@@ -7,13 +7,16 @@ import android.net.Uri;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
+import android.text.TextUtils;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.receivers.RxBroadcastReceiver;
 
 import javax.inject.Inject;
 
+import io.sweers.catchup.R;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
 import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.rx.Confine;
@@ -71,6 +74,10 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
   }
 
   public void openUrl(@NonNull String url, @ColorInt int accentColor) {
+    if (TextUtils.isEmpty(url)) {
+      Toast.makeText(activity, R.string.error_no_url, Toast.LENGTH_SHORT).show();
+      return;
+    }
     openUrl(Uri.parse(url), accentColor);
   }
 
