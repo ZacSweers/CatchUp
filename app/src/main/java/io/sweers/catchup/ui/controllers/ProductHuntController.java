@@ -76,9 +76,11 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     holder.tag(null);
 
     holder.itemClicks()
-        .subscribe(v -> linkManager.openUrl(item.redirect_url()));
+        .compose(transformUrl(item.redirect_url()))
+        .subscribe(linkManager);
     holder.itemCommentClicks()
-        .subscribe(v -> linkManager.openUrl(item.discussion_url()));
+        .compose(transformUrl(item.discussion_url()))
+        .subscribe(linkManager);
   }
 
   @NonNull

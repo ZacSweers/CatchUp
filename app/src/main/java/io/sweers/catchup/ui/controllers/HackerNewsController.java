@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
-import android.widget.Toast;
 
 import com.squareup.moshi.Moshi;
 
@@ -24,6 +23,7 @@ import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
+import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -89,16 +89,14 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     holder.tag(story.type().tag());
 
     holder.itemClicks()
-        .subscribe(v -> {
-          if (url == null) {
-            Toast.makeText(holder.itemView.getContext(), R.string.error_no_url, Toast.LENGTH_SHORT).show();
-          } else {
-            linkManager.openUrl(url);
-          }
-        });
+        .compose(transformUrl(url))
+        .compose(Confine.to(holder.itemView))
+        .subscribe(linkManager);
 
     holder.itemCommentClicks()
-        .subscribe(v -> linkManager.openUrl("https://news.ycombinator.com/item?id=" + story.id()));
+        .compose(transformUrl("https://news.ycombinator.com/item?id=" + story.id()))
+        .compose(Confine.to(holder.itemView))
+        .subscribe(linkManager);
   }
 
   @NonNull

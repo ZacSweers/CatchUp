@@ -67,13 +67,14 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     setRetainViewMode(RetainViewMode.RETAIN_DETACH);
   }
 
-  public Observable.Transformer<Void, Void> throttleClicks() {
+  public static <T> Observable.Transformer<T, T> throttleClicks() {
     return voidObservable -> {
-      PublishRelay<Void> throttledRelay = PublishRelay.create();
-      voidObservable.subscribe(throttledRelay);
+      PublishRelay<T> throttledRelay = PublishRelay.create();
+      voidObservable
+          .subscribe(throttledRelay);
       return throttledRelay
-          .asObservable()
-          .throttleFirst(500, TimeUnit.MILLISECONDS);
+          .doOnNext(System.out::println)
+          .throttleFirst(300, TimeUnit.MILLISECONDS);
     };
   }
 
@@ -183,6 +184,10 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     loadData();
   }
 
+  protected UrlTransformer transformUrl(String url) {
+    return new UrlTransformer(url);
+  }
+
   private static class Adapter<T extends HasStableId> extends RecyclerView.Adapter<ViewHolder> {
 
     private final List<T> data = new ArrayList<>();
@@ -249,15 +254,18 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     }
 
     public Observable<Void> itemClicks() {
-      return RxView.clicks(container);
+      return RxView.clicks(container)
+          .compose(throttleClicks());
     }
 
     public Observable<Void> itemLongClicks() {
-      return RxView.longClicks(container);
+      return RxView.longClicks(container)
+          .compose(throttleClicks());
     }
 
     public Observable<Void> itemCommentClicks() {
-      return RxView.clicks(comments);
+      return RxView.clicks(comments)
+          .compose(throttleClicks());
     }
 
     public void title(@NonNull CharSequence titleText) {
@@ -319,6 +327,20 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
 
     public void hideComments() {
       comments.setVisibility(GONE);
+    }
+  }
+
+  private class UrlTransformer implements Observable.Transformer<Object, Pair<String, Integer>> {
+
+    private final String url;
+
+    public UrlTransformer(String url) {
+      this.url = url;
+    }
+
+    @Override
+    public Observable<Pair<String, Integer>> call(Observable<Object> source) {
+      return source.map(o -> Pair.create(url, getServiceThemeColor()));
     }
   }
 }

@@ -27,6 +27,7 @@ import io.sweers.catchup.data.reddit.model.RedditObject;
 import io.sweers.catchup.data.reddit.model.RedditObjectDeserializer;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
+import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -85,11 +86,13 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     holder.tag(link.subreddit());
 
     holder.itemClicks()
-        .compose(throttleClicks())
-        .subscribe(v -> linkManager.openUrl(link.url()));
+        .compose(transformUrl(link.url()))
+        .compose(Confine.to(holder.itemView))
+        .subscribe(linkManager);
     holder.itemCommentClicks()
-        .compose(throttleClicks())
-        .subscribe(v -> linkManager.openUrl("https://reddit.com/comments/" + link.id()));
+        .compose(transformUrl("https://reddit.com/comments/" + link.id()))
+        .compose(Confine.to(holder.itemView))
+        .subscribe(linkManager);
   }
 
   @NonNull

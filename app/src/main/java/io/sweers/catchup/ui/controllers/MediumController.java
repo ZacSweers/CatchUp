@@ -26,6 +26,7 @@ import io.sweers.catchup.data.medium.model.MediumResponse;
 import io.sweers.catchup.data.medium.model.Payload;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
+import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -87,9 +88,13 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     holder.source(null);
 
     holder.itemClicks()
-        .subscribe(v -> linkManager.openUrl(item.constructUrl()));
+        .compose(transformUrl(item.constructUrl()))
+        .compose(Confine.to(holder.itemView))
+        .subscribe(linkManager);
     holder.itemCommentClicks()
-        .subscribe(v -> linkManager.openUrl(item.constructCommentsUrl()));
+        .compose(transformUrl(item.constructCommentsUrl()))
+        .compose(Confine.to(holder.itemView))
+        .subscribe(linkManager);
   }
 
   @NonNull

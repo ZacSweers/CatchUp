@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
+import android.util.Pair;
 
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.receivers.RxBroadcastReceiver;
@@ -20,12 +22,13 @@ import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static io.sweers.catchup.rx.Transformers.doOnEmpty;
 
 @PerActivity
-public class LinkManager {
+public class LinkManager implements Action1<Pair<String, Integer>> {
 
   private final MainActivity activity;
   private final CustomTabActivityHelper customTab;
@@ -67,27 +70,27 @@ public class LinkManager {
         && match <= IntentFilter.MATCH_CATEGORY_PATH;
   }
 
-  public void openUrl(@NonNull String url) {
-    openUrl(Uri.parse(url));
+  public void openUrl(@NonNull String url, @ColorInt int accentColor) {
+    openUrl(Uri.parse(url), accentColor);
   }
 
-  public void openUrl(@NonNull Uri uri) {
+  public void openUrl(@NonNull Uri uri, @ColorInt int accentColor) {
     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
     if (!globalSmartLinkingPref.get()) {
-      openCustomTab(uri);
+      openCustomTab(uri, accentColor);
       return;
     }
 
     if (!dumbCache.containsKey(uri.getHost())) {
-      queryAndOpen(uri, intent);
+      queryAndOpen(uri, intent, accentColor);
     } else if (dumbCache.get(uri.getHost())) {
       activity.startActivity(intent);
     } else {
-      openCustomTab(uri);
+      openCustomTab(uri, accentColor);
     }
   }
 
-  private void queryAndOpen(Uri uri, Intent intent) {
+  private void queryAndOpen(Uri uri, Intent intent, @ColorInt int accentColor) {
     PackageManager manager = activity.getPackageManager();
     Observable.defer(() -> Observable.from(manager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)))
         .filter(resolveInfo -> isSpecificUriMatch(resolveInfo.match))
@@ -95,7 +98,7 @@ public class LinkManager {
         .observeOn(AndroidSchedulers.mainThread())
         .compose(doOnEmpty((Action0) () -> {
           dumbCache.put(uri.getHost(), false);
-          openCustomTab(uri);
+          openCustomTab(uri, accentColor);
         }))
         .compose(Confine.to(activity))
         .subscribe(count -> {
@@ -104,7 +107,17 @@ public class LinkManager {
         });
   }
 
-  private void openCustomTab(@NonNull Uri uri) {
-    customTab.openCustomTab(customTab.getCustomTabIntent().build(), uri);
+  private void openCustomTab(@NonNull Uri uri, @ColorInt int accentColor) {
+    customTab.openCustomTab(
+        customTab
+            .getCustomTabIntent()
+            .setToolbarColor(accentColor)
+            .build(),
+        uri);
+  }
+
+  @Override
+  public void call(Pair<String, Integer> pair) {
+    openUrl(pair.first, pair.second);
   }
 }
