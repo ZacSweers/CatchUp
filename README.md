@@ -1,7 +1,4 @@
-Empty Android Project (EAP)
-===========================
+CatchUp
+=======
 
-This is an empty Android project with my preferred boilerplate setup.
-
-I wouldn't necessarily use all of these things in a new project, but it's easier to have them available
-when putting together example projects.
+An app for catching up on things on the train.
