@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/container"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="?selectableItemBackground"
+              android:clickable="true"
+              android:orientation="horizontal"
+  >
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:orientation="vertical"
+    android:padding="16dp"
+    >
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+
+      <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/score"
+        style="@style/TextAppearance.AppCompat.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?colorAccent"
+        tools:text="+ 128"
+        />
+
+      <android.support.v7.widget.AppCompatTextView
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:text=" • "
+        />
+
+      <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/timestamp"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="12 hours ago"
+        />
+
+    </LinearLayout>
+
+    <io.sweers.catchup.ui.widget.BaselineGridTextView
+      android:id="@+id/title"
+      style="@style/TextAppearance.AppCompat.Subhead"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8dp"
+      android:layout_marginTop="8dp"
+      tools:text="Show HN: Into.js Hints"
+      />
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+
+      <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/author"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="pandanomic"
+        />
+
+      <android.support.v7.widget.AppCompatTextView
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:text=" — "
+        />
+
+      <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/source"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="medium.com"
+        />
+
+    </LinearLayout>
+
+  </LinearLayout>
+
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/comments"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="?selectableItemBackgroundBorderless"
+    android:clickable="true"
+    android:drawableTop="@drawable/ic_comment_black_24dp"
+    android:gravity="center"
+    android:padding="16dp"
+    tools:text="39"
+    />
+
+</LinearLayout>

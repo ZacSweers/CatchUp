@@ -1,0 +1,59 @@
+package io.sweers.catchup.model;
+
+import android.support.annotation.Nullable;
+
+import com.google.auto.value.AutoValue;
+import com.squareup.moshi.Json;
+import com.squareup.moshi.JsonAdapter;
+
+import java.util.List;
+
+@AutoValue
+public abstract class HackerNewsStory {
+
+  public enum HNType {
+    @Json(name = "job")
+    JOB,
+
+    @Json(name = "story")
+    STORY,
+
+    @Json(name = "comment")
+    COMMENT,
+
+    @Json(name = "poll")
+    POLL,
+
+    @Json(name = "pollopt")
+    POLLOPT
+  }
+
+  public abstract String by();
+
+  //    public abstract boolean dead();
+//    public abstract boolean deleted();
+//    public abstract int descendants();
+  public abstract String id();
+
+  @Nullable public abstract List<String> kids();
+
+  @Nullable public abstract HackerNewsStory parent();
+
+  @Nullable public abstract List<String> parts();
+
+  public abstract int score();
+
+  public abstract long time();
+
+  public abstract String title();
+
+  @Nullable public abstract String text();
+
+  public abstract HNType type();
+
+  public abstract String url();
+
+  public static JsonAdapter.Factory typeAdapterFactory() {
+    return AutoValue_HackerNewsStory.typeAdapterFactory();
+  }
+}

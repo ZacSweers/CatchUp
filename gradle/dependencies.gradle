@@ -1,0 +1,113 @@
+ext {
+    // Build
+    minSdkVersion = 21
+    targetSdkVersion = 23
+    compileSdkVersion = 23
+    buildToolsVersion = '23.0.2'
+    ci = 'true'.equals(System.getenv('CI'))
+
+    // Kotlin
+    kotlinVersion = '1.0.1-2'
+    kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    kotlinAndroidAnnotaitons = "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$kotlinVersion"
+    kotterKnife = 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
+
+    // Google
+    supportVersion = '23.3.0'
+    supportAnnotations = "com.android.support:support-annotations:$supportVersion"
+    supportAppCompat = "com.android.support:appcompat-v7:$supportVersion"
+    supportCardView = "com.android.support:cardview-v7:$supportVersion"
+    supportCustomTabs = "com.android.support:customtabs:$supportVersion"
+    supportDesign = "com.android.support:design:$supportVersion"
+    supportPalette = "com.android.support:palette-v7:$supportVersion"
+    supportPercent = "com.android.support:percent:$supportVersion"
+    supportPreference = "com.android.support:preference-v7:$supportVersion"
+    supportRecyclerView = "com.android.support:recyclerview-v7:$supportVersion"
+    supportV4 = "com.android.support:support-v4:$supportVersion"
+    multidex = 'com.android.support:multidex:1.0.1'
+    androidPlugin = 'com.android.tools.build:gradle:2.0.0'
+    playServicesVersion = '8.4.0'
+
+    // Dagger
+    daggerVersion = '2.4'
+    dagger = "com.google.dagger:dagger:$daggerVersion"
+    daggerCompiler = "com.google.dagger:dagger-compiler:$daggerVersion"
+    javax = 'org.glassfish:javax.annotation:10.0-b28'
+
+    // Misc
+    aptPlugin = 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    bottomsheetVersion = '1.5.0'
+    bottomsheet = "com.flipboard:bottomsheet-core:$bottomsheetVersion"
+    bottomsheetCommons = "com.flipboard:bottomsheet-commons:$bottomsheetVersion"
+    calligraphy = 'uk.co.chrisjenx:calligraphy:2.2.0'
+    glide = 'com.github.bumptech.glide:glide:3.7.0'
+    glideOkhttp = 'com.github.bumptech.glide:okhttp-integration:1.4.0@aar'
+    gson = 'com.google.code.gson:gson:2.6.2'
+    psyncPlugin = 'gradle.plugin.com.flipboard:psync:1.1.5'
+    stethoVersion = '1.3.1'
+    stetho = "com.facebook.stetho:stetho:$stethoVersion"
+    stethoOkHttp = "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
+    versionsPlugin = 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
+
+    // Personal
+    barberVersion = '1.3.1'
+    barberCompiler = "io.sweers.barber:barber-compiler:$barberVersion"
+    barberApi = "io.sweers.barber:barber-api:$barberVersion"
+    rxPaletteVersion = '0.3.0'
+    rxPalette = "io.sweers.rxpalette:rxpalette:$rxPaletteVersion"
+    rxPaletteKotlin = "io.sweers.rxpalette:rxpalette-kotlin:$rxPaletteVersion"
+
+    // Rx
+    rxAndroid = 'io.reactivex:rxandroid:1.1.0'
+    rxBindingVersion = '0.4.0'
+    rxBinding = "com.jakewharton.rxbinding:rxbinding:$rxBindingVersion"
+    rxJava = 'io.reactivex:rxjava:1.1.3'
+    rxLifecycle = 'com.trello:rxlifecycle:0.5.0'
+    rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.1'
+    rxRelay = 'com.jakewharton.rxrelay:rxrelay:1.1.0'
+
+    // Square and JW
+    butterKnife = 'com.jakewharton:butterknife:7.0.1'
+    leakCanaryVersion = '1.4-beta2'
+    leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    leakCanaryNoop = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    okhttpVersion = '3.2.0'
+    okhttp = "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+    okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
+    okio = 'com.squareup.okio:okio:1.7.0'
+    retrofitVersion = '2.0.1'
+    retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    retrofitMoshi = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+    retrofitGson = "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    retrofitRxJava = "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
+    sdkManagerPlugin = 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+    timber = 'com.jakewharton.timber:timber:4.1.2'
+
+    // Testing
+    assertj = 'org.assertj:assertj-core:2.2.0'
+    assertjAndroidVersion = '1.1.1'
+    assertjAndroid = "com.squareup.assertj:assertj-android:$assertjAndroidVersion"
+    hamcrest = 'org.hamcrest:hamcrest-core:1.3'
+    junit = 'junit:junit:4.12'
+    mockito = 'org.mockito:mockito-all:1.10.19'
+    robolectric = 'org.robolectric:robolectric:3.0'
+    truth = 'com.google.truth:truth:0.28'
+
+    // Espresso
+    supportTestVersion = '0.4.1'
+    supportTestRunner = "com.android.support.test:runner:$supportTestVersion"
+    supportTestRules = "com.android.support.test:rules:$supportTestVersion"
+    supportTestEspressoVersion = '2.2.1'
+    supportTestEspresso = "com.android.support.test.espresso:espresso-core:$supportTestEspressoVersion"
+    supportTestEspressoContrib = "com.android.support.test.espresso:espresso-contrib:$supportTestEspressoVersion"
+    supportTestEspressoWeb = "com.android.support.test.espresso:espresso-web:$supportTestEspressoVersion"
+
+    // query git for the SHA, Tag and commit count. Use these to automate versioning.
+    gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+    gitTag = 'git describe --tags'.execute([], project.rootDir).text.trim()
+    gitCommitCount = 100 + Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim() ?: '0')
+    gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+    gitTimestamp = 'git log -n 1 --format=%at'.execute([], rootDir).text.trim()
+}
