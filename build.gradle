@@ -2,17 +2,13 @@ subprojects {
     buildscript {
         repositories {
             jcenter()
-            mavenCentral()
             maven { url "https://plugins.gradle.org/m2/" }
-            maven { url "https://jitpack.io" }
             maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         }
     }
 
     repositories {
         jcenter()
-        mavenCentral()
-        maven { url "https://jitpack.io" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 

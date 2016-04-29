@@ -97,7 +97,7 @@ android {
 
 // My standard tech stack
 dependencies {
-    retrolambdaConfig 'com.jakewharton.retrolambda:retrolambda:2.1.0-jake1-SNAPSHOT'
+    retrolambdaConfig 'com.jakewharton.retrolambda:retrolambda:2.1.0-jake2'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile rootProject.ext.supportAnnotations
@@ -116,14 +116,14 @@ dependencies {
     compile rootProject.ext.retrofitRxJava
     compile rootProject.ext.rxAndroid
     compile rootProject.ext.rxBinding
+    compile rootProject.ext.rxBindingV4
     compile rootProject.ext.rxJava
     compile rootProject.ext.rxLifecycle
     compile rootProject.ext.timber
 
+    compile rootProject.ext.gson
     compile rootProject.ext.stetho
     compile rootProject.ext.stethoOkHttp
-
-    compile 'com.google.code.gson:gson:2.6.2'
 
     apt rootProject.ext.barberCompiler
     compile rootProject.ext.barberApi

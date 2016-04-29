@@ -4,6 +4,7 @@ import com.squareup.moshi.Moshi;
 
 import io.sweers.catchup.app.ApplicationComponent;
 import io.sweers.catchup.injection.PerActivity;
+import io.sweers.catchup.ui.base.ActionBarProvider;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.OkHttpClient;
 
@@ -20,4 +21,6 @@ public interface ActivityComponent {
   Moshi moshi();
 
   OkHttpClient okhttpClient();
+
+  ActionBarProvider actionBarProvider();
 }

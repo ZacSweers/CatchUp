@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:tools="http://schemas.android.com/tools"
+  >
+
+  <android.support.v4.widget.SwipeRefreshLayout
+    android:id="@+id/refresh"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <android.support.v7.widget.RecyclerView
+      android:id="@+id/list"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:overScrollMode="never"
+      />
+
+  </android.support.v4.widget.SwipeRefreshLayout>
+
+  <LinearLayout
+    android:id="@+id/error_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone"
+    android:layout_gravity="center"
+    android:gravity="center_horizontal"
+    tools:visibility="visible"
+    >
+
+    <android.support.v7.widget.AppCompatImageView
+      android:id="@+id/error_image"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      tools:src="@drawable/avd_no_connection"
+      />
+
+    <android.support.v7.widget.AppCompatButton
+      android:id="@+id/retry_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:text="@string/retry"
+      />
+
+  </LinearLayout>
+</FrameLayout>
