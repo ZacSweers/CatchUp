@@ -27,6 +27,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 import static rx.schedulers.Schedulers.io;
 
@@ -94,7 +95,7 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
     return service.topStories()
         .concatMapIterable(strings -> strings)
         .take(25)
-        .concatMap(id -> service.getItem(id))
+        .concatMap(id -> service.getItem(id).subscribeOn(Schedulers.io()))
         .toList();
   }
 
