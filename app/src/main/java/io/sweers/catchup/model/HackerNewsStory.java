@@ -1,38 +1,30 @@
 package io.sweers.catchup.model;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 
 import java.util.List;
 
 @AutoValue
 public abstract class HackerNewsStory {
 
-  public enum HNType {
-    @Json(name = "job")
-    JOB,
-
-    @Json(name = "story")
-    STORY,
-
-    @Json(name = "comment")
-    COMMENT,
-
-    @Json(name = "poll")
-    POLL,
-
-    @Json(name = "pollopt")
-    POLLOPT
+  public static JsonAdapter<HackerNewsStory> jsonAdapter(@NonNull Moshi moshi) {
+    return new AutoValue_HackerNewsStory.MoshiJsonAdapter(moshi);
   }
 
   public abstract String by();
 
-  //    public abstract boolean dead();
-//    public abstract boolean deleted();
-//    public abstract int descendants();
+  public abstract boolean dead();
+
+  public abstract boolean deleted();
+
+  public abstract int descendants();
+
   public abstract String id();
 
   @Nullable public abstract List<String> kids();
@@ -51,9 +43,23 @@ public abstract class HackerNewsStory {
 
   public abstract HNType type();
 
+  @Nullable
   public abstract String url();
 
-  public static JsonAdapter.Factory typeAdapterFactory() {
-    return AutoValue_HackerNewsStory.typeAdapterFactory();
+  public enum HNType {
+    @Json(name = "job")
+    JOB,
+
+    @Json(name = "story")
+    STORY,
+
+    @Json(name = "comment")
+    COMMENT,
+
+    @Json(name = "poll")
+    POLL,
+
+    @Json(name = "pollopt")
+    POLLOPT
   }
 }

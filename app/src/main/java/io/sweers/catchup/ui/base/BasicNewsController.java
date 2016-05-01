@@ -26,6 +26,7 @@ import io.sweers.catchup.R;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import timber.log.Timber;
 
 import static android.view.View.GONE;
 
@@ -167,6 +168,7 @@ public abstract class BasicNewsController<T> extends BaseController
                         R.drawable.avd_no_connection));
                 errorView.setVisibility(View.VISIBLE);
               }
+              Timber.e(e, "Update failed!");
             });
   }
 
@@ -206,8 +208,10 @@ public abstract class BasicNewsController<T> extends BaseController
 
     @Bind(R.id.title) TextView title;
     @Bind(R.id.score) TextView score;
+    @Bind(R.id.score_divider) TextView scoreDivider;
     @Bind(R.id.timestamp) TextView timestamp;
     @Bind(R.id.author) TextView author;
+    @Bind(R.id.author_divider) TextView authorDivider;
     @Bind(R.id.source) TextView source;
     @Bind(R.id.comments) TextView comments;
 
@@ -235,13 +239,24 @@ public abstract class BasicNewsController<T> extends BaseController
       onCommentClick(this, itemView, datum);
     }
 
+    public TextView score() {
+      return score;
+    }
+
     public void title(@NonNull CharSequence titleText) {
       title.setText(titleText);
     }
 
     public void score(@Nullable CharSequence scoreValue) {
       // TODO Shorten large numbers
-      setOrHideView(score, scoreValue);
+      if (scoreValue == null) {
+        score.setVisibility(GONE);
+        scoreDivider.setVisibility(GONE);
+      } else {
+        scoreDivider.setVisibility(View.VISIBLE);
+        score.setVisibility(View.VISIBLE);
+        score.setText(scoreValue);
+      }
     }
 
     public void timestamp(long utcTime) {
@@ -253,21 +268,19 @@ public abstract class BasicNewsController<T> extends BaseController
     }
 
     public void source(@Nullable CharSequence sourceText) {
-      setOrHideView(source, sourceText);
+      if (sourceText == null) {
+        source.setVisibility(GONE);
+        authorDivider.setVisibility(GONE);
+      } else {
+        authorDivider.setVisibility(View.VISIBLE);
+        source.setVisibility(View.VISIBLE);
+        source.setText(sourceText);
+      }
     }
 
     public void comments(int commentsCount) {
       // TODO Shorten large numbers
       comments.setText(String.format(Locale.getDefault(), "%d", commentsCount));
-    }
-
-    private void setOrHideView(@NonNull TextView textView, @Nullable CharSequence value) {
-      if (value == null) {
-        textView.setVisibility(GONE);
-      } else {
-        textView.setVisibility(View.VISIBLE);
-        textView.setText(value);
-      }
     }
   }
 }

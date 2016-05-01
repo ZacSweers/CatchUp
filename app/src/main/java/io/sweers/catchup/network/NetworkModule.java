@@ -3,6 +3,7 @@ package io.sweers.catchup.network;
 import android.os.Looper;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.ryanharter.auto.value.moshi.AutoValueMoshiAdapterFactory;
 import com.squareup.moshi.Moshi;
 
 import java.util.concurrent.TimeUnit;
@@ -12,7 +13,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.sweers.catchup.app.CatchUpApplication;
-import io.sweers.catchup.model.HackerNewsStory;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
@@ -48,7 +48,7 @@ public class NetworkModule {
 
   @Provides @Singleton Moshi provideMoshi() {
     return new Moshi.Builder()
-        .add(HackerNewsStory.typeAdapterFactory())
+        .add(new AutoValueMoshiAdapterFactory())
         .build();
   }
 

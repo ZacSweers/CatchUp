@@ -34,12 +34,12 @@ public class PagerController extends BaseController {
   private static final String[][] PAGE_NAMES = new String[][]{
       {"HN", "Hacker News"},
       {"R", "Reddit"},
+      {"M", "Medium"},
       {"PH", "Product Hunt"},
       {"SD", "SlashDot"},
       {"DN", "Designer News"},
       {"DR", "Dribbble"},
       {"GH", "GitHub"},
-      {"M", "Medium"},
       {"RD", "Readability"}
   };
 
@@ -59,6 +59,8 @@ public class PagerController extends BaseController {
             return new HackerNewsController();
           case 1:
             return new RedditController();
+          case 2:
+            return new MediumController();
           default:
             return new HackerNewsController();
         }

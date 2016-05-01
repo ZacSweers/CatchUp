@@ -59,7 +59,13 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
     holder.score(String.format(Locale.getDefault(), "+ %d", story.score()));
     holder.timestamp(story.time());
     holder.author(story.by());
-    holder.source(HttpUrl.parse(story.url()).host());
+
+    String url = story.url();
+    if (url == null) {
+      holder.source(null);
+    } else {
+      holder.source(HttpUrl.parse(url).host());
+    }
 
     int commentsCount = 0;
     // TODO Adapter to coerce this to Collections.emptyList()?

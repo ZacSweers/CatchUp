@@ -1,0 +1,170 @@
+package io.sweers.catchup.ui;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.view.View;
+
+import com.squareup.moshi.Moshi;
+
+import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+
+import dagger.Lazy;
+import dagger.Provides;
+import io.sweers.catchup.injection.PerController;
+import io.sweers.catchup.model.medium.Collection;
+import io.sweers.catchup.model.medium.MediumPost;
+import io.sweers.catchup.model.medium.MediumResponse;
+import io.sweers.catchup.model.medium.Payload;
+import io.sweers.catchup.network.MediumService;
+import io.sweers.catchup.ui.activity.ActivityComponent;
+import io.sweers.catchup.ui.activity.MainActivity;
+import io.sweers.catchup.ui.base.BasicNewsController;
+import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.moshi.MoshiConverterFactory;
+import rx.Observable;
+
+import static rx.schedulers.Schedulers.io;
+
+
+public final class MediumController extends BasicNewsController<MediumPost> {
+
+  @Inject MediumService service;
+  @Inject CustomTabActivityHelper customTab;
+
+  public MediumController() {
+    this(null);
+  }
+
+  public MediumController(Bundle args) {
+    super(args);
+  }
+
+  @Override protected void performInjection() {
+    DaggerMediumController_Component
+        .builder()
+        .module(new Module())
+        .activityComponent(((MainActivity) getActivity()).getComponent())
+        .build()
+        .inject(this);
+  }
+
+  @Override
+  protected void bindItemView(@NonNull BasicNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
+    holder.score().setTextColor(Color.parseColor("#00AB6B"));
+
+    holder.title(item.post().title());
+
+    holder.score(String.format(Locale.getDefault(), "♥ %d", item.post().virtuals().recommends()));
+    holder.timestamp(item.post().createdAt() / 1000);
+
+    holder.author(item.user().name());
+
+    Collection collection = item.collection();
+    if (collection != null) {
+      holder.source(collection.name());
+    } else {
+      holder.source(null);
+    }
+
+    holder.comments(item.post().virtuals().responsesCreatedCount());
+  }
+
+  @Override
+  protected void onItemClick(@NonNull BasicNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
+    // TODO construct URL. domain + uniqueSlug
+    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.constructUrl()));
+    startActivity(intent);
+
+    // TODO This should be how it's actually done
+//      customTab.openCustomTab(customTab.getCustomTabIntent().build(),
+//          Uri.parse(item.constructUrl()));
+  }
+
+  @Override
+  protected void onCommentClick(@NonNull BasicNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
+    // TODO Make the app choice a pref
+    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.constructCommentsUrl()));
+    startActivity(intent);
+
+    // TODO This should be how it's actually done
+//      customTab.openCustomTab(customTab.getCustomTabIntent().build(),
+//          Uri.parse(item.constructCommentsUrl()));
+  }
+
+  @NonNull @Override protected Observable<List<MediumPost>> getDataObservable() {
+    return service.top()
+        .map(MediumResponse::payload)
+        .map(Payload::references)
+//        .flatMap(references -> {
+//          return Observable.combineLatest(
+//              Observable.from(references.Post().values()),
+//              Observable.just(references.User()),
+//              Observable.just(references.Collection()),
+//              (post, userMap, collectionMap) -> {
+//                return MediumPost.builder()
+//                    .post(post)
+//                    .user(userMap.get(post.creatorId()))
+//                    .collection(collectionMap.get(post.homeCollectionId()))
+//                    .build();
+//              }
+//          );
+//        })
+        .flatMap(references -> Observable.from(references.Post().values())
+            .map(post -> MediumPost.builder()
+                .post(post)
+                .user(references.User().get(post.creatorId()))
+                .collection(references.Collection().get(post.homeCollectionId()))
+                .build()))
+        .toList();
+  }
+
+  @PerController
+  @dagger.Component(
+      modules = Module.class,
+      dependencies = ActivityComponent.class
+  )
+  public interface Component {
+    void inject(MediumController controller);
+  }
+
+  @dagger.Module
+  public static class Module {
+
+    @Provides
+    @PerController
+    MediumService provideMediumService(final Lazy<OkHttpClient> client, Moshi moshi) {
+      Retrofit retrofit = new Retrofit.Builder()
+          .baseUrl("https://medium.com/")
+          .callFactory(request -> client.get().newBuilder().addInterceptor(chain -> {
+            Request request1 = chain.request();
+            Response response = chain.proceed(request1);
+            ResponseBody originalBody = response.body();
+            String content = originalBody.string();
+            originalBody.close();
+            Response fixedResponse = response.newBuilder()
+                .body(ResponseBody.create(
+                    originalBody.contentType(),
+                    content.substring(content.indexOf("{"), content.length())
+                ))
+                .build();
+            return fixedResponse;
+          }).build().newCall(request))
+          .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(io()))
+          .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .build();
+      return retrofit.create(MediumService.class);
+    }
+  }
+}

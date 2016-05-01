@@ -134,7 +134,7 @@ dependencies {
 
     provided 'com.jakewharton.auto.value:auto-value-annotations:1.2-update1'
     apt 'com.google.auto.value:auto-value:1.2'
-    apt 'com.ryanharter.auto.value:auto-value-moshi:0.2.2'
+    apt 'com.ryanharter.auto.value:auto-value-moshi:0.2.3-SNAPSHOT'
 
     compile 'com.bluelinelabs:conductor:1.1.4'
     compile 'com.bluelinelabs:conductor-support:1.1.4'
