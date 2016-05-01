@@ -15,8 +15,8 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.injection.PerController;
-import io.sweers.catchup.model.HackerNewsStory;
-import io.sweers.catchup.network.HackerNewsService;
+import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
+import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BasicNewsController;
@@ -72,7 +72,7 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
     // TODO Adapter to coerce this to Collections.emptyList()?
     List<String> kids = story.kids();
     if (kids != null) {
-      kids.size();
+      commentsCount = kids.size();
     }
     holder.comments(commentsCount);
   }

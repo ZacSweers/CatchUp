@@ -61,8 +61,10 @@ public class PagerController extends BaseController {
             return new RedditController();
           case 2:
             return new MediumController();
+          case 3:
+            return new ProductHuntController();
           default:
-            return new HackerNewsController();
+            return new RedditController();
         }
       }
 

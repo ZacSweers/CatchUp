@@ -32,8 +32,9 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
 
-        buildConfigField 'String', 'GIT_SHA', "\"${gitSha}\""
+        buildConfigField 'String', 'GIT_SHA', /"${gitSha}"/
         buildConfigField 'long', 'GIT_TIMESTAMP', "${gitTimestamp}"
+        buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"$product_hunt_developer_token"/
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
