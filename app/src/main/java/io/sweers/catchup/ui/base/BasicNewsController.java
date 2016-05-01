@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -161,12 +162,21 @@ public abstract class BasicNewsController<T> extends BaseController
               adapter.setData(data);
             },
             e -> {
-              if (e instanceof HttpException) {
-                errorImage.setImageDrawable(
-                    AnimatedVectorDrawableCompat.create(
-                        getActivity(),
-                        R.drawable.avd_no_connection));
+              if (e instanceof IOException) {
+                AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
+                    getActivity(),
+                    R.drawable.avd_no_connection);
+                errorImage.setImageDrawable(avd);
                 errorView.setVisibility(View.VISIBLE);
+                avd.start();
+              } else if (e instanceof HttpException) {
+                // TODO Show some sort of API error response.
+                AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
+                    getActivity(),
+                    R.drawable.avd_no_connection);
+                errorImage.setImageDrawable(avd);
+                errorView.setVisibility(View.VISIBLE);
+                avd.start();
               }
               Timber.e(e, "Update failed!");
             });
