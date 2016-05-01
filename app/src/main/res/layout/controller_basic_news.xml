@@ -9,17 +9,26 @@
   <android.support.v4.widget.SwipeRefreshLayout
     android:id="@+id/refresh"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     >
 
     <android.support.v7.widget.RecyclerView
       android:id="@+id/list"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="match_parent"
       android:overScrollMode="never"
       />
 
   </android.support.v4.widget.SwipeRefreshLayout>
+
+  <ProgressBar
+    android:id="@+id/progress"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    style="@style/Widget.AppCompat.ProgressBar"
+    android:indeterminate="true"
+    android:layout_gravity="center"
+    />
 
   <LinearLayout
     android:id="@+id/error_container"
@@ -36,6 +45,7 @@
       android:id="@+id/error_image"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:clickable="true"
       tools:src="@drawable/avd_no_connection"
       />
 

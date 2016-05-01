@@ -11,8 +11,11 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import io.sweers.catchup.R;
+import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -37,8 +41,9 @@ public abstract class BasicNewsController<T> extends BaseController
 
   @Bind(R.id.error_container) View errorView;
   @Bind(R.id.error_image) ImageView errorImage;
-  @Bind(R.id.refresh) SwipeRefreshLayout swipeRefreshLayout;
   @Bind(R.id.list) RecyclerView recyclerView;
+  @Bind(R.id.progress) ProgressBar progress;
+  @Bind(R.id.refresh) SwipeRefreshLayout swipeRefreshLayout;
 
   private Adapter adapter;
 
@@ -127,23 +132,26 @@ public abstract class BasicNewsController<T> extends BaseController
     recyclerView.setAdapter(adapter);
     swipeRefreshLayout.setOnRefreshListener(this);
 
-    // TODO Use RecyclerView animators from wasabeef
-//    FadeInUpAnimator itemAnimator = new FadeInUpAnimator(new OvershootInterpolator(1f));
-//    itemAnimator.setAddDuration(300);
-//    itemAnimator.setRemoveDuration(300);
-//    recyclerView.setItemAnimator(itemAnimator);
+    FadeInUpAnimator itemAnimator = new FadeInUpAnimator(new OvershootInterpolator(1f));
+    itemAnimator.setAddDuration(300);
+    itemAnimator.setRemoveDuration(300);
+    recyclerView.setItemAnimator(itemAnimator);
   }
 
   @OnClick(R.id.retry_button) void onRetry() {
     errorView.setVisibility(GONE);
-    swipeRefreshLayout.setRefreshing(true);
+    progress.setVisibility(View.VISIBLE);
     onRefresh();
+  }
+
+  @OnClick(R.id.error_image) void onErrorClick(ImageView imageView) {
+    AnimatedVectorDrawableCompat avd = (AnimatedVectorDrawableCompat) imageView.getDrawable();
+    avd.start();
   }
 
   @Override
   protected void onAttach(@NonNull View view) {
     super.onAttach(view);
-    swipeRefreshLayout.setRefreshing(true);
     loadData();
   }
 
@@ -157,8 +165,12 @@ public abstract class BasicNewsController<T> extends BaseController
         .observeOn(AndroidSchedulers.mainThread())
         .doOnUnsubscribe(() -> swipeRefreshLayout.setRefreshing(false))
         .compose(this.<List<T>>bindToLifecycle())
+        .toSingle()
         .subscribe(
             data -> {
+              progress.setVisibility(GONE);
+              errorView.setVisibility(GONE);
+              swipeRefreshLayout.setVisibility(View.VISIBLE);
               adapter.setData(data);
             },
             e -> {
@@ -167,6 +179,8 @@ public abstract class BasicNewsController<T> extends BaseController
                     getActivity(),
                     R.drawable.avd_no_connection);
                 errorImage.setImageDrawable(avd);
+                progress.setVisibility(GONE);
+                swipeRefreshLayout.setVisibility(GONE);
                 errorView.setVisibility(View.VISIBLE);
                 avd.start();
               } else if (e instanceof HttpException) {
@@ -175,10 +189,13 @@ public abstract class BasicNewsController<T> extends BaseController
                     getActivity(),
                     R.drawable.avd_no_connection);
                 errorImage.setImageDrawable(avd);
+                progress.setVisibility(GONE);
+                swipeRefreshLayout.setVisibility(GONE);
                 errorView.setVisibility(View.VISIBLE);
                 avd.start();
               }
               Timber.e(e, "Update failed!");
+              Toast.makeText(getActivity(), "Failed - " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
   }
 
@@ -208,9 +225,16 @@ public abstract class BasicNewsController<T> extends BaseController
     }
 
     public void setData(List<T> newData) {
-      data.clear();
+      boolean wasEmpty = data.isEmpty();
+      if (!wasEmpty) {
+        data.clear();
+      }
       data.addAll(newData);
-      notifyDataSetChanged();
+      if (wasEmpty) {
+        notifyItemRangeInserted(0, data.size());
+      } else {
+        notifyDataSetChanged();
+      }
     }
   }
 
