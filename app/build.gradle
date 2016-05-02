@@ -111,6 +111,7 @@ dependencies {
     compile rootProject.ext.glide
     compile rootProject.ext.glideOkhttp
     compile rootProject.ext.okhttp
+    compile rootProject.ext.okio
     compile rootProject.ext.retrofit
     compile rootProject.ext.retrofitMoshi
     compile rootProject.ext.retrofitGson

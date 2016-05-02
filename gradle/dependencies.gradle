@@ -77,7 +77,7 @@ ext {
     okhttp = "com.squareup.okhttp3:okhttp:$okhttpVersion"
     okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
-    okio = 'com.squareup.okio:okio:1.7.0'
+    okio = 'com.squareup.okio:okio:1.8.0'
     retrofitVersion = '2.0.1'
     retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
     retrofitMoshi = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
