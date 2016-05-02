@@ -5,6 +5,6 @@
   <color name="colorAccent">#ffFF4081</color>
   <color name="mediumAccent">#ff00AB6B</color>
   <color name="productHuntAccent">#ffff9800</color>
-  <color name="redditAccent">#ffff5700</color>
+  <color name="redditAccent">#336699</color>
   <color name="hackerNewsAccent">#ffff6600</color>
 </resources>
