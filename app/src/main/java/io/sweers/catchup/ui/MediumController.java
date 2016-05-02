@@ -31,7 +31,7 @@ import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
+import okio.BufferedSource;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -160,16 +160,9 @@ public final class MediumController extends BasicNewsController<MediumPost> {
               .addInterceptor(chain -> {
                 Request request1 = chain.request();
                 Response response = chain.proceed(request1);
-                ResponseBody originalBody = response.body();
-                String content = originalBody.string();
-                originalBody.close();
-                Response fixedResponse = response.newBuilder()
-                    .body(ResponseBody.create(
-                        originalBody.contentType(),
-                        content.substring(content.indexOf("{"), content.length())
-                    ))
-                    .build();
-                return fixedResponse;
+                BufferedSource source = response.body().source();
+                source.skip(source.indexOf((byte) '{'));
+                return response;
               })
               .build()
               .newCall(request))
