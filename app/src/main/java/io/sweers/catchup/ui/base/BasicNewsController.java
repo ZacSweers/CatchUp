@@ -167,7 +167,6 @@ public abstract class BasicNewsController<T> extends BaseController
         .observeOn(AndroidSchedulers.mainThread())
         .doOnUnsubscribe(() -> swipeRefreshLayout.setRefreshing(false))
         .compose(this.<List<T>>bindToLifecycle())
-        .toSingle()
         .subscribe(
             data -> {
               progress.setVisibility(GONE);
