@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="colorPrimary">#3F51B5</color>
-  <color name="colorPrimaryDark">#303F9F</color>
-  <color name="colorAccent">#FF4081</color>
-  <color name="mediumAccent">#00AB6B</color>
+  <color name="colorPrimary">#ff3F51B5</color>
+  <color name="colorPrimaryDark">#ff303F9F</color>
+  <color name="colorAccent">#ffFF4081</color>
+  <color name="mediumAccent">#ff00AB6B</color>
   <color name="productHuntAccent">#ffff9800</color>
+  <color name="redditAccent">#ffff5700</color>
+  <color name="hackerNewsAccent">#ffff6600</color>
 </resources>

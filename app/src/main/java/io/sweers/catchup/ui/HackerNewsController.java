@@ -1,8 +1,10 @@
 package io.sweers.catchup.ui;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
 import com.squareup.moshi.Moshi;
@@ -14,6 +16,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
+import io.sweers.catchup.R;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
 import io.sweers.catchup.injection.PerController;
@@ -52,6 +55,10 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
+  }
+
+  @Override protected Context onThemeContext(@NonNull Context context) {
+    return new ContextThemeWrapper(context, R.style.CatchUp_HackerNews);
   }
 
   @Override

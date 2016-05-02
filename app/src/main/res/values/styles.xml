@@ -25,4 +25,12 @@
     <item name="colorAccent">@color/productHuntAccent</item>
   </style>
 
+  <style name="CatchUp.Reddit" parent="CatchUp">
+    <item name="colorAccent">@color/redditAccent</item>
+  </style>
+
+  <style name="CatchUp.HackerNews" parent="CatchUp">
+    <item name="colorAccent">@color/hackerNewsAccent</item>
+  </style>
+
 </resources>

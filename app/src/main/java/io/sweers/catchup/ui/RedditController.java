@@ -1,9 +1,11 @@
 package io.sweers.catchup.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -16,6 +18,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
+import io.sweers.catchup.R;
 import io.sweers.catchup.data.reddit.RedditService;
 import io.sweers.catchup.data.reddit.model.RedditLink;
 import io.sweers.catchup.data.reddit.model.RedditObject;
@@ -54,6 +57,10 @@ public final class RedditController extends BasicNewsController<RedditLink> {
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
+  }
+
+  @Override protected Context onThemeContext(@NonNull Context context) {
+    return new ContextThemeWrapper(context, R.style.CatchUp_Reddit);
   }
 
   @Override
