@@ -7,8 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
-import com.squareup.moshi.Moshi;
-
 import java.text.ParseException;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +21,7 @@ import io.sweers.catchup.data.AuthInterceptor;
 import io.sweers.catchup.data.producthunt.ProductHuntService;
 import io.sweers.catchup.data.producthunt.model.Post;
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
+import io.sweers.catchup.injection.API;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -36,7 +35,6 @@ import rx.Observable;
 import timber.log.Timber;
 
 import static io.sweers.catchup.data.producthunt.ProductHuntService.DATE_FORMAT;
-import static rx.schedulers.Schedulers.io;
 
 
 public final class ProductHuntController extends BasicNewsController<Post> {
@@ -117,16 +115,25 @@ public final class ProductHuntController extends BasicNewsController<Post> {
 
     @Provides
     @PerController
-    ProductHuntService provideProductHuntService(final Lazy<OkHttpClient> client, Moshi moshi) {
+    @API
+    OkHttpClient provideProductHuntOkHttpClient(OkHttpClient client) {
+      return client
+          .newBuilder()
+          .addInterceptor(new AuthInterceptor(BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
+          .build();
+    }
+
+    @Provides
+    @PerController
+    ProductHuntService provideProductHuntService(
+        @API final Lazy<OkHttpClient> client,
+        MoshiConverterFactory moshiConverterFactory,
+        RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder()
           .baseUrl(ProductHuntService.ENDPOINT)
-          .callFactory(request -> client.get()
-              .newBuilder()
-              .addInterceptor(new AuthInterceptor(BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
-              .build()
-              .newCall(request))
-          .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(io()))
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .callFactory(request -> client.get().newCall(request))
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addConverterFactory(moshiConverterFactory)
           .build()
           .create(ProductHuntService.class);
     }

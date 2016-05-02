@@ -15,6 +15,9 @@ import dagger.Provides;
 import io.sweers.catchup.app.CatchUpApplication;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.moshi.MoshiConverterFactory;
+import rx.schedulers.Schedulers;
 
 @Module
 public class NetworkModule {
@@ -52,4 +55,11 @@ public class NetworkModule {
         .build();
   }
 
+  @Provides @Singleton MoshiConverterFactory provideMoshiConverterFactory(Moshi moshi) {
+    return MoshiConverterFactory.create(moshi);
+  }
+
+  @Provides @Singleton RxJavaCallAdapterFactory provideRxJavaCallAdapterFactory() {
+    return RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+  }
 }

@@ -10,6 +10,8 @@ import retrofit2.http.Query;
 import rx.Observable;
 
 public interface RedditService {
+  String ENDPOINT = "https://www.reddit.com/";
+
   @GET("r/{subreddit}/comments/{id}.json") Observable<List<RedditResponse<RedditListing>>> comments(
       @Path("subreddit") String subreddit,
       @Path("id") String id

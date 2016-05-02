@@ -154,6 +154,7 @@ public abstract class BasicNewsController<T> extends BaseController
   @Override
   protected void onAttach(@NonNull View view) {
     super.onAttach(view);
+    swipeRefreshLayout.setEnabled(false);
     loadData();
   }
 
@@ -165,7 +166,10 @@ public abstract class BasicNewsController<T> extends BaseController
   private void loadData() {
     getDataObservable()
         .observeOn(AndroidSchedulers.mainThread())
-        .doOnUnsubscribe(() -> swipeRefreshLayout.setRefreshing(false))
+        .doOnUnsubscribe(() -> {
+          swipeRefreshLayout.setEnabled(true);
+          swipeRefreshLayout.setRefreshing(false);
+        })
         .compose(this.<List<T>>bindToLifecycle())
         .subscribe(
             data -> {

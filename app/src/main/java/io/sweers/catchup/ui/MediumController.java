@@ -8,8 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
-import com.squareup.moshi.Moshi;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -23,6 +21,7 @@ import io.sweers.catchup.data.medium.model.Collection;
 import io.sweers.catchup.data.medium.model.MediumPost;
 import io.sweers.catchup.data.medium.model.MediumResponse;
 import io.sweers.catchup.data.medium.model.Payload;
+import io.sweers.catchup.injection.API;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -36,8 +35,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import rx.Observable;
-
-import static rx.schedulers.Schedulers.io;
 
 
 public final class MediumController extends BasicNewsController<MediumPost> {
@@ -153,21 +150,30 @@ public final class MediumController extends BasicNewsController<MediumPost> {
 
     @Provides
     @PerController
-    MediumService provideMediumService(final Lazy<OkHttpClient> client, Moshi moshi) {
+    @API
+    OkHttpClient provideMediumOkHttpClient(OkHttpClient client) {
+      return client.newBuilder()
+          .addInterceptor(chain -> {
+            Request request1 = chain.request();
+            Response response = chain.proceed(request1);
+            BufferedSource source = response.body().source();
+            source.skip(source.indexOf((byte) '{'));
+            return response;
+          })
+          .build();
+    }
+
+    @Provides
+    @PerController
+    MediumService provideMediumService(
+        @API final Lazy<OkHttpClient> client,
+        MoshiConverterFactory moshiConverterFactory,
+        RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()
-          .baseUrl("https://medium.com/")
-          .callFactory(request -> client.get().newBuilder()
-              .addInterceptor(chain -> {
-                Request request1 = chain.request();
-                Response response = chain.proceed(request1);
-                BufferedSource source = response.body().source();
-                source.skip(source.indexOf((byte) '{'));
-                return response;
-              })
-              .build()
-              .newCall(request))
-          .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(io()))
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .baseUrl(MediumService.ENDPOINT)
+          .callFactory(request -> client.get().newCall(request))
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addConverterFactory(moshiConverterFactory)
           .build();
       return retrofit.create(MediumService.class);
     }

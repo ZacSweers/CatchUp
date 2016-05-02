@@ -7,8 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
-import com.squareup.moshi.Moshi;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -31,8 +29,6 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import rx.Observable;
 import rx.schedulers.Schedulers;
-
-import static rx.schedulers.Schedulers.io;
 
 
 public final class HackerNewsController extends BasicNewsController<HackerNewsStory> {
@@ -124,12 +120,15 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
 
     @Provides
     @PerController
-    HackerNewsService provideHackerNewsService(final Lazy<OkHttpClient> client, Moshi moshi) {
+    HackerNewsService provideHackerNewsService(
+        final Lazy<OkHttpClient> client,
+        MoshiConverterFactory moshiConverterFactory,
+        RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()
-          .baseUrl("https://hacker-news.firebaseio.com/v0/")
+          .baseUrl(HackerNewsService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))
-          .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(io()))
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addConverterFactory(moshiConverterFactory)
           .build();
       return retrofit.create(HackerNewsService.class);
     }

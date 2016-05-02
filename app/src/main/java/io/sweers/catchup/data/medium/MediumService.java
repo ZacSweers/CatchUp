@@ -6,6 +6,8 @@ import rx.Observable;
 
 public interface MediumService {
 
+  String ENDPOINT = "https://medium.com/";
+
   @GET("browse/top?format=json")
   Observable<MediumResponse> top();
 }

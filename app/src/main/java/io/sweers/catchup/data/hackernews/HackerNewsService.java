@@ -9,6 +9,8 @@ import rx.Observable;
 
 public interface HackerNewsService {
 
+  String ENDPOINT = "https://hacker-news.firebaseio.com/v0/";
+
   @GET("topstories.json") Observable<List<String>> topStories();
 
   @GET("item/{id}.json") Observable<HackerNewsStory> getItem(@Path("id") String id);

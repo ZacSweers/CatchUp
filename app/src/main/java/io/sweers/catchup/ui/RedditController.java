@@ -34,8 +34,6 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 
-import static rx.schedulers.Schedulers.io;
-
 
 public final class RedditController extends BasicNewsController<RedditLink> {
 
@@ -122,18 +120,23 @@ public final class RedditController extends BasicNewsController<RedditLink> {
   public static class Module {
 
     @Provides
-    @PerController Gson provideGson() {
+    @PerController
+    Gson provideGson() {
       return new GsonBuilder()
           .registerTypeAdapter(RedditObject.class, new RedditObjectDeserializer())
           .create();
     }
 
     @Provides
-    @PerController RedditService provideRedditService(final Lazy<OkHttpClient> client, Gson gson) {
+    @PerController
+    RedditService provideRedditService(
+        final Lazy<OkHttpClient> client,
+        RxJavaCallAdapterFactory rxJavaCallAdapterFactory,
+        Gson gson) {
       Retrofit retrofit = new Retrofit.Builder()
-          .baseUrl("https://www.reddit.com/")
+          .baseUrl(RedditService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))
-          .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(io()))
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(GsonConverterFactory.create(gson))
           .build();
       return retrofit.create(RedditService.class);
