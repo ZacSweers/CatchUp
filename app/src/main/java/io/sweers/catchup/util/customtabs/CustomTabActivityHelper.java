@@ -17,13 +17,10 @@
 package io.sweers.catchup.util.customtabs;
 
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsServiceConnection;
@@ -56,7 +53,7 @@ public class CustomTabActivityHelper {
    * @param uri              the Uri to be opened
    */
   public void openCustomTab(CustomTabsIntent customTabsIntent,
-                                   Uri uri) {
+                            Uri uri) {
     String packageName = CustomTabsHelper.getPackageNameToUse(activity);
 
     // if we cant find a package name, it means there's no browser that supports
@@ -71,7 +68,6 @@ public class CustomTabActivityHelper {
 
   public CustomTabsIntent.Builder getCustomTabIntent() {
     return new CustomTabsIntent.Builder(getSession())
-        .setToolbarColor(Color.BLACK)
         .setShowTitle(true)
         .enableUrlBarHiding()
         .addDefaultShareMenuItem();

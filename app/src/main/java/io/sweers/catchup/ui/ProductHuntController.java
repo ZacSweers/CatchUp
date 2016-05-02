@@ -1,8 +1,10 @@
 package io.sweers.catchup.ui;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
 import com.squareup.moshi.Moshi;
@@ -16,6 +18,7 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.BuildConfig;
+import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
 import io.sweers.catchup.data.producthunt.ProductHuntService;
 import io.sweers.catchup.data.producthunt.model.Post;
@@ -58,6 +61,10 @@ public final class ProductHuntController extends BasicNewsController<Post> {
         .inject(this);
   }
 
+  @Override protected Context onThemeContext(@NonNull Context context) {
+    return new ContextThemeWrapper(context, R.style.CatchUp_ProductHunt);
+  }
+
   @Override
   protected void bindItemView(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
     holder.title(item.name());
@@ -75,14 +82,18 @@ public final class ProductHuntController extends BasicNewsController<Post> {
   @Override
   protected void onItemClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
     // TODO Make the app choice a pref
-    customTab.openCustomTab(customTab.getCustomTabIntent().build(),
+    customTab.openCustomTab(customTab.getCustomTabIntent()
+            .setToolbarColor(getServiceThemeColor())
+            .build(),
         Uri.parse(item.redirect_url()));
   }
 
   @Override
   protected void onCommentClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
     // TODO Make the app choice a pref
-    customTab.openCustomTab(customTab.getCustomTabIntent().build(),
+    customTab.openCustomTab(customTab.getCustomTabIntent()
+            .setToolbarColor(getServiceThemeColor())
+            .build(),
         Uri.parse(item.discussion_url()));
   }
 

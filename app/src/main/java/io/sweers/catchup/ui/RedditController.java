@@ -16,11 +16,11 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
-import io.sweers.catchup.injection.PerController;
+import io.sweers.catchup.data.reddit.RedditService;
 import io.sweers.catchup.data.reddit.model.RedditLink;
 import io.sweers.catchup.data.reddit.model.RedditObject;
 import io.sweers.catchup.data.reddit.model.RedditObjectDeserializer;
-import io.sweers.catchup.data.reddit.RedditService;
+import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BasicNewsController;
@@ -75,7 +75,9 @@ public final class RedditController extends BasicNewsController<RedditLink> {
 
   @Override
   protected void onItemClick(@NonNull BasicNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
-    customTab.openCustomTab(customTab.getCustomTabIntent().build(),
+    customTab.openCustomTab(customTab.getCustomTabIntent()
+            .setToolbarColor(getServiceThemeColor())
+            .build(),
         Uri.parse(link.getUrl()));
   }
 
@@ -86,12 +88,14 @@ public final class RedditController extends BasicNewsController<RedditLink> {
     startActivity(intent);
 
     // TODO This should be how it's actually done
-//      customTab.openCustomTab(customTab.getCustomTabIntent().build(),
+//      customTab.openCustomTab(customTab.getCustomTabIntent()
+//    .setToolbarColor(getServiceThemeColor())
+//        .build(),
 //          Uri.parse("https://reddit.com/comments/" + link.getId()));
   }
 
   @NonNull @Override protected Observable<List<RedditLink>> getDataObservable() {
-    return service.top(null, 25)
+    return service.frontPage(25)
         .map((redditListingRedditResponse) -> {
           //noinspection CodeBlock2Expr,unchecked
           return (List<RedditLink>) redditListingRedditResponse.getData().getChildren();

@@ -24,4 +24,8 @@ public interface RedditService {
       @Query("after") String after,
       @Query("limit") int limit
   );
+
+  @GET(".json") Observable<RedditResponse<RedditListing>> frontPage(
+      @Query("limit") int limit
+  );
 }

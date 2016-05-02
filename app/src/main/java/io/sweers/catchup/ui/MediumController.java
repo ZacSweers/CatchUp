@@ -1,10 +1,11 @@
 package io.sweers.catchup.ui;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
 import com.squareup.moshi.Moshi;
@@ -16,12 +17,13 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
-import io.sweers.catchup.injection.PerController;
+import io.sweers.catchup.R;
+import io.sweers.catchup.data.medium.MediumService;
 import io.sweers.catchup.data.medium.model.Collection;
 import io.sweers.catchup.data.medium.model.MediumPost;
 import io.sweers.catchup.data.medium.model.MediumResponse;
 import io.sweers.catchup.data.medium.model.Payload;
-import io.sweers.catchup.data.medium.MediumService;
+import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BasicNewsController;
@@ -60,10 +62,12 @@ public final class MediumController extends BasicNewsController<MediumPost> {
         .inject(this);
   }
 
+  @Override protected Context onThemeContext(@NonNull Context context) {
+    return new ContextThemeWrapper(context, R.style.CatchUp_Medium);
+  }
+
   @Override
   protected void bindItemView(@NonNull BasicNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
-    holder.score().setTextColor(Color.parseColor("#00AB6B"));
-
     holder.title(item.post().title());
 
     holder.score(String.format(Locale.getDefault(), "♥ %d", item.post().virtuals().recommends()));
@@ -88,7 +92,9 @@ public final class MediumController extends BasicNewsController<MediumPost> {
     startActivity(intent);
 
     // TODO This should be how it's actually done
-//      customTab.openCustomTab(customTab.getCustomTabIntent().build(),
+//      customTab.openCustomTab(customTab.getCustomTabIntent()
+//        .setToolbarColor(getServiceThemeColor())
+//        .build(),
 //          Uri.parse(item.constructUrl()));
   }
 
@@ -99,7 +105,9 @@ public final class MediumController extends BasicNewsController<MediumPost> {
     startActivity(intent);
 
     // TODO This should be how it's actually done
-//      customTab.openCustomTab(customTab.getCustomTabIntent().build(),
+//      customTab.openCustomTab(customTab.getCustomTabIntent()
+//        .setToolbarColor(getServiceThemeColor())
+//        .build(),
 //          Uri.parse(item.constructCommentsUrl()));
   }
 
@@ -107,6 +115,7 @@ public final class MediumController extends BasicNewsController<MediumPost> {
     return service.top()
         .map(MediumResponse::payload)
         .map(Payload::references)
+        // TODO why doesn't this work? Only emits once
 //        .flatMap(references -> {
 //          return Observable.combineLatest(
 //              Observable.from(references.Post().values()),
@@ -147,20 +156,23 @@ public final class MediumController extends BasicNewsController<MediumPost> {
     MediumService provideMediumService(final Lazy<OkHttpClient> client, Moshi moshi) {
       Retrofit retrofit = new Retrofit.Builder()
           .baseUrl("https://medium.com/")
-          .callFactory(request -> client.get().newBuilder().addInterceptor(chain -> {
-            Request request1 = chain.request();
-            Response response = chain.proceed(request1);
-            ResponseBody originalBody = response.body();
-            String content = originalBody.string();
-            originalBody.close();
-            Response fixedResponse = response.newBuilder()
-                .body(ResponseBody.create(
-                    originalBody.contentType(),
-                    content.substring(content.indexOf("{"), content.length())
-                ))
-                .build();
-            return fixedResponse;
-          }).build().newCall(request))
+          .callFactory(request -> client.get().newBuilder()
+              .addInterceptor(chain -> {
+                Request request1 = chain.request();
+                Response response = chain.proceed(request1);
+                ResponseBody originalBody = response.body();
+                String content = originalBody.string();
+                originalBody.close();
+                Response fixedResponse = response.newBuilder()
+                    .body(ResponseBody.create(
+                        originalBody.contentType(),
+                        content.substring(content.indexOf("{"), content.length())
+                    ))
+                    .build();
+                return fixedResponse;
+              })
+              .build()
+              .newCall(request))
           .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(io()))
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .build();

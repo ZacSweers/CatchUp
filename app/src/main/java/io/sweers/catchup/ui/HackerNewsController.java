@@ -14,9 +14,9 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
-import io.sweers.catchup.injection.PerController;
-import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
+import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
+import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BasicNewsController;
@@ -80,14 +80,18 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
   @Override
   protected void onItemClick(@NonNull BasicNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View view, @NonNull HackerNewsStory story) {
     // TODO Check supported media types, otherwise Chrome Custom Tabs
-    customTab.openCustomTab(customTab.getCustomTabIntent().build(),
+    customTab.openCustomTab(customTab.getCustomTabIntent()
+            .setToolbarColor(getServiceThemeColor())
+            .build(),
         Uri.parse(story.url()));
   }
 
   @Override
   protected void onCommentClick(@NonNull BasicNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View view, @NonNull HackerNewsStory story) {
     // TODO Make the app choice a pref
-    customTab.openCustomTab(customTab.getCustomTabIntent().build(),
+    customTab.openCustomTab(customTab.getCustomTabIntent()
+            .setToolbarColor(getServiceThemeColor())
+            .build(),
         Uri.parse("https://news.ycombinator.com/item?id=" + story.id()));
   }
 

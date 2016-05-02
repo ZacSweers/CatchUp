@@ -61,8 +61,8 @@ public abstract class BasicNewsController<T> extends BaseController
    * View binding implementation to bind the given datum to the {@code holder}.
    *
    * @param holder The item ViewHolder instance.
-   * @param view The underlying view, for convenience.
-   * @param t The datum to back the view with.
+   * @param view   The underlying view, for convenience.
+   * @param t      The datum to back the view with.
    */
   protected abstract void bindItemView(
       @NonNull ViewHolder holder,
@@ -73,8 +73,8 @@ public abstract class BasicNewsController<T> extends BaseController
    * Main handler for row clicks.
    *
    * @param holder The item ViewHolder instance.
-   * @param view The underlying view, for convenience.
-   * @param t The datum backing the view.
+   * @param view   The underlying view, for convenience.
+   * @param t      The datum backing the view.
    */
   protected abstract void onItemClick(
       @NonNull ViewHolder holder,
@@ -86,8 +86,8 @@ public abstract class BasicNewsController<T> extends BaseController
    * comments view in the item view.
    *
    * @param holder The item ViewHolder instance.
-   * @param view The underlying view, for convenience.
-   * @param t The datum backing the view.
+   * @param view   The underlying view, for convenience.
+   * @param t      The datum backing the view.
    */
   protected void onCommentClick(
       @NonNull ViewHolder holder,
@@ -101,8 +101,8 @@ public abstract class BasicNewsController<T> extends BaseController
    * the item view.
    *
    * @param holder The item ViewHolder instance.
-   * @param view The underlying view, for convenience.
-   * @param t The datum backing the view.
+   * @param view   The underlying view, for convenience.
+   * @param t      The datum backing the view.
    * @return {@code true} if the click was handled, {@link false} if not.
    */
   protected boolean onItemLongClick(
@@ -124,6 +124,8 @@ public abstract class BasicNewsController<T> extends BaseController
     super.onViewBound(view);
     // TODO There must be an earlier place than this
     performInjection();
+
+    swipeRefreshLayout.setColorSchemeColors(getServiceThemeColor());
 
     LinearLayoutManager layoutManager
         = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
