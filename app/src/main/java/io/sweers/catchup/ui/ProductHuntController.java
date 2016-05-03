@@ -7,7 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
-import java.text.ParseException;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Rfc3339DateJsonAdapter;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,9 +35,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import rx.Observable;
-import timber.log.Timber;
-
-import static io.sweers.catchup.data.producthunt.ProductHuntService.DATE_FORMAT;
 
 
 public final class ProductHuntController extends BasicNewsController<Post> {
@@ -67,11 +67,7 @@ public final class ProductHuntController extends BasicNewsController<Post> {
   protected void bindItemView(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
     holder.title(item.name());
     holder.score(String.format(Locale.getDefault(), "▲ %d", item.votes_count()));
-    try {
-      holder.timestamp(DATE_FORMAT.parse(item.created_at()).getTime() / 1000);
-    } catch (ParseException e) {
-      Timber.e(e, "Parsing date failed");
-    }
+    holder.timestamp(item.created_at());
     holder.author(item.user().name());
     holder.source(item.getFirstTopic());
     holder.comments(item.comments_count());
@@ -125,15 +121,24 @@ public final class ProductHuntController extends BasicNewsController<Post> {
 
     @Provides
     @PerController
+    @API
+    Moshi provideProductHuntMoshi(Moshi moshi) {
+      return moshi.newBuilder()
+          .add(Date.class, new Rfc3339DateJsonAdapter())
+          .build();
+    }
+
+    @Provides
+    @PerController
     ProductHuntService provideProductHuntService(
         @API final Lazy<OkHttpClient> client,
-        MoshiConverterFactory moshiConverterFactory,
+        @API Moshi moshi,
         RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder()
           .baseUrl(ProductHuntService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(moshiConverterFactory)
+          .addConverterFactory(MoshiConverterFactory.create(moshi))
           .build()
           .create(ProductHuntService.class);
     }

@@ -1,7 +1,5 @@
 package io.sweers.catchup.data.reddit.model;
 
-import android.util.Log;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -9,11 +7,11 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
+import timber.log.Timber;
+
 // TODO Make this Moshi-friendly
 public class RedditObjectDeserializer implements JsonDeserializer<RedditObject> {
-  public static final String TAG = RedditObjectDeserializer.class.getSimpleName();
-  public static final String KIND = "kind";
-
+  @Override
   public RedditObject deserialize(JsonElement json, Type type, JsonDeserializationContext context)
       throws JsonParseException {
     if (!json.isJsonObject()) {
@@ -24,7 +22,7 @@ public class RedditObjectDeserializer implements JsonDeserializer<RedditObject> 
       RedditObjectWrapper wrapper = context.deserialize(json, RedditObjectWrapper.class);
       return context.deserialize(wrapper.getData(), wrapper.getKind().getDerivedClass());
     } catch (JsonParseException e) {
-      Log.e(TAG, "Failed to deserialize", e);
+      Timber.e(e, "Failed to deserialize RedditObject");
       return null;
     }
   }

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -298,8 +299,8 @@ public abstract class BasicNewsController<T> extends BaseController
       }
     }
 
-    public void timestamp(long utcTime) {
-      timestamp.setText(DateUtils.getRelativeTimeSpanString(utcTime * 1000, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
+    public void timestamp(Date date) {
+      timestamp.setText(DateUtils.getRelativeTimeSpanString(date.getTime(), System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
     }
 
     public void author(@NonNull CharSequence authorText) {

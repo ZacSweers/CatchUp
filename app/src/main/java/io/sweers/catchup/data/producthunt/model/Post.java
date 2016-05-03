@@ -23,6 +23,7 @@ import com.google.auto.value.AutoValue;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public abstract class Post {
 
   public abstract String redirect_url();
 
-  public abstract String created_at();
+  public abstract Date created_at();
 
   public abstract int comments_count();
 

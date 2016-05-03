@@ -11,6 +11,7 @@ import android.view.View;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.R;
+import io.sweers.catchup.data.reddit.UtcDateTypeAdapter;
 import io.sweers.catchup.data.reddit.RedditService;
 import io.sweers.catchup.data.reddit.model.RedditLink;
 import io.sweers.catchup.data.reddit.model.RedditObject;
@@ -124,6 +126,7 @@ public final class RedditController extends BasicNewsController<RedditLink> {
     Gson provideGson() {
       return new GsonBuilder()
           .registerTypeAdapter(RedditObject.class, new RedditObjectDeserializer())
+          .registerTypeAdapter(Date.class, new UtcDateTypeAdapter(true))
           .create();
     }
 
@@ -141,5 +144,7 @@ public final class RedditController extends BasicNewsController<RedditLink> {
           .build();
       return retrofit.create(RedditService.class);
     }
+
   }
+
 }

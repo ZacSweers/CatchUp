@@ -8,6 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
+import com.squareup.moshi.Moshi;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -16,6 +19,7 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.R;
+import io.sweers.catchup.data.UtcDateJsonAdapter;
 import io.sweers.catchup.data.medium.MediumService;
 import io.sweers.catchup.data.medium.model.Collection;
 import io.sweers.catchup.data.medium.model.MediumPost;
@@ -68,7 +72,7 @@ public final class MediumController extends BasicNewsController<MediumPost> {
     holder.title(item.post().title());
 
     holder.score(String.format(Locale.getDefault(), "♥ %d", item.post().virtuals().recommends()));
-    holder.timestamp(item.post().createdAt() / 1000);
+    holder.timestamp(item.post().createdAt());
 
     holder.author(item.user().name());
 
@@ -165,15 +169,24 @@ public final class MediumController extends BasicNewsController<MediumPost> {
 
     @Provides
     @PerController
+    @API
+    Moshi provideMediumMoshi(Moshi moshi) {
+      return moshi.newBuilder()
+          .add(Date.class, new UtcDateJsonAdapter())
+          .build();
+    }
+
+    @Provides
+    @PerController
     MediumService provideMediumService(
         @API final Lazy<OkHttpClient> client,
-        MoshiConverterFactory moshiConverterFactory,
+        @API Moshi moshi,
         RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()
           .baseUrl(MediumService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(moshiConverterFactory)
+          .addConverterFactory(MoshiConverterFactory.create(moshi))
           .build();
       return retrofit.create(MediumService.class);
     }

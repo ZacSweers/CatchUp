@@ -7,6 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
+import com.squareup.moshi.Moshi;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -15,8 +18,10 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.R;
+import io.sweers.catchup.data.UtcDateJsonAdapter;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
+import io.sweers.catchup.injection.API;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -120,15 +125,24 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
 
     @Provides
     @PerController
+    @API
+    Moshi provideHackerNewsMoshi(Moshi moshi) {
+      return moshi.newBuilder()
+          .add(Date.class, new UtcDateJsonAdapter(true))
+          .build();
+    }
+
+    @Provides
+    @PerController
     HackerNewsService provideHackerNewsService(
         final Lazy<OkHttpClient> client,
-        MoshiConverterFactory moshiConverterFactory,
+        @API Moshi moshi,
         RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()
           .baseUrl(HackerNewsService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(moshiConverterFactory)
+          .addConverterFactory(MoshiConverterFactory.create(moshi))
           .build();
       return retrofit.create(HackerNewsService.class);
     }

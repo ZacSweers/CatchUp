@@ -1,5 +1,7 @@
 package io.sweers.catchup.data.reddit.model;
 
+import java.util.Date;
+
 public class RedditSubmission extends RedditObject {
   String banned_by;
   String subreddit;
@@ -11,7 +13,7 @@ public class RedditSubmission extends RedditObject {
   String name;
   long created;
   String author_flair_text;
-  long created_utc;
+  Date created_utc;
   int ups;
 
   public String getBannedBy() {
@@ -54,7 +56,7 @@ public class RedditSubmission extends RedditObject {
     return author_flair_text;
   }
 
-  public long getCreatedUtc() {
+  public Date getCreatedUtc() {
     return created_utc;
   }
 

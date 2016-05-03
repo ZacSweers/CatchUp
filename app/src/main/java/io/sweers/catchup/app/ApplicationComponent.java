@@ -1,12 +1,13 @@
 package io.sweers.catchup.app;
 
+import com.squareup.moshi.Moshi;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
 import io.sweers.catchup.network.NetworkModule;
 import okhttp3.OkHttpClient;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.moshi.MoshiConverterFactory;
 
 @Singleton
 @Component(
@@ -20,7 +21,7 @@ public interface ApplicationComponent {
 
   OkHttpClient okhttpClient();
 
-  MoshiConverterFactory moshiConverterFactory();
+  Moshi moshi();
 
   RxJavaCallAdapterFactory rxJavaCallAdapterFactory();
 }

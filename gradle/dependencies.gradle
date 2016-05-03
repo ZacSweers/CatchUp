@@ -78,6 +78,9 @@ ext {
     okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
     okio = 'com.squareup.okio:okio:1.8.0'
+    def moshiVersion = '1.1.0'
+    moshi = "com.squareup.moshi:moshi:$moshiVersion"
+    moshiAdapters = "com.squareup.moshi:moshi-adapters:$moshiVersion"
     retrofitVersion = '2.0.1'
     retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
     retrofitMoshi = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"

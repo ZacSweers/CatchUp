@@ -16,7 +16,6 @@ import io.sweers.catchup.app.CatchUpApplication;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.moshi.MoshiConverterFactory;
 import rx.schedulers.Schedulers;
 
 @Module
@@ -46,6 +45,7 @@ public class NetworkModule {
 
   protected void configureOkHttpClientForVariant(OkHttpClient.Builder builder) {
     // Override in variants
+    // TODO move this to a debug variant
     builder.addNetworkInterceptor(new StethoInterceptor());
   }
 
@@ -53,10 +53,6 @@ public class NetworkModule {
     return new Moshi.Builder()
         .add(new AutoValueMoshiAdapterFactory())
         .build();
-  }
-
-  @Provides @Singleton MoshiConverterFactory provideMoshiConverterFactory(Moshi moshi) {
-    return MoshiConverterFactory.create(moshi);
   }
 
   @Provides @Singleton RxJavaCallAdapterFactory provideRxJavaCallAdapterFactory() {
