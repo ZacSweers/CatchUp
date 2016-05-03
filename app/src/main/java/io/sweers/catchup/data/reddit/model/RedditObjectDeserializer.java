@@ -2,7 +2,6 @@ package io.sweers.catchup.data.reddit.model;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -22,7 +21,7 @@ public class RedditObjectDeserializer implements JsonDeserializer<RedditObject> 
       return null;
     }
     try {
-      RedditObjectWrapper wrapper = new Gson().fromJson(json, RedditObjectWrapper.class);
+      RedditObjectWrapper wrapper = context.deserialize(json, RedditObjectWrapper.class);
       return context.deserialize(wrapper.getData(), wrapper.getKind().getDerivedClass());
     } catch (JsonParseException e) {
       Log.e(TAG, "Failed to deserialize", e);
