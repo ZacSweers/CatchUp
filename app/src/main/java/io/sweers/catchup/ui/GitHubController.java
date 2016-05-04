@@ -8,9 +8,7 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 
 import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Rfc3339DateJsonAdapter;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,9 +19,13 @@ import dagger.Provides;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
-import io.sweers.catchup.data.producthunt.ProductHuntService;
-import io.sweers.catchup.data.producthunt.model.Post;
-import io.sweers.catchup.data.producthunt.model.PostsResponse;
+import io.sweers.catchup.data.github.GitHubService;
+import io.sweers.catchup.data.InstantAdapter;
+import io.sweers.catchup.data.github.TrendingTimespan;
+import io.sweers.catchup.data.github.model.Order;
+import io.sweers.catchup.data.github.model.Repository;
+import io.sweers.catchup.data.github.model.SearchQuery;
+import io.sweers.catchup.data.github.model.SearchRepositoriesResult;
 import io.sweers.catchup.injection.API;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
@@ -37,21 +39,21 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 import rx.Observable;
 
 
-public final class ProductHuntController extends BasicNewsController<Post> {
+public final class GitHubController extends BasicNewsController<Repository> {
 
-  @Inject ProductHuntService service;
+  @Inject GitHubService service;
   @Inject CustomTabActivityHelper customTab;
 
-  public ProductHuntController() {
+  public GitHubController() {
     this(null);
   }
 
-  public ProductHuntController(Bundle args) {
+  public GitHubController(Bundle args) {
     super(args);
   }
 
   @Override protected void performInjection() {
-    DaggerProductHuntController_Component
+    DaggerGitHubController_Component
         .builder()
         .module(new Module())
         .activityComponent(((MainActivity) getActivity()).getComponent())
@@ -60,40 +62,37 @@ public final class ProductHuntController extends BasicNewsController<Post> {
   }
 
   @Override protected Context onThemeContext(@NonNull Context context) {
-    return new ContextThemeWrapper(context, R.style.CatchUp_ProductHunt);
+    return new ContextThemeWrapper(context, R.style.CatchUp_GitHub);
   }
 
   @Override
-  protected void bindItemView(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
-    holder.title(item.name());
-    holder.score(String.format(Locale.getDefault(), "▲ %d", item.votes_count()));
+  protected void bindItemView(@NonNull ViewHolder holder, @NonNull View view, @NonNull Repository item) {
+    holder.comments().setVisibility(View.GONE);
+    holder.title(item.full_name());
+    holder.score(String.format(Locale.getDefault(), "★ %d", item.stargazers_count()));
     holder.timestamp(item.created_at());
-    holder.author(item.user().name());
-    holder.source(item.getFirstTopic());
-    holder.comments(item.comments_count());
+    holder.author(item.owner().login());
+    holder.source(item.language());
+//    holder.comments(item.comments_count());
   }
 
   @Override
-  protected void onItemClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
+  protected void onItemClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Repository item) {
     // TODO Make the app choice a pref
     customTab.openCustomTab(customTab.getCustomTabIntent()
             .setToolbarColor(getServiceThemeColor())
             .build(),
-        Uri.parse(item.redirect_url()));
+        Uri.parse(item.html_url()));
   }
 
-  @Override
-  protected void onCommentClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
-    // TODO Make the app choice a pref
-    customTab.openCustomTab(customTab.getCustomTabIntent()
-            .setToolbarColor(getServiceThemeColor())
-            .build(),
-        Uri.parse(item.discussion_url()));
-  }
-
-  @NonNull @Override protected Observable<List<Post>> getDataObservable() {
-    return service.getPosts(0)
-        .map(PostsResponse::posts);
+  @NonNull @Override protected Observable<List<Repository>> getDataObservable() {
+    return service.searchRepositories(
+//        "created:>`date -v-7d '+%Y-%m-%d'`",
+        SearchQuery.builder().createdSince(TrendingTimespan.WEEK.createdSince()).build(),
+        "watchers",
+        Order.DESC
+    )
+        .map(SearchRepositoriesResult::items);
 
   }
 
@@ -103,7 +102,7 @@ public final class ProductHuntController extends BasicNewsController<Post> {
       dependencies = ActivityComponent.class
   )
   public interface Component {
-    void inject(ProductHuntController controller);
+    void inject(GitHubController controller);
   }
 
   @dagger.Module
@@ -112,35 +111,35 @@ public final class ProductHuntController extends BasicNewsController<Post> {
     @Provides
     @PerController
     @API
-    OkHttpClient provideProductHuntOkHttpClient(OkHttpClient client) {
+    OkHttpClient provideGitHubOkHttpClient(OkHttpClient client) {
       return client
           .newBuilder()
-          .addInterceptor(new AuthInterceptor("Bearer", BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
+          .addInterceptor(new AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
           .build();
     }
 
     @Provides
     @PerController
     @API
-    Moshi provideProductHuntMoshi(Moshi moshi) {
+    Moshi provideGitHubMoshi(Moshi moshi) {
       return moshi.newBuilder()
-          .add(Date.class, new Rfc3339DateJsonAdapter())
+          .add(new InstantAdapter())
           .build();
     }
 
     @Provides
     @PerController
-    ProductHuntService provideProductHuntService(
+    GitHubService provideGitHubService(
         @API final Lazy<OkHttpClient> client,
         @API Moshi moshi,
         RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder()
-          .baseUrl(ProductHuntService.ENDPOINT)
+          .baseUrl(GitHubService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .build()
-          .create(ProductHuntService.class);
+          .create(GitHubService.class);
     }
   }
 }

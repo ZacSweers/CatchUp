@@ -102,7 +102,7 @@ public final class RedditController extends BasicNewsController<RedditLink> {
   }
 
   @NonNull @Override protected Observable<List<RedditLink>> getDataObservable() {
-    return service.frontPage(25)
+    return service.frontPage(50)
         .map((redditListingRedditResponse) -> {
           //noinspection CodeBlock2Expr,unchecked
           return (List<RedditLink>) redditListingRedditResponse.getData().getChildren();
@@ -144,7 +144,5 @@ public final class RedditController extends BasicNewsController<RedditLink> {
           .build();
       return retrofit.create(RedditService.class);
     }
-
   }
-
 }

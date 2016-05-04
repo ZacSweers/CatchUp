@@ -29,17 +29,19 @@ import okhttp3.Response;
  */
 public class AuthInterceptor implements Interceptor {
 
-    @NonNull private final String accessToken;
+  @NonNull private final String accessToken;
+  @NonNull private final String key;
 
-    public AuthInterceptor(@NonNull String accessToken) {
-        this.accessToken = accessToken;
-    }
+  public AuthInterceptor(@NonNull String key, @NonNull String accessToken) {
+    this.key = key;
+    this.accessToken = accessToken;
+  }
 
-    @Override
-    public Response intercept(Chain chain) throws IOException {
-        final Request request = chain.request().newBuilder()
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .build();
-        return chain.proceed(request);
-    }
+  @Override
+  public Response intercept(Chain chain) throws IOException {
+    final Request request = chain.request().newBuilder()
+        .addHeader("Authorization", key + " " + accessToken)
+        .build();
+    return chain.proceed(request);
+  }
 }

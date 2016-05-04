@@ -29,6 +29,10 @@
     <item name="colorAccent">@color/redditAccent</item>
   </style>
 
+  <style name="CatchUp.GitHub" parent="CatchUp">
+    <item name="colorAccent">@color/redditAccent</item>
+  </style>
+
   <style name="CatchUp.HackerNews" parent="CatchUp">
     <item name="colorAccent">@color/hackerNewsAccent</item>
   </style>

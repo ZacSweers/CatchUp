@@ -17,6 +17,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.threeten.bp.Instant;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -300,7 +302,15 @@ public abstract class BasicNewsController<T> extends BaseController
     }
 
     public void timestamp(Date date) {
-      timestamp.setText(DateUtils.getRelativeTimeSpanString(date.getTime(), System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
+      timestamp(date.getTime());
+    }
+
+    public void timestamp(Instant instant) {
+      timestamp(instant.toEpochMilli());
+    }
+
+    public void timestamp(long date) {
+      timestamp.setText(DateUtils.getRelativeTimeSpanString(date, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
     }
 
     public void author(@NonNull CharSequence authorText) {
@@ -321,6 +331,10 @@ public abstract class BasicNewsController<T> extends BaseController
     public void comments(int commentsCount) {
       // TODO Shorten large numbers
       comments.setText(String.format(Locale.getDefault(), "%d", commentsCount));
+    }
+
+    public TextView comments() {
+      return comments;
     }
   }
 }

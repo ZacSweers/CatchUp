@@ -63,6 +63,8 @@ public class PagerController extends BaseController {
             return new MediumController();
           case 3:
             return new ProductHuntController();
+          case 7:
+            return new GitHubController();
           default:
             return new RedditController();
         }

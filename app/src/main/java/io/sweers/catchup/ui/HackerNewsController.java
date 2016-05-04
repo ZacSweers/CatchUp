@@ -106,7 +106,8 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
   @NonNull @Override protected Observable<List<HackerNewsStory>> getDataObservable() {
     return service.topStories()
         .concatMapIterable(strings -> strings)
-        .take(25)
+        // TODO Pref this
+        .take(50)
         .concatMap(id -> service.getItem(id).subscribeOn(Schedulers.io()))
         .toList();
   }

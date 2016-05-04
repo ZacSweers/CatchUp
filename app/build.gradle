@@ -35,6 +35,7 @@ android {
         buildConfigField 'String', 'GIT_SHA', /"${gitSha}"/
         buildConfigField 'long', 'GIT_TIMESTAMP', "${gitTimestamp}"
         buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"$product_hunt_developer_token"/
+        buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN', /"$github_developer_token"/
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -145,6 +146,8 @@ dependencies {
     compile 'com.bluelinelabs:conductor:1.1.4'
     compile 'com.bluelinelabs:conductor-support:1.1.4'
     compile 'com.bluelinelabs:conductor-rxlifecycle:1.1.4'
+
+    compile 'com.jakewharton.threetenabp:threetenabp:1.0.2'
 
     testCompile project(':testing-utils')
     androidTestCompile project(':testing-utils')
