@@ -5,7 +5,7 @@ import com.squareup.moshi.Moshi;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import io.sweers.catchup.network.NetworkModule;
+import io.sweers.catchup.data.DataModule;
 import okhttp3.OkHttpClient;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
@@ -13,7 +13,7 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 @Component(
     modules = {
         ApplicationModule.class,
-        NetworkModule.class
+        DataModule.class
     }
 )
 public interface ApplicationComponent {

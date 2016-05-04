@@ -1,4 +1,4 @@
-package io.sweers.catchup.network;
+package io.sweers.catchup.data;
 
 import android.os.Looper;
 
@@ -19,7 +19,7 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import rx.schedulers.Schedulers;
 
 @Module
-public class NetworkModule {
+public class DataModule {
 
   private static final long HTTP_RESPONSE_CACHE = 10 * 1024 * 1024;
   private static final int HTTP_TIMEOUT_S = 30;

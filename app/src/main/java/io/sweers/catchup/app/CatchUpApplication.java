@@ -9,7 +9,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
-import io.sweers.catchup.network.NetworkModule;
+import io.sweers.catchup.data.DataModule;
 import timber.log.Timber;
 
 public class CatchUpApplication extends Application {
@@ -29,7 +29,7 @@ public class CatchUpApplication extends Application {
     refWatcher = LeakCanary.install(this);
     component = DaggerApplicationComponent.builder()
         .applicationModule(new ApplicationModule(this))
-        .networkModule(new NetworkModule())
+        .dataModule(new DataModule())
         .build();
     component.inject(this);
     Stetho.initializeWithDefaults(this);
