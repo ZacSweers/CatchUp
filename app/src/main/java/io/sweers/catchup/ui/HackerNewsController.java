@@ -25,7 +25,7 @@ import io.sweers.catchup.injection.API;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
-import io.sweers.catchup.ui.base.BasicNewsController;
+import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -36,7 +36,7 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 
-public final class HackerNewsController extends BasicNewsController<HackerNewsStory> {
+public final class HackerNewsController extends BaseNewsController<HackerNewsStory> {
 
   @Inject HackerNewsService service;
   @Inject CustomTabActivityHelper customTab;
@@ -63,7 +63,7 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
   }
 
   @Override
-  protected void bindItemView(@NonNull BasicNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View itemView, @NonNull HackerNewsStory story) {
+  protected void bindItemView(@NonNull BaseNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View itemView, @NonNull HackerNewsStory story) {
     holder.title(story.title());
     holder.score(String.format(Locale.getDefault(), "+ %d", story.score()));
     holder.timestamp(story.time());
@@ -86,7 +86,7 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
   }
 
   @Override
-  protected void onItemClick(@NonNull BasicNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View view, @NonNull HackerNewsStory story) {
+  protected void onItemClick(@NonNull BaseNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View view, @NonNull HackerNewsStory story) {
     // TODO Check supported media types, otherwise Chrome Custom Tabs
     customTab.openCustomTab(customTab.getCustomTabIntent()
             .setToolbarColor(getServiceThemeColor())
@@ -95,7 +95,7 @@ public final class HackerNewsController extends BasicNewsController<HackerNewsSt
   }
 
   @Override
-  protected void onCommentClick(@NonNull BasicNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View view, @NonNull HackerNewsStory story) {
+  protected void onCommentClick(@NonNull BaseNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View view, @NonNull HackerNewsStory story) {
     // TODO Make the app choice a pref
     customTab.openCustomTab(customTab.getCustomTabIntent()
             .setToolbarColor(getServiceThemeColor())

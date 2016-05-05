@@ -2,7 +2,6 @@ package io.sweers.catchup.data;
 
 import android.os.Looper;
 
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.ryanharter.auto.value.moshi.AutoValueMoshiAdapterFactory;
 import com.squareup.moshi.Moshi;
 
@@ -45,8 +44,6 @@ public class DataModule {
 
   protected void configureOkHttpClientForVariant(OkHttpClient.Builder builder) {
     // Override in variants
-    // TODO move this to a debug variant
-    builder.addNetworkInterceptor(new StethoInterceptor());
   }
 
   @Provides @Singleton Moshi provideMoshi() {

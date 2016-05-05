@@ -28,7 +28,7 @@ import io.sweers.catchup.data.reddit.model.RedditObjectDeserializer;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
-import io.sweers.catchup.ui.base.BasicNewsController;
+import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -37,7 +37,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 
 
-public final class RedditController extends BasicNewsController<RedditLink> {
+public final class RedditController extends BaseNewsController<RedditLink> {
 
   @Inject RedditService service;
   @Inject CustomTabActivityHelper customTab;
@@ -64,7 +64,7 @@ public final class RedditController extends BasicNewsController<RedditLink> {
   }
 
   @Override
-  protected void bindItemView(@NonNull BasicNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
+  protected void bindItemView(@NonNull BaseNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
     holder.title(link.getTitle());
 
     holder.score(String.format(Locale.getDefault(), "+ %d", link.getScore()));
@@ -81,7 +81,7 @@ public final class RedditController extends BasicNewsController<RedditLink> {
   }
 
   @Override
-  protected void onItemClick(@NonNull BasicNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
+  protected void onItemClick(@NonNull BaseNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
     customTab.openCustomTab(customTab.getCustomTabIntent()
             .setToolbarColor(getServiceThemeColor())
             .build(),
@@ -89,7 +89,7 @@ public final class RedditController extends BasicNewsController<RedditLink> {
   }
 
   @Override
-  protected void onCommentClick(@NonNull BasicNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
+  protected void onCommentClick(@NonNull BaseNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
     // TODO Make the app choice a pref
     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://reddit.com/comments/" + link.getId()));
     startActivity(intent);

@@ -1,0 +1,12 @@
+<manifest
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  package="io.sweers.catchup"
+  >
+
+  <application
+    android:name=".app.DebugCatchUpApplication"
+    tools:replace="android:name"
+    />
+
+</manifest>

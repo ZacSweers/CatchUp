@@ -1,21 +1,22 @@
 buildscript {
     dependencies {
+        classpath rootProject.ext.aptPlugin
         classpath rootProject.ext.androidPlugin
+        classpath rootProject.ext.retrolambdaPlugin
+        classpath rootProject.ext.retrolambdaPluginLombok
         classpath rootProject.ext.psyncPlugin
         classpath rootProject.ext.versionsPlugin
-        classpath rootProject.ext.aptPlugin
-        classpath "com.fernandocejas.frodo:frodo-plugin:0.8.2"
-        classpath 'me.tatarka:gradle-retrolambda:3.3.0-beta4'
     }
+
+    // Exclude the lombok version that the android plugin depends on.
+    configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
-//apply plugin: 'android-sdk-manager'   // Add back after https://github.com/JakeWharton/sdk-manager-plugin/issues/99
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.flipboard.psync'
 apply plugin: 'com.github.ben-manes.versions'   // ./gradlew dependencyUpdates -Drevision=release
-apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'com.fernandocejas.frodo'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -34,8 +35,8 @@ android {
 
         buildConfigField 'String', 'GIT_SHA', /"${gitSha}"/
         buildConfigField 'long', 'GIT_TIMESTAMP', "${gitTimestamp}"
-        buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"$product_hunt_developer_token"/
-        buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN', /"$github_developer_token"/
+        buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"$catchup_product_hunt_developer_token"/
+        buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN', /"$catchup_github_developer_token"/
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -63,6 +64,7 @@ android {
             versionNameSuffix "-dev"
         }
         release {
+            buildConfigField 'String', 'BUGSNAG_KEY', /"$catchup_bugsnag_key"/
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
@@ -71,18 +73,6 @@ android {
     dexOptions {
         javaMaxHeapSize "4g"
         preDexLibraries = !rootProject.ext.ci
-    }
-    applicationVariants.all { variant ->
-        // Delete unaligned APKs and manifest junk after
-        def assembleTask = "assemble${variant.name.capitalize()}"
-        tasks[assembleTask].doLast {
-//            cleanOutputDir(file("build/outputs/apk/"))
-
-            // Enable by adding "-P notify" to end of your ./gradlew command
-            if (project.hasProperty("notify")) {
-                "terminal-notifier -message '${assembleTask}-->DONE' -sound 'Ping'".execute()
-            }
-        }
     }
     lintOptions {
         abortOnError true
@@ -97,20 +87,33 @@ android {
     }
 }
 
-// My standard tech stack
+def supportLibraries = configurations.create("supportCompile")
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'com.android.support' && details.requested.name != 'multidex') {
+            // We want to force all support libraries to use the same version, even if they're transitive.
+            details.useVersion rootProject.ext.supportVersion
+        }
+    }
+}
+
 dependencies {
-    retrolambdaConfig 'com.jakewharton.retrolambda:retrolambda:2.1.0-jake2'
+    retrolambdaConfig rootProject.ext.retrolambda
 
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile rootProject.ext.supportAnnotations
-    compile rootProject.ext.supportAppCompat
-    compile rootProject.ext.supportV4
-    compile rootProject.ext.supportDesign
-    compile rootProject.ext.supportCustomTabs
+    // Support libs
+    supportCompile rootProject.ext.supportAnnotations
+    supportCompile rootProject.ext.supportAppCompat
+    supportCompile rootProject.ext.supportV4
+    supportCompile rootProject.ext.supportDesign
+    supportCompile rootProject.ext.supportCustomTabs
 
+    compile supportLibraries
+    testCompile supportLibraries
+    androidTestCompile supportLibraries
+
+    // Square/JW
     compile rootProject.ext.butterKnife
-    compile rootProject.ext.glide
-    compile rootProject.ext.glideOkhttp
+    apt rootProject.ext.butterKnifeCompiler
     compile rootProject.ext.okhttp
     compile rootProject.ext.okio
     compile rootProject.ext.moshi
@@ -122,36 +125,45 @@ dependencies {
     compile rootProject.ext.rxAndroid
     compile rootProject.ext.rxBinding
     compile rootProject.ext.rxBindingV4
+    compile rootProject.ext.timber
+    compile rootProject.ext.threetenabp
+
+    releaseCompile rootProject.ext.bugsnag
+
+    // Misc
+    compile rootProject.ext.barberApi
+    apt rootProject.ext.barberCompiler
+    compile rootProject.ext.glide
+    compile rootProject.ext.glideOkhttp
+    compile rootProject.ext.gson
+    compile rootProject.ext.recyclerViewAnimators
     compile rootProject.ext.rxJava
     compile rootProject.ext.rxLifecycle
-    compile rootProject.ext.timber
 
-    compile rootProject.ext.gson
-    compile rootProject.ext.stetho
-    compile rootProject.ext.stethoOkHttp
+    // Stetho
+    debugCompile rootProject.ext.stetho
+    debugCompile rootProject.ext.stethoOkHttp
 
-    apt rootProject.ext.barberCompiler
-    compile rootProject.ext.barberApi
-
+    // Dagger
     apt rootProject.ext.daggerCompiler
     provided rootProject.ext.javax
     compile rootProject.ext.dagger
 
-    provided 'com.jakewharton.auto.value:auto-value-annotations:1.2-update1'
-    apt 'com.google.auto.value:auto-value:1.2'
-    apt 'com.ryanharter.auto.value:auto-value-moshi:0.2.3-SNAPSHOT'
+    // AutoValue
+    provided rootProject.ext.autoValueAnnotations
+    apt rootProject.ext.autoValue
+    apt rootProject.ext.autoValueMoshi
 
-    compile 'jp.wasabeef:recyclerview-animators:2.2.3'
+    // Conductor
+    compile rootProject.ext.conductor
+    compile rootProject.ext.conductorSupport
+    compile rootProject.ext.conductorRxLifecycle
 
-    compile 'com.bluelinelabs:conductor:1.1.4'
-    compile 'com.bluelinelabs:conductor-support:1.1.4'
-    compile 'com.bluelinelabs:conductor-rxlifecycle:1.1.4'
-
-    compile 'com.jakewharton.threetenabp:threetenabp:1.0.2'
-
+    // Test
     testCompile project(':testing-utils')
     androidTestCompile project(':testing-utils')
 
+    // LeakCanary
     debugCompile rootProject.ext.leakCanary
     releaseCompile rootProject.ext.leakCanaryNoop
 }

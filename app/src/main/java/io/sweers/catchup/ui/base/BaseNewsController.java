@@ -20,12 +20,13 @@ import android.widget.Toast;
 import org.threeten.bp.Instant;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
@@ -39,22 +40,22 @@ import timber.log.Timber;
 import static android.view.View.GONE;
 
 
-public abstract class BasicNewsController<T> extends BaseController
+public abstract class BaseNewsController<T> extends BaseController
     implements SwipeRefreshLayout.OnRefreshListener {
 
-  @Bind(R.id.error_container) View errorView;
-  @Bind(R.id.error_image) ImageView errorImage;
-  @Bind(R.id.list) RecyclerView recyclerView;
-  @Bind(R.id.progress) ProgressBar progress;
-  @Bind(R.id.refresh) SwipeRefreshLayout swipeRefreshLayout;
+  @BindView(R.id.error_container) View errorView;
+  @BindView(R.id.error_image) ImageView errorImage;
+  @BindView(R.id.list) RecyclerView recyclerView;
+  @BindView(R.id.progress) ProgressBar progress;
+  @BindView(R.id.refresh) SwipeRefreshLayout swipeRefreshLayout;
 
   private Adapter adapter;
 
-  public BasicNewsController() {
+  public BaseNewsController() {
     this(null);
   }
 
-  public BasicNewsController(Bundle args) {
+  public BaseNewsController(Bundle args) {
     super(args);
   }
 
@@ -161,11 +162,6 @@ public abstract class BasicNewsController<T> extends BaseController
     loadData();
   }
 
-  @Override protected void onDestroyView(View view) {
-    ButterKnife.unbind(this);
-    super.onDestroyView(view);
-  }
-
   private void loadData() {
     getDataObservable()
         .observeOn(AndroidSchedulers.mainThread())
@@ -248,14 +244,14 @@ public abstract class BasicNewsController<T> extends BaseController
 
   protected class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.score) TextView score;
-    @Bind(R.id.score_divider) TextView scoreDivider;
-    @Bind(R.id.timestamp) TextView timestamp;
-    @Bind(R.id.author) TextView author;
-    @Bind(R.id.author_divider) TextView authorDivider;
-    @Bind(R.id.source) TextView source;
-    @Bind(R.id.comments) TextView comments;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.score) TextView score;
+    @BindView(R.id.score_divider) TextView scoreDivider;
+    @BindView(R.id.timestamp) TextView timestamp;
+    @BindView(R.id.author) TextView author;
+    @BindView(R.id.author_divider) TextView authorDivider;
+    @BindView(R.id.source) TextView source;
+    @BindView(R.id.comments) TextView comments;
 
     private T datum;
 

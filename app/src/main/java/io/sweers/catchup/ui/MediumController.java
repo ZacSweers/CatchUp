@@ -29,7 +29,7 @@ import io.sweers.catchup.injection.API;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
-import io.sweers.catchup.ui.base.BasicNewsController;
+import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -41,7 +41,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 import rx.Observable;
 
 
-public final class MediumController extends BasicNewsController<MediumPost> {
+public final class MediumController extends BaseNewsController<MediumPost> {
 
   @Inject MediumService service;
   @Inject CustomTabActivityHelper customTab;
@@ -68,7 +68,7 @@ public final class MediumController extends BasicNewsController<MediumPost> {
   }
 
   @Override
-  protected void bindItemView(@NonNull BasicNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
+  protected void bindItemView(@NonNull BaseNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
     holder.title(item.post().title());
 
     holder.score(String.format(Locale.getDefault(), "♥ %d", item.post().virtuals().recommends()));
@@ -87,7 +87,7 @@ public final class MediumController extends BasicNewsController<MediumPost> {
   }
 
   @Override
-  protected void onItemClick(@NonNull BasicNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
+  protected void onItemClick(@NonNull BaseNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
     // TODO construct URL. domain + uniqueSlug
     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.constructUrl()));
     startActivity(intent);
@@ -100,7 +100,7 @@ public final class MediumController extends BasicNewsController<MediumPost> {
   }
 
   @Override
-  protected void onCommentClick(@NonNull BasicNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
+  protected void onCommentClick(@NonNull BaseNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
     // TODO Make the app choice a pref
     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.constructCommentsUrl()));
     startActivity(intent);

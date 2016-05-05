@@ -35,16 +35,32 @@ ext {
     daggerCompiler = "com.google.dagger:dagger-compiler:$daggerVersion"
     javax = 'org.glassfish:javax.annotation:10.0-b28'
 
+    // AutoValue
+    autoValue = 'com.google.auto.value:auto-value:1.2'
+    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.2.3-SNAPSHOT'
+    autoValueAnnotations = 'com.jakewharton.auto.value:auto-value-annotations:1.2-update1'
+
+    // Conductor
+    conductorVersion = '1.1.4'
+    conductor = "com.bluelinelabs:conductor:$conductorVersion"
+    conductorSupport = "com.bluelinelabs:conductor-support:$conductorVersion"
+    conductorRxLifecycle = "com.bluelinelabs:conductor-rxlifecycle:$conductorVersion"
+
     // Misc
     aptPlugin = 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     bottomsheetVersion = '1.5.0'
     bottomsheet = "com.flipboard:bottomsheet-core:$bottomsheetVersion"
     bottomsheetCommons = "com.flipboard:bottomsheet-commons:$bottomsheetVersion"
+    bugsnag = 'com.bugsnag:bugsnag-android:3.4.0'
     calligraphy = 'uk.co.chrisjenx:calligraphy:2.2.0'
     glide = 'com.github.bumptech.glide:glide:3.7.0'
     glideOkhttp = 'com.github.bumptech.glide:okhttp-integration:1.4.0@aar'
     gson = 'com.google.code.gson:gson:2.6.2'
     psyncPlugin = 'gradle.plugin.com.flipboard:psync:1.1.5'
+    recyclerViewAnimators = 'jp.wasabeef:recyclerview-animators:2.2.3'
+    retrolambda = 'net.orfjackal.retrolambda:retrolambda:2.3.0'
+    retrolambdaPlugin = 'me.tatarka:gradle-retrolambda:3.3.0-beta4'
+    retrolambdaPluginLombok = 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
     stethoVersion = '1.3.1'
     stetho = "com.facebook.stetho:stetho:$stethoVersion"
     stethoOkHttp = "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
@@ -69,7 +85,9 @@ ext {
     rxRelay = 'com.jakewharton.rxrelay:rxrelay:1.1.0'
 
     // Square and JW
-    butterKnife = 'com.jakewharton:butterknife:7.0.1'
+    butterKnifeVersion = '8.0.1'
+    butterKnife = "com.jakewharton:butterknife:$butterKnifeVersion"
+    butterKnifeCompiler = "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
     leakCanaryVersion = '1.4-beta2'
     leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     leakCanaryNoop = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
@@ -78,7 +96,7 @@ ext {
     okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
     okio = 'com.squareup.okio:okio:1.8.0'
-    def moshiVersion = '1.1.0'
+    moshiVersion = '1.1.0'
     moshi = "com.squareup.moshi:moshi:$moshiVersion"
     moshiAdapters = "com.squareup.moshi:moshi-adapters:$moshiVersion"
     retrofitVersion = '2.0.1'
@@ -87,6 +105,7 @@ ext {
     retrofitGson = "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     retrofitRxJava = "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
     sdkManagerPlugin = 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+    threetenabp = 'com.jakewharton.threetenabp:threetenabp:1.0.2'
     timber = 'com.jakewharton.timber:timber:4.1.2'
 
     // Testing

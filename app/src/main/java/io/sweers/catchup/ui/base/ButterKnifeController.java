@@ -12,12 +12,14 @@ import android.view.ViewGroup;
 import com.bluelinelabs.conductor.rxlifecycle.RxController;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import io.sweers.catchup.R;
 import io.sweers.catchup.util.UiUtil;
 
 public abstract class ButterKnifeController extends RxController {
 
   @ColorInt private int serviceThemeColor = Color.BLACK;
+  private Unbinder unbinder;
 
   protected ButterKnifeController() {
   }
@@ -51,7 +53,7 @@ public abstract class ButterKnifeController extends RxController {
     }
 
     View view = inflateView(LayoutInflater.from(themedContext), container);
-    ButterKnife.bind(this, view);
+    unbinder = ButterKnife.bind(this, view);
     onViewBound(view);
     return view;
   }
@@ -61,8 +63,10 @@ public abstract class ButterKnifeController extends RxController {
 
   @Override
   protected void onDestroyView(View view) {
+    if (unbinder != null) {
+      unbinder.unbind();
+    }
     super.onDestroyView(view);
-    ButterKnife.unbind(this);
   }
 
 }

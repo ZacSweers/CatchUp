@@ -11,23 +11,25 @@ import com.bluelinelabs.conductor.Router;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import io.sweers.catchup.R;
+import io.sweers.catchup.app.CatchUpApplication;
 import io.sweers.catchup.ui.PagerController;
 import io.sweers.catchup.ui.base.ActionBarProvider;
-import io.sweers.catchup.app.CatchUpApplication;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 
 public class MainActivity extends AppCompatActivity implements ActionBarProvider {
 
   @Inject CustomTabActivityHelper customTab;
 
-  @Bind(R.id.toolbar) Toolbar toolbar;
-  @Bind(R.id.controller_container) ViewGroup container;
+  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.controller_container) ViewGroup container;
 
   private Router router;
   private ActivityComponent component;
+  private Unbinder unbinder;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarProvider
     component = createComponent();
     component.inject(this);
 
-    ButterKnife.bind(this);
+    unbinder = ButterKnife.bind(this);
 
     setSupportActionBar(toolbar);
 
@@ -77,7 +79,9 @@ public class MainActivity extends AppCompatActivity implements ActionBarProvider
   @Override
   protected void onDestroy() {
     customTab.setConnectionCallback(null);
-    ButterKnife.unbind(this);
+    if (unbinder != null) {
+      unbinder.unbind();
+    }
     super.onDestroy();
   }
 

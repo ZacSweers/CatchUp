@@ -13,7 +13,7 @@ import com.jakewharton.rxbinding.support.v4.view.RxViewPager;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import io.sweers.catchup.R;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
@@ -45,8 +45,8 @@ public class PagerController extends BaseController {
 
   @Inject ActionBarProvider actionBarProvider;
 
-  @Bind(R.id.tab_layout) TabLayout tabLayout;
-  @Bind(R.id.view_pager) ViewPager viewPager;
+  @BindView(R.id.tab_layout) TabLayout tabLayout;
+  @BindView(R.id.view_pager) ViewPager viewPager;
 
   private ControllerPagerAdapter pagerAdapter;
 

@@ -11,17 +11,10 @@ subprojects {
         jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
-
-//    afterEvaluate {
-//        // The default 'assemble' task only applies to normal variants. Add test variants as well.
-//        android.testVariants.all { variant ->
-//            tasks.getByName('assemble').dependsOn variant.assemble
-//        }
-//    }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.12'
+    gradleVersion = '2.13'
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 

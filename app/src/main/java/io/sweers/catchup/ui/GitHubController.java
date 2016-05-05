@@ -30,7 +30,7 @@ import io.sweers.catchup.injection.API;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
-import io.sweers.catchup.ui.base.BasicNewsController;
+import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -39,7 +39,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 import rx.Observable;
 
 
-public final class GitHubController extends BasicNewsController<Repository> {
+public final class GitHubController extends BaseNewsController<Repository> {
 
   @Inject GitHubService service;
   @Inject CustomTabActivityHelper customTab;
