@@ -7,4 +7,6 @@
   <color name="productHuntAccent">#ffff9800</color>
   <color name="redditAccent">#336699</color>
   <color name="hackerNewsAccent">#ffff6600</color>
+  <color name="tab_text_default">#b3ffffff</color>
+  <color name="tab_text_selected">#ffffffff</color>
 </resources>
