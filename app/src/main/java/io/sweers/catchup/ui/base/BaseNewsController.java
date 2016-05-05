@@ -20,7 +20,6 @@ import android.widget.Toast;
 import org.threeten.bp.Instant;
 
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +56,9 @@ public abstract class BaseNewsController<T> extends BaseController
 
   public BaseNewsController(Bundle args) {
     super(args);
+
+    // TODO remove after Conductor 2.0
+    setRetainViewMode(RetainViewMode.RETAIN_DETACH);
   }
 
   protected abstract void performInjection();
