@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
+import android.util.Pair;
 import android.view.View;
 
 import com.squareup.moshi.Moshi;
@@ -12,7 +13,6 @@ import com.squareup.moshi.Rfc3339DateJsonAdapter;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -66,7 +66,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
   @Override
   protected void bindItemView(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
     holder.title(item.name());
-    holder.score(String.format(Locale.getDefault(), "▲ %d", item.votes_count()));
+    holder.score(Pair.create("▲", item.votes_count()));
     holder.timestamp(item.created_at());
     holder.author(item.user().name());
     holder.source(item.getFirstTopic());

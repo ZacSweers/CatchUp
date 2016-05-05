@@ -6,13 +6,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
+import android.util.Pair;
 import android.view.View;
 
 import com.squareup.moshi.Moshi;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -71,7 +71,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   protected void bindItemView(@NonNull BaseNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
     holder.title(item.post().title());
 
-    holder.score(String.format(Locale.getDefault(), "♥ %d", item.post().virtuals().recommends()));
+    holder.score(Pair.create("♥", item.post().virtuals().recommends()));
     holder.timestamp(item.post().createdAt());
 
     holder.author(item.user().name());

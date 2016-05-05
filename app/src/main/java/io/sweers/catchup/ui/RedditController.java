@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
+import android.util.Pair;
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -13,15 +14,14 @@ import com.google.gson.GsonBuilder;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.R;
-import io.sweers.catchup.data.reddit.UtcDateTypeAdapter;
 import io.sweers.catchup.data.reddit.RedditService;
+import io.sweers.catchup.data.reddit.UtcDateTypeAdapter;
 import io.sweers.catchup.data.reddit.model.RedditLink;
 import io.sweers.catchup.data.reddit.model.RedditObject;
 import io.sweers.catchup.data.reddit.model.RedditObjectDeserializer;
@@ -67,7 +67,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
   protected void bindItemView(@NonNull BaseNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
     holder.title(link.getTitle());
 
-    holder.score(String.format(Locale.getDefault(), "+ %d", link.getScore()));
+    holder.score(Pair.create("+", link.getScore()));
     holder.timestamp(link.getCreatedUtc());
     holder.author("/u/" + link.getAuthor());
 

@@ -5,13 +5,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
+import android.util.Pair;
 import android.view.View;
 
 import com.squareup.moshi.Moshi;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -65,7 +65,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   @Override
   protected void bindItemView(@NonNull BaseNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View itemView, @NonNull HackerNewsStory story) {
     holder.title(story.title());
-    holder.score(String.format(Locale.getDefault(), "+ %d", story.score()));
+    holder.score(Pair.create("+", story.score()));
     holder.timestamp(story.time());
     holder.author(story.by());
 

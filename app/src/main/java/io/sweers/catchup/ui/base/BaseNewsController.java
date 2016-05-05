@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +24,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import io.sweers.catchup.R;
+import io.sweers.catchup.util.NumberUtil;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
@@ -279,23 +280,18 @@ public abstract class BaseNewsController<T> extends BaseController
       onCommentClick(this, itemView, datum);
     }
 
-    public TextView score() {
-      return score;
-    }
-
     public void title(@NonNull CharSequence titleText) {
       title.setText(titleText);
     }
 
-    public void score(@Nullable CharSequence scoreValue) {
-      // TODO Shorten large numbers
+    public void score(@Nullable Pair<String, Integer> scoreValue) {
       if (scoreValue == null) {
         score.setVisibility(GONE);
         scoreDivider.setVisibility(GONE);
       } else {
         scoreDivider.setVisibility(View.VISIBLE);
         score.setVisibility(View.VISIBLE);
-        score.setText(scoreValue);
+        score.setText(String.format("%s %s", scoreValue.first, NumberUtil.format(scoreValue.second)));
       }
     }
 
@@ -327,8 +323,7 @@ public abstract class BaseNewsController<T> extends BaseController
     }
 
     public void comments(int commentsCount) {
-      // TODO Shorten large numbers
-      comments.setText(String.format(Locale.getDefault(), "%d", commentsCount));
+      comments.setText(NumberUtil.format(commentsCount));
     }
 
     public TextView comments() {

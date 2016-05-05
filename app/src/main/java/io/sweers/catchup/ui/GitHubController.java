@@ -5,12 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
+import android.util.Pair;
 import android.view.View;
 
 import com.squareup.moshi.Moshi;
 
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -19,8 +19,8 @@ import dagger.Provides;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
-import io.sweers.catchup.data.github.GitHubService;
 import io.sweers.catchup.data.InstantAdapter;
+import io.sweers.catchup.data.github.GitHubService;
 import io.sweers.catchup.data.github.TrendingTimespan;
 import io.sweers.catchup.data.github.model.Order;
 import io.sweers.catchup.data.github.model.Repository;
@@ -69,11 +69,10 @@ public final class GitHubController extends BaseNewsController<Repository> {
   protected void bindItemView(@NonNull ViewHolder holder, @NonNull View view, @NonNull Repository item) {
     holder.comments().setVisibility(View.GONE);
     holder.title(item.full_name());
-    holder.score(String.format(Locale.getDefault(), "★ %d", item.stargazers_count()));
+    holder.score(Pair.create("★", item.stargazers_count()));
     holder.timestamp(item.created_at());
     holder.author(item.owner().login());
     holder.source(item.language());
-//    holder.comments(item.comments_count());
   }
 
   @Override
