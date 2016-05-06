@@ -8,7 +8,6 @@
   android:background="?selectableItemBackground"
   android:clickable="true"
   android:orientation="horizontal"
-  android:layout_margin="8dp"
   >
 
   <LinearLayout
