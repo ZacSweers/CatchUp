@@ -215,16 +215,6 @@ public abstract class BaseNewsController<T> extends BaseController
 
     private final List<T> data = new ArrayList<>();
 
-    public Adapter() {
-      super();
-      setHasStableIds(true);
-    }
-
-    @Override public long getItemId(int position) {
-      // TODO maybe this should be something more concrete from the models
-      return position;
-    }
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_general, parent, false);
