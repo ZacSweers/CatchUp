@@ -8,7 +8,8 @@ import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
-import java.util.Date;
+import org.threeten.bp.Instant;
+
 import java.util.List;
 
 @AutoValue
@@ -36,7 +37,7 @@ public abstract class HackerNewsStory {
 
   public abstract int score();
 
-  public abstract Date time();
+  public abstract Instant time();
 
   public abstract String title();
 

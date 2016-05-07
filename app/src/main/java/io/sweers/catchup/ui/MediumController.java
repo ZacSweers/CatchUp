@@ -11,7 +11,8 @@ import android.view.View;
 
 import com.squareup.moshi.Moshi;
 
-import java.util.Date;
+import org.threeten.bp.Instant;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,7 +20,7 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.R;
-import io.sweers.catchup.data.UtcDateJsonAdapter;
+import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.medium.MediumService;
 import io.sweers.catchup.data.medium.model.Collection;
 import io.sweers.catchup.data.medium.model.MediumPost;
@@ -172,7 +173,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     @API
     Moshi provideMediumMoshi(Moshi moshi) {
       return moshi.newBuilder()
-          .add(Date.class, new UtcDateJsonAdapter())
+          .add(Instant.class, new EpochInstantJsonAdapter())
           .build();
     }
 

@@ -47,6 +47,7 @@ public abstract class Post {
 
   public abstract String redirect_url();
 
+  // TODO Coerce this to Instant - '2016-05-06T00:45:40.791-07:00'
   public abstract Date created_at();
 
   public abstract int comments_count();

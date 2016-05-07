@@ -6,7 +6,7 @@ import com.google.auto.value.AutoValue;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
-import java.util.Date;
+import org.threeten.bp.Instant;
 
 @AutoValue
 public abstract class Post {
@@ -14,7 +14,7 @@ public abstract class Post {
     return new AutoValue_Post.MoshiJsonAdapter(moshi);
   }
 
-  public abstract Date createdAt();
+  public abstract Instant createdAt();
 
   public abstract String creatorId();
 

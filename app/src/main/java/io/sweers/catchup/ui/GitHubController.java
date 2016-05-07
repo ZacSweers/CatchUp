@@ -19,7 +19,7 @@ import dagger.Provides;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
-import io.sweers.catchup.data.InstantAdapter;
+import io.sweers.catchup.data.ISOInstantAdapter;
 import io.sweers.catchup.data.github.GitHubService;
 import io.sweers.catchup.data.github.TrendingTimespan;
 import io.sweers.catchup.data.github.model.Order;
@@ -122,7 +122,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
     @API
     Moshi provideGitHubMoshi(Moshi moshi) {
       return moshi.newBuilder()
-          .add(new InstantAdapter())
+          .add(new ISOInstantAdapter())
           .build();
     }
 

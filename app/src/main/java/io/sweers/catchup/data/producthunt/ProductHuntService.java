@@ -16,8 +16,6 @@
 
 package io.sweers.catchup.data.producthunt;
 
-import java.text.SimpleDateFormat;
-
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -28,7 +26,6 @@ import rx.Observable;
  */
 public interface ProductHuntService {
 
-  SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
   String ENDPOINT = "https://api.producthunt.com/";
 
   @GET("v1/posts") Observable<PostsResponse> getPosts(@Query("days_ago") int page);

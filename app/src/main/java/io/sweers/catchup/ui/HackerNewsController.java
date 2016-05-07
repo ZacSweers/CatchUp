@@ -10,7 +10,8 @@ import android.view.View;
 
 import com.squareup.moshi.Moshi;
 
-import java.util.Date;
+import org.threeten.bp.Instant;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,7 +19,7 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.R;
-import io.sweers.catchup.data.UtcDateJsonAdapter;
+import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
 import io.sweers.catchup.injection.API;
@@ -129,7 +130,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     @API
     Moshi provideHackerNewsMoshi(Moshi moshi) {
       return moshi.newBuilder()
-          .add(Date.class, new UtcDateJsonAdapter(true))
+          .add(Instant.class, new EpochInstantJsonAdapter(true))
           .build();
     }
 

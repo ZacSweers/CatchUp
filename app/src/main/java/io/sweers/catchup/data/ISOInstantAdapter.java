@@ -5,7 +5,7 @@ import com.squareup.moshi.ToJson;
 
 import org.threeten.bp.Instant;
 
-public final class InstantAdapter {
+public final class ISOInstantAdapter {
   @ToJson public String toJson(Instant instant) {
     return instant.toString();
   }

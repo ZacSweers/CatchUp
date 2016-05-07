@@ -9,7 +9,7 @@ import org.threeten.bp.Instant;
 import java.io.IOException;
 
 /**
- * Converts timestamp longs to Dates
+ * Converts timestamp longs to Instants
  */
 public class EpochInstantTypeAdapter extends TypeAdapter<Instant> {
 
