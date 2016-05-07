@@ -113,7 +113,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
     OkHttpClient provideGitHubOkHttpClient(OkHttpClient client) {
       return client
           .newBuilder()
-          .addInterceptor(new AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
+          .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
           .build();
     }
 

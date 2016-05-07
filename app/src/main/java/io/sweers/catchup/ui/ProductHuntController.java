@@ -115,7 +115,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     OkHttpClient provideProductHuntOkHttpClient(OkHttpClient client) {
       return client
           .newBuilder()
-          .addInterceptor(new AuthInterceptor("Bearer", BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
+          .addInterceptor(AuthInterceptor.create("Bearer", BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
           .build();
     }
 
