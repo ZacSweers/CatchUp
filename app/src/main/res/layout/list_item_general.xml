@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<io.sweers.catchup.ui.widget.ForegroundLinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/container"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:background="@android:color/white"
+  android:background="?android:colorBackground"
+  android:foreground="?selectableItemBackground"
   android:clickable="true"
   android:orientation="horizontal"
   android:stateListAnimator="@animator/raise"
@@ -113,4 +114,4 @@
     tools:text="39"
     />
 
-</LinearLayout>
+</io.sweers.catchup.ui.widget.ForegroundLinearLayout>
