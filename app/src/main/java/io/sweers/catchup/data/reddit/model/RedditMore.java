@@ -1,31 +1,28 @@
 package io.sweers.catchup.data.reddit.model;
 
+import android.support.annotation.NonNull;
+
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
-public class RedditMore extends RedditObject {
-  int count;
-  String parent_id;
-  String id;
-  String name;
-  List<String> children;
-
-  public int getCount() {
-    return count;
+@AutoValue
+public abstract class RedditMore extends RedditObject {
+  public static TypeAdapter<RedditMore> typeAdapter(@NonNull Gson gson) {
+    return new AutoValue_RedditMore.GsonTypeAdapter(gson);
   }
 
-  public String getParentId() {
-    return parent_id;
-  }
+  public abstract int count();
 
-  public String getId() {
-    return id;
-  }
+  @SerializedName("parent_id")
+  public abstract String parentId();
 
-  public String getName() {
-    return name;
-  }
+  public abstract String id();
 
-  public List<String> getChildren() {
-    return children;
-  }
+  public abstract String name();
+
+  public abstract List<String> children();
 }

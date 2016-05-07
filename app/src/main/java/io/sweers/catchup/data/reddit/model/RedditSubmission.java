@@ -1,66 +1,37 @@
 package io.sweers.catchup.data.reddit.model;
 
-import java.util.Date;
+import android.support.annotation.Nullable;
 
-public class RedditSubmission extends RedditObject {
-  String banned_by;
-  String subreddit;
-  boolean saved;
-  String id;
-  int gilded;
-  String author;
-  int score;
-  String name;
-  long created;
-  String author_flair_text;
-  Date created_utc;
-  int ups;
+import com.google.gson.annotations.SerializedName;
 
-  public String getBannedBy() {
-    return banned_by;
-  }
+import org.threeten.bp.Instant;
 
-  public String getSubreddit() {
-    return subreddit;
-  }
+public abstract class RedditSubmission extends RedditObject {
 
-  public boolean isSaved() {
-    return saved;
-  }
+  @Nullable @SerializedName("banned_by")
+  public abstract String bannedBy();
 
-  public String getId() {
-    return id;
-  }
+  public abstract String subreddit();
 
-  public int getGilded() {
-    return gilded;
-  }
+  public abstract boolean saved();
 
-  public String getAuthor() {
-    return author;
-  }
+  public abstract String id();
 
-  public int getScore() {
-    return score;
-  }
+  public abstract int gilded();
 
-  public String getName() {
-    return name;
-  }
+  public abstract String author();
 
-  public long getCreated() {
-    return created;
-  }
+  public abstract int score();
 
-  public String getAuthorFlairText() {
-    return author_flair_text;
-  }
+  public abstract String name();
 
-  public Date getCreatedUtc() {
-    return created_utc;
-  }
+  public abstract Instant created();
 
-  public int getUps() {
-    return ups;
-  }
+  @Nullable @SerializedName("author_flair_text")
+  public abstract String authorFlairText();
+
+  @SerializedName("created_utc")
+  public abstract Instant createdUtc();
+
+  public abstract int ups();
 }

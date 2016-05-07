@@ -1,48 +1,35 @@
 package io.sweers.catchup.data.reddit.model;
 
-public class RedditComment extends RedditSubmission {
-  RedditObject replies;
-  String subreddit_id;
-  String parent_id;
-  int controversiality;
-  String body;
-  String body_html;
-  String link_id;
-  int depth;
+import android.support.annotation.NonNull;
 
-  public RedditObject getReplies() {
-    return replies;
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.SerializedName;
+
+@AutoValue
+public abstract class RedditComment extends RedditSubmission {
+  public static TypeAdapter<RedditComment> typeAdapter(@NonNull Gson gson) {
+    return new AutoValue_RedditComment.GsonTypeAdapter(gson);
   }
 
-  public String getSubredditId() {
-    return subreddit_id;
-  }
+  public abstract RedditObject replies();
 
-  public String getParentId() {
-    return parent_id;
-  }
+  @SerializedName("subreddit_id")
+  public abstract String subredditId();
 
-  public int getControversiality() {
-    return controversiality;
-  }
+  @SerializedName("parent_id")
+  public abstract String parentId();
 
-  public String getBody() {
-    return body;
-  }
+  public abstract int controversiality();
 
-  public String getBodyHtml() {
-    return body_html;
-  }
+  public abstract String body();
 
-  public String getLinkId() {
-    return link_id;
-  }
+  @SerializedName("body_html")
+  public abstract String bodyHtml();
 
-  public int getDepth() {
-    return depth;
-  }
+  @SerializedName("link_id")
+  public abstract String linkId();
 
-  public void setDepth(int depth) {
-    this.depth = depth;
-  }
+  public abstract int depth();
 }

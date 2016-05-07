@@ -303,7 +303,7 @@ public abstract class BaseNewsController<T> extends BaseController
       timestamp(instant.toEpochMilli());
     }
 
-    public void timestamp(long date) {
+    private void timestamp(long date) {
       timestamp.setText(DateUtils.getRelativeTimeSpanString(date, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
     }
 

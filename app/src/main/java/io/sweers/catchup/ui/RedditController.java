@@ -12,7 +12,8 @@ import android.view.View;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.Date;
+import org.threeten.bp.Instant;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,8 +21,9 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.R;
+import io.sweers.catchup.data.reddit.AutoValueTypeAdapterFactory;
 import io.sweers.catchup.data.reddit.RedditService;
-import io.sweers.catchup.data.reddit.UtcDateTypeAdapter;
+import io.sweers.catchup.data.reddit.EpochInstantTypeAdapter;
 import io.sweers.catchup.data.reddit.model.RedditLink;
 import io.sweers.catchup.data.reddit.model.RedditObject;
 import io.sweers.catchup.data.reddit.model.RedditObjectDeserializer;
@@ -65,19 +67,19 @@ public final class RedditController extends BaseNewsController<RedditLink> {
 
   @Override
   protected void bindItemView(@NonNull BaseNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
-    holder.title(link.getTitle());
+    holder.title(link.title());
 
-    holder.score(Pair.create("+", link.getScore()));
-    holder.timestamp(link.getCreatedUtc());
-    holder.author("/u/" + link.getAuthor());
+    holder.score(Pair.create("+", link.score()));
+    holder.timestamp(link.createdUtc());
+    holder.author("/u/" + link.author());
 
-    if (link.getDomain() != null) {
-      holder.source(link.getDomain());
+    if (link.domain() != null) {
+      holder.source(link.domain());
     } else {
       holder.source("self");
     }
 
-    holder.comments(link.getNumComments());
+    holder.comments(link.numComments());
   }
 
   @Override
@@ -85,13 +87,13 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     customTab.openCustomTab(customTab.getCustomTabIntent()
             .setToolbarColor(getServiceThemeColor())
             .build(),
-        Uri.parse(link.getUrl()));
+        Uri.parse(link.url()));
   }
 
   @Override
   protected void onCommentClick(@NonNull BaseNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
     // TODO Make the app choice a pref
-    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://reddit.com/comments/" + link.getId()));
+    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://reddit.com/comments/" + link.id()));
     startActivity(intent);
 
     // TODO This should be how it's actually done
@@ -105,7 +107,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     return service.frontPage(50)
         .map((redditListingRedditResponse) -> {
           //noinspection CodeBlock2Expr,unchecked
-          return (List<RedditLink>) redditListingRedditResponse.getData().getChildren();
+          return (List<RedditLink>) redditListingRedditResponse.data().children();
         });
   }
 
@@ -126,7 +128,8 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     Gson provideGson() {
       return new GsonBuilder()
           .registerTypeAdapter(RedditObject.class, new RedditObjectDeserializer())
-          .registerTypeAdapter(Date.class, new UtcDateTypeAdapter(true))
+          .registerTypeAdapter(Instant.class, new EpochInstantTypeAdapter(true))
+          .registerTypeAdapterFactory(new AutoValueTypeAdapterFactory())
           .create();
     }
 

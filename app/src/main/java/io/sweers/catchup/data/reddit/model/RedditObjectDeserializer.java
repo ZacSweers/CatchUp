@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 
 import timber.log.Timber;
 
-// TODO Make this Moshi-friendly
+// TODO Make this Moshi-friendly when Moshi can do this.
 public class RedditObjectDeserializer implements JsonDeserializer<RedditObject> {
   @Override
   public RedditObject deserialize(JsonElement json, Type type, JsonDeserializationContext context)

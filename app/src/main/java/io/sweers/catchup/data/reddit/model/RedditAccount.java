@@ -1,64 +1,48 @@
 package io.sweers.catchup.data.reddit.model;
 
-public class RedditAccount extends RedditObject {
-  int comment_karma;
-  boolean has_mail;
-  boolean has_mod_mail;
-  boolean has_verified_email;
-  String id;
-  boolean is_friend;
-  boolean is_gold;
-  boolean is_mod;
-  int link_karma;
-  String modhash;
-  String name;
-  boolean over_18;
+import android.support.annotation.NonNull;
 
-  public int getCommentKarma() {
-    return comment_karma;
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.SerializedName;
+
+@AutoValue
+public abstract class RedditAccount extends RedditObject {
+  public static TypeAdapter<RedditAccount> typeAdapter(@NonNull Gson gson) {
+    return new AutoValue_RedditAccount.GsonTypeAdapter(gson);
   }
 
-  public boolean hasMail() {
-    return has_mail;
-  }
+  @SerializedName("comment_karma")
+  public abstract int commentKarma();
 
-  public boolean hasModMail() {
-    return has_mod_mail;
-  }
+  @SerializedName("has_mail")
+  public abstract boolean hasMail();
 
-  public boolean hasVerifiedEmail() {
-    return has_verified_email;
-  }
+  @SerializedName("has_mod_mail")
+  public abstract boolean hasModMail();
 
-  public String getId() {
-    return id;
-  }
+  @SerializedName("has_verified_email")
+  public abstract boolean hasVerifiedEmail();
 
-  public boolean isFriend() {
-    return is_friend;
-  }
+  public abstract String id();
 
-  public boolean isGold() {
-    return is_gold;
-  }
+  @SerializedName("is_friend")
+  public abstract boolean isFriend();
 
-  public boolean isMod() {
-    return is_mod;
-  }
+  @SerializedName("is_gold")
+  public abstract boolean isGold();
 
-  public int getLinkKarma() {
-    return link_karma;
-  }
+  @SerializedName("is_mod")
+  public abstract boolean isMod();
 
-  public String getModhash() {
-    return modhash;
-  }
+  @SerializedName("link_karma")
+  public abstract int linkKarma();
 
-  public String getName() {
-    return name;
-  }
+  public abstract String modhash();
 
-  public boolean isOver18() {
-    return over_18;
-  }
+  public abstract String name();
+
+  @SerializedName("over_18")
+  public abstract boolean nsfw();
 }

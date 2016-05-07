@@ -1,78 +1,48 @@
 package io.sweers.catchup.data.reddit.model;
 
-public class RedditLink extends RedditSubmission {
-  private String domain;
-  private String selftext_html;
-  private String selftext;
-  private String link_flair_text;
-  private boolean clicked;
-  private boolean hidden;
-  private String thumbnail;
-  private boolean is_self;
-  private String permalink;
-  private boolean stickied;
-  private String url;
-  private String title;
-  private int num_comments;
-  private boolean visited;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-  public String getDomain() {
-    return domain;
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.SerializedName;
+
+@AutoValue
+public abstract class RedditLink extends RedditSubmission {
+  public static TypeAdapter<RedditLink> typeAdapter(@NonNull Gson gson) {
+    return new AutoValue_RedditLink.GsonTypeAdapter(gson);
   }
 
-  public String getSelftextHtml() {
-    return selftext_html;
-  }
+  public abstract String domain();
 
-  public String getSelftext() {
-    return selftext;
-  }
+  @Nullable @SerializedName("selftext_html")
+  public abstract String selftextHtml();
 
-  public String getLinkFlairText() {
-    return link_flair_text;
-  }
+  @Nullable public abstract String selftext();
 
-  public boolean isClicked() {
-    return clicked;
-  }
+  @Nullable @SerializedName("link_flair_text")
+  public abstract String linkFlairText();
 
-  public boolean isHidden() {
-    return hidden;
-  }
+  public abstract boolean clicked();
 
-  public String getThumbnail() {
-    return thumbnail;
-  }
+  public abstract boolean hidden();
 
-  public String getSubreddit() {
-    return subreddit;
-  }
+  public abstract String thumbnail();
 
-  public boolean isSelf() {
-    return is_self;
-  }
+  @SerializedName("is_self")
+  public abstract boolean isSelf();
 
-  public String getPermalink() {
-    return permalink;
-  }
+  public abstract String permalink();
 
-  public boolean isStickied() {
-    return stickied;
-  }
+  public abstract boolean stickied();
 
-  public String getUrl() {
-    return url;
-  }
+  public abstract String url();
 
-  public String getTitle() {
-    return title;
-  }
+  public abstract String title();
 
-  public int getNumComments() {
-    return num_comments;
-  }
+  @SerializedName("num_comments")
+  public abstract int numComments();
 
-  public boolean isVisited() {
-    return visited;
-  }
+  public abstract boolean visited();
 }
