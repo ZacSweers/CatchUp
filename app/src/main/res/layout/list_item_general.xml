@@ -5,9 +5,10 @@
   android:id="@+id/container"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:background="?selectableItemBackground"
+  android:background="@android:color/white"
   android:clickable="true"
   android:orientation="horizontal"
+  android:stateListAnimator="@animator/raise"
   >
 
   <LinearLayout
