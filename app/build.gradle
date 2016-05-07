@@ -153,6 +153,8 @@ dependencies {
     provided rootProject.ext.autoValueAnnotations
     apt rootProject.ext.autoValue
     apt rootProject.ext.autoValueMoshi
+    apt rootProject.ext.autoValueGson
+    apt rootProject.ext.autoValueRedacted
 
     // Conductor
     compile rootProject.ext.conductor

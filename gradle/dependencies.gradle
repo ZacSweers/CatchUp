@@ -37,8 +37,10 @@ ext {
 
     // AutoValue
     autoValue = 'com.google.auto.value:auto-value:1.2'
-    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.2.3-SNAPSHOT'
     autoValueAnnotations = 'com.jakewharton.auto.value:auto-value-annotations:1.2-update1'
+    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.2.3-SNAPSHOT'
+    autoValueGson = 'com.ryanharter.auto.value:auto-value-gson:0.2.5'
+    autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:0.1.0'
 
     // Conductor
     conductorVersion = '1.1.4'
