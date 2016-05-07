@@ -38,7 +38,7 @@ ext {
     // AutoValue
     autoValue = 'com.google.auto.value:auto-value:1.2'
     autoValueAnnotations = 'com.jakewharton.auto.value:auto-value-annotations:1.2-update1'
-    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.2.3-SNAPSHOT'
+    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.3.0'
     autoValueGson = 'com.ryanharter.auto.value:auto-value-gson:0.2.5'
     autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:0.1.0'
 
