@@ -15,7 +15,7 @@ public abstract class Payload {
     return new AutoValue_Payload.MoshiJsonAdapter(moshi);
   }
 
-  public abstract List<StreamItem> streamItems();
-
   public abstract References references();
+
+  public abstract List<StreamItem> streamItems();
 }

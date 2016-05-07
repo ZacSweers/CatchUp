@@ -13,7 +13,7 @@ public abstract class MediumResponse {
     return new AutoValue_MediumResponse.MoshiJsonAdapter(moshi);
   }
 
-  public abstract boolean success();
-
   public abstract Payload payload();
+
+  public abstract boolean success();
 }

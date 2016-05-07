@@ -14,11 +14,11 @@ public abstract class Paragraph {
     return new AutoValue_Paragraph.MoshiJsonAdapter(moshi);
   }
 
-  public abstract String name();
+  public abstract List<Markup> markups();
 
-  public abstract int type();
+  public abstract String name();
 
   public abstract String text();
 
-  public abstract List<Markup> markups();
+  public abstract int type();
 }

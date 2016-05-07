@@ -68,9 +68,9 @@ public final class GitHubController extends BaseNewsController<Repository> {
   @Override
   protected void bindItemView(@NonNull ViewHolder holder, @NonNull View view, @NonNull Repository item) {
     holder.comments().setVisibility(View.GONE);
-    holder.title(item.full_name());
-    holder.score(Pair.create("★", item.stargazers_count()));
-    holder.timestamp(item.created_at());
+    holder.title(item.fullName());
+    holder.score(Pair.create("★", item.starsCount()));
+    holder.timestamp(item.createdAt());
     holder.author(item.owner().login());
     holder.source(item.language());
   }
@@ -81,12 +81,11 @@ public final class GitHubController extends BaseNewsController<Repository> {
     customTab.openCustomTab(customTab.getCustomTabIntent()
             .setToolbarColor(getServiceThemeColor())
             .build(),
-        Uri.parse(item.html_url()));
+        Uri.parse(item.htmlUrl()));
   }
 
   @NonNull @Override protected Observable<List<Repository>> getDataObservable() {
     return service.searchRepositories(
-//        "created:>`date -v-7d '+%Y-%m-%d'`",
         SearchQuery.builder().createdSince(TrendingTimespan.WEEK.createdSince()).build(),
         "watchers",
         Order.DESC

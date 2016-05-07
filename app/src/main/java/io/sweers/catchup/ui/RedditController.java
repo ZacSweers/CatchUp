@@ -79,7 +79,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
       holder.source("self");
     }
 
-    holder.comments(link.numComments());
+    holder.comments(link.commentsCount());
   }
 
   @Override

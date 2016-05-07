@@ -12,9 +12,9 @@ public abstract class Markup {
     return new AutoValue_Markup.MoshiJsonAdapter(moshi);
   }
 
-  public abstract int type();
+  public abstract int end();
 
   public abstract int start();
 
-  public abstract int end();
+  public abstract int type();
 }

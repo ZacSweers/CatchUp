@@ -16,6 +16,7 @@ public abstract class SearchQuery {
     return new AutoValue_SearchQuery.MoshiJsonAdapter(moshi);
   }
 
+  // Overkill for now, but can support other aspects in the future.
   public static Builder builder() {
     return new AutoValue_SearchQuery.Builder();
   }

@@ -13,23 +13,23 @@ public abstract class RedditComment extends RedditSubmission {
     return new AutoValue_RedditComment.GsonTypeAdapter(gson);
   }
 
-  public abstract RedditObject replies();
-
-  @SerializedName("subreddit_id")
-  public abstract String subredditId();
-
-  @SerializedName("parent_id")
-  public abstract String parentId();
-
-  public abstract int controversiality();
-
   public abstract String body();
 
   @SerializedName("body_html")
   public abstract String bodyHtml();
 
+  public abstract int controversiality();
+
+  public abstract int depth();
+
   @SerializedName("link_id")
   public abstract String linkId();
 
-  public abstract int depth();
+  @SerializedName("parent_id")
+  public abstract String parentId();
+
+  public abstract RedditObject replies();
+
+  @SerializedName("subreddit_id")
+  public abstract String subredditId();
 }

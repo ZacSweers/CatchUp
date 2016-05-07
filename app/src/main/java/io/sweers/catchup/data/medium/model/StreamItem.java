@@ -13,7 +13,7 @@ public abstract class StreamItem {
     return new AutoValue_StreamItem.MoshiJsonAdapter(moshi);
   }
 
-  public abstract long createdAt();
-
   public abstract PostPreview bmPostPreview();
+
+  public abstract long createdAt();
 }

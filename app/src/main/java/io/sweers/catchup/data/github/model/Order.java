@@ -4,6 +4,6 @@ public enum Order {
   ASC, DESC;
 
   @Override public String toString() {
-    return super.toString().toLowerCase();
+    return name().toLowerCase();
   }
 }

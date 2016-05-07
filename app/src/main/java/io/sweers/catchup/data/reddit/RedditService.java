@@ -16,6 +16,10 @@ public interface RedditService {
       @Path("id") String id
   );
 
+  @GET(".json") Observable<RedditResponse> frontPage(
+      @Query("limit") int limit
+  );
+
   @GET("r/{subreddit}.json") Observable<RedditResponse> subreddit(
       @Path("subreddit") String subreddit,
       @Query("after") String after,
@@ -23,10 +27,6 @@ public interface RedditService {
 
   @GET("top.json") Observable<RedditResponse> top(
       @Query("after") String after,
-      @Query("limit") int limit
-  );
-
-  @GET(".json") Observable<RedditResponse> frontPage(
       @Query("limit") int limit
   );
 }

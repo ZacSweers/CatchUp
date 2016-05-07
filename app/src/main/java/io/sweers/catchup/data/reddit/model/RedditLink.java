@@ -14,35 +14,35 @@ public abstract class RedditLink extends RedditSubmission {
     return new AutoValue_RedditLink.GsonTypeAdapter(gson);
   }
 
-  public abstract String domain();
-
-  @Nullable @SerializedName("selftext_html")
-  public abstract String selftextHtml();
-
-  @Nullable public abstract String selftext();
-
-  @Nullable @SerializedName("link_flair_text")
-  public abstract String linkFlairText();
-
   public abstract boolean clicked();
 
-  public abstract boolean hidden();
+  public abstract String domain();
 
-  public abstract String thumbnail();
+  public abstract boolean hidden();
 
   @SerializedName("is_self")
   public abstract boolean isSelf();
 
+  @Nullable @SerializedName("link_flair_text")
+  public abstract String linkFlairText();
+
+  @SerializedName("num_comments")
+  public abstract int commentsCount();
+
   public abstract String permalink();
+
+  @Nullable public abstract String selftext();
+
+  @Nullable @SerializedName("selftext_html")
+  public abstract String selftextHtml();
 
   public abstract boolean stickied();
 
-  public abstract String url();
+  public abstract String thumbnail();
 
   public abstract String title();
 
-  @SerializedName("num_comments")
-  public abstract int numComments();
+  public abstract String url();
 
   public abstract boolean visited();
 }

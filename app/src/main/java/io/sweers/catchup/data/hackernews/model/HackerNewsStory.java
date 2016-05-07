@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
-import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
@@ -48,20 +47,4 @@ public abstract class HackerNewsStory {
   @Nullable
   public abstract String url();
 
-  public enum HNType {
-    @Json(name = "job")
-    JOB,
-
-    @Json(name = "story")
-    STORY,
-
-    @Json(name = "comment")
-    COMMENT,
-
-    @Json(name = "poll")
-    POLL,
-
-    @Json(name = "pollopt")
-    POLLOPT
-  }
 }

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.HttpUrl;
+import timber.log.Timber;
 
 /**
  * Models a post on Product Hunt.
@@ -39,30 +40,30 @@ public abstract class Post {
     return new AutoValue_Post.MoshiJsonAdapter(moshi);
   }
 
-  public abstract String name();
-
-  public abstract String tagline();
-
-  public abstract String discussion_url();
-
-  public abstract String redirect_url();
+  public abstract int comments_count();
 
   // TODO Coerce this to Instant - '2016-05-06T00:45:40.791-07:00'
   public abstract Date created_at();
 
-  public abstract int comments_count();
-
-  public abstract int votes_count();
-
-  public abstract User user();
+  public abstract String discussion_url();
 
   public abstract List<User> makers();
 
-  public abstract List<Topic> topics();
-
   public abstract boolean maker_inside();
 
+  public abstract String name();
+
+  public abstract String redirect_url();
+
   public abstract Map<String, String> screenshot_url();
+
+  public abstract String tagline();
+
+  public abstract List<Topic> topics();
+
+  public abstract User user();
+
+  public abstract int votes_count();
 
   @Nullable
   public String getFirstTopic() {
@@ -94,6 +95,7 @@ public abstract class Post {
           break;
         }
       } catch (NumberFormatException nfe) {
+        Timber.e(nfe, "FailedGetScreenshotUrl");
       }
     }
 

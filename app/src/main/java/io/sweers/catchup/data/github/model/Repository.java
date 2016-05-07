@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
@@ -16,18 +17,22 @@ public abstract class Repository {
     return new AutoValue_Repository.MoshiJsonAdapter(moshi);
   }
 
-  public abstract String name();
+  @Json(name = "created_at")
+  public abstract Instant createdAt();
 
-  public abstract String full_name();
+  @Json(name = "full_name")
+  public abstract String fullName();
 
-  public abstract User owner();
-
-  public abstract String html_url();
-
-  public abstract Instant created_at();
+  @Json(name = "html_url")
+  public abstract String htmlUrl();
 
   @Nullable public abstract String language();
 
-  public abstract int stargazers_count();
+  public abstract String name();
+
+  public abstract User owner();
+
+  @Json(name = "stargazers_count")
+  public abstract int starsCount();
 
 }

@@ -12,9 +12,9 @@ public abstract class User {
     return new AutoValue_User.MoshiJsonAdapter(moshi);
   }
 
+  public abstract String name();
+
   public abstract String userId();
 
   public abstract String username();
-
-  public abstract String name();
 }

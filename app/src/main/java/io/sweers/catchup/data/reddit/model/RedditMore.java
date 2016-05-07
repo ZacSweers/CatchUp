@@ -15,14 +15,14 @@ public abstract class RedditMore extends RedditObject {
     return new AutoValue_RedditMore.GsonTypeAdapter(gson);
   }
 
-  public abstract int count();
+  public abstract List<String> children();
 
-  @SerializedName("parent_id")
-  public abstract String parentId();
+  public abstract int count();
 
   public abstract String id();
 
   public abstract String name();
 
-  public abstract List<String> children();
+  @SerializedName("parent_id")
+  public abstract String parentId();
 }

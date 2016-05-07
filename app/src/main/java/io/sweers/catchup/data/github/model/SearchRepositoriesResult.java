@@ -3,6 +3,7 @@ package io.sweers.catchup.data.github.model;
 import android.support.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
+import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
@@ -15,10 +16,12 @@ public abstract class SearchRepositoriesResult {
     return new AutoValue_SearchRepositoriesResult.MoshiJsonAdapter(moshi);
   }
 
-  public abstract int total_count();
-
-  public abstract boolean incomplete_results();
+  @Json(name = "incomplete_results")
+  public abstract boolean incompleteResults();
 
   public abstract List<Repository> items();
+
+  @Json(name = "total_count")
+  public abstract int totalCount();
 
 }

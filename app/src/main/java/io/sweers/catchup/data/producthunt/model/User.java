@@ -35,19 +35,19 @@ public abstract class User {
     return new AutoValue_User.MoshiJsonAdapter(moshi);
   }
 
-  public abstract long id();
-
-  public abstract String name();
+  public abstract String created_at();
 
   @Nullable public abstract String headline();
 
-  public abstract String created_at();
+  public abstract long id();
+
+  public abstract Map<String, String> image_url();
+
+  public abstract String name();
+
+  public abstract String profile_url();
 
   public abstract String username();
 
   @Nullable public abstract String website_url();
-
-  public abstract String profile_url();
-
-  public abstract Map<String, String> image_url();
 }

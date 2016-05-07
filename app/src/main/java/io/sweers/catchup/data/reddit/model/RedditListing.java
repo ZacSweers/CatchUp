@@ -15,11 +15,11 @@ public abstract class RedditListing extends RedditObject {
     return new AutoValue_RedditListing.GsonTypeAdapter(gson);
   }
 
-  public abstract String modhash();
-
   public abstract String after();
 
   @Nullable public abstract String before();
 
   public abstract List<? extends RedditObject> children();
+
+  public abstract String modhash();
 }

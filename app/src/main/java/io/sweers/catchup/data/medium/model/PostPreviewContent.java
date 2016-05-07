@@ -13,7 +13,7 @@ public abstract class PostPreviewContent {
     return new AutoValue_PostPreviewContent.MoshiJsonAdapter(moshi);
   }
 
-  public abstract boolean isFullContent();
-
   public abstract BodyModel bodyModel();
+
+  public abstract boolean isFullContent();
 }
