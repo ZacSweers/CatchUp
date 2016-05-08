@@ -2,7 +2,6 @@ package io.sweers.catchup.ui.activity;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ViewGroup;
 
@@ -18,9 +17,10 @@ import io.sweers.catchup.R;
 import io.sweers.catchup.app.CatchUpApplication;
 import io.sweers.catchup.ui.PagerController;
 import io.sweers.catchup.ui.base.ActionBarProvider;
+import io.sweers.catchup.ui.base.BaseActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 
-public class MainActivity extends AppCompatActivity implements ActionBarProvider {
+public class MainActivity extends BaseActivity implements ActionBarProvider {
 
   @Inject CustomTabActivityHelper customTab;
 

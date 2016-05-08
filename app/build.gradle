@@ -87,6 +87,11 @@ android {
     }
 }
 
+psync {
+    includesPattern = "**/xml/prefs_*.xml"
+    generateRx = true
+}
+
 def supportLibraries = configurations.create("supportCompile")
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
@@ -139,6 +144,9 @@ dependencies {
     compile rootProject.ext.recyclerViewAnimators
     compile rootProject.ext.rxJava
     compile rootProject.ext.rxLifecycle
+    compile rootProject.ext.rxPreferences
+    compile rootProject.ext.rxReceivers
+    compile rootProject.ext.rxRelay
 
     // Stetho
     debugCompile rootProject.ext.stetho

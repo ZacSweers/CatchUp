@@ -1,5 +1,7 @@
 package io.sweers.catchup.data;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Looper;
 
 import com.ryanharter.auto.value.moshi.AutoValueMoshiAdapterFactory;
@@ -11,7 +13,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.sweers.catchup.app.CatchUpApplication;
+import io.sweers.catchup.injection.ApplicationContext;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -23,8 +25,8 @@ public class DataModule {
   private static final long HTTP_RESPONSE_CACHE = 10 * 1024 * 1024;
   private static final int HTTP_TIMEOUT_S = 30;
 
-  @Provides @Singleton Cache provideCache(CatchUpApplication application) {
-    return new Cache(application.getCacheDir(), HTTP_RESPONSE_CACHE);
+  @Provides @Singleton Cache provideCache(@ApplicationContext Context context) {
+    return new Cache(context.getCacheDir(), HTTP_RESPONSE_CACHE);
   }
 
   @Provides @Singleton OkHttpClient provideOkHttpClient(Cache cache) {
@@ -54,5 +56,10 @@ public class DataModule {
 
   @Provides @Singleton RxJavaCallAdapterFactory provideRxJavaCallAdapterFactory() {
     return RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+  }
+
+  @Provides @Singleton
+  public SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {
+    return context.getSharedPreferences("catchup", Context.MODE_PRIVATE);
   }
 }

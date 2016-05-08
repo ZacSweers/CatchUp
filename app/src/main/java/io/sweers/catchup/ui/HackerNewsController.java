@@ -1,12 +1,12 @@
 package io.sweers.catchup.ui;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
 import android.view.View;
+import android.widget.Toast;
 
 import com.squareup.moshi.Moshi;
 
@@ -20,6 +20,7 @@ import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
+import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
 import io.sweers.catchup.injection.API;
@@ -27,7 +28,6 @@ import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
-import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -40,7 +40,7 @@ import rx.schedulers.Schedulers;
 public final class HackerNewsController extends BaseNewsController<HackerNewsStory> {
 
   @Inject HackerNewsService service;
-  @Inject CustomTabActivityHelper customTab;
+  @Inject LinkManager linkManager;
 
   public HackerNewsController() {
     this(null);
@@ -88,20 +88,17 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
 
   @Override
   protected void onItemClick(@NonNull BaseNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View view, @NonNull HackerNewsStory story) {
-    // TODO Check supported media types, otherwise Chrome Custom Tabs
-    customTab.openCustomTab(customTab.getCustomTabIntent()
-            .setToolbarColor(getServiceThemeColor())
-            .build(),
-        Uri.parse(story.url()));
+    String url = story.url();
+    if (url == null) {
+      Toast.makeText(view.getContext(), R.string.error_no_url, Toast.LENGTH_SHORT).show();
+    } else {
+      linkManager.openUrl(url);
+    }
   }
 
   @Override
   protected void onCommentClick(@NonNull BaseNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View view, @NonNull HackerNewsStory story) {
-    // TODO Make the app choice a pref
-    customTab.openCustomTab(customTab.getCustomTabIntent()
-            .setToolbarColor(getServiceThemeColor())
-            .build(),
-        Uri.parse("https://news.ycombinator.com/item?id=" + story.id()));
+    linkManager.openUrl("https://news.ycombinator.com/item?id=" + story.id());
   }
 
   @NonNull @Override protected Observable<List<HackerNewsStory>> getDataObservable() {

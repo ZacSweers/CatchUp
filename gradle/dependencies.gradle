@@ -82,8 +82,9 @@ ext {
     rxBinding = "com.jakewharton.rxbinding:rxbinding:$rxBindingVersion"
     rxBindingV4 = "com.jakewharton.rxbinding:rxbinding-support-v4:$rxBindingVersion"
     rxJava = 'io.reactivex:rxjava:1.1.5'
-    rxLifecycle = 'com.trello:rxlifecycle:0.5.0'
+    rxLifecycle = 'com.trello:rxlifecycle:0.6.0'
     rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.1'
+    rxReceivers = 'com.f2prateek.rx.receivers:rx-receivers:0.1.0-SNAPSHOT'
     rxRelay = 'com.jakewharton.rxrelay:rxrelay:1.1.0'
 
     // Square and JW

@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import io.sweers.catchup.R;
+import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.util.NumberUtil;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import retrofit2.adapter.rxjava.HttpException;
@@ -172,7 +173,7 @@ public abstract class BaseNewsController<T> extends BaseController
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .compose(this.<List<T>>bindToLifecycle())
+        .compose(Confine.to(this))
         .subscribe(
             data -> {
               progress.setVisibility(GONE);

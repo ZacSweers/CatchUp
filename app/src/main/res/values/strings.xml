@@ -1,4 +1,20 @@
 <resources>
   <string name="app_name">CatchUp</string>
   <string name="retry">Retry</string>
+  <string name="pref_services">Services</string>
+  <string name="pref_services_summary">Configure service preferences</string>
+  <string name="about">About</string>
+  <string name="licenses">Licenses</string>
+  <string name="pref_reports">Analytics and Crash Reporting</string>
+  <string name="pref_reports_summary">Help me help you! Enable this to allow automatic uploads of analytics and crash reports. No personally identifiable data is sent.</string>
+  <string name="hacker_news">Hacker News</string>
+  <string name="reddit">reddit</string>
+  <string name="medium">Medium</string>
+  <string name="product_hunt">Product Hunt</string>
+  <string name="slashdot">Slashdot</string>
+  <string name="designer_news">Designer News</string>
+  <string name="dribbble">Dribbble</string>
+  <string name="github">GitHub</string>
+  <string name="readability">Readability</string>
+  <string name="error_no_url">No URL :(</string>
 </resources>

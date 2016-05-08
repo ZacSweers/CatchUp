@@ -1,8 +1,6 @@
 package io.sweers.catchup.ui;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
@@ -21,6 +19,7 @@ import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
+import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.medium.MediumService;
 import io.sweers.catchup.data.medium.model.Collection;
 import io.sweers.catchup.data.medium.model.MediumPost;
@@ -31,7 +30,6 @@ import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
-import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -45,7 +43,7 @@ import rx.Observable;
 public final class MediumController extends BaseNewsController<MediumPost> {
 
   @Inject MediumService service;
-  @Inject CustomTabActivityHelper customTab;
+  @Inject LinkManager linkManager;
 
   public MediumController() {
     this(null);
@@ -89,28 +87,12 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
   @Override
   protected void onItemClick(@NonNull BaseNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
-    // TODO construct URL. domain + uniqueSlug
-    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.constructUrl()));
-    startActivity(intent);
-
-    // TODO This should be how it's actually done
-//      customTab.openCustomTab(customTab.getCustomTabIntent()
-//        .setToolbarColor(getServiceThemeColor())
-//        .build(),
-//          Uri.parse(item.constructUrl()));
+    linkManager.openUrl(item.constructUrl());
   }
 
   @Override
   protected void onCommentClick(@NonNull BaseNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
-    // TODO Make the app choice a pref
-    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.constructCommentsUrl()));
-    startActivity(intent);
-
-    // TODO This should be how it's actually done
-//      customTab.openCustomTab(customTab.getCustomTabIntent()
-//        .setToolbarColor(getServiceThemeColor())
-//        .build(),
-//          Uri.parse(item.constructCommentsUrl()));
+    linkManager.openUrl(item.constructUrl());
   }
 
   @NonNull @Override protected Observable<List<MediumPost>> getDataObservable() {

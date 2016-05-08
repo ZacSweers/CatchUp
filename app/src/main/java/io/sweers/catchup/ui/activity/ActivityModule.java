@@ -16,6 +16,12 @@ class ActivityModule {
 
   @PerActivity
   @Provides
+  MainActivity provideActivity() {
+    return activity;
+  }
+
+  @PerActivity
+  @Provides
   ActionBarProvider provideActionBar() {
     return activity;
   }

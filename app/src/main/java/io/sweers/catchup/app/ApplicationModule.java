@@ -1,11 +1,13 @@
 package io.sweers.catchup.app;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.sweers.catchup.injection.ApplicationContext;
 
 @Module
 public class ApplicationModule {
@@ -16,9 +18,8 @@ public class ApplicationModule {
     this.application = application;
   }
 
-  @Provides @Singleton
-  public CatchUpApplication provideApplication() {
-    return application;
+  @Provides @Singleton @ApplicationContext
+  public Context provideApplicationContext() {
+    return application.getApplicationContext();
   }
-
 }

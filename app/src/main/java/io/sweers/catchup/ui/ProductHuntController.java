@@ -1,7 +1,6 @@
 package io.sweers.catchup.ui;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
@@ -21,6 +20,7 @@ import dagger.Provides;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
+import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.producthunt.ProductHuntService;
 import io.sweers.catchup.data.producthunt.model.Post;
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
@@ -29,7 +29,6 @@ import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
-import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -40,7 +39,7 @@ import rx.Observable;
 public final class ProductHuntController extends BaseNewsController<Post> {
 
   @Inject ProductHuntService service;
-  @Inject CustomTabActivityHelper customTab;
+  @Inject LinkManager linkManager;
 
   public ProductHuntController() {
     this(null);
@@ -75,20 +74,12 @@ public final class ProductHuntController extends BaseNewsController<Post> {
 
   @Override
   protected void onItemClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
-    // TODO Make the app choice a pref
-    customTab.openCustomTab(customTab.getCustomTabIntent()
-            .setToolbarColor(getServiceThemeColor())
-            .build(),
-        Uri.parse(item.redirect_url()));
+    linkManager.openUrl(item.redirect_url());
   }
 
   @Override
   protected void onCommentClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
-    // TODO Make the app choice a pref
-    customTab.openCustomTab(customTab.getCustomTabIntent()
-            .setToolbarColor(getServiceThemeColor())
-            .build(),
-        Uri.parse(item.discussion_url()));
+    linkManager.openUrl(item.discussion_url());
   }
 
   @NonNull @Override protected Observable<List<Post>> getDataObservable() {

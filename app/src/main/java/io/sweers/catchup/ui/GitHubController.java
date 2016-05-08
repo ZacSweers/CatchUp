@@ -1,7 +1,6 @@
 package io.sweers.catchup.ui;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
@@ -20,6 +19,7 @@ import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
 import io.sweers.catchup.data.ISOInstantAdapter;
+import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.github.GitHubService;
 import io.sweers.catchup.data.github.TrendingTimespan;
 import io.sweers.catchup.data.github.model.Order;
@@ -31,7 +31,6 @@ import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
-import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -42,7 +41,7 @@ import rx.Observable;
 public final class GitHubController extends BaseNewsController<Repository> {
 
   @Inject GitHubService service;
-  @Inject CustomTabActivityHelper customTab;
+  @Inject LinkManager linkManager;
 
   public GitHubController() {
     this(null);
@@ -77,11 +76,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
 
   @Override
   protected void onItemClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Repository item) {
-    // TODO Make the app choice a pref
-    customTab.openCustomTab(customTab.getCustomTabIntent()
-            .setToolbarColor(getServiceThemeColor())
-            .build(),
-        Uri.parse(item.htmlUrl()));
+    linkManager.openUrl(item.htmlUrl());
   }
 
   @NonNull @Override protected Observable<List<Repository>> getDataObservable() {

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <Preference
+    android:key="services"
+    android:title="@string/pref_services"
+    android:summary="@string/pref_services_summary"
+    />
+
+  <Preference
+    android:key="about"
+    android:title="@string/about"
+    />
+
+  <Preference
+    android:key="licenses"
+    android:title="@string/licenses"
+    />
+
+  <CheckBoxPreference
+    android:key="reports"
+    android:defaultValue="true"
+    android:title="@string/pref_reports"
+    android:summary="@string/pref_reports_summary"
+    />
+
+</PreferenceScreen>
