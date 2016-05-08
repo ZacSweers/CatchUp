@@ -21,10 +21,6 @@ public class CatchUpApplication extends Application {
   private static RefWatcher refWatcher;
   private static ApplicationComponent component;
 
-  static {
-    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
-  }
-
   @Override
   public void onCreate() {
     super.onCreate();
@@ -37,6 +33,14 @@ public class CatchUpApplication extends Application {
     AndroidThreeTen.init(this);
     P.init(this);
     P.setSharedPreferences(sharedPreferences);  // TODO Pass RxSharedPreferences instance to this when it's supported
+
+    int nightMode = AppCompatDelegate.MODE_NIGHT_NO;
+    if (P.daynightAuto.get()) {
+      nightMode = AppCompatDelegate.MODE_NIGHT_AUTO;
+    } else if (P.daynightNight.get()) {
+      nightMode = AppCompatDelegate.MODE_NIGHT_YES;
+    }
+    AppCompatDelegate.setDefaultNightMode(nightMode);
     initVariant();
   }
 

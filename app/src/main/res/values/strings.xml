@@ -17,4 +17,6 @@
   <string name="github">GitHub</string>
   <string name="readability">Readability</string>
   <string name="error_no_url">No URL :(</string>
+  <string name="general">General</string>
+  <string name="prefs_theme">Theming</string>
 </resources>
