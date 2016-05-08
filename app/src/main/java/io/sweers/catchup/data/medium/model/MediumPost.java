@@ -7,8 +7,10 @@ import com.google.auto.value.AutoValue;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+import io.sweers.catchup.ui.base.HasStableId;
+
 @AutoValue
-public abstract class MediumPost {
+public abstract class MediumPost implements HasStableId {
   public static JsonAdapter<MediumPost> jsonAdapter(@NonNull Moshi moshi) {
     return new AutoValue_MediumPost.MoshiJsonAdapter(moshi);
   }
@@ -31,6 +33,10 @@ public abstract class MediumPost {
   @NonNull
   public String constructCommentsUrl() {
     return constructUrl() + "#--responses";
+  }
+
+  @Override public long stableId() {
+    return post().id().hashCode();
   }
 
   @AutoValue.Builder

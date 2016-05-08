@@ -11,8 +11,10 @@ import org.threeten.bp.Instant;
 
 import java.util.List;
 
+import io.sweers.catchup.ui.base.HasStableId;
+
 @AutoValue
-public abstract class HackerNewsStory {
+public abstract class HackerNewsStory implements HasStableId {
 
   public static JsonAdapter<HackerNewsStory> jsonAdapter(@NonNull Moshi moshi) {
     return new AutoValue_HackerNewsStory.MoshiJsonAdapter(moshi);
@@ -47,4 +49,7 @@ public abstract class HackerNewsStory {
   @Nullable
   public abstract String url();
 
+  @Override public long stableId() {
+    return id().hashCode();
+  }
 }

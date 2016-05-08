@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import io.sweers.catchup.ui.base.HasStableId;
 import okhttp3.HttpUrl;
 import timber.log.Timber;
 
@@ -34,7 +35,7 @@ import timber.log.Timber;
  * Models a post on Product Hunt.
  */
 @AutoValue
-public abstract class Post {
+public abstract class Post implements HasStableId {
 
   public static JsonAdapter<Post> jsonAdapter(@NonNull Moshi moshi) {
     return new AutoValue_Post.MoshiJsonAdapter(moshi);
@@ -46,6 +47,8 @@ public abstract class Post {
   public abstract Date created_at();
 
   public abstract String discussion_url();
+
+  public abstract long id();
 
   public abstract List<User> makers();
 
@@ -100,5 +103,9 @@ public abstract class Post {
     }
 
     return url;
+  }
+
+  @Override public long stableId() {
+    return id();
   }
 }

@@ -6,7 +6,9 @@ import com.google.gson.annotations.SerializedName;
 
 import org.threeten.bp.Instant;
 
-public abstract class RedditSubmission extends RedditObject {
+import io.sweers.catchup.ui.base.HasStableId;
+
+public abstract class RedditSubmission extends RedditObject implements HasStableId {
 
   public abstract String author();
 
@@ -34,4 +36,8 @@ public abstract class RedditSubmission extends RedditObject {
   public abstract String subreddit();
 
   public abstract int ups();
+
+  @Override public long stableId() {
+    return id().hashCode();
+  }
 }

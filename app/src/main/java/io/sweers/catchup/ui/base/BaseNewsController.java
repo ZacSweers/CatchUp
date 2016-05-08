@@ -41,7 +41,7 @@ import timber.log.Timber;
 import static android.view.View.GONE;
 
 
-public abstract class BaseNewsController<T> extends BaseController
+public abstract class BaseNewsController<T extends HasStableId> extends BaseController
     implements SwipeRefreshLayout.OnRefreshListener {
 
   @BindView(R.id.error_container) View errorView;
@@ -215,6 +215,15 @@ public abstract class BaseNewsController<T> extends BaseController
   private class Adapter extends RecyclerView.Adapter<ViewHolder> {
 
     private final List<T> data = new ArrayList<>();
+
+    public Adapter() {
+      super();
+      setHasStableIds(true);
+    }
+
+    @Override public long getItemId(int position) {
+      return data.get(position).stableId();
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

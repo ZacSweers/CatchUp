@@ -10,8 +10,10 @@ import com.squareup.moshi.Moshi;
 
 import org.threeten.bp.Instant;
 
+import io.sweers.catchup.ui.base.HasStableId;
+
 @AutoValue
-public abstract class Repository {
+public abstract class Repository implements HasStableId {
 
   public static JsonAdapter<Repository> jsonAdapter(@NonNull Moshi moshi) {
     return new AutoValue_Repository.MoshiJsonAdapter(moshi);
@@ -26,6 +28,8 @@ public abstract class Repository {
   @Json(name = "html_url")
   public abstract String htmlUrl();
 
+  public abstract long id();
+
   @Nullable public abstract String language();
 
   public abstract String name();
@@ -35,4 +39,7 @@ public abstract class Repository {
   @Json(name = "stargazers_count")
   public abstract int starsCount();
 
+  @Override public long stableId() {
+    return id();
+  }
 }
