@@ -26,11 +26,14 @@ import io.sweers.catchup.data.reddit.RedditService;
 import io.sweers.catchup.data.reddit.model.RedditLink;
 import io.sweers.catchup.data.reddit.model.RedditObject;
 import io.sweers.catchup.data.reddit.model.RedditObjectDeserializer;
+import io.sweers.catchup.injection.ForApi;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -120,10 +123,27 @@ public final class RedditController extends BaseNewsController<RedditLink> {
           .create();
     }
 
+    @ForApi
+    @Provides
+    @PerController
+    OkHttpClient provideRedditOkHttpClient(OkHttpClient client) {
+      return client.newBuilder()
+          .addNetworkInterceptor(chain -> {
+            Request request = chain.request();
+            HttpUrl url = request.url();
+            request = request.newBuilder()
+                .header("User-Agent", "CatchUp app by /u/pandanomic")
+                .url(url.newBuilder().encodedPath(url.encodedPath() + ".json").build())
+                .build();
+            return chain.proceed(request);
+          })
+          .build();
+    }
+
     @Provides
     @PerController
     RedditService provideRedditService(
-        final Lazy<OkHttpClient> client,
+        @ForApi final Lazy<OkHttpClient> client,
         RxJavaCallAdapterFactory rxJavaCallAdapterFactory,
         Gson gson) {
       Retrofit retrofit = new Retrofit.Builder()

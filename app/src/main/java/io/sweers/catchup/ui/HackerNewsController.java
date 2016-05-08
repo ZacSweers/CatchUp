@@ -23,7 +23,7 @@ import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
-import io.sweers.catchup.injection.API;
+import io.sweers.catchup.injection.ForApi;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -124,7 +124,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
 
     @Provides
     @PerController
-    @API
+    @ForApi
     Moshi provideHackerNewsMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Instant.class, new EpochInstantJsonAdapter(true))
@@ -135,7 +135,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     @PerController
     HackerNewsService provideHackerNewsService(
         final Lazy<OkHttpClient> client,
-        @API Moshi moshi,
+        @ForApi Moshi moshi,
         RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()
           .baseUrl(HackerNewsService.ENDPOINT)

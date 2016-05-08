@@ -24,7 +24,7 @@ import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.producthunt.ProductHuntService;
 import io.sweers.catchup.data.producthunt.model.Post;
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
-import io.sweers.catchup.injection.API;
+import io.sweers.catchup.injection.ForApi;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -102,7 +102,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
 
     @Provides
     @PerController
-    @API
+    @ForApi
     OkHttpClient provideProductHuntOkHttpClient(OkHttpClient client) {
       return client
           .newBuilder()
@@ -112,7 +112,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
 
     @Provides
     @PerController
-    @API
+    @ForApi
     Moshi provideProductHuntMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Date.class, new Rfc3339DateJsonAdapter())
@@ -122,8 +122,8 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     @Provides
     @PerController
     ProductHuntService provideProductHuntService(
-        @API final Lazy<OkHttpClient> client,
-        @API Moshi moshi,
+        @ForApi final Lazy<OkHttpClient> client,
+        @ForApi Moshi moshi,
         RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder()
           .baseUrl(ProductHuntService.ENDPOINT)

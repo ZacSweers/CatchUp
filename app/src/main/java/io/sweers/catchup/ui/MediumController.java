@@ -25,7 +25,7 @@ import io.sweers.catchup.data.medium.model.Collection;
 import io.sweers.catchup.data.medium.model.MediumPost;
 import io.sweers.catchup.data.medium.model.MediumResponse;
 import io.sweers.catchup.data.medium.model.Payload;
-import io.sweers.catchup.injection.API;
+import io.sweers.catchup.injection.ForApi;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -137,7 +137,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
     @Provides
     @PerController
-    @API
+    @ForApi
     OkHttpClient provideMediumOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addInterceptor(chain -> {
@@ -152,7 +152,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
     @Provides
     @PerController
-    @API
+    @ForApi
     Moshi provideMediumMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Instant.class, new EpochInstantJsonAdapter())
@@ -162,8 +162,8 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     @Provides
     @PerController
     MediumService provideMediumService(
-        @API final Lazy<OkHttpClient> client,
-        @API Moshi moshi,
+        @ForApi final Lazy<OkHttpClient> client,
+        @ForApi Moshi moshi,
         RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()
           .baseUrl(MediumService.ENDPOINT)

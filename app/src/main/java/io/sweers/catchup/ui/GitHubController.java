@@ -26,7 +26,7 @@ import io.sweers.catchup.data.github.model.Order;
 import io.sweers.catchup.data.github.model.Repository;
 import io.sweers.catchup.data.github.model.SearchQuery;
 import io.sweers.catchup.data.github.model.SearchRepositoriesResult;
-import io.sweers.catchup.injection.API;
+import io.sweers.catchup.injection.ForApi;
 import io.sweers.catchup.injection.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -103,7 +103,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
 
     @Provides
     @PerController
-    @API
+    @ForApi
     OkHttpClient provideGitHubOkHttpClient(OkHttpClient client) {
       return client
           .newBuilder()
@@ -113,7 +113,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
 
     @Provides
     @PerController
-    @API
+    @ForApi
     Moshi provideGitHubMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(new ISOInstantAdapter())
@@ -123,8 +123,8 @@ public final class GitHubController extends BaseNewsController<Repository> {
     @Provides
     @PerController
     GitHubService provideGitHubService(
-        @API final Lazy<OkHttpClient> client,
-        @API Moshi moshi,
+        @ForApi final Lazy<OkHttpClient> client,
+        @ForApi Moshi moshi,
         RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder()
           .baseUrl(GitHubService.ENDPOINT)
