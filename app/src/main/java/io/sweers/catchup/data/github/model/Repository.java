@@ -30,7 +30,8 @@ public abstract class Repository implements HasStableId {
 
   public abstract long id();
 
-  @Nullable public abstract String language();
+  @Nullable
+  public abstract String language();
 
   public abstract String name();
 
@@ -39,7 +40,8 @@ public abstract class Repository implements HasStableId {
   @Json(name = "stargazers_count")
   public abstract int starsCount();
 
-  @Override public long stableId() {
+  @Override
+  public long stableId() {
     return id();
   }
 }

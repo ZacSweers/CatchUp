@@ -52,7 +52,8 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     super(args);
   }
 
-  @Override protected void performInjection() {
+  @Override
+  protected void performInjection() {
     DaggerRedditController_Component
         .builder()
         .module(new Module())
@@ -61,7 +62,8 @@ public final class RedditController extends BaseNewsController<RedditLink> {
         .inject(this);
   }
 
-  @Override protected Context onThemeContext(@NonNull Context context) {
+  @Override
+  protected Context onThemeContext(@NonNull Context context) {
     return new ContextThemeWrapper(context, R.style.CatchUp_Reddit);
   }
 
@@ -89,7 +91,9 @@ public final class RedditController extends BaseNewsController<RedditLink> {
         .subscribe(v -> linkManager.openUrl("https://reddit.com/comments/" + link.id()));
   }
 
-  @NonNull @Override protected Observable<List<RedditLink>> getDataObservable() {
+  @NonNull
+  @Override
+  protected Observable<List<RedditLink>> getDataObservable() {
     return service.frontPage(50)
         .map((redditListingRedditResponse) -> {
           //noinspection CodeBlock2Expr,unchecked

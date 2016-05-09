@@ -36,9 +36,12 @@ public abstract class AuthInterceptor implements Interceptor {
     return new AutoValue_AuthInterceptor(accessToken, method);
   }
 
-  @NonNull @Redacted public abstract String accessToken();
+  @NonNull
+  @Redacted
+  public abstract String accessToken();
 
-  @NonNull public abstract String method();
+  @NonNull
+  public abstract String method();
 
   @Override
   public Response intercept(Chain chain) throws IOException {

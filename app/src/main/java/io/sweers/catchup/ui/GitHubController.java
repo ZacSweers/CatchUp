@@ -52,7 +52,8 @@ public final class GitHubController extends BaseNewsController<Repository> {
     super(args);
   }
 
-  @Override protected void performInjection() {
+  @Override
+  protected void performInjection() {
     DaggerGitHubController_Component
         .builder()
         .module(new Module())
@@ -61,7 +62,8 @@ public final class GitHubController extends BaseNewsController<Repository> {
         .inject(this);
   }
 
-  @Override protected Context onThemeContext(@NonNull Context context) {
+  @Override
+  protected Context onThemeContext(@NonNull Context context) {
     return new ContextThemeWrapper(context, R.style.CatchUp_GitHub);
   }
 
@@ -78,7 +80,9 @@ public final class GitHubController extends BaseNewsController<Repository> {
         .subscribe(v -> linkManager.openUrl(item.htmlUrl()));
   }
 
-  @NonNull @Override protected Observable<List<Repository>> getDataObservable() {
+  @NonNull
+  @Override
+  protected Observable<List<Repository>> getDataObservable() {
     return service.searchRepositories(
         SearchQuery.builder().createdSince(TrendingTimespan.WEEK.createdSince()).build(),
         "watchers",

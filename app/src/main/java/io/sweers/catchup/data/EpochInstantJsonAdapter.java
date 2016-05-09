@@ -26,7 +26,8 @@ public final class EpochInstantJsonAdapter extends JsonAdapter<Instant> {
     this.isSeconds = isSeconds;
   }
 
-  @Override public synchronized Instant fromJson(JsonReader reader) throws IOException {
+  @Override
+  public synchronized Instant fromJson(JsonReader reader) throws IOException {
     long l = reader.nextLong();
     if (isSeconds) {
       l *= 1000;
@@ -34,7 +35,8 @@ public final class EpochInstantJsonAdapter extends JsonAdapter<Instant> {
     return Instant.ofEpochMilli(l);
   }
 
-  @Override public synchronized void toJson(JsonWriter writer, Instant value) throws IOException {
+  @Override
+  public synchronized void toJson(JsonWriter writer, Instant value) throws IOException {
     long longTime = value.toEpochMilli();
     if (isSeconds) {
       longTime /= 1000;

@@ -25,11 +25,15 @@ public class DataModule {
   private static final long HTTP_RESPONSE_CACHE = 10 * 1024 * 1024;
   private static final int HTTP_TIMEOUT_S = 30;
 
-  @Provides @Singleton Cache provideCache(@ApplicationContext Context context) {
+  @Provides
+  @Singleton
+  Cache provideCache(@ApplicationContext Context context) {
     return new Cache(context.getCacheDir(), HTTP_RESPONSE_CACHE);
   }
 
-  @Provides @Singleton OkHttpClient provideOkHttpClient(Cache cache) {
+  @Provides
+  @Singleton
+  OkHttpClient provideOkHttpClient(Cache cache) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
       throw new IllegalStateException("HTTP client initialized on main thread.");
     }
@@ -48,17 +52,22 @@ public class DataModule {
     // Override in variants
   }
 
-  @Provides @Singleton Moshi provideMoshi() {
+  @Provides
+  @Singleton
+  Moshi provideMoshi() {
     return new Moshi.Builder()
         .add(new AutoValueMoshiAdapterFactory())
         .build();
   }
 
-  @Provides @Singleton RxJavaCallAdapterFactory provideRxJavaCallAdapterFactory() {
+  @Provides
+  @Singleton
+  RxJavaCallAdapterFactory provideRxJavaCallAdapterFactory() {
     return RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
   }
 
-  @Provides @Singleton
+  @Provides
+  @Singleton
   public SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {
     return context.getSharedPreferences("catchup", Context.MODE_PRIVATE);
   }

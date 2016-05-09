@@ -41,13 +41,11 @@ import io.sweers.catchup.R;
 public class BaselineGridTextView extends AppCompatTextView {
 
   private final int FOUR_DIP;
-  private int unalignedTopPadding = 0;
-
   @StyledAttr(R.styleable.BaselineGridTextView_lineHeightMultiplierHint)
   float lineHeightMultiplierHint = 1f;
-
   @StyledAttr(R.styleable.BaselineGridTextView_lineHeightHint)
   float lineHeightHint = 0f;
+  private int unalignedTopPadding = 0;
 
   public BaselineGridTextView(Context context) {
     this(context, null);

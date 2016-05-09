@@ -30,11 +30,14 @@ public abstract class HackerNewsStory implements HasStableId {
 
   public abstract String id();
 
-  @Nullable public abstract List<String> kids();
+  @Nullable
+  public abstract List<String> kids();
 
-  @Nullable public abstract HackerNewsStory parent();
+  @Nullable
+  public abstract HackerNewsStory parent();
 
-  @Nullable public abstract List<String> parts();
+  @Nullable
+  public abstract List<String> parts();
 
   public abstract int score();
 
@@ -42,14 +45,16 @@ public abstract class HackerNewsStory implements HasStableId {
 
   public abstract String title();
 
-  @Nullable public abstract String text();
+  @Nullable
+  public abstract String text();
 
   public abstract HNType type();
 
   @Nullable
   public abstract String url();
 
-  @Override public long stableId() {
+  @Override
+  public long stableId() {
     return id().hashCode();
   }
 }

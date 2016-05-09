@@ -19,7 +19,8 @@ public abstract class MediumPost implements HasStableId {
     return new AutoValue_MediumPost.Builder();
   }
 
-  @Nullable public abstract Collection collection();
+  @Nullable
+  public abstract Collection collection();
 
   public abstract Post post();
 
@@ -35,7 +36,8 @@ public abstract class MediumPost implements HasStableId {
     return constructUrl() + "#--responses";
   }
 
-  @Override public long stableId() {
+  @Override
+  public long stableId() {
     return post().id().hashCode();
   }
 

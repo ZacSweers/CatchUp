@@ -97,7 +97,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     return inflater.inflate(R.layout.controller_basic_news, container, false);
   }
 
-  @Override protected void onViewBound(@NonNull View view) {
+  @Override
+  protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
     // TODO There must be an earlier place than this
     performInjection();
@@ -117,13 +118,15 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     recyclerView.setItemAnimator(itemAnimator);
   }
 
-  @OnClick(R.id.retry_button) void onRetry() {
+  @OnClick(R.id.retry_button)
+  void onRetry() {
     errorView.setVisibility(GONE);
     progress.setVisibility(View.VISIBLE);
     onRefresh();
   }
 
-  @OnClick(R.id.error_image) void onErrorClick(ImageView imageView) {
+  @OnClick(R.id.error_image)
+  void onErrorClick(ImageView imageView) {
     AnimatedVectorDrawableCompat avd = (AnimatedVectorDrawableCompat) imageView.getDrawable();
     avd.start();
   }
@@ -192,7 +195,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       setHasStableIds(true);
     }
 
-    @Override public long getItemId(int position) {
+    @Override
+    public long getItemId(int position) {
       return data.get(position).stableId();
     }
 

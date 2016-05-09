@@ -23,7 +23,8 @@ public abstract class SearchQuery {
 
   public abstract LocalDate createdSince();
 
-  @Override public final String toString() {
+  @Override
+  public final String toString() {
     // Returning null here is not ideal, but it lets retrofit drop the query param altogether.
     return createdSince() == null ? null : "created:>=" + ISO_LOCAL_DATE.format(createdSince());
   }

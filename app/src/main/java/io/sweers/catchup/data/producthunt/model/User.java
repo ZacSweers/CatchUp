@@ -37,7 +37,8 @@ public abstract class User {
 
   public abstract String created_at();
 
-  @Nullable public abstract String headline();
+  @Nullable
+  public abstract String headline();
 
   public abstract long id();
 
@@ -49,5 +50,6 @@ public abstract class User {
 
   public abstract String username();
 
-  @Nullable public abstract String website_url();
+  @Nullable
+  public abstract String website_url();
 }

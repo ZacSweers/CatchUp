@@ -13,7 +13,8 @@ public abstract class Collection {
     return new AutoValue_Collection.MoshiJsonAdapter(moshi);
   }
 
-  @Nullable public abstract String domain();
+  @Nullable
+  public abstract String domain();
 
   public abstract String id();
 

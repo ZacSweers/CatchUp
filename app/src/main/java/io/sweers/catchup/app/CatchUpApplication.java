@@ -16,10 +16,19 @@ import io.sweers.catchup.injection.Modules;
 
 public class CatchUpApplication extends Application {
 
-  @Inject SharedPreferences sharedPreferences;
-
   private static RefWatcher refWatcher;
   private static ApplicationComponent component;
+  @Inject SharedPreferences sharedPreferences;
+
+  @NonNull
+  public static ApplicationComponent component() {
+    return component;
+  }
+
+  @NonNull
+  public static RefWatcher refWatcher() {
+    return refWatcher;
+  }
 
   @Override
   public void onCreate() {
@@ -46,16 +55,6 @@ public class CatchUpApplication extends Application {
 
   protected void initVariant() {
     // Override this in variants
-  }
-
-  @NonNull
-  public static ApplicationComponent component() {
-    return component;
-  }
-
-  @NonNull
-  public static RefWatcher refWatcher() {
-    return refWatcher;
   }
 
 }

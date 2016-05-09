@@ -28,5 +28,6 @@ public interface ProductHuntService {
 
   String ENDPOINT = "https://api.producthunt.com/";
 
-  @GET("v1/posts") Observable<PostsResponse> getPosts(@Query("days_ago") int page);
+  @GET("v1/posts")
+  Observable<PostsResponse> getPosts(@Query("days_ago") int page);
 }

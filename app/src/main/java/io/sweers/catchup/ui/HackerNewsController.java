@@ -49,7 +49,8 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     super(args);
   }
 
-  @Override protected void performInjection() {
+  @Override
+  protected void performInjection() {
     DaggerHackerNewsController_Component
         .builder()
         .module(new Module())
@@ -58,7 +59,8 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
         .inject(this);
   }
 
-  @Override protected Context onThemeContext(@NonNull Context context) {
+  @Override
+  protected Context onThemeContext(@NonNull Context context) {
     return new ContextThemeWrapper(context, R.style.CatchUp_HackerNews);
   }
 
@@ -97,7 +99,9 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
         .subscribe(v -> linkManager.openUrl("https://news.ycombinator.com/item?id=" + story.id()));
   }
 
-  @NonNull @Override protected Observable<List<HackerNewsStory>> getDataObservable() {
+  @NonNull
+  @Override
+  protected Observable<List<HackerNewsStory>> getDataObservable() {
     return service.topStories()
         .concatMapIterable(strings -> strings)
         // TODO Pref this

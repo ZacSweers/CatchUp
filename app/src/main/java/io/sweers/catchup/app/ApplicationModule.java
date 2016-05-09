@@ -18,7 +18,9 @@ public class ApplicationModule {
     this.application = application;
   }
 
-  @Provides @Singleton @ApplicationContext
+  @Provides
+  @Singleton
+  @ApplicationContext
   public Context provideApplicationContext() {
     return application.getApplicationContext();
   }

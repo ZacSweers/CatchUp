@@ -11,21 +11,25 @@ import rx.Observable;
 public interface RedditService {
   String ENDPOINT = "https://www.reddit.com";
 
-  @GET("/r/{subreddit}/comments/{id}") Observable<List<RedditResponse>> comments(
+  @GET("/r/{subreddit}/comments/{id}")
+  Observable<List<RedditResponse>> comments(
       @Path("subreddit") String subreddit,
       @Path("id") String id
   );
 
-  @GET("/") Observable<RedditResponse> frontPage(
+  @GET("/")
+  Observable<RedditResponse> frontPage(
       @Query("limit") int limit
   );
 
-  @GET("/r/{subreddit}") Observable<RedditResponse> subreddit(
+  @GET("/r/{subreddit}")
+  Observable<RedditResponse> subreddit(
       @Path("subreddit") String subreddit,
       @Query("after") String after,
       @Query("limit") int limit);
 
-  @GET("/top") Observable<RedditResponse> top(
+  @GET("/top")
+  Observable<RedditResponse> top(
       @Query("after") String after,
       @Query("limit") int limit
   );

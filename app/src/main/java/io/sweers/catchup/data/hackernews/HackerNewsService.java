@@ -11,8 +11,10 @@ public interface HackerNewsService {
 
   String ENDPOINT = "https://hacker-news.firebaseio.com/v0/";
 
-  @GET("item/{id}.json") Observable<HackerNewsStory> getItem(@Path("id") String id);
+  @GET("item/{id}.json")
+  Observable<HackerNewsStory> getItem(@Path("id") String id);
 
-  @GET("topstories.json") Observable<List<String>> topStories();
+  @GET("topstories.json")
+  Observable<List<String>> topStories();
 
 }

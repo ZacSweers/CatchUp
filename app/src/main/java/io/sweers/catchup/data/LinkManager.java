@@ -32,7 +32,8 @@ public class LinkManager {
   // TODO Eventually replace this with something that's mindful of user prefs
   private final ArrayMap<String, Boolean> dumbCache = new ArrayMap<>();
 
-  @Inject public LinkManager(
+  @Inject
+  public LinkManager(
       MainActivity activity,
       CustomTabActivityHelper customTab) {
     this.activity = activity;

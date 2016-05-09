@@ -16,7 +16,8 @@ public final class UiUtil {
     throw new InstantiationError("No instances.");
   }
 
-  @ColorInt @UiThread
+  @ColorInt
+  @UiThread
   public static int resolveAttribute(@NonNull Context context, @AttrRes int resId) {
     Resources.Theme theme = context.getTheme();
     theme.resolveAttribute(resId, TYPED_VALUE, true);

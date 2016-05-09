@@ -48,7 +48,8 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     super(args);
   }
 
-  @Override protected void performInjection() {
+  @Override
+  protected void performInjection() {
     DaggerProductHuntController_Component
         .builder()
         .module(new Module())
@@ -57,7 +58,8 @@ public final class ProductHuntController extends BaseNewsController<Post> {
         .inject(this);
   }
 
-  @Override protected Context onThemeContext(@NonNull Context context) {
+  @Override
+  protected Context onThemeContext(@NonNull Context context) {
     return new ContextThemeWrapper(context, R.style.CatchUp_ProductHunt);
   }
 
@@ -76,7 +78,9 @@ public final class ProductHuntController extends BaseNewsController<Post> {
         .subscribe(v -> linkManager.openUrl(item.discussion_url()));
   }
 
-  @NonNull @Override protected Observable<List<Post>> getDataObservable() {
+  @NonNull
+  @Override
+  protected Observable<List<Post>> getDataObservable() {
     return service.getPosts(0)
         .map(PostsResponse::posts);
 

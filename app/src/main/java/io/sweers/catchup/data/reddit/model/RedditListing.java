@@ -17,7 +17,8 @@ public abstract class RedditListing extends RedditObject {
 
   public abstract String after();
 
-  @Nullable public abstract String before();
+  @Nullable
+  public abstract String before();
 
   public abstract List<? extends RedditObject> children();
 

@@ -12,10 +12,12 @@ public abstract class RedditSubmission extends RedditObject implements HasStable
 
   public abstract String author();
 
-  @Nullable @SerializedName("author_flair_text")
+  @Nullable
+  @SerializedName("author_flair_text")
   public abstract String authorFlairText();
 
-  @Nullable @SerializedName("banned_by")
+  @Nullable
+  @SerializedName("banned_by")
   public abstract String bannedBy();
 
   public abstract Instant created();
@@ -37,7 +39,8 @@ public abstract class RedditSubmission extends RedditObject implements HasStable
 
   public abstract int ups();
 
-  @Override public long stableId() {
+  @Override
+  public long stableId() {
     return id().hashCode();
   }
 }

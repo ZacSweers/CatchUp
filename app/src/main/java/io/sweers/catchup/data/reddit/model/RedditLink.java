@@ -23,7 +23,8 @@ public abstract class RedditLink extends RedditSubmission {
   @SerializedName("is_self")
   public abstract boolean isSelf();
 
-  @Nullable @SerializedName("link_flair_text")
+  @Nullable
+  @SerializedName("link_flair_text")
   public abstract String linkFlairText();
 
   @SerializedName("num_comments")
@@ -31,9 +32,11 @@ public abstract class RedditLink extends RedditSubmission {
 
   public abstract String permalink();
 
-  @Nullable public abstract String selftext();
+  @Nullable
+  public abstract String selftext();
 
-  @Nullable @SerializedName("selftext_html")
+  @Nullable
+  @SerializedName("selftext_html")
   public abstract String selftextHtml();
 
   public abstract boolean stickied();

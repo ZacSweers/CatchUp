@@ -29,7 +29,8 @@ public enum TrendingTimespan {
     return LocalDate.now().minus(duration, durationUnit);
   }
 
-  @Override public String toString() {
+  @Override
+  public String toString() {
     return name;
   }
 }

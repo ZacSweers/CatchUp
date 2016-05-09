@@ -52,7 +52,8 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     super(args);
   }
 
-  @Override protected void performInjection() {
+  @Override
+  protected void performInjection() {
     DaggerMediumController_Component
         .builder()
         .module(new Module())
@@ -61,7 +62,8 @@ public final class MediumController extends BaseNewsController<MediumPost> {
         .inject(this);
   }
 
-  @Override protected Context onThemeContext(@NonNull Context context) {
+  @Override
+  protected Context onThemeContext(@NonNull Context context) {
     return new ContextThemeWrapper(context, R.style.CatchUp_Medium);
   }
 
@@ -89,7 +91,9 @@ public final class MediumController extends BaseNewsController<MediumPost> {
         .subscribe(v -> linkManager.openUrl(item.constructCommentsUrl()));
   }
 
-  @NonNull @Override protected Observable<List<MediumPost>> getDataObservable() {
+  @NonNull
+  @Override
+  protected Observable<List<MediumPost>> getDataObservable() {
     return service.top()
         .map(MediumResponse::payload)
         .map(Payload::references)

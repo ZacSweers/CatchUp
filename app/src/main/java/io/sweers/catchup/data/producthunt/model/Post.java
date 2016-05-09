@@ -105,7 +105,8 @@ public abstract class Post implements HasStableId {
     return url;
   }
 
-  @Override public long stableId() {
+  @Override
+  public long stableId() {
     return id();
   }
 }

@@ -87,7 +87,8 @@ public class PagerController extends BaseController {
     return inflater.inflate(R.layout.controller_pager, container, false);
   }
 
-  @Override protected void onViewBound(@NonNull View view) {
+  @Override
+  protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
 
     // TODO Must be a sooner place to inject this
