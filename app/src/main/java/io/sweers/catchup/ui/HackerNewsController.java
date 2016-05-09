@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
-import android.view.View;
 import android.widget.Toast;
 
 import com.squareup.moshi.Moshi;
@@ -64,7 +63,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   }
 
   @Override
-  protected void bindItemView(@NonNull BaseNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View itemView, @NonNull HackerNewsStory story) {
+  protected void bindItemView(@NonNull HackerNewsStory story, @NonNull ViewHolder holder) {
     holder.title(story.title());
     holder.score(Pair.create("+", story.score()));
     holder.timestamp(story.time());
@@ -84,21 +83,18 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
       commentsCount = kids.size();
     }
     holder.comments(commentsCount);
-  }
 
-  @Override
-  protected void onItemClick(@NonNull BaseNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View view, @NonNull HackerNewsStory story) {
-    String url = story.url();
-    if (url == null) {
-      Toast.makeText(view.getContext(), R.string.error_no_url, Toast.LENGTH_SHORT).show();
-    } else {
-      linkManager.openUrl(url);
-    }
-  }
+    holder.itemClicks()
+        .subscribe(v -> {
+          if (url == null) {
+            Toast.makeText(holder.itemView.getContext(), R.string.error_no_url, Toast.LENGTH_SHORT).show();
+          } else {
+            linkManager.openUrl(url);
+          }
+        });
 
-  @Override
-  protected void onCommentClick(@NonNull BaseNewsController<HackerNewsStory>.ViewHolder holder, @NonNull View view, @NonNull HackerNewsStory story) {
-    linkManager.openUrl("https://news.ycombinator.com/item?id=" + story.id());
+    holder.itemCommentClicks()
+        .subscribe(v -> linkManager.openUrl("https://news.ycombinator.com/item?id=" + story.id()));
   }
 
   @NonNull @Override protected Observable<List<HackerNewsStory>> getDataObservable() {

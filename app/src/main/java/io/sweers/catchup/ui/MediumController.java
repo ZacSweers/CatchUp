@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
-import android.view.View;
 
 import com.squareup.moshi.Moshi;
 
@@ -67,7 +66,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   }
 
   @Override
-  protected void bindItemView(@NonNull BaseNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
+  protected void bindItemView(@NonNull MediumPost item, @NonNull ViewHolder holder) {
     holder.title(item.post().title());
 
     holder.score(Pair.create("♥", item.post().virtuals().recommends()));
@@ -83,16 +82,11 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     }
 
     holder.comments(item.post().virtuals().responsesCreatedCount());
-  }
 
-  @Override
-  protected void onItemClick(@NonNull BaseNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
-    linkManager.openUrl(item.constructUrl());
-  }
-
-  @Override
-  protected void onCommentClick(@NonNull BaseNewsController<MediumPost>.ViewHolder holder, @NonNull View view, @NonNull MediumPost item) {
-    linkManager.openUrl(item.constructUrl());
+    holder.itemClicks()
+        .subscribe(v -> linkManager.openUrl(item.constructUrl()));
+    holder.itemCommentClicks()
+        .subscribe(v -> linkManager.openUrl(item.constructCommentsUrl()));
   }
 
   @NonNull @Override protected Observable<List<MediumPost>> getDataObservable() {

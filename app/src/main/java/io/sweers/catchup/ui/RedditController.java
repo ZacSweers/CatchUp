@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
-import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -67,7 +66,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
   }
 
   @Override
-  protected void bindItemView(@NonNull BaseNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
+  protected void bindItemView(@NonNull RedditLink link, @NonNull ViewHolder holder) {
     holder.title(link.title());
 
     holder.score(Pair.create("+", link.score()));
@@ -81,16 +80,13 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     }
 
     holder.comments(link.commentsCount());
-  }
 
-  @Override
-  protected void onItemClick(@NonNull BaseNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
-    linkManager.openUrl(link.url());
-  }
-
-  @Override
-  protected void onCommentClick(@NonNull BaseNewsController<RedditLink>.ViewHolder holder, @NonNull View view, @NonNull RedditLink link) {
-    linkManager.openUrl("https://reddit.com/comments/" + link.id());
+    holder.itemClicks()
+        .compose(throttleClicks())
+        .subscribe(v -> linkManager.openUrl(link.url()));
+    holder.itemCommentClicks()
+        .compose(throttleClicks())
+        .subscribe(v -> linkManager.openUrl("https://reddit.com/comments/" + link.id()));
   }
 
   @NonNull @Override protected Observable<List<RedditLink>> getDataObservable() {

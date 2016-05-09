@@ -28,6 +28,7 @@ import io.sweers.catchup.data.github.model.SearchQuery;
 import io.sweers.catchup.data.github.model.SearchRepositoriesResult;
 import io.sweers.catchup.injection.ForApi;
 import io.sweers.catchup.injection.PerController;
+import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -65,18 +66,16 @@ public final class GitHubController extends BaseNewsController<Repository> {
   }
 
   @Override
-  protected void bindItemView(@NonNull ViewHolder holder, @NonNull View view, @NonNull Repository item) {
+  protected void bindItemView(@NonNull Repository item, @NonNull ViewHolder holder) {
     holder.comments().setVisibility(View.GONE);
     holder.title(item.fullName());
     holder.score(Pair.create("★", item.starsCount()));
     holder.timestamp(item.createdAt());
     holder.author(item.owner().login());
     holder.source(item.language());
-  }
-
-  @Override
-  protected void onItemClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Repository item) {
-    linkManager.openUrl(item.htmlUrl());
+    holder.itemClicks()
+        .compose(Confine.to(holder.itemView))
+        .subscribe(v -> linkManager.openUrl(item.htmlUrl()));
   }
 
   @NonNull @Override protected Observable<List<Repository>> getDataObservable() {

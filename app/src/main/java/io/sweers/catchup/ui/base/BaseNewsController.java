@@ -18,17 +18,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxrelay.PublishRelay;
+
 import org.threeten.bp.Instant;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnLongClick;
 import io.sweers.catchup.R;
 import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.util.NumberUtil;
@@ -36,6 +39,7 @@ import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action2;
 import timber.log.Timber;
 
 import static android.view.View.GONE;
@@ -50,7 +54,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   @BindView(R.id.progress) ProgressBar progress;
   @BindView(R.id.refresh) SwipeRefreshLayout swipeRefreshLayout;
 
-  private Adapter adapter;
+  private Adapter<T> adapter;
 
   public BaseNewsController() {
     this(null);
@@ -63,62 +67,27 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     setRetainViewMode(RetainViewMode.RETAIN_DETACH);
   }
 
+  public Observable.Transformer<Void, Void> throttleClicks() {
+    return voidObservable -> {
+      PublishRelay<Void> throttledRelay = PublishRelay.create();
+      voidObservable.subscribe(throttledRelay);
+      return throttledRelay
+          .asObservable()
+          .throttleFirst(500, TimeUnit.MILLISECONDS);
+    };
+  }
+
   protected abstract void performInjection();
 
   /**
    * View binding implementation to bind the given datum to the {@code holder}.
    *
-   * @param holder The item ViewHolder instance.
-   * @param view   The underlying view, for convenience.
    * @param t      The datum to back the view with.
+   * @param holder The item ViewHolder instance.
    */
   protected abstract void bindItemView(
-      @NonNull ViewHolder holder,
-      @NonNull View view,
-      @NonNull T t);
-
-  /**
-   * Main handler for row clicks.
-   *
-   * @param holder The item ViewHolder instance.
-   * @param view   The underlying view, for convenience.
-   * @param t      The datum backing the view.
-   */
-  protected abstract void onItemClick(
-      @NonNull ViewHolder holder,
-      @NonNull View view,
-      @NonNull T t);
-
-  /**
-   * Optional comment click handling. If you don't override this, you probably should hide the
-   * comments view in the item view.
-   *
-   * @param holder The item ViewHolder instance.
-   * @param view   The underlying view, for convenience.
-   * @param t      The datum backing the view.
-   */
-  protected void onCommentClick(
-      @NonNull ViewHolder holder,
-      @NonNull View view,
-      @NonNull T t) {
-
-  }
-
-  /**
-   * Optional item long click handling. If you don't override this, you should disable longclick on
-   * the item view.
-   *
-   * @param holder The item ViewHolder instance.
-   * @param view   The underlying view, for convenience.
-   * @param t      The datum backing the view.
-   * @return {@code true} if the click was handled, {@link false} if not.
-   */
-  protected boolean onItemLongClick(
-      @NonNull ViewHolder holder,
-      @NonNull View view,
-      @NonNull T t) {
-    return false;
-  }
+      @NonNull T t,
+      @NonNull ViewHolder holder);
 
   @NonNull
   protected abstract Observable<List<T>> getDataObservable();
@@ -138,7 +107,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     LinearLayoutManager layoutManager
         = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
     recyclerView.setLayoutManager(layoutManager);
-    adapter = new Adapter();
+    adapter = new Adapter<>(this::bindItemView);
     recyclerView.setAdapter(adapter);
     swipeRefreshLayout.setOnRefreshListener(this);
 
@@ -212,12 +181,14 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     loadData();
   }
 
-  private class Adapter extends RecyclerView.Adapter<ViewHolder> {
+  private static class Adapter<T extends HasStableId> extends RecyclerView.Adapter<ViewHolder> {
 
     private final List<T> data = new ArrayList<>();
+    private final Action2<T, ViewHolder> bindDelegate;
 
-    public Adapter() {
+    public Adapter(@NonNull Action2<T, ViewHolder> bindDelegate) {
       super();
+      this.bindDelegate = bindDelegate;
       setHasStableIds(true);
     }
 
@@ -233,7 +204,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-      holder.bindViewInternal(data.get(position));
+      bindDelegate.call(data.get(position), holder);
     }
 
     @Override
@@ -255,8 +226,9 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     }
   }
 
-  protected class ViewHolder extends RecyclerView.ViewHolder {
+  public static class ViewHolder extends RecyclerView.ViewHolder {
 
+    @BindView(R.id.container) View container;
     @BindView(R.id.title) TextView title;
     @BindView(R.id.score) TextView score;
     @BindView(R.id.score_divider) TextView scoreDivider;
@@ -266,28 +238,21 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     @BindView(R.id.source) TextView source;
     @BindView(R.id.comments) TextView comments;
 
-    private T datum;
-
     public ViewHolder(@NonNull View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }
 
-    void bindViewInternal(T datum) {
-      this.datum = datum;
-      bindItemView(this, itemView, datum);
+    public Observable<Void> itemClicks() {
+      return RxView.clicks(container);
     }
 
-    @OnClick(R.id.container) void onItemClickInternal() {
-      onItemClick(this, itemView, datum);
+    public Observable<Void> itemLongClicks() {
+      return RxView.longClicks(container);
     }
 
-    @OnLongClick(R.id.container) boolean onItemLongClickInternal() {
-      return onItemLongClick(this, itemView, datum);
-    }
-
-    @OnClick(R.id.comments) void onCommentsClickInternal() {
-      onCommentClick(this, itemView, datum);
+    public Observable<Void> itemCommentClicks() {
+      return RxView.clicks(comments);
     }
 
     public void title(@NonNull CharSequence titleText) {

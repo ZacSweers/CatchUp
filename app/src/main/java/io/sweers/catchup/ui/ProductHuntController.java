@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
-import android.view.View;
 
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
@@ -63,23 +62,18 @@ public final class ProductHuntController extends BaseNewsController<Post> {
   }
 
   @Override
-  protected void bindItemView(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
+  protected void bindItemView(@NonNull Post item, @NonNull ViewHolder holder) {
     holder.title(item.name());
     holder.score(Pair.create("▲", item.votes_count()));
     holder.timestamp(item.created_at());
     holder.author(item.user().name());
     holder.source(item.getFirstTopic());
     holder.comments(item.comments_count());
-  }
 
-  @Override
-  protected void onItemClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
-    linkManager.openUrl(item.redirect_url());
-  }
-
-  @Override
-  protected void onCommentClick(@NonNull ViewHolder holder, @NonNull View view, @NonNull Post item) {
-    linkManager.openUrl(item.discussion_url());
+    holder.itemClicks()
+        .subscribe(v -> linkManager.openUrl(item.redirect_url()));
+    holder.itemCommentClicks()
+        .subscribe(v -> linkManager.openUrl(item.discussion_url()));
   }
 
   @NonNull @Override protected Observable<List<Post>> getDataObservable() {
