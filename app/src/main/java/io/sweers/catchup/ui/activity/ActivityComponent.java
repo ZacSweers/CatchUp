@@ -1,5 +1,6 @@
 package io.sweers.catchup.ui.activity;
 
+import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.squareup.moshi.Moshi;
 
 import io.sweers.catchup.app.ApplicationComponent;
@@ -18,15 +19,18 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 public interface ActivityComponent {
   void inject(MainActivity activity);
 
+  ActionBarProvider actionBarProvider();
+
   CustomTabActivityHelper customTab();
 
-  OkHttpClient okhttpClient();
+  LinkManager linkManager();
 
-  ActionBarProvider actionBarProvider();
+  OkHttpClient okhttpClient();
 
   Moshi moshi();
 
   RxJavaCallAdapterFactory rxJavaCallAdapterFactory();
 
-  LinkManager linkManager();
+  RxSharedPreferences rxSharedPreferences();
+
 }

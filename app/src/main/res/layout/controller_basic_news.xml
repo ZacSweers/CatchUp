@@ -24,21 +24,21 @@
 
   <ProgressBar
     android:id="@+id/progress"
+    style="@style/Widget.AppCompat.ProgressBar"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    style="@style/Widget.AppCompat.ProgressBar"
-    android:indeterminate="true"
     android:layout_gravity="center"
+    android:indeterminate="true"
     />
 
   <LinearLayout
     android:id="@+id/error_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:visibility="gone"
     android:layout_gravity="center"
     android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:visibility="gone"
     tools:visibility="visible"
     >
 
@@ -48,6 +48,18 @@
       android:layout_height="wrap_content"
       android:clickable="true"
       tools:src="@drawable/avd_no_connection"
+      />
+
+    <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/error_message"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:layout_marginTop="16dp"
+      android:gravity="center"
+      android:visibility="gone"
+      tools:text="Something went wrong :("
+      tools:visibility="visible"
       />
 
     <android.support.v7.widget.AppCompatButton

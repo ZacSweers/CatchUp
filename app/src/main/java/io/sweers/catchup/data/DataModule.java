@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Looper;
 
+import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.ryanharter.auto.value.moshi.AutoValueMoshiAdapterFactory;
 import com.squareup.moshi.Moshi;
 
@@ -70,5 +71,11 @@ public class DataModule {
   @Singleton
   public SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {
     return context.getSharedPreferences("catchup", Context.MODE_PRIVATE);
+  }
+
+  @Provides
+  @Singleton
+  public RxSharedPreferences provideRxSharedPreferences(SharedPreferences sharedPreferences) {
+    return RxSharedPreferences.create(sharedPreferences);
   }
 }

@@ -29,6 +29,13 @@
       android:title="Enable dark theme."
       />
 
+    <!-- Remove this option on < L -->
+    <CheckBoxPreference
+      android:defaultValue="true"
+      android:key="theme_navigation_bar"
+      android:title="Theme navigation bar in pager."
+      />
+
   </PreferenceCategory>
 
   <PreferenceCategory

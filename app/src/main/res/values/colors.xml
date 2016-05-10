@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="colorPrimary">#ff3F51B5</color>
-  <color name="colorPrimaryDark">#ff303F9F</color>
+  <color name="colorPrimary">#f9f9f9</color>
+  <color name="colorPrimaryDark">#343434</color>
+  <color name="colorPrimaryAlt">#343434</color>
+  <color name="colorPrimaryDarkAlt">#282828</color>
+
   <color name="colorAccent">#ffFF4081</color>
+
   <color name="mediumAccent">#ff00AB6B</color>
   <color name="productHuntAccent">#ffff9800</color>
   <color name="redditAccent">#336699</color>
   <color name="hackerNewsAccent">#ffff6600</color>
   <color name="tab_text_default">#b3ffffff</color>
   <color name="tab_text_selected">#ffffffff</color>
+  <color name="no_color">#00000000</color>
 </resources>

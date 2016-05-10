@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.widget;
 
 import android.content.Context;
 import android.graphics.Paint;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 
@@ -38,7 +37,7 @@ import io.sweers.catchup.R;
  * (relative to the view's top) and the {@code bottomPadding} to ensure this view's height is a
  * multiple of 4dp so that subsequent views start on the grid.
  */
-public class BaselineGridTextView extends AppCompatTextView {
+public class BaselineGridTextView extends CompatTextView {
 
   private final int FOUR_DIP;
   @StyledAttr(R.styleable.BaselineGridTextView_lineHeightMultiplierHint)

@@ -1,6 +1,7 @@
 package io.sweers.catchup.util;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
@@ -23,6 +24,11 @@ public final class UiUtil {
     theme.resolveAttribute(resId, TYPED_VALUE, true);
     @ColorInt int color = TYPED_VALUE.data;
     return color;
+  }
+
+  public static boolean isInNightMode(@NonNull Context context) {
+    Configuration conf = context.getResources().getConfiguration();
+    return (conf.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
   }
 
 }

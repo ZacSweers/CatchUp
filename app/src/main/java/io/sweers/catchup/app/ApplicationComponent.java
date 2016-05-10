@@ -1,5 +1,6 @@
 package io.sweers.catchup.app;
 
+import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.squareup.moshi.Moshi;
 
 import javax.inject.Singleton;
@@ -24,4 +25,6 @@ public interface ApplicationComponent {
   Moshi moshi();
 
   RxJavaCallAdapterFactory rxJavaCallAdapterFactory();
+
+  RxSharedPreferences rxSharedPreferences();
 }

@@ -16,7 +16,6 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxrelay.PublishRelay;
@@ -175,7 +174,6 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
                 avd.start();
               }
               Timber.e(e, "Update failed!");
-              Toast.makeText(getActivity(), "Failed - " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
   }
 
@@ -305,8 +303,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       comments.setText(NumberUtil.format(commentsCount));
     }
 
-    public TextView comments() {
-      return comments;
+    public void hideComments() {
+      comments.setVisibility(GONE);
     }
   }
 }

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <io.sweers.catchup.ui.widget.ForegroundLinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/container"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:background="?android:colorBackground"
-  android:foreground="?selectableItemBackground"
   android:clickable="true"
+  android:foreground="?selectableItemBackground"
   android:orientation="horizontal"
   android:stateListAnimator="@animator/raise"
   >
@@ -101,16 +102,18 @@
 
   </LinearLayout>
 
-  <android.support.v7.widget.AppCompatTextView
+  <io.sweers.catchup.ui.widget.CompatTextView
     android:id="@+id/comments"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="?selectableItemBackgroundBorderless"
+    android:background="?android:colorBackground"
     android:clickable="true"
-    android:drawableTop="@drawable/ic_comment_black_24dp"
+    android:drawableTint="?colorAccent"
     android:gravity="center"
     android:padding="16dp"
+    android:stateListAnimator="@animator/raise"
+    app:drawableTop="@drawable/ic_comment_black_24dp"
     tools:text="39"
     />
 

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
-import android.view.View;
 
 import com.squareup.moshi.Moshi;
 
@@ -69,7 +68,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
 
   @Override
   protected void bindItemView(@NonNull Repository item, @NonNull ViewHolder holder) {
-    holder.comments().setVisibility(View.GONE);
+    holder.hideComments();
     holder.title(item.fullName());
     holder.score(Pair.create("★", item.starsCount()));
     holder.timestamp(item.createdAt());

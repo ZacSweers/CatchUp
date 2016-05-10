@@ -19,6 +19,10 @@ public final class NumberUtil {
     put(1_000_000_000_000_000_000L, "E");
   }};
 
+  private NumberUtil() {
+    throw new InstantiationError();
+  }
+
   @NonNull
   public static String format(long value) {
     String shortened = shorten(value);

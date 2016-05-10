@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <declare-styleable name="CompatTextView">
+    <attr name="drawableStart" format="reference"/>
+    <attr name="drawableTop" format="reference"/>
+    <attr name="drawableEnd" format="reference"/>
+    <attr name="drawableBottom" format="reference"/>
+  </declare-styleable>
+</resources>
