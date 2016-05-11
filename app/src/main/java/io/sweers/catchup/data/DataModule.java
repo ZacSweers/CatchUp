@@ -14,7 +14,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.sweers.catchup.injection.ApplicationContext;
+import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -34,7 +34,9 @@ public class DataModule {
 
   @Provides
   @Singleton
-  OkHttpClient provideOkHttpClient(Cache cache) {
+  OkHttpClient provideOkHttpClient(
+      @ApplicationContext Context context,
+      Cache cache) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
       throw new IllegalStateException("HTTP client initialized on main thread.");
     }
@@ -45,11 +47,13 @@ public class DataModule {
         .writeTimeout(HTTP_TIMEOUT_S, TimeUnit.SECONDS)
         .cache(cache);
 
-    configureOkHttpClientForVariant(builder);
+    configureOkHttpClientForVariant(context, builder);
     return builder.build();
   }
 
-  protected void configureOkHttpClientForVariant(OkHttpClient.Builder builder) {
+  protected void configureOkHttpClientForVariant(
+      @ApplicationContext Context context,
+      OkHttpClient.Builder builder) {
     // Override in variants
   }
 

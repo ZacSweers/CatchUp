@@ -1,4 +1,4 @@
-package io.sweers.catchup.ui;
+package io.sweers.catchup.ui.controllers;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -22,13 +22,14 @@ import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
-import io.sweers.catchup.injection.ForApi;
-import io.sweers.catchup.injection.PerController;
+import io.sweers.catchup.injection.qualifiers.ForApi;
+import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -122,6 +123,22 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   @dagger.Module
   public static class Module {
 
+    @ForApi
+    @Provides
+    @PerController
+    OkHttpClient provideHackerNewsOkHttpClient(OkHttpClient client) {
+      return client.newBuilder()
+          .addNetworkInterceptor(chain -> {
+            Request request = chain.request();
+            HttpUrl url = request.url();
+            request = request.newBuilder()
+                .url(url.newBuilder().encodedPath(url.encodedPath() + ".json").build())
+                .build();
+            return chain.proceed(request);
+          })
+          .build();
+    }
+
     @Provides
     @PerController
     @ForApi
@@ -134,7 +151,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     @Provides
     @PerController
     HackerNewsService provideHackerNewsService(
-        final Lazy<OkHttpClient> client,
+        @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
         RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()

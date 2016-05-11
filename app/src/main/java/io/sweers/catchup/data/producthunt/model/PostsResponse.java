@@ -34,6 +34,17 @@ public abstract class PostsResponse {
     return new AutoValue_PostsResponse.MoshiJsonAdapter(moshi);
   }
 
+  public static Builder builder() {
+    return new AutoValue_PostsResponse.Builder();
+  }
+
   public abstract List<Post> posts();
+
+  @AutoValue.Builder
+  public abstract static class Builder {
+    public abstract Builder posts(List<Post> posts);
+
+    public abstract PostsResponse build();
+  }
 
 }

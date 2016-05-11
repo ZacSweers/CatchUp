@@ -1,4 +1,4 @@
-package io.sweers.catchup.ui;
+package io.sweers.catchup.ui.controllers;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -25,8 +25,8 @@ import io.sweers.catchup.data.reddit.RedditService;
 import io.sweers.catchup.data.reddit.model.RedditLink;
 import io.sweers.catchup.data.reddit.model.RedditObject;
 import io.sweers.catchup.data.reddit.model.RedditObjectDeserializer;
-import io.sweers.catchup.injection.ForApi;
-import io.sweers.catchup.injection.PerController;
+import io.sweers.catchup.injection.qualifiers.ForApi;
+import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;

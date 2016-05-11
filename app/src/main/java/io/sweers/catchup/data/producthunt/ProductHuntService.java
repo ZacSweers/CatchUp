@@ -26,8 +26,10 @@ import rx.Observable;
  */
 public interface ProductHuntService {
 
-  String ENDPOINT = "https://api.producthunt.com/";
+  String SCHEME = "https";
+  String HOST = "api.producthunt.com";
+  String ENDPOINT = SCHEME + "://" + HOST;
 
-  @GET("v1/posts")
+  @GET("/v1/posts")
   Observable<PostsResponse> getPosts(@Query("days_ago") int page);
 }

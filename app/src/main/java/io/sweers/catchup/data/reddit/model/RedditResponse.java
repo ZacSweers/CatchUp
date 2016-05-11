@@ -12,5 +12,16 @@ public abstract class RedditResponse {
     return new AutoValue_RedditResponse.GsonTypeAdapter(gson);
   }
 
+  public static Builder builder() {
+    return new AutoValue_RedditResponse.Builder();
+  }
+
   public abstract RedditListing data();
+
+  @AutoValue.Builder
+  public abstract static class Builder {
+    public abstract Builder data(RedditListing listing);
+
+    public abstract RedditResponse build();
+  }
 }

@@ -7,7 +7,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.sweers.catchup.injection.ApplicationContext;
+import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 
 @Module
 public class ApplicationModule {

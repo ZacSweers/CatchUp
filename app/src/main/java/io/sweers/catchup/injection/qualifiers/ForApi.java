@@ -1,11 +1,11 @@
-package io.sweers.catchup.injection;
+package io.sweers.catchup.injection.qualifiers;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import javax.inject.Scope;
+import javax.inject.Qualifier;
 
-@Scope
+@Qualifier
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PerController {
+public @interface ForApi {
 }

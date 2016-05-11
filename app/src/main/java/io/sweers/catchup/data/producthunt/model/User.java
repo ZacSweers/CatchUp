@@ -35,6 +35,10 @@ public abstract class User {
     return new AutoValue_User.MoshiJsonAdapter(moshi);
   }
 
+  public static Builder builder() {
+    return new AutoValue_User.Builder();
+  }
+
   public abstract String created_at();
 
   @Nullable
@@ -52,4 +56,25 @@ public abstract class User {
 
   @Nullable
   public abstract String website_url();
+
+  @AutoValue.Builder
+  public abstract static class Builder {
+    public abstract Builder created_at(String created_at);
+
+    public abstract Builder headline(@Nullable String headline);
+
+    public abstract Builder id(long id);
+
+    public abstract Builder image_url(Map<String, String> imageUrl);
+
+    public abstract Builder name(String name);
+
+    public abstract Builder profile_url(String profile_url);
+
+    public abstract Builder username(String username);
+
+    public abstract Builder website_url(@Nullable String website_url);
+
+    public abstract User builder();
+  }
 }

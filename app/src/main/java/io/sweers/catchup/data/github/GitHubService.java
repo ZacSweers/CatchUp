@@ -8,7 +8,8 @@ import retrofit2.http.Query;
 import rx.Observable;
 
 public interface GitHubService {
-  String ENDPOINT = "https://api.github.com";
+  String HOST = "api.github.com";
+  String ENDPOINT = "https://" + HOST;
 
   @GET("/search/repositories")
   Observable<SearchRepositoriesResult> searchRepositories(

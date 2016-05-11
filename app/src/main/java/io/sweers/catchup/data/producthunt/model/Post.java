@@ -41,6 +41,10 @@ public abstract class Post implements HasStableId {
     return new AutoValue_Post.MoshiJsonAdapter(moshi);
   }
 
+  public static Builder builder() {
+    return new AutoValue_Post.Builder();
+  }
+
   public abstract int comments_count();
 
   // TODO Coerce this to Instant - '2016-05-06T00:45:40.791-07:00'
@@ -108,5 +112,37 @@ public abstract class Post implements HasStableId {
   @Override
   public long stableId() {
     return id();
+  }
+
+  @AutoValue.Builder
+  public abstract static class Builder {
+    public abstract Builder comments_count(int count);
+
+    // TODO Coerce this to Instant - '2016-05-06T00:45:40.791-07:00'
+    public abstract Builder created_at(Date date);
+
+    public abstract Builder discussion_url(String url);
+
+    public abstract Builder id(long id);
+
+    public abstract Builder makers(List<User> makers);
+
+    public abstract Builder maker_inside(boolean makerInside);
+
+    public abstract Builder name(String name);
+
+    public abstract Builder redirect_url(String url);
+
+    public abstract Builder screenshot_url(Map<String, String> url);
+
+    public abstract Builder tagline(String tagline);
+
+    public abstract Builder topics(List<Topic> topics);
+
+    public abstract Builder user(User user);
+
+    public abstract Builder votes_count(int count);
+
+    public abstract Post build();
   }
 }

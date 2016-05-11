@@ -16,9 +16,9 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.sweers.catchup.R;
 import io.sweers.catchup.app.CatchUpApplication;
-import io.sweers.catchup.ui.PagerController;
 import io.sweers.catchup.ui.base.ActionBarProvider;
 import io.sweers.catchup.ui.base.BaseActivity;
+import io.sweers.catchup.ui.controllers.PagerController;
 import io.sweers.catchup.util.UiUtil;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 

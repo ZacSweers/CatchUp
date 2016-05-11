@@ -9,7 +9,8 @@ import retrofit2.http.Query;
 import rx.Observable;
 
 public interface RedditService {
-  String ENDPOINT = "https://www.reddit.com";
+  String HOST = "www.reddit.com";
+  String ENDPOINT = "https://" + HOST;
 
   @GET("/r/{subreddit}/comments/{id}")
   Observable<List<RedditResponse>> comments(

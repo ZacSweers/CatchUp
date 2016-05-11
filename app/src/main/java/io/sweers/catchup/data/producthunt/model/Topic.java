@@ -13,10 +13,25 @@ public abstract class Topic {
     return new AutoValue_Topic.MoshiJsonAdapter(moshi);
   }
 
+  public static Builder builder() {
+    return new AutoValue_Topic.Builder();
+  }
+
   public abstract long id();
 
   public abstract String name();
 
   public abstract String slug();
+
+  @AutoValue.Builder
+  public abstract static class Builder {
+    public abstract Builder id(long id);
+
+    public abstract Builder name(String name);
+
+    public abstract Builder slug(String slug);
+
+    public abstract Topic build();
+  }
 
 }

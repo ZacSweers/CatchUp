@@ -1,6 +1,7 @@
-package io.sweers.catchup.ui;
+package io.sweers.catchup.ui.controllers;
 
 import android.animation.ArgbEvaluator;
+import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -24,7 +25,8 @@ import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.P;
 import io.sweers.catchup.R;
-import io.sweers.catchup.injection.PerController;
+import io.sweers.catchup.injection.qualifiers.preferences.NavBarTheme;
+import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.ActionBarProvider;
@@ -84,7 +86,7 @@ public class PagerController extends BaseController {
   private final int[] resolvedColorCache = new int[PAGE_DATA.length];
   private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
   @Inject ActionBarProvider actionBarProvider;
-  @Inject Lazy<Preference<Boolean>> themeNavigationBarPref;
+  @Inject @NavBarTheme Lazy<Preference<Boolean>> themeNavigationBarPref;
   @BindView(R.id.tab_layout) TabLayout tabLayout;
   @BindView(R.id.view_pager) ViewPager viewPager;
   private boolean colorNavBar = false;
@@ -152,7 +154,7 @@ public class PagerController extends BaseController {
             if (b) {
               color = getAndSaveColor(viewPager.getCurrentItem());
             } else {
-              color = 0xff343434; // TODO pull from resources.
+              color = Color.BLACK;
             }
             getActivity().getWindow().setNavigationBarColor(color);
           });
@@ -218,6 +220,7 @@ public class PagerController extends BaseController {
 
     @Provides
     @PerController
+    @NavBarTheme
     Preference<Boolean> provideThemeNavigationColorPreference(RxSharedPreferences rxSharedPreferences) {
       return rxSharedPreferences.getBoolean(P.themeNavigationBar.key, P.themeNavigationBar.defaultValue());
       // TODO revert to this when this is fixed: https://github.com/Flipboard/psync/issues/11
