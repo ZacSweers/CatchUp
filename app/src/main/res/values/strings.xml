@@ -10,4 +10,6 @@
   <string name="error_no_url">No URL :(</string>
   <string name="general">General</string>
   <string name="prefs_theme">Theming</string>
+  <string name="pref_smart_linking_title">Enable smart linking</string>
+  <string name="pref_smart_linking_summary">Smart linking will open links in a dedicated app if one exists, otherwise it will fall back to using a Chrome custom tab or browser.</string>
 </resources>

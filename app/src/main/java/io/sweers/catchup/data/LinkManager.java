@@ -7,11 +7,13 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 
+import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.receivers.RxBroadcastReceiver;
 
 import javax.inject.Inject;
 
-import io.sweers.catchup.injection.PerActivity;
+import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
+import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
@@ -27,25 +29,28 @@ public class LinkManager {
 
   private final MainActivity activity;
   private final CustomTabActivityHelper customTab;
+  @SmartLinking private final Preference<Boolean> globalSmartLinkingPref;
 
   // Naive cache that tracks if we've already resolved for activities that can handle a given host
-  // TODO Eventually replace this with something that's mindful of user prefs
+  // TODO Eventually replace this with something that's mindful of per-service prefs
   private final ArrayMap<String, Boolean> dumbCache = new ArrayMap<>();
 
   @Inject
   public LinkManager(
       MainActivity activity,
-      CustomTabActivityHelper customTab) {
+      CustomTabActivityHelper customTab,
+      @SmartLinking Preference<Boolean> globalSmartLinkingPref) {
     this.activity = activity;
     this.customTab = customTab;
+    this.globalSmartLinkingPref = globalSmartLinkingPref;
 
-    // Invalidate the cache when a new install/update happens
+    // Invalidate the cache when a new install/update happens or prefs changed
     IntentFilter filter = new IntentFilter();
     filter.addAction(Intent.ACTION_INSTALL_PACKAGE);
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
-    RxBroadcastReceiver.create(activity, filter)
+    Observable.merge(RxBroadcastReceiver.create(activity, filter), globalSmartLinkingPref.asObservable())
         .compose(Confine.to(activity))
-        .subscribe(intent -> dumbCache.clear());
+        .subscribe(o -> dumbCache.clear());
   }
 
   /**
@@ -68,6 +73,11 @@ public class LinkManager {
 
   public void openUrl(@NonNull Uri uri) {
     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+    if (!globalSmartLinkingPref.get()) {
+      openCustomTab(uri);
+      return;
+    }
+
     if (!dumbCache.containsKey(uri.getHost())) {
       queryAndOpen(uri, intent);
     } else if (dumbCache.get(uri.getHost())) {

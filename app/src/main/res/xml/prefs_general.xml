@@ -4,6 +4,13 @@
   <PreferenceCategory
     android:title="@string/general">
 
+    <CheckBoxPreference
+      android:defaultValue="true"
+      android:key="smartlinking_global"
+      android:summary="@string/pref_smart_linking_summary"
+      android:title="@string/pref_smart_linking_title"
+      />
+
     <Preference
       android:key="services"
       android:summary="@string/pref_services_summary"
@@ -31,7 +38,7 @@
 
     <!-- Remove this option on < L -->
     <CheckBoxPreference
-      android:defaultValue="true"
+      android:defaultValue="false"
       android:key="theme_navigation_bar"
       android:title="Theme navigation bar in pager."
       />
