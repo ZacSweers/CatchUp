@@ -42,6 +42,7 @@ import rx.functions.Action2;
 import timber.log.Timber;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 
 public abstract class BaseNewsController<T extends HasStableId> extends BaseController
@@ -120,7 +121,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   @OnClick(R.id.retry_button)
   void onRetry() {
     errorView.setVisibility(GONE);
-    progress.setVisibility(View.VISIBLE);
+    progress.setVisibility(VISIBLE);
     onRefresh();
   }
 
@@ -149,7 +150,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
             data -> {
               progress.setVisibility(GONE);
               errorView.setVisibility(GONE);
-              swipeRefreshLayout.setVisibility(View.VISIBLE);
+              swipeRefreshLayout.setVisibility(VISIBLE);
               adapter.setData(data);
             },
             e -> {
@@ -160,7 +161,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
                 errorImage.setImageDrawable(avd);
                 progress.setVisibility(GONE);
                 swipeRefreshLayout.setVisibility(GONE);
-                errorView.setVisibility(View.VISIBLE);
+                errorView.setVisibility(VISIBLE);
                 avd.start();
               } else if (e instanceof HttpException) {
                 // TODO Show some sort of API error response.
@@ -170,7 +171,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
                 errorImage.setImageDrawable(avd);
                 progress.setVisibility(GONE);
                 swipeRefreshLayout.setVisibility(GONE);
-                errorView.setVisibility(View.VISIBLE);
+                errorView.setVisibility(VISIBLE);
                 avd.start();
               }
               Timber.e(e, "Update failed!");
@@ -239,6 +240,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     @BindView(R.id.author_divider) TextView authorDivider;
     @BindView(R.id.source) TextView source;
     @BindView(R.id.comments) TextView comments;
+    @BindView(R.id.tag) TextView tag;
+    @BindView(R.id.tag_divider) View tagDivider;
 
     public ViewHolder(@NonNull View itemView) {
       super(itemView);
@@ -266,9 +269,20 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
         score.setVisibility(GONE);
         scoreDivider.setVisibility(GONE);
       } else {
-        scoreDivider.setVisibility(View.VISIBLE);
-        score.setVisibility(View.VISIBLE);
+        scoreDivider.setVisibility(VISIBLE);
+        score.setVisibility(VISIBLE);
         score.setText(String.format("%s %s", scoreValue.first, NumberUtil.format(scoreValue.second)));
+      }
+    }
+
+    public void tag(@Nullable String text) {
+      if (text == null) {
+        tag.setVisibility(GONE);
+        tagDivider.setVisibility(GONE);
+      } else {
+        tag.setVisibility(VISIBLE);
+        tagDivider.setVisibility(VISIBLE);
+        tag.setText(text);
       }
     }
 
@@ -293,8 +307,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
         source.setVisibility(GONE);
         authorDivider.setVisibility(GONE);
       } else {
-        authorDivider.setVisibility(View.VISIBLE);
-        source.setVisibility(View.VISIBLE);
+        authorDivider.setVisibility(VISIBLE);
+        source.setVisibility(VISIBLE);
         source.setText(sourceText);
       }
     }

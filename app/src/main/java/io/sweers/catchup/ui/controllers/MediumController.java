@@ -78,12 +78,13 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
     Collection collection = item.collection();
     if (collection != null) {
-      holder.source(collection.name());
+      holder.tag(collection.name());
     } else {
-      holder.source(null);
+      holder.tag(null);
     }
 
     holder.comments(item.post().virtuals().responsesCreatedCount());
+    holder.source(null);
 
     holder.itemClicks()
         .subscribe(v -> linkManager.openUrl(item.constructUrl()));

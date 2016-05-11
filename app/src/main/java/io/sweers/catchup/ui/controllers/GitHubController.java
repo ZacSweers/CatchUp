@@ -73,7 +73,8 @@ public final class GitHubController extends BaseNewsController<Repository> {
     holder.score(Pair.create("★", item.starsCount()));
     holder.timestamp(item.createdAt());
     holder.author(item.owner().login());
-    holder.source(item.language());
+    holder.source(null);
+    holder.tag(item.language());
     holder.itemClicks()
         .compose(Confine.to(holder.itemView))
         .subscribe(v -> linkManager.openUrl(item.htmlUrl()));

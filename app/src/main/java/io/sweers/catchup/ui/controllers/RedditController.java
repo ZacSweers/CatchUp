@@ -82,6 +82,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     }
 
     holder.comments(link.commentsCount());
+    holder.tag(link.subreddit());
 
     holder.itemClicks()
         .compose(throttleClicks())

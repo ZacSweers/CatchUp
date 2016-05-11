@@ -72,6 +72,9 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     holder.source(item.getFirstTopic());
     holder.comments(item.comments_count());
 
+    // Because seriously it's all "tech"
+    holder.tag(null);
+
     holder.itemClicks()
         .subscribe(v -> linkManager.openUrl(item.redirect_url()));
     holder.itemCommentClicks()

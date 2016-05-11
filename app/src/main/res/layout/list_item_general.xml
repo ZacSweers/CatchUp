@@ -33,11 +33,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?colorAccent"
+        android:textStyle="bold"
         tools:text="+ 128"
         />
 
       <android.support.v7.widget.AppCompatTextView
         android:id="@+id/score_divider"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:text=" • "
+        />
+
+      <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tag"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:textColor="?colorAccent"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="tag"
+        tools:visibility="visible"
+        />
+
+      <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tag_divider"
         style="@style/TextAppearance.AppCompat.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

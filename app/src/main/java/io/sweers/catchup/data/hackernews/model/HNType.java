@@ -16,5 +16,11 @@ public enum HNType {
   POLLOPT,
 
   @Json(name = "story")
-  STORY
+  STORY;
+
+  public String tag() {
+    String name = name().toLowerCase();
+    name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    return name;
+  }
 }

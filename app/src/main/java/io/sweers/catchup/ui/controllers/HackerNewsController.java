@@ -86,6 +86,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
       commentsCount = kids.size();
     }
     holder.comments(commentsCount);
+    holder.tag(story.type().tag());
 
     holder.itemClicks()
         .subscribe(v -> {
