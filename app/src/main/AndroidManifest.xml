@@ -15,6 +15,7 @@
 
     <activity
       android:name=".ui.activity.MainActivity"
+      android:launchMode="singleInstance"
       >
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
