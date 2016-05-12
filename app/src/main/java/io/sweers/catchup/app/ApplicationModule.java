@@ -1,5 +1,6 @@
 package io.sweers.catchup.app;
 
+import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -16,6 +17,12 @@ public class ApplicationModule {
 
   public ApplicationModule(@NonNull CatchUpApplication application) {
     this.application = application;
+  }
+
+  @Provides
+  @Singleton
+  public Application provideApplication() {
+    return application;
   }
 
   @Provides

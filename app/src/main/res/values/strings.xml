@@ -12,4 +12,5 @@
   <string name="prefs_theme">Theming</string>
   <string name="pref_smart_linking_title">Enable smart linking</string>
   <string name="pref_smart_linking_summary">Smart linking will open links in a dedicated app if one exists, otherwise it will fall back to using a Chrome custom tab or browser.</string>
+  <string name="no_intent_handler">There are no applications available to handle this action.</string>
 </resources>

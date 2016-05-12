@@ -3,6 +3,7 @@ package io.sweers.catchup.ui.activity;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 
+import dagger.Module;
 import dagger.Provides;
 import io.sweers.catchup.P;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
@@ -10,8 +11,10 @@ import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.ui.base.ActionBarProvider;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 
-@dagger.Module
-class ActivityModule {
+@Module(
+    includes = UiModule.class
+)
+public class ActivityModule {
 
   private MainActivity activity;
 

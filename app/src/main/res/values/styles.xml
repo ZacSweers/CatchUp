@@ -1,4 +1,7 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+  <style name="None">
+  </style>
 
   <!-- Base application theme. -->
   <style name="CatchUp" parent="Theme.AppCompat.DayNight.NoActionBar">
@@ -6,6 +9,7 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
   </style>
 
   <style name="CatchUp.TabLayout" parent="Widget.Design.TabLayout">

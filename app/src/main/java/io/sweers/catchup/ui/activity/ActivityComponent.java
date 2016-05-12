@@ -5,6 +5,7 @@ import android.content.Context;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.squareup.moshi.Moshi;
 
+import dagger.Component;
 import io.sweers.catchup.app.ApplicationComponent;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
@@ -15,8 +16,11 @@ import okhttp3.OkHttpClient;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 @PerActivity
-@dagger.Component(
-    modules = ActivityModule.class,
+@Component(
+    modules = {
+        ActivityModule.class,
+        UiModule.class
+    },
     dependencies = ApplicationComponent.class
 )
 public interface ActivityComponent {

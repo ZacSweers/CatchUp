@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.sweers.catchup.R;
 import io.sweers.catchup.app.CatchUpApplication;
+import io.sweers.catchup.ui.ViewContainer;
 import io.sweers.catchup.ui.base.ActionBarProvider;
 import io.sweers.catchup.ui.base.BaseActivity;
 import io.sweers.catchup.ui.controllers.PagerController;
@@ -25,6 +26,7 @@ import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 public class MainActivity extends BaseActivity implements ActionBarProvider {
 
   @Inject CustomTabActivityHelper customTab;
+  @Inject ViewContainer viewContainer;
 
   @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.controller_container) ViewGroup container;
@@ -36,11 +38,10 @@ public class MainActivity extends BaseActivity implements ActionBarProvider {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    setContentView(R.layout.activity_main);
-
     component = createComponent();
     component.inject(this);
+    ViewGroup viewGroup = viewContainer.forActivity(this);
+    getLayoutInflater().inflate(R.layout.activity_main, viewGroup);
 
     unbinder = ButterKnife.bind(this);
 
@@ -61,6 +62,7 @@ public class MainActivity extends BaseActivity implements ActionBarProvider {
     return DaggerActivityComponent.builder()
         .applicationComponent(CatchUpApplication.component())
         .activityModule(new ActivityModule(this))
+        .uiModule(new UiModule())
         .build();
   }
 

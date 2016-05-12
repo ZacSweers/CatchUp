@@ -5,11 +5,12 @@ import io.sweers.catchup.data.DebugDataModule;
 
 public final class Modules {
 
+  private Modules() {
+    throw new InstantiationError("No instances.");
+  }
+
   public static DataModule dataModule() {
     return new DebugDataModule();
   }
 
-  private Modules() {
-    throw new InstantiationError("No instances.");
-  }
 }
