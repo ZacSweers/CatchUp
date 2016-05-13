@@ -3,11 +3,15 @@ package io.sweers.catchup.ui.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Conductor;
 import com.bluelinelabs.conductor.Router;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import javax.inject.Inject;
 
@@ -56,6 +60,26 @@ public class MainActivity extends BaseActivity implements ActionBarProvider {
     if (!router.hasRootController()) {
       router.setRoot(new PagerController());
     }
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.main, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.toggle_daynight) {
+      if (UiUtil.isInNightMode(this)) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+      } else {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+      }
+      ProcessPhoenix.triggerRebirth(this);
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   protected ActivityComponent createComponent() {
