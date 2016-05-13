@@ -1,0 +1,7 @@
+<resources>
+
+  <style name="CatchUp" parent="Base">
+    <item name="android:windowLightStatusBar">true</item>
+  </style>
+
+</resources>

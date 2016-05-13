@@ -4,11 +4,14 @@
   </style>
 
   <!-- Base application theme. -->
-  <style name="CatchUp" parent="Theme.AppCompat.DayNight.NoActionBar">
-    <!-- Customize your theme here. -->
+  <style name="Base" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
+  </style>
+
+  <style name="CatchUp" parent="Base">
     <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
   </style>
 
