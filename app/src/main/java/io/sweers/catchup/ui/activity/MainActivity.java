@@ -1,9 +1,9 @@
 package io.sweers.catchup.ui.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.sweers.catchup.P;
 import io.sweers.catchup.R;
 import io.sweers.catchup.app.CatchUpApplication;
 import io.sweers.catchup.ui.ViewContainer;
@@ -70,14 +71,20 @@ public class MainActivity extends BaseActivity implements ActionBarProvider {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == R.id.toggle_daynight) {
-      if (UiUtil.isInNightMode(this)) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-      } else {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-      }
-      ProcessPhoenix.triggerRebirth(this);
-      return true;
+    switch (item.getItemId()) {
+      case R.id.toggle_daynight:
+        P.daynightAuto.put(false).commit();
+        if (UiUtil.isInNightMode(this)) {
+          P.daynightNight.put(false).commit();
+        } else {
+          P.daynightNight.put(true).commit();
+        }
+        // TODO Use recreate() here after conductor 2.0 and not needing to retain views on detach
+        ProcessPhoenix.triggerRebirth(this);
+        return true;
+      case R.id.settings:
+        startActivity(new Intent(this, SettingsActivity.class));
+        return true;
     }
     return super.onOptionsItemSelected(item);
   }
