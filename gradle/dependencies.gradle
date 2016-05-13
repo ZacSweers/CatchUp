@@ -3,18 +3,18 @@ ext {
     minSdkVersion = 21
     targetSdkVersion = 23
     compileSdkVersion = 23
-    buildToolsVersion = '23.0.2'
+    buildToolsVersion = '23.0.3'
     ci = 'true'.equals(System.getenv('CI'))
 
     // Kotlin
-    kotlinVersion = '1.0.1-2'
+    kotlinVersion = '1.0.2'
     kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     kotlinAndroidAnnotaitons = "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$kotlinVersion"
     kotterKnife = 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
 
     // Google
-    supportVersion = '23.3.0'
+    supportVersion = '23.4.0'
     supportAnnotations = "com.android.support:support-annotations:$supportVersion"
     supportAppCompat = "com.android.support:appcompat-v7:$supportVersion"
     supportCardView = "com.android.support:cardview-v7:$supportVersion"
@@ -43,7 +43,7 @@ ext {
     autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:0.1.0'
 
     // Conductor
-    conductorVersion = '1.1.4'
+    conductorVersion = '1.1.6'
     conductor = "com.bluelinelabs:conductor:$conductorVersion"
     conductorSupport = "com.bluelinelabs:conductor-support:$conductorVersion"
     conductorRxLifecycle = "com.bluelinelabs:conductor-rxlifecycle:$conductorVersion"
@@ -82,7 +82,7 @@ ext {
     rxBinding = "com.jakewharton.rxbinding:rxbinding:$rxBindingVersion"
     rxBindingV4 = "com.jakewharton.rxbinding:rxbinding-support-v4:$rxBindingVersion"
     rxJava = 'io.reactivex:rxjava:1.1.5'
-    rxLifecycle = 'com.trello:rxlifecycle:0.6.0'
+    rxLifecycle = 'com.trello:rxlifecycle:0.6.1'
     rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.1'
     rxReceivers = 'com.f2prateek.rx.receivers:rx-receivers:0.1.0-SNAPSHOT'
     rxRelay = 'com.jakewharton.rxrelay:rxrelay:1.1.0'
