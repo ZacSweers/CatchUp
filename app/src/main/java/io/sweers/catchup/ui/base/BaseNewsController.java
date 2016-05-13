@@ -135,8 +135,11 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   @Override
   protected void onAttach(@NonNull View view) {
     super.onAttach(view);
-    swipeRefreshLayout.setEnabled(false);
-    loadData();
+    if (adapter.data.isEmpty()) {
+      // TODO remove after Conductor 2.0
+      swipeRefreshLayout.setEnabled(false);
+      loadData();
+    }
   }
 
   private void loadData() {
