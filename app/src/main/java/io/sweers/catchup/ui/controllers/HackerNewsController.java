@@ -90,12 +90,10 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
 
     holder.itemClicks()
         .compose(transformUrl(url))
-        .compose(Confine.to(holder.itemView))
         .subscribe(linkManager);
 
     holder.itemCommentClicks()
         .compose(transformUrl("https://news.ycombinator.com/item?id=" + story.id()))
-        .compose(Confine.to(holder.itemView))
         .subscribe(linkManager);
   }
 
