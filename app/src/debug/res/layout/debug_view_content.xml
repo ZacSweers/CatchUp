@@ -147,6 +147,19 @@
   <TextView
     style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
     android:layout_gravity="start|center_vertical"
+    android:text="Enable mock mode"
+    tools:ignore="HardcodedText"
+    />
+
+  <Switch
+    android:id="@+id/debug_enable_mock_mode"
+    style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
+    android:layout_gravity="start|center_vertical"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
     android:text="Capture intents"
     tools:ignore="HardcodedText"
     />

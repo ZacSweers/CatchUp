@@ -17,6 +17,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.f2prateek.rx.preferences.Preference;
+import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxAdapterView;
 import com.squareup.leakcanary.internal.DisplayLeakActivity;
 
@@ -61,6 +62,7 @@ public final class DebugView extends FrameLayout {
   @BindView(R.id.debug_network_variance) Spinner networkVarianceView;
   @BindView(R.id.debug_network_error) Spinner networkErrorView;
   @BindView(R.id.debug_network_logging) Spinner networkLoggingView;
+  @BindView(R.id.debug_enable_mock_mode) Switch enableMockModeView;
   @BindView(R.id.debug_capture_intents) Switch captureIntentsView;
   @BindView(R.id.debug_repositories_response) Spinner repositoriesResponseView;
   @BindView(R.id.debug_ui_animation_speed) Spinner uiAnimationSpeedView;
@@ -242,6 +244,11 @@ public final class DebugView extends FrameLayout {
   }
 
   private void setupMockBehaviorSection() {
+    enableMockModeView.setChecked(P.debugMockModeEnabled.get());
+    RxView.clicks(enableMockModeView)
+        .subscribe(v -> {
+          P.debugMockModeEnabled.put(enableMockModeView.isChecked()).apply();
+        });
 //    captureIntentsView.setEnabled(isMockMode);
 //    captureIntentsView.setChecked(captureIntents.get());
 //    captureIntentsView.setOnCheckedChangeListener((compoundButton, b) -> {
