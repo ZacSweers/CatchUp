@@ -15,14 +15,8 @@
   </style>
 
   <style name="CatchUp.TabLayout" parent="Widget.Design.TabLayout">
+    <item name="android:theme">@style/Theme.AppCompat</item>
     <item name="tabIndicatorColor">#FFFFFF</item>
-    <item name="tabTextAppearance">@style/CatchUp.TabLayout.Tab</item>
-    <item name="tabSelectedTextColor">@color/tab_text_selected</item>
-    <item name="tabTextColor">@color/tab_text_default</item>
-  </style>
-
-  <style name="CatchUp.TabLayout.Tab" parent="TextAppearance.Design.Tab">
-    <item name="textAllCaps">true</item>
   </style>
 
   <style name="CatchUp.Medium" parent="CatchUp">
