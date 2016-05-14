@@ -72,7 +72,7 @@ public final class DebugViewContainer implements ViewContainer {
     final ViewHolder viewHolder = new ViewHolder();
     ButterKnife.bind(viewHolder, activity);
 
-    final Context drawerContext = new ContextThemeWrapper(activity, R.style.CatchUp);
+    final Context drawerContext = new ContextThemeWrapper(activity, R.style.DebugDrawer);
     final DebugView debugView = new DebugView(drawerContext);
     viewHolder.debugDrawer.addView(debugView);
 
@@ -90,6 +90,7 @@ public final class DebugViewContainer implements ViewContainer {
       }
     });
 
+    viewHolder.telescopeLayout.setPointerCount(3);
     TelescopeLayout.cleanUp(activity); // Clean up any old screenshots.
 //    viewHolder.telescopeLayout.setLens(new BugReportLens(activity, lumberYard));
 
