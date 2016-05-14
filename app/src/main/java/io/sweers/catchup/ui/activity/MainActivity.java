@@ -1,7 +1,6 @@
 package io.sweers.catchup.ui.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
@@ -49,11 +48,6 @@ public class MainActivity extends BaseActivity implements ActionBarProvider {
     getLayoutInflater().inflate(R.layout.activity_main, viewGroup);
 
     unbinder = ButterKnife.bind(this);
-
-    if (!UiUtil.isInNightMode(this)) {
-      // TODO Why can't theming handle this?
-      toolbar.setTitleTextColor(Color.BLACK);
-    }
 
     setSupportActionBar(toolbar);
 
