@@ -107,6 +107,8 @@ public class PagerController extends BaseController {
             return new MediumController();
           case 3:
             return new ProductHuntController();
+          case 4:
+            return new SlashdotController();
           case 7:
             return new GitHubController();
           default:
