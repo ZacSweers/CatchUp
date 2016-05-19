@@ -6,6 +6,7 @@ import android.support.v4.util.ArrayMap;
 import java.io.IOException;
 
 import io.sweers.catchup.P;
+import io.sweers.catchup.data.designernews.DesignerNewsService;
 import io.sweers.catchup.data.github.GitHubService;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.medium.MediumService;
@@ -52,6 +53,10 @@ public final class MockDataInterceptor implements Interceptor {
         new ServiceData.Builder("sd")
             .addEndpoint("/Slashdot/slashdotMainatom")
             .fileType("xml")
+            .build());
+    put(DesignerNewsService.HOST,
+        new ServiceData.Builder("dn")
+            .addEndpoint("/api/v1/stories")
             .build());
     put(GitHubService.HOST,
         new ServiceData.Builder("g")

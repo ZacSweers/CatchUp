@@ -37,6 +37,7 @@ android {
         buildConfigField 'long', 'GIT_TIMESTAMP', "${gitTimestamp}"
         buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"$catchup_product_hunt_developer_token"/
         buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN', /"$catchup_github_developer_token"/
+        buildConfigField 'String', 'DESIGNER_NEWS_CLIENT_ID', /"$catchup_designer_news_client_id"/
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
