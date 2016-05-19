@@ -20,7 +20,6 @@ public final class DebugDataModule extends DataModule {
     loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
     builder.addNetworkInterceptor(loggingInterceptor);
 
-    // TODO Pref this
     builder.addInterceptor(new MockDataInterceptor(context));
   }
 }

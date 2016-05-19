@@ -17,6 +17,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.f2prateek.rx.preferences.Preference;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxAdapterView;
 import com.squareup.leakcanary.internal.DisplayLeakActivity;
@@ -55,16 +56,12 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 public final class DebugView extends FrameLayout {
   private static final DateTimeFormatter DATE_DISPLAY_FORMAT =
       DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a", Locale.US).withZone(ZoneId.systemDefault());
-//  private final ContextualDebugActions contextualDebugActions;
   @BindView(R.id.debug_contextual_title) View contextualTitleView;
   @BindView(R.id.debug_contextual_list) LinearLayout contextualListView;
   @BindView(R.id.debug_network_delay) Spinner networkDelayView;
   @BindView(R.id.debug_network_variance) Spinner networkVarianceView;
   @BindView(R.id.debug_network_error) Spinner networkErrorView;
-  @BindView(R.id.debug_network_logging) Spinner networkLoggingView;
   @BindView(R.id.debug_enable_mock_mode) Switch enableMockModeView;
-  @BindView(R.id.debug_capture_intents) Switch captureIntentsView;
-  @BindView(R.id.debug_repositories_response) Spinner repositoriesResponseView;
   @BindView(R.id.debug_ui_animation_speed) Spinner uiAnimationSpeedView;
   @BindView(R.id.debug_ui_pixel_grid) Switch uiPixelGridView;
   @BindView(R.id.debug_ui_pixel_ratio) Switch uiPixelRatioView;
@@ -94,7 +91,6 @@ public final class DebugView extends FrameLayout {
   Preference<Integer> networkVariancePercent = P.debugNetworkVariancePercent.rx();
   //  @Inject MockGithubService mockGithubService;
   @Inject Application app;
-//  @Inject Set<DebugAction> debugActions;
   private Preference<Integer> animationSpeed = P.debugAnimationSpeed.rx();
   private Preference<Boolean> pixelGridEnabled = P.debugPixelGridEnabled.rx();
   private Preference<Boolean> pixelRatioEnabled = P.debugPixelRatioEnabled.rx();
@@ -117,8 +113,6 @@ public final class DebugView extends FrameLayout {
     // Inflate all of the controls and inject them.
     LayoutInflater.from(context).inflate(R.layout.debug_view_content, this);
     ButterKnife.bind(this);
-
-//    contextualDebugActions = new ContextualDebugActions(this, debugActions);
 
     setupNetworkSection();
     setupMockBehaviorSection();
@@ -158,10 +152,6 @@ public final class DebugView extends FrameLayout {
     }
     return bytes + units[unit];
   }
-
-//  public ContextualDebugActions getContextualDebugActions() {
-//    return contextualDebugActions;
-//  }
 
   public void onDrawerOpened() {
     refreshOkHttpCacheStats();
@@ -211,36 +201,12 @@ public final class DebugView extends FrameLayout {
           networkFailurePercent.set(selected);
         });
 
-    if (isMockMode) {
-      // Disable network proxy if we are in mock mode.
-      networkLoggingView.setEnabled(false);
-    } else {
+    if (!isMockMode) {
       // Disable network controls if we are not in mock mode.
       networkDelayView.setEnabled(false);
       networkVarianceView.setEnabled(false);
       networkErrorView.setEnabled(false);
     }
-
-    // We use the JSON rest adapter as the source of truth for the log level.
-    //final EnumAdapter<RestAdapter.LogLevel> loggingAdapter =
-    //    new EnumAdapter<>(getContext(), RestAdapter.LogLevel.class);
-    //networkLoggingView.setAdapter(loggingAdapter);
-    //networkLoggingView.setSelection(retrofit.getLogLevel().ordinal());
-    //networkLoggingView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-    //  @Override
-    //  public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-    //    RestAdapter.LogLevel selected = loggingAdapter.getItem(position);
-    //    if (selected != retrofit.getLogLevel()) {
-    //      Timber.d("Setting logging level to %s", selected);
-    //      retrofit.setLogLevel(selected);
-    //    } else {
-    //      Timber.d("Ignoring re-selection of logging level " + selected);
-    //    }
-    //  }
-    //
-    //  @Override public void onNothingSelected(AdapterView<?> adapterView) {
-    //  }
-    //});
   }
 
   private void setupMockBehaviorSection() {
@@ -248,36 +214,8 @@ public final class DebugView extends FrameLayout {
     RxView.clicks(enableMockModeView)
         .subscribe(v -> {
           P.debugMockModeEnabled.put(enableMockModeView.isChecked()).apply();
+          ProcessPhoenix.triggerRebirth(getContext());
         });
-//    captureIntentsView.setEnabled(isMockMode);
-//    captureIntentsView.setChecked(captureIntents.get());
-//    captureIntentsView.setOnCheckedChangeListener((compoundButton, b) -> {
-//      Timber.d("Capture intents set to %s", b);
-//      captureIntents.set(b);
-//    });
-
-//    configureResponseSpinner(repositoriesResponseView, MockRepositoriesResponse.class);
-  }
-
-  /**
-   * Populates a {@code Spinner} with the values of an {@code enum} and binds it to the value set
-   * in
-   * the mock service.
-   */
-  private <T extends Enum<T>> void configureResponseSpinner(Spinner spinner,
-                                                            final Class<T> responseClass) {
-//    final EnumAdapter<T> adapter = new EnumAdapter<>(getContext(), responseClass);
-//    spinner.setEnabled(isMockMode);
-//    spinner.setAdapter(adapter);
-//    spinner.setSelection(mockGithubService.getResponse(responseClass).ordinal());
-//
-//    RxAdapterView.itemSelections(spinner)
-//        .map(adapter::getItem)
-//        .filter(item -> item != mockGithubService.getResponse(responseClass))
-//        .subscribe(selected -> {
-//          Timber.d("Setting %s to %s", responseClass.getSimpleName(), selected);
-//          mockGithubService.setResponse(responseClass, selected);
-//        });
   }
 
   private void setupUserInterfaceSection() {

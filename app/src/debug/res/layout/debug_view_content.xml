@@ -120,19 +120,6 @@
     android:layout_gravity="start|center_vertical|fill_horizontal"
     />
 
-  <TextView
-    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
-    android:layout_gravity="start|center_vertical"
-    android:text="Logging"
-    tools:ignore="HardcodedText"
-    />
-
-  <Spinner
-    android:id="@+id/debug_network_logging"
-    android:layout_width="0dp"
-    android:layout_gravity="start|center_vertical|fill_horizontal"
-    />
-
   <!-- MOCK BEHAVIOR SECTION -->
 
   <TextView
@@ -155,32 +142,6 @@
     android:id="@+id/debug_enable_mock_mode"
     style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
     android:layout_gravity="start|center_vertical"
-    />
-
-  <TextView
-    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
-    android:layout_gravity="start|center_vertical"
-    android:text="Capture intents"
-    tools:ignore="HardcodedText"
-    />
-
-  <Switch
-    android:id="@+id/debug_capture_intents"
-    style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
-    android:layout_gravity="start|center_vertical"
-    />
-
-  <TextView
-    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
-    android:layout_gravity="start|center_vertical"
-    android:text="Repositories"
-    tools:ignore="HardcodedText"
-    />
-
-  <Spinner
-    android:id="@+id/debug_repositories_response"
-    android:layout_width="0dp"
-    android:layout_gravity="start|center_vertical|fill_horizontal"
     />
 
   <!-- USER INTERFACE SECTION -->
