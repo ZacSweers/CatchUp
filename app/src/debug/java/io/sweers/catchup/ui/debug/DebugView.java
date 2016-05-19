@@ -39,8 +39,10 @@ import dagger.Lazy;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.P;
 import io.sweers.catchup.R;
+import io.sweers.catchup.app.ApplicationComponent;
 import io.sweers.catchup.app.CatchUpApplication;
 import io.sweers.catchup.data.LumberYard;
+import io.sweers.catchup.injection.scopes.PerView;
 import io.sweers.catchup.ui.logs.LogsDialog;
 import io.sweers.catchup.util.Strings;
 import okhttp3.Cache;
@@ -84,13 +86,13 @@ public final class DebugView extends FrameLayout {
   @BindView(R.id.debug_okhttp_cache_hit_count) TextView okHttpCacheHitCountView;
   @Inject Lazy<OkHttpClient> client;
   @Inject LumberYard lumberYard;
+  @Inject Application app;
   boolean isMockMode = P.debugMockModeEnabled.get();
   NetworkBehavior behavior;
   Preference<Integer> networkDelay = P.debugNetworkDelay.rx();
   Preference<Integer> networkFailurePercent = P.debugNetworkFailurePercent.rx();
   Preference<Integer> networkVariancePercent = P.debugNetworkVariancePercent.rx();
   //  @Inject MockGithubService mockGithubService;
-  @Inject Application app;
   private Preference<Integer> animationSpeed = P.debugAnimationSpeed.rx();
   private Preference<Boolean> pixelGridEnabled = P.debugPixelGridEnabled.rx();
   private Preference<Boolean> pixelRatioEnabled = P.debugPixelRatioEnabled.rx();
@@ -103,7 +105,10 @@ public final class DebugView extends FrameLayout {
 
   public DebugView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    CatchUpApplication.component().inject(this);
+    DaggerDebugView_Component.builder()
+        .applicationComponent(CatchUpApplication.component())
+        .build()
+        .inject(this);
 
     behavior = NetworkBehavior.create();
     behavior.setDelay(networkDelay.get(), MILLISECONDS);
@@ -325,5 +330,13 @@ public final class DebugView extends FrameLayout {
     } catch (Exception e) {
       throw new RuntimeException("Unable to apply animation speed.", e);
     }
+  }
+
+  @PerView
+  @dagger.Component(
+      dependencies = ApplicationComponent.class
+  )
+  public interface Component {
+    void inject(DebugView debugView);
   }
 }

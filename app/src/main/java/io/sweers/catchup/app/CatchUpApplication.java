@@ -12,13 +12,15 @@ import com.squareup.leakcanary.RefWatcher;
 import javax.inject.Inject;
 
 import io.sweers.catchup.P;
+import io.sweers.catchup.data.LumberYard;
 import io.sweers.catchup.injection.Modules;
 
 public class CatchUpApplication extends Application {
 
   private static RefWatcher refWatcher;
   private static ApplicationComponent component;
-  @Inject SharedPreferences sharedPreferences;
+  @Inject protected SharedPreferences sharedPreferences;
+  @Inject protected LumberYard lumberYard;
 
   @NonNull
   public static ApplicationComponent component() {

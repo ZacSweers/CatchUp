@@ -127,17 +127,22 @@ dependencies {
     compile rootProject.ext.retrofitMoshi
     compile rootProject.ext.retrofitGson
     compile rootProject.ext.retrofitRxJava
+    compile(rootProject.ext.retrofitXml) {
+        exclude module: 'stax'
+        exclude module: 'stax-api'
+        exclude module: 'xpp3'
+    }
     compile rootProject.ext.rxAndroid
     compile rootProject.ext.rxBinding
     compile rootProject.ext.rxBindingV4
     compile rootProject.ext.timber
     compile rootProject.ext.threetenabp
-    debugCompile 'com.jakewharton.madge:madge:1.1.3'
-    debugCompile 'com.jakewharton.scalpel:scalpel:1.1.2'
-    debugCompile 'com.jakewharton:process-phoenix:1.0.2'
-    debugCompile 'com.mattprecious.telescope:telescope:1.5.0@aar'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
-    debugCompile 'com.squareup.retrofit2:retrofit-mock:2.0.0'
+    debugCompile rootProject.ext.madge
+    debugCompile rootProject.ext.scalpel
+    compile rootProject.ext.processPhoenix  // Move back to debugCompile when it's not needed for daynight
+    debugCompile rootProject.ext.telescope
+    compile rootProject.ext.okhttpLoggingInterceptor
+    debugCompile rootProject.ext.retrofitMock
 
     releaseCompile rootProject.ext.bugsnag
 
@@ -153,12 +158,6 @@ dependencies {
     compile rootProject.ext.rxPreferences
     compile rootProject.ext.rxReceivers
     compile rootProject.ext.rxRelay
-
-    compile(rootProject.ext.retrofitXml) {
-        exclude module: 'stax'
-        exclude module: 'stax-api'
-        exclude module: 'xpp3'
-    }
     compile(rootProject.ext.simpleXml) {
         exclude module: 'stax'
         exclude module: 'stax-api'
@@ -192,5 +191,6 @@ dependencies {
 
     // LeakCanary
     debugCompile rootProject.ext.leakCanary
+    debugCompile rootProject.ext.haha
     releaseCompile rootProject.ext.leakCanaryNoop
 }

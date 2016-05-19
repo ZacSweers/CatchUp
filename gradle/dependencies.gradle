@@ -92,6 +92,7 @@ ext {
     butterKnifeVersion = '8.0.1'
     butterKnife = "com.jakewharton:butterknife:$butterKnifeVersion"
     butterKnifeCompiler = "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+    haha = 'com.squareup.haha:haha:2.0.3'
     leakCanaryVersion = '1.4-beta2'
     leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     leakCanaryNoop = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
@@ -100,16 +101,21 @@ ext {
     okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
     okio = 'com.squareup.okio:okio:1.8.0'
+    madge = 'com.jakewharton.madge:madge:1.1.3'
     moshiVersion = '1.1.0'
     moshi = "com.squareup.moshi:moshi:$moshiVersion"
     moshiAdapters = "com.squareup.moshi:moshi-adapters:$moshiVersion"
+    processPhoenix = 'com.jakewharton:process-phoenix:1.0.2'
     retrofitVersion = '2.0.1'
     retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    retrofitMock = "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
     retrofitMoshi = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
     retrofitGson = "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     retrofitRxJava = "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
     retrofitXml = "com.squareup.retrofit2:converter-simplexml:$retrofitVersion"
+    scalpel = 'com.jakewharton.scalpel:scalpel:1.1.2'
     sdkManagerPlugin = 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+    telescope = 'com.mattprecious.telescope:telescope:1.5.0@aar'
     threetenabp = 'com.jakewharton.threetenabp:threetenabp:1.0.2'
     timber = 'com.jakewharton.timber:timber:4.1.2'
 
