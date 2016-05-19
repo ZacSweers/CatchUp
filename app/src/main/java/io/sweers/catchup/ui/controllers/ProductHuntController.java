@@ -69,11 +69,9 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     holder.score(Pair.create("▲", item.votes_count()));
     holder.timestamp(item.created_at());
     holder.author(item.user().name());
-    holder.source(item.getFirstTopic());
+    holder.tag(item.getFirstTopic());
+    holder.source(null);
     holder.comments(item.comments_count());
-
-    // Because seriously it's all "tech"
-    holder.tag(null);
 
     holder.itemClicks()
         .compose(transformUrl(item.redirect_url()))
