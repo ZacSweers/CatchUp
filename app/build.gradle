@@ -154,6 +154,17 @@ dependencies {
     compile rootProject.ext.rxReceivers
     compile rootProject.ext.rxRelay
 
+    compile(rootProject.ext.retrofitXml) {
+        exclude module: 'stax'
+        exclude module: 'stax-api'
+        exclude module: 'xpp3'
+    }
+    compile(rootProject.ext.simpleXml) {
+        exclude module: 'stax'
+        exclude module: 'stax-api'
+        exclude module: 'xpp3'
+    }
+
     // Stetho
     debugCompile rootProject.ext.stetho
     debugCompile rootProject.ext.stethoOkHttp

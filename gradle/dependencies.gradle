@@ -63,6 +63,7 @@ ext {
     retrolambda = 'net.orfjackal.retrolambda:retrolambda:2.3.0'
     retrolambdaPlugin = 'me.tatarka:gradle-retrolambda:3.3.0-beta4'
     retrolambdaPluginLombok = 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
+    simpleXml = 'org.simpleframework:simple-xml:2.7.1'
     stethoVersion = '1.3.1'
     stetho = "com.facebook.stetho:stetho:$stethoVersion"
     stethoOkHttp = "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
@@ -107,6 +108,7 @@ ext {
     retrofitMoshi = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
     retrofitGson = "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     retrofitRxJava = "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
+    retrofitXml = "com.squareup.retrofit2:converter-simplexml:$retrofitVersion"
     sdkManagerPlugin = 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
     threetenabp = 'com.jakewharton.threetenabp:threetenabp:1.0.2'
     timber = 'com.jakewharton.timber:timber:4.1.2'

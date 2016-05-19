@@ -12,6 +12,7 @@ import io.sweers.catchup.data.medium.MediumService;
 import io.sweers.catchup.data.model.ServiceData;
 import io.sweers.catchup.data.producthunt.ProductHuntService;
 import io.sweers.catchup.data.reddit.RedditService;
+import io.sweers.catchup.data.slashdot.SlashdotService;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -47,6 +48,11 @@ public final class MockDataInterceptor implements Interceptor {
         new ServiceData.Builder("ph")
             .addEndpoint("/v1/posts")
             .build());
+    put(SlashdotService.HOST,
+        new ServiceData.Builder("sd")
+            .addEndpoint("/Slashdot/slashdotMainatom")
+            .fileType("xml")
+            .build());
     put(GitHubService.HOST,
         new ServiceData.Builder("g")
             .addEndpoint("/search/repositories")
@@ -67,7 +73,8 @@ public final class MockDataInterceptor implements Interceptor {
     return service.assetsPrefix
         + "/"
         + lastSegment
-        + ".json";
+        + "."
+        + service.fileType;
   }
 
   @Override

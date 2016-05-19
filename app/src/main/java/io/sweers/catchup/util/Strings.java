@@ -16,4 +16,13 @@ public final class Strings {
   public static String truncateAt(String string, int length) {
     return string.length() > length ? string.substring(0, length) : string;
   }
+
+  public static String capitalize(String input) {
+    if (isBlank(input)) {
+      return input;
+    } else if (input.length() == 1) {
+      return input.toUpperCase();
+    }
+    return Character.toUpperCase(input.charAt(0)) + input.substring(1);
+  }
 }
