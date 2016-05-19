@@ -32,6 +32,7 @@ import butterknife.OnClick;
 import io.sweers.catchup.R;
 import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.util.NumberUtil;
+import io.sweers.catchup.util.Strings;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
@@ -277,7 +278,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       } else {
         tag.setVisibility(VISIBLE);
         tagDivider.setVisibility(VISIBLE);
-        tag.setText(text);
+        tag.setText(Strings.capitalize(text));
       }
     }
 

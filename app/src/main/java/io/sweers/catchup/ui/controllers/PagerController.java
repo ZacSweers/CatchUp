@@ -2,9 +2,11 @@ package io.sweers.catchup.ui.controllers;
 
 import android.animation.ArgbEvaluator;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -38,47 +40,47 @@ public class PagerController extends BaseController {
 
   private static final int[][] PAGE_DATA = new int[][]{
       {
-          R.string.hacker_news_short,
+          R.drawable.logo_hn,
           R.string.hacker_news,
           R.color.hackerNewsAccent
       },
       {
-          R.string.reddit_short,
+          R.drawable.logo_reddit,
           R.string.reddit,
           R.color.redditAccent
       },
       {
-          R.string.medium_short,
+          R.drawable.logo_medium,
           R.string.medium,
           R.color.mediumAccent
       },
       {
-          R.string.product_hunt_short,
+          R.drawable.ll_ph,
           R.string.product_hunt,
           R.color.productHuntAccent
       },
       {
-          R.string.slashdot_short,
+          R.drawable.logo_sd,
           R.string.slashdot,
-          R.color.redditAccent
+          R.color.slashdotAccent
       },
       {
-          R.string.designer_news_short,
+          R.drawable.logo_dn,
           R.string.designer_news,
           R.color.redditAccent
       },
       {
-          R.string.dribbble_short,
+          R.drawable.logo_dribbble,
           R.string.dribbble,
           R.color.redditAccent
       },
       {
-          R.string.github_short,
+          R.drawable.logo_github,
           R.string.github,
           R.color.redditAccent
       },
       {
-          R.string.readability_short,
+          R.drawable.logo_github,
           R.string.readability,
           R.color.redditAccent
       }
@@ -119,7 +121,7 @@ public class PagerController extends BaseController {
 
       @Override
       public CharSequence getPageTitle(int position) {
-        return getResources().getString(PAGE_DATA[position][0]);
+        return "";
       }
     };
 
@@ -162,6 +164,13 @@ public class PagerController extends BaseController {
 
     viewPager.setAdapter(pagerAdapter);
     tabLayout.setupWithViewPager(viewPager);
+
+    // Set icons
+    for (int i = 0; i < PAGE_DATA.length; i++) {
+      int[] vals = PAGE_DATA[i];
+      Drawable d = VectorDrawableCompat.create(getResources(), vals[0], null);
+      tabLayout.getTabAt(i).setIcon(d);
+    }
 
     // Animate color changes
     // adapted from http://kubaspatny.github.io/2014/09/18/viewpager-background-transition/

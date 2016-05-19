@@ -3,6 +3,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:orientation="vertical"
   >
 
@@ -14,6 +15,7 @@
     android:background="?colorPrimary"
     android:elevation="6dp"
     android:minHeight="?actionBarSize"
+    app:tabMode="scrollable"
     />
 
   <android.support.v4.view.ViewPager
