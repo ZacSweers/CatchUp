@@ -1,22 +1,22 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+  <style name="None">
+  </style>
 
   <!-- Base application theme. -->
-  <style name="CatchUp" parent="Theme.AppCompat.DayNight.NoActionBar">
-    <!-- Customize your theme here. -->
+  <style name="Base" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
   </style>
 
-  <style name="CatchUp.TabLayout" parent="Widget.Design.TabLayout">
-    <item name="tabIndicatorColor">#FFFFFF</item>
-    <item name="tabTextAppearance">@style/CatchUp.TabLayout.Tab</item>
-    <item name="tabSelectedTextColor">@color/tab_text_selected</item>
-    <item name="tabTextColor">@color/tab_text_default</item>
+  <style name="CatchUp" parent="Base">
+    <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
   </style>
 
-  <style name="CatchUp.TabLayout.Tab" parent="TextAppearance.Design.Tab">
-    <item name="textAllCaps">true</item>
+  <style name="CatchUp.TabLayout" parent="Widget.Design.TabLayout">
+    <item name="android:theme">@style/Theme.AppCompat</item>
+    <item name="tabIndicatorColor">#FFFFFF</item>
   </style>
 
   <style name="CatchUp.Medium" parent="CatchUp">
@@ -37,6 +37,10 @@
 
   <style name="CatchUp.HackerNews" parent="CatchUp">
     <item name="colorAccent">@color/hackerNewsAccent</item>
+  </style>
+
+  <style name="CatchUp.Slashdot" parent="CatchUp">
+    <item name="colorAccent">@color/slashdotAccent</item>
   </style>
 
 </resources>

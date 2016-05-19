@@ -5,10 +5,12 @@ import java.util.Set;
 
 public class ServiceData {
   public final String assetsPrefix;
+  public final String fileType;
   public final Set<String> supportedEndpoints;
 
-  private ServiceData(String assetsPrefix, Set<String> supportedEndpoints) {
+  private ServiceData(String assetsPrefix, String fileType, Set<String> supportedEndpoints) {
     this.assetsPrefix = assetsPrefix;
+    this.fileType = fileType;
     this.supportedEndpoints = supportedEndpoints;
   }
 
@@ -19,6 +21,7 @@ public class ServiceData {
   public static class Builder {
     private final String prefix;
     private final Set<String> endpoints = new HashSet<>();
+    private String fileType = "json"; // Default
 
     public Builder(String prefix) {
       this.prefix = prefix;
@@ -29,8 +32,13 @@ public class ServiceData {
       return this;
     }
 
+    public Builder fileType(String fileType) {
+      this.fileType = fileType;
+      return this;
+    }
+
     public ServiceData build() {
-      return new ServiceData(prefix, endpoints);
+      return new ServiceData(prefix, fileType, endpoints);
     }
   }
 }

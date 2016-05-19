@@ -89,11 +89,9 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
     holder.itemClicks()
         .compose(transformUrl(item.constructUrl()))
-        .compose(Confine.to(holder.itemView))
         .subscribe(linkManager);
     holder.itemCommentClicks()
         .compose(transformUrl(item.constructCommentsUrl()))
-        .compose(Confine.to(holder.itemView))
         .subscribe(linkManager);
   }
 

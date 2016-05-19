@@ -18,7 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.jakewharton.rxbinding.view.RxView;
-import com.jakewharton.rxrelay.PublishRelay;
 
 import org.threeten.bp.Instant;
 
@@ -26,7 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +32,7 @@ import butterknife.OnClick;
 import io.sweers.catchup.R;
 import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.util.NumberUtil;
+import io.sweers.catchup.util.Strings;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
@@ -65,17 +64,6 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
 
     // TODO remove after Conductor 2.0
     setRetainViewMode(RetainViewMode.RETAIN_DETACH);
-  }
-
-  public static <T> Observable.Transformer<T, T> throttleClicks() {
-    return voidObservable -> {
-      PublishRelay<T> throttledRelay = PublishRelay.create();
-      voidObservable
-          .subscribe(throttledRelay);
-      return throttledRelay
-          .doOnNext(System.out::println)
-          .throttleFirst(300, TimeUnit.MILLISECONDS);
-    };
   }
 
   protected abstract void performInjection();
@@ -135,8 +123,11 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   @Override
   protected void onAttach(@NonNull View view) {
     super.onAttach(view);
-    swipeRefreshLayout.setEnabled(false);
-    loadData();
+    if (adapter.data.isEmpty()) {
+      // TODO remove after Conductor 2.0
+      swipeRefreshLayout.setEnabled(false);
+      loadData();
+    }
   }
 
   private void loadData() {
@@ -254,18 +245,15 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     }
 
     public Observable<Void> itemClicks() {
-      return RxView.clicks(container)
-          .compose(throttleClicks());
+      return RxView.clicks(container);
     }
 
     public Observable<Void> itemLongClicks() {
-      return RxView.longClicks(container)
-          .compose(throttleClicks());
+      return RxView.longClicks(container);
     }
 
     public Observable<Void> itemCommentClicks() {
-      return RxView.clicks(comments)
-          .compose(throttleClicks());
+      return RxView.clicks(comments);
     }
 
     public void title(@NonNull CharSequence titleText) {
@@ -290,7 +278,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       } else {
         tag.setVisibility(VISIBLE);
         tagDivider.setVisibility(VISIBLE);
-        tag.setText(text);
+        tag.setText(Strings.capitalize(text));
       }
     }
 

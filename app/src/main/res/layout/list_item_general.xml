@@ -131,12 +131,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="?android:colorBackground"
+    android:background="?selectableItemBackgroundBorderless"
     android:clickable="true"
     android:drawableTint="?colorAccent"
     android:gravity="center"
     android:padding="16dp"
-    android:stateListAnimator="@animator/raise"
     app:drawableTop="@drawable/ic_comment_black_24dp"
     tools:text="39"
     />

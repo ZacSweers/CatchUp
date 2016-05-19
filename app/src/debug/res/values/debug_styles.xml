@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <style name="Widget.CatchUp.DebugDrawer.Header" parent="None">
+    <item name="android:paddingBottom">2dp</item>
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
+    <item name="android:textAllCaps">true</item>
+    <item name="android:textSize">13sp</item>
+    <item name="android:layout_marginTop">24dp</item>
+    <item name="android:layout_marginBottom">2dp</item>
+    <item name="android:background">@android:color/black</item>
+  </style>
+
+  <style name="Widget.CatchUp.DebugDrawer.RowWidget" parent="None">
+    <item name="android:minHeight">26dp</item>
+    <item name="android:layout_marginTop">4dp</item>
+  </style>
+
+  <style name="Widget.CatchUp.DebugDrawer.RowTitle" parent="Widget.CatchUp.DebugDrawer.RowWidget">
+    <item name="android:layout_marginRight">16dp</item>
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
+    <item name="android:textSize">16sp</item>
+  </style>
+
+  <style name="Widget.CatchUp.DebugDrawer.RowValue" parent="Widget.CatchUp.DebugDrawer.RowWidget">
+    <item name="android:textColor">?android:attr/textColorPrimary</item>
+    <item name="android:textSize">16sp</item>
+  </style>
+
+  <style name="Widget.CatchUp.ExternalIntent.Header" parent="None">
+    <item name="android:paddingBottom">8dp</item>
+    <item name="android:paddingLeft">16dp</item>
+    <item name="android:paddingRight">16dp</item>
+    <item name="android:paddingTop">16dp</item>
+    <item name="android:textColor">?android:attr/textColorPrimary</item>
+    <item name="android:textSize">18sp</item>
+  </style>
+
+  <style name="Widget.CatchUp.ExternalIntent.Body" parent="None">
+    <item name="android:paddingLeft">32dp</item>
+    <item name="android:paddingRight">32dp</item>
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
+    <item name="android:textSize">14sp</item>
+  </style>
+</resources>

@@ -3,6 +3,16 @@
   xmlns:tools="http://schemas.android.com/tools"
   package="io.sweers.catchup"
   >
+  <!-- Used for sharing logs and Spoon. -->
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+  <!-- Used for telescope. -->
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.VIBRATE"/>
+
+  <!-- Used for instrumentation tests. -->
+  <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+  <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
   <application
     android:name=".app.DebugCatchUpApplication"

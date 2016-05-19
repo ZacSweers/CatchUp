@@ -6,6 +6,8 @@ import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import timber.log.Timber;
 
 public final class DebugDataModule extends DataModule {
   @Override
@@ -14,7 +16,10 @@ public final class DebugDataModule extends DataModule {
       OkHttpClient.Builder builder) {
     builder.addNetworkInterceptor(new StethoInterceptor());
 
-    // TODO Pref this
+    HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> Timber.tag("OkHttp").v(message));
+    loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+    builder.addNetworkInterceptor(loggingInterceptor);
+
     builder.addInterceptor(new MockDataInterceptor(context));
   }
 }

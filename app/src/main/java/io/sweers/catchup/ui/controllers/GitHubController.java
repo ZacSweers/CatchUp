@@ -77,7 +77,6 @@ public final class GitHubController extends BaseNewsController<Repository> {
     holder.tag(item.language());
     holder.itemClicks()
         .compose(transformUrl(item.htmlUrl()))
-        .compose(Confine.to(holder.itemView))
         .subscribe(linkManager);
   }
 

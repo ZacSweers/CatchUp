@@ -5,12 +5,14 @@ import android.support.v4.util.ArrayMap;
 
 import java.io.IOException;
 
+import io.sweers.catchup.P;
 import io.sweers.catchup.data.github.GitHubService;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.medium.MediumService;
 import io.sweers.catchup.data.model.ServiceData;
 import io.sweers.catchup.data.producthunt.ProductHuntService;
 import io.sweers.catchup.data.reddit.RedditService;
+import io.sweers.catchup.data.slashdot.SlashdotService;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -46,6 +48,11 @@ public final class MockDataInterceptor implements Interceptor {
         new ServiceData.Builder("ph")
             .addEndpoint("/v1/posts")
             .build());
+    put(SlashdotService.HOST,
+        new ServiceData.Builder("sd")
+            .addEndpoint("/Slashdot/slashdotMainatom")
+            .fileType("xml")
+            .build());
     put(GitHubService.HOST,
         new ServiceData.Builder("g")
             .addEndpoint("/search/repositories")
@@ -66,7 +73,8 @@ public final class MockDataInterceptor implements Interceptor {
     return service.assetsPrefix
         + "/"
         + lastSegment
-        + ".json";
+        + "."
+        + service.fileType;
   }
 
   @Override
@@ -76,7 +84,9 @@ public final class MockDataInterceptor implements Interceptor {
     String host = url.host();
     String path = url.encodedPath();
     ServiceData serviceData = SUPPORTED_ENDPOINTS.get(host);
-    if (serviceData != null && serviceData.supports(path)) {
+    if (P.debugMockModeEnabled.get()
+        && serviceData != null
+        && serviceData.supports(path)) {
       return new Response.Builder()
           .request(request)
           .body(ResponseBody.create(MediaType.parse("application/json"),

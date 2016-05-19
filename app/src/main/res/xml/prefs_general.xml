@@ -25,6 +25,7 @@
 
     <CheckBoxPreference
       android:defaultValue="true"
+      android:disableDependentsState="true"
       android:key="daynight_auto"
       android:title="Automatically set theme using DayNight"
       />

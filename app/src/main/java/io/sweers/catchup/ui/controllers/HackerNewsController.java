@@ -23,7 +23,6 @@ import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -86,16 +85,14 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
       commentsCount = kids.size();
     }
     holder.comments(commentsCount);
-    holder.tag(story.type().tag());
+    holder.tag(null);
 
     holder.itemClicks()
         .compose(transformUrl(url))
-        .compose(Confine.to(holder.itemView))
         .subscribe(linkManager);
 
     holder.itemCommentClicks()
         .compose(transformUrl("https://news.ycombinator.com/item?id=" + story.id()))
-        .compose(Confine.to(holder.itemView))
         .subscribe(linkManager);
   }
 

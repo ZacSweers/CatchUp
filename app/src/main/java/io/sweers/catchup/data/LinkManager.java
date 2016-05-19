@@ -20,6 +20,7 @@ import io.sweers.catchup.R;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
 import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.rx.Confine;
+import io.sweers.catchup.rx.Transformers;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import rx.Observable;
@@ -103,6 +104,7 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
         .filter(resolveInfo -> isSpecificUriMatch(resolveInfo.match))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
+        .compose(Transformers.delayedMessage(activity.findViewById(android.R.id.content), "Resolving"))
         .compose(doOnEmpty((Action0) () -> {
           dumbCache.put(uri.getHost(), false);
           openCustomTab(uri, accentColor);

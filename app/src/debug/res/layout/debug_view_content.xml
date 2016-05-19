@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:columnCount="2"
+  android:padding="12dp"
+  tools:ignore="UselessParent"
+  >
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:orientation="horizontal"
+    >
+
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="48dp"
+      android:layout_marginRight="8dp"
+      android:layout_weight="1"
+      android:gravity="center_vertical|right"
+      android:orientation="vertical"
+      >
+
+      <TextView
+        style="@android:style/TextAppearance.Holo.Widget.ActionBar.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        />
+
+      <TextView
+        style="@android:style/TextAppearance.Holo.Widget.ActionBar.Subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/development_settings"
+        />
+    </LinearLayout>
+
+    <!-- TODO use drawable -->
+    <android.support.v7.widget.AppCompatImageView
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:src="@mipmap/ic_launcher"
+      />
+  </LinearLayout>
+
+  <!-- CONTEXTUAL SECTION -->
+
+  <TextView
+    android:id="@+id/debug_contextual_title"
+    style="@style/Widget.CatchUp.DebugDrawer.Header"
+    android:layout_width="0dp"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="Contextual Actions"
+    android:visibility="gone"
+    tools:ignore="HardcodedText"
+    />
+
+  <LinearLayout
+    android:id="@+id/debug_contextual_list"
+    android:layout_width="0dp"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:orientation="vertical"
+    android:visibility="gone"
+    />
+
+  <!-- NETWORK SECTION -->
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.Header"
+    android:layout_width="0dp"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="Network"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Delay"
+    tools:ignore="HardcodedText"
+    />
+
+  <Spinner
+    android:id="@+id/debug_network_delay"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Variance"
+    tools:ignore="HardcodedText"
+    />
+
+  <Spinner
+    android:id="@+id/debug_network_variance"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Error"
+    tools:ignore="HardcodedText"
+    />
+
+  <Spinner
+    android:id="@+id/debug_network_error"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <!-- MOCK BEHAVIOR SECTION -->
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.Header"
+    android:layout_width="0dp"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="Mock Behavior"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Enable mock mode"
+    tools:ignore="HardcodedText"
+    />
+
+  <Switch
+    android:id="@+id/debug_enable_mock_mode"
+    style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
+    android:layout_gravity="start|center_vertical"
+    />
+
+  <!-- USER INTERFACE SECTION -->
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.Header"
+    android:layout_width="0dp"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="User Interface"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Animations"
+    tools:ignore="HardcodedText"
+    />
+
+  <Spinner
+    android:id="@+id/debug_ui_animation_speed"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Pixel Grid"
+    tools:ignore="HardcodedText"
+    />
+
+  <Switch
+    android:id="@+id/debug_ui_pixel_grid"
+    style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
+    android:layout_gravity="start|center_vertical"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Pixel Scale"
+    tools:ignore="HardcodedText"
+    />
+
+  <Switch
+    android:id="@+id/debug_ui_pixel_ratio"
+    style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
+    android:layout_gravity="start|center_vertical"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Scalpel"
+    tools:ignore="HardcodedText"
+    />
+
+  <Switch
+    android:id="@+id/debug_ui_scalpel"
+    style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
+    android:layout_gravity="start|center_vertical"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Wireframe"
+    tools:ignore="HardcodedText"
+    />
+
+  <Switch
+    android:id="@+id/debug_ui_scalpel_wireframe"
+    style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
+    android:layout_gravity="start|center_vertical"
+    />
+
+  <!-- LOGGING SECTION -->
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.Header"
+    android:layout_width="0dp"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="Logs"
+    tools:ignore="HardcodedText"
+    />
+
+  <Button
+    android:id="@+id/debug_logs_show"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="Show logs"
+    tools:ignore="HardcodedText"
+    />
+
+  <Button
+    android:id="@+id/debug_leaks_show"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="Leak analysis"
+    tools:ignore="HardcodedText"
+    />
+
+  <!-- BUILD INFORMATION SECTION -->
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.Header"
+    android:layout_width="0dp"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="Build Information"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Name"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_build_name"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Code"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_build_code"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="SHA"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_build_sha"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Date"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_build_date"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <!-- DEVICE INFORMATION SECTION -->
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.Header"
+    android:layout_width="0dp"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="Device Information"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Make"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_device_make"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Model"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_device_model"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Resolution"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_device_resolution"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Density"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_device_density"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Release"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_device_release"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="API"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_device_api"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <!-- OKHTTP CACHE SECTION -->
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.Header"
+    android:layout_width="0dp"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="OkHttp Cache"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Max Size"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_okhttp_cache_max_size"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Write Errors"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_okhttp_cache_write_error"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="Request Count"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_okhttp_cache_request_count"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="   Network Count"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_okhttp_cache_network_count"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+  <TextView
+    style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
+    android:layout_gravity="start|center_vertical"
+    android:text="   Hit Count"
+    tools:ignore="HardcodedText"
+    />
+
+  <TextView
+    android:id="@+id/debug_okhttp_cache_hit_count"
+    style="@style/Widget.CatchUp.DebugDrawer.RowValue"
+    android:layout_width="0dp"
+    android:layout_gravity="start|center_vertical|fill_horizontal"
+    />
+
+</GridLayout>
