@@ -29,6 +29,7 @@ import io.sweers.catchup.ui.base.BaseNewsController;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -130,7 +131,12 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
             request = request.newBuilder()
                 .url(url.newBuilder().encodedPath(url.encodedPath() + ".json").build())
                 .build();
-            return chain.proceed(request);
+            Response originalResponse = chain.proceed(request);
+            // Hacker News requests are expensive and take awhile, so cache for 5min
+            int maxAge = 60 * 5;
+            return originalResponse.newBuilder()
+                .header("Cache-Control", "public, max-age=" + maxAge)
+                .build();
           })
           .build();
     }
