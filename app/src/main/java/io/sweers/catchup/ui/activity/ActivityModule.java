@@ -8,7 +8,6 @@ import dagger.Provides;
 import io.sweers.catchup.P;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
 import io.sweers.catchup.injection.scopes.PerActivity;
-import io.sweers.catchup.ui.base.ActionBarProvider;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 
 @Module(
@@ -25,12 +24,6 @@ public class ActivityModule {
   @PerActivity
   @Provides
   MainActivity provideActivity() {
-    return activity;
-  }
-
-  @PerActivity
-  @Provides
-  ActionBarProvider provideActionBar() {
     return activity;
   }
 

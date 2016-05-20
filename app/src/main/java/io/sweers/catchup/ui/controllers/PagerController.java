@@ -1,6 +1,7 @@
 package io.sweers.catchup.ui.controllers;
 
 import android.animation.ArgbEvaluator;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
@@ -9,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.support.ControllerPagerAdapter;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.Arrays;
 
@@ -31,7 +34,7 @@ import io.sweers.catchup.injection.qualifiers.preferences.NavBarTheme;
 import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
-import io.sweers.catchup.ui.base.ActionBarProvider;
+import io.sweers.catchup.ui.activity.SettingsActivity;
 import io.sweers.catchup.ui.base.BaseController;
 import io.sweers.catchup.util.ApiUtil;
 import io.sweers.catchup.util.UiUtil;
@@ -82,10 +85,10 @@ public class PagerController extends BaseController {
   };
   private final int[] resolvedColorCache = new int[PAGE_DATA.length];
   private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
-  @Inject ActionBarProvider actionBarProvider;
   @Inject @NavBarTheme Lazy<Preference<Boolean>> themeNavigationBarPref;
   @BindView(R.id.tab_layout) TabLayout tabLayout;
   @BindView(R.id.view_pager) ViewPager viewPager;
+  @BindView(R.id.toolbar) Toolbar toolbar;
   private boolean colorNavBar = false;
   private ControllerPagerAdapter pagerAdapter;
 
@@ -140,6 +143,29 @@ public class PagerController extends BaseController {
     // TODO Must be a sooner place to inject this
     createComponent().inject(this);
 
+    toolbar.inflateMenu(R.menu.main);
+    toolbar.setOnMenuItemClickListener(item -> {
+      switch (item.getItemId()) {
+        case R.id.toggle_daynight:
+          P.daynightAuto.put(false).commit();
+          if (UiUtil.isInNightMode(getActivity())) {
+            P.daynightNight.put(false).commit();
+          } else {
+            P.daynightNight.put(true).commit();
+          }
+          // TODO Use recreate() here after conductor 2.0 and not needing to retain views on detach
+          ProcessPhoenix.triggerRebirth(getActivity());
+          return true;
+        case R.id.settings:
+          startActivity(new Intent(getActivity(), SettingsActivity.class));
+          return true;
+      }
+      return false;
+    });
+
+    // Initial title
+    toolbar.setTitle(getResources().getString(PAGE_DATA[0][1]));
+
     // Set the initial color
     @ColorInt int initialColor = getAndSaveColor(0);
     tabLayout.setBackgroundColor(initialColor);
@@ -190,7 +216,7 @@ public class PagerController extends BaseController {
 
       @Override
       public void onPageSelected(int position) {
-        actionBarProvider.getSupportActionBar().setTitle(PAGE_DATA[position][1]);
+        toolbar.setTitle(PAGE_DATA[position][1]);
       }
 
       @Override

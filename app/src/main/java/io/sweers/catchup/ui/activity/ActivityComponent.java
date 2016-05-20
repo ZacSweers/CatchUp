@@ -10,7 +10,6 @@ import io.sweers.catchup.app.ApplicationComponent;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import io.sweers.catchup.injection.scopes.PerActivity;
-import io.sweers.catchup.ui.base.ActionBarProvider;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.OkHttpClient;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -28,8 +27,6 @@ public interface ActivityComponent {
 
   @ApplicationContext
   Context context();
-
-  ActionBarProvider actionBarProvider();
 
   CustomTabActivityHelper customTab();
 
