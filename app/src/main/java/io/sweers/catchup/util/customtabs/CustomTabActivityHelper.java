@@ -48,7 +48,6 @@ public class CustomTabActivityHelper {
    * Opens the URL on a Custom Tab if possible; otherwise falls back to opening it via
    * {@code Intent.ACTION_VIEW}
    *
-   * @param activity         The host activity
    * @param customTabsIntent a CustomTabsIntent to be used if Custom Tabs is available
    * @param uri              the Uri to be opened
    */

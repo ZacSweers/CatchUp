@@ -120,6 +120,8 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
     customTab.openCustomTab(
         customTab
             .getCustomTabIntent()
+            .setStartAnimations(activity, R.anim.slide_up, R.anim.inset)
+            .setExitAnimations(activity, R.anim.outset, R.anim.slide_down)
             .setToolbarColor(accentColor)
             .build(),
         uri);
