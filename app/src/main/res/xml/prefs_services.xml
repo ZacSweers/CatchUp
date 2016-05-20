@@ -32,8 +32,4 @@
     android:key="github"
     android:title="@string/github"
     />
-  <Preference
-    android:key="readability"
-    android:title="@string/readability"
-    />
 </PreferenceScreen>

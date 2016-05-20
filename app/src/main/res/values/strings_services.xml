@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="hacker_news">Hacker News</string>
-  <string name="hacker_news_short">HN</string>
   <string name="reddit">reddit</string>
-  <string name="reddit_short">R</string>
   <string name="medium">Medium</string>
-  <string name="medium_short">M</string>
   <string name="product_hunt">Product Hunt</string>
-  <string name="product_hunt_short">PH</string>
   <string name="slashdot">Slashdot</string>
-  <string name="slashdot_short">SD</string>
   <string name="designer_news">Designer News</string>
-  <string name="designer_news_short">DN</string>
   <string name="dribbble">Dribbble</string>
-  <string name="dribbble_short">DR</string>
   <string name="github">GitHub</string>
-  <string name="github_short">G</string>
-  <string name="readability">Readability</string>
-  <string name="readability_short">RD</string>
 </resources>

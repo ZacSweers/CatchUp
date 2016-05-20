@@ -78,11 +78,6 @@ public class PagerController extends BaseController {
           R.drawable.logo_github,
           R.string.github,
           R.color.redditAccent
-      },
-      {
-          R.drawable.logo_github,
-          R.string.readability,
-          R.color.redditAccent
       }
   };
   private final int[] resolvedColorCache = new int[PAGE_DATA.length];
