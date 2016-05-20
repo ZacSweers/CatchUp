@@ -28,6 +28,7 @@ ext {
     multidex = 'com.android.support:multidex:1.0.1'
     androidPlugin = 'com.android.tools.build:gradle:2.2.0-alpha1'
     playServicesVersion = '8.4.0'
+    constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-alpha1'
 
     // Dagger
     daggerVersion = '2.4'

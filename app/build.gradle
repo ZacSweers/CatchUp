@@ -112,6 +112,7 @@ dependencies {
     supportCompile rootProject.ext.supportV4
     supportCompile rootProject.ext.supportDesign
     supportCompile rootProject.ext.supportCustomTabs
+    supportCompile rootProject.ext.constraintLayout
 
     compile supportLibraries
     testCompile supportLibraries
