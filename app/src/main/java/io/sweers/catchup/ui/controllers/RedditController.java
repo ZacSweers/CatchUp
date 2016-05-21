@@ -8,6 +8,7 @@ import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ryanharter.auto.value.gson.AutoValueGsonTypeAdapterFactory;
 
 import org.threeten.bp.Instant;
 
@@ -19,7 +20,6 @@ import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LinkManager;
-import io.sweers.catchup.data.reddit.AutoValueTypeAdapterFactory;
 import io.sweers.catchup.data.reddit.EpochInstantTypeAdapter;
 import io.sweers.catchup.data.reddit.RedditService;
 import io.sweers.catchup.data.reddit.model.RedditLink;
@@ -120,7 +120,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
       return new GsonBuilder()
           .registerTypeAdapter(RedditObject.class, new RedditObjectDeserializer())
           .registerTypeAdapter(Instant.class, new EpochInstantTypeAdapter(true))
-          .registerTypeAdapterFactory(new AutoValueTypeAdapterFactory())
+          .registerTypeAdapterFactory(new AutoValueGsonTypeAdapterFactory())
           .create();
     }
 

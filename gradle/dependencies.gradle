@@ -27,7 +27,7 @@ ext {
     supportV4 = "com.android.support:support-v4:$supportVersion"
     multidex = 'com.android.support:multidex:1.0.1'
     androidPlugin = 'com.android.tools.build:gradle:2.2.0-alpha1'
-    playServicesVersion = '8.4.0'
+    playServicesVersion = '9.0.0'
     constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-alpha1'
 
     // Dagger
@@ -39,8 +39,8 @@ ext {
     // AutoValue
     autoValue = 'com.google.auto.value:auto-value:1.2'
     autoValueAnnotations = 'com.jakewharton.auto.value:auto-value-annotations:1.2-update1'
-    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.3.0'
-    autoValueGson = 'com.ryanharter.auto.value:auto-value-gson:0.2.5'
+    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.3.2'
+    autoValueGson = 'com.ryanharter.auto.value:auto-value-gson:0.3.0'
     autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:0.1.0'
 
     // Conductor
@@ -107,7 +107,7 @@ ext {
     moshi = "com.squareup.moshi:moshi:$moshiVersion"
     moshiAdapters = "com.squareup.moshi:moshi-adapters:$moshiVersion"
     processPhoenix = 'com.jakewharton:process-phoenix:1.0.2'
-    retrofitVersion = '2.0.1'
+    retrofitVersion = '2.0.2'
     retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
     retrofitMock = "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
     retrofitMoshi = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
