@@ -22,6 +22,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 
 import io.sweers.barber.Barber;
+import io.sweers.barber.Kind;
 import io.sweers.barber.StyledAttr;
 import io.sweers.catchup.R;
 
@@ -42,7 +43,7 @@ public class BaselineGridTextView extends CompatTextView {
   private final int FOUR_DIP;
   @StyledAttr(R.styleable.BaselineGridTextView_lineHeightMultiplierHint)
   float lineHeightMultiplierHint = 1f;
-  @StyledAttr(R.styleable.BaselineGridTextView_lineHeightHint)
+  @StyledAttr(value = R.styleable.BaselineGridTextView_lineHeightHint, kind = Kind.DIMEN_PIXEL_SIZE)
   float lineHeightHint = 0f;
   private int unalignedTopPadding = 0;
 
