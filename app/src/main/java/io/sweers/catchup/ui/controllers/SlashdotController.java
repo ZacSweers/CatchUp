@@ -67,7 +67,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
 
     holder.source(entry.department);
 
-    holder.comments(Integer.parseInt(entry.comments));
+    holder.comments(entry.comments);
     holder.tag(entry.section);
 
     holder.itemClicks()

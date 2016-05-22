@@ -17,18 +17,25 @@ public class Entry implements HasStableId {
 
   @Element(name = "title", required = false)
   public String title;
-  @Element(name = "id", required = true)
+
+  @Element(name = "id")
   public String id;
+
   @Element(name = "link", required = false)
   public String link;
+
   @Element(name = "updated", required = false)
   public String updated;
+
   @Element(name = "section", required = false)
   public String section;
+
   @Element(name = "comments", required = false)
-  public String comments;
+  public int comments;
+
   @Element(name = "author", required = false)
   public Author author;
+
   @Element(name = "department", required = false)
   public String department;
 
