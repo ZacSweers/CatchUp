@@ -2,7 +2,7 @@ package io.sweers.catchup.util;
 
 public final class Strings {
   private Strings() {
-    // No instances.
+    throw new InstantiationError();
   }
 
   public static boolean isBlank(CharSequence string) {

@@ -25,7 +25,7 @@ public final class UiUtil {
   private static final TypedValue TYPED_VALUE = new TypedValue();
 
   private UiUtil() {
-    throw new InstantiationError("No instances.");
+    throw new InstantiationError();
   }
 
   @ColorInt

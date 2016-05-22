@@ -7,7 +7,7 @@ import static java.lang.String.format;
 public final class Preconditions {
 
   private Preconditions() {
-    throw new AssertionError("No instances.");
+    throw new InstantiationError();
   }
 
   /**

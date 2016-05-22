@@ -13,7 +13,7 @@ import static android.widget.Toast.LENGTH_LONG;
 
 public final class Intents {
   private Intents() {
-    throw new AssertionError("No instances.");
+    throw new InstantiationError();
   }
 
   /**

@@ -24,6 +24,7 @@ import android.util.Property;
 public class AnimUtils {
 
   private AnimUtils() {
+    throw new InstantiationError();
   }
 
   /**

@@ -39,6 +39,7 @@ public class ColorUtils {
   public static final int LIGHTNESS_UNKNOWN = 2;
 
   private ColorUtils() {
+    throw new InstantiationError();
   }
 
   /**

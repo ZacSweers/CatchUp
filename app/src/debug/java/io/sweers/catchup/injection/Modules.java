@@ -6,7 +6,7 @@ import io.sweers.catchup.data.DebugDataModule;
 public final class Modules {
 
   private Modules() {
-    throw new InstantiationError("No instances.");
+    throw new InstantiationError();
   }
 
   public static DataModule dataModule() {
