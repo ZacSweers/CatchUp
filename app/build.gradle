@@ -38,6 +38,7 @@ android {
         buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"$catchup_product_hunt_developer_token"/
         buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN', /"$catchup_github_developer_token"/
         buildConfigField 'String', 'DESIGNER_NEWS_CLIENT_ID', /"$catchup_designer_news_client_id"/
+        buildConfigField 'String', 'DRIBBBLE_CLIENT_ACCESS_TOKEN', /"$catchup_dribbble_access_token"/
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -113,6 +114,7 @@ dependencies {
     supportCompile rootProject.ext.supportDesign
     supportCompile rootProject.ext.supportCustomTabs
     supportCompile rootProject.ext.constraintLayout
+    supportCompile rootProject.ext.supportPalette
 
     compile supportLibraries
     testCompile supportLibraries

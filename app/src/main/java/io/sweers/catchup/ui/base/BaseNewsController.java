@@ -175,10 +175,6 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     loadData();
   }
 
-  protected UrlTransformer transformUrl(String url) {
-    return new UrlTransformer(url);
-  }
-
   private static class Adapter<T extends HasStableId> extends RecyclerView.Adapter<ViewHolder> {
 
     private final List<T> data = new ArrayList<>();
@@ -315,20 +311,6 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
 
     public void hideComments() {
       comments.setVisibility(GONE);
-    }
-  }
-
-  private class UrlTransformer implements Observable.Transformer<Object, Pair<String, Integer>> {
-
-    private final String url;
-
-    public UrlTransformer(String url) {
-      this.url = url;
-    }
-
-    @Override
-    public Observable<Pair<String, Integer>> call(Observable<Object> source) {
-      return source.map(o -> Pair.create(url, getServiceThemeColor()));
     }
   }
 }

@@ -53,4 +53,8 @@
     <item name="colorAccent">@color/designerNewsAccent</item>
   </style>
 
+  <style name="CatchUp.Dribbble" parent="CatchUp">
+    <item name="colorAccent">@color/dribbbleAccent</item>
+  </style>
+
 </resources>

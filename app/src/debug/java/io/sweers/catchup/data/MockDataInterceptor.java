@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import io.sweers.catchup.P;
 import io.sweers.catchup.data.designernews.DesignerNewsService;
+import io.sweers.catchup.data.dribbble.DribbbleService;
 import io.sweers.catchup.data.github.GitHubService;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.medium.MediumService;
@@ -57,6 +58,10 @@ public final class MockDataInterceptor implements Interceptor {
     put(DesignerNewsService.HOST,
         new ServiceData.Builder("dn")
             .addEndpoint("/api/v1/stories")
+            .build());
+    put(DribbbleService.HOST,
+        new ServiceData.Builder("dr")
+            .addEndpoint("/v1/shots")
             .build());
     put(GitHubService.HOST,
         new ServiceData.Builder("g")

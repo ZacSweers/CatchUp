@@ -75,7 +75,7 @@ public class PagerController extends BaseController {
       {
           R.drawable.logo_dribbble,
           R.string.dribbble,
-          R.color.redditAccent
+          R.color.dribbbleAccent
       },
       {
           R.drawable.logo_github,
@@ -109,6 +109,8 @@ public class PagerController extends BaseController {
             return new SlashdotController();
           case 5:
             return new DesignerNewsController();
+          case 6:
+            return new DribbbleController();
           case 7:
             return new GitHubController();
           default:
