@@ -43,6 +43,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.BuildConfig;
@@ -180,6 +181,19 @@ public class DribbbleController extends BaseController
               }
               Timber.e(e, "Update failed!");
             });
+  }
+
+  @OnClick(R.id.retry_button)
+  void onRetry() {
+    errorView.setVisibility(GONE);
+    progress.setVisibility(VISIBLE);
+    onRefresh();
+  }
+
+  @OnClick(R.id.error_image)
+  void onErrorClick(ImageView imageView) {
+    AnimatedVectorDrawableCompat avd = (AnimatedVectorDrawableCompat) imageView.getDrawable();
+    avd.start();
   }
 
   @Override
