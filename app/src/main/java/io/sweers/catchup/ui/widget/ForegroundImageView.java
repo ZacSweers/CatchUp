@@ -17,13 +17,14 @@
 package io.sweers.catchup.ui.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 
+import io.sweers.barber.Barber;
+import io.sweers.barber.StyledAttr;
 import io.sweers.catchup.R;
 
 /**
@@ -35,14 +36,7 @@ public class ForegroundImageView extends ImageView {
 
   public ForegroundImageView(Context context, AttributeSet attrs) {
     super(context, attrs);
-
-    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ForegroundView);
-
-    final Drawable d = a.getDrawable(R.styleable.ForegroundView_android_foreground);
-    if (d != null) {
-      setForeground(d);
-    }
-    a.recycle();
+    Barber.style(this, attrs, R.styleable.ForegroundView);
     setOutlineProvider(ViewOutlineProvider.BOUNDS);
   }
 
@@ -93,6 +87,7 @@ public class ForegroundImageView extends ImageView {
    *
    * @param drawable The Drawable to be drawn on top of the ImageView
    */
+  @StyledAttr(R.styleable.ForegroundView_android_foreground)
   public void setForeground(Drawable drawable) {
     if (foreground != drawable) {
       if (foreground != null) {
