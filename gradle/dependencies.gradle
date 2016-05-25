@@ -71,7 +71,7 @@ ext {
     versionsPlugin = 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
 
     // Personal
-    barberVersion = '1.3.1'
+    barberVersion = '1.4.0-SNAPSHOT'
     barberCompiler = "io.sweers.barber:barber-compiler:$barberVersion"
     barberApi = "io.sweers.barber:barber-api:$barberVersion"
     rxPaletteVersion = '0.3.0'
