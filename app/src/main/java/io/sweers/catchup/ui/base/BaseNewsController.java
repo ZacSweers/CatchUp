@@ -17,7 +17,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewChildDetachEvent;
+import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxrelay.PublishRelay;
 
 import org.threeten.bp.Instant;
 
@@ -54,6 +57,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   @BindView(R.id.refresh) SwipeRefreshLayout swipeRefreshLayout;
 
   private Adapter<T> adapter;
+  private PublishRelay<RecyclerViewChildDetachEvent>
+      recyclerViewChildDetachEventPublishRelay = PublishRelay.create();
 
   public BaseNewsController() {
     this(null);
@@ -128,6 +133,20 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       swipeRefreshLayout.setEnabled(false);
       loadData();
     }
+    RxRecyclerView.childAttachStateChangeEvents(recyclerView)
+        .filter(e -> e instanceof RecyclerViewChildDetachEvent)
+        .cast(RecyclerViewChildDetachEvent.class)
+        .compose(Confine.to(this))
+        .subscribe(recyclerViewChildDetachEventPublishRelay);
+  }
+
+  protected Observable<RecyclerViewChildDetachEvent> recyclerViewChildDetaches() {
+    return recyclerViewChildDetachEventPublishRelay.asObservable();
+  }
+
+  protected <S> Observable.Transformer<S, S> bindToHolder(ViewHolder holder) {
+    return source -> source
+        .takeUntil(recyclerViewChildDetaches().filter(e -> e.child() == holder.itemView));
   }
 
   private void loadData() {

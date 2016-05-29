@@ -9,8 +9,10 @@ import android.util.Pair;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -25,6 +27,7 @@ import io.sweers.catchup.data.producthunt.model.Post;
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
+import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -33,6 +36,8 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public final class ProductHuntController extends BaseNewsController<Post> {
@@ -64,27 +69,69 @@ public final class ProductHuntController extends BaseNewsController<Post> {
   }
 
   @Override
-  protected void bindItemView(@NonNull Post item, @NonNull ViewHolder holder) {
-    holder.title(item.name());
-    holder.score(Pair.create("▲", item.votes_count()));
-    holder.timestamp(item.created_at());
-    holder.author(item.user().name());
-    holder.tag(item.getFirstTopic());
-    holder.source(null);
-    holder.comments(item.comments_count());
+  protected void bindItemView(@NonNull Post post, @NonNull ViewHolder holder) {
+    holder.title(post.name());
+    holder.score(Pair.create("▲", post.votes_count()));
+    holder.timestamp(post.created_at());
+    holder.author(post.user().name());
+    holder.tag(post.getFirstTopic());
+    holder.comments(post.comments_count());
+
+    if (post.redirect_url() != null) {
+      if (post.hasCachedRedirectHost()) {
+        holder.source(post.getCachedRedirectHost());
+      } else {
+        holder.source(null);
+        Observable<String> resolveHostObservable = resolveHost(post, holder);
+
+        // Neat little effect to indicate that host is still being resolved
+        // .
+        // ..
+        // ...
+        // .
+        // ..
+        // github.com
+        Observable.interval(300, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.computation())
+            .takeUntil(resolveHostObservable)
+            .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindToHolder(holder))
+            .compose(Confine.to(this))
+            .subscribe(tick -> {
+              char[] chars = new char[(int) (tick % 4)];
+              Arrays.fill(chars, '.');
+              String s = new String(chars);
+              holder.source(s);
+            });
+        resolveHostObservable
+            .subscribe(holder::source, throwable -> {
+              holder.source(null);
+            });
+      }
+    }
 
     holder.itemClicks()
-        .compose(transformUrl(item.redirect_url()))
+        .compose(transformUrl(post.redirect_url()))
         .subscribe(linkManager);
     holder.itemCommentClicks()
-        .compose(transformUrl(item.discussion_url()))
+        .compose(transformUrl(post.discussion_url()))
         .subscribe(linkManager);
+  }
+
+  private Observable<String> resolveHost(@NonNull Post post, @NonNull ViewHolder holder) {
+    return service.resolveDomain(post.redirect_url())
+        .subscribeOn(Schedulers.io())
+        .map(response -> response.raw().request().url().host())
+        .doOnNext(post::setCachedRedirectHost)
+        .observeOn(AndroidSchedulers.mainThread())
+        .compose(bindToHolder(holder))
+        .compose(Confine.to(this));
   }
 
   @NonNull
   @Override
   protected Observable<List<Post>> getDataObservable() {
-    return service.getPosts(0)
+    return service.getPosts(1)
         .map(PostsResponse::posts);
 
   }

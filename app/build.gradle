@@ -1,200 +1,204 @@
 buildscript {
-    dependencies {
-        classpath rootProject.ext.aptPlugin
-        classpath rootProject.ext.androidPlugin
-        classpath rootProject.ext.retrolambdaPlugin
-        classpath rootProject.ext.retrolambdaPluginLombok
-        classpath rootProject.ext.psyncPlugin
-        classpath rootProject.ext.versionsPlugin
-    }
+  dependencies {
+    classpath rootProject.ext.aptPlugin
+    classpath rootProject.ext.androidPlugin
+    classpath rootProject.ext.retrolambdaPlugin
+    classpath rootProject.ext.retrolambdaPluginLombok
+    classpath rootProject.ext.psyncPlugin
+    classpath rootProject.ext.versionsPlugin
+    classpath rootProject.ext.frodoPlugin
+  }
 
-    // Exclude the lombok version that the android plugin depends on.
-    configurations.classpath.exclude group: 'com.android.tools.external.lombok'
+  // Exclude the lombok version that the android plugin depends on.
+  configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.flipboard.psync'
+apply plugin: 'com.fernandocejas.frodo'
 apply plugin: 'com.github.ben-manes.versions'   // ./gradlew dependencyUpdates -Drevision=release
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
-    useLibrary 'org.apache.http.legacy'
+  compileSdkVersion rootProject.ext.compileSdkVersion
+  buildToolsVersion rootProject.ext.buildToolsVersion
+  useLibrary 'org.apache.http.legacy'
 
-    defaultConfig {
-        applicationId "io.sweers.catchup"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode rootProject.ext.gitCommitCount
-        versionName rootProject.ext.gitTag
-        multiDexEnabled true
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
+  defaultConfig {
+    applicationId "io.sweers.catchup"
+    minSdkVersion rootProject.ext.minSdkVersion
+    targetSdkVersion rootProject.ext.targetSdkVersion
+    versionCode rootProject.ext.gitCommitCount
+    versionName rootProject.ext.gitTag
+    multiDexEnabled true
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    vectorDrawables.useSupportLibrary = true
 
-        buildConfigField 'String', 'GIT_SHA', /"${gitSha}"/
-        buildConfigField 'long', 'GIT_TIMESTAMP', "${gitTimestamp}"
-        buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"$catchup_product_hunt_developer_token"/
-        buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN', /"$catchup_github_developer_token"/
-        buildConfigField 'String', 'DESIGNER_NEWS_CLIENT_ID', /"$catchup_designer_news_client_id"/
-        buildConfigField 'String', 'DRIBBBLE_CLIENT_ACCESS_TOKEN', /"$catchup_dribbble_access_token"/
+    buildConfigField 'String', 'GIT_SHA', /"${gitSha}"/
+    buildConfigField 'long', 'GIT_TIMESTAMP', "${gitTimestamp}"
+    buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"$catchup_product_hunt_developer_token"/
+    buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN', /"$catchup_github_developer_token"/
+    buildConfigField 'String', 'DESIGNER_NEWS_CLIENT_ID', /"$catchup_designer_news_client_id"/
+    buildConfigField 'String', 'DRIBBBLE_CLIENT_ACCESS_TOKEN', /"$catchup_dribbble_access_token"/
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+  signingConfigs {
+    release {
+      storeFile file("placeholder")
+      keyAlias "placeholder"
+      storePassword "placeholder"
+      keyPassword "placeholder"
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+  }
+  packagingOptions {
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/NOTICE'
+    exclude 'LICENSE.txt'
+    exclude 'META-INF/NOTICE.txt'
+    exclude 'META-INF/LICENSE.txt'
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
+  buildTypes {
+    debug {
+      applicationIdSuffix ".debug"
+      versionNameSuffix "-dev"
     }
-    signingConfigs {
-        release {
-            storeFile file("placeholder")
-            keyAlias "placeholder"
-            storePassword "placeholder"
-            keyPassword "placeholder"
-        }
+    release {
+      buildConfigField 'String', 'BUGSNAG_KEY', /"$catchup_bugsnag_key"/
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      signingConfig signingConfigs.release
     }
-    packagingOptions {
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
-        exclude 'LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/services/javax.annotation.processing.Processor'
-    }
-    buildTypes {
-        debug {
-            applicationIdSuffix ".debug"
-            versionNameSuffix "-dev"
-        }
-        release {
-            buildConfigField 'String', 'BUGSNAG_KEY', /"$catchup_bugsnag_key"/
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-        }
-    }
-    dexOptions {
-        javaMaxHeapSize "4g"
-        preDexLibraries = !rootProject.ext.ci
-    }
-    lintOptions {
-        abortOnError true
-        check 'NewApi', 'InlinedApi'
-        fatal 'NewApi', 'InlinedApi'
-        enable 'UnusedResources'
-        checkReleaseBuilds true
-        textReport rootProject.ext.ci
-        textOutput 'stdout'
-        htmlReport !rootProject.ext.ci
-        xmlReport !rootProject.ext.ci
-    }
+  }
+  dexOptions {
+    javaMaxHeapSize "4g"
+    preDexLibraries = !rootProject.ext.ci
+  }
+  lintOptions {
+    abortOnError true
+    check 'NewApi', 'InlinedApi'
+    fatal 'NewApi', 'InlinedApi'
+    enable 'UnusedResources'
+    checkReleaseBuilds true
+    textReport rootProject.ext.ci
+    textOutput 'stdout'
+    htmlReport !rootProject.ext.ci
+    xmlReport !rootProject.ext.ci
+  }
 }
 
 psync {
-    includesPattern = "**/xml/prefs_*.xml"
-    generateRx = true
+  includesPattern = "**/xml/prefs_*.xml"
+  generateRx = true
 }
 
 def supportLibraries = configurations.create("supportCompile")
 configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'com.android.support' && details.requested.name != 'multidex') {
-            // We want to force all support libraries to use the same version, even if they're transitive.
-            details.useVersion rootProject.ext.supportVersion
-        }
+  resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+    if (details.requested.group == 'com.android.support' && details.requested.name != 'multidex') {
+      // We want to force all support libraries to use the same version, even if they're transitive.
+      details.useVersion rootProject.ext.supportVersion
     }
+  }
 }
 
 dependencies {
-    retrolambdaConfig rootProject.ext.retrolambda
+  retrolambdaConfig rootProject.ext.retrolambda
 
-    // Support libs
-    supportCompile rootProject.ext.supportAnnotations
-    supportCompile rootProject.ext.supportAppCompat
-    supportCompile rootProject.ext.supportV4
-    supportCompile rootProject.ext.supportDesign
-    supportCompile rootProject.ext.supportCustomTabs
-    supportCompile rootProject.ext.constraintLayout
-    supportCompile rootProject.ext.supportPalette
+  // Support libs
+  supportCompile rootProject.ext.supportAnnotations
+  supportCompile rootProject.ext.supportAppCompat
+  supportCompile rootProject.ext.supportV4
+  supportCompile rootProject.ext.supportDesign
+  supportCompile rootProject.ext.supportCustomTabs
+  supportCompile rootProject.ext.constraintLayout
+  supportCompile rootProject.ext.supportPalette
 
-    compile supportLibraries
-    testCompile supportLibraries
-    androidTestCompile supportLibraries
+  compile supportLibraries
+  testCompile supportLibraries
+  androidTestCompile supportLibraries
 
-    // Square/JW
-    compile rootProject.ext.butterKnife
-    apt rootProject.ext.butterKnifeCompiler
-    compile rootProject.ext.okhttp
-    compile rootProject.ext.okio
-    compile rootProject.ext.moshi
-    compile rootProject.ext.moshiAdapters
-    compile rootProject.ext.retrofit
-    compile rootProject.ext.retrofitMoshi
-    compile rootProject.ext.retrofitGson
-    compile rootProject.ext.retrofitRxJava
-    compile(rootProject.ext.retrofitXml) {
-        exclude module: 'stax'
-        exclude module: 'stax-api'
-        exclude module: 'xpp3'
-    }
-    compile rootProject.ext.rxAndroid
-    compile rootProject.ext.rxBinding
-    compile rootProject.ext.rxBindingV4
-    compile rootProject.ext.timber
-    compile rootProject.ext.threetenabp
-    debugCompile rootProject.ext.madge
-    debugCompile rootProject.ext.scalpel
-    compile rootProject.ext.processPhoenix  // Move back to debugCompile when it's not needed for daynight
-    debugCompile rootProject.ext.telescope
-    compile rootProject.ext.okhttpLoggingInterceptor
-    debugCompile rootProject.ext.retrofitMock
+  // Square/JW
+  compile rootProject.ext.butterKnife
+  apt rootProject.ext.butterKnifeCompiler
+  compile rootProject.ext.okhttp
+  compile rootProject.ext.okio
+  compile rootProject.ext.moshi
+  compile rootProject.ext.moshiAdapters
+  compile rootProject.ext.retrofit
+  compile rootProject.ext.retrofitMoshi
+  compile rootProject.ext.retrofitGson
+  compile rootProject.ext.retrofitRxJava
+  compile(rootProject.ext.retrofitXml) {
+    exclude module: 'stax'
+    exclude module: 'stax-api'
+    exclude module: 'xpp3'
+  }
+  compile rootProject.ext.rxAndroid
+  compile rootProject.ext.rxBinding
+  compile rootProject.ext.rxBindingV4
+  compile rootProject.ext.rxBindingRecyclerView
+  compile rootProject.ext.timber
+  compile rootProject.ext.threetenabp
+  debugCompile rootProject.ext.madge
+  debugCompile rootProject.ext.scalpel
+  compile rootProject.ext.processPhoenix
+  // Move back to debugCompile when it's not needed for daynight
+  debugCompile rootProject.ext.telescope
+  compile rootProject.ext.okhttpLoggingInterceptor
+  debugCompile rootProject.ext.retrofitMock
 
-    releaseCompile rootProject.ext.bugsnag
+  releaseCompile rootProject.ext.bugsnag
 
-    // Misc
-    compile rootProject.ext.barberApi
-    apt rootProject.ext.barberCompiler
-    compile rootProject.ext.glide
-    compile rootProject.ext.glideOkhttp
-    compile rootProject.ext.gson
-    compile rootProject.ext.recyclerViewAnimators
-    compile rootProject.ext.rxJava
-    compile rootProject.ext.rxLifecycle
-    compile rootProject.ext.rxPreferences
-    compile rootProject.ext.rxReceivers
-    compile rootProject.ext.rxRelay
-    compile(rootProject.ext.simpleXml) {
-        exclude module: 'stax'
-        exclude module: 'stax-api'
-        exclude module: 'xpp3'
-    }
+  // Misc
+  compile rootProject.ext.barberApi
+  apt rootProject.ext.barberCompiler
+  compile rootProject.ext.glide
+  compile rootProject.ext.glideOkhttp
+  compile rootProject.ext.gson
+  compile rootProject.ext.recyclerViewAnimators
+  compile rootProject.ext.rxJava
+  compile rootProject.ext.rxLifecycle
+  compile rootProject.ext.rxPreferences
+  compile rootProject.ext.rxReceivers
+  compile rootProject.ext.rxRelay
+  compile(rootProject.ext.simpleXml) {
+    exclude module: 'stax'
+    exclude module: 'stax-api'
+    exclude module: 'xpp3'
+  }
 
-    // Stetho
-    debugCompile rootProject.ext.stetho
-    debugCompile rootProject.ext.stethoOkHttp
+  // Stetho
+  debugCompile rootProject.ext.stetho
+  debugCompile rootProject.ext.stethoOkHttp
 
-    // Dagger
-    apt rootProject.ext.daggerCompiler
-    provided rootProject.ext.javax
-    compile rootProject.ext.dagger
+  // Dagger
+  apt rootProject.ext.daggerCompiler
+  provided rootProject.ext.javax
+  compile rootProject.ext.dagger
 
-    // AutoValue
-    provided rootProject.ext.autoValueAnnotations
-    apt rootProject.ext.autoValue
-    apt rootProject.ext.autoValueMoshi
-    apt rootProject.ext.autoValueGson
-    apt rootProject.ext.autoValueRedacted
+  // AutoValue
+  provided rootProject.ext.autoValueAnnotations
+  apt rootProject.ext.autoValue
+  apt rootProject.ext.autoValueMoshi
+  apt rootProject.ext.autoValueGson
+  apt rootProject.ext.autoValueRedacted
 
-    // Conductor
-    compile rootProject.ext.conductor
-    compile rootProject.ext.conductorSupport
-    compile rootProject.ext.conductorRxLifecycle
+  // Conductor
+  compile rootProject.ext.conductor
+  compile rootProject.ext.conductorSupport
+  compile rootProject.ext.conductorRxLifecycle
 
-    // Test
-    testCompile project(':testing-utils')
-    androidTestCompile project(':testing-utils')
+  // Test
+  testCompile project(':testing-utils')
+  androidTestCompile project(':testing-utils')
 
-    // LeakCanary
-    debugCompile rootProject.ext.leakCanary
-    debugCompile rootProject.ext.haha
-    releaseCompile rootProject.ext.leakCanaryNoop
+  // LeakCanary
+  debugCompile rootProject.ext.leakCanary
+  debugCompile rootProject.ext.haha
+  releaseCompile rootProject.ext.leakCanaryNoop
 }

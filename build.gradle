@@ -1,25 +1,25 @@
 subprojects {
-    buildscript {
-        repositories {
-            jcenter()
-            maven { url "https://plugins.gradle.org/m2/" }
-            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        }
-    }
-
+  buildscript {
     repositories {
-        jcenter()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+      jcenter()
+      maven { url "https://plugins.gradle.org/m2/" }
+      maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
+  }
+
+  repositories {
+    jcenter()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+  }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.13'
-    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+  gradleVersion = '2.13'
+  distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
 task clean(type: Delete) {
-    delete rootProject.buildDir
+  delete rootProject.buildDir
 }
 
 apply from: 'gradle/dependencies.gradle'

@@ -17,8 +17,11 @@
 package io.sweers.catchup.data.producthunt;
 
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
+import retrofit2.Response;
 import retrofit2.http.GET;
+import retrofit2.http.HEAD;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 import rx.Observable;
 
 /**
@@ -32,4 +35,7 @@ public interface ProductHuntService {
 
   @GET("/v1/posts")
   Observable<PostsResponse> getPosts(@Query("days_ago") int page);
+
+  @HEAD
+  Observable<Response<Void>> resolveDomain(@Url String url);
 }

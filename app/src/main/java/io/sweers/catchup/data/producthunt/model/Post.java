@@ -37,6 +37,8 @@ import timber.log.Timber;
 @AutoValue
 public abstract class Post implements HasStableId {
 
+  @Nullable private volatile transient String cachedRedirectHost;
+
   public static JsonAdapter<Post> jsonAdapter(@NonNull Moshi moshi) {
     return new AutoValue_Post.MoshiJsonAdapter(moshi);
   }
@@ -112,6 +114,19 @@ public abstract class Post implements HasStableId {
   @Override
   public long stableId() {
     return id();
+  }
+
+  @Nullable
+  public String getCachedRedirectHost() {
+    return cachedRedirectHost;
+  }
+
+  public boolean hasCachedRedirectHost() {
+    return cachedRedirectHost != null;
+  }
+
+  public void setCachedRedirectHost(@Nullable String cachedRedirectHost) {
+    this.cachedRedirectHost = cachedRedirectHost;
   }
 
   @AutoValue.Builder
