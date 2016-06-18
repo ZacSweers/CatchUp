@@ -1,20 +1,20 @@
 ext {
     // Build
     minSdkVersion = 21
-    targetSdkVersion = 23
-    compileSdkVersion = 23
-    buildToolsVersion = '23.0.3'
+    targetSdkVersion = 24
+    compileSdkVersion = 24
+    buildToolsVersion = '24.0.0'
     ci = 'true'.equals(System.getenv('CI'))
 
     // Kotlin
-    kotlinVersion = '1.0.2'
+    kotlinVersion = '1.0.2-1'
     kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     kotlinAndroidAnnotaitons = "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$kotlinVersion"
     kotterKnife = 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
 
     // Google
-    supportVersion = '23.4.0'
+    supportVersion = '24.0.0'
     supportAnnotations = "com.android.support:support-annotations:$supportVersion"
     supportAppCompat = "com.android.support:appcompat-v7:$supportVersion"
     supportCardView = "com.android.support:cardview-v7:$supportVersion"
@@ -26,22 +26,22 @@ ext {
     supportRecyclerView = "com.android.support:recyclerview-v7:$supportVersion"
     supportV4 = "com.android.support:support-v4:$supportVersion"
     multidex = 'com.android.support:multidex:1.0.1'
-    androidPlugin = 'com.android.tools.build:gradle:2.2.0-alpha1'
+    androidPlugin = 'com.android.tools.build:gradle:2.2.0-alpha3'
     playServicesVersion = '9.0.0'
-    constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-alpha1'
+    constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
 
     // Dagger
-    daggerVersion = '2.4'
+    daggerVersion = '2.5'
     dagger = "com.google.dagger:dagger:$daggerVersion"
     daggerCompiler = "com.google.dagger:dagger-compiler:$daggerVersion"
     javax = 'org.glassfish:javax.annotation:10.0-b28'
 
     // AutoValue
-    autoValue = 'com.google.auto.value:auto-value:1.2'
+    autoValue = 'com.google.auto.value:auto-value:1.3-rc2'
     autoValueAnnotations = 'com.jakewharton.auto.value:auto-value-annotations:1.2-update1'
-    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.3.2'
-    autoValueGson = 'com.ryanharter.auto.value:auto-value-gson:0.3.0'
-    autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:0.1.0'
+    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.3.3-rc1'
+    autoValueGson = 'com.ryanharter.auto.value:auto-value-gson:0.3.2-rc1'
+    autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:1.0.0'
 
     // Conductor
     conductorVersion = '1.1.6'
@@ -58,7 +58,7 @@ ext {
     calligraphy = 'uk.co.chrisjenx:calligraphy:2.2.0'
     glide = 'com.github.bumptech.glide:glide:3.7.0'
     glideOkhttp = 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
-    gson = 'com.google.code.gson:gson:2.6.2'
+    gson = 'com.google.code.gson:gson:2.7'
     psyncPlugin = 'gradle.plugin.com.flipboard:psync:1.1.5'
     recyclerViewAnimators = 'jp.wasabeef:recyclerview-animators:2.2.3'
     retrolambda = 'net.orfjackal.retrolambda:retrolambda:2.3.0'
@@ -79,35 +79,35 @@ ext {
     rxPaletteKotlin = "io.sweers.rxpalette:rxpalette-kotlin:$rxPaletteVersion"
 
     // Rx
-    rxAndroid = 'io.reactivex:rxandroid:1.2.0'
+    rxAndroid = 'io.reactivex:rxandroid:1.2.1'
     rxBindingVersion = '0.4.0'
     rxBinding = "com.jakewharton.rxbinding:rxbinding:$rxBindingVersion"
     rxBindingV4 = "com.jakewharton.rxbinding:rxbinding-support-v4:$rxBindingVersion"
-    rxJava = 'io.reactivex:rxjava:1.1.5'
+    rxJava = 'io.reactivex:rxjava:1.1.6'
     rxLifecycle = 'com.trello:rxlifecycle:0.6.1'
-    rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.1'
+    rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.2'
     rxReceivers = 'com.f2prateek.rx.receivers:rx-receivers:0.1.0-SNAPSHOT'
     rxRelay = 'com.jakewharton.rxrelay:rxrelay:1.1.0'
 
     // Square and JW
-    butterKnifeVersion = '8.0.1'
+    butterKnifeVersion = '8.1.0'
     butterKnife = "com.jakewharton:butterknife:$butterKnifeVersion"
     butterKnifeCompiler = "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
     haha = 'com.squareup.haha:haha:2.0.3'
     leakCanaryVersion = '1.4-beta2'
     leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     leakCanaryNoop = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    okhttpVersion = '3.2.0'
+    okhttpVersion = '3.3.1'
     okhttp = "com.squareup.okhttp3:okhttp:$okhttpVersion"
     okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
     okio = 'com.squareup.okio:okio:1.8.0'
     madge = 'com.jakewharton.madge:madge:1.1.3'
-    moshiVersion = '1.1.0'
+    moshiVersion = '1.2.0'
     moshi = "com.squareup.moshi:moshi:$moshiVersion"
     moshiAdapters = "com.squareup.moshi:moshi-adapters:$moshiVersion"
     processPhoenix = 'com.jakewharton:process-phoenix:1.0.2'
-    retrofitVersion = '2.0.2'
+    retrofitVersion = '2.1.0'
     retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
     retrofitMock = "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
     retrofitMoshi = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
@@ -117,7 +117,7 @@ ext {
     scalpel = 'com.jakewharton.scalpel:scalpel:1.1.2'
     sdkManagerPlugin = 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
     telescope = 'com.mattprecious.telescope:telescope:1.5.0@aar'
-    threetenabp = 'com.jakewharton.threetenabp:threetenabp:1.0.2'
+    threetenabp = 'com.jakewharton.threetenabp:threetenabp:1.0.3'
     timber = 'com.jakewharton.timber:timber:4.1.2'
 
     // Testing
