@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.ui.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -87,6 +88,7 @@ public class ForegroundImageView extends ImageView {
    *
    * @param drawable The Drawable to be drawn on top of the ImageView
    */
+  @SuppressLint("NewApi")
   @StyledAttr(R.styleable.ForegroundView_android_foreground)
   public void setForeground(Drawable drawable) {
     if (foreground != drawable) {

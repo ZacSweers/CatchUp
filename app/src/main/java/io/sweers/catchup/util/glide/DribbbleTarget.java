@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.util.glide;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.support.v7.graphics.Palette;
 
@@ -89,6 +90,7 @@ public class DribbbleTarget extends GlideDrawableImageViewTarget implements
   }
 
   @Override
+  @SuppressLint("NewApi")
   public void onGenerated(Palette palette) {
     //noinspection RedundantCast for setForeground to not complain
     ((BadgedFourThreeImageView) getView()).setForeground(

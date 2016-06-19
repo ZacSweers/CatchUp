@@ -3,11 +3,14 @@ package io.sweers.catchup.ui.controllers;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.ColorInt;
@@ -250,6 +253,7 @@ public class DribbbleController extends BaseController
       return shots.get(position).stableId();
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public DribbbleShotHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       final DribbbleShotHolder holder = new DribbbleShotHolder(
@@ -309,6 +313,7 @@ public class DribbbleController extends BaseController
     }
 
     @Override
+    @SuppressLint("NewApi")
     public void onViewRecycled(DribbbleShotHolder holder) {
       // reset the badge & ripple which are dynamically determined
       holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR);

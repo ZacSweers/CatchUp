@@ -58,8 +58,8 @@
 -dontwarn com.squareup.okhttp.**
 
 # Retrofit
--dontwarn retrofit.**
--keep class retrofit.** { *; }
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
 
@@ -110,3 +110,22 @@
 -assumenosideeffects class kotlin.jvm.internal.Intrinsics {
     static void checkParameterIsNotNull(java.lang.Object, java.lang.String);
 }
+
+-keep class **.model.** { *; }
+
+# SimpleXML
+-keep class org.simpleframework.**{ *; }
+-keep class org.simpleframework.xml.**{ *; }
+-keep class org.simpleframework.xml.core.**{ *; }
+-keep class org.simpleframework.xml.util.**{ *; }
+-keep class org.simpleframework.xml.stream.**{ *; }
+-dontwarn org.simpleframework.xml.stream.**
+
+# Okio
+-keep class sun.misc.Unsafe { *; }
+-dontwarn java.nio.file.*
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn okio.**
+
+# Retrolambda
+-dontwarn java.lang.invoke.*
