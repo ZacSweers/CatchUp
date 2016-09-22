@@ -6,6 +6,8 @@ import android.os.Looper;
 
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.ryanharter.auto.value.moshi.AutoValueMoshiAdapterFactory;
+import com.squareup.moshi.ArrayCollectionJsonAdapter;
+import com.squareup.moshi.ArrayMapJsonAdapter;
 import com.squareup.moshi.Moshi;
 
 import java.util.concurrent.TimeUnit;
@@ -62,6 +64,8 @@ public class DataModule {
   Moshi provideMoshi() {
     return new Moshi.Builder()
         .add(new AutoValueMoshiAdapterFactory())
+        .add(ArrayMapJsonAdapter.FACTORY)
+        .add(ArrayCollectionJsonAdapter.FACTORY)
         .build();
   }
 
