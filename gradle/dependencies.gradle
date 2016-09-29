@@ -27,8 +27,8 @@ ext {
     supportV4 = "com.android.support:support-v4:$supportVersion"
     multidex = 'com.android.support:multidex:1.0.1'
     androidPlugin = 'com.android.tools.build:gradle:2.2.0'
-    playServicesVersion = '9.6.0'
-    constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
+    playServicesVersion = '9.6.1'
+    constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
 
     // Dagger
     daggerVersion = '2.7'
