@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Looper;
 
 import com.f2prateek.rx.preferences.RxSharedPreferences;
-import com.ryanharter.auto.value.moshi.AutoValueMoshiAdapterFactory;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.ArrayCollectionJsonAdapter;
 import com.squareup.moshi.ArrayMapJsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -16,11 +16,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import rx.schedulers.Schedulers;
 
 @Module
 public class DataModule {
@@ -63,7 +62,7 @@ public class DataModule {
   @Singleton
   Moshi provideMoshi() {
     return new Moshi.Builder()
-        .add(new AutoValueMoshiAdapterFactory())
+        .add(AutoValueMoshiAdapterFactory.create())
         .add(ArrayMapJsonAdapter.FACTORY)
         .add(ArrayCollectionJsonAdapter.FACTORY)
         .build();
@@ -71,8 +70,8 @@ public class DataModule {
 
   @Provides
   @Singleton
-  RxJavaCallAdapterFactory provideRxJavaCallAdapterFactory() {
-    return RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+  RxJava2CallAdapterFactory provideRxJavaCallAdapterFactory() {
+    return RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io());
   }
 
   @Provides

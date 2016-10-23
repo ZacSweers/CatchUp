@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
 
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
+import io.reactivex.Maybe;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LinkManager;
@@ -31,9 +33,7 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
-import rx.Observable;
 
 
 public final class DesignerNewsController extends BaseNewsController<Story> {
@@ -87,7 +87,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
 
   @NonNull
   @Override
-  protected Observable<List<Story>> getDataObservable() {
+  protected Maybe<List<Story>> getDataObservable() {
     return service.getTopStories(1)
         .map(StoriesResponse::stories);
   }
@@ -135,7 +135,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
     DesignerNewsService provideDesignerNewsService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
-        RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
+        RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()
           .baseUrl(DesignerNewsService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))

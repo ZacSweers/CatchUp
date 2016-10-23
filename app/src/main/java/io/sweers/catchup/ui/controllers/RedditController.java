@@ -8,7 +8,7 @@ import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ryanharter.auto.value.gson.AutoValueGsonTypeAdapterFactory;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import org.threeten.bp.Instant;
 
@@ -18,7 +18,9 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
+import io.reactivex.Maybe;
 import io.sweers.catchup.R;
+import io.sweers.catchup.data.AutoValueGsonTypeAdapterFactory;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.reddit.EpochInstantTypeAdapter;
 import io.sweers.catchup.data.reddit.RedditService;
@@ -34,9 +36,7 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
 
 
 public final class RedditController extends BaseNewsController<RedditLink> {
@@ -94,7 +94,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
 
   @NonNull
   @Override
-  protected Observable<List<RedditLink>> getDataObservable() {
+  protected Maybe<List<RedditLink>> getDataObservable() {
     return service.frontPage(50)
         .map((redditListingRedditResponse) -> {
           //noinspection CodeBlock2Expr,unchecked
@@ -120,7 +120,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
       return new GsonBuilder()
           .registerTypeAdapter(RedditObject.class, new RedditObjectDeserializer())
           .registerTypeAdapter(Instant.class, new EpochInstantTypeAdapter(true))
-          .registerTypeAdapterFactory(new AutoValueGsonTypeAdapterFactory())
+          .registerTypeAdapterFactory(AutoValueGsonTypeAdapterFactory.create())
           .create();
     }
 
@@ -145,7 +145,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     @PerController
     RedditService provideRedditService(
         @ForApi final Lazy<OkHttpClient> client,
-        RxJavaCallAdapterFactory rxJavaCallAdapterFactory,
+        RxJava2CallAdapterFactory rxJavaCallAdapterFactory,
         Gson gson) {
       Retrofit retrofit = new Retrofit.Builder()
           .baseUrl(RedditService.ENDPOINT)

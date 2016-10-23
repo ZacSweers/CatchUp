@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
 
 import org.threeten.bp.Instant;
@@ -16,6 +17,8 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
+import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.LinkManager;
@@ -26,7 +29,6 @@ import io.sweers.catchup.data.medium.model.MediumResponse;
 import io.sweers.catchup.data.medium.model.Payload;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -35,9 +37,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okio.BufferedSource;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
-import rx.Observable;
 
 
 public final class MediumController extends BaseNewsController<MediumPost> {
@@ -97,7 +97,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
   @NonNull
   @Override
-  protected Observable<List<MediumPost>> getDataObservable() {
+  protected Maybe<List<MediumPost>> getDataObservable() {
     return service.top()
         .map(MediumResponse::payload)
         .map(Payload::references)
@@ -116,13 +116,16 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 //              }
 //          );
 //        })
-        .flatMap(references -> Observable.from(references.Post().values())
+        .toFlowable()
+        .flatMap(references -> Flowable.fromIterable(references.Post().values())
             .map(post -> MediumPost.builder()
                 .post(post)
                 .user(references.User().get(post.creatorId()))
                 .collection(references.Collection().get(post.homeCollectionId()))
-                .build()))
-        .toList();
+                .build())
+        )
+        .toList()
+        .toMaybe();
   }
 
   @PerController
@@ -171,7 +174,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     MediumService provideMediumService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
-        RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
+        RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()
           .baseUrl(MediumService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))

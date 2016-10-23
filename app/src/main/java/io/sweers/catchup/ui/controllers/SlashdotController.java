@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
+import io.reactivex.Maybe;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.slashdot.Entry;
@@ -24,9 +27,7 @@ import io.sweers.catchup.util.Iso8601Utils;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
-import rx.Observable;
 
 
 public final class SlashdotController extends BaseNewsController<Entry> {
@@ -80,7 +81,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
 
   @NonNull
   @Override
-  protected Observable<List<Entry>> getDataObservable() {
+  protected Maybe<List<Entry>> getDataObservable() {
     return service.main()
         .map(channel -> channel.itemList);
   }
@@ -117,7 +118,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
     @PerController
     SlashdotService provideSlashdotService(
         @ForApi final Lazy<OkHttpClient> client,
-        RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
+        RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()
           .baseUrl(SlashdotService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))

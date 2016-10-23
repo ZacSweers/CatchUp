@@ -16,10 +16,10 @@
 
 package io.sweers.catchup.data.producthunt;
 
+import io.reactivex.Maybe;
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import rx.Observable;
 
 /**
  * Models the Product Hunt API. See https://api.producthunt.com/v1/docs
@@ -31,5 +31,5 @@ public interface ProductHuntService {
   String ENDPOINT = SCHEME + "://" + HOST;
 
   @GET("/v1/posts")
-  Observable<PostsResponse> getPosts(@Query("days_ago") int page);
+  Maybe<PostsResponse> getPosts(@Query("days_ago") int page);
 }

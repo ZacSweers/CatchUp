@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.f2prateek.rx.preferences.RxSharedPreferences;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
 
 import javax.inject.Singleton;
@@ -13,7 +14,6 @@ import io.sweers.catchup.data.DataModule;
 import io.sweers.catchup.data.LumberYard;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import okhttp3.OkHttpClient;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 @Singleton
 @Component(
@@ -36,7 +36,7 @@ public interface ApplicationComponent {
 
   Moshi moshi();
 
-  RxJavaCallAdapterFactory rxJavaCallAdapterFactory();
+  RxJava2CallAdapterFactory rxJavaCallAdapterFactory();
 
   RxSharedPreferences rxSharedPreferences();
 }

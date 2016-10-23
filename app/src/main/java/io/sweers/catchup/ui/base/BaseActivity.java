@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import com.jakewharton.rxrelay.BehaviorRelay;
-import com.trello.rxlifecycle.ActivityEvent;
+import com.trello.rxlifecycle.android.ActivityEvent;
 
 import rx.Observable;
 

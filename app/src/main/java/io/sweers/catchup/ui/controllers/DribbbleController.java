@@ -34,6 +34,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.jakewharton.rxbinding.view.RxView;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
@@ -49,6 +50,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import dagger.Lazy;
 import dagger.Provides;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
@@ -68,11 +71,8 @@ import io.sweers.catchup.util.glide.DribbbleTarget;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.HttpException;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action2;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static android.view.View.GONE;
@@ -149,11 +149,11 @@ public class DribbbleController extends BaseController
     service.getPopular(1, 50)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .doOnUnsubscribe(() -> {
+        .doAfterTerminate(() -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .compose(Confine.to(this))
+        .compose(Confine.to(this).forMaybe())
         .subscribe(
             shot -> {
               progress.setVisibility(GONE);
@@ -415,7 +415,7 @@ public class DribbbleController extends BaseController
     DribbbleService provideDribbbleService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
-        RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
+        RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder()
           .baseUrl(DribbbleService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))

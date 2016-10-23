@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 /**
- * An implementation of {@link BaseAdapter} which uses the new/bind pattern for its views.
+ * An implementation of {@link BaseAdapter} which uses the bind pattern for its views.
  */
 public abstract class BindableAdapter<T> extends BaseAdapter {
   private final Context context;

@@ -16,10 +16,10 @@
 
 package io.sweers.catchup.data.designernews;
 
+import io.reactivex.Maybe;
 import io.sweers.catchup.data.designernews.model.StoriesResponse;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import rx.Observable;
 
 /**
  * Models the Designer News API.
@@ -33,6 +33,6 @@ public interface DesignerNewsService {
   String ENDPOINT = "https://" + HOST;
 
   @GET("/api/v1/stories")
-  Observable<StoriesResponse> getTopStories(@Query("page") int page);
+  Maybe<StoriesResponse> getTopStories(@Query("page") int page);
 
 }

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
 
 import org.threeten.bp.Instant;
@@ -16,6 +17,8 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
+import io.reactivex.Maybe;
+import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.LinkManager;
@@ -31,10 +34,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 
 public final class HackerNewsController extends BaseNewsController<HackerNewsStory> {
@@ -99,13 +99,14 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
 
   @NonNull
   @Override
-  protected Observable<List<HackerNewsStory>> getDataObservable() {
+  protected Maybe<List<HackerNewsStory>> getDataObservable() {
     return service.topStories()
         .concatMapIterable(strings -> strings)
         // TODO Pref this
         .take(50)
         .concatMap(id -> service.getItem(id).subscribeOn(Schedulers.io()))
-        .toList();
+        .toList()
+        .toMaybe();
   }
 
   @PerController
@@ -155,7 +156,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     HackerNewsService provideHackerNewsService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
-        RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
+        RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()
           .baseUrl(HackerNewsService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))

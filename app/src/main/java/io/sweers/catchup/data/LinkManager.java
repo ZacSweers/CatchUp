@@ -16,6 +16,9 @@ import com.f2prateek.rx.receivers.RxBroadcastReceiver;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
 import io.sweers.catchup.injection.scopes.PerActivity;
@@ -23,12 +26,9 @@ import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.rx.Transformers;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
+import static hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Flowable;
 import static io.sweers.catchup.rx.Transformers.doOnEmpty;
 
 @PerActivity
@@ -36,7 +36,8 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
 
   private final MainActivity activity;
   private final CustomTabActivityHelper customTab;
-  @SmartLinking private final Preference<Boolean> globalSmartLinkingPref;
+  @SmartLinking
+  private final Preference<Boolean> globalSmartLinkingPref;
 
   // Naive cache that tracks if we've already resolved for activities that can handle a given host
   // TODO Eventually replace this with something that's mindful of per-service prefs
@@ -55,7 +56,9 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
     IntentFilter filter = new IntentFilter();
     filter.addAction(Intent.ACTION_INSTALL_PACKAGE);
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
-    Observable.merge(RxBroadcastReceiver.create(activity, filter), globalSmartLinkingPref.asObservable())
+    Flowable.merge(
+        toV2Flowable(RxBroadcastReceiver.create(activity, filter)),
+        toV2Flowable(globalSmartLinkingPref.asObservable()))
         .compose(Confine.to(activity))
         .subscribe(o -> dumbCache.clear());
   }
@@ -100,12 +103,12 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
 
   private void queryAndOpen(Uri uri, Intent intent, @ColorInt int accentColor) {
     PackageManager manager = activity.getPackageManager();
-    Observable.defer(() -> Observable.from(manager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)))
+    Flowable.defer(() -> Flowable.fromIterable(manager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)))
         .filter(resolveInfo -> isSpecificUriMatch(resolveInfo.match))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .compose(Transformers.delayedMessage(activity.findViewById(android.R.id.content), "Resolving"))
-        .compose(doOnEmpty((Action0) () -> {
+        .compose(doOnEmpty(() -> {
           dumbCache.put(uri.getHost(), false);
           openCustomTab(uri, accentColor);
         }))

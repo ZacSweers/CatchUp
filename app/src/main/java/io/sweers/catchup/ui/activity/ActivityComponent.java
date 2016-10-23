@@ -3,6 +3,7 @@ package io.sweers.catchup.ui.activity;
 import android.content.Context;
 
 import com.f2prateek.rx.preferences.RxSharedPreferences;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
 
 import dagger.Component;
@@ -12,7 +13,6 @@ import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import okhttp3.OkHttpClient;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 @PerActivity
 @Component(
@@ -36,7 +36,7 @@ public interface ActivityComponent {
 
   Moshi moshi();
 
-  RxJavaCallAdapterFactory rxJavaCallAdapterFactory();
+  RxJava2CallAdapterFactory rxJavaCallAdapterFactory();
 
   RxSharedPreferences rxSharedPreferences();
 

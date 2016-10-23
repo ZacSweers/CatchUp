@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
 
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
+import io.reactivex.Maybe;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
@@ -30,9 +32,7 @@ import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
-import rx.Observable;
 
 
 public final class ProductHuntController extends BaseNewsController<Post> {
@@ -83,7 +83,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
 
   @NonNull
   @Override
-  protected Observable<List<Post>> getDataObservable() {
+  protected Maybe<List<Post>> getDataObservable() {
     return service.getPosts(0)
         .map(PostsResponse::posts);
 
@@ -125,7 +125,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     ProductHuntService provideProductHuntService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
-        RxJavaCallAdapterFactory rxJavaCallAdapterFactory) {
+        RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder()
           .baseUrl(ProductHuntService.ENDPOINT)
           .callFactory(request -> client.get().newCall(request))

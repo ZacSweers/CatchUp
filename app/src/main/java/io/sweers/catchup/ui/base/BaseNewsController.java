@@ -29,6 +29,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Maybe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.util.NumberUtil;
@@ -36,7 +38,6 @@ import io.sweers.catchup.util.Strings;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action2;
 import timber.log.Timber;
 
@@ -79,7 +80,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       @NonNull ViewHolder holder);
 
   @NonNull
-  protected abstract Observable<List<T>> getDataObservable();
+  protected abstract Maybe<List<T>> getDataObservable();
 
   @Override
   protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
@@ -133,11 +134,11 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   private void loadData() {
     getDataObservable()
         .observeOn(AndroidSchedulers.mainThread())
-        .doOnUnsubscribe(() -> {
+        .doAfterTerminate(() -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .compose(Confine.to(this))
+        .compose(Confine.to(this).forMaybe())
         .subscribe(
             data -> {
               progress.setVisibility(GONE);
