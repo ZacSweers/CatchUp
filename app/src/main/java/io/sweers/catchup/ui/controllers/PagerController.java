@@ -93,7 +93,7 @@ public class PagerController extends BaseController {
   private ControllerPagerAdapter pagerAdapter;
 
   public PagerController() {
-    pagerAdapter = new ControllerPagerAdapter(this) {
+    pagerAdapter = new ControllerPagerAdapter(this, true) {
       @Override
       public Controller getItem(int position) {
         switch (position) {

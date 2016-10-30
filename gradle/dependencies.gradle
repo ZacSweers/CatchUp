@@ -44,7 +44,7 @@ ext {
     autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:1.0.0'
 
     // Conductor
-    conductorVersion = '1.1.6'
+    conductorVersion = '2.0.3'
     conductor = "com.bluelinelabs:conductor:$conductorVersion"
     conductorSupport = "com.bluelinelabs:conductor-support:$conductorVersion"
     conductorRxLifecycle = "com.bluelinelabs:conductor-rxlifecycle:$conductorVersion"

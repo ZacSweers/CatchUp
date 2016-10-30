@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Conductor;
 import com.bluelinelabs.conductor.Router;
+import com.bluelinelabs.conductor.RouterTransaction;
 
 import javax.inject.Inject;
 
@@ -42,7 +43,7 @@ public class MainActivity extends BaseActivity {
 
     router = Conductor.attachRouter(this, container, savedInstanceState);
     if (!router.hasRootController()) {
-      router.setRoot(new PagerController());
+      router.setRoot(RouterTransaction.with(new PagerController()));
     }
   }
 
