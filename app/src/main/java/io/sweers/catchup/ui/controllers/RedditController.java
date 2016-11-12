@@ -3,8 +3,8 @@ package io.sweers.catchup.ui.controllers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
+import android.view.ContextThemeWrapper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -56,7 +56,6 @@ public final class RedditController extends BaseNewsController<RedditLink> {
   protected void performInjection() {
     DaggerRedditController_Component
         .builder()
-        .module(new Module())
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
@@ -112,11 +111,11 @@ public final class RedditController extends BaseNewsController<RedditLink> {
   }
 
   @dagger.Module
-  public static class Module {
+  public abstract static class Module {
 
     @Provides
     @PerController
-    Gson provideGson() {
+    static Gson provideGson() {
       return new GsonBuilder()
           .registerTypeAdapter(RedditObject.class, new RedditObjectDeserializer())
           .registerTypeAdapter(Instant.class, new EpochInstantTypeAdapter(true))
@@ -127,7 +126,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     @ForApi
     @Provides
     @PerController
-    OkHttpClient provideRedditOkHttpClient(OkHttpClient client) {
+    static OkHttpClient provideRedditOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addNetworkInterceptor(chain -> {
             Request request = chain.request();
@@ -143,7 +142,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
 
     @Provides
     @PerController
-    RedditService provideRedditService(
+    static RedditService provideRedditService(
         @ForApi final Lazy<OkHttpClient> client,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory,
         Gson gson) {

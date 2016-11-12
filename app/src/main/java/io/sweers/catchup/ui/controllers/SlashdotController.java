@@ -3,7 +3,7 @@ package io.sweers.catchup.ui.controllers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.view.ContextThemeWrapper;
+import android.view.ContextThemeWrapper;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -47,7 +47,6 @@ public final class SlashdotController extends BaseNewsController<Entry> {
   protected void performInjection() {
     DaggerSlashdotController_Component
         .builder()
-        .module(new Module())
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
@@ -96,12 +95,12 @@ public final class SlashdotController extends BaseNewsController<Entry> {
   }
 
   @dagger.Module
-  public static class Module {
+  public abstract static class Module {
 
     @Provides
     @ForApi
     @PerController
-    OkHttpClient provideSlashdotOkHttpClient(OkHttpClient okHttpClient) {
+    static OkHttpClient provideSlashdotOkHttpClient(OkHttpClient okHttpClient) {
       return okHttpClient.newBuilder()
           .addNetworkInterceptor(chain -> {
             Response originalResponse = chain.proceed(chain.request());
@@ -116,7 +115,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
 
     @Provides
     @PerController
-    SlashdotService provideSlashdotService(
+    static SlashdotService provideSlashdotService(
         @ForApi final Lazy<OkHttpClient> client,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder()

@@ -3,8 +3,8 @@ package io.sweers.catchup.ui.controllers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
+import android.view.ContextThemeWrapper;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
@@ -52,7 +52,6 @@ public final class ProductHuntController extends BaseNewsController<Post> {
   protected void performInjection() {
     DaggerProductHuntController_Component
         .builder()
-        .module(new Module())
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
@@ -99,12 +98,12 @@ public final class ProductHuntController extends BaseNewsController<Post> {
   }
 
   @dagger.Module
-  public static class Module {
+  public abstract static class Module {
 
     @Provides
     @PerController
     @ForApi
-    OkHttpClient provideProductHuntOkHttpClient(OkHttpClient client) {
+    static OkHttpClient provideProductHuntOkHttpClient(OkHttpClient client) {
       return client
           .newBuilder()
           .addInterceptor(AuthInterceptor.create("Bearer", BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
@@ -114,7 +113,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     @Provides
     @PerController
     @ForApi
-    Moshi provideProductHuntMoshi(Moshi moshi) {
+    static Moshi provideProductHuntMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Date.class, new Rfc3339DateJsonAdapter())
           .build();
@@ -122,7 +121,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
 
     @Provides
     @PerController
-    ProductHuntService provideProductHuntService(
+    static ProductHuntService provideProductHuntService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {

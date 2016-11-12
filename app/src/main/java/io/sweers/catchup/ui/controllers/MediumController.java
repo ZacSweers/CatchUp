@@ -3,8 +3,8 @@ package io.sweers.catchup.ui.controllers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
+import android.view.ContextThemeWrapper;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
@@ -57,7 +57,6 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   protected void performInjection() {
     DaggerMediumController_Component
         .builder()
-        .module(new Module())
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
@@ -138,12 +137,12 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   }
 
   @dagger.Module
-  public static class Module {
+  public abstract static class Module {
 
     @Provides
     @PerController
     @ForApi
-    OkHttpClient provideMediumOkHttpClient(OkHttpClient client) {
+    static OkHttpClient provideMediumOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addInterceptor(chain -> {
             Request request = chain.request();
@@ -163,7 +162,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     @Provides
     @PerController
     @ForApi
-    Moshi provideMediumMoshi(Moshi moshi) {
+    static Moshi provideMediumMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Instant.class, new EpochInstantJsonAdapter())
           .build();
@@ -171,7 +170,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
     @Provides
     @PerController
-    MediumService provideMediumService(
+    static MediumService provideMediumService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {

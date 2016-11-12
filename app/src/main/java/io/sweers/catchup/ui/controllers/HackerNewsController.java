@@ -3,8 +3,8 @@ package io.sweers.catchup.ui.controllers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
+import android.view.ContextThemeWrapper;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
@@ -54,7 +54,6 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   protected void performInjection() {
     DaggerHackerNewsController_Component
         .builder()
-        .module(new Module())
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
@@ -119,12 +118,12 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   }
 
   @dagger.Module
-  public static class Module {
+  public abstract static class Module {
 
     @ForApi
     @Provides
     @PerController
-    OkHttpClient provideHackerNewsOkHttpClient(OkHttpClient client) {
+    static OkHttpClient provideHackerNewsOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addNetworkInterceptor(chain -> {
             Request request = chain.request();
@@ -145,7 +144,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     @Provides
     @PerController
     @ForApi
-    Moshi provideHackerNewsMoshi(Moshi moshi) {
+    static Moshi provideHackerNewsMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Instant.class, new EpochInstantJsonAdapter(true))
           .build();
@@ -153,7 +152,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
 
     @Provides
     @PerController
-    HackerNewsService provideHackerNewsService(
+    static HackerNewsService provideHackerNewsService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {

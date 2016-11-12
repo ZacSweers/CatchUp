@@ -4,10 +4,10 @@ ext {
     targetSdkVersion = 25
     compileSdkVersion = 25
     buildToolsVersion = '25.0.0'
-    ci = 'true'.equals(System.getenv('CI'))
+    ci = 'true' == System.getenv('CI')
 
     // Kotlin
-    kotlinVersion = '1.0.4'
+    kotlinVersion = '1.0.5'
     kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     kotlinAndroidAnnotaitons = "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$kotlinVersion"
@@ -26,9 +26,9 @@ ext {
     supportRecyclerView = "com.android.support:recyclerview-v7:$supportVersion"
     supportV4 = "com.android.support:support-v4:$supportVersion"
     multidex = 'com.android.support:multidex:1.0.1'
-    androidPlugin = 'com.android.tools.build:gradle:2.2.2'
+    androidPlugin = 'com.android.tools.build:gradle:2.3.0-alpha1'
     playServicesVersion = '9.8.0'
-    constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
+    constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
 
     // Dagger
     daggerVersion = '2.7'
@@ -135,7 +135,7 @@ ext {
     junit = 'junit:junit:4.12'
     mockito = 'org.mockito:mockito-all:1.10.19'
     robolectric = 'org.robolectric:robolectric:3.0'
-    truth = 'com.google.truth:truth:0.28'
+    truth = 'com.google.truth:truth:0.30'
 
     // Espresso
     supportTestVersion = '0.4.1'

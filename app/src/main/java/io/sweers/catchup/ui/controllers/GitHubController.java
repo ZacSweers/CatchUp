@@ -3,8 +3,8 @@ package io.sweers.catchup.ui.controllers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
+import android.view.ContextThemeWrapper;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
@@ -54,7 +54,6 @@ public final class GitHubController extends BaseNewsController<Repository> {
   protected void performInjection() {
     DaggerGitHubController_Component
         .builder()
-        .module(new Module())
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
@@ -101,12 +100,12 @@ public final class GitHubController extends BaseNewsController<Repository> {
   }
 
   @dagger.Module
-  public static class Module {
+  public abstract static class Module {
 
     @Provides
     @PerController
     @ForApi
-    OkHttpClient provideGitHubOkHttpClient(OkHttpClient client) {
+    static OkHttpClient provideGitHubOkHttpClient(OkHttpClient client) {
       return client
           .newBuilder()
           .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
@@ -116,7 +115,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
     @Provides
     @PerController
     @ForApi
-    Moshi provideGitHubMoshi(Moshi moshi) {
+    static Moshi provideGitHubMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(new ISOInstantAdapter())
           .build();
@@ -124,7 +123,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
 
     @Provides
     @PerController
-    GitHubService provideGitHubService(
+    static GitHubService provideGitHubService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {

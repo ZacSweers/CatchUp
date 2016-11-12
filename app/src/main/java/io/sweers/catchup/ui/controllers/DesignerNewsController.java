@@ -3,8 +3,8 @@ package io.sweers.catchup.ui.controllers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Pair;
+import android.view.ContextThemeWrapper;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
@@ -53,7 +53,6 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
   protected void performInjection() {
     DaggerDesignerNewsController_Component
         .builder()
-        .module(new Module())
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
@@ -102,12 +101,12 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
   }
 
   @dagger.Module
-  public static class Module {
+  public abstract static class Module {
 
     @Provides
     @ForApi
     @PerController
-    OkHttpClient provideDesignerNewsOkHttpClient(OkHttpClient okHttpClient) {
+    static OkHttpClient provideDesignerNewsOkHttpClient(OkHttpClient okHttpClient) {
       return okHttpClient.newBuilder()
           .addNetworkInterceptor(chain -> {
             Request originalRequest = chain.request();
@@ -124,7 +123,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
     @Provides
     @ForApi
     @PerController
-    Moshi provideDesignerNewsMoshi(Moshi moshi) {
+    static Moshi provideDesignerNewsMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Date.class, new Rfc3339DateJsonAdapter())
           .build();
@@ -132,7 +131,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
 
     @Provides
     @PerController
-    DesignerNewsService provideDesignerNewsService(
+    static DesignerNewsService provideDesignerNewsService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {

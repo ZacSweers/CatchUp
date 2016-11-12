@@ -18,9 +18,9 @@ import android.support.annotation.NonNull;
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -118,7 +118,6 @@ public class DribbbleController extends BaseController
     // TODO There must be an earlier place than this
     DaggerDribbbleController_Component
         .builder()
-        .module(new DribbbleController.Module())
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
@@ -389,12 +388,12 @@ public class DribbbleController extends BaseController
   }
 
   @dagger.Module
-  public static class Module {
+  public abstract static class Module {
 
     @Provides
     @PerController
     @ForApi
-    OkHttpClient provideDribbbleOkHttpClient(OkHttpClient client) {
+    static OkHttpClient provideDribbbleOkHttpClient(OkHttpClient client) {
       return client
           .newBuilder()
           .addInterceptor(AuthInterceptor.create("Bearer", BuildConfig.DRIBBBLE_CLIENT_ACCESS_TOKEN))
@@ -404,7 +403,7 @@ public class DribbbleController extends BaseController
     @Provides
     @PerController
     @ForApi
-    Moshi provideDribbbleMoshi(Moshi moshi) {
+    static Moshi provideDribbbleMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Date.class, new Rfc3339DateJsonAdapter())
           .build();
@@ -412,7 +411,7 @@ public class DribbbleController extends BaseController
 
     @Provides
     @PerController
-    DribbbleService provideDribbbleService(
+    static DribbbleService provideDribbbleService(
         @ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
