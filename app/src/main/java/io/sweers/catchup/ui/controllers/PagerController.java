@@ -6,11 +6,13 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,7 @@ import io.sweers.catchup.P;
 import io.sweers.catchup.R;
 import io.sweers.catchup.injection.qualifiers.preferences.NavBarTheme;
 import io.sweers.catchup.injection.scopes.PerController;
+import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.activity.SettingsActivity;
@@ -89,8 +92,13 @@ public class PagerController extends BaseController {
   @BindView(R.id.tab_layout) TabLayout tabLayout;
   @BindView(R.id.view_pager) ViewPager viewPager;
   @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.appbarlayout) AppBarLayout appBarLayout;
   private boolean colorNavBar = false;
   private ControllerPagerAdapter pagerAdapter;
+
+  // Ew, but the only way to get the controller later
+  // https://github.com/bluelinelabs/Conductor/issues/166
+  private SparseArray<Controller> controllers = new SparseArray<>();
 
   public PagerController() {
     pagerAdapter = new ControllerPagerAdapter(this, true) {
@@ -98,23 +106,41 @@ public class PagerController extends BaseController {
       public Controller getItem(int position) {
         switch (position) {
           case 0:
-            return new HackerNewsController();
+            Controller newController0 = new HackerNewsController();
+            controllers.put(0, newController0);
+            return newController0;
           case 1:
-            return new RedditController();
+            Controller newController1 = new RedditController();
+            controllers.put(1, newController1);
+            return newController1;
           case 2:
-            return new MediumController();
+            Controller newController2 = new MediumController();
+            controllers.put(2, newController2);
+            return newController2;
           case 3:
-            return new ProductHuntController();
+            Controller newController3 = new ProductHuntController();
+            controllers.put(3, newController3);
+            return newController3;
           case 4:
-            return new SlashdotController();
+            Controller newController4 = new SlashdotController();
+            controllers.put(4, newController4);
+            return newController4;
           case 5:
-            return new DesignerNewsController();
+            Controller newController5 = new DesignerNewsController();
+            controllers.put(5, newController5);
+            return newController5;
           case 6:
-            return new DribbbleController();
+            Controller newController6 = new DribbbleController();
+            controllers.put(6, newController6);
+            return newController6;
           case 7:
-            return new GitHubController();
+            Controller newController7 = new GitHubController();
+            controllers.put(7, newController7);
+            return newController7;
           default:
-            return new RedditController();
+            Controller newController = new RedditController();
+            controllers.put(-1, newController);
+            return newController;
         }
       }
 
@@ -224,6 +250,27 @@ public class PagerController extends BaseController {
       @Override
       public void onPageScrollStateChanged(int state) {
         // NO-OP.
+      }
+    });
+
+    tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+      @Override
+      public void onTabSelected(TabLayout.Tab tab) {
+
+      }
+
+      @Override
+      public void onTabUnselected(TabLayout.Tab tab) {
+
+      }
+
+      @Override
+      public void onTabReselected(TabLayout.Tab tab) {
+        Controller controller = controllers.get(tab.getPosition());
+        if (controller instanceof Scrollable) {
+          ((Scrollable) controller).onRequestScrollToTop();
+          appBarLayout.setExpanded(true, true);
+        }
       }
     });
   }

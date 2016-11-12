@@ -61,6 +61,7 @@ import io.sweers.catchup.data.dribbble.model.Shot;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.rx.Confine;
+import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseController;
@@ -79,7 +80,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public class DribbbleController extends BaseController
-    implements SwipeRefreshLayout.OnRefreshListener {
+    implements SwipeRefreshLayout.OnRefreshListener, Scrollable {
 
   @ColorInt private static final int INITIAL_GIF_BADGE_COLOR = 0x40ffffff;
   @Inject DribbbleService service;
@@ -201,6 +202,11 @@ public class DribbbleController extends BaseController
   @Override
   public void onRefresh() {
     loadData();
+  }
+
+  @Override
+  public void onRequestScrollToTop() {
+    recyclerView.smoothScrollToPosition(0);
   }
 
   @PerController

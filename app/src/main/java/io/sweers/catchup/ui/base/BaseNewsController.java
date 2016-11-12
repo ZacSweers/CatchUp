@@ -33,6 +33,7 @@ import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.rx.Confine;
+import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.util.NumberUtil;
 import io.sweers.catchup.util.Strings;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
@@ -46,7 +47,7 @@ import static android.view.View.VISIBLE;
 
 
 public abstract class BaseNewsController<T extends HasStableId> extends BaseController
-    implements SwipeRefreshLayout.OnRefreshListener {
+    implements SwipeRefreshLayout.OnRefreshListener, Scrollable {
 
   @BindView(R.id.error_container) View errorView;
   @BindView(R.id.error_image) ImageView errorImage;
@@ -174,6 +175,11 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   @Override
   public void onRefresh() {
     loadData();
+  }
+
+  @Override
+  public void onRequestScrollToTop() {
+    recyclerView.smoothScrollToPosition(0);
   }
 
   private static class Adapter<T extends HasStableId> extends RecyclerView.Adapter<ViewHolder> {
