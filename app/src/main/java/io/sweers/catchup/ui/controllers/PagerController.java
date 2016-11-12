@@ -10,9 +10,9 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.SparseArrayCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,7 +98,7 @@ public class PagerController extends BaseController {
 
   // Ew, but the only way to get the controller later
   // https://github.com/bluelinelabs/Conductor/issues/166
-  private SparseArray<Controller> controllers = new SparseArray<>();
+  private SparseArrayCompat<Controller> controllers = new SparseArrayCompat<>();
 
   public PagerController() {
     pagerAdapter = new ControllerPagerAdapter(this, true) {
@@ -268,7 +268,7 @@ public class PagerController extends BaseController {
       public void onTabReselected(TabLayout.Tab tab) {
         Controller controller = controllers.get(tab.getPosition());
         if (controller instanceof Scrollable) {
-          ((Scrollable) controller).onRequestScrollToTop();
+//          ((Scrollable) controller).onRequestScrollToTop();
           appBarLayout.setExpanded(true, true);
         }
       }
