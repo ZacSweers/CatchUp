@@ -18,6 +18,14 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.flipboard.psync'
 apply plugin: 'com.github.ben-manes.versions'   // ./gradlew dependencyUpdates -Drevision=release
 
+private String getPropertyOrEmpty(String property) {
+  if (hasProperty(property)) {
+    return project.properties[property]
+  } else {
+    return ""
+  }
+}
+
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
   buildToolsVersion rootProject.ext.buildToolsVersion
@@ -33,12 +41,12 @@ android {
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
 
-    buildConfigField 'String', 'GIT_SHA', /"${gitSha}"/
-    buildConfigField 'long', 'GIT_TIMESTAMP', "${gitTimestamp}"
-    buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"$catchup_product_hunt_developer_token"/
-    buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN', /"$catchup_github_developer_token"/
-    buildConfigField 'String', 'DESIGNER_NEWS_CLIENT_ID', /"$catchup_designer_news_client_id"/
-    buildConfigField 'String', 'DRIBBBLE_CLIENT_ACCESS_TOKEN', /"$catchup_dribbble_access_token"/
+    buildConfigField 'String', 'GIT_SHA', /"$gitSha"/
+    buildConfigField 'long', 'GIT_TIMESTAMP', "$gitTimestamp"
+    buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"${getPropertyOrEmpty("catchup_product_hunt_developer_token")}"/
+    buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN', /"${getPropertyOrEmpty("catchup_github_developer_token")}"/
+    buildConfigField 'String', 'DESIGNER_NEWS_CLIENT_ID', /"${getPropertyOrEmpty("catchup_designer_news_client_id")}"/
+    buildConfigField 'String', 'DRIBBBLE_CLIENT_ACCESS_TOKEN', /"${getPropertyOrEmpty("catchup_dribbble_access_token")}"/
   }
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
@@ -67,7 +75,7 @@ android {
       versionNameSuffix "-dev"
     }
     release {
-      buildConfigField 'String', 'BUGSNAG_KEY', /"$catchup_bugsnag_key"/
+      buildConfigField 'String', 'BUGSNAG_KEY', /"${getPropertyOrEmpty("catchup_bugsnag_key")}"/
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       signingConfig signingConfigs.debug
