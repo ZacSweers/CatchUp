@@ -103,44 +103,39 @@ public class PagerController extends BaseController {
   public PagerController() {
     pagerAdapter = new ControllerPagerAdapter(this, true) {
       @Override
+      public Object instantiateItem(ViewGroup container, int position) {
+        Controller controller = (Controller) super.instantiateItem(container, position);
+        controllers.put(position, controller);
+        return controller;
+      }
+
+      @Override
+      public void destroyItem(ViewGroup container, int position, Object object) {
+        super.destroyItem(container, position, object);
+        controllers.remove(position);
+      }
+
+      @Override
       public Controller getItem(int position) {
         switch (position) {
           case 0:
-            Controller newController0 = new HackerNewsController();
-            controllers.put(0, newController0);
-            return newController0;
+            return new HackerNewsController();
           case 1:
-            Controller newController1 = new RedditController();
-            controllers.put(1, newController1);
-            return newController1;
+            return new RedditController();
           case 2:
-            Controller newController2 = new MediumController();
-            controllers.put(2, newController2);
-            return newController2;
+            return new MediumController();
           case 3:
-            Controller newController3 = new ProductHuntController();
-            controllers.put(3, newController3);
-            return newController3;
+            return new ProductHuntController();
           case 4:
-            Controller newController4 = new SlashdotController();
-            controllers.put(4, newController4);
-            return newController4;
+            return new SlashdotController();
           case 5:
-            Controller newController5 = new DesignerNewsController();
-            controllers.put(5, newController5);
-            return newController5;
+            return new DesignerNewsController();
           case 6:
-            Controller newController6 = new DribbbleController();
-            controllers.put(6, newController6);
-            return newController6;
+            return new DribbbleController();
           case 7:
-            Controller newController7 = new GitHubController();
-            controllers.put(7, newController7);
-            return newController7;
+            return new GitHubController();
           default:
-            Controller newController = new RedditController();
-            controllers.put(-1, newController);
-            return newController;
+            return new RedditController();
         }
       }
 
@@ -268,7 +263,7 @@ public class PagerController extends BaseController {
       public void onTabReselected(TabLayout.Tab tab) {
         Controller controller = controllers.get(tab.getPosition());
         if (controller instanceof Scrollable) {
-//          ((Scrollable) controller).onRequestScrollToTop();
+          ((Scrollable) controller).onRequestScrollToTop();
           appBarLayout.setExpanded(true, true);
         }
       }
