@@ -17,8 +17,8 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import dagger.Provides;
-import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.LinkManager;
@@ -115,8 +115,8 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 //              }
 //          );
 //        })
-        .toFlowable()
-        .flatMap(references -> Flowable.fromIterable(references.Post().values())
+        .toObservable()
+        .flatMap(references -> Observable.fromIterable(references.Post().values())
             .map(post -> MediumPost.builder()
                 .post(post)
                 .user(references.User().get(post.creatorId()))

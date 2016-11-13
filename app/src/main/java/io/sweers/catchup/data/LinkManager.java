@@ -16,7 +16,7 @@ import com.f2prateek.rx.receivers.RxBroadcastReceiver;
 
 import javax.inject.Inject;
 
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
@@ -28,7 +28,7 @@ import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import rx.functions.Action1;
 
-import static hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Flowable;
+import static hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Observable;
 import static io.sweers.catchup.rx.Transformers.doOnEmpty;
 
 @PerActivity
@@ -56,9 +56,9 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
     IntentFilter filter = new IntentFilter();
     filter.addAction(Intent.ACTION_INSTALL_PACKAGE);
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
-    Flowable.merge(
-        toV2Flowable(RxBroadcastReceiver.create(activity, filter)),
-        toV2Flowable(globalSmartLinkingPref.asObservable()))
+    Observable.merge(
+        toV2Observable(RxBroadcastReceiver.create(activity, filter)),
+        toV2Observable(globalSmartLinkingPref.asObservable()))
         .compose(Confine.to(activity))
         .subscribe(o -> dumbCache.clear());
   }
@@ -103,7 +103,7 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
 
   private void queryAndOpen(Uri uri, Intent intent, @ColorInt int accentColor) {
     PackageManager manager = activity.getPackageManager();
-    Flowable.defer(() -> Flowable.fromIterable(manager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)))
+    Observable.defer(() -> Observable.fromIterable(manager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)))
         .filter(resolveInfo -> isSpecificUriMatch(resolveInfo.match))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())

@@ -5,8 +5,8 @@ import android.view.View;
 
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Flowable;
-import io.reactivex.FlowableTransformer;
+import io.reactivex.Observable;
+import io.reactivex.ObservableTransformer;
 import io.reactivex.functions.Action;
 import rx.Observable.Transformer;
 import rx.schedulers.Schedulers;
@@ -18,9 +18,9 @@ public final class Transformers {
     throw new InstantiationError();
   }
 
-  public static <T> FlowableTransformer<T, T> doOnEmpty(Action action) {
+  public static <T> ObservableTransformer<T, T> doOnEmpty(Action action) {
     return source -> source
-        .switchIfEmpty(Flowable.<T>empty().doOnComplete(action));
+        .switchIfEmpty(Observable.<T>empty().doOnComplete(action));
   }
 
   public static <T> Transformer<T, T> normalize(long time, TimeUnit unit) {
@@ -28,14 +28,14 @@ public final class Transformers {
         .lift(new OperatorNormalize<>(time, unit, Schedulers.computation()));
   }
 
-  public static <T> FlowableTransformer<T, T> delayedMessage(View view, String message) {
-    return new FlowableTransformer<T, T>() {
+  public static <T> ObservableTransformer<T, T> delayedMessage(View view, String message) {
+    return new ObservableTransformer<T, T>() {
 
-      private Flowable<Long> timer = Flowable.timer(300, TimeUnit.MILLISECONDS);
+      private Observable<Long> timer = Observable.timer(300, TimeUnit.MILLISECONDS);
       private Snackbar snackbar = null;
 
       @Override
-      public Flowable<T> apply(Flowable<T> source) {
+      public Observable<T> apply(Observable<T> source) {
         verifyMainThread();
         return source
             .doOnSubscribe(c -> timer.takeUntil(source)

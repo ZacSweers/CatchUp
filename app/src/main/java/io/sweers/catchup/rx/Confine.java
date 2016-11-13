@@ -12,10 +12,17 @@ import com.trello.rxlifecycle.android.RxLifecycleAndroid;
 import org.reactivestreams.Publisher;
 
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.CompletableSource;
 import io.reactivex.CompletableTransformer;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableTransformer;
+import io.reactivex.Maybe;
+import io.reactivex.MaybeSource;
 import io.reactivex.MaybeTransformer;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.SingleSource;
 import io.reactivex.SingleTransformer;
 import io.sweers.catchup.ui.base.BaseActivity;
 import rx.Completable;
@@ -51,7 +58,12 @@ public final class Confine {
     return LifecycleTransformer2.create(RxLifecycleAndroid.bindView(view));
   }
 
-  public static class LifecycleTransformer2<T> implements FlowableTransformer<T, T> {
+  public static class LifecycleTransformer2<T>
+      implements FlowableTransformer<T, T>,
+      SingleTransformer<T, T>,
+      ObservableTransformer<T, T>,
+      MaybeTransformer<T, T>,
+      CompletableTransformer {
 
     private LifecycleTransformer<T> delegate;
 
@@ -63,35 +75,39 @@ public final class Confine {
       return new LifecycleTransformer2<>(delegate);
     }
 
-    public <U> MaybeTransformer<U, U> forMaybe() {
-      return source -> {
-        Observable<U> o = toV1Observable(source.toFlowable());
-        o = (Observable<U>) delegate.<U>call((Observable<T>) o);
-        return RxJavaInterop.toV2Flowable(o).singleElement();
-      };
-    }
-
-    public <U> SingleTransformer<U, U> forSingle() {
-      return source1 -> {
-        Single<U> o = toV1Single(source1);
-        o = delegate.<U>forSingle().call(o);
-        return RxJavaInterop.toV2Single(o);
-      };
-    }
-
-    public CompletableTransformer forCompletable() {
-      return source -> {
-        Completable o = toV1Completable(source);
-        o = delegate.forCompletable().call(o);
-        return RxJavaInterop.toV2Completable(o);
-      };
-    }
-
     @Override
     public Publisher<T> apply(Flowable<T> source) {
       Observable<T> o = toV1Observable(source);
       o = delegate.call(o);
       return RxJavaInterop.toV2Flowable(o);
+    }
+
+    @Override
+    public MaybeSource<T> apply(Maybe<T> upstream) {
+      Observable<T> o = toV1Observable(upstream.toFlowable());
+      o = delegate.<T>call(o);
+      return RxJavaInterop.toV2Flowable(o).singleElement();
+    }
+
+    @Override
+    public ObservableSource<T> apply(io.reactivex.Observable<T> upstream) {
+      Observable<T> o = toV1Observable(upstream.toFlowable(BackpressureStrategy.MISSING));
+      o = delegate.call(o);
+      return RxJavaInterop.toV2Observable(o);
+    }
+
+    @Override
+    public SingleSource<T> apply(io.reactivex.Single<T> upstream) {
+      Single<T> o = toV1Single(upstream);
+      o = delegate.<T>forSingle().call(o);
+      return RxJavaInterop.toV2Single(o);
+    }
+
+    @Override
+    public CompletableSource apply(io.reactivex.Completable upstream) {
+      Completable o = toV1Completable(upstream);
+      o = delegate.forCompletable().call(o);
+      return RxJavaInterop.toV2Completable(o);
     }
   }
 }

@@ -133,7 +133,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .compose(Confine.to(this).forMaybe())
+        .compose(Confine.to(this))
         .subscribe(
             data -> {
               progress.setVisibility(GONE);

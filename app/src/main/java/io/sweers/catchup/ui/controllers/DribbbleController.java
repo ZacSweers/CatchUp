@@ -147,7 +147,7 @@ public class DribbbleController extends BaseController
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .compose(Confine.to(this).forMaybe())
+        .compose(Confine.to(this))
         .subscribe(
             shot -> {
               progress.setVisibility(GONE);
