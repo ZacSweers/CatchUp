@@ -98,9 +98,6 @@ public class DribbbleController extends BaseController
 
   public DribbbleController(Bundle args) {
     super(args);
-
-    // TODO remove after Conductor 2.0
-    setRetainViewMode(RetainViewMode.RETAIN_DETACH);
   }
 
   @Override
@@ -138,11 +135,8 @@ public class DribbbleController extends BaseController
   @Override
   protected void onAttach(@NonNull View view) {
     super.onAttach(view);
-    if (adapter.shots.isEmpty()) {
-      // TODO remove after Conductor 2.0
-      swipeRefreshLayout.setEnabled(false);
-      loadData();
-    }
+    swipeRefreshLayout.setEnabled(false);
+    loadData();
   }
 
   private void loadData() {

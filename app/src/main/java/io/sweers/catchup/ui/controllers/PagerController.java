@@ -21,7 +21,6 @@ import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.support.ControllerPagerAdapter;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
-import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.Arrays;
 
@@ -176,8 +175,7 @@ public class PagerController extends BaseController {
           } else {
             P.daynightNight.put(true).commit();
           }
-          // TODO Use recreate() here after conductor 2.0 and not needing to retain views on detach
-          ProcessPhoenix.triggerRebirth(getActivity());
+          getActivity().recreate();
           return true;
         case R.id.settings:
           startActivity(new Intent(getActivity(), SettingsActivity.class));

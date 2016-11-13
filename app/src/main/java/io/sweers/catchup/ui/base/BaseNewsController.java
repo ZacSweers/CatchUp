@@ -63,9 +63,6 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
 
   public BaseNewsController(Bundle args) {
     super(args);
-
-    // TODO remove after Conductor 2.0
-    setRetainViewMode(RetainViewMode.RETAIN_DETACH);
   }
 
   protected abstract void performInjection();
@@ -125,11 +122,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   @Override
   protected void onAttach(@NonNull View view) {
     super.onAttach(view);
-    if (adapter.data.isEmpty()) {
-      // TODO remove after Conductor 2.0
-      swipeRefreshLayout.setEnabled(false);
-      loadData();
-    }
+    swipeRefreshLayout.setEnabled(false);
+    loadData();
   }
 
   private void loadData() {
