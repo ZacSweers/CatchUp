@@ -82,7 +82,7 @@ android {
     }
   }
   dexOptions {
-    javaMaxHeapSize "5g"
+    javaMaxHeapSize "2g"
     preDexLibraries = !rootProject.ext.ci
   }
   lintOptions {
