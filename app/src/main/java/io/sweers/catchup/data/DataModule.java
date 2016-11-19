@@ -60,7 +60,7 @@ public class DataModule {
 
   @Provides
   @Singleton
-  Moshi provideMoshi() {
+  static Moshi provideMoshi() {
     return new Moshi.Builder()
         .add(AutoValueMoshiAdapterFactory.create())
         .add(ArrayMapJsonAdapter.FACTORY)
