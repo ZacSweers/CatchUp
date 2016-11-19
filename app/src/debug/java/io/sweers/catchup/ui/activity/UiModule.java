@@ -7,10 +7,10 @@ import io.sweers.catchup.ui.DebugViewContainer;
 import io.sweers.catchup.ui.ViewContainer;
 
 @Module
-public class UiModule {
+public abstract class UiModule {
   @Provides
   @PerActivity
-  ViewContainer provideViewContainer(DebugViewContainer viewContainer) {
+  static ViewContainer provideViewContainer(DebugViewContainer viewContainer) {
     return viewContainer;
   }
 }

@@ -29,7 +29,7 @@ public class DataModule {
 
   @Provides
   @Singleton
-  Cache provideCache(@ApplicationContext Context context) {
+  static Cache provideCache(@ApplicationContext Context context) {
     return new Cache(context.getCacheDir(), HTTP_RESPONSE_CACHE);
   }
 
@@ -70,19 +70,19 @@ public class DataModule {
 
   @Provides
   @Singleton
-  RxJava2CallAdapterFactory provideRxJavaCallAdapterFactory() {
+  static RxJava2CallAdapterFactory provideRxJavaCallAdapterFactory() {
     return RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io());
   }
 
   @Provides
   @Singleton
-  public SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {
+  static public SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {
     return context.getSharedPreferences("catchup", Context.MODE_PRIVATE);
   }
 
   @Provides
   @Singleton
-  public RxSharedPreferences provideRxSharedPreferences(SharedPreferences sharedPreferences) {
+  static public RxSharedPreferences provideRxSharedPreferences(SharedPreferences sharedPreferences) {
     return RxSharedPreferences.create(sharedPreferences);
   }
 }

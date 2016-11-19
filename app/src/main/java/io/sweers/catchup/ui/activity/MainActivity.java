@@ -51,7 +51,6 @@ public class MainActivity extends BaseActivity {
     return DaggerActivityComponent.builder()
         .applicationComponent(CatchUpApplication.component())
         .activityModule(new ActivityModule(this))
-        .uiModule(new UiModule())
         .build();
   }
 

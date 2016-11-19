@@ -6,10 +6,10 @@ import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.ui.ViewContainer;
 
 @Module
-public class UiModule {
+public abstract class UiModule {
   @Provides
   @PerActivity
-  ViewContainer provideViewContainer() {
+  static ViewContainer provideViewContainer() {
     return ViewContainer.DEFAULT;
   }
 }

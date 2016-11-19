@@ -36,7 +36,7 @@ public class ActivityModule {
   @PerActivity
   @Provides
   @SmartLinking
-  Preference<Boolean> provideSmartLinkingPref(RxSharedPreferences rxSharedPreferences) {
+  static Preference<Boolean> provideSmartLinkingPref(RxSharedPreferences rxSharedPreferences) {
     // TODO Use psync once it's fixed
     return rxSharedPreferences.getBoolean(P.smartlinkingGlobal.key, P.smartlinkingGlobal.defaultValue());
 //    return P.smartlinkingGlobal.rx();
