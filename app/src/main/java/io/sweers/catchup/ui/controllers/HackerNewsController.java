@@ -7,11 +7,11 @@ import android.util.Pair;
 import android.view.ContextThemeWrapper;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
-import org.threeten.bp.Instant;
-
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -20,7 +20,7 @@ import dagger.Provides;
 import io.reactivex.Maybe;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
-import io.sweers.catchup.data.EpochInstantJsonAdapter;
+import io.sweers.catchup.data.InstantModule;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
@@ -117,7 +117,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     void inject(HackerNewsController controller);
   }
 
-  @dagger.Module
+  @dagger.Module(includes = InstantModule.class)
   public abstract static class Module {
 
     @ForApi
@@ -144,9 +144,9 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     @Provides
     @PerController
     @ForApi
-    static Moshi provideHackerNewsMoshi(Moshi moshi) {
+    static Moshi provideHackerNewsMoshi(Moshi moshi, Set<JsonAdapter.Factory> factories) {
       return moshi.newBuilder()
-          .add(Instant.class, new EpochInstantJsonAdapter(true))
+          .add(factories.iterator().next())
           .build();
     }
 
