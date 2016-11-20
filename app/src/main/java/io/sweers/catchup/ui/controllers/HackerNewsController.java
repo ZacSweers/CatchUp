@@ -10,8 +10,11 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -35,6 +38,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
+import rx.Observable;
 
 
 public final class HackerNewsController extends BaseNewsController<HackerNewsStory> {
@@ -144,10 +148,17 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     @Provides
     @PerController
     @ForApi
-    static Moshi provideHackerNewsMoshi(Moshi moshi, Set<JsonAdapter.Factory> factories) {
-      return moshi.newBuilder()
-          .add(factories.iterator().next())
-          .build();
+    static Moshi provideHackerNewsMoshi(Moshi rootMoshi, Set<JsonAdapter.Factory> factories) {
+
+      Moshi.Builder builder = rootMoshi.newBuilder();
+
+      // Borrow from the parent's cache
+      builder.add((type, annotations, moshi) -> rootMoshi.adapter(type, annotations));
+
+      // Populate from the factories, use https://github.com/square/moshi/pull/216
+      Observable.from(factories).subscribe(builder::add);
+
+      return builder.build();
     }
 
     @Provides
