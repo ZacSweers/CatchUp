@@ -7,20 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.reactivex.functions.Consumer;
+import io.sweers.catchup.R;
+import io.sweers.catchup.data.LumberYard.Entry;
+import io.sweers.catchup.ui.BindableAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import io.sweers.catchup.R;
-import io.sweers.catchup.data.LumberYard.Entry;
-import io.sweers.catchup.ui.BindableAdapter;
-import rx.functions.Action1;
-
-
-final class LogAdapter extends BindableAdapter<Entry> implements Action1<Entry> {
+final class LogAdapter extends BindableAdapter<Entry> implements Consumer<Entry> {
   private List<Entry> logs;
 
   public LogAdapter(Context context) {
@@ -28,9 +25,7 @@ final class LogAdapter extends BindableAdapter<Entry> implements Action1<Entry> 
     logs = Collections.emptyList();
   }
 
-  public static
-  @DrawableRes
-  int backgroundForLevel(int level) {
+  public static @DrawableRes int backgroundForLevel(int level) {
     switch (level) {
       case Log.VERBOSE:
       case Log.DEBUG:
@@ -51,37 +46,31 @@ final class LogAdapter extends BindableAdapter<Entry> implements Action1<Entry> 
     this.logs = new ArrayList<>(logs);
   }
 
-  @Override
-  public void call(Entry entry) {
+  @Override public void accept(Entry entry) throws Exception {
     logs.add(entry);
     notifyDataSetChanged();
   }
 
-  @Override
-  public int getCount() {
+  @Override public int getCount() {
     return logs.size();
   }
 
-  @Override
-  public Entry getItem(int i) {
+  @Override public Entry getItem(int i) {
     return logs.get(i);
   }
 
-  @Override
-  public long getItemId(int i) {
+  @Override public long getItemId(int i) {
     return i;
   }
 
-  @Override
-  public View newView(LayoutInflater inflater, int position, ViewGroup container) {
+  @Override public View newView(LayoutInflater inflater, int position, ViewGroup container) {
     View view = inflater.inflate(R.layout.debug_logs_list_item, container, false);
     LogItemViewHolder viewHolder = new LogItemViewHolder(view);
     view.setTag(viewHolder);
     return view;
   }
 
-  @Override
-  public void bindView(Entry item, int position, View view) {
+  @Override public void bindView(Entry item, int position, View view) {
     LogItemViewHolder viewHolder = (LogItemViewHolder) view.getTag();
     viewHolder.setEntry(item);
   }

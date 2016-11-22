@@ -8,22 +8,19 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.f2prateek.rx.preferences.Preference;
 import com.jakewharton.madge.MadgeFrameLayout;
 import com.jakewharton.scalpel.ScalpelFrameLayout;
 import com.mattprecious.telescope.TelescopeLayout;
-
-import javax.inject.Inject;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.sweers.catchup.P;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LumberYard;
 import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.ui.debug.DebugDrawerLayout;
 import io.sweers.catchup.ui.debug.DebugView;
+import javax.inject.Inject;
 import rx.subscriptions.CompositeSubscription;
 
 import static android.content.Context.POWER_SERVICE;
@@ -36,8 +33,7 @@ import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
  * An {@link ViewContainer} for debug builds which wraps a sliding drawer on the right that holds
  * all of the debug information and settings.
  */
-@PerActivity
-public final class DebugViewContainer implements ViewContainer {
+@PerActivity public final class DebugViewContainer implements ViewContainer {
   private final LumberYard lumberYard;
   private Preference<Boolean> seenDebugDrawer = P.debugSeenDebugDrawer.rx();
   private Preference<Boolean> pixelGridEnabled = P.debugPixelGridEnabled.rx();
@@ -45,8 +41,7 @@ public final class DebugViewContainer implements ViewContainer {
   private Preference<Boolean> scalpelEnabled = P.debugScalpelEnabled.rx();
   private Preference<Boolean> scalpelWireframeEnabled = P.debugScalpelWireframeDrawer.rx();
 
-  @Inject
-  public DebugViewContainer(LumberYard lumberYard) {
+  @Inject public DebugViewContainer(LumberYard lumberYard) {
     this.lumberYard = lumberYard;
   }
 
@@ -65,8 +60,7 @@ public final class DebugViewContainer implements ViewContainer {
     lock.release();
   }
 
-  @Override
-  public ViewGroup forActivity(final Activity activity) {
+  @Override public ViewGroup forActivity(final Activity activity) {
     activity.setContentView(R.layout.debug_activity_frame);
 
     final ViewHolder viewHolder = new ViewHolder();
@@ -77,22 +71,21 @@ public final class DebugViewContainer implements ViewContainer {
     viewHolder.debugDrawer.addView(debugView);
 
     // Set up the contextual actions to watch views coming in and out of the content area.
-//    ContextualDebugActions contextualActions = debugView.getContextualDebugActions();
-//    contextualActions.setActionClickListener(v -> viewHolder.drawerLayout.closeDrawers());
-//    viewHolder.content.setOnHierarchyChangeListener(
-//        HierarchyTreeChangeListener.wrap(contextualActions));
+    //    ContextualDebugActions contextualActions = debugView.getContextualDebugActions();
+    //    contextualActions.setActionClickListener(v -> viewHolder.drawerLayout.closeDrawers());
+    //    viewHolder.content.setOnHierarchyChangeListener(
+    //        HierarchyTreeChangeListener.wrap(contextualActions));
 
-//    viewHolder.drawerLayout.setDrawerShadow(R.drawable.debug_drawer_shadow, GravityCompat.END);
+    //    viewHolder.drawerLayout.setDrawerShadow(R.drawable.debug_drawer_shadow, GravityCompat.END);
     viewHolder.drawerLayout.setDrawerListener(new DebugDrawerLayout.SimpleDrawerListener() {
-      @Override
-      public void onDrawerOpened(View drawerView) {
+      @Override public void onDrawerOpened(View drawerView) {
         debugView.onDrawerOpened();
       }
     });
 
     viewHolder.telescopeLayout.setPointerCount(3);
     TelescopeLayout.cleanUp(activity); // Clean up any old screenshots.
-//    viewHolder.telescopeLayout.setLens(new BugReportLens(activity, lumberYard));
+    viewHolder.telescopeLayout.setLens(new BugReportLens(activity, lumberYard));
 
     // If you have not seen the debug drawer before, show it with a message
     if (!seenDebugDrawer.get()) {

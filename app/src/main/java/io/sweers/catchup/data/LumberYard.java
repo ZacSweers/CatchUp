@@ -1,32 +1,27 @@
 package io.sweers.catchup.data;
 
 import android.app.Application;
-import android.os.AsyncTask;
 import android.util.Log;
-
-import org.threeten.bp.LocalDateTime;
-
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.subjects.PublishSubject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import okio.BufferedSink;
 import okio.Okio;
-import rx.Observable;
-import rx.Subscriber;
-import rx.subjects.PublishSubject;
+import org.threeten.bp.LocalDateTime;
+import rx.Completable;
 import timber.log.Timber;
 
 import static org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-@Singleton
-public final class LumberYard {
+@Singleton public final class LumberYard {
   private static final int BUFFER_SIZE = 200;
 
   private final Application app;
@@ -34,15 +29,13 @@ public final class LumberYard {
   private final Deque<Entry> entries = new ArrayDeque<>(BUFFER_SIZE + 1);
   private final PublishSubject<Entry> entrySubject = PublishSubject.create();
 
-  @Inject
-  public LumberYard(Application app) {
+  @Inject public LumberYard(Application app) {
     this.app = app;
   }
 
   public Timber.Tree tree() {
     return new Timber.DebugTree() {
-      @Override
-      protected void log(int priority, String tag, String message, Throwable t) {
+      @Override protected void log(int priority, String tag, String message, Throwable t) {
         addEntry(new Entry(priority, tag, message));
       }
     };
@@ -68,42 +61,38 @@ public final class LumberYard {
   /**
    * Save the current logs to disk.
    */
-  public Observable<File> save() {
-    return Observable.create(new Observable.OnSubscribe<File>() {
-      @Override
-      public void call(Subscriber<? super File> subscriber) {
-        File folder = app.getExternalFilesDir(null);
-        if (folder == null) {
-          subscriber.onError(new IOException("External storage is not mounted."));
-          return;
+  public Single<File> save() {
+    return Single.create(subscriber -> {
+      File folder = app.getExternalFilesDir(null);
+      if (folder == null) {
+        subscriber.onError(new IOException("External storage is not mounted."));
+        return;
+      }
+
+      String fileName = ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
+      File output = new File(folder, fileName);
+
+      BufferedSink sink = null;
+      try {
+        sink = Okio.buffer(Okio.sink(output));
+        List<Entry> entries1 = bufferedLogs();
+        for (Entry entry : entries1) {
+          sink.writeUtf8(entry.prettyPrint()).writeByte('\n');
         }
+        // need to close before emiting file to the subscriber, because when subscriber receives
+        // data in the same thread the file may be truncated
+        sink.close();
+        sink = null;
 
-        String fileName = ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
-        File output = new File(folder, fileName);
-
-        BufferedSink sink = null;
-        try {
-          sink = Okio.buffer(Okio.sink(output));
-          List<Entry> entries = bufferedLogs();
-          for (Entry entry : entries) {
-            sink.writeUtf8(entry.prettyPrint()).writeByte('\n');
-          }
-          // need to close before emiting file to the subscriber, because when subscriber receives data in the same thread
-          // the file may be truncated
-          sink.close();
-          sink = null;
-
-          subscriber.onNext(output);
-          subscriber.onCompleted();
-        } catch (IOException e) {
-          subscriber.onError(e);
-        } finally {
-          if (sink != null) {
-            try {
-              sink.close();
-            } catch (IOException e) {
-              subscriber.onError(e);
-            }
+        subscriber.onSuccess(output);
+      } catch (IOException e) {
+        subscriber.onError(e);
+      } finally {
+        if (sink != null) {
+          try {
+            sink.close();
+          } catch (IOException e) {
+            subscriber.onError(e);
           }
         }
       }
@@ -115,21 +104,16 @@ public final class LumberYard {
    * finished using the file reference.
    */
   public void cleanUp() {
-    new AsyncTask<Void, Void, Void>() {
-      @Override
-      protected Void doInBackground(Void... folders) {
-        File folder = app.getExternalFilesDir(null);
-        if (folder != null) {
-          for (File file : folder.listFiles()) {
-            if (file.getName().endsWith(".log")) {
-              file.delete();
-            }
+    Completable.fromAction(() -> {
+      File folder = app.getExternalFilesDir(null);
+      if (folder != null) {
+        for (File file : folder.listFiles()) {
+          if (file.getName().endsWith(".log")) {
+            file.delete();
           }
         }
-
-        return null;
       }
-    }.execute();
+    });
   }
 
   public static final class Entry {
