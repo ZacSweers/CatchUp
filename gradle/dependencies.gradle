@@ -112,7 +112,7 @@ ext {
     retrofitRxJava = "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
     retrofitXml = "com.squareup.retrofit2:converter-simplexml:$retrofitVersion"
     scalpel = 'com.jakewharton.scalpel:scalpel:1.1.2'
-    telescope = 'com.mattprecious.telescope:telescope:1.5.0@aar'
+    telescope = 'com.mattprecious.telescope:telescope:2.1.0'
     threetenabp = 'com.jakewharton.threetenabp:threetenabp:1.0.4'
     timber = 'com.jakewharton.timber:timber:4.3.1'
 

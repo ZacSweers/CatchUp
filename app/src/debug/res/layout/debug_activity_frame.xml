@@ -13,7 +13,7 @@
     android:id="@+id/telescope_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:progressColor="@android:color/holo_red_light"
+    app:telescope_progressColor="@android:color/holo_red_light"
     >
 
     <com.jakewharton.madge.MadgeFrameLayout
