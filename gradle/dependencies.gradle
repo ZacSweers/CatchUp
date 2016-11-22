@@ -6,15 +6,8 @@ ext {
     buildToolsVersion = '25.0.0'
     ci = 'true' == System.getenv('CI')
 
-    // Kotlin
-    kotlinVersion = '1.0.5'
-    kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    kotlinAndroidAnnotaitons = "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$kotlinVersion"
-    kotterKnife = 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
-
     // Google
-    supportVersion = '25.0.0'
+    supportVersion = '25.0.1'
     supportAnnotations = "com.android.support:support-annotations:$supportVersion"
     supportAppCompat = "com.android.support:appcompat-v7:$supportVersion"
     supportCardView = "com.android.support:cardview-v7:$supportVersion"
@@ -26,9 +19,8 @@ ext {
     supportRecyclerView = "com.android.support:recyclerview-v7:$supportVersion"
     supportV4 = "com.android.support:support-v4:$supportVersion"
     multidex = 'com.android.support:multidex:1.0.1'
-    androidPlugin = 'com.android.tools.build:gradle:2.3.0-alpha1'
-    playServicesVersion = '9.8.0'
-    constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
+    androidPlugin = 'com.android.tools.build:gradle:2.3.0-alpha2'
+    constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     // Dagger
     daggerVersion = '2.7'
@@ -39,31 +31,29 @@ ext {
     // AutoValue
     autoValue = 'com.google.auto.value:auto-value:1.3'
     autoValueAnnotations = 'com.jakewharton.auto.value:auto-value-annotations:1.3'
-    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.4.1'
-    autoValueGson = 'com.ryanharter.auto.value:auto-value-gson:0.4.3'
+    autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.4.2'
+    autoValueGson = 'com.ryanharter.auto.value:auto-value-gson:0.4.4'
     autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:1.0.0'
 
     // Conductor
-    conductorVersion = '2.0.3'
+    conductorVersion = '2.0.4'
     conductor = "com.bluelinelabs:conductor:$conductorVersion"
     conductorSupport = "com.bluelinelabs:conductor-support:$conductorVersion"
     conductorRxLifecycle = "com.bluelinelabs:conductor-rxlifecycle:$conductorVersion"
 
     // Misc
-    aptPlugin = 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     arraySetBackport = 'io.sweers.arraysetbackport:arraysetbackport:1.0.0'
     bottomsheetVersion = '1.5.0'
     bottomsheet = "com.flipboard:bottomsheet-core:$bottomsheetVersion"
     bottomsheetCommons = "com.flipboard:bottomsheet-commons:$bottomsheetVersion"
     bugsnag = 'com.bugsnag:bugsnag-android:3.7.0'
-    calligraphy = 'uk.co.chrisjenx:calligraphy:2.2.0'
     glide = 'com.github.bumptech.glide:glide:3.7.0'
     glideOkhttp = 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
     gson = 'com.google.code.gson:gson:2.8.0'
     psyncPlugin = 'gradle.plugin.com.flipboard:psync:1.1.5'
     recyclerViewAnimators = 'jp.wasabeef:recyclerview-animators:2.2.4'
     retrolambda = 'net.orfjackal.retrolambda:retrolambda:2.3.0'
-    retrolambdaPlugin = 'me.tatarka:gradle-retrolambda:3.3.1'
+    retrolambdaPlugin = 'me.tatarka:gradle-retrolambda:3.4.0'
     retrolambdaPluginLombok = 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
     simpleXml = 'org.simpleframework:simple-xml:2.7.1'
     stethoVersion = '1.4.1'
@@ -85,15 +75,15 @@ ext {
     rxBinding = "com.jakewharton.rxbinding:rxbinding:$rxBindingVersion"
     rxBindingV4 = "com.jakewharton.rxbinding:rxbinding-support-v4:$rxBindingVersion"
     rxJava = 'io.reactivex:rxjava:1.2.1'
-    rxLifecycle = 'com.trello:rxlifecycle:0.8.0'
-    rxLifecycleAndroid = 'com.trello:rxlifecycle-android:0.8.0'
+    rxLifecycle = 'com.trello:rxlifecycle:1.0'
+    rxLifecycleAndroid = 'com.trello:rxlifecycle-android:1.0'
     rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.2'
     rxReceivers = 'com.f2prateek.rx.receivers:rx-receivers:0.1.0'
     rxRelay = 'com.jakewharton.rxrelay:rxrelay:1.2.0'
 
-    rxJava2 = 'io.reactivex.rxjava2:rxjava:2.0.0'
-    rxAndroid2 = 'io.reactivex.rxjava2:rxandroid:2.0.0'
-    rxJava2Interop = 'com.github.akarnokd:rxjava2-interop:0.6.0'
+    rxJava2 = 'io.reactivex.rxjava2:rxjava:2.0.1'
+    rxAndroid2 = 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    rxJava2Interop = 'com.github.akarnokd:rxjava2-interop:0.6.2'
     retrofitRxJava2Adapter = 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
 
     // Square and JW
@@ -104,7 +94,7 @@ ext {
     leakCanaryVersion = '1.5'
     leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     leakCanaryNoop = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    okhttpVersion = '3.4.1'
+    okhttpVersion = '3.4.2'
     okhttp = "com.squareup.okhttp3:okhttp:$okhttpVersion"
     okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
@@ -113,7 +103,7 @@ ext {
     moshiVersion = '1.3.1'
     moshi = "com.squareup.moshi:moshi:$moshiVersion"
     moshiAdapters = "com.squareup.moshi:moshi-adapters:$moshiVersion"
-    processPhoenix = 'com.jakewharton:process-phoenix:1.1.0'
+    processPhoenix = 'com.jakewharton:process-phoenix:1.1.1'
     retrofitVersion = '2.1.0'
     retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
     retrofitMock = "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
@@ -122,7 +112,6 @@ ext {
     retrofitRxJava = "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
     retrofitXml = "com.squareup.retrofit2:converter-simplexml:$retrofitVersion"
     scalpel = 'com.jakewharton.scalpel:scalpel:1.1.2'
-    sdkManagerPlugin = 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
     telescope = 'com.mattprecious.telescope:telescope:1.5.0@aar'
     threetenabp = 'com.jakewharton.threetenabp:threetenabp:1.0.4'
     timber = 'com.jakewharton.timber:timber:4.3.1'

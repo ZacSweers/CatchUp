@@ -1,6 +1,5 @@
 buildscript {
   dependencies {
-    classpath rootProject.ext.aptPlugin
     classpath rootProject.ext.androidPlugin
     classpath rootProject.ext.retrolambdaPlugin
     classpath rootProject.ext.retrolambdaPluginLombok
@@ -13,7 +12,6 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.flipboard.psync'
 apply plugin: 'com.github.ben-manes.versions'   // ./gradlew dependencyUpdates -Drevision=release
@@ -136,7 +134,7 @@ dependencies {
 
   // Square/JW
   compile rootProject.ext.butterKnife
-  apt rootProject.ext.butterKnifeCompiler
+  annotationProcessor rootProject.ext.butterKnifeCompiler
   compile rootProject.ext.okhttp
   compile rootProject.ext.okio
   compile rootProject.ext.moshi
@@ -173,7 +171,7 @@ dependencies {
   // Misc
   compile rootProject.ext.arraySetBackport
   compile rootProject.ext.barberApi
-  apt rootProject.ext.barberCompiler
+  annotationProcessor rootProject.ext.barberCompiler
   compile rootProject.ext.glide
   compile rootProject.ext.glideOkhttp
   compile rootProject.ext.gson
@@ -195,7 +193,7 @@ dependencies {
   debugCompile rootProject.ext.stethoOkHttp
 
   // Dagger
-  apt rootProject.ext.daggerCompiler
+  annotationProcessor rootProject.ext.daggerCompiler
   provided rootProject.ext.javax
   compile rootProject.ext.dagger
 
@@ -203,10 +201,10 @@ dependencies {
   provided rootProject.ext.autoValueAnnotations
   provided rootProject.ext.autoValueGson
   provided rootProject.ext.autoValueMoshi
-  apt rootProject.ext.autoValue
-  apt rootProject.ext.autoValueMoshi
-  apt rootProject.ext.autoValueGson
-  apt rootProject.ext.autoValueRedacted
+  annotationProcessor rootProject.ext.autoValue
+  annotationProcessor rootProject.ext.autoValueMoshi
+  annotationProcessor rootProject.ext.autoValueGson
+  annotationProcessor rootProject.ext.autoValueRedacted
 
   // Conductor
   compile rootProject.ext.conductor
