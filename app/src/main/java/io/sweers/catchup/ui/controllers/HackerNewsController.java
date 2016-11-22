@@ -10,6 +10,8 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+import io.sweers.arraysetbackport.ArraySet;
+import io.sweers.catchup.ui.activity.ActivityModule;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -148,15 +150,27 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     @Provides
     @PerController
     @ForApi
-    static Moshi provideHackerNewsMoshi(Moshi rootMoshi, Set<JsonAdapter.Factory> factories) {
+    static Set<JsonAdapter.Factory> factories(Set<JsonAdapter.Factory> moduleFactories,
+        @ActivityModule.Factories Set<JsonAdapter.Factory> parentFactories) {
+      Set<JsonAdapter.Factory> factories = new ArraySet<>();
+      factories.addAll(moduleFactories);
+      factories.removeAll(parentFactories);
+      return factories;
+    }
+
+    @Provides
+    @PerController
+    @ForApi
+    static Moshi provideHackerNewsMoshi(@ActivityModule.Factories Moshi rootMoshi,
+        @ForApi Set<JsonAdapter.Factory> factories) {
 
       Moshi.Builder builder = rootMoshi.newBuilder();
 
-      // Borrow from the parent's cache
-      builder.add((type, annotations, moshi) -> rootMoshi.adapter(type, annotations));
-
       // Populate from the factories, use https://github.com/square/moshi/pull/216
       Observable.from(factories).subscribe(builder::add);
+
+      // Borrow from the parent's cache
+      builder.add((type, annotations, moshi) -> rootMoshi.adapter(type, annotations));
 
       return builder.build();
     }

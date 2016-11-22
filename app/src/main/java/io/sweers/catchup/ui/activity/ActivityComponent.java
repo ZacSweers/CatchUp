@@ -1,17 +1,17 @@
 package io.sweers.catchup.ui.activity;
 
 import android.content.Context;
-
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-
 import dagger.Component;
 import io.sweers.catchup.app.ApplicationComponent;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
+import java.util.Set;
 import okhttp3.OkHttpClient;
 
 @PerActivity
@@ -36,8 +36,14 @@ public interface ActivityComponent {
 
   Moshi moshi();
 
+  @ActivityModule.Factories
+  Moshi moshiAdjusted();
+
   RxJava2CallAdapterFactory rxJavaCallAdapterFactory();
 
   RxSharedPreferences rxSharedPreferences();
+
+  @ActivityModule.Factories
+  Set<JsonAdapter.Factory> factories();
 
 }
