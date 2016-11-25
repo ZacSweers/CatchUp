@@ -3,12 +3,15 @@ package io.sweers.catchup.ui.controllers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
 
+import io.reactivex.subjects.BehaviorSubject;
+import io.sweers.catchup.data.medium.model.References;
+import java.util.Map;
 import org.threeten.bp.Instant;
 
 import java.util.List;
@@ -100,27 +103,11 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     return service.top()
         .map(MediumResponse::payload)
         .map(Payload::references)
-        // TODO why doesn't this work? Only emits once
-//        .flatMap(references -> {
-//          return Observable.combineLatest(
-//              Observable.from(references.Post().values()),
-//              Observable.just(references.User()),
-//              Observable.just(references.Collection()),
-//              (post, userMap, collectionMap) -> {
-//                return MediumPost.builder()
-//                    .post(post)
-//                    .user(userMap.get(post.creatorId()))
-//                    .collection(collectionMap.get(post.homeCollectionId()))
-//                    .build();
-//              }
-//          );
-//        })
-        .toObservable()
-        .flatMap(references -> Observable.fromIterable(references.Post().values())
+        .flatMap(references -> Observable.fromIterable(references.post().values())
             .map(post -> MediumPost.builder()
                 .post(post)
-                .user(references.User().get(post.creatorId()))
-                .collection(references.Collection().get(post.homeCollectionId()))
+                .user(references.user().get(post.creatorId()))
+                .collection(references.collection().get(post.homeCollectionId()))
                 .build())
         )
         .toList()

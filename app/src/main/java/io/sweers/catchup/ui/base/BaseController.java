@@ -1,7 +1,7 @@
 package io.sweers.catchup.ui.base;
 
 import android.os.Bundle;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 
 import rx.Observable;
 

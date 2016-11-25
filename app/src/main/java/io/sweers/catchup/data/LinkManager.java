@@ -8,7 +8,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 import android.widget.Toast;
 
 import com.f2prateek.rx.preferences.Preference;

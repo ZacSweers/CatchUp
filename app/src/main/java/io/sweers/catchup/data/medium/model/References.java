@@ -3,6 +3,7 @@ package io.sweers.catchup.data.medium.model;
 import android.support.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
+import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
@@ -14,9 +15,12 @@ public abstract class References {
     return new AutoValue_References.MoshiJsonAdapter(moshi);
   }
 
-  public abstract Map<String, Collection> Collection();
+  @Json(name = "Collection")
+  public abstract Map<String, Collection> collection();
 
-  public abstract Map<String, Post> Post();
+  @Json(name = "Post")
+  public abstract Map<String, Post> post();
 
-  public abstract Map<String, User> User();
+  @Json(name = "User")
+  public abstract Map<String, User> user();
 }

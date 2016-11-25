@@ -3,7 +3,7 @@ package io.sweers.catchup.ui.controllers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
