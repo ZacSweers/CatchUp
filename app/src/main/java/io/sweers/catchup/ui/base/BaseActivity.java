@@ -50,6 +50,11 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
   }
 
   @Override
+  public boolean hasLifecycleStarted() {
+    return lifecycleSubject.getValue() != null;
+  }
+
+  @Override
   @CallSuper
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

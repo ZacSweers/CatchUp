@@ -5,17 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
-
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import dagger.Lazy;
 import dagger.Provides;
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
@@ -32,6 +26,8 @@ import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
+import java.util.List;
+import javax.inject.Inject;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -80,7 +76,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
 
   @NonNull
   @Override
-  protected Maybe<List<Repository>> getDataObservable() {
+  protected Single<List<Repository>> getDataObservable() {
     return service.searchRepositories(
         SearchQuery.builder().createdSince(TrendingTimespan.WEEK.createdSince()).build(),
         "watchers",

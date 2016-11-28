@@ -8,15 +8,13 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.bluelinelabs.conductor.rxlifecycle.RxController;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import com.bluelinelabs.conductor.Controller;
 import io.sweers.catchup.R;
 import io.sweers.catchup.util.UiUtil;
 
-public abstract class ButterKnifeController extends RxController {
+public abstract class ButterKnifeController extends Controller {
 
   @ColorInt private int serviceThemeColor = Color.BLACK;
   private Unbinder unbinder;

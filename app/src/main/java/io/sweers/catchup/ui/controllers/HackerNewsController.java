@@ -5,19 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
-
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
-
-import org.threeten.bp.Instant;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import dagger.Lazy;
 import dagger.Provides;
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
@@ -29,10 +21,13 @@ import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
+import java.util.List;
+import javax.inject.Inject;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.threeten.bp.Instant;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
@@ -98,14 +93,13 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
 
   @NonNull
   @Override
-  protected Maybe<List<HackerNewsStory>> getDataObservable() {
+  protected Single<List<HackerNewsStory>> getDataObservable() {
     return service.topStories()
         .concatMapIterable(strings -> strings)
         // TODO Pref this
         .take(50)
         .concatMap(id -> service.getItem(id).subscribeOn(Schedulers.io()))
-        .toList()
-        .toMaybe();
+        .toList();
   }
 
   @PerController

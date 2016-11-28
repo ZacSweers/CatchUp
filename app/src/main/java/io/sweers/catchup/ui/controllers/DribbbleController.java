@@ -27,7 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-
+import butterknife.BindView;
+import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -38,16 +39,6 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.jakewharton.rxbinding.view.RxView;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -60,7 +51,7 @@ import io.sweers.catchup.data.dribbble.DribbbleService;
 import io.sweers.catchup.data.dribbble.model.Shot;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.Confine;
+import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -69,6 +60,11 @@ import io.sweers.catchup.ui.widget.BadgedFourThreeImageView;
 import io.sweers.catchup.util.ObservableColorMatrix;
 import io.sweers.catchup.util.UiUtil;
 import io.sweers.catchup.util.glide.DribbbleTarget;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.inject.Inject;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.HttpException;
@@ -143,19 +139,18 @@ public class DribbbleController extends BaseController
     service.getPopular(1, 50)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .doAfterTerminate(() -> {
+        .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .compose(Confine.to(this))
-        .subscribe(
-            shot -> {
+        .subscribe(BoundObservers.<List<Shot>>forSingle(this)
+            .onSuccess(shot -> {
               progress.setVisibility(GONE);
               errorView.setVisibility(GONE);
               swipeRefreshLayout.setVisibility(VISIBLE);
               adapter.setShots(shot);
-            },
-            e -> {
+            })
+            .onError(e -> {
               if (e instanceof IOException) {
                 AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
                     getActivity(),
@@ -177,7 +172,8 @@ public class DribbbleController extends BaseController
                 avd.start();
               }
               Timber.e(e, "Update failed!");
-            });
+            })
+          .create());
   }
 
   @OnClick(R.id.retry_button)

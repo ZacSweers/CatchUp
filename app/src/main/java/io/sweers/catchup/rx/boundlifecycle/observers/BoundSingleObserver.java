@@ -32,7 +32,7 @@ public final class BoundSingleObserver<T> extends BaseObserver implements Single
   }
 
   public static class BoundSingleObserverCreator<T>
-      extends BaseObserver.Creator<BoundSingleObserverCreator> {
+      extends BaseObserver.Creator<BoundSingleObserverCreator<T>> {
     private Consumer<? super T> successConsumer;
 
     <E> BoundSingleObserverCreator(@NonNull LifecycleProvider<E> provider) {

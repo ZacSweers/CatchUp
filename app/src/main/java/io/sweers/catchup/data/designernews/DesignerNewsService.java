@@ -16,7 +16,7 @@
 
 package io.sweers.catchup.data.designernews;
 
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.sweers.catchup.data.designernews.model.StoriesResponse;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -33,6 +33,6 @@ public interface DesignerNewsService {
   String ENDPOINT = "https://" + HOST;
 
   @GET("/api/v1/stories")
-  Maybe<StoriesResponse> getTopStories(@Query("page") int page);
+  Single<StoriesResponse> getTopStories(@Query("page") int page);
 
 }

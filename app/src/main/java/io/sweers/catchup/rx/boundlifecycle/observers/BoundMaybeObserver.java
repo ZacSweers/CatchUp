@@ -10,7 +10,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 
-public final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<T> {
+final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<T> {
 
   private final Consumer<? super T> successConsumer;
   private final Action completeAction;
@@ -55,7 +55,7 @@ public final class BoundMaybeObserver<T> extends BaseObserver implements MaybeOb
   }
 
   public static class BoundMaybeObserverCreator<T>
-      extends BaseObserver.Creator<BoundMaybeObserverCreator> {
+      extends BaseObserver.Creator<BoundMaybeObserverCreator<T>> {
     private Consumer<? super T> successConsumer;
     private Action completeAction;
 

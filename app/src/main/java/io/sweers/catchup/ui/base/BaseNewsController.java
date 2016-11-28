@@ -4,11 +4,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,27 +16,23 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.jakewharton.rxbinding.view.RxView;
-
-import org.threeten.bp.Instant;
-
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.sweers.catchup.R;
+import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
+import io.sweers.catchup.ui.Scrollable;
+import io.sweers.catchup.util.NumberUtil;
+import io.sweers.catchup.util.Strings;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import io.reactivex.Maybe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.sweers.catchup.R;
-import io.sweers.catchup.rx.Confine;
-import io.sweers.catchup.ui.Scrollable;
-import io.sweers.catchup.util.NumberUtil;
-import io.sweers.catchup.util.Strings;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
+import org.threeten.bp.Instant;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.functions.Action2;
@@ -78,7 +74,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       @NonNull ViewHolder holder);
 
   @NonNull
-  protected abstract Maybe<List<T>> getDataObservable();
+  protected abstract Single<List<T>> getDataObservable();
 
   @Override
   protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
@@ -129,41 +125,42 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   private void loadData() {
     getDataObservable()
         .observeOn(AndroidSchedulers.mainThread())
-        .doAfterTerminate(() -> {
+        .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .compose(Confine.to(this))
         .subscribe(
-            data -> {
-              progress.setVisibility(GONE);
-              errorView.setVisibility(GONE);
-              swipeRefreshLayout.setVisibility(VISIBLE);
-              adapter.setData(data);
-            },
-            e -> {
-              if (e instanceof IOException) {
-                AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
-                    getActivity(),
-                    R.drawable.avd_no_connection);
-                errorImage.setImageDrawable(avd);
-                progress.setVisibility(GONE);
-                swipeRefreshLayout.setVisibility(GONE);
-                errorView.setVisibility(VISIBLE);
-                avd.start();
-              } else if (e instanceof HttpException) {
-                // TODO Show some sort of API error response.
-                AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
-                    getActivity(),
-                    R.drawable.avd_no_connection);
-                errorImage.setImageDrawable(avd);
-                progress.setVisibility(GONE);
-                swipeRefreshLayout.setVisibility(GONE);
-                errorView.setVisibility(VISIBLE);
-                avd.start();
-              }
-              Timber.e(e, "Update failed!");
-            });
+            BoundObservers.<List<T>>forSingle(this)
+                .onSuccess(data -> {
+                  progress.setVisibility(GONE);
+                  errorView.setVisibility(GONE);
+                  swipeRefreshLayout.setVisibility(VISIBLE);
+                  adapter.setData(data);
+                })
+                .onError(e -> {
+                  if (e instanceof IOException) {
+                    AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
+                        getActivity(),
+                        R.drawable.avd_no_connection);
+                    errorImage.setImageDrawable(avd);
+                    progress.setVisibility(GONE);
+                    swipeRefreshLayout.setVisibility(GONE);
+                    errorView.setVisibility(VISIBLE);
+                    avd.start();
+                  } else if (e instanceof HttpException) {
+                    // TODO Show some sort of API error response.
+                    AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
+                        getActivity(),
+                        R.drawable.avd_no_connection);
+                    errorImage.setImageDrawable(avd);
+                    progress.setVisibility(GONE);
+                    swipeRefreshLayout.setVisibility(GONE);
+                    errorView.setVisibility(VISIBLE);
+                    avd.start();
+                  }
+                  Timber.e(e, "Update failed!");
+                })
+            .create());
   }
 
   @Override

@@ -1,6 +1,6 @@
 package io.sweers.catchup.data.github;
 
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.sweers.catchup.data.github.model.Order;
 import io.sweers.catchup.data.github.model.SearchQuery;
 import io.sweers.catchup.data.github.model.SearchRepositoriesResult;
@@ -12,7 +12,7 @@ public interface GitHubService {
   String ENDPOINT = "https://" + HOST;
 
   @GET("/search/repositories")
-  Maybe<SearchRepositoriesResult> searchRepositories(
+  Single<SearchRepositoriesResult> searchRepositories(
       @Query("q") SearchQuery query,
       @Query("sort") String sort,
       @Query("order") Order order

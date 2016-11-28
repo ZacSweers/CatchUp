@@ -16,7 +16,7 @@
 
 package io.sweers.catchup.data.producthunt;
 
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -31,5 +31,5 @@ public interface ProductHuntService {
   String ENDPOINT = SCHEME + "://" + HOST;
 
   @GET("/v1/posts")
-  Maybe<PostsResponse> getPosts(@Query("days_ago") int page);
+  Single<PostsResponse> getPosts(@Query("days_ago") int page);
 }

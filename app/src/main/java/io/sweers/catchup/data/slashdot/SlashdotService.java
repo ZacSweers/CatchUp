@@ -1,6 +1,6 @@
 package io.sweers.catchup.data.slashdot;
 
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import retrofit2.http.GET;
 
 public interface SlashdotService {
@@ -8,5 +8,5 @@ public interface SlashdotService {
   String ENDPOINT = "http://" + HOST;
 
   @GET("/Slashdot/slashdotMainatom")
-  Maybe<Feed> main();
+  Single<Feed> main();
 }

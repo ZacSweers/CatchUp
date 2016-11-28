@@ -1,9 +1,8 @@
 package io.sweers.catchup.data.reddit;
 
-import java.util.List;
-
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.sweers.catchup.data.reddit.model.RedditResponse;
+import java.util.List;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -20,7 +19,7 @@ public interface RedditService {
   );
 
   @GET("/")
-  Maybe<RedditResponse> frontPage(
+  Single<RedditResponse> frontPage(
       @Query("limit") int limit
   );
 

@@ -4,16 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.ContextThemeWrapper;
-
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import dagger.Lazy;
 import dagger.Provides;
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.slashdot.Entry;
@@ -24,6 +18,8 @@ import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.util.Iso8601Utils;
+import java.util.List;
+import javax.inject.Inject;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import retrofit2.Retrofit;
@@ -80,7 +76,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
 
   @NonNull
   @Override
-  protected Maybe<List<Entry>> getDataObservable() {
+  protected Single<List<Entry>> getDataObservable() {
     return service.main()
         .map(channel -> channel.itemList);
   }

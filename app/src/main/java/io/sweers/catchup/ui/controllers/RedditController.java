@@ -5,20 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-
-import org.threeten.bp.Instant;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import dagger.Lazy;
 import dagger.Provides;
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AutoValueGsonTypeAdapterFactory;
 import io.sweers.catchup.data.LinkManager;
@@ -32,9 +24,12 @@ import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
+import java.util.List;
+import javax.inject.Inject;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import org.threeten.bp.Instant;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -93,7 +88,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
 
   @NonNull
   @Override
-  protected Maybe<List<RedditLink>> getDataObservable() {
+  protected Single<List<RedditLink>> getDataObservable() {
     return service.frontPage(50)
         .map((redditListingRedditResponse) -> {
           //noinspection CodeBlock2Expr,unchecked

@@ -7,28 +7,22 @@ import android.net.Uri;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
-import android.text.TextUtils;
 import android.support.v4.util.Pair;
+import android.text.TextUtils;
 import android.widget.Toast;
-
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.receivers.RxBroadcastReceiver;
-
-import io.reactivex.functions.Consumer;
-import io.sweers.catchup.rx.boundlifecycle.observers.BoundObserver;
-import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
-import javax.inject.Inject;
-
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
 import io.sweers.catchup.injection.scopes.PerActivity;
-import io.sweers.catchup.rx.Confine;
 import io.sweers.catchup.rx.Transformers;
+import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
+import javax.inject.Inject;
 import rx.functions.Action1;
 
 import static hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Observable;

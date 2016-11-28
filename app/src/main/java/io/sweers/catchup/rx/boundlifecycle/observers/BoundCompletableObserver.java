@@ -10,7 +10,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 
-public final class BoundCompletableObserver extends BaseObserver implements CompletableObserver {
+final class BoundCompletableObserver extends BaseObserver implements CompletableObserver {
 
   private final Action completeAction;
 

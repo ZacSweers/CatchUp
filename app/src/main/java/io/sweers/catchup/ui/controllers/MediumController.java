@@ -5,23 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
-
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
-
-import io.reactivex.subjects.BehaviorSubject;
-import io.sweers.catchup.data.medium.model.References;
-import java.util.Map;
-import org.threeten.bp.Instant;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import dagger.Lazy;
 import dagger.Provides;
-import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.LinkManager;
@@ -35,10 +24,13 @@ import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
+import java.util.List;
+import javax.inject.Inject;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okio.BufferedSource;
+import org.threeten.bp.Instant;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
@@ -99,7 +91,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
   @NonNull
   @Override
-  protected Maybe<List<MediumPost>> getDataObservable() {
+  protected Single<List<MediumPost>> getDataObservable() {
     return service.top()
         .map(MediumResponse::payload)
         .map(Payload::references)
@@ -110,8 +102,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
                 .collection(references.collection().get(post.homeCollectionId()))
                 .build())
         )
-        .toList()
-        .toMaybe();
+        .toList();
   }
 
   @PerController

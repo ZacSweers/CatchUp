@@ -16,10 +16,9 @@
 
 package io.sweers.catchup.data.dribbble;
 
-import java.util.List;
-
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.sweers.catchup.data.dribbble.model.Shot;
+import java.util.List;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
@@ -32,7 +31,7 @@ public interface DribbbleService {
   String ENDPOINT = "https://" + HOST;
 
   @GET("/v1/shots")
-  Maybe<List<Shot>> getPopular(
+  Single<List<Shot>> getPopular(
       @Query("page") int page,
       @Query("per_page") int pageSize);
 

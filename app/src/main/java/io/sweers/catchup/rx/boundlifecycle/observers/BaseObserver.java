@@ -8,13 +8,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.CompositeException;
 import io.reactivex.exceptions.Exceptions;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 import java.util.concurrent.Callable;
-
-/**
- * Created by pandanomic on 11/27/16.
- */
 
 abstract class BaseObserver {
 
@@ -27,6 +24,17 @@ abstract class BaseObserver {
       @Nullable Consumer<? super Throwable> errorConsumer) {
     this.lifecycle = lifecycle;
     this.errorConsumer = errorConsumer;
+  }
+
+  private static <E> Observable<Boolean> mapEvents(@NonNull Observable<E> lifecycle,
+      @NonNull Function<E, E> correspondingEvents) {
+    return Observable.combineLatest(
+        lifecycle.take(1)
+            .map(correspondingEvents),
+        lifecycle.skip(1),
+        (bindUntilEvent, lifecycleEvent) -> lifecycleEvent.equals(bindUntilEvent))
+        .filter(b -> b)
+        .take(1);
   }
 
   public final void onSubscribe(Disposable d) {
@@ -52,7 +60,7 @@ abstract class BaseObserver {
     }
   }
 
-  protected abstract static class Creator<T extends Creator> {
+  abstract static class Creator<C extends Creator> {
     protected final Observable<?> lifecycle;
     protected Consumer<? super Throwable> errorConsumer;
 
@@ -60,7 +68,7 @@ abstract class BaseObserver {
       this.lifecycle = Observable.defer(new Callable<ObservableSource<Boolean>>() {
         @Override
         public ObservableSource<Boolean> call() throws Exception {
-          return LifecycleProvider.mapEvents(provider.lifecycle(), provider.correspondingEvents());
+          return mapEvents(provider.lifecycle(), provider.correspondingEvents());
         }
       });
     }
@@ -69,9 +77,9 @@ abstract class BaseObserver {
       this.lifecycle = lifecycle;
     }
 
-    public T onError(@Nullable Consumer<? super Throwable> errorConsumer) {
+    public C onError(@Nullable Consumer<? super Throwable> errorConsumer) {
       this.errorConsumer = errorConsumer;
-      return (T) this;
+      return (C) this;
     }
   }
 }
