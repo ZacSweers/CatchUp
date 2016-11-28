@@ -23,7 +23,6 @@ dependencies {
     compile rootProject.ext.supportTestEspresso
     compile rootProject.ext.supportTestEspressoContrib
     compile rootProject.ext.supportTestEspressoWeb
-    compile rootProject.ext.jsr305Annotations
 }
 
 android {

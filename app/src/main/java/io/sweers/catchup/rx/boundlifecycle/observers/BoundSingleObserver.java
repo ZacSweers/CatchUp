@@ -13,8 +13,8 @@ public final class BoundSingleObserver<T> extends BaseObserver implements Single
   private final Consumer<? super T> successConsumer;
 
   private BoundSingleObserver(@NonNull Observable<?> lifecycle,
-      @Nullable Consumer<? super T> consumer,
-      @Nullable Consumer<? super Throwable> errorConsumer) {
+      @Nullable Consumer<? super Throwable> errorConsumer,
+      @Nullable Consumer<? super T> consumer) {
     super(lifecycle, errorConsumer);
     this.successConsumer = consumer;
   }
@@ -49,8 +49,12 @@ public final class BoundSingleObserver<T> extends BaseObserver implements Single
       return this;
     }
 
+    public SingleObserver<T> asConsumer(@Nullable Consumer<? super T> nextConsumer) {
+      return new BoundSingleObserver<>(lifecycle, null, nextConsumer);
+    }
+
     public SingleObserver<T> create() {
-      return new BoundSingleObserver<>(lifecycle, successConsumer, errorConsumer);
+      return new BoundSingleObserver<>(lifecycle, errorConsumer, successConsumer);
     }
   }
 }

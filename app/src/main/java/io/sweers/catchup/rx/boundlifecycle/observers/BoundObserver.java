@@ -16,8 +16,8 @@ public final class BoundObserver<T> extends BaseObserver implements Observer<T> 
   private final Action completeAction;
 
   private BoundObserver(@NonNull Observable<?> lifecycle,
-      @Nullable Consumer<? super T> consumer,
       @Nullable Consumer<? super Throwable> errorConsumer,
+      @Nullable Consumer<? super T> consumer,
       @Nullable Action completeAction) {
     super(lifecycle, errorConsumer);
     this.consumer = consumer;
@@ -77,8 +77,12 @@ public final class BoundObserver<T> extends BaseObserver implements Observer<T> 
       return this;
     }
 
+    public Observer<T> asConsumer(@Nullable Consumer<? super T> nextConsumer) {
+      return new BoundObserver<>(lifecycle, null, nextConsumer, null);
+    }
+
     public Observer<T> create() {
-      return new BoundObserver<>(lifecycle, nextConsumer, errorConsumer, completeAction);
+      return new BoundObserver<>(lifecycle, errorConsumer, nextConsumer, completeAction);
     }
   }
 }

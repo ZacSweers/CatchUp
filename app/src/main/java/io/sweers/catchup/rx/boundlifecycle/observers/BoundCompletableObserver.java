@@ -56,6 +56,10 @@ final class BoundCompletableObserver extends BaseObserver implements Completable
       return this;
     }
 
+    public CompletableObserver asAction(@Nullable Action action) {
+      return new BoundCompletableObserver(lifecycle, null, action);
+    }
+
     public CompletableObserver create() {
       return new BoundCompletableObserver(lifecycle, errorConsumer, completeAction);
     }

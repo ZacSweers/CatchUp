@@ -39,7 +39,6 @@ ext {
     conductorVersion = '2.0.4'
     conductor = "com.bluelinelabs:conductor:$conductorVersion"
     conductorSupport = "com.bluelinelabs:conductor-support:$conductorVersion"
-    conductorRxLifecycle = "com.bluelinelabs:conductor-rxlifecycle:$conductorVersion"
 
     // Misc
     arraySetBackport = 'io.sweers.arraysetbackport:arraysetbackport:1.0.0'
@@ -76,8 +75,6 @@ ext {
     rxBinding = "com.jakewharton.rxbinding:rxbinding:$rxBindingVersion"
     rxBindingV4 = "com.jakewharton.rxbinding:rxbinding-support-v4:$rxBindingVersion"
     rxJava = 'io.reactivex:rxjava:1.2.2'
-    rxLifecycle = 'com.trello:rxlifecycle:1.0'
-    rxLifecycleAndroid = 'com.trello:rxlifecycle-android:1.0'
     rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.2'
     rxReceivers = 'com.f2prateek.rx.receivers:rx-receivers:0.1.0'
     rxRelay = 'com.jakewharton.rxrelay:rxrelay:1.2.0'

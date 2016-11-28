@@ -177,8 +177,6 @@ dependencies {
   compile rootProject.ext.gson
   compile rootProject.ext.recyclerViewAnimators
   compile rootProject.ext.rxJava
-  compile rootProject.ext.rxLifecycle
-  compile rootProject.ext.rxLifecycleAndroid
   compile rootProject.ext.rxPreferences
   compile rootProject.ext.rxReceivers
   compile rootProject.ext.rxRelay
@@ -209,7 +207,6 @@ dependencies {
   // Conductor
   compile rootProject.ext.conductor
   compile rootProject.ext.conductorSupport
-  compile rootProject.ext.conductorRxLifecycle
 
   // Test
   testCompile project(':testing-utils')

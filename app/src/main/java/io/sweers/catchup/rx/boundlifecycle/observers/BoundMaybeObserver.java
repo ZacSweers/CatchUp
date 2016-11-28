@@ -16,8 +16,8 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
   private final Action completeAction;
 
   private BoundMaybeObserver(@NonNull Observable<?> lifecycle,
-      @Nullable Consumer<? super T> consumer,
       @Nullable Consumer<? super Throwable> errorConsumer,
+      @Nullable Consumer<? super T> consumer,
       @Nullable Action completeAction) {
     super(lifecycle, errorConsumer);
     this.successConsumer = consumer;
@@ -77,8 +77,12 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
       return this;
     }
 
+    public MaybeObserver<T> asConsumer(@Nullable Consumer<? super T> nextConsumer) {
+      return new BoundMaybeObserver<>(lifecycle, null, nextConsumer, null);
+    }
+
     public MaybeObserver<T> create() {
-      return new BoundMaybeObserver<>(lifecycle, successConsumer, errorConsumer, completeAction);
+      return new BoundMaybeObserver<>(lifecycle, errorConsumer, successConsumer, completeAction);
     }
   }
 }

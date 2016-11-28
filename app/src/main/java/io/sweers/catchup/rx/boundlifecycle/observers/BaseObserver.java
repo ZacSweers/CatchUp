@@ -12,6 +12,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 import java.util.concurrent.Callable;
+import rx.exceptions.OnErrorNotImplementedException;
 
 abstract class BaseObserver {
 
@@ -37,6 +38,7 @@ abstract class BaseObserver {
         .take(1);
   }
 
+  @SuppressWarnings("unused")
   public final void onSubscribe(Disposable d) {
     this.disposable = d;
     lifecycleDisposable = lifecycle.take(1)
@@ -57,6 +59,8 @@ abstract class BaseObserver {
         Exceptions.throwIfFatal(e1);
         RxJavaPlugins.onError(new CompositeException(e, e1));
       }
+    } else {
+      throw new OnErrorNotImplementedException(e);
     }
   }
 
