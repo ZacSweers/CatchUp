@@ -14,6 +14,9 @@ import android.widget.Toast;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.receivers.RxBroadcastReceiver;
 
+import io.reactivex.functions.Consumer;
+import io.sweers.catchup.rx.boundlifecycle.observers.BoundObserver;
+import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
@@ -31,21 +34,18 @@ import rx.functions.Action1;
 import static hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Observable;
 import static io.sweers.catchup.rx.Transformers.doOnEmpty;
 
-@PerActivity
-public class LinkManager implements Action1<Pair<String, Integer>> {
+@PerActivity public class LinkManager implements Action1<Pair<String, Integer>> {
 
   private final MainActivity activity;
   private final CustomTabActivityHelper customTab;
-  @SmartLinking
-  private final Preference<Boolean> globalSmartLinkingPref;
+  @SmartLinking private final Preference<Boolean> globalSmartLinkingPref;
 
   // Naive cache that tracks if we've already resolved for activities that can handle a given host
   // TODO Eventually replace this with something that's mindful of per-service prefs
   private final ArrayMap<String, Boolean> dumbCache = new ArrayMap<>();
 
   @Inject
-  public LinkManager(
-      MainActivity activity,
+  public LinkManager(MainActivity activity,
       CustomTabActivityHelper customTab,
       @SmartLinking Preference<Boolean> globalSmartLinkingPref) {
     this.activity = activity;
@@ -56,11 +56,11 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
     IntentFilter filter = new IntentFilter();
     filter.addAction(Intent.ACTION_INSTALL_PACKAGE);
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
-    Observable.merge(
-        toV2Observable(RxBroadcastReceiver.create(activity, filter)),
+    Observable.merge(toV2Observable(RxBroadcastReceiver.create(activity, filter)),
         toV2Observable(globalSmartLinkingPref.asObservable()))
-        .compose(Confine.to(activity))
-        .subscribe(o -> dumbCache.clear());
+        .subscribe(BoundObservers.forObservable(activity)
+            .onNext(o -> dumbCache.clear())
+            .create());
   }
 
   /**
@@ -73,13 +73,13 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
    */
   private static boolean isSpecificUriMatch(int match) {
     match = match & IntentFilter.MATCH_CATEGORY_MASK;
-    return match >= IntentFilter.MATCH_CATEGORY_HOST
-        && match <= IntentFilter.MATCH_CATEGORY_PATH;
+    return match >= IntentFilter.MATCH_CATEGORY_HOST && match <= IntentFilter.MATCH_CATEGORY_PATH;
   }
 
   public void openUrl(@NonNull String url, @ColorInt int accentColor) {
     if (TextUtils.isEmpty(url)) {
-      Toast.makeText(activity, R.string.error_no_url, Toast.LENGTH_SHORT).show();
+      Toast.makeText(activity, R.string.error_no_url, Toast.LENGTH_SHORT)
+          .show();
       return;
     }
     openUrl(Uri.parse(url), accentColor);
@@ -103,31 +103,31 @@ public class LinkManager implements Action1<Pair<String, Integer>> {
 
   private void queryAndOpen(Uri uri, Intent intent, @ColorInt int accentColor) {
     PackageManager manager = activity.getPackageManager();
-    Observable.defer(() -> Observable.fromIterable(manager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)))
+    Observable.defer(() -> Observable.fromIterable(manager.queryIntentActivities(intent,
+        PackageManager.MATCH_DEFAULT_ONLY)))
         .filter(resolveInfo -> isSpecificUriMatch(resolveInfo.match))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .compose(Transformers.delayedMessage(activity.findViewById(android.R.id.content), "Resolving"))
+        .compose(Transformers.delayedMessage(activity.findViewById(android.R.id.content),
+            "Resolving"))
         .compose(doOnEmpty(() -> {
           dumbCache.put(uri.getHost(), false);
           openCustomTab(uri, accentColor);
         }))
-        .compose(Confine.to(activity))
-        .subscribe(count -> {
-          dumbCache.put(uri.getHost(), true);
-          activity.startActivity(intent);
-        });
+        .subscribe(BoundObservers.forObservable(activity)
+            .onNext(o -> {
+              dumbCache.put(uri.getHost(), true);
+              activity.startActivity(intent);
+            })
+            .create());
   }
 
   private void openCustomTab(@NonNull Uri uri, @ColorInt int accentColor) {
-    customTab.openCustomTab(
-        customTab
-            .getCustomTabIntent()
-            .setStartAnimations(activity, R.anim.slide_up, R.anim.inset)
-            .setExitAnimations(activity, R.anim.outset, R.anim.slide_down)
-            .setToolbarColor(accentColor)
-            .build(),
-        uri);
+    customTab.openCustomTab(customTab.getCustomTabIntent()
+        .setStartAnimations(activity, R.anim.slide_up, R.anim.inset)
+        .setExitAnimations(activity, R.anim.outset, R.anim.slide_down)
+        .setToolbarColor(accentColor)
+        .build(), uri);
   }
 
   @Override

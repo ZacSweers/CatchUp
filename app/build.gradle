@@ -212,8 +212,8 @@ dependencies {
   compile rootProject.ext.conductorRxLifecycle
 
   // Test
-//  testCompile project(':testing-utils')
-//  androidTestCompile project(':testing-utils')
+  testCompile project(':testing-utils')
+  androidTestCompile project(':testing-utils')
 
   // LeakCanary
   debugCompile rootProject.ext.leakCanary

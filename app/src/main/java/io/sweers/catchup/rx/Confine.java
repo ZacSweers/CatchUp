@@ -3,14 +3,10 @@ package io.sweers.catchup.rx;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.view.View;
-
 import com.bluelinelabs.conductor.rxlifecycle.RxController;
 import com.bluelinelabs.conductor.rxlifecycle.RxControllerLifecycle;
 import com.trello.rxlifecycle.LifecycleTransformer;
 import com.trello.rxlifecycle.android.RxLifecycleAndroid;
-
-import org.reactivestreams.Publisher;
-
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.CompletableSource;
@@ -24,7 +20,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.SingleSource;
 import io.reactivex.SingleTransformer;
-import io.sweers.catchup.ui.base.BaseActivity;
+import org.reactivestreams.Publisher;
 import rx.Completable;
 import rx.Observable;
 import rx.Single;
@@ -37,12 +33,6 @@ public final class Confine {
 
   private Confine() {
     throw new InstantiationError();
-  }
-
-  @NonNull
-  @CheckResult
-  public static <T> LifecycleTransformer2<T> to(@NonNull BaseActivity activity) {
-    return LifecycleTransformer2.create(RxLifecycleAndroid.bindActivity(activity.lifecycle()));
   }
 
   @NonNull

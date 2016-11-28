@@ -10,6 +10,7 @@ dependencies {
     compile rootProject.ext.assertj
     compile rootProject.ext.assertjAndroid
     compile rootProject.ext.rxJava
+    compile rootProject.ext.rxJava2
     compile rootProject.ext.rxAndroid
     compile rootProject.ext.supportAnnotations
     compile rootProject.ext.supportRecyclerView
@@ -22,6 +23,7 @@ dependencies {
     compile rootProject.ext.supportTestEspresso
     compile rootProject.ext.supportTestEspressoContrib
     compile rootProject.ext.supportTestEspressoWeb
+    compile rootProject.ext.jsr305Annotations
 }
 
 android {
