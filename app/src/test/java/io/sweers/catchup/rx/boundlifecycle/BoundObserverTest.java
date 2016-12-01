@@ -13,6 +13,80 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class BoundObserverTest {
 
+  //public interface Receiver<T> {
+  //  void onReceive(T t);
+  //}
+  //
+  //public static class Doer<T> {
+  //  public void doSomething(Receiver<T> receiver) {
+  //    // Stuff
+  //  }
+  //}
+  //
+  //public static class ReceiverHelper {
+  //  public static ReceiverHelper help() {
+  //    return new ReceiverHelper();
+  //  }
+  //
+  //  public <T> ReceiverCreator<T> creator() {
+  //    return new ReceiverCreator<>();
+  //  }
+  //}
+  //
+  //public static class ParameterizedReceiverHelper<T> {
+  //
+  //  public static <T> ParameterizedReceiverHelper<T> make() {
+  //    return new ParameterizedReceiverHelper<>();
+  //  }
+  //
+  //  public <E> ReceiverCreator<E> creator() {
+  //    return new ReceiverCreator<>();
+  //  }
+  //}
+  //
+  //public static <T> Receiver<T> directReceiver() {
+  //  return new ReceiverCreator<T>().create();
+  //}
+  //
+  //public static <T> Receiver<T> directStaticReceiver() {
+  //  return ReceiverCreator.staticCreate();
+  //}
+  //
+  //public static <T> ReceiverCreator<T> directReceiverCreator() {
+  //  return new ReceiverCreator<>();
+  //}
+  //
+  //public static class ReceiverCreator<E> {
+  //
+  //  public static <E> Receiver<E> staticCreate() {
+  //    return new ReceiverCreator<E>().create();
+  //  }
+  //
+  //  public static <E> ReceiverCreator<E> staticCreator() {
+  //    return new ReceiverCreator<E>();
+  //  }
+  //
+  //  public Receiver<E> create() {
+  //    return t -> { };
+  //  }
+  //}
+  //
+  //public void tesReceiver() {
+  //  Doer<Integer> doer = new Doer<>();
+  //
+  //  doer.doSomething(directReceiver()); // Fine
+  //  doer.doSomething(new ReceiverCreator().create()); // Result type erased
+  //  doer.doSomething(new ReceiverCreator<>().create()); // Compile error, returns Receiver<Object>
+  //  doer.doSomething(new ReceiverCreator<Integer>().create()); // Fine
+  //  doer.doSomething(ReceiverCreator.staticCreate()); // Fine
+  //  doer.doSomething(ReceiverCreator.staticCreator().create()); // Compile error, returns Receiver<Object>
+  //  doer.doSomething(directStaticReceiver()); // Fine
+  //  doer.doSomething(directReceiverCreator().create()); // Compile error, returns Receiver<Object>
+  //  doer.doSomething(BoundObserverTest.<Integer>directReceiverCreator().create()); // Fine
+  //  doer.doSomething(ReceiverHelper.help().creator().create()); // Compile error, returns Receiver<Object>
+  //  doer.doSomething(ParameterizedReceiverHelper.make().creator().create()); // Compile error, returns Receiver<Object>
+  //}
+
   @Test
   public void testBoundObserver() {
     AtomicInteger valHolder = new AtomicInteger(0);
