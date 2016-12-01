@@ -2,8 +2,6 @@ package io.sweers.catchup.ui.base;
 
 import android.os.Bundle;
 import android.support.v4.util.Pair;
-import com.bluelinelabs.conductor.rxlifecycle.ControllerEvent;
-import com.trello.rxlifecycle.OutsideLifecycleException;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
@@ -14,22 +12,6 @@ public abstract class BaseController extends RefWatchingController
     implements LifecycleProvider<ControllerEvent> {
 
   private BehaviorSubject<ControllerEvent> lifecycleSubject = BehaviorSubject.create();
-  private static final Function<ControllerEvent, ControllerEvent> CONTROLLER_LIFECYCLE =
-      lastEvent -> {
-        switch (lastEvent) {
-          case CREATE:
-            return ControllerEvent.DESTROY;
-          case ATTACH:
-            return ControllerEvent.DETACH;
-          case CREATE_VIEW:
-            return ControllerEvent.DESTROY_VIEW;
-          case DETACH:
-            return ControllerEvent.DESTROY;
-          default:
-            throw new OutsideLifecycleException(
-                "Cannot bind to Controller lifecycle when outside of it.");
-        }
-      };
 
   protected BaseController() {
   }
@@ -51,7 +33,7 @@ public abstract class BaseController extends RefWatchingController
   @Nonnull
   @Override
   public Function<ControllerEvent, ControllerEvent> correspondingEvents() {
-    return CONTROLLER_LIFECYCLE;
+    return ControllerEvent.LIFECYCLE;
   }
 
   @Override
