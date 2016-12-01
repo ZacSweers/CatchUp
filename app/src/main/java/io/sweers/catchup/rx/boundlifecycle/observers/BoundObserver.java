@@ -81,6 +81,10 @@ public final class BoundObserver<T> extends BaseObserver implements Observer<T> 
       return new BoundObserver<>(lifecycle, null, nextConsumer, null);
     }
 
+    public Observer<T> asConsumer(@NonNull String errorTag, @Nullable Consumer<? super T> nextConsumer) {
+      return new BoundObserver<>(lifecycle, createTaggedError(errorTag), nextConsumer, null);
+    }
+
     public Observer<T> create() {
       return new BoundObserver<>(lifecycle, errorConsumer, nextConsumer, completeAction);
     }

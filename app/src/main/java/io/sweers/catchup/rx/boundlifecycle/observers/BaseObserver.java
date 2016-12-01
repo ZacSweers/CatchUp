@@ -85,5 +85,11 @@ abstract class BaseObserver {
       this.errorConsumer = errorConsumer;
       return (C) this;
     }
+
+    protected static Consumer<? super Throwable> createTaggedError(@NonNull String tag) {
+      return (Consumer<Throwable>) throwable -> {
+        throw new OnErrorNotImplementedException(tag, throwable);
+      };
+    }
   }
 }
