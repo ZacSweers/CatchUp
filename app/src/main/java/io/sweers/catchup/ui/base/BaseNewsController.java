@@ -41,7 +41,6 @@ import timber.log.Timber;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-
 public abstract class BaseNewsController<T extends HasStableId> extends BaseController
     implements SwipeRefreshLayout.OnRefreshListener, Scrollable {
 
@@ -66,12 +65,10 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   /**
    * View binding implementation to bind the given datum to the {@code holder}.
    *
-   * @param t      The datum to back the view with.
+   * @param t The datum to back the view with.
    * @param holder The item ViewHolder instance.
    */
-  protected abstract void bindItemView(
-      @NonNull T t,
-      @NonNull ViewHolder holder);
+  protected abstract void bindItemView(@NonNull T t, @NonNull ViewHolder holder);
 
   @NonNull
   protected abstract Single<List<T>> getDataObservable();
@@ -89,8 +86,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
 
     swipeRefreshLayout.setColorSchemeColors(getServiceThemeColor());
 
-    LinearLayoutManager layoutManager
-        = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+    LinearLayoutManager layoutManager =
+        new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
     recyclerView.setLayoutManager(layoutManager);
     adapter = new Adapter<>(this::bindItemView);
     recyclerView.setAdapter(adapter);
@@ -123,43 +120,40 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   }
 
   private void loadData() {
-    getDataObservable()
-        .observeOn(AndroidSchedulers.mainThread())
+    getDataObservable().observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .subscribe(
-            BoundObservers.<List<T>>forSingle(this)
-                .onSuccess(data -> {
-                  progress.setVisibility(GONE);
-                  errorView.setVisibility(GONE);
-                  swipeRefreshLayout.setVisibility(VISIBLE);
-                  adapter.setData(data);
-                })
-                .onError(e -> {
-                  if (e instanceof IOException) {
-                    AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
-                        getActivity(),
+        .subscribe(BoundObservers.<List<T>>forSingle(this).onSuccess(data -> {
+          progress.setVisibility(GONE);
+          errorView.setVisibility(GONE);
+          swipeRefreshLayout.setVisibility(VISIBLE);
+          adapter.setData(data);
+        })
+            .onError(e -> {
+              if (e instanceof IOException) {
+                AnimatedVectorDrawableCompat avd =
+                    AnimatedVectorDrawableCompat.create(getActivity(),
                         R.drawable.avd_no_connection);
-                    errorImage.setImageDrawable(avd);
-                    progress.setVisibility(GONE);
-                    swipeRefreshLayout.setVisibility(GONE);
-                    errorView.setVisibility(VISIBLE);
-                    avd.start();
-                  } else if (e instanceof HttpException) {
-                    // TODO Show some sort of API error response.
-                    AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
-                        getActivity(),
+                errorImage.setImageDrawable(avd);
+                progress.setVisibility(GONE);
+                swipeRefreshLayout.setVisibility(GONE);
+                errorView.setVisibility(VISIBLE);
+                avd.start();
+              } else if (e instanceof HttpException) {
+                // TODO Show some sort of API error response.
+                AnimatedVectorDrawableCompat avd =
+                    AnimatedVectorDrawableCompat.create(getActivity(),
                         R.drawable.avd_no_connection);
-                    errorImage.setImageDrawable(avd);
-                    progress.setVisibility(GONE);
-                    swipeRefreshLayout.setVisibility(GONE);
-                    errorView.setVisibility(VISIBLE);
-                    avd.start();
-                  }
-                  Timber.e(e, "Update failed!");
-                })
+                errorImage.setImageDrawable(avd);
+                progress.setVisibility(GONE);
+                swipeRefreshLayout.setVisibility(GONE);
+                errorView.setVisibility(VISIBLE);
+                avd.start();
+              }
+              Timber.e(e, "Update failed!");
+            })
             .create());
   }
 
@@ -186,12 +180,14 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
 
     @Override
     public long getItemId(int position) {
-      return data.get(position).stableId();
+      return data.get(position)
+          .stableId();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_general, parent, false);
+      View view = LayoutInflater.from(parent.getContext())
+          .inflate(R.layout.list_item_general, parent, false);
       return new ViewHolder(view);
     }
 
@@ -261,7 +257,10 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       } else {
         scoreDivider.setVisibility(VISIBLE);
         score.setVisibility(VISIBLE);
-        score.setText(String.format("%s %s", scoreValue.first, NumberUtil.format(scoreValue.second)));
+        score.setText(String.format(
+            "%s %s",
+            scoreValue.first,
+            NumberUtil.format(scoreValue.second)));
       }
     }
 
@@ -285,7 +284,11 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     }
 
     private void timestamp(long date) {
-      timestamp.setText(DateUtils.getRelativeTimeSpanString(date, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
+      timestamp.setText(DateUtils.getRelativeTimeSpanString(
+          date,
+          System.currentTimeMillis(),
+          0L,
+          DateUtils.FORMAT_ABBREV_ALL));
     }
 
     public void author(@NonNull CharSequence authorText) {
