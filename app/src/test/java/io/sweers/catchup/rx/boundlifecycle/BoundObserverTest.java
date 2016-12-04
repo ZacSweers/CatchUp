@@ -6,7 +6,9 @@ import io.reactivex.functions.Cancellable;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
+import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers2;
 import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
+import io.sweers.testutils.RecordingObserver2;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nonnull;
 import org.junit.Test;
@@ -190,6 +192,27 @@ public class BoundObserverTest {
     lifecycle.onNext(2);
     emitter[0].onNext(2);
     verify(cancellable).cancel();
+    assertThat(lifecycle.hasObservers()).isFalse();
+  }
+
+  @Test
+  public void alternateCreator() {
+    PublishSubject<Integer> source = PublishSubject.create();
+    PublishSubject<Integer> lifecycle = PublishSubject.create();
+    RecordingObserver2<Integer> o = new RecordingObserver2<>();
+    source.subscribe(BoundObservers2.against(lifecycle).around(o));
+
+    assertThat(source.hasObservers()).isTrue();
+    assertThat(lifecycle.hasObservers()).isTrue();
+    o.assertNoMoreEvents();
+
+    source.onNext(1);
+    assertThat(o.takeNext()).isEqualTo(1);
+
+    lifecycle.onNext(2);
+    source.onNext(2);
+    o.assertNoMoreEvents();
+    assertThat(source.hasObservers()).isFalse();
     assertThat(lifecycle.hasObservers()).isFalse();
   }
 }
