@@ -1,13 +1,21 @@
 package io.sweers.catchup.rx.boundlifecycle;
 
+import com.jakewharton.rxrelay2.PublishRelay;
+import com.jakewharton.rxrelay2.Relay;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.functions.Cancellable;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
-import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers2;
 import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
+import io.sweers.catchup.rx.boundlifecycle.observers.Disposables;
 import io.sweers.testutils.RecordingObserver2;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nonnull;
@@ -19,80 +27,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class BoundObserverTest {
-
-  //public interface Receiver<T> {
-  //  void onReceive(T t);
-  //}
-  //
-  //public static class Doer<T> {
-  //  public void doSomething(Receiver<T> receiver) {
-  //    // Stuff
-  //  }
-  //}
-  //
-  //public static class ReceiverHelper {
-  //  public static ReceiverHelper help() {
-  //    return new ReceiverHelper();
-  //  }
-  //
-  //  public <T> ReceiverCreator<T> creator() {
-  //    return new ReceiverCreator<>();
-  //  }
-  //}
-  //
-  //public static class ParameterizedReceiverHelper<T> {
-  //
-  //  public static <T> ParameterizedReceiverHelper<T> make() {
-  //    return new ParameterizedReceiverHelper<>();
-  //  }
-  //
-  //  public <E> ReceiverCreator<E> creator() {
-  //    return new ReceiverCreator<>();
-  //  }
-  //}
-  //
-  //public static <T> Receiver<T> directReceiver() {
-  //  return new ReceiverCreator<T>().create();
-  //}
-  //
-  //public static <T> Receiver<T> directStaticReceiver() {
-  //  return ReceiverCreator.staticCreate();
-  //}
-  //
-  //public static <T> ReceiverCreator<T> directReceiverCreator() {
-  //  return new ReceiverCreator<>();
-  //}
-  //
-  //public static class ReceiverCreator<E> {
-  //
-  //  public static <E> Receiver<E> staticCreate() {
-  //    return new ReceiverCreator<E>().create();
-  //  }
-  //
-  //  public static <E> ReceiverCreator<E> staticCreator() {
-  //    return new ReceiverCreator<E>();
-  //  }
-  //
-  //  public Receiver<E> create() {
-  //    return t -> { };
-  //  }
-  //}
-  //
-  //public void tesReceiver() {
-  //  Doer<Integer> doer = new Doer<>();
-  //
-  //  doer.doSomething(directReceiver()); // Fine
-  //  doer.doSomething(new ReceiverCreator().create()); // Result type erased
-  //  doer.doSomething(new ReceiverCreator<>().create()); // Compile error, returns Receiver<Object>
-  //  doer.doSomething(new ReceiverCreator<Integer>().create()); // Fine
-  //  doer.doSomething(ReceiverCreator.staticCreate()); // Fine
-  //  doer.doSomething(ReceiverCreator.staticCreator().create()); // Compile error, returns Receiver<Object>
-  //  doer.doSomething(directStaticReceiver()); // Fine
-  //  doer.doSomething(directReceiverCreator().create()); // Compile error, returns Receiver<Object>
-  //  doer.doSomething(BoundObserverTest.<Integer>directReceiverCreator().create()); // Fine
-  //  doer.doSomething(ReceiverHelper.help().creator().create()); // Compile error, returns Receiver<Object>
-  //  doer.doSomething(ParameterizedReceiverHelper.make().creator().create()); // Compile error, returns Receiver<Object>
-  //}
 
   @Test
   public void testBoundObserver() {
@@ -200,7 +134,8 @@ public class BoundObserverTest {
     PublishSubject<Integer> source = PublishSubject.create();
     PublishSubject<Integer> lifecycle = PublishSubject.create();
     RecordingObserver2<Integer> o = new RecordingObserver2<>();
-    source.subscribe(BoundObservers2.against(lifecycle).around(o));
+    source.subscribe(Disposables.forObservable(lifecycle)
+        .around(o));
 
     assertThat(source.hasObservers()).isTrue();
     assertThat(lifecycle.hasObservers()).isTrue();
@@ -214,5 +149,39 @@ public class BoundObserverTest {
     o.assertNoMoreEvents();
     assertThat(source.hasObservers()).isFalse();
     assertThat(lifecycle.hasObservers()).isFalse();
+  }
+
+  @Test
+  public void disposablesDemos() {
+    PublishSubject<Integer> lifecycle = PublishSubject.create();
+    SingleObserver<Integer> so = mock(SingleObserver.class);
+    MaybeObserver<Integer> mo = mock(MaybeObserver.class);
+
+    Single.just(1)
+        .subscribe(Disposables.forSingle(lifecycle)
+            .around(so));
+    Maybe.just(1)
+        .subscribe(Disposables.forMaybe(lifecycle)
+            .around(mo));
+
+    Observable.just(1)
+        .subscribe(Disposables.forObservable(lifecycle)
+            .around(t -> System.out.println("Hello")));
+    Maybe.just(1)
+        .subscribe(Disposables.forMaybe(lifecycle)
+            .around(t -> System.out.println("Hello")));
+    Single.just(1)
+        .subscribe(Disposables.forSingle(lifecycle)
+            .around(t -> System.out.println("Hello")));
+
+    Relay<Integer> relay = PublishRelay.create();
+    Observable.just(1)
+        .subscribe(Disposables.forObservable(lifecycle)
+            .around(relay));
+
+    CompletableObserver co = mock(CompletableObserver.class);
+    Completable.complete()
+        .subscribe(Disposables.forCompletable(lifecycle)
+            .around(co));
   }
 }

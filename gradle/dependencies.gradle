@@ -77,7 +77,7 @@ ext {
     rxJava = 'io.reactivex:rxjava:1.2.2'
     rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.2'
     rxReceivers = 'com.f2prateek.rx.receivers:rx-receivers:0.1.0'
-    rxRelay = 'com.jakewharton.rxrelay:rxrelay:1.2.0'
+    rxRelay = 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 
     rxJava2 = 'io.reactivex.rxjava2:rxjava:2.0.1'
     rxAndroid2 = 'io.reactivex.rxjava2:rxandroid:2.0.1'

@@ -210,6 +210,7 @@ dependencies {
 
   // Test
   testCompile project(':testing-utils')
+  testCompile rootProject.ext.rxRelay
   androidTestCompile project(':testing-utils')
 
   // LeakCanary
