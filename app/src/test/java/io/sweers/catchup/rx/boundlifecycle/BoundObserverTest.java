@@ -1,6 +1,8 @@
 package io.sweers.catchup.rx.boundlifecycle;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.functions.Cancellable;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
@@ -10,6 +12,9 @@ import javax.annotation.Nonnull;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class BoundObserverTest {
 
@@ -163,6 +168,28 @@ public class BoundObserverTest {
 
     assertThat(valHolder.get()).isEqualTo(2);
     assertThat(source.hasObservers()).isFalse();
+    assertThat(lifecycle.hasObservers()).isFalse();
+  }
+
+  @Test
+  public void verifyCancellation() throws Exception {
+    Cancellable cancellable = mock(Cancellable.class);
+    final ObservableEmitter<Integer>[] emitter = new ObservableEmitter[1];
+    Observable<Integer> source = Observable.create(e -> {
+      e.setCancellable(cancellable);
+      emitter[0] = e;
+    });
+    PublishSubject<Integer> lifecycle = PublishSubject.create();
+    source.subscribe(BoundObservers.<Integer>forObservable(lifecycle).create());
+
+    verify(cancellable, never()).cancel();
+    assertThat(lifecycle.hasObservers()).isTrue();
+
+    emitter[0].onNext(1);
+
+    lifecycle.onNext(2);
+    emitter[0].onNext(2);
+    verify(cancellable).cancel();
     assertThat(lifecycle.hasObservers()).isFalse();
   }
 }

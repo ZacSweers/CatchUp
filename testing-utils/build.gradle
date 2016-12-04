@@ -15,6 +15,7 @@ dependencies {
     compile rootProject.ext.supportAnnotations
     compile rootProject.ext.supportRecyclerView
     compile rootProject.ext.supportV4
+    compile rootProject.ext.mockito
     compile rootProject.ext.junit
     compile rootProject.ext.robolectric
     compile rootProject.ext.truth

@@ -38,12 +38,7 @@ public final class BoundObserver<T> extends BaseObserver implements Observer<T> 
 
   @Override
   public final void onComplete() {
-    if (lifecycleDisposable != null) {
-      lifecycleDisposable.dispose();
-    }
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    dispose();
     if (completeAction != null) {
       try {
         completeAction.run();
@@ -81,7 +76,8 @@ public final class BoundObserver<T> extends BaseObserver implements Observer<T> 
       return new BoundObserver<>(lifecycle, null, nextConsumer, null);
     }
 
-    public Observer<T> asConsumer(@NonNull String errorTag, @Nullable Consumer<? super T> nextConsumer) {
+    public Observer<T> asConsumer(@NonNull String errorTag,
+        @Nullable Consumer<? super T> nextConsumer) {
       return new BoundObserver<>(lifecycle, createTaggedError(errorTag), nextConsumer, null);
     }
 

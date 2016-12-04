@@ -21,6 +21,7 @@ public final class BoundSingleObserver<T> extends BaseObserver implements Single
 
   @Override
   public final void onSuccess(T value) {
+    dispose();
     if (successConsumer != null) {
       try {
         successConsumer.accept(value);
@@ -51,6 +52,11 @@ public final class BoundSingleObserver<T> extends BaseObserver implements Single
 
     public SingleObserver<T> asConsumer(@Nullable Consumer<? super T> nextConsumer) {
       return new BoundSingleObserver<>(lifecycle, null, nextConsumer);
+    }
+
+    public SingleObserver<T> asConsumer(@NonNull String errorTag,
+        @Nullable Consumer<? super T> nextConsumer) {
+      return new BoundSingleObserver<>(lifecycle, createTaggedError(errorTag), nextConsumer);
     }
 
     public SingleObserver<T> create() {

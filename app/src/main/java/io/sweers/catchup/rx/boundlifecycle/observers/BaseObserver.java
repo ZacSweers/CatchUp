@@ -9,17 +9,19 @@ import io.reactivex.exceptions.CompositeException;
 import io.reactivex.exceptions.Exceptions;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.internal.disposables.DisposableHelper;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicReference;
 import rx.exceptions.OnErrorNotImplementedException;
 
-abstract class BaseObserver {
+abstract class BaseObserver implements Disposable {
 
+  private final AtomicReference<Disposable> mainDisposable = new AtomicReference<>();
+  private final AtomicReference<Disposable> lifecycleDisposable = new AtomicReference<>();
   protected final Observable<?> lifecycle;
   protected final Consumer<? super Throwable> errorConsumer;
-  protected Disposable lifecycleDisposable;
-  protected Disposable disposable;
 
   protected BaseObserver(@NonNull Observable<?> lifecycle,
       @Nullable Consumer<? super Throwable> errorConsumer) {
@@ -40,18 +42,29 @@ abstract class BaseObserver {
 
   @SuppressWarnings("unused")
   public final void onSubscribe(Disposable d) {
-    this.disposable = d;
-    lifecycleDisposable = lifecycle.take(1)
-        .subscribe(e -> d.dispose());
+    if (DisposableHelper.setOnce(this.mainDisposable, d)) {
+      DisposableHelper.setOnce(
+          this.lifecycleDisposable,
+          lifecycle.take(1)
+              .subscribe(e -> dispose()));
+    }
+  }
+
+  @Override
+  public final boolean isDisposed() {
+    return mainDisposable.get() == DisposableHelper.DISPOSED;
+  }
+
+  @Override
+  public final void dispose() {
+    synchronized (this) {
+      DisposableHelper.dispose(lifecycleDisposable);
+      DisposableHelper.dispose(mainDisposable);
+    }
   }
 
   public final void onError(Throwable e) {
-    if (lifecycleDisposable != null) {
-      lifecycleDisposable.dispose();
-    }
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    dispose();
     if (errorConsumer != null) {
       try {
         errorConsumer.accept(e);

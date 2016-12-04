@@ -26,6 +26,7 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
 
   @Override
   public final void onSuccess(T value) {
+    dispose();
     if (successConsumer != null) {
       try {
         successConsumer.accept(value);
@@ -38,12 +39,7 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
 
   @Override
   public final void onComplete() {
-    if (lifecycleDisposable != null) {
-      lifecycleDisposable.dispose();
-    }
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    dispose();
     if (completeAction != null) {
       try {
         completeAction.run();
@@ -79,6 +75,11 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
 
     public MaybeObserver<T> asConsumer(@Nullable Consumer<? super T> nextConsumer) {
       return new BoundMaybeObserver<>(lifecycle, null, nextConsumer, null);
+    }
+
+    public MaybeObserver<T> asConsumer(@NonNull String errorTag,
+        @Nullable Consumer<? super T> nextConsumer) {
+      return new BoundMaybeObserver<>(lifecycle, createTaggedError(errorTag), nextConsumer, null);
     }
 
     public MaybeObserver<T> create() {

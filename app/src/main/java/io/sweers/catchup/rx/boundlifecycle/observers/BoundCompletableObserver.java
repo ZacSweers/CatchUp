@@ -23,12 +23,7 @@ final class BoundCompletableObserver extends BaseObserver implements Completable
 
   @Override
   public final void onComplete() {
-    if (lifecycleDisposable != null) {
-      lifecycleDisposable.dispose();
-    }
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    dispose();
     if (completeAction != null) {
       try {
         completeAction.run();
@@ -58,6 +53,10 @@ final class BoundCompletableObserver extends BaseObserver implements Completable
 
     public CompletableObserver asAction(@Nullable Action action) {
       return new BoundCompletableObserver(lifecycle, null, action);
+    }
+
+    public CompletableObserver asAction(@NonNull String errorTag, @Nullable Action action) {
+      return new BoundCompletableObserver(lifecycle, createTaggedError(errorTag), action);
     }
 
     public CompletableObserver create() {
