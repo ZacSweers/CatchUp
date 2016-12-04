@@ -20,6 +20,10 @@ public class BoundObservers2 {
     return new BoundObservers2(lifecycle);
   }
 
+  public static BoundObservers2 against(Maybe<?> lifecycle) {
+    return new BoundObservers2(lifecycle);
+  }
+
   <E> BoundObservers2(LifecycleProvider<E> provider) {
     this.lifecycle = BaseObserver.mapEvents(provider.lifecycle(), provider.correspondingEvents());
   }
