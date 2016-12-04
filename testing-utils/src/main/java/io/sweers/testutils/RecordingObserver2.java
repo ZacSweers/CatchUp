@@ -1,6 +1,5 @@
 package io.sweers.testutils;
 
-import android.util.Log;
 import com.google.common.truth.Platform;
 import io.reactivex.disposables.Disposable;
 import java.util.NoSuchElementException;
@@ -17,25 +16,25 @@ public final class RecordingObserver2<T> implements io.reactivex.Observer<T> {
 
   @Override
   public void onError(Throwable e) {
-    Log.v(TAG, "onError", e);
+    //Log.v(TAG, "onError", e);
     events.addLast(new OnError(e));
   }
 
   @Override
   public void onComplete() {
-    Log.v(TAG, "onCompleted");
+    //Log.v(TAG, "onCompleted");
     events.addLast(new OnCompleted());
   }
 
   @Override
   public void onSubscribe(Disposable d) {
-    Log.v(TAG, "onSubscribe");
+    //Log.v(TAG, "onSubscribe");
     events.addLast(new OnSubscribe(d));
   }
 
   @Override
   public void onNext(T t) {
-    Log.v(TAG, "onNext " + t);
+    //Log.v(TAG, "onNext " + t);
     events.addLast(new OnNext(t));
   }
 
