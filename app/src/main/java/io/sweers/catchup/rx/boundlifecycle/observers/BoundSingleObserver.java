@@ -2,6 +2,7 @@ package io.sweers.catchup.rx.boundlifecycle.observers;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.SingleObserver;
 import io.reactivex.exceptions.Exceptions;
@@ -12,7 +13,7 @@ public final class BoundSingleObserver<T> extends BaseObserver implements Single
 
   private final Consumer<? super T> successConsumer;
 
-  private BoundSingleObserver(@NonNull Observable<?> lifecycle,
+  private BoundSingleObserver(@NonNull Maybe<?> lifecycle,
       @Nullable Consumer<? super Throwable> errorConsumer,
       @Nullable Consumer<? super T> consumer) {
     super(lifecycle, errorConsumer);
@@ -41,6 +42,10 @@ public final class BoundSingleObserver<T> extends BaseObserver implements Single
     }
 
     BoundSingleObserverCreator(@NonNull Observable<?> lifecycle) {
+      super(lifecycle);
+    }
+
+    BoundSingleObserverCreator(@NonNull Maybe<?> lifecycle) {
       super(lifecycle);
     }
 

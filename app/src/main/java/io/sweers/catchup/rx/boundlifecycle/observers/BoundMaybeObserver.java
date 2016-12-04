@@ -2,6 +2,7 @@ package io.sweers.catchup.rx.boundlifecycle.observers;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import io.reactivex.Maybe;
 import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.exceptions.Exceptions;
@@ -15,7 +16,7 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
   private final Consumer<? super T> successConsumer;
   private final Action completeAction;
 
-  private BoundMaybeObserver(@NonNull Observable<?> lifecycle,
+  private BoundMaybeObserver(@NonNull Maybe<?> lifecycle,
       @Nullable Consumer<? super Throwable> errorConsumer,
       @Nullable Consumer<? super T> consumer,
       @Nullable Action completeAction) {
@@ -60,6 +61,10 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
     }
 
     BoundMaybeObserverCreator(@NonNull Observable<?> lifecycle) {
+      super(lifecycle);
+    }
+
+    BoundMaybeObserverCreator(@NonNull Maybe<?> lifecycle) {
       super(lifecycle);
     }
 

@@ -3,6 +3,7 @@ package io.sweers.catchup.rx.boundlifecycle.observers;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import io.reactivex.CompletableObserver;
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.exceptions.Exceptions;
 import io.reactivex.functions.Action;
@@ -14,7 +15,7 @@ final class BoundCompletableObserver extends BaseObserver implements Completable
 
   private final Action completeAction;
 
-  private BoundCompletableObserver(@NonNull Observable<?> lifecycle,
+  private BoundCompletableObserver(@NonNull Maybe<?> lifecycle,
       @Nullable Consumer<? super Throwable> errorConsumer,
       @Nullable Action completeAction) {
     super(lifecycle, errorConsumer);
@@ -43,6 +44,10 @@ final class BoundCompletableObserver extends BaseObserver implements Completable
     }
 
     BoundCompletableObserverCreator(@NonNull Observable<?> lifecycle) {
+      super(lifecycle);
+    }
+
+    BoundCompletableObserverCreator(@NonNull Maybe<?> lifecycle) {
       super(lifecycle);
     }
 

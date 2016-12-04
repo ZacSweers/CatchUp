@@ -1,6 +1,7 @@
 package io.sweers.catchup.rx.boundlifecycle.observers;
 
 import android.support.annotation.NonNull;
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 import io.sweers.catchup.rx.boundlifecycle.observers.BoundCompletableObserver.BoundCompletableObserverCreator;
@@ -19,6 +20,10 @@ public final class BoundObservers {
     return new BoundObserverCreator<>(lifecycleProvider);
   }
 
+  public static <T> BoundObserverCreator<T> forObservable(@NonNull Maybe<?> lifecycle) {
+    return new BoundObserverCreator<>(lifecycle);
+  }
+
   public static <T> BoundSingleObserverCreator<T> forSingle(@NonNull Observable<?> lifecycle) {
     return new BoundSingleObserverCreator<>(lifecycle);
   }
@@ -26,6 +31,10 @@ public final class BoundObservers {
   public static <T> BoundSingleObserverCreator<T> forSingle(
       @NonNull LifecycleProvider<?> lifecycleProvider) {
     return new BoundSingleObserverCreator<>(lifecycleProvider);
+  }
+
+  public static <T> BoundSingleObserverCreator<T> forSingle(@NonNull Maybe<?> lifecycle) {
+    return new BoundSingleObserverCreator<>(lifecycle);
   }
 
   public static <T> BoundMaybeObserverCreator<T> forMaybe(@NonNull Observable<?> lifecycle) {
@@ -37,6 +46,10 @@ public final class BoundObservers {
     return new BoundMaybeObserverCreator<>(lifecycleProvider);
   }
 
+  public static <T> BoundMaybeObserverCreator<T> forMaybe(@NonNull Maybe<?> lifecycle) {
+    return new BoundMaybeObserverCreator<>(lifecycle);
+  }
+
   public static BoundCompletableObserverCreator forCompletable(@NonNull Observable<?> lifecycle) {
     return new BoundCompletableObserverCreator(lifecycle);
   }
@@ -44,5 +57,9 @@ public final class BoundObservers {
   public static BoundCompletableObserverCreator forCompletable(
       @NonNull LifecycleProvider<?> lifecycleProvider) {
     return new BoundCompletableObserverCreator(lifecycleProvider);
+  }
+
+  public static BoundCompletableObserverCreator forCompletable(@NonNull Maybe<?> lifecycle) {
+    return new BoundCompletableObserverCreator(lifecycle);
   }
 }
