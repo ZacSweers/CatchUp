@@ -13,7 +13,7 @@ import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 
 final class BoundCompletableObserver extends BaseObserver implements CompletableObserver {
 
-  private final Action completeAction;
+  @Nullable private final Action completeAction;
 
   private BoundCompletableObserver(@NonNull Maybe<?> lifecycle,
       @Nullable Consumer<? super Throwable> errorConsumer,
@@ -35,33 +35,37 @@ final class BoundCompletableObserver extends BaseObserver implements Completable
     }
   }
 
-  public static class BoundCompletableObserverCreator
-      extends BaseObserver.Creator<BoundCompletableObserverCreator> {
-    private Action completeAction;
+  public static class Creator extends BaseCreator<Creator> {
 
-    <E> BoundCompletableObserverCreator(@NonNull LifecycleProvider<E> provider) {
+    @Nullable private Action completeAction;
+
+    Creator(@NonNull LifecycleProvider<?> provider) {
       super(provider);
     }
 
-    BoundCompletableObserverCreator(@NonNull Observable<?> lifecycle) {
+    Creator(@NonNull Observable<?> lifecycle) {
       super(lifecycle);
     }
 
-    BoundCompletableObserverCreator(@NonNull Maybe<?> lifecycle) {
+    Creator(@NonNull Maybe<?> lifecycle) {
       super(lifecycle);
     }
 
-    public BoundCompletableObserverCreator onComplete(@Nullable Action completeAction) {
+    public Creator onComplete(@NonNull Action completeAction) {
       this.completeAction = completeAction;
       return this;
     }
 
-    public CompletableObserver asAction(@Nullable Action action) {
+    public CompletableObserver asAction(@NonNull Action action) {
       return new BoundCompletableObserver(lifecycle, null, action);
     }
 
-    public CompletableObserver asAction(@NonNull String errorTag, @Nullable Action action) {
+    public CompletableObserver asAction(@NonNull String errorTag, @NonNull Action action) {
       return new BoundCompletableObserver(lifecycle, createTaggedError(errorTag), action);
+    }
+
+    public CompletableObserver around(@NonNull CompletableObserver o) {
+      return new BoundCompletableObserver(lifecycle, o::onError, o::onComplete);
     }
 
     public CompletableObserver create() {

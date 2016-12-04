@@ -28,6 +28,8 @@ abstract class BaseObserver implements Disposable {
   private static BiFunction<Object, Object, Boolean> COMPARATOR =
       (BiFunction<Object, Object, Boolean>) Object::equals;
 
+  private static Function<Object, LifecycleEvent> TRANSFORM_TO_END = o -> LifecycleEvent.END;
+
   protected final Maybe<?> lifecycle;
   private final AtomicReference<Disposable> mainDisposable = new AtomicReference<>();
   private final AtomicReference<Disposable> lifecycleDisposable = new AtomicReference<>();
@@ -44,16 +46,10 @@ abstract class BaseObserver implements Disposable {
     return mapEvents(provider.lifecycle(), provider.correspondingEvents());
   }
 
-  private static Function<Object, LifecycleEvent> TRANSFORM_TO_END = o -> LifecycleEvent.END;
-
   static <E> Maybe<LifecycleEvent> mapEvents(@NonNull Observable<E> lifecycle,
       @NonNull Function<E, E> correspondingEvents) {
-    return Observable
-        .combineLatest(
-        lifecycle.take(1)
-            .map(correspondingEvents),
-        lifecycle.skip(1),
-        COMPARATOR)
+    return Observable.combineLatest(lifecycle.take(1)
+        .map(correspondingEvents), lifecycle.skip(1), COMPARATOR)
         .filter(b -> b)
         .map(TRANSFORM_TO_END)
         .firstElement();
@@ -62,9 +58,7 @@ abstract class BaseObserver implements Disposable {
   @SuppressWarnings("unused")
   public final void onSubscribe(Disposable d) {
     if (DisposableHelper.setOnce(this.mainDisposable, d)) {
-      DisposableHelper.setOnce(
-          this.lifecycleDisposable,
-          lifecycle.subscribe(e -> dispose()));
+      DisposableHelper.setOnce(this.lifecycleDisposable, lifecycle.subscribe(e -> dispose()));
     }
   }
 
@@ -95,28 +89,28 @@ abstract class BaseObserver implements Disposable {
     }
   }
 
-  abstract static class Creator<C extends Creator> {
+  abstract static class BaseCreator<C extends BaseCreator> {
     protected final Maybe<?> lifecycle;
     protected Consumer<? super Throwable> errorConsumer;
 
-    protected <E> Creator(@NonNull LifecycleProvider<E> provider) {
+    protected <E> BaseCreator(@NonNull LifecycleProvider<E> provider) {
       this.lifecycle = Maybe.defer(new Callable<MaybeSource<LifecycleEvent>>() {
         @Override
         public MaybeSource<LifecycleEvent> call() throws Exception {
-          return mapEvents(provider.lifecycle(), provider.correspondingEvents());
+          return mapEvents(provider);
         }
       });
     }
 
-    protected Creator(@NonNull Observable<?> lifecycle) {
+    protected <E> BaseCreator(@NonNull Observable<E> lifecycle) {
       this.lifecycle = lifecycle.firstElement();
     }
 
-    protected Creator(@NonNull Maybe<?> lifecycle) {
+    protected <E> BaseCreator(@NonNull Maybe<E> lifecycle) {
       this.lifecycle = lifecycle;
     }
 
-    protected Creator(@NonNull Single<?> lifecycle) {
+    protected BaseCreator(@NonNull Single<?> lifecycle) {
       this.lifecycle = lifecycle.toMaybe();
     }
 

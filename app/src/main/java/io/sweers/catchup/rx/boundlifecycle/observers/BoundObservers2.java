@@ -3,6 +3,8 @@ package io.sweers.catchup.rx.boundlifecycle.observers;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
+import io.reactivex.functions.Consumer;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 
 /**
@@ -24,19 +26,31 @@ public class BoundObservers2 {
     return new BoundObservers2(lifecycle);
   }
 
-  <E> BoundObservers2(LifecycleProvider<E> provider) {
-    this.lifecycle = BaseObserver.mapEvents(provider.lifecycle(), provider.correspondingEvents());
+  BoundObservers2(LifecycleProvider<?> provider) {
+    this.lifecycle = BaseObserver.mapEvents(provider);
   }
 
-  <E> BoundObservers2(Observable<E> lifecycle) {
+  BoundObservers2(Observable<?> lifecycle) {
     this.lifecycle = lifecycle.firstElement();
   }
 
-  <E> BoundObservers2(Maybe<E> lifecycle) {
+  BoundObservers2(Maybe<?> lifecycle) {
     this.lifecycle = lifecycle;
   }
 
   public <T> Observer<T> around(Observer<T> o) {
-    return new BoundObserver.BoundObserverCreator<T>(lifecycle).around(o);
+    return new BoundObserver.Creator<T>(lifecycle).around(o);
+  }
+
+  public <T> Observer<T> aroundConsumer(Consumer<T> o) {
+    return new BoundObserver.Creator<T>(lifecycle).asConsumer(o);
+  }
+
+  public <T> SingleObserver<T> around(SingleObserver<T> o) {
+    return new BoundSingleObserver.Creator<T>(lifecycle).around(o);
+  }
+
+  public <T> Observer<T> aroundConsumerSingle(Consumer<T> o) {
+    return new BoundObserver.Creator<T>(lifecycle).asConsumer(o);
   }
 }

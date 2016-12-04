@@ -13,8 +13,8 @@ import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 
 public final class BoundObserver<T> extends BaseObserver implements Observer<T> {
 
-  private final Consumer<? super T> consumer;
-  private final Action completeAction;
+  @Nullable private final Consumer<? super T> consumer;
+  @Nullable private final Action completeAction;
 
   private BoundObserver(@NonNull Maybe<?> lifecycle,
       @Nullable Consumer<? super Throwable> errorConsumer,
@@ -50,44 +50,47 @@ public final class BoundObserver<T> extends BaseObserver implements Observer<T> 
     }
   }
 
-  public static class BoundObserverCreator<T>
-      extends BaseObserver.Creator<BoundObserverCreator<T>> {
-    private Consumer<? super T> nextConsumer;
-    private Action completeAction;
+  public static class Creator<T> extends BaseCreator<Creator<T>> {
 
-    <E> BoundObserverCreator(@NonNull LifecycleProvider<E> provider) {
+    @Nullable private Consumer<? super T> nextConsumer;
+    @Nullable private Action completeAction;
+
+    Creator(@NonNull LifecycleProvider<?> provider) {
       super(provider);
     }
 
-    BoundObserverCreator(@NonNull Observable<?> lifecycle) {
+    Creator(@NonNull Observable<?> lifecycle) {
       super(lifecycle);
     }
 
-    BoundObserverCreator(@NonNull Maybe<?> lifecycle) {
+    Creator(@NonNull Maybe<?> lifecycle) {
       super(lifecycle);
     }
 
-    public BoundObserverCreator<T> onNext(@Nullable Consumer<? super T> nextConsumer) {
+    public Creator<T> onNext(@NonNull Consumer<? super T> nextConsumer) {
       this.nextConsumer = nextConsumer;
       return this;
     }
 
-    public BoundObserverCreator<T> onComplete(@Nullable Action completeAction) {
+    public Creator<T> onComplete(@NonNull Action completeAction) {
       this.completeAction = completeAction;
       return this;
     }
 
-    public Observer<T> asConsumer(@Nullable Consumer<? super T> nextConsumer) {
+    public Observer<T> asConsumer(@NonNull Consumer<? super T> nextConsumer) {
       return new BoundObserver<>(lifecycle, null, nextConsumer, null);
     }
 
     public Observer<T> asConsumer(@NonNull String errorTag,
-        @Nullable Consumer<? super T> nextConsumer) {
+        @NonNull Consumer<? super T> nextConsumer) {
       return new BoundObserver<>(lifecycle, createTaggedError(errorTag), nextConsumer, null);
     }
 
     public Observer<T> around(@NonNull Observer<T> observer) {
-      return new BoundObserver<>(lifecycle, observer::onError, observer::onNext, observer::onComplete);
+      return new BoundObserver<>(lifecycle,
+          observer::onError,
+          observer::onNext,
+          observer::onComplete);
     }
 
     public Observer<T> create() {

@@ -33,35 +33,38 @@ public final class BoundSingleObserver<T> extends BaseObserver implements Single
     }
   }
 
-  public static class BoundSingleObserverCreator<T>
-      extends BaseObserver.Creator<BoundSingleObserverCreator<T>> {
-    private Consumer<? super T> successConsumer;
+  public static class Creator<T> extends BaseCreator<Creator<T>> {
 
-    <E> BoundSingleObserverCreator(@NonNull LifecycleProvider<E> provider) {
+    @Nullable private Consumer<? super T> successConsumer;
+
+    Creator(@NonNull LifecycleProvider<?> provider) {
       super(provider);
     }
 
-    BoundSingleObserverCreator(@NonNull Observable<?> lifecycle) {
+    Creator(@NonNull Observable<?> lifecycle) {
       super(lifecycle);
     }
 
-    BoundSingleObserverCreator(@NonNull Maybe<?> lifecycle) {
+    Creator(@NonNull Maybe<?> lifecycle) {
       super(lifecycle);
     }
 
-    public BoundSingleObserver.BoundSingleObserverCreator<T> onSuccess(
-        @Nullable Consumer<? super T> successConsumer) {
+    public Creator<T> onSuccess(@NonNull Consumer<? super T> successConsumer) {
       this.successConsumer = successConsumer;
       return this;
     }
 
-    public SingleObserver<T> asConsumer(@Nullable Consumer<? super T> nextConsumer) {
+    public SingleObserver<T> asConsumer(@NonNull Consumer<? super T> nextConsumer) {
       return new BoundSingleObserver<>(lifecycle, null, nextConsumer);
     }
 
     public SingleObserver<T> asConsumer(@NonNull String errorTag,
-        @Nullable Consumer<? super T> nextConsumer) {
+        @NonNull Consumer<? super T> nextConsumer) {
       return new BoundSingleObserver<>(lifecycle, createTaggedError(errorTag), nextConsumer);
+    }
+
+    public SingleObserver<T> around(@NonNull SingleObserver<T> o) {
+      return new BoundSingleObserver<>(lifecycle, o::onError, o::onSuccess);
     }
 
     public SingleObserver<T> create() {

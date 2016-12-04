@@ -51,40 +51,44 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
     }
   }
 
-  public static class BoundMaybeObserverCreator<T>
-      extends BaseObserver.Creator<BoundMaybeObserverCreator<T>> {
-    private Consumer<? super T> successConsumer;
-    private Action completeAction;
+  public static class Creator<T> extends BaseCreator<Creator<T>> {
 
-    <E> BoundMaybeObserverCreator(@NonNull LifecycleProvider<E> provider) {
+    @Nullable private Consumer<? super T> successConsumer;
+    @Nullable private Action completeAction;
+
+    Creator(@NonNull LifecycleProvider<?> provider) {
       super(provider);
     }
 
-    BoundMaybeObserverCreator(@NonNull Observable<?> lifecycle) {
+    Creator(@NonNull Observable<?> lifecycle) {
       super(lifecycle);
     }
 
-    BoundMaybeObserverCreator(@NonNull Maybe<?> lifecycle) {
+    Creator(@NonNull Maybe<?> lifecycle) {
       super(lifecycle);
     }
 
-    public BoundMaybeObserverCreator<T> onSuccess(@Nullable Consumer<? super T> successConsumer) {
+    public Creator<T> onSuccess(@NonNull Consumer<? super T> successConsumer) {
       this.successConsumer = successConsumer;
       return this;
     }
 
-    public BoundMaybeObserverCreator<T> onComplete(@Nullable Action completeAction) {
+    public Creator<T> onComplete(@NonNull Action completeAction) {
       this.completeAction = completeAction;
       return this;
     }
 
-    public MaybeObserver<T> asConsumer(@Nullable Consumer<? super T> nextConsumer) {
+    public MaybeObserver<T> asConsumer(@NonNull Consumer<? super T> nextConsumer) {
       return new BoundMaybeObserver<>(lifecycle, null, nextConsumer, null);
     }
 
     public MaybeObserver<T> asConsumer(@NonNull String errorTag,
-        @Nullable Consumer<? super T> nextConsumer) {
+        @NonNull Consumer<? super T> nextConsumer) {
       return new BoundMaybeObserver<>(lifecycle, createTaggedError(errorTag), nextConsumer, null);
+    }
+
+    public MaybeObserver<T> around(@NonNull MaybeObserver<T> o) {
+      return new BoundMaybeObserver<>(lifecycle, o::onError, o::onSuccess, o::onComplete);
     }
 
     public MaybeObserver<T> create() {
