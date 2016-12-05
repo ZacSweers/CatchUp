@@ -5,8 +5,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import com.jakewharton.rxrelay.BehaviorRelay;
-import hu.akarnokd.rxjava.interop.RxJavaInterop;
+import com.jakewharton.rxrelay2.BehaviorRelay;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
@@ -14,12 +13,12 @@ import javax.annotation.Nonnull;
 
 public class BaseActivity extends AppCompatActivity implements LifecycleProvider<ActivityEvent> {
 
-  private final BehaviorRelay<ActivityEvent> lifecycleSubject = BehaviorRelay.create();
+  private final BehaviorRelay<ActivityEvent> lifecycleRelay = BehaviorRelay.create();
 
   @NonNull
   @CheckResult
   public final Observable<ActivityEvent> lifecycle() {
-    return RxJavaInterop.toV2Observable(lifecycleSubject.asObservable());
+    return lifecycleRelay;
   }
 
   @Nonnull
@@ -30,48 +29,48 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
 
   @Override
   public boolean hasLifecycleStarted() {
-    return lifecycleSubject.getValue() != null;
+    return lifecycleRelay.hasValue();
   }
 
   @Override
   @CallSuper
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    lifecycleSubject.call(ActivityEvent.CREATE);
+    lifecycleRelay.accept(ActivityEvent.CREATE);
   }
 
   @Override
   @CallSuper
   protected void onStart() {
     super.onStart();
-    lifecycleSubject.call(ActivityEvent.START);
+    lifecycleRelay.accept(ActivityEvent.START);
   }
 
   @Override
   @CallSuper
   protected void onResume() {
     super.onResume();
-    lifecycleSubject.call(ActivityEvent.RESUME);
+    lifecycleRelay.accept(ActivityEvent.RESUME);
   }
 
   @Override
   @CallSuper
   protected void onPause() {
-    lifecycleSubject.call(ActivityEvent.PAUSE);
+    lifecycleRelay.accept(ActivityEvent.PAUSE);
     super.onPause();
   }
 
   @Override
   @CallSuper
   protected void onStop() {
-    lifecycleSubject.call(ActivityEvent.STOP);
+    lifecycleRelay.accept(ActivityEvent.STOP);
     super.onStop();
   }
 
   @Override
   @CallSuper
   protected void onDestroy() {
-    lifecycleSubject.call(ActivityEvent.DESTROY);
+    lifecycleRelay.accept(ActivityEvent.DESTROY);
     super.onDestroy();
   }
 }
