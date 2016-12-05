@@ -55,20 +55,24 @@ final class BoundCompletableObserver extends BaseObserver implements Completable
       return this;
     }
 
-    public CompletableObserver asAction(Action action) {
-      return new BoundCompletableObserver(lifecycle, DEFAULT_ERROR_CONSUMER, action);
+    public CompletableObserver around(Action action) {
+      return around(action, DEFAULT_ERROR_CONSUMER);
     }
 
-    public CompletableObserver asAction(String errorTag, Action action) {
-      return new BoundCompletableObserver(lifecycle, createTaggedError(errorTag), action);
+    public CompletableObserver around(String errorTag, Action action) {
+      return around(action, createTaggedError(errorTag));
     }
 
     public CompletableObserver around(CompletableObserver o) {
-      return new BoundCompletableObserver(lifecycle, o::onError, o::onComplete);
+      return around(o::onComplete, o::onError);
+    }
+
+    public CompletableObserver around(Action action, Consumer<? super Throwable> onError) {
+      return new BoundCompletableObserver(lifecycle, onError, action);
     }
 
     public CompletableObserver create() {
-      return new BoundCompletableObserver(lifecycle, errorConsumer, completeAction);
+      return around(completeAction, errorConsumer);
     }
   }
 }

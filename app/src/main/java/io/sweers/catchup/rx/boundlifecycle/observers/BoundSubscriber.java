@@ -159,26 +159,31 @@ public final class BoundSubscriber<T> implements Subscriber<T>, Disposable {
       return this;
     }
 
-    public Subscriber<T> asConsumer(Consumer<? super T> nextConsumer) {
-      return new BoundSubscriber<>(lifecycle, DEFAULT_ERROR_CONSUMER, nextConsumer, EMPTY_ACTION);
+    public Subscriber<T> around(Consumer<? super T> nextConsumer) {
+      return around(nextConsumer, DEFAULT_ERROR_CONSUMER, EMPTY_ACTION);
     }
 
-    public Subscriber<T> asConsumer(String errorTag, Consumer<? super T> nextConsumer) {
-      return new BoundSubscriber<>(lifecycle,
-          createTaggedError(errorTag),
-          nextConsumer,
-          EMPTY_ACTION);
+    public Subscriber<T> around(String errorTag, Consumer<? super T> nextConsumer) {
+      return around(nextConsumer, createTaggedError(errorTag), EMPTY_ACTION);
+    }
+
+    public Subscriber<T> around(Consumer<? super T> onSuccess,
+        Consumer<? super Throwable> onError) {
+      return around(onSuccess, onError, EMPTY_ACTION);
     }
 
     public Subscriber<T> around(Subscriber<T> subscriber) {
-      return new BoundSubscriber<>(lifecycle,
-          subscriber::onError,
-          subscriber::onNext,
-          subscriber::onComplete);
+      return around(subscriber::onNext, subscriber::onError, subscriber::onComplete);
+    }
+
+    public Subscriber<T> around(Consumer<? super T> onSuccess,
+        Consumer<? super Throwable> onError,
+        Action onComplete) {
+      return new BoundSubscriber<>(lifecycle, onError, onSuccess, onComplete);
     }
 
     public Subscriber<T> create() {
-      return new BoundSubscriber<>(lifecycle, errorConsumer, nextConsumer, completeAction);
+      return around(nextConsumer, errorConsumer, completeAction);
     }
   }
 }

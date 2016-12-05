@@ -54,24 +54,29 @@ public final class BoundSingleObserver<T> extends BaseObserver implements Single
       return this;
     }
 
-    public SingleObserver<T> asConsumer(Consumer<? super T> successConsumer) {
-      return new BoundSingleObserver<>(lifecycle, DEFAULT_ERROR_CONSUMER, successConsumer);
+    public SingleObserver<T> around(Consumer<? super T> successConsumer) {
+      return around(successConsumer, DEFAULT_ERROR_CONSUMER);
     }
 
-    public SingleObserver<T> asConsumer(String errorTag, Consumer<? super T> successConsumer) {
-      return new BoundSingleObserver<>(lifecycle, createTaggedError(errorTag), successConsumer);
+    public SingleObserver<T> around(String errorTag, Consumer<? super T> successConsumer) {
+      return around(successConsumer, createTaggedError(errorTag));
     }
 
     public SingleObserver<T> around(SingleObserver<T> o) {
-      return new BoundSingleObserver<>(lifecycle, o::onError, o::onSuccess);
+      return around(o::onSuccess, o::onError);
     }
 
     public SingleObserver<T> around(BiConsumer<? super T, ? super Throwable> o) {
-      return new BoundSingleObserver<>(lifecycle, t -> o.accept(null, t), v -> o.accept(v, null));
+      return around(v -> o.accept(v, null), t -> o.accept(null, t));
+    }
+
+    public SingleObserver<T> around(Consumer<? super T> onSuccess,
+        Consumer<? super Throwable> onError) {
+      return new BoundSingleObserver<>(lifecycle, onError, onSuccess);
     }
 
     public SingleObserver<T> create() {
-      return new BoundSingleObserver<>(lifecycle, errorConsumer, successConsumer);
+      return around(successConsumer, errorConsumer);
     }
   }
 }

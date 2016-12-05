@@ -17,22 +17,22 @@ import static io.sweers.catchup.rx.boundlifecycle.observers.Util.emptyConsumerIf
 
 final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<T> {
 
-  private final Consumer<? super T> successConsumer;
-  private final Action completeAction;
+  private final Consumer<? super T> onSuccess;
+  private final Action onComplete;
 
   private BoundMaybeObserver(Maybe<?> lifecycle,
       Consumer<? super Throwable> errorConsumer,
       Consumer<? super T> consumer,
-      Action completeAction) {
+      Action onComplete) {
     super(lifecycle, errorConsumer);
-    this.successConsumer = emptyConsumerIfNull(consumer);
-    this.completeAction = emptyActionIfNull(completeAction);
+    this.onSuccess = emptyConsumerIfNull(consumer);
+    this.onComplete = emptyActionIfNull(onComplete);
   }
 
   @Override
   public final void onSuccess(T value) {
     try {
-      successConsumer.accept(value);
+      onSuccess.accept(value);
     } catch (Exception e) {
       Exceptions.throwIfFatal(e);
       onError(e);
@@ -42,7 +42,7 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
   @Override
   public final void onComplete() {
     try {
-      completeAction.run();
+      onComplete.run();
     } catch (Exception e) {
       Exceptions.throwIfFatal(e);
       RxJavaPlugins.onError(e);
@@ -51,8 +51,8 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
 
   public static class Creator<T> extends BaseCreator<Creator<T>> {
 
-    private Consumer<? super T> successConsumer;
-    private Action completeAction;
+    private Consumer<? super T> onSuccess;
+    private Action onComplete;
 
     Creator(LifecycleProvider<?> provider) {
       super(provider);
@@ -66,36 +66,41 @@ final class BoundMaybeObserver<T> extends BaseObserver implements MaybeObserver<
       super(lifecycle);
     }
 
-    public Creator<T> onSuccess(Consumer<? super T> successConsumer) {
-      this.successConsumer = successConsumer;
+    public Creator<T> onSuccess(Consumer<? super T> onSuccess) {
+      this.onSuccess = onSuccess;
       return this;
     }
 
-    public Creator<T> onComplete(Action completeAction) {
-      this.completeAction = completeAction;
+    public Creator<T> onComplete(Action onComplete) {
+      this.onComplete = onComplete;
       return this;
     }
 
-    public MaybeObserver<T> asConsumer(Consumer<? super T> nextConsumer) {
-      return new BoundMaybeObserver<>(lifecycle,
-          DEFAULT_ERROR_CONSUMER,
-          nextConsumer,
-          EMPTY_ACTION);
+    public MaybeObserver<T> around(Consumer<? super T> nextConsumer) {
+      return around(nextConsumer, DEFAULT_ERROR_CONSUMER, EMPTY_ACTION);
     }
 
-    public MaybeObserver<T> asConsumer(String errorTag, Consumer<? super T> nextConsumer) {
-      return new BoundMaybeObserver<>(lifecycle,
-          createTaggedError(errorTag),
-          nextConsumer,
-          EMPTY_ACTION);
+    public MaybeObserver<T> around(String errorTag, Consumer<? super T> nextConsumer) {
+      return around(nextConsumer, createTaggedError(errorTag), EMPTY_ACTION);
+    }
+
+    public MaybeObserver<T> around(Consumer<? super T> onSuccess,
+        Consumer<? super Throwable> onError) {
+      return around(onSuccess, onError, EMPTY_ACTION);
     }
 
     public MaybeObserver<T> around(MaybeObserver<T> o) {
-      return new BoundMaybeObserver<>(lifecycle, o::onError, o::onSuccess, o::onComplete);
+      return around(o::onSuccess, o::onError, o::onComplete);
+    }
+
+    public MaybeObserver<T> around(Consumer<? super T> onSuccess,
+        Consumer<? super Throwable> onError,
+        Action onComplete) {
+      return new BoundMaybeObserver<>(lifecycle, onError, onSuccess, onComplete);
     }
 
     public MaybeObserver<T> create() {
-      return new BoundMaybeObserver<>(lifecycle, errorConsumer, successConsumer, completeAction);
+      return around(onSuccess, errorConsumer, onComplete);
     }
   }
 }

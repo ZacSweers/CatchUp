@@ -122,11 +122,11 @@ public final class Disposables {
     }
 
     public <T> Subscriber<T> around(Consumer<T> o) {
-      return new BoundSubscriber.Creator<T>(lifecycle).asConsumer(o);
+      return new BoundSubscriber.Creator<T>(lifecycle).around(o);
     }
 
     public <T> Subscriber<T> around(String errorTag, Consumer<T> o) {
-      return new BoundSubscriber.Creator<T>(lifecycle).asConsumer(errorTag, o);
+      return new BoundSubscriber.Creator<T>(lifecycle).around(errorTag, o);
     }
   }
 
@@ -148,11 +148,22 @@ public final class Disposables {
     }
 
     public <T> Observer<T> around(Consumer<T> o) {
-      return new BoundObserver.Creator<T>(lifecycle).asConsumer(o);
+      return new BoundObserver.Creator<T>(lifecycle).around(o);
     }
 
     public <T> Observer<T> around(String errorTag, Consumer<T> o) {
-      return new BoundObserver.Creator<T>(lifecycle).asConsumer(errorTag, o);
+      return new BoundObserver.Creator<T>(lifecycle).around(errorTag, o);
+    }
+
+    public <T> Observer<T> around(Consumer<? super T> onSuccess,
+        Consumer<? super Throwable> onError) {
+      return new BoundObserver.Creator<T>(lifecycle).around(onSuccess, onError);
+    }
+
+    public <T> Observer<T> around(Consumer<? super T> onSuccess,
+        Consumer<? super Throwable> onError,
+        Action onComplete) {
+      return new BoundObserver.Creator<T>(lifecycle).around(onSuccess, onError, onComplete);
     }
   }
 
@@ -174,11 +185,11 @@ public final class Disposables {
     }
 
     public <T> SingleObserver<? super T> around(Consumer<? super T> o) {
-      return new BoundSingleObserver.Creator<T>(lifecycle).asConsumer(o);
+      return new BoundSingleObserver.Creator<T>(lifecycle).around(o);
     }
 
     public <T> SingleObserver<? super T> around(String errorTag, Consumer<T> o) {
-      return new BoundSingleObserver.Creator<T>(lifecycle).asConsumer(errorTag, o);
+      return new BoundSingleObserver.Creator<T>(lifecycle).around(errorTag, o);
     }
 
     public <T> SingleObserver<? super T> around(Consumer<? super T> c, Consumer<Throwable> error) {
@@ -210,11 +221,22 @@ public final class Disposables {
     }
 
     public <T> MaybeObserver<T> around(Consumer<T> o) {
-      return new BoundMaybeObserver.Creator<T>(lifecycle).asConsumer(o);
+      return new BoundMaybeObserver.Creator<T>(lifecycle).around(o);
     }
 
     public <T> MaybeObserver<T> around(String errorTag, Consumer<T> o) {
-      return new BoundMaybeObserver.Creator<T>(lifecycle).asConsumer(errorTag, o);
+      return new BoundMaybeObserver.Creator<T>(lifecycle).around(errorTag, o);
+    }
+
+    public <T> MaybeObserver<T> around(Consumer<? super T> onSuccess,
+        Consumer<? super Throwable> onError) {
+      return new BoundMaybeObserver.Creator<T>(lifecycle).around(onSuccess, onError);
+    }
+
+    public <T> MaybeObserver<T> around(Consumer<? super T> onSuccess,
+        Consumer<? super Throwable> onError,
+        Action onComplete) {
+      return new BoundMaybeObserver.Creator<T>(lifecycle).around(onSuccess, onError, onComplete);
     }
   }
 
@@ -236,11 +258,11 @@ public final class Disposables {
     }
 
     public CompletableObserver around(Action a) {
-      return new BoundCompletableObserver.Creator(lifecycle).asAction(a);
+      return new BoundCompletableObserver.Creator(lifecycle).around(a);
     }
 
     public CompletableObserver around(String errorTag, Action a) {
-      return new BoundCompletableObserver.Creator(lifecycle).asAction(errorTag, a);
+      return new BoundCompletableObserver.Creator(lifecycle).around(errorTag, a);
     }
   }
 }

@@ -9,6 +9,10 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.DEFAULT_ERROR_CONSUMER;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.EMPTY_ACTION;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.createTaggedError;
+
 public final class BoundObserver<T> extends BaseObserver implements Observer<T> {
 
   private final Consumer<? super T> consumer;
@@ -45,7 +49,7 @@ public final class BoundObserver<T> extends BaseObserver implements Observer<T> 
 
   public static class Creator<T> extends BaseCreator<Creator<T>> {
 
-    private Consumer<? super T> nextConsumer;
+    private Consumer<? super T> onNext;
     private Action completeAction;
 
     Creator(LifecycleProvider<?> provider) {
@@ -60,8 +64,8 @@ public final class BoundObserver<T> extends BaseObserver implements Observer<T> 
       super(lifecycle);
     }
 
-    public Creator<T> onNext(Consumer<? super T> nextConsumer) {
-      this.nextConsumer = nextConsumer;
+    public Creator<T> onNext(Consumer<? super T> onNext) {
+      this.onNext = onNext;
       return this;
     }
 
@@ -70,26 +74,30 @@ public final class BoundObserver<T> extends BaseObserver implements Observer<T> 
       return this;
     }
 
-    public Observer<T> asConsumer(Consumer<? super T> nextConsumer) {
-      return new BoundObserver<>(lifecycle, Util.DEFAULT_ERROR_CONSUMER, nextConsumer, Util.EMPTY_ACTION);
+    public Observer<T> around(Consumer<? super T> onNext) {
+      return around(onNext, DEFAULT_ERROR_CONSUMER, EMPTY_ACTION);
     }
 
-    public Observer<T> asConsumer(String errorTag, Consumer<? super T> nextConsumer) {
-      return new BoundObserver<>(lifecycle,
-          Util.createTaggedError(errorTag),
-          nextConsumer,
-          Util.EMPTY_ACTION);
+    public Observer<T> around(String errorTag, Consumer<? super T> onNext) {
+      return around(onNext, createTaggedError(errorTag), EMPTY_ACTION);
     }
 
     public Observer<T> around(Observer<T> observer) {
-      return new BoundObserver<>(lifecycle,
-          observer::onError,
-          observer::onNext,
-          observer::onComplete);
+      return around(observer::onNext, observer::onError, observer::onComplete);
+    }
+
+    public Observer<T> around(Consumer<? super T> onNext, Consumer<? super Throwable> onError) {
+      return around(onNext, onError, EMPTY_ACTION);
+    }
+
+    public Observer<T> around(Consumer<? super T> onNext,
+        Consumer<? super Throwable> onError,
+        Action onComplete) {
+      return new BoundObserver<>(lifecycle, onError, onNext, onComplete);
     }
 
     public Observer<T> create() {
-      return new BoundObserver<>(lifecycle, errorConsumer, nextConsumer, completeAction);
+      return around(onNext, errorConsumer, completeAction);
     }
   }
 }
