@@ -1,17 +1,12 @@
 package io.sweers.catchup.rx.boundlifecycle.observers;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeSource;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.CompositeException;
 import io.reactivex.exceptions.Exceptions;
-import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.internal.disposables.DisposableHelper;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
@@ -19,40 +14,20 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 import rx.exceptions.OnErrorNotImplementedException;
 
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.checkNotNull;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.emptyErrorConsumerIfNull;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.mapEvents;
+
 abstract class BaseObserver implements Disposable {
 
-  private enum LifecycleEvent {
-    END
-  }
-
-  private static BiFunction<Object, Object, Boolean> COMPARATOR =
-      (BiFunction<Object, Object, Boolean>) Object::equals;
-
-  private static Function<Object, LifecycleEvent> TRANSFORM_TO_END = o -> LifecycleEvent.END;
-
-  protected final Maybe<?> lifecycle;
   private final AtomicReference<Disposable> mainDisposable = new AtomicReference<>();
   private final AtomicReference<Disposable> lifecycleDisposable = new AtomicReference<>();
-
+  protected final Maybe<?> lifecycle;
   protected final Consumer<? super Throwable> errorConsumer;
 
-  protected BaseObserver(@NonNull Maybe<?> lifecycle,
-      @Nullable Consumer<? super Throwable> errorConsumer) {
+  protected BaseObserver(Maybe<?> lifecycle, Consumer<? super Throwable> errorConsumer) {
     this.lifecycle = lifecycle;
-    this.errorConsumer = errorConsumer;
-  }
-
-  static <E> Maybe<LifecycleEvent> mapEvents(@NonNull LifecycleProvider<E> provider) {
-    return mapEvents(provider.lifecycle(), provider.correspondingEvents());
-  }
-
-  static <E> Maybe<LifecycleEvent> mapEvents(@NonNull Observable<E> lifecycle,
-      @NonNull Function<E, E> correspondingEvents) {
-    return Observable.combineLatest(lifecycle.take(1)
-        .map(correspondingEvents), lifecycle.skip(1), COMPARATOR)
-        .filter(b -> b)
-        .map(TRANSFORM_TO_END)
-        .firstElement();
+    this.errorConsumer = emptyErrorConsumerIfNull(errorConsumer);
   }
 
   @SuppressWarnings("unused")
@@ -76,7 +51,6 @@ abstract class BaseObserver implements Disposable {
   }
 
   public final void onError(Throwable e) {
-    dispose();
     if (errorConsumer != null) {
       try {
         errorConsumer.accept(e);
@@ -93,36 +67,28 @@ abstract class BaseObserver implements Disposable {
     protected final Maybe<?> lifecycle;
     protected Consumer<? super Throwable> errorConsumer;
 
-    protected <E> BaseCreator(@NonNull LifecycleProvider<E> provider) {
-      this.lifecycle = Maybe.defer(new Callable<MaybeSource<LifecycleEvent>>() {
+    protected <E> BaseCreator(LifecycleProvider<E> provider) {
+      checkNotNull(provider, "provider == null");
+      this.lifecycle = Maybe.defer(new Callable<MaybeSource<Util.LifecycleEvent>>() {
         @Override
-        public MaybeSource<LifecycleEvent> call() throws Exception {
+        public MaybeSource<Util.LifecycleEvent> call() throws Exception {
           return mapEvents(provider);
         }
       });
     }
 
-    protected <E> BaseCreator(@NonNull Observable<E> lifecycle) {
-      this.lifecycle = lifecycle.firstElement();
+    protected <E> BaseCreator(Observable<E> lifecycle) {
+      this.lifecycle = checkNotNull(lifecycle, "lifecycle == null").firstElement();
     }
 
-    protected <E> BaseCreator(@NonNull Maybe<E> lifecycle) {
-      this.lifecycle = lifecycle;
+    protected <E> BaseCreator(Maybe<E> lifecycle) {
+      this.lifecycle = checkNotNull(lifecycle, "lifecycle == null");
     }
 
-    protected BaseCreator(@NonNull Single<?> lifecycle) {
-      this.lifecycle = lifecycle.toMaybe();
-    }
-
-    public C onError(@Nullable Consumer<? super Throwable> errorConsumer) {
+    @SuppressWarnings("unchecked")
+    public C onError(Consumer<? super Throwable> errorConsumer) {
       this.errorConsumer = errorConsumer;
       return (C) this;
-    }
-
-    protected static Consumer<? super Throwable> createTaggedError(@NonNull String tag) {
-      return (Consumer<Throwable>) throwable -> {
-        throw new OnErrorNotImplementedException(tag, throwable);
-      };
     }
   }
 }

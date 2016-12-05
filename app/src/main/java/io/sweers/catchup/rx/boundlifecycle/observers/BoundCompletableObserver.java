@@ -1,7 +1,5 @@
 package io.sweers.catchup.rx.boundlifecycle.observers;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
@@ -11,60 +9,61 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.DEFAULT_ERROR_CONSUMER;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.createTaggedError;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.emptyActionIfNull;
+
 final class BoundCompletableObserver extends BaseObserver implements CompletableObserver {
 
-  @Nullable private final Action completeAction;
+  private final Action completeAction;
 
-  private BoundCompletableObserver(@NonNull Maybe<?> lifecycle,
-      @Nullable Consumer<? super Throwable> errorConsumer,
-      @Nullable Action completeAction) {
+  private BoundCompletableObserver(Maybe<?> lifecycle,
+      Consumer<? super Throwable> errorConsumer,
+      Action completeAction) {
     super(lifecycle, errorConsumer);
-    this.completeAction = completeAction;
+    this.completeAction = emptyActionIfNull(completeAction);
   }
 
   @Override
   public final void onComplete() {
-    dispose();
-    if (completeAction != null) {
-      try {
-        completeAction.run();
-      } catch (Exception e) {
-        Exceptions.throwIfFatal(e);
-        RxJavaPlugins.onError(e);
-      }
+    try {
+      completeAction.run();
+    } catch (Exception e) {
+      Exceptions.throwIfFatal(e);
+      RxJavaPlugins.onError(e);
     }
   }
 
   public static class Creator extends BaseCreator<Creator> {
 
-    @Nullable private Action completeAction;
+    private Action completeAction;
 
-    Creator(@NonNull LifecycleProvider<?> provider) {
+    Creator(LifecycleProvider<?> provider) {
       super(provider);
     }
 
-    Creator(@NonNull Observable<?> lifecycle) {
+    Creator(Observable<?> lifecycle) {
       super(lifecycle);
     }
 
-    Creator(@NonNull Maybe<?> lifecycle) {
+    Creator(Maybe<?> lifecycle) {
       super(lifecycle);
     }
 
-    public Creator onComplete(@NonNull Action completeAction) {
+    public Creator onComplete(Action completeAction) {
       this.completeAction = completeAction;
       return this;
     }
 
-    public CompletableObserver asAction(@NonNull Action action) {
-      return new BoundCompletableObserver(lifecycle, null, action);
+    public CompletableObserver asAction(Action action) {
+      return new BoundCompletableObserver(lifecycle, DEFAULT_ERROR_CONSUMER, action);
     }
 
-    public CompletableObserver asAction(@NonNull String errorTag, @NonNull Action action) {
+    public CompletableObserver asAction(String errorTag, Action action) {
       return new BoundCompletableObserver(lifecycle, createTaggedError(errorTag), action);
     }
 
-    public CompletableObserver around(@NonNull CompletableObserver o) {
+    public CompletableObserver around(CompletableObserver o) {
       return new BoundCompletableObserver(lifecycle, o::onError, o::onComplete);
     }
 

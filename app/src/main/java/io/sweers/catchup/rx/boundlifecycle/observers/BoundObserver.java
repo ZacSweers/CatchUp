@@ -1,7 +1,5 @@
 package io.sweers.catchup.rx.boundlifecycle.observers;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -13,80 +11,77 @@ import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 
 public final class BoundObserver<T> extends BaseObserver implements Observer<T> {
 
-  @Nullable private final Consumer<? super T> consumer;
-  @Nullable private final Action completeAction;
+  private final Consumer<? super T> consumer;
+  private final Action completeAction;
 
-  private BoundObserver(@NonNull Maybe<?> lifecycle,
-      @Nullable Consumer<? super Throwable> errorConsumer,
-      @Nullable Consumer<? super T> consumer,
-      @Nullable Action completeAction) {
+  private BoundObserver(Maybe<?> lifecycle,
+      Consumer<? super Throwable> errorConsumer,
+      Consumer<? super T> consumer,
+      Action completeAction) {
     super(lifecycle, errorConsumer);
-    this.consumer = consumer;
-    this.completeAction = completeAction;
+    this.consumer = Util.emptyConsumerIfNull(consumer);
+    this.completeAction = Util.emptyActionIfNull(completeAction);
   }
 
   @Override
   public final void onNext(T value) {
-    if (consumer != null) {
-      try {
-        consumer.accept(value);
-      } catch (Exception e) {
-        Exceptions.throwIfFatal(e);
-        onError(e);
-      }
+    try {
+      consumer.accept(value);
+    } catch (Exception e) {
+      Exceptions.throwIfFatal(e);
+      onError(e);
     }
   }
 
   @Override
   public final void onComplete() {
-    dispose();
-    if (completeAction != null) {
-      try {
-        completeAction.run();
-      } catch (Exception e) {
-        Exceptions.throwIfFatal(e);
-        RxJavaPlugins.onError(e);
-      }
+    try {
+      completeAction.run();
+    } catch (Exception e) {
+      Exceptions.throwIfFatal(e);
+      RxJavaPlugins.onError(e);
     }
   }
 
   public static class Creator<T> extends BaseCreator<Creator<T>> {
 
-    @Nullable private Consumer<? super T> nextConsumer;
-    @Nullable private Action completeAction;
+    private Consumer<? super T> nextConsumer;
+    private Action completeAction;
 
-    Creator(@NonNull LifecycleProvider<?> provider) {
+    Creator(LifecycleProvider<?> provider) {
       super(provider);
     }
 
-    Creator(@NonNull Observable<?> lifecycle) {
+    Creator(Observable<?> lifecycle) {
       super(lifecycle);
     }
 
-    Creator(@NonNull Maybe<?> lifecycle) {
+    Creator(Maybe<?> lifecycle) {
       super(lifecycle);
     }
 
-    public Creator<T> onNext(@NonNull Consumer<? super T> nextConsumer) {
+    public Creator<T> onNext(Consumer<? super T> nextConsumer) {
       this.nextConsumer = nextConsumer;
       return this;
     }
 
-    public Creator<T> onComplete(@NonNull Action completeAction) {
+    public Creator<T> onComplete(Action completeAction) {
       this.completeAction = completeAction;
       return this;
     }
 
-    public Observer<T> asConsumer(@NonNull Consumer<? super T> nextConsumer) {
-      return new BoundObserver<>(lifecycle, null, nextConsumer, null);
+    public Observer<T> asConsumer(Consumer<? super T> nextConsumer) {
+      return new BoundObserver<>(lifecycle, Util.DEFAULT_ERROR_CONSUMER, nextConsumer, Util.EMPTY_ACTION);
     }
 
-    public Observer<T> asConsumer(@NonNull String errorTag,
-        @NonNull Consumer<? super T> nextConsumer) {
-      return new BoundObserver<>(lifecycle, createTaggedError(errorTag), nextConsumer, null);
+    public Observer<T> asConsumer(String errorTag, Consumer<? super T> nextConsumer) {
+      return new BoundObserver<>(lifecycle,
+          Util.createTaggedError(errorTag),
+          nextConsumer,
+          Util.EMPTY_ACTION);
     }
 
-    public Observer<T> around(@NonNull Observer<T> observer) {
+    public Observer<T> around(Observer<T> observer) {
       return new BoundObserver<>(lifecycle,
           observer::onError,
           observer::onNext,

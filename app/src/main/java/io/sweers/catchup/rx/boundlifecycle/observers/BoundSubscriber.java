@@ -1,7 +1,5 @@
 package io.sweers.catchup.rx.boundlifecycle.observers;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
@@ -18,23 +16,30 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import rx.exceptions.OnErrorNotImplementedException;
 
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.DEFAULT_ERROR_CONSUMER;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.EMPTY_ACTION;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.createTaggedError;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.emptyActionIfNull;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.emptyConsumerIfNull;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.emptyErrorConsumerIfNull;
+
 public final class BoundSubscriber<T> implements Subscriber<T>, Disposable {
 
   private final AtomicReference<Subscription> mainSubscription = new AtomicReference<>();
   private final AtomicReference<Disposable> lifecycleDisposable = new AtomicReference<>();
-  @NonNull private final Maybe<?> lifecycle;
-  @Nullable private final Consumer<? super T> consumer;
-  @Nullable private final Consumer<? super Throwable> errorConsumer;
-  @Nullable private final Action completeAction;
+  private final Maybe<?> lifecycle;
+  private final Consumer<? super T> consumer;
+  private final Consumer<? super Throwable> errorConsumer;
+  private final Action completeAction;
 
-  private BoundSubscriber(@NonNull Maybe<?> lifecycle,
-      @Nullable Consumer<? super Throwable> errorConsumer,
-      @Nullable Consumer<? super T> consumer,
-      @Nullable Action completeAction) {
+  private BoundSubscriber(Maybe<?> lifecycle,
+      Consumer<? super Throwable> errorConsumer,
+      Consumer<? super T> consumer,
+      Action completeAction) {
     this.lifecycle = lifecycle;
-    this.errorConsumer = errorConsumer;
-    this.consumer = consumer;
-    this.completeAction = completeAction;
+    this.errorConsumer = emptyErrorConsumerIfNull(errorConsumer);
+    this.consumer = emptyConsumerIfNull(consumer);
+    this.completeAction = emptyActionIfNull(completeAction);
   }
 
   @Override
@@ -103,7 +108,6 @@ public final class BoundSubscriber<T> implements Subscriber<T>, Disposable {
 
   @Override
   public void onError(Throwable e) {
-    dispose();
     if (errorConsumer != null) {
       try {
         errorConsumer.accept(e);
@@ -118,7 +122,6 @@ public final class BoundSubscriber<T> implements Subscriber<T>, Disposable {
 
   @Override
   public final void onComplete() {
-    dispose();
     if (completeAction != null) {
       try {
         completeAction.run();
@@ -131,41 +134,43 @@ public final class BoundSubscriber<T> implements Subscriber<T>, Disposable {
 
   public static class Creator<T> extends BaseObserver.BaseCreator<Creator<T>> {
 
-    @Nullable private Consumer<? super T> nextConsumer;
-    @Nullable private Action completeAction;
+    private Consumer<? super T> nextConsumer;
+    private Action completeAction;
 
-    Creator(@NonNull LifecycleProvider<?> provider) {
+    Creator(LifecycleProvider<?> provider) {
       super(provider);
     }
 
-    Creator(@NonNull Observable<?> lifecycle) {
+    Creator(Observable<?> lifecycle) {
       super(lifecycle);
     }
 
-    Creator(@NonNull Maybe<?> lifecycle) {
+    Creator(Maybe<?> lifecycle) {
       super(lifecycle);
     }
 
-    public Creator<T> onNext(@NonNull Consumer<? super T> nextConsumer) {
+    public Creator<T> onNext(Consumer<? super T> nextConsumer) {
       this.nextConsumer = nextConsumer;
       return this;
     }
 
-    public Creator<T> onComplete(@NonNull Action completeAction) {
+    public Creator<T> onComplete(Action completeAction) {
       this.completeAction = completeAction;
       return this;
     }
 
-    public Subscriber<T> asConsumer(@NonNull Consumer<? super T> nextConsumer) {
-      return new BoundSubscriber<>(lifecycle, null, nextConsumer, null);
+    public Subscriber<T> asConsumer(Consumer<? super T> nextConsumer) {
+      return new BoundSubscriber<>(lifecycle, DEFAULT_ERROR_CONSUMER, nextConsumer, EMPTY_ACTION);
     }
 
-    public Subscriber<T> asConsumer(@NonNull String errorTag,
-        @NonNull Consumer<? super T> nextConsumer) {
-      return new BoundSubscriber<>(lifecycle, createTaggedError(errorTag), nextConsumer, null);
+    public Subscriber<T> asConsumer(String errorTag, Consumer<? super T> nextConsumer) {
+      return new BoundSubscriber<>(lifecycle,
+          createTaggedError(errorTag),
+          nextConsumer,
+          EMPTY_ACTION);
     }
 
-    public Subscriber<T> around(@NonNull Subscriber<T> subscriber) {
+    public Subscriber<T> around(Subscriber<T> subscriber) {
       return new BoundSubscriber<>(lifecycle,
           subscriber::onError,
           subscriber::onNext,

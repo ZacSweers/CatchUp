@@ -1,6 +1,6 @@
 package io.sweers.catchup.rx.boundlifecycle.observers;
 
-import android.support.annotation.NonNull;
+import android.support.annotation.CheckResult;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
@@ -8,55 +8,63 @@ import io.sweers.catchup.rx.boundlifecycle.observers.BoundObserver.Creator;
 
 public final class BoundObservers {
 
-  public static <T> Creator<T> forObservable(@NonNull Observable<?> lifecycle) {
+  @CheckResult
+  public static <T> Creator<T> forObservable(Observable<?> lifecycle) {
     return new Creator<>(lifecycle);
   }
 
-  public static <T> Creator<T> forObservable(
-      @NonNull LifecycleProvider<?> lifecycleProvider) {
+  @CheckResult
+  public static <T> Creator<T> forObservable(LifecycleProvider<?> lifecycleProvider) {
     return new Creator<>(lifecycleProvider);
   }
 
-  public static <T> Creator<T> forObservable(@NonNull Maybe<?> lifecycle) {
+  @CheckResult
+  public static <T> Creator<T> forObservable(Maybe<?> lifecycle) {
     return new Creator<>(lifecycle);
   }
 
-  public static <T> BoundSingleObserver.Creator<T> forSingle(@NonNull Observable<?> lifecycle) {
+  @CheckResult
+  public static <T> BoundSingleObserver.Creator<T> forSingle(Observable<?> lifecycle) {
     return new BoundSingleObserver.Creator<>(lifecycle);
   }
 
-  public static <T> BoundSingleObserver.Creator<T> forSingle(
-      @NonNull LifecycleProvider<?> lifecycleProvider) {
+  @CheckResult
+  public static <T> BoundSingleObserver.Creator<T> forSingle(LifecycleProvider<?> lifecycleProvider) {
     return new BoundSingleObserver.Creator<>(lifecycleProvider);
   }
 
-  public static <T> BoundSingleObserver.Creator<T> forSingle(@NonNull Maybe<?> lifecycle) {
+  @CheckResult
+  public static <T> BoundSingleObserver.Creator<T> forSingle(Maybe<?> lifecycle) {
     return new BoundSingleObserver.Creator<>(lifecycle);
   }
 
-  public static <T> BoundMaybeObserver.Creator<T> forMaybe(@NonNull Observable<?> lifecycle) {
+  @CheckResult
+  public static <T> BoundMaybeObserver.Creator<T> forMaybe(Observable<?> lifecycle) {
     return new BoundMaybeObserver.Creator<>(lifecycle);
   }
 
-  public static <T> BoundMaybeObserver.Creator<T> forMaybe(
-      @NonNull LifecycleProvider<?> lifecycleProvider) {
+  @CheckResult
+  public static <T> BoundMaybeObserver.Creator<T> forMaybe(LifecycleProvider<?> lifecycleProvider) {
     return new BoundMaybeObserver.Creator<>(lifecycleProvider);
   }
 
-  public static <T> BoundMaybeObserver.Creator<T> forMaybe(@NonNull Maybe<?> lifecycle) {
+  @CheckResult
+  public static <T> BoundMaybeObserver.Creator<T> forMaybe(Maybe<?> lifecycle) {
     return new BoundMaybeObserver.Creator<>(lifecycle);
   }
 
-  public static BoundCompletableObserver.Creator forCompletable(@NonNull Observable<?> lifecycle) {
+  @CheckResult
+  public static BoundCompletableObserver.Creator forCompletable(Observable<?> lifecycle) {
     return new BoundCompletableObserver.Creator(lifecycle);
   }
 
-  public static BoundCompletableObserver.Creator forCompletable(
-      @NonNull LifecycleProvider<?> lifecycleProvider) {
+  @CheckResult
+  public static BoundCompletableObserver.Creator forCompletable(LifecycleProvider<?> lifecycleProvider) {
     return new BoundCompletableObserver.Creator(lifecycleProvider);
   }
 
-  public static BoundCompletableObserver.Creator forCompletable(@NonNull Maybe<?> lifecycle) {
+  @CheckResult
+  public static BoundCompletableObserver.Creator forCompletable(Maybe<?> lifecycle) {
     return new BoundCompletableObserver.Creator(lifecycle);
   }
 }
