@@ -4,6 +4,7 @@ import com.jakewharton.rxrelay2.PublishRelay;
 import com.jakewharton.rxrelay2.Relay;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
@@ -12,6 +13,8 @@ import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.functions.Cancellable;
 import io.reactivex.functions.Function;
+import io.reactivex.processors.FlowableProcessor;
+import io.reactivex.processors.PublishProcessor;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
@@ -178,6 +181,15 @@ public class BoundObserverTest {
     Observable.just(1)
         .subscribe(Disposables.forObservable(lifecycle)
             .around(relay));
+
+    // Works for flowables and other consumers too!
+    Flowable.just(1)
+        .subscribe(Disposables.forFlowable(lifecycle)
+            .around(relay));
+    FlowableProcessor<Integer> processor = PublishProcessor.create();
+    Flowable.just(1)
+        .subscribe(Disposables.forFlowable(lifecycle)
+            .around(processor));
 
     CompletableObserver co = mock(CompletableObserver.class);
     Completable.complete()

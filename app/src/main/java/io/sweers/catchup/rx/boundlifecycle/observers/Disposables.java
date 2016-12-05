@@ -12,9 +12,9 @@ import io.reactivex.functions.Consumer;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 import org.reactivestreams.Subscriber;
 
-public final class Disposables {
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.mapEvents;
 
-  private final Maybe<?> lifecycle;
+public final class Disposables {
 
   public static Subscribers forFlowable(LifecycleProvider<?> provider) {
     return new Subscribers(provider);
@@ -76,23 +76,11 @@ public final class Disposables {
     return new CompletableObservers(lifecycle);
   }
 
-  private Disposables(LifecycleProvider<?> provider) {
-    this.lifecycle = Util.mapEvents(provider);
-  }
-
-  private Disposables(Observable<?> lifecycle) {
-    this.lifecycle = lifecycle.firstElement();
-  }
-
-  private Disposables(Maybe<?> lifecycle) {
-    this.lifecycle = lifecycle;
-  }
-
   private static class Base {
     protected final Maybe<?> lifecycle;
 
     protected Base(LifecycleProvider<?> provider) {
-      this.lifecycle = Util.mapEvents(provider);
+      this.lifecycle = mapEvents(provider);
     }
 
     protected Base(Observable<?> lifecycle) {
