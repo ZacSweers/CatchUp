@@ -42,6 +42,7 @@ import com.squareup.moshi.Rfc3339DateJsonAdapter;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
@@ -52,6 +53,8 @@ import io.sweers.catchup.data.dribbble.model.Shot;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
+import io.sweers.catchup.rx.boundlifecycle.observers.Disposables;
+import io.sweers.catchup.rx.boundlifecycle.observers.adapter.SingleObserverAdapter;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -110,20 +113,19 @@ public class DribbbleController extends BaseController
   protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
     // TODO There must be an earlier place than this
-    DaggerDribbbleController_Component
-        .builder()
+    DaggerDribbbleController_Component.builder()
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
 
     swipeRefreshLayout.setColorSchemeColors(getServiceThemeColor());
 
-    GridLayoutManager layoutManager
-        = new GridLayoutManager(getActivity(), 2);
+    GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
     recyclerView.setLayoutManager(layoutManager);
-    adapter = new Adapter(view.getContext(), (shot, viewHolder) -> RxView.clicks(viewHolder.itemView)
-        .compose(transformUrl(shot.htmlUrl()))
-        .subscribe(linkManager));
+    adapter = new Adapter(view.getContext(),
+        (shot, viewHolder) -> RxView.clicks(viewHolder.itemView)
+            .compose(transformUrl(shot.htmlUrl()))
+            .subscribe(linkManager));
     recyclerView.setAdapter(adapter);
     swipeRefreshLayout.setOnRefreshListener(this);
   }
@@ -143,18 +145,17 @@ public class DribbbleController extends BaseController
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .subscribe(BoundObservers.<List<Shot>>forSingle(this)
-            .onSuccess(shot -> {
+        .subscribe(Disposables.forSingle(lifecycle())
+            .around(shots -> {
               progress.setVisibility(GONE);
               errorView.setVisibility(GONE);
               swipeRefreshLayout.setVisibility(VISIBLE);
-              adapter.setShots(shot);
-            })
-            .onError(e -> {
+              adapter.setShots(shots);
+            }, e -> {
               if (e instanceof IOException) {
-                AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
-                    getActivity(),
-                    R.drawable.avd_no_connection);
+                AnimatedVectorDrawableCompat avd =
+                    AnimatedVectorDrawableCompat.create(getActivity(),
+                        R.drawable.avd_no_connection);
                 errorImage.setImageDrawable(avd);
                 progress.setVisibility(GONE);
                 swipeRefreshLayout.setVisibility(GONE);
@@ -162,9 +163,9 @@ public class DribbbleController extends BaseController
                 avd.start();
               } else if (e instanceof HttpException) {
                 // TODO Show some sort of API error response.
-                AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(
-                    getActivity(),
-                    R.drawable.avd_no_connection);
+                AnimatedVectorDrawableCompat avd =
+                    AnimatedVectorDrawableCompat.create(getActivity(),
+                        R.drawable.avd_no_connection);
                 errorImage.setImageDrawable(avd);
                 progress.setVisibility(GONE);
                 swipeRefreshLayout.setVisibility(GONE);
@@ -172,8 +173,7 @@ public class DribbbleController extends BaseController
                 avd.start();
               }
               Timber.e(e, "Update failed!");
-            })
-          .create());
+            }));
   }
 
   @OnClick(R.id.retry_button)
@@ -200,10 +200,7 @@ public class DribbbleController extends BaseController
   }
 
   @PerController
-  @dagger.Component(
-      modules = DribbbleController.Module.class,
-      dependencies = ActivityComponent.class
-  )
+  @dagger.Component(modules = DribbbleController.Module.class, dependencies = ActivityComponent.class)
   public interface Component {
     void inject(DribbbleController controller);
   }
@@ -223,7 +220,8 @@ public class DribbbleController extends BaseController
       } else {
         loadingColorArrayId = R.array.loading_placeholders_light;
       }
-      int[] placeholderColors = context.getResources().getIntArray(loadingColorArrayId);
+      int[] placeholderColors = context.getResources()
+          .getIntArray(loadingColorArrayId);
       shotLoadingPlaceholders = new ColorDrawable[placeholderColors.length];
       for (int i = 0; i < placeholderColors.length; i++) {
         shotLoadingPlaceholders[i] = new ColorDrawable(placeholderColors[i]);
@@ -245,14 +243,15 @@ public class DribbbleController extends BaseController
 
     @Override
     public long getItemId(int position) {
-      return shots.get(position).stableId();
+      return shots.get(position)
+          .stableId();
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public DribbbleShotHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      final DribbbleShotHolder holder = new DribbbleShotHolder(
-          LayoutInflater.from(parent.getContext())
+      final DribbbleShotHolder holder =
+          new DribbbleShotHolder(LayoutInflater.from(parent.getContext())
               .inflate(R.layout.dribbble_shot_item, parent, false));
       holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR);
       holder.image.setForeground(UiUtil.createColorSelector(0x40808080, null));
@@ -262,7 +261,9 @@ public class DribbbleController extends BaseController
         final int action = event.getAction();
         if (!(action == MotionEvent.ACTION_DOWN
             || action == MotionEvent.ACTION_UP
-            || action == MotionEvent.ACTION_CANCEL)) return false;
+            || action == MotionEvent.ACTION_CANCEL)) {
+          return false;
+        }
 
         // get the image and check if it's an animated GIF
         final Drawable drawable = holder.image.getDrawable();
@@ -326,13 +327,14 @@ public class DribbbleController extends BaseController
       }
 
       public void bindView(Shot shot) {
-        final int[] imageSize = shot.images().bestSize();
+        final int[] imageSize = shot.images()
+            .bestSize();
         Glide.with(itemView.getContext())
-            .load(shot.images().best())
+            .load(shot.images()
+                .best())
             .listener(new RequestListener<String, GlideDrawable>() {
               @Override
-              public boolean onResourceReady(
-                  GlideDrawable resource,
+              public boolean onResourceReady(GlideDrawable resource,
                   String model,
                   Target<GlideDrawable> target,
                   boolean isFromMemoryCache,
@@ -340,8 +342,8 @@ public class DribbbleController extends BaseController
                 if (!shot.hasFadedIn) {
                   image.setHasTransientState(true);
                   final ObservableColorMatrix cm = new ObservableColorMatrix();
-                  final ObjectAnimator saturation = ObjectAnimator.ofFloat(
-                      cm, ObservableColorMatrix.SATURATION, 0f, 1f);
+                  final ObjectAnimator saturation =
+                      ObjectAnimator.ofFloat(cm, ObservableColorMatrix.SATURATION, 0f, 1f);
                   saturation.addUpdateListener(valueAnimator -> {
                     // just animating the color matrix does not invalidate the
                     // drawable so need this update listener.  Also have to create a
@@ -364,35 +366,36 @@ public class DribbbleController extends BaseController
               }
 
               @Override
-              public boolean onException(Exception e, String model, Target<GlideDrawable>
-                  target, boolean isFirstResource) {
+              public boolean onException(Exception e,
+                  String model,
+                  Target<GlideDrawable> target,
+                  boolean isFirstResource) {
                 return false;
               }
             })
-            .placeholder(shotLoadingPlaceholders[getAdapterPosition() %
-                shotLoadingPlaceholders.length])
+            .placeholder(shotLoadingPlaceholders[getAdapterPosition()
+                % shotLoadingPlaceholders.length])
             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
             .fitCenter()
             .override(imageSize[0], imageSize[1])
             .into(new DribbbleTarget(image, false));
         // need both placeholder & background to prevent seeing through shot as it fades in
-        image.setBackground(shotLoadingPlaceholders[getAdapterPosition() %
-            shotLoadingPlaceholders.length]);
+        image.setBackground(shotLoadingPlaceholders[getAdapterPosition()
+            % shotLoadingPlaceholders.length]);
         image.showBadge(shot.animated());
       }
     }
   }
 
-  @dagger.Module
-  public abstract static class Module {
+  @dagger.Module public abstract static class Module {
 
     @Provides
     @PerController
     @ForApi
     static OkHttpClient provideDribbbleOkHttpClient(OkHttpClient client) {
-      return client
-          .newBuilder()
-          .addInterceptor(AuthInterceptor.create("Bearer", BuildConfig.DRIBBBLE_CLIENT_ACCESS_TOKEN))
+      return client.newBuilder()
+          .addInterceptor(AuthInterceptor.create("Bearer",
+              BuildConfig.DRIBBBLE_CLIENT_ACCESS_TOKEN))
           .build();
     }
 
@@ -407,13 +410,12 @@ public class DribbbleController extends BaseController
 
     @Provides
     @PerController
-    static DribbbleService provideDribbbleService(
-        @ForApi final Lazy<OkHttpClient> client,
+    static DribbbleService provideDribbbleService(@ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
-      return new Retrofit.Builder()
-          .baseUrl(DribbbleService.ENDPOINT)
-          .callFactory(request -> client.get().newCall(request))
+      return new Retrofit.Builder().baseUrl(DribbbleService.ENDPOINT)
+          .callFactory(request -> client.get()
+              .newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .build()

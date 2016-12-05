@@ -20,6 +20,7 @@ import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
 import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.rx.Transformers;
 import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
+import io.sweers.catchup.rx.boundlifecycle.observers.Disposables;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import javax.inject.Inject;
@@ -52,9 +53,8 @@ import static io.sweers.catchup.rx.Transformers.doOnEmpty;
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
     Observable.merge(toV2Observable(RxBroadcastReceiver.create(activity, filter)),
         toV2Observable(globalSmartLinkingPref.asObservable()))
-        .subscribe(BoundObservers.forObservable(activity)
-            .onNext(o -> dumbCache.clear())
-            .create());
+        .subscribe(Disposables.forObservable(activity)
+            .around(o -> dumbCache.clear()));
   }
 
   /**
@@ -108,12 +108,11 @@ import static io.sweers.catchup.rx.Transformers.doOnEmpty;
           dumbCache.put(uri.getHost(), false);
           openCustomTab(uri, accentColor);
         }))
-        .subscribe(BoundObservers.forObservable(activity)
-            .onNext(o -> {
+        .subscribe(Disposables.forObservable(activity)
+            .around(o -> {
               dumbCache.put(uri.getHost(), true);
               activity.startActivity(intent);
-            })
-            .create());
+            }));
   }
 
   private void openCustomTab(@NonNull Uri uri, @ColorInt int accentColor) {

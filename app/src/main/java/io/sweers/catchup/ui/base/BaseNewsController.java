@@ -23,7 +23,7 @@ import com.jakewharton.rxbinding.view.RxView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.sweers.catchup.R;
-import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
+import io.sweers.catchup.rx.boundlifecycle.observers.Disposables;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.util.NumberUtil;
 import io.sweers.catchup.util.Strings;
@@ -125,13 +125,13 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .subscribe(BoundObservers.<List<T>>forSingle(this).onSuccess(data -> {
-          progress.setVisibility(GONE);
-          errorView.setVisibility(GONE);
-          swipeRefreshLayout.setVisibility(VISIBLE);
-          adapter.setData(data);
-        })
-            .onError(e -> {
+        .subscribe(Disposables.forSingle(this)
+            .around(data -> {
+              progress.setVisibility(GONE);
+              errorView.setVisibility(GONE);
+              swipeRefreshLayout.setVisibility(VISIBLE);
+              adapter.setData(data);
+            }, e -> {
               if (e instanceof IOException) {
                 AnimatedVectorDrawableCompat avd =
                     AnimatedVectorDrawableCompat.create(getActivity(),
@@ -153,8 +153,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
                 avd.start();
               }
               Timber.e(e, "Update failed!");
-            })
-            .create());
+            }));
   }
 
   @Override
@@ -257,8 +256,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       } else {
         scoreDivider.setVisibility(VISIBLE);
         score.setVisibility(VISIBLE);
-        score.setText(String.format(
-            "%s %s",
+        score.setText(String.format("%s %s",
             scoreValue.first,
             NumberUtil.format(scoreValue.second)));
       }
@@ -284,8 +282,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     }
 
     private void timestamp(long date) {
-      timestamp.setText(DateUtils.getRelativeTimeSpanString(
-          date,
+      timestamp.setText(DateUtils.getRelativeTimeSpanString(date,
           System.currentTimeMillis(),
           0L,
           DateUtils.FORMAT_ABBREV_ALL));
