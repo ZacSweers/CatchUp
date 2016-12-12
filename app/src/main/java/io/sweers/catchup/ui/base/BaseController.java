@@ -11,9 +11,38 @@ import rx.Observable;
 public abstract class BaseController extends RefWatchingController
     implements LifecycleProvider<ControllerEvent> {
 
-  private BehaviorSubject<ControllerEvent> lifecycleSubject = BehaviorSubject.create();
+  private BehaviorSubject<ControllerEvent> lifecycleSubject =
+      BehaviorSubject.createDefault(ControllerEvent.CREATE);
 
   protected BaseController() {
+    // TODO this breaks controllers magnificently
+    //addLifecycleListener(new Controller.LifecycleListener() {
+    //
+    //  @Override
+    //  public void preCreateView(@NonNull Controller controller) {
+    //    lifecycleSubject.onNext(ControllerEvent.CREATE_VIEW);
+    //  }
+    //
+    //  @Override
+    //  public void preAttach(@NonNull Controller controller, @NonNull View view) {
+    //    lifecycleSubject.onNext(ControllerEvent.ATTACH);
+    //  }
+    //
+    //  @Override
+    //  public void preDetach(@NonNull Controller controller, @NonNull View view) {
+    //    lifecycleSubject.onNext(ControllerEvent.DETACH);
+    //  }
+    //
+    //  @Override
+    //  public void preDestroyView(@NonNull Controller controller, @NonNull View view) {
+    //    lifecycleSubject.onNext(ControllerEvent.DESTROY_VIEW);
+    //  }
+    //
+    //  @Override
+    //  public void preDestroy(@NonNull Controller controller) {
+    //    lifecycleSubject.onNext(ControllerEvent.DESTROY);
+    //  }
+    //});
   }
 
   protected BaseController(Bundle args) {

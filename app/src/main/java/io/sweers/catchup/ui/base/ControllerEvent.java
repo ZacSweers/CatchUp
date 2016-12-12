@@ -7,16 +7,18 @@ import io.sweers.catchup.rx.autodispose.LifecycleEndedException;
  * Controller lifecycle events
  */
 public enum ControllerEvent {
-  CREATE, ATTACH, CREATE_VIEW, DESTROY_VIEW, DETACH, DESTROY;
+  CREATE, CREATE_VIEW, ATTACH, DETACH, DESTROY_VIEW, DESTROY;
   static final Function<ControllerEvent, ControllerEvent> LIFECYCLE = lastEvent -> {
     switch (lastEvent) {
       case CREATE:
         return DESTROY;
-      case ATTACH:
-        return DETACH;
       case CREATE_VIEW:
         return DESTROY_VIEW;
+      case ATTACH:
+        return DETACH;
       case DETACH:
+        return DESTROY_VIEW;
+      case DESTROY_VIEW:
         return DESTROY;
       case DESTROY:
         throw new LifecycleEndedException(
