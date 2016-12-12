@@ -24,11 +24,6 @@ public abstract class MaybeObserverAdapter<T> implements MaybeObserver<T> {
   }
 
   @Override
-  public final String toString() {
-    return super.toString();
-  }
-
-  @Override
   protected final void finalize() throws Throwable {
     super.finalize();
   }

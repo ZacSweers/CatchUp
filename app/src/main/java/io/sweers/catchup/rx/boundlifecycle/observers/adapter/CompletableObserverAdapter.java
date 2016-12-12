@@ -24,11 +24,6 @@ public abstract class CompletableObserverAdapter implements CompletableObserver 
   }
 
   @Override
-  public final String toString() {
-    return super.toString();
-  }
-
-  @Override
   protected final void finalize() throws Throwable {
     super.finalize();
   }

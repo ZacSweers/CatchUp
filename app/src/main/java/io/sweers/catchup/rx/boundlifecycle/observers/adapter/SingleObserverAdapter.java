@@ -21,11 +21,6 @@ public abstract class SingleObserverAdapter<T> implements SingleObserver<T> {
   }
 
   @Override
-  public final String toString() {
-    return super.toString();
-  }
-
-  @Override
   protected final void finalize() throws Throwable {
     super.finalize();
   }

@@ -24,11 +24,6 @@ public abstract class SubscriberAdapter<T> implements Subscriber<T> {
   }
 
   @Override
-  public final String toString() {
-    return super.toString();
-  }
-
-  @Override
   protected final void finalize() throws Throwable {
     super.finalize();
   }
