@@ -23,7 +23,7 @@ import com.jakewharton.rxbinding.view.RxView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.sweers.catchup.R;
-import io.sweers.catchup.rx.boundlifecycle.observers.Disposables;
+import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.util.NumberUtil;
 import io.sweers.catchup.util.Strings;
@@ -125,7 +125,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .subscribe(Disposables.forSingle(this)
+        .subscribe(AutoDispose.single(this)
             .around(data -> {
               progress.setVisibility(GONE);
               errorView.setVisibility(GONE);

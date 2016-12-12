@@ -1,10 +1,10 @@
-package io.sweers.catchup.rx.boundlifecycle.observers.adapter;
+package io.sweers.catchup.rx.observers.adapter;
 
-import io.reactivex.MaybeObserver;
+import io.reactivex.CompletableObserver;
 import io.reactivex.disposables.Disposable;
 
-public abstract class MaybeObserverAdapter<T> implements MaybeObserver<T> {
-  public MaybeObserverAdapter() {
+public abstract class CompletableObserverAdapter implements CompletableObserver {
+  public CompletableObserverAdapter() {
     super();
   }
 
@@ -34,17 +34,12 @@ public abstract class MaybeObserverAdapter<T> implements MaybeObserver<T> {
   }
 
   @Override
-  public void onSuccess(T value) {
+  public void onComplete() {
 
   }
 
   @Override
   public void onError(Throwable e) {
-
-  }
-
-  @Override
-  public void onComplete() {
 
   }
 }

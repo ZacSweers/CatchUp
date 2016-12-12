@@ -1,12 +1,9 @@
-package io.sweers.catchup.rx.boundlifecycle.observers.adapter;
+package io.sweers.catchup.rx.observers.adapter;
 
-import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 
-public abstract class ObserverAdapter<T> implements Observer<T> {
-  public ObserverAdapter() {
-    super();
-  }
+public abstract class SingleObserverAdapter<T> implements SingleObserver<T> {
 
   @Override
   public final int hashCode() {
@@ -34,17 +31,12 @@ public abstract class ObserverAdapter<T> implements Observer<T> {
   }
 
   @Override
-  public void onNext(T value) {
+  public void onSuccess(T value) {
 
   }
 
   @Override
   public void onError(Throwable e) {
-
-  }
-
-  @Override
-  public void onComplete() {
 
   }
 }

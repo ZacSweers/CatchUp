@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v4.util.Pair;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
-import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
+import io.sweers.catchup.rx.autodispose.LifecycleProvider;
 import javax.annotation.Nonnull;
 import rx.Observable;
 

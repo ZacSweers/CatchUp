@@ -19,8 +19,7 @@ import io.sweers.catchup.R;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
 import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.rx.Transformers;
-import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
-import io.sweers.catchup.rx.boundlifecycle.observers.Disposables;
+import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 import javax.inject.Inject;
@@ -53,7 +52,7 @@ import static io.sweers.catchup.rx.Transformers.doOnEmpty;
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
     Observable.merge(toV2Observable(RxBroadcastReceiver.create(activity, filter)),
         toV2Observable(globalSmartLinkingPref.asObservable()))
-        .subscribe(Disposables.forObservable(activity)
+        .subscribe(AutoDispose.observable(activity)
             .around(o -> dumbCache.clear()));
   }
 
@@ -108,7 +107,7 @@ import static io.sweers.catchup.rx.Transformers.doOnEmpty;
           dumbCache.put(uri.getHost(), false);
           openCustomTab(uri, accentColor);
         }))
-        .subscribe(Disposables.forObservable(activity)
+        .subscribe(AutoDispose.observable(activity)
             .around(o -> {
               dumbCache.put(uri.getHost(), true);
               activity.startActivity(intent);

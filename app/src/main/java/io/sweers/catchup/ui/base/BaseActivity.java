@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.jakewharton.rxrelay2.BehaviorRelay;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
-import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
+import io.sweers.catchup.rx.autodispose.LifecycleProvider;
 import javax.annotation.Nonnull;
 
 public class BaseActivity extends AppCompatActivity implements LifecycleProvider<ActivityEvent> {

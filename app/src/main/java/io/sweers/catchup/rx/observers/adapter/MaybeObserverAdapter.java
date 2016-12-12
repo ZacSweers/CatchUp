@@ -1,10 +1,10 @@
-package io.sweers.catchup.rx.boundlifecycle.observers.adapter;
+package io.sweers.catchup.rx.observers.adapter;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
+import io.reactivex.MaybeObserver;
+import io.reactivex.disposables.Disposable;
 
-public abstract class SubscriberAdapter<T> implements Subscriber<T> {
-  public SubscriberAdapter() {
+public abstract class MaybeObserverAdapter<T> implements MaybeObserver<T> {
+  public MaybeObserverAdapter() {
     super();
   }
 
@@ -29,17 +29,17 @@ public abstract class SubscriberAdapter<T> implements Subscriber<T> {
   }
 
   @Override
-  public void onSubscribe(Subscription s) {
+  public void onSubscribe(Disposable d) {
 
   }
 
   @Override
-  public void onNext(T t) {
+  public void onSuccess(T value) {
 
   }
 
   @Override
-  public void onError(Throwable t) {
+  public void onError(Throwable e) {
 
   }
 

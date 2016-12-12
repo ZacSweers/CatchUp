@@ -1,7 +1,8 @@
-package io.sweers.catchup.rx.boundlifecycle;
+package io.sweers.catchup.rx.autodispose;
 
 import com.jakewharton.rxrelay2.PublishRelay;
 import com.jakewharton.rxrelay2.Relay;
+import hu.akarnokd.rxjava2.subjects.MaybeSubject;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Flowable;
@@ -17,12 +18,7 @@ import io.reactivex.processors.FlowableProcessor;
 import io.reactivex.processors.PublishProcessor;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
-import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
-import io.sweers.catchup.rx.boundlifecycle.observers.Disposables;
-import io.sweers.catchup.ui.base.LifecycleEndedException;
-import io.sweers.catchup.ui.base.LifecycleNotStartedException;
 import io.sweers.testutils.RecordingObserver2;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nonnull;
 import org.junit.Test;
 
@@ -31,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class BoundObserverTest {
+public class AutoDisposeObserverTest {
 
   private static final Function<Integer, Integer> CORRESPONDING_EVENTS = lastEvent -> {
     switch (lastEvent) {
@@ -40,38 +36,63 @@ public class BoundObserverTest {
       case 1:
         return 2;
       default:
-        throw new LifecycleEndedException("Out of lifecycle");
+        throw new LifecycleEndedException();
     }
   };
 
   @Test
-  public void testBoundObserver() {
-    AtomicInteger valHolder = new AtomicInteger(0);
+  public void autoDispose_withObservable() {
+    RecordingObserver2<Integer> o = new RecordingObserver2<>();
     PublishSubject<Integer> source = PublishSubject.create();
     PublishSubject<Integer> lifecycle = PublishSubject.create();
-    source.subscribe(BoundObservers.<Integer>forObservable(lifecycle).onNext(valHolder::set)
-        .create());
+    source.subscribe(AutoDispose.observable(lifecycle)
+        .around(o));
+    o.takeSubscribe();
 
     assertThat(source.hasObservers()).isTrue();
     assertThat(lifecycle.hasObservers()).isTrue();
 
     source.onNext(1);
-    assertThat(valHolder.get()).isEqualTo(1);
+    assertThat(o.takeNext()).isEqualTo(1);
 
     lifecycle.onNext(2);
     source.onNext(2);
-    assertThat(valHolder.get()).isEqualTo(1);
+    o.assertNoMoreEvents();
     assertThat(source.hasObservers()).isFalse();
     assertThat(lifecycle.hasObservers()).isFalse();
   }
 
   @Test
-  public void testBoundObserver_withProvider() {
+  public void autoDispose_withMaybe() {
+    RecordingObserver2<Integer> o = new RecordingObserver2<>();
+    PublishSubject<Integer> source = PublishSubject.create();
+    MaybeSubject<Integer> lifecycle = MaybeSubject.create();
+    source.subscribe(AutoDispose.observable(lifecycle)
+        .around(o));
+    o.takeSubscribe();
+
+    assertThat(source.hasObservers()).isTrue();
+    assertThat(lifecycle.hasObservers()).isTrue();
+
+    source.onNext(1);
+    assertThat(o.takeNext()).isEqualTo(1);
+
+    lifecycle.onSuccess(2);
+    source.onNext(2);
+    o.assertNoMoreEvents();
+    assertThat(source.hasObservers()).isFalse();
+    assertThat(lifecycle.hasObservers()).isFalse();
+  }
+
+  @Test
+  public void autoDispose_withProvider() {
     RecordingObserver2<Integer> o = new RecordingObserver2<>();
     PublishSubject<Integer> source = PublishSubject.create();
     BehaviorSubject<Integer> lifecycle = BehaviorSubject.createDefault(0);
     LifecycleProvider<Integer> provider = makeProvider(lifecycle);
-    source.subscribe(BoundObservers.<Integer>forObservable(provider).around(o));
+    source.subscribe(AutoDispose.observable(provider)
+        .around(o));
+    o.takeSubscribe();
 
     assertThat(source.hasObservers()).isTrue();
     assertThat(lifecycle.hasObservers()).isTrue();
@@ -95,19 +116,45 @@ public class BoundObserverTest {
   }
 
   @Test
-  public void testBoundObserver_withProvider_withoutStartingLifecycle_shouldFail() {
+  public void autoDispose_shouldTerminateNormally_onNormalExecution() {
+    RecordingObserver2<Integer> o = new RecordingObserver2<>();
+    PublishSubject<Integer> source = PublishSubject.create();
+    PublishSubject<Integer> lifecycle = PublishSubject.create();
+    AutoDisposingObserver<Integer> auto =
+        (AutoDisposingObserver<Integer>) AutoDispose.observable(lifecycle)
+            .around(o);
+    source.subscribe(auto);
+    o.takeSubscribe();
+
+    assertThat(source.hasObservers()).isTrue();
+    assertThat(lifecycle.hasObservers()).isTrue();
+
+    source.onNext(1);
+    assertThat(o.takeNext()).isEqualTo(1);
+
+    source.onNext(2);
+    source.onComplete();
+    assertThat(o.takeNext()).isEqualTo(2);
+    o.assertOnComplete();
+    assertThat(auto.isDisposed()).isTrue();
+    assertThat(source.hasObservers()).isFalse();
+    assertThat(lifecycle.hasObservers()).isFalse();
+  }
+
+  @Test
+  public void autoDispose_withProvider_withoutStartingLifecycle_shouldFail() {
     BehaviorSubject<Integer> lifecycle = BehaviorSubject.create();
     RecordingObserver2<Integer> o = new RecordingObserver2<>();
     LifecycleProvider<Integer> provider = makeProvider(lifecycle);
     Observable.just(1)
-        .subscribe(Disposables.forObservable(provider)
+        .subscribe(AutoDispose.observable(provider)
             .around(o));
 
     assertThat(o.takeError()).isInstanceOf(LifecycleNotStartedException.class);
   }
 
   @Test
-  public void testBoundObserver_withProvider_afterLifecycle_shouldFail() {
+  public void autoDispose_withProvider_afterLifecycle_shouldFail() {
     BehaviorSubject<Integer> lifecycle = BehaviorSubject.createDefault(0);
     lifecycle.onNext(1);
     lifecycle.onNext(2);
@@ -115,7 +162,7 @@ public class BoundObserverTest {
     RecordingObserver2<Integer> o = new RecordingObserver2<>();
     LifecycleProvider<Integer> provider = makeProvider(lifecycle);
     Observable.just(1)
-        .subscribe(Disposables.forObservable(provider)
+        .subscribe(AutoDispose.observable(provider)
             .around(o));
 
     assertThat(o.takeError()).isInstanceOf(LifecycleEndedException.class);
@@ -131,7 +178,8 @@ public class BoundObserverTest {
       emitter[0] = e;
     });
     PublishSubject<Integer> lifecycle = PublishSubject.create();
-    source.subscribe(BoundObservers.<Integer>forObservable(lifecycle).create());
+    source.subscribe(AutoDispose.observable(lifecycle)
+        .empty());
 
     verify(cancellable, never()).cancel();
     assertThat(lifecycle.hasObservers()).isTrue();
@@ -145,67 +193,46 @@ public class BoundObserverTest {
   }
 
   @Test
-  public void alternateCreator() {
-    PublishSubject<Integer> source = PublishSubject.create();
-    PublishSubject<Integer> lifecycle = PublishSubject.create();
-    RecordingObserver2<Integer> o = new RecordingObserver2<>();
-    source.subscribe(Disposables.forObservable(lifecycle)
-        .around(o));
-
-    assertThat(source.hasObservers()).isTrue();
-    assertThat(lifecycle.hasObservers()).isTrue();
-    o.assertNoMoreEvents();
-
-    source.onNext(1);
-    assertThat(o.takeNext()).isEqualTo(1);
-
-    lifecycle.onNext(2);
-    source.onNext(2);
-    o.assertNoMoreEvents();
-    assertThat(source.hasObservers()).isFalse();
-    assertThat(lifecycle.hasObservers()).isFalse();
-  }
-
-  @Test
-  public void disposablesDemos() {
+  @SuppressWarnings("unchecked")
+  public void demos() {
     PublishSubject<Integer> lifecycle = PublishSubject.create();
     SingleObserver<Integer> so = mock(SingleObserver.class);
     MaybeObserver<Integer> mo = mock(MaybeObserver.class);
 
     Single.just(1)
-        .subscribe(Disposables.forSingle(lifecycle)
+        .subscribe(AutoDispose.single(lifecycle)
             .around(so));
     Maybe.just(1)
-        .subscribe(Disposables.forMaybe(lifecycle)
+        .subscribe(AutoDispose.maybe(lifecycle)
             .around(mo));
 
     Observable.just(1)
-        .subscribe(Disposables.forObservable(lifecycle)
+        .subscribe(AutoDispose.observable(lifecycle)
             .around(t -> System.out.println("Hello")));
     Maybe.just(1)
-        .subscribe(Disposables.forMaybe(lifecycle)
+        .subscribe(AutoDispose.maybe(lifecycle)
             .around(t -> System.out.println("Hello")));
     Single.just(1)
-        .subscribe(Disposables.forSingle(lifecycle)
+        .subscribe(AutoDispose.single(lifecycle)
             .around(t -> System.out.println("Hello")));
 
     Relay<Integer> relay = PublishRelay.create();
     Observable.just(1)
-        .subscribe(Disposables.forObservable(lifecycle)
+        .subscribe(AutoDispose.observable(lifecycle)
             .around(relay));
 
-    // Works for flowables and other consumers too!
+    // Works flowables and other consumers too!
     Flowable.just(1)
-        .subscribe(Disposables.forFlowable(lifecycle)
+        .subscribe(AutoDispose.flowable(lifecycle)
             .around(relay));
     FlowableProcessor<Integer> processor = PublishProcessor.create();
     Flowable.just(1)
-        .subscribe(Disposables.forFlowable(lifecycle)
+        .subscribe(AutoDispose.flowable(lifecycle)
             .around(processor));
 
     CompletableObserver co = mock(CompletableObserver.class);
     Completable.complete()
-        .subscribe(Disposables.forCompletable(lifecycle)
+        .subscribe(AutoDispose.completable(lifecycle)
             .around(co));
   }
 

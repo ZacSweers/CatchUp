@@ -1,10 +1,10 @@
-package io.sweers.catchup.rx.boundlifecycle.observers.adapter;
+package io.sweers.catchup.rx.observers.adapter;
 
-import io.reactivex.CompletableObserver;
-import io.reactivex.disposables.Disposable;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
-public abstract class CompletableObserverAdapter implements CompletableObserver {
-  public CompletableObserverAdapter() {
+public abstract class SubscriberAdapter<T> implements Subscriber<T> {
+  public SubscriberAdapter() {
     super();
   }
 
@@ -29,17 +29,22 @@ public abstract class CompletableObserverAdapter implements CompletableObserver 
   }
 
   @Override
-  public void onSubscribe(Disposable d) {
+  public void onSubscribe(Subscription s) {
+
+  }
+
+  @Override
+  public void onNext(T t) {
+
+  }
+
+  @Override
+  public void onError(Throwable t) {
 
   }
 
   @Override
   public void onComplete() {
-
-  }
-
-  @Override
-  public void onError(Throwable e) {
 
   }
 }

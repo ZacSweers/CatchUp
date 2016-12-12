@@ -1,4 +1,4 @@
-package io.sweers.catchup.ui.base;
+package io.sweers.catchup.rx.autodispose;
 
 /**
  * Signifies an error occurred due to execution starting before the lifecycle has started.
@@ -6,6 +6,10 @@ package io.sweers.catchup.ui.base;
 public class LifecycleNotStartedException extends OutsideLifecycleException {
 
   public LifecycleNotStartedException() {
-    super("Lifecycle hasn't started!");
+    this("Lifecycle hasn't started!");
+  }
+
+  public LifecycleNotStartedException(String s) {
+    super(s);
   }
 }

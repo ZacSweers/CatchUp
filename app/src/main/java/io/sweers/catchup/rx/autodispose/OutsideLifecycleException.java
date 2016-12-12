@@ -1,4 +1,4 @@
-package io.sweers.catchup.ui.base;
+package io.sweers.catchup.rx.autodispose;
 
 /**
  * Signifies an error occurred due to execution starting outside the lifecycle.

@@ -42,7 +42,6 @@ import com.squareup.moshi.Rfc3339DateJsonAdapter;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
@@ -52,9 +51,7 @@ import io.sweers.catchup.data.dribbble.DribbbleService;
 import io.sweers.catchup.data.dribbble.model.Shot;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
-import io.sweers.catchup.rx.boundlifecycle.observers.Disposables;
-import io.sweers.catchup.rx.boundlifecycle.observers.adapter.SingleObserverAdapter;
+import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -145,7 +142,7 @@ public class DribbbleController extends BaseController
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .subscribe(Disposables.forSingle(lifecycle())
+        .subscribe(AutoDispose.single(lifecycle())
             .around(shots -> {
               progress.setVisibility(GONE);
               errorView.setVisibility(GONE);
