@@ -74,14 +74,15 @@ ext {
     rxBindingVersion = '0.4.0'
     rxBinding = "com.jakewharton.rxbinding:rxbinding:$rxBindingVersion"
     rxBindingV4 = "com.jakewharton.rxbinding:rxbinding-support-v4:$rxBindingVersion"
-    rxJava = 'io.reactivex:rxjava:1.2.2'
+    rxJava = 'io.reactivex:rxjava:1.2.3'
     rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.2'
     rxReceivers = 'com.f2prateek.rx.receivers:rx-receivers:0.1.0'
     rxRelay = 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 
-    rxJava2 = 'io.reactivex.rxjava2:rxjava:2.0.1'
+    rxJava2 = 'io.reactivex.rxjava2:rxjava:2.0.2'
     rxAndroid2 = 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    rxJava2Interop = 'com.github.akarnokd:rxjava2-interop:0.6.2'
+    rxJava2Interop = 'com.github.akarnokd:rxjava2-interop:0.7.2'
+    rxJava2Extensions = 'com.github.akarnokd:rxjava2-extensions:0.12.0'
     retrofitRxJava2Adapter = 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
 
     // Square and JW
