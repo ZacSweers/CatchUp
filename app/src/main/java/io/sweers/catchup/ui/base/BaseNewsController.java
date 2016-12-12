@@ -151,6 +151,16 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
                 swipeRefreshLayout.setVisibility(GONE);
                 errorView.setVisibility(VISIBLE);
                 avd.start();
+              } else {
+                // TODO Show some sort of generic response error
+                AnimatedVectorDrawableCompat avd =
+                    AnimatedVectorDrawableCompat.create(getActivity(),
+                        R.drawable.avd_no_connection);
+                errorImage.setImageDrawable(avd);
+                progress.setVisibility(GONE);
+                swipeRefreshLayout.setVisibility(GONE);
+                errorView.setVisibility(VISIBLE);
+                avd.start();
               }
               Timber.e(e, "Update failed!");
             }));
