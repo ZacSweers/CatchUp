@@ -1,6 +1,7 @@
 package io.sweers.catchup.rx.boundlifecycle;
 
 import android.support.annotation.CheckResult;
+import android.support.annotation.Nullable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 
@@ -18,5 +19,6 @@ public interface LifecycleProvider<E> {
   @CheckResult
   Function<E, E> correspondingEvents();
 
-  boolean hasLifecycleStarted();
+  @Nullable
+  E peekLifecycle();
 }

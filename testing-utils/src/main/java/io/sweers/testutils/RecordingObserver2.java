@@ -1,6 +1,7 @@
 package io.sweers.testutils;
 
 import com.google.common.truth.Platform;
+import io.reactivex.MaybeObserver;
 import io.reactivex.disposables.Disposable;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingDeque;
@@ -9,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public final class RecordingObserver2<T> implements io.reactivex.Observer<T> {
+public final class RecordingObserver2<T> implements io.reactivex.Observer<T>, MaybeObserver<T> {
   private static final String TAG = "RecordingObserver2";
 
   private final BlockingDeque<Object> events = new LinkedBlockingDeque<>();
@@ -30,6 +31,12 @@ public final class RecordingObserver2<T> implements io.reactivex.Observer<T> {
   public void onSubscribe(Disposable d) {
     //Log.v(TAG, "onSubscribe");
     events.addLast(new OnSubscribe(d));
+  }
+
+  @Override
+  public void onSuccess(T value) {
+    //Log.v(TAG, "onSuccess");
+    events.addLast(new OnSuccess(value));
   }
 
   @Override
@@ -68,6 +75,11 @@ public final class RecordingObserver2<T> implements io.reactivex.Observer<T> {
     return event.value;
   }
 
+  public T takeSuccess() {
+    OnSuccess event = takeEvent(OnSuccess.class);
+    return event.value;
+  }
+
   public Disposable takeDisposable() {
     return takeEvent(OnSubscribe.class).disposable;
   }
@@ -76,7 +88,7 @@ public final class RecordingObserver2<T> implements io.reactivex.Observer<T> {
     return takeEvent(OnError.class).throwable;
   }
 
-  public void assertOnCompleted() {
+  public void assertOnComplete() {
     takeEvent(OnCompleted.class);
   }
 
@@ -131,6 +143,19 @@ public final class RecordingObserver2<T> implements io.reactivex.Observer<T> {
     @Override
     public String toString() {
       return "OnSubscribe[" + disposable + "]";
+    }
+  }
+
+  private final class OnSuccess {
+    private final T value;
+
+    private OnSuccess(T value) {
+      this.value = value;
+    }
+
+    @Override
+    public String toString() {
+      return "OnSuccess[" + value + "]";
     }
   }
 }

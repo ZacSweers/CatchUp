@@ -2,19 +2,19 @@ package io.sweers.catchup.rx.boundlifecycle.observers;
 
 import android.support.annotation.Nullable;
 import io.reactivex.Maybe;
+import io.reactivex.MaybeSource;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
-import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
+import io.sweers.catchup.ui.base.LifecycleNotStartedException;
+import java.util.concurrent.Callable;
 import rx.exceptions.OnErrorNotImplementedException;
 
 class Util {
 
-  private static final BiFunction<Object, Object, Boolean> COMPARATOR =
-      (BiFunction<Object, Object, Boolean>) Object::equals;
   private static final Function<Object, LifecycleEvent> TRANSFORM_TO_END = o -> LifecycleEvent.END;
 
   static final Action EMPTY_ACTION = new Action() {
@@ -61,14 +61,24 @@ class Util {
     }
   }
 
-  static <E> Maybe<LifecycleEvent> mapEvents(LifecycleProvider<E> provider) {
-    return mapEvents(provider.lifecycle(), provider.correspondingEvents());
+  static <E> Maybe<LifecycleEvent> deferredResolvedLifecycle(LifecycleProvider<E> provider) {
+    checkNotNull(provider, "provider == null");
+    return Maybe.defer(new Callable<MaybeSource<LifecycleEvent>>() {
+      @Override
+      public MaybeSource<LifecycleEvent> call() throws Exception {
+        E lastEvent = provider.peekLifecycle();
+        if (lastEvent == null) {
+          throw new LifecycleNotStartedException();
+        }
+        E endEvent = provider.correspondingEvents().apply(lastEvent);
+        return mapEvents(provider.lifecycle(), endEvent);
+      }
+    });
   }
 
-  static <E> Maybe<LifecycleEvent> mapEvents(Observable<E> lifecycle,
-      Function<E, E> correspondingEvents) {
-    return Observable.combineLatest(lifecycle.take(1)
-        .map(correspondingEvents), lifecycle.skip(1), COMPARATOR)
+  private static <E> Maybe<LifecycleEvent> mapEvents(Observable<E> lifecycle, E endEvent) {
+    return lifecycle.skip(1)
+        .map(e -> e.equals(endEvent))
         .filter(b -> b)
         .map(TRANSFORM_TO_END)
         .firstElement();

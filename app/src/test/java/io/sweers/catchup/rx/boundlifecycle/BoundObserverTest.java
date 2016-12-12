@@ -19,6 +19,8 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import io.sweers.catchup.rx.boundlifecycle.observers.BoundObservers;
 import io.sweers.catchup.rx.boundlifecycle.observers.Disposables;
+import io.sweers.catchup.ui.base.LifecycleEndedException;
+import io.sweers.catchup.ui.base.LifecycleNotStartedException;
 import io.sweers.testutils.RecordingObserver2;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nonnull;
@@ -30,6 +32,17 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class BoundObserverTest {
+
+  private static final Function<Integer, Integer> CORRESPONDING_EVENTS = lastEvent -> {
+    switch (lastEvent) {
+      case 0:
+        return 3;
+      case 1:
+        return 2;
+      default:
+        throw new LifecycleEndedException("Out of lifecycle");
+    }
+  };
 
   @Test
   public void testBoundObserver() {
@@ -54,65 +67,64 @@ public class BoundObserverTest {
 
   @Test
   public void testBoundObserver_withProvider() {
-    AtomicInteger valHolder = new AtomicInteger(0);
+    RecordingObserver2<Integer> o = new RecordingObserver2<>();
     PublishSubject<Integer> source = PublishSubject.create();
     BehaviorSubject<Integer> lifecycle = BehaviorSubject.createDefault(0);
-    Function<Integer, Integer> correspondingEvents = integer -> {
-      int intVal = integer;
-      switch (intVal) {
-        case 0:
-          return 3;
-        case 1:
-          return 2;
-        default:
-          throw new RuntimeException("Out of lifecycle");
-      }
-    };
-    LifecycleProvider<Integer> provider = new LifecycleProvider<Integer>() {
-      @Nonnull
-      @Override
-      public Observable<Integer> lifecycle() {
-        return lifecycle;
-      }
-
-      @Nonnull
-      @Override
-      public Function<Integer, Integer> correspondingEvents() {
-        return correspondingEvents;
-      }
-
-      @Override
-      public boolean hasLifecycleStarted() {
-        return lifecycle.getValue() != null;
-      }
-    };
-    source.subscribe(BoundObservers.<Integer>forObservable(provider).onNext(valHolder::set)
-        .create());
+    LifecycleProvider<Integer> provider = makeProvider(lifecycle);
+    source.subscribe(BoundObservers.<Integer>forObservable(provider).around(o));
 
     assertThat(source.hasObservers()).isTrue();
     assertThat(lifecycle.hasObservers()).isTrue();
 
     source.onNext(1);
-    assertThat(valHolder.get()).isEqualTo(1);
+    assertThat(o.takeNext()).isEqualTo(1);
 
     lifecycle.onNext(1);
     source.onNext(2);
 
     assertThat(source.hasObservers()).isTrue();
     assertThat(lifecycle.hasObservers()).isTrue();
-    assertThat(valHolder.get()).isEqualTo(2);
+    assertThat(o.takeNext()).isEqualTo(2);
 
     lifecycle.onNext(3);
     source.onNext(3);
 
-    assertThat(valHolder.get()).isEqualTo(2);
+    o.assertNoMoreEvents();
     assertThat(source.hasObservers()).isFalse();
     assertThat(lifecycle.hasObservers()).isFalse();
   }
 
   @Test
+  public void testBoundObserver_withProvider_withoutStartingLifecycle_shouldFail() {
+    BehaviorSubject<Integer> lifecycle = BehaviorSubject.create();
+    RecordingObserver2<Integer> o = new RecordingObserver2<>();
+    LifecycleProvider<Integer> provider = makeProvider(lifecycle);
+    Observable.just(1)
+        .subscribe(Disposables.forObservable(provider)
+            .around(o));
+
+    assertThat(o.takeError()).isInstanceOf(LifecycleNotStartedException.class);
+  }
+
+  @Test
+  public void testBoundObserver_withProvider_afterLifecycle_shouldFail() {
+    BehaviorSubject<Integer> lifecycle = BehaviorSubject.createDefault(0);
+    lifecycle.onNext(1);
+    lifecycle.onNext(2);
+    lifecycle.onNext(3);
+    RecordingObserver2<Integer> o = new RecordingObserver2<>();
+    LifecycleProvider<Integer> provider = makeProvider(lifecycle);
+    Observable.just(1)
+        .subscribe(Disposables.forObservable(provider)
+            .around(o));
+
+    assertThat(o.takeError()).isInstanceOf(LifecycleEndedException.class);
+  }
+
+  @Test
   public void verifyCancellation() throws Exception {
     Cancellable cancellable = mock(Cancellable.class);
+    //noinspection unchecked because Java
     final ObservableEmitter<Integer>[] emitter = new ObservableEmitter[1];
     Observable<Integer> source = Observable.create(e -> {
       e.setCancellable(cancellable);
@@ -195,5 +207,26 @@ public class BoundObserverTest {
     Completable.complete()
         .subscribe(Disposables.forCompletable(lifecycle)
             .around(co));
+  }
+
+  private static LifecycleProvider<Integer> makeProvider(final BehaviorSubject<Integer> lifecycle) {
+    return new LifecycleProvider<Integer>() {
+      @Nonnull
+      @Override
+      public Observable<Integer> lifecycle() {
+        return lifecycle;
+      }
+
+      @Nonnull
+      @Override
+      public Function<Integer, Integer> correspondingEvents() {
+        return CORRESPONDING_EVENTS;
+      }
+
+      @Override
+      public Integer peekLifecycle() {
+        return lifecycle.getValue();
+      }
+    };
   }
 }

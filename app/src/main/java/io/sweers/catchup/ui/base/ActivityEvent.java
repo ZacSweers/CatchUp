@@ -20,7 +20,8 @@ public enum ActivityEvent {
       case STOP:
         return DESTROY;
       case DESTROY:
-        throw new OutsideLifecycleException("Cannot bind to Activity lifecycle when outside of it.");
+        throw new LifecycleEndedException(
+            "Cannot bind to Activity lifecycle after it's been destroyed.");
       default:
         throw new UnsupportedOperationException("Binding to " + lastEvent + " not yet implemented");
     }

@@ -12,7 +12,8 @@ import io.reactivex.functions.Consumer;
 import io.sweers.catchup.rx.boundlifecycle.LifecycleProvider;
 import org.reactivestreams.Subscriber;
 
-import static io.sweers.catchup.rx.boundlifecycle.observers.Util.mapEvents;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.checkNotNull;
+import static io.sweers.catchup.rx.boundlifecycle.observers.Util.deferredResolvedLifecycle;
 
 public final class Disposables {
 
@@ -80,7 +81,8 @@ public final class Disposables {
     protected final Maybe<?> lifecycle;
 
     protected Base(LifecycleProvider<?> provider) {
-      this.lifecycle = mapEvents(provider);
+      checkNotNull(provider, "provider == null");
+      this.lifecycle = deferredResolvedLifecycle(provider);
     }
 
     protected Base(Observable<?> lifecycle) {

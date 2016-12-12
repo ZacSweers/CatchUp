@@ -17,9 +17,11 @@ public enum ControllerEvent {
         return DESTROY_VIEW;
       case DETACH:
         return DESTROY;
+      case DESTROY:
+        throw new LifecycleEndedException(
+            "Cannot bind to Controller lifecycle after it's been destroyed.");
       default:
-        throw new OutsideLifecycleException(
-            "Cannot bind to Controller lifecycle when outside of it.");
+        throw new UnsupportedOperationException("Binding to " + lastEvent + " not yet implemented");
     }
   };
 }

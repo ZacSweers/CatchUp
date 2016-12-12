@@ -28,8 +28,8 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
   }
 
   @Override
-  public boolean hasLifecycleStarted() {
-    return lifecycleRelay.hasValue();
+  public ActivityEvent peekLifecycle() {
+    return lifecycleRelay.getValue();
   }
 
   @Override

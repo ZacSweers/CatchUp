@@ -37,8 +37,8 @@ public abstract class BaseController extends RefWatchingController
   }
 
   @Override
-  public boolean hasLifecycleStarted() {
-    return lifecycleSubject.getValue() != null;
+  public ControllerEvent peekLifecycle() {
+    return lifecycleSubject.getValue();
   }
 
   private class UrlTransformer implements Observable.Transformer<Object, Pair<String, Integer>> {
