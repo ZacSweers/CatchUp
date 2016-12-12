@@ -80,7 +80,7 @@ public final class RecordingObserver2<T> implements io.reactivex.Observer<T>, Ma
     return event.value;
   }
 
-  public Disposable takeDisposable() {
+  public Disposable takeSubscribe() {
     return takeEvent(OnSubscribe.class).disposable;
   }
 
