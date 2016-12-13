@@ -10,6 +10,7 @@ import io.reactivex.Maybe;
 import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.functions.Cancellable;
@@ -21,6 +22,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.sweers.testutils.RecordingObserver2;
 import javax.annotation.Nonnull;
 import org.junit.Test;
+import org.reactivestreams.Subscriber;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Mockito.mock;
@@ -196,32 +198,49 @@ public class AutoDisposeObserverTest {
   @SuppressWarnings("unchecked")
   public void demos() {
     PublishSubject<Integer> lifecycle = PublishSubject.create();
+    Observer<Integer> o = mock(Observer.class);
     SingleObserver<Integer> so = mock(SingleObserver.class);
     MaybeObserver<Integer> mo = mock(MaybeObserver.class);
+    CompletableObserver co = mock(CompletableObserver.class);
+    Subscriber<Integer> s = mock(Subscriber.class);
 
+    Observable.just(1)
+        .subscribe(AutoDispose.observable(lifecycle)
+            .around(o));
     Single.just(1)
         .subscribe(AutoDispose.single(lifecycle)
             .around(so));
     Maybe.just(1)
         .subscribe(AutoDispose.maybe(lifecycle)
             .around(mo));
+    Completable.complete()
+        .subscribe(AutoDispose.completable(lifecycle)
+            .around(co));
+    Flowable.just(1)
+        .subscribe(AutoDispose.flowable(lifecycle)
+            .around(s));
 
     Observable.just(1)
         .subscribe(AutoDispose.observable(lifecycle)
-            .around(t -> System.out.println("Hello")));
+            .around(t -> System.out.println("Works for observable")));
     Maybe.just(1)
         .subscribe(AutoDispose.maybe(lifecycle)
-            .around(t -> System.out.println("Hello")));
+            .around(t -> System.out.println("Works for maybe")));
     Single.just(1)
         .subscribe(AutoDispose.single(lifecycle)
-            .around(t -> System.out.println("Hello")));
+            .around(t -> System.out.println("Works for single")));
+    Completable.complete()
+        .subscribe(AutoDispose.completable(lifecycle)
+            .around(() -> System.out.println("Works for completable")));
+    Flowable.just(1)
+        .subscribe(AutoDispose.flowable(lifecycle)
+            .around(t -> System.out.println("Works for flowable")));
 
     Relay<Integer> relay = PublishRelay.create();
     Observable.just(1)
         .subscribe(AutoDispose.observable(lifecycle)
             .around(relay));
 
-    // Works flowables and other consumers too!
     Flowable.just(1)
         .subscribe(AutoDispose.flowable(lifecycle)
             .around(relay));
@@ -229,11 +248,6 @@ public class AutoDisposeObserverTest {
     Flowable.just(1)
         .subscribe(AutoDispose.flowable(lifecycle)
             .around(processor));
-
-    CompletableObserver co = mock(CompletableObserver.class);
-    Completable.complete()
-        .subscribe(AutoDispose.completable(lifecycle)
-            .around(co));
   }
 
   private static LifecycleProvider<Integer> makeProvider(final BehaviorSubject<Integer> lifecycle) {
