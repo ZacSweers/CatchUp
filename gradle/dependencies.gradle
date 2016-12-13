@@ -19,7 +19,7 @@ ext {
     supportRecyclerView = "com.android.support:recyclerview-v7:$supportVersion"
     supportV4 = "com.android.support:support-v4:$supportVersion"
     multidex = 'com.android.support:multidex:1.0.1'
-    androidPlugin = 'com.android.tools.build:gradle:2.3.0-alpha2'
+    androidPlugin = 'com.android.tools.build:gradle:2.3.0-alpha3'
     constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     // Dagger
