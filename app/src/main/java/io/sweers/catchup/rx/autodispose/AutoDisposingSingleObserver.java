@@ -30,7 +30,7 @@ public final class AutoDisposingSingleObserver<T> implements SingleObserver<T>, 
     this.onSubscribe = AutoDisposeUtil.emptyDisposableIfNull(onSubscribe);
   }
 
-  @SuppressWarnings("unused")
+  @Override
   public final void onSubscribe(Disposable d) {
     if (AutoDisposableHelper.setOnce(this.mainDisposable, d)) {
       AutoDisposableHelper.setOnce(this.lifecycleDisposable,
