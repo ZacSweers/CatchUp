@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -107,6 +108,11 @@ public class DribbbleController extends BaseController
   }
 
   @Override
+  protected Unbinder bind(@NonNull View view) {
+    return new DribbbleController_ViewBinding<>(this, view);
+  }
+
+  @Override
   protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
     // TODO There must be an earlier place than this
@@ -142,7 +148,7 @@ public class DribbbleController extends BaseController
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .subscribe(AutoDispose.single(lifecycle())
+        .subscribe(AutoDispose.single(this)
             .around(shots -> {
               progress.setVisibility(GONE);
               errorView.setVisibility(GONE);

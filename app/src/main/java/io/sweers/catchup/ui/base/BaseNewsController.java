@@ -17,8 +17,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import com.jakewharton.rxbinding.view.RxView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -76,6 +76,11 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   @Override
   protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
     return inflater.inflate(R.layout.controller_basic_news, container, false);
+  }
+
+  @Override
+  protected Unbinder bind(@NonNull View view) {
+    return new BaseNewsController_ViewBinding<>(this, view);
   }
 
   @Override
@@ -237,10 +242,14 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     @BindView(R.id.comments) TextView comments;
     @BindView(R.id.tag) TextView tag;
     @BindView(R.id.tag_divider) View tagDivider;
+    private Unbinder unbinder;
 
     public ViewHolder(@NonNull View itemView) {
       super(itemView);
-      ButterKnife.bind(this, itemView);
+      if (unbinder != null) {
+        unbinder.unbind();
+      }
+      unbinder = new BaseNewsController$ViewHolder_ViewBinding<>(this, itemView);
     }
 
     public Observable<Void> itemClicks() {

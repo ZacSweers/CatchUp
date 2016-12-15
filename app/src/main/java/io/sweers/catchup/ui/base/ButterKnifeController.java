@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.bluelinelabs.conductor.Controller;
 import io.sweers.catchup.R;
@@ -51,16 +50,18 @@ public abstract class ButterKnifeController extends Controller {
     }
 
     View view = inflateView(LayoutInflater.from(themedContext), container);
-    unbinder = ButterKnife.bind(this, view);
+    unbinder = bind(view);
     onViewBound(view);
     return view;
   }
+
+  protected abstract Unbinder bind(@NonNull View view);
 
   protected void onViewBound(@NonNull View view) {
   }
 
   @Override
-  protected void onDestroyView(View view) {
+  protected void onDestroyView(@NonNull View view) {
     if (unbinder != null) {
       unbinder.unbind();
     }

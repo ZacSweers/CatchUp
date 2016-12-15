@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.Unbinder;
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.support.ControllerPagerAdapter;
 import com.f2prateek.rx.preferences.Preference;
@@ -95,25 +96,9 @@ public class PagerController extends BaseController {
   private boolean colorNavBar = false;
   private ControllerPagerAdapter pagerAdapter;
 
-  // Ew, but the only way to get the controller later
-  // https://github.com/bluelinelabs/Conductor/issues/166
-  private SparseArrayCompat<Controller> controllers = new SparseArrayCompat<>();
 
   public PagerController() {
     pagerAdapter = new ControllerPagerAdapter(this, true) {
-      @Override
-      public Object instantiateItem(ViewGroup container, int position) {
-        Controller controller = (Controller) super.instantiateItem(container, position);
-        controllers.put(position, controller);
-        return controller;
-      }
-
-      @Override
-      public void destroyItem(ViewGroup container, int position, Object object) {
-        super.destroyItem(container, position, object);
-        controllers.remove(position);
-      }
-
       @Override
       public Controller getItem(int position) {
         switch (position) {
@@ -156,6 +141,11 @@ public class PagerController extends BaseController {
   @Override
   protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
     return inflater.inflate(R.layout.controller_pager, container, false);
+  }
+
+  @Override
+  protected Unbinder bind(@NonNull View view) {
+    return new PagerController_ViewBinding<>(this, view);
   }
 
   @Override
@@ -259,7 +249,7 @@ public class PagerController extends BaseController {
 
       @Override
       public void onTabReselected(TabLayout.Tab tab) {
-        Controller controller = controllers.get(tab.getPosition());
+        Controller controller = pagerAdapter.getController(tab.getPosition());
         if (controller instanceof Scrollable) {
           ((Scrollable) controller).onRequestScrollToTop();
           appBarLayout.setExpanded(true, true);

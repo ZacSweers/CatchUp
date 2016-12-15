@@ -7,7 +7,7 @@ ext {
     ci = 'true' == System.getenv('CI')
 
     // Google
-    supportVersion = '25.0.1'
+    supportVersion = '25.1.0'
     supportAnnotations = "com.android.support:support-annotations:$supportVersion"
     supportAppCompat = "com.android.support:appcompat-v7:$supportVersion"
     supportCardView = "com.android.support:cardview-v7:$supportVersion"
@@ -23,7 +23,7 @@ ext {
     constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     // Dagger
-    daggerVersion = '2.7'
+    daggerVersion = '2.8'
     dagger = "com.google.dagger:dagger:$daggerVersion"
     daggerCompiler = "com.google.dagger:dagger-compiler:$daggerVersion"
     javax = 'org.glassfish:javax.annotation:10.0-b28'
@@ -36,7 +36,7 @@ ext {
     autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:1.0.0'
 
     // Conductor
-    conductorVersion = '2.0.4'
+    conductorVersion = '2.0.5'
     conductor = "com.bluelinelabs:conductor:$conductorVersion"
     conductorSupport = "com.bluelinelabs:conductor-support:$conductorVersion"
 
@@ -51,12 +51,12 @@ ext {
     gson = 'com.google.code.gson:gson:2.8.0'
     jsr305Annotations = 'com.google.code.findbugs:jsr305:3.0.1'
     psyncPlugin = 'gradle.plugin.com.flipboard:psync:1.1.5'
-    recyclerViewAnimators = 'jp.wasabeef:recyclerview-animators:2.2.4'
+    recyclerViewAnimators = 'jp.wasabeef:recyclerview-animators:2.2.5'
     retrolambda = 'net.orfjackal.retrolambda:retrolambda:2.3.0'
     retrolambdaPlugin = 'me.tatarka:gradle-retrolambda:3.4.0'
     retrolambdaPluginLombok = 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
     simpleXml = 'org.simpleframework:simple-xml:2.7.1'
-    stethoVersion = '1.4.1'
+    stethoVersion = '1.4.2'
     stetho = "com.facebook.stetho:stetho:$stethoVersion"
     stethoOkHttp = "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
     versionsPlugin = 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
@@ -71,7 +71,7 @@ ext {
 
     // Rx
     rxAndroid = 'io.reactivex:rxandroid:1.2.1'
-    rxBindingVersion = '0.4.0'
+    rxBindingVersion = '1.0.0'
     rxBinding = "com.jakewharton.rxbinding:rxbinding:$rxBindingVersion"
     rxBindingV4 = "com.jakewharton.rxbinding:rxbinding-support-v4:$rxBindingVersion"
     rxJava = 'io.reactivex:rxjava:1.2.3'
@@ -93,7 +93,7 @@ ext {
     leakCanaryVersion = '1.5'
     leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     leakCanaryNoop = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    okhttpVersion = '3.4.2'
+    okhttpVersion = '3.5.0'
     okhttp = "com.squareup.okhttp3:okhttp:$okhttpVersion"
     okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
@@ -113,7 +113,7 @@ ext {
     scalpel = 'com.jakewharton.scalpel:scalpel:1.1.2'
     telescope = 'com.mattprecious.telescope:telescope:2.1.0'
     threetenabp = 'com.jakewharton.threetenabp:threetenabp:1.0.4'
-    timber = 'com.jakewharton.timber:timber:4.3.1'
+    timber = 'com.jakewharton.timber:timber:4.4.0'
 
     // Testing
     assertj = 'org.assertj:assertj-core:2.2.0'
