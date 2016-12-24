@@ -47,7 +47,7 @@ public class AutoDisposeObserverTest {
     RecordingObserver2<Integer> o = new RecordingObserver2<>();
     PublishSubject<Integer> source = PublishSubject.create();
     PublishSubject<Integer> lifecycle = PublishSubject.create();
-    source.subscribe(AutoDispose.observable(lifecycle)
+    source.subscribe(AutoDispose.observable(lifecycle.firstElement())
         .around(o));
     o.takeSubscribe();
 
@@ -123,7 +123,7 @@ public class AutoDisposeObserverTest {
     PublishSubject<Integer> source = PublishSubject.create();
     PublishSubject<Integer> lifecycle = PublishSubject.create();
     AutoDisposingObserver<Integer> auto =
-        (AutoDisposingObserver<Integer>) AutoDispose.observable(lifecycle)
+        (AutoDisposingObserver<Integer>) AutoDispose.observable(lifecycle.firstElement())
             .around(o);
     source.subscribe(auto);
     o.takeSubscribe();
@@ -180,7 +180,7 @@ public class AutoDisposeObserverTest {
       emitter[0] = e;
     });
     PublishSubject<Integer> lifecycle = PublishSubject.create();
-    source.subscribe(AutoDispose.observable(lifecycle)
+    source.subscribe(AutoDispose.observable(lifecycle.firstElement())
         .empty());
 
     verify(cancellable, never()).cancel();
@@ -205,48 +205,48 @@ public class AutoDisposeObserverTest {
     Subscriber<Integer> s = mock(Subscriber.class);
 
     Observable.just(1)
-        .subscribe(AutoDispose.observable(lifecycle)
+        .subscribe(AutoDispose.observable(lifecycle.firstElement())
             .around(o));
     Single.just(1)
-        .subscribe(AutoDispose.single(lifecycle)
+        .subscribe(AutoDispose.single(lifecycle.firstElement())
             .around(so));
     Maybe.just(1)
-        .subscribe(AutoDispose.maybe(lifecycle)
+        .subscribe(AutoDispose.maybe(lifecycle.firstElement())
             .around(mo));
     Completable.complete()
-        .subscribe(AutoDispose.completable(lifecycle)
+        .subscribe(AutoDispose.completable(lifecycle.firstElement())
             .around(co));
     Flowable.just(1)
-        .subscribe(AutoDispose.flowable(lifecycle)
+        .subscribe(AutoDispose.flowable(lifecycle.firstElement())
             .around(s));
 
     Observable.just(1)
-        .subscribe(AutoDispose.observable(lifecycle)
+        .subscribe(AutoDispose.observable(lifecycle.firstElement())
             .around(t -> System.out.println("Works for observable")));
     Maybe.just(1)
-        .subscribe(AutoDispose.maybe(lifecycle)
+        .subscribe(AutoDispose.maybe(lifecycle.firstElement())
             .around(t -> System.out.println("Works for maybe")));
     Single.just(1)
-        .subscribe(AutoDispose.single(lifecycle)
+        .subscribe(AutoDispose.single(lifecycle.firstElement())
             .around(t -> System.out.println("Works for single")));
     Completable.complete()
-        .subscribe(AutoDispose.completable(lifecycle)
+        .subscribe(AutoDispose.completable(lifecycle.firstElement())
             .around(() -> System.out.println("Works for completable")));
     Flowable.just(1)
-        .subscribe(AutoDispose.flowable(lifecycle)
+        .subscribe(AutoDispose.flowable(lifecycle.firstElement())
             .around(t -> System.out.println("Works for flowable")));
 
     Relay<Integer> relay = PublishRelay.create();
     Observable.just(1)
-        .subscribe(AutoDispose.observable(lifecycle)
+        .subscribe(AutoDispose.observable(lifecycle.firstElement())
             .around(relay));
 
     Flowable.just(1)
-        .subscribe(AutoDispose.flowable(lifecycle)
+        .subscribe(AutoDispose.flowable(lifecycle.firstElement())
             .around(relay));
     FlowableProcessor<Integer> processor = PublishProcessor.create();
     Flowable.just(1)
-        .subscribe(AutoDispose.flowable(lifecycle)
+        .subscribe(AutoDispose.flowable(lifecycle.firstElement())
             .around(processor));
   }
 

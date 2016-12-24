@@ -15,14 +15,13 @@
  */
 package com.squareup.moshi;
 
+import android.support.v4.util.ArraySet;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import io.sweers.arraysetbackport.ArraySet;
 
 /** Converts collection types to JSON arrays containing their converted contents. */
 public abstract class ArrayCollectionJsonAdapter<C extends Collection<T>, T> extends JsonAdapter<C> {

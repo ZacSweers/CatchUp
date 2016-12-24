@@ -169,7 +169,6 @@ dependencies {
   releaseCompile rootProject.ext.bugsnag
 
   // Misc
-  compile rootProject.ext.arraySetBackport
   compile rootProject.ext.barberApi
   annotationProcessor rootProject.ext.barberCompiler
   compile rootProject.ext.glide
