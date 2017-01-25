@@ -215,6 +215,5 @@ dependencies {
 
   // LeakCanary
   debugCompile rootProject.ext.leakCanary
-  debugCompile rootProject.ext.haha
   releaseCompile rootProject.ext.leakCanaryNoop
 }
