@@ -80,7 +80,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
 
   @Override
   protected Unbinder bind(@NonNull View view) {
-    return new BaseNewsController_ViewBinding<>(this, view);
+    return new BaseNewsController_ViewBinding(this, view);
   }
 
   @Override
@@ -249,7 +249,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       if (unbinder != null) {
         unbinder.unbind();
       }
-      unbinder = new BaseNewsController$ViewHolder_ViewBinding<>(this, itemView);
+      unbinder = new BaseNewsController$ViewHolder_ViewBinding(this, itemView);
     }
 
     public Observable<Void> itemClicks() {

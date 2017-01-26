@@ -10,24 +10,17 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.SparseArrayCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import butterknife.BindView;
 import butterknife.Unbinder;
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.support.ControllerPagerAdapter;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
-
-import java.util.Arrays;
-
-import javax.inject.Inject;
-
-import butterknife.BindView;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.P;
@@ -41,6 +34,8 @@ import io.sweers.catchup.ui.activity.SettingsActivity;
 import io.sweers.catchup.ui.base.BaseController;
 import io.sweers.catchup.util.ApiUtil;
 import io.sweers.catchup.util.UiUtil;
+import java.util.Arrays;
+import javax.inject.Inject;
 
 public class PagerController extends BaseController {
 
@@ -96,7 +91,6 @@ public class PagerController extends BaseController {
   private boolean colorNavBar = false;
   private ControllerPagerAdapter pagerAdapter;
 
-
   public PagerController() {
     pagerAdapter = new ControllerPagerAdapter(this, true) {
       @Override
@@ -145,7 +139,7 @@ public class PagerController extends BaseController {
 
   @Override
   protected Unbinder bind(@NonNull View view) {
-    return new PagerController_ViewBinding<>(this, view);
+    return new PagerController_ViewBinding(this, view);
   }
 
   @Override

@@ -109,7 +109,7 @@ public class DribbbleController extends BaseController
 
   @Override
   protected Unbinder bind(@NonNull View view) {
-    return new DribbbleController_ViewBinding<>(this, view);
+    return new DribbbleController_ViewBinding(this, view);
   }
 
   @Override
