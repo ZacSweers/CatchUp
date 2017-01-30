@@ -81,7 +81,7 @@ ext {
     rxJava2 = 'io.reactivex.rxjava2:rxjava:2.0.4'
     rxAndroid2 = 'io.reactivex.rxjava2:rxandroid:2.0.1'
     rxJava2Interop = 'com.github.akarnokd:rxjava2-interop:0.8.3'
-    rxJava2Extensions = 'com.github.akarnokd:rxjava2-extensions:0.12.0'
+    rxJava2Extensions = 'com.github.akarnokd:rxjava2-extensions:0.14.3'
     retrofitRxJava2Adapter = 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
 
     // Square and JW
@@ -91,7 +91,7 @@ ext {
     leakCanaryVersion = '1.5'
     leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     leakCanaryNoop = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    okhttpVersion = '3.5.0'
+    okhttpVersion = '3.6.0'
     okhttp = "com.squareup.okhttp3:okhttp:$okhttpVersion"
     okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"

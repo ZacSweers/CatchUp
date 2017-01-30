@@ -22,6 +22,7 @@ import butterknife.Unbinder;
 import com.jakewharton.rxbinding.view.RxView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.BiConsumer;
 import io.sweers.catchup.R;
 import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.Scrollable;
@@ -35,7 +36,6 @@ import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import org.threeten.bp.Instant;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
-import rx.functions.Action2;
 import timber.log.Timber;
 
 import static android.view.View.GONE;
@@ -184,9 +184,9 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   private static class Adapter<T extends HasStableId> extends RecyclerView.Adapter<ViewHolder> {
 
     private final List<T> data = new ArrayList<>();
-    private final Action2<T, ViewHolder> bindDelegate;
+    private final BiConsumer<T, ViewHolder> bindDelegate;
 
-    public Adapter(@NonNull Action2<T, ViewHolder> bindDelegate) {
+    public Adapter(@NonNull BiConsumer<T, ViewHolder> bindDelegate) {
       super();
       this.bindDelegate = bindDelegate;
       setHasStableIds(true);
@@ -207,7 +207,11 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-      bindDelegate.call(data.get(position), holder);
+      try {
+        bindDelegate.accept(data.get(position), holder);
+      } catch (Exception e) {
+        Timber.e(e, "Bind delegate failure!");
+      }
     }
 
     @Override
