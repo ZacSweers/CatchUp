@@ -1,7 +1,10 @@
 package io.sweers.catchup.ui.base;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
+import android.view.View;
+import com.bluelinelabs.conductor.Controller;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import io.sweers.catchup.rx.autodispose.LifecycleProvider;
@@ -15,38 +18,40 @@ public abstract class BaseController extends RefWatchingController
       BehaviorSubject.createDefault(ControllerEvent.CREATE);
 
   protected BaseController() {
-    // TODO this breaks controllers magnificently
-    //addLifecycleListener(new Controller.LifecycleListener() {
-    //
-    //  @Override
-    //  public void preCreateView(@NonNull Controller controller) {
-    //    lifecycleSubject.onNext(ControllerEvent.CREATE_VIEW);
-    //  }
-    //
-    //  @Override
-    //  public void preAttach(@NonNull Controller controller, @NonNull View view) {
-    //    lifecycleSubject.onNext(ControllerEvent.ATTACH);
-    //  }
-    //
-    //  @Override
-    //  public void preDetach(@NonNull Controller controller, @NonNull View view) {
-    //    lifecycleSubject.onNext(ControllerEvent.DETACH);
-    //  }
-    //
-    //  @Override
-    //  public void preDestroyView(@NonNull Controller controller, @NonNull View view) {
-    //    lifecycleSubject.onNext(ControllerEvent.DESTROY_VIEW);
-    //  }
-    //
-    //  @Override
-    //  public void preDestroy(@NonNull Controller controller) {
-    //    lifecycleSubject.onNext(ControllerEvent.DESTROY);
-    //  }
-    //});
   }
 
   protected BaseController(Bundle args) {
     super(args);
+    initLifecycleHandling();
+  }
+
+  private void initLifecycleHandling() {
+    addLifecycleListener(new Controller.LifecycleListener() {
+      @Override
+      public void preCreateView(@NonNull Controller controller) {
+        lifecycleSubject.onNext(ControllerEvent.CREATE_VIEW);
+      }
+
+      @Override
+      public void preAttach(@NonNull Controller controller, @NonNull View view) {
+        lifecycleSubject.onNext(ControllerEvent.ATTACH);
+      }
+
+      @Override
+      public void preDetach(@NonNull Controller controller, @NonNull View view) {
+        lifecycleSubject.onNext(ControllerEvent.DETACH);
+      }
+
+      @Override
+      public void preDestroyView(@NonNull Controller controller, @NonNull View view) {
+        lifecycleSubject.onNext(ControllerEvent.DESTROY_VIEW);
+      }
+
+      @Override
+      public void preDestroy(@NonNull Controller controller) {
+        lifecycleSubject.onNext(ControllerEvent.DESTROY);
+      }
+    });
   }
 
   protected UrlTransformer transformUrl(String url) {

@@ -61,9 +61,7 @@
       android:layout_gravity="center_horizontal"
       android:layout_marginTop="16dp"
       android:gravity="center"
-      android:visibility="gone"
       tools:text="Something went wrong :("
-      tools:visibility="visible"
       />
 
     <android.support.v7.widget.AppCompatButton

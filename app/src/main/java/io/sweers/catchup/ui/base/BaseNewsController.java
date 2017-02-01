@@ -19,6 +19,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 import com.jakewharton.rxbinding.view.RxView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -34,7 +35,6 @@ import java.util.Date;
 import java.util.List;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import org.threeten.bp.Instant;
-import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import timber.log.Timber;
 
@@ -45,6 +45,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     implements SwipeRefreshLayout.OnRefreshListener, Scrollable {
 
   @BindView(R.id.error_container) View errorView;
+  @BindView(R.id.error_message) TextView errorTextView;
   @BindView(R.id.error_image) ImageView errorImage;
   @BindView(R.id.list) RecyclerView recyclerView;
   @BindView(R.id.progress) ProgressBar progress;
@@ -143,6 +144,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
                         R.drawable.avd_no_connection);
                 errorImage.setImageDrawable(avd);
                 progress.setVisibility(GONE);
+                errorTextView.setText("Network Problem");
                 swipeRefreshLayout.setVisibility(GONE);
                 errorView.setVisibility(VISIBLE);
                 avd.start();
@@ -153,6 +155,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
                         R.drawable.avd_no_connection);
                 errorImage.setImageDrawable(avd);
                 progress.setVisibility(GONE);
+                errorTextView.setText("API Problem");
                 swipeRefreshLayout.setVisibility(GONE);
                 errorView.setVisibility(VISIBLE);
                 avd.start();
@@ -164,6 +167,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
                 errorImage.setImageDrawable(avd);
                 progress.setVisibility(GONE);
                 swipeRefreshLayout.setVisibility(GONE);
+                errorTextView.setText("Unknown Issue");
                 errorView.setVisibility(VISIBLE);
                 avd.start();
               }
