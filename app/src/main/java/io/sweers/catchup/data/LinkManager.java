@@ -14,6 +14,7 @@ import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.receivers.RxBroadcastReceiver;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
@@ -28,7 +29,7 @@ import rx.functions.Action1;
 import static hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Observable;
 import static io.sweers.catchup.rx.Transformers.doOnEmpty;
 
-@PerActivity public class LinkManager implements Action1<Pair<String, Integer>> {
+@PerActivity public final class LinkManager implements Action1<Pair<String, Integer>> {
 
   private final MainActivity activity;
   private final CustomTabActivityHelper customTab;
@@ -38,7 +39,6 @@ import static io.sweers.catchup.rx.Transformers.doOnEmpty;
   // TODO Eventually replace this with something that's mindful of per-service prefs
   private final ArrayMap<String, Boolean> dumbCache = new ArrayMap<>();
 
-  @Inject
   public LinkManager(MainActivity activity,
       CustomTabActivityHelper customTab,
       @SmartLinking Preference<Boolean> globalSmartLinkingPref) {
