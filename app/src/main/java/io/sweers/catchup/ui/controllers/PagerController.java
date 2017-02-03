@@ -4,8 +4,10 @@ import android.animation.ArgbEvaluator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
@@ -18,7 +20,9 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.Unbinder;
 import com.bluelinelabs.conductor.Controller;
-import com.bluelinelabs.conductor.support.ControllerPagerAdapter;
+import com.bluelinelabs.conductor.Router;
+import com.bluelinelabs.conductor.RouterTransaction;
+import com.bluelinelabs.conductor.support.RouterPagerAdapter;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import dagger.Lazy;
@@ -39,7 +43,8 @@ import javax.inject.Inject;
 
 public class PagerController extends BaseController {
 
-  private static final int[][] PAGE_DATA = new int[][]{
+  private static final String PAGE_TAG = "PagerController.pageTag";
+  private static final int[][] PAGE_DATA = new int[][] {
       {
           R.drawable.logo_hn,
           R.string.hacker_news,
@@ -89,31 +94,54 @@ public class PagerController extends BaseController {
   @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.appbarlayout) AppBarLayout appBarLayout;
   private boolean colorNavBar = false;
-  private ControllerPagerAdapter pagerAdapter;
+  private RouterPagerAdapter pagerAdapter;
 
   public PagerController() {
-    pagerAdapter = new ControllerPagerAdapter(this, true) {
+    super();
+    init();
+  }
+
+  public PagerController(Bundle args) {
+    super(args);
+    init();
+  }
+
+  private void init() {
+    pagerAdapter = new RouterPagerAdapter(this) {
       @Override
-      public Controller getItem(int position) {
-        switch (position) {
-          case 0:
-            return new HackerNewsController();
-          case 1:
-            return new RedditController();
-          case 2:
-            return new MediumController();
-          case 3:
-            return new ProductHuntController();
-          case 4:
-            return new SlashdotController();
-          case 5:
-            return new DesignerNewsController();
-          case 6:
-            return new DribbbleController();
-          case 7:
-            return new GitHubController();
-          default:
-            return new RedditController();
+      public void configureRouter(Router router, int position) {
+        if (!router.hasRootController()) {
+          Controller page;
+          switch (position) {
+            case 0:
+              page = new HackerNewsController();
+              break;
+            case 1:
+              page = new RedditController();
+              break;
+            case 2:
+              page = new MediumController();
+              break;
+            case 3:
+              page = new ProductHuntController();
+              break;
+            case 4:
+              page = new SlashdotController();
+              break;
+            case 5:
+              page = new DesignerNewsController();
+              break;
+            case 6:
+              page = new DribbbleController();
+              break;
+            case 7:
+              page = new GitHubController();
+              break;
+            default:
+              page = new RedditController();
+          }
+          router.setRoot(RouterTransaction.with(page)
+              .tag(PAGE_TAG));
         }
       }
 
@@ -153,11 +181,14 @@ public class PagerController extends BaseController {
     toolbar.setOnMenuItemClickListener(item -> {
       switch (item.getItemId()) {
         case R.id.toggle_daynight:
-          P.daynightAuto.put(false).commit();
+          P.daynightAuto.put(false)
+              .commit();
           if (UiUtil.isInNightMode(getActivity())) {
-            P.daynightNight.put(false).commit();
+            P.daynightNight.put(false)
+                .commit();
           } else {
-            P.daynightNight.put(true).commit();
+            P.daynightNight.put(true)
+                .commit();
           }
           getActivity().recreate();
           return true;
@@ -174,9 +205,9 @@ public class PagerController extends BaseController {
     // Set the initial color
     @ColorInt int initialColor = getAndSaveColor(0);
     tabLayout.setBackgroundColor(initialColor);
-    if (ApiUtil.isL()
-        && !UiUtil.isInNightMode(view.getContext())) {
-      colorNavBar = themeNavigationBarPref.get().get(); // ew
+    if (ApiUtil.isL() && !UiUtil.isInNightMode(view.getContext())) {
+      colorNavBar = themeNavigationBarPref.get()
+          .get(); // ew
       themeNavigationBarPref.get()
           .asObservable()
           .distinctUntilChanged()
@@ -188,7 +219,8 @@ public class PagerController extends BaseController {
             } else {
               color = Color.BLACK;
             }
-            getActivity().getWindow().setNavigationBarColor(color);
+            getActivity().getWindow()
+                .setNavigationBarColor(color);
           });
     }
 
@@ -199,7 +231,8 @@ public class PagerController extends BaseController {
     for (int i = 0; i < PAGE_DATA.length; i++) {
       int[] vals = PAGE_DATA[i];
       Drawable d = VectorDrawableCompat.create(getResources(), vals[0], null);
-      tabLayout.getTabAt(i).setIcon(d);
+      tabLayout.getTabAt(i)
+          .setIcon(d);
     }
 
     // Animate color changes
@@ -209,13 +242,16 @@ public class PagerController extends BaseController {
       public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         int color;
         if (position < (pagerAdapter.getCount() - 1) && position < (PAGE_DATA.length - 1)) {
-          color = (Integer) argbEvaluator.evaluate(positionOffset, getAndSaveColor(position), getAndSaveColor(position + 1));
+          color = (Integer) argbEvaluator.evaluate(positionOffset,
+              getAndSaveColor(position),
+              getAndSaveColor(position + 1));
         } else {
           color = getAndSaveColor(PAGE_DATA.length - 1);
         }
         tabLayout.setBackgroundColor(color);
         if (colorNavBar) {
-          getActivity().getWindow().setNavigationBarColor(color);
+          getActivity().getWindow()
+              .setNavigationBarColor(color);
         }
       }
 
@@ -243,7 +279,8 @@ public class PagerController extends BaseController {
 
       @Override
       public void onTabReselected(TabLayout.Tab tab) {
-        Controller controller = pagerAdapter.getController(tab.getPosition());
+        Controller controller = pagerAdapter.getRouter(tab.getPosition())
+            .getControllerWithTag(PAGE_TAG);
         if (controller instanceof Scrollable) {
           ((Scrollable) controller).onRequestScrollToTop();
           appBarLayout.setExpanded(true, true);
@@ -282,10 +319,11 @@ public class PagerController extends BaseController {
     @PerController
     @NavBarTheme
     Preference<Boolean> provideThemeNavigationColorPreference(RxSharedPreferences rxSharedPreferences) {
-      return rxSharedPreferences.getBoolean(P.themeNavigationBar.key, P.themeNavigationBar.defaultValue());
+      return rxSharedPreferences.getBoolean(
+          P.themeNavigationBar.key,
+          P.themeNavigationBar.defaultValue());
       // TODO revert to this when this is fixed: https://github.com/Flipboard/psync/issues/11
-//      return P.themeNavigationBar.rx();
+      //      return P.themeNavigationBar.rx();
     }
-
   }
 }

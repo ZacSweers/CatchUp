@@ -90,7 +90,7 @@ public class DribbbleController extends BaseController
   private Adapter adapter;
 
   public DribbbleController() {
-    this(null);
+    super();
   }
 
   public DribbbleController(Bundle args) {

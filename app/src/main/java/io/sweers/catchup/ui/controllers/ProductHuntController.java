@@ -37,7 +37,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
   @Inject LinkManager linkManager;
 
   public ProductHuntController() {
-    this(null);
+    super();
   }
 
   public ProductHuntController(Bundle args) {

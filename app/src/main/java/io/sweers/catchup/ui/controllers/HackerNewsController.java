@@ -38,7 +38,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   @Inject LinkManager linkManager;
 
   public HackerNewsController() {
-    this(null);
+    super();
   }
 
   public HackerNewsController(Bundle args) {

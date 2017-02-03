@@ -7,6 +7,7 @@ import io.sweers.catchup.app.CatchUpApplication;
 public abstract class RefWatchingController extends ButterKnifeController {
 
   protected RefWatchingController() {
+    super();
   }
 
   protected RefWatchingController(Bundle args) {

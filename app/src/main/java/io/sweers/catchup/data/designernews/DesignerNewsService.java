@@ -29,10 +29,10 @@ import retrofit2.http.Query;
  */
 public interface DesignerNewsService {
 
-  String HOST = "www.designernews.co";
+  String HOST = "www.designernews.co/";
   String ENDPOINT = "https://" + HOST;
 
-  @GET("/api/v1/stories")
+  @GET("api/v1/stories")
   Single<StoriesResponse> getTopStories(@Query("page") int page);
 
 }

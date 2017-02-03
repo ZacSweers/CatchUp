@@ -25,14 +25,13 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-
 public final class SlashdotController extends BaseNewsController<Entry> {
 
   @Inject SlashdotService service;
   @Inject LinkManager linkManager;
 
   public SlashdotController() {
-    this(null);
+    super();
   }
 
   public SlashdotController(Bundle args) {
@@ -41,8 +40,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
 
   @Override
   protected void performInjection() {
-    DaggerSlashdotController_Component
-        .builder()
+    DaggerSlashdotController_Component.builder()
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
@@ -81,17 +79,12 @@ public final class SlashdotController extends BaseNewsController<Entry> {
         .map(channel -> channel.itemList);
   }
 
-  @PerController
-  @dagger.Component(
-      modules = Module.class,
-      dependencies = ActivityComponent.class
-  )
-  public interface Component {
+  @PerController @dagger.Component(modules = Module.class,
+      dependencies = ActivityComponent.class) public interface Component {
     void inject(SlashdotController controller);
   }
 
-  @dagger.Module
-  public abstract static class Module {
+  @dagger.Module public abstract static class Module {
 
     @Provides
     @ForApi
@@ -111,12 +104,11 @@ public final class SlashdotController extends BaseNewsController<Entry> {
 
     @Provides
     @PerController
-    static SlashdotService provideSlashdotService(
-        @ForApi final Lazy<OkHttpClient> client,
+    static SlashdotService provideSlashdotService(@ForApi final Lazy<OkHttpClient> client,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
-      Retrofit retrofit = new Retrofit.Builder()
-          .baseUrl(SlashdotService.ENDPOINT)
-          .callFactory(request -> client.get().newCall(request))
+      Retrofit retrofit = new Retrofit.Builder().baseUrl(SlashdotService.ENDPOINT)
+          .callFactory(request -> client.get()
+              .newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(SimpleXmlConverterFactory.createNonStrict())
           .build();

@@ -54,7 +54,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
   private Adapter<T> adapter;
 
   public BaseNewsController() {
-    this(null);
+    super();
   }
 
   public BaseNewsController(Bundle args) {

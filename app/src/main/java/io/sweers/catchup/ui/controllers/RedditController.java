@@ -40,7 +40,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
   @Inject LinkManager linkManager;
 
   public RedditController() {
-    this(null);
+    super();
   }
 
   public RedditController(Bundle args) {

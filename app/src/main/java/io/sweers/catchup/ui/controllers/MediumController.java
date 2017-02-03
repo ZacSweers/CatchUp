@@ -41,7 +41,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   @Inject LinkManager linkManager;
 
   public MediumController() {
-    this(null);
+    super();
   }
 
   public MediumController(Bundle args) {

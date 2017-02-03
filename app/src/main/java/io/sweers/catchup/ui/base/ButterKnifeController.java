@@ -19,6 +19,7 @@ public abstract class ButterKnifeController extends Controller {
   private Unbinder unbinder;
 
   protected ButterKnifeController() {
+    super();
   }
 
   protected ButterKnifeController(Bundle args) {

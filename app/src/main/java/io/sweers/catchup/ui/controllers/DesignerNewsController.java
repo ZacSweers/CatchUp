@@ -38,7 +38,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
   @Inject LinkManager linkManager;
 
   public DesignerNewsController() {
-    this(null);
+    super();
   }
 
   public DesignerNewsController(Bundle args) {

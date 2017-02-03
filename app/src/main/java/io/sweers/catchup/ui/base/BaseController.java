@@ -18,6 +18,8 @@ public abstract class BaseController extends RefWatchingController
       BehaviorSubject.createDefault(ControllerEvent.CREATE);
 
   protected BaseController() {
+    super();
+    initLifecycleHandling();
   }
 
   protected BaseController(Bundle args) {

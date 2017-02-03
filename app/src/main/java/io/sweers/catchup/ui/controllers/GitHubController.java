@@ -39,7 +39,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
   @Inject LinkManager linkManager;
 
   public GitHubController() {
-    this(null);
+    super();
   }
 
   public GitHubController(Bundle args) {
