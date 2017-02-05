@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
@@ -88,6 +87,7 @@ public class PagerController extends BaseController {
   };
   private final int[] resolvedColorCache = new int[PAGE_DATA.length];
   private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
+
   @Inject @NavBarTheme Lazy<Preference<Boolean>> themeNavigationBarPref;
   @BindView(R.id.tab_layout) TabLayout tabLayout;
   @BindView(R.id.view_pager) ViewPager viewPager;
@@ -319,8 +319,7 @@ public class PagerController extends BaseController {
     @PerController
     @NavBarTheme
     Preference<Boolean> provideThemeNavigationColorPreference(RxSharedPreferences rxSharedPreferences) {
-      return rxSharedPreferences.getBoolean(
-          P.themeNavigationBar.key,
+      return rxSharedPreferences.getBoolean(P.themeNavigationBar.key,
           P.themeNavigationBar.defaultValue());
       // TODO revert to this when this is fixed: https://github.com/Flipboard/psync/issues/11
       //      return P.themeNavigationBar.rx();
