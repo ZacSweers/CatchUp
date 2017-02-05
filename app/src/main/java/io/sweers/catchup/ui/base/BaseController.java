@@ -8,7 +8,6 @@ import com.bluelinelabs.conductor.Controller;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import io.sweers.catchup.rx.autodispose.LifecycleProvider;
-import javax.annotation.Nonnull;
 import rx.Observable;
 
 public abstract class BaseController extends RefWatchingController
@@ -60,13 +59,13 @@ public abstract class BaseController extends RefWatchingController
     return new UrlTransformer(url);
   }
 
-  @Nonnull
+  @NonNull
   @Override
   public io.reactivex.Observable<ControllerEvent> lifecycle() {
     return lifecycleSubject;
   }
 
-  @Nonnull
+  @NonNull
   @Override
   public Function<ControllerEvent, ControllerEvent> correspondingEvents() {
     return ControllerEvent.LIFECYCLE;
