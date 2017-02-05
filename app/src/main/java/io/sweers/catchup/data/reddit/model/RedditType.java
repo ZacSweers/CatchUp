@@ -16,13 +16,13 @@ public enum RedditType {
   @SerializedName("more")
   MORE(RedditMore.class);
 
-  private final Class mCls;
+  private final Class clazz;
 
   RedditType(Class cls) {
-    mCls = cls;
+    clazz = cls;
   }
 
   public Class getDerivedClass() {
-    return mCls;
+    return clazz;
   }
 }
