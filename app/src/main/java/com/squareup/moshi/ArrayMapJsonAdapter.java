@@ -47,7 +47,7 @@ public final class ArrayMapJsonAdapter<K, V> extends JsonAdapter<Map<K, V>> {
       if (entry.getKey() == null) {
         throw new JsonDataException("Map key is null at path " + writer.getPath());
       }
-      writer.promoteNameToValue();
+      writer.promoteValueToName();
       keyAdapter.toJson(writer, entry.getKey());
       valueAdapter.toJson(writer, entry.getValue());
     }

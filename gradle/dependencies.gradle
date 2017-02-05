@@ -23,7 +23,7 @@ ext {
     constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     // Dagger
-    daggerVersion = '2.8'
+    daggerVersion = '2.9'
     dagger = "com.google.dagger:dagger:$daggerVersion"
     daggerCompiler = "com.google.dagger:dagger-compiler:$daggerVersion"
     javax = 'org.glassfish:javax.annotation:10.0-b28'
@@ -97,7 +97,7 @@ ext {
     okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
     okio = 'com.squareup.okio:okio:1.11.0'
     madge = 'com.jakewharton.madge:madge:1.1.4'
-    moshiVersion = '1.3.1'
+    moshiVersion = '1.4.0'
     moshi = "com.squareup.moshi:moshi:$moshiVersion"
     moshiAdapters = "com.squareup.moshi:moshi-adapters:$moshiVersion"
     processPhoenix = 'com.jakewharton:process-phoenix:1.1.1'
