@@ -49,6 +49,7 @@ ext {
     glideOkhttp = 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
     gson = 'com.google.code.gson:gson:2.8.0'
     jsr305Annotations = 'com.google.code.findbugs:jsr305:3.0.1'
+    moshiLazyAdapters = 'com.serjltt.moshi:moshi-lazy-adapters:1.2'
     psyncPlugin = 'gradle.plugin.com.flipboard:psync:1.1.5'
     recyclerViewAnimators = 'jp.wasabeef:recyclerview-animators:2.2.5'
     retrolambda = 'net.orfjackal.retrolambda:retrolambda:2.5.0'

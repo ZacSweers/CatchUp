@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import com.serjltt.moshi.adapters.WrappedJsonAdapter;
 import com.squareup.moshi.Moshi;
 import dagger.Lazy;
 import dagger.Provides;
@@ -93,8 +94,6 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   @Override
   protected Single<List<MediumPost>> getDataObservable() {
     return service.top()
-        .map(MediumResponse::payload)
-        .map(Payload::references)
         .flatMap(references -> Observable.fromIterable(references.post().values())
             .map(post -> MediumPost.builder()
                 .post(post)
@@ -143,6 +142,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     static Moshi provideMediumMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Instant.class, new EpochInstantJsonAdapter())
+          .add(WrappedJsonAdapter.FACTORY)
           .build();
     }
 
