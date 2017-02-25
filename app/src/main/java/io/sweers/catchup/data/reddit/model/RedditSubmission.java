@@ -1,29 +1,21 @@
 package io.sweers.catchup.data.reddit.model;
 
 import android.support.annotation.Nullable;
-
-import com.google.gson.annotations.SerializedName;
-
-import org.threeten.bp.Instant;
-
+import com.squareup.moshi.Json;
 import io.sweers.catchup.ui.base.HasStableId;
+import org.threeten.bp.Instant;
 
 public abstract class RedditSubmission extends RedditObject implements HasStableId {
 
   public abstract String author();
 
-  @Nullable
-  @SerializedName("author_flair_text")
-  public abstract String authorFlairText();
+  @Nullable @Json(name = "author_flair_text") public abstract String authorFlairText();
 
-  @Nullable
-  @SerializedName("banned_by")
-  public abstract String bannedBy();
+  @Nullable @Json(name = "banned_by") public abstract String bannedBy();
 
   public abstract Instant created();
 
-  @SerializedName("created_utc")
-  public abstract Instant createdUtc();
+  @Json(name = "created_utc") public abstract Instant createdUtc();
 
   public abstract int gilded();
 
@@ -39,8 +31,7 @@ public abstract class RedditSubmission extends RedditObject implements HasStable
 
   public abstract int ups();
 
-  @Override
-  public long stableId() {
+  @Override public long stableId() {
     return id().hashCode();
   }
 }

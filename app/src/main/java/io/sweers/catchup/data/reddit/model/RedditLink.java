@@ -2,16 +2,15 @@ package io.sweers.catchup.data.reddit.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 
 @AutoValue
 public abstract class RedditLink extends RedditSubmission {
-  public static TypeAdapter<RedditLink> typeAdapter(@NonNull Gson gson) {
-    return new AutoValue_RedditLink.GsonTypeAdapter(gson);
+  public static JsonAdapter<RedditLink> jsonAdapter(@NonNull Moshi moshi) {
+    return new AutoValue_RedditLink.MoshiJsonAdapter(moshi);
   }
 
   public abstract boolean clicked();
@@ -20,24 +19,17 @@ public abstract class RedditLink extends RedditSubmission {
 
   public abstract boolean hidden();
 
-  @SerializedName("is_self")
-  public abstract boolean isSelf();
+  @Json(name = "is_self") public abstract boolean isSelf();
 
-  @Nullable
-  @SerializedName("link_flair_text")
-  public abstract String linkFlairText();
+  @Nullable @Json(name = "link_flair_text") public abstract String linkFlairText();
 
-  @SerializedName("num_comments")
-  public abstract int commentsCount();
+  @Json(name = "num_comments") public abstract int commentsCount();
 
   public abstract String permalink();
 
-  @Nullable
-  public abstract String selftext();
+  @Nullable public abstract String selftext();
 
-  @Nullable
-  @SerializedName("selftext_html")
-  public abstract String selftextHtml();
+  @Nullable @Json(name = "selftext_html") public abstract String selftextHtml();
 
   public abstract boolean stickied();
 

@@ -10,43 +10,23 @@ import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
 import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 
-@Module(
-    includes = UiModule.class
-)
-public class ActivityModule {
+@Module(includes = UiModule.class)
+public abstract class ActivityModule {
 
-  private MainActivity activity;
-
-  public ActivityModule(MainActivity activity) {
-    this.activity = activity;
+  @PerActivity @Provides static CustomTabActivityHelper provideCustomTabActivityHelper() {
+    return new CustomTabActivityHelper();
   }
 
-  @PerActivity
-  @Provides
-  MainActivity provideActivity() {
-    return activity;
-  }
-
-  @PerActivity
-  @Provides
-  CustomTabActivityHelper provideCustomTabActivityHelper(MainActivity activity) {
-    return new CustomTabActivityHelper(activity);
-  }
-
-  @PerActivity
-  @Provides
-  @SmartLinking
+  @PerActivity @Provides @SmartLinking
   static Preference<Boolean> provideSmartLinkingPref(RxSharedPreferences rxSharedPreferences) {
     // TODO Use psync once it's fixed
-    return rxSharedPreferences.getBoolean(P.smartlinkingGlobal.key, P.smartlinkingGlobal.defaultValue());
-//    return P.smartlinkingGlobal.rx();
+    return rxSharedPreferences.getBoolean(P.smartlinkingGlobal.key,
+        P.smartlinkingGlobal.defaultValue());
+    //    return P.smartlinkingGlobal.rx();
   }
 
-  @PerActivity
-  @Provides
-  LinkManager provideLinkManager(MainActivity activity, CustomTabActivityHelper helper,
+  @PerActivity @Provides static LinkManager provideLinkManager(CustomTabActivityHelper helper,
       @SmartLinking Preference<Boolean> linkingPref) {
-    return new LinkManager(activity, helper, linkingPref);
+    return new LinkManager(helper, linkingPref);
   }
-
 }

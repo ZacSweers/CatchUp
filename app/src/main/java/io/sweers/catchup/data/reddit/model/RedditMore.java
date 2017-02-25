@@ -1,18 +1,16 @@
 package io.sweers.catchup.data.reddit.model;
 
 import android.support.annotation.NonNull;
-
 import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.SerializedName;
-
+import com.squareup.moshi.Json;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 import java.util.List;
 
 @AutoValue
 public abstract class RedditMore extends RedditObject {
-  public static TypeAdapter<RedditMore> typeAdapter(@NonNull Gson gson) {
-    return new AutoValue_RedditMore.GsonTypeAdapter(gson);
+  public static JsonAdapter<RedditMore> jsonAdapter(@NonNull Moshi moshi) {
+    return new AutoValue_RedditMore.MoshiJsonAdapter(moshi);
   }
 
   public abstract List<String> children();
@@ -23,6 +21,5 @@ public abstract class RedditMore extends RedditObject {
 
   public abstract String name();
 
-  @SerializedName("parent_id")
-  public abstract String parentId();
+  @Json(name = "parent_id") public abstract String parentId();
 }

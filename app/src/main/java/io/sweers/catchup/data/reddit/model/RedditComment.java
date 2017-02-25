@@ -1,35 +1,35 @@
 package io.sweers.catchup.data.reddit.model;
 
 import android.support.annotation.NonNull;
-
 import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 
 @AutoValue
 public abstract class RedditComment extends RedditSubmission {
-  public static TypeAdapter<RedditComment> typeAdapter(@NonNull Gson gson) {
-    return new AutoValue_RedditComment.GsonTypeAdapter(gson);
+  public static JsonAdapter<RedditComment> jsonAdapter(@NonNull Moshi moshi) {
+    return new AutoValue_RedditComment.MoshiJsonAdapter(moshi);
   }
 
   public abstract String body();
 
-  @SerializedName("body_html")
-  public abstract String bodyHtml();
+  @Json(name = "body_html") public abstract String bodyHtml();
 
   public abstract int controversiality();
 
   public abstract int depth();
 
-  @SerializedName("link_id")
-  public abstract String linkId();
+  @Json(name = "link_id") public abstract String linkId();
 
-  @SerializedName("parent_id")
-  public abstract String parentId();
+  @Json(name = "parent_id") public abstract String parentId();
 
+  /**
+   * Ugh-asaurus
+   *
+   * @return list of comments. Or false. Because yeah.
+   */
   public abstract RedditObject replies();
 
-  @SerializedName("subreddit_id")
-  public abstract String subredditId();
+  @Json(name = "subreddit_id") public abstract String subredditId();
 }

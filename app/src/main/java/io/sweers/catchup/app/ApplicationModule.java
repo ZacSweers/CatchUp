@@ -2,33 +2,14 @@ package io.sweers.catchup.app;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.annotation.NonNull;
-
+import dagger.Binds;
+import dagger.Module;
+import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import javax.inject.Singleton;
 
-import dagger.Module;
-import dagger.Provides;
-import io.sweers.catchup.injection.qualifiers.ApplicationContext;
-
 @Module
-public class ApplicationModule {
+public abstract class ApplicationModule {
 
-  private CatchUpApplication application;
-
-  public ApplicationModule(@NonNull CatchUpApplication application) {
-    this.application = application;
-  }
-
-  @Provides
-  @Singleton
-  public Application provideApplication() {
-    return application;
-  }
-
-  @Provides
-  @Singleton
-  @ApplicationContext
-  public Context provideApplicationContext() {
-    return application.getApplicationContext();
-  }
+  @Binds @Singleton @ApplicationContext
+  public abstract Context provideApplicationContext(Application application);
 }

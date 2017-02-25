@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
 import dagger.Lazy;
@@ -20,6 +19,7 @@ import io.sweers.catchup.data.producthunt.model.Post;
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
+import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -28,8 +28,8 @@ import java.util.List;
 import javax.inject.Inject;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
-
 
 public final class ProductHuntController extends BaseNewsController<Post> {
 
@@ -44,51 +44,47 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     super(args);
   }
 
-  @Override
-  protected void performInjection() {
-    DaggerProductHuntController_Component
-        .builder()
+  @Override protected void performInjection() {
+    DaggerProductHuntController_Component.builder()
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
   }
 
-  @Override
-  protected Context onThemeContext(@NonNull Context context) {
+  @Override protected Context onThemeContext(@NonNull Context context) {
     return new ContextThemeWrapper(context, R.style.CatchUp_ProductHunt);
   }
 
-  @Override
-  protected void bindItemView(@NonNull Post item, @NonNull ViewHolder holder) {
+  @Override protected void bindItemView(@NonNull Post item, @NonNull ViewHolder holder) {
     holder.title(item.name());
     holder.score(Pair.create("▲", item.votes_count()));
     holder.timestamp(item.created_at());
-    holder.author(item.user().name());
+    holder.author(item.user()
+        .name());
     holder.tag(item.getFirstTopic());
     holder.source(null);
     holder.comments(item.comments_count());
 
     holder.itemClicks()
-        .compose(transformUrl(item.redirect_url()))
-        .subscribe(linkManager);
+        .compose(transformUrlToMeta(item.redirect_url()))
+        .flatMapCompletable(linkManager)
+        .subscribe(AutoDispose.completable(this)
+            .empty());
     holder.itemCommentClicks()
-        .compose(transformUrl(item.discussion_url()))
-        .subscribe(linkManager);
+        .compose(transformUrlToMeta(item.discussion_url()))
+        .flatMapCompletable(linkManager)
+        .subscribe(AutoDispose.completable(this)
+            .empty());
   }
 
-  @NonNull
-  @Override
-  protected Single<List<Post>> getDataObservable() {
+  @NonNull @Override protected Single<List<Post>> getDataObservable() {
     return service.getPosts(0)
         .map(PostsResponse::posts);
-
   }
 
   @PerController
-  @dagger.Component(
-      modules = Module.class,
-      dependencies = ActivityComponent.class
-  )
+  @dagger.Component(modules = Module.class,
+                    dependencies = ActivityComponent.class)
   public interface Component {
     void inject(ProductHuntController controller);
   }
@@ -96,34 +92,27 @@ public final class ProductHuntController extends BaseNewsController<Post> {
   @dagger.Module
   public abstract static class Module {
 
-    @Provides
-    @PerController
-    @ForApi
+    @Provides @PerController @ForApi
     static OkHttpClient provideProductHuntOkHttpClient(OkHttpClient client) {
-      return client
-          .newBuilder()
-          .addInterceptor(AuthInterceptor.create("Bearer", BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
+      return client.newBuilder()
+          .addInterceptor(AuthInterceptor.create("Bearer",
+              BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
           .build();
     }
 
-    @Provides
-    @PerController
-    @ForApi
-    static Moshi provideProductHuntMoshi(Moshi moshi) {
+    @Provides @PerController @ForApi static Moshi provideProductHuntMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Date.class, new Rfc3339DateJsonAdapter())
           .build();
     }
 
-    @Provides
-    @PerController
-    static ProductHuntService provideProductHuntService(
-        @ForApi final Lazy<OkHttpClient> client,
+    @Provides @PerController
+    static ProductHuntService provideProductHuntService(@ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
-      return new Retrofit.Builder()
-          .baseUrl(ProductHuntService.ENDPOINT)
-          .callFactory(request -> client.get().newCall(request))
+      return new Retrofit.Builder().baseUrl(ProductHuntService.ENDPOINT)
+          .callFactory(request -> client.get()
+              .newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .build()

@@ -2,33 +2,29 @@ package io.sweers.catchup.app;
 
 import android.app.Application;
 import android.content.Context;
-
 import com.f2prateek.rx.preferences.RxSharedPreferences;
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
-
-import javax.inject.Singleton;
-
+import dagger.BindsInstance;
 import dagger.Component;
 import io.sweers.catchup.data.DataModule;
 import io.sweers.catchup.data.LumberYard;
+import io.sweers.catchup.data.smmry.SmmryModule;
+import io.sweers.catchup.data.smmry.SmmryService;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
+import javax.inject.Singleton;
 import okhttp3.OkHttpClient;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 @Singleton
-@Component(
-    modules = {
-        ApplicationModule.class,
-        DataModule.class
-    }
-)
+@Component(modules = {
+    ApplicationModule.class, DataModule.class, SmmryModule.class
+})
 public interface ApplicationComponent {
   void inject(CatchUpApplication application);
 
   Application application();
 
-  @ApplicationContext
-  Context context();
+  @ApplicationContext Context context();
 
   LumberYard lumberYard();
 
@@ -39,4 +35,15 @@ public interface ApplicationComponent {
   RxJava2CallAdapterFactory rxJavaCallAdapterFactory();
 
   RxSharedPreferences rxSharedPreferences();
+
+  SmmryService smmryService();
+
+  @Component.Builder
+  interface Builder {
+    ApplicationComponent build();
+
+    Builder dataModule(DataModule dataModule);
+
+    @BindsInstance Builder application(Application application);
+  }
 }

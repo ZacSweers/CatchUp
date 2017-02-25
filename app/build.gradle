@@ -2,19 +2,15 @@ buildscript {
   dependencies {
     classpath rootProject.ext.androidPlugin
     classpath rootProject.ext.retrolambdaPlugin
-    classpath rootProject.ext.retrolambdaPluginLombok
     classpath rootProject.ext.psyncPlugin
     classpath rootProject.ext.versionsPlugin
   }
-
-  // Exclude the lombok version that the android plugin depends on.
-  configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.flipboard.psync'
-apply plugin: 'com.github.ben-manes.versions'   // ./gradlew dependencyUpdates -Drevision=release
+apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
 
 private String getPropertyOrEmpty(String property) {
   if (hasProperty(property)) {
@@ -22,6 +18,10 @@ private String getPropertyOrEmpty(String property) {
   } else {
     return ""
   }
+}
+
+repositories {
+  maven { url "https://jitpack.io" }
 }
 
 android {
@@ -41,10 +41,14 @@ android {
 
     buildConfigField 'String', 'GIT_SHA', /"$gitSha"/
     buildConfigField 'long', 'GIT_TIMESTAMP', "$gitTimestamp"
-    buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN', /"${getPropertyOrEmpty("catchup_product_hunt_developer_token")}"/
-    buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN', /"${getPropertyOrEmpty("catchup_github_developer_token")}"/
-    buildConfigField 'String', 'DESIGNER_NEWS_CLIENT_ID', /"${getPropertyOrEmpty("catchup_designer_news_client_id")}"/
-    buildConfigField 'String', 'DRIBBBLE_CLIENT_ACCESS_TOKEN', /"${getPropertyOrEmpty("catchup_dribbble_access_token")}"/
+    buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN',
+        /"${getPropertyOrEmpty("catchup_product_hunt_developer_token")}"/
+    buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN',
+        /"${getPropertyOrEmpty("catchup_github_developer_token")}"/
+    buildConfigField 'String', 'DESIGNER_NEWS_CLIENT_ID',
+        /"${getPropertyOrEmpty("catchup_designer_news_client_id")}"/
+    buildConfigField 'String', 'DRIBBBLE_CLIENT_ACCESS_TOKEN',
+        /"${getPropertyOrEmpty("catchup_dribbble_access_token")}"/
     buildConfigField 'String', 'SMMRY_API_KEY', /"${getPropertyOrEmpty("catchup_smmry_api_key")}"/
   }
   compileOptions {
@@ -142,7 +146,6 @@ dependencies {
   compile rootProject.ext.moshiAdapters
   compile rootProject.ext.retrofit
   compile rootProject.ext.retrofitMoshi
-  compile rootProject.ext.retrofitGson
   compile rootProject.ext.retrofitRxJava
   compile(rootProject.ext.retrofitXml) {
     exclude module: 'stax'
@@ -154,7 +157,7 @@ dependencies {
   compile rootProject.ext.rxJava
   compile rootProject.ext.rxJava2
   compile rootProject.ext.rxJava2Interop
-  compile rootProject.ext.retrofitRxJava2Adapter
+  compile rootProject.ext.retrofitRxJava2
   compile rootProject.ext.rxBinding
   compile rootProject.ext.rxBindingV4
   compile rootProject.ext.timber
@@ -172,9 +175,10 @@ dependencies {
   // Misc
   compile rootProject.ext.barberApi
   annotationProcessor rootProject.ext.barberCompiler
+  compile rootProject.ext.chipCloud
+  compile rootProject.ext.flexbox
   compile rootProject.ext.glide
   compile rootProject.ext.glideOkhttp
-  compile rootProject.ext.gson
   compile rootProject.ext.recyclerViewAnimators
   compile rootProject.ext.rxJava
   compile rootProject.ext.rxPreferences
@@ -198,11 +202,9 @@ dependencies {
 
   // AutoValue
   provided rootProject.ext.autoValueAnnotations
-  provided rootProject.ext.autoValueGson
   provided rootProject.ext.autoValueMoshi
   annotationProcessor rootProject.ext.autoValue
   annotationProcessor rootProject.ext.autoValueMoshi
-  annotationProcessor rootProject.ext.autoValueGson
   annotationProcessor rootProject.ext.autoValueRedacted
 
   // Conductor

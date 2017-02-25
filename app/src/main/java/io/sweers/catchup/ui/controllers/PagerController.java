@@ -24,6 +24,7 @@ import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.support.RouterPagerAdapter;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 import dagger.Lazy;
 import dagger.Provides;
 import io.sweers.catchup.P;
@@ -34,56 +35,33 @@ import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.activity.SettingsActivity;
-import io.sweers.catchup.ui.base.BaseController;
+import io.sweers.catchup.ui.base.ButterKnifeController;
 import io.sweers.catchup.util.ApiUtil;
 import io.sweers.catchup.util.UiUtil;
 import java.util.Arrays;
 import javax.inject.Inject;
 
-public class PagerController extends BaseController {
+public class PagerController extends ButterKnifeController {
 
   private static final String PAGE_TAG = "PagerController.pageTag";
   private static final int[][] PAGE_DATA = new int[][] {
       {
-          R.drawable.logo_hn,
-          R.string.hacker_news,
-          R.color.hackerNewsAccent
-      },
-      {
-          R.drawable.logo_reddit,
-          R.string.reddit,
-          R.color.redditAccent
-      },
-      {
-          R.drawable.logo_medium,
-          R.string.medium,
-          R.color.mediumAccent
-      },
-      {
-          R.drawable.ll_ph,
-          R.string.product_hunt,
-          R.color.productHuntAccent
-      },
-      {
-          R.drawable.logo_sd,
-          R.string.slashdot,
-          R.color.slashdotAccent
-      },
-      {
-          R.drawable.logo_dn,
-          R.string.designer_news,
-          R.color.designerNewsAccent
-      },
-      {
-          R.drawable.logo_dribbble,
-          R.string.dribbble,
-          R.color.dribbbleAccent
-      },
-      {
-          R.drawable.logo_github,
-          R.string.github,
-          R.color.redditAccent
-      }
+          R.drawable.logo_hn, R.string.hacker_news, R.color.hackerNewsAccent
+      }, {
+      R.drawable.logo_reddit, R.string.reddit, R.color.redditAccent
+  }, {
+      R.drawable.logo_medium, R.string.medium, R.color.mediumAccent
+  }, {
+      R.drawable.ll_ph, R.string.product_hunt, R.color.productHuntAccent
+  }, {
+      R.drawable.logo_sd, R.string.slashdot, R.color.slashdotAccent
+  }, {
+      R.drawable.logo_dn, R.string.designer_news, R.color.designerNewsAccent
+  }, {
+      R.drawable.logo_dribbble, R.string.dribbble, R.color.dribbbleAccent
+  }, {
+      R.drawable.logo_github, R.string.github, R.color.redditAccent
+  }
   };
   private final int[] resolvedColorCache = new int[PAGE_DATA.length];
   private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
@@ -108,8 +86,7 @@ public class PagerController extends BaseController {
 
   private void init() {
     pagerAdapter = new RouterPagerAdapter(this) {
-      @Override
-      public void configureRouter(Router router, int position) {
+      @Override public void configureRouter(Router router, int position) {
         if (!router.hasRootController()) {
           Controller page;
           switch (position) {
@@ -145,13 +122,11 @@ public class PagerController extends BaseController {
         }
       }
 
-      @Override
-      public int getCount() {
+      @Override public int getCount() {
         return PAGE_DATA.length;
       }
 
-      @Override
-      public CharSequence getPageTitle(int position) {
+      @Override public CharSequence getPageTitle(int position) {
         return "";
       }
     };
@@ -165,13 +140,11 @@ public class PagerController extends BaseController {
     return inflater.inflate(R.layout.controller_pager, container, false);
   }
 
-  @Override
-  protected Unbinder bind(@NonNull View view) {
+  @Override protected Unbinder bind(@NonNull View view) {
     return new PagerController_ViewBinding(this, view);
   }
 
-  @Override
-  protected void onViewBound(@NonNull View view) {
+  @Override protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
 
     // TODO Must be a sooner place to inject this
@@ -190,7 +163,7 @@ public class PagerController extends BaseController {
             P.daynightNight.put(true)
                 .commit();
           }
-          getActivity().recreate();
+          ProcessPhoenix.triggerRebirth(getActivity());
           return true;
         case R.id.settings:
           startActivity(new Intent(getActivity(), SettingsActivity.class));
@@ -255,30 +228,25 @@ public class PagerController extends BaseController {
         }
       }
 
-      @Override
-      public void onPageSelected(int position) {
+      @Override public void onPageSelected(int position) {
         toolbar.setTitle(PAGE_DATA[position][1]);
       }
 
-      @Override
-      public void onPageScrollStateChanged(int state) {
+      @Override public void onPageScrollStateChanged(int state) {
         // NO-OP.
       }
     });
 
     tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-      @Override
-      public void onTabSelected(TabLayout.Tab tab) {
+      @Override public void onTabSelected(TabLayout.Tab tab) {
 
       }
 
-      @Override
-      public void onTabUnselected(TabLayout.Tab tab) {
+      @Override public void onTabUnselected(TabLayout.Tab tab) {
 
       }
 
-      @Override
-      public void onTabReselected(TabLayout.Tab tab) {
+      @Override public void onTabReselected(TabLayout.Tab tab) {
         Controller controller = pagerAdapter.getRouter(tab.getPosition())
             .getControllerWithTag(PAGE_TAG);
         if (controller instanceof Scrollable) {
@@ -289,8 +257,7 @@ public class PagerController extends BaseController {
     });
   }
 
-  @ColorInt
-  private int getAndSaveColor(int position) {
+  @ColorInt private int getAndSaveColor(int position) {
     if (resolvedColorCache[position] == R.color.no_color) {
       resolvedColorCache[position] = ContextCompat.getColor(getActivity(), PAGE_DATA[position][2]);
     }
@@ -304,10 +271,8 @@ public class PagerController extends BaseController {
   }
 
   @PerController
-  @dagger.Component(
-      modules = Module.class,
-      dependencies = ActivityComponent.class
-  )
+  @dagger.Component(modules = Module.class,
+                    dependencies = ActivityComponent.class)
   interface Component {
     void inject(PagerController pagerController);
   }
@@ -315,10 +280,8 @@ public class PagerController extends BaseController {
   @dagger.Module
   static class Module {
 
-    @Provides
-    @PerController
-    @NavBarTheme
-    Preference<Boolean> provideThemeNavigationColorPreference(RxSharedPreferences rxSharedPreferences) {
+    @Provides @PerController @NavBarTheme Preference<Boolean> provideThemeNavigationColorPreference(
+        RxSharedPreferences rxSharedPreferences) {
       return rxSharedPreferences.getBoolean(P.themeNavigationBar.key,
           P.themeNavigationBar.defaultValue());
       // TODO revert to this when this is fixed: https://github.com/Flipboard/psync/issues/11

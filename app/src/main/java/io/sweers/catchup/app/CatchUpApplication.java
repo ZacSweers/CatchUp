@@ -4,16 +4,13 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDelegate;
-
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
-
-import javax.inject.Inject;
-
 import io.sweers.catchup.P;
 import io.sweers.catchup.data.LumberYard;
 import io.sweers.catchup.injection.Modules;
+import javax.inject.Inject;
 
 public class CatchUpApplication extends Application {
 
@@ -22,22 +19,19 @@ public class CatchUpApplication extends Application {
   @Inject protected SharedPreferences sharedPreferences;
   @Inject protected LumberYard lumberYard;
 
-  @NonNull
-  public static ApplicationComponent component() {
+  @NonNull public static ApplicationComponent component() {
     return component;
   }
 
-  @NonNull
-  public static RefWatcher refWatcher() {
+  @NonNull public static RefWatcher refWatcher() {
     return refWatcher;
   }
 
-  @Override
-  public void onCreate() {
+  @Override public void onCreate() {
     super.onCreate();
     refWatcher = LeakCanary.install(this);
     component = DaggerApplicationComponent.builder()
-        .applicationModule(new ApplicationModule(this))
+        .application(this)
         .dataModule(Modules.dataModule())
         .build();
     component.inject(this);
@@ -58,5 +52,4 @@ public class CatchUpApplication extends Application {
   protected void initVariant() {
     // Override this in variants
   }
-
 }

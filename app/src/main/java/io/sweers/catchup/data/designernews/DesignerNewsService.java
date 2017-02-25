@@ -29,10 +29,8 @@ import retrofit2.http.Query;
  */
 public interface DesignerNewsService {
 
-  String HOST = "www.designernews.co/";
+  String HOST = "api-news.layervault.com/";
   String ENDPOINT = "https://" + HOST;
 
-  @GET("api/v1/stories")
-  Single<StoriesResponse> getTopStories(@Query("page") int page);
-
+  @GET("api/v2/stories") Single<StoriesResponse> getTopStories(@Query("page") int page);
 }

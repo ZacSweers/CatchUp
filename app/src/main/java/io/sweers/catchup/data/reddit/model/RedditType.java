@@ -1,19 +1,19 @@
 package io.sweers.catchup.data.reddit.model;
 
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
 
 public enum RedditType {
 
-  @SerializedName("t1")
+  @Json(name = "t1")
   T1(RedditComment.class),
 
-  @SerializedName("t3")
+  @Json(name = "t3")
   T3(RedditLink.class),
 
-  @SerializedName("Listing")
+  @Json(name = "Listing")
   LISTING(RedditListing.class),
 
-  @SerializedName("more")
+  @Json(name = "more")
   MORE(RedditMore.class);
 
   private final Class clazz;

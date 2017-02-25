@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.ContextThemeWrapper;
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -14,6 +13,7 @@ import io.sweers.catchup.data.slashdot.Entry;
 import io.sweers.catchup.data.slashdot.SlashdotService;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
+import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 public final class SlashdotController extends BaseNewsController<Entry> {
@@ -38,21 +39,18 @@ public final class SlashdotController extends BaseNewsController<Entry> {
     super(args);
   }
 
-  @Override
-  protected void performInjection() {
+  @Override protected void performInjection() {
     DaggerSlashdotController_Component.builder()
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
   }
 
-  @Override
-  protected Context onThemeContext(@NonNull Context context) {
+  @Override protected Context onThemeContext(@NonNull Context context) {
     return new ContextThemeWrapper(context, R.style.CatchUp_Slashdot);
   }
 
-  @Override
-  protected void bindItemView(@NonNull Entry entry, @NonNull ViewHolder holder) {
+  @Override protected void bindItemView(@NonNull Entry entry, @NonNull ViewHolder holder) {
     holder.title(entry.title);
 
     holder.score(null);
@@ -65,30 +63,33 @@ public final class SlashdotController extends BaseNewsController<Entry> {
     holder.tag(entry.section);
 
     holder.itemClicks()
-        .compose(transformUrl(entry.id))
-        .subscribe(linkManager);
+        .compose(transformUrlToMeta(entry.id))
+        .flatMapCompletable(linkManager)
+        .subscribe(AutoDispose.completable(this)
+            .empty());
     holder.itemCommentClicks()
-        .compose(transformUrl(entry.id + "#comments"))
-        .subscribe(linkManager);
+        .compose(transformUrlToMeta(entry.id + "#comments"))
+        .flatMapCompletable(linkManager)
+        .subscribe(AutoDispose.completable(this)
+            .empty());
   }
 
-  @NonNull
-  @Override
-  protected Single<List<Entry>> getDataObservable() {
+  @NonNull @Override protected Single<List<Entry>> getDataObservable() {
     return service.main()
         .map(channel -> channel.itemList);
   }
 
-  @PerController @dagger.Component(modules = Module.class,
-      dependencies = ActivityComponent.class) public interface Component {
+  @PerController
+  @dagger.Component(modules = Module.class,
+                    dependencies = ActivityComponent.class)
+  public interface Component {
     void inject(SlashdotController controller);
   }
 
-  @dagger.Module public abstract static class Module {
+  @dagger.Module
+  public abstract static class Module {
 
-    @Provides
-    @ForApi
-    @PerController
+    @Provides @ForApi @PerController
     static OkHttpClient provideSlashdotOkHttpClient(OkHttpClient okHttpClient) {
       return okHttpClient.newBuilder()
           .addNetworkInterceptor(chain -> {
@@ -102,8 +103,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
           .build();
     }
 
-    @Provides
-    @PerController
+    @Provides @PerController
     static SlashdotService provideSlashdotService(@ForApi final Lazy<OkHttpClient> client,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder().baseUrl(SlashdotService.ENDPOINT)

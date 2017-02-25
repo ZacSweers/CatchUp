@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
 import dagger.Lazy;
@@ -19,6 +18,7 @@ import io.sweers.catchup.data.designernews.model.StoriesResponse;
 import io.sweers.catchup.data.designernews.model.Story;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
+import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -29,8 +29,8 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
-
 
 public final class DesignerNewsController extends BaseNewsController<Story> {
 
@@ -45,22 +45,18 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
     super(args);
   }
 
-  @Override
-  protected void performInjection() {
-    DaggerDesignerNewsController_Component
-        .builder()
+  @Override protected void performInjection() {
+    DaggerDesignerNewsController_Component.builder()
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
   }
 
-  @Override
-  protected Context onThemeContext(@NonNull Context context) {
+  @Override protected Context onThemeContext(@NonNull Context context) {
     return new ContextThemeWrapper(context, R.style.CatchUp_DesignerNews);
   }
 
-  @Override
-  protected void bindItemView(@NonNull Story story, @NonNull ViewHolder holder) {
+  @Override protected void bindItemView(@NonNull Story story, @NonNull ViewHolder holder) {
     holder.title(story.title());
 
     holder.score(Pair.create("▲", story.voteCount()));
@@ -73,25 +69,26 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
     holder.tag(story.badge());
 
     holder.itemClicks()
-        .compose(transformUrl(story.url()))
-        .subscribe(linkManager);
+        .compose(transformUrlToMeta(story.url()))
+        .flatMapCompletable(linkManager)
+        .subscribe(AutoDispose.completable(this)
+            .empty());
     holder.itemCommentClicks()
-        .compose(transformUrl(story.siteUrl().replace("api.", "www.")))
-        .subscribe(linkManager);
+        .compose(transformUrlToMeta(story.siteUrl()
+            .replace("api.", "www.")))
+        .flatMapCompletable(linkManager)
+        .subscribe(AutoDispose.completable(this)
+            .empty());
   }
 
-  @NonNull
-  @Override
-  protected Single<List<Story>> getDataObservable() {
+  @NonNull @Override protected Single<List<Story>> getDataObservable() {
     return service.getTopStories(1)
         .map(StoriesResponse::stories);
   }
 
   @PerController
-  @dagger.Component(
-      modules = Module.class,
-      dependencies = ActivityComponent.class
-  )
+  @dagger.Component(modules = Module.class,
+                    dependencies = ActivityComponent.class)
   public interface Component {
     void inject(DesignerNewsController controller);
   }
@@ -99,9 +96,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
   @dagger.Module
   public abstract static class Module {
 
-    @Provides
-    @ForApi
-    @PerController
+    @Provides @ForApi @PerController
     static OkHttpClient provideDesignerNewsOkHttpClient(OkHttpClient okHttpClient) {
       return okHttpClient.newBuilder()
           .addNetworkInterceptor(chain -> {
@@ -116,24 +111,19 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
           .build();
     }
 
-    @Provides
-    @ForApi
-    @PerController
-    static Moshi provideDesignerNewsMoshi(Moshi moshi) {
+    @Provides @ForApi @PerController static Moshi provideDesignerNewsMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Date.class, new Rfc3339DateJsonAdapter())
           .build();
     }
 
-    @Provides
-    @PerController
-    static DesignerNewsService provideDesignerNewsService(
-        @ForApi final Lazy<OkHttpClient> client,
+    @Provides @PerController
+    static DesignerNewsService provideDesignerNewsService(@ForApi final Lazy<OkHttpClient> client,
         @ForApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
-      Retrofit retrofit = new Retrofit.Builder()
-          .baseUrl(DesignerNewsService.ENDPOINT)
-          .callFactory(request -> client.get().newCall(request))
+      Retrofit retrofit = new Retrofit.Builder().baseUrl(DesignerNewsService.ENDPOINT)
+          .callFactory(request -> client.get()
+              .newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .build();

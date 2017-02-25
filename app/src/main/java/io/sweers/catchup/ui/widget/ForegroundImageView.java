@@ -20,10 +20,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
-
 import io.sweers.barber.Barber;
 import io.sweers.barber.StyledAttr;
 import io.sweers.catchup.R;
@@ -31,7 +33,7 @@ import io.sweers.catchup.R;
 /**
  * An extension to {@link ImageView} which has a foreground drawable.
  */
-public class ForegroundImageView extends ImageView {
+public class ForegroundImageView extends AppCompatImageView {
 
   private Drawable foreground;
 
@@ -41,32 +43,27 @@ public class ForegroundImageView extends ImageView {
     setOutlineProvider(ViewOutlineProvider.BOUNDS);
   }
 
-  @Override
-  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+  @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
     if (foreground != null) {
       foreground.setBounds(0, 0, w, h);
     }
   }
 
-  @Override
-  public boolean hasOverlappingRendering() {
+  @Override public boolean hasOverlappingRendering() {
     return false;
   }
 
-  @Override
-  protected boolean verifyDrawable(Drawable who) {
+  @Override protected boolean verifyDrawable(@NonNull Drawable who) {
     return super.verifyDrawable(who) || (who == foreground);
   }
 
-  @Override
-  public void jumpDrawablesToCurrentState() {
+  @Override public void jumpDrawablesToCurrentState() {
     super.jumpDrawablesToCurrentState();
     if (foreground != null) foreground.jumpToCurrentState();
   }
 
-  @Override
-  protected void drawableStateChanged() {
+  @Override protected void drawableStateChanged() {
     super.drawableStateChanged();
     if (foreground != null && foreground.isStateful()) {
       foreground.setState(getDrawableState());
@@ -88,9 +85,8 @@ public class ForegroundImageView extends ImageView {
    *
    * @param drawable The Drawable to be drawn on top of the ImageView
    */
-  @SuppressLint("NewApi")
-  @StyledAttr(R.styleable.ForegroundView_android_foreground)
-  public void setForeground(Drawable drawable) {
+  @SuppressLint("NewApi") @StyledAttr(R.styleable.ForegroundView_android_foreground)
+  public void setForeground(@Nullable Drawable drawable) {
     if (foreground != drawable) {
       if (foreground != null) {
         foreground.setCallback(null);
@@ -113,16 +109,14 @@ public class ForegroundImageView extends ImageView {
     }
   }
 
-  @Override
-  public void draw(Canvas canvas) {
+  @Override public void draw(Canvas canvas) {
     super.draw(canvas);
     if (foreground != null) {
       foreground.draw(canvas);
     }
   }
 
-  @Override
-  public void drawableHotspotChanged(float x, float y) {
+  @Override public void drawableHotspotChanged(float x, float y) {
     super.drawableHotspotChanged(x, y);
     if (foreground != null) {
       foreground.setHotspot(x, y);

@@ -1,37 +1,38 @@
 package io.sweers.catchup.data;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.widget.Toast;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.receivers.RxBroadcastReceiver;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
 import io.sweers.catchup.injection.scopes.PerActivity;
-import io.sweers.catchup.rx.Transformers;
 import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
-import javax.inject.Inject;
-import rx.functions.Action1;
 
 import static hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Observable;
 import static io.sweers.catchup.rx.Transformers.doOnEmpty;
 
-@PerActivity public final class LinkManager implements Action1<Pair<String, Integer>> {
+@PerActivity
+public final class LinkManager implements Function<LinkManager.UrlMeta, Completable> {
 
-  private final MainActivity activity;
   private final CustomTabActivityHelper customTab;
   @SmartLinking private final Preference<Boolean> globalSmartLinkingPref;
 
@@ -39,13 +40,13 @@ import static io.sweers.catchup.rx.Transformers.doOnEmpty;
   // TODO Eventually replace this with something that's mindful of per-service prefs
   private final ArrayMap<String, Boolean> dumbCache = new ArrayMap<>();
 
-  public LinkManager(MainActivity activity,
-      CustomTabActivityHelper customTab,
+  public LinkManager(CustomTabActivityHelper customTab,
       @SmartLinking Preference<Boolean> globalSmartLinkingPref) {
-    this.activity = activity;
     this.customTab = customTab;
     this.globalSmartLinkingPref = globalSmartLinkingPref;
+  }
 
+  public void connect(MainActivity activity) {
     // Invalidate the cache when a new install/update happens or prefs changed
     IntentFilter filter = new IntentFilter();
     filter.addAction(Intent.ACTION_INSTALL_PACKAGE);
@@ -69,61 +70,86 @@ import static io.sweers.catchup.rx.Transformers.doOnEmpty;
     return match >= IntentFilter.MATCH_CATEGORY_HOST && match <= IntentFilter.MATCH_CATEGORY_PATH;
   }
 
-  public void openUrl(@NonNull String url, @ColorInt int accentColor) {
-    if (TextUtils.isEmpty(url)) {
-      Toast.makeText(activity, R.string.error_no_url, Toast.LENGTH_SHORT)
+  public Completable openUrl(UrlMeta meta) {
+    if (meta.uri == null) {
+      Toast.makeText(meta.context, R.string.error_no_url, Toast.LENGTH_SHORT)
           .show();
-      return;
+      return Completable.complete();
     }
-    openUrl(Uri.parse(url), accentColor);
-  }
-
-  public void openUrl(@NonNull Uri uri, @ColorInt int accentColor) {
-    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+    Intent intent = new Intent(Intent.ACTION_VIEW, meta.uri);
     if (!globalSmartLinkingPref.get()) {
-      openCustomTab(uri, accentColor);
-      return;
+      openCustomTab(meta.context, meta.uri, meta.accentColor);
+      return Completable.complete();
     }
 
-    if (!dumbCache.containsKey(uri.getHost())) {
-      queryAndOpen(uri, intent, accentColor);
-    } else if (dumbCache.get(uri.getHost())) {
-      activity.startActivity(intent);
+    if (!dumbCache.containsKey(meta.uri.getHost())) {
+      return queryAndOpen(meta.context, meta.uri, intent, meta.accentColor);
+    } else if (dumbCache.get(meta.uri.getHost())) {
+      meta.context.startActivity(intent);
+      return Completable.complete();
     } else {
-      openCustomTab(uri, accentColor);
+      openCustomTab(meta.context, meta.uri, meta.accentColor);
+      return Completable.complete();
     }
   }
 
-  private void queryAndOpen(Uri uri, Intent intent, @ColorInt int accentColor) {
-    PackageManager manager = activity.getPackageManager();
-    Observable.defer(() -> Observable.fromIterable(manager.queryIntentActivities(intent,
+  private Completable queryAndOpen(Context context,
+      Uri uri,
+      Intent intent,
+      @ColorInt int accentColor) {
+    PackageManager manager = context.getPackageManager();
+    return Observable.defer(() -> Observable.fromIterable(manager.queryIntentActivities(intent,
         PackageManager.MATCH_DEFAULT_ONLY)))
         .filter(resolveInfo -> isSpecificUriMatch(resolveInfo.match))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .compose(Transformers.delayedMessage(activity.findViewById(android.R.id.content),
-            "Resolving"))
         .compose(doOnEmpty(() -> {
           dumbCache.put(uri.getHost(), false);
-          openCustomTab(uri, accentColor);
+          openCustomTab(context, uri, accentColor);
         }))
-        .subscribe(AutoDispose.observable(activity)
-            .around(o -> {
-              dumbCache.put(uri.getHost(), true);
-              activity.startActivity(intent);
-            }));
+        .doOnNext(o -> {
+          dumbCache.put(uri.getHost(), true);
+          context.startActivity(intent);
+        })
+        .ignoreElements();
   }
 
-  private void openCustomTab(@NonNull Uri uri, @ColorInt int accentColor) {
-    customTab.openCustomTab(customTab.getCustomTabIntent()
-        .setStartAnimations(activity, R.anim.slide_up, R.anim.inset)
-        .setExitAnimations(activity, R.anim.outset, R.anim.slide_down)
-        .setToolbarColor(accentColor)
-        .build(), uri);
+  private void openCustomTab(Context context, Uri uri, @ColorInt int accentColor) {
+    customTab.openCustomTab(context,
+        customTab.getCustomTabIntent()
+            .setStartAnimations(context, R.anim.slide_up, R.anim.inset)
+            .setExitAnimations(context, R.anim.outset, R.anim.slide_down)
+            .setToolbarColor(accentColor)
+            .build(),
+        uri);
   }
 
-  @Override
-  public void call(Pair<String, Integer> pair) {
-    openUrl(pair.first, pair.second);
+  @Override public Completable apply(UrlMeta meta) throws Exception {
+    return openUrl(meta).doOnSubscribe(new Consumer<Disposable>() {
+      @Override public void accept(Disposable disposable) throws Exception {
+        System.out.println("COME ON");
+      }
+    })
+        .doOnDispose(new Action() {
+          @Override public void run() throws Exception {
+            System.out.println("WHY U DISPOSE");
+          }
+        });
+  }
+
+  public static class UrlMeta {
+    final Uri uri;
+    @ColorInt final int accentColor;
+    final Context context;
+
+    public UrlMeta(@Nullable String url, @ColorInt int accentColor, Context context) {
+      this(TextUtils.isEmpty(url) ? null : Uri.parse(url), accentColor, context);
+    }
+
+    public UrlMeta(@Nullable Uri uri, @ColorInt int accentColor, Context context) {
+      this.uri = uri;
+      this.accentColor = accentColor;
+      this.context = context;
+    }
   }
 }

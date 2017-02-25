@@ -1,15 +1,14 @@
 package io.sweers.catchup.data.reddit.model;
 
 import android.support.annotation.NonNull;
-
 import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 
 @AutoValue
 public abstract class RedditResponse {
-  public static TypeAdapter<RedditResponse> typeAdapter(@NonNull Gson gson) {
-    return new AutoValue_RedditResponse.GsonTypeAdapter(gson);
+  public static JsonAdapter<RedditResponse> jsonAdapter(@NonNull Moshi moshi) {
+    return new AutoValue_RedditResponse.MoshiJsonAdapter(moshi);
   }
 
   public static Builder builder() {

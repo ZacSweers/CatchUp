@@ -19,8 +19,9 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 import com.jakewharton.rxbinding.view.RxView;
+import hu.akarnokd.rxjava.interop.RxJavaInterop;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.BiConsumer;
@@ -35,13 +36,14 @@ import java.util.Date;
 import java.util.List;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import org.threeten.bp.Instant;
-import rx.Observable;
+import retrofit2.adapter.rxjava2.HttpException;
+import rx.functions.Func1;
 import timber.log.Timber;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public abstract class BaseNewsController<T extends HasStableId> extends BaseController
+public abstract class BaseNewsController<T extends HasStableId> extends ServiceController
     implements SwipeRefreshLayout.OnRefreshListener, Scrollable {
 
   @BindView(R.id.error_container) View errorView;
@@ -71,21 +73,18 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
    */
   protected abstract void bindItemView(@NonNull T t, @NonNull ViewHolder holder);
 
-  @NonNull
-  protected abstract Single<List<T>> getDataObservable();
+  @NonNull protected abstract Single<List<T>> getDataObservable();
 
   @Override
   protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
     return inflater.inflate(R.layout.controller_basic_news, container, false);
   }
 
-  @Override
-  protected Unbinder bind(@NonNull View view) {
+  @Override protected Unbinder bind(@NonNull View view) {
     return new BaseNewsController_ViewBinding(this, view);
   }
 
-  @Override
-  protected void onViewBound(@NonNull View view) {
+  @Override protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
     // TODO There must be an earlier place than this
     performInjection();
@@ -103,26 +102,23 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
     itemAnimator.setAddDuration(300);
     itemAnimator.setRemoveDuration(300);
     recyclerView.setItemAnimator(itemAnimator);
+    loadData();
   }
 
-  @OnClick(R.id.retry_button)
-  void onRetry() {
+  @OnClick(R.id.retry_button) void onRetry() {
     errorView.setVisibility(GONE);
     progress.setVisibility(VISIBLE);
     onRefresh();
   }
 
-  @OnClick(R.id.error_image)
-  void onErrorClick(ImageView imageView) {
+  @OnClick(R.id.error_image) void onErrorClick(ImageView imageView) {
     AnimatedVectorDrawableCompat avd = (AnimatedVectorDrawableCompat) imageView.getDrawable();
     avd.start();
   }
 
-  @Override
-  protected void onAttach(@NonNull View view) {
+  @Override protected void onAttach(@NonNull View view) {
     super.onAttach(view);
     swipeRefreshLayout.setEnabled(false);
-    loadData();
   }
 
   private void loadData() {
@@ -175,13 +171,11 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
             }));
   }
 
-  @Override
-  public void onRefresh() {
+  @Override public void onRefresh() {
     loadData();
   }
 
-  @Override
-  public void onRequestScrollToTop() {
+  @Override public void onRequestScrollToTop() {
     recyclerView.smoothScrollToPosition(0);
   }
 
@@ -196,21 +190,18 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       setHasStableIds(true);
     }
 
-    @Override
-    public long getItemId(int position) {
+    @Override public long getItemId(int position) {
       return data.get(position)
           .stableId();
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       View view = LayoutInflater.from(parent.getContext())
           .inflate(R.layout.list_item_general, parent, false);
       return new ViewHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    @Override public void onBindViewHolder(ViewHolder holder, int position) {
       try {
         bindDelegate.accept(data.get(position), holder);
       } catch (Exception e) {
@@ -218,8 +209,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       }
     }
 
-    @Override
-    public int getItemCount() {
+    @Override public int getItemCount() {
       return data.size();
     }
 
@@ -260,16 +250,22 @@ public abstract class BaseNewsController<T extends HasStableId> extends BaseCont
       unbinder = new BaseNewsController$ViewHolder_ViewBinding(this, itemView);
     }
 
-    public Observable<Void> itemClicks() {
-      return RxView.clicks(container);
+    private static final Object TEMP_OBJECT = new Object();
+    private static final Func1<Void, Object> TEMP_FUNCTION = (Func1<Void, Object>) o -> TEMP_OBJECT;
+
+    public Observable<Object> itemClicks() {
+      return RxJavaInterop.toV2Observable(RxView.clicks(container)
+          .map(TEMP_FUNCTION));
     }
 
-    public Observable<Void> itemLongClicks() {
-      return RxView.longClicks(container);
+    public Observable<Object> itemLongClicks() {
+      return RxJavaInterop.toV2Observable(RxView.longClicks(container)
+          .map(TEMP_FUNCTION));
     }
 
-    public Observable<Void> itemCommentClicks() {
-      return RxView.clicks(comments);
+    public Observable<Object> itemCommentClicks() {
+      return RxJavaInterop.toV2Observable(RxView.clicks(comments)
+          .map(TEMP_FUNCTION));
     }
 
     public void title(@NonNull CharSequence titleText) {
