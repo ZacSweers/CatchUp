@@ -86,6 +86,10 @@ public final class MediumController extends BaseNewsController<MediumPost> {
         .responsesCreatedCount());
     holder.source(null);
 
+    holder.itemLongClicks()
+        .subscribe(AutoDispose.observable(this)
+            .around(SmmryController.showFor(this, item.constructUrl())));
+
     holder.itemClicks()
         .compose(transformUrlToMeta(item.constructUrl()))
         .flatMapCompletable(linkManager)
