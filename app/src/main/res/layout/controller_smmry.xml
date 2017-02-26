@@ -1,49 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drag_dismiss_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:windowBackground"
-    android:clipToPadding="false"
-    android:padding="16dp"
+    app:dragDismissDistance="112dp"
     >
 
-  <FrameLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
+  <LinearLayout
+      android:id="@+id/loading_view"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:orientation="vertical"
       >
-
-    <LinearLayout
-        android:id="@+id/loading_view"
+    <ProgressBar
+        android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical"
-        >
-      <ProgressBar
-          android:id="@+id/progress"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center"
-          android:layout_marginBottom="16dp"
-          android:indeterminate="true"
-          style="@style/Widget.AppCompat.ProgressBar"
-          />
+        android:layout_marginBottom="16dp"
+        android:indeterminate="true"
+        style="@style/Widget.AppCompat.ProgressBar"
+        />
 
-      <io.sweers.catchup.ui.widget.BaselineGridTextView
-          android:id="@+id/loading_text"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="@string/summarizing"
-          />
-    </LinearLayout>
+    <io.sweers.catchup.ui.widget.BaselineGridTextView
+        android:id="@+id/loading_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/summarizing"
+        />
+  </LinearLayout>
+
+  <android.support.v4.widget.NestedScrollView
+      android:id="@+id/content_container"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:clipToPadding="false"
+      android:padding="16dp"
+      android:visibility="gone"
+      >
 
     <LinearLayout
-        android:id="@+id/content_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone"
         >
 
       <io.sweers.catchup.ui.widget.BaselineGridTextView
@@ -70,5 +72,5 @@
           />
 
     </LinearLayout>
-  </FrameLayout>
-</android.support.v4.widget.NestedScrollView>
+  </android.support.v4.widget.NestedScrollView>
+</io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout>

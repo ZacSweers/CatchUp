@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.NestedScrollView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,8 @@ import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.ButterKnifeController;
 import io.sweers.catchup.ui.base.ServiceController;
+import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout;
+import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback;
 import javax.inject.Inject;
 
 /**
@@ -47,10 +50,19 @@ public class SmmryController extends ButterKnifeController {
   @ColorInt private int accentColor;
   @BindView(R.id.loading_view) View loadingView;
   @BindView(R.id.progress) ProgressBar progressBar;
-  @BindView(R.id.content_container) ViewGroup content;
+  @BindView(R.id.content_container) NestedScrollView content;
   @BindView(R.id.tags_container) FlexboxLayout tags;
   @BindView(R.id.title) TextView title;
   @BindView(R.id.summary) TextView summary;
+  @BindView(R.id.drag_dismiss_layout) ElasticDragDismissFrameLayout dragDismissFrameLayout;
+
+  private final ElasticDragDismissCallback dragDismissListener = new ElasticDragDismissCallback() {
+    @Override public void onDragDismissed() {
+      //overridePopHandler(new ScaleFadeChangeHandler());
+      getRouter().popController(SmmryController.this);
+      dragDismissFrameLayout.removeListener(this);
+    }
+  };
 
   public static <T> Consumer<T> showFor(ServiceController controller, String url) {
     return t -> {
@@ -85,6 +97,7 @@ public class SmmryController extends ButterKnifeController {
         .activityComponent(((MainActivity) getActivity()).getComponent())
         .build()
         .inject(this);
+    dragDismissFrameLayout.addListener(dragDismissListener);
   }
 
   @Override protected void onAttach(@NonNull View view) {
@@ -113,6 +126,7 @@ public class SmmryController extends ButterKnifeController {
               @Override public void onError(Throwable e) {
                 Toast.makeText(getActivity(), "API error", Toast.LENGTH_SHORT)
                     .show();
+                getRouter().popController(SmmryController.this);
               }
             }));
   }
@@ -127,7 +141,8 @@ public class SmmryController extends ButterKnifeController {
     ChipCloud chipCloud = new ChipCloud(tags.getContext(), tags, config);
     if (smmry.keywords() != null) {
       for (String s : smmry.keywords()) {
-        chipCloud.addChip(s.toUpperCase());
+        chipCloud.addChip(s.trim()
+            .toUpperCase());
       }
     }
     title.setText(smmry.title());
@@ -140,6 +155,7 @@ public class SmmryController extends ButterKnifeController {
             loadingView.setVisibility(View.GONE);
           }
         });
+    content.setNestedScrollingEnabled(true);
     content.setAlpha(0f);
     content.setVisibility(View.VISIBLE);
     content.animate()
