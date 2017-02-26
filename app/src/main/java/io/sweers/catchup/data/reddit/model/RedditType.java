@@ -16,13 +16,13 @@ public enum RedditType {
   @Json(name = "more")
   MORE(RedditMore.class);
 
-  private final Class clazz;
+  private final Class<?> clazz;
 
-  RedditType(Class cls) {
+  RedditType(Class<?> cls) {
     clazz = cls;
   }
 
-  public Class getDerivedClass() {
+  public Class<?> getDerivedClass() {
     return clazz;
   }
 }

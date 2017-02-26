@@ -4,11 +4,13 @@ buildscript {
     classpath rootProject.ext.retrolambdaPlugin
     classpath rootProject.ext.psyncPlugin
     classpath rootProject.ext.versionsPlugin
+    classpath rootProject.ext.errorPronePlugin
   }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.flipboard.psync'
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
 
@@ -173,6 +175,8 @@ dependencies {
   releaseCompile rootProject.ext.bugsnag
 
   // Misc
+  errorprone rootProject.ext.errorProneCore
+  compile rootProject.ext.errorProneAnnotations
   compile rootProject.ext.barberApi
   annotationProcessor rootProject.ext.barberCompiler
   compile rootProject.ext.chipCloud
@@ -216,6 +220,8 @@ dependencies {
   testCompile rootProject.ext.rxJava2Extensions
   testCompile rootProject.ext.rxRelay
   androidTestCompile project(':testing-utils')
+  androidTestCompile rootProject.ext.errorProneAnnotations
+  testCompile rootProject.ext.errorProneAnnotations
 
   // LeakCanary
   debugCompile rootProject.ext.leakCanary

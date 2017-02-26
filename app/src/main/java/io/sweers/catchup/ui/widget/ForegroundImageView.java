@@ -76,7 +76,7 @@ public class ForegroundImageView extends AppCompatImageView {
    *
    * @return A Drawable or null if no foreground was set.
    */
-  public Drawable getForeground() {
+  @Override public Drawable getForeground() {
     return foreground;
   }
 
@@ -85,7 +85,7 @@ public class ForegroundImageView extends AppCompatImageView {
    *
    * @param drawable The Drawable to be drawn on top of the ImageView
    */
-  @SuppressLint("NewApi") @StyledAttr(R.styleable.ForegroundView_android_foreground)
+  @Override @SuppressLint("NewApi") @StyledAttr(R.styleable.ForegroundView_android_foreground)
   public void setForeground(@Nullable Drawable drawable) {
     if (foreground != drawable) {
       if (foreground != null) {

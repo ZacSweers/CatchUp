@@ -8,6 +8,8 @@ import io.sweers.catchup.rx.autodispose.LifecycleEndedException;
  */
 public enum ActivityEvent {
   CREATE, START, RESUME, PAUSE, STOP, DESTROY;
+  @SuppressWarnings("UnnecessaryDefaultInEnumSwitch")
+  // https://github.com/google/error-prone/issues/548
   static final Function<ActivityEvent, ActivityEvent> LIFECYCLE = lastEvent -> {
     switch (lastEvent) {
       case CREATE:

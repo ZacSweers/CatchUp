@@ -15,26 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.f2prateek.rx.preferences.Preference;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxAdapterView;
 import com.squareup.leakcanary.internal.DisplayLeakActivity;
-
-import org.threeten.bp.Instant;
-import org.threeten.bp.ZoneId;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.temporal.TemporalAccessor;
-
-import java.lang.reflect.Method;
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import dagger.Lazy;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.P;
@@ -45,8 +33,15 @@ import io.sweers.catchup.data.LumberYard;
 import io.sweers.catchup.injection.scopes.PerView;
 import io.sweers.catchup.ui.logs.LogsDialog;
 import io.sweers.catchup.util.Strings;
+import java.lang.reflect.Method;
+import java.util.Locale;
+import javax.inject.Inject;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import org.threeten.bp.Instant;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.temporal.TemporalAccessor;
 import retrofit2.mock.NetworkBehavior;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -57,7 +52,8 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public final class DebugView extends FrameLayout {
   private static final DateTimeFormatter DATE_DISPLAY_FORMAT =
-      DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a", Locale.US).withZone(ZoneId.systemDefault());
+      DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a", Locale.US)
+          .withZone(ZoneId.systemDefault());
   @BindView(R.id.debug_contextual_title) View contextualTitleView;
   @BindView(R.id.debug_contextual_list) LinearLayout contextualListView;
   @BindView(R.id.debug_network_delay) Spinner networkDelayView;
@@ -116,7 +112,8 @@ public final class DebugView extends FrameLayout {
     behavior.setVariancePercent(networkVariancePercent.get());
 
     // Inflate all of the controls and inject them.
-    LayoutInflater.from(context).inflate(R.layout.debug_view_content, this);
+    LayoutInflater.from(context)
+        .inflate(R.layout.debug_view_content, this);
     ButterKnife.bind(this);
 
     setupNetworkSection();
@@ -149,7 +146,7 @@ public final class DebugView extends FrameLayout {
   }
 
   private static String getSizeString(long bytes) {
-    String[] units = new String[]{"B", "KB", "MB", "GB"};
+    String[] units = new String[] { "B", "KB", "MB", "GB" };
     int unit = 0;
     while (bytes >= 1024) {
       bytes /= 1024;
@@ -166,8 +163,8 @@ public final class DebugView extends FrameLayout {
 
     final NetworkDelayAdapter delayAdapter = new NetworkDelayAdapter(getContext());
     networkDelayView.setAdapter(delayAdapter);
-    networkDelayView.setSelection(
-        NetworkDelayAdapter.getPositionForValue(behavior.delay(MILLISECONDS)));
+    networkDelayView.setSelection(NetworkDelayAdapter.getPositionForValue(behavior.delay(
+        MILLISECONDS)));
 
     RxAdapterView.itemSelections(networkDelayView)
         .map(delayAdapter::getItem)
@@ -180,8 +177,7 @@ public final class DebugView extends FrameLayout {
 
     final NetworkVarianceAdapter varianceAdapter = new NetworkVarianceAdapter(getContext());
     networkVarianceView.setAdapter(varianceAdapter);
-    networkVarianceView.setSelection(
-        NetworkVarianceAdapter.getPositionForValue(behavior.variancePercent()));
+    networkVarianceView.setSelection(NetworkVarianceAdapter.getPositionForValue(behavior.variancePercent()));
 
     RxAdapterView.itemSelections(networkVarianceView)
         .map(varianceAdapter::getItem)
@@ -194,8 +190,7 @@ public final class DebugView extends FrameLayout {
 
     final NetworkErrorAdapter errorAdapter = new NetworkErrorAdapter(getContext());
     networkErrorView.setAdapter(errorAdapter);
-    networkErrorView.setSelection(
-        NetworkErrorAdapter.getPositionForValue(behavior.failurePercent()));
+    networkErrorView.setSelection(NetworkErrorAdapter.getPositionForValue(behavior.failurePercent()));
 
     RxAdapterView.itemSelections(networkErrorView)
         .map(errorAdapter::getItem)
@@ -218,7 +213,8 @@ public final class DebugView extends FrameLayout {
     enableMockModeView.setChecked(P.debugMockModeEnabled.get());
     RxView.clicks(enableMockModeView)
         .subscribe(v -> {
-          P.debugMockModeEnabled.put(enableMockModeView.isChecked()).apply();
+          P.debugMockModeEnabled.put(enableMockModeView.isChecked())
+              .apply();
           ProcessPhoenix.triggerRebirth(getContext());
         });
   }
@@ -227,12 +223,11 @@ public final class DebugView extends FrameLayout {
     final AnimationSpeedAdapter speedAdapter = new AnimationSpeedAdapter(getContext());
     uiAnimationSpeedView.setAdapter(speedAdapter);
     final int animationSpeedValue = animationSpeed.get();
-    uiAnimationSpeedView.setSelection(
-        AnimationSpeedAdapter.getPositionForValue(animationSpeedValue));
+    uiAnimationSpeedView.setSelection(AnimationSpeedAdapter.getPositionForValue(animationSpeedValue));
 
     RxAdapterView.itemSelections(uiAnimationSpeedView)
         .map(speedAdapter::getItem)
-        .filter(item -> item != animationSpeed.get())
+        .filter(item -> !item.equals(animationSpeed.get()))
         .subscribe(selected -> {
           Timber.d("Setting animation speed to %sx", selected);
           animationSpeed.set(selected);
@@ -271,13 +266,11 @@ public final class DebugView extends FrameLayout {
     });
   }
 
-  @OnClick(R.id.debug_logs_show)
-  void showLogs() {
+  @OnClick(R.id.debug_logs_show) void showLogs() {
     new LogsDialog(new ContextThemeWrapper(getContext(), R.style.CatchUp), lumberYard).show();
   }
 
-  @OnClick(R.id.debug_leaks_show)
-  void showLeaks() {
+  @OnClick(R.id.debug_leaks_show) void showLeaks() {
     Intent intent = new Intent(getContext(), DisplayLeakActivity.class);
     getContext().startActivity(intent);
   }
@@ -292,7 +285,8 @@ public final class DebugView extends FrameLayout {
   }
 
   private void setupDeviceSection() {
-    DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+    DisplayMetrics displayMetrics = getContext().getResources()
+        .getDisplayMetrics();
     String densityBucket = getDensityString(displayMetrics);
     deviceMakeView.setText(Strings.truncateAt(Build.MANUFACTURER, 20));
     deviceModelView.setText(Strings.truncateAt(Build.MODEL, 20));
@@ -303,7 +297,8 @@ public final class DebugView extends FrameLayout {
   }
 
   private void setupOkHttpCacheSection() {
-    Observable.fromCallable(() -> client.get().cache())
+    Observable.fromCallable(() -> client.get()
+        .cache())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(cache -> {
@@ -313,11 +308,16 @@ public final class DebugView extends FrameLayout {
   }
 
   private void refreshOkHttpCacheStats() {
-    Cache cache = client.get().cache(); // Shares the cache with apiClient, so no need to check both.
+    Cache cache = client.get()
+        .cache(); // Shares the cache with apiClient, so no need to check both.
     int writeTotal = cache.writeSuccessCount() + cache.writeAbortCount();
     int percentage = (int) ((1f * cache.writeAbortCount() / writeTotal) * 100);
-    okHttpCacheWriteErrorView.setText(
-        cache.writeAbortCount() + " / " + writeTotal + " (" + percentage + "%)");
+    okHttpCacheWriteErrorView.setText(cache.writeAbortCount()
+        + " / "
+        + writeTotal
+        + " ("
+        + percentage
+        + "%)");
     okHttpCacheRequestCountView.setText(String.valueOf(cache.requestCount()));
     okHttpCacheNetworkCountView.setText(String.valueOf(cache.networkCount()));
     okHttpCacheHitCountView.setText(String.valueOf(cache.hitCount()));
@@ -333,9 +333,7 @@ public final class DebugView extends FrameLayout {
   }
 
   @PerView
-  @dagger.Component(
-      dependencies = ApplicationComponent.class
-  )
+  @dagger.Component(dependencies = ApplicationComponent.class)
   public interface Component {
     void inject(DebugView debugView);
   }

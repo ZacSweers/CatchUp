@@ -49,6 +49,7 @@ public final class RedditObjectJsonAdapter extends JsonAdapter<Object> {
     this.moreAdapter = moreAdapter;
   }
 
+  @SuppressWarnings("UnnecessaryDefaultInEnumSwitch") // https://github.com/google/error-prone/issues/548
   @Override public Object fromJson(JsonReader reader) throws IOException {
     Object jsonValue = reader.readJsonValue();
     if (jsonValue instanceof String) {

@@ -14,61 +14,44 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
 
   private final BehaviorRelay<ActivityEvent> lifecycleRelay = BehaviorRelay.create();
 
-  @NonNull
-  @CheckResult
-  public final Observable<ActivityEvent> lifecycle() {
+  @NonNull @CheckResult @Override public final Observable<ActivityEvent> lifecycle() {
     return lifecycleRelay;
   }
 
-  @NonNull
-  @Override
-  public Function<ActivityEvent, ActivityEvent> correspondingEvents() {
+  @NonNull @Override public Function<ActivityEvent, ActivityEvent> correspondingEvents() {
     return ActivityEvent.LIFECYCLE;
   }
 
-  @Override
-  public ActivityEvent peekLifecycle() {
+  @Override public ActivityEvent peekLifecycle() {
     return lifecycleRelay.getValue();
   }
 
-  @Override
-  @CallSuper
-  protected void onCreate(Bundle savedInstanceState) {
+  @Override @CallSuper protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     lifecycleRelay.accept(ActivityEvent.CREATE);
   }
 
-  @Override
-  @CallSuper
-  protected void onStart() {
+  @Override @CallSuper protected void onStart() {
     super.onStart();
     lifecycleRelay.accept(ActivityEvent.START);
   }
 
-  @Override
-  @CallSuper
-  protected void onResume() {
+  @Override @CallSuper protected void onResume() {
     super.onResume();
     lifecycleRelay.accept(ActivityEvent.RESUME);
   }
 
-  @Override
-  @CallSuper
-  protected void onPause() {
+  @Override @CallSuper protected void onPause() {
     lifecycleRelay.accept(ActivityEvent.PAUSE);
     super.onPause();
   }
 
-  @Override
-  @CallSuper
-  protected void onStop() {
+  @Override @CallSuper protected void onStop() {
     lifecycleRelay.accept(ActivityEvent.STOP);
     super.onStop();
   }
 
-  @Override
-  @CallSuper
-  protected void onDestroy() {
+  @Override @CallSuper protected void onDestroy() {
     lifecycleRelay.accept(ActivityEvent.DESTROY);
     super.onDestroy();
   }

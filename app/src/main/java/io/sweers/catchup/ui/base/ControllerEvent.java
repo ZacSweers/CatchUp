@@ -8,6 +8,9 @@ import io.sweers.catchup.rx.autodispose.LifecycleEndedException;
  */
 public enum ControllerEvent {
   CREATE, CREATE_VIEW, ATTACH, DETACH, DESTROY_VIEW, DESTROY;
+
+  @SuppressWarnings("UnnecessaryDefaultInEnumSwitch")
+  // https://github.com/google/error-prone/issues/548
   static final Function<ControllerEvent, ControllerEvent> LIFECYCLE = lastEvent -> {
     switch (lastEvent) {
       case CREATE:
