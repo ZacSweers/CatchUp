@@ -77,7 +77,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
             .empty());
   }
 
-  @NonNull @Override protected Single<List<Post>> getDataObservable() {
+  @NonNull @Override protected Single<List<Post>> getDataSingle() {
     return service.getPosts(0)
         .map(PostsResponse::posts);
   }

@@ -81,7 +81,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
             .empty());
   }
 
-  @NonNull @Override protected Single<List<Story>> getDataObservable() {
+  @NonNull @Override protected Single<List<Story>> getDataSingle() {
     return service.getTopStories(1)
         .map(StoriesResponse::stories);
   }

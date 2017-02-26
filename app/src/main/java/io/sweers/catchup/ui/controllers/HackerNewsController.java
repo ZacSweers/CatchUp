@@ -9,6 +9,7 @@ import android.view.ContextThemeWrapper;
 import com.squareup.moshi.Moshi;
 import dagger.Lazy;
 import dagger.Provides;
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
@@ -22,7 +23,9 @@ import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import okhttp3.HttpUrl;
@@ -101,13 +104,18 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
             .empty());
   }
 
-  @NonNull @Override protected Single<List<HackerNewsStory>> getDataObservable() {
+  @NonNull @Override protected Single<List<HackerNewsStory>> getDataSingle() {
     return service.topStories()
-        .concatMapIterable(strings -> strings)
-        // TODO Pref this
-        .take(50)
-        .concatMap(id -> service.getItem(id)
-            .subscribeOn(Schedulers.io()))
+        .flattenAsFlowable(strings -> strings)
+        .take(50) // TODO Pref this
+        .zipWith(Flowable.range(0, Integer.MAX_VALUE), Pair::create) // "Map with index"
+        .parallel()
+        .runOn(Schedulers.io())
+        .flatMap(pair -> service.getItem(pair.first)
+            .map(story -> Pair.create(story, pair.second))
+            .toFlowable())
+        .sorted((o1, o2) -> o1.second.compareTo(o2.second))
+        .map(pair -> pair.first)
         .toList();
   }
 

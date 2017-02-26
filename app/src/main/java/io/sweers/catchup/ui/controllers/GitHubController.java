@@ -73,7 +73,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
             .empty());
   }
 
-  @NonNull @Override protected Single<List<Repository>> getDataObservable() {
+  @NonNull @Override protected Single<List<Repository>> getDataSingle() {
     return service.searchRepositories(SearchQuery.builder()
         .createdSince(TrendingTimespan.WEEK.createdSince())
         .build(), "watchers", Order.DESC)

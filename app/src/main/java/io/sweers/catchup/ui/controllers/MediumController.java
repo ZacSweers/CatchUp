@@ -102,7 +102,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
             .empty());
   }
 
-  @NonNull @Override protected Single<List<MediumPost>> getDataObservable() {
+  @NonNull @Override protected Single<List<MediumPost>> getDataSingle() {
     return service.top()
         .flatMap(references -> Observable.fromIterable(references.post()
             .values())

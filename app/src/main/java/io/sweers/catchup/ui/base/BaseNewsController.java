@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import org.threeten.bp.Instant;
 import retrofit2.adapter.rxjava2.HttpException;
@@ -73,7 +74,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
    */
   protected abstract void bindItemView(@NonNull T t, @NonNull ViewHolder holder);
 
-  @NonNull protected abstract Single<List<T>> getDataObservable();
+  @NonNull protected abstract Single<List<T>> getDataSingle();
 
   @Override
   protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
@@ -122,11 +123,17 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
   }
 
   private void loadData() {
-    getDataObservable().observeOn(AndroidSchedulers.mainThread())
+    AtomicLong timer = new AtomicLong();
+    getDataSingle().observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
+        .doOnSubscribe(disposable -> timer.set(System.currentTimeMillis()))
+        .doFinally(() -> System.out.println("Data load - "
+            + getClass().getSimpleName()
+            + " - took: "
+            + (System.currentTimeMillis() - timer.get())))
         .subscribe(AutoDispose.single(this)
             .around(data -> {
               progress.setVisibility(GONE);

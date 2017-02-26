@@ -91,7 +91,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
             .empty());
   }
 
-  @NonNull @Override protected Single<List<RedditLink>> getDataObservable() {
+  @NonNull @Override protected Single<List<RedditLink>> getDataSingle() {
     return service.frontPage(50)
         .map((redditListingRedditResponse) -> {
           //noinspection CodeBlock2Expr,unchecked
