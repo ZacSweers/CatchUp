@@ -8,8 +8,6 @@ import io.sweers.catchup.rx.autodispose.LifecycleEndedException;
  */
 public enum ActivityEvent {
   CREATE, START, RESUME, PAUSE, STOP, DESTROY;
-  @SuppressWarnings("UnnecessaryDefaultInEnumSwitch")
-  // https://github.com/google/error-prone/issues/548
   static final Function<ActivityEvent, ActivityEvent> LIFECYCLE = lastEvent -> {
     switch (lastEvent) {
       case CREATE:
@@ -25,8 +23,7 @@ public enum ActivityEvent {
       case DESTROY:
         throw new LifecycleEndedException(
             "Cannot bind to Activity lifecycle after it's been destroyed.");
-      default:
-        throw new UnsupportedOperationException("Binding to " + lastEvent + " not yet implemented");
     }
+    throw new UnsupportedOperationException("Binding to " + lastEvent + " not yet implemented");
   };
 }
