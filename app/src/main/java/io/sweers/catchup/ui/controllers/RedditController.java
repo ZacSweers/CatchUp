@@ -10,7 +10,6 @@ import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
 import io.sweers.catchup.R;
-import io.sweers.catchup.data.AutoValueMoshiAdapterFactory;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.reddit.RedditService;
@@ -111,9 +110,8 @@ public final class RedditController extends BaseNewsController<RedditLink> {
   public abstract static class Module {
 
     @ForApi @Provides @PerController static Moshi provideMoshi(Moshi upstreamMoshi) {
-      return new Moshi.Builder().add(RedditObjectFactory.getInstance())
-          .add(AutoValueMoshiAdapterFactory.create())
-          //.add((type, annotations, m) -> upstreamMoshi.adapter(type, annotations))  // TODO Why doesn't this work?
+      return upstreamMoshi.newBuilder()
+          .add(RedditObjectFactory.getInstance())
           .add(Instant.class, new EpochInstantJsonAdapter(TimeUnit.SECONDS))
           .build();
     }

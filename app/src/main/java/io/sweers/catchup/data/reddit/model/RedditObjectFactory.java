@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,6 +30,7 @@ public final class RedditObjectFactory implements JsonAdapter.Factory {
   public JsonAdapter<?> create(Type type, Set<? extends Annotation> annotations, Moshi moshi) {
     Class<?> clazz = Types.getRawType(type);
     if (!RedditObject.class.equals(clazz)) {
+      // Not one of our oddball polymorphic types, ignore it.
       return null;
     }
     return new JsonAdapter<Object>() {
@@ -44,9 +44,7 @@ public final class RedditObjectFactory implements JsonAdapter.Factory {
         Map<String, Object> value = (Map<String, Object>) jsonValue;
         RedditType type = RedditType.valueOf(((String) value.get("kind")).toUpperCase());
         Object redditObject = value.get("data");
-        JsonAdapter<Object> adapter = moshi.nextAdapter(RedditObjectFactory.this,
-            type.getDerivedClass(),
-            Collections.emptySet());
+        JsonAdapter<?> adapter = moshi.adapter(type.getDerivedClass());
         if (adapter == null) {
           throw new JsonDataException();
         } else {
