@@ -10,6 +10,7 @@ import com.squareup.moshi.Moshi;
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.schedulers.Schedulers;
+import io.sweers.catchup.data.adapters.UnescapeJsonAdapter;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
@@ -53,6 +54,7 @@ public class DataModule {
 
   @Provides @Singleton static Moshi provideMoshi() {
     return new Moshi.Builder().add(AutoValueMoshiAdapterFactory.create())
+        .add(UnescapeJsonAdapter.FACTORY)
         .add(ArrayMapJsonAdapter.FACTORY)
         .add(ArrayCollectionJsonAdapter.FACTORY)
         .build();

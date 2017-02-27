@@ -5,6 +5,7 @@ import com.google.auto.value.AutoValue;
 import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import io.sweers.catchup.data.adapters.UnEscape;
 import java.util.List;
 
 @AutoValue
@@ -23,7 +24,7 @@ public abstract class SmmryResponse {
   /**
    * Contains the title when available
    */
-  @Json(name = "sm_api_title") @Nullable public abstract String title();
+  @Json(name = "sm_api_title") @UnEscape @Nullable public abstract String title();
 
   /**
    * Contains the summary
