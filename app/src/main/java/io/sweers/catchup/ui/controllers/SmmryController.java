@@ -72,7 +72,7 @@ public class SmmryController extends ButterKnifeController {
       controller.getRouter()
           .pushController(RouterTransaction.with(new SmmryController(url,
               controller.getServiceThemeColor()))
-              .pushChangeHandler(new VerticalChangeHandler())
+              .pushChangeHandler(new VerticalChangeHandler(false))
               .popChangeHandler(new VerticalChangeHandler()));
     };
   }
