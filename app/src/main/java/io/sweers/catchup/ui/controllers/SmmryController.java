@@ -58,7 +58,6 @@ public class SmmryController extends ButterKnifeController {
 
   private final ElasticDragDismissCallback dragDismissListener = new ElasticDragDismissCallback() {
     @Override public void onDragDismissed() {
-      //overridePopHandler(new ScaleFadeChangeHandler());
       getRouter().popController(SmmryController.this);
       dragDismissFrameLayout.removeListener(this);
     }
