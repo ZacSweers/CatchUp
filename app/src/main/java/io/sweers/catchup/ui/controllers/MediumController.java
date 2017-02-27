@@ -7,6 +7,7 @@ import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.serjltt.moshi.adapters.WrappedJsonAdapter;
 import com.squareup.moshi.Moshi;
+import com.uber.autodispose.AutoDispose;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Observable;
@@ -19,7 +20,6 @@ import io.sweers.catchup.data.medium.model.Collection;
 import io.sweers.catchup.data.medium.model.MediumPost;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -87,18 +87,21 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     holder.source(null);
 
     holder.itemLongClicks()
-        .subscribe(AutoDispose.observable(this)
+        .subscribe(AutoDispose.observable()
+            .scopeWith(holder)
             .around(SmmryController.showFor(this, item.constructUrl())));
 
     holder.itemClicks()
         .compose(transformUrlToMeta(item.constructUrl()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable(this)
+        .subscribe(AutoDispose.completable()
+            .scopeWith(holder)
             .empty());
     holder.itemCommentClicks()
         .compose(transformUrlToMeta(item.constructCommentsUrl()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable(this)
+        .subscribe(AutoDispose.completable()
+            .scopeWith(holder)
             .empty());
   }
 

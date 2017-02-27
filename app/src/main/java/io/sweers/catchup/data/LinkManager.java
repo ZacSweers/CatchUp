@@ -12,18 +12,15 @@ import android.text.TextUtils;
 import android.widget.Toast;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.receivers.RxBroadcastReceiver;
+import com.uber.autodispose.AutoDispose;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
 import io.sweers.catchup.injection.scopes.PerActivity;
-import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 
@@ -53,7 +50,8 @@ public final class LinkManager implements Function<LinkManager.UrlMeta, Completa
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
     Observable.merge(toV2Observable(RxBroadcastReceiver.create(activity, filter)),
         toV2Observable(globalSmartLinkingPref.asObservable()))
-        .subscribe(AutoDispose.observable(activity)
+        .subscribe(AutoDispose.observable()
+            .scopeWith(activity)
             .around(o -> dumbCache.clear()));
   }
 
@@ -125,16 +123,7 @@ public final class LinkManager implements Function<LinkManager.UrlMeta, Completa
   }
 
   @Override public Completable apply(UrlMeta meta) throws Exception {
-    return openUrl(meta).doOnSubscribe(new Consumer<Disposable>() {
-      @Override public void accept(Disposable disposable) throws Exception {
-        System.out.println("COME ON");
-      }
-    })
-        .doOnDispose(new Action() {
-          @Override public void run() throws Exception {
-            System.out.println("WHY U DISPOSE");
-          }
-        });
+    return openUrl(meta);
   }
 
   public static class UrlMeta {

@@ -1,7 +1,7 @@
 package io.sweers.catchup.ui.base;
 
+import com.uber.autodispose.LifecycleEndedException;
 import io.reactivex.functions.Function;
-import io.sweers.catchup.rx.autodispose.LifecycleEndedException;
 
 /**
  * Controller lifecycle events

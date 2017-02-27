@@ -23,6 +23,7 @@ private String getPropertyOrEmpty(String property) {
 }
 
 repositories {
+  mavenLocal()
   maven { url "https://jitpack.io" }
 }
 
@@ -166,8 +167,7 @@ dependencies {
   compile rootProject.ext.threetenabp
   debugCompile rootProject.ext.madge
   debugCompile rootProject.ext.scalpel
-  compile rootProject.ext.processPhoenix
-  // Move back to debugCompile when it's not needed for daynight
+  compile rootProject.ext.processPhoenix // Move back to debugCompile when it's not needed for daynight
   debugCompile rootProject.ext.telescope
   compile rootProject.ext.okhttpLoggingInterceptor
   debugCompile rootProject.ext.retrofitMock
@@ -175,6 +175,8 @@ dependencies {
   releaseCompile rootProject.ext.bugsnag
 
   // Misc
+  compile rootProject.ext.autoDispose
+  compile rootProject.ext.autoDisposeAndroid
   errorprone rootProject.ext.errorProneCore
   compile rootProject.ext.errorProneAnnotations
   compile rootProject.ext.barberApi

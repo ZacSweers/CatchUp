@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.squareup.moshi.Moshi;
+import com.uber.autodispose.AutoDispose;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -22,7 +23,6 @@ import io.sweers.catchup.data.github.model.SearchQuery;
 import io.sweers.catchup.data.github.model.SearchRepositoriesResult;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -69,7 +69,8 @@ public final class GitHubController extends BaseNewsController<Repository> {
     holder.itemClicks()
         .compose(transformUrlToMeta(item.htmlUrl()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable(this)
+        .subscribe(AutoDispose.completable()
+            .scopeWith(holder)
             .empty());
   }
 

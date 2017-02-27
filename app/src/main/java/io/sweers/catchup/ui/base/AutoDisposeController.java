@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import com.bluelinelabs.conductor.Controller;
+import com.uber.autodispose.LifecycleScopeProvider;
 import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
-import io.sweers.catchup.rx.autodispose.LifecycleProvider;
 
 public abstract class AutoDisposeController extends RefWatchingController
-    implements LifecycleProvider<ControllerEvent> {
+    implements LifecycleScopeProvider<ControllerEvent> {
 
   private BehaviorSubject<ControllerEvent> lifecycleSubject =
       BehaviorSubject.createDefault(ControllerEvent.CREATE);

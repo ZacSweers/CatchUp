@@ -19,6 +19,7 @@ import butterknife.Unbinder;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler;
 import com.google.android.flexbox.FlexboxLayout;
+import com.uber.autodispose.AutoDispose;
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipCloudConfig;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -29,7 +30,6 @@ import io.sweers.catchup.data.smmry.SmmryService;
 import io.sweers.catchup.data.smmry.model.SmmryRequestBuilder;
 import io.sweers.catchup.data.smmry.model.SmmryResponse;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.rx.observers.adapter.SingleObserverAdapter;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -108,7 +108,8 @@ public class SmmryController extends ButterKnifeController {
         .build())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(AutoDispose.single(this)
+        .subscribe(AutoDispose.single()
+            .scopeWith(this)
             .around(new SingleObserverAdapter<SmmryResponse>() {
               @Override public void onSuccess(SmmryResponse value) {
                 if (value.apiMessage() != null) {

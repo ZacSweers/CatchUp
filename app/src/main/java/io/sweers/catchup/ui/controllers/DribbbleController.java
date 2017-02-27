@@ -40,6 +40,7 @@ import com.bumptech.glide.request.target.Target;
 import com.jakewharton.rxbinding.view.RxView;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
+import com.uber.autodispose.AutoDispose;
 import dagger.Lazy;
 import dagger.Provides;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
@@ -49,11 +50,11 @@ import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
 import io.sweers.catchup.data.LinkManager;
+import io.sweers.catchup.data.RxViewHolder;
 import io.sweers.catchup.data.dribbble.DribbbleService;
 import io.sweers.catchup.data.dribbble.model.Shot;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
@@ -130,7 +131,8 @@ public class DribbbleController extends ServiceController
             .map(o -> new Object()))
             .compose(transformUrlToMeta(shot.htmlUrl()))
             .flatMapCompletable(linkManager)
-            .subscribe(AutoDispose.completable(this)
+            .subscribe(AutoDispose.completable()
+                .scopeWith(viewHolder)
                 .empty()));
     recyclerView.setAdapter(adapter);
     swipeRefreshLayout.setOnRefreshListener(this);
@@ -150,7 +152,8 @@ public class DribbbleController extends ServiceController
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
-        .subscribe(AutoDispose.single(this)
+        .subscribe(AutoDispose.single()
+            .scopeWith(this)
             .around(shots -> {
               progress.setVisibility(GONE);
               errorView.setVisibility(GONE);
@@ -324,9 +327,10 @@ public class DribbbleController extends ServiceController
       holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR);
       holder.image.showBadge(false);
       holder.image.setForeground(UiUtil.createColorSelector(0x40808080, null));
+      RxViewHolder.onViewRecycled(holder);
     }
 
-    class DribbbleShotHolder extends RecyclerView.ViewHolder {
+    class DribbbleShotHolder extends RxViewHolder {
 
       private BadgedFourThreeImageView image;
 

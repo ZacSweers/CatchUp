@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.ContextThemeWrapper;
+import com.uber.autodispose.AutoDispose;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -13,7 +14,6 @@ import io.sweers.catchup.data.slashdot.Entry;
 import io.sweers.catchup.data.slashdot.SlashdotService;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -65,12 +65,14 @@ public final class SlashdotController extends BaseNewsController<Entry> {
     holder.itemClicks()
         .compose(transformUrlToMeta(entry.id))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable(this)
+        .subscribe(AutoDispose.completable()
+            .scopeWith(holder)
             .empty());
     holder.itemCommentClicks()
         .compose(transformUrlToMeta(entry.id + "#comments"))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable(this)
+        .subscribe(AutoDispose.completable()
+            .scopeWith(holder)
             .empty());
   }
 

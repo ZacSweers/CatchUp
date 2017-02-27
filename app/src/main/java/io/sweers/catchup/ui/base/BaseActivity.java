@@ -6,11 +6,12 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import com.jakewharton.rxrelay2.BehaviorRelay;
+import com.uber.autodispose.LifecycleScopeProvider;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
-import io.sweers.catchup.rx.autodispose.LifecycleProvider;
 
-public class BaseActivity extends AppCompatActivity implements LifecycleProvider<ActivityEvent> {
+public class BaseActivity extends AppCompatActivity
+    implements LifecycleScopeProvider<ActivityEvent> {
 
   private final BehaviorRelay<ActivityEvent> lifecycleRelay = BehaviorRelay.create();
 

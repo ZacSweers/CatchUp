@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.squareup.moshi.Moshi;
+import com.uber.autodispose.AutoDispose;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -18,7 +19,6 @@ import io.sweers.catchup.data.reddit.model.RedditObjectFactory;
 import io.sweers.catchup.data.smmry.SmmryService;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -77,16 +77,19 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     holder.itemClicks()
         .compose(transformUrlToMeta(link.url()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable(this)
+        .subscribe(AutoDispose.completable()
+            .scopeWith(holder)
             .empty());
 
     holder.itemLongClicks()
-        .subscribe(AutoDispose.observable(this)
+        .subscribe(AutoDispose.observable()
+            .scopeWith(holder)
             .around(SmmryController.showFor(this, link.url())));
     holder.itemCommentClicks()
         .compose(transformUrlToMeta("https://reddit.com/comments/" + link.id()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable(this)
+        .subscribe(AutoDispose.completable()
+            .scopeWith(holder)
             .empty());
   }
 

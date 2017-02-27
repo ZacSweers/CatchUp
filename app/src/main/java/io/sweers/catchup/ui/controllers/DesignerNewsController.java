@@ -7,6 +7,7 @@ import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
+import com.uber.autodispose.AutoDispose;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -18,7 +19,6 @@ import io.sweers.catchup.data.designernews.model.StoriesResponse;
 import io.sweers.catchup.data.designernews.model.Story;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.rx.autodispose.AutoDispose;
 import io.sweers.catchup.ui.activity.ActivityComponent;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
@@ -71,13 +71,15 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
     holder.itemClicks()
         .compose(transformUrlToMeta(story.url()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable(this)
+        .subscribe(AutoDispose.completable()
+            .scopeWith(holder)
             .empty());
     holder.itemCommentClicks()
         .compose(transformUrlToMeta(story.siteUrl()
             .replace("api.", "www.")))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable(this)
+        .subscribe(AutoDispose.completable()
+            .scopeWith(holder)
             .empty());
   }
 

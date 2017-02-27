@@ -20,13 +20,14 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import com.jakewharton.rxbinding.view.RxView;
+import com.uber.autodispose.AutoDispose;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.BiConsumer;
 import io.sweers.catchup.R;
-import io.sweers.catchup.rx.autodispose.AutoDispose;
+import io.sweers.catchup.data.RxViewHolder;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.util.NumberUtil;
 import io.sweers.catchup.util.Strings;
@@ -134,7 +135,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
             + getClass().getSimpleName()
             + " - took: "
             + (System.currentTimeMillis() - timer.get())))
-        .subscribe(AutoDispose.single(this)
+        .subscribe(AutoDispose.single()
+            .scopeWith(this)
             .around(data -> {
               progress.setVisibility(GONE);
               errorView.setVisibility(GONE);
@@ -232,9 +234,14 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
         notifyDataSetChanged();
       }
     }
+
+    @Override public void onViewRecycled(ViewHolder holder) {
+      super.onViewRecycled(holder);
+      RxViewHolder.onViewRecycled(holder);
+    }
   }
 
-  public static class ViewHolder extends RecyclerView.ViewHolder {
+  public static class ViewHolder extends RxViewHolder {
 
     @BindView(R.id.container) View container;
     @BindView(R.id.title) TextView title;
