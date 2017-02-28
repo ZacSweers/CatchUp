@@ -10,6 +10,7 @@ import com.squareup.leakcanary.RefWatcher;
 import io.sweers.catchup.P;
 import io.sweers.catchup.data.LumberYard;
 import io.sweers.catchup.injection.Modules;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 public class CatchUpApplication extends Application {
@@ -29,7 +30,9 @@ public class CatchUpApplication extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
-    refWatcher = LeakCanary.install(this);
+    refWatcher = LeakCanary.refWatcher(this)
+        .watchDelay(10, TimeUnit.SECONDS)
+        .buildAndInstall();
     component = DaggerApplicationComponent.builder()
         .application(this)
         .dataModule(Modules.dataModule())
