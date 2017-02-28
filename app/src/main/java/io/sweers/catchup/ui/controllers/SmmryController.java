@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
@@ -44,10 +45,11 @@ import javax.inject.Inject;
  */
 public class SmmryController extends ButterKnifeController {
 
+  private static final String ID_URL = "smmrycontroller.url";
+  private static final String ID_ACCENT = "smmrycontroller.accent";
+
   @Inject SmmryService smmryService;
 
-  private String url;
-  @ColorInt private int accentColor;
   @BindView(R.id.loading_view) View loadingView;
   @BindView(R.id.progress) ProgressBar progressBar;
   @BindView(R.id.content_container) NestedScrollView content;
@@ -55,6 +57,9 @@ public class SmmryController extends ButterKnifeController {
   @BindView(R.id.title) TextView title;
   @BindView(R.id.summary) TextView summary;
   @BindView(R.id.drag_dismiss_layout) ElasticDragDismissFrameLayout dragDismissFrameLayout;
+
+  private String url;
+  @ColorInt private int accentColor;
 
   private final ElasticDragDismissCallback dragDismissListener = new ElasticDragDismissCallback() {
     @Override public void onDragDismissed() {
@@ -77,11 +82,28 @@ public class SmmryController extends ButterKnifeController {
   }
 
   public SmmryController() {
+
+  }
+
+  public SmmryController(Bundle args) {
+    super(args);
   }
 
   public SmmryController(String url, @ColorInt int accentColor) {
     this.url = url;
     this.accentColor = accentColor;
+  }
+
+  @Override protected void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putString(ID_URL, url);
+    outState.putInt(ID_ACCENT, accentColor);
+  }
+
+  @Override protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    url = savedInstanceState.getString(ID_URL);
+    accentColor = savedInstanceState.getInt(ID_ACCENT);
   }
 
   @Override
