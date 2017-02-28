@@ -10,9 +10,7 @@ import com.squareup.moshi.Moshi;
 import com.uber.autodispose.AutoDispose;
 import dagger.Lazy;
 import dagger.Provides;
-import io.reactivex.Flowable;
 import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.LinkManager;
@@ -107,16 +105,10 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
 
   @NonNull @Override protected Single<List<HackerNewsStory>> getDataSingle() {
     return service.topStories()
-        .flattenAsFlowable(strings -> strings)
+        .flattenAsObservable(strings -> strings)
         .take(50) // TODO Pref this
-        .zipWith(Flowable.range(0, Integer.MAX_VALUE), Pair::create) // "Map with index"
-        .parallel()
-        .runOn(Schedulers.io())
-        .flatMap(pair -> service.getItem(pair.first)
-            .map(story -> Pair.create(story, pair.second))
-            .toFlowable())
-        .sorted((o1, o2) -> o1.second.compareTo(o2.second))
-        .map(pair -> pair.first)
+        .concatMapEager(id -> service.getItem(id)
+            .toObservable())
         .toList();
   }
 
