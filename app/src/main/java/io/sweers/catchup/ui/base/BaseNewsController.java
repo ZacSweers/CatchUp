@@ -20,7 +20,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import com.jakewharton.rxbinding.view.RxView;
-import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.SingleScoper;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -135,49 +135,42 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
             + getClass().getSimpleName()
             + " - took: "
             + (System.currentTimeMillis() - timer.get())))
-        .subscribe(AutoDispose.single()
-            .scopeWith(this)
-            .around(data -> {
-              progress.setVisibility(GONE);
-              errorView.setVisibility(GONE);
-              swipeRefreshLayout.setVisibility(VISIBLE);
-              adapter.setData(data);
-            }, e -> {
-              if (e instanceof IOException) {
-                AnimatedVectorDrawableCompat avd =
-                    AnimatedVectorDrawableCompat.create(getActivity(),
-                        R.drawable.avd_no_connection);
-                errorImage.setImageDrawable(avd);
-                progress.setVisibility(GONE);
-                errorTextView.setText("Network Problem");
-                swipeRefreshLayout.setVisibility(GONE);
-                errorView.setVisibility(VISIBLE);
-                avd.start();
-              } else if (e instanceof HttpException) {
-                // TODO Show some sort of API error response.
-                AnimatedVectorDrawableCompat avd =
-                    AnimatedVectorDrawableCompat.create(getActivity(),
-                        R.drawable.avd_no_connection);
-                errorImage.setImageDrawable(avd);
-                progress.setVisibility(GONE);
-                errorTextView.setText("API Problem");
-                swipeRefreshLayout.setVisibility(GONE);
-                errorView.setVisibility(VISIBLE);
-                avd.start();
-              } else {
-                // TODO Show some sort of generic response error
-                AnimatedVectorDrawableCompat avd =
-                    AnimatedVectorDrawableCompat.create(getActivity(),
-                        R.drawable.avd_no_connection);
-                errorImage.setImageDrawable(avd);
-                progress.setVisibility(GONE);
-                swipeRefreshLayout.setVisibility(GONE);
-                errorTextView.setText("Unknown Issue");
-                errorView.setVisibility(VISIBLE);
-                avd.start();
-              }
-              Timber.e(e, "Update failed!");
-            }));
+        .to(new SingleScoper<>(this))
+        .subscribe(data -> {
+          progress.setVisibility(GONE);
+          errorView.setVisibility(GONE);
+          swipeRefreshLayout.setVisibility(VISIBLE);
+          adapter.setData(data);
+        }, e -> {
+          if (e instanceof IOException) {
+            AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+            errorImage.setImageDrawable(avd);
+            progress.setVisibility(GONE);
+            errorTextView.setText("Network Problem");
+            swipeRefreshLayout.setVisibility(GONE);
+            errorView.setVisibility(VISIBLE);
+            avd.start();
+          } else if (e instanceof HttpException) {
+            // TODO Show some sort of API error response.
+            AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+            errorImage.setImageDrawable(avd);
+            progress.setVisibility(GONE);
+            errorTextView.setText("API Problem");
+            swipeRefreshLayout.setVisibility(GONE);
+            errorView.setVisibility(VISIBLE);
+            avd.start();
+          } else {
+            // TODO Show some sort of generic response error
+            AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+            errorImage.setImageDrawable(avd);
+            progress.setVisibility(GONE);
+            swipeRefreshLayout.setVisibility(GONE);
+            errorTextView.setText("Unknown Issue");
+            errorView.setVisibility(VISIBLE);
+            avd.start();
+          }
+          Timber.e(e, "Update failed!");
+        });
   }
 
   @Override public void onRefresh() {

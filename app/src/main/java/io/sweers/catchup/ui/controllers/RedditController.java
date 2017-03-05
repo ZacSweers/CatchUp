@@ -6,7 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.squareup.moshi.Moshi;
-import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.CompletableScoper;
+import com.uber.autodispose.ObservableScoper;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -77,20 +78,17 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     holder.itemClicks()
         .compose(transformUrlToMeta(link.url()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
 
     holder.itemLongClicks()
-        .subscribe(AutoDispose.observable()
-            .scopeWith(holder)
-            .around(SmmryController.showFor(this, link.url())));
+        .to(new ObservableScoper<>(holder))
+        .subscribe(SmmryController.showFor(this, link.url()));
     holder.itemCommentClicks()
         .compose(transformUrlToMeta("https://reddit.com/comments/" + link.id()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
   }
 
   @NonNull @Override protected Single<List<RedditLink>> getDataSingle() {

@@ -7,7 +7,7 @@ import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
-import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.CompletableScoper;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -68,15 +68,13 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     holder.itemClicks()
         .compose(transformUrlToMeta(item.redirect_url()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
     holder.itemCommentClicks()
         .compose(transformUrlToMeta(item.discussion_url()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
   }
 
   @NonNull @Override protected Single<List<Post>> getDataSingle() {

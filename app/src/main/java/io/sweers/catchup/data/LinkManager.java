@@ -12,7 +12,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.receivers.RxBroadcastReceiver;
-import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.ObservableScoper;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -50,9 +50,8 @@ public final class LinkManager implements Function<LinkManager.UrlMeta, Completa
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
     Observable.merge(toV2Observable(RxBroadcastReceiver.create(activity, filter)),
         toV2Observable(globalSmartLinkingPref.asObservable()))
-        .subscribe(AutoDispose.observable()
-            .scopeWith(activity)
-            .around(o -> dumbCache.clear()));
+        .to(new ObservableScoper<>(activity))
+        .subscribe(o -> dumbCache.clear());
   }
 
   /**

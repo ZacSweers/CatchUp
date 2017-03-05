@@ -7,7 +7,8 @@ import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import com.squareup.moshi.Moshi;
-import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.CompletableScoper;
+import com.uber.autodispose.ObservableScoper;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -83,24 +84,21 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
 
     if (!TextUtils.isEmpty(url)) {
       holder.itemLongClicks()
-          .subscribe(AutoDispose.observable()
-              .scopeWith(holder)
-              .around(SmmryController.showFor(this, url)));
+          .to(new ObservableScoper<>(holder))
+          .subscribe(SmmryController.showFor(this, url));
     }
 
     holder.itemClicks()
         .compose(transformUrlToMeta(url))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
 
     holder.itemCommentClicks()
         .compose(transformUrlToMeta("https://news.ycombinator.com/item?id=" + story.id()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
   }
 
   @NonNull @Override protected Single<List<HackerNewsStory>> getDataSingle() {

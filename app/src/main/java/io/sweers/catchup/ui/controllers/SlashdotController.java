@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.ContextThemeWrapper;
-import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.CompletableScoper;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -65,15 +65,13 @@ public final class SlashdotController extends BaseNewsController<Entry> {
     holder.itemClicks()
         .compose(transformUrlToMeta(entry.id))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
     holder.itemCommentClicks()
         .compose(transformUrlToMeta(entry.id + "#comments"))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
   }
 
   @NonNull @Override protected Single<List<Entry>> getDataSingle() {

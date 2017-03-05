@@ -7,7 +7,7 @@ import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
-import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.CompletableScoper;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -71,16 +71,14 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
     holder.itemClicks()
         .compose(transformUrlToMeta(story.url()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
     holder.itemCommentClicks()
         .compose(transformUrlToMeta(story.siteUrl()
             .replace("api.", "www.")))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
   }
 
   @NonNull @Override protected Single<List<Story>> getDataSingle() {

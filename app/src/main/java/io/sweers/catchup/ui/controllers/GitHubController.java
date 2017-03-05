@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.squareup.moshi.Moshi;
-import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.CompletableScoper;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Single;
@@ -69,9 +69,8 @@ public final class GitHubController extends BaseNewsController<Repository> {
     holder.itemClicks()
         .compose(transformUrlToMeta(item.htmlUrl()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
   }
 
   @NonNull @Override protected Single<List<Repository>> getDataSingle() {

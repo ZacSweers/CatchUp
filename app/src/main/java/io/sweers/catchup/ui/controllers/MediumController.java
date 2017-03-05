@@ -7,7 +7,8 @@ import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.serjltt.moshi.adapters.WrappedJsonAdapter;
 import com.squareup.moshi.Moshi;
-import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.CompletableScoper;
+import com.uber.autodispose.ObservableScoper;
 import dagger.Lazy;
 import dagger.Provides;
 import io.reactivex.Observable;
@@ -87,22 +88,19 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     holder.source(null);
 
     holder.itemLongClicks()
-        .subscribe(AutoDispose.observable()
-            .scopeWith(holder)
-            .around(SmmryController.showFor(this, item.constructUrl())));
+        .to(new ObservableScoper<>(holder))
+        .subscribe(SmmryController.showFor(this, item.constructUrl()));
 
     holder.itemClicks()
         .compose(transformUrlToMeta(item.constructUrl()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
     holder.itemCommentClicks()
         .compose(transformUrlToMeta(item.constructCommentsUrl()))
         .flatMapCompletable(linkManager)
-        .subscribe(AutoDispose.completable()
-            .scopeWith(holder)
-            .empty());
+        .to(new CompletableScoper(holder))
+        .subscribe();
   }
 
   @NonNull @Override protected Single<List<MediumPost>> getDataSingle() {

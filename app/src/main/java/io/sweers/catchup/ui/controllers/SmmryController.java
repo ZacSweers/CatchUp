@@ -20,7 +20,7 @@ import butterknife.Unbinder;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler;
 import com.google.android.flexbox.FlexboxLayout;
-import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.SingleScoper;
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipCloudConfig;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -130,27 +130,27 @@ public class SmmryController extends ButterKnifeController {
         .build())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(AutoDispose.single()
-            .scopeWith(this)
-            .around(new SingleObserverAdapter<SmmryResponse>() {
-              @Override public void onSuccess(SmmryResponse value) {
-                if (value.apiMessage() != null) {
-                  Toast.makeText(getActivity(),
-                      "Smmry Error: " + value.errorCode() + " - " + value.apiMessage(),
-                      Toast.LENGTH_LONG)
-                      .show();
-                  getRouter().popController(SmmryController.this);
-                } else {
-                  showSummary(value);
-                }
-              }
+        .to(new SingleScoper<>(this))
+        .subscribe(new SingleObserverAdapter<SmmryResponse>() {
+          @Override public void onSuccess(SmmryResponse value) {
+            if (value.apiMessage() != null) {
+              Toast.makeText(
+                  getActivity(),
+                  "Smmry Error: " + value.errorCode() + " - " + value.apiMessage(),
+                  Toast.LENGTH_LONG)
+                  .show();
+              getRouter().popController(SmmryController.this);
+            } else {
+              showSummary(value);
+            }
+          }
 
-              @Override public void onError(Throwable e) {
-                Toast.makeText(getActivity(), "API error", Toast.LENGTH_SHORT)
-                    .show();
-                getRouter().popController(SmmryController.this);
-              }
-            }));
+          @Override public void onError(Throwable e) {
+            Toast.makeText(getActivity(), "API error", Toast.LENGTH_SHORT)
+                .show();
+            getRouter().popController(SmmryController.this);
+          }
+        });
   }
 
   private void showSummary(SmmryResponse smmry) {
