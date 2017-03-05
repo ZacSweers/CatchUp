@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import io.reactivex.ObservableTransformer;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LinkManager.UrlMeta;
+import io.sweers.catchup.injection.ConductorInjection;
 import io.sweers.catchup.util.UiUtil;
 
 /**
@@ -37,6 +38,11 @@ public abstract class ServiceController extends ButterKnifeController {
       serviceThemeColor = UiUtil.resolveAttribute(themedContext, R.attr.colorAccent);
     }
     return view;
+  }
+
+  @Override protected void onAttach(@NonNull View view) {
+    ConductorInjection.inject(this);
+    super.onAttach(view);
   }
 
   protected <T> ObservableTransformer<T, UrlMeta> transformUrlToMeta(@Nullable final String url) {

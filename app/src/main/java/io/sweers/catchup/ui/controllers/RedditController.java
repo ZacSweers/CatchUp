@@ -5,11 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
+import com.bluelinelabs.conductor.Controller;
 import com.squareup.moshi.Moshi;
 import com.uber.autodispose.CompletableScoper;
 import com.uber.autodispose.ObservableScoper;
+import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.IntoMap;
 import io.reactivex.Single;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
@@ -18,10 +23,9 @@ import io.sweers.catchup.data.reddit.RedditService;
 import io.sweers.catchup.data.reddit.model.RedditLink;
 import io.sweers.catchup.data.reddit.model.RedditObjectFactory;
 import io.sweers.catchup.data.smmry.SmmryService;
+import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.ui.activity.ActivityComponent;
-import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -46,13 +50,6 @@ public final class RedditController extends BaseNewsController<RedditLink> {
 
   public RedditController(Bundle args) {
     super(args);
-  }
-
-  @Override protected void performInjection() {
-    DaggerRedditController_Component.builder()
-        .activityComponent(((MainActivity) getActivity()).getComponent())
-        .build()
-        .inject(this);
   }
 
   @Override protected Context onThemeContext(@NonNull Context context) {
@@ -101,14 +98,19 @@ public final class RedditController extends BaseNewsController<RedditLink> {
   }
 
   @PerController
-  @dagger.Component(modules = Module.class,
-                    dependencies = ActivityComponent.class)
-  public interface Component {
-    void inject(RedditController controller);
+  @Subcomponent(modules = Module.class)
+  public interface Component extends AndroidInjector<RedditController> {
+
+    @Subcomponent.Builder
+    abstract class Builder extends AndroidInjector.Builder<RedditController> {}
   }
 
-  @dagger.Module
+  @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
+
+    @Binds @IntoMap @ControllerKey(RedditController.class)
+    abstract AndroidInjector.Factory<? extends Controller> bindRedditControllerInjectorFactory(
+        Component.Builder builder);
 
     @ForApi @Provides @PerController static Moshi provideMoshi(Moshi upstreamMoshi) {
       return upstreamMoshi.newBuilder()

@@ -1,49 +1,36 @@
 package io.sweers.catchup.ui.activity;
 
-import android.content.Context;
-import com.f2prateek.rx.preferences.RxSharedPreferences;
-import com.squareup.moshi.Moshi;
-import dagger.BindsInstance;
-import dagger.Component;
-import io.sweers.catchup.app.ApplicationComponent;
-import io.sweers.catchup.data.LinkManager;
-import io.sweers.catchup.data.smmry.SmmryService;
-import io.sweers.catchup.injection.qualifiers.ApplicationContext;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
 import io.sweers.catchup.injection.scopes.PerActivity;
-import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
-import okhttp3.OkHttpClient;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import io.sweers.catchup.ui.controllers.DesignerNewsController;
+import io.sweers.catchup.ui.controllers.DribbbleController;
+import io.sweers.catchup.ui.controllers.GitHubController;
+import io.sweers.catchup.ui.controllers.HackerNewsController;
+import io.sweers.catchup.ui.controllers.MediumController;
+import io.sweers.catchup.ui.controllers.PagerController;
+import io.sweers.catchup.ui.controllers.ProductHuntController;
+import io.sweers.catchup.ui.controllers.RedditController;
+import io.sweers.catchup.ui.controllers.SlashdotController;
 
 @PerActivity
-@Component(modules = {
-    ActivityModule.class, UiModule.class
-},
-           dependencies = ApplicationComponent.class)
-public interface ActivityComponent {
-  void inject(MainActivity activity);
+@Subcomponent(modules = {
+    ActivityModule.class,
+    UiModule.class,
+    PagerController.Module.class,
+    HackerNewsController.Module.class,
+    RedditController.Module.class,
+    MediumController.Module.class,
+    ProductHuntController.Module.class,
+    SlashdotController.Module.class,
+    DesignerNewsController.Module.class,
+    DribbbleController.Module.class,
+    GitHubController.Module.class,
+})
+public interface ActivityComponent extends AndroidInjector<MainActivity> {
 
-  @ApplicationContext Context context();
+  @Subcomponent.Builder
+  abstract class Builder extends AndroidInjector.Builder<MainActivity> {
 
-  CustomTabActivityHelper customTab();
-
-  LinkManager linkManager();
-
-  OkHttpClient okhttpClient();
-
-  Moshi moshi();
-
-  RxJava2CallAdapterFactory rxJavaCallAdapterFactory();
-
-  RxSharedPreferences rxSharedPreferences();
-
-  SmmryService smmryService();
-
-  @Component.Builder
-  interface Builder {
-    ActivityComponent build();
-
-    Builder applicationComponent(ApplicationComponent component);
-
-    @BindsInstance Builder activity(MainActivity activity);
   }
 }

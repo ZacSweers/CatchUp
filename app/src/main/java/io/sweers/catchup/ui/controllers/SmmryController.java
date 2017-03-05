@@ -21,19 +21,21 @@ import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler;
 import com.google.android.flexbox.FlexboxLayout;
 import com.uber.autodispose.SingleScoper;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipCloudConfig;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
+import io.sweers.catchup.data.smmry.SmmryModule;
 import io.sweers.catchup.data.smmry.SmmryService;
 import io.sweers.catchup.data.smmry.model.SmmryRequestBuilder;
 import io.sweers.catchup.data.smmry.model.SmmryResponse;
+import io.sweers.catchup.injection.ConductorInjection;
 import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.rx.observers.adapter.SingleObserverAdapter;
-import io.sweers.catchup.ui.activity.ActivityComponent;
-import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.ButterKnifeController;
 import io.sweers.catchup.ui.base.ServiceController;
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout;
@@ -114,14 +116,11 @@ public class SmmryController extends ButterKnifeController {
   @Override protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
     progressBar.setIndeterminateTintList(ColorStateList.valueOf(accentColor));
-    DaggerSmmryController_Component.builder()
-        .activityComponent(((MainActivity) getActivity()).getComponent())
-        .build()
-        .inject(this);
     dragDismissFrameLayout.addListener(dragDismissListener);
   }
 
   @Override protected void onAttach(@NonNull View view) {
+    ConductorInjection.inject(this);
     super.onAttach(view);
     smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(url)
         .withBreak(true)
@@ -134,8 +133,7 @@ public class SmmryController extends ButterKnifeController {
         .subscribe(new SingleObserverAdapter<SmmryResponse>() {
           @Override public void onSuccess(SmmryResponse value) {
             if (value.apiMessage() != null) {
-              Toast.makeText(
-                  getActivity(),
+              Toast.makeText(getActivity(),
                   "Smmry Error: " + value.errorCode() + " - " + value.apiMessage(),
                   Toast.LENGTH_LONG)
                   .show();
@@ -189,8 +187,9 @@ public class SmmryController extends ButterKnifeController {
   }
 
   @PerController
-  @dagger.Component(dependencies = ActivityComponent.class)
-  public interface Component {
-    void inject(SmmryController controller);
+  @Subcomponent(modules = SmmryModule.class)
+  public interface Component extends AndroidInjector<SmmryController> {
+    @Subcomponent.Builder
+    abstract class Builder extends AndroidInjector.Builder<SmmryController> {}
   }
 }

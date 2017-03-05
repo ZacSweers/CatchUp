@@ -1,5 +1,6 @@
 package io.sweers.catchup.app;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -7,16 +8,19 @@ import android.support.v7.app.AppCompatDelegate;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasDispatchingActivityInjector;
 import io.sweers.catchup.P;
 import io.sweers.catchup.data.LumberYard;
 import io.sweers.catchup.injection.Modules;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
-public class CatchUpApplication extends Application {
+public class CatchUpApplication extends Application implements HasDispatchingActivityInjector {
 
   private static RefWatcher refWatcher;
   private static ApplicationComponent component;
+  @Inject DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
   @Inject protected SharedPreferences sharedPreferences;
   @Inject protected LumberYard lumberYard;
 
@@ -54,5 +58,9 @@ public class CatchUpApplication extends Application {
 
   protected void initVariant() {
     // Override this in variants
+  }
+
+  @Override public DispatchingAndroidInjector<Activity> activityInjector() {
+    return dispatchingActivityInjector;
   }
 }

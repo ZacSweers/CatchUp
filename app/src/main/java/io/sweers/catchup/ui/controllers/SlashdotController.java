@@ -4,18 +4,22 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.ContextThemeWrapper;
+import com.bluelinelabs.conductor.Controller;
 import com.uber.autodispose.CompletableScoper;
+import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.IntoMap;
 import io.reactivex.Single;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.slashdot.Entry;
 import io.sweers.catchup.data.slashdot.SlashdotService;
+import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.ui.activity.ActivityComponent;
-import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.util.Iso8601Utils;
 import java.util.List;
@@ -37,13 +41,6 @@ public final class SlashdotController extends BaseNewsController<Entry> {
 
   public SlashdotController(Bundle args) {
     super(args);
-  }
-
-  @Override protected void performInjection() {
-    DaggerSlashdotController_Component.builder()
-        .activityComponent(((MainActivity) getActivity()).getComponent())
-        .build()
-        .inject(this);
   }
 
   @Override protected Context onThemeContext(@NonNull Context context) {
@@ -80,14 +77,19 @@ public final class SlashdotController extends BaseNewsController<Entry> {
   }
 
   @PerController
-  @dagger.Component(modules = Module.class,
-                    dependencies = ActivityComponent.class)
-  public interface Component {
-    void inject(SlashdotController controller);
+  @Subcomponent(modules = Module.class)
+  public interface Component extends AndroidInjector<SlashdotController> {
+
+    @Subcomponent.Builder
+    abstract class Builder extends AndroidInjector.Builder<SlashdotController> {}
   }
 
-  @dagger.Module
+  @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
+
+    @Binds @IntoMap @ControllerKey(SlashdotController.class)
+    abstract AndroidInjector.Factory<? extends Controller> bindSlashdotControllerInjectorFactory(
+        Component.Builder builder);
 
     @Provides @ForApi @PerController
     static OkHttpClient provideSlashdotOkHttpClient(OkHttpClient okHttpClient) {

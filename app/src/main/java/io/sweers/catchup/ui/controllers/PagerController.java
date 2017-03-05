@@ -25,15 +25,19 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.jakewharton.processphoenix.ProcessPhoenix;
+import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.IntoMap;
 import io.sweers.catchup.P;
 import io.sweers.catchup.R;
+import io.sweers.catchup.injection.ConductorInjection;
+import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.injection.qualifiers.preferences.NavBarTheme;
 import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.Scrollable;
-import io.sweers.catchup.ui.activity.ActivityComponent;
-import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.activity.SettingsActivity;
 import io.sweers.catchup.ui.base.ButterKnifeController;
 import io.sweers.catchup.util.ApiUtil;
@@ -140,15 +144,17 @@ public class PagerController extends ButterKnifeController {
     return inflater.inflate(R.layout.controller_pager, container, false);
   }
 
+  @Override protected void onAttach(@NonNull View view) {
+    ConductorInjection.inject(this);
+    super.onAttach(view);
+  }
+
   @Override protected Unbinder bind(@NonNull View view) {
     return new PagerController_ViewBinding(this, view);
   }
 
   @Override protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
-
-    // TODO Must be a sooner place to inject this
-    createComponent().inject(this);
 
     toolbar.inflateMenu(R.menu.main);
     toolbar.setOnMenuItemClickListener(item -> {
@@ -264,24 +270,23 @@ public class PagerController extends ButterKnifeController {
     return resolvedColorCache[position];
   }
 
-  protected Component createComponent() {
-    return DaggerPagerController_Component.builder()
-        .activityComponent(((MainActivity) getActivity()).getComponent())
-        .build();
-  }
-
   @PerController
-  @dagger.Component(modules = Module.class,
-                    dependencies = ActivityComponent.class)
-  interface Component {
-    void inject(PagerController pagerController);
+  @Subcomponent(modules = Module.class)
+  interface Component extends AndroidInjector<PagerController> {
+
+    @Subcomponent.Builder
+    abstract class Builder extends AndroidInjector.Builder<PagerController> {}
   }
 
-  @dagger.Module
-  static class Module {
+  @dagger.Module(subcomponents = Component.class)
+  public abstract static class Module {
 
-    @Provides @PerController @NavBarTheme Preference<Boolean> provideThemeNavigationColorPreference(
-        RxSharedPreferences rxSharedPreferences) {
+    @Binds @IntoMap @ControllerKey(PagerController.class)
+    abstract AndroidInjector.Factory<? extends Controller> bindPagerControllerInjectorFactory(
+        Component.Builder builder);
+
+    @Provides @PerController @NavBarTheme
+    static Preference<Boolean> provideThemeNavigationColorPreference(RxSharedPreferences rxSharedPreferences) {
       return rxSharedPreferences.getBoolean(P.themeNavigationBar.key,
           P.themeNavigationBar.defaultValue());
       // TODO revert to this when this is fixed: https://github.com/Flipboard/psync/issues/11

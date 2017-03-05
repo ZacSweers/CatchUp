@@ -65,8 +65,6 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     super(args);
   }
 
-  protected abstract void performInjection();
-
   /**
    * View binding implementation to bind the given datum to the {@code holder}.
    *
@@ -88,8 +86,6 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
 
   @Override protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
-    // TODO There must be an earlier place than this
-    performInjection();
 
     swipeRefreshLayout.setColorSchemeColors(getServiceThemeColor());
 

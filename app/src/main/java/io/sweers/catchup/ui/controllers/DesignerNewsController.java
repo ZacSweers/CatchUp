@@ -5,11 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
+import com.bluelinelabs.conductor.Controller;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
 import com.uber.autodispose.CompletableScoper;
+import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.IntoMap;
 import io.reactivex.Single;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
@@ -17,10 +22,9 @@ import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.designernews.DesignerNewsService;
 import io.sweers.catchup.data.designernews.model.StoriesResponse;
 import io.sweers.catchup.data.designernews.model.Story;
+import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.ui.activity.ActivityComponent;
-import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.Date;
 import java.util.List;
@@ -43,13 +47,6 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
 
   public DesignerNewsController(Bundle args) {
     super(args);
-  }
-
-  @Override protected void performInjection() {
-    DaggerDesignerNewsController_Component.builder()
-        .activityComponent(((MainActivity) getActivity()).getComponent())
-        .build()
-        .inject(this);
   }
 
   @Override protected Context onThemeContext(@NonNull Context context) {
@@ -87,14 +84,19 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
   }
 
   @PerController
-  @dagger.Component(modules = Module.class,
-                    dependencies = ActivityComponent.class)
-  public interface Component {
-    void inject(DesignerNewsController controller);
+  @Subcomponent(modules = Module.class)
+  public interface Component extends AndroidInjector<DesignerNewsController> {
+
+    @Subcomponent.Builder
+    abstract class Builder extends AndroidInjector.Builder<DesignerNewsController> {}
   }
 
-  @dagger.Module
+  @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
+
+    @Binds @IntoMap @ControllerKey(DesignerNewsController.class)
+    abstract AndroidInjector.Factory<? extends Controller> bindDesignerNewsControllerInjectorFactory(
+        Component.Builder builder);
 
     @Provides @ForApi @PerController
     static OkHttpClient provideDesignerNewsOkHttpClient(OkHttpClient okHttpClient) {

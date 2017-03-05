@@ -5,12 +5,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
+import com.bluelinelabs.conductor.Controller;
 import com.serjltt.moshi.adapters.WrappedJsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.uber.autodispose.CompletableScoper;
 import com.uber.autodispose.ObservableScoper;
+import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.IntoMap;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.sweers.catchup.R;
@@ -19,10 +24,9 @@ import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.medium.MediumService;
 import io.sweers.catchup.data.medium.model.Collection;
 import io.sweers.catchup.data.medium.model.MediumPost;
+import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.ui.activity.ActivityComponent;
-import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -47,13 +51,6 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
   public MediumController(Bundle args) {
     super(args);
-  }
-
-  @Override protected void performInjection() {
-    DaggerMediumController_Component.builder()
-        .activityComponent(((MainActivity) getActivity()).getComponent())
-        .build()
-        .inject(this);
   }
 
   @Override protected Context onThemeContext(@NonNull Context context) {
@@ -118,14 +115,19 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   }
 
   @PerController
-  @dagger.Component(modules = Module.class,
-                    dependencies = ActivityComponent.class)
-  public interface Component {
-    void inject(MediumController controller);
+  @Subcomponent(modules = Module.class)
+  public interface Component extends AndroidInjector<MediumController> {
+
+    @Subcomponent.Builder
+    abstract class Builder extends AndroidInjector.Builder<MediumController> {}
   }
 
-  @dagger.Module
+  @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
+
+    @Binds @IntoMap @ControllerKey(MediumController.class)
+    abstract AndroidInjector.Factory<? extends Controller> bindMediumControllerInjectorFactory(
+        Component.Builder builder);
 
     @Provides @PerController @ForApi
     static OkHttpClient provideMediumOkHttpClient(OkHttpClient client) {

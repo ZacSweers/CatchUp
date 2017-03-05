@@ -31,6 +31,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import com.bluelinelabs.conductor.Controller;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -42,8 +43,12 @@ import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
 import com.uber.autodispose.CompletableScoper;
 import com.uber.autodispose.SingleScoper;
+import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.IntoMap;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -54,11 +59,10 @@ import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.RxViewHolder;
 import io.sweers.catchup.data.dribbble.DribbbleService;
 import io.sweers.catchup.data.dribbble.model.Shot;
+import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.Scrollable;
-import io.sweers.catchup.ui.activity.ActivityComponent;
-import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.ServiceController;
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView;
 import io.sweers.catchup.util.ObservableColorMatrix;
@@ -117,11 +121,6 @@ public class DribbbleController extends ServiceController
 
   @Override protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
-    // TODO There must be an earlier place than this
-    DaggerDribbbleController_Component.builder()
-        .activityComponent(((MainActivity) getActivity()).getComponent())
-        .build()
-        .inject(this);
 
     swipeRefreshLayout.setColorSchemeColors(getServiceThemeColor());
 
@@ -160,7 +159,8 @@ public class DribbbleController extends ServiceController
           adapter.setShots(shots);
         }, e -> {
           if (e instanceof IOException) {
-            AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+            AnimatedVectorDrawableCompat avd =
+                AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
             errorImage.setImageDrawable(avd);
             errorTextView.setText("Network Problem");
             progress.setVisibility(GONE);
@@ -169,7 +169,8 @@ public class DribbbleController extends ServiceController
             avd.start();
           } else if (e instanceof HttpException) {
             // TODO Show some sort of API error response.
-            AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+            AnimatedVectorDrawableCompat avd =
+                AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
             errorImage.setImageDrawable(avd);
             errorTextView.setText("API Problem");
             progress.setVisibility(GONE);
@@ -178,7 +179,8 @@ public class DribbbleController extends ServiceController
             avd.start();
           } else {
             // TODO Show some sort of generic response error
-            AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+            AnimatedVectorDrawableCompat avd =
+                AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
             errorImage.setImageDrawable(avd);
             progress.setVisibility(GONE);
             swipeRefreshLayout.setVisibility(GONE);
@@ -210,10 +212,11 @@ public class DribbbleController extends ServiceController
   }
 
   @PerController
-  @dagger.Component(modules = DribbbleController.Module.class,
-                    dependencies = ActivityComponent.class)
-  public interface Component {
-    void inject(DribbbleController controller);
+  @Subcomponent(modules = DribbbleController.Module.class)
+  public interface Component extends AndroidInjector<DribbbleController> {
+
+    @Subcomponent.Builder
+    abstract class Builder extends AndroidInjector.Builder<DribbbleController> {}
   }
 
   private static class Adapter extends RecyclerView.Adapter<Adapter.DribbbleShotHolder> {
@@ -390,8 +393,12 @@ public class DribbbleController extends ServiceController
     }
   }
 
-  @dagger.Module
+  @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
+
+    @Binds @IntoMap @ControllerKey(DribbbleController.class)
+    abstract AndroidInjector.Factory<? extends Controller> bindDribbbleControllerInjectorFactory(
+        Component.Builder builder);
 
     @Provides @PerController @ForApi
     static OkHttpClient provideDribbbleOkHttpClient(OkHttpClient client) {

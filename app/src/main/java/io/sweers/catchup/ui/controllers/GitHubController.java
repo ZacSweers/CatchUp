@@ -5,10 +5,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
+import com.bluelinelabs.conductor.Controller;
 import com.squareup.moshi.Moshi;
 import com.uber.autodispose.CompletableScoper;
+import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.IntoMap;
 import io.reactivex.Single;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
@@ -21,10 +26,9 @@ import io.sweers.catchup.data.github.model.Order;
 import io.sweers.catchup.data.github.model.Repository;
 import io.sweers.catchup.data.github.model.SearchQuery;
 import io.sweers.catchup.data.github.model.SearchRepositoriesResult;
+import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.injection.qualifiers.ForApi;
 import io.sweers.catchup.injection.scopes.PerController;
-import io.sweers.catchup.ui.activity.ActivityComponent;
-import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.List;
 import javax.inject.Inject;
@@ -44,13 +48,6 @@ public final class GitHubController extends BaseNewsController<Repository> {
 
   public GitHubController(Bundle args) {
     super(args);
-  }
-
-  @Override protected void performInjection() {
-    DaggerGitHubController_Component.builder()
-        .activityComponent(((MainActivity) getActivity()).getComponent())
-        .build()
-        .inject(this);
   }
 
   @Override protected Context onThemeContext(@NonNull Context context) {
@@ -81,14 +78,19 @@ public final class GitHubController extends BaseNewsController<Repository> {
   }
 
   @PerController
-  @dagger.Component(modules = Module.class,
-                    dependencies = ActivityComponent.class)
-  public interface Component {
-    void inject(GitHubController controller);
+  @Subcomponent(modules = Module.class)
+  public interface Component extends AndroidInjector<GitHubController> {
+
+    @Subcomponent.Builder
+    abstract class Builder extends AndroidInjector.Builder<GitHubController> {}
   }
 
-  @dagger.Module
+  @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
+
+    @Binds @IntoMap @ControllerKey(GitHubController.class)
+    abstract AndroidInjector.Factory<? extends Controller> bindGitHubControllerInjectorFactory(
+        Component.Builder builder);
 
     @Provides @PerController @ForApi
     static OkHttpClient provideGitHubOkHttpClient(OkHttpClient client) {
