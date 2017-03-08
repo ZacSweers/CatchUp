@@ -77,7 +77,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
   }
 
   @PerController
-  @Subcomponent(modules = Module.class)
+  @Subcomponent
   public interface Component extends AndroidInjector<SlashdotController> {
 
     @Subcomponent.Builder

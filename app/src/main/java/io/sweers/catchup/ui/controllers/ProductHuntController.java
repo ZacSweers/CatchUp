@@ -80,7 +80,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
   }
 
   @PerController
-  @Subcomponent(modules = Module.class)
+  @Subcomponent
   public interface Component extends AndroidInjector<ProductHuntController> {
 
     @Subcomponent.Builder

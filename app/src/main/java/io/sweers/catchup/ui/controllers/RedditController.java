@@ -98,7 +98,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
   }
 
   @PerController
-  @Subcomponent(modules = Module.class)
+  @Subcomponent
   public interface Component extends AndroidInjector<RedditController> {
 
     @Subcomponent.Builder

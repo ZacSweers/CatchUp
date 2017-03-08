@@ -84,7 +84,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
   }
 
   @PerController
-  @Subcomponent(modules = Module.class)
+  @Subcomponent
   public interface Component extends AndroidInjector<DesignerNewsController> {
 
     @Subcomponent.Builder

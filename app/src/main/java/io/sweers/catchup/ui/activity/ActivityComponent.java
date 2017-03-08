@@ -15,7 +15,6 @@ import io.sweers.catchup.ui.controllers.SlashdotController;
 
 @PerActivity
 @Subcomponent(modules = {
-    ActivityModule.class,
     UiModule.class,
     PagerController.Module.class,
     HackerNewsController.Module.class,

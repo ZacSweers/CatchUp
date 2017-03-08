@@ -212,7 +212,7 @@ public class DribbbleController extends ServiceController
   }
 
   @PerController
-  @Subcomponent(modules = DribbbleController.Module.class)
+  @Subcomponent
   public interface Component extends AndroidInjector<DribbbleController> {
 
     @Subcomponent.Builder

@@ -78,7 +78,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
   }
 
   @PerController
-  @Subcomponent(modules = Module.class)
+  @Subcomponent
   public interface Component extends AndroidInjector<GitHubController> {
 
     @Subcomponent.Builder

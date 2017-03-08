@@ -108,7 +108,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   }
 
   @PerController
-  @Subcomponent(modules = Module.class)
+  @Subcomponent
   public interface Component extends AndroidInjector<HackerNewsController> {
 
     @Subcomponent.Builder

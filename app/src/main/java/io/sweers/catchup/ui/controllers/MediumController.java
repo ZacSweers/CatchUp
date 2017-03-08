@@ -115,7 +115,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   }
 
   @PerController
-  @Subcomponent(modules = Module.class)
+  @Subcomponent
   public interface Component extends AndroidInjector<MediumController> {
 
     @Subcomponent.Builder

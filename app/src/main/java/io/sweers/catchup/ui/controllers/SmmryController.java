@@ -29,7 +29,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
-import io.sweers.catchup.data.smmry.SmmryModule;
 import io.sweers.catchup.data.smmry.SmmryService;
 import io.sweers.catchup.data.smmry.model.SmmryRequestBuilder;
 import io.sweers.catchup.data.smmry.model.SmmryResponse;
@@ -187,7 +186,7 @@ public class SmmryController extends ButterKnifeController {
   }
 
   @PerController
-  @Subcomponent(modules = SmmryModule.class)
+  @Subcomponent
   public interface Component extends AndroidInjector<SmmryController> {
     @Subcomponent.Builder
     abstract class Builder extends AndroidInjector.Builder<SmmryController> {}

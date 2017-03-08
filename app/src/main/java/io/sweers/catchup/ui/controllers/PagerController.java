@@ -271,7 +271,7 @@ public class PagerController extends ButterKnifeController {
   }
 
   @PerController
-  @Subcomponent(modules = Module.class)
+  @Subcomponent
   interface Component extends AndroidInjector<PagerController> {
 
     @Subcomponent.Builder
