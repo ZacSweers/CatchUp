@@ -54,6 +54,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
   @BindView(R.id.refresh) SwipeRefreshLayout swipeRefreshLayout;
 
   private Adapter<T> adapter;
+  private boolean loaded = false;
 
   public BaseNewsController() {
     super();
@@ -114,7 +115,9 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
   @Override protected void onAttach(@NonNull View view) {
     super.onAttach(view);
     swipeRefreshLayout.setEnabled(false);
-    loadData();
+    if (!loaded) {
+      loadData();
+    }
   }
 
   private void loadData() {
@@ -135,6 +138,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
           errorView.setVisibility(GONE);
           swipeRefreshLayout.setVisibility(VISIBLE);
           adapter.setData(data);
+          loaded = true;
         }, e -> {
           if (e instanceof IOException) {
             AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);

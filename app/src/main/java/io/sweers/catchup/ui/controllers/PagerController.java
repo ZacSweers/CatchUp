@@ -143,39 +143,13 @@ public class PagerController extends ButterKnifeController {
     return inflater.inflate(R.layout.controller_pager, container, false);
   }
 
-  @Override protected void onAttach(@NonNull View view) {
-    ConductorInjection.inject(this);
-    super.onAttach(view);
-
-    // Set the initial color
-    @ColorInt int initialColor = getAndSaveColor(0);
-    tabLayout.setBackgroundColor(initialColor);
-    if (ApiUtil.isL() && !UiUtil.isInNightMode(view.getContext())) {
-      colorNavBar = themeNavigationBarPref.get()
-          .get(); // ew
-      themeNavigationBarPref.get()
-          .asObservable()
-          .distinctUntilChanged()
-          .subscribe(b -> {
-            colorNavBar = b;
-            int color;
-            if (b) {
-              color = getAndSaveColor(viewPager.getCurrentItem());
-            } else {
-              color = Color.BLACK;
-            }
-            getActivity().getWindow()
-                .setNavigationBarColor(color);
-          });
-    }
-  }
-
   @Override protected Unbinder bind(@NonNull View view) {
     return new PagerController_ViewBinding(this, view);
   }
 
   @Override protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
+    ConductorInjection.inject(this);
 
     toolbar.inflateMenu(R.menu.main);
     toolbar.setOnMenuItemClickListener(item -> {
@@ -201,6 +175,28 @@ public class PagerController extends ButterKnifeController {
 
     // Initial title
     toolbar.setTitle(getResources().getString(PAGE_DATA[0][1]));
+
+    // Set the initial color
+    @ColorInt int initialColor = getAndSaveColor(0);
+    tabLayout.setBackgroundColor(initialColor);
+    if (ApiUtil.isL() && !UiUtil.isInNightMode(view.getContext())) {
+      colorNavBar = themeNavigationBarPref.get()
+          .get(); // ew
+      themeNavigationBarPref.get()
+          .asObservable()
+          .distinctUntilChanged()
+          .subscribe(b -> {
+            colorNavBar = b;
+            int color;
+            if (b) {
+              color = getAndSaveColor(viewPager.getCurrentItem());
+            } else {
+              color = Color.BLACK;
+            }
+            getActivity().getWindow()
+                .setNavigationBarColor(color);
+          });
+    }
 
     viewPager.setAdapter(pagerAdapter);
     tabLayout.setupWithViewPager(viewPager);

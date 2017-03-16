@@ -40,9 +40,9 @@ public abstract class ServiceController extends ButterKnifeController {
     return view;
   }
 
-  @Override protected void onAttach(@NonNull View view) {
+  @Override protected void onViewBound(@NonNull View view) {
     ConductorInjection.inject(this);
-    super.onAttach(view);
+    super.onViewBound(view);
   }
 
   protected <T> ObservableTransformer<T, UrlMeta> transformUrlToMeta(@Nullable final String url) {
