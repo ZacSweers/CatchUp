@@ -19,9 +19,8 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.uber.autodispose.SingleScoper;
-import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -39,7 +38,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import org.threeten.bp.Instant;
 import retrofit2.adapter.rxjava2.HttpException;
-import rx.functions.Func1;
 import timber.log.Timber;
 
 import static android.view.View.GONE;
@@ -253,22 +251,16 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
       unbinder = new BaseNewsController$ViewHolder_ViewBinding(this, itemView);
     }
 
-    private static final Object TEMP_OBJECT = new Object();
-    private static final Func1<Void, Object> TEMP_FUNCTION = (Func1<Void, Object>) o -> TEMP_OBJECT;
-
     public Observable<Object> itemClicks() {
-      return RxJavaInterop.toV2Observable(RxView.clicks(container)
-          .map(TEMP_FUNCTION));
+      return RxView.clicks(container);
     }
 
     public Observable<Object> itemLongClicks() {
-      return RxJavaInterop.toV2Observable(RxView.longClicks(container)
-          .map(TEMP_FUNCTION));
+      return RxView.longClicks(container);
     }
 
     public Observable<Object> itemCommentClicks() {
-      return RxJavaInterop.toV2Observable(RxView.clicks(comments)
-          .map(TEMP_FUNCTION));
+      return RxView.clicks(comments);
     }
 
     public void title(@NonNull CharSequence titleText) {

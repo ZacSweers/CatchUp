@@ -224,6 +224,7 @@ dependencies {
   testCompile rootProject.ext.rxRelay
   androidTestCompile project(':testing-utils')
   androidTestCompile rootProject.ext.errorProneAnnotations
+  androidTestCompile rootProject.ext.rxJava2
   testCompile rootProject.ext.errorProneAnnotations
 
   // LeakCanary

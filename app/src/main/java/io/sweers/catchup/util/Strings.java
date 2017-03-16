@@ -8,7 +8,7 @@ public final class Strings {
     throw new InstantiationError();
   }
 
-  public static boolean isBlank(CharSequence string) {
+  public static boolean isBlank(@Nullable CharSequence string) {
     return (string == null
         || string.toString()
         .trim()

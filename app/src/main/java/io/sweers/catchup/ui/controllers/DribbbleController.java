@@ -38,7 +38,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Rfc3339DateJsonAdapter;
 import com.uber.autodispose.CompletableScoper;
@@ -49,7 +49,6 @@ import dagger.Provides;
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
-import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.BuildConfig;
@@ -127,8 +126,7 @@ public class DribbbleController extends ServiceController
     GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
     recyclerView.setLayoutManager(layoutManager);
     adapter = new Adapter(view.getContext(),
-        (shot, viewHolder) -> RxJavaInterop.toV2Observable(RxView.clicks(viewHolder.itemView)
-            .map(o -> new Object()))
+        (shot, viewHolder) -> RxView.clicks(viewHolder.itemView)
             .compose(transformUrlToMeta(shot.htmlUrl()))
             .flatMapCompletable(linkManager)
             .to(new CompletableScoper(viewHolder))

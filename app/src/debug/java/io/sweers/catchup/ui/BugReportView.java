@@ -7,7 +7,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.jakewharton.rxbinding.widget.RxTextView;
+import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.uber.autodispose.ObservableScoper;
+import com.uber.autodispose.android.ViewScopeProvider;
 import io.sweers.catchup.R;
 import io.sweers.catchup.util.Strings;
 
@@ -36,7 +38,9 @@ public final class BugReportView extends LinearLayout {
         titleView.setError(Strings.isBlank(titleView.getText()) ? "Cannot be empty." : null);
       }
     });
-    RxTextView.afterTextChangeEvents(titleView).subscribe(s -> {
+    RxTextView.afterTextChangeEvents(titleView)
+        .to(new ObservableScoper<>(ViewScopeProvider.from(this)))
+        .subscribe(s -> {
       if (listener != null) {
         listener.onStateChanged(!Strings.isBlank(s.editable()));
       }
