@@ -20,14 +20,12 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking;
-import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.ui.activity.MainActivity;
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper;
 
 import static hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Observable;
 import static io.sweers.catchup.rx.Transformers.doOnEmpty;
 
-@PerActivity
 public final class LinkManager implements Function<LinkManager.UrlMeta, Completable> {
 
   private final CustomTabActivityHelper customTab;

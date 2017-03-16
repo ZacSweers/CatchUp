@@ -27,11 +27,10 @@ import io.sweers.catchup.data.github.model.Repository;
 import io.sweers.catchup.data.github.model.SearchQuery;
 import io.sweers.catchup.data.github.model.SearchRepositoriesResult;
 import io.sweers.catchup.injection.ControllerKey;
-import io.sweers.catchup.injection.qualifiers.ForApi;
-import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -77,7 +76,6 @@ public final class GitHubController extends BaseNewsController<Repository> {
         .map(SearchRepositoriesResult::items);
   }
 
-  @PerController
   @Subcomponent
   public interface Component extends AndroidInjector<GitHubController> {
 
@@ -88,26 +86,28 @@ public final class GitHubController extends BaseNewsController<Repository> {
   @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
 
+    @Qualifier
+    private @interface InternalApi {}
+
     @Binds @IntoMap @ControllerKey(GitHubController.class)
     abstract AndroidInjector.Factory<? extends Controller> bindGitHubControllerInjectorFactory(
         Component.Builder builder);
 
-    @Provides @PerController @ForApi
-    static OkHttpClient provideGitHubOkHttpClient(OkHttpClient client) {
+    @Provides @InternalApi static OkHttpClient provideGitHubOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
           .build();
     }
 
-    @Provides @PerController @ForApi static Moshi provideGitHubMoshi(Moshi moshi) {
+    @Provides @InternalApi static Moshi provideGitHubMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(new ISOInstantAdapter())
           .build();
     }
 
-    @Provides @PerController
-    static GitHubService provideGitHubService(@ForApi final Lazy<OkHttpClient> client,
-        @ForApi Moshi moshi,
+    @Provides
+    static GitHubService provideGitHubService(@InternalApi final Lazy<OkHttpClient> client,
+        @InternalApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder().baseUrl(GitHubService.ENDPOINT)
           .callFactory(request -> client.get()

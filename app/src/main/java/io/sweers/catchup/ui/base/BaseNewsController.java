@@ -98,7 +98,6 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     itemAnimator.setAddDuration(300);
     itemAnimator.setRemoveDuration(300);
     recyclerView.setItemAnimator(itemAnimator);
-    loadData();
   }
 
   @OnClick(R.id.retry_button) void onRetry() {
@@ -115,6 +114,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
   @Override protected void onAttach(@NonNull View view) {
     super.onAttach(view);
     swipeRefreshLayout.setEnabled(false);
+    loadData();
   }
 
   private void loadData() {

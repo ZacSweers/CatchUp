@@ -2,7 +2,6 @@ package io.sweers.catchup.ui.activity;
 
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
-import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.ui.controllers.DesignerNewsController;
 import io.sweers.catchup.ui.controllers.DribbbleController;
 import io.sweers.catchup.ui.controllers.GitHubController;
@@ -13,7 +12,6 @@ import io.sweers.catchup.ui.controllers.ProductHuntController;
 import io.sweers.catchup.ui.controllers.RedditController;
 import io.sweers.catchup.ui.controllers.SlashdotController;
 
-@PerActivity
 @Subcomponent(modules = {
     UiModule.class,
     PagerController.Module.class,

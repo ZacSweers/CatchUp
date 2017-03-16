@@ -24,12 +24,11 @@ import io.sweers.catchup.data.reddit.model.RedditLink;
 import io.sweers.catchup.data.reddit.model.RedditObjectFactory;
 import io.sweers.catchup.data.smmry.SmmryService;
 import io.sweers.catchup.injection.ControllerKey;
-import io.sweers.catchup.injection.qualifiers.ForApi;
-import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -97,7 +96,6 @@ public final class RedditController extends BaseNewsController<RedditLink> {
         });
   }
 
-  @PerController
   @Subcomponent
   public interface Component extends AndroidInjector<RedditController> {
 
@@ -108,19 +106,21 @@ public final class RedditController extends BaseNewsController<RedditLink> {
   @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
 
+    @Qualifier
+    private @interface InternalApi {}
+
     @Binds @IntoMap @ControllerKey(RedditController.class)
     abstract AndroidInjector.Factory<? extends Controller> bindRedditControllerInjectorFactory(
         Component.Builder builder);
 
-    @ForApi @Provides @PerController static Moshi provideMoshi(Moshi upstreamMoshi) {
+    @InternalApi @Provides static Moshi provideMoshi(Moshi upstreamMoshi) {
       return upstreamMoshi.newBuilder()
           .add(RedditObjectFactory.getInstance())
           .add(Instant.class, new EpochInstantJsonAdapter(TimeUnit.SECONDS))
           .build();
     }
 
-    @ForApi @Provides @PerController
-    static OkHttpClient provideRedditOkHttpClient(OkHttpClient client) {
+    @InternalApi @Provides static OkHttpClient provideRedditOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addNetworkInterceptor(chain -> {
             Request request = chain.request();
@@ -136,10 +136,10 @@ public final class RedditController extends BaseNewsController<RedditLink> {
           .build();
     }
 
-    @Provides @PerController
-    static RedditService provideRedditService(@ForApi final Lazy<OkHttpClient> client,
+    @Provides
+    static RedditService provideRedditService(@InternalApi final Lazy<OkHttpClient> client,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory,
-        @ForApi Moshi moshi) {
+        @InternalApi Moshi moshi) {
       Retrofit retrofit = new Retrofit.Builder().baseUrl(RedditService.ENDPOINT)
           .callFactory(request -> client.get()
               .newCall(request))

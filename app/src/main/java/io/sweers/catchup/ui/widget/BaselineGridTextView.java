@@ -18,9 +18,10 @@ package io.sweers.catchup.ui.widget;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-
 import io.sweers.barber.Barber;
 import io.sweers.barber.Kind;
 import io.sweers.barber.StyledAttr;
@@ -38,64 +39,34 @@ import io.sweers.catchup.R;
  * (relative to the view's top) and the {@code bottomPadding} to ensure this view's height is a
  * multiple of 4dp so that subsequent views start on the grid.
  */
-public class BaselineGridTextView extends CompatTextView {
+public class BaselineGridTextView extends AppCompatTextView {
 
-  private final int FOUR_DIP;
-  @StyledAttr(R.styleable.BaselineGridTextView_lineHeightMultiplierHint)
-  float lineHeightMultiplierHint = 1f;
-  @StyledAttr(value = R.styleable.BaselineGridTextView_lineHeightHint, kind = Kind.DIMEN_PIXEL_SIZE)
-  float lineHeightHint = 0f;
-  private int unalignedTopPadding = 0;
+  private final float FOUR_DIP;
+  @StyledAttr(R.styleable.BaselineGridTextView_lineHeightMultiplierHint) float
+      lineHeightMultiplierHint = 1f;
+  @StyledAttr(value = R.styleable.BaselineGridTextView_lineHeightHint,
+              kind = Kind.DIMEN_PIXEL_SIZE) float lineHeightHint = 0f;
+  @StyledAttr(value = R.styleable.BaselineGridTextView_maxLinesByHeight) boolean maxLinesByHeight =
+      false;
+  int extraTopPadding = 0;
+  int extraBottomPadding = 0;
 
   public BaselineGridTextView(Context context) {
     this(context, null);
   }
 
-  public BaselineGridTextView(Context context, AttributeSet attrs) {
+  public BaselineGridTextView(Context context, @Nullable AttributeSet attrs) {
     this(context, attrs, android.R.attr.textViewStyle);
   }
 
-  public BaselineGridTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public BaselineGridTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    Barber.style(this, attrs, R.styleable.BaselineGridTextView, defStyleAttr, 0);
+    Barber.style(this, attrs, R.styleable.BaselineGridTextView, defStyleAttr);
 
-    FOUR_DIP = (int) TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-
-    setIncludeFontPadding(false);
-    setElegantTextHeight(false);
-  }
-
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    recomputeLineHeight();
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    final int height = getMeasuredHeight();
-    final int gridOverhang = height % FOUR_DIP;
-    if (gridOverhang != 0) {
-      final int addition = FOUR_DIP - gridOverhang;
-      super.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(),
-          getPaddingBottom() + addition);
-      setMeasuredDimension(getMeasuredWidth(), height + addition);
-    }
-  }
-
-  @Override
-  public void setPadding(int left, int top, int right, int bottom) {
-    super.setPadding(left, top, right, bottom);
-    if (unalignedTopPadding != top) {
-      unalignedTopPadding = top;
-      recomputeLineHeight();
-    }
-  }
-
-  @Override
-  public void setPaddingRelative(int start, int top, int end, int bottom) {
-    super.setPaddingRelative(start, top, end, bottom);
-    if (unalignedTopPadding != top) {
-      unalignedTopPadding = top;
-      recomputeLineHeight();
-    }
+    FOUR_DIP = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+        4,
+        getResources().getDisplayMetrics());
+    computeLineHeight();
   }
 
   public float getLineHeightMultiplierHint() {
@@ -104,7 +75,7 @@ public class BaselineGridTextView extends CompatTextView {
 
   public void setLineHeightMultiplierHint(float lineHeightMultiplierHint) {
     this.lineHeightMultiplierHint = lineHeightMultiplierHint;
-    recomputeLineHeight();
+    computeLineHeight();
   }
 
   public float getLineHeightHint() {
@@ -113,26 +84,85 @@ public class BaselineGridTextView extends CompatTextView {
 
   public void setLineHeightHint(float lineHeightHint) {
     this.lineHeightHint = lineHeightHint;
-    recomputeLineHeight();
+    computeLineHeight();
   }
 
-  private void recomputeLineHeight() {
-    // ensure that the first line's baselines sits on 4dp grid by setting the top padding
-    final Paint.FontMetricsInt fm = getPaint().getFontMetricsInt();
-    final int gridAlignedTopPadding = (int) (FOUR_DIP * (float)
-        Math.ceil((unalignedTopPadding + Math.abs(fm.ascent)) / FOUR_DIP)
-        - Math.ceil(Math.abs(fm.ascent)));
-    super.setPadding(
-        getPaddingLeft(), gridAlignedTopPadding, getPaddingRight(), getPaddingBottom());
+  public boolean getMaxLinesByHeight() {
+    return maxLinesByHeight;
+  }
 
-    // ensures line height is a multiple of 4dp
+  public void setMaxLinesByHeight(boolean maxLinesByHeight) {
+    this.maxLinesByHeight = maxLinesByHeight;
+    requestLayout();
+  }
+
+  @Override public int getCompoundPaddingTop() {
+    // include extra padding to place the first line's baseline on the grid
+    return super.getCompoundPaddingTop() + extraTopPadding;
+  }
+
+  @Override public int getCompoundPaddingBottom() {
+    // include extra padding to make the height a multiple of 4dp
+    return super.getCompoundPaddingBottom() + extraBottomPadding;
+  }
+
+  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    extraTopPadding = 0;
+    extraBottomPadding = 0;
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    int height = getMeasuredHeight();
+    height += ensureBaselineOnGrid();
+    height += ensureHeightGridAligned(height);
+    setMeasuredDimension(getMeasuredWidth(), height);
+    checkMaxLines(height, MeasureSpec.getMode(heightMeasureSpec));
+  }
+
+  /**
+   * Ensures line height is a multiple of 4dp.
+   */
+  private void computeLineHeight() {
+    final Paint.FontMetricsInt fm = getPaint().getFontMetricsInt();
     final int fontHeight = Math.abs(fm.ascent - fm.descent) + fm.leading;
-    final float desiredLineHeight = (lineHeightHint > 0)
-        ? lineHeightHint
-        : lineHeightMultiplierHint * fontHeight;
+    final float desiredLineHeight =
+        (lineHeightHint > 0) ? lineHeightHint : lineHeightMultiplierHint * fontHeight;
 
     final int baselineAlignedLineHeight =
         (int) (FOUR_DIP * (float) Math.ceil(desiredLineHeight / FOUR_DIP));
     setLineSpacing(baselineAlignedLineHeight - fontHeight, 1f);
+  }
+
+  /**
+   * Ensure that the first line of text sits on the 4dp grid.
+   */
+  private int ensureBaselineOnGrid() {
+    float baseline = getBaseline();
+    float gridAlign = baseline % FOUR_DIP;
+    if (gridAlign != 0) {
+      extraTopPadding = (int) (FOUR_DIP - Math.ceil(gridAlign));
+    }
+    return extraTopPadding;
+  }
+
+  /**
+   * Ensure that height is a multiple of 4dp.
+   */
+  private int ensureHeightGridAligned(int height) {
+    float gridOverhang = height % FOUR_DIP;
+    if (gridOverhang != 0) {
+      extraBottomPadding = (int) (FOUR_DIP - Math.ceil(gridOverhang));
+    }
+    return extraBottomPadding;
+  }
+
+  /**
+   * When measured with an exact height, text can be vertically clipped mid-line. Prevent
+   * this by setting the {@code maxLines} property based on the available space.
+   */
+  private void checkMaxLines(int height, int heightMode) {
+    if (!maxLinesByHeight || heightMode != MeasureSpec.EXACTLY) return;
+
+    int textHeight = height - getCompoundPaddingTop() - getCompoundPaddingBottom();
+    int completeLines = (int) Math.floor(textHeight / getLineHeight());
+    setMaxLines(completeLines);
   }
 }

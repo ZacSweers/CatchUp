@@ -25,12 +25,11 @@ import io.sweers.catchup.data.medium.MediumService;
 import io.sweers.catchup.data.medium.model.Collection;
 import io.sweers.catchup.data.medium.model.MediumPost;
 import io.sweers.catchup.injection.ControllerKey;
-import io.sweers.catchup.injection.qualifiers.ForApi;
-import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -114,7 +113,6 @@ public final class MediumController extends BaseNewsController<MediumPost> {
         .toList();
   }
 
-  @PerController
   @Subcomponent
   public interface Component extends AndroidInjector<MediumController> {
 
@@ -125,12 +123,14 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
 
+    @Qualifier
+    private @interface InternalApi {}
+
     @Binds @IntoMap @ControllerKey(MediumController.class)
     abstract AndroidInjector.Factory<? extends Controller> bindMediumControllerInjectorFactory(
         Component.Builder builder);
 
-    @Provides @PerController @ForApi
-    static OkHttpClient provideMediumOkHttpClient(OkHttpClient client) {
+    @Provides @InternalApi static OkHttpClient provideMediumOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addInterceptor(chain -> {
             Request request = chain.request();
@@ -149,16 +149,16 @@ public final class MediumController extends BaseNewsController<MediumPost> {
           .build();
     }
 
-    @Provides @PerController @ForApi static Moshi provideMediumMoshi(Moshi moshi) {
+    @Provides @InternalApi static Moshi provideMediumMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Instant.class, new EpochInstantJsonAdapter(TimeUnit.MILLISECONDS))
           .add(WrappedJsonAdapter.FACTORY)
           .build();
     }
 
-    @Provides @PerController
-    static MediumService provideMediumService(@ForApi final Lazy<OkHttpClient> client,
-        @ForApi Moshi moshi,
+    @Provides
+    static MediumService provideMediumService(@InternalApi final Lazy<OkHttpClient> client,
+        @InternalApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder().baseUrl(MediumService.ENDPOINT)
           .callFactory(request -> client.get()

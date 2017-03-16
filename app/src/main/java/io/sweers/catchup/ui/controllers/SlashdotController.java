@@ -18,12 +18,11 @@ import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.slashdot.Entry;
 import io.sweers.catchup.data.slashdot.SlashdotService;
 import io.sweers.catchup.injection.ControllerKey;
-import io.sweers.catchup.injection.qualifiers.ForApi;
-import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.util.Iso8601Utils;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import retrofit2.Retrofit;
@@ -76,7 +75,6 @@ public final class SlashdotController extends BaseNewsController<Entry> {
         .map(channel -> channel.itemList);
   }
 
-  @PerController
   @Subcomponent
   public interface Component extends AndroidInjector<SlashdotController> {
 
@@ -87,11 +85,14 @@ public final class SlashdotController extends BaseNewsController<Entry> {
   @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
 
+    @Qualifier
+    private @interface InternalApi {}
+
     @Binds @IntoMap @ControllerKey(SlashdotController.class)
     abstract AndroidInjector.Factory<? extends Controller> bindSlashdotControllerInjectorFactory(
         Component.Builder builder);
 
-    @Provides @ForApi @PerController
+    @Provides @InternalApi
     static OkHttpClient provideSlashdotOkHttpClient(OkHttpClient okHttpClient) {
       return okHttpClient.newBuilder()
           .addNetworkInterceptor(chain -> {
@@ -105,8 +106,8 @@ public final class SlashdotController extends BaseNewsController<Entry> {
           .build();
     }
 
-    @Provides @PerController
-    static SlashdotService provideSlashdotService(@ForApi final Lazy<OkHttpClient> client,
+    @Provides
+    static SlashdotService provideSlashdotService(@InternalApi final Lazy<OkHttpClient> client,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder().baseUrl(SlashdotService.ENDPOINT)
           .callFactory(request -> client.get()

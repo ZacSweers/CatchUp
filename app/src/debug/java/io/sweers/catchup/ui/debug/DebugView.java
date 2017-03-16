@@ -23,8 +23,6 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
 import com.squareup.leakcanary.internal.DisplayLeakActivity;
-import com.uber.autodispose.ObservableScoper;
-import com.uber.autodispose.android.ViewScopeProvider;
 import dagger.Lazy;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -52,6 +50,7 @@ import timber.log.Timber;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+@SuppressWarnings("CheckReturnValue")
 public final class DebugView extends FrameLayout {
   private static final DateTimeFormatter DATE_DISPLAY_FORMAT =
       DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a", Locale.US)
@@ -171,7 +170,6 @@ public final class DebugView extends FrameLayout {
     RxAdapterView.itemSelections(networkDelayView)
         .map(delayAdapter::getItem)
         .filter(item -> item != behavior.delay(MILLISECONDS))
-        .to(new ObservableScoper<>(ViewScopeProvider.from(this)))
         .subscribe(selected -> {
           Timber.d("Setting network delay to %sms", selected);
           behavior.setDelay(selected, MILLISECONDS);
@@ -185,7 +183,6 @@ public final class DebugView extends FrameLayout {
     RxAdapterView.itemSelections(networkVarianceView)
         .map(varianceAdapter::getItem)
         .filter(item -> item != behavior.variancePercent())
-        .to(new ObservableScoper<>(ViewScopeProvider.from(this)))
         .subscribe(selected -> {
           Timber.d("Setting network variance to %s%%", selected);
           behavior.setVariancePercent(selected);
@@ -199,7 +196,6 @@ public final class DebugView extends FrameLayout {
     RxAdapterView.itemSelections(networkErrorView)
         .map(errorAdapter::getItem)
         .filter(item -> item != behavior.failurePercent())
-        .to(new ObservableScoper<>(ViewScopeProvider.from(this)))
         .subscribe(selected -> {
           Timber.d("Setting network error to %s%%", selected);
           behavior.setFailurePercent(selected);
@@ -217,7 +213,6 @@ public final class DebugView extends FrameLayout {
   private void setupMockBehaviorSection() {
     enableMockModeView.setChecked(P.debugMockModeEnabled.get());
     RxView.clicks(enableMockModeView)
-        .to(new ObservableScoper<>(ViewScopeProvider.from(this)))
         .subscribe(v -> {
           P.debugMockModeEnabled.put(enableMockModeView.isChecked())
               .apply();
@@ -234,7 +229,6 @@ public final class DebugView extends FrameLayout {
     RxAdapterView.itemSelections(uiAnimationSpeedView)
         .map(speedAdapter::getItem)
         .filter(item -> !item.equals(animationSpeed.get()))
-        .to(new ObservableScoper<>(ViewScopeProvider.from(this)))
         .subscribe(selected -> {
           Timber.d("Setting animation speed to %sx", selected);
           animationSpeed.set(selected);
@@ -308,7 +302,6 @@ public final class DebugView extends FrameLayout {
         .cache())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .to(new ObservableScoper<>(ViewScopeProvider.from(this)))
         .subscribe(cache -> {
           okHttpCacheMaxSizeView.setText(getSizeString(cache.maxSize()));
           refreshOkHttpCacheStats();

@@ -8,16 +8,16 @@ import io.sweers.catchup.data.DataModule;
 import io.sweers.catchup.data.LumberYard;
 import io.sweers.catchup.data.smmry.SmmryModule;
 import io.sweers.catchup.injection.ConductorInjectionModule;
-import javax.inject.Singleton;
+import io.sweers.catchup.ui.activity.ActivityModule;
 import okhttp3.OkHttpClient;
 
-@Singleton
 @Component(modules = {
     ApplicationModule.class,
     DataModule.class,
     SmmryModule.class,
     AndroidInjectionModule.class,
-    ConductorInjectionModule.class
+    ConductorInjectionModule.class,
+    ActivityModule.class
 })
 public interface ApplicationComponent {
 

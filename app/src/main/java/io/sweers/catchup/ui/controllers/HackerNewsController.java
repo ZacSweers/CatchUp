@@ -23,12 +23,11 @@ import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory;
 import io.sweers.catchup.injection.ControllerKey;
-import io.sweers.catchup.injection.qualifiers.ForApi;
-import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -107,7 +106,6 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
         .toList();
   }
 
-  @PerController
   @Subcomponent
   public interface Component extends AndroidInjector<HackerNewsController> {
 
@@ -118,12 +116,14 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
 
+    @Qualifier
+    private @interface InternalApi {}
+
     @Binds @IntoMap @ControllerKey(HackerNewsController.class)
     abstract AndroidInjector.Factory<? extends Controller> bindHackerNewsControllerInjectorFactory(
         Component.Builder builder);
 
-    @ForApi @Provides @PerController
-    static OkHttpClient provideHackerNewsOkHttpClient(OkHttpClient client) {
+    @InternalApi @Provides static OkHttpClient provideHackerNewsOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addNetworkInterceptor(chain -> {
             Request request = chain.request();
@@ -143,15 +143,15 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
           .build();
     }
 
-    @Provides @PerController @ForApi static Moshi provideHackerNewsMoshi(Moshi moshi) {
+    @Provides @InternalApi static Moshi provideHackerNewsMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Instant.class, new EpochInstantJsonAdapter(TimeUnit.SECONDS))
           .build();
     }
 
-    @Provides @PerController
-    static HackerNewsService provideHackerNewsService(@ForApi final Lazy<OkHttpClient> client,
-        @ForApi Moshi moshi,
+    @Provides
+    static HackerNewsService provideHackerNewsService(@InternalApi final Lazy<OkHttpClient> client,
+        @InternalApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder().baseUrl(HackerNewsService.ENDPOINT)
           .callFactory(request -> client.get()

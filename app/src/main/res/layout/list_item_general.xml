@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <io.sweers.catchup.ui.widget.ForegroundLinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/container"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:background="?android:colorBackground"
-  android:clickable="true"
-  android:foreground="?selectableItemBackground"
-  android:orientation="horizontal"
-  android:stateListAnimator="@animator/raise"
-  >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:colorBackground"
+    android:clickable="true"
+    android:foreground="?selectableItemBackground"
+    android:orientation="horizontal"
+    android:stateListAnimator="@animator/raise"
+    >
 
   <LinearLayout
     android:layout_width="0dp"
@@ -126,7 +125,7 @@
 
   </LinearLayout>
 
-  <io.sweers.catchup.ui.widget.CompatTextView
+  <io.sweers.catchup.ui.widget.BaselineGridTextView
     android:id="@+id/comments"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -136,7 +135,7 @@
     android:drawableTint="?colorAccent"
     android:gravity="center"
     android:padding="16dp"
-    app:drawableTop="@drawable/ic_comment_black_24dp"
+    android:drawableTop="@drawable/ic_comment_black_24dp"
     tools:text="39"
     />
 

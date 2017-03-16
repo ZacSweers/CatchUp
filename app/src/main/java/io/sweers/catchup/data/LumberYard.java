@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import okio.BufferedSink;
 import okio.Okio;
 import org.threeten.bp.LocalDateTime;
@@ -21,7 +20,7 @@ import timber.log.Timber;
 
 import static org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-@Singleton public final class LumberYard {
+public final class LumberYard {
   private static final int BUFFER_SIZE = 200;
 
   private final Application app;

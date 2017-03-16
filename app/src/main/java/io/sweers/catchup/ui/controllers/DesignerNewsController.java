@@ -23,12 +23,11 @@ import io.sweers.catchup.data.designernews.DesignerNewsService;
 import io.sweers.catchup.data.designernews.model.StoriesResponse;
 import io.sweers.catchup.data.designernews.model.Story;
 import io.sweers.catchup.injection.ControllerKey;
-import io.sweers.catchup.injection.qualifiers.ForApi;
-import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -83,7 +82,6 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
         .map(StoriesResponse::stories);
   }
 
-  @PerController
   @Subcomponent
   public interface Component extends AndroidInjector<DesignerNewsController> {
 
@@ -94,11 +92,14 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
   @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
 
+    @Qualifier
+    private @interface InternalApi {}
+
     @Binds @IntoMap @ControllerKey(DesignerNewsController.class)
     abstract AndroidInjector.Factory<? extends Controller> bindDesignerNewsControllerInjectorFactory(
         Component.Builder builder);
 
-    @Provides @ForApi @PerController
+    @Provides @InternalApi
     static OkHttpClient provideDesignerNewsOkHttpClient(OkHttpClient okHttpClient) {
       return okHttpClient.newBuilder()
           .addNetworkInterceptor(chain -> {
@@ -113,15 +114,15 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
           .build();
     }
 
-    @Provides @ForApi @PerController static Moshi provideDesignerNewsMoshi(Moshi moshi) {
+    @Provides @InternalApi static Moshi provideDesignerNewsMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Date.class, new Rfc3339DateJsonAdapter())
           .build();
     }
 
-    @Provides @PerController
-    static DesignerNewsService provideDesignerNewsService(@ForApi final Lazy<OkHttpClient> client,
-        @ForApi Moshi moshi,
+    @Provides static DesignerNewsService provideDesignerNewsService(
+        @InternalApi final Lazy<OkHttpClient> client,
+        @InternalApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       Retrofit retrofit = new Retrofit.Builder().baseUrl(DesignerNewsService.ENDPOINT)
           .callFactory(request -> client.get()

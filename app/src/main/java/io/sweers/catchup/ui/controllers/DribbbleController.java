@@ -59,8 +59,6 @@ import io.sweers.catchup.data.RxViewHolder;
 import io.sweers.catchup.data.dribbble.DribbbleService;
 import io.sweers.catchup.data.dribbble.model.Shot;
 import io.sweers.catchup.injection.ControllerKey;
-import io.sweers.catchup.injection.qualifiers.ForApi;
-import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.ui.base.ServiceController;
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView;
@@ -72,6 +70,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
 import retrofit2.HttpException;
 import retrofit2.Retrofit;
@@ -209,7 +208,6 @@ public class DribbbleController extends ServiceController
     recyclerView.smoothScrollToPosition(0);
   }
 
-  @PerController
   @Subcomponent
   public interface Component extends AndroidInjector<DribbbleController> {
 
@@ -394,27 +392,29 @@ public class DribbbleController extends ServiceController
   @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
 
+    @Qualifier
+    private @interface InternalApi {}
+
     @Binds @IntoMap @ControllerKey(DribbbleController.class)
     abstract AndroidInjector.Factory<? extends Controller> bindDribbbleControllerInjectorFactory(
         Component.Builder builder);
 
-    @Provides @PerController @ForApi
-    static OkHttpClient provideDribbbleOkHttpClient(OkHttpClient client) {
+    @Provides @InternalApi static OkHttpClient provideDribbbleOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addInterceptor(AuthInterceptor.create("Bearer",
               BuildConfig.DRIBBBLE_CLIENT_ACCESS_TOKEN))
           .build();
     }
 
-    @Provides @PerController @ForApi static Moshi provideDribbbleMoshi(Moshi moshi) {
+    @Provides @InternalApi static Moshi provideDribbbleMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Date.class, new Rfc3339DateJsonAdapter())
           .build();
     }
 
-    @Provides @PerController
-    static DribbbleService provideDribbbleService(@ForApi final Lazy<OkHttpClient> client,
-        @ForApi Moshi moshi,
+    @Provides
+    static DribbbleService provideDribbbleService(@InternalApi final Lazy<OkHttpClient> client,
+        @InternalApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder().baseUrl(DribbbleService.ENDPOINT)
           .callFactory(request -> client.get()

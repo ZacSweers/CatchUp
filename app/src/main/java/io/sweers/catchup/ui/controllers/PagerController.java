@@ -36,7 +36,6 @@ import io.sweers.catchup.R;
 import io.sweers.catchup.injection.ConductorInjection;
 import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.injection.qualifiers.preferences.NavBarTheme;
-import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.ui.activity.SettingsActivity;
 import io.sweers.catchup.ui.base.ButterKnifeController;
@@ -147,6 +146,28 @@ public class PagerController extends ButterKnifeController {
   @Override protected void onAttach(@NonNull View view) {
     ConductorInjection.inject(this);
     super.onAttach(view);
+
+    // Set the initial color
+    @ColorInt int initialColor = getAndSaveColor(0);
+    tabLayout.setBackgroundColor(initialColor);
+    if (ApiUtil.isL() && !UiUtil.isInNightMode(view.getContext())) {
+      colorNavBar = themeNavigationBarPref.get()
+          .get(); // ew
+      themeNavigationBarPref.get()
+          .asObservable()
+          .distinctUntilChanged()
+          .subscribe(b -> {
+            colorNavBar = b;
+            int color;
+            if (b) {
+              color = getAndSaveColor(viewPager.getCurrentItem());
+            } else {
+              color = Color.BLACK;
+            }
+            getActivity().getWindow()
+                .setNavigationBarColor(color);
+          });
+    }
   }
 
   @Override protected Unbinder bind(@NonNull View view) {
@@ -180,28 +201,6 @@ public class PagerController extends ButterKnifeController {
 
     // Initial title
     toolbar.setTitle(getResources().getString(PAGE_DATA[0][1]));
-
-    // Set the initial color
-    @ColorInt int initialColor = getAndSaveColor(0);
-    tabLayout.setBackgroundColor(initialColor);
-    if (ApiUtil.isL() && !UiUtil.isInNightMode(view.getContext())) {
-      colorNavBar = themeNavigationBarPref.get()
-          .get(); // ew
-      themeNavigationBarPref.get()
-          .asObservable()
-          .distinctUntilChanged()
-          .subscribe(b -> {
-            colorNavBar = b;
-            int color;
-            if (b) {
-              color = getAndSaveColor(viewPager.getCurrentItem());
-            } else {
-              color = Color.BLACK;
-            }
-            getActivity().getWindow()
-                .setNavigationBarColor(color);
-          });
-    }
 
     viewPager.setAdapter(pagerAdapter);
     tabLayout.setupWithViewPager(viewPager);
@@ -270,9 +269,8 @@ public class PagerController extends ButterKnifeController {
     return resolvedColorCache[position];
   }
 
-  @PerController
   @Subcomponent
-  interface Component extends AndroidInjector<PagerController> {
+  public interface Component extends AndroidInjector<PagerController> {
 
     @Subcomponent.Builder
     abstract class Builder extends AndroidInjector.Builder<PagerController> {}
@@ -285,7 +283,7 @@ public class PagerController extends ButterKnifeController {
     abstract AndroidInjector.Factory<? extends Controller> bindPagerControllerInjectorFactory(
         Component.Builder builder);
 
-    @Provides @PerController @NavBarTheme
+    @Provides @NavBarTheme
     static Preference<Boolean> provideThemeNavigationColorPreference(RxSharedPreferences rxSharedPreferences) {
       return rxSharedPreferences.getBoolean(P.themeNavigationBar.key,
           P.themeNavigationBar.defaultValue());

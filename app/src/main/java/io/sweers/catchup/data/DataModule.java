@@ -13,7 +13,6 @@ import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.data.adapters.UnescapeJsonAdapter;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import java.util.concurrent.TimeUnit;
-import javax.inject.Singleton;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -24,14 +23,14 @@ public class DataModule {
   private static final long HTTP_RESPONSE_CACHE = 10 * 1024 * 1024;
   private static final int HTTP_TIMEOUT_S = 30;
 
-  @Provides @Singleton static Cache provideCache(@ApplicationContext Context context) {
+  @Provides static Cache provideCache(@ApplicationContext Context context) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
       throw new IllegalStateException("Cache initialized on main thread.");
     }
     return new Cache(context.getCacheDir(), HTTP_RESPONSE_CACHE);
   }
 
-  @Provides @Singleton OkHttpClient provideOkHttpClient(@ApplicationContext Context context,
+  @Provides OkHttpClient provideOkHttpClient(@ApplicationContext Context context,
       Cache cache) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
       throw new IllegalStateException("HTTP client initialized on main thread.");
@@ -52,7 +51,7 @@ public class DataModule {
     // Override in variants
   }
 
-  @Provides @Singleton static Moshi provideMoshi() {
+  @Provides static Moshi provideMoshi() {
     return new Moshi.Builder().add(AutoValueMoshiAdapterFactory.create())
         .add(UnescapeJsonAdapter.FACTORY)
         .add(ArrayMapJsonAdapter.FACTORY)
@@ -60,16 +59,16 @@ public class DataModule {
         .build();
   }
 
-  @Provides @Singleton static RxJava2CallAdapterFactory provideRxJavaCallAdapterFactory() {
+  @Provides static RxJava2CallAdapterFactory provideRxJavaCallAdapterFactory() {
     return RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io());
   }
 
-  @Provides @Singleton
+  @Provides
   public static SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {
     return context.getSharedPreferences("catchup", Context.MODE_PRIVATE);
   }
 
-  @Provides @Singleton
+  @Provides
   public static RxSharedPreferences provideRxSharedPreferences(SharedPreferences sharedPreferences) {
     return RxSharedPreferences.create(sharedPreferences);
   }

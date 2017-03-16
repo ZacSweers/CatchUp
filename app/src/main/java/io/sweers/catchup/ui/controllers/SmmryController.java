@@ -33,7 +33,6 @@ import io.sweers.catchup.data.smmry.SmmryService;
 import io.sweers.catchup.data.smmry.model.SmmryRequestBuilder;
 import io.sweers.catchup.data.smmry.model.SmmryResponse;
 import io.sweers.catchup.injection.ConductorInjection;
-import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.rx.observers.adapter.SingleObserverAdapter;
 import io.sweers.catchup.ui.base.ButterKnifeController;
 import io.sweers.catchup.ui.base.ServiceController;
@@ -185,7 +184,6 @@ public class SmmryController extends ButterKnifeController {
     return new SmmryController_ViewBinding(this, view);
   }
 
-  @PerController
   @Subcomponent
   public interface Component extends AndroidInjector<SmmryController> {
     @Subcomponent.Builder

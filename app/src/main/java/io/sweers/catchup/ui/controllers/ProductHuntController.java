@@ -24,12 +24,11 @@ import io.sweers.catchup.data.producthunt.ProductHuntService;
 import io.sweers.catchup.data.producthunt.model.Post;
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
 import io.sweers.catchup.injection.ControllerKey;
-import io.sweers.catchup.injection.qualifiers.ForApi;
-import io.sweers.catchup.injection.scopes.PerController;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -79,7 +78,6 @@ public final class ProductHuntController extends BaseNewsController<Post> {
         .map(PostsResponse::posts);
   }
 
-  @PerController
   @Subcomponent
   public interface Component extends AndroidInjector<ProductHuntController> {
 
@@ -90,11 +88,14 @@ public final class ProductHuntController extends BaseNewsController<Post> {
   @dagger.Module(subcomponents = Component.class)
   public abstract static class Module {
 
+    @Qualifier
+    private @interface InternalApi {}
+
     @Binds @IntoMap @ControllerKey(ProductHuntController.class)
     abstract AndroidInjector.Factory<? extends Controller> bindProductHuntControllerInjectorFactory(
         Component.Builder builder);
 
-    @Provides @PerController @ForApi
+    @Provides @InternalApi
     static OkHttpClient provideProductHuntOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addInterceptor(AuthInterceptor.create("Bearer",
@@ -102,15 +103,15 @@ public final class ProductHuntController extends BaseNewsController<Post> {
           .build();
     }
 
-    @Provides @PerController @ForApi static Moshi provideProductHuntMoshi(Moshi moshi) {
+    @Provides @InternalApi static Moshi provideProductHuntMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Date.class, new Rfc3339DateJsonAdapter())
           .build();
     }
 
-    @Provides @PerController
-    static ProductHuntService provideProductHuntService(@ForApi final Lazy<OkHttpClient> client,
-        @ForApi Moshi moshi,
+    @Provides
+    static ProductHuntService provideProductHuntService(@InternalApi final Lazy<OkHttpClient> client,
+        @InternalApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder().baseUrl(ProductHuntService.ENDPOINT)
           .callFactory(request -> client.get()

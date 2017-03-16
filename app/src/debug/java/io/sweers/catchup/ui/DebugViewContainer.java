@@ -17,7 +17,6 @@ import com.mattprecious.telescope.TelescopeLayout;
 import io.sweers.catchup.P;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LumberYard;
-import io.sweers.catchup.injection.scopes.PerActivity;
 import io.sweers.catchup.ui.debug.DebugDrawerLayout;
 import io.sweers.catchup.ui.debug.DebugView;
 import javax.inject.Inject;
@@ -33,7 +32,7 @@ import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
  * An {@link ViewContainer} for debug builds which wraps a sliding drawer on the right that holds
  * all of the debug information and settings.
  */
-@PerActivity public final class DebugViewContainer implements ViewContainer {
+public final class DebugViewContainer implements ViewContainer {
   private final LumberYard lumberYard;
   private Preference<Boolean> seenDebugDrawer = P.debugSeenDebugDrawer.rx();
   private Preference<Boolean> pixelGridEnabled = P.debugPixelGridEnabled.rx();
