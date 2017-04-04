@@ -1,7 +1,6 @@
 buildscript {
   dependencies {
     classpath rootProject.ext.androidPlugin
-    classpath rootProject.ext.retrolambdaPlugin
     classpath rootProject.ext.psyncPlugin
     classpath rootProject.ext.versionsPlugin
     classpath rootProject.ext.errorPronePlugin
@@ -9,7 +8,6 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.flipboard.psync'
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
@@ -125,8 +123,6 @@ configurations.all {
 }
 
 dependencies {
-  retrolambdaConfig rootProject.ext.retrolambda
-
   // Support libs
   supportCompile rootProject.ext.supportAnnotations
   supportCompile rootProject.ext.supportAppCompat
@@ -225,6 +221,8 @@ dependencies {
   androidTestCompile project(':testing-utils')
   androidTestCompile rootProject.ext.errorProneAnnotations
   androidTestCompile rootProject.ext.rxJava2
+  androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
+  testCompile 'com.google.code.findbugs:jsr305:3.0.1'
   testCompile rootProject.ext.errorProneAnnotations
 
   // LeakCanary
