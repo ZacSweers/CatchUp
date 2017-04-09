@@ -12,13 +12,11 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasDispatchingActivityInjector;
 import io.sweers.catchup.P;
 import io.sweers.catchup.data.LumberYard;
-import io.sweers.catchup.injection.Modules;
-import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 public class CatchUpApplication extends Application implements HasDispatchingActivityInjector {
 
-  private static RefWatcher refWatcher;
+  protected static RefWatcher refWatcher;
   private static ApplicationComponent component;
   @Inject DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
   @Inject protected SharedPreferences sharedPreferences;
@@ -34,16 +32,13 @@ public class CatchUpApplication extends Application implements HasDispatchingAct
 
   @Override public void onCreate() {
     super.onCreate();
+    //noinspection ConstantConditions
     if (LeakCanary.isInAnalyzerProcess(this)) {
       // This process is dedicated to LeakCanary for heap analysis.
       return;
     }
-    refWatcher = LeakCanary.refWatcher(this)
-        .watchDelay(10, TimeUnit.SECONDS)
-        .buildAndInstall();
     component = DaggerApplicationComponent.builder()
         .application(this)
-        .dataModule(Modules.dataModule())
         .build();
     component.inject(this);
     AndroidThreeTen.init(this);

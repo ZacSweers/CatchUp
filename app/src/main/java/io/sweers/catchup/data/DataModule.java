@@ -9,17 +9,22 @@ import com.squareup.moshi.ArrayMapJsonAdapter;
 import com.squareup.moshi.Moshi;
 import dagger.Module;
 import dagger.Provides;
+import dagger.multibindings.IntoSet;
 import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.data.adapters.UnescapeJsonAdapter;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
+import io.sweers.catchup.injection.qualifiers.NetworkInterceptor;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Cache;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 @Module
-public class DataModule {
+public abstract class DataModule {
 
+  private static final Interceptor NOOP_INTERCEPTOR = chain -> chain.proceed(chain.request());
   private static final long HTTP_RESPONSE_CACHE = 10 * 1024 * 1024;
   private static final int HTTP_TIMEOUT_S = 30;
 
@@ -30,8 +35,9 @@ public class DataModule {
     return new Cache(context.getCacheDir(), HTTP_RESPONSE_CACHE);
   }
 
-  @Provides OkHttpClient provideOkHttpClient(@ApplicationContext Context context,
-      Cache cache) {
+  @Provides static OkHttpClient provideOkHttpClient(Cache cache,
+      Set<Interceptor> interceptors,
+      @NetworkInterceptor Set<Interceptor> networkInterceptors) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
       throw new IllegalStateException("HTTP client initialized on main thread.");
     }
@@ -42,7 +48,11 @@ public class DataModule {
             .writeTimeout(HTTP_TIMEOUT_S, TimeUnit.SECONDS)
             .cache(cache);
 
-    configureOkHttpClientForVariant(context, builder);
+    builder.networkInterceptors()
+        .addAll(networkInterceptors);
+    builder.interceptors()
+        .addAll(interceptors);
+
     return builder.build();
   }
 
@@ -71,5 +81,21 @@ public class DataModule {
   @Provides
   public static RxSharedPreferences provideRxSharedPreferences(SharedPreferences sharedPreferences) {
     return RxSharedPreferences.create(sharedPreferences);
+  }
+
+  /**
+   * Stub to force multibindings to at least one element, which allows for potentially empty variant
+   * provides
+   */
+  @Provides @NetworkInterceptor @IntoSet static Interceptor provideStubNetworkInterceptor() {
+    return NOOP_INTERCEPTOR;
+  }
+
+  /**
+   * Stub to force multibindings to at least one element, which allows for potentially empty variant
+   * provides
+   */
+  @Provides @IntoSet static Interceptor provideStubInterceptor() {
+    return NOOP_INTERCEPTOR;
   }
 }

@@ -19,7 +19,7 @@ ext {
   supportRecyclerView = "com.android.support:recyclerview-v7:$supportVersion"
   supportV4 = "com.android.support:support-v4:$supportVersion"
   multidex = 'com.android.support:multidex:1.0.1'
-  androidPlugin = 'com.android.tools.build:gradle:2.4.0-alpha4'
+  androidPlugin = 'com.android.tools.build:gradle:2.4.0-alpha5'
   constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.2'
 
   // Dagger
@@ -37,7 +37,7 @@ ext {
   autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:1.0.1'
 
   // Conductor
-  conductorVersion = '2.1.1'
+  conductorVersion = '2.1.2'
   conductor = "com.bluelinelabs:conductor:$conductorVersion"
   conductorSupport = "com.bluelinelabs:conductor-support:$conductorVersion"
 
