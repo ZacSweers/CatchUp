@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.ryanharter.auto.value.moshi.MoshiAdapterFactory;
 import com.squareup.moshi.JsonAdapter;
 
-@MoshiAdapterFactory
+@MoshiAdapterFactory(nullSafe = true)
 public abstract class AutoValueMoshiAdapterFactory implements JsonAdapter.Factory {
 
   @NonNull
