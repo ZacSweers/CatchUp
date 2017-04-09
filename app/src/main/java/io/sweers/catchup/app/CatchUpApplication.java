@@ -34,6 +34,10 @@ public class CatchUpApplication extends Application implements HasDispatchingAct
 
   @Override public void onCreate() {
     super.onCreate();
+    if (LeakCanary.isInAnalyzerProcess(this)) {
+      // This process is dedicated to LeakCanary for heap analysis.
+      return;
+    }
     refWatcher = LeakCanary.refWatcher(this)
         .watchDelay(10, TimeUnit.SECONDS)
         .buildAndInstall();
