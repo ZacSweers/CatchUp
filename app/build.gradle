@@ -40,9 +40,6 @@ android {
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
 
-    // Temporary until https://code.google.com/p/android/issues/detail?id=336952
-    javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
-
     buildConfigField 'String', 'GIT_SHA', /"$gitSha"/
     buildConfigField 'long', 'GIT_TIMESTAMP', "$gitTimestamp"
     buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN',
@@ -208,7 +205,7 @@ dependencies {
 
   // AutoValue
   provided rootProject.ext.autoValueAnnotations
-  provided rootProject.ext.autoValueMoshi
+  compile rootProject.ext.autoValueMoshiAnnotations
   annotationProcessor rootProject.ext.autoValue
   annotationProcessor rootProject.ext.autoValueMoshi
   annotationProcessor rootProject.ext.autoValueRedacted

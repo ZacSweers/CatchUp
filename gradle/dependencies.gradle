@@ -33,6 +33,7 @@ ext {
   autoValue = 'com.google.auto.value:auto-value:1.4'
   autoValueAnnotations = 'com.jakewharton.auto.value:auto-value-annotations:1.4'
   autoValueMoshi = 'com.ryanharter.auto.value:auto-value-moshi:0.4.3'
+  autoValueMoshiAnnotations = 'com.ryanharter.auto.value:auto-value-moshi-annotations:0.4.3'
   autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:1.0.1'
 
   // Conductor
