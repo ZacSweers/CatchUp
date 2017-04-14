@@ -58,8 +58,6 @@ ext {
   moshiLazyAdapters = 'com.serjltt.moshi:moshi-lazy-adapters:1.3'
   psyncPlugin = 'gradle.plugin.com.flipboard:psync:1.1.5'
   recyclerViewAnimators = 'jp.wasabeef:recyclerview-animators:2.2.6'
-  retrolambda = 'net.orfjackal.retrolambda:retrolambda:2.5.1'
-  retrolambdaPlugin = 'me.tatarka:gradle-retrolambda:3.5.0'
   simpleXml = 'org.simpleframework:simple-xml:2.7.1'
   stethoVersion = '1.4.2'
   stetho = "com.facebook.stetho:stetho:$stethoVersion"

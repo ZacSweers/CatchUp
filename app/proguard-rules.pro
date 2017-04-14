@@ -77,6 +77,3 @@
 
 # Okio
 -dontwarn okio.**
-
-# Retrolambda
--dontwarn java.lang.invoke.*
