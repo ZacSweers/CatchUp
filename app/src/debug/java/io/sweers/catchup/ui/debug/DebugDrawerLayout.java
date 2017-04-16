@@ -55,7 +55,7 @@ import java.util.List;
 /**
  * This is a fork of DrawerLayout which propagates insets without applying them.
  */
-@SuppressWarnings("ClassCanBeStatic") // https://github.com/google/error-prone/issues/550
+@SuppressWarnings({"ClassCanBeStatic", "ShortCircuitBoolean"}) // https://github.com/google/error-prone/issues/550
 public class DebugDrawerLayout extends ViewGroup implements DrawerLayoutImpl {
   /**
    * Indicates that any drawers are in an idle, settled state. No animation is in progress.
