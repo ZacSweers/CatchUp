@@ -1,12 +1,10 @@
-<vector
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:width="24dp"
-  android:height="24dp"
-  android:viewportHeight="430.118"
-  android:viewportWidth="430.117"
-  >
+<!-- Exported to vector from https://simpleicons.org/ under Creative Commons Zero v1.0 Universal license -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="24dp"
+    android:viewportHeight="16.0"
+    android:viewportWidth="16.0"
+    android:width="24dp">
   <path
-    android:fillColor="#FFFFFF"
-    android:pathData="M0,0v430.1h430.1V0H0zM234.2,248.2v105.5h-38.2V248.2L102,62.1h44.3l68.7,140.1l71.4,-140.1h41.5L234.2,248.2z"
-    />
+      android:fillColor="#FFFFFFFF"
+      android:pathData="M0,16V0h16v16H0zM4.634,3.931L7.375,9.07v3.376H8.43V9.132l2.766,-5.2H10.03L8.392,7.182c-0.248,0.497 -0.459,0.956 -0.459,0.956s-0.198,-0.472 -0.434,-0.956L5.887,3.931H4.634z"/>
 </vector>

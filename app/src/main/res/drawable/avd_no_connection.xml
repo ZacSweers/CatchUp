@@ -16,23 +16,23 @@
   -->
 
 <animated-vector
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:drawable="@drawable/no_connection"
-  >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/no_connection"
+    >
 
   <target
-    android:name="connection_mask"
-    android:animation="@animator/show_connection_line"
-    />
+      android:name="connection_mask"
+      android:animation="@animator/show_connection_line"
+      />
 
   <target
-    android:name="cross_group"
-    android:animation="@animator/show_connection_cross"
-    />
+      android:name="cross_group"
+      android:animation="@animator/show_connection_cross"
+      />
 
   <target
-    android:name="button"
-    android:animation="@animator/button_frown"
-    />
+      android:name="button"
+      android:animation="@animator/button_frown"
+      />
 
 </animated-vector>

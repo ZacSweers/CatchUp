@@ -51,20 +51,20 @@ public class PagerController extends ButterKnifeController {
       {
           R.drawable.logo_hn, R.string.hacker_news, R.color.hackerNewsAccent
       }, {
-      R.drawable.logo_reddit, R.string.reddit, R.color.redditAccent
-  }, {
-      R.drawable.logo_medium, R.string.medium, R.color.mediumAccent
-  }, {
-      R.drawable.ll_ph, R.string.product_hunt, R.color.productHuntAccent
-  }, {
-      R.drawable.logo_sd, R.string.slashdot, R.color.slashdotAccent
-  }, {
-      R.drawable.logo_dn, R.string.designer_news, R.color.designerNewsAccent
-  }, {
-      R.drawable.logo_dribbble, R.string.dribbble, R.color.dribbbleAccent
-  }, {
-      R.drawable.logo_github, R.string.github, R.color.redditAccent
-  }
+          R.drawable.logo_reddit, R.string.reddit, R.color.redditAccent
+      }, {
+          R.drawable.logo_medium, R.string.medium, R.color.mediumAccent
+      }, {
+          R.drawable.logo_ph, R.string.product_hunt, R.color.productHuntAccent
+      }, {
+          R.drawable.logo_sd, R.string.slashdot, R.color.slashdotAccent
+      }, {
+          R.drawable.logo_dn, R.string.designer_news, R.color.designerNewsAccent
+      }, {
+          R.drawable.logo_dribbble, R.string.dribbble, R.color.dribbbleAccent
+      }, {
+          R.drawable.logo_github, R.string.github, R.color.githubAccent
+      }
   };
   private final int[] resolvedColorCache = new int[PAGE_DATA.length];
   private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();

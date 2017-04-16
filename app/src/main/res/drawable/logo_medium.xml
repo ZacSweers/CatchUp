@@ -1,24 +1,11 @@
-<vector
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:width="24dp"
-  android:height="24dp"
-  android:viewportHeight="250.2"
-  android:viewportWidth="290.7"
-  >
+<!-- Exported to vector from https://simpleicons.org/ under Creative Commons Zero v1.0 Universal license -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="24dp"
+    android:viewportHeight="16.0"
+    android:viewportWidth="16.0"
+    android:width="24dp">
   <path
-    android:fillColor="#66ffffff"
-    android:pathData="M196.5,0.3c-1.5,-0.7 -2.7,0 -2.7,1.7v202.9l88.9,44.4c4.4,2.2 8,0 8,-5V49c0,-1 -0.5,-1.9 -1.4,-2.3L196.5,0.3z"
-    />
-  <path
-    android:fillColor="#99ffffff"
-    android:pathData="M96.9,156.5L192.2,1.6c0.9,-1.4 2.8,-2 4.3,-1.2l92.1,46c1.1,0.6 1.6,2 0.9,3.1l-95.7,155.4L96.9,156.5z"
-    />
-  <path
-    android:fillColor="#ccffffff"
-    android:pathData="M10.7,4.4c-5.9,-3 -7.9,-0.8 -4.4,4.9l90.6,147.2l96.9,48.5L97.5,48.5c-0.4,-0.7 -1,-1.2 -1.7,-1.6L10.7,4.4z"
-    />
-  <path
-    android:fillColor="#ffffffff"
-    android:pathData="M96.9,244.4c0,4.9 -3.6,7.2 -8,5L5.4,207.6c-3,-1.5 -5.4,-5.4 -5.4,-8.7V5c0,-3.3 2.4,-4.8 5.4,-3.3l90.3,45.2c0.7,0.4 1.2,1.1 1.2,1.9V244.4z"
-    />
+      android:fillColor="#FFFFFFFF"
+      android:pathData="M11.824,12.628l-0.276,0.45 0.798,0.398 2.744,1.372c0.15,0.076 0.294,0.11 0.418,0.11 0.278,0 0.467,-0.177 0.467,-0.492L15.975,5.883l-4.15,6.745zM15.92,3.958c-0.004,-0.003 0,-0.01 -0.003,-0.012l-4.825,-2.412c-0.06,-0.03 -0.123,-0.038 -0.187,-0.044 -0.016,0 -0.03,-0.01 -0.047,-0.01 -0.184,0 -0.368,0.092 -0.467,0.254l-0.24,0.39 -0.5,0.814 -1.89,3.08 1.89,3.076 0.5,0.813 0.5,0.812 0.59,0.95 4.71,-7.64c0.02,-0.03 0.01,-0.06 -0.02,-0.08zM9.65,11.003L7.17,6.97l-0.295,-0.477 -0.294,-0.477 -0.25,-0.416v4.867l3.32,1.663 0.5,0.25 0.5,0.25 -0.5,-0.813 -0.5,-0.813zM0.737,1.68L0.59,1.608c-0.085,-0.042 -0.166,-0.062 -0.24,-0.062 -0.206,0 -0.35,0.16 -0.35,0.427v10.162c0,0.272 0.2,0.594 0.442,0.716l4.145,2.08c0.107,0.06 0.208,0.08 0.3,0.08 0.257,0 0.438,-0.2 0.438,-0.53L5.325,4.01c0,-0.02 -0.012,-0.04 -0.03,-0.047L0.738,1.68z"
+      android:strokeLineJoin="round"/>
 </vector>

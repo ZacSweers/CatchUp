@@ -8,12 +8,13 @@
   <color name="colorAccent">#ffFF4081</color>
 
   <color name="mediumAccent">#ff00AB6B</color>
-  <color name="productHuntAccent">#ffff9800</color>
+  <color name="productHuntAccent">#ffDA552F</color>
   <color name="redditAccent">#336699</color>
-  <color name="hackerNewsAccent">#ffff6600</color>
-  <color name="slashdotAccent">#ff208483</color>
-  <color name="designerNewsAccent">#ff039be5</color>
-  <color name="dribbbleAccent">#fff06292</color>
+  <color name="githubAccent">#181717</color>
+  <color name="hackerNewsAccent">#ffF0652F</color>
+  <color name="slashdotAccent">#ff026664</color>
+  <color name="designerNewsAccent">#ff2D72D9</color>
+  <color name="dribbbleAccent">#ffEA4C89</color>
   <color name="tab_text_default">#b3ffffff</color>
   <color name="tab_text_selected">#ffffffff</color>
   <color name="no_color">#00000000</color>

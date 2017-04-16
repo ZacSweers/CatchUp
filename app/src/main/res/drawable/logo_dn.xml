@@ -1,16 +1,11 @@
-<vector
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:width="24dp"
-  android:height="24dp"
-  android:viewportHeight="256.0"
-  android:viewportWidth="256.0"
-  >
+<!-- Exported to vector from https://simpleicons.org/ under Creative Commons Zero v1.0 Universal license -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="24dp"
+    android:viewportHeight="16.0"
+    android:viewportWidth="16.0"
+    android:width="24dp">
   <path
-    android:fillColor="#99ffffff"
-    android:pathData="M38.71,176.73L146.05,256.57L410.06,273.17L207.75,85.92L207.75,128.61L188.88,115.09L153.76,85.92L132.85,120.01L103.46,95.47L51.77,92.19L38.71,176.73L38.71,176.73Z"
-    />
-  <path
-    android:fillColor="#FFFFFF"
-    android:pathData="M118.84,131.16C118.84,104.03 102.16,85.63 70.4,85.63L39.03,85.63L39.03,176.95L71.06,176.95C101.9,176.95 118.84,158.29 118.84,131.16L118.84,131.16L118.84,131.16ZM96.07,131.29C96.07,150.88 86.02,159.35 69.87,159.35L61.66,159.35L61.66,103.23L69.87,103.23C85.35,103.23 96.07,112.1 96.07,131.29L96.07,131.29L96.07,131.29ZM208.97,176.95L208.97,85.63L187.92,85.63L187.92,136.72L154.31,85.63L132.34,85.63L132.34,176.95L153.38,176.95L153.38,122.29L189.38,176.95L208.97,176.95L208.97,176.95Z"
-    />
+      android:fillColor="#FFFFFFFF"
+      android:pathData="M7.514,7.988c0,-2.555 -1.57,-4.287 -4.56,-4.287H0v8.6h3.016c2.903,0 4.498,-1.75 4.498,-4.31zM5.37,8c0,1.844 -0.946,2.642 -2.467,2.642H2.13V5.358h0.773C4.36,5.358 5.37,6.193 5.37,8zM16,12.3V3.7h-1.98v4.81L10.853,3.7h-2.07v8.6h1.982V7.152l3.39,5.146H16z"
+      android:strokeLineJoin="round"/>
 </vector>
