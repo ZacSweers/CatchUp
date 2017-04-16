@@ -18,16 +18,13 @@ package io.sweers.catchup.data.dribbble.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-
-import java.util.Date;
-import java.util.List;
-
 import io.sweers.catchup.ui.base.HasStableId;
+import java.util.List;
+import org.threeten.bp.Instant;
 
 /**
  * Models a dibbble shot
@@ -62,7 +59,7 @@ public abstract class Shot implements HasStableId {
   public abstract String commentsUrl();
 
   @Json(name = "created_at")
-  public abstract Date createdAt();
+  public abstract Instant createdAt();
 
   @Nullable
   public abstract String description();
@@ -97,7 +94,7 @@ public abstract class Shot implements HasStableId {
   public abstract Team team();
 
   @Json(name = "updated_at")
-  public abstract Date updatedAt();
+  public abstract Instant updatedAt();
 
   public abstract User user();
 

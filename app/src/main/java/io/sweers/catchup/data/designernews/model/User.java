@@ -17,7 +17,6 @@
 package io.sweers.catchup.data.designernews.model;
 
 import android.support.annotation.NonNull;
-
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
@@ -33,23 +32,17 @@ public abstract class User {
     return new AutoValue_User.MoshiJsonAdapter(moshi);
   }
 
-  @Json(name = "cover_photo_url")
-  public abstract String coverPhotoUrl();
+  @Json(name = "cover_photo_url") public abstract String coverPhotoUrl();
 
-  @Json(name = "display_name")
-  public abstract String displayName();
+  @Json(name = "display_name") public abstract String displayName();
 
-  @Json(name = "first_name")
-  public abstract String firstName();
+  @Json(name = "first_name") public abstract String firstName();
 
   public abstract long id();
 
   public abstract String job();
 
-  @Json(name = "last_name")
-  public abstract String lastName();
+  @Json(name = "last_name") public abstract String lastName();
 
-  @Json(name = "portrait_url")
-  public abstract String portraitUrl();
-
+  @Json(name = "portrait_url") public abstract String portraitUrl();
 }

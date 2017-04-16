@@ -142,7 +142,6 @@ dependencies {
   compile rootProject.ext.okhttp
   compile rootProject.ext.okio
   compile rootProject.ext.moshi
-  compile rootProject.ext.moshiAdapters
   compile rootProject.ext.retrofit
   compile rootProject.ext.retrofitMoshi
   compile rootProject.ext.retrofitRxJava

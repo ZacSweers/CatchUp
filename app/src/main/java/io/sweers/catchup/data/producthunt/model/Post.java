@@ -18,17 +18,14 @@ package io.sweers.catchup.data.producthunt.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-
-import java.util.Date;
+import io.sweers.catchup.ui.base.HasStableId;
 import java.util.List;
 import java.util.Map;
-
-import io.sweers.catchup.ui.base.HasStableId;
 import okhttp3.HttpUrl;
+import org.threeten.bp.Instant;
 import timber.log.Timber;
 
 /**
@@ -48,7 +45,7 @@ public abstract class Post implements HasStableId {
   public abstract int comments_count();
 
   // TODO Coerce this to Instant - '2016-05-06T00:45:40.791-07:00'
-  public abstract Date created_at();
+  public abstract Instant created_at();
 
   public abstract String discussion_url();
 
@@ -119,7 +116,7 @@ public abstract class Post implements HasStableId {
     public abstract Builder comments_count(int count);
 
     // TODO Coerce this to Instant - '2016-05-06T00:45:40.791-07:00'
-    public abstract Builder created_at(Date date);
+    public abstract Builder created_at(Instant date);
 
     public abstract Builder discussion_url(String url);
 

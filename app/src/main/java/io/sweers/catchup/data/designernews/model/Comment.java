@@ -18,14 +18,12 @@ package io.sweers.catchup.data.designernews.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-
-import java.util.Date;
 import java.util.List;
+import org.threeten.bp.Instant;
 
 /**
  * Models a comment on a designer news story.
@@ -39,13 +37,11 @@ public abstract class Comment {
 
   public abstract String body();
 
-  @Json(name = "body_html")
-  public abstract String bodyHtml();
+  @Json(name = "body_html") public abstract String bodyHtml();
 
   public abstract List<Comment> comments();
 
-  @Json(name = "created_at")
-  public abstract Date createdAt();
+  @Json(name = "created_at") public abstract Instant createdAt();
 
   public abstract int depth();
 
@@ -53,21 +49,13 @@ public abstract class Comment {
 
   public abstract boolean upvoted();
 
-  @Json(name = "user_display_name")
-  public abstract String userDisplayName();
+  @Json(name = "user_display_name") public abstract String userDisplayName();
 
-  @Json(name = "user_id")
-  public abstract long userId();
+  @Json(name = "user_id") public abstract long userId();
 
-  @Json(name = "user_job")
-  @Nullable
-  public abstract String userJob();
+  @Json(name = "user_job") @Nullable public abstract String userJob();
 
-  @Json(name = "user_portrait_url")
-  @Nullable
-  public abstract String userPortraitUrl();
+  @Json(name = "user_portrait_url") @Nullable public abstract String userPortraitUrl();
 
-  @Json(name = "vote_count")
-  public abstract int voteCount();
-
+  @Json(name = "vote_count") public abstract int voteCount();
 }

@@ -7,7 +7,6 @@ import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
 import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Rfc3339DateJsonAdapter;
 import com.uber.autodispose.CompletableScoper;
 import dagger.Binds;
 import dagger.Lazy;
@@ -18,19 +17,20 @@ import dagger.multibindings.IntoMap;
 import io.reactivex.Single;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
+import io.sweers.catchup.data.ISOInstantAdapter;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.designernews.DesignerNewsService;
 import io.sweers.catchup.data.designernews.model.StoriesResponse;
 import io.sweers.catchup.data.designernews.model.Story;
 import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.ui.base.BaseNewsController;
-import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import org.threeten.bp.Instant;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -116,7 +116,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
 
     @Provides @InternalApi static Moshi provideDesignerNewsMoshi(Moshi moshi) {
       return moshi.newBuilder()
-          .add(Date.class, new Rfc3339DateJsonAdapter())
+          .add(Instant.class, new ISOInstantAdapter())
           .build();
     }
 

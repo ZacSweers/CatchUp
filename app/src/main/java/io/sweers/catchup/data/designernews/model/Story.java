@@ -18,16 +18,13 @@ package io.sweers.catchup.data.designernews.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-
-import java.util.Date;
-import java.util.List;
-
 import io.sweers.catchup.ui.base.HasStableId;
+import java.util.List;
+import org.threeten.bp.Instant;
 
 /**
  * Models a Designer News story
@@ -39,55 +36,39 @@ public abstract class Story implements HasStableId {
     return new AutoValue_Story.MoshiJsonAdapter(moshi);
   }
 
-  @Nullable
-  public abstract String badge();
+  @Nullable public abstract String badge();
 
-  @Nullable
-  public abstract String comment();
+  @Nullable public abstract String comment();
 
-  @Json(name = "comment_count")
-  public abstract int commentCount();
+  @Json(name = "comment_count") public abstract int commentCount();
 
-  @Json(name = "comment_html")
-  @Nullable
-  public abstract String commentHtml();
+  @Json(name = "comment_html") @Nullable public abstract String commentHtml();
 
   public abstract List<Comment> comments();
 
-  @Json(name = "created_at")
-  public abstract Date createdAt();
+  @Json(name = "created_at") public abstract Instant createdAt();
 
-  @Nullable
-  public abstract String hostname();
+  @Nullable public abstract String hostname();
 
   public abstract long id();
 
-  @Json(name = "site_url")
-  public abstract String siteUrl();
+  @Json(name = "site_url") public abstract String siteUrl();
 
   public abstract String title();
 
   public abstract String url();
 
-  @Json(name = "user_display_name")
-  public abstract String userDisplayName();
+  @Json(name = "user_display_name") public abstract String userDisplayName();
 
-  @Json(name = "user_id")
-  public abstract long userId();
+  @Json(name = "user_id") public abstract long userId();
 
-  @Json(name = "user_job")
-  @Nullable
-  public abstract String userJob();
+  @Json(name = "user_job") @Nullable public abstract String userJob();
 
-  @Json(name = "user_portrait_url")
-  @Nullable
-  public abstract String userPortraitUrl();
+  @Json(name = "user_portrait_url") @Nullable public abstract String userPortraitUrl();
 
-  @Json(name = "vote_count")
-  public abstract int voteCount();
+  @Json(name = "vote_count") public abstract int voteCount();
 
-  @Override
-  public long stableId() {
+  @Override public long stableId() {
     return id();
   }
 }

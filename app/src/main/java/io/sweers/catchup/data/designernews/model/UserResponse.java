@@ -17,7 +17,6 @@
 package io.sweers.catchup.data.designernews.model;
 
 import android.support.annotation.NonNull;
-
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -33,5 +32,4 @@ public abstract class UserResponse {
   }
 
   public abstract User user();
-
 }

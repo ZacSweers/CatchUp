@@ -40,7 +40,6 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Rfc3339DateJsonAdapter;
 import com.uber.autodispose.CompletableScoper;
 import com.uber.autodispose.SingleScoper;
 import dagger.Binds;
@@ -54,6 +53,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
+import io.sweers.catchup.data.ISOInstantAdapter;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.RxViewHolder;
 import io.sweers.catchup.data.dribbble.DribbbleService;
@@ -67,11 +67,11 @@ import io.sweers.catchup.util.UiUtil;
 import io.sweers.catchup.util.glide.DribbbleTarget;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
+import org.threeten.bp.Instant;
 import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -408,7 +408,7 @@ public class DribbbleController extends ServiceController
 
     @Provides @InternalApi static Moshi provideDribbbleMoshi(Moshi moshi) {
       return moshi.newBuilder()
-          .add(Date.class, new Rfc3339DateJsonAdapter())
+          .add(Instant.class, new ISOInstantAdapter())
           .build();
     }
 

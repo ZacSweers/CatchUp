@@ -32,6 +32,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
+import org.threeten.bp.Instant;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -101,7 +102,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
 
     @Provides @InternalApi static Moshi provideGitHubMoshi(Moshi moshi) {
       return moshi.newBuilder()
-          .add(new ISOInstantAdapter())
+          .add(Instant.class, new ISOInstantAdapter())
           .build();
     }
 

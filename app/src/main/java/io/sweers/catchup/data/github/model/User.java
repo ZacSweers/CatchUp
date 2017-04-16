@@ -1,7 +1,6 @@
 package io.sweers.catchup.data.github.model;
 
 import android.support.annotation.NonNull;
-
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -14,5 +13,4 @@ public abstract class User {
   }
 
   public abstract String login();
-
 }

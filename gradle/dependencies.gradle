@@ -12,6 +12,7 @@ ext {
   supportAppCompat = "com.android.support:appcompat-v7:$supportVersion"
   supportCardView = "com.android.support:cardview-v7:$supportVersion"
   supportCustomTabs = "com.android.support:customtabs:$supportVersion"
+  supportCustomTabs = "com.android.support:customtabs:$supportVersion"
   supportDesign = "com.android.support:design:$supportVersion"
   supportPalette = "com.android.support:palette-v7:$supportVersion"
   supportPercent = "com.android.support:percent:$supportVersion"
@@ -102,7 +103,6 @@ ext {
   madge = 'com.jakewharton.madge:madge:1.1.4'
   moshiVersion = '1.4.0'
   moshi = "com.squareup.moshi:moshi:$moshiVersion"
-  moshiAdapters = "com.squareup.moshi:moshi-adapters:$moshiVersion"
   processPhoenix = 'com.jakewharton:process-phoenix:2.0.0'
   retrofitVersion = '2.2.0'
   retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
