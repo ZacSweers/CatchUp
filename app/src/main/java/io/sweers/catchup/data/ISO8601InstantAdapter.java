@@ -10,8 +10,7 @@ import org.threeten.bp.Instant;
 public final class ISO8601InstantAdapter extends JsonAdapter<Instant> {
 
   @Override public Instant fromJson(JsonReader reader) throws IOException {
-    String time = reader.nextString();
-    return Instants.parsePossiblyOffsetInstant(time);
+    return Instants.parsePossiblyOffsetInstant(reader.nextString());
   }
 
   @Override public void toJson(JsonWriter writer, Instant instant) throws IOException {
