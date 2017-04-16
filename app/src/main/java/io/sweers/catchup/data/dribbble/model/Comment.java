@@ -17,13 +17,12 @@
 package io.sweers.catchup.data.dribbble.model;
 
 import android.support.annotation.NonNull;
-
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-
 import java.util.Date;
+import org.threeten.bp.Instant;
 
 /**
  * Models a commend on a Dribbble shot.
@@ -37,19 +36,15 @@ public abstract class Comment {
 
   public abstract String body();
 
-  @Json(name = "created_at")
-  public abstract Date createdAt();
+  @Json(name = "created_at") public abstract Instant createdAt();
 
   public abstract long id();
 
-  @Json(name = "likes_count")
-  public abstract long likesCount();
+  @Json(name = "likes_count") public abstract long likesCount();
 
-  @Json(name = "likes_url")
-  public abstract String likesUrl();
+  @Json(name = "likes_url") public abstract String likesUrl();
 
-  @Json(name = "updated_at")
-  public abstract Date updatedAt();
+  @Json(name = "updated_at") public abstract Date updatedAt();
 
   public abstract User user();
 }

@@ -19,7 +19,7 @@ import io.sweers.catchup.data.slashdot.Entry;
 import io.sweers.catchup.data.slashdot.SlashdotService;
 import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.ui.base.BaseNewsController;
-import io.sweers.catchup.util.Iso8601Utils;
+import io.sweers.catchup.util.Instants;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
@@ -50,7 +50,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
     holder.title(entry.title);
 
     holder.score(null);
-    holder.timestamp(Iso8601Utils.parse(entry.updated));
+    holder.timestamp(Instants.parsePossiblyOffsetInstant(entry.updated));
     holder.author(entry.author.name);
 
     holder.source(entry.department);

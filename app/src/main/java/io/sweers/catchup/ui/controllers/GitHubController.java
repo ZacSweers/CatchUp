@@ -18,7 +18,7 @@ import io.reactivex.Single;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
-import io.sweers.catchup.data.ISOInstantAdapter;
+import io.sweers.catchup.data.ISO8601InstantAdapter;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.github.GitHubService;
 import io.sweers.catchup.data.github.TrendingTimespan;
@@ -102,7 +102,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
 
     @Provides @InternalApi static Moshi provideGitHubMoshi(Moshi moshi) {
       return moshi.newBuilder()
-          .add(Instant.class, new ISOInstantAdapter())
+          .add(Instant.class, new ISO8601InstantAdapter())
           .build();
     }
 

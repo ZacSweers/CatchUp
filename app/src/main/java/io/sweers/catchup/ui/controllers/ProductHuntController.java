@@ -18,7 +18,7 @@ import io.reactivex.Single;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
-import io.sweers.catchup.data.ISOInstantAdapter;
+import io.sweers.catchup.data.ISO8601InstantAdapter;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.producthunt.ProductHuntService;
 import io.sweers.catchup.data.producthunt.model.Post;
@@ -95,8 +95,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     abstract AndroidInjector.Factory<? extends Controller> bindProductHuntControllerInjectorFactory(
         Component.Builder builder);
 
-    @Provides @InternalApi
-    static OkHttpClient provideProductHuntOkHttpClient(OkHttpClient client) {
+    @Provides @InternalApi static OkHttpClient provideProductHuntOkHttpClient(OkHttpClient client) {
       return client.newBuilder()
           .addInterceptor(AuthInterceptor.create("Bearer",
               BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
@@ -105,12 +104,12 @@ public final class ProductHuntController extends BaseNewsController<Post> {
 
     @Provides @InternalApi static Moshi provideProductHuntMoshi(Moshi moshi) {
       return moshi.newBuilder()
-          .add(Instant.class, new ISOInstantAdapter())
+          .add(Instant.class, new ISO8601InstantAdapter())
           .build();
     }
 
-    @Provides
-    static ProductHuntService provideProductHuntService(@InternalApi final Lazy<OkHttpClient> client,
+    @Provides static ProductHuntService provideProductHuntService(
+        @InternalApi final Lazy<OkHttpClient> client,
         @InternalApi Moshi moshi,
         RxJava2CallAdapterFactory rxJavaCallAdapterFactory) {
       return new Retrofit.Builder().baseUrl(ProductHuntService.ENDPOINT)

@@ -53,7 +53,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
-import io.sweers.catchup.data.ISOInstantAdapter;
+import io.sweers.catchup.data.ISO8601InstantAdapter;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.RxViewHolder;
 import io.sweers.catchup.data.dribbble.DribbbleService;
@@ -408,7 +408,7 @@ public class DribbbleController extends ServiceController
 
     @Provides @InternalApi static Moshi provideDribbbleMoshi(Moshi moshi) {
       return moshi.newBuilder()
-          .add(Instant.class, new ISOInstantAdapter())
+          .add(Instant.class, new ISO8601InstantAdapter())
           .build();
     }
 

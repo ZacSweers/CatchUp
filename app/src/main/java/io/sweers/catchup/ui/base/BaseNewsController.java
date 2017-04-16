@@ -32,12 +32,11 @@ import io.sweers.catchup.util.NumberUtil;
 import io.sweers.catchup.util.Strings;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import org.threeten.bp.Instant;
-import retrofit2.adapter.rxjava2.HttpException;
+import retrofit2.HttpException;
 import timber.log.Timber;
 
 import static android.view.View.GONE;
@@ -141,7 +140,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
           loaded = true;
         }, e -> {
           if (e instanceof IOException) {
-            AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+            AnimatedVectorDrawableCompat avd =
+                AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
             errorImage.setImageDrawable(avd);
             progress.setVisibility(GONE);
             errorTextView.setText("Network Problem");
@@ -150,7 +150,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
             avd.start();
           } else if (e instanceof HttpException) {
             // TODO Show some sort of API error response.
-            AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+            AnimatedVectorDrawableCompat avd =
+                AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
             errorImage.setImageDrawable(avd);
             progress.setVisibility(GONE);
             errorTextView.setText("API Problem");
@@ -159,7 +160,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
             avd.start();
           } else {
             // TODO Show some sort of generic response error
-            AnimatedVectorDrawableCompat avd = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+            AnimatedVectorDrawableCompat avd =
+                AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
             errorImage.setImageDrawable(avd);
             progress.setVisibility(GONE);
             swipeRefreshLayout.setVisibility(GONE);
@@ -293,10 +295,6 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
         tagDivider.setVisibility(VISIBLE);
         tag.setText(Strings.capitalize(text));
       }
-    }
-
-    public void timestamp(Date date) {
-      timestamp(date.getTime());
     }
 
     public void timestamp(Instant instant) {
