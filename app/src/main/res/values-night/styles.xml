@@ -4,4 +4,8 @@
     <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
   </style>
 
+  <style name="CatchUp.GitHub" parent="CatchUp">
+    <item name="colorAccent">?android:textColorPrimary</item>
+  </style>
+
 </resources>
