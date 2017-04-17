@@ -106,6 +106,5 @@ tmp/
 .texlipse
 
 # Misc
-annotations
 private.props
 google-services.json
