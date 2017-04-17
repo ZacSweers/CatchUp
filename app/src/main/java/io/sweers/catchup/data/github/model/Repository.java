@@ -35,4 +35,29 @@ public abstract class Repository implements HasStableId {
   @Override public long stableId() {
     return id();
   }
+
+  public static Builder builder() {
+    return new AutoValue_Repository.Builder();
+  }
+
+  @AutoValue.Builder
+  public interface Builder {
+    Builder createdAt(Instant createdAt);
+
+    Builder fullName(String fullName);
+
+    Builder htmlUrl(String htmlUrl);
+
+    Builder id(long id);
+
+    Builder language(@Nullable String language);
+
+    Builder name(String name);
+
+    Builder owner(User owner);
+
+    Builder starsCount(int starsCount);
+
+    Repository build();
+  }
 }

@@ -2,7 +2,6 @@ package io.sweers.catchup.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Looper;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.squareup.moshi.ArrayCollectionJsonAdapter;
 import com.squareup.moshi.ArrayMapJsonAdapter;
@@ -29,18 +28,20 @@ public abstract class DataModule {
   private static final int HTTP_TIMEOUT_S = 30;
 
   @Provides static Cache provideCache(@ApplicationContext Context context) {
-    if (Looper.myLooper() == Looper.getMainLooper()) {
-      throw new IllegalStateException("Cache initialized on main thread.");
-    }
+    // Temporary pending https://github.com/apollographql/apollo-android/pull/421
+    //if (Looper.myLooper() == Looper.getMainLooper()) {
+    //  throw new IllegalStateException("Cache initialized on main thread.");
+    //}
     return new Cache(context.getCacheDir(), HTTP_RESPONSE_CACHE);
   }
 
   @Provides static OkHttpClient provideOkHttpClient(Cache cache,
       Set<Interceptor> interceptors,
       @NetworkInterceptor Set<Interceptor> networkInterceptors) {
-    if (Looper.myLooper() == Looper.getMainLooper()) {
-      throw new IllegalStateException("HTTP client initialized on main thread.");
-    }
+    // Temporary pending https://github.com/apollographql/apollo-android/pull/421
+    //if (Looper.myLooper() == Looper.getMainLooper()) {
+    //  throw new IllegalStateException("HTTP client initialized on main thread.");
+    //}
 
     OkHttpClient.Builder builder =
         new OkHttpClient.Builder().connectTimeout(HTTP_TIMEOUT_S, TimeUnit.SECONDS)
@@ -54,11 +55,6 @@ public abstract class DataModule {
         .addAll(interceptors);
 
     return builder.build();
-  }
-
-  protected void configureOkHttpClientForVariant(@ApplicationContext Context context,
-      OkHttpClient.Builder builder) {
-    // Override in variants
   }
 
   @Provides static Moshi provideMoshi() {

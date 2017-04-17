@@ -4,6 +4,7 @@ buildscript {
     classpath rootProject.ext.psyncPlugin
     classpath rootProject.ext.versionsPlugin
     classpath rootProject.ext.errorPronePlugin
+    classpath rootProject.ext.apolloPlugin
   }
 }
 
@@ -11,6 +12,7 @@ apply plugin: 'com.android.application'
 apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.flipboard.psync'
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
+apply plugin: 'com.apollographql.android'
 
 private String getPropertyOrEmpty(String property) {
   if (hasProperty(property)) {
@@ -108,6 +110,13 @@ psync {
   generateRx = true
 }
 
+apollo {
+  customTypeMapping {
+    DateTime = "org.threeten.bp.Instant"
+  }
+  customTypeMapping['URI'] = "okhttp3.HttpUrl"
+}
+
 def supportLibraries = configurations.create("supportCompile")
 configurations.all {
   resolutionStrategy.eachDependency { DependencyResolveDetails details ->
@@ -162,7 +171,8 @@ dependencies {
   compile rootProject.ext.threetenabp
   debugCompile rootProject.ext.madge
   debugCompile rootProject.ext.scalpel
-  compile rootProject.ext.processPhoenix // Move back to debugCompile when it's not needed for daynight
+  compile rootProject.ext.processPhoenix
+  // Move back to debugCompile when it's not needed for daynight
   debugCompile rootProject.ext.telescope
   compile rootProject.ext.okhttpLoggingInterceptor
   debugCompile rootProject.ext.retrofitMock
@@ -191,6 +201,10 @@ dependencies {
     exclude module: 'xpp3'
   }
   compile rootProject.ext.moshiLazyAdapters
+
+  compile rootProject.ext.apolloRuntime
+  compile rootProject.ext.apolloRx2Support
+  compile rootProject.ext.apolloAndroidSupport
 
   // Stetho
   debugCompile rootProject.ext.stetho

@@ -15,7 +15,7 @@ public final class Strings {
         .length() == 0);
   }
 
-  public static String valueOrDefault(String string, String defaultString) {
+  public static String valueOrDefault(@Nullable String string, String defaultString) {
     return isBlank(string) ? defaultString : string;
   }
 

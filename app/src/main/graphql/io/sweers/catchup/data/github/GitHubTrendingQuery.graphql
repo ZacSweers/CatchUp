@@ -1,0 +1,25 @@
+query GitHubSearch($queryString: String!, $firstCount: Int!, $order: LanguageOrder!) {
+  search(query: $queryString, type: REPOSITORY, first: $firstCount) {
+    repositoryCount
+    nodes {
+      ... on Repository {
+        name
+        createdAt
+        description
+        id
+        languages(first: 1, orderBy: $order) {
+          nodes {
+            name
+          }
+        }
+        owner {
+          login
+        }
+        stargazers {
+          totalCount
+        }
+        url
+      }
+    }
+  }
+}

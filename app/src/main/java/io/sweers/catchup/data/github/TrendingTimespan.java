@@ -6,7 +6,8 @@ import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.temporal.TemporalUnit;
 
 public enum TrendingTimespan {
-  DAY("today", 1, ChronoUnit.DAYS), WEEK("last week", 1, ChronoUnit.WEEKS), MONTH("last month",
+  DAY("today", 1, ChronoUnit.DAYS), WEEK("last week", 1, ChronoUnit.WEEKS), MONTH(
+      "last month",
       1,
       ChronoUnit.MONTHS);
 

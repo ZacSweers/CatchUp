@@ -13,4 +13,8 @@ public abstract class User {
   }
 
   public abstract String login();
+
+  public static User create(String login) {
+    return new AutoValue_User(login);
+  }
 }
