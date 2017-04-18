@@ -44,31 +44,25 @@ public abstract class Story implements HasStableId {
 
   @Json(name = "comment_html") @Nullable public abstract String commentHtml();
 
-  public abstract List<Comment> comments();
-
   @Json(name = "created_at") public abstract Instant createdAt();
 
   @Nullable public abstract String hostname();
 
-  public abstract long id();
+  public abstract String id();
 
-  @Json(name = "site_url") public abstract String siteUrl();
+  public abstract String href();
 
   public abstract String title();
 
-  public abstract String url();
+  @Nullable public abstract String url();
 
-  @Json(name = "user_display_name") public abstract String userDisplayName();
-
-  @Json(name = "user_id") public abstract long userId();
-
-  @Json(name = "user_job") @Nullable public abstract String userJob();
-
-  @Json(name = "user_portrait_url") @Nullable public abstract String userPortraitUrl();
+  public abstract Links links();
 
   @Json(name = "vote_count") public abstract int voteCount();
 
+  @Json(name = "twitter_handles") public abstract List<String> twitterHandles();
+
   @Override public long stableId() {
-    return id();
+    return Long.parseLong(id());
   }
 }

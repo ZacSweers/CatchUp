@@ -308,8 +308,15 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
           DateUtils.FORMAT_ABBREV_ALL));
     }
 
-    public void author(@NonNull CharSequence authorText) {
-      author.setText(authorText);
+    public void author(@Nullable CharSequence authorText) {
+      if (authorText == null) {
+        author.setVisibility(GONE);
+        authorDivider.setVisibility(GONE);
+      } else {
+        authorDivider.setVisibility(VISIBLE);
+        author.setVisibility(VISIBLE);
+        author.setText(authorText);
+      }
     }
 
     public void source(@Nullable CharSequence sourceText) {
@@ -317,7 +324,9 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
         source.setVisibility(GONE);
         authorDivider.setVisibility(GONE);
       } else {
-        authorDivider.setVisibility(VISIBLE);
+        if (author.getVisibility() == VISIBLE) {
+          authorDivider.setVisibility(VISIBLE);
+        }
         source.setVisibility(VISIBLE);
         source.setText(sourceText);
       }

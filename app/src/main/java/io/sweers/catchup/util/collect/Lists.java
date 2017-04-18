@@ -1,4 +1,4 @@
-package io.sweers.catchup.util;
+package io.sweers.catchup.util.collect;
 
 import android.support.annotation.Nullable;
 import java.util.Collections;

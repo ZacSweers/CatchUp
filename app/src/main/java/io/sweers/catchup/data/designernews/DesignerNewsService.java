@@ -16,21 +16,27 @@
 
 package io.sweers.catchup.data.designernews;
 
+import com.serjltt.moshi.adapters.Wrapped;
 import io.reactivex.Single;
-import io.sweers.catchup.data.designernews.model.StoriesResponse;
+import io.sweers.catchup.data.designernews.model.Story;
+import io.sweers.catchup.data.designernews.model.User;
+import io.sweers.catchup.util.collect.CommaJoinerList;
+import java.util.List;
 import retrofit2.http.GET;
-import retrofit2.http.Query;
+import retrofit2.http.Path;
 
 /**
  * Models the Designer News API.
  * <p>
- * v1 docs: https://github.com/layervault/dn_api
  * v2 docs: https://github.com/DesignerNews/dn_api_v2
  */
 public interface DesignerNewsService {
 
-  String HOST = "api-news.layervault.com/";
+  String HOST = "www.designernews.co/api/v2/";
   String ENDPOINT = "https://" + HOST;
 
-  @GET("api/v2/stories") Single<StoriesResponse> getTopStories(@Query("page") int page);
+  @GET("stories") @Wrapped("stories") Single<List<Story>> getTopStories();
+
+  @GET("users/{ids}") @Wrapped("users") Single<List<User>> getUsers(
+      @Path("ids") CommaJoinerList<String> ids);
 }

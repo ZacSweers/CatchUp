@@ -48,8 +48,6 @@ android {
         /"${getPropertyOrEmpty("catchup_product_hunt_developer_token")}"/
     buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN',
         /"${getPropertyOrEmpty("catchup_github_developer_token")}"/
-    buildConfigField 'String', 'DESIGNER_NEWS_CLIENT_ID',
-        /"${getPropertyOrEmpty("catchup_designer_news_client_id")}"/
     buildConfigField 'String', 'DRIBBBLE_CLIENT_ACCESS_TOKEN',
         /"${getPropertyOrEmpty("catchup_dribbble_access_token")}"/
     buildConfigField 'String', 'SMMRY_API_KEY', /"${getPropertyOrEmpty("catchup_smmry_api_key")}"/

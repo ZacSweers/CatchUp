@@ -47,7 +47,7 @@ import io.sweers.catchup.type.LanguageOrder;
 import io.sweers.catchup.type.LanguageOrderField;
 import io.sweers.catchup.type.OrderDirection;
 import io.sweers.catchup.ui.base.BaseNewsController;
-import io.sweers.catchup.util.Lists;
+import io.sweers.catchup.util.collect.Lists;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
