@@ -1,7 +1,5 @@
 package io.sweers.catchup.ui.controllers;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
@@ -80,7 +78,9 @@ public class PagerController extends ButterKnifeController {
   @BindView(R.id.view_pager) ViewPager viewPager;
   @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.appbarlayout) AppBarLayout appBarLayout;
+  private ValueAnimator statusBarColorAnimator = null;
   private boolean colorNavBar = false;
+  private boolean tablayoutIsPinned = false;
   private RouterPagerAdapter pagerAdapter;
 
   public PagerController() {
@@ -178,32 +178,38 @@ public class PagerController extends ButterKnifeController {
     boolean isInNightMode = UiUtil.isInNightMode(view.getContext());
     appBarLayout.addOnOffsetChangedListener((abl, verticalOffset) -> {
       if (verticalOffset == -toolbar.getHeight()) {
+        if (statusBarColorAnimator != null) {
+          statusBarColorAnimator.cancel();
+        }
+        tablayoutIsPinned = true;
         int newStatusColor = getAndSaveColor(tabLayout.getSelectedTabPosition());
-        ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor);
-        statusBarColorAnim.addUpdateListener(animation -> getActivity().getWindow()
+        statusBarColorAnimator = ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor);
+        statusBarColorAnimator.addUpdateListener(animation -> getActivity().getWindow()
             .setStatusBarColor((int) animation.getAnimatedValue()));
-        statusBarColorAnim.setDuration(200);
-        statusBarColorAnim.setInterpolator(new FastOutSlowInInterpolator());
-        statusBarColorAnim.start();
+        statusBarColorAnimator.setDuration(200);
+        statusBarColorAnimator.setInterpolator(new FastOutSlowInInterpolator());
+        statusBarColorAnimator.start();
         clearLightStatusBar(abl);
       } else {
-        if (getActivity().getWindow()
-            .getStatusBarColor() == getAndSaveColor(tabLayout.getSelectedTabPosition())) {
-          ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(getActivity().getWindow()
-              .getStatusBarColor(), colorPrimaryDark);
-          statusBarColorAnim.addUpdateListener(animation -> getActivity().getWindow()
-              .setStatusBarColor((int) animation.getAnimatedValue()));
-          statusBarColorAnim.setDuration(200);
-          statusBarColorAnim.setInterpolator(new DecelerateInterpolator());
-          if (!isInNightMode) {
-            statusBarColorAnim.addListener(new AnimatorListenerAdapter() {
-              @Override public void onAnimationEnd(Animator animation) {
-                setLightStatusBar(abl);
-                animation.removeListener(this);
-              }
-            });
+        boolean wasPinned = tablayoutIsPinned;
+        tablayoutIsPinned = false;
+        if (wasPinned) {
+          if (getActivity().getWindow()
+              .getStatusBarColor() == getAndSaveColor(tabLayout.getSelectedTabPosition())) {
+            if (statusBarColorAnimator != null) {
+              statusBarColorAnimator.cancel();
+            }
+            statusBarColorAnimator = ValueAnimator.ofArgb(getActivity().getWindow()
+                .getStatusBarColor(), colorPrimaryDark);
+            statusBarColorAnimator.addUpdateListener(animation -> getActivity().getWindow()
+                .setStatusBarColor((int) animation.getAnimatedValue()));
+            statusBarColorAnimator.setDuration(200);
+            statusBarColorAnimator.setInterpolator(new DecelerateInterpolator());
+            if (!isInNightMode) {
+              setLightStatusBar(abl);
+            }
+            statusBarColorAnimator.start();
           }
-          statusBarColorAnim.start();
         }
       }
     });
@@ -279,6 +285,10 @@ public class PagerController extends ButterKnifeController {
           color = getAndSaveColor(PAGE_DATA.length - 1);
         }
         tabLayout.setBackgroundColor(color);
+        if (tablayoutIsPinned) {
+          getActivity().getWindow()
+              .setStatusBarColor(color);
+        }
         if (colorNavBar) {
           getActivity().getWindow()
               .setNavigationBarColor(color);
