@@ -85,6 +85,7 @@ ext {
   rxBindingVersion = '2.0.0'
   rxBinding = "com.jakewharton.rxbinding2:rxbinding:$rxBindingVersion"
   rxBindingV4 = "com.jakewharton.rxbinding2:rxbinding-support-v4:$rxBindingVersion"
+  rxBindingDesign = "com.jakewharton.rxbinding2:rxbinding-design:$rxBindingVersion"
   rxJava = 'io.reactivex:rxjava:1.2.9'
   rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.2'
   rxReceivers = 'com.f2prateek.rx.receivers:rx-receivers:0.1.0'

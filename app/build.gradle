@@ -165,6 +165,7 @@ dependencies {
   compile rootProject.ext.retrofitRxJava2
   compile rootProject.ext.rxBinding
   compile rootProject.ext.rxBindingV4
+  compile rootProject.ext.rxBindingDesign
   compile rootProject.ext.timber
   compile rootProject.ext.threetenabp
   debugCompile rootProject.ext.madge

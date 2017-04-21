@@ -29,6 +29,7 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.jakewharton.processphoenix.ProcessPhoenix;
+import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout;
 import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
@@ -40,6 +41,7 @@ import io.sweers.catchup.R;
 import io.sweers.catchup.injection.ConductorInjection;
 import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.injection.qualifiers.preferences.NavBarTheme;
+import io.sweers.catchup.rx.PredicateConsumer;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.ui.activity.SettingsActivity;
 import io.sweers.catchup.ui.base.ButterKnifeController;
@@ -176,43 +178,62 @@ public class PagerController extends ButterKnifeController {
     @ColorInt int colorPrimaryDark =
         UiUtil.resolveAttribute(view.getContext(), R.attr.colorPrimaryDark);
     boolean isInNightMode = UiUtil.isInNightMode(view.getContext());
-    appBarLayout.addOnOffsetChangedListener((abl, verticalOffset) -> {
-      if (verticalOffset == -toolbar.getHeight()) {
-        if (statusBarColorAnimator != null) {
-          statusBarColorAnimator.cancel();
-        }
-        tablayoutIsPinned = true;
-        int newStatusColor = getAndSaveColor(tabLayout.getSelectedTabPosition());
-        statusBarColorAnimator = ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor);
-        statusBarColorAnimator.addUpdateListener(animation -> getActivity().getWindow()
-            .setStatusBarColor((int) animation.getAnimatedValue()));
-        statusBarColorAnimator.setDuration(200);
-        statusBarColorAnimator.setInterpolator(new FastOutSlowInInterpolator());
-        statusBarColorAnimator.start();
-        clearLightStatusBar(abl);
-      } else {
-        boolean wasPinned = tablayoutIsPinned;
-        tablayoutIsPinned = false;
-        if (wasPinned) {
-          if (getActivity().getWindow()
-              .getStatusBarColor() == getAndSaveColor(tabLayout.getSelectedTabPosition())) {
+    if (!isInNightMode) {
+      // Start with a light status bar in normal mode
+      setLightStatusBar(appBarLayout);
+    }
+    RxAppBarLayout.offsetChanges(appBarLayout)
+        .distinctUntilChanged()
+        .doOnNext(new PredicateConsumer<Integer>() {
+          @Override public boolean test(Integer verticalOffset) throws Exception {
+            return verticalOffset == -toolbar.getHeight();
+          }
+
+          @Override public void acceptActual(Integer verticalOffset) throws Exception {
             if (statusBarColorAnimator != null) {
               statusBarColorAnimator.cancel();
             }
-            statusBarColorAnimator = ValueAnimator.ofArgb(getActivity().getWindow()
-                .getStatusBarColor(), colorPrimaryDark);
-            statusBarColorAnimator.addUpdateListener(animation -> getActivity().getWindow()
+            tablayoutIsPinned = true;
+            int newStatusColor =
+                PagerController.this.getAndSaveColor(tabLayout.getSelectedTabPosition());
+            statusBarColorAnimator = ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor);
+            statusBarColorAnimator.addUpdateListener(animation -> PagerController.this.getActivity()
+                .getWindow()
                 .setStatusBarColor((int) animation.getAnimatedValue()));
             statusBarColorAnimator.setDuration(200);
-            statusBarColorAnimator.setInterpolator(new DecelerateInterpolator());
-            if (!isInNightMode) {
-              setLightStatusBar(abl);
-            }
+            statusBarColorAnimator.setInterpolator(new FastOutSlowInInterpolator());
             statusBarColorAnimator.start();
+            clearLightStatusBar(appBarLayout);
           }
-        }
-      }
-    });
+        })
+        .doOnNext(new PredicateConsumer<Integer>() {
+          @Override public void acceptActual(Integer verticalOffset) throws Exception {
+            boolean wasPinned = tablayoutIsPinned;
+            tablayoutIsPinned = false;
+            if (wasPinned) {
+              if (statusBarColorAnimator != null) {
+                statusBarColorAnimator.cancel();
+              }
+              statusBarColorAnimator = ValueAnimator.ofArgb(PagerController.this.getActivity()
+                  .getWindow()
+                  .getStatusBarColor(), colorPrimaryDark);
+              statusBarColorAnimator.addUpdateListener(animation -> PagerController.this.getActivity()
+                  .getWindow()
+                  .setStatusBarColor((int) animation.getAnimatedValue()));
+              statusBarColorAnimator.setDuration(200);
+              statusBarColorAnimator.setInterpolator(new DecelerateInterpolator());
+              if (!isInNightMode) {
+                setLightStatusBar(appBarLayout);
+              }
+              statusBarColorAnimator.start();
+            }
+          }
+
+          @Override public boolean test(Integer verticalOffset) throws Exception {
+            return verticalOffset != -toolbar.getHeight();
+          }
+        })
+        .subscribe();
     toolbar.inflateMenu(R.menu.main);
     toolbar.setOnMenuItemClickListener(item -> {
       switch (item.getItemId()) {
