@@ -1,1 +1,17 @@
+<!--
+  ~ Copyright (c) 2017 Zac Sweers
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414"><path d="M13.185 0L4.692 16H1.246L9.738 0h3.447zm1.57 13.2c0 1.512-1.227 2.738-2.74 2.738-1.512 0-2.738-1.226-2.738-2.738s1.226-2.738 2.738-2.738c1.513 0 2.74 1.226 2.74 2.738z"/></svg>
