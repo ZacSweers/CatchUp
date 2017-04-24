@@ -227,10 +227,8 @@ dependencies {
   compile rootProject.ext.conductorSupport
 
   // Test
-  testCompile project(':testing-utils')
   testCompile rootProject.ext.rxJava2Extensions
   testCompile rootProject.ext.rxRelay
-  androidTestCompile project(':testing-utils')
   androidTestCompile rootProject.ext.errorProneAnnotations
   androidTestCompile rootProject.ext.rxJava2
   androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'

@@ -1,6 +1,0 @@
-
-def cleanOutputDir(apkOutputDir) {
-    apkOutputDir.listFiles([accept: {fileObj, fileName -> fileName.contains('unaligned') || fileName.contains('manifest-merger')}] as FilenameFilter).each {
-        delete file(it.absolutePath)
-    }
-}
