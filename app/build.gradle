@@ -46,7 +46,6 @@ repositories {
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
   buildToolsVersion rootProject.ext.buildToolsVersion
-  useLibrary 'org.apache.http.legacy'
 
   defaultConfig {
     applicationId "io.sweers.catchup"
@@ -55,7 +54,7 @@ android {
     versionCode rootProject.ext.gitCommitCount
     versionName rootProject.ext.gitTag
     multiDexEnabled true
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
 
     buildConfigField 'String', 'GIT_SHA', /"$gitSha"/
