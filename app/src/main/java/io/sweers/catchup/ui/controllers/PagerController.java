@@ -14,7 +14,7 @@ import android.support.design.widget.TabLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -201,7 +201,7 @@ public class PagerController extends ButterKnifeController {
                 .getWindow()
                 .setStatusBarColor((int) animation.getAnimatedValue()));
             statusBarColorAnimator.setDuration(200);
-            statusBarColorAnimator.setInterpolator(new FastOutSlowInInterpolator());
+            statusBarColorAnimator.setInterpolator(new LinearOutSlowInInterpolator());
             statusBarColorAnimator.start();
             clearLightStatusBar(appBarLayout);
           }
