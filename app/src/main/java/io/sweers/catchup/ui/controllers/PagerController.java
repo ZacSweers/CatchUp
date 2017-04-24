@@ -5,7 +5,6 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -49,6 +48,8 @@ import io.sweers.catchup.util.ApiUtil;
 import io.sweers.catchup.util.UiUtil;
 import java.util.Arrays;
 import javax.inject.Inject;
+
+import static io.sweers.catchup.util.UiUtil.setLightStatusBar;
 
 public class PagerController extends ButterKnifeController {
 
@@ -146,22 +147,6 @@ public class PagerController extends ButterKnifeController {
     Arrays.fill(resolvedColorCache, R.color.no_color);
   }
 
-  public static void setLightStatusBar(@NonNull View view) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      int flags = view.getSystemUiVisibility();
-      flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-      view.setSystemUiVisibility(flags);
-    }
-  }
-
-  public static void clearLightStatusBar(@NonNull View view) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      int flags = view.getSystemUiVisibility();
-      flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-      view.setSystemUiVisibility(flags);
-    }
-  }
-
   @Override
   protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
     return inflater.inflate(R.layout.controller_pager, container, false);
@@ -203,7 +188,7 @@ public class PagerController extends ButterKnifeController {
             statusBarColorAnimator.setDuration(200);
             statusBarColorAnimator.setInterpolator(new LinearOutSlowInInterpolator());
             statusBarColorAnimator.start();
-            clearLightStatusBar(appBarLayout);
+            UiUtil.clearLightStatusBar(appBarLayout);
           }
         })
         .doOnNext(new PredicateConsumer<Integer>() {

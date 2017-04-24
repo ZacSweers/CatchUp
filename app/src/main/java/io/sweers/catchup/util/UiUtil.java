@@ -20,6 +20,7 @@ import android.support.annotation.UiThread;
 import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.View;
 
 public final class UiUtil {
 
@@ -136,5 +137,23 @@ public final class UiUtil {
     final DisplayMetrics dm = res.getDisplayMetrics();
     boolean canMove = (dm.widthPixels != dm.heightPixels && cfg.smallestScreenWidthDp < 600);
     return (!canMove || dm.widthPixels < dm.heightPixels);
+  }
+
+  public static void setLightStatusBar(@NonNull View view) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      int flags = view.getSystemUiVisibility();
+      // TODO noop if it's already set
+      flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+      view.setSystemUiVisibility(flags);
+    }
+  }
+
+  public static void clearLightStatusBar(@NonNull View view) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      int flags = view.getSystemUiVisibility();
+      // TODO noop if it's already not set
+      flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+      view.setSystemUiVisibility(flags);
+    }
   }
 }
