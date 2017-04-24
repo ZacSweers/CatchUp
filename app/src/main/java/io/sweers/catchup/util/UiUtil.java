@@ -33,6 +33,7 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -41,9 +42,15 @@ import android.view.View;
 public final class UiUtil {
 
   private static final TypedValue TYPED_VALUE = new TypedValue();
+  private static final FastOutSlowInInterpolator FAST_OUT_SLOW_IN_INTERPOLATOR =
+      new FastOutSlowInInterpolator();
 
   private UiUtil() {
     throw new InstantiationError();
+  }
+
+  public static FastOutSlowInInterpolator fastOutSlowInInterpolator() {
+    return FAST_OUT_SLOW_IN_INTERPOLATOR;
   }
 
   @ColorInt @UiThread
@@ -115,27 +122,25 @@ public final class UiUtil {
       @ColorInt int fallbackColor,
       boolean bounded) {
     int rippleColor = fallbackColor;
-    if (palette != null) {
-      // try the named swatches in preference order
-      if (palette.getVibrantSwatch() != null) {
-        rippleColor = ColorUtils.modifyAlpha(palette.getVibrantSwatch()
-            .getRgb(), darkAlpha);
-      } else if (palette.getLightVibrantSwatch() != null) {
-        rippleColor = ColorUtils.modifyAlpha(palette.getLightVibrantSwatch()
-            .getRgb(), lightAlpha);
-      } else if (palette.getDarkVibrantSwatch() != null) {
-        rippleColor = ColorUtils.modifyAlpha(palette.getDarkVibrantSwatch()
-            .getRgb(), darkAlpha);
-      } else if (palette.getMutedSwatch() != null) {
-        rippleColor = ColorUtils.modifyAlpha(palette.getMutedSwatch()
-            .getRgb(), darkAlpha);
-      } else if (palette.getLightMutedSwatch() != null) {
-        rippleColor = ColorUtils.modifyAlpha(palette.getLightMutedSwatch()
-            .getRgb(), lightAlpha);
-      } else if (palette.getDarkMutedSwatch() != null) {
-        rippleColor = ColorUtils.modifyAlpha(palette.getDarkMutedSwatch()
-            .getRgb(), darkAlpha);
-      }
+    // try the named swatches in preference order
+    if (palette.getVibrantSwatch() != null) {
+      rippleColor = ColorUtils.modifyAlpha(palette.getVibrantSwatch()
+          .getRgb(), darkAlpha);
+    } else if (palette.getLightVibrantSwatch() != null) {
+      rippleColor = ColorUtils.modifyAlpha(palette.getLightVibrantSwatch()
+          .getRgb(), lightAlpha);
+    } else if (palette.getDarkVibrantSwatch() != null) {
+      rippleColor = ColorUtils.modifyAlpha(palette.getDarkVibrantSwatch()
+          .getRgb(), darkAlpha);
+    } else if (palette.getMutedSwatch() != null) {
+      rippleColor = ColorUtils.modifyAlpha(palette.getMutedSwatch()
+          .getRgb(), darkAlpha);
+    } else if (palette.getLightMutedSwatch() != null) {
+      rippleColor = ColorUtils.modifyAlpha(palette.getLightMutedSwatch()
+          .getRgb(), lightAlpha);
+    } else if (palette.getDarkMutedSwatch() != null) {
+      rippleColor = ColorUtils.modifyAlpha(palette.getDarkMutedSwatch()
+          .getRgb(), darkAlpha);
     }
     return new RippleDrawable(ColorStateList.valueOf(rippleColor),
         null,

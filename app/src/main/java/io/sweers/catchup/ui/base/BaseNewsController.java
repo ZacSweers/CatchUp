@@ -24,6 +24,7 @@ import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -325,17 +326,38 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     }
 
     public void author(@Nullable CharSequence authorText) {
+      boolean changeNeeded = authorText == null && (!TextUtils.isEmpty(author.getText())
+          || author.getVisibility() == VISIBLE
+          || authorDivider.getVisibility() == VISIBLE);
+      changeNeeded = changeNeeded || (authorText != null && (TextUtils.isEmpty(author.getText())
+          || author.getVisibility() != VISIBLE
+          || authorDivider.getVisibility() != VISIBLE));
+      if (!changeNeeded) {
+        return;
+      }
       if (authorText == null) {
         author.setVisibility(GONE);
+        author.setText(null);
         authorDivider.setVisibility(GONE);
       } else {
-        authorDivider.setVisibility(VISIBLE);
-        author.setVisibility(VISIBLE);
+        if (source.getVisibility() == VISIBLE) {
+          authorDivider.setVisibility(VISIBLE);
+        }
         author.setText(authorText);
+        author.setVisibility(VISIBLE);
       }
     }
 
     public void source(@Nullable CharSequence sourceText) {
+      boolean changeNeeded = sourceText == null && (!TextUtils.isEmpty(source.getText())
+          || source.getVisibility() == VISIBLE
+          || authorDivider.getVisibility() == VISIBLE);
+      changeNeeded = changeNeeded || (sourceText != null && (TextUtils.isEmpty(source.getText())
+          || source.getVisibility() != VISIBLE
+          || authorDivider.getVisibility() != VISIBLE));
+      if (!changeNeeded) {
+        return;
+      }
       if (sourceText == null) {
         source.setVisibility(GONE);
         authorDivider.setVisibility(GONE);
@@ -343,8 +365,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
         if (author.getVisibility() == VISIBLE) {
           authorDivider.setVisibility(VISIBLE);
         }
-        source.setVisibility(VISIBLE);
         source.setText(sourceText);
+        source.setVisibility(VISIBLE);
       }
     }
 

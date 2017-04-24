@@ -22,9 +22,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
+import com.serjltt.moshi.adapters.ElementAtJsonAdapter;
 import com.serjltt.moshi.adapters.WrappedJsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.uber.autodispose.CompletableScoper;
+import com.uber.autodispose.SingleScoper;
 import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
@@ -32,6 +34,8 @@ import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.ISO8601InstantAdapter;
 import io.sweers.catchup.data.LinkManager;
@@ -39,6 +43,7 @@ import io.sweers.catchup.data.designernews.DesignerNewsService;
 import io.sweers.catchup.data.designernews.model.Story;
 import io.sweers.catchup.data.designernews.model.User;
 import io.sweers.catchup.injection.ControllerKey;
+import io.sweers.catchup.rx.observers.adapter.SingleObserverAdapter;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.ui.base.HasStableId;
 import java.util.List;
@@ -49,6 +54,7 @@ import org.threeten.bp.Instant;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
+import timber.log.Timber;
 
 public final class DesignerNewsController extends BaseNewsController<Story> {
 
@@ -74,8 +80,26 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
 
     holder.score(Pair.create("▲", story.voteCount()));
     holder.timestamp(story.createdAt());
-    //holder.author(user.displayName());
     holder.author(null);
+
+    // Temporary hack until we can zip together authors with their posts below
+    // Also bizarro things happen here with layout and 304 responses never getting responded...
+    service.getUser(story.links()
+        .user())
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .to(new SingleScoper<>(holder))
+        .subscribe(new SingleObserverAdapter<User>() {
+          @Override public void onSuccess(User user) {
+            holder.author(user.displayName());
+          }
+
+          @Override public void onError(Throwable e) {
+            super.onError(e);
+            // Noop
+            Timber.e(e);
+          }
+        });
 
     holder.source(story.hostname());
 
@@ -133,6 +157,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
       return moshi.newBuilder()
           .add(Instant.class, new ISO8601InstantAdapter())
           .add(WrappedJsonAdapter.FACTORY)
+          .add(ElementAtJsonAdapter.FACTORY)
           .build();
     }
 

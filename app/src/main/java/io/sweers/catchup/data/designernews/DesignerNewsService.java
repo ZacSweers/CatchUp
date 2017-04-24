@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.data.designernews;
 
+import com.serjltt.moshi.adapters.ElementAt;
 import com.serjltt.moshi.adapters.Wrapped;
 import io.reactivex.Single;
 import io.sweers.catchup.data.designernews.model.Story;
@@ -39,4 +40,7 @@ public interface DesignerNewsService {
 
   @GET("users/{ids}") @Wrapped("users") Single<List<User>> getUsers(
       @Path("ids") CommaJoinerList<String> ids);
+
+  @GET("users/{id}") @Wrapped("users") @ElementAt(index = 0) Single<User> getUser(
+      @Path("id") String id);
 }

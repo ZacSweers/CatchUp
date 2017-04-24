@@ -24,6 +24,7 @@ import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
 import com.squareup.moshi.Moshi;
 import com.uber.autodispose.CompletableScoper;
+import com.uber.autodispose.SingleScoper;
 import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
@@ -31,6 +32,8 @@ import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
@@ -40,15 +43,18 @@ import io.sweers.catchup.data.producthunt.ProductHuntService;
 import io.sweers.catchup.data.producthunt.model.Post;
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
 import io.sweers.catchup.injection.ControllerKey;
+import io.sweers.catchup.rx.observers.adapter.SingleObserverAdapter;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
 import org.threeten.bp.Instant;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
+import timber.log.Timber;
 
 public final class ProductHuntController extends BaseNewsController<Post> {
 
@@ -74,7 +80,29 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     holder.author(item.user()
         .name());
     holder.tag(item.getFirstTopic());
+
     holder.source(null);
+    if (item.redirect_url() != null) {
+      // This is still a bit wonky
+      service.headRequest(item.redirect_url())
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .to(new SingleScoper<>(holder))
+          .subscribe(new SingleObserverAdapter<Response<Void>>() {
+            @Override public void onSuccess(Response<Void> response) {
+              holder.source(response.raw()
+                  .request()
+                  .url()
+                  .host());
+            }
+
+            @Override public void onError(Throwable e) {
+              super.onError(e);
+              // Noop
+              Timber.e(e);
+            }
+          });
+    }
     holder.comments(item.comments_count());
 
     holder.itemClicks()

@@ -18,8 +18,11 @@ package io.sweers.catchup.data.producthunt;
 
 import io.reactivex.Single;
 import io.sweers.catchup.data.producthunt.model.PostsResponse;
+import retrofit2.Response;
 import retrofit2.http.GET;
+import retrofit2.http.HEAD;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 /**
  * Models the Product Hunt API. See https://api.producthunt.com/v1/docs
@@ -30,6 +33,7 @@ public interface ProductHuntService {
   String HOST = "api.producthunt.com";
   String ENDPOINT = SCHEME + "://" + HOST;
 
-  @GET("/v1/posts")
-  Single<PostsResponse> getPosts(@Query("days_ago") int page);
+  @GET("/v1/posts") Single<PostsResponse> getPosts(@Query("days_ago") int page);
+
+  @HEAD Single<Response<Void>> headRequest(@Url String url);
 }
