@@ -19,7 +19,6 @@ package io.sweers.catchup.app;
 import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDelegate;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
@@ -38,11 +37,11 @@ public class CatchUpApplication extends Application implements HasDispatchingAct
   @Inject protected SharedPreferences sharedPreferences;
   @Inject protected LumberYard lumberYard;
 
-  @NonNull public static ApplicationComponent component() {
+  public static ApplicationComponent component() {
     return component;
   }
 
-  @NonNull public static RefWatcher refWatcher() {
+  public static RefWatcher refWatcher() {
     return refWatcher;
   }
 

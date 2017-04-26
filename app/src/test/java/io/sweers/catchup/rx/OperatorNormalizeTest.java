@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import io.sweers.testutils.RecordingObserver;
+import io.sweers.catchup.RecordingObserver;
 import rx.Subscription;
 import rx.schedulers.TestScheduler;
 import rx.subjects.PublishSubject;
