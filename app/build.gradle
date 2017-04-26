@@ -249,6 +249,8 @@ dependencies {
   androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
   testCompile 'com.google.code.findbugs:jsr305:3.0.1'
   testCompile rootProject.ext.errorProneAnnotations
+  testCompile rootProject.ext.junit
+  testCompile rootProject.ext.truth
 
   // LeakCanary
   debugCompile rootProject.ext.leakCanary
