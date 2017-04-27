@@ -17,6 +17,7 @@
 buildscript {
   dependencies {
     classpath rootProject.ext.androidPlugin
+    classpath rootProject.ext.firebasePlugin
     classpath rootProject.ext.psyncPlugin
     classpath rootProject.ext.versionsPlugin
     classpath rootProject.ext.errorPronePlugin
@@ -25,6 +26,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.flipboard.psync'
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
@@ -141,6 +143,10 @@ configurations.all {
       // We want to force all play services libraries to use the same version, even if they're transitive.
       details.useVersion rootProject.ext.playServicesVersion
     }
+    if (details.requested.group == 'com.google.firebase') {
+      // We want to force all play services libraries to use the same version, even if they're transitive.
+      details.useVersion rootProject.ext.firebaseVersion
+    }
   }
 }
 
@@ -157,6 +163,9 @@ dependencies {
   compile supportLibraries
   testCompile supportLibraries
   androidTestCompile supportLibraries
+
+  compile rootProject.ext.firebaseCore
+  compile rootProject.ext.firebaseConfig
 
   // Square/JW
   compile rootProject.ext.butterKnife

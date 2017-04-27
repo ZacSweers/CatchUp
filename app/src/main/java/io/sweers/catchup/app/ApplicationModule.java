@@ -18,8 +18,12 @@ package io.sweers.catchup.app;
 
 import android.app.Application;
 import android.content.Context;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import dagger.Binds;
 import dagger.Module;
+import dagger.Provides;
+import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 
 @Module
@@ -27,4 +31,13 @@ public abstract class ApplicationModule {
 
   @Binds @ApplicationContext
   public abstract Context provideApplicationContext(Application application);
+
+  @Provides public static FirebaseRemoteConfig provideRemoteConfig() {
+    FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+    FirebaseRemoteConfigSettings configSettings =
+        new FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(BuildConfig.DEBUG)
+            .build();
+    config.setConfigSettings(configSettings);
+    return config;
+  }
 }

@@ -20,14 +20,17 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatDelegate;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasDispatchingActivityInjector;
 import io.sweers.catchup.P;
+import io.sweers.catchup.R;
 import io.sweers.catchup.data.LumberYard;
 import javax.inject.Inject;
+import timber.log.Timber;
 
 public class CatchUpApplication extends Application implements HasDispatchingActivityInjector {
 
@@ -36,6 +39,7 @@ public class CatchUpApplication extends Application implements HasDispatchingAct
   @Inject DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
   @Inject protected SharedPreferences sharedPreferences;
   @Inject protected LumberYard lumberYard;
+  @Inject protected FirebaseRemoteConfig remoteConfig;
 
   public static ApplicationComponent component() {
     return component;
@@ -68,6 +72,15 @@ public class CatchUpApplication extends Application implements HasDispatchingAct
     }
     AppCompatDelegate.setDefaultNightMode(nightMode);
     initVariant();
+    remoteConfig.fetch(getResources().getInteger(R.integer.remote_config_cache_duration))
+        .addOnCompleteListener(task -> {
+          if (task.isSuccessful()) {
+            Timber.d("Firebase fetch succeeded");
+            remoteConfig.activateFetched();
+          } else {
+            Timber.d("Firebase fetch failed");
+          }
+        });
   }
 
   protected void initVariant() {

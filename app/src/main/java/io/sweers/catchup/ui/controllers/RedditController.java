@@ -23,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.squareup.moshi.Moshi;
 import com.uber.autodispose.CompletableScoper;
 import com.uber.autodispose.ObservableScoper;
@@ -39,7 +40,6 @@ import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.reddit.RedditService;
 import io.sweers.catchup.data.reddit.model.RedditLink;
 import io.sweers.catchup.data.reddit.model.RedditObjectFactory;
-import io.sweers.catchup.data.smmry.SmmryService;
 import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import java.util.List;
@@ -54,11 +54,13 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
+import static io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED;
+
 public final class RedditController extends BaseNewsController<RedditLink> {
 
   @Inject RedditService service;
   @Inject LinkManager linkManager;
-  @Inject SmmryService smmryService;
+  @Inject FirebaseRemoteConfig remoteConfig;
 
   @Nullable private String lastSeen = null;
 
@@ -97,9 +99,11 @@ public final class RedditController extends BaseNewsController<RedditLink> {
         .to(new CompletableScoper(holder))
         .subscribe();
 
-    holder.itemLongClicks()
-        .to(new ObservableScoper<>(holder))
-        .subscribe(SmmryController.showFor(this, link.url()));
+    if (remoteConfig.getBoolean(SMMRY_ENABLED)) {
+      holder.itemLongClicks()
+          .to(new ObservableScoper<>(holder))
+          .subscribe(SmmryController.showFor(this, link.url()));
+    }
     holder.itemCommentClicks()
         .compose(transformUrlToMeta("https://reddit.com/comments/" + link.id()))
         .flatMapCompletable(linkManager)

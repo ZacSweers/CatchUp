@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.serjltt.moshi.adapters.WrappedJsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.uber.autodispose.CompletableScoper;
@@ -55,10 +56,13 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
+import static io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED;
+
 public final class MediumController extends BaseNewsController<MediumPost> {
 
   @Inject MediumService service;
   @Inject LinkManager linkManager;
+  @Inject FirebaseRemoteConfig remoteConfig;
 
   public MediumController() {
     super();
@@ -100,9 +104,11 @@ public final class MediumController extends BaseNewsController<MediumPost> {
         .responsesCreatedCount());
     holder.source(null);
 
-    holder.itemLongClicks()
-        .to(new ObservableScoper<>(holder))
-        .subscribe(SmmryController.showFor(this, item.constructUrl()));
+    if (remoteConfig.getBoolean(SMMRY_ENABLED)) {
+      holder.itemLongClicks()
+          .to(new ObservableScoper<>(holder))
+          .subscribe(SmmryController.showFor(this, item.constructUrl()));
+    }
 
     holder.itemClicks()
         .compose(transformUrlToMeta(item.constructUrl()))

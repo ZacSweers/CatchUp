@@ -17,6 +17,7 @@
 package io.sweers.catchup.app;
 
 import android.app.Application;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
@@ -41,6 +42,8 @@ public interface ApplicationComponent {
   Application application();
 
   OkHttpClient okHttpClient();
+
+  FirebaseRemoteConfig remoteConfig();
 
   @Component.Builder
   interface Builder {

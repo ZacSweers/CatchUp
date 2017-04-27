@@ -23,6 +23,7 @@ import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.squareup.moshi.Moshi;
 import com.uber.autodispose.CompletableScoper;
 import com.uber.autodispose.ObservableScoper;
@@ -53,10 +54,13 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
+import static io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED;
+
 public final class HackerNewsController extends BaseNewsController<HackerNewsStory> {
 
   @Inject HackerNewsService service;
   @Inject LinkManager linkManager;
+  @Inject FirebaseRemoteConfig remoteConfig;
 
   public HackerNewsController() {
     super();
@@ -94,7 +98,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     holder.comments(commentsCount);
     holder.tag(null);
 
-    if (!TextUtils.isEmpty(url)) {
+    if (remoteConfig.getBoolean(SMMRY_ENABLED) && !TextUtils.isEmpty(url)) {
       holder.itemLongClicks()
           .to(new ObservableScoper<>(holder))
           .subscribe(SmmryController.showFor(this, url));
