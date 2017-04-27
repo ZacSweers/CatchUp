@@ -18,6 +18,7 @@ buildscript {
   dependencies {
     classpath rootProject.ext.androidPlugin
     classpath rootProject.ext.firebasePlugin
+    classpath rootProject.ext.bugsnagPlugin
     classpath rootProject.ext.psyncPlugin
     classpath rootProject.ext.versionsPlugin
     classpath rootProject.ext.errorPronePlugin
@@ -31,6 +32,7 @@ apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.flipboard.psync'
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
 apply plugin: 'com.apollographql.android'
+apply plugin: 'com.bugsnag.android.gradle'
 
 private String getPropertyOrEmpty(String property) {
   if (hasProperty(property)) {
@@ -127,6 +129,12 @@ android {
     textOutput 'stdout'
     htmlReport !rootProject.ext.ci
     xmlReport !rootProject.ext.ci
+  }
+}
+
+if (getPropertyOrEmpty("catchup_bugsnag_key")) {
+  bugsnag {
+    apiKey getPropertyOrEmpty("catchup_bugsnag_key")
   }
 }
 

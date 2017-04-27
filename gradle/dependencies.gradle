@@ -91,6 +91,7 @@ ext {
   stetho = "com.facebook.stetho:stetho:$stethoVersion"
   stethoOkHttp = "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
   versionsPlugin = 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
+  bugsnagPlugin = 'com.bugsnag:bugsnag-android-gradle-plugin:2.3.2'
 
   // Apollo
   def apolloVersion = '0.3.0'
