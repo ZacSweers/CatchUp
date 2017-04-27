@@ -16,21 +16,21 @@
 
 package io.sweers.catchup.data.hackernews.model;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
+import com.google.firebase.database.DataSnapshot;
 import io.sweers.catchup.ui.base.HasStableId;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+import me.mattlogan.auto.value.firebase.adapter.FirebaseAdapter;
+import me.mattlogan.auto.value.firebase.adapter.TypeAdapter;
+import me.mattlogan.auto.value.firebase.annotation.FirebaseValue;
 import org.threeten.bp.Instant;
 
 @AutoValue
+@FirebaseValue
 public abstract class HackerNewsStory implements HasStableId {
-
-  public static JsonAdapter<HackerNewsStory> jsonAdapter(@NonNull Moshi moshi) {
-    return new AutoValue_HackerNewsStory.MoshiJsonAdapter(moshi);
-  }
 
   public abstract String by();
 
@@ -40,9 +40,9 @@ public abstract class HackerNewsStory implements HasStableId {
 
   public abstract int descendants();
 
-  public abstract String id();
+  public abstract long id();
 
-  @Nullable public abstract List<String> kids();
+  @Nullable public abstract List<Long> kids();
 
   @Nullable public abstract HackerNewsStory parent();
 
@@ -50,17 +50,44 @@ public abstract class HackerNewsStory implements HasStableId {
 
   public abstract int score();
 
-  public abstract Instant time();
+  @FirebaseAdapter(InstantAdapter.class) public abstract Instant time();
 
   public abstract String title();
 
   @Nullable public abstract String text();
 
-  public abstract HNType type();
+  @FirebaseAdapter(HNTypeAdapter.class) public abstract HNType type();
 
   @Nullable public abstract String url();
 
   @Override public long stableId() {
-    return id().hashCode();
+    return id();
+  }
+
+  public static HackerNewsStory create(DataSnapshot dataSnapshot) {
+    return dataSnapshot.getValue(AutoValue_HackerNewsStory.FirebaseValue.class)
+        .toAutoValue();
+  }
+
+  public static class InstantAdapter implements TypeAdapter<Instant, Long> {
+    @Override public Instant fromFirebaseValue(Long value) {
+      return Instant.ofEpochMilli(TimeUnit.MILLISECONDS.convert(value, TimeUnit.SECONDS));
+    }
+
+    @Override public Long toFirebaseValue(Instant value) {
+      long longTime = value.toEpochMilli();
+      return TimeUnit.MILLISECONDS.convert(longTime, TimeUnit.SECONDS);
+    }
+  }
+
+  public static class HNTypeAdapter implements TypeAdapter<HNType, String> {
+    @Override public HNType fromFirebaseValue(String value) {
+      return HNType.valueOf(value.toUpperCase(Locale.US));
+    }
+
+    @Override public String toFirebaseValue(HNType value) {
+      return value.name()
+          .toLowerCase(Locale.US);
+    }
   }
 }

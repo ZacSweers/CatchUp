@@ -21,7 +21,6 @@ import android.support.v4.util.ArrayMap;
 import io.sweers.catchup.P;
 import io.sweers.catchup.data.designernews.DesignerNewsService;
 import io.sweers.catchup.data.dribbble.DribbbleService;
-import io.sweers.catchup.data.hackernews.HackerNewsService;
 import io.sweers.catchup.data.medium.MediumService;
 import io.sweers.catchup.data.model.ServiceData;
 import io.sweers.catchup.data.producthunt.ProductHuntService;
@@ -46,11 +45,6 @@ public final class MockDataInterceptor implements Interceptor {
   // TODO Generate this?
   private static final ArrayMap<String, ServiceData> SUPPORTED_ENDPOINTS =
       new ArrayMap<String, ServiceData>() {{
-        put(
-            HackerNewsService.HOST,
-            new ServiceData.Builder("hn").addEndpoint("/v0/topstories")
-                .addEndpoint("/v0/item/11665804")
-                .build());
         put(
             RedditService.HOST,
             new ServiceData.Builder("r").addEndpoint("/")

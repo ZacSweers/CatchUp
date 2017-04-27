@@ -164,8 +164,13 @@ dependencies {
   testCompile supportLibraries
   androidTestCompile supportLibraries
 
+  // Firebase
   compile rootProject.ext.firebaseCore
   compile rootProject.ext.firebaseConfig
+  compile rootProject.ext.firebaseDatabase
+  annotationProcessor rootProject.ext.autoValueFirebase
+  provided rootProject.ext.autoValueFirebaseAnnotation
+  compile rootProject.ext.autoValueFirebaseAdapter
 
   // Square/JW
   compile rootProject.ext.butterKnife

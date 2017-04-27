@@ -40,9 +40,18 @@ ext {
   multidex = 'com.android.support:multidex:1.0.1'
   androidPlugin = 'com.android.tools.build:gradle:2.4.0-alpha6'
   constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.2'
+
+  // Firebase
   firebasePlugin = 'com.google.gms:google-services:3.0.0'
   firebaseCore = "com.google.firebase:firebase-core:$firebaseVersion"
   firebaseConfig = "com.google.firebase:firebase-config:$firebaseVersion"
+  firebaseDatabase = "com.google.firebase:firebase-database:$firebaseVersion"
+  autoValueFirebaseVersion = '1.0.1'
+  autoValueFirebase = "me.mattlogan.auto.value:auto-value-firebase:$autoValueFirebaseVersion"
+  autoValueFirebaseAnnotation =
+      "me.mattlogan.auto.value:auto-value-firebase-annotation:$autoValueFirebaseVersion"
+  autoValueFirebaseAdapter =
+      "me.mattlogan.auto.value:auto-value-firebase-adapter:$autoValueFirebaseVersion"
 
   // Dagger
   daggerVersion = '2.10'
