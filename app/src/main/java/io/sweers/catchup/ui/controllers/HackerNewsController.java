@@ -25,6 +25,7 @@ import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -115,40 +116,43 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
 
   @NonNull @Override protected Single<List<HackerNewsStory>> getDataSingle(int page) {
     int itemsPerPage = 25; // TODO Pref this
-    return Single.create((SingleEmitter<DataSnapshot> emitter) -> database.get()
-        .getReference("v0/topstories")
-        .addValueEventListener(new ValueEventListener() {
-          @Override public void onDataChange(DataSnapshot dataSnapshot) {
-            if (dataSnapshot != null) {
-              emitter.onSuccess(dataSnapshot);
-            }
-          }
+    return Single.create((SingleEmitter<DataSnapshot> emitter) -> {
+      ValueEventListener listener = new ValueEventListener() {
+        @Override public void onDataChange(DataSnapshot dataSnapshot) {
+          emitter.onSuccess(dataSnapshot);
+        }
 
-          @Override public void onCancelled(DatabaseError firebaseError) {
-            Timber.d("%d", firebaseError.getCode());
-            emitter.onError(firebaseError.toException());
-          }
-        }))
+        @Override public void onCancelled(DatabaseError firebaseError) {
+          Timber.d("%d", firebaseError.getCode());
+          emitter.onError(firebaseError.toException());
+        }
+      };
+
+      DatabaseReference ref = database.get()
+          .getReference("v0/topstories");
+      emitter.setCancellable(() -> ref.removeEventListener(listener));
+      ref.addValueEventListener(listener);
+    })
         .flattenAsObservable(DataSnapshot::getChildren)
         .skip(((page + 1) * itemsPerPage) - itemsPerPage)
         .take(itemsPerPage)
         .map(d -> (Long) d.getValue())
         .concatMapEager(id -> Observable.create((ObservableOnSubscribe<DataSnapshot>) emitter -> {
-          database.get()
-              .getReference("v0/item/" + id)
-              .addValueEventListener(new ValueEventListener() {
-                @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                  if (dataSnapshot != null) {
-                    emitter.onNext(dataSnapshot);
-                    emitter.onComplete();
-                  }
-                }
+          DatabaseReference ref = database.get()
+              .getReference("v0/item/" + id);
+          ValueEventListener listener = new ValueEventListener() {
+            @Override public void onDataChange(DataSnapshot dataSnapshot) {
+              emitter.onNext(dataSnapshot);
+              emitter.onComplete();
+            }
 
-                @Override public void onCancelled(DatabaseError firebaseError) {
-                  Timber.d("%d", firebaseError.getCode());
-                  emitter.onError(firebaseError.toException());
-                }
-              });
+            @Override public void onCancelled(DatabaseError firebaseError) {
+              Timber.d("%d", firebaseError.getCode());
+              emitter.onError(firebaseError.toException());
+            }
+          };
+          emitter.setCancellable(() -> ref.removeEventListener(listener));
+          ref.addValueEventListener(listener);
         }))
         .map(HackerNewsStory::create)
         .toList();
