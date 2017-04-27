@@ -171,10 +171,11 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     final int pageToRequest = page++;
     isDataLoading = true;
     if (adapter.getItemCount() != 0) {
-      adapter.dataStartedLoading();
+      recyclerView.post(() -> adapter.dataStartedLoading());
     }
     AtomicLong timer = new AtomicLong();
-    getDataSingle(pageToRequest).observeOn(AndroidSchedulers.mainThread())
+    getDataSingle(pageToRequest)
+        .observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
@@ -182,7 +183,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
         .doOnSubscribe(disposable -> timer.set(System.currentTimeMillis()))
         .doFinally(() -> {
           isDataLoading = false;
-          adapter.dataFinishedLoading();
+          recyclerView.post(() -> adapter.dataFinishedLoading());
           Timber.d("Data load - "
               + getClass().getSimpleName()
               + " - took: "
@@ -193,11 +194,13 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
           progress.setVisibility(GONE);
           errorView.setVisibility(GONE);
           swipeRefreshLayout.setVisibility(VISIBLE);
-          if (fromRefresh) {
-            adapter.setData(data);
-          } else {
-            adapter.addData(data);
-          }
+          recyclerView.post(() -> {
+            if (fromRefresh) {
+              adapter.setData(data);
+            } else {
+              adapter.addData(data);
+            }
+          });
           loaded = true;
         }, e -> {
           if (pageToRequest == 0) {
