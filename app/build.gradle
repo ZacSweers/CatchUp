@@ -43,7 +43,7 @@ private String getPropertyOrEmpty(String property) {
 }
 
 repositories {
-  mavenLocal()
+  jcenter()
   maven { url "https://jitpack.io" }
 }
 
