@@ -59,13 +59,6 @@
     public *;
 }
 
-# Kotlin
--dontwarn kotlin.**
-# Optionally remove runtime nullchecks, possible perf gain
--assumenosideeffects class kotlin.jvm.internal.Intrinsics {
-    static void checkParameterIsNotNull(java.lang.Object, java.lang.String);
-}
-
 # SimpleXML
 -dontwarn com.bea.xml.stream.**
 -dontwarn org.simpleframework.xml.stream.**
@@ -75,5 +68,26 @@
     @org.simpleframework.xml.* <init>(...);
 }
 
+# Some models that need to be reflective
+-keep class io.sweers.catchup.data.github.**{ *; }
+-keep class io.sweers.catchup.data.hackernews.model.**{ *; }
+
 # Okio
 -dontwarn okio.**
+
+# Error Prone
+-dontwarn com.google.errorprone.annotations.**
+
+# RxJava 1
+-dontwarn sun.misc.**
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+   long producerIndex;
+   long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
+-dontnote rx.internal.util.PlatformDependent

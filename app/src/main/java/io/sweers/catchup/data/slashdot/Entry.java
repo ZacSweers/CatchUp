@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.data.slashdot;
 
+import android.support.annotation.Keep;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.NamespaceList;
@@ -23,6 +24,7 @@ import org.simpleframework.xml.Root;
 
 import io.sweers.catchup.ui.base.HasStableId;
 
+@Keep
 @NamespaceList(
     {
         @Namespace(reference = "http://purl.org/rss/1.0/modules/slash/", prefix = "slash")

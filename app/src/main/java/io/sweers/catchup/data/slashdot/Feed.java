@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.data.slashdot;
 
+import android.support.annotation.Keep;
 import java.util.List;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
@@ -23,6 +24,7 @@ import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.NamespaceList;
 import org.simpleframework.xml.Root;
 
+@Keep
 @NamespaceList({
                    @Namespace(reference = "http://www.w3.org/2005/Atom",
                               prefix = "atom")

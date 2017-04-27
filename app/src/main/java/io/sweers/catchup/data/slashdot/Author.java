@@ -16,9 +16,11 @@
 
 package io.sweers.catchup.data.slashdot;
 
+import android.support.annotation.Keep;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
+@Keep
 @Root(strict = false)
 public class Author {
 
