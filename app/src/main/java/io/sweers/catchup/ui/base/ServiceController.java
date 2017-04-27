@@ -22,9 +22,11 @@ import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import io.reactivex.ObservableTransformer;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LinkManager.UrlMeta;
@@ -36,6 +38,8 @@ import io.sweers.catchup.util.UiUtil;
  */
 public abstract class ServiceController extends ButterKnifeController {
 
+  protected static final int TYPE_ITEM = 0;
+  protected static final int TYPE_LOADING_MORE = -1;
   @ColorInt private int serviceThemeColor = Color.BLACK;
 
   public ServiceController() {
@@ -67,5 +71,15 @@ public abstract class ServiceController extends ButterKnifeController {
 
   @ColorInt public int getServiceThemeColor() {
     return serviceThemeColor;
+  }
+
+  public static class LoadingMoreHolder extends RecyclerView.ViewHolder {
+
+    public final ProgressBar progress;
+
+    public LoadingMoreHolder(View itemView) {
+      super(itemView);
+      progress = (ProgressBar) itemView;
+    }
   }
 }

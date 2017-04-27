@@ -67,7 +67,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
     return new ContextThemeWrapper(context, R.style.CatchUp_DesignerNews);
   }
 
-  @Override protected void bindItemView(@NonNull Story story, @NonNull ViewHolder holder) {
+  @Override protected void bindItemView(@NonNull Story story, @NonNull NewsItemViewHolder holder) {
     //Story story = storyMeta.story;
     //User user = storyMeta.user;
     holder.title(story.title());
@@ -96,8 +96,8 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<Story>> getDataSingle() {
-    return service.getTopStories();
+  @NonNull @Override protected Single<List<Story>> getDataSingle(int page) {
+    return service.getTopStories(page);
     // This won't do for now because /users endpoint sporadically barfs on specific user IDs
     //return service.getTopStories()
     //    .flatMap(stories -> Observable.zip(

@@ -24,6 +24,7 @@ import io.sweers.catchup.util.collect.CommaJoinerList;
 import java.util.List;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Models the Designer News API.
@@ -35,7 +36,7 @@ public interface DesignerNewsService {
   String HOST = "www.designernews.co/api/v2/";
   String ENDPOINT = "https://" + HOST;
 
-  @GET("stories") @Wrapped("stories") Single<List<Story>> getTopStories();
+  @GET("stories") @Wrapped("stories") Single<List<Story>> getTopStories(@Query("page") int page);
 
   @GET("users/{ids}") @Wrapped("users") Single<List<User>> getUsers(
       @Path("ids") CommaJoinerList<String> ids);

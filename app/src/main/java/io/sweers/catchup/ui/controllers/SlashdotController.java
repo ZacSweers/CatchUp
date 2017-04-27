@@ -62,7 +62,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
     return new ContextThemeWrapper(context, R.style.CatchUp_Slashdot);
   }
 
-  @Override protected void bindItemView(@NonNull Entry entry, @NonNull ViewHolder holder) {
+  @Override protected void bindItemView(@NonNull Entry entry, @NonNull NewsItemViewHolder holder) {
     holder.title(entry.title);
 
     holder.score(null);
@@ -86,7 +86,8 @@ public final class SlashdotController extends BaseNewsController<Entry> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<Entry>> getDataSingle() {
+  @NonNull @Override protected Single<List<Entry>> getDataSingle(int page) {
+    setMoreDataAvailable(false);
     return service.main()
         .map(channel -> channel.itemList);
   }

@@ -19,6 +19,7 @@ package io.sweers.catchup.ui.base;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -43,11 +44,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.BiConsumer;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.RxViewHolder;
+import io.sweers.catchup.ui.InfiniteScrollListener;
 import io.sweers.catchup.ui.Scrollable;
+import io.sweers.catchup.util.Iterables;
 import io.sweers.catchup.util.NumberUtil;
 import io.sweers.catchup.util.Strings;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
@@ -59,7 +62,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public abstract class BaseNewsController<T extends HasStableId> extends ServiceController
-    implements SwipeRefreshLayout.OnRefreshListener, Scrollable {
+    implements SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
 
   @BindView(R.id.error_container) View errorView;
   @BindView(R.id.error_message) TextView errorTextView;
@@ -70,6 +73,9 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
 
   private Adapter<T> adapter;
   private boolean loaded = false;
+  private int page = 0;
+  private boolean moreDataAvailable = true;
+  private boolean isDataLoading = false;
 
   public BaseNewsController() {
     super();
@@ -85,9 +91,9 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
    * @param t The datum to back the view with.
    * @param holder The item ViewHolder instance.
    */
-  protected abstract void bindItemView(@NonNull T t, @NonNull ViewHolder holder);
+  protected abstract void bindItemView(@NonNull T t, @NonNull NewsItemViewHolder holder);
 
-  @NonNull protected abstract Single<List<T>> getDataSingle();
+  @NonNull protected abstract Single<List<T>> getDataSingle(int page);
 
   @Override
   protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
@@ -106,6 +112,11 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     LinearLayoutManager layoutManager =
         new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
     recyclerView.setLayoutManager(layoutManager);
+    recyclerView.addOnScrollListener(new InfiniteScrollListener(layoutManager, this) {
+      @Override public void onLoadMore() {
+        loadData();
+      }
+    });
     adapter = new Adapter<>(this::bindItemView);
     recyclerView.setAdapter(adapter);
     swipeRefreshLayout.setOnRefreshListener(this);
@@ -113,7 +124,9 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     FadeInUpAnimator itemAnimator = new FadeInUpAnimator(new OvershootInterpolator(1f));
     itemAnimator.setAddDuration(300);
     itemAnimator.setRemoveDuration(300);
-    recyclerView.setItemAnimator(itemAnimator);
+
+    // This blows up adding item ranges >_>
+    //recyclerView.setItemAnimator(itemAnimator);
   }
 
   @OnClick(R.id.retry_button) void onRetry() {
@@ -135,122 +148,216 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     }
   }
 
+  @Override public boolean isDataLoading() {
+    return isDataLoading;
+  }
+
+  protected void setMoreDataAvailable(boolean moreDataAvailable) {
+    this.moreDataAvailable = moreDataAvailable;
+  }
+
   private void loadData() {
+    loadData(false);
+  }
+
+  private void loadData(final boolean fromRefresh) {
+    if (fromRefresh) {
+      moreDataAvailable = true;
+      page = 0;
+    }
+    if (!moreDataAvailable) {
+      return;
+    }
+    final int pageToRequest = page++;
+    isDataLoading = true;
+    if (adapter.getItemCount() != 0) {
+      adapter.dataStartedLoading();
+    }
     AtomicLong timer = new AtomicLong();
-    getDataSingle().observeOn(AndroidSchedulers.mainThread())
+    getDataSingle(pageToRequest).observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
         .doOnSubscribe(disposable -> timer.set(System.currentTimeMillis()))
-        .doFinally(() -> System.out.println("Data load - "
-            + getClass().getSimpleName()
-            + " - took: "
-            + (System.currentTimeMillis() - timer.get())))
+        .doFinally(() -> {
+          isDataLoading = false;
+          adapter.dataFinishedLoading();
+          Timber.d("Data load - "
+              + getClass().getSimpleName()
+              + " - took: "
+              + (System.currentTimeMillis() - timer.get()));
+        })
         .to(new SingleScoper<>(this))
         .subscribe(data -> {
           progress.setVisibility(GONE);
           errorView.setVisibility(GONE);
           swipeRefreshLayout.setVisibility(VISIBLE);
-          adapter.setData(data);
+          if (fromRefresh) {
+            adapter.setData(data);
+          } else {
+            adapter.addData(data);
+          }
           loaded = true;
         }, e -> {
-          if (e instanceof IOException) {
-            AnimatedVectorDrawableCompat avd =
-                AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
-            errorImage.setImageDrawable(avd);
-            progress.setVisibility(GONE);
-            errorTextView.setText("Network Problem");
-            swipeRefreshLayout.setVisibility(GONE);
-            errorView.setVisibility(VISIBLE);
-            avd.start();
-          } else if (e instanceof HttpException) {
-            // TODO Show some sort of API error response.
-            AnimatedVectorDrawableCompat avd =
-                AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
-            errorImage.setImageDrawable(avd);
-            progress.setVisibility(GONE);
-            errorTextView.setText("API Problem");
-            swipeRefreshLayout.setVisibility(GONE);
-            errorView.setVisibility(VISIBLE);
-            avd.start();
+          if (pageToRequest == 0) {
+            if (e instanceof IOException) {
+              AnimatedVectorDrawableCompat avd =
+                  AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+              errorImage.setImageDrawable(avd);
+              progress.setVisibility(GONE);
+              errorTextView.setText("Network Problem");
+              swipeRefreshLayout.setVisibility(GONE);
+              errorView.setVisibility(VISIBLE);
+              avd.start();
+            } else if (e instanceof HttpException) {
+              // TODO Show some sort of API error response.
+              AnimatedVectorDrawableCompat avd =
+                  AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+              errorImage.setImageDrawable(avd);
+              progress.setVisibility(GONE);
+              errorTextView.setText("API Problem");
+              swipeRefreshLayout.setVisibility(GONE);
+              errorView.setVisibility(VISIBLE);
+              avd.start();
+            } else {
+              // TODO Show some sort of generic response error
+              AnimatedVectorDrawableCompat avd =
+                  AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+              errorImage.setImageDrawable(avd);
+              progress.setVisibility(GONE);
+              swipeRefreshLayout.setVisibility(GONE);
+              errorTextView.setText("Unknown issue.");
+              errorView.setVisibility(VISIBLE);
+              avd.start();
+            }
+            Timber.e(e, "Update failed!");
           } else {
-            // TODO Show some sort of generic response error
-            AnimatedVectorDrawableCompat avd =
-                AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
-            errorImage.setImageDrawable(avd);
-            progress.setVisibility(GONE);
-            swipeRefreshLayout.setVisibility(GONE);
-            errorTextView.setText("Unknown Issue");
-            errorView.setVisibility(VISIBLE);
-            avd.start();
+            page--;
           }
-          Timber.e(e, "Update failed!");
         });
   }
 
   @Override public void onRefresh() {
-    loadData();
+    loadData(true);
   }
 
   @Override public void onRequestScrollToTop() {
-    recyclerView.smoothScrollToPosition(0);
+    if (adapter.getItemCount() > 50) {
+      recyclerView.scrollToPosition(0);
+    } else {
+      recyclerView.smoothScrollToPosition(0);
+    }
   }
 
-  private static class Adapter<T extends HasStableId> extends RecyclerView.Adapter<ViewHolder> {
+  private static class Adapter<T extends HasStableId>
+      extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+      implements DataLoadingSubject.DataLoadingCallbacks {
 
-    private final List<T> data = new ArrayList<>();
-    private final BiConsumer<T, ViewHolder> bindDelegate;
+    private final LinkedHashSet<T> data = new LinkedHashSet<>();
+    private final BiConsumer<T, NewsItemViewHolder> bindDelegate;
+    private boolean showLoadingMore = false;
 
-    public Adapter(@NonNull BiConsumer<T, ViewHolder> bindDelegate) {
+    public Adapter(@NonNull BiConsumer<T, NewsItemViewHolder> bindDelegate) {
       super();
       this.bindDelegate = bindDelegate;
       setHasStableIds(true);
     }
 
     @Override public long getItemId(int position) {
-      return data.get(position)
+      if (getItemViewType(position) == TYPE_LOADING_MORE) {
+        return RecyclerView.NO_ID;
+      }
+      return Iterables.get(data, position)
           .stableId();
     }
 
-    @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      View view = LayoutInflater.from(parent.getContext())
-          .inflate(R.layout.list_item_general, parent, false);
-      return new ViewHolder(view);
+    @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+      switch (viewType) {
+        case TYPE_ITEM:
+          return new NewsItemViewHolder(layoutInflater.inflate(R.layout.list_item_general,
+              parent,
+              false));
+        case TYPE_LOADING_MORE:
+          return new LoadingMoreHolder(layoutInflater.inflate(R.layout.infinite_loading,
+              parent,
+              false));
+      }
+      return null;
     }
 
-    @Override public void onBindViewHolder(ViewHolder holder, int position) {
-      try {
-        bindDelegate.accept(data.get(position), holder);
-      } catch (Exception e) {
-        Timber.e(e, "Bind delegate failure!");
+    @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+      switch (getItemViewType(position)) {
+        case TYPE_ITEM:
+          try {
+            bindDelegate.accept(Iterables.get(data, position), (NewsItemViewHolder) holder);
+          } catch (Exception e) {
+            Timber.e(e, "Bind delegate failure!");
+          }
+          break;
+        case TYPE_LOADING_MORE:
+          ((LoadingMoreHolder) holder).progress.setVisibility(
+              (position > 0) ? View.VISIBLE : View.INVISIBLE);
+          break;
       }
     }
 
     @Override public int getItemCount() {
+      return getDataItemCount() + (showLoadingMore ? 1 : 0);
+    }
+
+    public int getDataItemCount() {
       return data.size();
     }
 
-    public void setData(List<T> newData) {
-      boolean wasEmpty = data.isEmpty();
-      if (!wasEmpty) {
-        data.clear();
-      }
-      data.addAll(newData);
-      if (wasEmpty) {
-        notifyItemRangeInserted(0, data.size());
-      } else {
-        notifyDataSetChanged();
-      }
+    private int getLoadingMoreItemPosition() {
+      return showLoadingMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    @Override public void onViewRecycled(ViewHolder holder) {
+    @Override public int getItemViewType(int position) {
+      if (position < getDataItemCount() && getDataItemCount() > 0) {
+        return TYPE_ITEM;
+      }
+      return TYPE_LOADING_MORE;
+    }
+
+    @Override public void dataStartedLoading() {
+      if (showLoadingMore) {
+        return;
+      }
+      showLoadingMore = true;
+      notifyItemInserted(getLoadingMoreItemPosition());
+    }
+
+    @Override public void dataFinishedLoading() {
+      if (!showLoadingMore) {
+        return;
+      }
+      final int loadingPos = getLoadingMoreItemPosition();
+      showLoadingMore = false;
+      notifyItemRemoved(loadingPos);
+    }
+
+    public void addData(List<T> newData) {
+      int prevSize = data.size();
+      data.addAll(newData);
+      notifyItemRangeInserted(prevSize, data.size() - prevSize);
+    }
+
+    public void setData(List<T> newData) {
+      data.clear();
+      data.addAll(newData);
+      notifyDataSetChanged();
+    }
+
+    @Override public void onViewRecycled(RecyclerView.ViewHolder holder) {
       super.onViewRecycled(holder);
       RxViewHolder.onViewRecycled(holder);
     }
   }
 
-  public static class ViewHolder extends RxViewHolder {
+  public static class NewsItemViewHolder extends RxViewHolder {
 
     @BindView(R.id.container) View container;
     @BindView(R.id.title) TextView title;
@@ -265,12 +372,12 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     @BindView(R.id.tag_divider) View tagDivider;
     private Unbinder unbinder;
 
-    public ViewHolder(@NonNull View itemView) {
+    public NewsItemViewHolder(@NonNull View itemView) {
       super(itemView);
       if (unbinder != null) {
         unbinder.unbind();
       }
-      unbinder = new BaseNewsController$ViewHolder_ViewBinding(this, itemView);
+      unbinder = new BaseNewsController$NewsItemViewHolder_ViewBinding(this, itemView);
     }
 
     public Observable<Object> itemClicks() {

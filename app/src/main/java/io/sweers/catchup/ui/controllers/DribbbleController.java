@@ -75,9 +75,12 @@ import io.sweers.catchup.data.RxViewHolder;
 import io.sweers.catchup.data.dribbble.DribbbleService;
 import io.sweers.catchup.data.dribbble.model.Shot;
 import io.sweers.catchup.injection.ControllerKey;
+import io.sweers.catchup.ui.InfiniteScrollListener;
 import io.sweers.catchup.ui.Scrollable;
+import io.sweers.catchup.ui.base.DataLoadingSubject;
 import io.sweers.catchup.ui.base.ServiceController;
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView;
+import io.sweers.catchup.util.Iterables;
 import io.sweers.catchup.util.ObservableColorMatrix;
 import io.sweers.catchup.util.UiUtil;
 import io.sweers.catchup.util.glide.DribbbleTarget;
@@ -99,7 +102,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public class DribbbleController extends ServiceController
-    implements SwipeRefreshLayout.OnRefreshListener, Scrollable {
+    implements SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
 
   @ColorInt private static final int INITIAL_GIF_BADGE_COLOR = 0x40ffffff;
   @Inject DribbbleService service;
@@ -111,6 +114,8 @@ public class DribbbleController extends ServiceController
   @BindView(R.id.progress) ProgressBar progress;
   @BindView(R.id.refresh) SwipeRefreshLayout swipeRefreshLayout;
   private Adapter adapter;
+  private int page = 0;
+  private boolean isDataLoading = false;
 
   public DribbbleController() {
     super();
@@ -147,6 +152,16 @@ public class DribbbleController extends ServiceController
             .to(new CompletableScoper(viewHolder))
             .subscribe());
     recyclerView.setAdapter(adapter);
+    recyclerView.addOnScrollListener(new InfiniteScrollListener(layoutManager, this) {
+      @Override public void onLoadMore() {
+        loadData();
+      }
+    });
+    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+      @Override public int getSpanSize(int position) {
+        return adapter.getItemColumnSpan(position);
+      }
+    });
     swipeRefreshLayout.setOnRefreshListener(this);
   }
 
@@ -156,20 +171,33 @@ public class DribbbleController extends ServiceController
     loadData();
   }
 
+  @Override public boolean isDataLoading() {
+    return isDataLoading;
+  }
+
   private void loadData() {
-    service.getPopular(1, 50)
+    int currentPage = page++;
+    isDataLoading = true;
+    if (adapter.getItemCount() != 0) {
+      adapter.dataStartedLoading();
+    }
+    service.getPopular(currentPage, 50)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
+        .doFinally(() -> {
+          isDataLoading = false;
+          adapter.dataFinishedLoading();
+        })
         .to(new SingleScoper<>(this))
         .subscribe(shots -> {
           progress.setVisibility(GONE);
           errorView.setVisibility(GONE);
           swipeRefreshLayout.setVisibility(VISIBLE);
-          adapter.setShots(shots);
+          adapter.addShots(shots);
         }, e -> {
           if (e instanceof IOException) {
             AnimatedVectorDrawableCompat avd =
@@ -221,7 +249,11 @@ public class DribbbleController extends ServiceController
   }
 
   @Override public void onRequestScrollToTop() {
-    recyclerView.smoothScrollToPosition(0);
+    if (adapter.getItemCount() > 50) {
+      recyclerView.scrollToPosition(0);
+    } else {
+      recyclerView.smoothScrollToPosition(0);
+    }
   }
 
   @Subcomponent
@@ -231,11 +263,13 @@ public class DribbbleController extends ServiceController
     abstract class Builder extends AndroidInjector.Builder<DribbbleController> {}
   }
 
-  private static class Adapter extends RecyclerView.Adapter<Adapter.DribbbleShotHolder> {
+  private static class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+      implements DataLoadingCallbacks {
 
     private final List<Shot> shots = new ArrayList<>();
     private final ColorDrawable[] shotLoadingPlaceholders;
     @NonNull private final Action2<Shot, DribbbleShotHolder> bindDelegate;
+    private boolean showLoadingMore = false;
 
     public Adapter(Context context, @NonNull Action2<Shot, DribbbleShotHolder> bindDelegate) {
       this.bindDelegate = bindDelegate;
@@ -254,88 +288,145 @@ public class DribbbleController extends ServiceController
       }
     }
 
-    public void setShots(List<Shot> newShots) {
-      boolean wasEmpty = shots.isEmpty();
-      if (!wasEmpty) {
-        shots.clear();
-      }
+    public void addShots(List<Shot> newShots) {
+      int prevSize = shots.size();
       shots.addAll(newShots);
-      if (wasEmpty) {
-        notifyItemRangeInserted(0, shots.size());
-      } else {
-        notifyDataSetChanged();
-      }
+      notifyItemRangeInserted(prevSize, shots.size() - prevSize);
     }
 
     @Override public long getItemId(int position) {
-      return shots.get(position)
+      if (getItemViewType(position) == TYPE_LOADING_MORE) {
+        return RecyclerView.NO_ID;
+      }
+      return Iterables.get(shots, position)
           .stableId();
     }
 
     @TargetApi(Build.VERSION_CODES.M) @Override
-    public DribbbleShotHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      final DribbbleShotHolder holder =
-          new DribbbleShotHolder(LayoutInflater.from(parent.getContext())
-              .inflate(R.layout.dribbble_shot_item, parent, false));
-      holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR);
-      holder.image.setForeground(UiUtil.createColorSelector(0x40808080, null));
-      // play animated GIFs whilst touched
-      holder.image.setOnTouchListener((v, event) -> {
-        // check if it's an event we care about, else bail fast
-        final int action = event.getAction();
-        if (!(action == MotionEvent.ACTION_DOWN
-            || action == MotionEvent.ACTION_UP
-            || action == MotionEvent.ACTION_CANCEL)) {
-          return false;
-        }
-
-        // get the image and check if it's an animated GIF
-        final Drawable drawable = holder.image.getDrawable();
-        if (drawable == null) return false;
-        GifDrawable gif = null;
-        if (drawable instanceof GifDrawable) {
-          gif = (GifDrawable) drawable;
-        } else if (drawable instanceof TransitionDrawable) {
-          // we fade in images on load which uses a TransitionDrawable; check its layers
-          TransitionDrawable fadingIn = (TransitionDrawable) drawable;
-          for (int i = 0; i < fadingIn.getNumberOfLayers(); i++) {
-            if (fadingIn.getDrawable(i) instanceof GifDrawable) {
-              gif = (GifDrawable) fadingIn.getDrawable(i);
-              break;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+      switch (viewType) {
+        case TYPE_ITEM:
+          final DribbbleShotHolder holder =
+              new DribbbleShotHolder(LayoutInflater.from(parent.getContext())
+                  .inflate(R.layout.dribbble_shot_item, parent, false));
+          holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR);
+          holder.image.setForeground(UiUtil.createColorSelector(0x40808080, null));
+          // play animated GIFs whilst touched
+          holder.image.setOnTouchListener((v, event) -> {
+            // check if it's an event we care about, else bail fast
+            final int action = event.getAction();
+            if (!(action == MotionEvent.ACTION_DOWN
+                || action == MotionEvent.ACTION_UP
+                || action == MotionEvent.ACTION_CANCEL)) {
+              return false;
             }
-          }
-        }
-        if (gif == null) return false;
-        // GIF found, start/stop it on press/lift
-        switch (action) {
-          case MotionEvent.ACTION_DOWN:
-            gif.start();
-            break;
-          case MotionEvent.ACTION_UP:
-          case MotionEvent.ACTION_CANCEL:
-            gif.stop();
-            break;
-        }
-        return false;
-      });
-      return holder;
+
+            // get the image and check if it's an animated GIF
+            final Drawable drawable = holder.image.getDrawable();
+            if (drawable == null) return false;
+            GifDrawable gif = null;
+            if (drawable instanceof GifDrawable) {
+              gif = (GifDrawable) drawable;
+            } else if (drawable instanceof TransitionDrawable) {
+              // we fade in images on load which uses a TransitionDrawable; check its layers
+              TransitionDrawable fadingIn = (TransitionDrawable) drawable;
+              for (int i = 0; i < fadingIn.getNumberOfLayers(); i++) {
+                if (fadingIn.getDrawable(i) instanceof GifDrawable) {
+                  gif = (GifDrawable) fadingIn.getDrawable(i);
+                  break;
+                }
+              }
+            }
+            if (gif == null) return false;
+            // GIF found, start/stop it on press/lift
+            switch (action) {
+              case MotionEvent.ACTION_DOWN:
+                gif.start();
+                break;
+              case MotionEvent.ACTION_UP:
+              case MotionEvent.ACTION_CANCEL:
+                gif.stop();
+                break;
+            }
+            return false;
+          });
+          return holder;
+        case TYPE_LOADING_MORE:
+          return new LoadingMoreHolder(layoutInflater.inflate(R.layout.infinite_loading,
+              parent,
+              false));
+      }
+      return null;
     }
 
-    @Override public void onBindViewHolder(DribbbleShotHolder holder, int position) {
-      holder.bindView(shots.get(position));
-      bindDelegate.call(shots.get(position), holder);
+    @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+      switch (getItemViewType(position)) {
+        case TYPE_ITEM:
+          ((DribbbleShotHolder) holder).bindView(shots.get(position));
+          bindDelegate.call(shots.get(position), ((DribbbleShotHolder) holder));
+          break;
+        case TYPE_LOADING_MORE:
+          ((LoadingMoreHolder) holder).progress.setVisibility(
+              (position > 0) ? View.VISIBLE : View.INVISIBLE);
+          break;
+      }
+    }
+
+    @Override @SuppressLint("NewApi") public void onViewRecycled(RecyclerView.ViewHolder holder) {
+      if (holder instanceof DribbbleShotHolder) {
+        // reset the badge & ripple which are dynamically determined
+        ((DribbbleShotHolder) holder).image.setBadgeColor(INITIAL_GIF_BADGE_COLOR);
+        ((DribbbleShotHolder) holder).image.showBadge(false);
+        ((DribbbleShotHolder) holder).image.setForeground(UiUtil.createColorSelector(0x40808080,
+            null));
+        RxViewHolder.onViewRecycled(holder);
+      }
     }
 
     @Override public int getItemCount() {
+      return getDataItemCount() + (showLoadingMore ? 1 : 0);
+    }
+
+    public int getDataItemCount() {
       return shots.size();
     }
 
-    @Override @SuppressLint("NewApi") public void onViewRecycled(DribbbleShotHolder holder) {
-      // reset the badge & ripple which are dynamically determined
-      holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR);
-      holder.image.showBadge(false);
-      holder.image.setForeground(UiUtil.createColorSelector(0x40808080, null));
-      RxViewHolder.onViewRecycled(holder);
+    private int getLoadingMoreItemPosition() {
+      return showLoadingMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
+    }
+
+    @Override public int getItemViewType(int position) {
+      if (position < getDataItemCount() && getDataItemCount() > 0) {
+        return TYPE_ITEM;
+      }
+      return TYPE_LOADING_MORE;
+    }
+
+    @Override public void dataStartedLoading() {
+      if (showLoadingMore) {
+        return;
+      }
+      showLoadingMore = true;
+      notifyItemInserted(getLoadingMoreItemPosition());
+    }
+
+    @Override public void dataFinishedLoading() {
+      if (!showLoadingMore) {
+        return;
+      }
+      final int loadingPos = getLoadingMoreItemPosition();
+      showLoadingMore = false;
+      notifyItemRemoved(loadingPos);
+    }
+
+    public int getItemColumnSpan(int position) {
+      switch (getItemViewType(position)) {
+        case TYPE_LOADING_MORE:
+          return 2;
+        default:
+          return 1;
+      }
     }
 
     class DribbbleShotHolder extends RxViewHolder {

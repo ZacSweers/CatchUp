@@ -19,6 +19,7 @@ package io.sweers.catchup.ui.controllers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
@@ -59,6 +60,8 @@ public final class RedditController extends BaseNewsController<RedditLink> {
   @Inject LinkManager linkManager;
   @Inject SmmryService smmryService;
 
+  @Nullable private String lastSeen = null;
+
   public RedditController() {
     super();
   }
@@ -71,7 +74,8 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     return new ContextThemeWrapper(context, R.style.CatchUp_Reddit);
   }
 
-  @Override protected void bindItemView(@NonNull RedditLink link, @NonNull ViewHolder holder) {
+  @Override
+  protected void bindItemView(@NonNull RedditLink link, @NonNull NewsItemViewHolder holder) {
     holder.title(link.title());
 
     holder.score(Pair.create("+", link.score()));
@@ -103,9 +107,11 @@ public final class RedditController extends BaseNewsController<RedditLink> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<RedditLink>> getDataSingle() {
-    return service.frontPage(50)
+  @NonNull @Override protected Single<List<RedditLink>> getDataSingle(int page) {
+    return service.frontPage(25, lastSeen)
         .map((redditListingRedditResponse) -> {
+          lastSeen = redditListingRedditResponse.data()
+              .after();
           //noinspection CodeBlock2Expr,unchecked
           return (List<RedditLink>) redditListingRedditResponse.data()
               .children();

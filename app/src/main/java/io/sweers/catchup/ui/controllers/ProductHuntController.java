@@ -67,7 +67,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     return new ContextThemeWrapper(context, R.style.CatchUp_ProductHunt);
   }
 
-  @Override protected void bindItemView(@NonNull Post item, @NonNull ViewHolder holder) {
+  @Override protected void bindItemView(@NonNull Post item, @NonNull NewsItemViewHolder holder) {
     holder.title(item.name());
     holder.score(Pair.create("▲", item.votes_count()));
     holder.timestamp(item.created_at());
@@ -89,8 +89,8 @@ public final class ProductHuntController extends BaseNewsController<Post> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<Post>> getDataSingle() {
-    return service.getPosts(0)
+  @NonNull @Override protected Single<List<Post>> getDataSingle(int page) {
+    return service.getPosts(page)
         .map(PostsResponse::posts);
   }
 

@@ -72,7 +72,8 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     return new ContextThemeWrapper(context, R.style.CatchUp_Medium);
   }
 
-  @Override protected void bindItemView(@NonNull MediumPost item, @NonNull ViewHolder holder) {
+  @Override
+  protected void bindItemView(@NonNull MediumPost item, @NonNull NewsItemViewHolder holder) {
     holder.title(item.post()
         .title());
 
@@ -115,7 +116,8 @@ public final class MediumController extends BaseNewsController<MediumPost> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<MediumPost>> getDataSingle() {
+  @NonNull @Override protected Single<List<MediumPost>> getDataSingle(int page) {
+    setMoreDataAvailable(false);
     return service.top()
         .flatMap(references -> Observable.fromIterable(references.post()
             .values())

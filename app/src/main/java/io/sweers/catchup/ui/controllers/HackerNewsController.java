@@ -71,7 +71,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   }
 
   @Override
-  protected void bindItemView(@NonNull HackerNewsStory story, @NonNull ViewHolder holder) {
+  protected void bindItemView(@NonNull HackerNewsStory story, @NonNull NewsItemViewHolder holder) {
     holder.title(story.title());
     holder.score(Pair.create("+", story.score()));
     holder.timestamp(story.time());
@@ -113,10 +113,12 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<HackerNewsStory>> getDataSingle() {
+  @NonNull @Override protected Single<List<HackerNewsStory>> getDataSingle(int page) {
+    int itemsPerPage = 25; // TODO Pref this
     return service.topStories()
         .flattenAsObservable(strings -> strings)
-        .take(50) // TODO Pref this
+        .skip(((page + 1) * itemsPerPage) - itemsPerPage)
+        .take(itemsPerPage)
         .concatMapEager(id -> service.getItem(id)
             .toObservable())
         .toList();

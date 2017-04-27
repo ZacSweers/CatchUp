@@ -87,7 +87,8 @@ public final class GitHubController extends BaseNewsController<Repository> {
     return new ContextThemeWrapper(context, R.style.CatchUp_GitHub);
   }
 
-  @Override protected void bindItemView(@NonNull Repository item, @NonNull ViewHolder holder) {
+  @Override
+  protected void bindItemView(@NonNull Repository item, @NonNull NewsItemViewHolder holder) {
     holder.hideComments();
     holder.title(item.fullName());
     holder.score(Pair.create("★", item.starsCount()));
@@ -103,8 +104,8 @@ public final class GitHubController extends BaseNewsController<Repository> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<Repository>> getDataSingle() {
-
+  @NonNull @Override protected Single<List<Repository>> getDataSingle(int page) {
+    setMoreDataAvailable(false);
     String query = SearchQuery.builder()
         .createdSince(TrendingTimespan.WEEK.createdSince())
         .minStars(50)
