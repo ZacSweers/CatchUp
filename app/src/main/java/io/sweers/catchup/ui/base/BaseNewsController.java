@@ -19,7 +19,6 @@ package io.sweers.catchup.ui.base;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -174,20 +173,18 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
       recyclerView.post(() -> adapter.dataStartedLoading());
     }
     AtomicLong timer = new AtomicLong();
-    getDataSingle(pageToRequest)
-        .observeOn(AndroidSchedulers.mainThread())
+    getDataSingle(pageToRequest).observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
         })
         .doOnSubscribe(disposable -> timer.set(System.currentTimeMillis()))
         .doFinally(() -> {
+          Timber.d("Data load - %s - took: %dms",
+              getClass().getSimpleName(),
+              System.currentTimeMillis() - timer.get());
           isDataLoading = false;
           recyclerView.post(() -> adapter.dataFinishedLoading());
-          Timber.d("Data load - "
-              + getClass().getSimpleName()
-              + " - took: "
-              + (System.currentTimeMillis() - timer.get()));
         })
         .to(new SingleScoper<>(this))
         .subscribe(data -> {
