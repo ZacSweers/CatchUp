@@ -3,6 +3,66 @@ CatchUp
 
 An app for catching up on things on the train.
 
+## Motivations
+
+There's a lot of services I like reading up on throughout the day. Most of these services have 
+dedicated apps for consuming them, but often times I just want to skim the front page and only deep
+dive occasionally. Enter CatchUp: a high level presentation of the "front page" of several services 
+in short form, and intelligent deeplinking into dedicated apps if you want to go further.
+
+CatchUp is not an all-purpose client for each of these services, just the concierge for at-a-glance
+details and router for getting on your way. It does not support login for any service, it does not 
+support customization/filtering of their feed. CatchUp is dumb, and you should use one of the many
+great dedicated apps for this if you want more integration features.
+
+CatchUp is also very much a testing ground for things I personally dive into, from architecture, 
+libraries, patterns, API quirks, and more. It's been a very fun project to spike test new things.
+
+## Features
+
+- Multiple services
+  - Hacker News
+  - Reddit
+  - Medium
+  - Product Hunt
+  - Slashdot
+  - Designer News
+  - Dribbble
+  - GitHub
+- Infinite scrolling on supported services
+- Pleasant, simple, consistent UI for across services
+- Night mode
+- Smart deeplinking into dedicated apps
+
+## Technologies
+
+- RxJava 2/AutoDispose
+- Conductor
+- Dagger 2
+- AutoValue + extensions
+- Firebase
+- Glide
+- Apollo GraphQL
+- Standard Square buffet of Okio/OkHttp 3/Retrofit 2/Moshi
+- ThreetenABP
+- Java 8 + Desugar
+- Error Prone
+
+There's a lot of neat/interesting little tidbits in the CatchUp source code that I plan to write a 
+mini blog series about. Each service has its own nuances that make them unique to work with in code.
+
+## Testing
+
+This is a personal pet project ¯\\\_(ツ)_\/¯.
+
+## Influences
+
+This app owes a lot of its inspiration, implementation details, and general inner workings to the 
+work of others. Particularly:
+- Nick Butcher and his Plaid app
+- Jake Wharton and his u2020 demo app
+- UI color patterning inspired by Sagrada Familia. Don't ask me how to explain that, it just felt right.
+
 License
 -------
 
