@@ -230,8 +230,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
               errorTextView.setText("Unknown issue.");
               errorView.setVisibility(VISIBLE);
               avd.start();
+              Timber.e(e, "Unknown issue.");
             }
-            Timber.e(e, "Update failed!");
           } else {
             page--;
           }
