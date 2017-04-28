@@ -18,6 +18,7 @@ package io.sweers.catchup.app;
 
 import android.app.Application;
 import android.content.Context;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import dagger.Binds;
@@ -32,7 +33,9 @@ public abstract class ApplicationModule {
   @Binds @ApplicationContext
   public abstract Context provideApplicationContext(Application application);
 
-  @Provides public static FirebaseRemoteConfig provideRemoteConfig() {
+  @Provides
+  public static FirebaseRemoteConfig provideRemoteConfig(@ApplicationContext Context context) {
+    FirebaseApp.initializeApp(context);
     FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
     FirebaseRemoteConfigSettings configSettings =
         new FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(BuildConfig.DEBUG)
