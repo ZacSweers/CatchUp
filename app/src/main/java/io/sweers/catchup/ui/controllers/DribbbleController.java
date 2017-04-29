@@ -114,7 +114,7 @@ public class DribbbleController extends ServiceController
   @BindView(R.id.progress) ProgressBar progress;
   @BindView(R.id.refresh) SwipeRefreshLayout swipeRefreshLayout;
   private Adapter adapter;
-  private int page = 0;
+  private int page = 1;
   private boolean isDataLoading = false;
 
   public DribbbleController() {
