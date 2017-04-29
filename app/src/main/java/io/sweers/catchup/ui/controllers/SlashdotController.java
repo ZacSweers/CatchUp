@@ -29,6 +29,7 @@ import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
 import io.reactivex.Single;
+import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.slashdot.Entry;
@@ -131,6 +132,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
               .newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(SimpleXmlConverterFactory.createNonStrict())
+          .validateEagerly(BuildConfig.DEBUG)
           .build();
       return retrofit.create(SlashdotService.class);
     }

@@ -93,6 +93,12 @@ ext {
   versionsPlugin = 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
   bugsnagPlugin = 'com.bugsnag:bugsnag-android-gradle-plugin:2.3.2'
 
+  storeVersion = '2.0.4'
+  store = "com.nytimes.android:store:$storeVersion"
+  storeCache = "com.nytimes.android:cache:$storeVersion"
+  storeMoshi = "com.nytimes.android:middleware-moshi:$storeVersion"
+  storeFS = "com.nytimes.android:filesystem:$storeVersion"
+
   // Apollo
   def apolloVersion = '0.3.0'
   apolloPlugin = "com.apollographql.apollo:gradle-plugin:$apolloVersion"

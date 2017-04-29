@@ -133,6 +133,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
               .newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .validateEagerly(BuildConfig.DEBUG)
           .build()
           .create(ProductHuntService.class);
     }

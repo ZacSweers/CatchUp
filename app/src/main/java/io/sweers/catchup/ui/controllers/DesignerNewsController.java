@@ -32,6 +32,7 @@ import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
 import io.reactivex.Single;
+import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.ISO8601InstantAdapter;
 import io.sweers.catchup.data.LinkManager;
@@ -144,6 +145,7 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
               .newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .validateEagerly(BuildConfig.DEBUG)
           .build();
       return retrofit.create(DesignerNewsService.class);
     }

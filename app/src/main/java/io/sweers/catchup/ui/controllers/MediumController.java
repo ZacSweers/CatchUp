@@ -35,6 +35,7 @@ import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.LinkManager;
@@ -189,6 +190,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
               .newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .validateEagerly(BuildConfig.DEBUG)
           .build();
       return retrofit.create(MediumService.class);
     }

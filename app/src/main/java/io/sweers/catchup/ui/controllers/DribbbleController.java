@@ -528,6 +528,7 @@ public class DribbbleController extends ServiceController
               .newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .validateEagerly(BuildConfig.DEBUG)
           .build()
           .create(DribbbleService.class);
     }

@@ -34,6 +34,7 @@ import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
 import io.reactivex.Single;
+import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.EpochInstantJsonAdapter;
 import io.sweers.catchup.data.LinkManager;
@@ -171,6 +172,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
               .newCall(request))
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .validateEagerly(BuildConfig.DEBUG)
           .build();
       return retrofit.create(RedditService.class);
     }

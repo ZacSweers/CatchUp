@@ -24,6 +24,7 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
+import io.sweers.catchup.BuildConfig;
 import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.ui.controllers.SmmryController;
 import okhttp3.OkHttpClient;
@@ -45,6 +46,7 @@ public abstract class SmmryModule {
             .newCall(request))
         .addCallAdapterFactory(rxJavaCallAdapterFactory)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(BuildConfig.DEBUG)
         .build()
         .create(SmmryService.class);
   }
