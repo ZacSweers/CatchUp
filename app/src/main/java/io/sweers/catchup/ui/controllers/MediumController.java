@@ -83,7 +83,6 @@ import static io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED;
 
 public final class MediumController extends BaseNewsController<MediumPost> {
 
-  @Inject MediumService service;
   @Inject LinkManager linkManager;
   @Inject FirebaseRemoteConfig remoteConfig;
   @Inject Store<List<MediumPost>, String> store;
@@ -146,8 +145,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
         .subscribe();
   }
 
-  @NonNull @Override
-  protected Single<List<MediumPost>> getDataSingle(DataRequest request) {
+  @NonNull @Override protected Single<List<MediumPost>> getDataSingle(DataRequest request) {
     setMoreDataAvailable(false);
     return RxJavaInterop.toV2Observable(request.fromRefresh() ? store.fetch("") : store.get(""))
         .firstOrError();
