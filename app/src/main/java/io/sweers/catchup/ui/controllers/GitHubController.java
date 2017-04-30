@@ -56,12 +56,12 @@ import io.sweers.catchup.data.github.TrendingTimespan;
 import io.sweers.catchup.data.github.model.Repository;
 import io.sweers.catchup.data.github.model.SearchQuery;
 import io.sweers.catchup.data.github.model.User;
-import io.sweers.catchup.injection.ControllerKey;
-import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import io.sweers.catchup.data.github.type.CustomType;
 import io.sweers.catchup.data.github.type.LanguageOrder;
 import io.sweers.catchup.data.github.type.LanguageOrderField;
 import io.sweers.catchup.data.github.type.OrderDirection;
+import io.sweers.catchup.injection.ControllerKey;
+import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.util.collect.Lists;
 import java.util.List;
@@ -104,7 +104,8 @@ public final class GitHubController extends BaseNewsController<Repository> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<Repository>> getDataSingle(int page) {
+  @NonNull @Override
+  protected Single<List<Repository>> getDataSingle(int page, boolean fromRefresh) {
     setMoreDataAvailable(false);
     String query = SearchQuery.builder()
         .createdSince(TrendingTimespan.WEEK.createdSince())
@@ -119,7 +120,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
             .direction(OrderDirection.DESC)
             .field(LanguageOrderField.SIZE)
             .build()))
-        .cacheControl(CacheControl.CACHE_FIRST);
+        .cacheControl(fromRefresh ? CacheControl.NETWORK_FIRST : CacheControl.CACHE_FIRST);
 
     return Rx2Apollo.from(searchQuery)
         .flatMap(data -> Observable.fromIterable(Lists.emptyIfNull(data.search()

@@ -18,13 +18,24 @@ package io.sweers.catchup.ui.controllers;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.nytimes.android.external.fs.FileSystemPersister;
+import com.nytimes.android.external.fs.PathResolver;
+import com.nytimes.android.external.fs.filesystem.FileSystemFactory;
+import com.nytimes.android.external.store.base.Persister;
+import com.nytimes.android.external.store.base.impl.MemoryPolicy;
+import com.nytimes.android.external.store.base.impl.Store;
+import com.nytimes.android.external.store.base.impl.StoreBuilder;
+import com.nytimes.android.external.store.middleware.moshi.MoshiParserFactory;
 import com.serjltt.moshi.adapters.WrappedJsonAdapter;
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
 import com.uber.autodispose.CompletableScoper;
 import com.uber.autodispose.ObservableScoper;
 import dagger.Binds;
@@ -33,6 +44,8 @@ import dagger.Provides;
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
+import hu.akarnokd.rxjava.interop.RxJavaInterop;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.sweers.catchup.BuildConfig;
@@ -43,20 +56,29 @@ import io.sweers.catchup.data.medium.MediumService;
 import io.sweers.catchup.data.medium.model.Collection;
 import io.sweers.catchup.data.medium.model.MediumPost;
 import io.sweers.catchup.injection.ControllerKey;
+import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import io.sweers.catchup.ui.base.BaseNewsController;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okio.BufferedSource;
+import okio.Okio;
 import org.threeten.bp.Instant;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
+import timber.log.Timber;
 
+import static hu.akarnokd.rxjava.interop.RxJavaInterop.toV1Observable;
 import static io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED;
 
 public final class MediumController extends BaseNewsController<MediumPost> {
@@ -64,6 +86,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   @Inject MediumService service;
   @Inject LinkManager linkManager;
   @Inject FirebaseRemoteConfig remoteConfig;
+  @Inject Store<List<MediumPost>, String> store;
 
   public MediumController() {
     super();
@@ -123,8 +146,15 @@ public final class MediumController extends BaseNewsController<MediumPost> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<MediumPost>> getDataSingle(int page) {
+  @NonNull @Override
+  protected Single<List<MediumPost>> getDataSingle(int page, boolean fromRefresh) {
     setMoreDataAvailable(false);
+    return RxJavaInterop.toV2Observable(fromRefresh ? store.fetch("") : store.get(""))
+        .firstOrError();
+    //return getPosts(service);
+  }
+
+  static Single<List<MediumPost>> getPosts(MediumService service) {
     return service.top()
         .flatMap(references -> Observable.fromIterable(references.post()
             .values())
@@ -193,6 +223,48 @@ public final class MediumController extends BaseNewsController<MediumPost> {
           .validateEagerly(BuildConfig.DEBUG)
           .build();
       return retrofit.create(MediumService.class);
+    }
+
+    @Provides
+    static Persister<BufferedSource, String> providePersister(@ApplicationContext Context context) {
+      if (Looper.myLooper() == Looper.getMainLooper()) {
+        Timber.e("Persister on main thread!");
+        //throw new IllegalStateException("Persister initialized on main thread.");
+      }
+      try {
+        return FileSystemPersister.create(FileSystemFactory.create(context.getFilesDir()),
+            new PathResolver<String>() {
+              @Nonnull @Override public String resolve(@Nonnull String key) {
+                return "medium";
+              }
+            });
+      } catch (IOException e) {
+        throw new RuntimeException("Creating FS persister failed", e);
+      }
+    }
+
+    @Provides
+    static Store<List<MediumPost>, String> providePersistedMediumStore(@InternalApi Moshi moshi,
+        MediumService api,
+        Persister<BufferedSource, String> persister) {
+      final Type mediumPostListType = Types.newParameterizedType(List.class, MediumPost.class);
+      final JsonAdapter<List<MediumPost>> adapter = moshi.adapter(mediumPostListType);
+      return StoreBuilder.<String, BufferedSource, List<MediumPost>>parsedWithKey().fetcher(ignored -> {
+        return toV1Observable(getPosts(api).map(value -> {
+
+          // Ew - because the FS persister only supports BufferedSource
+          return Okio.buffer(Okio.source(new ByteArrayInputStream(adapter.toJson(value)
+              .getBytes(StandardCharsets.UTF_8))));
+        })
+            .toObservable(), BackpressureStrategy.ERROR);
+      })
+          .persister(persister)
+          .memoryPolicy(MemoryPolicy.builder()
+              .setExpireAfter(1)
+              .setExpireAfterTimeUnit(TimeUnit.HOURS)
+              .build())
+          .parser(MoshiParserFactory.createSourceParser(moshi, mediumPostListType))
+          .open();
     }
   }
 }

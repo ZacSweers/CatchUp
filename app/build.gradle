@@ -248,9 +248,16 @@ dependencies {
   }
   compile rootProject.ext.moshiLazyAdapters
 
+  // Apollo
   compile rootProject.ext.apolloRuntime
   compile rootProject.ext.apolloRx2Support
   compile rootProject.ext.apolloAndroidSupport
+
+  // Store
+  compile rootProject.ext.store
+  compile rootProject.ext.storeCache
+  compile rootProject.ext.storeMoshi
+  compile rootProject.ext.storeFS
 
   // Stetho
   debugCompile rootProject.ext.stetho

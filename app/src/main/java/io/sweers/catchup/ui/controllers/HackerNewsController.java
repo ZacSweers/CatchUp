@@ -114,7 +114,8 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<HackerNewsStory>> getDataSingle(int page) {
+  @NonNull @Override
+  protected Single<List<HackerNewsStory>> getDataSingle(int page, boolean fromRefresh) {
     int itemsPerPage = 25; // TODO Pref this
     return Single.create((SingleEmitter<DataSnapshot> emitter) -> {
       ValueEventListener listener = new ValueEventListener() {

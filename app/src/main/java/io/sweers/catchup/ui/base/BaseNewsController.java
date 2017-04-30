@@ -92,7 +92,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
    */
   protected abstract void bindItemView(@NonNull T t, @NonNull NewsItemViewHolder holder);
 
-  @NonNull protected abstract Single<List<T>> getDataSingle(int page);
+  @NonNull protected abstract Single<List<T>> getDataSingle(int page, boolean fromRefresh);
 
   @Override
   protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
@@ -173,7 +173,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
       recyclerView.post(() -> adapter.dataStartedLoading());
     }
     AtomicLong timer = new AtomicLong();
-    getDataSingle(pageToRequest).observeOn(AndroidSchedulers.mainThread())
+    getDataSingle(pageToRequest, fromRefresh).observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);

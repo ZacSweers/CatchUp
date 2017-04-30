@@ -17,6 +17,7 @@
 package io.sweers.catchup.app;
 
 import android.app.Application;
+import android.content.Context;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import dagger.BindsInstance;
 import dagger.Component;
@@ -26,6 +27,7 @@ import io.sweers.catchup.data.LumberYard;
 import io.sweers.catchup.data.VariantDataModule;
 import io.sweers.catchup.data.smmry.SmmryModule;
 import io.sweers.catchup.injection.ConductorInjectionModule;
+import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import io.sweers.catchup.ui.activity.ActivityModule;
 import okhttp3.OkHttpClient;
 
@@ -42,6 +44,8 @@ public interface ApplicationComponent {
   Application application();
 
   OkHttpClient okHttpClient();
+
+  @ApplicationContext Context applicationContext();
 
   FirebaseRemoteConfig remoteConfig();
 

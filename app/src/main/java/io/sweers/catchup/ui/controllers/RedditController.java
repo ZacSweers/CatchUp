@@ -112,7 +112,8 @@ public final class RedditController extends BaseNewsController<RedditLink> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<RedditLink>> getDataSingle(int page) {
+  @NonNull @Override
+  protected Single<List<RedditLink>> getDataSingle(int page, boolean fromRefresh) {
     return service.frontPage(25, lastSeen)
         .map((redditListingRedditResponse) -> {
           lastSeen = redditListingRedditResponse.data()
