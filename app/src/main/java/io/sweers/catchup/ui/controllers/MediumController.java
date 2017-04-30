@@ -151,7 +151,6 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     setMoreDataAvailable(false);
     return RxJavaInterop.toV2Observable(fromRefresh ? store.fetch("") : store.get(""))
         .firstOrError();
-    //return getPosts(service);
   }
 
   static Single<List<MediumPost>> getPosts(MediumService service) {
@@ -245,17 +244,27 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
     @Provides
     static Store<List<MediumPost>, String> providePersistedMediumStore(@InternalApi Moshi moshi,
-        MediumService api,
+        MediumService service,
         Persister<BufferedSource, String> persister) {
       final Type mediumPostListType = Types.newParameterizedType(List.class, MediumPost.class);
       final JsonAdapter<List<MediumPost>> adapter = moshi.adapter(mediumPostListType);
       return StoreBuilder.<String, BufferedSource, List<MediumPost>>parsedWithKey().fetcher(ignored -> {
-        return toV1Observable(getPosts(api).map(value -> {
-
-          // Ew - because the FS persister only supports BufferedSource
-          return Okio.buffer(Okio.source(new ByteArrayInputStream(adapter.toJson(value)
-              .getBytes(StandardCharsets.UTF_8))));
-        })
+        return toV1Observable(service.top()
+            .flatMap(references -> Observable.fromIterable(references.post()
+                .values())
+                .map(post -> MediumPost.builder()
+                    .post(post)
+                    .user(references.user()
+                        .get(post.creatorId()))
+                    .collection(references.collection()
+                        .get(post.homeCollectionId()))
+                    .build()))
+            .toList()
+            .map(value -> {
+              // Ew - because the FS persister only supports BufferedSource
+              return Okio.buffer(Okio.source(new ByteArrayInputStream(adapter.toJson(value)
+                  .getBytes(StandardCharsets.UTF_8))));
+            })
             .toObservable(), BackpressureStrategy.ERROR);
       })
           .persister(persister)
