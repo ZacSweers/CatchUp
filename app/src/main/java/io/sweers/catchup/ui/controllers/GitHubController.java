@@ -104,8 +104,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
         .subscribe();
   }
 
-  @NonNull @Override
-  protected Single<List<Repository>> getDataSingle(int page, boolean fromRefresh) {
+  @NonNull @Override protected Single<List<Repository>> getDataSingle(DataRequest request) {
     setMoreDataAvailable(false);
     String query = SearchQuery.builder()
         .createdSince(TrendingTimespan.WEEK.createdSince())
@@ -120,7 +119,8 @@ public final class GitHubController extends BaseNewsController<Repository> {
             .direction(OrderDirection.DESC)
             .field(LanguageOrderField.SIZE)
             .build()))
-        .cacheControl(fromRefresh ? CacheControl.NETWORK_FIRST : CacheControl.CACHE_FIRST);
+        .cacheControl(
+            request.fromRefresh() ? CacheControl.NETWORK_FIRST : CacheControl.CACHE_FIRST);
 
     return Rx2Apollo.from(searchQuery)
         .flatMap(data -> Observable.fromIterable(Lists.emptyIfNull(data.search()

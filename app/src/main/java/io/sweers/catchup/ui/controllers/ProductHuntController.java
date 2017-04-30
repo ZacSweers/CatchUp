@@ -89,8 +89,8 @@ public final class ProductHuntController extends BaseNewsController<Post> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<Post>> getDataSingle(int page, boolean fromRefresh) {
-    return service.getPosts(page)
+  @NonNull @Override protected Single<List<Post>> getDataSingle(DataRequest request) {
+    return service.getPosts(request.page())
         .map(PostsResponse::posts);
   }
 

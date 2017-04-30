@@ -115,7 +115,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   }
 
   @NonNull @Override
-  protected Single<List<HackerNewsStory>> getDataSingle(int page, boolean fromRefresh) {
+  protected Single<List<HackerNewsStory>> getDataSingle(DataRequest request) {
     int itemsPerPage = 25; // TODO Pref this
     return Single.create((SingleEmitter<DataSnapshot> emitter) -> {
       ValueEventListener listener = new ValueEventListener() {
@@ -135,7 +135,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
       ref.addValueEventListener(listener);
     })
         .flattenAsObservable(DataSnapshot::getChildren)
-        .skip(((page + 1) * itemsPerPage) - itemsPerPage)
+        .skip(((request.page() + 1) * itemsPerPage) - itemsPerPage)
         .take(itemsPerPage)
         .map(d -> (Long) d.getValue())
         .concatMapEager(id -> Observable.create((ObservableOnSubscribe<DataSnapshot>) emitter -> {

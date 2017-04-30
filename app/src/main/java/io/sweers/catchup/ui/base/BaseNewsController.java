@@ -35,6 +35,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import com.google.auto.value.AutoValue;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.uber.autodispose.SingleScoper;
 import io.reactivex.Observable;
@@ -92,7 +93,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
    */
   protected abstract void bindItemView(@NonNull T t, @NonNull NewsItemViewHolder holder);
 
-  @NonNull protected abstract Single<List<T>> getDataSingle(int page, boolean fromRefresh);
+  @NonNull protected abstract Single<List<T>> getDataSingle(DataRequest request);
 
   @Override
   protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
@@ -173,7 +174,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
       recyclerView.post(() -> adapter.dataStartedLoading());
     }
     AtomicLong timer = new AtomicLong();
-    getDataSingle(pageToRequest, fromRefresh).observeOn(AndroidSchedulers.mainThread())
+    getDataSingle(DataRequest.create(fromRefresh, pageToRequest))
+        .observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
@@ -354,6 +356,18 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     @Override public void onViewRecycled(RecyclerView.ViewHolder holder) {
       super.onViewRecycled(holder);
       RxViewHolder.onViewRecycled(holder);
+    }
+  }
+
+  @AutoValue
+  public abstract static class DataRequest {
+
+    public abstract boolean fromRefresh();
+
+    public abstract int page();
+
+    static DataRequest create(boolean fromRefresh, int page) {
+      return new AutoValue_BaseNewsController_DataRequest(fromRefresh, page);
     }
   }
 

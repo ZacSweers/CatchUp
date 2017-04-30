@@ -147,9 +147,9 @@ public final class MediumController extends BaseNewsController<MediumPost> {
   }
 
   @NonNull @Override
-  protected Single<List<MediumPost>> getDataSingle(int page, boolean fromRefresh) {
+  protected Single<List<MediumPost>> getDataSingle(DataRequest request) {
     setMoreDataAvailable(false);
-    return RxJavaInterop.toV2Observable(fromRefresh ? store.fetch("") : store.get(""))
+    return RxJavaInterop.toV2Observable(request.fromRefresh() ? store.fetch("") : store.get(""))
         .firstOrError();
   }
 

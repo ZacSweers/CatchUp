@@ -97,8 +97,8 @@ public final class DesignerNewsController extends BaseNewsController<Story> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<Story>> getDataSingle(int page, boolean fromRefresh) {
-    return service.getTopStories(page);
+  @NonNull @Override protected Single<List<Story>> getDataSingle(DataRequest request) {
+    return service.getTopStories(request.page());
     // This won't do for now because /users endpoint sporadically barfs on specific user IDs
     //return service.getTopStories()
     //    .flatMap(stories -> Observable.zip(

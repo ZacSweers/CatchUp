@@ -87,7 +87,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<Entry>> getDataSingle(int page, boolean fromRefresh) {
+  @NonNull @Override protected Single<List<Entry>> getDataSingle(DataRequest request) {
     setMoreDataAvailable(false);
     return service.main()
         .map(channel -> channel.itemList);
