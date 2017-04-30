@@ -16,8 +16,10 @@
 
 package io.sweers.catchup.data.producthunt;
 
+import com.serjltt.moshi.adapters.Wrapped;
 import io.reactivex.Single;
-import io.sweers.catchup.data.producthunt.model.PostsResponse;
+import io.sweers.catchup.data.producthunt.model.Post;
+import java.util.List;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
@@ -31,5 +33,6 @@ public interface ProductHuntService {
   String ENDPOINT = SCHEME + "://" + HOST;
 
   @GET("/v1/posts")
-  Single<PostsResponse> getPosts(@Query("days_ago") int page);
+  @Wrapped("posts")
+  Single<List<Post>> getPosts(@Query("days_ago") int page);
 }
