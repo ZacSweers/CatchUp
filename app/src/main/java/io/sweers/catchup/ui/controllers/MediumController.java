@@ -46,6 +46,7 @@ import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.BackpressureStrategy;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.sweers.catchup.BuildConfig;
@@ -147,22 +148,14 @@ public final class MediumController extends BaseNewsController<MediumPost> {
 
   @NonNull @Override protected Single<List<MediumPost>> getDataSingle(DataRequest request) {
     setMoreDataAvailable(false);
-    return RxJavaInterop.toV2Observable(request.fromRefresh() ? store.fetch("") : store.get(""))
-        .firstOrError();
-  }
-
-  static Single<List<MediumPost>> getPosts(MediumService service) {
-    return service.top()
-        .flatMap(references -> Observable.fromIterable(references.post()
-            .values())
-            .map(post -> MediumPost.builder()
-                .post(post)
-                .user(references.user()
-                    .get(post.creatorId()))
-                .collection(references.collection()
-                    .get(post.homeCollectionId()))
-                .build()))
-        .toList();
+    if (request.fromRefresh()) {
+      return Completable.fromAction(() -> store.clear())
+          .andThen(RxJavaInterop.toV2Observable(store.fetch(""))
+              .firstOrError());
+    } else {
+      return RxJavaInterop.toV2Observable(store.get(""))
+          .firstOrError();
+    }
   }
 
   @Subcomponent
