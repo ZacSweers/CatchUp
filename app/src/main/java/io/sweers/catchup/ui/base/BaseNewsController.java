@@ -50,6 +50,7 @@ import io.sweers.catchup.util.Iterables;
 import io.sweers.catchup.util.NumberUtil;
 import io.sweers.catchup.util.Strings;
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -174,8 +175,10 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
       recyclerView.post(() -> adapter.dataStartedLoading());
     }
     AtomicLong timer = new AtomicLong();
-    getDataSingle(DataRequest.create(fromRefresh, pageToRequest))
-        .observeOn(AndroidSchedulers.mainThread())
+    getDataSingle(DataRequest.create(
+        fromRefresh,
+        false,
+        pageToRequest)).observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
           swipeRefreshLayout.setRefreshing(false);
@@ -286,7 +289,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
               parent,
               false));
       }
-      return null;
+      throw new InvalidParameterException("Unrecognized view type - " + viewType);
     }
 
     @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -364,10 +367,12 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
 
     public abstract boolean fromRefresh();
 
+    public abstract boolean multipage();
+
     public abstract int page();
 
-    static DataRequest create(boolean fromRefresh, int page) {
-      return new AutoValue_BaseNewsController_DataRequest(fromRefresh, page);
+    static DataRequest create(boolean fromRefresh, boolean multipage, int page) {
+      return new AutoValue_BaseNewsController_DataRequest(fromRefresh, multipage, page);
     }
   }
 
