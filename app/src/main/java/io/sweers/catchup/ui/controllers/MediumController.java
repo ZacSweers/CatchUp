@@ -25,7 +25,6 @@ import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.nytimes.android.external.fs.FileSystemPersister;
-import com.nytimes.android.external.fs.PathResolver;
 import com.nytimes.android.external.fs.filesystem.FileSystemFactory;
 import com.nytimes.android.external.store.base.Persister;
 import com.nytimes.android.external.store.base.impl.MemoryPolicy;
@@ -65,7 +64,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
@@ -223,11 +221,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
       }
       try {
         return FileSystemPersister.create(FileSystemFactory.create(context.getFilesDir()),
-            new PathResolver<String>() {
-              @Nonnull @Override public String resolve(@Nonnull String key) {
-                return "medium";
-              }
-            });
+            key -> "medium");
       } catch (IOException e) {
         throw new RuntimeException("Creating FS persister failed", e);
       }

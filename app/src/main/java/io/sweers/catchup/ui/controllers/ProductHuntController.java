@@ -24,7 +24,6 @@ import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
 import com.nytimes.android.external.fs.FileSystemPersister;
-import com.nytimes.android.external.fs.PathResolver;
 import com.nytimes.android.external.fs.filesystem.FileSystemFactory;
 import com.nytimes.android.external.store.base.Persister;
 import com.nytimes.android.external.store.base.impl.MemoryPolicy;
@@ -65,7 +64,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
@@ -191,11 +189,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
       }
       try {
         return FileSystemPersister.create(FileSystemFactory.create(context.getFilesDir()),
-            new PathResolver<Integer>() {
-              @Nonnull @Override public String resolve(@Nonnull Integer key) {
-                return "producthunt" + File.pathSeparator + key.toString();
-              }
-            });
+            key -> "producthunt" + File.pathSeparator + key.toString());
       } catch (IOException e) {
         throw new RuntimeException("Creating FS persister failed", e);
       }
