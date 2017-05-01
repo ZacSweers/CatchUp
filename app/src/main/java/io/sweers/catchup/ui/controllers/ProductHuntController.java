@@ -123,7 +123,16 @@ public final class ProductHuntController extends BaseNewsController<Post> {
           .flatMapSingle(this::getPage)
           .collectInto(new ArrayList<>(), List::addAll);
     } else if (request.fromRefresh()) {
-      return Completable.fromAction(() -> store.clear())
+      Completable clearCompletable = Completable.fromAction(() -> store.clear());
+
+      // TODO temporary until https://github.com/NYTimes/Store/issues/142 is fixed
+      // Just a hack that clears the first potential 15 pages ¯\_(ツ)_/¯
+      // Actually this doesn't work either :|
+      clearCompletable = Observable.range(0, 10)
+          .doOnNext(page -> store.clear(page))
+          .ignoreElements();
+
+      return clearCompletable
           .andThen(RxJavaInterop.toV2Observable(store.fetch(request.page()))
               .firstOrError());
     } else {
