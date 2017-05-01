@@ -18,8 +18,10 @@ package io.sweers.catchup.app;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.ComponentCallbacks2;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatDelegate;
+import com.bumptech.glide.Glide;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
@@ -89,5 +91,20 @@ public class CatchUpApplication extends Application implements HasDispatchingAct
 
   @Override public DispatchingAndroidInjector<Activity> activityInjector() {
     return dispatchingActivityInjector;
+  }
+
+  @Override public void onTrimMemory(int level) {
+    super.onTrimMemory(level);
+    Glide.with(this)
+        .onTrimMemory(level);
+    switch (level) {
+      case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
+      case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
+      case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
+      case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
+        Timber.d("OnTrimMemory");
+        // TODO someday clear Store in-memory
+        break;
+    }
   }
 }

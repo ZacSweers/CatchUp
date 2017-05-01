@@ -19,6 +19,8 @@
   <string name="retry">Retry</string>
   <string name="pref_services">Services</string>
   <string name="pref_services_summary">Configure service preferences</string>
+  <string name="pref_clear_cache">Clear cache</string>
+  <string name="pref_clear_cache_summary">Clears the current cache</string>
   <string name="about">About</string>
   <string name="licenses">Licenses</string>
   <string name="pref_reports">Analytics and Crash Reporting</string>
@@ -31,4 +33,5 @@
   <string name="no_intent_handler">There are no applications available to handle this action.</string>
   <string name="title_activity_settings">Settings</string>
   <string name="summarizing">Summarizing…</string>
+  <string name="clear_cache_success">Cleaned %sB</string>
 </resources>

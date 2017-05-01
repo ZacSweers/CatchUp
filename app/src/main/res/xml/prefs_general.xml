@@ -33,6 +33,12 @@
       android:title="@string/pref_services"
       />
 
+    <Preference
+      android:key="clear_cache"
+      android:summary="@string/pref_clear_cache_summary"
+      android:title="@string/pref_clear_cache"
+      />
+
   </PreferenceCategory>
 
   <PreferenceCategory
