@@ -24,8 +24,7 @@ import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.nytimes.android.external.fs.FileSystemPersister;
-import com.nytimes.android.external.fs.filesystem.FileSystemFactory;
+import com.nytimes.android.external.fs.FileSystemPersisterFactory;
 import com.nytimes.android.external.store.base.Persister;
 import com.nytimes.android.external.store.base.impl.MemoryPolicy;
 import com.nytimes.android.external.store.base.impl.Store;
@@ -220,8 +219,10 @@ public final class MediumController extends BaseNewsController<MediumPost> {
         //throw new IllegalStateException("Persister initialized on main thread.");
       }
       try {
-        return FileSystemPersister.create(FileSystemFactory.create(context.getFilesDir()),
-            key -> "medium");
+        return FileSystemPersisterFactory.create(context.getFilesDir(),
+            key -> "medium",
+            1,
+            TimeUnit.HOURS);
       } catch (IOException e) {
         throw new RuntimeException("Creating FS persister failed", e);
       }

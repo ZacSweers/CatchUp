@@ -23,8 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
-import com.nytimes.android.external.fs.FileSystemPersister;
-import com.nytimes.android.external.fs.filesystem.FileSystemFactory;
+import com.nytimes.android.external.fs.FileSystemPersisterFactory;
 import com.nytimes.android.external.store.base.Persister;
 import com.nytimes.android.external.store.base.impl.MemoryPolicy;
 import com.nytimes.android.external.store.base.impl.Store;
@@ -132,9 +131,8 @@ public final class ProductHuntController extends BaseNewsController<Post> {
           .doOnNext(page -> store.clear(page))
           .ignoreElements();
 
-      return clearCompletable
-          .andThen(RxJavaInterop.toV2Observable(store.fetch(request.page()))
-              .firstOrError());
+      return clearCompletable.andThen(RxJavaInterop.toV2Observable(store.fetch(request.page()))
+          .firstOrError());
     } else {
       return getPage(request.page());
     }
@@ -197,8 +195,10 @@ public final class ProductHuntController extends BaseNewsController<Post> {
         //throw new IllegalStateException("Persister initialized on main thread.");
       }
       try {
-        return FileSystemPersister.create(FileSystemFactory.create(context.getFilesDir()),
-            key -> "producthunt" + File.pathSeparator + key.toString());
+        return FileSystemPersisterFactory.create(context.getFilesDir(),
+            key -> "producthunt" + File.pathSeparator + key.toString(),
+            1,
+            TimeUnit.HOURS);
       } catch (IOException e) {
         throw new RuntimeException("Creating FS persister failed", e);
       }
