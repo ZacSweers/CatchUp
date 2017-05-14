@@ -27,7 +27,6 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.flipboard.psync'
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
@@ -299,3 +298,5 @@ dependencies {
   debugCompile rootProject.ext.chuck
   releaseCompile rootProject.ext.chuckNoop
 }
+
+apply plugin: 'com.google.gms.google-services'
