@@ -31,7 +31,7 @@ import io.reactivex.functions.Function;
 import io.sweers.catchup.injection.HasDispatchingControllerInjector;
 import javax.inject.Inject;
 
-public class BaseActivity extends AppCompatActivity
+public abstract class BaseActivity extends AppCompatActivity
     implements LifecycleScopeProvider<ActivityEvent>, HasDispatchingControllerInjector {
 
   @Inject DispatchingAndroidInjector<Controller> controllerInjector;
