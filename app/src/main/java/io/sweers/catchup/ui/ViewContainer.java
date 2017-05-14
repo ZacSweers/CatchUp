@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.ui;
 
-import android.app.Activity;
 import android.view.ViewGroup;
+import io.sweers.catchup.ui.base.BaseActivity;
 
 import static butterknife.ButterKnife.findById;
 
@@ -33,5 +33,5 @@ public interface ViewContainer {
   /**
    * The root {@link ViewGroup} into which the activity should place its contents.
    */
-  ViewGroup forActivity(Activity activity);
+  ViewGroup forActivity(BaseActivity activity);
 }

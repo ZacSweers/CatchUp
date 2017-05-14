@@ -26,13 +26,18 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import com.f2prateek.rx.preferences.Preference;
 import com.jakewharton.madge.MadgeFrameLayout;
 import com.jakewharton.scalpel.ScalpelFrameLayout;
 import com.mattprecious.telescope.TelescopeLayout;
+import com.uber.autodispose.ObservableScoper;
+import io.reactivex.functions.Consumer;
 import io.sweers.catchup.P;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LumberYard;
+import io.sweers.catchup.ui.base.ActivityEvent;
+import io.sweers.catchup.ui.base.BaseActivity;
 import io.sweers.catchup.ui.debug.DebugDrawerLayout;
 import io.sweers.catchup.ui.debug.DebugView;
 import javax.inject.Inject;
@@ -75,11 +80,11 @@ public final class DebugViewContainer implements ViewContainer {
     lock.release();
   }
 
-  @Override public ViewGroup forActivity(final Activity activity) {
+  @Override public ViewGroup forActivity(final BaseActivity activity) {
     activity.setContentView(R.layout.debug_activity_frame);
 
     final ViewHolder viewHolder = new ViewHolder();
-    ButterKnife.bind(viewHolder, activity);
+    Unbinder unbinder = ButterKnife.bind(viewHolder, activity);
 
     final Context drawerContext = new ContextThemeWrapper(activity, R.style.DebugDrawer);
     final DebugView debugView = new DebugView(drawerContext);
@@ -116,6 +121,18 @@ public final class DebugViewContainer implements ViewContainer {
     setupScalpel(viewHolder, subscriptions);
 
     riseAndShine(activity);
+    activity.lifecycle()
+        .to(new ObservableScoper<>(activity))
+        .subscribe(activityEvent -> {
+          switch (activityEvent) {
+            case DESTROY:
+              unbinder.unbind();
+              subscriptions.clear();
+              break;
+            default:
+              // Noop
+          }
+        });
     return viewHolder.content;
   }
 
