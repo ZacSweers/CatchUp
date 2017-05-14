@@ -16,16 +16,38 @@
 
 package io.sweers.catchup.app;
 
+import android.app.Activity;
+import android.os.Bundle;
 import com.facebook.stetho.Stetho;
+import com.readystatesoftware.chuck.internal.ui.MainActivity;
 import com.squareup.leakcanary.LeakCanary;
-import java.util.concurrent.TimeUnit;
 import timber.log.Timber;
 
 public final class DebugCatchUpApplication extends CatchUpApplication {
   @Override protected void initVariant() {
     refWatcher = LeakCanary.refWatcher(this)
-        .watchDelay(10, TimeUnit.SECONDS)
-        .buildAndInstall();
+        .build();
+    registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+      @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) { }
+
+      @Override public void onActivityStarted(Activity activity) { }
+
+      @Override public void onActivityResumed(Activity activity) { }
+
+      @Override public void onActivityPaused(Activity activity) { }
+
+      @Override public void onActivityStopped(Activity activity) { }
+
+      @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) { }
+
+      @Override public void onActivityDestroyed(Activity activity) {
+        if (activity instanceof MainActivity) {
+          // Ignore Chuck
+          return;
+        }
+        refWatcher.watch(activity);
+      }
+    });
     Timber.plant(new Timber.DebugTree());
     Timber.plant(lumberYard.tree());
     Stetho.initializeWithDefaults(this);

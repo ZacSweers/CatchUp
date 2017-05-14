@@ -72,9 +72,14 @@ ext {
   conductor = "com.bluelinelabs:conductor:$conductorVersion"
   conductorSupport = "com.bluelinelabs:conductor-support:$conductorVersion"
 
+  // Chuck
+  chuckVersion = '1.0.4'
+  chuck = "com.readystatesoftware.chuck:library:$chuckVersion"
+  chuckNoop = "com.readystatesoftware.chuck:library-no-op:$chuckVersion"
+
   // Misc
-  autoDispose = 'com.uber.autodispose:autodispose:0.1.0'
-  autoDisposeAndroid = 'com.uber.autodispose:autodispose-android:0.1.0'
+  autoDispose = 'com.uber.autodispose:autodispose:0.2.0'
+  autoDisposeAndroid = 'com.uber.autodispose:autodispose-android:0.2.0'
   bugsnag = 'com.bugsnag:bugsnag-android:3.8.0'
   chipCloud = 'com.github.fiskurgit:ChipCloud:3.0.3'
   errorPronePlugin = 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.10'

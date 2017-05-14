@@ -18,6 +18,7 @@ package io.sweers.catchup.data;
 
 import android.content.Context;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.readystatesoftware.chuck.ChuckInterceptor;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
@@ -40,6 +41,11 @@ public abstract class VariantDataModule {
 
   @Provides @NetworkInterceptor @IntoSet static Interceptor provideStethoInterceptor() {
     return new StethoInterceptor();
+  }
+
+  @Provides @NetworkInterceptor @IntoSet
+  static Interceptor provideChuckInterceptor(@ApplicationContext Context context) {
+    return new ChuckInterceptor(context);
   }
 
   @Provides @IntoSet

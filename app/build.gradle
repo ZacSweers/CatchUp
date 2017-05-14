@@ -294,4 +294,8 @@ dependencies {
   // LeakCanary
   debugCompile rootProject.ext.leakCanary
   releaseCompile rootProject.ext.leakCanaryNoop
+
+  // Chuck
+  debugCompile rootProject.ext.chuck
+  releaseCompile rootProject.ext.chuckNoop
 }
