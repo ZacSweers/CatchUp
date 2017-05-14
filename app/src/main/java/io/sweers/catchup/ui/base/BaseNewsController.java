@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.ui.base;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -73,8 +74,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
   @BindView(R.id.refresh) SwipeRefreshLayout swipeRefreshLayout;
 
   private Adapter<T> adapter;
-  private boolean loaded = false;
   private int page = 0;
+  private boolean fromSaveInstanceState = false;
   private boolean moreDataAvailable = true;
   private boolean isDataLoading = false;
 
@@ -144,9 +145,26 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
   @Override protected void onAttach(@NonNull View view) {
     super.onAttach(view);
     swipeRefreshLayout.setEnabled(false);
-    if (!loaded) {
-      loadData();
-    }
+    loadData();
+  }
+
+  @Override protected void onDetach(@NonNull View view) {
+    page = 0;
+    moreDataAvailable = true;
+    super.onDetach(view);
+  }
+
+  @Override protected void onSaveInstanceState(@NonNull Bundle outState) {
+    // TODO Check when these are called in conductor, restore seems to be after attach.
+    //outState.putInt("pageNumber", page);
+    //outState.putBoolean("savedInstance", true);
+    super.onSaveInstanceState(outState);
+  }
+
+  @Override protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    //page = savedInstanceState.getInt("pageNumber");
+    //fromSaveInstanceState = savedInstanceState.getBoolean("savedInstance", false);
   }
 
   @Override public boolean isDataLoading() {
@@ -177,7 +195,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     AtomicLong timer = new AtomicLong();
     getDataSingle(DataRequest.create(
         fromRefresh,
-        false,
+        fromSaveInstanceState && page != 0,
         pageToRequest)).observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
           swipeRefreshLayout.setEnabled(true);
@@ -203,12 +221,12 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
               adapter.addData(data);
             }
           });
-          loaded = true;
         }, e -> {
-          if (pageToRequest == 0) {
+          Activity activity = getActivity();
+          if (pageToRequest == 0 && activity != null) {
             if (e instanceof IOException) {
               AnimatedVectorDrawableCompat avd =
-                  AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+                  AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection);
               errorImage.setImageDrawable(avd);
               progress.setVisibility(GONE);
               errorTextView.setText("Network Problem");
@@ -218,7 +236,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
             } else if (e instanceof HttpException) {
               // TODO Show some sort of API error response.
               AnimatedVectorDrawableCompat avd =
-                  AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+                  AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection);
               errorImage.setImageDrawable(avd);
               progress.setVisibility(GONE);
               errorTextView.setText("API Problem");
@@ -228,7 +246,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
             } else {
               // TODO Show some sort of generic response error
               AnimatedVectorDrawableCompat avd =
-                  AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.avd_no_connection);
+                  AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection);
               errorImage.setImageDrawable(avd);
               progress.setVisibility(GONE);
               swipeRefreshLayout.setVisibility(GONE);
