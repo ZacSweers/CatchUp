@@ -31,8 +31,7 @@ import com.f2prateek.rx.preferences.Preference;
 import com.jakewharton.madge.MadgeFrameLayout;
 import com.jakewharton.scalpel.ScalpelFrameLayout;
 import com.mattprecious.telescope.TelescopeLayout;
-import com.uber.autodispose.ObservableScoper;
-import io.reactivex.functions.Consumer;
+import com.uber.autodispose.MaybeScoper;
 import io.sweers.catchup.P;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LumberYard;
@@ -71,7 +70,8 @@ public final class DebugViewContainer implements ViewContainer {
    * save you from hundreds of power button presses and pattern swiping per day!
    */
   public static void riseAndShine(Activity activity) {
-    activity.getWindow().addFlags(FLAG_SHOW_WHEN_LOCKED);
+    activity.getWindow()
+        .addFlags(FLAG_SHOW_WHEN_LOCKED);
 
     PowerManager power = (PowerManager) activity.getSystemService(POWER_SERVICE);
     PowerManager.WakeLock lock =
@@ -111,7 +111,8 @@ public final class DebugViewContainer implements ViewContainer {
     if (!seenDebugDrawer.get()) {
       viewHolder.drawerLayout.postDelayed(() -> {
         viewHolder.drawerLayout.openDrawer(GravityCompat.END);
-        Toast.makeText(drawerContext, R.string.debug_drawer_welcome, Toast.LENGTH_LONG).show();
+        Toast.makeText(drawerContext, R.string.debug_drawer_welcome, Toast.LENGTH_LONG)
+            .show();
       }, 1000);
       seenDebugDrawer.set(true);
     }
@@ -122,36 +123,28 @@ public final class DebugViewContainer implements ViewContainer {
 
     riseAndShine(activity);
     activity.lifecycle()
-        .to(new ObservableScoper<>(activity))
+        .filter(event -> event == ActivityEvent.DESTROY)
+        .firstElement()
+        .to(new MaybeScoper<>(activity))
         .subscribe(activityEvent -> {
-          switch (activityEvent) {
-            case DESTROY:
-              unbinder.unbind();
-              subscriptions.clear();
-              break;
-            default:
-              // Noop
-          }
+          unbinder.unbind();
+          subscriptions.clear();
         });
     return viewHolder.content;
   }
 
   private void setupMadge(final ViewHolder viewHolder, CompositeSubscription subscriptions) {
-    subscriptions.add(pixelGridEnabled.asObservable().subscribe(enabled -> {
-      viewHolder.madgeFrameLayout.setOverlayEnabled(enabled);
-    }));
-    subscriptions.add(pixelRatioEnabled.asObservable().subscribe(enabled -> {
-      viewHolder.madgeFrameLayout.setOverlayRatioEnabled(enabled);
-    }));
+    subscriptions.add(pixelGridEnabled.asObservable()
+        .subscribe(enabled -> viewHolder.madgeFrameLayout.setOverlayEnabled(enabled)));
+    subscriptions.add(pixelRatioEnabled.asObservable()
+        .subscribe(enabled -> viewHolder.madgeFrameLayout.setOverlayRatioEnabled(enabled)));
   }
 
   private void setupScalpel(final ViewHolder viewHolder, CompositeSubscription subscriptions) {
-    subscriptions.add(scalpelEnabled.asObservable().subscribe(enabled -> {
-      viewHolder.content.setLayerInteractionEnabled(enabled);
-    }));
-    subscriptions.add(scalpelWireframeEnabled.asObservable().subscribe(enabled -> {
-      viewHolder.content.setDrawViews(!enabled);
-    }));
+    subscriptions.add(scalpelEnabled.asObservable()
+        .subscribe(enabled -> viewHolder.content.setLayerInteractionEnabled(enabled)));
+    subscriptions.add(scalpelWireframeEnabled.asObservable()
+        .subscribe(enabled -> viewHolder.content.setDrawViews(!enabled)));
   }
 
   static class ViewHolder {
