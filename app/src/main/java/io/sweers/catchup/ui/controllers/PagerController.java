@@ -45,12 +45,14 @@ import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout;
+import com.uber.autodispose.ObservableScoper;
 import dagger.Binds;
 import dagger.Lazy;
 import dagger.Provides;
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
+import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.sweers.catchup.P;
 import io.sweers.catchup.R;
 import io.sweers.catchup.injection.ConductorInjection;
@@ -234,6 +236,7 @@ public class PagerController extends ButterKnifeController {
             return verticalOffset != -toolbar.getHeight();
           }
         })
+        .to(new ObservableScoper<>(this))
         .subscribe();
     toolbar.inflateMenu(R.menu.main);
     toolbar.setOnMenuItemClickListener(item -> {
@@ -266,9 +269,10 @@ public class PagerController extends ButterKnifeController {
     if (ApiUtil.isL() && !UiUtil.isInNightMode(view.getContext())) {
       colorNavBar = themeNavigationBarPref.get()
           .get(); // ew
-      themeNavigationBarPref.get()
-          .asObservable()
+      RxJavaInterop.toV2Observable(themeNavigationBarPref.get()
+          .asObservable())
           .distinctUntilChanged()
+          .to(new ObservableScoper<>(this))
           .subscribe(b -> {
             colorNavBar = b;
             int color;
@@ -283,7 +287,7 @@ public class PagerController extends ButterKnifeController {
     }
 
     viewPager.setAdapter(pagerAdapter);
-    tabLayout.setupWithViewPager(viewPager);
+    tabLayout.setupWithViewPager(viewPager, false);
 
     // Set icons
     for (int i = 0; i < PAGE_DATA.length; i++) {
