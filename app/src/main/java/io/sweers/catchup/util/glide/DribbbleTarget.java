@@ -18,14 +18,13 @@ package io.sweers.catchup.util.glide;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v7.graphics.Palette;
-
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-
+import com.bumptech.glide.request.target.DrawableImageViewTarget;
+import com.bumptech.glide.request.transition.Transition;
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView;
 import io.sweers.catchup.util.ColorUtils;
 import io.sweers.catchup.util.UiUtil;
@@ -35,7 +34,7 @@ import io.sweers.catchup.util.UiUtil;
  * A Glide {@see ViewTarget} for {@link BadgedFourThreeImageView}s. It applies a badge for animated
  * images, can prevent GIFs from auto-playing & applies a palette generated ripple.
  */
-public class DribbbleTarget extends GlideDrawableImageViewTarget implements
+public class DribbbleTarget extends DrawableImageViewTarget implements
     Palette.PaletteAsyncListener {
 
   private final boolean autoplayGifs;
@@ -45,21 +44,23 @@ public class DribbbleTarget extends GlideDrawableImageViewTarget implements
     this.autoplayGifs = autoplayGifs;
   }
 
-  @Override
-  public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable>
-      animation) {
-    super.onResourceReady(resource, animation);
-    if (!autoplayGifs) {
-      resource.stop();
+  @Override public void onResourceReady(Drawable resource,
+      @Nullable Transition<? super Drawable> transition) {
+    super.onResourceReady(resource, transition);
+    if (!autoplayGifs && resource instanceof GifDrawable) {
+      ((GifDrawable) resource).stop();
     }
 
     BadgedFourThreeImageView badgedImageView = (BadgedFourThreeImageView) getView();
-    if (resource instanceof GlideBitmapDrawable) {
-      Palette.from(((GlideBitmapDrawable) resource).getBitmap())
+    if (resource instanceof BitmapDrawable) {
+      Palette.from(((BitmapDrawable) resource).getBitmap())
           .clearFilters()
           .generate(this);
     } else if (resource instanceof GifDrawable) {
       Bitmap image = ((GifDrawable) resource).getFirstFrame();
+      if (image == null || image.isRecycled()) {
+        return;
+      }
       Palette.from(image).clearFilters().generate(this);
 
       // look at the corner to determine the gif badge color

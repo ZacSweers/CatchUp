@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -49,10 +50,12 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import com.bluelinelabs.conductor.Controller;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.squareup.moshi.Moshi;
@@ -444,11 +447,17 @@ public class DribbbleController extends ServiceController
         Glide.with(itemView.getContext())
             .load(shot.images()
                 .best())
-            .listener(new RequestListener<String, GlideDrawable>() {
-              @Override public boolean onResourceReady(GlideDrawable resource,
-                  String model,
-                  Target<GlideDrawable> target,
-                  boolean isFromMemoryCache,
+            .apply(new RequestOptions()
+                .placeholder(shotLoadingPlaceholders[getAdapterPosition()
+                    % shotLoadingPlaceholders.length])
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .fitCenter()
+                .override(imageSize[0], imageSize[1]))
+            .listener(new RequestListener<Drawable>() {
+              @Override public boolean onResourceReady(Drawable resource,
+                  Object model,
+                  Target<Drawable> target,
+                  DataSource dataSource,
                   boolean isFirstResource) {
                 if (!shot.hasFadedIn) {
                   image.setHasTransientState(true);
@@ -475,18 +484,13 @@ public class DribbbleController extends ServiceController
                 return false;
               }
 
-              @Override public boolean onException(Exception e,
-                  String model,
-                  Target<GlideDrawable> target,
+              @Override public boolean onLoadFailed(@Nullable GlideException e,
+                  Object model,
+                  Target<Drawable> target,
                   boolean isFirstResource) {
                 return false;
               }
             })
-            .placeholder(shotLoadingPlaceholders[getAdapterPosition()
-                % shotLoadingPlaceholders.length])
-            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-            .fitCenter()
-            .override(imageSize[0], imageSize[1])
             .into(new DribbbleTarget(image, false));
         // need both placeholder & background to prevent seeing through shot as it fades in
         image.setBackground(shotLoadingPlaceholders[getAdapterPosition()

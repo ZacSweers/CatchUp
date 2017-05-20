@@ -50,11 +50,11 @@
 
     <meta-data
       android:name="io.sweers.catchup.GlideConfiguration"
-      android:value="GlideModule"
+      android:value="AppGlideModule"
       />
     <meta-data
-      android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
-      android:value="GlideModule"
+      android:name="com.bumptech.glide.integration.okhttp3.OkHttpLibraryGlideModule"
+      android:value="LibraryGlideModule"
       />
   </application>
 
