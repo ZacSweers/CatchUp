@@ -15,6 +15,11 @@
  */
 
 buildscript {
+  repositories {
+    jcenter()
+    maven { url "https://maven.google.com" }
+  }
+
   dependencies {
     classpath rootProject.ext.androidPlugin
     classpath rootProject.ext.firebasePlugin
@@ -31,7 +36,7 @@ apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.flipboard.psync'
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
 apply plugin: 'com.apollographql.android'
-apply plugin: 'com.bugsnag.android.gradle'
+//apply plugin: 'com.bugsnag.android.gradle'
 
 private String getPropertyOrEmpty(String property) {
   if (hasProperty(property)) {
@@ -44,6 +49,7 @@ private String getPropertyOrEmpty(String property) {
 repositories {
   jcenter()
   maven { url "https://jitpack.io" }
+  maven { url "https://maven.google.com" }
 }
 
 android {
@@ -109,9 +115,8 @@ android {
     }
     release {
       buildConfigField 'String', 'BUGSNAG_KEY', /"${getPropertyOrEmpty("catchup_bugsnag_key")}"/
-      minifyEnabled true
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       signingConfig signingConfigs.release
+      postprocessing.proguardFiles = [getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro']
     }
   }
   dexOptions {
@@ -131,11 +136,11 @@ android {
   }
 }
 
-if (getPropertyOrEmpty("catchup_bugsnag_key")) {
-  bugsnag {
-    apiKey getPropertyOrEmpty("catchup_bugsnag_key")
-  }
-}
+//if (getPropertyOrEmpty("catchup_bugsnag_key")) {
+//  bugsnag {
+//    apiKey getPropertyOrEmpty("catchup_bugsnag_key")
+//  }
+//}
 
 psync {
   includesPattern = "**/xml/prefs_*.xml"
@@ -149,7 +154,7 @@ apollo {
   customTypeMapping['URI'] = "okhttp3.HttpUrl"
 }
 
-def supportLibraries = configurations.create("supportCompile")
+def supportLibraries = configurations.create("supportImplementation")
 configurations.all {
   resolutionStrategy.eachDependency { DependencyResolveDetails details ->
     if (details.requested.group == 'com.android.support' && details.requested.name != 'multidex') {
@@ -169,134 +174,134 @@ configurations.all {
 
 dependencies {
   // Support libs
-  supportCompile rootProject.ext.supportAnnotations
-  supportCompile rootProject.ext.supportAppCompat
-  supportCompile rootProject.ext.supportV4
-  supportCompile rootProject.ext.supportDesign
-  supportCompile rootProject.ext.supportCustomTabs
-  supportCompile rootProject.ext.constraintLayout
-  supportCompile rootProject.ext.supportPalette
+  supportImplementation rootProject.ext.supportAnnotations
+  supportImplementation rootProject.ext.supportAppCompat
+  supportImplementation rootProject.ext.supportV4
+  supportImplementation rootProject.ext.supportDesign
+  supportImplementation rootProject.ext.supportCustomTabs
+  supportImplementation rootProject.ext.constraintLayout
+  supportImplementation rootProject.ext.supportPalette
 
-  compile supportLibraries
-  testCompile supportLibraries
-  androidTestCompile supportLibraries
+  implementation supportLibraries
+  testImplementation supportLibraries
+  androidTestImplementation supportLibraries
 
   // Firebase
-  compile rootProject.ext.firebaseCore
-  compile rootProject.ext.firebaseConfig
-  compile rootProject.ext.firebaseDatabase
+  implementation rootProject.ext.firebaseCore
+  implementation rootProject.ext.firebaseConfig
+  implementation rootProject.ext.firebaseDatabase
   annotationProcessor rootProject.ext.autoValueFirebase
-  provided rootProject.ext.autoValueFirebaseAnnotation
-  compile rootProject.ext.autoValueFirebaseAdapter
+  compileOnly rootProject.ext.autoValueFirebaseAnnotation
+  implementation rootProject.ext.autoValueFirebaseAdapter
 
   // Square/JW
-  compile rootProject.ext.butterKnife
+  implementation rootProject.ext.butterKnife
   annotationProcessor rootProject.ext.butterKnifeCompiler
-  compile rootProject.ext.okhttp
-  compile rootProject.ext.okio
-  compile rootProject.ext.moshi
-  compile rootProject.ext.retrofit
-  compile rootProject.ext.retrofitMoshi
-  compile rootProject.ext.retrofitRxJava
+  implementation rootProject.ext.okhttp
+  implementation rootProject.ext.okio
+  implementation rootProject.ext.moshi
+  implementation rootProject.ext.retrofit
+  implementation rootProject.ext.retrofitMoshi
+  implementation rootProject.ext.retrofitRxJava
   compile(rootProject.ext.retrofitXml) {
     exclude module: 'stax'
     exclude module: 'stax-api'
     exclude module: 'xpp3'
   }
-  compile rootProject.ext.rxAndroid
-  compile rootProject.ext.rxAndroid2
-  compile rootProject.ext.rxJava
-  compile rootProject.ext.rxJava2
-  compile rootProject.ext.rxJava2Interop
-  compile rootProject.ext.retrofitRxJava2
-  compile rootProject.ext.rxBinding
-  compile rootProject.ext.rxBindingV4
-  compile rootProject.ext.rxBindingDesign
-  compile rootProject.ext.timber
-  compile rootProject.ext.threetenabp
-  debugCompile rootProject.ext.madge
-  debugCompile rootProject.ext.scalpel
-  compile rootProject.ext.processPhoenix
-  // Move back to debugCompile when it's not needed for daynight
-  debugCompile rootProject.ext.telescope
-  compile rootProject.ext.okhttpLoggingInterceptor
-  debugCompile rootProject.ext.retrofitMock
+  implementation rootProject.ext.rxAndroid
+  implementation rootProject.ext.rxAndroid2
+  implementation rootProject.ext.rxJava
+  implementation rootProject.ext.rxJava2
+  implementation rootProject.ext.rxJava2Interop
+  implementation rootProject.ext.retrofitRxJava2
+  implementation rootProject.ext.rxBinding
+  implementation rootProject.ext.rxBindingV4
+  implementation rootProject.ext.rxBindingDesign
+  implementation rootProject.ext.timber
+  implementation rootProject.ext.threetenabp
+  debugImplementation rootProject.ext.madge
+  debugImplementation rootProject.ext.scalpel
+  implementation rootProject.ext.processPhoenix
+  // Move back to debugImplementation when it's not needed for daynight
+  debugImplementation rootProject.ext.telescope
+  implementation rootProject.ext.okhttpLoggingInterceptor
+  debugImplementation rootProject.ext.retrofitMock
 
-  releaseCompile rootProject.ext.bugsnag
+  releaseImplementation rootProject.ext.bugsnag
 
   // Misc
-  compile rootProject.ext.autoDispose
-  compile rootProject.ext.autoDisposeAndroid
+  implementation rootProject.ext.autoDispose
+  implementation rootProject.ext.autoDisposeAndroid
   errorprone rootProject.ext.errorProneCore
-  compile rootProject.ext.errorProneAnnotations
-  compile rootProject.ext.barberApi
+  implementation rootProject.ext.errorProneAnnotations
+  implementation rootProject.ext.barberApi
   annotationProcessor rootProject.ext.barberCompiler
-  compile rootProject.ext.chipCloud
-  compile rootProject.ext.flexbox
-  compile rootProject.ext.glide
-  compile rootProject.ext.glideOkhttp
-  compile rootProject.ext.recyclerViewAnimators
-  compile rootProject.ext.rxJava
-  compile rootProject.ext.rxPreferences
-  compile rootProject.ext.rxReceivers
-  compile rootProject.ext.rxRelay
+  implementation rootProject.ext.chipCloud
+  implementation rootProject.ext.flexbox
+  implementation rootProject.ext.glide
+  implementation rootProject.ext.glideOkhttp
+  implementation rootProject.ext.recyclerViewAnimators
+  implementation rootProject.ext.rxJava
+  implementation rootProject.ext.rxPreferences
+  implementation rootProject.ext.rxReceivers
+  implementation rootProject.ext.rxRelay
   compile(rootProject.ext.simpleXml) {
     exclude module: 'stax'
     exclude module: 'stax-api'
     exclude module: 'xpp3'
   }
-  compile rootProject.ext.moshiLazyAdapters
+  implementation rootProject.ext.moshiLazyAdapters
 
   // Apollo
-  compile rootProject.ext.apolloRuntime
-  compile rootProject.ext.apolloRx2Support
-  compile rootProject.ext.apolloAndroidSupport
+  implementation rootProject.ext.apolloRuntime
+  implementation rootProject.ext.apolloRx2Support
+  implementation rootProject.ext.apolloAndroidSupport
 
   // Store
-  compile rootProject.ext.store
-  compile rootProject.ext.storeCache
-  compile rootProject.ext.storeMoshi
-  compile rootProject.ext.storeFS
+  implementation rootProject.ext.store
+  implementation rootProject.ext.storeCache
+  implementation rootProject.ext.storeMoshi
+  implementation rootProject.ext.storeFS
 
   // Stetho
-  debugCompile rootProject.ext.stetho
-  debugCompile rootProject.ext.stethoOkHttp
+  debugImplementation rootProject.ext.stetho
+  debugImplementation rootProject.ext.stethoOkHttp
 
   // Dagger
   annotationProcessor rootProject.ext.daggerCompiler
-  provided rootProject.ext.javax
-  compile rootProject.ext.dagger
-  compile rootProject.ext.daggerAndroid
+  compileOnly rootProject.ext.javax
+  implementation rootProject.ext.dagger
+  implementation rootProject.ext.daggerAndroid
 
   // AutoValue
-  provided rootProject.ext.autoValueAnnotations
-  compile rootProject.ext.autoValueMoshiAnnotations
+  compileOnly rootProject.ext.autoValueAnnotations
+  implementation rootProject.ext.autoValueMoshiAnnotations
   annotationProcessor rootProject.ext.autoValue
   annotationProcessor rootProject.ext.autoValueMoshi
   annotationProcessor rootProject.ext.autoValueRedacted
 
   // Conductor
-  compile rootProject.ext.conductor
-  compile rootProject.ext.conductorSupport
+  implementation rootProject.ext.conductor
+  implementation rootProject.ext.conductorSupport
 
   // Test
-  testCompile rootProject.ext.rxJava2Extensions
-  testCompile rootProject.ext.rxRelay
-  androidTestCompile rootProject.ext.errorProneAnnotations
-  androidTestCompile rootProject.ext.rxJava2
-  androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
-  testCompile 'com.google.code.findbugs:jsr305:3.0.1'
-  testCompile rootProject.ext.errorProneAnnotations
-  testCompile rootProject.ext.junit
-  testCompile rootProject.ext.truth
+  testImplementation rootProject.ext.rxJava2Extensions
+  testImplementation rootProject.ext.rxRelay
+  androidTestImplementation rootProject.ext.errorProneAnnotations
+  androidTestImplementation rootProject.ext.rxJava2
+  androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.1'
+  testImplementation 'com.google.code.findbugs:jsr305:3.0.1'
+  testImplementation rootProject.ext.errorProneAnnotations
+  testImplementation rootProject.ext.junit
+  testImplementation rootProject.ext.truth
 
   // LeakCanary
-  debugCompile rootProject.ext.leakCanary
-  releaseCompile rootProject.ext.leakCanaryNoop
+  debugImplementation rootProject.ext.leakCanary
+  releaseImplementation rootProject.ext.leakCanaryNoop
 
   // Chuck
-  debugCompile rootProject.ext.chuck
-  releaseCompile rootProject.ext.chuckNoop
+  debugImplementation rootProject.ext.chuck
+  releaseImplementation rootProject.ext.chuckNoop
 }
 
 apply plugin: 'com.google.gms.google-services'

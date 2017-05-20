@@ -27,14 +27,14 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasDispatchingActivityInjector;
+import dagger.android.HasActivityInjector;
 import io.sweers.catchup.P;
 import io.sweers.catchup.R;
 import io.sweers.catchup.data.LumberYard;
 import javax.inject.Inject;
 import timber.log.Timber;
 
-public class CatchUpApplication extends Application implements HasDispatchingActivityInjector {
+public class CatchUpApplication extends Application implements HasActivityInjector {
 
   protected static RefWatcher refWatcher;
   private static ApplicationComponent component;

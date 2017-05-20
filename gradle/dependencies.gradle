@@ -38,15 +38,15 @@ ext {
   supportRecyclerView = "com.android.support:recyclerview-v7:$supportVersion"
   supportV4 = "com.android.support:support-v4:$supportVersion"
   multidex = 'com.android.support:multidex:1.0.1'
-  androidPlugin = 'com.android.tools.build:gradle:2.4.0-alpha7'
-  constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.2'
+  androidPlugin = 'com.android.tools.build:gradle:3.0.0-alpha1'
+  constraintLayout = 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
   // Firebase
-  firebasePlugin = 'com.google.gms:google-services:3.0.0'
+  firebasePlugin = 'com.google.gms:google-services:3.1.0'
   firebaseCore = "com.google.firebase:firebase-core:$firebaseVersion"
   firebaseConfig = "com.google.firebase:firebase-config:$firebaseVersion"
   firebaseDatabase = "com.google.firebase:firebase-database:$firebaseVersion"
-  autoValueFirebaseVersion = '1.0.1'
+  autoValueFirebaseVersion = '1.1.0'
   autoValueFirebase = "me.mattlogan.auto.value:auto-value-firebase:$autoValueFirebaseVersion"
   autoValueFirebaseAnnotation =
       "me.mattlogan.auto.value:auto-value-firebase-annotation:$autoValueFirebaseVersion"
@@ -54,7 +54,7 @@ ext {
       "me.mattlogan.auto.value:auto-value-firebase-adapter:$autoValueFirebaseVersion"
 
   // Dagger
-  daggerVersion = '2.10'
+  daggerVersion = '2.11-rc2'
   dagger = "com.google.dagger:dagger:$daggerVersion"
   daggerCompiler = "com.google.dagger:dagger-compiler:$daggerVersion"
   daggerAndroid = "com.google.dagger:dagger-android:$daggerVersion"
@@ -68,7 +68,7 @@ ext {
   autoValueRedacted = 'com.squareup.auto.value:auto-value-redacted:1.0.1'
 
   // Conductor
-  conductorVersion = '2.1.2'
+  conductorVersion = '2.1.3'
   conductor = "com.bluelinelabs:conductor:$conductorVersion"
   conductorSupport = "com.bluelinelabs:conductor-support:$conductorVersion"
 
@@ -80,7 +80,7 @@ ext {
   // Misc
   autoDispose = 'com.uber.autodispose:autodispose:0.2.0'
   autoDisposeAndroid = 'com.uber.autodispose:autodispose-android:0.2.0'
-  bugsnag = 'com.bugsnag:bugsnag-android:3.8.0'
+  bugsnag = 'com.bugsnag:bugsnag-android:3.9.0'
   chipCloud = 'com.github.fiskurgit:ChipCloud:3.0.3'
   errorPronePlugin = 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.10'
   errorProneCore = 'com.google.errorprone:error_prone_core:2.0.19'
@@ -96,7 +96,7 @@ ext {
   stetho = "com.facebook.stetho:stetho:$stethoVersion"
   stethoOkHttp = "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
   versionsPlugin = 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
-  bugsnagPlugin = 'com.bugsnag:bugsnag-android-gradle-plugin:2.3.2'
+  bugsnagPlugin = 'com.bugsnag:bugsnag-android-gradle-plugin:2.4.2'
 
   storeVersion = '2.0.4'
   store = "com.nytimes.android:store:$storeVersion"
@@ -125,33 +125,33 @@ ext {
   rxBinding = "com.jakewharton.rxbinding2:rxbinding:$rxBindingVersion"
   rxBindingV4 = "com.jakewharton.rxbinding2:rxbinding-support-v4:$rxBindingVersion"
   rxBindingDesign = "com.jakewharton.rxbinding2:rxbinding-design:$rxBindingVersion"
-  rxJava = 'io.reactivex:rxjava:1.2.10'
+  rxJava = 'io.reactivex:rxjava:1.3.0'
   rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.2'
   rxReceivers = 'com.f2prateek.rx.receivers:rx-receivers:0.1.0'
   rxRelay = 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 
   rxJava2 = 'io.reactivex.rxjava2:rxjava:2.1.0'
   rxAndroid2 = 'io.reactivex.rxjava2:rxandroid:2.0.1'
-  rxJava2Interop = 'com.github.akarnokd:rxjava2-interop:0.9.7'
+  rxJava2Interop = 'com.github.akarnokd:rxjava2-interop:0.10.0'
   rxJava2Extensions = 'com.github.akarnokd:rxjava2-extensions:0.17.0'
 
   // Square and JW
-  butterKnifeVersion = '8.5.1'
+  butterKnifeVersion = '8.6.0'
   butterKnife = "com.jakewharton:butterknife:$butterKnifeVersion"
   butterKnifeCompiler = "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
-  leakCanaryVersion = '1.5'
+  leakCanaryVersion = '1.5.1'
   leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
   leakCanaryNoop = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-  okhttpVersion = '3.7.0'
+  okhttpVersion = '3.8.0'
   okhttp = "com.squareup.okhttp3:okhttp:$okhttpVersion"
   okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
   okhttpWebSockets = "com.squareup.okhttp3:okhttp-ws:$okhttpVersion"
-  okio = 'com.squareup.okio:okio:1.12.0'
+  okio = 'com.squareup.okio:okio:1.13.0'
   madge = 'com.jakewharton.madge:madge:1.1.4'
   moshiVersion = '1.4.0'
   moshi = "com.squareup.moshi:moshi:$moshiVersion"
   processPhoenix = 'com.jakewharton:process-phoenix:2.0.0'
-  retrofitVersion = '2.2.0'
+  retrofitVersion = '2.3.0'
   retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
   retrofitMock = "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
   retrofitMoshi = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
@@ -171,7 +171,7 @@ ext {
   junit = 'junit:junit:4.12'
   mockito = 'org.mockito:mockito-core:2.1.0'
   robolectric = 'org.robolectric:robolectric:3.2.2'
-  truth = 'com.google.truth:truth:0.30'
+  truth = 'com.google.truth:truth:0.32'
 
   // Espresso
   supportTestVersion = '0.4.1'
