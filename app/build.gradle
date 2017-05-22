@@ -245,7 +245,7 @@ dependencies {
   implementation rootProject.ext.rxPreferences
   implementation rootProject.ext.rxReceivers
   implementation rootProject.ext.rxRelay
-  compile(rootProject.ext.simpleXml) {
+  implementation(rootProject.ext.simpleXml) {
     exclude module: 'stax'
     exclude module: 'stax-api'
     exclude module: 'xpp3'
