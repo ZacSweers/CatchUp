@@ -130,12 +130,12 @@ public class SmmryController extends ButterKnifeController {
   @Override protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
     progressBar.setIndeterminateTintList(ColorStateList.valueOf(accentColor));
-    dragDismissFrameLayout.addListener(dragDismissListener);
   }
 
   @Override protected void onAttach(@NonNull View view) {
     ConductorInjection.inject(this);
     super.onAttach(view);
+    dragDismissFrameLayout.addListener(dragDismissListener);
     smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(url)
         .withBreak(true)
         .keywordCount(5)
@@ -165,6 +165,11 @@ public class SmmryController extends ButterKnifeController {
         });
   }
 
+  @Override protected void onDetach(@NonNull View view) {
+    dragDismissFrameLayout.removeListener(dragDismissListener);
+    super.onDetach(view);
+  }
+
   private void showSummary(SmmryResponse smmry) {
     ChipCloudConfig config = new ChipCloudConfig().selectMode(ChipCloud.SelectMode.none)
         .uncheckedChipColor(accentColor)
@@ -187,6 +192,7 @@ public class SmmryController extends ButterKnifeController {
         .setListener(new AnimatorListenerAdapter() {
           @Override public void onAnimationEnd(Animator animation) {
             loadingView.setVisibility(View.GONE);
+            loadingView.animate().setListener(null);
           }
         });
     content.setNestedScrollingEnabled(true);
