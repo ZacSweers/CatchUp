@@ -53,7 +53,7 @@ mini blog series about. Each service has its own nuances that make them unique t
 
 ## Testing
 
-This is a personal pet project ¯\\\_(ツ)_\/¯.
+While this is a personal pet project, extensive tests can be found [here](https://youtu.be/oHg5SJYRHA0).
 
 ## Influences
 
