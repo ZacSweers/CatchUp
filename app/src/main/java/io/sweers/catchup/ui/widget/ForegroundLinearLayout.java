@@ -22,6 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.LinearLayout;
@@ -34,7 +35,6 @@ public class ForegroundLinearLayout extends LinearLayout {
 
   private final Rect mSelfBounds = new Rect();
   private final Rect mOverlayBounds = new Rect();
-  protected boolean mForegroundInPadding = true;
   boolean mForegroundBoundsChanged = false;
   private Drawable mForeground;
   private int mForegroundGravity = Gravity.FILL;
@@ -43,11 +43,11 @@ public class ForegroundLinearLayout extends LinearLayout {
     this(context, null);
   }
 
-  public ForegroundLinearLayout(Context context, AttributeSet attrs) {
+  public ForegroundLinearLayout(Context context, @Nullable AttributeSet attrs) {
     this(context, attrs, 0);
   }
 
-  public ForegroundLinearLayout(Context context, AttributeSet attrs, int defStyle) {
+  public ForegroundLinearLayout(Context context, @Nullable AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
 
     TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ForegroundView, defStyle, 0);
@@ -59,9 +59,6 @@ public class ForegroundLinearLayout extends LinearLayout {
     if (d != null) {
       setForeground(d);
     }
-
-    mForegroundInPadding =
-        a.getBoolean(R.styleable.ForegroundView_android_foregroundInsidePadding, true);
 
     a.recycle();
   }
@@ -190,14 +187,10 @@ public class ForegroundLinearLayout extends LinearLayout {
         final int w = getRight() - getLeft();
         final int h = getBottom() - getTop();
 
-        if (mForegroundInPadding) {
-          selfBounds.set(0, 0, w, h);
-        } else {
-          selfBounds.set(getPaddingLeft(),
-              getPaddingTop(),
-              w - getPaddingRight(),
-              h - getPaddingBottom());
-        }
+        selfBounds.set(getPaddingLeft(),
+            getPaddingTop(),
+            w - getPaddingRight(),
+            h - getPaddingBottom());
 
         Gravity.apply(mForegroundGravity,
             foreground.getIntrinsicWidth(),

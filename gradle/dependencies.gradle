@@ -38,7 +38,7 @@ ext {
   supportRecyclerView = "com.android.support:recyclerview-v7:$supportVersion"
   supportV4 = "com.android.support:support-v4:$supportVersion"
   multidex = 'com.android.support:multidex:1.0.1'
-  androidPlugin = 'com.android.tools.build:gradle:3.0.0-alpha1'
+  androidPlugin = 'com.android.tools.build:gradle:3.0.0-alpha2'
   constraintLayout = 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
   // Firebase
@@ -54,7 +54,7 @@ ext {
       "me.mattlogan.auto.value:auto-value-firebase-adapter:$autoValueFirebaseVersion"
 
   // Dagger
-  daggerVersion = '2.11-rc2'
+  daggerVersion = '2.11'
   dagger = "com.google.dagger:dagger:$daggerVersion"
   daggerCompiler = "com.google.dagger:dagger-compiler:$daggerVersion"
   daggerAndroid = "com.google.dagger:dagger-android:$daggerVersion"
