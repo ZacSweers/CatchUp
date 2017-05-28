@@ -98,7 +98,7 @@ ext {
   versionsPlugin = 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
   bugsnagPlugin = 'com.bugsnag:bugsnag-android-gradle-plugin:2.4.2'
 
-  storeVersion = '2.0.4'
+  storeVersion = '2.1.0'
   store = "com.nytimes.android:store:$storeVersion"
   storeCache = "com.nytimes.android:cache:$storeVersion"
   storeMoshi = "com.nytimes.android:middleware-moshi:$storeVersion"
