@@ -157,7 +157,7 @@ apollo {
 def supportLibraries = configurations.create("supportImplementation")
 configurations.all {
   resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-    if (details.requested.group == 'com.android.support' && details.requested.name != 'multidex') {
+    if (details.requested.group == 'com.android.support' && !details.requested.name.contains('multidex')) {
       // We want to force all support libraries to use the same version, even if they're transitive.
       details.useVersion rootProject.ext.supportVersion
     }
