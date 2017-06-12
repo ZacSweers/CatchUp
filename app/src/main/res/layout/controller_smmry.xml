@@ -23,6 +23,7 @@
     android:background="?android:windowBackground"
     android:clickable="true"
     android:elevation="16dp"
+    android:focusable="true"
     android:paddingBottom="16dp"
     app:dragDismissDistance="112dp"
     >
@@ -48,7 +49,9 @@
         android:id="@+id/loading_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/nunito"
         android:text="@string/summarizing"
+        app:fontFamily="@font/nunito"
         />
   </LinearLayout>
 
