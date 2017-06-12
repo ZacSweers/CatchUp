@@ -25,9 +25,20 @@
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
     <item name="toolbarStyle">@style/Widget.Catchup.Toolbar</item>
+    <item name="android:textViewStyle">@style/CatchUp.TextView</item>
   </style>
 
   <style name="CatchUp" parent="Base">
+  </style>
+
+  <style name="CatchUp.TextView" parent="android:Widget.TextView">
+    <item name="android:textAppearance">@style/CatchUp.TextAppearance</item>
+  </style>
+
+  <style name="CatchUp.TextAppearance" parent="TextAppearance.AppCompat">
+    <!-- Defaults for anything unstyled, but appcompat text styles won't catch this -->
+    <item name="android:fontFamily">@font/nunito</item>
+    <item name="fontFamily">@font/nunito</item>
   </style>
 
   <style name="Catchup.Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
