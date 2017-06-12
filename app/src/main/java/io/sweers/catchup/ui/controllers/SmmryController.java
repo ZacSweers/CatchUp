@@ -54,6 +54,7 @@ import io.sweers.catchup.ui.base.ButterKnifeController;
 import io.sweers.catchup.ui.base.ServiceController;
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout;
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback;
+import io.sweers.catchup.ui.widget.FlowLayout;
 import javax.inject.Inject;
 
 /**
@@ -69,7 +70,7 @@ public class SmmryController extends ButterKnifeController {
   @BindView(R.id.loading_view) View loadingView;
   @BindView(R.id.progress) ProgressBar progressBar;
   @BindView(R.id.content_container) NestedScrollView content;
-  @BindView(R.id.tags_container) FlexboxLayout tags;
+  @BindView(R.id.tags_container) FlowLayout tags;
   @BindView(R.id.title) TextView title;
   @BindView(R.id.summary) TextView summary;
   @BindView(R.id.drag_dismiss_layout) ElasticDragDismissFrameLayout dragDismissFrameLayout;

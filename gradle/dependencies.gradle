@@ -86,7 +86,6 @@ ext {
   errorPronePlugin = 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.10'
   errorProneCore = 'com.google.errorprone:error_prone_core:2.0.19'
   errorProneAnnotations = 'com.google.errorprone:error_prone_annotations:2.0.19'
-  flexbox = 'com.google.android:flexbox:0.2.5'
   glide = 'com.github.bumptech.glide:glide:4.0.0-RC0'
   glideOkhttp = 'com.github.bumptech.glide:okhttp3-integration:4.0.0-RC0'
   moshiLazyAdapters = 'com.serjltt.moshi:moshi-lazy-adapters:1.3'

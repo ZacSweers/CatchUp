@@ -73,27 +73,29 @@
           android:layout_height="wrap_content"
           android:layout_marginBottom="16dp"
           android:fontFamily="@font/nunito"
+          android:gravity="center_horizontal"
           app:fontFamily="@font/nunito"
           style="@style/TextAppearance.AppCompat.Title"
-          />
-
-      <com.google.android.flexbox.FlexboxLayout
-          android:id="@+id/tags_container"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="16dp"
-          app:alignContent="space_around"
-          app:flexWrap="wrap"
           />
 
       <io.sweers.catchup.ui.widget.BaselineGridTextView
           android:id="@+id/summary"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:fontFamily="@font/nunito"
           android:textAppearance="@style/TextAppearance.AppCompat.Body1"
           android:textIsSelectable="true"
-          android:fontFamily="@font/nunito"
           app:fontFamily="@font/nunito"
+          />
+
+      <io.sweers.catchup.ui.widget.FlowLayout
+          android:id="@+id/tags_container"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_marginBottom="16dp"
+          app:horizontalSpacing="4dp"
+          app:verticalSpacing="4dp"
           />
 
     </LinearLayout>
