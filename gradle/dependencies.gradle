@@ -133,6 +133,7 @@ ext {
   butterKnifeVersion = '8.6.0'
   butterKnife = "com.jakewharton:butterknife:$butterKnifeVersion"
   butterKnifeCompiler = "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+  jsr305 = 'com.google.code.findbugs:jsr305:3.0.2'
   leakCanaryVersion = '1.5.1'
   leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
   leakCanaryNoop = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"

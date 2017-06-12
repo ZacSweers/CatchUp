@@ -278,13 +278,15 @@ dependencies {
   implementation rootProject.ext.conductor
   implementation rootProject.ext.conductorSupport
 
+  implementation rootProject.ext.jsr305
+
   // Test
   testImplementation rootProject.ext.rxJava2Extensions
   testImplementation rootProject.ext.rxRelay
   androidTestImplementation rootProject.ext.errorProneAnnotations
   androidTestImplementation rootProject.ext.rxJava2
-  androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.1'
-  testImplementation 'com.google.code.findbugs:jsr305:3.0.1'
+  androidTestImplementation rootProject.ext.jsr305
+  testImplementation rootProject.ext.jsr305
   testImplementation rootProject.ext.errorProneAnnotations
   testImplementation rootProject.ext.junit
   testImplementation rootProject.ext.truth
