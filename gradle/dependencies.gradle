@@ -16,8 +16,8 @@
 
 ext {
   // Build
-  minSdkVersion = 26
-  targetSdkVersion = 21
+  minSdkVersion = 21
+  targetSdkVersion = 26
   compileSdkVersion = 26
   buildToolsVersion = '26.0.0'
   ci = 'true' == System.getenv('CI')
@@ -97,12 +97,6 @@ ext {
   stethoOkHttp = "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
   versionsPlugin = 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
   bugsnagPlugin = 'com.bugsnag:bugsnag-android-gradle-plugin:2.4.2'
-
-  storeVersion = '2.1.0'
-  store = "com.nytimes.android:store:$storeVersion"
-  storeCache = "com.nytimes.android:cache:$storeVersion"
-  storeMoshi = "com.nytimes.android:middleware-moshi:$storeVersion"
-  storeFS = "com.nytimes.android:filesystem:$storeVersion"
 
   // Apollo
   def apolloVersion = '0.3.0'

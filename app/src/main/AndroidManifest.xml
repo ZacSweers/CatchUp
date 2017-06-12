@@ -56,6 +56,7 @@
       android:name="com.bumptech.glide.integration.okhttp3.OkHttpLibraryGlideModule"
       android:value="LibraryGlideModule"
       />
+    <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts" />
   </application>
 
 </manifest>
