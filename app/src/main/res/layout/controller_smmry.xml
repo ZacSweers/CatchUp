@@ -35,23 +35,27 @@
       android:layout_gravity="center"
       android:orientation="vertical"
       >
-    <ProgressBar
+
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_width="152dp"
+        android:layout_height="152dp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
-        android:indeterminate="true"
-        style="@style/Widget.AppCompat.ProgressBar"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="summarizing.json"
+        app:lottie_loop="true"
         />
 
     <io.sweers.catchup.ui.widget.BaselineGridTextView
         android:id="@+id/loading_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:fontFamily="@font/nunito"
+        android:gravity="center_horizontal"
         android:text="@string/summarizing"
-        app:fontFamily="@font/nunito"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
         />
   </LinearLayout>
 

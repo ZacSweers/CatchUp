@@ -301,6 +301,7 @@ dependencies {
   annotationProcessor rootProject.ext.barberCompiler
   implementation rootProject.ext.glide
   implementation rootProject.ext.glideOkhttp
+  implementation rootProject.ext.lottie
   implementation rootProject.ext.recyclerViewAnimators
   implementation rootProject.ext.rxJava
   implementation rootProject.ext.rxPreferences

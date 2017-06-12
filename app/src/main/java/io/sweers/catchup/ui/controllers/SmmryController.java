@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.controllers;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -27,11 +26,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.Unbinder;
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.SimpleColorFilter;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler;
 import com.uber.autodispose.SingleScoper;
@@ -65,7 +65,7 @@ public class SmmryController extends ButterKnifeController {
   @Inject SmmryService smmryService;
 
   @BindView(R.id.loading_view) View loadingView;
-  @BindView(R.id.progress) ProgressBar progressBar;
+  @BindView(R.id.progress) LottieAnimationView lottieView;
   @BindView(R.id.content_container) NestedScrollView content;
   @BindView(R.id.tags) TextView tags;
   @BindView(R.id.title) TextView title;
@@ -130,7 +130,8 @@ public class SmmryController extends ButterKnifeController {
 
   @Override protected void onViewBound(@NonNull View view) {
     super.onViewBound(view);
-    progressBar.setIndeterminateTintList(ColorStateList.valueOf(accentColor));
+    final SimpleColorFilter colorFilter = new SimpleColorFilter(accentColor);
+    lottieView.addColorFilter(colorFilter);
   }
 
   @Override protected void onAttach(@NonNull View view) {
