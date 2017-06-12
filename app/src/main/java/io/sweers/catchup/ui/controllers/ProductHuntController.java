@@ -18,21 +18,12 @@ package io.sweers.catchup.ui.controllers;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
-import com.nytimes.android.external.fs.FileSystemPersisterFactory;
-import com.nytimes.android.external.store.base.Persister;
-import com.nytimes.android.external.store.base.impl.MemoryPolicy;
-import com.nytimes.android.external.store.base.impl.Store;
-import com.nytimes.android.external.store.base.impl.StoreBuilder;
-import com.nytimes.android.external.store.middleware.moshi.MoshiParserFactory;
 import com.serjltt.moshi.adapters.WrappedJsonAdapter;
-import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Types;
 import com.uber.autodispose.CompletableScoper;
 import dagger.Binds;
 import dagger.Lazy;
@@ -40,9 +31,6 @@ import dagger.Provides;
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
-import hu.akarnokd.rxjava.interop.RxJavaInterop;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.sweers.catchup.BuildConfig;
@@ -53,32 +41,20 @@ import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.producthunt.ProductHuntService;
 import io.sweers.catchup.data.producthunt.model.Post;
 import io.sweers.catchup.injection.ControllerKey;
-import io.sweers.catchup.injection.qualifiers.ApplicationContext;
 import io.sweers.catchup.ui.base.BaseNewsController;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
-import okio.BufferedSource;
-import okio.Okio;
 import org.threeten.bp.Instant;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
-import timber.log.Timber;
-
-import static hu.akarnokd.rxjava.interop.RxJavaInterop.toV1Observable;
 
 public final class ProductHuntController extends BaseNewsController<Post> {
 
-  @Inject Store<List<Post>, Integer> store;
+  @Inject ProductHuntService service;
   @Inject LinkManager linkManager;
 
   public ProductHuntController() {
@@ -122,25 +98,14 @@ public final class ProductHuntController extends BaseNewsController<Post> {
           .flatMapSingle(this::getPage)
           .collectInto(new ArrayList<>(), List::addAll);
     } else if (request.fromRefresh()) {
-      Completable clearCompletable = Completable.fromAction(() -> store.clear());
-
-      // TODO temporary until https://github.com/NYTimes/Store/issues/142 is fixed
-      // Just a hack that clears the first potential 15 pages ¯\_(ツ)_/¯
-      // Actually this doesn't work either :|
-      clearCompletable = Observable.range(0, 10)
-          .doOnNext(page -> store.clear(page))
-          .ignoreElements();
-
-      return clearCompletable.andThen(RxJavaInterop.toV2Observable(store.fetch(request.page()))
-          .firstOrError());
+      return getPage(request.page());
     } else {
       return getPage(request.page());
     }
   }
 
   private Single<List<Post>> getPage(int page) {
-    return RxJavaInterop.toV2Observable(store.get(page))
-        .firstOrError();
+    return service.getPosts(page);
   }
 
   @Subcomponent
@@ -186,45 +151,6 @@ public final class ProductHuntController extends BaseNewsController<Post> {
           .validateEagerly(BuildConfig.DEBUG)
           .build()
           .create(ProductHuntService.class);
-    }
-
-    @Provides static Persister<BufferedSource, Integer> providePersister(
-        @ApplicationContext Context context) {
-      if (Looper.myLooper() == Looper.getMainLooper()) {
-        Timber.e("Persister on main thread!");
-        //throw new IllegalStateException("Persister initialized on main thread.");
-      }
-      try {
-        return FileSystemPersisterFactory.create(context.getFilesDir(),
-            key -> "producthunt" + File.pathSeparator + key.toString(),
-            1,
-            TimeUnit.HOURS);
-      } catch (IOException e) {
-        throw new RuntimeException("Creating FS persister failed", e);
-      }
-    }
-
-    @Provides static Store<List<Post>, Integer> providePersistedPostsStore(@InternalApi Moshi moshi,
-        ProductHuntService service,
-        Persister<BufferedSource, Integer> persister) {
-      final Type postListType = Types.newParameterizedType(List.class, Post.class);
-      final JsonAdapter<List<Post>> adapter = moshi.adapter(postListType);
-      return StoreBuilder.<Integer, BufferedSource, List<Post>>parsedWithKey().fetcher(page -> {
-        return toV1Observable(service.getPosts(page)
-            .map(value -> {
-              // Ew - because the FS persister only supports BufferedSource
-              return Okio.buffer(Okio.source(new ByteArrayInputStream(adapter.toJson(value)
-                  .getBytes(StandardCharsets.UTF_8))));
-            })
-            .toObservable(), BackpressureStrategy.ERROR);
-      })
-          .persister(persister)
-          .memoryPolicy(MemoryPolicy.builder()
-              .setExpireAfter(1)
-              .setExpireAfterTimeUnit(TimeUnit.HOURS)
-              .build())
-          .parser(MoshiParserFactory.createSourceParser(moshi, postListType))
-          .open();
     }
   }
 }

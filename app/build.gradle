@@ -257,12 +257,6 @@ dependencies {
   implementation rootProject.ext.apolloRx2Support
   implementation rootProject.ext.apolloAndroidSupport
 
-  // Store
-  implementation rootProject.ext.store
-  implementation rootProject.ext.storeCache
-  implementation rootProject.ext.storeMoshi
-  implementation rootProject.ext.storeFS
-
   // Stetho
   debugImplementation rootProject.ext.stetho
   debugImplementation rootProject.ext.stethoOkHttp
