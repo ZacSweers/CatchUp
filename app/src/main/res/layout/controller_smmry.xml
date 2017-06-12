@@ -72,6 +72,8 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginBottom="16dp"
+          android:fontFamily="@font/nunito"
+          app:fontFamily="@font/nunito"
           style="@style/TextAppearance.AppCompat.Title"
           />
 
@@ -88,7 +90,10 @@
           android:id="@+id/summary"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:textAppearance="@style/TextAppearance.AppCompat.Body1"
           android:textIsSelectable="true"
+          android:fontFamily="@font/nunito"
+          app:fontFamily="@font/nunito"
           />
 
     </LinearLayout>

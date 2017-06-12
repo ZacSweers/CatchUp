@@ -17,6 +17,7 @@
 
 <io.sweers.catchup.ui.widget.ForegroundLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
@@ -29,130 +30,148 @@
     >
 
   <LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:orientation="vertical"
-    android:padding="16dp"
-    >
-
-    <LinearLayout
-      android:layout_width="wrap_content"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
+      android:layout_weight="1"
+      android:orientation="vertical"
+      android:padding="16dp"
       >
 
-      <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/score"
-        style="@style/TextAppearance.AppCompat.Small"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?colorAccent"
-        android:textStyle="bold"
-        tools:text="+ 128"
-        />
+        android:orientation="horizontal"
+        >
 
       <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/score_divider"
-        style="@style/TextAppearance.AppCompat.Caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:text=" • "
-        />
+          android:id="@+id/score"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="@font/nunito"
+          android:textColor="?colorAccent"
+          android:textStyle="bold"
+          app:fontFamily="@font/nunito"
+          tools:text="+ 128"
+          style="@style/TextAppearance.AppCompat.Caption"
+          />
 
       <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tag"
-        style="@style/TextAppearance.AppCompat.Caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:textColor="?colorAccent"
-        android:textStyle="bold"
-        android:visibility="gone"
-        tools:text="tag"
-        tools:visibility="visible"
-        />
+          android:id="@+id/score_divider"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="4dp"
+          android:layout_marginRight="4dp"
+          android:fontFamily="@font/nunito"
+          android:text=" • "
+          app:fontFamily="@font/nunito"
+          style="@style/TextAppearance.AppCompat.Caption"
+          />
 
       <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tag_divider"
-        style="@style/TextAppearance.AppCompat.Caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:text=" • "
-        />
+          android:id="@+id/tag"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="4dp"
+          android:fontFamily="@font/nunito"
+          android:textColor="?colorAccent"
+          android:textStyle="bold"
+          android:visibility="gone"
+          app:fontFamily="@font/nunito"
+          tools:text="tag"
+          tools:visibility="visible"
+          style="@style/TextAppearance.AppCompat.Caption"
+          />
 
       <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/timestamp"
-        style="@style/TextAppearance.AppCompat.Caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="12 hours ago"
-        />
+          android:id="@+id/tag_divider"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="4dp"
+          android:layout_marginRight="4dp"
+          android:fontFamily="@font/nunito"
+          android:text=" • "
+          app:fontFamily="@font/nunito"
+          style="@style/TextAppearance.AppCompat.Caption"
+          />
+
+      <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/timestamp"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="@font/nunito"
+          app:fontFamily="@font/nunito"
+          tools:text="12 hours ago"
+          style="@style/TextAppearance.AppCompat.Caption"
+          />
 
     </LinearLayout>
 
     <io.sweers.catchup.ui.widget.BaselineGridTextView
-      android:id="@+id/title"
-      style="@style/TextAppearance.AppCompat.Subhead"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="4dp"
-      android:layout_marginTop="4dp"
-      tools:text="Show HN: Into.js Hints"
-      />
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/nunito"
+        app:fontFamily="@font/nunito"
+        tools:text="Show HN: Into.js Hints"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        />
 
     <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      >
-
-      <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/author"
-        style="@style/TextAppearance.AppCompat.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="pandanomic"
-        />
+        android:orientation="horizontal"
+        >
 
       <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/author_divider"
-        style="@style/TextAppearance.AppCompat.Caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:text=" — "
-        />
+          android:id="@+id/author"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="@font/nunito"
+          app:fontFamily="@font/nunito"
+          tools:text="pandanomic"
+          style="@style/TextAppearance.AppCompat.Caption"
+          />
 
       <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/source"
-        style="@style/TextAppearance.AppCompat.Caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="medium.com"
-        />
+          android:id="@+id/author_divider"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="4dp"
+          android:layout_marginRight="4dp"
+          android:fontFamily="@font/nunito"
+          android:text=" — "
+          app:fontFamily="@font/nunito"
+          style="@style/TextAppearance.AppCompat.Caption"
+          />
+
+      <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/source"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="@font/nunito"
+          app:fontFamily="@font/nunito"
+          tools:text="medium.com"
+          style="@style/TextAppearance.AppCompat.Caption"
+          />
 
     </LinearLayout>
 
   </LinearLayout>
 
   <io.sweers.catchup.ui.widget.BaselineGridTextView
-    android:id="@+id/comments"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:background="?selectableItemBackgroundBorderless"
-    android:clickable="true"
-    android:drawableTint="?colorAccent"
-    android:gravity="center"
-    android:padding="16dp"
-    android:drawableTop="@drawable/ic_comment_black_24dp"
-    tools:text="39"
-    />
+      android:id="@+id/comments"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:background="?selectableItemBackgroundBorderless"
+      android:clickable="true"
+      android:drawableTint="?colorAccent"
+      android:drawableTop="@drawable/ic_comment_black_24dp"
+      android:gravity="center"
+      android:padding="16dp"
+      tools:text="39"
+      />
 
 </io.sweers.catchup.ui.widget.ForegroundLinearLayout>

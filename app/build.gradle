@@ -243,6 +243,7 @@ dependencies {
   supportImplementation rootProject.ext.supportCustomTabs
   supportImplementation rootProject.ext.constraintLayout
   supportImplementation rootProject.ext.supportPalette
+  supportImplementation rootProject.ext.supportCompat
 
   implementation supportLibraries
   testImplementation supportLibraries

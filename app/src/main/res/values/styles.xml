@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
   <style name="None">
   </style>
@@ -24,6 +24,7 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="toolbarStyle">@style/Widget.Catchup.Toolbar</item>
   </style>
 
   <style name="CatchUp" parent="Base">
@@ -33,6 +34,15 @@
     <!-- Force icons and title text to be all the same color -->
     <item name="colorControlNormal">?android:attr/textColorPrimary</item>
     <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
+  </style>
+
+  <style name="Widget.Catchup.Toolbar" parent="Widget.AppCompat.Toolbar">
+    <item name="titleTextAppearance">@style/TextAppearance.Widget.Catchup.Toolbar.Title</item>
+  </style>
+
+  <style name="TextAppearance.Widget.Catchup.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <item name="android:fontFamily">@font/nunito</item>
+    <item name="fontFamily">@font/nunito</item>
   </style>
 
   <style name="CatchUp.TabLayout" parent="Widget.Design.TabLayout">
