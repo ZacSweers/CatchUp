@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,6 @@ import butterknife.BindView;
 import butterknife.Unbinder;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler;
-import com.google.android.flexbox.FlexboxLayout;
 import com.uber.autodispose.SingleScoper;
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
@@ -62,6 +62,7 @@ import javax.inject.Inject;
  */
 public class SmmryController extends ButterKnifeController {
 
+  private static final String ID_TITLE = "smmrycontroller.title";
   private static final String ID_URL = "smmrycontroller.url";
   private static final String ID_ACCENT = "smmrycontroller.accent";
 
@@ -77,6 +78,7 @@ public class SmmryController extends ButterKnifeController {
 
   private String url;
   @ColorInt private int accentColor;
+  private String fallbackTitle;
 
   private final ElasticDragDismissCallback dragDismissListener = new ElasticDragDismissCallback() {
     @Override public void onDragDismissed() {
@@ -85,40 +87,42 @@ public class SmmryController extends ButterKnifeController {
     }
   };
 
-  public static <T> Consumer<T> showFor(ServiceController controller, String url) {
+  public static <T> Consumer<T> showFor(ServiceController controller,
+      String url,
+      String fallbackTitle) {
     return t -> {
       // TODO Optimize this
       // Exclude images
       // Summarize reddit selftexts
       controller.getRouter()
           .pushController(RouterTransaction.with(new SmmryController(url,
-              controller.getServiceThemeColor()))
+              controller.getServiceThemeColor(),
+              fallbackTitle))
               .pushChangeHandler(new VerticalChangeHandler(false))
               .popChangeHandler(new VerticalChangeHandler()));
     };
-  }
-
-  public SmmryController() {
-
   }
 
   public SmmryController(Bundle args) {
     super(args);
   }
 
-  public SmmryController(String url, @ColorInt int accentColor) {
+  public SmmryController(String url, @ColorInt int accentColor, String fallbackTitle) {
     this.url = url;
     this.accentColor = accentColor;
+    this.fallbackTitle = fallbackTitle.trim();
   }
 
   @Override protected void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
+    outState.putString(ID_TITLE, fallbackTitle);
     outState.putString(ID_URL, url);
     outState.putInt(ID_ACCENT, accentColor);
   }
 
   @Override protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
     super.onRestoreInstanceState(savedInstanceState);
+    fallbackTitle = savedInstanceState.getString(ID_TITLE);
     url = savedInstanceState.getString(ID_URL);
     accentColor = savedInstanceState.getInt(ID_ACCENT);
   }
@@ -185,7 +189,11 @@ public class SmmryController extends ButterKnifeController {
             .toUpperCase());
       }
     }
-    title.setText(smmry.title());
+    String smmryTitle = smmry.title();
+    if (TextUtils.isEmpty(smmryTitle)) {
+      smmryTitle = fallbackTitle;
+    }
+    title.setText(smmryTitle);
     summary.setText(smmry.content()
         .replace("[BREAK]", "\n\n"));
     loadingView.animate()
@@ -193,7 +201,8 @@ public class SmmryController extends ButterKnifeController {
         .setListener(new AnimatorListenerAdapter() {
           @Override public void onAnimationEnd(Animator animation) {
             loadingView.setVisibility(View.GONE);
-            loadingView.animate().setListener(null);
+            loadingView.animate()
+                .setListener(null);
           }
         });
     content.setNestedScrollingEnabled(true);

@@ -103,7 +103,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
     if (remoteConfig.getBoolean(SMMRY_ENABLED)) {
       holder.itemLongClicks()
           .to(new ObservableScoper<>(holder))
-          .subscribe(SmmryController.showFor(this, link.url()));
+          .subscribe(SmmryController.showFor(this, link.url(), link.title()));
     }
     holder.itemCommentClicks()
         .compose(transformUrlToMeta("https://reddit.com/comments/" + link.id()))
@@ -112,8 +112,7 @@ public final class RedditController extends BaseNewsController<RedditLink> {
         .subscribe();
   }
 
-  @NonNull @Override
-  protected Single<List<RedditLink>> getDataSingle(DataRequest request) {
+  @NonNull @Override protected Single<List<RedditLink>> getDataSingle(DataRequest request) {
     return service.frontPage(25, lastSeen)
         .map((redditListingRedditResponse) -> {
           lastSeen = redditListingRedditResponse.data()

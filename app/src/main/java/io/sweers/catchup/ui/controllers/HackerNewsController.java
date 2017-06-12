@@ -98,7 +98,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     if (remoteConfig.getBoolean(SMMRY_ENABLED) && !TextUtils.isEmpty(url)) {
       holder.itemLongClicks()
           .to(new ObservableScoper<>(holder))
-          .subscribe(SmmryController.showFor(this, url));
+          .subscribe(SmmryController.showFor(this, url, story.title()));
     }
 
     holder.itemClicks()

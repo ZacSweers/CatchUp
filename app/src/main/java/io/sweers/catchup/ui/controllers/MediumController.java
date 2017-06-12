@@ -108,7 +108,10 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     if (remoteConfig.getBoolean(SMMRY_ENABLED)) {
       holder.itemLongClicks()
           .to(new ObservableScoper<>(holder))
-          .subscribe(SmmryController.showFor(this, item.constructUrl()));
+          .subscribe(SmmryController.showFor(this,
+              item.constructUrl(),
+              item.post()
+                  .title()));
     }
 
     holder.itemClicks()
