@@ -116,7 +116,8 @@ android {
     release {
       buildConfigField 'String', 'BUGSNAG_KEY', /"${getPropertyOrEmpty("catchup_bugsnag_key")}"/
       signingConfig signingConfigs.release
-      postprocessing.proguardFiles = [getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro']
+      postprocessing.proguardFiles =
+          [getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro']
     }
   }
   dexOptions {
@@ -133,6 +134,66 @@ android {
     textOutput 'stdout'
     htmlReport !rootProject.ext.ci
     xmlReport !rootProject.ext.ci
+  }
+  applicationVariants.all {
+    // Configure firebase
+    String apiKey = null
+    String appId = null
+    String databaseUrl = null
+    String gaTrackingId = null
+    String gcmDefaultSender = null
+    String storageBucket = null
+    String defaultWebClientId = null
+    String crashReportingApiKey = null
+    String projectId = null
+    if (it.buildType.name == "debug") {
+      apiKey = project.properties.get('catchup.google_api_key.debug')
+      appId = project.properties.get('catchup.google_app_id.debug')
+      databaseUrl = project.properties.get('catchup.firebase_database_url.debug')
+      gaTrackingId = project.properties.get('catchup.ga_trackingId.debug')
+      gcmDefaultSender = project.properties.get('catchup.gcm_defaultSenderId.debug')
+      storageBucket = project.properties.get('catchup.google_storage_bucket.debug')
+      defaultWebClientId = project.properties.get('catchup.default_web_client_id.debug')
+      crashReportingApiKey = project.properties.get('catchup.google_crash_reporting_api_key.debug')
+      projectId = 'catchup.project_id.debug'
+    } else if (it.buildType.name == "release") {
+      apiKey = project.properties.get('catchup.google_api_key')
+      appId = project.properties.get('catchup.google_app_id')
+      databaseUrl = project.properties.get('catchup.firebase_database_url')
+      gaTrackingId = project.properties.get('catchup.ga_trackingId')
+      gcmDefaultSender = project.properties.get('catchup.gcm_defaultSenderId')
+      storageBucket = project.properties.get('catchup.google_storage_bucket')
+      defaultWebClientId = project.properties.get('catchup.default_web_client_id')
+      crashReportingApiKey = project.properties.get('catchup.google_crash_reporting_api_key')
+      projectId = project.properties.get('catchup.project_id')
+    }
+    if (apiKey) {
+      it.resValue 'string', 'google_api_key', apiKey
+    }
+    if (appId) {
+      it.resValue 'string', 'google_app_id', appId
+    }
+    if (databaseUrl) {
+      it.resValue 'string', 'firebase_database_url', databaseUrl
+    }
+    if (gaTrackingId) {
+      it.resValue 'string', 'ga_trackingId', gaTrackingId
+    }
+    if (gcmDefaultSender) {
+      it.resValue 'string', 'gcm_defaultSenderId', gcmDefaultSender
+    }
+    if (storageBucket) {
+      it.resValue 'string', 'google_storage_bucket', storageBucket
+    }
+    if (defaultWebClientId) {
+      it.resValue 'string', 'default_web_client_id', defaultWebClientId
+    }
+    if (crashReportingApiKey) {
+      it.resValue 'string', 'google_crash_reporting_api_key', crashReportingApiKey
+    }
+    if (projectId) {
+      it.resValue 'string', 'project_id', projectId
+    }
   }
 }
 
@@ -157,7 +218,8 @@ apollo {
 def supportLibraries = configurations.create("supportImplementation")
 configurations.all {
   resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-    if (details.requested.group == 'com.android.support' && !details.requested.name.contains('multidex')) {
+    if (details.requested.group == 'com.android.support' &&
+        !details.requested.name.contains('multidex')) {
       // We want to force all support libraries to use the same version, even if they're transitive.
       details.useVersion rootProject.ext.supportVersion
     }
@@ -203,7 +265,7 @@ dependencies {
   implementation rootProject.ext.retrofit
   implementation rootProject.ext.retrofitMoshi
   implementation rootProject.ext.retrofitRxJava
-  compile(rootProject.ext.retrofitXml) {
+  implementation(rootProject.ext.retrofitXml) {
     exclude module: 'stax'
     exclude module: 'stax-api'
     exclude module: 'xpp3'
@@ -299,5 +361,3 @@ dependencies {
   debugImplementation rootProject.ext.chuck
   releaseImplementation rootProject.ext.chuckNoop
 }
-
-apply plugin: 'com.google.gms.google-services'
