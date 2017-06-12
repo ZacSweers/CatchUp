@@ -75,7 +75,7 @@ import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
 import io.sweers.catchup.data.ISO8601InstantAdapter;
 import io.sweers.catchup.data.LinkManager;
-import io.sweers.catchup.data.RxViewHolder;
+import android.support.v7.widget.RxViewHolder;
 import io.sweers.catchup.data.dribbble.DribbbleService;
 import io.sweers.catchup.data.dribbble.model.Shot;
 import io.sweers.catchup.injection.ControllerKey;
@@ -384,7 +384,6 @@ public class DribbbleController extends ServiceController
         ((DribbbleShotHolder) holder).image.showBadge(false);
         ((DribbbleShotHolder) holder).image.setForeground(UiUtil.createColorSelector(0x40808080,
             null));
-        RxViewHolder.onViewRecycled(holder);
       }
     }
 

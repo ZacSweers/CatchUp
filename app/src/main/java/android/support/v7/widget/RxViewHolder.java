@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data;
+package android.support.v7.widget;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import com.uber.autodispose.ScopeProvider;
 import io.reactivex.Maybe;
@@ -24,6 +23,7 @@ import io.reactivex.subjects.MaybeSubject;
 
 public abstract class RxViewHolder extends RecyclerView.ViewHolder implements ScopeProvider {
 
+  private static final Object NOTIFICATION = new Object();
   private MaybeSubject<Object> unbindNotifier;
 
   public RxViewHolder(View itemView) {
@@ -32,6 +32,7 @@ public abstract class RxViewHolder extends RecyclerView.ViewHolder implements Sc
 
   private void onUnBind() {
     emitUnBindIfPresent();
+    unbindNotifier = null;
   }
 
   private MaybeSubject<?> getOrInitNotifier() {
@@ -43,7 +44,7 @@ public abstract class RxViewHolder extends RecyclerView.ViewHolder implements Sc
 
   private void emitUnBindIfPresent() {
     if (unbindNotifier != null && !unbindNotifier.hasComplete()) {
-      unbindNotifier.onSuccess(new Object());
+      unbindNotifier.onSuccess(NOTIFICATION);
     }
   }
 
@@ -51,15 +52,35 @@ public abstract class RxViewHolder extends RecyclerView.ViewHolder implements Sc
     return getOrInitNotifier();
   }
 
-  /**
-   * Proxy for RecyclerView.Adapter's onViewRecycled method to unbind a holder if it's an
-   * RxViewHolder instance.
-   *
-   * @param holder the holder to check
-   */
-  public static void onViewRecycled(RecyclerView.ViewHolder holder) {
-    if (holder instanceof RxViewHolder) {
-      ((RxViewHolder) holder).onUnBind();
+  @Override void setFlags(int flags, int mask) {
+    boolean wasBound = isBound();
+    super.setFlags(flags, mask);
+    if (wasBound && !isBound()) {
+      onUnBind();
+    }
+  }
+
+  @Override void addFlags(int flags) {
+    boolean wasBound = isBound();
+    super.addFlags(flags);
+    if (wasBound && !isBound()) {
+      onUnBind();
+    }
+  }
+
+  @Override void clearPayload() {
+    boolean wasBound = isBound();
+    super.clearPayload();
+    if (wasBound && !isBound()) {
+      onUnBind();
+    }
+  }
+
+  @Override void resetInternal() {
+    boolean wasBound = isBound();
+    super.resetInternal();
+    if (wasBound && !isBound()) {
+      onUnBind();
     }
   }
 }

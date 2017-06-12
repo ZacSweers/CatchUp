@@ -44,7 +44,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.BiConsumer;
 import io.sweers.catchup.R;
-import io.sweers.catchup.data.RxViewHolder;
+import android.support.v7.widget.RxViewHolder;
 import io.sweers.catchup.ui.InfiniteScrollListener;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.util.Iterables;
@@ -372,11 +372,6 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
       data.clear();
       data.addAll(newData);
       notifyDataSetChanged();
-    }
-
-    @Override public void onViewRecycled(RecyclerView.ViewHolder holder) {
-      super.onViewRecycled(holder);
-      RxViewHolder.onViewRecycled(holder);
     }
   }
 
