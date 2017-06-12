@@ -82,7 +82,6 @@ ext {
   autoDispose = 'com.uber.autodispose:autodispose:0.2.0'
   autoDisposeAndroid = 'com.uber.autodispose:autodispose-android:0.2.0'
   bugsnag = 'com.bugsnag:bugsnag-android:3.9.0'
-  chipCloud = 'com.github.fiskurgit:ChipCloud:3.0.3'
   errorPronePlugin = 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.10'
   errorProneCore = 'com.google.errorprone:error_prone_core:2.0.19'
   errorProneAnnotations = 'com.google.errorprone:error_prone_annotations:2.0.19'

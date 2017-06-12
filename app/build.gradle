@@ -299,7 +299,6 @@ dependencies {
   implementation rootProject.ext.errorProneAnnotations
   implementation rootProject.ext.barberApi
   annotationProcessor rootProject.ext.barberCompiler
-  implementation rootProject.ext.chipCloud
   implementation rootProject.ext.glide
   implementation rootProject.ext.glideOkhttp
   implementation rootProject.ext.recyclerViewAnimators

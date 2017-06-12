@@ -19,8 +19,6 @@ package io.sweers.catchup.ui.controllers;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -39,8 +37,7 @@ import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler;
 import com.uber.autodispose.SingleScoper;
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
-import fisk.chipcloud.ChipCloud;
-import fisk.chipcloud.ChipCloudConfig;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -54,7 +51,6 @@ import io.sweers.catchup.ui.base.ButterKnifeController;
 import io.sweers.catchup.ui.base.ServiceController;
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout;
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback;
-import io.sweers.catchup.ui.widget.FlowLayout;
 import javax.inject.Inject;
 
 /**
@@ -71,7 +67,7 @@ public class SmmryController extends ButterKnifeController {
   @BindView(R.id.loading_view) View loadingView;
   @BindView(R.id.progress) ProgressBar progressBar;
   @BindView(R.id.content_container) NestedScrollView content;
-  @BindView(R.id.tags_container) FlowLayout tags;
+  @BindView(R.id.tags) TextView tags;
   @BindView(R.id.title) TextView title;
   @BindView(R.id.summary) TextView summary;
   @BindView(R.id.drag_dismiss_layout) ElasticDragDismissFrameLayout dragDismissFrameLayout;
@@ -176,18 +172,17 @@ public class SmmryController extends ButterKnifeController {
   }
 
   private void showSummary(SmmryResponse smmry) {
-    ChipCloudConfig config = new ChipCloudConfig().selectMode(ChipCloud.SelectMode.none)
-        .uncheckedChipColor(accentColor)
-        .uncheckedTextColor(Color.WHITE)
-        .typeface(Typeface.DEFAULT_BOLD)
-        .useInsetPadding(true);
-
-    ChipCloud chipCloud = new ChipCloud(tags.getContext(), tags, config);
     if (smmry.keywords() != null) {
-      for (String s : smmry.keywords()) {
-        chipCloud.addChip(s.trim()
-            .toUpperCase());
-      }
+      tags.setTextColor(accentColor);
+      tags.setText(TextUtils.join("  —  ",
+          Observable.fromIterable(smmry.keywords())
+              .map(s -> s.trim()
+                  .toUpperCase())
+              .toList()
+              .blockingGet()));
+      tags.setVisibility(View.VISIBLE);
+    } else {
+      tags.setVisibility(View.GONE);
     }
     String smmryTitle = smmry.title();
     if (TextUtils.isEmpty(smmryTitle)) {

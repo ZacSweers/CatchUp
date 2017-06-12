@@ -71,11 +71,22 @@
           android:id="@+id/title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="16dp"
+          android:layout_marginBottom="8dp"
           android:fontFamily="@font/nunito"
           android:gravity="center_horizontal"
           app:fontFamily="@font/nunito"
           style="@style/TextAppearance.AppCompat.Title"
+          />
+
+      <io.sweers.catchup.ui.widget.BaselineGridTextView
+          android:id="@+id/tags"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="16dp"
+          android:fontFamily="@font/nunito"
+          android:gravity="center_horizontal"
+          app:fontFamily="@font/nunito"
+          style="@style/TextAppearance.AppCompat.Caption"
           />
 
       <io.sweers.catchup.ui.widget.BaselineGridTextView
@@ -86,16 +97,6 @@
           android:textAppearance="@style/TextAppearance.AppCompat.Body1"
           android:textIsSelectable="true"
           app:fontFamily="@font/nunito"
-          />
-
-      <io.sweers.catchup.ui.widget.FlowLayout
-          android:id="@+id/tags_container"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_horizontal"
-          android:layout_marginBottom="16dp"
-          app:horizontalSpacing="4dp"
-          app:verticalSpacing="4dp"
           />
 
     </LinearLayout>
