@@ -127,7 +127,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     itemAnimator.setAddDuration(300);
     itemAnimator.setRemoveDuration(300);
 
-    // This blows up adding item ranges >_>
+    // This blows up adding item ranges >_>. Items start going to random places
     //recyclerView.setItemAnimator(itemAnimator);
   }
 
