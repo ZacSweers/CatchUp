@@ -16,13 +16,10 @@
 
 package io.sweers.catchup;
 
-import com.google.common.truth.Platform;
-
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
-
 import rx.Observer;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -32,21 +29,18 @@ public final class RecordingObserver<T> implements Observer<T> {
 
   private final BlockingDeque<Object> events = new LinkedBlockingDeque<>();
 
-  @Override
-  public void onCompleted() {
-//    Log.v(TAG, "onCompleted");
+  @Override public void onCompleted() {
+    //    Log.v(TAG, "onCompleted");
     events.addLast(new OnCompleted());
   }
 
-  @Override
-  public void onError(Throwable e) {
-//    Log.v(TAG, "onError", e);
+  @Override public void onError(Throwable e) {
+    //    Log.v(TAG, "onError", e);
     events.addLast(new OnError(e));
   }
 
-  @Override
-  public void onNext(T t) {
-//    Log.v(TAG, "onNext " + t);
+  @Override public void onNext(T t) {
+    //    Log.v(TAG, "onNext " + t);
     events.addLast(new OnNext(t));
   }
 
@@ -58,8 +52,8 @@ public final class RecordingObserver<T> implements Observer<T> {
       throw new RuntimeException(e);
     }
     if (event == null) {
-      throw new NoSuchElementException(
-          "No event found while waiting for " + wanted.getSimpleName());
+      throw new NoSuchElementException("No event found while waiting for "
+          + wanted.getSimpleName());
     }
     assertThat(event).isInstanceOf(wanted);
     return wanted.cast(event);
@@ -72,7 +66,8 @@ public final class RecordingObserver<T> implements Observer<T> {
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
-    return event != null && Platform.isInstanceOfType(event, OnNext.class);
+    return event != null && event.getClass()
+        .isAssignableFrom(OnNext.class);
   }
 
   public T takeNext() {
@@ -103,15 +98,13 @@ public final class RecordingObserver<T> implements Observer<T> {
       this.value = value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return "OnNext[" + value + "]";
     }
   }
 
   private final class OnCompleted {
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return "OnCompleted";
     }
   }
@@ -123,8 +116,7 @@ public final class RecordingObserver<T> implements Observer<T> {
       this.throwable = throwable;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return "OnError[" + throwable + "]";
     }
   }
