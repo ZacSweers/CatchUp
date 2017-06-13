@@ -33,6 +33,6 @@ public interface ProductHuntService {
   String ENDPOINT = SCHEME + "://" + HOST;
 
   @GET("/v1/posts")
-  @Wrapped("posts")
+  @Wrapped(path = "posts")
   Single<List<Post>> getPosts(@Query("days_ago") int page);
 }

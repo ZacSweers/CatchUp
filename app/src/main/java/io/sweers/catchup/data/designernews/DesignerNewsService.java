@@ -36,8 +36,8 @@ public interface DesignerNewsService {
   String HOST = "www.designernews.co/api/v2/";
   String ENDPOINT = "https://" + HOST;
 
-  @GET("stories") @Wrapped("stories") Single<List<Story>> getTopStories(@Query("page") int page);
+  @GET("stories") @Wrapped(path = "stories") Single<List<Story>> getTopStories(@Query("page") int page);
 
-  @GET("users/{ids}") @Wrapped("users") Single<List<User>> getUsers(
+  @GET("users/{ids}") @Wrapped(path = "users") Single<List<User>> getUsers(
       @Path("ids") CommaJoinerList<String> ids);
 }

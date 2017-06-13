@@ -22,7 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
-import com.serjltt.moshi.adapters.WrappedJsonAdapter;
+import com.serjltt.moshi.adapters.Wrapped;
 import com.squareup.moshi.Moshi;
 import com.uber.autodispose.CompletableScoper;
 import dagger.Binds;
@@ -135,7 +135,7 @@ public final class ProductHuntController extends BaseNewsController<Post> {
     @Provides @InternalApi static Moshi provideProductHuntMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Instant.class, new ISO8601InstantAdapter())
-          .add(WrappedJsonAdapter.FACTORY)
+          .add(Wrapped.ADAPTER_FACTORY)
           .build();
     }
 

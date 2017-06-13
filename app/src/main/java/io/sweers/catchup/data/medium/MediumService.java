@@ -27,7 +27,7 @@ public interface MediumService {
   String HOST = "medium.com";
   String ENDPOINT = "https://" + HOST;
 
-  @GET("/browse/top") @Wrapped({ "payload", "references" }) Observable<References> top();
+  @GET("/browse/top") @Wrapped(path = { "payload", "references" }) Observable<References> top();
 
   @GET("/browse/top") Observable<ResponseBody> topRaw();
 }

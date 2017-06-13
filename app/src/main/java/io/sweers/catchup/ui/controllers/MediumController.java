@@ -23,7 +23,7 @@ import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.serjltt.moshi.adapters.WrappedJsonAdapter;
+import com.serjltt.moshi.adapters.Wrapped;
 import com.squareup.moshi.Moshi;
 import com.uber.autodispose.CompletableScoper;
 import com.uber.autodispose.ObservableScoper;
@@ -108,7 +108,8 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     if (remoteConfig.getBoolean(SMMRY_ENABLED)) {
       holder.itemLongClicks()
           .to(new ObservableScoper<>(holder))
-          .subscribe(SmmryController.showFor(this,
+          .subscribe(SmmryController.showFor(
+              this,
               item.constructUrl(),
               item.post()
                   .title()));
@@ -180,7 +181,7 @@ public final class MediumController extends BaseNewsController<MediumPost> {
     @Provides @InternalApi static Moshi provideMediumMoshi(Moshi moshi) {
       return moshi.newBuilder()
           .add(Instant.class, new EpochInstantJsonAdapter(TimeUnit.MILLISECONDS))
-          .add(WrappedJsonAdapter.FACTORY)
+          .add(Wrapped.ADAPTER_FACTORY)
           .build();
     }
 
