@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.controllers;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.ContextThemeWrapper;
 import com.bluelinelabs.conductor.Controller;
 import com.uber.autodispose.CompletableScoper;
@@ -37,6 +36,7 @@ import io.sweers.catchup.data.slashdot.SlashdotService;
 import io.sweers.catchup.injection.ControllerKey;
 import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.util.Instants;
+import io.sweers.catchup.util.Strings;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
@@ -59,12 +59,12 @@ public final class SlashdotController extends BaseNewsController<Entry> {
     super(args);
   }
 
-  @Override protected Context onThemeContext(@NonNull Context context) {
+  @Override protected Context onThemeContext(Context context) {
     return new ContextThemeWrapper(context, R.style.CatchUp_Slashdot);
   }
 
-  @Override protected void bindItemView(@NonNull Entry entry, @NonNull NewsItemViewHolder holder) {
-    holder.title(entry.title);
+  @Override protected void bindItemView(Entry entry, NewsItemViewHolder holder) {
+    holder.title(Strings.unescapeJavaString(entry.title));
 
     holder.score(null);
     holder.timestamp(Instants.parsePossiblyOffsetInstant(entry.updated));
@@ -87,7 +87,7 @@ public final class SlashdotController extends BaseNewsController<Entry> {
         .subscribe();
   }
 
-  @NonNull @Override protected Single<List<Entry>> getDataSingle(DataRequest request) {
+  @Override protected Single<List<Entry>> getDataSingle(DataRequest request) {
     setMoreDataAvailable(false);
     return service.main()
         .map(channel -> channel.itemList);

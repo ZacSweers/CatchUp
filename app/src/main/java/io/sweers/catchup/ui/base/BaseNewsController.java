@@ -18,13 +18,13 @@ package io.sweers.catchup.ui.base;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RxViewHolder;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +44,6 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.BiConsumer;
 import io.sweers.catchup.R;
-import android.support.v7.widget.RxViewHolder;
 import io.sweers.catchup.ui.InfiniteScrollListener;
 import io.sweers.catchup.ui.Scrollable;
 import io.sweers.catchup.util.Iterables;
@@ -93,20 +92,19 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
    * @param t The datum to back the view with.
    * @param holder The item ViewHolder instance.
    */
-  protected abstract void bindItemView(@NonNull T t, @NonNull NewsItemViewHolder holder);
+  protected abstract void bindItemView(T t, NewsItemViewHolder holder);
 
-  @NonNull protected abstract Single<List<T>> getDataSingle(DataRequest request);
+  protected abstract Single<List<T>> getDataSingle(DataRequest request);
 
-  @Override
-  protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+  @Override protected View inflateView(LayoutInflater inflater, ViewGroup container) {
     return inflater.inflate(R.layout.controller_basic_news, container, false);
   }
 
-  @Override protected Unbinder bind(@NonNull View view) {
+  @Override protected Unbinder bind(View view) {
     return new BaseNewsController_ViewBinding(this, view);
   }
 
-  @Override protected void onViewBound(@NonNull View view) {
+  @Override protected void onViewBound(View view) {
     super.onViewBound(view);
 
     swipeRefreshLayout.setColorSchemeColors(getServiceThemeColor());
@@ -142,26 +140,26 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     avd.start();
   }
 
-  @Override protected void onAttach(@NonNull View view) {
+  @Override protected void onAttach(View view) {
     super.onAttach(view);
     swipeRefreshLayout.setEnabled(false);
     loadData();
   }
 
-  @Override protected void onDetach(@NonNull View view) {
+  @Override protected void onDetach(View view) {
     page = 0;
     moreDataAvailable = true;
     super.onDetach(view);
   }
 
-  @Override protected void onSaveInstanceState(@NonNull Bundle outState) {
+  @Override protected void onSaveInstanceState(Bundle outState) {
     // TODO Check when these are called in conductor, restore seems to be after attach.
     //outState.putInt("pageNumber", page);
     //outState.putBoolean("savedInstance", true);
     super.onSaveInstanceState(outState);
   }
 
-  @Override protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+  @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
     super.onRestoreInstanceState(savedInstanceState);
     //page = savedInstanceState.getInt("pageNumber");
     //fromSaveInstanceState = savedInstanceState.getBoolean("savedInstance", false);
@@ -193,8 +191,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
       recyclerView.post(() -> adapter.dataStartedLoading());
     }
     AtomicLong timer = new AtomicLong();
-    getDataSingle(DataRequest.create(
-        fromRefresh,
+    getDataSingle(DataRequest.create(fromRefresh,
         fromSaveInstanceState && page != 0,
         pageToRequest)).observeOn(AndroidSchedulers.mainThread())
         .doOnEvent((result, t) -> {
@@ -281,7 +278,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     private final BiConsumer<T, NewsItemViewHolder> bindDelegate;
     private boolean showLoadingMore = false;
 
-    public Adapter(@NonNull BiConsumer<T, NewsItemViewHolder> bindDelegate) {
+    public Adapter(BiConsumer<T, NewsItemViewHolder> bindDelegate) {
       super();
       this.bindDelegate = bindDelegate;
       setHasStableIds(true);
@@ -404,7 +401,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
     @BindView(R.id.tag_divider) View tagDivider;
     private Unbinder unbinder;
 
-    public NewsItemViewHolder(@NonNull View itemView) {
+    public NewsItemViewHolder(View itemView) {
       super(itemView);
       if (unbinder != null) {
         unbinder.unbind();
@@ -424,7 +421,7 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
       return RxView.clicks(comments);
     }
 
-    public void title(@NonNull CharSequence titleText) {
+    public void title(@Nullable CharSequence titleText) {
       title.setText(titleText);
     }
 
