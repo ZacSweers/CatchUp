@@ -21,9 +21,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.ContextThemeWrapper;
-import com.apollographql.android.rx2.Rx2Apollo;
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.Field;
+import com.apollographql.apollo.api.Operation;
+import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.cache.normalized.CacheKey;
 import com.apollographql.apollo.cache.normalized.CacheKeyResolver;
@@ -32,6 +34,7 @@ import com.apollographql.apollo.cache.normalized.lru.EvictionPolicy;
 import com.apollographql.apollo.cache.normalized.lru.LruNormalizedCacheFactory;
 import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper;
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory;
+import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.bluelinelabs.conductor.Controller;
 import com.uber.autodispose.CompletableScoper;
 import dagger.Binds;
@@ -50,8 +53,10 @@ import io.sweers.catchup.data.HttpUrlApolloAdapter;
 import io.sweers.catchup.data.ISO8601InstantApolloAdapter;
 import io.sweers.catchup.data.LinkManager;
 import io.sweers.catchup.data.github.GitHubSearch;
-import io.sweers.catchup.data.github.GitHubSearch.Data.Languages;
-import io.sweers.catchup.data.github.GitHubSearch.Data.Node;
+import io.sweers.catchup.data.github.GitHubSearch.Data;
+import io.sweers.catchup.data.github.GitHubSearch.Languages;
+import io.sweers.catchup.data.github.GitHubSearch.Node;
+import io.sweers.catchup.data.github.GitHubSearch.Node1;
 import io.sweers.catchup.data.github.TrendingTimespan;
 import io.sweers.catchup.data.github.model.Repository;
 import io.sweers.catchup.data.github.model.SearchQuery;
@@ -66,6 +71,7 @@ import io.sweers.catchup.ui.base.BaseNewsController;
 import io.sweers.catchup.util.collect.Lists;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 import okhttp3.OkHttpClient;
@@ -113,7 +119,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
         .toString();
 
     //noinspection ConstantConditions it's not null here
-    ApolloCall<GitHubSearch.Data> searchQuery = apolloClient.newCall(new GitHubSearch(query,
+    ApolloCall<Data> searchQuery = apolloClient.query(new GitHubSearch(query,
         50,
         LanguageOrder.builder()
             .direction(OrderDirection.DESC)
@@ -123,6 +129,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
             request.fromRefresh() ? CacheControl.NETWORK_FIRST : CacheControl.CACHE_FIRST);
 
     return Rx2Apollo.from(searchQuery)
+        .map(Response::data)
         .flatMap(data -> Observable.fromIterable(Lists.emptyIfNull(data.search()
             .nodes()))
             .map(Node::asRepository)
@@ -130,7 +137,7 @@ public final class GitHubController extends BaseNewsController<Repository> {
               String primaryLanguage = null;
               Languages langs = node.languages();
               if (langs != null && langs.nodes() != null) {
-                List<GitHubSearch.Data.Node1> nodes = langs.nodes();
+                List<Node1> nodes = langs.nodes();
                 if (nodes != null && !nodes.isEmpty()) {
                   primaryLanguage = nodes.get(0)
                       .name();
@@ -180,9 +187,10 @@ public final class GitHubController extends BaseNewsController<Repository> {
           .build();
     }
 
-    @Provides static CacheKeyResolver<Map<String, Object>> provideCacheKeyResolver() {
-      return new CacheKeyResolver<Map<String, Object>>() {
-        @NonNull @Override public CacheKey resolve(@NonNull Map<String, Object> objectSource) {
+    @Provides static CacheKeyResolver provideCacheKeyResolver() {
+      return new CacheKeyResolver() {
+        @Nonnull @Override public CacheKey fromFieldRecordSet(@Nonnull Field field,
+            @Nonnull Map<String, Object> objectSource) {
           //Specific id for User type.
           if (objectSource.get("__typename")
               .equals("User")) {
@@ -194,6 +202,11 @@ public final class GitHubController extends BaseNewsController<Repository> {
             String typeNameAndIDKey = objectSource.get("__typename") + "." + objectSource.get("id");
             return CacheKey.from(typeNameAndIDKey);
           }
+          return CacheKey.NO_KEY;
+        }
+
+        @Nonnull @Override public CacheKey fromFieldArguments(@Nonnull Field field,
+            @Nonnull Operation.Variables variables) {
           return CacheKey.NO_KEY;
         }
       };
@@ -208,13 +221,13 @@ public final class GitHubController extends BaseNewsController<Repository> {
 
     @Provides static ApolloClient provideApolloClient(@InternalApi final Lazy<OkHttpClient> client,
         NormalizedCacheFactory cacheFactory,
-        CacheKeyResolver<Map<String, Object>> resolver) {
+        CacheKeyResolver resolver) {
       return ApolloClient.builder()
           .serverUrl(SERVER_URL)
           .okHttpClient(client.get())
           .normalizedCache(cacheFactory, resolver)
-          .withCustomTypeAdapter(CustomType.DATETIME, new ISO8601InstantApolloAdapter())
-          .withCustomTypeAdapter(CustomType.URI, new HttpUrlApolloAdapter())
+          .addCustomTypeAdapter(CustomType.DATETIME, new ISO8601InstantApolloAdapter())
+          .addCustomTypeAdapter(CustomType.URI, new HttpUrlApolloAdapter())
           .build();
     }
   }

@@ -39,7 +39,7 @@ ext {
   supportCompat = "com.android.support:support-compat:$supportVersion"
   supportV4 = "com.android.support:support-v4:$supportVersion"
   multidex = 'com.android.support:multidex:1.0.2'
-  androidPlugin = 'com.android.tools.build:gradle:3.0.0-alpha3'
+  androidPlugin = 'com.android.tools.build:gradle:3.0.0-alpha4'
   constraintLayout = 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
   // Firebase
@@ -99,7 +99,7 @@ ext {
   bugsnagPlugin = 'com.bugsnag:bugsnag-android-gradle-plugin:2.4.2'
 
   // Apollo
-  def apolloVersion = '0.3.0'
+  def apolloVersion = '0.3.2'
   apolloPlugin = "com.apollographql.apollo:gradle-plugin:$apolloVersion"
   apolloRuntime = "com.apollographql.apollo:apollo-runtime:$apolloVersion"
   apolloRx2Support = "com.apollographql.apollo:apollo-rx2-support:$apolloVersion"
