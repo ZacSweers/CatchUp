@@ -49,7 +49,7 @@ public final class DebugCatchUpApplication extends CatchUpApplication {
       }
     });
     Timber.plant(new Timber.DebugTree());
-    Timber.plant(lumberYard.tree());
+    Timber.plant(getLumberYard().tree());
     Stetho.initializeWithDefaults(this);
   }
 }

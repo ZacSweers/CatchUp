@@ -18,6 +18,7 @@ package io.sweers.catchup.util;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import org.jetbrains.annotations.Contract;
 
 public final class Strings {
   private Strings() {
@@ -63,7 +64,8 @@ public final class Strings {
    * @param st A string optionally containing standard java escape sequences.
    * @return The translated string.
    */
-  @Nullable public static String unescapeJavaString(@Nullable String st) {
+  @Contract("null -> null; !null -> !null") @Nullable public static String unescapeJavaString(
+      @Nullable String st) {
     if (TextUtils.isEmpty(st)) {
       return st;
     }

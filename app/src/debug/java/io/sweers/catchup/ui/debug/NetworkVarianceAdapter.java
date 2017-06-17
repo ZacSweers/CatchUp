@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import io.sweers.catchup.ui.BindableAdapter;
 
 import static butterknife.ButterKnife.findById;
@@ -44,28 +43,23 @@ class NetworkVarianceAdapter extends BindableAdapter<Integer> {
     return 1; // Default to 40% if something changes.
   }
 
-  @Override
-  public int getCount() {
+  @Override public int getCount() {
     return VALUES.length;
   }
 
-  @Override
-  public Integer getItem(int position) {
+  @Override public Integer getItem(int position) {
     return VALUES[position];
   }
 
-  @Override
-  public long getItemId(int position) {
+  @Override public long getItemId(int position) {
     return position;
   }
 
-  @Override
-  public View newView(LayoutInflater inflater, int position, ViewGroup container) {
+  @Override public View newView(LayoutInflater inflater, int position, ViewGroup container) {
     return inflater.inflate(android.R.layout.simple_spinner_item, container, false);
   }
 
-  @Override
-  public void bindView(Integer item, int position, View view) {
+  @Override public void bindView(Integer item, int position, View view) {
     TextView tv = findById(view, android.R.id.text1);
     tv.setText("±" + item + "%");
   }

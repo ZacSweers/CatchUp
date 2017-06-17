@@ -42,6 +42,12 @@ ext {
   androidPlugin = 'com.android.tools.build:gradle:3.0.0-alpha4'
   constraintLayout = 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
+  // Kotlin
+  kotlinVersion = '1.1.2-5'
+  kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+  kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  kotlinStdLib7 = "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+
   // Firebase
   firebaseCore = "com.google.firebase:firebase-core:$firebaseVersion"
   firebaseConfig = "com.google.firebase:firebase-config:$firebaseVersion"

@@ -17,11 +17,8 @@
 package io.sweers.catchup.data;
 
 import android.support.annotation.NonNull;
-
 import com.google.auto.value.AutoValue;
-
 import java.io.IOException;
-
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -36,16 +33,13 @@ public abstract class AuthInterceptor implements Interceptor {
     return new AutoValue_AuthInterceptor(accessToken, method);
   }
 
-  @NonNull
-  @Redacted
-  public abstract String accessToken();
+  @NonNull @Redacted public abstract String accessToken();
 
-  @NonNull
-  public abstract String method();
+  @NonNull public abstract String method();
 
-  @Override
-  public Response intercept(Chain chain) throws IOException {
-    final Request request = chain.request().newBuilder()
+  @Override public Response intercept(Chain chain) throws IOException {
+    final Request request = chain.request()
+        .newBuilder()
         .addHeader("Authorization", method() + " " + accessToken())
         .build();
     return chain.proceed(request);

@@ -317,8 +317,8 @@ public abstract class BaseNewsController<T extends HasStableId> extends ServiceC
           }
           break;
         case TYPE_LOADING_MORE:
-          ((LoadingMoreHolder) holder).progress.setVisibility(
-              (position > 0) ? View.VISIBLE : View.INVISIBLE);
+          ((LoadingMoreHolder) holder).getProgress()
+              .setVisibility((position > 0) ? View.VISIBLE : View.INVISIBLE);
           break;
       }
     }

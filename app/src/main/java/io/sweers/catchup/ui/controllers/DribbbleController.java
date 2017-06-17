@@ -37,6 +37,7 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RxViewHolder;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -75,7 +76,6 @@ import io.sweers.catchup.R;
 import io.sweers.catchup.data.AuthInterceptor;
 import io.sweers.catchup.data.ISO8601InstantAdapter;
 import io.sweers.catchup.data.LinkManager;
-import android.support.v7.widget.RxViewHolder;
 import io.sweers.catchup.data.dribbble.DribbbleService;
 import io.sweers.catchup.data.dribbble.model.Shot;
 import io.sweers.catchup.injection.ControllerKey;
@@ -371,8 +371,8 @@ public class DribbbleController extends ServiceController
           bindDelegate.call(shots.get(position), ((DribbbleShotHolder) holder));
           break;
         case TYPE_LOADING_MORE:
-          ((LoadingMoreHolder) holder).progress.setVisibility(
-              (position > 0) ? View.VISIBLE : View.INVISIBLE);
+          ((LoadingMoreHolder) holder).getProgress()
+              .setVisibility((position > 0) ? View.VISIBLE : View.INVISIBLE);
           break;
       }
     }
@@ -447,9 +447,8 @@ public class DribbbleController extends ServiceController
         Glide.with(itemView.getContext())
             .load(shot.images()
                 .best())
-            .apply(new RequestOptions()
-                .placeholder(shotLoadingPlaceholders[getAdapterPosition()
-                    % shotLoadingPlaceholders.length])
+            .apply(new RequestOptions().placeholder(shotLoadingPlaceholders[getAdapterPosition()
+                % shotLoadingPlaceholders.length])
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .fitCenter()
                 .override(imageSize[0], imageSize[1]))

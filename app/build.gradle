@@ -22,6 +22,7 @@ buildscript {
 
   dependencies {
     classpath rootProject.ext.androidPlugin
+    classpath rootProject.ext.kotlinPlugin
     classpath rootProject.ext.bugsnagPlugin
     classpath rootProject.ext.psyncPlugin
     classpath rootProject.ext.versionsPlugin
@@ -31,8 +32,10 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.flipboard.psync'
+apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'org.jetbrains.kotlin.kapt'
+apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
 apply plugin: 'com.apollographql.android'
 //apply plugin: 'com.bugsnag.android.gradle'
@@ -97,6 +100,10 @@ android {
         v2SigningEnabled true
       }
     }
+  }
+  sourceSets {
+    // For kapt
+    main.java.srcDirs += [file("$buildDir/generated/source/kapt/main")]
   }
   packagingOptions {
     exclude 'META-INF/LICENSE'
@@ -248,17 +255,21 @@ dependencies {
   testImplementation supportLibraries
   androidTestImplementation supportLibraries
 
+  // Kotlin
+  implementation rootProject.ext.kotlinStdLib
+  implementation rootProject.ext.kotlinStdLib7
+
   // Firebase
   implementation rootProject.ext.firebaseCore
   implementation rootProject.ext.firebaseConfig
   implementation rootProject.ext.firebaseDatabase
-  annotationProcessor rootProject.ext.autoValueFirebase
+  kapt rootProject.ext.autoValueFirebase
   compileOnly rootProject.ext.autoValueFirebaseAnnotation
   implementation rootProject.ext.autoValueFirebaseAdapter
 
   // Square/JW
   implementation rootProject.ext.butterKnife
-  annotationProcessor rootProject.ext.butterKnifeCompiler
+  kapt rootProject.ext.butterKnifeCompiler
   implementation rootProject.ext.okhttp
   implementation rootProject.ext.okio
   implementation rootProject.ext.moshi
@@ -297,7 +308,7 @@ dependencies {
   errorprone rootProject.ext.errorProneCore
   implementation rootProject.ext.errorProneAnnotations
   implementation rootProject.ext.barberApi
-  annotationProcessor rootProject.ext.barberCompiler
+  kapt rootProject.ext.barberCompiler
   implementation rootProject.ext.glide
   implementation rootProject.ext.glideOkhttp
   implementation rootProject.ext.lottie
@@ -323,7 +334,7 @@ dependencies {
   debugImplementation rootProject.ext.stethoOkHttp
 
   // Dagger
-  annotationProcessor rootProject.ext.daggerCompiler
+  kapt rootProject.ext.daggerCompiler
   compileOnly rootProject.ext.javax
   implementation rootProject.ext.dagger
   implementation rootProject.ext.daggerAndroid
@@ -331,9 +342,9 @@ dependencies {
   // AutoValue
   compileOnly rootProject.ext.autoValueAnnotations
   implementation rootProject.ext.autoValueMoshiAnnotations
-  annotationProcessor rootProject.ext.autoValue
-  annotationProcessor rootProject.ext.autoValueMoshi
-  annotationProcessor rootProject.ext.autoValueRedacted
+  kapt rootProject.ext.autoValue
+  kapt rootProject.ext.autoValueMoshi
+  kapt rootProject.ext.autoValueRedacted
 
   // Conductor
   implementation rootProject.ext.conductor
