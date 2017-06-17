@@ -43,7 +43,6 @@ ext {
   constraintLayout = 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
   // Firebase
-  firebasePlugin = 'com.google.gms:google-services:3.1.0'
   firebaseCore = "com.google.firebase:firebase-core:$firebaseVersion"
   firebaseConfig = "com.google.firebase:firebase-config:$firebaseVersion"
   firebaseDatabase = "com.google.firebase:firebase-database:$firebaseVersion"

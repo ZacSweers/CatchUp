@@ -22,7 +22,6 @@ buildscript {
 
   dependencies {
     classpath rootProject.ext.androidPlugin
-    classpath rootProject.ext.firebasePlugin
     classpath rootProject.ext.bugsnagPlugin
     classpath rootProject.ext.psyncPlugin
     classpath rootProject.ext.versionsPlugin
