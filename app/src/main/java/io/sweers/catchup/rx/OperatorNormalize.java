@@ -20,7 +20,6 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import rx.Observable;
 import rx.Scheduler;
 import rx.Subscriber;
@@ -31,8 +30,12 @@ import rx.Subscriber;
  * longer before than the specified window, it will emit immediately.
  * <p>
  * This is not a solution for backpressure and I do not know if it supports it. The intended usage
- * is to effectively normalize a flow that you don't want emitting too quickly, such as when dealing
- * with APIs that have rate limiting.
+ * is to effectively normalize a flow that you don't want emitting too quickly, such as when
+ * dealing
+ * with APIs that have rate limiting but you don't necessarily care when messages are sent within a
+ * window.
+ *
+ * TODO: RxJava 2 this, callback for saving remaining queue if canceled, etc.
  *
  * @param <T> the data stream type
  */
@@ -47,8 +50,7 @@ public class OperatorNormalize<T> implements Observable.Operator<T, T> {
     this.scheduler = scheduler;
   }
 
-  @Override
-  public Subscriber<? super T> call(final Subscriber<? super T> child) {
+  @Override public Subscriber<? super T> call(final Subscriber<? super T> child) {
     final Scheduler.Worker worker = scheduler.createWorker();
     child.add(worker);
     return new Subscriber<T>(child) {
@@ -62,8 +64,7 @@ public class OperatorNormalize<T> implements Observable.Operator<T, T> {
       private boolean completionPending = false;
       private Throwable pendingError = null;
 
-      @Override
-      public void onCompleted() {
+      @Override public void onCompleted() {
         if (!done) {
           done = true;
           completionPending = true;
@@ -73,8 +74,7 @@ public class OperatorNormalize<T> implements Observable.Operator<T, T> {
         }
       }
 
-      @Override
-      public void onError(final Throwable e) {
+      @Override public void onError(final Throwable e) {
         if (!done) {
           done = true;
           pendingError = e;
@@ -85,8 +85,7 @@ public class OperatorNormalize<T> implements Observable.Operator<T, T> {
         }
       }
 
-      @Override
-      public void onNext(final T t) {
+      @Override public void onNext(final T t) {
         long timeNow = scheduler.now();
         if (queue.isEmpty() && timeNow >= nextTimestamp) {
           // Can emit immediately

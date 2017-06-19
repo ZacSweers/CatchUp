@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.injection.qualifiers.debug;
+package io.sweers.catchup.injection.qualifiers.debug
 
-import java.lang.annotation.Retention;
-
-import javax.inject.Qualifier;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javax.inject.Qualifier
+import kotlin.annotation.AnnotationRetention.RUNTIME
 
 @Qualifier
 @Retention(RUNTIME)
-public @interface CaptureIntents {
-}
+annotation class CaptureIntents

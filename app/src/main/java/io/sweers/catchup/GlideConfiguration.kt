@@ -29,10 +29,10 @@ import com.bumptech.glide.request.RequestOptions
  */
 class GlideConfiguration : AppGlideModule() {
 
-  override fun applyOptions(context: Context?, builder: GlideBuilder?) {
+  override fun applyOptions(context: Context, builder: GlideBuilder) {
     // Prefer higher quality images unless we're on a low RAM device
-    val activityManager = context!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    builder!!.setDefaultRequestOptions(RequestOptions().format(
+    val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    builder.setDefaultRequestOptions(RequestOptions().format(
         if (ActivityManagerCompat.isLowRamDevice(activityManager))
           DecodeFormat.PREFER_RGB_565
         else

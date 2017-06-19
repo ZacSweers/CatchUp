@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.injection;
+package io.sweers.catchup.injection
 
-import com.bluelinelabs.conductor.Controller;
-import dagger.Module;
-import dagger.android.AndroidInjector;
-import dagger.multibindings.Multibinds;
-import java.util.Map;
+import com.bluelinelabs.conductor.Controller
+import dagger.Module
+import dagger.android.AndroidInjector
+import dagger.multibindings.Multibinds
 
 /**
- * Contains bindings to ensure the usability of {@code dagger.android} framework classes. This
- * module should be installed in the component that is used to inject the {@link
- * android.app.Application} class.
+ * Contains bindings to ensure the usability of `dagger.android` framework classes. This
+ * module should be installed in the component that is used to inject the [ ] class.
  */
 @Module
-public abstract class ConductorInjectionModule {
+abstract class ConductorInjectionModule private constructor() {
   @Multibinds
-  abstract Map<Class<? extends Controller>, AndroidInjector.Factory<? extends Controller>> controllerInjectorFactories();
-
-  private ConductorInjectionModule() {}
+  internal abstract fun controllerInjectorFactories(): Map<Class<out Controller>, AndroidInjector.Factory<out Controller>>
 }

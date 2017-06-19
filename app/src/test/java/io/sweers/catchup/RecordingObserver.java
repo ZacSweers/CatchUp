@@ -103,13 +103,13 @@ public final class RecordingObserver<T> implements Observer<T> {
     }
   }
 
-  private final class OnCompleted {
+  private static final class OnCompleted {
     @Override public String toString() {
       return "OnCompleted";
     }
   }
 
-  private final class OnError {
+  private static final class OnError {
     private final Throwable throwable;
 
     private OnError(Throwable throwable) {
