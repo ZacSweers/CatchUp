@@ -83,7 +83,7 @@ class GitHubController : BaseNewsController<Repository> {
   }
 
   override fun bindItemView(item: Repository, holder: BaseNewsController.NewsItemViewHolder) {
-    holder.apply {
+    holder.run {
       hideComments()
       title(item.fullName())
       score(Pair.create("★", item.starsCount()))
