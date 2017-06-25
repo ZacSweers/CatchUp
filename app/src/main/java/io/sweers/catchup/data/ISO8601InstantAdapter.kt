@@ -19,7 +19,7 @@ package io.sweers.catchup.data
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import io.sweers.catchup.util.Instants
+import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import org.threeten.bp.Instant
 import java.io.IOException
 
@@ -27,7 +27,7 @@ class ISO8601InstantAdapter : JsonAdapter<Instant>() {
 
   @Throws(IOException::class)
   override fun fromJson(reader: JsonReader): Instant? {
-    return Instants.parsePossiblyOffsetInstant(reader.nextString())
+    return reader.nextString().parsePossiblyOffsetInstant()
   }
 
   @Throws(IOException::class)

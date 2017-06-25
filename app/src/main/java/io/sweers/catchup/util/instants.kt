@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data
+@file:Suppress("NOTHING_TO_INLINE")
 
-import com.apollographql.apollo.CustomTypeAdapter
-import io.sweers.catchup.util.parsePossiblyOffsetInstant
+package io.sweers.catchup.util
+
 import org.threeten.bp.Instant
+import org.threeten.bp.OffsetDateTime
+
+/*
+ * Utilities for dealing with [Instant]
+ */
 
 /**
- * A CustomTypeAdapter for apollo that can convert ISO style date strings to Instant.
+ * Parses an instant from a time allowing for standard UTC (i.e. "Z") or UTC + offset.
+ *
+ * @return an Instant representation of the time
  */
-class ISO8601InstantApolloAdapter : CustomTypeAdapter<Instant> {
-  override fun decode(value: String): Instant {
-    return value.parsePossiblyOffsetInstant()
-  }
-
-  override fun encode(instant: Instant): String {
-    return instant.toString()
+inline fun String.parsePossiblyOffsetInstant(): Instant {
+  if (!endsWith("Z")) {
+    return OffsetDateTime.parse(this)
+        .toInstant()
+  } else {
+    return Instant.parse(this)
   }
 }

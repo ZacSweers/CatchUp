@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data
+package io.sweers.catchup.util
 
-import com.apollographql.apollo.CustomTypeAdapter
-import io.sweers.catchup.util.parsePossiblyOffsetInstant
-import org.threeten.bp.Instant
+import android.content.Context
+import timber.log.Timber
+import java.io.File
 
-/**
- * A CustomTypeAdapter for apollo that can convert ISO style date strings to Instant.
- */
-class ISO8601InstantApolloAdapter : CustomTypeAdapter<Instant> {
-  override fun decode(value: String): Instant {
-    return value.parsePossiblyOffsetInstant()
+fun Context.clearCache(): Long {
+  return cleanDir(applicationContext.cacheDir)
+}
+
+private fun cleanDir(dir: File): Long {
+  var bytesDeleted: Long = 0
+  val files = dir.listFiles()
+
+  for (file in files) {
+    val length = file.length()
+    if (file.delete()) {
+      Timber.d("Deleted file")
+      bytesDeleted += length
+    }
   }
-
-  override fun encode(instant: Instant): String {
-    return instant.toString()
-  }
+  return bytesDeleted
 }

@@ -24,8 +24,8 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import io.sweers.catchup.P
 import io.sweers.catchup.R
-import io.sweers.catchup.util.DataUtil
-import io.sweers.catchup.util.NumberUtil
+import io.sweers.catchup.util.clearCache
+import io.sweers.catchup.util.format
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -51,10 +51,10 @@ class SettingsActivity : AppCompatActivity() {
         preference: Preference): Boolean {
       when (preference.key) {
         P.clearCache.key -> {
-          val cleaned = DataUtil.clearCache(activity.applicationContext)
+          val cleaned = activity.applicationContext.clearCache()
           Toast.makeText(
               activity,
-              getString(R.string.clear_cache_success, NumberUtil.format(cleaned)),
+              getString(R.string.clear_cache_success, cleaned.format()),
               Toast.LENGTH_SHORT)
               .show()
         }

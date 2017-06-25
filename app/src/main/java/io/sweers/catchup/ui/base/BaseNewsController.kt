@@ -46,8 +46,8 @@ import io.sweers.catchup.R
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.util.Iterables
-import io.sweers.catchup.util.NumberUtil
 import io.sweers.catchup.util.Strings
+import io.sweers.catchup.util.format
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import org.threeten.bp.Instant
 import retrofit2.HttpException
@@ -410,7 +410,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
         score.visibility = VISIBLE
         score.text = String.format("%s %s",
             scoreValue.first,
-            NumberUtil.format(scoreValue.second.toLong()))
+            scoreValue.second.toLong().format())
       }
     }
 
@@ -461,7 +461,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     }
 
     fun comments(commentsCount: Int) {
-      comments.text = NumberUtil.format(commentsCount.toLong())
+      comments.text = commentsCount.toLong().format()
     }
 
     fun hideComments() {

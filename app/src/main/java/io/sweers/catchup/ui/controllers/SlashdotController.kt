@@ -36,8 +36,8 @@ import io.sweers.catchup.data.slashdot.Entry
 import io.sweers.catchup.data.slashdot.SlashdotService
 import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.ui.base.BaseNewsController
-import io.sweers.catchup.util.Instants
 import io.sweers.catchup.util.Strings
+import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -63,7 +63,7 @@ class SlashdotController : BaseNewsController<Entry> {
       title(Strings.unescapeJavaString(item.title))
 
       score(null)
-      timestamp(Instants.parsePossiblyOffsetInstant(item.updated))
+      timestamp(item.updated.parsePossiblyOffsetInstant())
       author(item.author?.name)
 
       source(item.department)
