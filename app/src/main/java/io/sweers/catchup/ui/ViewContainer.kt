@@ -14,24 +14,30 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui;
+package io.sweers.catchup.ui
 
-import android.view.ViewGroup;
-import io.sweers.catchup.ui.base.BaseActivity;
-
-import static butterknife.ButterKnife.findById;
+import android.view.ViewGroup
+import butterknife.ButterKnife.findById
+import io.sweers.catchup.ui.base.BaseActivity
 
 /**
  * An indirection which allows controlling the root container used for each activity.
  */
-public interface ViewContainer {
-  /**
-   * An {@link ViewContainer} which returns the normal activity content view.
-   */
-  ViewContainer DEFAULT = activity -> findById(activity, android.R.id.content);
+interface ViewContainer {
 
   /**
-   * The root {@link ViewGroup} into which the activity should place its contents.
+   * The root [ViewGroup] into which the activity should place its contents.
    */
-  ViewGroup forActivity(BaseActivity activity);
+  fun forActivity(activity: BaseActivity): ViewGroup
+
+  companion object {
+    /**
+     * An [ViewContainer] which returns the normal activity content view.
+     */
+    val DEFAULT = object : ViewContainer {
+      override fun forActivity(activity: BaseActivity): ViewGroup {
+        return findById(activity, android.R.id.content)
+      }
+    }
+  }
 }

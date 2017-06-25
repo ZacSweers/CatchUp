@@ -20,7 +20,7 @@ package io.sweers.catchup.ui.base
  * An interface for classes offering data loading state to be observed.
  */
 interface DataLoadingSubject {
-  val isDataLoading: Boolean
+  fun isDataLoading(): Boolean
 
   interface DataLoadingCallbacks {
     fun dataStartedLoading()

@@ -30,7 +30,7 @@ abstract class InfiniteScrollListener(private val layoutManager: LinearLayoutMan
 
   override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
     // bail out if scrolling upward or already loading data
-    if (dy < 0 || dataLoading.isDataLoading) {
+    if (dy < 0 || dataLoading.isDataLoading()) {
       return
     }
 

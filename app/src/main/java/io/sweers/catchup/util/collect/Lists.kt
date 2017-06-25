@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("Lists")
+@file:Suppress("NOTHING_TO_INLINE")
 
-package io.sweers.catchup.util.collect;
+package io.sweers.catchup.util.collect
 
-import android.support.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-
-/**
- * List utilities
- */
-public final class Lists {
-
-  public static <T> List<T> emptyIfNull(@Nullable List<T> input) {
-    if (input == null) {
-      return Collections.emptyList();
-    } else {
-      return input;
-    }
+inline fun <T> List<T>?.emptyIfNull(): List<T> {
+  if (this == null) {
+    return emptyList()
+  } else {
+    return this
   }
 }
+
+inline fun <reified T : Any> Sequence<Any>.cast(): Sequence<T> = map { it as T }
