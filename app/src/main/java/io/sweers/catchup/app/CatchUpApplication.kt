@@ -95,7 +95,7 @@ open class CatchUpApplication : Application(), HasActivityInjector {
 
   companion object {
 
-    protected lateinit var refWatcher: RefWatcher
+    @JvmStatic lateinit var refWatcher: RefWatcher
     private lateinit var component: ApplicationComponent
 
     @JvmStatic fun component(): ApplicationComponent {
