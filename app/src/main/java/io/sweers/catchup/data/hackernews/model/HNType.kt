@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.hackernews.model;
+package io.sweers.catchup.data.hackernews.model
 
-import io.sweers.catchup.util.Strings;
-
-public enum HNType {
+enum class HNType {
   COMMENT, JOB, POLL, POLLOPT, STORY;
 
-  public String tag() {
-    String name = name().toLowerCase();
-    name = Strings.capitalize(name);
-    return name;
-  }
+  fun tag(): String = name.toLowerCase().capitalize()
 }
