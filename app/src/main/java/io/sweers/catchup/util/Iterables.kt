@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.util;
-
-import java.util.List;
-
-import static io.sweers.catchup.util.Preconditions.checkNotNull;
+package io.sweers.catchup.util
 
 /**
  * Utils for Iterables
  */
 
-public final class Iterables {
-
-  private Iterables() {
-
-  }
+object Iterables {
 
   /**
    * Returns the element at the specified position in an iterable.
    *
-   * <p><b>{@code Stream} equivalent:</b> {@code stream.skip(position).findFirst().get()}
-   * (throws {@code NoSuchElementException} if out of bounds)
-   *
+   * **`Stream` equivalent:** `stream.skip(position).findFirst().get()`
+   * (throws `NoSuchElementException` if out of bounds)
+  *
    * @param position position of the element to return
-   * @return the element at the specified position in {@code iterable}
-   * @throws IndexOutOfBoundsException if {@code position} is negative or
-   * greater than or equal to the size of {@code iterable}
+   * @return the element at the specified position in `iterable`
+   * @throws IndexOutOfBoundsException if `position` is negative or
+   * greater than or equal to the size of `iterable`
    */
-  public static <T> T get(Iterable<T> iterable, int position) {
-    checkNotNull(iterable);
-    return (iterable instanceof List) ? ((List<T>) iterable).get(position)
-        : Iterators.get(iterable.iterator(), position);
+  fun <T> get(iterable: Iterable<T>, position: Int): T {
+    return if (iterable is List<*>)
+      (iterable as List<T>)[position]
+    else
+      Iterators.get(iterable.iterator(), position)
   }
 }

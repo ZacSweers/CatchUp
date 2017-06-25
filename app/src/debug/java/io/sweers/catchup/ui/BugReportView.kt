@@ -27,7 +27,6 @@ import com.jakewharton.rxbinding2.widget.RxTextView
 import com.uber.autodispose.android.ViewScopeProvider
 import com.uber.autodispose.kotlin.autoDisposeWith
 import io.sweers.catchup.R
-import io.sweers.catchup.util.Strings
 
 class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
   @BindView(R.id.title) lateinit var titleView: EditText
@@ -47,13 +46,13 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
 
     titleView.setOnFocusChangeListener { _, hasFocus ->
       if (!hasFocus) {
-        titleView.error = if (Strings.isBlank(titleView.text)) "Cannot be empty." else null
+        titleView.error = if (titleView.text.isNullOrBlank()) "Cannot be empty." else null
       }
     }
     RxTextView.afterTextChangeEvents(titleView)
         .autoDisposeWith(ViewScopeProvider.from(this))
         .subscribe { s ->
-          listener?.onStateChanged(!Strings.isBlank(s.editable()))
+          listener?.onStateChanged(!s.editable().isNullOrBlank())
         }
 
     screenshotView.isChecked = true

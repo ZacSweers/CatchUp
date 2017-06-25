@@ -197,7 +197,7 @@ class DribbbleController : ServiceController, SwipeRefreshLayout.OnRefreshListen
           val activity = activity
           if (activity != null) {
             if (e is IOException) {
-              errorTextView.text = "Network Problem"
+              errorTextView.text = "Connection Problem"
               progress.visibility = GONE
               swipeRefreshLayout.visibility = GONE
               errorView.visibility = VISIBLE

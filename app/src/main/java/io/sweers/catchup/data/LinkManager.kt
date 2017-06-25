@@ -36,7 +36,7 @@ import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking
-import io.sweers.catchup.rx.Transformers.doOnEmpty
+import io.sweers.catchup.rx.doOnEmpty
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 
@@ -101,17 +101,18 @@ class LinkManager(private val customTab: CustomTabActivityHelper,
       intent: Intent,
       @ColorInt accentColor: Int): Completable {
     val manager = context.packageManager
-    return Observable.defer<ResolveInfo> {
-      Observable.fromIterable<ResolveInfo>(manager.queryIntentActivities(intent,
-          PackageManager.MATCH_DEFAULT_ONLY))
-    }
+    return Observable
+        .defer<ResolveInfo> {
+          Observable.fromIterable<ResolveInfo>(manager.queryIntentActivities(intent,
+              PackageManager.MATCH_DEFAULT_ONLY))
+        }
         .filter { resolveInfo -> isSpecificUriMatch(resolveInfo.match) }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .compose<ResolveInfo>(doOnEmpty<ResolveInfo> {
+        .doOnEmpty {
           dumbCache.put(uri.host, false)
           openCustomTab(context, uri, accentColor)
-        })
+        }
         .doOnNext {
           dumbCache.put(uri.host, true)
           context.startActivity(intent)

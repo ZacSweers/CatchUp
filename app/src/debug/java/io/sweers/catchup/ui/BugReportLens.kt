@@ -32,7 +32,6 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.BugReportDialog.ReportListener
 import io.sweers.catchup.ui.BugReportView.Report
 import io.sweers.catchup.util.Intents
-import io.sweers.catchup.util.Strings
 import java.io.File
 
 /**
@@ -85,7 +84,7 @@ class BugReportLens(private val context: Activity,
         .setSubject(report.title)
 
     val body = StringBuilder()
-    if (!Strings.isBlank(report.description)) {
+    if (!report.description.isNullOrBlank()) {
       body.append("{panel:title=Description}\n").append(report.description).append("\n{panel}\n\n")
     }
 

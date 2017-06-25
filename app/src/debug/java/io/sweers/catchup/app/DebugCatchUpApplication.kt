@@ -28,7 +28,7 @@ class DebugCatchUpApplication : CatchUpApplication() {
   override fun initVariant() {
     refWatcher = LeakCanary.refWatcher(this).build()
     registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
-      override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle) {}
+      override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
       override fun onActivityStarted(activity: Activity) {}
 

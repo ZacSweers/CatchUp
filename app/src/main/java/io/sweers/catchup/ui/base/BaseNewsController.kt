@@ -46,7 +46,6 @@ import io.sweers.catchup.R
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.util.Iterables
-import io.sweers.catchup.util.Strings
 import io.sweers.catchup.util.format
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import org.threeten.bp.Instant
@@ -208,7 +207,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
           if (pageToRequest == 0 && activity != null) {
             if (e is IOException) {
               progress.visibility = GONE
-              errorTextView.text = "Network Problem"
+              errorTextView.text = "Connection Problem"
               swipeRefreshLayout.visibility = GONE
               errorView.visibility = VISIBLE
               AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
@@ -421,7 +420,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
       } else {
         tag.visibility = VISIBLE
         tagDivider.visibility = VISIBLE
-        tag.text = Strings.capitalize(text)
+        tag.text = text.capitalize()
       }
     }
 
