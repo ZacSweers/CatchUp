@@ -14,43 +14,41 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.smmry.model;
+package io.sweers.catchup.data.smmry.model
 
-import android.support.annotation.Nullable;
-import com.google.auto.value.AutoValue;
-import com.squareup.moshi.Json;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
-import io.sweers.catchup.data.adapters.UnEscape;
-import java.util.List;
+import com.google.auto.value.AutoValue
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import io.sweers.catchup.data.adapters.UnEscape
 
 @AutoValue
-public abstract class SmmryResponse {
+abstract class SmmryResponse {
 
   /**
    * Contains notices, warnings, and error messages.
    */
-  @Json(name = "sm_api_message") @Nullable public abstract String apiMessage();
+  @Json(name = "sm_api_message") abstract fun apiMessage(): String?
 
   /**
    * Contains the amount of characters returned
    */
-  @Json(name = "sm_api_character_count") @Nullable public abstract String characterCount();
+  @Json(name = "sm_api_character_count") abstract fun characterCount(): String?
 
   /**
    * Contains the title when available
    */
-  @Json(name = "sm_api_title") @UnEscape @Nullable public abstract String title();
+  @Json(name = "sm_api_title") @UnEscape abstract fun title(): String?
 
   /**
    * Contains the summary
    */
-  @Json(name = "sm_api_content") @Nullable public abstract String content();
+  @Json(name = "sm_api_content") abstract fun content(): String?
 
   /**
    * Contains top ranked keywords in descending order
    */
-  @Json(name = "sm_api_keyword_array") @Nullable public abstract List<String> keywords();
+  @Json(name = "sm_api_keyword_array") abstract fun keywords(): List<String>?
 
   /**
    * Contains error code
@@ -59,9 +57,13 @@ public abstract class SmmryResponse {
    * 2 - Intentional restriction (low credits/disabled API key/banned API key)
    * 3 - Summarization error
    */
-  @Json(name = "sm_api_error") public abstract int errorCode();
+  @Json(name = "sm_api_error") abstract fun errorCode(): Int
 
-  public static JsonAdapter<SmmryResponse> jsonAdapter(Moshi moshi) {
-    return new AutoValue_SmmryResponse.MoshiJsonAdapter(moshi);
+  companion object {
+
+    @JvmStatic
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<SmmryResponse> {
+      return AutoValue_SmmryResponse.MoshiJsonAdapter(moshi)
+    }
   }
 }

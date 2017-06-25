@@ -80,7 +80,8 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
         if (remoteConfig.getBoolean(SMMRY_ENABLED)) {
           itemLongClicks()
               .autoDisposeWith(this)
-              .subscribe(SmmryController.showFor<Any>(this@HackerNewsController, url, item.title()))
+              .subscribe(
+                  SmmryController.showFor<Any>(this@HackerNewsController, url!!, item.title()))
         }
 
         itemClicks()
