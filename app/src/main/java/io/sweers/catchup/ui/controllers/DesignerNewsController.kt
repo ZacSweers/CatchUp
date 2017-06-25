@@ -66,32 +66,34 @@ class DesignerNewsController : BaseNewsController<Story> {
   override fun bindItemView(item: Story, holder: BaseNewsController.NewsItemViewHolder) {
     //Story story = storyMeta.story;
     //User user = storyMeta.user;
-    holder.title(item.title())
+    holder.run {
+      title(item.title())
 
-    holder.score(Pair.create("▲", item.voteCount()))
-    holder.timestamp(item.createdAt())
-    //holder.author(user.displayName());
-    holder.author(null)
+      score(Pair.create("▲", item.voteCount()))
+      timestamp(item.createdAt())
+      //author(user.displayName());
+      author(null)
 
-    holder.source(item.hostname())
+      source(item.hostname())
 
-    holder.comments(item.commentCount())
-    holder.tag(item.badge())
+      comments(item.commentCount())
+      tag(item.badge())
 
-    item.url()?.let {
-      holder.itemClicks()
-          .compose<UrlMeta>(transformUrlToMeta<Any>(it))
+      item.url()?.let {
+        itemClicks()
+            .compose<UrlMeta>(transformUrlToMeta<Any>(it))
+            .flatMapCompletable(linkManager)
+            .autoDisposeWith(this)
+            .subscribe()
+      }
+      itemCommentClicks()
+          .compose<UrlMeta>(transformUrlToMeta<Any>(item.href()
+              .replace("api.", "www.")
+              .replace("api/v2/", "")))
           .flatMapCompletable(linkManager)
-          .autoDisposeWith(holder)
+          .autoDisposeWith(this)
           .subscribe()
     }
-    holder.itemCommentClicks()
-        .compose<UrlMeta>(transformUrlToMeta<Any>(item.href()
-            .replace("api.", "www.")
-            .replace("api/v2/", "")))
-        .flatMapCompletable(linkManager)
-        .autoDisposeWith(holder)
-        .subscribe()
   }
 
   override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<Story>> {

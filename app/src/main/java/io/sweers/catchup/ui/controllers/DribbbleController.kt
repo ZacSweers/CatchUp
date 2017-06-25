@@ -341,9 +341,7 @@ class DribbbleController : ServiceController, SwipeRefreshLayout.OnRefreshListen
           return holder
         }
         ServiceController.TYPE_LOADING_MORE -> return ServiceController.LoadingMoreHolder(
-            layoutInflater.inflate(R.layout.infinite_loading,
-                parent,
-                false))
+            layoutInflater.inflate(R.layout.infinite_loading, parent, false))
       }
       return null
     }
