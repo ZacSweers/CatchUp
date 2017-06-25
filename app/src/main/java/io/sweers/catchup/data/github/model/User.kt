@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.github.model;
+package io.sweers.catchup.data.github.model
 
-import android.support.annotation.NonNull;
-import com.google.auto.value.AutoValue;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
+import com.google.auto.value.AutoValue
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 
 @AutoValue
-public abstract class User {
+abstract class User {
 
-  public static JsonAdapter<User> jsonAdapter(@NonNull Moshi moshi) {
-    return new AutoValue_User.MoshiJsonAdapter(moshi);
-  }
+  abstract fun login(): String
 
-  public abstract String login();
+  companion object {
 
-  public static User create(String login) {
-    return new AutoValue_User(login);
+    @JvmStatic
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<User> {
+      return AutoValue_User.MoshiJsonAdapter(moshi)
+    }
+
+    fun create(login: String): User {
+      return AutoValue_User(login)
+    }
   }
 }

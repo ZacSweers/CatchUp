@@ -14,46 +14,48 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.github.model;
+package io.sweers.catchup.data.github.model
 
-import android.support.annotation.Nullable;
-import com.google.auto.value.AutoValue;
-import org.threeten.bp.LocalDate;
+import com.google.auto.value.AutoValue
+import org.threeten.bp.LocalDate
 
-import static org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE;
+import org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 @AutoValue
-public abstract class SearchQuery {
-  public static Builder builder() {
-    return new AutoValue_SearchQuery.Builder();
-  }
+abstract class SearchQuery {
 
-  @Nullable public abstract LocalDate createdSince();
+  abstract fun createdSince(): LocalDate?
 
-  public abstract int minStars();
+  abstract fun minStars(): Int
 
-  @Override public final String toString() {
+  override fun toString(): String {
     // Returning null here is not ideal, but it lets retrofit drop the query param altogether.
-    StringBuilder builder = new StringBuilder();
+    val builder = StringBuilder()
     if (createdSince() != null) {
       builder.append("created:>=")
-          .append(ISO_LOCAL_DATE.format(createdSince()))
-          .append(' ');
+          .append(ISO_LOCAL_DATE.format(createdSince()!!))
+          .append(' ')
     }
     if (minStars() != 0) {
       builder.append("stars:>=")
-          .append(minStars());
+          .append(minStars())
     }
     return builder.toString()
-        .trim();
+        .trim { it <= ' ' }
   }
 
   @AutoValue.Builder
-  public abstract static class Builder {
-    public abstract Builder createdSince(LocalDate createdSince);
+  abstract class Builder {
+    abstract fun createdSince(createdSince: LocalDate): Builder
 
-    public abstract Builder minStars(int minStars);
+    abstract fun minStars(minStars: Int): Builder
 
-    public abstract SearchQuery build();
+    abstract fun build(): SearchQuery
+  }
+
+  companion object {
+    fun builder(): Builder {
+      return AutoValue_SearchQuery.Builder()
+    }
   }
 }
