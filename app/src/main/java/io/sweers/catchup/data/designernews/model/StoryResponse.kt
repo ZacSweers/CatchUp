@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.designernews.model;
+package io.sweers.catchup.data.designernews.model
 
-import android.support.annotation.NonNull;
-import com.google.auto.value.AutoValue;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
+import com.google.auto.value.AutoValue
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 
 /**
  * Models a response from the Designer News API that returns a single story
  */
 @AutoValue
-public abstract class StoryResponse {
+abstract class StoryResponse {
 
-  public static JsonAdapter<StoryResponse> jsonAdapter(@NonNull Moshi moshi) {
-    return new AutoValue_StoryResponse.MoshiJsonAdapter(moshi);
+  abstract fun story(): Story
+
+  companion object {
+
+    @JvmStatic
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<StoryResponse> {
+      return AutoValue_StoryResponse.MoshiJsonAdapter(moshi)
+    }
   }
-
-  public abstract Story story();
 }

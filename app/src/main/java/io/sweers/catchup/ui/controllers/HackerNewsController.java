@@ -72,13 +72,13 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
   }
 
   @Override
-  protected void bindItemView(@NonNull HackerNewsStory story, @NonNull NewsItemViewHolder holder) {
-    holder.title(story.title());
-    holder.score(Pair.create("+", story.score()));
-    holder.timestamp(story.time());
-    holder.author(story.by());
+  protected void bindItemView(@NonNull HackerNewsStory item, @NonNull NewsItemViewHolder holder) {
+    holder.title(item.title());
+    holder.score(Pair.create("+", item.score()));
+    holder.timestamp(item.time());
+    holder.author(item.by());
 
-    String url = story.url();
+    String url = item.url();
     if (url == null) {
       holder.source(null);
     } else {
@@ -88,7 +88,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
 
     int commentsCount = 0;
     // TODO Adapter to coerce this to Collections.emptyList()?
-    List<Long> kids = story.kids();
+    List<Long> kids = item.kids();
     if (kids != null) {
       commentsCount = kids.size();
     }
@@ -98,7 +98,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
     if (remoteConfig.getBoolean(SMMRY_ENABLED) && !TextUtils.isEmpty(url)) {
       holder.itemLongClicks()
           .to(new ObservableScoper<>(holder))
-          .subscribe(SmmryController.showFor(this, url, story.title()));
+          .subscribe(SmmryController.showFor(this, url, item.title()));
     }
 
     holder.itemClicks()
@@ -108,7 +108,7 @@ public final class HackerNewsController extends BaseNewsController<HackerNewsSto
         .subscribe();
 
     holder.itemCommentClicks()
-        .compose(transformUrlToMeta("https://news.ycombinator.com/item?id=" + story.id()))
+        .compose(transformUrlToMeta("https://news.ycombinator.com/item?id=" + item.id()))
         .flatMapCompletable(linkManager)
         .to(new CompletableScoper(holder))
         .subscribe();

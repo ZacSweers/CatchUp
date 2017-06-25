@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.designernews.model;
+package io.sweers.catchup.data.designernews.model
 
-import com.google.auto.value.AutoValue;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
-import java.util.List;
+import com.google.auto.value.AutoValue
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 
 @AutoValue
-public abstract class Links {
+abstract class Links {
 
-  public abstract String user();
+  abstract fun user(): String
 
-  public abstract List<String> comments();
+  abstract fun comments(): List<String>
 
-  public abstract List<String> upvotes();
+  abstract fun upvotes(): List<String>
 
-  public abstract List<String> downvotes();
+  abstract fun downvotes(): List<String>
 
-  public static JsonAdapter<Links> jsonAdapter(Moshi moshi) {
-    return new AutoValue_Links.MoshiJsonAdapter(moshi);
+  companion object {
+
+    @JvmStatic
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Links> {
+      return AutoValue_Links.MoshiJsonAdapter(moshi)
+    }
   }
 }

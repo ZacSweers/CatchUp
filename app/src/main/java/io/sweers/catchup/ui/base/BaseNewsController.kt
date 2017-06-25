@@ -82,10 +82,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
   /**
    * View binding implementation to bind the given datum to the `holder`.
    *
-   * @param t The datum to back the view with.
+   * @param item The datum to back the view with.
    * @param holder The item ViewHolder instance.
    */
-  protected abstract fun bindItemView(t: T, holder: NewsItemViewHolder)
+  protected abstract fun bindItemView(item: T, holder: NewsItemViewHolder)
 
   protected abstract fun getDataSingle(request: DataRequest): Single<List<T>>
 
