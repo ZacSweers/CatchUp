@@ -84,8 +84,10 @@ ext {
   chuckNoop = "com.readystatesoftware.chuck:library-no-op:$chuckVersion"
 
   // Misc
-  autoDispose = 'com.uber.autodispose:autodispose:0.2.0'
-  autoDisposeAndroid = 'com.uber.autodispose:autodispose-android:0.2.0'
+  autoDisposeVersion = '0.2.0'
+  autoDispose = "com.uber.autodispose:autodispose:$autoDisposeVersion"
+  autoDisposeAndroid = "com.uber.autodispose:autodispose-android:$autoDisposeVersion"
+  autoDisposeKotlin = "com.uber.autodispose:autodispose-kotlin:$autoDisposeVersion"
   bugsnag = 'com.bugsnag:bugsnag-android:3.9.0'
   errorPronePlugin = 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.10'
   errorProneCore = 'com.google.errorprone:error_prone_core:2.0.19'

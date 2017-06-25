@@ -305,6 +305,7 @@ dependencies {
   // Misc
   implementation rootProject.ext.autoDispose
   implementation rootProject.ext.autoDisposeAndroid
+  implementation rootProject.ext.autoDisposeKotlin
   errorprone rootProject.ext.errorProneCore
   implementation rootProject.ext.errorProneAnnotations
   implementation rootProject.ext.barberApi

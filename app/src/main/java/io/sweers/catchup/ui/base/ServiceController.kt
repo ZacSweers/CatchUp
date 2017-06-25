@@ -36,8 +36,7 @@ import io.sweers.catchup.util.UiUtil
  */
 abstract class ServiceController : ButterKnifeController {
   @SuppressLint("SupportAnnotationUsage")
-  @ColorInt @get:ColorInt var serviceThemeColor = Color.BLACK
-    private set
+  @ColorInt var serviceThemeColor = Color.BLACK
 
   constructor() : super()
 
@@ -59,7 +58,7 @@ abstract class ServiceController : ButterKnifeController {
 
   protected fun <T> transformUrlToMeta(url: String?): ObservableTransformer<T, UrlMeta> {
     return ObservableTransformer { upstream ->
-      upstream.map { UrlMeta(url, serviceThemeColor, activity) }
+      upstream.map { UrlMeta(url, serviceThemeColor, activity!!) }
     }
   }
 
