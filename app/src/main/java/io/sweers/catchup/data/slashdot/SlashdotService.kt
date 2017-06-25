@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.slashdot;
+package io.sweers.catchup.data.slashdot
 
-import io.reactivex.Single;
-import retrofit2.http.GET;
+import io.reactivex.Single
+import retrofit2.http.GET
 
-public interface SlashdotService {
-  String HOST = "rss.slashdot.org";
-  String ENDPOINT = "http://" + HOST;
+interface SlashdotService {
 
   @GET("/Slashdot/slashdotMainatom")
-  Single<Feed> main();
+  fun main(): Single<Feed>
+
+  companion object {
+    val HOST = "rss.slashdot.org"
+    val ENDPOINT = "http://" + HOST
+  }
 }

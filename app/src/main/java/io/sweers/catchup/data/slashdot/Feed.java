@@ -24,6 +24,10 @@ import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.NamespaceList;
 import org.simpleframework.xml.Root;
 
+/**
+ * These classes stay in java because SimpleXML is crazy and its reflection can't find things in
+ * kotlin
+ */
 @Keep
 @NamespaceList({
                    @Namespace(reference = "http://www.w3.org/2005/Atom",
