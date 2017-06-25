@@ -21,11 +21,11 @@ import android.content.Context;
 import android.os.PowerManager;
 import android.support.v4.view.GravityCompat;
 import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.f2prateek.rx.preferences.Preference;
 import com.jakewharton.madge.MadgeFrameLayout;
@@ -81,10 +81,13 @@ public final class DebugViewContainer implements ViewContainer {
   }
 
   @Override public ViewGroup forActivity(final BaseActivity activity) {
-    activity.setContentView(R.layout.debug_activity_frame);
+    View contentView = LayoutInflater.from(activity)
+        .inflate(R.layout.debug_activity_frame,
+            activity.findViewById(android.R.id.content), false);
+    activity.setContentView(contentView);
 
     final ViewHolder viewHolder = new ViewHolder();
-    Unbinder unbinder = ButterKnife.bind(viewHolder, activity);
+    Unbinder unbinder = new DebugViewContainer$ViewHolder_ViewBinding(viewHolder, contentView);
 
     final Context drawerContext = new ContextThemeWrapper(activity, R.style.DebugDrawer);
     final DebugView debugView = new DebugView(drawerContext);
