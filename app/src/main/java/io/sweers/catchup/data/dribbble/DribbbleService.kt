@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.dribbble;
+package io.sweers.catchup.data.dribbble
 
-import io.reactivex.Single;
-import io.sweers.catchup.data.dribbble.model.Shot;
-import java.util.List;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+import io.reactivex.Single
+import io.sweers.catchup.data.dribbble.model.Shot
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 /**
  * Dribbble API - http://developer.dribbble.com/v1/
  */
-public interface DribbbleService {
-
-  String HOST = "api.dribbble.com";
-  String ENDPOINT = "https://" + HOST;
+interface DribbbleService {
 
   @GET("/v1/shots")
-  Single<List<Shot>> getPopular(
-      @Query("page") int page,
-      @Query("per_page") int pageSize);
+  fun getPopular(
+      @Query("page") page: Int,
+      @Query("per_page") pageSize: Int): Single<List<Shot>>
+
+  companion object {
+
+    val HOST = "api.dribbble.com"
+    val ENDPOINT = "https://" + HOST
+  }
 
 }
