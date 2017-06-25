@@ -83,19 +83,21 @@ class GitHubController : BaseNewsController<Repository> {
   }
 
   override fun bindItemView(item: Repository, holder: BaseNewsController.NewsItemViewHolder) {
-    holder.hideComments()
-    holder.title(item.fullName())
-    holder.score(Pair.create("★", item.starsCount()))
-    holder.timestamp(item.createdAt())
-    holder.author(item.owner()
-        .login())
-    holder.source(null)
-    holder.tag(item.language())
-    holder.itemClicks()
-        .compose<UrlMeta>(transformUrlToMeta<Any>(item.htmlUrl()))
-        .flatMapCompletable(linkManager)
-        .autoDisposeWith(holder)
-        .subscribe()
+    holder.apply {
+      hideComments()
+      title(item.fullName())
+      score(Pair.create("★", item.starsCount()))
+      timestamp(item.createdAt())
+      author(item.owner()
+          .login())
+      source(null)
+      tag(item.language())
+      itemClicks()
+          .compose<UrlMeta>(transformUrlToMeta<Any>(item.htmlUrl()))
+          .flatMapCompletable(linkManager)
+          .autoDisposeWith(this)
+          .subscribe()
+    }
   }
 
   override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<Repository>> {
