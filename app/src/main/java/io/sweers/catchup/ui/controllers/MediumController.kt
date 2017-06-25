@@ -186,10 +186,7 @@ class MediumController : BaseNewsController<MediumPost> {
           @InternalApi moshi: Moshi,
           rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): MediumService {
         val retrofit = Retrofit.Builder().baseUrl(MediumService.ENDPOINT)
-            .callFactory { request ->
-              client.get()
-                  .newCall(request)
-            }
+            .callFactory { client.get().newCall(it) }
             .addCallAdapterFactory(rxJavaCallAdapterFactory)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .validateEagerly(BuildConfig.DEBUG)

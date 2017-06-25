@@ -503,10 +503,7 @@ class DribbbleController : ServiceController, SwipeRefreshLayout.OnRefreshListen
           @InternalApi moshi: Moshi,
           rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DribbbleService {
         return Retrofit.Builder().baseUrl(DribbbleService.ENDPOINT)
-            .callFactory { request ->
-              client.get()
-                  .newCall(request)
-            }
+            .callFactory { client.get().newCall(it) }
             .addCallAdapterFactory(rxJavaCallAdapterFactory)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .validateEagerly(BuildConfig.DEBUG)

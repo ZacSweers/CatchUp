@@ -30,18 +30,18 @@ import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
+import io.sweers.catchup.data.AuthInterceptor
 import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.LinkManager.UrlMeta
-import io.sweers.catchup.data.designernews.DesignerNewsService
-import io.sweers.catchup.data.designernews.model.Story
-import io.sweers.catchup.data.designernews.model.User
+import io.sweers.catchup.data.producthunt.ProductHuntService
+import io.sweers.catchup.data.producthunt.model.Post
 import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.ui.base.BaseNewsController
-import io.sweers.catchup.ui.base.HasStableId
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -50,9 +50,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class DesignerNewsController : BaseNewsController<Story> {
+class ProductHuntController : BaseNewsController<Post> {
 
-  @Inject lateinit var service: DesignerNewsService
+  @Inject lateinit var service: ProductHuntService
   @Inject lateinit var linkManager: LinkManager
 
   constructor() : super()
@@ -60,63 +60,56 @@ class DesignerNewsController : BaseNewsController<Story> {
   constructor(args: Bundle) : super(args)
 
   override fun onThemeContext(context: Context): Context {
-    return ContextThemeWrapper(context, R.style.CatchUp_DesignerNews)
+    return ContextThemeWrapper(context, R.style.CatchUp_ProductHunt)
   }
 
-  override fun bindItemView(item: Story, holder: BaseNewsController.NewsItemViewHolder) {
-    //Story story = storyMeta.story;
-    //User user = storyMeta.user;
+  override fun bindItemView(item: Post, holder: BaseNewsController.NewsItemViewHolder) {
     holder.run {
-      title(item.title())
+      title(item.name())
+      score(Pair.create("▲", item.votes_count()))
+      timestamp(item.created_at())
+      author(item.user()
+          .name())
+      tag(item.firstTopic)
+      source(null)
+      comments(item.comments_count())
 
-      score(Pair.create("▲", item.voteCount()))
-      timestamp(item.createdAt())
-      //author(user.displayName());
-      author(null)
-
-      source(item.hostname())
-
-      comments(item.commentCount())
-      tag(item.badge())
-
-      item.url()?.let {
-        itemClicks()
-            .compose<UrlMeta>(transformUrlToMeta<Any>(it))
-            .flatMapCompletable(linkManager)
-            .autoDisposeWith(this)
-            .subscribe()
-      }
+      itemClicks()
+          .compose<UrlMeta>(transformUrlToMeta<Any>(item.redirect_url()))
+          .flatMapCompletable(linkManager)
+          .autoDisposeWith(this)
+          .subscribe()
       itemCommentClicks()
-          .compose<UrlMeta>(transformUrlToMeta<Any>(item.href()
-              .replace("api.", "www.")
-              .replace("api/v2/", "")))
+          .compose<UrlMeta>(transformUrlToMeta<Any>(item.discussion_url()))
           .flatMapCompletable(linkManager)
           .autoDisposeWith(this)
           .subscribe()
     }
   }
 
-  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<Story>> {
-    return service.getTopStories(request.page())
-    // This won't do for now because /users endpoint sporadically barfs on specific user IDs
-    //return service.getTopStories()
-    //    .flatMap(stories -> Observable.zip(
-    //        Observable.fromIterable(stories),
-    //        Observable.fromIterable(stories)
-    //            .map(story -> story.links()
-    //                .user())
-    //            .toList()
-    //            .flatMap(ids -> service.getUsers(CommaJoinerList.from(ids)))
-    //            .flattenAsObservable(users -> users),
-    //        StoryAndUserHolder::new)
-    //        .toList());
+  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<Post>> {
+    if (request.multipage()) {
+      // Backfill pages
+      return Observable.range(0, request.page())
+          .flatMapSingle { this.getPage(it) }
+          .collectInto(mutableListOf<Post>()) { list, collection -> list.addAll(collection) }
+          .map { it } // Weird
+    } else if (request.fromRefresh()) {
+      return getPage(request.page())
+    } else {
+      return getPage(request.page())
+    }
+  }
+
+  private fun getPage(page: Int): Single<List<Post>> {
+    return service.getPosts(page)
   }
 
   @Subcomponent
-  interface Component : AndroidInjector<DesignerNewsController> {
+  interface Component : AndroidInjector<ProductHuntController> {
 
     @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<DesignerNewsController>()
+    abstract class Builder : AndroidInjector.Builder<ProductHuntController>()
   }
 
   @dagger.Module(subcomponents = arrayOf(Component::class))
@@ -127,39 +120,40 @@ class DesignerNewsController : BaseNewsController<Story> {
 
     @Binds
     @IntoMap
-    @ControllerKey(DesignerNewsController::class)
-    internal abstract fun bindDesignerNewsControllerInjectorFactory(
+    @ControllerKey(ProductHuntController::class)
+    internal abstract fun bindProductHuntControllerInjectorFactory(
         builder: Component.Builder): AndroidInjector.Factory<out Controller>
 
     @dagger.Module
     companion object {
 
-      @Provides @InternalApi @JvmStatic internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
+      @Provides @InternalApi @JvmStatic internal fun provideProductHuntOkHttpClient(
+          client: OkHttpClient): OkHttpClient {
+        return client.newBuilder()
+            .addInterceptor(AuthInterceptor.create("Bearer",
+                BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
+            .build()
+      }
+
+      @Provides @InternalApi @JvmStatic internal fun provideProductHuntMoshi(moshi: Moshi): Moshi {
         return moshi.newBuilder()
             .add(Instant::class.java, ISO8601InstantAdapter())
             .add(Wrapped.ADAPTER_FACTORY)
             .build()
       }
 
-      @Provides @JvmStatic internal fun provideDesignerNewsService(client: Lazy<OkHttpClient>,
+      @Provides @JvmStatic internal fun provideProductHuntService(
+          @InternalApi client: Lazy<OkHttpClient>,
           @InternalApi moshi: Moshi,
-          rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DesignerNewsService {
-        val retrofit = Retrofit.Builder().baseUrl(DesignerNewsService.ENDPOINT)
+          rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): ProductHuntService {
+        return Retrofit.Builder().baseUrl(ProductHuntService.ENDPOINT)
             .callFactory { client.get().newCall(it) }
             .addCallAdapterFactory(rxJavaCallAdapterFactory)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .validateEagerly(BuildConfig.DEBUG)
             .build()
-        return retrofit.create(DesignerNewsService::class.java)
+            .create(ProductHuntService::class.java)
       }
-    }
-  }
-
-  // TODO Eventually use this when we can safely query User ids
-  internal class StoryAndUserHolder(val story: Story, val user: User) : HasStableId {
-
-    override fun stableId(): Long {
-      return story.stableId()
     }
   }
 }

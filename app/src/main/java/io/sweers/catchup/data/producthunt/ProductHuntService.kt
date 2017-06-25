@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.producthunt;
+package io.sweers.catchup.data.producthunt
 
-import com.serjltt.moshi.adapters.Wrapped;
-import io.reactivex.Single;
-import io.sweers.catchup.data.producthunt.model.Post;
-import java.util.List;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+import com.serjltt.moshi.adapters.Wrapped
+import io.reactivex.Single
+import io.sweers.catchup.data.producthunt.model.Post
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 /**
  * Models the Product Hunt API. See https://api.producthunt.com/v1/docs
  */
-public interface ProductHuntService {
-
-  String SCHEME = "https";
-  String HOST = "api.producthunt.com";
-  String ENDPOINT = SCHEME + "://" + HOST;
+interface ProductHuntService {
 
   @GET("/v1/posts")
-  @Wrapped(path = "posts")
-  Single<List<Post>> getPosts(@Query("days_ago") int page);
+  @Wrapped(path = arrayOf("posts"))
+  fun getPosts(@Query("days_ago") page: Int): Single<List<Post>>
+
+  companion object {
+
+    val SCHEME = "https"
+    val HOST = "api.producthunt.com"
+    val ENDPOINT = SCHEME + "://" + HOST
+  }
 }
