@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.widget;
+package io.sweers.catchup.ui.widget
 
-import android.content.Context;
-import android.util.AttributeSet;
+import android.content.Context
+import android.util.AttributeSet
+import android.view.View.MeasureSpec.EXACTLY
+import android.view.View.MeasureSpec.getSize
+import android.view.View.MeasureSpec.makeMeasureSpec
 
 /**
  * A extension of ForegroundImageView that is always 4:3 aspect ratio.
  */
-public class FourThreeImageView extends ForegroundImageView {
+open class FourThreeImageView(context: Context, attrs: AttributeSet)
+  : ForegroundImageView(context, attrs) {
 
-  public FourThreeImageView(Context context, AttributeSet attrs) {
-    super(context, attrs);
-  }
-
-  @Override
-  protected void onMeasure(int widthSpec, int heightSpec) {
-    int fourThreeHeight = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthSpec) * 3 / 4,
-        MeasureSpec.EXACTLY);
-    super.onMeasure(widthSpec, fourThreeHeight);
+  override fun onMeasure(widthSpec: Int, heightSpec: Int) {
+    val fourThreeHeight = makeMeasureSpec(
+        getSize(widthSpec) * 3 / 4,
+        EXACTLY)
+    super.onMeasure(widthSpec, fourThreeHeight)
   }
 }
