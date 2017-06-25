@@ -14,7 +14,30 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model;
+package io.sweers.catchup.data.reddit.model
 
-public abstract class RedditObject {
+import com.google.auto.value.AutoValue
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+
+@AutoValue
+abstract class RedditMore : RedditObject() {
+
+  abstract fun children(): List<String>
+
+  abstract fun count(): Int
+
+  abstract fun id(): String
+
+  abstract fun name(): String
+
+  @Json(name = "parent_id") abstract fun parentId(): String
+
+  companion object {
+    @JvmStatic
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<RedditMore> {
+      return AutoValue_RedditMore.MoshiJsonAdapter(moshi)
+    }
+  }
 }

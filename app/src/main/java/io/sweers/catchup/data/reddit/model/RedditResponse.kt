@@ -14,31 +14,32 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model;
+package io.sweers.catchup.data.reddit.model
 
-import com.squareup.moshi.Json;
+import com.google.auto.value.AutoValue
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 
-public enum RedditType {
+@AutoValue
+abstract class RedditResponse {
 
-  @Json(name = "t1")
-  T1(RedditComment.class),
+  abstract fun data(): RedditListing
 
-  @Json(name = "t3")
-  T3(RedditLink.class),
+  @AutoValue.Builder
+  interface Builder {
+    fun data(listing: RedditListing): Builder
 
-  @Json(name = "Listing")
-  LISTING(RedditListing.class),
-
-  @Json(name = "more")
-  MORE(RedditMore.class);
-
-  private final Class<?> clazz;
-
-  RedditType(Class<?> cls) {
-    clazz = cls;
+    fun build(): RedditResponse
   }
 
-  public Class<?> getDerivedClass() {
-    return clazz;
+  companion object {
+    @JvmStatic
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<RedditResponse> {
+      return AutoValue_RedditResponse.MoshiJsonAdapter(moshi)
+    }
+
+    fun builder(): Builder {
+      return `$AutoValue_RedditResponse`.Builder()
+    }
   }
 }
