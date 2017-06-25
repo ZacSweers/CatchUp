@@ -19,7 +19,6 @@ package io.sweers.catchup.ui.controllers
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.design.widget.AppBarLayout
@@ -39,32 +38,18 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import com.f2prateek.rx.preferences.Preference
-import com.f2prateek.rx.preferences.RxSharedPreferences
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.uber.autodispose.kotlin.autoDisposeWith
-import dagger.Binds
-import dagger.Lazy
-import dagger.Provides
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
-import hu.akarnokd.rxjava.interop.RxJavaInterop
 import io.sweers.catchup.P
 import io.sweers.catchup.R
-import io.sweers.catchup.injection.ConductorInjection
-import io.sweers.catchup.injection.ControllerKey
-import io.sweers.catchup.injection.qualifiers.preferences.NavBarTheme
 import io.sweers.catchup.rx.PredicateConsumer
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.UiUtil.setLightStatusBar
-import io.sweers.catchup.util.isL
 import java.util.Arrays
-import javax.inject.Inject
 
 class PagerController : ButterKnifeController {
 
@@ -85,14 +70,13 @@ class PagerController : ButterKnifeController {
   private val resolvedColorCache = IntArray(PAGE_DATA.size)
   private val argbEvaluator = ArgbEvaluator()
 
-  @Inject @NavBarTheme lateinit var themeNavigationBarPref: Lazy<Preference<Boolean>>
   @BindView(R.id.tab_layout) lateinit var tabLayout: TabLayout
   @BindView(R.id.view_pager) lateinit var viewPager: ViewPager
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.appbarlayout) lateinit var appBarLayout: AppBarLayout
   private var statusBarColorAnimator: ValueAnimator? = null
   private var colorNavBar = false
-  private var tablayoutIsPinned = false
+  private var tabLayoutIsPinned = false
   private var pagerAdapter: RouterPagerAdapter
 
   constructor() : super()
@@ -142,7 +126,6 @@ class PagerController : ButterKnifeController {
 
   override fun onViewBound(view: View) {
     super.onViewBound(view)
-    ConductorInjection.inject(this)
 
     @ColorInt val colorPrimaryDark = UiUtil.resolveAttribute(view.context, R.attr.colorPrimaryDark)
     val isInNightMode = UiUtil.isInNightMode(view.context)
@@ -154,14 +137,14 @@ class PagerController : ButterKnifeController {
         .distinctUntilChanged()
         .doOnNext(object : PredicateConsumer<Int>() {
           @Throws(Exception::class)
-          override fun test(verticalOffset: Int?): Boolean {
+          override fun test(verticalOffset: Int): Boolean {
             return verticalOffset == -toolbar.height
           }
 
           @Throws(Exception::class)
-          override fun acceptActual(verticalOffset: Int) {
+          override fun acceptActual(value: Int) {
             statusBarColorAnimator?.cancel()
-            tablayoutIsPinned = true
+            tabLayoutIsPinned = true
             val newStatusColor = this@PagerController.getAndSaveColor(
                 tabLayout.selectedTabPosition)
             statusBarColorAnimator = ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor)
@@ -179,9 +162,9 @@ class PagerController : ButterKnifeController {
         })
         .doOnNext(object : PredicateConsumer<Int>() {
           @Throws(Exception::class)
-          override fun acceptActual(verticalOffset: Int) {
-            val wasPinned = tablayoutIsPinned
-            tablayoutIsPinned = false
+          override fun acceptActual(value: Int) {
+            val wasPinned = tabLayoutIsPinned
+            tabLayoutIsPinned = false
             if (wasPinned) {
               statusBarColorAnimator?.cancel()
               statusBarColorAnimator = ValueAnimator.ofArgb(this@PagerController.activity!!
@@ -202,7 +185,7 @@ class PagerController : ButterKnifeController {
           }
 
           @Throws(Exception::class)
-          override fun test(verticalOffset: Int?): Boolean {
+          override fun test(verticalOffset: Int): Boolean {
             return verticalOffset != -toolbar.height
           }
         })
@@ -238,25 +221,6 @@ class PagerController : ButterKnifeController {
     // Set the initial color
     @ColorInt val initialColor = getAndSaveColor(0)
     tabLayout.setBackgroundColor(initialColor)
-    if (isL() && !UiUtil.isInNightMode(view.context)) {
-      colorNavBar = themeNavigationBarPref.get()
-          .get()!! // ew
-      RxJavaInterop.toV2Observable(themeNavigationBarPref.get()
-          .asObservable())
-          .distinctUntilChanged()
-          .autoDisposeWith(this)
-          .subscribe { b ->
-            colorNavBar = b!!
-            val color: Int
-            if (b) {
-              color = getAndSaveColor(viewPager.currentItem)
-            } else {
-              color = Color.BLACK
-            }
-            activity?.window?.navigationBarColor = color
-          }
-    }
-
     viewPager.adapter = pagerAdapter
     tabLayout.setupWithViewPager(viewPager, false)
 
@@ -280,7 +244,7 @@ class PagerController : ButterKnifeController {
           color = getAndSaveColor(PAGE_DATA.size - 1)
         }
         tabLayout.setBackgroundColor(color)
-        if (tablayoutIsPinned) {
+        if (tabLayoutIsPinned) {
           activity?.window?.statusBarColor = color
         }
         if (colorNavBar) {
@@ -322,37 +286,5 @@ class PagerController : ButterKnifeController {
       resolvedColorCache[position] = ContextCompat.getColor(activity!!, PAGE_DATA[position][2])
     }
     return resolvedColorCache[position]
-  }
-
-  @Subcomponent
-  interface Component : AndroidInjector<PagerController> {
-
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<PagerController>()
-  }
-
-  @dagger.Module(subcomponents = arrayOf(Component::class))
-  abstract class Module {
-
-    @Binds
-    @IntoMap
-    @ControllerKey(PagerController::class)
-    internal abstract fun bindPagerControllerInjectorFactory(
-        builder: Component.Builder): AndroidInjector.Factory<out Controller>
-
-    @dagger.Module
-    companion object {
-
-      @Provides
-      @NavBarTheme
-      @JvmStatic
-      internal fun provideThemeNavigationColorPreference(
-          rxSharedPreferences: RxSharedPreferences): Preference<Boolean> {
-        return rxSharedPreferences.getBoolean(P.themeNavigationBar.key,
-            P.themeNavigationBar.defaultValue())
-        // TODO revert to this when this is fixed: https://github.com/Flipboard/psync/issues/11
-        //      return P.themeNavigationBar.rx();
-      }
-    }
   }
 }

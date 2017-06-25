@@ -23,13 +23,11 @@ import io.sweers.catchup.ui.controllers.DribbbleController
 import io.sweers.catchup.ui.controllers.GitHubController
 import io.sweers.catchup.ui.controllers.HackerNewsController
 import io.sweers.catchup.ui.controllers.MediumController
-import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.ui.controllers.ProductHuntController
 import io.sweers.catchup.ui.controllers.RedditController
 import io.sweers.catchup.ui.controllers.SlashdotController
 
 @Subcomponent(modules = arrayOf(UiModule::class,
-    PagerController.Module::class,
     HackerNewsController.Module::class,
     RedditController.Module::class,
     MediumController.Module::class,
