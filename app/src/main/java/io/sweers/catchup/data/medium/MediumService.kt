@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.medium.model;
+package io.sweers.catchup.data.medium
 
-import android.support.annotation.NonNull;
+import com.serjltt.moshi.adapters.Wrapped
+import io.reactivex.Observable
+import io.sweers.catchup.data.medium.model.References
+import okhttp3.ResponseBody
+import retrofit2.http.GET
 
-import com.google.auto.value.AutoValue;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
+interface MediumService {
 
-@AutoValue
-public abstract class MediumResponse {
+  @GET("/browse/top") @Wrapped(
+      path = arrayOf("payload", "references")) fun top(): Observable<References>
 
-  public static JsonAdapter<MediumResponse> jsonAdapter(@NonNull Moshi moshi) {
-    return new AutoValue_MediumResponse.MoshiJsonAdapter(moshi);
+  @GET("/browse/top") fun topRaw(): Observable<ResponseBody>
+
+  companion object {
+
+    val HOST = "medium.com"
+    val ENDPOINT = "https://" + HOST
   }
-
-  public abstract Payload payload();
-
-  public abstract boolean success();
 }

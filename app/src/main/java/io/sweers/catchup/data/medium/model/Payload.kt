@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.medium.model;
+package io.sweers.catchup.data.medium.model
 
-import android.support.annotation.NonNull;
-
-import com.google.auto.value.AutoValue;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
+import com.google.auto.value.AutoValue
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 
 @AutoValue
-public abstract class StreamItem {
+abstract class Payload {
 
-  public static JsonAdapter<StreamItem> jsonAdapter(@NonNull Moshi moshi) {
-    return new AutoValue_StreamItem.MoshiJsonAdapter(moshi);
+  abstract fun references(): References
+
+  abstract fun streamItems(): List<StreamItem>
+
+  companion object {
+
+    @JvmStatic
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Payload> {
+      return AutoValue_Payload.MoshiJsonAdapter(moshi)
+    }
   }
-
-  public abstract PostPreview bmPostPreview();
-
-  public abstract long createdAt();
 }
