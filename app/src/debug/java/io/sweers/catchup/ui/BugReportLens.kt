@@ -31,7 +31,7 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.BugReportDialog.ReportListener
 import io.sweers.catchup.ui.BugReportView.Report
-import io.sweers.catchup.util.Intents
+import io.sweers.catchup.util.maybeStartActivity
 import java.io.File
 
 /**
@@ -123,7 +123,7 @@ class BugReportLens(private val context: Activity,
           .getUriForFile(context.applicationContext, logs))
     }
 
-    Intents.maybeStartActivity(context, intent.intent)
+    context.maybeStartActivity(intent.intent)
   }
 
   private fun getDensityString(displayMetrics: DisplayMetrics): String {

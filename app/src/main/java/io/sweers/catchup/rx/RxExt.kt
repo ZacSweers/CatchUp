@@ -34,6 +34,7 @@ import rx.android.MainThreadSubscription.verifyMainThread
 import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
+@Suppress("UNCHECKED_CAST")
 abstract class OmniTransformer<Upstream, Downstream>
   : ObservableTransformer<Upstream, Downstream>,
     SingleTransformer<Upstream, Downstream>,

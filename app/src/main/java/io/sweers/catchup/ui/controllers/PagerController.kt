@@ -47,8 +47,10 @@ import io.sweers.catchup.rx.PredicateConsumer
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
-import io.sweers.catchup.util.UiUtil
-import io.sweers.catchup.util.UiUtil.setLightStatusBar
+import io.sweers.catchup.util.clearLightStatusBar
+import io.sweers.catchup.util.isInNightMode
+import io.sweers.catchup.util.resolveAttribute
+import io.sweers.catchup.util.setLightStatusBar
 import java.util.Arrays
 
 class PagerController : ButterKnifeController {
@@ -127,11 +129,11 @@ class PagerController : ButterKnifeController {
   override fun onViewBound(view: View) {
     super.onViewBound(view)
 
-    @ColorInt val colorPrimaryDark = UiUtil.resolveAttribute(view.context, R.attr.colorPrimaryDark)
-    val isInNightMode = UiUtil.isInNightMode(view.context)
+    @ColorInt val colorPrimaryDark = view.context.resolveAttribute(R.attr.colorPrimaryDark)
+    val isInNightMode = view.context.isInNightMode()
     if (!isInNightMode) {
       // Start with a light status bar in normal mode
-      setLightStatusBar(appBarLayout)
+      appBarLayout.setLightStatusBar()
     }
     RxAppBarLayout.offsetChanges(appBarLayout)
         .distinctUntilChanged()
@@ -157,7 +159,7 @@ class PagerController : ButterKnifeController {
                   interpolator = LinearOutSlowInInterpolator()
                   start()
                 }
-            UiUtil.clearLightStatusBar(appBarLayout)
+            appBarLayout.clearLightStatusBar()
           }
         })
         .doOnNext(object : PredicateConsumer<Int>() {
@@ -177,7 +179,7 @@ class PagerController : ButterKnifeController {
                 duration = 200
                 interpolator = DecelerateInterpolator()
                 if (!isInNightMode) {
-                  setLightStatusBar(appBarLayout)
+                  appBarLayout.setLightStatusBar()
                 }
                 start()
               }
@@ -197,7 +199,7 @@ class PagerController : ButterKnifeController {
         R.id.toggle_daynight -> {
           P.daynightAuto.put(false)
               .commit()
-          if (UiUtil.isInNightMode(activity!!)) {
+          if (activity?.isInNightMode() ?: false) {
             P.daynightNight.put(false)
                 .commit()
           } else {

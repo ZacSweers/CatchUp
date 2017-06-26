@@ -74,7 +74,7 @@ class MainActivity : BaseActivity() {
   }
 
   override fun onDestroy() {
-    customTab.setConnectionCallback(null)
+    customTab.connectionCallback = null
     unbinder?.unbind()
     super.onDestroy()
   }

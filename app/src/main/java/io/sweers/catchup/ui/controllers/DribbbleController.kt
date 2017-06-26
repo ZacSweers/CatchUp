@@ -89,6 +89,7 @@ import io.sweers.catchup.util.ObservableColorMatrix
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.collect.cast
 import io.sweers.catchup.util.glide.DribbbleTarget
+import io.sweers.catchup.util.isInNightMode
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.HttpException
@@ -272,7 +273,7 @@ class DribbbleController : ServiceController, SwipeRefreshLayout.OnRefreshListen
     init {
       setHasStableIds(true)
       @ArrayRes val loadingColorArrayId: Int
-      if (UiUtil.isInNightMode(context)) {
+      if (context.isInNightMode()) {
         loadingColorArrayId = R.array.loading_placeholders_dark
       } else {
         loadingColorArrayId = R.array.loading_placeholders_light

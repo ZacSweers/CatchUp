@@ -29,7 +29,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.LumberYard
-import io.sweers.catchup.util.Intents
+import io.sweers.catchup.util.maybeStartChooser
 import java.io.File
 
 class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDialog(context) {
@@ -80,7 +80,7 @@ class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDi
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.type = "text/plain"
             sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file))
-            Intents.maybeStartChooser(context, sendIntent)
+            context.maybeStartChooser(sendIntent)
           }
 
           override fun onError(e: Throwable) {

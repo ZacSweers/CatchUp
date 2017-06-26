@@ -25,7 +25,7 @@ import android.view.View
 import android.widget.FrameLayout
 import io.sweers.catchup.R
 import io.sweers.catchup.util.ColorUtils
-import io.sweers.catchup.util.UiUtil
+import io.sweers.catchup.util.isNavBarOnBottom
 import java.util.ArrayList
 
 /**
@@ -240,7 +240,7 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(context: Context,
   class SystemChromeFader(private val activity: Activity) : ElasticDragDismissCallback() {
     private val statusBarAlpha: Int = Color.alpha(activity.window.statusBarColor)
     private val navBarAlpha: Int = Color.alpha(activity.window.navigationBarColor)
-    private val fadeNavBar: Boolean = UiUtil.isNavBarOnBottom(activity)
+    private val fadeNavBar: Boolean = activity.isNavBarOnBottom()
 
     override fun onDrag(elasticOffset: Float,
         elasticOffsetPixels: Float,

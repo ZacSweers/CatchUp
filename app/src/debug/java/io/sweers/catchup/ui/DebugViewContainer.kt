@@ -147,6 +147,7 @@ class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard)
           .addFlags(FLAG_SHOW_WHEN_LOCKED)
 
       val power = activity.getSystemService(POWER_SERVICE) as PowerManager
+      @Suppress("DEPRECATION")
       power.newWakeLock(FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
           "wakeup!").run {
         acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))

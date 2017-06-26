@@ -30,6 +30,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.util.UiUtil
+import io.sweers.catchup.util.resolveAttribute
 
 /**
  * Controller base for different services.
@@ -46,7 +47,7 @@ abstract class ServiceController : ButterKnifeController {
     val view = super.onCreateView(inflater, container)
     val themedContext = view.context
     if (container.context !== themedContext) {
-      serviceThemeColor = UiUtil.resolveAttribute(themedContext, R.attr.colorAccent)
+      serviceThemeColor = themedContext.resolveAttribute(R.attr.colorAccent)
     }
     return view
   }
