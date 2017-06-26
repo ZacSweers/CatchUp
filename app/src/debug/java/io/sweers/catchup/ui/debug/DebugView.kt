@@ -51,7 +51,7 @@ import io.sweers.catchup.app.CatchUpApplication
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.scopes.PerView
 import io.sweers.catchup.ui.logs.LogsDialog
-import io.sweers.catchup.util.Strings
+import io.sweers.catchup.util.truncateAt
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
@@ -268,8 +268,8 @@ class DebugView @JvmOverloads constructor(context: Context,
     val displayMetrics = context.resources
         .displayMetrics
     val densityBucket = getDensityString(displayMetrics)
-    deviceMakeView.text = Strings.truncateAt(Build.MANUFACTURER, 20)
-    deviceModelView.text = Strings.truncateAt(Build.MODEL, 20)
+    deviceMakeView.text = Build.MANUFACTURER truncateAt 20
+    deviceModelView.text = Build.MODEL truncateAt 20
     deviceResolutionView.text = "${displayMetrics.heightPixels}x${displayMetrics.widthPixels}"
     deviceDensityView.text = "${displayMetrics.densityDpi}dpi ($densityBucket)"
     deviceReleaseView.text = Build.VERSION.RELEASE

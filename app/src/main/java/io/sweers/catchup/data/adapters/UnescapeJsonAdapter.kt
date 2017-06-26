@@ -20,7 +20,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Types
-import io.sweers.catchup.util.Strings
+import io.sweers.catchup.util.unescapeJavaString
 
 /**
  * [JsonAdapter] that defaults the given element if it is a collection to an empty form
@@ -31,7 +31,7 @@ class UnescapeJsonAdapter internal constructor(
 
   override fun fromJson(reader: JsonReader): String? {
     var fromJson: String = delegate.fromJson(reader)!!
-    fromJson = Strings.unescapeJavaString(fromJson)!!
+    fromJson = fromJson.unescapeJavaString()
     return fromJson
   }
 

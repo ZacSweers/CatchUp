@@ -36,8 +36,8 @@ import io.sweers.catchup.data.slashdot.Entry
 import io.sweers.catchup.data.slashdot.SlashdotService
 import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.ui.base.BaseNewsController
-import io.sweers.catchup.util.Strings
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
+import io.sweers.catchup.util.unescapeJavaString
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -60,7 +60,7 @@ class SlashdotController : BaseNewsController<Entry> {
 
   override fun bindItemView(item: Entry, holder: BaseNewsController.NewsItemViewHolder) {
     holder.run {
-      title(Strings.unescapeJavaString(item.title))
+      title(item.title.unescapeJavaString())
 
       score(null)
       timestamp(item.updated.parsePossiblyOffsetInstant())

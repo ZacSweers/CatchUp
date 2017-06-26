@@ -31,7 +31,6 @@ import io.reactivex.Single
 import io.reactivex.SingleSource
 import io.reactivex.SingleTransformer
 import rx.android.MainThreadSubscription.verifyMainThread
-import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 @Suppress("UNCHECKED_CAST")
@@ -60,10 +59,6 @@ abstract class OmniTransformer<Upstream, Downstream>
 
 fun <T> Observable<T>.doOnEmpty(action: () -> Unit): Observable<T> {
   return switchIfEmpty(Observable.empty<T>().doOnComplete(action))
-}
-
-fun <T> rx.Observable<T>.normalize(time: Long, unit: TimeUnit): rx.Observable<T> {
-  return lift(OperatorNormalize<T>(time, unit, Schedulers.computation()))
 }
 
 fun <T : Any> Observable<T>.delayedMessage(view: View, message: String): Observable<T> {
