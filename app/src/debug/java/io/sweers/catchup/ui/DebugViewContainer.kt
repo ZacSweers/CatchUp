@@ -23,6 +23,7 @@ import android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP
 import android.os.PowerManager.FULL_WAKE_LOCK
 import android.os.PowerManager.ON_AFTER_RELEASE
 import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -39,7 +40,6 @@ import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.base.ActivityEvent
 import io.sweers.catchup.ui.base.BaseActivity
-import io.sweers.catchup.ui.debug.DebugDrawerLayout
 import io.sweers.catchup.ui.debug.DebugView
 import rx.subscriptions.CompositeSubscription
 import java.util.concurrent.TimeUnit
@@ -77,7 +77,7 @@ class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard)
     //        HierarchyTreeChangeListener.wrap(contextualActions));
 
     //    viewHolder.drawerLayout.setDrawerShadow(R.drawable.debug_drawer_shadow, GravityCompat.END);
-    viewHolder.drawerLayout.setDrawerListener(object : DebugDrawerLayout.SimpleDrawerListener() {
+    viewHolder.drawerLayout.setDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
       override fun onDrawerOpened(drawerView: View) {
         debugView.onDrawerOpened()
       }
@@ -128,7 +128,7 @@ class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard)
   }
 
   internal class ViewHolder {
-    @BindView(R.id.debug_drawer_layout) lateinit var drawerLayout: DebugDrawerLayout
+    @BindView(R.id.debug_drawer_layout) lateinit var drawerLayout: DrawerLayout
     @BindView(R.id.debug_drawer) lateinit var debugDrawer: ViewGroup
     @BindView(R.id.telescope_container) lateinit var telescopeLayout: TelescopeLayout
     @BindView(R.id.madge_container) lateinit var madgeFrameLayout: MadgeFrameLayout
