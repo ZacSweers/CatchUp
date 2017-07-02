@@ -20,6 +20,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.support.v4.app.ActivityManagerCompat
 import com.bumptech.glide.GlideBuilder
+import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
@@ -27,6 +28,7 @@ import com.bumptech.glide.request.RequestOptions
 /**
  * Configure Glide to set desired image quality.
  */
+@GlideModule
 class GlideConfiguration : AppGlideModule() {
 
   override fun applyOptions(context: Context, builder: GlideBuilder) {
