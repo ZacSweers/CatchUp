@@ -77,7 +77,7 @@ class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard)
     //        HierarchyTreeChangeListener.wrap(contextualActions));
 
     //    viewHolder.drawerLayout.setDrawerShadow(R.drawable.debug_drawer_shadow, GravityCompat.END);
-    viewHolder.drawerLayout.setDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+    viewHolder.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
       override fun onDrawerOpened(drawerView: View) {
         debugView.onDrawerOpened()
       }
