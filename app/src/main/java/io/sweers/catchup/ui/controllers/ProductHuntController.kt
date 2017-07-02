@@ -88,16 +88,16 @@ class ProductHuntController : BaseNewsController<Post> {
   }
 
   override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<Post>> {
-    if (request.multipage()) {
+    if (request.multipage) {
       // Backfill pages
-      return Observable.range(0, request.page())
+      return Observable.range(0, request.page)
           .flatMapSingle { this.getPage(it) }
           .collectInto(mutableListOf<Post>()) { list, collection -> list.addAll(collection) }
           .map { it } // Weird
-    } else if (request.fromRefresh()) {
-      return getPage(request.page())
+    } else if (request.fromRefresh) {
+      return getPage(request.page)
     } else {
-      return getPage(request.page())
+      return getPage(request.page)
     }
   }
 

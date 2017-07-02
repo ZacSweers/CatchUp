@@ -121,7 +121,7 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
       ref.addValueEventListener(listener)
     }
         .flattenAsObservable { it.children }
-        .skip(((request.page() + 1) * itemsPerPage - itemsPerPage).toLong())
+        .skip(((request.page + 1) * itemsPerPage - itemsPerPage).toLong())
         .take(itemsPerPage.toLong())
         .map { d -> d.value as Long }
         .concatMapEager { id ->

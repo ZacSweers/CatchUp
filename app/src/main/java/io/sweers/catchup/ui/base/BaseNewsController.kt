@@ -36,7 +36,6 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import butterknife.Unbinder
-import com.google.auto.value.AutoValue
 import com.jakewharton.rxbinding2.view.RxView
 import com.uber.autodispose.kotlin.autoDisposeWith
 import io.reactivex.Observable
@@ -178,9 +177,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
       recyclerView.post { adapter.dataStartedLoading() }
     }
     val timer = AtomicLong()
-    getDataSingle(DataRequest.create(fromRefresh,
+    getDataSingle(DataRequest(fromRefresh,
         fromSaveInstanceState && page != 0,
-        pageToRequest)).observeOn(AndroidSchedulers.mainThread())
+        pageToRequest))
+        .observeOn(AndroidSchedulers.mainThread())
         .doOnEvent { _, _ ->
           swipeRefreshLayout.isEnabled = true
           swipeRefreshLayout.isRefreshing = false
@@ -350,22 +350,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     }
   }
 
-  @AutoValue
-  abstract class DataRequest {
-
-    abstract fun fromRefresh(): Boolean
-
-    abstract fun multipage(): Boolean
-
-    abstract fun page(): Int
-
-    companion object {
-
-      internal fun create(fromRefresh: Boolean, multipage: Boolean, page: Int): DataRequest {
-        return AutoValue_BaseNewsController_DataRequest(fromRefresh, multipage, page)
-      }
-    }
-  }
+  data class DataRequest(val fromRefresh: Boolean, val multipage: Boolean, val page: Int)
 
   class NewsItemViewHolder(itemView: View) : RxViewHolder(itemView) {
 

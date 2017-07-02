@@ -70,7 +70,7 @@ class DesignerNewsController : BaseNewsController<CatchUpItem> {
 
   override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<CatchUpItem>> {
     // This won't do for now because /users endpoint sporadically barfs on specific user IDs
-    return service.getTopStories(request.page())
+    return service.getTopStories(request.page)
         .flatMapObservable { stories ->
           Observable.zip(
               Observable.fromIterable(stories),

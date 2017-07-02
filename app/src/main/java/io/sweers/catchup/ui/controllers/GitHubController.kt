@@ -116,7 +116,7 @@ class GitHubController : BaseNewsController<Repository> {
             .field(LanguageOrderField.SIZE)
             .build()))
         .cacheControl(
-            if (request.fromRefresh()) CacheControl.NETWORK_FIRST else CacheControl.CACHE_FIRST)
+            if (request.fromRefresh) CacheControl.NETWORK_FIRST else CacheControl.CACHE_FIRST)
 
     return Rx2Apollo.from(searchQuery)
         .map { it.data()!! }
