@@ -37,7 +37,8 @@ import okhttp3.OkHttpClient;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 /**
- * I was never able to get this working with dagger in kotlin ಠ_ಠ. It always
+ * I was never able to get this working with dagger in kotlin ಠ_ಠ. It always fails to recognize
+ * qualifier annotations.
  */
 @Module
 public abstract class DataModule {
