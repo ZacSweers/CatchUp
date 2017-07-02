@@ -33,7 +33,6 @@ import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo.rx2.Rx2Apollo
 import com.bluelinelabs.conductor.Controller
-import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
 import dagger.Lazy
 import dagger.Provides
@@ -46,10 +45,10 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.AuthInterceptor
+import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.HttpUrlApolloAdapter
 import io.sweers.catchup.data.ISO8601InstantApolloAdapter
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.github.GitHubSearch
 import io.sweers.catchup.data.github.TrendingTimespan
 import io.sweers.catchup.data.github.model.Repository
@@ -69,7 +68,7 @@ import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class GitHubController : BaseNewsController<Repository> {
+class GitHubController : BaseNewsController<CatchUpItem> {
 
   @Inject lateinit var apolloClient: ApolloClient
   @Inject lateinit var linkManager: LinkManager
@@ -82,32 +81,17 @@ class GitHubController : BaseNewsController<Repository> {
     return ContextThemeWrapper(context, R.style.CatchUp_GitHub)
   }
 
-  override fun bindItemView(item: Repository, holder: BaseNewsController.NewsItemViewHolder) {
-    holder.run {
-      hideComments()
-      title(item.fullName())
-      score(Pair.create("★", item.starsCount()))
-      timestamp(item.createdAt())
-      author(item.owner()
-          .login())
-      source(null)
-      tag(item.language())
-      itemClicks()
-          .compose<UrlMeta>(transformUrlToMeta<Any>(item.htmlUrl()))
-          .flatMapCompletable(linkManager)
-          .autoDisposeWith(this)
-          .subscribe()
-    }
+  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.NewsItemViewHolder) {
+    holder.bind(this, item, linkManager)
   }
 
-  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<Repository>> {
+  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<CatchUpItem>> {
     setMoreDataAvailable(false)
     val query = SearchQuery.builder()
         .createdSince(TrendingTimespan.WEEK.createdSince())
         .minStars(50)
         .build()
         .toString()
-
 
     val searchQuery = apolloClient.query(GitHubSearch(query,
         50,
@@ -147,6 +131,21 @@ class GitHubController : BaseNewsController<Repository> {
                     .starsCount(node.stargazers()
                         .totalCount())
                     .build()
+              }
+              // Should probably combine these, but I also like having separation here
+              .map {
+                with(it) {
+                  CatchUpItem.builder()
+                      .id(id())
+                      .hideComments(true)
+                      .title(fullName())
+                      .score(Pair.create("★", starsCount()))
+                      .timestamp(createdAt())
+                      .author(owner().login())
+                      .tag(language())
+                      .itemClickUrl(htmlUrl())
+                      .build()
+                }
               }
               .toList()
         }

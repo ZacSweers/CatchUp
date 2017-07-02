@@ -20,11 +20,10 @@ import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import io.sweers.catchup.ui.base.HasStableId
 import org.threeten.bp.Instant
 
 @AutoValue
-abstract class Repository : HasStableId {
+abstract class Repository {
 
   @Json(name = "created_at") abstract fun createdAt(): Instant
 
@@ -41,8 +40,6 @@ abstract class Repository : HasStableId {
   abstract fun owner(): User
 
   @Json(name = "stargazers_count") abstract fun starsCount(): Int
-
-  override fun stableId(): Long = id()
 
   @AutoValue.Builder
   interface Builder {
