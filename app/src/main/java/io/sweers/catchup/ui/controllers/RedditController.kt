@@ -101,7 +101,7 @@ class RedditController : BaseNewsController<RedditLink> {
   }
 
   override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<RedditLink>> {
-    return service.frontPage(25, lastSeen)
+    return service.frontPage(25, if (request.fromRefresh) null else lastSeen)
         .map { redditListingRedditResponse ->
           lastSeen = redditListingRedditResponse.data().after()
           //noinspection CodeBlock2Expr,unchecked
