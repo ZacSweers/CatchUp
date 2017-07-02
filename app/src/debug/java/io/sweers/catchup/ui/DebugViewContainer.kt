@@ -35,13 +35,13 @@ import com.jakewharton.madge.MadgeFrameLayout
 import com.jakewharton.scalpel.ScalpelFrameLayout
 import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.kotlin.autoDisposeWith
+import io.reactivex.disposables.CompositeDisposable
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.base.ActivityEvent
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.debug.DebugView
-import rx.subscriptions.CompositeSubscription
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
@@ -51,11 +51,11 @@ import javax.inject.Inject
  * all of the debug information and settings.
  */
 class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard) : ViewContainer {
-  private val seenDebugDrawer = P.debugSeenDebugDrawer.rx()
-  private val pixelGridEnabled = P.debugPixelGridEnabled.rx()
-  private val pixelRatioEnabled = P.debugPixelRatioEnabled.rx()
-  private val scalpelEnabled = P.debugScalpelEnabled.rx()
-  private val scalpelWireframeEnabled = P.debugScalpelWireframeDrawer.rx()
+  private val seenDebugDrawer = P.DebugSeenDebugDrawer.rx()
+  private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
+  private val pixelRatioEnabled = P.DebugPixelRatioEnabled.rx()
+  private val scalpelEnabled = P.DebugScalpelEnabled.rx()
+  private val scalpelWireframeEnabled = P.DebugScalpelWireframeDrawer.rx()
 
   override fun forActivity(activity: BaseActivity): ViewGroup {
     val contentView = LayoutInflater.from(activity)
@@ -88,7 +88,7 @@ class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard)
     viewHolder.telescopeLayout.setLens(BugReportLens(activity, lumberYard))
 
     // If you have not seen the debug drawer before, show it with a message
-    if (!(seenDebugDrawer.get()!!)) {
+    if (!(seenDebugDrawer.get())) {
       viewHolder.drawerLayout.postDelayed({
         viewHolder.drawerLayout.openDrawer(GravityCompat.END)
         Toast.makeText(drawerContext, R.string.debug_drawer_welcome, Toast.LENGTH_LONG)
@@ -97,7 +97,7 @@ class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard)
       seenDebugDrawer.set(true)
     }
 
-    val subscriptions = CompositeSubscription()
+    val subscriptions = CompositeDisposable()
     setupMadge(viewHolder, subscriptions)
     setupScalpel(viewHolder, subscriptions)
 
@@ -113,16 +113,16 @@ class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard)
     return viewHolder.content
   }
 
-  private fun setupMadge(viewHolder: ViewHolder, subscriptions: CompositeSubscription) {
+  private fun setupMadge(viewHolder: ViewHolder, subscriptions: CompositeDisposable) {
     subscriptions.add(pixelGridEnabled.asObservable()
-        .subscribe { enabled -> viewHolder.madgeFrameLayout.isOverlayEnabled = enabled!! })
+        .subscribe { enabled -> viewHolder.madgeFrameLayout.isOverlayEnabled = enabled })
     subscriptions.add(pixelRatioEnabled.asObservable()
-        .subscribe { enabled -> viewHolder.madgeFrameLayout.isOverlayRatioEnabled = enabled!! })
+        .subscribe { enabled -> viewHolder.madgeFrameLayout.isOverlayRatioEnabled = enabled })
   }
 
-  private fun setupScalpel(viewHolder: ViewHolder, subscriptions: CompositeSubscription) {
+  private fun setupScalpel(viewHolder: ViewHolder, subscriptions: CompositeDisposable) {
     subscriptions.add(scalpelEnabled.asObservable()
-        .subscribe { enabled -> viewHolder.content.isLayerInteractionEnabled = enabled!! })
+        .subscribe { enabled -> viewHolder.content.isLayerInteractionEnabled = enabled })
     subscriptions.add(scalpelWireframeEnabled.asObservable()
         .subscribe { enabled -> viewHolder.content.setDrawViews(!enabled) })
   }

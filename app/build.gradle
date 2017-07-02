@@ -32,7 +32,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.flipboard.psync'
+apply plugin: 'io.sweers.psync'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'org.jetbrains.kotlin.kapt'
 apply plugin: "net.ltgt.errorprone"
@@ -212,6 +212,7 @@ android {
 psync {
   includesPattern = "**/xml/prefs_*.xml"
   generateRx = true
+  packageName = "io.sweers.catchup"
 }
 
 apollo {
@@ -294,8 +295,7 @@ dependencies {
   implementation rootProject.ext.threetenabp
   debugImplementation rootProject.ext.madge
   debugImplementation rootProject.ext.scalpel
-  implementation rootProject.ext.processPhoenix
-  // Move back to debugImplementation when it's not needed for daynight
+  debugImplementation rootProject.ext.processPhoenix
   debugImplementation rootProject.ext.telescope
   implementation rootProject.ext.okhttpLoggingInterceptor
   debugImplementation rootProject.ext.retrofitMock

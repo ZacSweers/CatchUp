@@ -17,8 +17,8 @@
 package io.sweers.catchup.ui.activity
 
 import android.app.Activity
-import com.f2prateek.rx.preferences.Preference
-import com.f2prateek.rx.preferences.RxSharedPreferences
+import com.f2prateek.rx.preferences2.Preference
+import com.f2prateek.rx.preferences2.RxSharedPreferences
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -52,8 +52,8 @@ abstract class ActivityModule {
     internal fun provideSmartLinkingPref(
         rxSharedPreferences: RxSharedPreferences): Preference<Boolean> {
       // TODO Use psync once it's fixed
-      return rxSharedPreferences.getBoolean(P.smartlinkingGlobal.key,
-          P.smartlinkingGlobal.defaultValue())
+      return rxSharedPreferences.getBoolean(P.SmartlinkingGlobal.KEY,
+          P.SmartlinkingGlobal.defaultValue())
       //    return P.smartlinkingGlobal.rx();
     }
 

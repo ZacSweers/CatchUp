@@ -48,7 +48,7 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
     val host = url.host()
     val path = url.encodedPath()
     val serviceData = SUPPORTED_ENDPOINTS[host]
-    if (P.debugMockModeEnabled.get() && serviceData != null && serviceData.supports(path)) {
+    if (P.DebugMockModeEnabled.get() && serviceData != null && serviceData.supports(path)) {
       return Response.Builder().request(request)
           .body(ResponseBody.create(
               MediaType.parse("application/json"),

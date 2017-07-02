@@ -50,7 +50,7 @@ class SettingsActivity : AppCompatActivity() {
     override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen,
         preference: Preference): Boolean {
       when (preference.key) {
-        P.clearCache.key -> {
+        P.ClearCache.KEY -> {
           val cleaned = activity.applicationContext.clearCache()
           Toast.makeText(
               activity,
@@ -58,9 +58,9 @@ class SettingsActivity : AppCompatActivity() {
               Toast.LENGTH_SHORT)
               .show()
         }
-        P.licenses.key -> Toast.makeText(activity, "TODO", Toast.LENGTH_SHORT)
+        P.licenses.KEY -> Toast.makeText(activity, "TODO", Toast.LENGTH_SHORT)
             .show()
-        P.about.key -> Toast.makeText(activity, "TODO", Toast.LENGTH_SHORT)
+        P.about.KEY -> Toast.makeText(activity, "TODO", Toast.LENGTH_SHORT)
             .show()
       }
 

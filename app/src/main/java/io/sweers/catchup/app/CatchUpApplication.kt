@@ -21,6 +21,7 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatDelegate
 import com.bumptech.glide.Glide
+import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.squareup.leakcanary.LeakCanary
@@ -38,6 +39,7 @@ open class CatchUpApplication : Application(), HasActivityInjector {
   @Inject lateinit var sharedPreferences: SharedPreferences
   @Inject lateinit var lumberYard: LumberYard
   @Inject lateinit var remoteConfig: FirebaseRemoteConfig
+  @Inject lateinit var rxPreferences: RxSharedPreferences
 
   override fun onCreate() {
     super.onCreate()
@@ -50,17 +52,21 @@ open class CatchUpApplication : Application(), HasActivityInjector {
         .build()
     component.inject(this)
     AndroidThreeTen.init(this)
-    P.init(this)
-    P.setSharedPreferences(
-        sharedPreferences)  // TODO Pass RxSharedPreferences instance to this when it's supported
+    P.init(this, false)
+    P.setSharedPreferences(sharedPreferences, rxPreferences)
 
-    var nightMode = AppCompatDelegate.MODE_NIGHT_NO
-    if (P.daynightAuto.get()) {
-      nightMode = AppCompatDelegate.MODE_NIGHT_AUTO
-    } else if (P.daynightNight.get()) {
-      nightMode = AppCompatDelegate.MODE_NIGHT_YES
-    }
-    AppCompatDelegate.setDefaultNightMode(nightMode)
+    P.DaynightAuto.rx()
+        .asObservable()
+        .subscribe { autoEnabled ->
+          Timber.d("Updating daynight")
+          var nightMode = AppCompatDelegate.MODE_NIGHT_NO
+          if (autoEnabled) {
+            nightMode = AppCompatDelegate.MODE_NIGHT_AUTO
+          } else if (P.DaynightNight.get()) {
+            nightMode = AppCompatDelegate.MODE_NIGHT_YES
+          }
+          AppCompatDelegate.setDefaultNightMode(nightMode)
+        }
     initVariant()
     remoteConfig.fetch(resources.getInteger(R.integer.remote_config_cache_duration).toLong())
         .addOnCompleteListener { task ->

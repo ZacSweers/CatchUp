@@ -25,7 +25,7 @@ import android.net.Uri
 import android.support.annotation.ColorInt
 import android.support.v4.util.ArrayMap
 import android.widget.Toast
-import com.f2prateek.rx.preferences.Preference
+import com.f2prateek.rx.preferences2.Preference
 import com.f2prateek.rx.receivers.RxBroadcastReceiver
 import com.uber.autodispose.kotlin.autoDisposeWith
 import hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Observable
@@ -54,7 +54,7 @@ class LinkManager(private val customTab: CustomTabActivityHelper,
     filter.addAction(Intent.ACTION_INSTALL_PACKAGE)
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED)
     Observable.merge(toV2Observable(RxBroadcastReceiver.create(activity, filter)),
-        toV2Observable(globalSmartLinkingPref.asObservable()))
+        globalSmartLinkingPref.asObservable())
         .autoDisposeWith(activity)
         .subscribe { dumbCache.clear() }
   }
@@ -80,7 +80,7 @@ class LinkManager(private val customTab: CustomTabActivityHelper,
       return Completable.complete()
     }
     val intent = Intent(Intent.ACTION_VIEW, meta.uri)
-    if (!(globalSmartLinkingPref.get() ?: false)) {
+    if (!globalSmartLinkingPref.get()) {
       openCustomTab(meta.context, meta.uri, meta.accentColor)
       return Completable.complete()
     }

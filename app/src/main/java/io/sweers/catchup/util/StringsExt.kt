@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package io.sweers.catchup.util
 
 inline infix fun String.truncateAt(length: Int): String {
@@ -73,7 +75,7 @@ inline fun String.unescapeJavaString(): String {
       // Hex Unicode: u????
         'u' -> {
           if (i >= length - 5) {
-            ch = 'u'
+//            ch = 'u'
             break@loop
           }
           val code = Integer.parseInt(""

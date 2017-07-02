@@ -96,7 +96,7 @@ ext {
   glideOkhttp = 'com.github.bumptech.glide:okhttp3-integration:4.0.0-RC0'
   lottie = 'com.airbnb.android:lottie:2.0.0'
   moshiLazyAdapters = 'com.serjltt.moshi:moshi-lazy-adapters:2.0'
-  psyncPlugin = 'gradle.plugin.com.flipboard:psync:1.1.5'
+  psyncPlugin = 'io.sweers.psync:psync:2.0.0-SNAPSHOT'
   recyclerViewAnimators = 'jp.wasabeef:recyclerview-animators:2.2.6'
   simpleXml = 'org.simpleframework:simple-xml:2.7.1'
   stethoVersion = '1.5.0'
@@ -127,7 +127,7 @@ ext {
   rxBindingV4 = "com.jakewharton.rxbinding2:rxbinding-support-v4:$rxBindingVersion"
   rxBindingDesign = "com.jakewharton.rxbinding2:rxbinding-design:$rxBindingVersion"
   rxJava = 'io.reactivex:rxjava:1.3.0'
-  rxPreferences = 'com.f2prateek.rx.preferences:rx-preferences:1.0.2'
+  rxPreferences = 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC2'
   rxReceivers = 'com.f2prateek.rx.receivers:rx-receivers:0.1.0'
   rxRelay = 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 

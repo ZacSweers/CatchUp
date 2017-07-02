@@ -96,17 +96,17 @@ class DebugView @JvmOverloads constructor(context: Context,
   @Inject lateinit var client: Lazy<OkHttpClient>
   @Inject lateinit var lumberYard: LumberYard
   @Inject lateinit var app: Application
-  internal var isMockMode = P.debugMockModeEnabled.get()
+  internal var isMockMode = P.DebugMockModeEnabled.get()
   internal var behavior: NetworkBehavior
-  internal var networkDelay = P.debugNetworkDelay.rx()
-  internal var networkFailurePercent = P.debugNetworkFailurePercent.rx()
-  internal var networkVariancePercent = P.debugNetworkVariancePercent.rx()
+  internal var networkDelay = P.DebugNetworkDelay.rx()
+  internal var networkFailurePercent = P.DebugNetworkFailurePercent.rx()
+  internal var networkVariancePercent = P.DebugNetworkVariancePercent.rx()
   //  @Inject MockGithubService mockGithubService;
-  private val animationSpeed = P.debugAnimationSpeed.rx()
-  private val pixelGridEnabled = P.debugPixelGridEnabled.rx()
-  private val pixelRatioEnabled = P.debugPixelRatioEnabled.rx()
-  private val scalpelEnabled = P.debugScalpelEnabled.rx()
-  private val scalpelWireframeEnabled = P.debugScalpelWireframeDrawer.rx()
+  private val animationSpeed = P.DebugAnimationSpeed.rx()
+  private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
+  private val pixelRatioEnabled = P.DebugPixelRatioEnabled.rx()
+  private val scalpelEnabled = P.DebugScalpelEnabled.rx()
+  private val scalpelWireframeEnabled = P.DebugScalpelWireframeDrawer.rx()
 
   init {
     DaggerDebugView_Component.builder()
@@ -115,9 +115,9 @@ class DebugView @JvmOverloads constructor(context: Context,
         .inject(this)
 
     behavior = NetworkBehavior.create()
-    behavior.setDelay(networkDelay.get()!!.toLong(), MILLISECONDS)
-    behavior.setFailurePercent(networkFailurePercent.get()!!)
-    behavior.setVariancePercent(networkVariancePercent.get()!!)
+    behavior.setDelay(networkDelay.get().toLong(), MILLISECONDS)
+    behavior.setFailurePercent(networkFailurePercent.get())
+    behavior.setVariancePercent(networkVariancePercent.get())
 
     // Inflate all of the controls and inject them.
     LayoutInflater.from(context)
@@ -189,10 +189,10 @@ class DebugView @JvmOverloads constructor(context: Context,
   }
 
   private fun setupMockBehaviorSection() {
-    enableMockModeView.isChecked = P.debugMockModeEnabled.get()
+    enableMockModeView.isChecked = P.DebugMockModeEnabled.get()
     RxView.clicks(enableMockModeView)
         .subscribe {
-          P.debugMockModeEnabled.put(enableMockModeView.isChecked)
+          P.DebugMockModeEnabled.put(enableMockModeView.isChecked)
               .apply()
           ProcessPhoenix.triggerRebirth(context)
         }
@@ -201,7 +201,7 @@ class DebugView @JvmOverloads constructor(context: Context,
   private fun setupUserInterfaceSection() {
     val speedAdapter = AnimationSpeedAdapter(context)
     uiAnimationSpeedView.adapter = speedAdapter
-    val animationSpeedValue = animationSpeed.get()!!
+    val animationSpeedValue = animationSpeed.get()
     uiAnimationSpeedView.setSelection(
         AnimationSpeedAdapter.getPositionForValue(animationSpeedValue))
 
@@ -216,7 +216,7 @@ class DebugView @JvmOverloads constructor(context: Context,
     // Ensure the animation speed value is always applied across app restarts.
     post { applyAnimationSpeed(animationSpeedValue) }
 
-    val gridEnabled = pixelGridEnabled.get()!!
+    val gridEnabled = pixelGridEnabled.get()
     uiPixelGridView.isChecked = gridEnabled
     uiPixelRatioView.isEnabled = gridEnabled
     uiPixelGridView.setOnCheckedChangeListener { _, isChecked ->
@@ -225,21 +225,21 @@ class DebugView @JvmOverloads constructor(context: Context,
       uiPixelRatioView.isEnabled = isChecked
     }
 
-    uiPixelRatioView.isChecked = pixelRatioEnabled.get()!!
+    uiPixelRatioView.isChecked = pixelRatioEnabled.get()
     uiPixelRatioView.setOnCheckedChangeListener { _, isChecked ->
       Timber.d("Setting pixel scale overlay enabled to %b", isChecked)
       pixelRatioEnabled.set(isChecked)
     }
 
-    uiScalpelView.isChecked = scalpelEnabled.get()!!
-    uiScalpelWireframeView.isEnabled = scalpelEnabled.get()!!
+    uiScalpelView.isChecked = scalpelEnabled.get()
+    uiScalpelWireframeView.isEnabled = scalpelEnabled.get()
     uiScalpelView.setOnCheckedChangeListener { _, isChecked ->
       Timber.d("Setting scalpel interaction enabled to %b", isChecked)
       scalpelEnabled.set(isChecked)
       uiScalpelWireframeView.isEnabled = isChecked
     }
 
-    uiScalpelWireframeView.isChecked = scalpelWireframeEnabled.get()!!
+    uiScalpelWireframeView.isChecked = scalpelWireframeEnabled.get()
     uiScalpelWireframeView.setOnCheckedChangeListener { _, isChecked ->
       Timber.d("Setting scalpel wireframe enabled to %b", isChecked)
       scalpelWireframeEnabled.set(isChecked)

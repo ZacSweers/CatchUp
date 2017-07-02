@@ -18,7 +18,7 @@ package io.sweers.catchup.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import com.f2prateek.rx.preferences.RxSharedPreferences;
+import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.squareup.moshi.ArrayMapJsonAdapter;
 import com.squareup.moshi.Moshi;
 import dagger.Module;

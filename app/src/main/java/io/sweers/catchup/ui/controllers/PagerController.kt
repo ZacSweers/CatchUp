@@ -21,12 +21,16 @@ import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.ColorInt
+import android.support.annotation.ColorRes
+import android.support.annotation.DrawableRes
+import android.support.annotation.StringRes
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.TabLayout
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.view.animation.LinearOutSlowInInterpolator
+import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
@@ -38,7 +42,6 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import com.jakewharton.processphoenix.ProcessPhoenix
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.uber.autodispose.kotlin.autoDisposeWith
 import io.sweers.catchup.P
@@ -53,20 +56,22 @@ import io.sweers.catchup.util.resolveAttribute
 import io.sweers.catchup.util.setLightStatusBar
 import java.util.Arrays
 
+data class Service(@StringRes val name: Int, @DrawableRes val icon: Int, @ColorRes val accent: Int)
+
 class PagerController : ButterKnifeController {
 
   companion object {
 
     private const val PAGE_TAG = "PagerController.pageTag"
     private val PAGE_DATA = arrayOf(
-        intArrayOf(R.drawable.logo_hn, R.string.hacker_news, R.color.hackerNewsAccent),
-        intArrayOf(R.drawable.logo_reddit, R.string.reddit, R.color.redditAccent),
-        intArrayOf(R.drawable.logo_medium, R.string.medium, R.color.mediumAccent),
-        intArrayOf(R.drawable.logo_ph, R.string.product_hunt, R.color.productHuntAccent),
-        intArrayOf(R.drawable.logo_sd, R.string.slashdot, R.color.slashdotAccent),
-        intArrayOf(R.drawable.logo_dn, R.string.designer_news, R.color.designerNewsAccent),
-        intArrayOf(R.drawable.logo_dribbble, R.string.dribbble, R.color.dribbbleAccent),
-        intArrayOf(R.drawable.logo_github, R.string.github, R.color.githubAccent))
+        Service(R.string.hacker_news, R.drawable.logo_hn, R.color.hackerNewsAccent),
+        Service(R.string.reddit, R.drawable.logo_reddit, R.color.redditAccent),
+        Service(R.string.medium, R.drawable.logo_medium, R.color.mediumAccent),
+        Service(R.string.product_hunt, R.drawable.logo_ph, R.color.productHuntAccent),
+        Service(R.string.slashdot, R.drawable.logo_sd, R.color.slashdotAccent),
+        Service(R.string.designer_news, R.drawable.logo_dn, R.color.designerNewsAccent),
+        Service(R.string.dribbble, R.drawable.logo_dribbble, R.color.dribbbleAccent),
+        Service(R.string.github, R.drawable.logo_github, R.color.githubAccent))
   }
 
   private val resolvedColorCache = IntArray(PAGE_DATA.size)
@@ -199,16 +204,25 @@ class PagerController : ButterKnifeController {
     toolbar.setOnMenuItemClickListener { item ->
       when (item.itemId) {
         R.id.toggle_daynight -> {
-          P.daynightAuto.put(false)
+          P.DaynightAuto.put(false)
               .commit()
           if (activity?.isInNightMode() ?: false) {
-            P.daynightNight.put(false)
+            P.DaynightNight.put(false)
                 .commit()
           } else {
-            P.daynightNight.put(true)
+            P.DaynightNight.put(true)
                 .commit()
           }
-          ProcessPhoenix.triggerRebirth(activity!!)
+          // For whatever reason, the observable we set in CatchUpApplication on prefs doesn't
+          // register the above changes, so manually do it here.
+          var nightMode = AppCompatDelegate.MODE_NIGHT_NO
+          if (P.DaynightAuto.get()) {
+            nightMode = AppCompatDelegate.MODE_NIGHT_AUTO
+          } else if (P.DaynightNight.get()) {
+            nightMode = AppCompatDelegate.MODE_NIGHT_YES
+          }
+          AppCompatDelegate.setDefaultNightMode(nightMode)
+          activity?.recreate()
           return@setOnMenuItemClickListener true
         }
         R.id.settings -> {
@@ -220,7 +234,7 @@ class PagerController : ButterKnifeController {
     }
 
     // Initial title
-    toolbar.title = resources!!.getString(PAGE_DATA[0][1])
+    toolbar.title = resources!!.getString(PAGE_DATA[0].name)
 
     // Set the initial color
     @ColorInt val initialColor = getAndSaveColor(0)
@@ -230,8 +244,8 @@ class PagerController : ButterKnifeController {
 
     // Set icons
     for (i in PAGE_DATA.indices) {
-      val vals = PAGE_DATA[i]
-      val d = VectorDrawableCompat.create(resources!!, vals[0], null)
+      val service = PAGE_DATA[i]
+      val d = VectorDrawableCompat.create(resources!!, service.icon, null)
       tabLayout.getTabAt(i)!!.icon = d
     }
 
@@ -270,7 +284,7 @@ class PagerController : ButterKnifeController {
     tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
       override fun onTabSelected(tab: TabLayout.Tab) {
         val position = tab.position
-        toolbar.setTitle(PAGE_DATA[position][1])
+        toolbar.setTitle(PAGE_DATA[position].name)
 
         // If we're switching between more than one page, we just want to manually set the color
         // once rather than let the usual page scroll logic cycle through all the colors in a weird
@@ -304,7 +318,7 @@ class PagerController : ButterKnifeController {
 
   @ColorInt private fun getAndSaveColor(position: Int): Int {
     if (resolvedColorCache[position] == R.color.no_color) {
-      resolvedColorCache[position] = ContextCompat.getColor(activity!!, PAGE_DATA[position][2])
+      resolvedColorCache[position] = ContextCompat.getColor(activity!!, PAGE_DATA[position].accent)
     }
     return resolvedColorCache[position]
   }
