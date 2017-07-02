@@ -23,7 +23,6 @@ import android.view.ContextThemeWrapper
 import com.bluelinelabs.conductor.Controller
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
-import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
 import dagger.Lazy
 import dagger.Provides
@@ -35,11 +34,10 @@ import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.AuthInterceptor
+import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.producthunt.ProductHuntService
-import io.sweers.catchup.data.producthunt.model.Post
 import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.ui.base.BaseNewsController
 import okhttp3.OkHttpClient
@@ -50,7 +48,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class ProductHuntController : BaseNewsController<Post> {
+class ProductHuntController : BaseNewsController<CatchUpItem> {
 
   @Inject lateinit var service: ProductHuntService
   @Inject lateinit var linkManager: LinkManager
@@ -63,36 +61,16 @@ class ProductHuntController : BaseNewsController<Post> {
     return ContextThemeWrapper(context, R.style.CatchUp_ProductHunt)
   }
 
-  override fun bindItemView(item: Post, holder: BaseNewsController.NewsItemViewHolder) {
-    holder.run {
-      title(item.name())
-      score(Pair.create("▲", item.votes_count()))
-      timestamp(item.created_at())
-      author(item.user()
-          .name())
-      tag(item.firstTopic)
-      source(null)
-      comments(item.comments_count())
-
-      itemClicks()
-          .compose<UrlMeta>(transformUrlToMeta<Any>(item.redirect_url()))
-          .flatMapCompletable(linkManager)
-          .autoDisposeWith(this)
-          .subscribe()
-      itemCommentClicks()
-          .compose<UrlMeta>(transformUrlToMeta<Any>(item.discussion_url()))
-          .flatMapCompletable(linkManager)
-          .autoDisposeWith(this)
-          .subscribe()
-    }
+  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.NewsItemViewHolder) {
+    holder.bind(this, item, linkManager)
   }
 
-  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<Post>> {
+  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<CatchUpItem>> {
     if (request.multipage) {
       // Backfill pages
       return Observable.range(0, request.page)
           .flatMapSingle { this.getPage(it) }
-          .collectInto(mutableListOf<Post>()) { list, collection -> list.addAll(collection) }
+          .collectInto(mutableListOf<CatchUpItem>()) { list, collection -> list.addAll(collection) }
           .map { it } // Weird
     } else if (request.fromRefresh) {
       return getPage(request.page)
@@ -101,8 +79,25 @@ class ProductHuntController : BaseNewsController<Post> {
     }
   }
 
-  private fun getPage(page: Int): Single<List<Post>> {
+  private fun getPage(page: Int): Single<List<CatchUpItem>> {
     return service.getPosts(page)
+        .flattenAsObservable { it }
+        .map {
+          with(it) {
+            CatchUpItem.builder()
+                .id(id())
+                .title(name())
+                .score(Pair.create("▲", votes_count()))
+                .timestamp(created_at())
+                .author(user().name())
+                .tag(firstTopic)
+                .commentCount(comments_count())
+                .itemClickUrl(redirect_url())
+                .itemCommentClickUrl(discussion_url())
+                .build()
+          }
+        }
+        .toList()
   }
 
   @Subcomponent

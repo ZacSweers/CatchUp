@@ -19,7 +19,6 @@ package io.sweers.catchup.data.producthunt.model
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import io.sweers.catchup.ui.base.HasStableId
 import okhttp3.HttpUrl
 import org.threeten.bp.Instant
 import timber.log.Timber
@@ -28,7 +27,7 @@ import timber.log.Timber
  * Models a post on Product Hunt.
  */
 @AutoValue
-abstract class Post : HasStableId {
+abstract class Post {
 
   abstract fun comments_count(): Int
 
@@ -91,8 +90,6 @@ abstract class Post : HasStableId {
 
     return url
   }
-
-  override fun stableId(): Long = id()
 
   @AutoValue.Builder
   interface Builder {

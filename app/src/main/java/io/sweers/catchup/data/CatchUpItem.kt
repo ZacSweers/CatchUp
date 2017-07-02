@@ -70,7 +70,7 @@ abstract class CatchUpItem : HasStableId {
 
     fun itemClickUrl(itemClickUrl: String?): Builder
 
-    fun itemCommentClickUrl(itemCommentClickUrl: String): Builder
+    fun itemCommentClickUrl(itemCommentClickUrl: String?): Builder
 
     fun build(): CatchUpItem
   }
