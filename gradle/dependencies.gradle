@@ -39,7 +39,7 @@ ext {
   supportCompat = "com.android.support:support-compat:$supportVersion"
   supportV4 = "com.android.support:support-v4:$supportVersion"
   multidex = 'com.android.support:multidex:1.0.2'
-  androidPlugin = 'com.android.tools.build:gradle:3.0.0-alpha4'
+  androidPlugin = 'com.android.tools.build:gradle:3.0.0-alpha5'
   constraintLayout = 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
   // Kotlin
