@@ -79,6 +79,8 @@ class PagerController : ButterKnifeController {
   private var statusBarColorAnimator: ValueAnimator? = null
   private var colorNavBar = false
   private var tabLayoutIsPinned = false
+  private var canAnimateColor = true
+  private var lastPosition = 0
   private var pagerAdapter: RouterPagerAdapter
 
   constructor() : super()
@@ -237,47 +239,64 @@ class PagerController : ButterKnifeController {
     // adapted from http://kubaspatny.github.io/2014/09/18/viewpager-background-transition/
     viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
       override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        val color: Int
-        if (position < pagerAdapter.count - 1 && position < PAGE_DATA.size - 1) {
-          color = argbEvaluator.evaluate(positionOffset,
-              getAndSaveColor(position),
-              getAndSaveColor(position + 1)) as Int
-        } else {
-          color = getAndSaveColor(PAGE_DATA.size - 1)
-        }
-        tabLayout.setBackgroundColor(color)
-        if (tabLayoutIsPinned) {
-          activity?.window?.statusBarColor = color
-        }
-        if (colorNavBar) {
-          activity?.window?.navigationBarColor = color
+        if (canAnimateColor) {
+          val color: Int
+          if (position < pagerAdapter.count - 1 && position < PAGE_DATA.size - 1) {
+            color = argbEvaluator.evaluate(positionOffset,
+                getAndSaveColor(position),
+                getAndSaveColor(position + 1)) as Int
+          } else {
+            color = getAndSaveColor(PAGE_DATA.size - 1)
+          }
+          tabLayout.setBackgroundColor(color)
+          if (tabLayoutIsPinned) {
+            activity?.window?.statusBarColor = color
+          }
+          if (colorNavBar) {
+            activity?.window?.navigationBarColor = color
+          }
         }
       }
 
-      override fun onPageSelected(position: Int) {
-        toolbar.setTitle(PAGE_DATA[position][1])
-      }
+      override fun onPageSelected(position: Int) {}
 
       override fun onPageScrollStateChanged(state: Int) {
-        // NO-OP.
+        if (state == ViewPager.SCROLL_STATE_IDLE) {
+          canAnimateColor = true
+        }
       }
     })
 
     tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
       override fun onTabSelected(tab: TabLayout.Tab) {
+        val position = tab.position
+        toolbar.setTitle(PAGE_DATA[position][1])
 
+        // If we're switching between more than one page, we just want to manually set the color
+        // once rather than let the usual page scroll logic cycle through all the colors in a weird
+        // flashy way.
+        if (Math.abs(lastPosition - position) > 1) {
+          canAnimateColor = false
+          val color = getAndSaveColor(position)
+          tabLayout.setBackgroundColor(color)
+          if (tabLayoutIsPinned) {
+            activity?.window?.statusBarColor = color
+          }
+          if (colorNavBar) {
+            activity?.window?.navigationBarColor = color
+          }
+        }
+        lastPosition = position
       }
 
-      override fun onTabUnselected(tab: TabLayout.Tab) {
-
-      }
+      override fun onTabUnselected(tab: TabLayout.Tab) {}
 
       override fun onTabReselected(tab: TabLayout.Tab) {
-        val controller = pagerAdapter.getRouter(tab.position)!!
-            .getControllerWithTag(PAGE_TAG)
-        if (controller is Scrollable) {
-          controller.onRequestScrollToTop()
-          appBarLayout.setExpanded(true, true)
+        pagerAdapter.getRouter(tab.position)?.getControllerWithTag(PAGE_TAG)?.let {
+          if (it is Scrollable) {
+            it.onRequestScrollToTop()
+            appBarLayout.setExpanded(true, true)
+          }
         }
       }
     })
