@@ -29,7 +29,6 @@ import io.reactivex.ObservableTransformer
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.injection.ConductorInjection
-import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.resolveAttribute
 
 /**
@@ -57,7 +56,7 @@ abstract class ServiceController : ButterKnifeController {
     super.onViewBound(view)
   }
 
-  protected fun <T> transformUrlToMeta(url: String?): ObservableTransformer<T, UrlMeta> {
+  fun <T> transformUrlToMeta(url: String?): ObservableTransformer<T, UrlMeta> {
     return ObservableTransformer { upstream ->
       upstream.map { UrlMeta(url, serviceThemeColor, activity!!) }
     }

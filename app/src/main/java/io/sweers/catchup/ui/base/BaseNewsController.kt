@@ -43,6 +43,9 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
+import io.sweers.catchup.data.CatchUpItem
+import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.util.Iterables
@@ -382,6 +385,35 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     init {
       unbinder?.unbind()
       unbinder = `BaseNewsController$NewsItemViewHolder_ViewBinding`(this, itemView)
+    }
+
+    fun bind(controller: ServiceController, item: CatchUpItem, linkManager: LinkManager? = null) {
+      title(item.title())
+      score(item.score())
+      timestamp(item.timestamp())
+      author(item.author())
+      source(item.source())
+      comments(item.commentCount())
+      tag(item.tag())
+
+      item.itemClickUrl()?.let {
+        itemClicks()
+            .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
+            .apply {
+              linkManager?.let { flatMapCompletable(linkManager) }
+            }
+            .autoDisposeWith(this)
+            .subscribe()
+      }
+      item.itemCommentClickUrl()?.let {
+        itemCommentClicks()
+            .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
+            .apply {
+              linkManager?.let { flatMapCompletable(linkManager) }
+            }
+            .autoDisposeWith(this)
+            .subscribe()
+      }
     }
 
     fun itemClicks(): Observable<Any> {

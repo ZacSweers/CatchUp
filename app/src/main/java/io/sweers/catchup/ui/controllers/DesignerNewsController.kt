@@ -23,25 +23,26 @@ import android.view.ContextThemeWrapper
 import com.bluelinelabs.conductor.Controller
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
-import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
+import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
+import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.designernews.DesignerNewsService
 import io.sweers.catchup.data.designernews.model.Story
 import io.sweers.catchup.data.designernews.model.User
 import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.ui.base.BaseNewsController
-import io.sweers.catchup.ui.base.HasStableId
+import io.sweers.catchup.util.collect.toCommaJoinerList
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -50,7 +51,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class DesignerNewsController : BaseNewsController<Story> {
+class DesignerNewsController : BaseNewsController<CatchUpItem> {
 
   @Inject lateinit var service: DesignerNewsService
   @Inject lateinit var linkManager: LinkManager
@@ -63,53 +64,46 @@ class DesignerNewsController : BaseNewsController<Story> {
     return ContextThemeWrapper(context, R.style.CatchUp_DesignerNews)
   }
 
-  override fun bindItemView(item: Story, holder: BaseNewsController.NewsItemViewHolder) {
-    //Story story = storyMeta.story;
-    //User user = storyMeta.user;
-    holder.run {
-      title(item.title())
-
-      score(Pair.create("▲", item.voteCount()))
-      timestamp(item.createdAt())
-      //author(user.displayName());
-      author(null)
-
-      source(item.hostname())
-
-      comments(item.commentCount())
-      tag(item.badge())
-
-      item.url()?.let {
-        itemClicks()
-            .compose<UrlMeta>(transformUrlToMeta<Any>(it))
-            .flatMapCompletable(linkManager)
-            .autoDisposeWith(this)
-            .subscribe()
-      }
-      itemCommentClicks()
-          .compose<UrlMeta>(transformUrlToMeta<Any>(item.href()
-              .replace("api.", "www.")
-              .replace("api/v2/", "")))
-          .flatMapCompletable(linkManager)
-          .autoDisposeWith(this)
-          .subscribe()
-    }
+  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.NewsItemViewHolder) {
+    holder.bind(this, item, linkManager)
   }
 
-  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<Story>> {
-    return service.getTopStories(request.page())
+  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<CatchUpItem>> {
     // This won't do for now because /users endpoint sporadically barfs on specific user IDs
-    //return service.getTopStories()
-    //    .flatMap(stories -> Observable.zip(
-    //        Observable.fromIterable(stories),
-    //        Observable.fromIterable(stories)
-    //            .map(story -> story.links()
-    //                .user())
-    //            .toList()
-    //            .flatMap(ids -> service.getUsers(CommaJoinerList.from(ids)))
-    //            .flattenAsObservable(users -> users),
-    //        StoryAndUserHolder::new)
-    //        .toList());
+    return service.getTopStories(request.page())
+        .flatMapObservable { stories ->
+          Observable.zip(
+              Observable.fromIterable(stories),
+              Observable.fromIterable(stories)
+                  .map { it.links().user() }
+                  .toList()
+                  .flatMap { ids -> service.getUsers(ids.toCommaJoinerList()) }
+                  .onErrorReturn { (0..stories.size).map { User.NONE } }
+                  .flattenAsObservable { it },
+              // RxKotlin might help here
+              BiFunction<Story, User, StoryAndUserHolder> { story, user ->
+                StoryAndUserHolder(story, if (user === User.NONE) null else user)
+              })
+        }
+        .map { (story, user) ->
+          with(story) {
+            CatchUpItem.builder()
+                .id(java.lang.Long.parseLong(id()))
+                .title(title())
+                .score(Pair.create("▲", voteCount()))
+                .timestamp(createdAt())
+                .author(user?.displayName())
+                .source(hostname())
+                .commentCount(commentCount())
+                .tag(badge())
+                .itemClickUrl(url())
+                .itemCommentClickUrl(href()
+                    .replace("api.", "www.")
+                    .replace("api/v2/", ""))
+                .build()
+          }
+        }
+        .toList()
   }
 
   @Subcomponent
@@ -155,11 +149,5 @@ class DesignerNewsController : BaseNewsController<Story> {
     }
   }
 
-  // TODO Eventually use this when we can safely query User ids
-  internal class StoryAndUserHolder(val story: Story, val user: User) : HasStableId {
-
-    override fun stableId(): Long {
-      return story.stableId()
-    }
-  }
+  private data class StoryAndUserHolder(val story: Story, val user: User?)
 }

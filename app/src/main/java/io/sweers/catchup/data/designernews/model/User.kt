@@ -22,7 +22,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
 /**
- * Models a Desinger News User
+ * Models a Designer News User
  */
 @AutoValue
 abstract class User {
@@ -47,5 +47,7 @@ abstract class User {
     fun jsonAdapter(moshi: Moshi): JsonAdapter<User> {
       return AutoValue_User.MoshiJsonAdapter(moshi)
     }
+
+    val NONE: User = AutoValue_User("", "", "", 0, "", "", "")
   }
 }

@@ -20,14 +20,13 @@ import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import io.sweers.catchup.ui.base.HasStableId
 import org.threeten.bp.Instant
 
 /**
  * Models a Designer News story
  */
 @AutoValue
-abstract class Story : HasStableId {
+abstract class Story {
 
   abstract fun badge(): String?
 
@@ -54,8 +53,6 @@ abstract class Story : HasStableId {
   @Json(name = "vote_count") abstract fun voteCount(): Int
 
   @Json(name = "twitter_handles") abstract fun twitterHandles(): List<String>
-
-  override fun stableId(): Long = java.lang.Long.parseLong(id())
 
   companion object {
 

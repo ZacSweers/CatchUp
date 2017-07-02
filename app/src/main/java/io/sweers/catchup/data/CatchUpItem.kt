@@ -18,10 +18,13 @@ package io.sweers.catchup.data
 
 import android.support.v4.util.Pair
 import com.google.auto.value.AutoValue
+import io.sweers.catchup.ui.base.HasStableId
 import org.threeten.bp.Instant
 
 @AutoValue
-abstract class CatchUpItem {
+abstract class CatchUpItem : HasStableId {
+
+  abstract fun id(): Long
 
   abstract fun title(): CharSequence
 
@@ -31,20 +34,24 @@ abstract class CatchUpItem {
 
   abstract fun tag(): String?
 
-  abstract fun author(): CharSequence
+  abstract fun author(): CharSequence?
 
-  abstract fun source(): CharSequence
+  abstract fun source(): CharSequence?
 
   abstract fun commentCount(): Int
 
   abstract fun hideComments(): Boolean
 
-  abstract fun itemClickUrl(): String
+  abstract fun itemClickUrl(): String?
 
-  abstract fun itemCommentClickUrl(): String
+  abstract fun itemCommentClickUrl(): String?
+
+  override fun stableId(): Long = id()
 
   @AutoValue.Builder
   interface Builder {
+    fun id(id: Long): Builder
+
     fun title(title: CharSequence): Builder
 
     fun score(score: Pair<String, Int>?): Builder
@@ -53,15 +60,15 @@ abstract class CatchUpItem {
 
     fun tag(tag: String?): Builder
 
-    fun author(author: CharSequence): Builder
+    fun author(author: CharSequence?): Builder
 
-    fun source(source: CharSequence): Builder
+    fun source(source: CharSequence?): Builder
 
     fun commentCount(commentCount: Int): Builder
 
     fun hideComments(hideComments: Boolean): Builder
 
-    fun itemClickUrl(itemClickUrl: String): Builder
+    fun itemClickUrl(itemClickUrl: String?): Builder
 
     fun itemCommentClickUrl(itemCommentClickUrl: String): Builder
 
@@ -72,6 +79,8 @@ abstract class CatchUpItem {
 
     fun builder(): Builder {
       return AutoValue_CatchUpItem.Builder()
+          .hideComments(false)
+          .commentCount(0)
     }
   }
 }
