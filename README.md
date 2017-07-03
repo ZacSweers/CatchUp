@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/hzsweers/CatchUp/blob/master/art/app-icon/main/play%20store/catchup.png?raw=true" width="250" height="250"/>
+  <img src="https://github.com/hzsweers/CatchUp/blob/master/art/app-icon/main/round/catchup_round.png?raw=true" width="250" height="250"/>
 </p>
 
 CatchUp
