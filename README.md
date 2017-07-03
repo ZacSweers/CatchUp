@@ -36,6 +36,7 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 
 ## Technologies
 
+- Kotlin
 - RxJava 2/AutoDispose
 - Conductor
 - Dagger 2
@@ -45,8 +46,6 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Apollo GraphQL
 - Standard Square buffet of Okio/OkHttp 3/Retrofit 2/Moshi
 - ThreetenABP
-- Java 8 + Desugar
-- Error Prone
 
 There's a lot of neat/interesting little tidbits in the CatchUp source code that I plan to write a 
 mini blog series about. Each service has its own nuances that make them unique to work with in code.
