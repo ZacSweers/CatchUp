@@ -42,8 +42,14 @@ import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.data.smmry.SmmryService
+import io.sweers.catchup.data.smmry.model.ApiRejection
+import io.sweers.catchup.data.smmry.model.IncorrectVariables
+import io.sweers.catchup.data.smmry.model.InternalError
 import io.sweers.catchup.data.smmry.model.SmmryRequestBuilder
 import io.sweers.catchup.data.smmry.model.SmmryResponse
+import io.sweers.catchup.data.smmry.model.Success
+import io.sweers.catchup.data.smmry.model.SummarizationError
+import io.sweers.catchup.data.smmry.model.UnknownErrorCode
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.rx.observers.adapter.SingleObserverAdapter
 import io.sweers.catchup.ui.base.ButterKnifeController
@@ -125,14 +131,25 @@ class SmmryController : ButterKnifeController {
         .autoDisposeWith(this)
         .subscribe(object : SingleObserverAdapter<SmmryResponse>() {
           override fun onSuccess(value: SmmryResponse) {
-            if (value.apiMessage() != null) {
-              Toast.makeText(activity,
-                  "Smmry Error: " + value.errorCode() + " - " + value.apiMessage(),
-                  Toast.LENGTH_LONG)
-                  .show()
-              router.popController(this@SmmryController)
-            } else {
-              showSummary(value)
+            when (value) {
+              is Success -> {
+                showSummary(value)
+              }
+              else -> {
+                val message = when (value) {
+                  is InternalError -> "Smmry internal error - ${value.message}"
+                  is IncorrectVariables -> "Smmry invalid input - ${value.message}"
+                  is ApiRejection -> "Smmry API error - ${value.message}"
+                  is SummarizationError -> "Smmry summarization error - ${value.message}"
+                  is UnknownErrorCode -> "Unknown error :("
+                  else -> TODO("Placeholder because I've already checked for this")
+                }
+                Toast.makeText(activity,
+                    message,
+                    Toast.LENGTH_LONG)
+                    .show()
+                router.popController(this@SmmryController)
+              }
             }
           }
 
@@ -149,7 +166,7 @@ class SmmryController : ButterKnifeController {
     super.onDetach(view)
   }
 
-  private fun showSummary(smmry: SmmryResponse) {
+  private fun showSummary(smmry: Success) {
     if (smmry.keywords() != null) {
       tags.setTextColor(accentColor)
       tags.text = TextUtils.join("  —  ",
@@ -169,7 +186,7 @@ class SmmryController : ButterKnifeController {
       smmryTitle = fallbackTitle
     }
     title.text = smmryTitle
-    summary.text = smmry.content()!!
+    summary.text = smmry.content()
         .replace("[BREAK]", "\n\n")
     loadingView.animate()
         .alpha(0f)
