@@ -124,6 +124,8 @@ android {
       signingConfig signingConfigs.release
       postprocessing.proguardFiles =
           [getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro']
+      postprocessing.optimizeCode = true
+      postprocessing.obfuscate = false
     }
   }
   dexOptions {
