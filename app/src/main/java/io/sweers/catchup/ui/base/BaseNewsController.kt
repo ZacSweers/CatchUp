@@ -38,9 +38,11 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.jakewharton.rxbinding2.view.RxView
 import com.uber.autodispose.kotlin.autoDisposeWith
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Function
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.LinkManager
@@ -353,6 +355,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
 
   class NewsItemViewHolder(itemView: View) : RxViewHolder(itemView) {
 
+    companion object {
+      val COMPLETABLE_FUNC = Function<UrlMeta, Completable> { Completable.complete() }
+    }
+
     @BindView(R.id.container) lateinit var container: View
     @BindView(R.id.title) lateinit var title: TextView
     @BindView(R.id.score) lateinit var score: TextView
@@ -383,18 +389,14 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
       item.itemClickUrl()?.let {
         itemClicks()
             .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
-            .apply {
-              linkManager?.let { flatMapCompletable(linkManager) }
-            }
+            .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
             .autoDisposeWith(this)
             .subscribe()
       }
       item.itemCommentClickUrl()?.let {
         itemCommentClicks()
             .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
-            .apply {
-              linkManager?.let { flatMapCompletable(linkManager) }
-            }
+            .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
             .autoDisposeWith(this)
             .subscribe()
       }
