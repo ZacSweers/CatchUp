@@ -31,7 +31,7 @@ import dagger.android.HasActivityInjector
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
-import timber.log.Timber
+import io.sweers.catchup.util.d
 import javax.inject.Inject
 
 open class CatchUpApplication : Application(), HasActivityInjector {
@@ -58,7 +58,7 @@ open class CatchUpApplication : Application(), HasActivityInjector {
     P.DaynightAuto.rx()
         .asObservable()
         .subscribe { autoEnabled ->
-          Timber.d("Updating daynight")
+          d { "Updating daynight" }
           var nightMode = AppCompatDelegate.MODE_NIGHT_NO
           if (autoEnabled) {
             nightMode = AppCompatDelegate.MODE_NIGHT_AUTO
@@ -71,10 +71,10 @@ open class CatchUpApplication : Application(), HasActivityInjector {
     remoteConfig.fetch(resources.getInteger(R.integer.remote_config_cache_duration).toLong())
         .addOnCompleteListener { task ->
           if (task.isSuccessful) {
-            Timber.d("Firebase fetch succeeded")
+            d { "Firebase fetch succeeded" }
             remoteConfig.activateFetched()
           } else {
-            Timber.d("Firebase fetch failed")
+            d { "Firebase fetch failed" }
           }
         }
   }
@@ -95,7 +95,7 @@ open class CatchUpApplication : Application(), HasActivityInjector {
       TRIM_MEMORY_MODERATE,
       TRIM_MEMORY_RUNNING_LOW,
       TRIM_MEMORY_RUNNING_MODERATE,
-      TRIM_MEMORY_RUNNING_CRITICAL -> Timber.d("OnTrimMemory")
+      TRIM_MEMORY_RUNNING_CRITICAL -> d { "OnTrimMemory" }
     }// TODO someday clear Store in-memory
   }
 

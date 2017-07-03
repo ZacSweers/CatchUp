@@ -48,11 +48,12 @@ import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.util.Iterables
+import io.sweers.catchup.util.d
+import io.sweers.catchup.util.e
 import io.sweers.catchup.util.format
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import org.threeten.bp.Instant
 import retrofit2.HttpException
-import timber.log.Timber
 import java.io.IOException
 import java.security.InvalidParameterException
 import java.util.LinkedHashSet
@@ -187,9 +188,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
         }
         .doOnSubscribe { timer.set(System.currentTimeMillis()) }
         .doFinally {
-          Timber.d("Data load - %s - took: %dms",
-              javaClass.simpleName,
-              System.currentTimeMillis() - timer.get())
+          d { "Data load - ${javaClass.simpleName} - took: ${System.currentTimeMillis() - timer.get()}ms" }
           dataLoading = false
           recyclerView.post { adapter.dataFinishedLoading() }
         }
@@ -205,10 +204,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
               adapter.addData(data)
             }
           }
-        }, { e ->
+        }, { error ->
           val activity = activity
           if (pageToRequest == 0 && activity != null) {
-            if (e is IOException) {
+            if (error is IOException) {
               progress.visibility = GONE
               errorTextView.text = "Connection Problem"
               swipeRefreshLayout.visibility = GONE
@@ -217,7 +216,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
                 errorImage.setImageDrawable(this)
                 start()
               }
-            } else if (e is HttpException) {
+            } else if (error is HttpException) {
               // TODO Show some sort of API error response.
               progress.visibility = GONE
               errorTextView.text = "API Problem"
@@ -237,7 +236,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
                 errorImage.setImageDrawable(this)
                 start()
               }
-              Timber.e(e, "Unknown issue.")
+              e(error) { "Unknown issue." }
             }
           } else {
             page--
@@ -295,8 +294,8 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
       when (getItemViewType(position)) {
         ServiceController.TYPE_ITEM -> try {
           bindDelegate(Iterables.get(data, position), holder as NewsItemViewHolder)
-        } catch (e: Exception) {
-          Timber.e(e, "Bind delegate failure!")
+        } catch (error: Exception) {
+          e(error) { "Bind delegate failure!" }
         }
 
         ServiceController.TYPE_LOADING_MORE -> (holder as ServiceController.LoadingMoreHolder).progress.visibility = if (position > 0) View.VISIBLE else View.INVISIBLE

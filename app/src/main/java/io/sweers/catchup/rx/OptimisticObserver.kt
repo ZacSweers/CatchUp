@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.rx
 
+import io.sweers.catchup.util.e
 import rx.Observer
-import timber.log.Timber
 
 class OptimisticObserver<T>(private val tag: String) : Observer<T> {
 
@@ -25,8 +25,8 @@ class OptimisticObserver<T>(private val tag: String) : Observer<T> {
 
   }
 
-  override fun onError(e: Throwable) {
-    Timber.e(e, tag)
+  override fun onError(error: Throwable) {
+    e(error) { tag }
   }
 
   override fun onNext(t: T) {

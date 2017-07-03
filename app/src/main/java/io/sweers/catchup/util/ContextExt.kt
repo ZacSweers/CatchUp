@@ -26,7 +26,6 @@ import android.util.TypedValue
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import io.sweers.catchup.R.string
-import timber.log.Timber
 import java.io.File
 
 fun Context.clearCache(): Long {
@@ -40,7 +39,7 @@ private fun cleanDir(dir: File): Long {
   for (file in files) {
     val length = file.length()
     if (file.delete()) {
-      Timber.d("Deleted file")
+      d { "Deleted file" }
       bytesDeleted += length
     }
   }

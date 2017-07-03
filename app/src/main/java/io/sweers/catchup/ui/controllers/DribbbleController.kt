@@ -88,6 +88,7 @@ import io.sweers.catchup.util.Iterables
 import io.sweers.catchup.util.ObservableColorMatrix
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.collect.cast
+import io.sweers.catchup.util.e
 import io.sweers.catchup.util.glide.DribbbleTarget
 import io.sweers.catchup.util.isInNightMode
 import okhttp3.OkHttpClient
@@ -96,7 +97,6 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import timber.log.Timber
 import java.io.IOException
 import java.util.ArrayList
 import javax.inject.Inject
@@ -194,10 +194,10 @@ class DribbbleController : ServiceController, SwipeRefreshLayout.OnRefreshListen
           errorView.visibility = GONE
           swipeRefreshLayout.visibility = VISIBLE
           adapter.addShots(shots)
-        }, { e ->
+        }, { error ->
           val activity = activity
           if (activity != null) {
-            if (e is IOException) {
+            if (error is IOException) {
               errorTextView.text = "Connection Problem"
               progress.visibility = GONE
               swipeRefreshLayout.visibility = GONE
@@ -206,7 +206,7 @@ class DribbbleController : ServiceController, SwipeRefreshLayout.OnRefreshListen
                 errorImage.setImageDrawable(this)
                 start()
               }
-            } else if (e is HttpException) {
+            } else if (error is HttpException) {
               // TODO Show some sort of API error response.
               errorTextView.text = "API Problem"
               progress.visibility = GONE
@@ -227,7 +227,7 @@ class DribbbleController : ServiceController, SwipeRefreshLayout.OnRefreshListen
                 start()
               }
             }
-            Timber.e(e, "Update failed!")
+            e(error) { "Update failed!" }
           }
         })
   }

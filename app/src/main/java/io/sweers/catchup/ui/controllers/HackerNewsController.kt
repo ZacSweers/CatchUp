@@ -43,8 +43,8 @@ import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory
 import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.util.d
 import okhttp3.HttpUrl
-import timber.log.Timber
 import javax.inject.Inject
 
 class HackerNewsController : BaseNewsController<HackerNewsStory> {
@@ -110,7 +110,7 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
         }
 
         override fun onCancelled(firebaseError: DatabaseError) {
-          Timber.d("%d", firebaseError.code)
+          d { "${firebaseError.code}" }
           emitter.onError(firebaseError.toException())
         }
       }
@@ -135,7 +135,7 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
               }
 
               override fun onCancelled(firebaseError: DatabaseError) {
-                Timber.d("%d", firebaseError.code)
+                d { "${firebaseError.code}" }
                 emitter.onError(firebaseError.toException())
               }
             }

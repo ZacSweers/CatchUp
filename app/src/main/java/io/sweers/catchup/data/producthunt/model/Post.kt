@@ -19,9 +19,9 @@ package io.sweers.catchup.data.producthunt.model
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import io.sweers.catchup.util.e
 import okhttp3.HttpUrl
 import org.threeten.bp.Instant
-import timber.log.Timber
 
 /**
  * Models a post on Product Hunt.
@@ -83,7 +83,7 @@ abstract class Post {
           break
         }
       } catch (nfe: NumberFormatException) {
-        Timber.e(nfe, "FailedGetScreenshotUrl")
+        e(nfe) { "FailedGetScreenshotUrl" }
       }
 
     }

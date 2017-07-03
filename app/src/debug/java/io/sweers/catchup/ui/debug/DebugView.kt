@@ -51,13 +51,13 @@ import io.sweers.catchup.app.CatchUpApplication
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.scopes.PerView
 import io.sweers.catchup.ui.logs.LogsDialog
+import io.sweers.catchup.util.d
 import io.sweers.catchup.util.truncateAt
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.mock.NetworkBehavior
-import timber.log.Timber
 import java.util.Locale
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
@@ -147,7 +147,7 @@ class DebugView @JvmOverloads constructor(context: Context,
         .map { delayAdapter.getItem(it) }
         .filter { item -> item != behavior.delay(MILLISECONDS) }
         .subscribe { selected ->
-          Timber.d("Setting network delay to %sms", selected)
+          d { "Setting network delay to ${selected}ms" }
           behavior.setDelay(selected, MILLISECONDS)
           networkDelay.set(selected.toInt())
         }
@@ -161,7 +161,7 @@ class DebugView @JvmOverloads constructor(context: Context,
         .map { varianceAdapter.getItem(it) }
         .filter { item -> item != behavior.variancePercent() }
         .subscribe { selected ->
-          Timber.d("Setting network variance to %s%%", selected)
+          d { "Setting network variance to $selected%" }
           behavior.setVariancePercent(selected)
           networkVariancePercent.set(selected)
         }
@@ -175,7 +175,7 @@ class DebugView @JvmOverloads constructor(context: Context,
         .map { errorAdapter.getItem(it) }
         .filter { item -> item != behavior.failurePercent() }
         .subscribe { selected ->
-          Timber.d("Setting network error to %s%%", selected)
+          d { "Setting network error to $selected%" }
           behavior.setFailurePercent(selected)
           networkFailurePercent.set(selected)
         }
@@ -209,7 +209,7 @@ class DebugView @JvmOverloads constructor(context: Context,
         .map { speedAdapter.getItem(it) }
         .filter { item -> item != animationSpeed.get() }
         .subscribe { selected ->
-          Timber.d("Setting animation speed to %sx", selected)
+          d { "Setting animation speed to ${selected}x" }
           animationSpeed.set(selected)
           applyAnimationSpeed(selected)
         }
@@ -220,28 +220,28 @@ class DebugView @JvmOverloads constructor(context: Context,
     uiPixelGridView.isChecked = gridEnabled
     uiPixelRatioView.isEnabled = gridEnabled
     uiPixelGridView.setOnCheckedChangeListener { _, isChecked ->
-      Timber.d("Setting pixel grid overlay enabled to %b", isChecked)
+      d { "Setting pixel grid overlay enabled to $isChecked" }
       pixelGridEnabled.set(isChecked)
       uiPixelRatioView.isEnabled = isChecked
     }
 
     uiPixelRatioView.isChecked = pixelRatioEnabled.get()
     uiPixelRatioView.setOnCheckedChangeListener { _, isChecked ->
-      Timber.d("Setting pixel scale overlay enabled to %b", isChecked)
+      d { "Setting pixel scale overlay enabled to $isChecked" }
       pixelRatioEnabled.set(isChecked)
     }
 
     uiScalpelView.isChecked = scalpelEnabled.get()
     uiScalpelWireframeView.isEnabled = scalpelEnabled.get()
     uiScalpelView.setOnCheckedChangeListener { _, isChecked ->
-      Timber.d("Setting scalpel interaction enabled to %b", isChecked)
+      d { "Setting scalpel interaction enabled to $isChecked" }
       scalpelEnabled.set(isChecked)
       uiScalpelWireframeView.isEnabled = isChecked
     }
 
     uiScalpelWireframeView.isChecked = scalpelWireframeEnabled.get()
     uiScalpelWireframeView.setOnCheckedChangeListener { _, isChecked ->
-      Timber.d("Setting scalpel wireframe enabled to %b", isChecked)
+      d { "Setting scalpel wireframe enabled to $isChecked" }
       scalpelWireframeEnabled.set(isChecked)
     }
   }
