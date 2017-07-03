@@ -354,6 +354,7 @@ dependencies {
   implementation rootProject.ext.conductorSupport
 
   implementation rootProject.ext.jsr305
+  implementation rootProject.ext.unbescape
 
   // Test
   testImplementation rootProject.ext.rxJava2Extensions

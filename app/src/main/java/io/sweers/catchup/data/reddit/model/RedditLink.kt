@@ -20,6 +20,7 @@ import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import io.sweers.catchup.data.adapters.UnEscape
 
 @AutoValue
 abstract class RedditLink : RedditSubmission() {
@@ -30,7 +31,7 @@ abstract class RedditLink : RedditSubmission() {
 
   abstract fun hidden(): Boolean
 
-  @get:Json(name = "is_self") abstract val isSelf: Boolean
+  @Json(name = "is_self") abstract val isSelf: Boolean
 
   @Json(name = "link_flair_text") abstract fun linkFlairText(): String?
 
@@ -46,7 +47,7 @@ abstract class RedditLink : RedditSubmission() {
 
   abstract fun thumbnail(): String
 
-  abstract fun title(): String
+  @UnEscape(html = true) abstract fun title(): String
 
   abstract fun url(): String
 

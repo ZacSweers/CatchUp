@@ -23,4 +23,4 @@ import com.squareup.moshi.JsonQualifier
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FIELD, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.VALUE_PARAMETER)
-annotation class UnEscape
+annotation class UnEscape(val html: Boolean = false)
