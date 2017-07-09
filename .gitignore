@@ -108,3 +108,4 @@ tmp/
 # Misc
 private.props
 google-services.json
+.tasks.cache.json
