@@ -70,7 +70,7 @@ abstract class ServiceController : ButterKnifeController {
 
   companion object {
 
-    @JvmStatic val TYPE_ITEM = 0
-    @JvmStatic val TYPE_LOADING_MORE = -1
+    const val TYPE_ITEM = 0
+    const val TYPE_LOADING_MORE = -1
   }
 }

@@ -25,12 +25,10 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Formats dates in UTC seconds or milliseconds time to [Instant] instances.
- */
-class EpochInstantJsonAdapter
-/**
+ *
  * @param timeUnit because some APIs give you UTC time in different units
  */
-@JvmOverloads constructor(
+class EpochInstantJsonAdapter(
     private val timeUnit: TimeUnit = TimeUnit.SECONDS) : JsonAdapter<Instant>() {
 
   @Synchronized @Throws(IOException::class)

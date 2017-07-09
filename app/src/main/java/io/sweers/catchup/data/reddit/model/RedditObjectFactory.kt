@@ -91,7 +91,7 @@ class RedditObjectFactory : JsonAdapter.Factory {
   companion object {
     private var instance: WeakReference<RedditObjectFactory>? = null
 
-    @JvmStatic fun getInstance(): RedditObjectFactory {
+    fun getInstance(): RedditObjectFactory {
       return instance?.get() ?: RedditObjectFactory().apply { instance = WeakReference(this) }
     }
   }

@@ -26,7 +26,7 @@ enum class ActivityEvent {
   CREATE, START, RESUME, PAUSE, STOP, DESTROY;
 
   companion object {
-    @JvmField val LIFECYCLE = Function<ActivityEvent, ActivityEvent> { lastEvent: ActivityEvent ->
+    val LIFECYCLE = Function { lastEvent: ActivityEvent ->
       return@Function when (lastEvent) {
         CREATE -> DESTROY
         START -> STOP

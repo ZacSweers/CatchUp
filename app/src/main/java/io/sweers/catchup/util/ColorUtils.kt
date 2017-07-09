@@ -93,7 +93,7 @@ class ColorUtils private constructor() {
      * Determines if a given bitmap is dark. This extracts a palette inline so should not be called
      * with a large image!! If palette fails then check the color of the specified pixel
      */
-    @JvmOverloads fun isDark(
+    fun isDark(
         bitmap: Bitmap,
         backupPixelX: Int = bitmap.width / 2,
         backupPixelY: Int = bitmap.height / 2): Boolean {

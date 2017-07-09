@@ -59,7 +59,6 @@ internal class NetworkErrorAdapter(context: Context) : BindableAdapter<Int>(cont
   companion object {
     private val VALUES = intArrayOf(0, 3, 10, 25, 50, 75, 100)
 
-    @JvmStatic
     fun getPositionForValue(value: Int): Int {
       return VALUES.indices.firstOrNull { VALUES[it] == value } ?: 1 // Default to 3% if something changes.
     }

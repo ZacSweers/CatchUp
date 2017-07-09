@@ -47,7 +47,6 @@ import org.threeten.bp.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -136,7 +135,7 @@ class RedditController : BaseNewsController<RedditLink> {
       @InternalApi @Provides @JvmStatic internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
         return upstreamMoshi.newBuilder()
             .add(RedditObjectFactory.getInstance())
-            .add(Instant::class.java, EpochInstantJsonAdapter(TimeUnit.SECONDS))
+            .add(Instant::class.java, EpochInstantJsonAdapter())
             .build()
       }
 

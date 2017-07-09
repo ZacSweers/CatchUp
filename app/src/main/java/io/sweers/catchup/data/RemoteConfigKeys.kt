@@ -21,5 +21,5 @@ package io.sweers.catchup.data
  */
 object RemoteConfigKeys {
 
-  @JvmField val SMMRY_ENABLED = "smmry_enabled"
+  const val SMMRY_ENABLED = "smmry_enabled"
 }

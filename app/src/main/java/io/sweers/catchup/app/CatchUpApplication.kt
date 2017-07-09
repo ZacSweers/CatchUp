@@ -104,11 +104,11 @@ open class CatchUpApplication : Application(), HasActivityInjector {
     @JvmStatic lateinit var refWatcher: RefWatcher
     private lateinit var component: ApplicationComponent
 
-    @JvmStatic fun component(): ApplicationComponent {
+    fun component(): ApplicationComponent {
       return component
     }
 
-    @JvmStatic fun refWatcher(): RefWatcher {
+    fun refWatcher(): RefWatcher {
       return refWatcher
     }
   }

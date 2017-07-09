@@ -44,7 +44,7 @@ abstract class AuthInterceptor : Interceptor {
 
   companion object {
 
-    @JvmStatic fun create(method: String, accessToken: String): AuthInterceptor {
+    fun create(method: String, accessToken: String): AuthInterceptor {
       return AutoValue_AuthInterceptor(accessToken, method)
     }
   }

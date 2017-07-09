@@ -57,8 +57,7 @@ class HierarchyTreeChangeListener private constructor(
      * Wrap a regular [hierarchy change listener][android.view.ViewGroup.OnHierarchyChangeListener] with one
      * that monitors an entire tree of views.
      */
-    @JvmStatic fun wrap(
-        delegate: ViewGroup.OnHierarchyChangeListener): HierarchyTreeChangeListener {
+    fun wrap(delegate: ViewGroup.OnHierarchyChangeListener): HierarchyTreeChangeListener {
       return HierarchyTreeChangeListener(delegate)
     }
   }
