@@ -21,13 +21,13 @@ buildscript {
   }
 
   dependencies {
-    classpath rootProject.ext.androidPlugin
-    classpath rootProject.ext.kotlinPlugin
-    classpath rootProject.ext.bugsnagPlugin
-    classpath rootProject.ext.psyncPlugin
-    classpath rootProject.ext.versionsPlugin
-    classpath rootProject.ext.errorPronePlugin
-    classpath rootProject.ext.apolloPlugin
+    classpath deps.android.gradlePlugin
+    classpath deps.kotlin.gradlePlugin
+    classpath deps.build.gradlePlugins.bugsnag
+    classpath deps.build.gradlePlugins.psync
+    classpath deps.build.gradlePlugins.versions
+    classpath deps.errorProne.gradlePlugin
+    classpath deps.apollo.gradlePlugin
   }
 }
 
@@ -55,21 +55,21 @@ repositories {
 }
 
 android {
-  compileSdkVersion rootProject.ext.compileSdkVersion
-  buildToolsVersion rootProject.ext.buildToolsVersion
+  compileSdkVersion deps.android.build.compileSdkVersion
+  buildToolsVersion deps.android.build.buildToolsVersion
 
   defaultConfig {
     applicationId "io.sweers.catchup"
-    minSdkVersion rootProject.ext.minSdkVersion
-    targetSdkVersion rootProject.ext.targetSdkVersion
-    versionCode rootProject.ext.gitCommitCount
-    versionName rootProject.ext.gitTag
+    minSdkVersion deps.android.build.minSdkVersion
+    targetSdkVersion deps.android.build.targetSdkVersion
+    versionCode deps.build.gitCommitCount
+    versionName deps.build.gitTag
     multiDexEnabled true
     archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
 
-    buildConfigField 'String', 'GIT_SHA', /"$gitSha"/
-    buildConfigField 'long', 'GIT_TIMESTAMP', "$gitTimestamp"
+    buildConfigField 'String', 'GIT_SHA', /"$deps.build.gitSha"/
+    buildConfigField 'long', 'GIT_TIMESTAMP', "$deps.build.gitTimestamp"
     buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN',
         /"${getPropertyOrEmpty("catchup_product_hunt_developer_token")}"/
     buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN',
@@ -138,10 +138,10 @@ android {
     fatal 'NewApi', 'InlinedApi'
     enable 'UnusedResources'
     checkReleaseBuilds true
-    textReport rootProject.ext.ci
+    textReport deps.build.ci
     textOutput 'stdout'
-    htmlReport !rootProject.ext.ci
-    xmlReport !rootProject.ext.ci
+    htmlReport !deps.build.ci
+    xmlReport !deps.build.ci
   }
   applicationVariants.all {
     // Configure firebase
@@ -230,150 +230,149 @@ configurations.all {
     if (details.requested.group == 'com.android.support' &&
         !details.requested.name.contains('multidex')) {
       // We want to force all support libraries to use the same version, even if they're transitive.
-      details.useVersion rootProject.ext.supportVersion
+      details.useVersion versions.support
     }
     if (details.requested.group == 'com.google.android.gms') {
       // We want to force all play services libraries to use the same version, even if they're transitive.
-      details.useVersion rootProject.ext.playServicesVersion
+      details.useVersion versions.playServices
     }
     if (details.requested.group == 'com.google.firebase') {
       // We want to force all play services libraries to use the same version, even if they're transitive.
-      details.useVersion rootProject.ext.firebaseVersion
+      details.useVersion versions.firebase
     }
   }
 }
 
 dependencies {
   // Support libs
-  supportImplementation rootProject.ext.supportAnnotations
-  supportImplementation rootProject.ext.supportAppCompat
-  supportImplementation rootProject.ext.supportV4
-  supportImplementation rootProject.ext.supportDesign
-  supportImplementation rootProject.ext.supportCustomTabs
-  supportImplementation rootProject.ext.constraintLayout
-  supportImplementation rootProject.ext.supportPalette
-  supportImplementation rootProject.ext.supportCompat
+  supportImplementation deps.android.support.annotations
+  supportImplementation deps.android.support.appCompat
+  supportImplementation deps.android.support.v4
+  supportImplementation deps.android.support.design
+  supportImplementation deps.android.support.customTabs
+  supportImplementation deps.android.support.constraintLayout
+  supportImplementation deps.android.support.palette
+  supportImplementation deps.android.support.compat
 
   implementation supportLibraries
   testImplementation supportLibraries
   androidTestImplementation supportLibraries
 
   // Kotlin
-  implementation rootProject.ext.kotlinStdLib
-  implementation rootProject.ext.kotlinStdLib7
+  implementation deps.kotlin.stdlib.core
+  implementation deps.kotlin.stdlib.jre7
 
   // Firebase
-  implementation rootProject.ext.firebaseCore
-  implementation rootProject.ext.firebaseConfig
-  implementation rootProject.ext.firebaseDatabase
-  kapt rootProject.ext.autoValueFirebase
-  compileOnly rootProject.ext.autoValueFirebaseAnnotation
-  implementation rootProject.ext.autoValueFirebaseAdapter
+  implementation deps.android.firebase.core
+  implementation deps.android.firebase.config
+  implementation deps.android.firebase.database
+  kapt deps.auto.value.extensions.firebase.apt.core
+  compileOnly deps.auto.value.extensions.firebase.compileOnly.annotation
+  implementation deps.auto.value.extensions.firebase.adapter
 
   // Square/JW
-  implementation rootProject.ext.butterKnife
-  kapt rootProject.ext.butterKnifeCompiler
-  implementation rootProject.ext.diskLruCache
-  implementation rootProject.ext.okhttp
-  implementation rootProject.ext.okio
-  implementation rootProject.ext.moshi
-  implementation rootProject.ext.retrofit
-  implementation rootProject.ext.retrofitMoshi
-  implementation rootProject.ext.retrofitRxJava
-  implementation(rootProject.ext.retrofitXml) {
+  implementation deps.butterKnife.runtime
+  kapt deps.butterKnife.apt
+  implementation deps.misc.diskLruCache
+  implementation deps.okhttp.core
+  implementation deps.misc.okio
+  implementation deps.misc.moshi
+  implementation deps.retrofit.core
+  implementation deps.retrofit.moshi
+  implementation deps.retrofit.rxJava2
+  implementation(deps.retrofit.xml) {
     exclude module: 'stax'
     exclude module: 'stax-api'
     exclude module: 'xpp3'
   }
-  implementation rootProject.ext.rxAndroid
-  implementation rootProject.ext.rxAndroid2
-  implementation rootProject.ext.rxJava
-  implementation rootProject.ext.rxJava2
-  implementation rootProject.ext.rxJava2Interop
-  implementation rootProject.ext.retrofitRxJava2
-  implementation rootProject.ext.rxBinding
-  implementation rootProject.ext.rxBindingV4
-  implementation rootProject.ext.rxBindingDesign
-  implementation rootProject.ext.timber
-  implementation rootProject.ext.threetenabp
-  debugImplementation rootProject.ext.madge
-  debugImplementation rootProject.ext.scalpel
-  debugImplementation rootProject.ext.processPhoenix
-  debugImplementation rootProject.ext.telescope
-  implementation rootProject.ext.okhttpLoggingInterceptor
-  debugImplementation rootProject.ext.retrofitMock
+  implementation deps.rx.android
+  implementation deps.rx.android2
+  implementation deps.rx.java
+  implementation deps.rx.java2
+  implementation deps.rx.java2Interop
+  implementation deps.rx.binding.core
+  implementation deps.rx.binding.v4
+  implementation deps.rx.binding.design
+  implementation deps.misc.timber
+  implementation deps.misc.threetenabp
+  debugImplementation deps.misc.debug.madge
+  debugImplementation deps.misc.debug.scalpel
+  debugImplementation deps.misc.debug.processPhoenix
+  debugImplementation deps.misc.debug.telescope
+  implementation deps.okhttp.debug.loggingInterceptor
+  debugImplementation deps.retrofit.debug.mock
 
-  releaseImplementation rootProject.ext.bugsnag
+  releaseImplementation deps.misc.bugsnag
 
   // Misc
-  implementation rootProject.ext.autoDispose
-  implementation rootProject.ext.autoDisposeAndroid
-  implementation rootProject.ext.autoDisposeKotlin
-  errorprone rootProject.ext.errorProneCore
-  implementation rootProject.ext.errorProneAnnotations
-  implementation rootProject.ext.barberApi
-  kapt rootProject.ext.barberCompiler
-  implementation rootProject.ext.glide
-  implementation rootProject.ext.glideOkhttp
-  implementation rootProject.ext.lottie
-  implementation rootProject.ext.recyclerViewAnimators
-  implementation rootProject.ext.rxJava
-  implementation rootProject.ext.rxPreferences
-  implementation rootProject.ext.rxReceivers
-  implementation rootProject.ext.rxRelay
-  implementation(rootProject.ext.simpleXml) {
+  implementation deps.autoDispose.core
+  implementation deps.autoDispose.android
+  implementation deps.autoDispose.kotlin
+  errorprone deps.errorProne.build.core
+  implementation deps.errorProne.compileOnly.annotations
+  implementation deps.barber.api
+  kapt deps.barber.apt
+  implementation deps.glide.core
+  implementation deps.glide.okhttp
+  implementation deps.misc.lottie
+  implementation deps.misc.recyclerViewAnimators
+  implementation deps.rx.java
+  implementation deps.rx.preferences
+  implementation deps.rx.receivers
+  implementation deps.rx.relay
+  implementation(deps.misc.simpleXml) {
     exclude module: 'stax'
     exclude module: 'stax-api'
     exclude module: 'xpp3'
   }
-  implementation rootProject.ext.moshiLazyAdapters
+  implementation deps.misc.moshiLazyAdapters
 
   // Apollo
-  implementation rootProject.ext.apolloRuntime
-  implementation rootProject.ext.apolloRx2Support
-  implementation rootProject.ext.apolloAndroidSupport
+  implementation deps.apollo.runtime
+  implementation deps.apollo.rx2Support
+  implementation deps.apollo.androidSupport
 
   // Stetho
-  debugImplementation rootProject.ext.stetho
-  debugImplementation rootProject.ext.stethoOkHttp
+  debugImplementation deps.stetho.debug.core
+  debugImplementation deps.stetho.debug.okhttp
 
   // Dagger
-  kapt rootProject.ext.daggerCompiler
-  compileOnly rootProject.ext.javax
-  implementation rootProject.ext.dagger
-  implementation rootProject.ext.daggerAndroid
+  kapt deps.dagger.apt.compiler
+  compileOnly deps.misc.javaxInject
+  implementation deps.dagger.core
+  implementation deps.dagger.android
 
   // AutoValue
-  compileOnly rootProject.ext.autoValueAnnotations
-  implementation rootProject.ext.autoValueMoshiAnnotations
-  kapt rootProject.ext.autoValue
-  kapt rootProject.ext.autoValueMoshi
-  kapt rootProject.ext.autoValueRedacted
+  compileOnly deps.auto.value.apt.core
+  implementation deps.auto.value.extensions.moshi.compileOnly.annotations
+  kapt deps.auto.value.apt.core
+  kapt deps.auto.value.extensions.moshi.apt.core
+  kapt deps.auto.value.extensions.redacted.apt.core
 
   // Conductor
-  implementation rootProject.ext.conductor
-  implementation rootProject.ext.conductorAutoDispoe
-  implementation rootProject.ext.conductorSupport
+  implementation deps.conductor.core
+  implementation deps.conductor.autoDispose
+  implementation deps.conductor.support
 
-  implementation rootProject.ext.jsr305
-  implementation rootProject.ext.unbescape
+  implementation deps.misc.jsr305
+  implementation deps.misc.unbescape
 
   // Test
-  testImplementation rootProject.ext.rxJava2Extensions
-  testImplementation rootProject.ext.rxRelay
-  androidTestImplementation rootProject.ext.errorProneAnnotations
-  androidTestImplementation rootProject.ext.rxJava2
-  androidTestImplementation rootProject.ext.jsr305
-  testImplementation rootProject.ext.jsr305
-  testImplementation rootProject.ext.errorProneAnnotations
-  testImplementation rootProject.ext.junit
-  testImplementation rootProject.ext.truth
+  testImplementation deps.rx.java2Extensions
+  testImplementation deps.rx.relay
+  androidTestImplementation deps.errorProne.compileOnly.annotations
+  androidTestImplementation deps.rx.java2
+  androidTestImplementation deps.misc.jsr305
+  testImplementation deps.misc.jsr305
+  testImplementation deps.errorProne.compileOnly.annotations
+  testImplementation deps.test.junit
+  testImplementation deps.test.truth
 
   // LeakCanary
-  debugImplementation rootProject.ext.leakCanary
-  releaseImplementation rootProject.ext.leakCanaryNoop
+  debugImplementation deps.leakCanary.debug
+  releaseImplementation deps.leakCanary.release
 
   // Chuck
-  debugImplementation rootProject.ext.chuck
-  releaseImplementation rootProject.ext.chuckNoop
+  debugImplementation deps.chuck.debug
+  releaseImplementation deps.chuck.release
 }
