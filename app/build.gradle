@@ -273,6 +273,7 @@ dependencies {
   // Square/JW
   implementation rootProject.ext.butterKnife
   kapt rootProject.ext.butterKnifeCompiler
+  implementation rootProject.ext.diskLruCache
   implementation rootProject.ext.okhttp
   implementation rootProject.ext.okio
   implementation rootProject.ext.moshi
@@ -351,6 +352,7 @@ dependencies {
 
   // Conductor
   implementation rootProject.ext.conductor
+  implementation rootProject.ext.conductorAutoDispoe
   implementation rootProject.ext.conductorSupport
 
   implementation rootProject.ext.jsr305

@@ -17,57 +17,29 @@
 package io.sweers.catchup.ui.base
 
 import android.os.Bundle
-import android.view.View
-import com.bluelinelabs.conductor.Controller
+import com.bluelinelabs.conductor.autodispose.ControllerEvent
+import com.bluelinelabs.conductor.autodispose.ControllerScopeProvider
 import com.uber.autodispose.LifecycleScopeProvider
 import io.reactivex.functions.Function
-import io.reactivex.subjects.BehaviorSubject
 
-abstract class AutoDisposeController : RefWatchingController, LifecycleScopeProvider<ControllerEvent> {
+abstract class AutoDisposeController
+  : RefWatchingController, LifecycleScopeProvider<ControllerEvent> {
 
-  private val lifecycleSubject = BehaviorSubject.createDefault(ControllerEvent.CREATE)
+  private val lifecycleProvider = ControllerScopeProvider.from(this)
 
-  protected constructor() : super() {
-    initLifecycleHandling()
-  }
+  protected constructor() : super()
 
-  protected constructor(args: Bundle) : super(args) {
-    initLifecycleHandling()
-  }
-
-  private fun initLifecycleHandling() {
-    addLifecycleListener(object : Controller.LifecycleListener() {
-      override fun preCreateView(controller: Controller) {
-        lifecycleSubject.onNext(ControllerEvent.CREATE_VIEW)
-      }
-
-      override fun preAttach(controller: Controller, view: View) {
-        lifecycleSubject.onNext(ControllerEvent.ATTACH)
-      }
-
-      override fun preDetach(controller: Controller, view: View) {
-        lifecycleSubject.onNext(ControllerEvent.DETACH)
-      }
-
-      override fun preDestroyView(controller: Controller, view: View) {
-        lifecycleSubject.onNext(ControllerEvent.DESTROY_VIEW)
-      }
-
-      override fun preDestroy(controller: Controller) {
-        lifecycleSubject.onNext(ControllerEvent.DESTROY)
-      }
-    })
-  }
+  protected constructor(args: Bundle) : super(args)
 
   override fun lifecycle(): io.reactivex.Observable<ControllerEvent> {
-    return lifecycleSubject
+    return lifecycleProvider.lifecycle()
   }
 
   override fun correspondingEvents(): Function<ControllerEvent, ControllerEvent> {
-    return ControllerEvent.LIFECYCLE
+    return lifecycleProvider.correspondingEvents()
   }
 
-  override fun peekLifecycle(): ControllerEvent {
-    return lifecycleSubject.value
+  override fun peekLifecycle(): ControllerEvent? {
+    return lifecycleProvider.peekLifecycle()
   }
 }
