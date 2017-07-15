@@ -113,8 +113,8 @@ class CustomTabActivityHelper {
         client == null -> null
         customTabsSession == null -> client!!.newSession(null)
         else -> customTabsSession
-      }?.apply {
-        customTabsSession = this
+      }?.also {
+        customTabsSession = it
       }
     }
 

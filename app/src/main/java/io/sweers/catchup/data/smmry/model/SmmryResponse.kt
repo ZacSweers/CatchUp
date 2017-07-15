@@ -115,7 +115,7 @@ class SmmryResponseFactory : JsonAdapter.Factory {
     private var instance: WeakReference<SmmryResponseFactory>? = null
 
     fun getInstance(): SmmryResponseFactory {
-      return instance?.get() ?: SmmryResponseFactory().apply { instance = WeakReference(this) }
+      return instance?.get() ?: SmmryResponseFactory().also { instance = WeakReference(it) }
     }
   }
 }

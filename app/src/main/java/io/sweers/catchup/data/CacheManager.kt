@@ -190,7 +190,7 @@ private class CachingCall<R> internal constructor(
           responseConverter.convert(ResponseBody.create(cachedData.mediaType, cachedData.source)))
     } else {
       try {
-        val response = delegate.execute()
+        val response = delegate.execute().also {  }
         // CACHE HERE
         val rBody: RequestBody = requestConverter.convert(response.body())
         val buffer = Buffer()
