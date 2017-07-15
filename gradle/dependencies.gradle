@@ -54,7 +54,7 @@ ext.deps = [
             config: "com.google.firebase:firebase-config:${versions.firebase}",
             database: "com.google.firebase:firebase-database:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-alpha5',
+        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-alpha6',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
