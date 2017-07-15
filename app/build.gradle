@@ -309,7 +309,7 @@ dependencies {
   implementation deps.autoDispose.android
   implementation deps.autoDispose.kotlin
   errorprone deps.errorProne.build.core
-  implementation deps.errorProne.compileOnly.annotations
+  compileOnly deps.errorProne.compileOnly.annotations
   implementation deps.barber.api
   kapt deps.barber.apt
   implementation deps.glide.core
@@ -343,8 +343,7 @@ dependencies {
   implementation deps.dagger.android
 
   // AutoValue
-  compileOnly deps.auto.value.apt.core
-  implementation deps.auto.value.extensions.moshi.compileOnly.annotations
+  compileOnly deps.auto.value.extensions.moshi.compileOnly.annotations
   kapt deps.auto.value.apt.core
   kapt deps.auto.value.extensions.moshi.apt.core
   kapt deps.auto.value.extensions.redacted.apt.core
@@ -360,11 +359,11 @@ dependencies {
   // Test
   testImplementation deps.rx.java2Extensions
   testImplementation deps.rx.relay
-  androidTestImplementation deps.errorProne.compileOnly.annotations
+  androidTestCompileOnly deps.errorProne.compileOnly.annotations
   androidTestImplementation deps.rx.java2
   androidTestImplementation deps.misc.jsr305
   testImplementation deps.misc.jsr305
-  testImplementation deps.errorProne.compileOnly.annotations
+  testCompileOnly deps.errorProne.compileOnly.annotations
   testImplementation deps.test.junit
   testImplementation deps.test.truth
 
