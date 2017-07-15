@@ -345,6 +345,7 @@ dependencies {
   implementation deps.dagger.android
 
   // AutoValue
+  compileOnly deps.auto.value.compileOnly.annotations
   compileOnly deps.auto.value.extensions.moshi.compileOnly.annotations
   kapt deps.auto.value.apt.core
   kapt deps.auto.value.extensions.moshi.apt.core
