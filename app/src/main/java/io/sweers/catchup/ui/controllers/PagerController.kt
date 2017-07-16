@@ -60,7 +60,10 @@ import io.sweers.catchup.util.resolveAttribute
 import io.sweers.catchup.util.setLightStatusBar
 import java.util.Arrays
 
-data class Service(@StringRes val name: Int, @DrawableRes val icon: Int, @ColorRes val accent: Int)
+data class Service(@StringRes val name: Int,
+    @DrawableRes val icon: Int,
+    @ColorRes val accent: Int,
+    val instantiator: () -> Controller)
 
 class PagerController : ButterKnifeController {
 
@@ -68,14 +71,38 @@ class PagerController : ButterKnifeController {
 
     private const val PAGE_TAG = "PagerController.pageTag"
     private val PAGE_DATA = arrayOf(
-        Service(R.string.hacker_news, R.drawable.logo_hn, R.color.hackerNewsAccent),
-        Service(R.string.reddit, R.drawable.logo_reddit, R.color.redditAccent),
-        Service(R.string.medium, R.drawable.logo_medium, R.color.mediumAccent),
-        Service(R.string.product_hunt, R.drawable.logo_ph, R.color.productHuntAccent),
-        Service(R.string.slashdot, R.drawable.logo_sd, R.color.slashdotAccent),
-        Service(R.string.designer_news, R.drawable.logo_dn, R.color.designerNewsAccent),
-        Service(R.string.dribbble, R.drawable.logo_dribbble, R.color.dribbbleAccent),
-        Service(R.string.github, R.drawable.logo_github, R.color.githubAccent))
+        Service(R.string.hacker_news,
+            R.drawable.logo_hn,
+            R.color.hackerNewsAccent,
+            { HackerNewsController() }),
+        Service(R.string.reddit,
+            R.drawable.logo_reddit,
+            R.color.redditAccent,
+            { RedditController() }),
+        Service(R.string.medium,
+            R.drawable.logo_medium,
+            R.color.mediumAccent,
+            { MediumController() }),
+        Service(R.string.product_hunt,
+            R.drawable.logo_ph,
+            R.color.productHuntAccent,
+            { ProductHuntController() }),
+        Service(R.string.slashdot,
+            R.drawable.logo_sd,
+            R.color.slashdotAccent,
+            { SlashdotController() }),
+        Service(R.string.designer_news,
+            R.drawable.logo_dn,
+            R.color.designerNewsAccent,
+            { DesignerNewsController() }),
+        Service(R.string.dribbble,
+            R.drawable.logo_dribbble,
+            R.color.dribbbleAccent,
+            { DribbbleController() }),
+        Service(R.string.github,
+            R.drawable.logo_github,
+            R.color.githubAccent,
+            { GitHubController() }))
   }
 
   private val resolvedColorCache = IntArray(PAGE_DATA.size)
@@ -101,18 +128,7 @@ class PagerController : ButterKnifeController {
     pagerAdapter = object : RouterPagerAdapter(this) {
       override fun configureRouter(router: Router, position: Int) {
         if (!router.hasRootController()) {
-          val page: Controller = when (position) {
-            0 -> HackerNewsController()
-            1 -> RedditController()
-            2 -> MediumController()
-            3 -> ProductHuntController()
-            4 -> SlashdotController()
-            5 -> DesignerNewsController()
-            6 -> DribbbleController()
-            7 -> GitHubController()
-            else -> RedditController()
-          }
-          router.setRoot(RouterTransaction.with(page)
+          router.setRoot(RouterTransaction.with(PAGE_DATA[position].instantiator())
               .tag(PAGE_TAG))
         }
       }
