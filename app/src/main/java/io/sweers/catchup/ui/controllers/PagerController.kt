@@ -16,9 +16,12 @@
 
 package io.sweers.catchup.ui.controllers
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
@@ -29,6 +32,7 @@ import android.support.design.widget.TabLayout
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
+import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v4.view.animation.LinearOutSlowInInterpolator
 import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.Toolbar
@@ -82,6 +86,7 @@ class PagerController : ButterKnifeController {
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.appbarlayout) lateinit var appBarLayout: AppBarLayout
   private var statusBarColorAnimator: ValueAnimator? = null
+  private var tabLayoutColorAnimator: Animator? = null
   private var colorNavBar = false
   private var tabLayoutIsPinned = false
   private var canAnimateColor = true
@@ -291,14 +296,39 @@ class PagerController : ButterKnifeController {
         // flashy way.
         if (Math.abs(lastPosition - position) > 1) {
           canAnimateColor = false
-          val color = getAndSaveColor(position)
-          tabLayout.setBackgroundColor(color)
-          if (tabLayoutIsPinned) {
-            activity?.window?.statusBarColor = color
-          }
-          if (colorNavBar) {
-            activity?.window?.navigationBarColor = color
-          }
+          // Start with the current tablayout color to feel more natural if we're in between
+          @ColorInt val startColor = (tabLayout.background as ColorDrawable).color
+          @ColorInt val endColor = getAndSaveColor(position)
+          tabLayoutColorAnimator?.cancel()
+          ValueAnimator.ofFloat(0f, 1f)
+              .run {
+                interpolator = FastOutSlowInInterpolator()  // TODO Use singleton
+                duration = 400
+                addListener(object : AnimatorListenerAdapter() {
+                  override fun onAnimationStart(animator: Animator, isReverse: Boolean) {
+                    tabLayoutColorAnimator = animator
+                  }
+
+                  override fun onAnimationEnd(animator: Animator) {
+                    removeAllUpdateListeners()
+                    removeListener(this)
+                    tabLayoutColorAnimator = null
+                  }
+                })
+                addUpdateListener { animator ->
+                  @ColorInt val color = argbEvaluator.evaluate(animator.animatedValue as Float,
+                      startColor,
+                      endColor) as Int
+                  tabLayout.setBackgroundColor(color)
+                  if (tabLayoutIsPinned) {
+                    activity?.window?.statusBarColor = color
+                  }
+                  if (colorNavBar) {
+                    activity?.window?.navigationBarColor = color
+                  }
+                }
+                start()
+              }
         }
         lastPosition = position
       }
