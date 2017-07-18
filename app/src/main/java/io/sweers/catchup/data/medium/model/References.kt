@@ -20,6 +20,9 @@ import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import io.sweers.inspector.Inspector
+import io.sweers.inspector.ValidationException
+import io.sweers.inspector.Validator
 
 @AutoValue
 abstract class References {
@@ -37,6 +40,19 @@ abstract class References {
     @JvmStatic
     fun jsonAdapter(moshi: Moshi): JsonAdapter<References> {
       return AutoValue_References.MoshiJsonAdapter(moshi)
+    }
+
+    @JvmStatic
+    fun validator(inspector: Inspector /* Remove when inspector supports 0 arg */): Validator<References> {
+      return object : Validator<References>() {
+        override fun validate(references: References) {
+          references.post().values.forEach {
+            if (it.creatorId() !in references.user()) {
+              throw ValidationException("Medium Post ${it.id()} creator not in user map.")
+            }
+          }
+        }
+      }.nullSafe()
     }
   }
 }

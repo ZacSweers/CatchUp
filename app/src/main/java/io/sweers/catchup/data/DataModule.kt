@@ -29,6 +29,7 @@ import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
 import io.sweers.catchup.data.adapters.UnescapeJsonAdapter
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.injection.qualifiers.NetworkInterceptor
+import io.sweers.inspector.Inspector
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -78,11 +79,25 @@ object DataModule {
   @Provides
   @JvmStatic
   internal fun provideMoshi(): Moshi {
-    return Moshi.Builder().add(AutoValueMoshiAdapterFactory.create())
+    return Moshi.Builder().add(ModelArbiter.createMoshiAdapterFactory())
         .add(UnescapeJsonAdapter.FACTORY)
         .add(ArrayMapJsonAdapter.FACTORY)
         .add(ArrayCollectionJsonAdapter.FACTORY)
         .build()
+  }
+
+  @Provides
+  @JvmStatic
+  internal fun provideInspector(): Inspector {
+    return Inspector.Builder()
+        .add(ModelArbiter.createValidatorFactory())
+        .build()
+  }
+
+  @Provides
+  @JvmStatic
+  internal fun provideInspectorConverterFactory(inspector: Inspector): InspectorConverterFactory {
+    return InspectorConverterFactory.create(inspector)
   }
 
   @Provides

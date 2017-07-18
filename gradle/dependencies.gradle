@@ -28,6 +28,7 @@ def versions = [
     espresso: '2.2.1',
     firebase: '10.2.1',
     glide: '4.0.0-RC1',
+    inspector: '0.2.0',
     kotlin: '1.1.4-eap-11',
     leakcanary: '1.5.1',
     okhttp: '3.8.1',
@@ -54,7 +55,7 @@ ext.deps = [
             config: "com.google.firebase:firebase-config:${versions.firebase}",
             database: "com.google.firebase:firebase-database:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-alpha6',
+        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-alpha7',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
@@ -179,6 +180,25 @@ ext.deps = [
     glide: [
         core: "com.github.bumptech.glide:glide:${versions.glide}",
         okhttp: "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
+    ],
+
+    inspector: [
+        apt: [
+            compiler: "io.sweers.inspector:inspector-compiler:${versions.inspector}",
+            extensions: [
+                android: "io.sweers.inspector:inspector-android-compiler-extension:${versions.inspector}",
+                autovalue: "io.sweers.inspector:inspector-autovalue-compiler-extension:${versions.inspector}",
+                nullability: "io.sweers.inspector:inspector-nullability-compiler-extension:${versions.inspector}",
+            ]
+        ],
+        core: "io.sweers.inspector:inspector:${versions.inspector}",
+        factoryCompiler: [
+            apt: "io.sweers.inspector:inspector-factory-compiler:${versions.inspector}",
+            compileOnly: [
+                annotations: "io.sweers.inspector:inspector-factory-compiler-annotations:${versions.inspector}"
+            ]
+        ]
+
     ],
 
     kotlin: [

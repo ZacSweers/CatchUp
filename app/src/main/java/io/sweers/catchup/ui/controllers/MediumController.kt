@@ -36,6 +36,7 @@ import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.EpochInstantJsonAdapter
+import io.sweers.catchup.data.InspectorConverterFactory
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
@@ -184,10 +185,12 @@ class MediumController : BaseNewsController<MediumPost> {
       @JvmStatic
       internal fun provideMediumService(@InternalApi client: Lazy<OkHttpClient>,
           @InternalApi moshi: Moshi,
+          inspectorConverterFactory: InspectorConverterFactory,
           rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): MediumService {
         val retrofit = Retrofit.Builder().baseUrl(MediumService.ENDPOINT)
             .callFactory { client.get().newCall(it) }
             .addCallAdapterFactory(rxJavaCallAdapterFactory)
+            .addConverterFactory(inspectorConverterFactory)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .validateEagerly(BuildConfig.DEBUG)
             .build()

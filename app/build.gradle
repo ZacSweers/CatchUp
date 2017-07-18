@@ -54,6 +54,7 @@ repositories {
   maven { url "https://jitpack.io" }
   maven { url "https://maven.google.com" }
   maven { url "https://dl.bintray.com/kotlin/kotlin-eap-1.1" }
+  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 android {
@@ -343,6 +344,15 @@ dependencies {
   compileOnly deps.misc.javaxInject
   implementation deps.dagger.core
   implementation deps.dagger.android
+
+  // Inspector
+  compileOnly deps.inspector.factoryCompiler.compileOnly.annotations
+  compileOnly deps.inspector.apt.extensions.android
+  compileOnly deps.inspector.apt.extensions.nullability
+  kapt deps.inspector.apt.extensions.autovalue
+  kapt deps.inspector.apt.compiler
+  kapt deps.inspector.factoryCompiler.apt
+  implementation deps.inspector.core
 
   // AutoValue
   compileOnly deps.auto.value.compileOnly.annotations
