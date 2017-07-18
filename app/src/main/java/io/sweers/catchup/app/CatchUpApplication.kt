@@ -22,8 +22,8 @@ import android.content.SharedPreferences
 import android.support.v7.app.AppCompatDelegate
 import com.bumptech.glide.Glide
 import com.f2prateek.rx.preferences2.RxSharedPreferences
+import com.gabrielittner.threetenbp.LazyThreeTen
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.jakewharton.threetenabp.AndroidThreeTen
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import dagger.android.DispatchingAndroidInjector
@@ -51,7 +51,7 @@ open class CatchUpApplication : Application(), HasActivityInjector {
         .application(this)
         .build()
     component.inject(this)
-    AndroidThreeTen.init(this)
+    LazyThreeTen.init(this)
     P.init(this, false)
     P.setSharedPreferences(sharedPreferences, rxPreferences)
 

@@ -296,8 +296,8 @@ dependencies {
   implementation deps.rx.binding.core
   implementation deps.rx.binding.v4
   implementation deps.rx.binding.design
+  implementation deps.misc.lazythreeten
   implementation deps.misc.timber
-  implementation deps.misc.threetenabp
   debugImplementation deps.misc.debug.madge
   debugImplementation deps.misc.debug.scalpel
   debugImplementation deps.misc.debug.processPhoenix
