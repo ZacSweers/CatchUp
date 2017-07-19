@@ -41,12 +41,12 @@ abstract class ApplicationModule {
     @JvmStatic
     fun provideRemoteConfig(@ApplicationContext context: Context): FirebaseRemoteConfig {
       FirebaseApp.initializeApp(context)
-      val config = FirebaseRemoteConfig.getInstance()
-      val configSettings = FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(
-          BuildConfig.DEBUG)
-          .build()
-      config.setConfigSettings(configSettings)
-      return config
+      return FirebaseRemoteConfig.getInstance()
+          .apply {
+            setConfigSettings(FirebaseRemoteConfigSettings.Builder()
+                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .build())
+          }
     }
   }
 }
