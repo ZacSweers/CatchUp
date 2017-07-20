@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.debug
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -46,10 +45,7 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.P
 import io.sweers.catchup.R
-import io.sweers.catchup.app.ApplicationComponent
-import io.sweers.catchup.app.CatchUpApplication
 import io.sweers.catchup.data.LumberYard
-import io.sweers.catchup.injection.scopes.PerView
 import io.sweers.catchup.ui.logs.LogsDialog
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.truncateAt
@@ -60,7 +56,6 @@ import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.mock.NetworkBehavior
 import java.util.Locale
 import java.util.concurrent.TimeUnit.MILLISECONDS
-import javax.inject.Inject
 
 @SuppressLint("SetTextI18n")
 class DebugView @JvmOverloads constructor(context: Context,
@@ -93,32 +88,34 @@ class DebugView @JvmOverloads constructor(context: Context,
   @BindView(R.id.debug_okhttp_cache_network_count)
   lateinit var okHttpCacheNetworkCountView: TextView
   @BindView(R.id.debug_okhttp_cache_hit_count) lateinit var okHttpCacheHitCountView: TextView
-  @Inject lateinit var client: Lazy<OkHttpClient>
-  @Inject lateinit var lumberYard: LumberYard
-  @Inject lateinit var app: Application
-  internal var isMockMode = P.DebugMockModeEnabled.get()
-  internal var behavior: NetworkBehavior
-  internal var networkDelay = P.DebugNetworkDelay.rx()
-  internal var networkFailurePercent = P.DebugNetworkFailurePercent.rx()
-  internal var networkVariancePercent = P.DebugNetworkVariancePercent.rx()
-  //  @Inject MockGithubService mockGithubService;
+  private lateinit var client: Lazy<OkHttpClient>
+  private lateinit var lumberYard: LumberYard
+  private var isMockMode = P.DebugMockModeEnabled.get()
+  private var networkDelay = P.DebugNetworkDelay.rx()
+  private var networkFailurePercent = P.DebugNetworkFailurePercent.rx()
+  private var networkVariancePercent = P.DebugNetworkVariancePercent.rx()
+  private var behavior: NetworkBehavior = NetworkBehavior.create().apply {
+    setDelay(networkDelay.get().toLong(), MILLISECONDS)
+    setFailurePercent(networkFailurePercent.get())
+    setVariancePercent(networkVariancePercent.get())
+  }
   private val animationSpeed = P.DebugAnimationSpeed.rx()
   private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
   private val pixelRatioEnabled = P.DebugPixelRatioEnabled.rx()
   private val scalpelEnabled = P.DebugScalpelEnabled.rx()
   private val scalpelWireframeEnabled = P.DebugScalpelWireframeDrawer.rx()
 
+  constructor(context: Context,
+      client: Lazy<OkHttpClient>,
+      lumberYard: LumberYard) : this(context) {
+    // TODO check out jw's assisted injection. Dagger-android doesn't make view injection easy
+    // because it doesn't support it, and via subcomponents we can't get ahold of an instance of the
+    // internal ActivityComponent
+    this.client = client
+    this.lumberYard = lumberYard
+  }
+
   init {
-    DaggerDebugView_Component.builder()
-        .applicationComponent(CatchUpApplication.component())
-        .build()
-        .inject(this)
-
-    behavior = NetworkBehavior.create()
-    behavior.setDelay(networkDelay.get().toLong(), MILLISECONDS)
-    behavior.setFailurePercent(networkFailurePercent.get())
-    behavior.setVariancePercent(networkVariancePercent.get())
-
     // Inflate all of the controls and inject them.
     LayoutInflater.from(context)
         .inflate(R.layout.debug_view_content, this)
@@ -306,12 +303,6 @@ class DebugView @JvmOverloads constructor(context: Context,
     } catch (e: Exception) {
       throw RuntimeException("Unable to apply animation speed.", e)
     }
-  }
-
-  @PerView
-  @dagger.Component(dependencies = arrayOf(ApplicationComponent::class))
-  interface Component {
-    fun inject(debugView: DebugView)
   }
 
   companion object {

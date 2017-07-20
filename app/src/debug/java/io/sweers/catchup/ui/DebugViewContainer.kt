@@ -35,6 +35,7 @@ import com.jakewharton.madge.MadgeFrameLayout
 import com.jakewharton.scalpel.ScalpelFrameLayout
 import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.kotlin.autoDisposeWith
+import dagger.Lazy
 import io.reactivex.disposables.CompositeDisposable
 import io.sweers.catchup.P
 import io.sweers.catchup.R
@@ -42,6 +43,7 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.base.ActivityEvent
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.debug.DebugView
+import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
@@ -50,7 +52,9 @@ import javax.inject.Inject
  * An [ViewContainer] for debug builds which wraps a sliding drawer on the right that holds
  * all of the debug information and settings.
  */
-class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard) : ViewContainer {
+class DebugViewContainer @Inject constructor(
+    private val lumberYard: LumberYard,
+    private val lazyOkHttpClient: Lazy<OkHttpClient>) : ViewContainer {
   private val seenDebugDrawer = P.DebugSeenDebugDrawer.rx()
   private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
   private val pixelRatioEnabled = P.DebugPixelRatioEnabled.rx()
@@ -67,7 +71,7 @@ class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard)
     val unbinder = `DebugViewContainer$ViewHolder_ViewBinding`(viewHolder, contentView)
 
     val drawerContext = ContextThemeWrapper(activity, R.style.DebugDrawer)
-    val debugView = DebugView(drawerContext)
+    val debugView = DebugView(drawerContext, lazyOkHttpClient, lumberYard)
     viewHolder.debugDrawer.addView(debugView)
 
     // Set up the contextual actions to watch views coming in and out of the content area.
@@ -97,9 +101,9 @@ class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard)
       seenDebugDrawer.set(true)
     }
 
-    val subscriptions = CompositeDisposable()
-    setupMadge(viewHolder, subscriptions)
-    setupScalpel(viewHolder, subscriptions)
+    val disposables = CompositeDisposable()
+    setupMadge(viewHolder, disposables)
+    setupScalpel(viewHolder, disposables)
 
     riseAndShine(activity)
     activity.lifecycle()
@@ -108,7 +112,7 @@ class DebugViewContainer @Inject constructor(private val lumberYard: LumberYard)
         .autoDisposeWith(activity)
         .subscribe {
           unbinder.unbind()
-          subscriptions.clear()
+          disposables.clear()
         }
     return viewHolder.content
   }

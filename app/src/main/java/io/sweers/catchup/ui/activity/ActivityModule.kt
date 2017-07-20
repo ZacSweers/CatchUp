@@ -30,7 +30,8 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 
-@Module(includes = arrayOf(UiModule::class), subcomponents = arrayOf(ActivityComponent::class))
+@Module(includes = arrayOf(UiModule::class),
+    subcomponents = arrayOf(ActivityComponent::class))
 abstract class ActivityModule {
 
   @Binds

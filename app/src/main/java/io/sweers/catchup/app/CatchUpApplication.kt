@@ -34,7 +34,7 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.util.d
 import javax.inject.Inject
 
-open class CatchUpApplication : Application(), HasActivityInjector {
+abstract class CatchUpApplication : Application(), HasActivityInjector {
   @Inject lateinit internal var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
   @Inject lateinit var sharedPreferences: SharedPreferences
   @Inject lateinit var lumberYard: LumberYard
@@ -47,10 +47,10 @@ open class CatchUpApplication : Application(), HasActivityInjector {
       // This process is dedicated to LeakCanary for heap analysis.
       return
     }
-    component = DaggerApplicationComponent.builder()
+    DaggerApplicationComponent.builder()
         .application(this)
         .build()
-    component.inject(this)
+        .inject(this)
     LazyThreeTen.init(this)
     P.init(this, false)
     P.setSharedPreferences(sharedPreferences, rxPreferences)
@@ -102,11 +102,6 @@ open class CatchUpApplication : Application(), HasActivityInjector {
   companion object {
 
     @JvmStatic lateinit var refWatcher: RefWatcher
-    private lateinit var component: ApplicationComponent
-
-    fun component(): ApplicationComponent {
-      return component
-    }
 
     fun refWatcher(): RefWatcher {
       return refWatcher

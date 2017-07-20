@@ -17,36 +17,25 @@
 package io.sweers.catchup.app
 
 import android.app.Application
-import android.content.Context
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import io.sweers.catchup.data.DataModule
-import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.data.VariantDataModule
 import io.sweers.catchup.data.smmry.SmmryModule
 import io.sweers.catchup.injection.ConductorInjectionModule
-import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.ui.activity.ActivityModule
-import okhttp3.OkHttpClient
 
-@Component(modules = arrayOf(ActivityModule::class, AndroidInjectionModule::class,
-    ApplicationModule::class, ConductorInjectionModule::class, DataModule::class,
-    SmmryModule::class, VariantDataModule::class))
+@Component(modules = arrayOf(ActivityModule::class,
+    AndroidInjectionModule::class,
+    ApplicationModule::class,
+    ConductorInjectionModule::class,
+    DataModule::class,
+    SmmryModule::class,
+    VariantDataModule::class))
 interface ApplicationComponent {
 
   fun inject(application: CatchUpApplication)
-
-  fun lumberYard(): LumberYard
-
-  fun application(): Application
-
-  fun okHttpClient(): OkHttpClient
-
-  @ApplicationContext fun applicationContext(): Context
-
-  fun remoteConfig(): FirebaseRemoteConfig
 
   @Component.Builder
   interface Builder {
