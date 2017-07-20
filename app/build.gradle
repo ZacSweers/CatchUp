@@ -220,6 +220,13 @@ psync {
   packageName = "io.sweers.catchup"
 }
 
+if (gradle.startParameter.isOffline()) {
+  afterEvaluate {
+    // Because this stalls in offline mode
+    tasks.installApolloCodegen.deleteAllActions()
+  }
+}
+
 apollo {
   customTypeMapping {
     DateTime = "org.threeten.bp.Instant"
