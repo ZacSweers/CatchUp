@@ -99,11 +99,11 @@ fun Palette.orderedSwatches(
     @FloatRange(from = 0.0, to = 1.0) darkAlpha: Float,
     @FloatRange(from = 0.0, to = 1.0) lightAlpha: Float): List<Pair<Swatch, Float>> {
   return listOf(
-      vibrantSwatch?.let { Pair(it, darkAlpha) },
-      lightVibrantSwatch?.let { Pair(it, lightAlpha) },
-      darkVibrantSwatch?.let { Pair(it, darkAlpha) },
-      mutedSwatch?.let { Pair(it, darkAlpha) },
-      lightMutedSwatch?.let { Pair(it, lightAlpha) },
-      darkMutedSwatch?.let { Pair(it, darkAlpha) }
+      vibrantSwatch?.let { it to darkAlpha },
+      lightVibrantSwatch?.let { it to lightAlpha },
+      darkVibrantSwatch?.let { it to darkAlpha },
+      mutedSwatch?.let { it to darkAlpha },
+      lightMutedSwatch?.let { it to lightAlpha },
+      darkMutedSwatch?.let { it to darkAlpha }
   ).filterNotNull()
 }
