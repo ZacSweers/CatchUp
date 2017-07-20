@@ -33,9 +33,9 @@ abstract class FloatProperty<T>(name: String) : Property<T, Float>(Float::class.
    * A type-specific override of the [.set] that is faster when dealing
    * with fields of type `float`.
    */
-  abstract fun setValue(`object`: T, value: Float)
+  abstract fun setValue(target: T, value: Float)
 
-  override fun set(`object`: T, value: Float?) {
-    setValue(`object`, value!!)
+  override fun set(target: T, value: Float?) {
+    setValue(target, value!!)
   }
 }

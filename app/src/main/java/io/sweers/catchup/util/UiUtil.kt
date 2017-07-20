@@ -86,7 +86,6 @@ object UiUtil {
       bounded: Boolean): RippleDrawable {
     // try the named swatches in preference order
     val rippleColor = palette.orderedSwatches(darkAlpha, lightAlpha)
-        .filterNotNull()
         .firstOrNull()
         ?.let { (swatch, alpha) ->
           return@let ColorUtils.modifyAlpha(swatch.rgb, alpha)
@@ -98,7 +97,7 @@ object UiUtil {
 
 fun Palette.orderedSwatches(
     @FloatRange(from = 0.0, to = 1.0) darkAlpha: Float,
-    @FloatRange(from = 0.0, to = 1.0) lightAlpha: Float): List<Pair<Swatch, Float>?> {
+    @FloatRange(from = 0.0, to = 1.0) lightAlpha: Float): List<Pair<Swatch, Float>> {
   return listOf(
       vibrantSwatch?.let { Pair(it, darkAlpha) },
       lightVibrantSwatch?.let { Pair(it, lightAlpha) },
@@ -106,5 +105,5 @@ fun Palette.orderedSwatches(
       mutedSwatch?.let { Pair(it, darkAlpha) },
       lightMutedSwatch?.let { Pair(it, lightAlpha) },
       darkMutedSwatch?.let { Pair(it, darkAlpha) }
-  )
+  ).filterNotNull()
 }

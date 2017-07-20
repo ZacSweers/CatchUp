@@ -19,5 +19,5 @@ package io.sweers.catchup.util
 import android.os.Build
 
 fun isM(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-
-fun isL(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+fun isN(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+fun isO(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O

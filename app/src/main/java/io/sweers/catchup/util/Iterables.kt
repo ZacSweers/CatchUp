@@ -19,7 +19,6 @@ package io.sweers.catchup.util
 /**
  * Utils for Iterables
  */
-
 object Iterables {
 
   /**
