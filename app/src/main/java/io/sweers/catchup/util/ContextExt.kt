@@ -50,16 +50,14 @@ private fun cleanDir(dir: File): Long {
  * Attempt to launch the supplied [Intent]. Queries on-device packages before launching and
  * will display a simple message if none are available to handle it.
  */
-fun Context.maybeStartActivity(
-    intent: Intent): Boolean = maybeStartActivity(intent, false)
+fun Context.maybeStartActivity(intent: Intent): Boolean = maybeStartActivity(intent, false)
 
 /**
  * Attempt to launch Android's chooser for the supplied [Intent]. Queries on-device
  * packages before launching and will display a simple message if none are available to handle
  * it.
  */
-fun Context.maybeStartChooser(
-    intent: Intent): Boolean = maybeStartActivity(intent, true)
+fun Context.maybeStartChooser(intent: Intent): Boolean = maybeStartActivity(intent, true)
 
 private fun Context.maybeStartActivity(inputIntent: Intent,
     chooser: Boolean): Boolean {
@@ -89,16 +87,13 @@ private val TYPED_VALUE = TypedValue()
 @ColorInt
 @UiThread
 fun Context.resolveAttribute(@AttrRes resId: Int): Int {
-  val theme = theme
   theme.resolveAttribute(resId, TYPED_VALUE, true)
   @ColorInt val color = TYPED_VALUE.data
   return color
 }
 
 fun Context.isInNightMode(): Boolean {
-  val conf = resources
-      .configuration
-  return conf.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+  return resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 }
 
 /**
@@ -107,8 +102,7 @@ fun Context.isInNightMode(): Boolean {
  */
 fun Context.isNavBarOnBottom(): Boolean {
   val res = resources
-  val cfg = resources
-      .configuration
+  val cfg = resources.configuration
   val dm = res.displayMetrics
   val canMove = dm.widthPixels != dm.heightPixels && cfg.smallestScreenWidthDp < 600
   return !canMove || dm.widthPixels < dm.heightPixels
