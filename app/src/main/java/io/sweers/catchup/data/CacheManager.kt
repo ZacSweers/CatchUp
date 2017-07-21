@@ -146,7 +146,7 @@ private class CachingCall<R> internal constructor(
     executed = true
 
     // Is it cached?
-    // Take a "isRefreshing" flag
+    // Take a "shouldUseCache" flag
     val cacheKey = createKeyFromRequest(delegate.request())
     val cachedData = cacheManager.get(cacheKey)
     if (cachedData != null) {
