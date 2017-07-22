@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.controllers
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.util.LruCache
 import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
 import com.bluelinelabs.conductor.Controller
@@ -35,8 +34,6 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
-import io.sweers.catchup.data.CacheManager
-import io.sweers.catchup.data.CachingAdapterFactory
 import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
@@ -131,10 +128,6 @@ class DesignerNewsController : BaseNewsController<CatchUpItem> {
     @dagger.Module
     companion object {
 
-      @Provides @JvmStatic internal fun provideCacheManager(): CacheManager {
-        return CacheManager(LruCache(10))
-      }
-
       @Provides @InternalApi @JvmStatic internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
         return moshi.newBuilder()
             .add(Instant::class.java, ISO8601InstantAdapter())
@@ -144,21 +137,10 @@ class DesignerNewsController : BaseNewsController<CatchUpItem> {
 
       @Provides @JvmStatic internal fun provideDesignerNewsService(client: Lazy<OkHttpClient>,
           @InternalApi moshi: Moshi,
-          rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
-          cacheManager: CacheManager): DesignerNewsService {
+          rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DesignerNewsService {
 
         val retrofit = Retrofit.Builder().baseUrl(DesignerNewsService.ENDPOINT)
             .callFactory { client.get().newCall(it) }
-//            .addCallAdapterFactory(LoggingCallAdapterFactory(object : Logger {
-//              override fun <T> onResponse(call: Call<T>, response: Response<T>) {
-//                d { "Read response for ${call.request().url()}" }
-//              }
-//
-//              override fun <T> onFailure(call: Call<T>, t: Throwable) {
-//                throw AssertionError()
-//              }
-//            }))
-            .addCallAdapterFactory(CachingAdapterFactory(cacheManager))
             .addCallAdapterFactory(rxJavaCallAdapterFactory)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .validateEagerly(BuildConfig.DEBUG)
