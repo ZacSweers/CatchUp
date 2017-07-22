@@ -17,18 +17,12 @@
 package io.sweers.catchup.data
 
 import android.support.annotation.VisibleForTesting
-import android.support.v4.util.LruCache
-import okhttp3.MediaType
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okio.Buffer
-import org.threeten.bp.Instant
-import org.threeten.bp.temporal.ChronoUnit
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Callback
-import retrofit2.Converter
 import retrofit2.Response
 import retrofit2.Retrofit
 import java.io.EOFException
@@ -36,178 +30,6 @@ import java.io.IOException
 import java.lang.reflect.Type
 import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
-
-/**
- * Creates a key from a given [request]].
- *
- * @param request The request to generated a key from
- * @param keyMutator An optional function to attach any other information you want to add to the key. Note that this should be idempotent.
- */
-fun createKeyFromRequest(request: Request, keyMutator: (String) -> String = { it }): String {
-  val url = request.url()
-  return keyMutator("${url.host()}${url.pathSegments().joinToString("/")}")
-}
-
-data class DataHolder(
-    val source: String,
-    val expiration: Instant,
-    val mediaType: MediaType
-)
-
-class CacheManager(
-    //    val diskCache: DiskLruCache,
-    private val memoryCache: LruCache<String, DataHolder>
-) {
-
-  fun get(key: String): DataHolder? {
-    val now = Instant.now()
-    memoryCache[key]?.let {
-      if (it.expiration.isAfter(now)) {
-        return it
-      }
-    }
-//    diskCache[key]?.let {
-//      memoryCache.put(key, it.getInputStream())
-//    }
-    return null
-  }
-
-  fun get(key: String, creator: () -> DataHolder): DataHolder {
-    val now = Instant.now()
-    memoryCache[key]?.let {
-      if (it.expiration.isBefore(now)) {
-        return it
-      }
-    }
-//    diskCache[key]?.let {
-//      memoryCache.put(key, it.getInputStream())
-//    }
-    return creator()
-  }
-
-  fun put(key: String, data: DataHolder) {
-    memoryCache.put(key, data)
-    // Write to disk async
-  }
-}
-
-class CachingAdapterFactory(
-    private val cacheManager: CacheManager) : CallAdapter.Factory() {
-  override fun get(returnType: Type,
-      annotations: Array<out Annotation>,
-      retrofit: Retrofit): CallAdapter<*, *>? {
-    val adapter = retrofit.nextCallAdapter(this, returnType, annotations)
-    return Adapter(cacheManager, annotations, retrofit, adapter)
-  }
-
-  private class Adapter<R, T> internal constructor(
-      private val cacheManager: CacheManager,
-      annotations: Array<out Annotation>,
-      retrofit: Retrofit,
-      private val delegate: CallAdapter<R, T>) : CallAdapter<R, T> {
-
-    private val requestConverter: Converter<R, RequestBody>
-        = retrofit.requestBodyConverter<R>(delegate.responseType(), annotations, annotations)
-    private val responseConverter: Converter<ResponseBody, R>
-        = retrofit.responseBodyConverter<R>(delegate.responseType(), annotations)
-
-    override fun responseType(): Type {
-      return delegate.responseType()
-    }
-
-    override fun adapt(call: Call<R>): T {
-      return delegate.adapt(
-          CachingCall(cacheManager, requestConverter, responseConverter, call))
-    }
-  }
-}
-
-private class CachingCall<R> internal constructor(
-    private val cacheManager: CacheManager,
-    private val requestConverter: Converter<R, RequestBody>,
-    private val responseConverter: Converter<ResponseBody, R>,
-    private val delegate: Call<R>) : Call<R> {
-
-  private var executed = false
-
-  override fun enqueue(callback: Callback<R>) {
-    executed = true
-
-    // Is it cached?
-    val cacheKey = createKeyFromRequest(delegate.request())
-    val cachedData = cacheManager.get(cacheKey)
-    if (cachedData != null && cachedData.expiration.isAfter(Instant.now())) {
-      callback.onResponse(delegate, Response.success(
-          responseConverter.convert(ResponseBody.create(cachedData.mediaType, cachedData.source))))
-    } else {
-      delegate.enqueue(object : Callback<R> {
-        override fun onResponse(call: Call<R>, response: Response<R>) {
-          val rBody: RequestBody = requestConverter.convert(response.body())
-          val buffer = Buffer()
-          rBody.writeTo(buffer)
-          val dataToCache = DataHolder(buffer.readUtf8(),
-              Instant.now().plus(1, ChronoUnit.DAYS),
-              rBody.contentType()!!)
-          cacheManager.put(cacheKey, dataToCache)
-          callback.onResponse(call, response)
-        }
-
-        override fun onFailure(call: Call<R>, t: Throwable) {
-          callback.onFailure(call, t)
-        }
-      })
-    }
-  }
-
-  override fun isExecuted(): Boolean {
-    // Track our own execution here
-    return executed || delegate.isExecuted
-  }
-
-  @Throws(IOException::class)
-  override fun execute(): Response<R> {
-    executed = true
-    // If cached, make our own response here!
-    val cacheKey = createKeyFromRequest(delegate.request())
-    val cachedData = cacheManager.get(cacheKey)
-    if (cachedData != null && cachedData.expiration.isAfter(Instant.now())) {
-      return Response.success(
-          responseConverter.convert(ResponseBody.create(cachedData.mediaType, cachedData.source)))
-    } else {
-      try {
-        return delegate.execute().also {
-          // Cache here
-          val rBody: RequestBody = requestConverter.convert(it.body())
-          val buffer = Buffer()
-          rBody.writeTo(buffer)
-          val dataToCache = DataHolder(buffer.readUtf8(),
-              Instant.now().plus(1, ChronoUnit.DAYS),
-              rBody.contentType()!!)
-          cacheManager.put(cacheKey, dataToCache)
-        }
-      } catch (e: IOException) {
-        throw e
-      }
-    }
-  }
-
-  override fun cancel() {
-    delegate.cancel()
-  }
-
-  override fun isCanceled(): Boolean {
-    return delegate.isCanceled
-  }
-
-  // Performing deep clone.
-  override fun clone(): Call<R> {
-    return CachingCall(cacheManager, requestConverter, responseConverter, delegate.clone())
-  }
-
-  override fun request(): Request {
-    return delegate.request()
-  }
-}
 
 /**
  * Adapted from https://gist.github.com/NightlyNexus/2e880c86668815690cba8b61501c9e14
