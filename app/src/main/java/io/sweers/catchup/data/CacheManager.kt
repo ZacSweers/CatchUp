@@ -48,20 +48,6 @@ fun createKeyFromRequest(request: Request, keyMutator: (String) -> String = { it
   return keyMutator("${url.host()}${url.pathSegments().joinToString("/")}")
 }
 
-interface RefreshStatus {
-  fun isRefreshing(): Boolean
-}
-
-//class RefreshMessager : RefreshStatus {
-//
-////  val isRefreshing = false
-////
-////  override fun isRefreshing(): Boolean {
-////
-////  }
-//
-//}
-
 data class DataHolder(
     val source: String,
     val expiration: Instant,
@@ -101,11 +87,12 @@ class CacheManager(
 
   fun put(key: String, data: DataHolder) {
     memoryCache.put(key, data)
+    // Write to disk async
   }
-
 }
 
-class CachingAdapterFactory(private val cacheManager: CacheManager) : CallAdapter.Factory() {
+class CachingAdapterFactory(
+    private val cacheManager: CacheManager) : CallAdapter.Factory() {
   override fun get(returnType: Type,
       annotations: Array<out Annotation>,
       retrofit: Retrofit): CallAdapter<*, *>? {
@@ -129,7 +116,8 @@ class CachingAdapterFactory(private val cacheManager: CacheManager) : CallAdapte
     }
 
     override fun adapt(call: Call<R>): T {
-      return delegate.adapt(CachingCall(cacheManager, requestConverter, responseConverter, call))
+      return delegate.adapt(
+          CachingCall(cacheManager, requestConverter, responseConverter, call))
     }
   }
 }
@@ -146,16 +134,14 @@ private class CachingCall<R> internal constructor(
     executed = true
 
     // Is it cached?
-    // Take a "shouldUseCache" flag
     val cacheKey = createKeyFromRequest(delegate.request())
     val cachedData = cacheManager.get(cacheKey)
-    if (cachedData != null) {
+    if (cachedData != null && cachedData.expiration.isAfter(Instant.now())) {
       callback.onResponse(delegate, Response.success(
           responseConverter.convert(ResponseBody.create(cachedData.mediaType, cachedData.source))))
     } else {
       delegate.enqueue(object : Callback<R> {
         override fun onResponse(call: Call<R>, response: Response<R>) {
-          // TODO (actually) asynchronously cache here
           val rBody: RequestBody = requestConverter.convert(response.body())
           val buffer = Buffer()
           rBody.writeTo(buffer)
@@ -167,7 +153,6 @@ private class CachingCall<R> internal constructor(
         }
 
         override fun onFailure(call: Call<R>, t: Throwable) {
-          // TODO or if it was a refresh/stale and refetched, show old cache instead?
           callback.onFailure(call, t)
         }
       })
@@ -185,21 +170,21 @@ private class CachingCall<R> internal constructor(
     // If cached, make our own response here!
     val cacheKey = createKeyFromRequest(delegate.request())
     val cachedData = cacheManager.get(cacheKey)
-    if (cachedData != null) {
+    if (cachedData != null && cachedData.expiration.isAfter(Instant.now())) {
       return Response.success(
           responseConverter.convert(ResponseBody.create(cachedData.mediaType, cachedData.source)))
     } else {
       try {
-        val response = delegate.execute().also {  }
-        // CACHE HERE
-        val rBody: RequestBody = requestConverter.convert(response.body())
-        val buffer = Buffer()
-        rBody.writeTo(buffer)
-        val dataToCache = DataHolder(buffer.readUtf8(),
-            Instant.now().plus(1, ChronoUnit.DAYS),
-            rBody.contentType()!!)
-        cacheManager.put(cacheKey, dataToCache)
-        return response
+        return delegate.execute().also {
+          // Cache here
+          val rBody: RequestBody = requestConverter.convert(it.body())
+          val buffer = Buffer()
+          rBody.writeTo(buffer)
+          val dataToCache = DataHolder(buffer.readUtf8(),
+              Instant.now().plus(1, ChronoUnit.DAYS),
+              rBody.contentType()!!)
+          cacheManager.put(cacheKey, dataToCache)
+        }
       } catch (e: IOException) {
         throw e
       }
@@ -229,9 +214,13 @@ private class CachingCall<R> internal constructor(
  */
 class LoggingCallAdapterFactory(private val logger: Logger) : CallAdapter.Factory() {
   interface Logger {
-    fun <T> onResponse(call: Call<T>, response: Response<T>)
+    fun <T> onResponse(call: Call<T>, response: Response<T>) {
 
-    fun <T> onFailure(call: Call<T>, t: Throwable)
+    }
+
+    fun <T> onFailure(call: Call<T>, t: Throwable) {
+
+    }
   }
 
   override fun get(returnType: Type,
