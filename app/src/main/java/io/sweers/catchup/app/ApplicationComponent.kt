@@ -24,9 +24,11 @@ import io.sweers.catchup.data.DataModule
 import io.sweers.catchup.data.VariantDataModule
 import io.sweers.catchup.data.smmry.SmmryModule
 import io.sweers.catchup.injection.ConductorInjectionModule
-import io.sweers.catchup.ui.activity.ActivityModule
+import io.sweers.catchup.injection.scopes.PerApp
+import io.sweers.catchup.ui.activity.ActivityBindingModule
 
-@Component(modules = arrayOf(ActivityModule::class,
+@PerApp
+@Component(modules = arrayOf(ActivityBindingModule::class,
     AndroidInjectionModule::class,
     ApplicationModule::class,
     ConductorInjectionModule::class,

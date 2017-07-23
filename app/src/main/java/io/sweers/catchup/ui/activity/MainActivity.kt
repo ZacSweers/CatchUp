@@ -24,8 +24,15 @@ import butterknife.Unbinder
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
+import com.f2prateek.rx.preferences2.Preference
+import com.f2prateek.rx.preferences2.RxSharedPreferences
+import dagger.Module
+import dagger.Provides
+import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking
+import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.ViewContainer
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.controllers.PagerController
@@ -77,5 +84,37 @@ class MainActivity : BaseActivity() {
     customTab.connectionCallback = null
     unbinder?.unbind()
     super.onDestroy()
+  }
+
+}
+
+@Module
+internal object MainActivityModule {
+
+  @Provides
+  @JvmStatic
+  @PerActivity
+  internal fun provideCustomTabActivityHelper(): CustomTabActivityHelper {
+    return CustomTabActivityHelper()
+  }
+
+  @Provides
+  @SmartLinking
+  @JvmStatic
+  @PerActivity
+  internal fun provideSmartLinkingPref(
+      rxSharedPreferences: RxSharedPreferences): Preference<Boolean> {
+    // TODO Use psync once it's fixed
+    return rxSharedPreferences.getBoolean(P.SmartlinkingGlobal.KEY,
+        P.SmartlinkingGlobal.defaultValue())
+    //    return P.smartlinkingGlobal.rx();
+  }
+
+  @Provides
+  @JvmStatic
+  @PerActivity
+  internal fun provideLinkManager(helper: CustomTabActivityHelper,
+      @SmartLinking linkingPref: Preference<Boolean>): LinkManager {
+    return LinkManager(helper, linkingPref)
   }
 }

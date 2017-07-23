@@ -160,11 +160,16 @@ ext.deps = [
     ],
 
     dagger: [
+        android: [
+            apt: [
+                processor: "com.google.dagger:dagger-android-processor:${versions.dagger}"
+            ],
+            runtime: "com.google.dagger:dagger-android:${versions.dagger}",
+        ],
         apt: [
             compiler: "com.google.dagger:dagger-compiler:${versions.dagger}"
         ],
-        android: "com.google.dagger:dagger-android:${versions.dagger}",
-        core: "com.google.dagger:dagger:${versions.dagger}",
+        runtime: "com.google.dagger:dagger:${versions.dagger}",
     ],
 
     errorProne: [
