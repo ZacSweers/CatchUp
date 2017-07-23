@@ -10,13 +10,14 @@ class ReleaseCatchUpApplication : CatchUpApplication() {
     CatchUpApplication.refWatcher = RefWatcher.DISABLED
     Bugsnag.init(this, BuildConfig.BUGSNAG_KEY)
 
-    val tree = BugsnagTree()
-    Bugsnag.getClient()
-        .beforeNotify { error ->
-          tree.update(error)
-          true
-        }
+    BugsnagTree().also {
+      Bugsnag.getClient()
+          .beforeNotify { error ->
+            it.update(error)
+            true
+          }
 
-    Timber.plant(tree)
+      Timber.plant(it)
+    }
   }
 }
