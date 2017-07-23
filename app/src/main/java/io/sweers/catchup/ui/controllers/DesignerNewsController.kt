@@ -20,15 +20,12 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
-import com.bluelinelabs.conductor.Controller
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
-import dagger.Binds
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
@@ -40,7 +37,7 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.designernews.DesignerNewsService
 import io.sweers.catchup.data.designernews.model.Story
 import io.sweers.catchup.data.designernews.model.User
-import io.sweers.catchup.injection.ControllerKey
+import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
 import io.sweers.catchup.util.collect.toCommaJoinerList
 import okhttp3.OkHttpClient
@@ -106,47 +103,45 @@ class DesignerNewsController : BaseNewsController<CatchUpItem> {
         .toList()
   }
 
-  @Subcomponent
+  @PerController
+  @Subcomponent(modules = arrayOf(Module::class))
   interface Component : AndroidInjector<DesignerNewsController> {
 
     @Subcomponent.Builder
     abstract class Builder : AndroidInjector.Builder<DesignerNewsController>()
   }
 
-  @dagger.Module(subcomponents = arrayOf(Component::class))
-  abstract class Module {
+  @dagger.Module
+  object Module {
 
     @Qualifier
     private annotation class InternalApi
 
-    @Binds
-    @IntoMap
-    @ControllerKey(DesignerNewsController::class)
-    internal abstract fun bindDesignerNewsControllerInjectorFactory(
-        builder: Component.Builder): AndroidInjector.Factory<out Controller>
+    @Provides
+    @InternalApi
+    @JvmStatic
+    @PerController
+    internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
+      return moshi.newBuilder()
+          .add(Instant::class.java, ISO8601InstantAdapter())
+          .add(Wrapped.ADAPTER_FACTORY)
+          .build()
+    }
 
-    @dagger.Module
-    companion object {
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideDesignerNewsService(client: Lazy<OkHttpClient>,
+        @InternalApi moshi: Moshi,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DesignerNewsService {
 
-      @Provides @InternalApi @JvmStatic internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
-        return moshi.newBuilder()
-            .add(Instant::class.java, ISO8601InstantAdapter())
-            .add(Wrapped.ADAPTER_FACTORY)
-            .build()
-      }
-
-      @Provides @JvmStatic internal fun provideDesignerNewsService(client: Lazy<OkHttpClient>,
-          @InternalApi moshi: Moshi,
-          rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DesignerNewsService {
-
-        val retrofit = Retrofit.Builder().baseUrl(DesignerNewsService.ENDPOINT)
-            .callFactory { client.get().newCall(it) }
-            .addCallAdapterFactory(rxJavaCallAdapterFactory)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .validateEagerly(BuildConfig.DEBUG)
-            .build()
-        return retrofit.create(DesignerNewsService::class.java)
-      }
+      val retrofit = Retrofit.Builder().baseUrl(DesignerNewsService.ENDPOINT)
+          .callFactory { client.get().newCall(it) }
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .validateEagerly(BuildConfig.DEBUG)
+          .build()
+      return retrofit.create(DesignerNewsService::class.java)
     }
   }
 

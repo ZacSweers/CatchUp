@@ -33,13 +33,17 @@ import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.SimpleColorFilter
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
+import com.squareup.moshi.Moshi
 import com.uber.autodispose.kotlin.autoDisposeWith
+import dagger.Lazy
+import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.smmry.SmmryService
 import io.sweers.catchup.data.smmry.model.ApiRejection
@@ -47,21 +51,49 @@ import io.sweers.catchup.data.smmry.model.IncorrectVariables
 import io.sweers.catchup.data.smmry.model.InternalError
 import io.sweers.catchup.data.smmry.model.SmmryRequestBuilder
 import io.sweers.catchup.data.smmry.model.SmmryResponse
+import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
 import io.sweers.catchup.data.smmry.model.Success
 import io.sweers.catchup.data.smmry.model.SummarizationError
 import io.sweers.catchup.data.smmry.model.UnknownErrorCode
 import io.sweers.catchup.injection.ConductorInjection
+import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.rx.observers.adapter.SingleObserverAdapter
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.ServiceController
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
+import javax.inject.Qualifier
 
 /**
  * Overlay controller for displaying Smmry API results.
  */
 class SmmryController : ButterKnifeController {
+
+  companion object {
+
+    private val ID_TITLE = "smmrycontroller.title"
+    private val ID_URL = "smmrycontroller.url"
+    private val ID_ACCENT = "smmrycontroller.accent"
+
+    fun <T> showFor(controller: ServiceController,
+        url: String,
+        fallbackTitle: String) = Consumer<T> { _ ->
+      // TODO Optimize this
+      // Exclude images
+      // Summarize reddit selftexts
+      controller.router
+          .pushController(RouterTransaction.with(SmmryController(url,
+              controller.serviceThemeColor,
+              fallbackTitle))
+              .pushChangeHandler(VerticalChangeHandler(false))
+              .popChangeHandler(VerticalChangeHandler()))
+    }
+  }
 
   @Inject lateinit var smmryService: SmmryService
 
@@ -208,30 +240,46 @@ class SmmryController : ButterKnifeController {
     return SmmryController_ViewBinding(this, view)
   }
 
-  @Subcomponent
+  @PerController
+  @Subcomponent(modules = arrayOf(Module::class))
   interface Component : AndroidInjector<SmmryController> {
+
     @Subcomponent.Builder
     abstract class Builder : AndroidInjector.Builder<SmmryController>()
   }
 
-  companion object {
+  @dagger.Module
+  object Module {
 
-    private val ID_TITLE = "smmrycontroller.title"
-    private val ID_URL = "smmrycontroller.url"
-    private val ID_ACCENT = "smmrycontroller.accent"
+    @Qualifier
+    private annotation class InternalApi
 
-    fun <T> showFor(controller: ServiceController,
-        url: String,
-        fallbackTitle: String) = Consumer<T> { _ ->
-      // TODO Optimize this
-      // Exclude images
-      // Summarize reddit selftexts
-      controller.router
-          .pushController(RouterTransaction.with(SmmryController(url,
-              controller.serviceThemeColor,
-              fallbackTitle))
-              .pushChangeHandler(VerticalChangeHandler(false))
-              .popChangeHandler(VerticalChangeHandler()))
+    @Provides
+    @JvmStatic
+    @InternalApi
+    @PerController
+    internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
+      return moshi.newBuilder()
+          .add(SmmryResponseFactory.getInstance())
+          .build()
+    }
+
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideSmmryService(client: Lazy<OkHttpClient>,
+        @InternalApi moshi: Moshi,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SmmryService {
+      return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
+          .callFactory { request ->
+            client.get()
+                .newCall(request)
+          }
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .validateEagerly(BuildConfig.DEBUG)
+          .build()
+          .create(SmmryService::class.java)
     }
   }
 }

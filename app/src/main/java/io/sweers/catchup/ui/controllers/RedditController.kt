@@ -20,16 +20,13 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
-import com.bluelinelabs.conductor.Controller
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.squareup.moshi.Moshi
 import com.uber.autodispose.kotlin.autoDisposeWith
-import dagger.Binds
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
@@ -40,7 +37,7 @@ import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
 import io.sweers.catchup.data.reddit.RedditService
 import io.sweers.catchup.data.reddit.model.RedditLink
 import io.sweers.catchup.data.reddit.model.RedditObjectFactory
-import io.sweers.catchup.injection.ControllerKey
+import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
@@ -110,65 +107,65 @@ class RedditController : BaseNewsController<RedditLink> {
         }
   }
 
-  @Subcomponent
+  @PerController
+  @Subcomponent(modules = arrayOf(Module::class))
   interface Component : AndroidInjector<RedditController> {
 
     @Subcomponent.Builder
     abstract class Builder : AndroidInjector.Builder<RedditController>()
   }
 
-  @dagger.Module(subcomponents = arrayOf(Component::class))
-  abstract class Module {
+  @dagger.Module
+  object Module {
 
     @Qualifier
     private annotation class InternalApi
 
-    @Binds
-    @IntoMap
-    @ControllerKey(RedditController::class)
-    internal abstract fun bindRedditControllerInjectorFactory(
-        builder: Component.Builder): AndroidInjector.Factory<out Controller>
+    @InternalApi
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
+      return upstreamMoshi.newBuilder()
+          .add(RedditObjectFactory.getInstance())
+          .add(Instant::class.java, EpochInstantJsonAdapter())
+          .build()
+    }
 
-    @dagger.Module
-    companion object {
+    @InternalApi
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideRedditOkHttpClient(
+        client: OkHttpClient): OkHttpClient {
+      return client.newBuilder()
+          .addNetworkInterceptor { chain ->
+            var request = chain.request()
+            val url = request.url()
+            request = request.newBuilder()
+                .header("User-Agent", "CatchUp app by /u/pandanomic")
+                .url(url.newBuilder()
+                    .encodedPath(url.encodedPath() + ".json")
+                    .build())
+                .build()
+            chain.proceed(request)
+          }
+          .build()
+    }
 
-      @InternalApi @Provides @JvmStatic internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
-        return upstreamMoshi.newBuilder()
-            .add(RedditObjectFactory.getInstance())
-            .add(Instant::class.java, EpochInstantJsonAdapter())
-            .build()
-      }
-
-      @InternalApi @Provides @JvmStatic internal fun provideRedditOkHttpClient(
-          client: OkHttpClient): OkHttpClient {
-        return client.newBuilder()
-            .addNetworkInterceptor { chain ->
-              var request = chain.request()
-              val url = request.url()
-              request = request.newBuilder()
-                  .header("User-Agent", "CatchUp app by /u/pandanomic")
-                  .url(url.newBuilder()
-                      .encodedPath(url.encodedPath() + ".json")
-                      .build())
-                  .build()
-              chain.proceed(request)
-            }
-            .build()
-      }
-
-      @Provides
-      @JvmStatic
-      internal fun provideRedditService(@InternalApi client: Lazy<OkHttpClient>,
-          rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
-          @InternalApi moshi: Moshi): RedditService {
-        val retrofit = Retrofit.Builder().baseUrl(RedditService.ENDPOINT)
-            .callFactory { client.get().newCall(it) }
-            .addCallAdapterFactory(rxJavaCallAdapterFactory)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .validateEagerly(BuildConfig.DEBUG)
-            .build()
-        return retrofit.create(RedditService::class.java)
-      }
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideRedditService(@InternalApi client: Lazy<OkHttpClient>,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+        @InternalApi moshi: Moshi): RedditService {
+      val retrofit = Retrofit.Builder().baseUrl(RedditService.ENDPOINT)
+          .callFactory { client.get().newCall(it) }
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .validateEagerly(BuildConfig.DEBUG)
+          .build()
+      return retrofit.create(RedditService::class.java)
     }
   }
 }

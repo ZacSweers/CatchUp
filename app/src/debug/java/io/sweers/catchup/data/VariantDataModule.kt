@@ -27,6 +27,7 @@ import io.sweers.catchup.injection.qualifiers.NetworkInterceptor
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
+import javax.inject.Singleton
 
 @Module
 object VariantDataModule {
@@ -35,6 +36,7 @@ object VariantDataModule {
   @NetworkInterceptor
   @IntoSet
   @JvmStatic
+  @Singleton
   internal fun provideLoggingInterceptor(): Interceptor {
     val loggingInterceptor = HttpLoggingInterceptor { message ->
       Timber.tag("OkHttp")
@@ -48,6 +50,7 @@ object VariantDataModule {
   @NetworkInterceptor
   @IntoSet
   @JvmStatic
+  @Singleton
   internal fun provideStethoInterceptor(): Interceptor {
     return StethoInterceptor()
   }
@@ -56,6 +59,7 @@ object VariantDataModule {
   @NetworkInterceptor
   @IntoSet
   @JvmStatic
+  @Singleton
   internal fun provideChuckInterceptor(@ApplicationContext context: Context): Interceptor {
     return ChuckInterceptor(context)
   }
@@ -63,6 +67,7 @@ object VariantDataModule {
   @Provides
   @IntoSet
   @JvmStatic
+  @Singleton
   internal fun provideMockDataInterceptor(@ApplicationContext context: Context): Interceptor {
     return MockDataInterceptor(context)
   }

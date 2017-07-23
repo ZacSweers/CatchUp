@@ -17,18 +17,18 @@
 package io.sweers.catchup.ui.activity
 
 import dagger.Module
-import dagger.Provides
+import dagger.android.ContributesAndroidInjector
+import io.sweers.catchup.injection.ControllerBindingModule
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.ui.DebugViewContainer
-import io.sweers.catchup.ui.ViewContainer
 
 @Module
-object UiModule {
+abstract class ActivityBindingModule {
 
-  @Provides
-  @JvmStatic
   @PerActivity
-  internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer {
-    return viewContainer
-  }
+  @ContributesAndroidInjector(modules = arrayOf(
+      UiModule::class,
+      MainActivity.Module::class,
+      ControllerBindingModule::class
+  ))
+  internal abstract fun mainActivity(): MainActivity
 }
