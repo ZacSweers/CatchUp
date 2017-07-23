@@ -35,6 +35,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 abstract class DataModule {
@@ -54,6 +55,7 @@ abstract class DataModule {
 
     @Provides
     @JvmStatic
+    @Singleton
     internal fun provideCache(@ApplicationContext context: Context): Cache {
       // Temporary pending https://github.com/apollographql/apollo-android/pull/421
       //if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -64,6 +66,7 @@ abstract class DataModule {
 
     @Provides
     @JvmStatic
+    @Singleton
     internal fun provideOkHttpClient(cache: Cache,
         interceptors: Set<@JvmSuppressWildcards Interceptor>,
         @NetworkInterceptor networkInterceptors: Set<@JvmSuppressWildcards Interceptor>): OkHttpClient {
@@ -87,6 +90,7 @@ abstract class DataModule {
 
     @Provides
     @JvmStatic
+    @Singleton
     internal fun provideMoshi(): Moshi {
       return Moshi.Builder().add(ModelArbiter.createMoshiAdapterFactory())
           .add(UnescapeJsonAdapter.FACTORY)
@@ -97,6 +101,7 @@ abstract class DataModule {
 
     @Provides
     @JvmStatic
+    @Singleton
     internal fun provideInspector(): Inspector {
       return Inspector.Builder()
           .add(ModelArbiter.createValidatorFactory())
@@ -105,24 +110,28 @@ abstract class DataModule {
 
     @Provides
     @JvmStatic
+    @Singleton
     internal fun provideInspectorConverterFactory(inspector: Inspector): InspectorConverterFactory {
       return InspectorConverterFactory.create(inspector)
     }
 
     @Provides
     @JvmStatic
+    @Singleton
     internal fun provideRxJavaCallAdapterFactory(): RxJava2CallAdapterFactory {
       return RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
     }
 
     @Provides
     @JvmStatic
+    @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
       return context.getSharedPreferences("catchup", Context.MODE_PRIVATE)
     }
 
     @Provides
     @JvmStatic
+    @Singleton
     fun provideRxSharedPreferences(sharedPreferences: SharedPreferences): RxSharedPreferences {
       return RxSharedPreferences.create(sharedPreferences)
     }

@@ -24,6 +24,7 @@ import io.sweers.catchup.ui.ViewContainer
 
 @Module
 object UiModule {
+
   @Provides
   @JvmStatic
   @PerActivity
