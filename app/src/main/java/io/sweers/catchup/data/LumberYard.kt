@@ -32,7 +32,9 @@ import java.io.IOException
 import java.util.ArrayDeque
 import java.util.ArrayList
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LumberYard @Inject constructor(private val app: Application) {
 
   private val entries = ArrayDeque<Entry>(BUFFER_SIZE + 1)

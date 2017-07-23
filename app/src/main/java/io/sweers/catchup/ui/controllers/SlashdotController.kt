@@ -19,14 +19,11 @@ package io.sweers.catchup.ui.controllers
 import android.content.Context
 import android.os.Bundle
 import android.view.ContextThemeWrapper
-import com.bluelinelabs.conductor.Controller
 import com.uber.autodispose.kotlin.autoDisposeWith
-import dagger.Binds
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
@@ -34,7 +31,7 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.slashdot.Entry
 import io.sweers.catchup.data.slashdot.SlashdotService
-import io.sweers.catchup.injection.ControllerKey
+import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import io.sweers.catchup.util.unescapeJavaString
@@ -90,56 +87,49 @@ class SlashdotController : BaseNewsController<Entry> {
         .map { it.itemList }
   }
 
-  @Subcomponent
+  @PerController
+  @Subcomponent(modules = arrayOf(Module::class))
   interface Component : AndroidInjector<SlashdotController> {
 
     @Subcomponent.Builder
     abstract class Builder : AndroidInjector.Builder<SlashdotController>()
   }
 
-  @dagger.Module(subcomponents = arrayOf(Component::class))
-  abstract class Module {
+  @dagger.Module
+  object Module {
 
     @Qualifier
     private annotation class InternalApi
 
-    @Binds
-    @IntoMap
-    @ControllerKey(SlashdotController::class)
-    internal abstract fun bindSlashdotControllerInjectorFactory(
-        builder: Component.Builder): AndroidInjector.Factory<out Controller>
+    @Provides
+    @InternalApi
+    @JvmStatic
+    @PerController
+    internal fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
+      return okHttpClient.newBuilder()
+          .addNetworkInterceptor { chain ->
+            val originalResponse = chain.proceed(chain.request())
+            // read from cache for 30 minutes, per slashdot's preferred limit
+            val maxAge = 60 * 30
+            originalResponse.newBuilder()
+                .header("Cache-Control", "public, max-age=" + maxAge)
+                .build()
+          }
+          .build()
+    }
 
-    @dagger.Module
-    companion object {
-
-      @Provides
-      @InternalApi
-      @JvmStatic
-      internal fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
-        return okHttpClient.newBuilder()
-            .addNetworkInterceptor { chain ->
-              val originalResponse = chain.proceed(chain.request())
-              // read from cache for 30 minutes, per slashdot's preferred limit
-              val maxAge = 60 * 30
-              originalResponse.newBuilder()
-                  .header("Cache-Control", "public, max-age=" + maxAge)
-                  .build()
-            }
-            .build()
-      }
-
-      @Provides
-      @JvmStatic
-      internal fun provideSlashdotService(@InternalApi client: Lazy<OkHttpClient>,
-          rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SlashdotService {
-        val retrofit = Retrofit.Builder().baseUrl(SlashdotService.ENDPOINT)
-            .callFactory { client.get().newCall(it) }
-            .addCallAdapterFactory(rxJavaCallAdapterFactory)
-            .addConverterFactory(SimpleXmlConverterFactory.createNonStrict())
-            .validateEagerly(BuildConfig.DEBUG)
-            .build()
-        return retrofit.create(SlashdotService::class.java)
-      }
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideSlashdotService(@InternalApi client: Lazy<OkHttpClient>,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SlashdotService {
+      val retrofit = Retrofit.Builder().baseUrl(SlashdotService.ENDPOINT)
+          .callFactory { client.get().newCall(it) }
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addConverterFactory(SimpleXmlConverterFactory.createNonStrict())
+          .validateEagerly(BuildConfig.DEBUG)
+          .build()
+      return retrofit.create(SlashdotService::class.java)
     }
   }
 }

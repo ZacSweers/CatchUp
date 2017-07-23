@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.activity
+package io.sweers.catchup.injection.scopes
 
-import dagger.Module
-import dagger.Provides
-import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.ui.DebugViewContainer
-import io.sweers.catchup.ui.ViewContainer
+import javax.inject.Scope
 
-@Module
-object UiModule {
-
-  @Provides
-  @JvmStatic
-  @PerActivity
-  internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer {
-    return viewContainer
-  }
-}
+@Scope
+annotation internal class PerApp
