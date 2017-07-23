@@ -25,7 +25,6 @@ import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.f2prateek.rx.preferences2.Preference
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import dagger.Provides
 import io.sweers.catchup.P
 import io.sweers.catchup.R
@@ -99,12 +98,8 @@ class MainActivity : BaseActivity() {
     @SmartLinking
     @JvmStatic
     @PerActivity
-    internal fun provideSmartLinkingPref(
-        rxSharedPreferences: RxSharedPreferences): Preference<Boolean> {
-      // TODO Use psync once it's fixed
-      return rxSharedPreferences.getBoolean(P.SmartlinkingGlobal.KEY,
-          P.SmartlinkingGlobal.defaultValue())
-      //    return P.smartlinkingGlobal.rx();
+    internal fun provideSmartLinkingPref(): Preference<Boolean> {
+      return P.SmartlinkingGlobal.rx()
     }
 
     @Provides
