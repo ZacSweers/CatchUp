@@ -35,6 +35,16 @@ import io.sweers.catchup.util.d
 import javax.inject.Inject
 
 abstract class CatchUpApplication : Application(), HasActivityInjector {
+
+  companion object {
+
+    @JvmStatic lateinit var refWatcher: RefWatcher
+
+    fun refWatcher(): RefWatcher {
+      return refWatcher
+    }
+  }
+
   @Inject lateinit internal var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
   @Inject lateinit var sharedPreferences: SharedPreferences
   @Inject lateinit var lumberYard: LumberYard
@@ -96,15 +106,6 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
       TRIM_MEMORY_RUNNING_LOW,
       TRIM_MEMORY_RUNNING_MODERATE,
       TRIM_MEMORY_RUNNING_CRITICAL -> d { "OnTrimMemory" }
-    }
-  }
-
-  companion object {
-
-    @JvmStatic lateinit var refWatcher: RefWatcher
-
-    fun refWatcher(): RefWatcher {
-      return refWatcher
     }
   }
 }
