@@ -96,7 +96,7 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
       TRIM_MEMORY_RUNNING_LOW,
       TRIM_MEMORY_RUNNING_MODERATE,
       TRIM_MEMORY_RUNNING_CRITICAL -> d { "OnTrimMemory" }
-    }// TODO someday clear Store in-memory
+    }
   }
 
   companion object {
