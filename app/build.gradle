@@ -34,11 +34,11 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'io.sweers.psync'
+apply plugin: 'com.apollographql.android'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'org.jetbrains.kotlin.kapt'
 apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
-apply plugin: 'com.apollographql.android'
 //apply plugin: 'com.bugsnag.android.gradle'
 
 private String getPropertyOrEmpty(String property) {
