@@ -23,7 +23,7 @@ import com.squareup.moshi.ArrayMapJsonAdapter
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
-import dagger.multibindings.IntoSet
+import dagger.multibindings.Multibinds
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
 import io.sweers.catchup.data.adapters.UnescapeJsonAdapter
@@ -37,107 +37,95 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.util.concurrent.TimeUnit
 
 @Module
-object DataModule {
+abstract class DataModule {
 
-  private val NOOP_INTERCEPTOR = Interceptor { chain -> chain.proceed(chain.request()) }
-  private val HTTP_RESPONSE_CACHE = (10 * 1024 * 1024).toLong()
-  private val HTTP_TIMEOUT_S = 30
-
-  @Provides
-  @JvmStatic
-  internal fun provideCache(@ApplicationContext context: Context): Cache {
-    // Temporary pending https://github.com/apollographql/apollo-android/pull/421
-    //if (Looper.myLooper() == Looper.getMainLooper()) {
-    //  throw new IllegalStateException("Cache initialized on main thread.");
-    //}
-    return Cache(context.cacheDir, HTTP_RESPONSE_CACHE)
-  }
-
-  @Provides
-  @JvmStatic
-  internal fun provideOkHttpClient(cache: Cache,
-      interceptors: Set<@JvmSuppressWildcards Interceptor>,
-      @NetworkInterceptor networkInterceptors: Set<@JvmSuppressWildcards Interceptor>): OkHttpClient {
-    // Temporary pending https://github.com/apollographql/apollo-android/pull/421
-    //if (Looper.myLooper() == Looper.getMainLooper()) {
-    //  throw new IllegalStateException("HTTP client initialized on main thread.");
-    //}
-
-    val builder = OkHttpClient.Builder().connectTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-        .readTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-        .writeTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-        .cache(cache)
-
-    builder.networkInterceptors()
-        .addAll(networkInterceptors)
-    builder.interceptors()
-        .addAll(interceptors)
-
-    return builder.build()
-  }
-
-  @Provides
-  @JvmStatic
-  internal fun provideMoshi(): Moshi {
-    return Moshi.Builder().add(ModelArbiter.createMoshiAdapterFactory())
-        .add(UnescapeJsonAdapter.FACTORY)
-        .add(ArrayMapJsonAdapter.FACTORY)
-        .add(ArrayCollectionJsonAdapter.FACTORY)
-        .build()
-  }
-
-  @Provides
-  @JvmStatic
-  internal fun provideInspector(): Inspector {
-    return Inspector.Builder()
-        .add(ModelArbiter.createValidatorFactory())
-        .build()
-  }
-
-  @Provides
-  @JvmStatic
-  internal fun provideInspectorConverterFactory(inspector: Inspector): InspectorConverterFactory {
-    return InspectorConverterFactory.create(inspector)
-  }
-
-  @Provides
-  @JvmStatic
-  internal fun provideRxJavaCallAdapterFactory(): RxJava2CallAdapterFactory {
-    return RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
-  }
-
-  @Provides
-  @JvmStatic
-  fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-    return context.getSharedPreferences("catchup", Context.MODE_PRIVATE)
-  }
-
-  @Provides
-  @JvmStatic
-  fun provideRxSharedPreferences(sharedPreferences: SharedPreferences): RxSharedPreferences {
-    return RxSharedPreferences.create(sharedPreferences)
-  }
-
-  /**
-   * Stub to force multibindings to at least one element, which allows for potentially empty variant
-   * provides
-   */
-  @Provides
   @NetworkInterceptor
-  @IntoSet
-  @JvmStatic
-  internal fun provideStubNetworkInterceptor(): Interceptor {
-    return NOOP_INTERCEPTOR
-  }
+  @Multibinds
+  internal abstract fun provideNetworkInterceptors(): Set<Interceptor>
 
-  /**
-   * Stub to force multibindings to at least one element, which allows for potentially empty variant
-   * provides
-   */
-  @Provides
-  @IntoSet
-  @JvmStatic
-  internal fun provideStubInterceptor(): Interceptor {
-    return NOOP_INTERCEPTOR
+  @Multibinds
+  internal abstract fun provideInterceptors(): Set<Interceptor>
+
+  @Module
+  companion object {
+
+    private val HTTP_RESPONSE_CACHE = (10 * 1024 * 1024).toLong()
+    private val HTTP_TIMEOUT_S = 30
+
+    @Provides
+    @JvmStatic
+    internal fun provideCache(@ApplicationContext context: Context): Cache {
+      // Temporary pending https://github.com/apollographql/apollo-android/pull/421
+      //if (Looper.myLooper() == Looper.getMainLooper()) {
+      //  throw new IllegalStateException("Cache initialized on main thread.");
+      //}
+      return Cache(context.cacheDir, HTTP_RESPONSE_CACHE)
+    }
+
+    @Provides
+    @JvmStatic
+    internal fun provideOkHttpClient(cache: Cache,
+        interceptors: Set<@JvmSuppressWildcards Interceptor>,
+        @NetworkInterceptor networkInterceptors: Set<@JvmSuppressWildcards Interceptor>): OkHttpClient {
+      // Temporary pending https://github.com/apollographql/apollo-android/pull/421
+      //if (Looper.myLooper() == Looper.getMainLooper()) {
+      //  throw new IllegalStateException("HTTP client initialized on main thread.");
+      //}
+
+      val builder = OkHttpClient.Builder().connectTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+          .readTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+          .writeTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+          .cache(cache)
+
+      builder.networkInterceptors()
+          .addAll(networkInterceptors)
+      builder.interceptors()
+          .addAll(interceptors)
+
+      return builder.build()
+    }
+
+    @Provides
+    @JvmStatic
+    internal fun provideMoshi(): Moshi {
+      return Moshi.Builder().add(ModelArbiter.createMoshiAdapterFactory())
+          .add(UnescapeJsonAdapter.FACTORY)
+          .add(ArrayMapJsonAdapter.FACTORY)
+          .add(ArrayCollectionJsonAdapter.FACTORY)
+          .build()
+    }
+
+    @Provides
+    @JvmStatic
+    internal fun provideInspector(): Inspector {
+      return Inspector.Builder()
+          .add(ModelArbiter.createValidatorFactory())
+          .build()
+    }
+
+    @Provides
+    @JvmStatic
+    internal fun provideInspectorConverterFactory(inspector: Inspector): InspectorConverterFactory {
+      return InspectorConverterFactory.create(inspector)
+    }
+
+    @Provides
+    @JvmStatic
+    internal fun provideRxJavaCallAdapterFactory(): RxJava2CallAdapterFactory {
+      return RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
+    }
+
+    @Provides
+    @JvmStatic
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+      return context.getSharedPreferences("catchup", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @JvmStatic
+    fun provideRxSharedPreferences(sharedPreferences: SharedPreferences): RxSharedPreferences {
+      return RxSharedPreferences.create(sharedPreferences)
+    }
   }
 }
+
