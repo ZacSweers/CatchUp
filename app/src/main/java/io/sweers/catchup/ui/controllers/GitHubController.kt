@@ -32,13 +32,10 @@ import com.apollographql.apollo.cache.normalized.lru.LruNormalizedCacheFactory
 import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo.rx2.Rx2Apollo
-import com.bluelinelabs.conductor.Controller
-import dagger.Binds
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -58,8 +55,8 @@ import io.sweers.catchup.data.github.type.CustomType
 import io.sweers.catchup.data.github.type.LanguageOrder
 import io.sweers.catchup.data.github.type.LanguageOrderField
 import io.sweers.catchup.data.github.type.OrderDirection
-import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
+import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
 import io.sweers.catchup.util.collect.emptyIfNull
 import okhttp3.HttpUrl
@@ -152,79 +149,83 @@ class GitHubController : BaseNewsController<CatchUpItem> {
         .subscribeOn(Schedulers.io())
   }
 
-  @Subcomponent
+  @PerController
+  @Subcomponent(modules = arrayOf(Module::class))
   interface Component : AndroidInjector<GitHubController> {
 
     @Subcomponent.Builder
     abstract class Builder : AndroidInjector.Builder<GitHubController>()
   }
 
-  @dagger.Module(subcomponents = arrayOf(Component::class))
-  abstract class Module {
+  @dagger.Module
+  object Module {
+
+    private val SERVER_URL = "https://api.github.com/graphql"
 
     @Qualifier
     private annotation class InternalApi
 
-    @Binds
-    @IntoMap
-    @ControllerKey(GitHubController::class)
-    internal abstract fun bindGitHubControllerInjectorFactory(
-        builder: Component.Builder): AndroidInjector.Factory<out Controller>
+    @Provides
+    @InternalApi
+    @JvmStatic
+    @PerController
+    internal fun provideGitHubOkHttpClient(
+        client: OkHttpClient): OkHttpClient {
+      return client.newBuilder()
+          .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
+          .build()
+    }
 
-    @dagger.Module
-    companion object {
-
-      private val SERVER_URL = "https://api.github.com/graphql"
-
-      @Provides @InternalApi @JvmStatic internal fun provideGitHubOkHttpClient(
-          client: OkHttpClient): OkHttpClient {
-        return client.newBuilder()
-            .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
-            .build()
-      }
-
-      @Provides @JvmStatic internal fun provideCacheKeyResolver(): CacheKeyResolver {
-        return object : CacheKeyResolver() {
-          override fun fromFieldRecordSet(field: Field,
-              objectSource: Map<String, Any>): CacheKey {
-            //Specific id for User type.
-            if (objectSource["__typename"] == "User") {
-              val userKey = objectSource["__typename"].toString() + "." + objectSource["login"]
-              return CacheKey.from(userKey)
-            }
-            //Use id as default case.
-            if (objectSource.containsKey("id")) {
-              val typeNameAndIDKey = objectSource["__typename"].toString() + "." + objectSource["id"]
-              return CacheKey.from(typeNameAndIDKey)
-            }
-            return CacheKey.NO_KEY
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideCacheKeyResolver(): CacheKeyResolver {
+      return object : CacheKeyResolver() {
+        override fun fromFieldRecordSet(field: Field,
+            objectSource: Map<String, Any>): CacheKey {
+          //Specific id for User type.
+          if (objectSource["__typename"] == "User") {
+            val userKey = objectSource["__typename"].toString() + "." + objectSource["login"]
+            return CacheKey.from(userKey)
           }
-
-          override fun fromFieldArguments(field: Field,
-              variables: Operation.Variables): CacheKey {
-            return CacheKey.NO_KEY
+          //Use id as default case.
+          if (objectSource.containsKey("id")) {
+            val typeNameAndIDKey = objectSource["__typename"].toString() + "." + objectSource["id"]
+            return CacheKey.from(typeNameAndIDKey)
           }
+          return CacheKey.NO_KEY
+        }
+
+        override fun fromFieldArguments(field: Field,
+            variables: Operation.Variables): CacheKey {
+          return CacheKey.NO_KEY
         }
       }
+    }
 
-      @Provides @JvmStatic internal fun provideNormalizedCacheFactory(
-          @ApplicationContext context: Context): NormalizedCacheFactory<*> {
-        val apolloSqlHelper = ApolloSqlHelper(context, "githubdb")
-        return LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION,
-            SqlNormalizedCacheFactory(apolloSqlHelper))
-      }
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideNormalizedCacheFactory(
+        @ApplicationContext context: Context): NormalizedCacheFactory<*> {
+      val apolloSqlHelper = ApolloSqlHelper(context, "githubdb")
+      return LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION,
+          SqlNormalizedCacheFactory(apolloSqlHelper))
+    }
 
-      @Provides @JvmStatic internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
-          cacheFactory: NormalizedCacheFactory<*>,
-          resolver: CacheKeyResolver): ApolloClient {
-        return ApolloClient.builder()
-            .serverUrl(SERVER_URL)
-            .okHttpClient(client.get())
-            .normalizedCache(cacheFactory, resolver)
-            .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
-            .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())
-            .build()
-      }
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
+        cacheFactory: NormalizedCacheFactory<*>,
+        resolver: CacheKeyResolver): ApolloClient {
+      return ApolloClient.builder()
+          .serverUrl(SERVER_URL)
+          .okHttpClient(client.get())
+          .normalizedCache(cacheFactory, resolver)
+          .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
+          .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())
+          .build()
     }
   }
 }

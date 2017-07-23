@@ -49,7 +49,6 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import butterknife.Unbinder
-import com.bluelinelabs.conductor.Controller
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -62,12 +61,10 @@ import com.bumptech.glide.request.target.Target
 import com.jakewharton.rxbinding2.view.RxView
 import com.squareup.moshi.Moshi
 import com.uber.autodispose.kotlin.autoDisposeWith
-import dagger.Binds
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
@@ -78,7 +75,7 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.dribbble.DribbbleService
 import io.sweers.catchup.data.dribbble.model.Shot
-import io.sweers.catchup.injection.ControllerKey
+import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.DataLoadingSubject
@@ -102,7 +99,13 @@ import java.util.ArrayList
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class DribbbleController : ServiceController, SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
+class DribbbleController
+  : ServiceController, SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
+
+  companion object {
+    @ColorInt private const val INITIAL_GIF_BADGE_COLOR = 0x40ffffff
+  }
+
   @Inject lateinit var service: DribbbleService
   @Inject lateinit var linkManager: LinkManager
   @BindView(R.id.error_container) lateinit var errorView: View
@@ -253,13 +256,6 @@ class DribbbleController : ServiceController, SwipeRefreshLayout.OnRefreshListen
     } else {
       recyclerView.smoothScrollToPosition(0)
     }
-  }
-
-  @Subcomponent
-  interface Component : AndroidInjector<DribbbleController> {
-
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<DribbbleController>()
   }
 
   private class Adapter(context: Context,
@@ -469,53 +465,55 @@ class DribbbleController : ServiceController, SwipeRefreshLayout.OnRefreshListen
     }
   }
 
-  @dagger.Module(subcomponents = arrayOf(Component::class))
-  abstract class Module {
+  @PerController
+  @Subcomponent(modules = arrayOf(Module::class))
+  interface Component : AndroidInjector<DribbbleController> {
+
+    @Subcomponent.Builder
+    abstract class Builder : AndroidInjector.Builder<DribbbleController>()
+  }
+
+  @dagger.Module
+  object Module {
 
     @Qualifier
     private annotation class InternalApi
 
-    @Binds
-    @IntoMap
-    @ControllerKey(DribbbleController::class)
-    internal abstract fun bindDribbbleControllerInjectorFactory(
-        builder: Component.Builder): AndroidInjector.Factory<out Controller>
-
-    @dagger.Module
-    companion object {
-
-      @Provides @InternalApi @JvmStatic internal fun provideDribbbleOkHttpClient(
-          client: OkHttpClient): OkHttpClient {
-        return client.newBuilder()
-            .addInterceptor(AuthInterceptor.create("Bearer",
-                BuildConfig.DRIBBBLE_CLIENT_ACCESS_TOKEN))
-            .build()
-      }
-
-      @Provides @InternalApi @JvmStatic internal fun provideDribbbleMoshi(moshi: Moshi): Moshi {
-        return moshi.newBuilder()
-            .add(Instant::class.java, ISO8601InstantAdapter())
-            .build()
-      }
-
-      @Provides
-      @JvmStatic
-      internal fun provideDribbbleService(@InternalApi client: Lazy<OkHttpClient>,
-          @InternalApi moshi: Moshi,
-          rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DribbbleService {
-        return Retrofit.Builder().baseUrl(DribbbleService.ENDPOINT)
-            .callFactory { client.get().newCall(it) }
-            .addCallAdapterFactory(rxJavaCallAdapterFactory)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .validateEagerly(BuildConfig.DEBUG)
-            .build()
-            .create(DribbbleService::class.java)
-      }
+    @Provides
+    @InternalApi
+    @JvmStatic
+    @PerController
+    internal fun provideDribbbleOkHttpClient(
+        client: OkHttpClient): OkHttpClient {
+      return client.newBuilder()
+          .addInterceptor(AuthInterceptor.create("Bearer",
+              BuildConfig.DRIBBBLE_CLIENT_ACCESS_TOKEN))
+          .build()
     }
-  }
 
-  companion object {
+    @Provides
+    @InternalApi
+    @JvmStatic
+    @PerController
+    internal fun provideDribbbleMoshi(moshi: Moshi): Moshi {
+      return moshi.newBuilder()
+          .add(Instant::class.java, ISO8601InstantAdapter())
+          .build()
+    }
 
-    @ColorInt private const val INITIAL_GIF_BADGE_COLOR = 0x40ffffff
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideDribbbleService(@InternalApi client: Lazy<OkHttpClient>,
+        @InternalApi moshi: Moshi,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DribbbleService {
+      return Retrofit.Builder().baseUrl(DribbbleService.ENDPOINT)
+          .callFactory { client.get().newCall(it) }
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .validateEagerly(BuildConfig.DEBUG)
+          .build()
+          .create(DribbbleService::class.java)
+    }
   }
 }

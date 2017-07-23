@@ -16,46 +16,42 @@
 
 package io.sweers.catchup.data.smmry
 
-import com.bluelinelabs.conductor.Controller
 import com.squareup.moshi.Moshi
-import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
-import io.sweers.catchup.injection.ControllerKey
-import io.sweers.catchup.ui.controllers.SmmryController
+import io.sweers.catchup.injection.scopes.PerController
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Qualifier
 
-@Module(subcomponents = arrayOf(SmmryController.Component::class))
+@Module
 abstract class SmmryModule {
 
   @Qualifier
   private annotation class InternalApi
 
-  @Binds
-  @IntoMap
-  @ControllerKey(SmmryController::class)
-  internal abstract fun bindSmmryControllerInjectorFactory(
-      builder: SmmryController.Component.Builder): AndroidInjector.Factory<out Controller>
-
   @Module
   companion object {
 
-    @Provides @JvmStatic @InternalApi internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
+    @Provides
+    @JvmStatic
+    @InternalApi
+    @PerController
+    internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
           .add(SmmryResponseFactory.getInstance())
           .build()
     }
 
-    @Provides @JvmStatic internal fun provideSmmryService(client: Lazy<OkHttpClient>,
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideSmmryService(client: Lazy<OkHttpClient>,
         @InternalApi moshi: Moshi,
         rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SmmryService {
       return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)

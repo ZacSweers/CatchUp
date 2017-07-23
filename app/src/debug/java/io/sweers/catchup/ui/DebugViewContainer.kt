@@ -40,6 +40,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.base.ActivityEvent
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.debug.DebugView
@@ -52,6 +53,7 @@ import javax.inject.Inject
  * An [ViewContainer] for debug builds which wraps a sliding drawer on the right that holds
  * all of the debug information and settings.
  */
+@PerActivity
 class DebugViewContainer @Inject constructor(
     private val lumberYard: LumberYard,
     private val lazyOkHttpClient: Lazy<OkHttpClient>) : ViewContainer {

@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.activity
+package io.sweers.catchup.injection.qualifiers
 
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
-import io.sweers.catchup.injection.ControllerBindingModule
-import io.sweers.catchup.injection.scopes.PerActivity
+import javax.inject.Qualifier
 
-@Module
-abstract class ActivityBindingModule {
-
-  @PerActivity
-  @ContributesAndroidInjector(modules = arrayOf(
-      UiModule::class,
-      MainActivity.Module::class,
-      ControllerBindingModule::class
-  ))
-  internal abstract fun mainActivity(): MainActivity
-}
+@Qualifier
+annotation class ActivityContext

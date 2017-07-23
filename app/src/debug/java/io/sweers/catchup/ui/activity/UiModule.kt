@@ -18,6 +18,7 @@ package io.sweers.catchup.ui.activity
 
 import dagger.Module
 import dagger.Provides
+import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.DebugViewContainer
 import io.sweers.catchup.ui.ViewContainer
 
@@ -25,6 +26,7 @@ import io.sweers.catchup.ui.ViewContainer
 object UiModule {
   @Provides
   @JvmStatic
+  @PerActivity
   internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer {
     return viewContainer
   }

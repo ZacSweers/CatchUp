@@ -26,12 +26,14 @@ import dagger.Module
 import dagger.Provides
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
+import javax.inject.Singleton
 
 @Module
 abstract class ApplicationModule {
 
   @Binds
   @ApplicationContext
+  @Singleton
   abstract fun provideApplicationContext(application: Application): Context
 
   @Module
@@ -39,6 +41,7 @@ abstract class ApplicationModule {
 
     @Provides
     @JvmStatic
+    @Singleton
     fun provideRemoteConfig(@ApplicationContext context: Context): FirebaseRemoteConfig {
       FirebaseApp.initializeApp(context)
       return FirebaseRemoteConfig.getInstance()

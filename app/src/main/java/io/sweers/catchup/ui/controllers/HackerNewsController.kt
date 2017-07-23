@@ -20,19 +20,16 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
-import com.bluelinelabs.conductor.Controller
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.uber.autodispose.kotlin.autoDisposeWith
-import dagger.Binds
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
@@ -41,7 +38,7 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory
-import io.sweers.catchup.injection.ControllerKey
+import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
 import io.sweers.catchup.util.d
 import okhttp3.HttpUrl
@@ -147,28 +144,22 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
         .toList()
   }
 
-  @Subcomponent
+  @PerController
+  @Subcomponent(modules = arrayOf(Module::class))
   interface Component : AndroidInjector<HackerNewsController> {
 
     @Subcomponent.Builder
     abstract class Builder : AndroidInjector.Builder<HackerNewsController>()
   }
 
-  @dagger.Module(subcomponents = arrayOf(Component::class))
-  abstract class Module {
+  @dagger.Module
+  object Module {
 
-    @Binds
-    @IntoMap
-    @ControllerKey(HackerNewsController::class)
-    internal abstract fun bindHackerNewsControllerInjectorFactory(
-        builder: Component.Builder): AndroidInjector.Factory<out Controller>
-
-    @dagger.Module
-    companion object {
-
-      @Provides @JvmStatic internal fun provideDataBase(): FirebaseDatabase {
-        return FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/")
-      }
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideDataBase(): FirebaseDatabase {
+      return FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/")
     }
   }
 }

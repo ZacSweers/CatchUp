@@ -22,19 +22,19 @@ import dagger.Component
 import dagger.android.AndroidInjectionModule
 import io.sweers.catchup.data.DataModule
 import io.sweers.catchup.data.VariantDataModule
-import io.sweers.catchup.data.smmry.SmmryModule
 import io.sweers.catchup.injection.ConductorInjectionModule
-import io.sweers.catchup.injection.scopes.PerApp
 import io.sweers.catchup.ui.activity.ActivityBindingModule
+import javax.inject.Singleton
 
-@PerApp
-@Component(modules = arrayOf(ActivityBindingModule::class,
+@Singleton
+@Component(modules = arrayOf(
+    ActivityBindingModule::class,
     AndroidInjectionModule::class,
     ApplicationModule::class,
     ConductorInjectionModule::class,
     DataModule::class,
-    SmmryModule::class,
-    VariantDataModule::class))
+    VariantDataModule::class
+))
 interface ApplicationComponent {
 
   fun inject(application: CatchUpApplication)
