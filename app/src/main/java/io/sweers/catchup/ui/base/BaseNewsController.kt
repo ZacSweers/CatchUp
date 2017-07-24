@@ -386,7 +386,8 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
       comments(item.commentCount())
       tag(item.tag())
 
-      item.itemClickUrl()?.let {
+      val itemClickUrl = item.itemClickUrl() ?: item.itemCommentClickUrl()
+      itemClickUrl?.let {
         itemClicks()
             .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
             .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
@@ -399,6 +400,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
             .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
             .autoDisposeWith(this)
             .subscribe()
+      } ?: hideComments()
+
+      if (item.hideComments()) {
+        hideComments()
       }
     }
 
