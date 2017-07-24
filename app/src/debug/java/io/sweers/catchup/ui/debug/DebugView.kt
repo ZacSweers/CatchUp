@@ -113,9 +113,12 @@ class DebugView @JvmOverloads constructor(context: Context,
     // internal ActivityComponent
     this.client = client
     this.lumberYard = lumberYard
+    realInit()
   }
 
-  init {
+  // A little scary but it's not safe to just use init {} here because it sometimes gets called in
+  // the super constructor call before our actual constructor finishes.
+  private fun realInit() {
     // Inflate all of the controls and inject them.
     LayoutInflater.from(context)
         .inflate(R.layout.debug_view_content, this)
