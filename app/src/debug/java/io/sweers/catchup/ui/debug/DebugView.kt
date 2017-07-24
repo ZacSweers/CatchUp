@@ -192,8 +192,7 @@ class DebugView @JvmOverloads constructor(context: Context,
     enableMockModeView.isChecked = P.DebugMockModeEnabled.get()
     RxView.clicks(enableMockModeView)
         .subscribe {
-          P.DebugMockModeEnabled.put(enableMockModeView.isChecked)
-              .apply()
+          P.DebugMockModeEnabled.put(enableMockModeView.isChecked).commit()
           ProcessPhoenix.triggerRebirth(context)
         }
   }
