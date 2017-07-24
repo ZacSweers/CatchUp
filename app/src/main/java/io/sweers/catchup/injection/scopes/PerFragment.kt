@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data
+package io.sweers.catchup.injection.scopes
 
-/**
- * Flags control for remote config keys
- */
-object RemoteConfigKeys {
+import javax.inject.Scope
 
-  const val SMMRY_ENABLED = "smmry_enabled"
-  const val THEME_NAV_BAR_ENABLED = "theme_nav_bar_enabled"
-}
+@Scope
+annotation internal class PerFragment

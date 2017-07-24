@@ -21,6 +21,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.annotation.ColorInt
@@ -34,7 +35,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v4.view.animation.LinearOutSlowInInterpolator
-import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
@@ -46,10 +46,16 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.uber.autodispose.kotlin.autoDisposeWith
+import dagger.Subcomponent
+import dagger.android.AndroidInjector
 import io.sweers.catchup.P
 import io.sweers.catchup.R
+import io.sweers.catchup.data.RemoteConfigKeys
+import io.sweers.catchup.injection.ConductorInjection
+import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.rx.PredicateConsumer
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
@@ -59,6 +65,7 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttribute
 import io.sweers.catchup.util.setLightStatusBar
 import java.util.Arrays
+import javax.inject.Inject
 
 data class Service(@StringRes val name: Int,
     @DrawableRes val icon: Int,
@@ -69,6 +76,7 @@ class PagerController : ButterKnifeController {
 
   companion object {
 
+    private const val SETTINGS_ACTIVITY_REQUEST = 100
     private const val PAGE_TAG = "PagerController.pageTag"
     private val PAGE_DATA = arrayOf(
         Service(R.string.hacker_news,
@@ -108,13 +116,18 @@ class PagerController : ButterKnifeController {
   private val resolvedColorCache = IntArray(PAGE_DATA.size)
   private val argbEvaluator = ArgbEvaluator()
 
+  @Inject lateinit var remoteConfig: FirebaseRemoteConfig
   @BindView(R.id.tab_layout) lateinit var tabLayout: TabLayout
   @BindView(R.id.view_pager) lateinit var viewPager: ViewPager
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.appbarlayout) lateinit var appBarLayout: AppBarLayout
   private var statusBarColorAnimator: ValueAnimator? = null
   private var tabLayoutColorAnimator: Animator? = null
-  private var colorNavBar = false
+  private var colorNavBar: Boolean
+    set(value) {
+      P.ThemeNavigationBar.put(value).commit()
+    }
+    get() = P.ThemeNavigationBar.get()
   private var tabLayoutIsPinned = false
   private var canAnimateColor = true
   private var lastPosition = 0
@@ -152,6 +165,11 @@ class PagerController : ButterKnifeController {
 
   override fun bind(view: View): Unbinder {
     return PagerController_ViewBinding(this, view)
+  }
+
+  override fun onAttach(view: View) {
+    ConductorInjection.inject(this)
+    super.onAttach(view)
   }
 
   override fun onViewBound(view: View) {
@@ -224,30 +242,9 @@ class PagerController : ButterKnifeController {
     toolbar.inflateMenu(R.menu.main)
     toolbar.setOnMenuItemClickListener { item ->
       when (item.itemId) {
-        R.id.toggle_daynight -> {
-          P.DaynightAuto.put(false)
-              .commit()
-          if (activity?.isInNightMode() ?: false) {
-            P.DaynightNight.put(false)
-                .commit()
-          } else {
-            P.DaynightNight.put(true)
-                .commit()
-          }
-          // For whatever reason, the observable we set in CatchUpApplication on prefs doesn't
-          // register the above changes, so manually do it here.
-          var nightMode = AppCompatDelegate.MODE_NIGHT_NO
-          if (P.DaynightAuto.get()) {
-            nightMode = AppCompatDelegate.MODE_NIGHT_AUTO
-          } else if (P.DaynightNight.get()) {
-            nightMode = AppCompatDelegate.MODE_NIGHT_YES
-          }
-          AppCompatDelegate.setDefaultNightMode(nightMode)
-          activity?.recreate()
-          return@setOnMenuItemClickListener true
-        }
         R.id.settings -> {
-          startActivity(Intent(activity, SettingsActivity::class.java))
+          startActivityForResult(
+              Intent(activity, SettingsActivity::class.java), SETTINGS_ACTIVITY_REQUEST)
           return@setOnMenuItemClickListener true
         }
       }
@@ -367,5 +364,32 @@ class PagerController : ButterKnifeController {
       resolvedColorCache[position] = ContextCompat.getColor(activity!!, PAGE_DATA[position].accent)
     }
     return resolvedColorCache[position]
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == SETTINGS_ACTIVITY_REQUEST) {
+      if (resultCode == SettingsActivity.NIGHT_MODE_UPDATED) {
+        activity?.recreate()
+      } else {
+        if (remoteConfig.getBoolean(RemoteConfigKeys.THEME_NAV_BAR_ENABLED)) {
+          // Update the nav bar with whatever prefs we had
+          val navBarColor = if (P.ThemeNavigationBar.get()) {
+            (tabLayout.background as ColorDrawable).color
+          } else {
+            Color.BLACK // TODO is this actually a safe default?
+          }
+          activity?.window?.navigationBarColor = navBarColor
+        }
+      }
+    }
+  }
+
+  @PerController
+  @Subcomponent
+  interface Component : AndroidInjector<PagerController> {
+
+    @Subcomponent.Builder
+    abstract class Builder : AndroidInjector.Builder<PagerController>()
   }
 }

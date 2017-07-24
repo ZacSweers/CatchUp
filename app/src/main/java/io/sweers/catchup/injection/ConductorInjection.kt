@@ -33,10 +33,10 @@ object ConductorInjection {
    *
    *  1. Walks the parent-controller hierarchy to find the a controller that implements [ ], and if none do
    *  2. Uses the `controller`'s [activity][Controller.getActivity] if it implements
-   * [HasDispatchingControllerInjector], and if not
+   * [HasControllerInjector], and if not
    *  3. Uses the [android.app.Application] if it implements [ ].
    *
-   * If none of them implement [HasDispatchingControllerInjector], a [ ] is thrown.
+   * If none of them implement [HasControllerInjector], a [ ] is thrown.
    *
    * @throws IllegalArgumentException if no `AndroidInjector.Factory<Controller, ?>` is bound
    * for `controller`.
@@ -60,18 +60,18 @@ object ConductorInjection {
     controllerInjector.inject(controller)
   }
 
-  private fun findHasControllerInjector(controller: Controller): HasDispatchingControllerInjector {
+  private fun findHasControllerInjector(controller: Controller): HasControllerInjector {
     val controllerSequence = generateSequence(controller) { it.parentController } // <3 Kotlin
     controllerSequence.forEach {
-      if (it is HasDispatchingControllerInjector) {
+      if (it is HasControllerInjector) {
         return it
       }
     }
     controller.activity?.let {
-      if (it is HasDispatchingControllerInjector) {
+      if (it is HasControllerInjector) {
         return it
-      } else if (it.application is HasDispatchingControllerInjector) {
-        return it.application as HasDispatchingControllerInjector
+      } else if (it.application is HasControllerInjector) {
+        return it.application as HasControllerInjector
       }
     }
     throw IllegalArgumentException(String.format(

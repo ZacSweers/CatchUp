@@ -27,11 +27,11 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import io.reactivex.Observable
 import io.reactivex.functions.Function
-import io.sweers.catchup.injection.HasDispatchingControllerInjector
+import io.sweers.catchup.injection.HasControllerInjector
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity(),
-    LifecycleScopeProvider<ActivityEvent>, HasDispatchingControllerInjector {
+    LifecycleScopeProvider<ActivityEvent>, HasControllerInjector {
 
   @Inject lateinit var controllerInjector: DispatchingAndroidInjector<Controller>
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()

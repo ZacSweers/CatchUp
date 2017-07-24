@@ -20,7 +20,7 @@ import com.bluelinelabs.conductor.Controller
 import dagger.android.DispatchingAndroidInjector
 
 /** Provides a [DispatchingAndroidInjector] of [Controller]s.  */
-interface HasDispatchingControllerInjector {
+interface HasControllerInjector {
 
   /** Returns a [DispatchingAndroidInjector] of [Controller]s.  */
   fun controllerInjector(): DispatchingAndroidInjector<Controller>

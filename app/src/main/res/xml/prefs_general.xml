@@ -18,75 +18,80 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
   <PreferenceCategory
-    android:title="@string/general">
+      android:title="@string/general">
 
     <CheckBoxPreference
-      android:defaultValue="true"
-      android:key="smartlinking_global"
-      android:summary="@string/pref_smart_linking_summary"
-      android:title="@string/pref_smart_linking_title"
-      />
+        android:defaultValue="true"
+        android:key="smartlinking_global"
+        android:summary="@string/pref_smart_linking_summary"
+        android:title="@string/pref_smart_linking_title"
+        />
+
+    <!-- Not doing this yet -->
+    <!--<Preference-->
+        <!--android:key="services"-->
+        <!--android:summary="@string/pref_services_summary"-->
+        <!--android:title="@string/pref_services"-->
+        <!--/>-->
 
     <Preference
-      android:key="services"
-      android:summary="@string/pref_services_summary"
-      android:title="@string/pref_services"
-      />
-
-    <Preference
-      android:key="clear_cache"
-      android:summary="@string/pref_clear_cache_summary"
-      android:title="@string/pref_clear_cache"
-      />
+        android:key="clear_cache"
+        android:summary="@string/pref_clear_cache_summary"
+        android:title="@string/pref_clear_cache"
+        />
 
   </PreferenceCategory>
 
   <PreferenceCategory
-    android:title="@string/prefs_theme"
-    >
+      android:title="@string/prefs_theme"
+      >
 
     <CheckBoxPreference
-      android:defaultValue="true"
-      android:disableDependentsState="true"
-      android:key="daynight_auto"
-      android:title="Automatically set theme using DayNight"
-      />
+        android:defaultValue="true"
+        android:disableDependentsState="true"
+        android:key="daynight_auto"
+        android:title="Automatically set theme"
+        android:summary="Sets the theme automatically via depending on the time of day (via DayNight)."
+        android:icon="@drawable/ic_brightness_4_black_24dp"
+        />
 
     <CheckBoxPreference
-      android:defaultValue="false"
-      android:dependency="daynight_auto"
-      android:key="daynight_night"
-      android:title="Enable dark theme."
-      />
+        android:defaultValue="false"
+        android:dependency="daynight_auto"
+        android:key="daynight_night"
+        android:summaryOff="Dark theme is disabled, light them is the default."
+        android:summaryOn="Dark theme is enabled"
+        android:title="Use dark theme."
+        android:icon="@drawable/ic_brightness_3_black_24dp"
+        />
 
-    <!-- Remove this option on < L -->
     <CheckBoxPreference
-      android:defaultValue="false"
-      android:key="theme_navigation_bar"
-      android:title="Theme navigation bar in pager."
-      />
+        android:defaultValue="false"
+        android:key="theme_navigation_bar"
+        android:title="Theme navigation bar in pager."
+        />
 
   </PreferenceCategory>
 
   <PreferenceCategory
-    android:title="@string/app_name">
+      android:title="@string/app_name">
 
     <Preference
-      android:key="about"
-      android:title="@string/about"
-      />
+        android:key="about"
+        android:title="@string/about"
+        />
 
     <Preference
-      android:key="licenses"
-      android:title="@string/licenses"
-      />
+        android:key="licenses"
+        android:title="@string/licenses"
+        />
 
     <CheckBoxPreference
-      android:defaultValue="true"
-      android:key="reports"
-      android:summary="@string/pref_reports_summary"
-      android:title="@string/pref_reports"
-      />
+        android:defaultValue="true"
+        android:key="reports"
+        android:summary="@string/pref_reports_summary"
+        android:title="@string/pref_reports"
+        />
 
   </PreferenceCategory>
 </PreferenceScreen>

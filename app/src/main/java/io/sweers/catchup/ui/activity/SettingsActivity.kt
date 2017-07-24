@@ -16,40 +16,154 @@
 
 package io.sweers.catchup.ui.activity
 
+import android.app.Activity
+import android.app.Fragment
 import android.os.Bundle
+import android.preference.CheckBoxPreference
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceScreen
-import android.support.v7.app.AppCompatActivity
+import android.support.design.widget.Snackbar
+import android.support.v7.widget.Toolbar
 import android.widget.Toast
+import butterknife.BindView
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import dagger.Module
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.ContributesAndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasFragmentInjector
 import io.sweers.catchup.P
 import io.sweers.catchup.R
+import io.sweers.catchup.data.RemoteConfigKeys
+import io.sweers.catchup.injection.scopes.PerFragment
+import io.sweers.catchup.ui.base.BaseActivity
+import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.format
+import io.sweers.catchup.util.isInNightMode
+import io.sweers.catchup.util.setLightStatusBar
+import javax.inject.Inject
 
-class SettingsActivity : AppCompatActivity() {
+
+class SettingsActivity : BaseActivity(), HasFragmentInjector {
+
+  companion object {
+    const val NIGHT_MODE_UPDATED = 100
+    const val ARG_FROM_RECREATE = "fromRecreate"
+  }
+
+  @Inject lateinit internal var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
+  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+
+  /**
+   * Backpress hijacks activity result codes, so store ours here in case
+   */
+  private var _resultMirror: Int = Activity.RESULT_CANCELED
+  private var resultMirror: Int
+    set(value) {
+      setResult(value)
+      _resultMirror = value
+    }
+    get() = _resultMirror
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_settings)
+    SettingsActivity_ViewBinding(this)
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    if (!isInNightMode()) {
+      toolbar.setLightStatusBar()
+    }
 
     if (savedInstanceState == null) {
       fragmentManager.beginTransaction()
           .add(R.id.container, SettingsFrag())
           .commit()
+    } else if (savedInstanceState.getBoolean(ARG_FROM_RECREATE, false)) {
+      resultMirror = NIGHT_MODE_UPDATED
     }
   }
 
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    outState.putBoolean(ARG_FROM_RECREATE, true)
+  }
+
+  override fun onBackPressed() {
+    setResult(resultMirror)
+    super.onBackPressed()
+  }
+
+  override fun fragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
+
   class SettingsFrag : PreferenceFragment() {
 
+    @Inject lateinit var remoteConfig: FirebaseRemoteConfig
+
     override fun onCreate(savedInstanceState: Bundle?) {
+      AndroidInjection.inject(this)
       super.onCreate(savedInstanceState)
       addPreferencesFromResource(R.xml.prefs_general)
+
+      (findPreference(
+          P.SmartlinkingGlobal.KEY) as CheckBoxPreference).isChecked = P.SmartlinkingGlobal.get()
+      (findPreference(P.DaynightAuto.KEY) as CheckBoxPreference).isChecked = P.DaynightAuto.get()
+      (findPreference(P.DaynightNight.KEY) as CheckBoxPreference).isChecked = P.DaynightNight.get()
+      (findPreference(P.reports.KEY) as CheckBoxPreference).isChecked = P.reports.get()
+
+      val themeNavBarPref = findPreference(P.ThemeNavigationBar.KEY) as CheckBoxPreference
+      if (remoteConfig.getBoolean(RemoteConfigKeys.THEME_NAV_BAR_ENABLED)) {
+        themeNavBarPref.isChecked = P.ThemeNavigationBar.get()
+      } else {
+        preferenceScreen.removePreference(themeNavBarPref)
+      }
     }
 
     override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen,
         preference: Preference): Boolean {
       when (preference.key) {
+        P.SmartlinkingGlobal.KEY -> {
+          P.SmartlinkingGlobal.put((preference as CheckBoxPreference).isChecked).apply()
+          return true
+        }
+        P.DaynightAuto.KEY -> {
+          val isChecked = (preference as CheckBoxPreference).isChecked
+          P.DaynightAuto.put(isChecked)
+              .apply {
+                if (isChecked) {
+                  // If we're enabling auto, clear out the prev daynight night-only mode
+                  putBoolean(P.DaynightNight.KEY, false)
+                  (findPreference(P.DaynightNight.KEY) as CheckBoxPreference).isChecked = false
+                }
+              }
+              .apply()
+          UiUtil.updateNightMode(activity)
+          return true
+        }
+        P.DaynightNight.KEY -> {
+          P.DaynightNight.put((preference as CheckBoxPreference).isChecked).apply()
+          UiUtil.updateNightMode(activity)
+          return true
+        }
+        P.ThemeNavigationBar.KEY -> {
+          P.ThemeNavigationBar.put((preference as CheckBoxPreference).isChecked).apply()
+          return true
+        }
+        P.reports.KEY -> {
+          val isChecked = (preference as CheckBoxPreference).isChecked
+          P.reports.put(isChecked).apply()
+          Snackbar.make(view, "Will take effect on next app restart", Snackbar.LENGTH_SHORT)
+              .setAction("Undo") {
+                P.reports.put(!isChecked).apply()
+                preference.isChecked = !isChecked
+              }
+              .show()
+          return true
+        }
         P.ClearCache.KEY -> {
           val cleaned = activity.applicationContext.clearCache()
           Toast.makeText(
@@ -57,14 +171,27 @@ class SettingsActivity : AppCompatActivity() {
               getString(R.string.clear_cache_success, cleaned.format()),
               Toast.LENGTH_SHORT)
               .show()
+          return true
         }
-        P.licenses.KEY -> Toast.makeText(activity, "TODO", Toast.LENGTH_SHORT)
-            .show()
-        P.about.KEY -> Toast.makeText(activity, "TODO", Toast.LENGTH_SHORT)
-            .show()
+        P.licenses.KEY -> {
+          Toast.makeText(activity, "TODO", Toast.LENGTH_SHORT).show()
+          return true
+        }
+        P.about.KEY -> {
+          Toast.makeText(activity, "TODO", Toast.LENGTH_SHORT).show()
+          return true
+        }
       }
 
       return super.onPreferenceTreeClick(preferenceScreen, preference)
+    }
+
+    @Module
+    abstract class SettingsFragmentBindingModule {
+
+      @PerFragment
+      @ContributesAndroidInjector
+      internal abstract fun settingsFragment(): SettingsFrag
     }
   }
 }

@@ -20,6 +20,7 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import io.sweers.catchup.injection.ControllerBindingModule
 import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.ui.activity.SettingsActivity.SettingsFrag.SettingsFragmentBindingModule
 
 @Module
 abstract class ActivityBindingModule {
@@ -31,4 +32,8 @@ abstract class ActivityBindingModule {
       ControllerBindingModule::class
   ))
   internal abstract fun mainActivity(): MainActivity
+
+  @PerActivity
+  @ContributesAndroidInjector(modules = arrayOf(SettingsFragmentBindingModule::class))
+  internal abstract fun settingsActivity(): SettingsActivity
 }
