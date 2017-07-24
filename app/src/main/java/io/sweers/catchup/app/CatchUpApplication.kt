@@ -34,7 +34,7 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.util.d
 import javax.inject.Inject
 
-abstract class CatchUpApplication : Application(), HasActivityInjector {
+class CatchUpApplication : Application(), HasActivityInjector {
 
   companion object {
 
