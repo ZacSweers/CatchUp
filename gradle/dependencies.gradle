@@ -37,7 +37,7 @@ def versions = [
     rxbinding: '2.0.0',
     rxpalette: '0.3.0',
     stetho: '1.5.0',
-    support: "26.0.0-beta2"
+    support: "26.0.0"
 ]
 
 ext.versions = versions
@@ -55,7 +55,7 @@ ext.deps = [
             config: "com.google.firebase:firebase-config:${versions.firebase}",
             database: "com.google.firebase:firebase-database:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-alpha7',
+        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-alpha8',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
