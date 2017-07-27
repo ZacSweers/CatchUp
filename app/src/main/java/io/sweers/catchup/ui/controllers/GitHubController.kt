@@ -21,9 +21,13 @@ import android.os.Bundle
 import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Field
 import com.apollographql.apollo.api.Operation
-import com.apollographql.apollo.cache.normalized.CacheControl
+import com.apollographql.apollo.api.ResponseField
+import com.apollographql.apollo.api.internal.Optional
+import com.apollographql.apollo.cache.http.DiskLruHttpCacheStore
+import com.apollographql.apollo.cache.http.HttpCache
+import com.apollographql.apollo.cache.http.HttpCachePolicy
+import com.apollographql.apollo.cache.http.HttpCacheStore
 import com.apollographql.apollo.cache.normalized.CacheKey
 import com.apollographql.apollo.cache.normalized.CacheKeyResolver
 import com.apollographql.apollo.cache.normalized.NormalizedCacheFactory
@@ -31,6 +35,7 @@ import com.apollographql.apollo.cache.normalized.lru.EvictionPolicy
 import com.apollographql.apollo.cache.normalized.lru.LruNormalizedCacheFactory
 import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
+import com.apollographql.apollo.internal.util.ApolloLogger
 import com.apollographql.apollo.rx2.Rx2Apollo
 import dagger.Lazy
 import dagger.Provides
@@ -46,7 +51,7 @@ import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.HttpUrlApolloAdapter
 import io.sweers.catchup.data.ISO8601InstantApolloAdapter
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.github.GitHubSearch
+import io.sweers.catchup.data.github.GitHubSearchQuery
 import io.sweers.catchup.data.github.TrendingTimespan
 import io.sweers.catchup.data.github.model.Repository
 import io.sweers.catchup.data.github.model.SearchQuery
@@ -62,6 +67,7 @@ import io.sweers.catchup.util.collect.emptyIfNull
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
+import java.util.concurrent.TimeUnit.DAYS
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -90,20 +96,25 @@ class GitHubController : BaseNewsController<CatchUpItem> {
         .build()
         .toString()
 
-    val searchQuery = apolloClient.query(GitHubSearch(query,
+    val searchQuery = apolloClient.query(GitHubSearchQuery(query,
         50,
         LanguageOrder.builder()
             .direction(OrderDirection.DESC)
             .field(LanguageOrderField.SIZE)
             .build()))
-        .cacheControl(
-            if (request.fromRefresh) CacheControl.NETWORK_FIRST else CacheControl.CACHE_FIRST)
+        .httpCachePolicy(
+            if (request.fromRefresh) {
+              HttpCachePolicy.NETWORK_FIRST.expireAfter(1, DAYS)
+            } else {
+              HttpCachePolicy.CACHE_FIRST
+            }
+        )
 
     return Rx2Apollo.from(searchQuery)
+        .firstOrError() // TODO Do we want to handle multiple?
         .map { it.data()!! }
         .flatMap { data ->
-          Observable.fromIterable(data.search()
-              .nodes().emptyIfNull())
+          Observable.fromIterable(data.search().nodes().emptyIfNull())
               .map { it.asRepository()!! }
               .map { node ->
                 var primaryLanguage: String? = null
@@ -166,12 +177,28 @@ class GitHubController : BaseNewsController<CatchUpItem> {
     private annotation class InternalApi
 
     @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideHttpCacheStore(@ApplicationContext context: Context): HttpCacheStore {
+      return DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
+    }
+
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache {
+      return HttpCache(httpCacheStore, ApolloLogger(Optional.absent()))
+    }
+
+    @Provides
     @InternalApi
     @JvmStatic
     @PerController
     internal fun provideGitHubOkHttpClient(
-        client: OkHttpClient): OkHttpClient {
+        client: OkHttpClient,
+        httpCache: HttpCache): OkHttpClient {
       return client.newBuilder()
+          .addInterceptor(httpCache.interceptor())
           .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
           .build()
     }
@@ -181,7 +208,7 @@ class GitHubController : BaseNewsController<CatchUpItem> {
     @PerController
     internal fun provideCacheKeyResolver(): CacheKeyResolver {
       return object : CacheKeyResolver() {
-        override fun fromFieldRecordSet(field: Field,
+        override fun fromFieldRecordSet(field: ResponseField,
             objectSource: Map<String, Any>): CacheKey {
           //Specific id for User type.
           if (objectSource["__typename"] == "User") {
@@ -196,7 +223,7 @@ class GitHubController : BaseNewsController<CatchUpItem> {
           return CacheKey.NO_KEY
         }
 
-        override fun fromFieldArguments(field: Field,
+        override fun fromFieldArguments(field: ResponseField,
             variables: Operation.Variables): CacheKey {
           return CacheKey.NO_KEY
         }
@@ -218,10 +245,13 @@ class GitHubController : BaseNewsController<CatchUpItem> {
     @PerController
     internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
         cacheFactory: NormalizedCacheFactory<*>,
-        resolver: CacheKeyResolver): ApolloClient {
+        resolver: CacheKeyResolver,
+        httpCacheStore: HttpCacheStore): ApolloClient {
       return ApolloClient.builder()
           .serverUrl(SERVER_URL)
+          .httpCacheStore(httpCacheStore)
           .okHttpClient(client.get())
+//          .callFactory { client.get().newCall(it) }
           .normalizedCache(cacheFactory, resolver)
           .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
           .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())

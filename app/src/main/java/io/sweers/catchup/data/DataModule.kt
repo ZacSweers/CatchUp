@@ -57,10 +57,10 @@ abstract class DataModule {
     @JvmStatic
     @Singleton
     internal fun provideCache(@ApplicationContext context: Context): Cache {
-      // Temporary pending https://github.com/apollographql/apollo-android/pull/421
-      //if (Looper.myLooper() == Looper.getMainLooper()) {
-      //  throw new IllegalStateException("Cache initialized on main thread.");
-      //}
+      // Pending https://github.com/apollographql/apollo-android/pull/591
+//      if (Looper.myLooper() == Looper.getMainLooper()) {
+//        throw IllegalStateException("Cache initialized on main thread.");
+//      }
       return Cache(context.cacheDir, HTTP_RESPONSE_CACHE)
     }
 
@@ -70,10 +70,10 @@ abstract class DataModule {
     internal fun provideOkHttpClient(cache: Cache,
         interceptors: Set<@JvmSuppressWildcards Interceptor>,
         @NetworkInterceptor networkInterceptors: Set<@JvmSuppressWildcards Interceptor>): OkHttpClient {
-      // Temporary pending https://github.com/apollographql/apollo-android/pull/421
-      //if (Looper.myLooper() == Looper.getMainLooper()) {
-      //  throw new IllegalStateException("HTTP client initialized on main thread.");
-      //}
+      // Pending https://github.com/apollographql/apollo-android/pull/591
+//      if (Looper.myLooper() == Looper.getMainLooper()) {
+//        throw IllegalStateException("HTTP client initialized on main thread.");
+//      }
 
       val builder = OkHttpClient.Builder().connectTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
           .readTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
