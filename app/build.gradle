@@ -17,8 +17,8 @@
 buildscript {
   repositories {
     jcenter()
-    maven { url "https://maven.google.com" }
-    maven { url "https://dl.bintray.com/kotlin/kotlin-eap-1.1" }
+    maven { url deps.build.repositories.google }
+    maven { url deps.build.repositories.kotlinEap }
   }
 
   dependencies {
@@ -51,10 +51,10 @@ private String getPropertyOrEmpty(String property) {
 
 repositories {
   jcenter()
-  maven { url "https://jitpack.io" }
-  maven { url "https://maven.google.com" }
-  maven { url "https://dl.bintray.com/kotlin/kotlin-eap-1.1" }
-  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+  maven { url deps.build.repositories.jitpack }
+  maven { url deps.build.repositories.google }
+  maven { url deps.build.repositories.kotlinEap }
+  maven { url deps.build.repositories.snapshots }
 }
 
 android {
