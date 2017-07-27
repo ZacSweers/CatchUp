@@ -24,14 +24,17 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import java.io.IOException
 import java.lang.reflect.Type
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
 /**
  * A converter factory that uses Inspector to validate responses and fails fast if the response
  * models are invalid.
  */
-class InspectorConverterFactory private constructor(
-    private val inspector: Inspector) : Converter.Factory() {
+@Singleton
+class InspectorConverterFactory @Inject constructor(private val inspector: Inspector)
+  : Converter.Factory() {
   override fun responseBodyConverter(
       type: Type,
       annotations: Array<Annotation>,
@@ -41,13 +44,6 @@ class InspectorConverterFactory private constructor(
         type,
         annotations)
     return InspectorResponseConverter(type, inspector, delegateConverter)
-  }
-
-  companion object {
-
-    fun create(inspector: Inspector): InspectorConverterFactory {
-      return InspectorConverterFactory(inspector)
-    }
   }
 }
 

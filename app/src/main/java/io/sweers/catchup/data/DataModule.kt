@@ -111,13 +111,6 @@ abstract class DataModule {
     @Provides
     @JvmStatic
     @Singleton
-    internal fun provideInspectorConverterFactory(inspector: Inspector): InspectorConverterFactory {
-      return InspectorConverterFactory.create(inspector)
-    }
-
-    @Provides
-    @JvmStatic
-    @Singleton
     internal fun provideRxJavaCallAdapterFactory(): RxJava2CallAdapterFactory {
       return RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
     }
