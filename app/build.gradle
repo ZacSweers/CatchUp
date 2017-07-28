@@ -257,12 +257,12 @@ dependencies {
   // Support libs
   supportImplementation deps.android.support.annotations
   supportImplementation deps.android.support.appCompat
-  supportImplementation deps.android.support.v4
-  supportImplementation deps.android.support.design
-  supportImplementation deps.android.support.customTabs
-  supportImplementation deps.android.support.constraintLayout
-  supportImplementation deps.android.support.palette
   supportImplementation deps.android.support.compat
+  supportImplementation deps.android.support.constraintLayout
+  supportImplementation deps.android.support.customTabs
+  supportImplementation deps.android.support.design
+  supportImplementation deps.android.support.palette
+  supportImplementation deps.android.support.v4
 
   implementation supportLibraries
   testImplementation supportLibraries
