@@ -123,7 +123,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     itemAnimator.removeDuration = 300
 
     // This blows up adding item ranges >_>. Items start going to random places
-    //recyclerView.setItemAnimator(itemAnimator);
+//    recyclerView.itemAnimator = itemAnimator
   }
 
   @OnClick(R.id.retry_button) internal fun onRetry() {
