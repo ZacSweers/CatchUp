@@ -267,6 +267,16 @@
     tools:ignore="HardcodedText"
     />
 
+  <Button
+    android:id="@+id/debug_network_logs"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_columnSpan="2"
+    android:layout_gravity="start|fill_horizontal"
+    android:text="Network logs"
+    tools:ignore="HardcodedText"
+    />
+
   <!-- BUILD INFORMATION SECTION -->
 
   <TextView

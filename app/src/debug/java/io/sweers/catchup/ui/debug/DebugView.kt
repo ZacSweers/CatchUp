@@ -37,6 +37,7 @@ import butterknife.OnClick
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxAdapterView
+import com.readystatesoftware.chuck.internal.ui.MainActivity
 import com.squareup.leakcanary.internal.DisplayLeakActivity
 import dagger.Lazy
 import io.reactivex.Observable
@@ -251,6 +252,11 @@ class DebugView @JvmOverloads constructor(context: Context,
 
   @OnClick(R.id.debug_leaks_show) internal fun showLeaks() {
     val intent = Intent(context, DisplayLeakActivity::class.java)
+    context.startActivity(intent)
+  }
+
+  @OnClick(R.id.debug_network_logs) internal fun showNetworkLogs() {
+    val intent = Intent(context, MainActivity::class.java)
     context.startActivity(intent)
   }
 
