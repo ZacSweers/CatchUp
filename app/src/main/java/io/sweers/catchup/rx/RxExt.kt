@@ -123,6 +123,6 @@ fun <T> delayedMessageTransformer(view: View, message: String): OmniTransformer<
  * Utility for working with enums when you want to run actions only on specific values
  */
 inline fun <T : Enum<T>> Observable<T>.doOn(target: T,
-    crossinline action: () -> Unit): Observable<T> {
-  return doOnNext { if (it == target) action() }
+    crossinline action: () -> Unit): Observable<T> = apply {
+  doOnNext { if (it == target) action() }
 }

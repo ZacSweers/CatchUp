@@ -27,9 +27,8 @@ import io.sweers.catchup.rx.doOn
 abstract class AutoDisposeController
   : RefWatchingController, LifecycleScopeProvider<ControllerEvent> {
 
-  protected fun <T> T.doOnDestroy(action: T.() -> Unit): T {
+  protected fun <T> T.doOnDestroy(action: T.() -> Unit): T = apply {
     lifecycle().doOn(DESTROY) { action() }
-    return this
   }
 
   private val lifecycleProvider = ControllerScopeProvider.from(this)

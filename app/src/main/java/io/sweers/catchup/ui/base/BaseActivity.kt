@@ -35,9 +35,8 @@ import javax.inject.Inject
 abstract class BaseActivity : AppCompatActivity(),
     LifecycleScopeProvider<ActivityEvent>, HasControllerInjector {
 
-  protected fun <T> T.doOnDestroy(action: T.() -> Unit): T {
+  protected fun <T> T.doOnDestroy(action: T.() -> Unit): T = apply {
     lifecycle().doOn(DESTROY) { action() }
-    return this
   }
 
   @Inject lateinit var controllerInjector: DispatchingAndroidInjector<Controller>
