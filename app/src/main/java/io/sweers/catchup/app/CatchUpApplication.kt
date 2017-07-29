@@ -69,6 +69,8 @@ open class CatchUpApplication : Application(), HasActivityInjector {
         .asObservable()
         .subscribe { autoEnabled ->
           d { "Updating daynight" }
+          // Someday would like to add activity lifecycle callbacks to automatically call recreate
+          // when resumed since this was updated
           var nightMode = AppCompatDelegate.MODE_NIGHT_NO
           if (autoEnabled) {
             nightMode = AppCompatDelegate.MODE_NIGHT_AUTO
