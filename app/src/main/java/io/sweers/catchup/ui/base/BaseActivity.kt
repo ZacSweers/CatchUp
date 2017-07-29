@@ -28,10 +28,17 @@ import dagger.android.DispatchingAndroidInjector
 import io.reactivex.Observable
 import io.reactivex.functions.Function
 import io.sweers.catchup.injection.HasControllerInjector
+import io.sweers.catchup.rx.doOn
+import io.sweers.catchup.ui.base.ActivityEvent.DESTROY
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity(),
     LifecycleScopeProvider<ActivityEvent>, HasControllerInjector {
+
+  protected fun <T> T.doOnDestroy(action: T.() -> Unit): T {
+    lifecycle().doOn(DESTROY) { action() }
+    return this
+  }
 
   @Inject lateinit var controllerInjector: DispatchingAndroidInjector<Controller>
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()

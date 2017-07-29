@@ -18,12 +18,19 @@ package io.sweers.catchup.ui.base
 
 import android.os.Bundle
 import com.bluelinelabs.conductor.autodispose.ControllerEvent
+import com.bluelinelabs.conductor.autodispose.ControllerEvent.DESTROY
 import com.bluelinelabs.conductor.autodispose.ControllerScopeProvider
 import com.uber.autodispose.LifecycleScopeProvider
 import io.reactivex.functions.Function
+import io.sweers.catchup.rx.doOn
 
 abstract class AutoDisposeController
   : RefWatchingController, LifecycleScopeProvider<ControllerEvent> {
+
+  protected fun <T> T.doOnDestroy(action: T.() -> Unit): T {
+    lifecycle().doOn(DESTROY) { action() }
+    return this
+  }
 
   private val lifecycleProvider = ControllerScopeProvider.from(this)
 
