@@ -111,6 +111,11 @@ class DebugViewContainer @Inject constructor(
     activity.lifecycle()
         .filter { event -> event === ActivityEvent.DESTROY }
         .firstElement()
+        // Why is the below all so awkward?
+        .doOnDispose {
+          unbinder.unbind()
+          disposables.clear()
+        }
         .autoDisposeWith(activity)
         .subscribe {
           unbinder.unbind()
