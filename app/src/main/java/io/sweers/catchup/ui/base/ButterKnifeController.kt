@@ -25,6 +25,7 @@ import butterknife.Unbinder
 
 abstract class ButterKnifeController : AutoDisposeController {
 
+  private var themedContext: Context? = null
   private var unbinder: Unbinder? = null
 
   protected constructor() : super()
@@ -35,14 +36,18 @@ abstract class ButterKnifeController : AutoDisposeController {
       container: ViewGroup): View
 
   /**
-   * Callback for wrapping context. Override for your own theme.
+   * Callback for wrapping context. Override for your own theme. Result will be cached
    */
   protected open fun onThemeContext(context: Context): Context {
     return context
   }
 
+  protected fun requestThemedContext(context: Context): Context {
+    return themedContext ?: onThemeContext(context).also { themedContext = it }
+  }
+
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
-    val themedContext = onThemeContext(container.context)
+    val themedContext = requestThemedContext(container.context)
     val view = inflateView(LayoutInflater.from(themedContext), container)
     unbinder = bind(view)
     onViewBound(view)
@@ -55,6 +60,7 @@ abstract class ButterKnifeController : AutoDisposeController {
 
   override fun onDestroyView(view: View) {
     unbinder?.unbind()
+    themedContext = null
     super.onDestroyView(view)
   }
 }

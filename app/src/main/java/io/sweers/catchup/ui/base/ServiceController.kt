@@ -43,12 +43,12 @@ abstract class ServiceController : ButterKnifeController {
   constructor(args: Bundle) : super(args)
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
-    val view = super.onCreateView(inflater, container)
-    val themedContext = view.context
-    if (container.context !== themedContext) {
-      serviceThemeColor = themedContext.resolveAttribute(R.attr.colorAccent)
+    requestThemedContext(container.context).let {
+      if (container.context !== it) {
+        serviceThemeColor = it.resolveAttribute(R.attr.colorAccent)
+      }
     }
-    return view
+    return super.onCreateView(inflater, container)
   }
 
   override fun onViewBound(view: View) {
