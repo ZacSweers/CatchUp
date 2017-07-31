@@ -52,9 +52,7 @@ abstract class CatchUpDatabase : RoomDatabase() {
           .also { INSTANCE = it }
     }
   }
-
 }
-
 
 @Dao
 //@TypeConverters(arrayOf(InstantConverter::class, PairConverter::class)) // Why doesn't this work?
