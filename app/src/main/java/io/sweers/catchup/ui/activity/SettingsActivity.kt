@@ -28,14 +28,19 @@ import android.support.v7.widget.Toolbar
 import android.widget.Toast
 import butterknife.BindView
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Module
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.ContributesAndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasFragmentInjector
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
+import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.RemoteConfigKeys
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.base.BaseActivity
@@ -44,6 +49,7 @@ import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.format
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
+import java.io.File
 import javax.inject.Inject
 
 
@@ -103,6 +109,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
   class SettingsFrag : PreferenceFragment() {
 
     @Inject lateinit var remoteConfig: FirebaseRemoteConfig
+    @Inject lateinit var database: CatchUpDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
       AndroidInjection.inject(this)
@@ -165,12 +172,25 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
           return true
         }
         P.ClearCache.KEY -> {
-          val cleaned = activity.applicationContext.clearCache()
-          Toast.makeText(
-              activity,
-              getString(R.string.clear_cache_success, cleaned.format()),
-              Toast.LENGTH_SHORT)
-              .show()
+          Single.fromCallable {
+            val cacheCleaned = activity.applicationContext.clearCache()
+            val dbFile = File(database.openHelper.readableDatabase.path)
+            val initialDbSize = dbFile.length()
+            with(database.serviceDao()) {
+              nukeItems()
+              nukePages()
+            }
+            val deletedFromDb = initialDbSize - dbFile.length()
+            return@fromCallable cacheCleaned + deletedFromDb
+          }.subscribeOn(Schedulers.io())
+              .observeOn(AndroidSchedulers.mainThread())
+              .autoDisposeWith(activity as BaseActivity)
+              .subscribe { cleanedAmount, throwable ->
+                val errorMessage = throwable?.let {
+                  "There was an error cleaning cache"
+                } ?: getString(R.string.clear_cache_success, cleanedAmount.format())
+                Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show()
+              }
           return true
         }
         P.licenses.KEY -> {

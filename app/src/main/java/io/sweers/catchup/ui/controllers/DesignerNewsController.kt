@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.controllers
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
@@ -32,6 +31,7 @@ import io.reactivex.functions.BiFunction
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpItem
+import io.sweers.catchup.data.CatchUpItem2
 import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.designernews.DesignerNewsService
@@ -39,6 +39,7 @@ import io.sweers.catchup.data.designernews.model.Story
 import io.sweers.catchup.data.designernews.model.User
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.ui.base.StorageBackedNewsController
 import io.sweers.catchup.util.collect.toCommaJoinerList
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
@@ -48,7 +49,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class DesignerNewsController : BaseNewsController<CatchUpItem> {
+class DesignerNewsController : StorageBackedNewsController {
 
   @Inject lateinit var service: DesignerNewsService
   @Inject lateinit var linkManager: LinkManager
@@ -56,6 +57,8 @@ class DesignerNewsController : BaseNewsController<CatchUpItem> {
   constructor() : super()
 
   constructor(args: Bundle) : super(args)
+
+  override fun serviceType() = "dn"
 
   override fun onThemeContext(context: Context): Context {
     return ContextThemeWrapper(context, R.style.CatchUp_DesignerNews)
@@ -65,11 +68,11 @@ class DesignerNewsController : BaseNewsController<CatchUpItem> {
     holder.bind(this, item, linkManager)
   }
 
-  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<CatchUpItem>> {
-    // This won't do for now because /users endpoint sporadically barfs on specific user IDs
-    return service.getTopStories(request.page)
+  override fun getDataFromService(page: Int): Single<List<CatchUpItem2>> {
+    return service.getTopStories(page)
         .flatMapObservable { stories ->
           Observable.zip(
+              // TODO This needs to update to the new /users endpoint behavior, which will only give a best effort result and not necessarily all
               Observable.fromIterable(stories),
               Observable.fromIterable(stories)
                   .map { it.links().user() }
@@ -84,20 +87,20 @@ class DesignerNewsController : BaseNewsController<CatchUpItem> {
         }
         .map { (story, user) ->
           with(story) {
-            CatchUpItem.builder()
-                .id(java.lang.Long.parseLong(id()))
-                .title(title())
-                .score(Pair.create("▲", voteCount()))
-                .timestamp(createdAt())
-                .author(user?.displayName())
-                .source(hostname())
-                .commentCount(commentCount())
-                .tag(badge())
-                .itemClickUrl(url())
-                .itemCommentClickUrl(href()
-                    .replace("api.", "www.")
-                    .replace("api/v2/", ""))
-                .build()
+            CatchUpItem2().apply {
+              id = java.lang.Long.parseLong(id())
+              title = title()
+              score = Pair("▲", voteCount())
+              timestamp = createdAt()
+              author = user?.displayName()
+              source = hostname()
+              commentCount = commentCount()
+              tag = badge()
+              itemClickUrl = url()
+              itemCommentClickUrl = href()
+                  .replace("api.", "www.")
+                  .replace("api/v2/", "")
+            }
           }
         }
         .toList()

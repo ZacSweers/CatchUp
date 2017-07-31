@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.controllers
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -61,7 +60,7 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
   override fun bindItemView(item: HackerNewsStory, holder: BaseNewsController.NewsItemViewHolder) {
     holder.run {
       title(item.title())
-      score(Pair.create("+", item.score()))
+      score(Pair("+", item.score()))
       timestamp(item.time())
       author(item.by())
 

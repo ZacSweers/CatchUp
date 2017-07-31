@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.controllers
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
@@ -26,17 +25,18 @@ import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.AuthInterceptor
 import io.sweers.catchup.data.CatchUpItem
+import io.sweers.catchup.data.CatchUpItem2
 import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.producthunt.ProductHuntService
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.ui.base.StorageBackedNewsController
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -45,7 +45,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class ProductHuntController : BaseNewsController<CatchUpItem> {
+class ProductHuntController : StorageBackedNewsController {
 
   @Inject lateinit var service: ProductHuntService
   @Inject lateinit var linkManager: LinkManager
@@ -53,6 +53,8 @@ class ProductHuntController : BaseNewsController<CatchUpItem> {
   constructor() : super()
 
   constructor(args: Bundle) : super(args)
+
+  override fun serviceType() = "ph"
 
   override fun onThemeContext(context: Context): Context {
     return ContextThemeWrapper(context, R.style.CatchUp_ProductHunt)
@@ -62,36 +64,22 @@ class ProductHuntController : BaseNewsController<CatchUpItem> {
     holder.bind(this, item, linkManager)
   }
 
-  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<CatchUpItem>> {
-    if (request.multipage) {
-      // Backfill pages
-      return Observable.range(0, request.page)
-          .flatMapSingle { this.getPage(it) }
-          .collectInto(mutableListOf<CatchUpItem>()) { list, collection -> list.addAll(collection) }
-          .map { it } // Weird
-    } else if (request.fromRefresh) {
-      return getPage(request.page)
-    } else {
-      return getPage(request.page)
-    }
-  }
-
-  private fun getPage(page: Int): Single<List<CatchUpItem>> {
+  override fun getDataFromService(page: Int): Single<List<CatchUpItem2>> {
     return service.getPosts(page)
         .flattenAsObservable { it }
         .map {
           with(it) {
-            CatchUpItem.builder()
-                .id(id())
-                .title(name())
-                .score(Pair.create("▲", votes_count()))
-                .timestamp(created_at())
-                .author(user().name())
-                .tag(firstTopic)
-                .commentCount(comments_count())
-                .itemClickUrl(redirect_url())
-                .itemCommentClickUrl(discussion_url())
-                .build()
+            CatchUpItem2().apply {
+              id = id()
+              title = name()
+              score = Pair("▲", votes_count())
+              timestamp = created_at()
+              author = user().name()
+              tag = firstTopic
+              commentCount = comments_count()
+              itemClickUrl = redirect_url()
+              itemCommentClickUrl = discussion_url()
+            }
           }
         }
         .toList()

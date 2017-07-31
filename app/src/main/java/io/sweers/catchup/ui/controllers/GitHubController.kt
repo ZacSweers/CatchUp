@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.controllers
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Operation
@@ -147,7 +146,7 @@ class GitHubController : BaseNewsController<CatchUpItem> {
                       .id(id())
                       .hideComments(true)
                       .title(fullName())
-                      .score(Pair.create("★", starsCount()))
+                      .score(Pair("★", starsCount()))
                       .timestamp(createdAt())
                       .author(owner().login())
                       .tag(language())

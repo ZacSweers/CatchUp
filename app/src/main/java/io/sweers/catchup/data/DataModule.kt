@@ -128,6 +128,20 @@ abstract class DataModule {
     fun provideRxSharedPreferences(sharedPreferences: SharedPreferences): RxSharedPreferences {
       return RxSharedPreferences.create(sharedPreferences)
     }
+
+    @Provides
+    @JvmStatic
+    @Singleton
+    internal fun provideCatchUpDatabase(@ApplicationContext context: Context): CatchUpDatabase {
+      return CatchUpDatabase.getDatabase(context)
+    }
+
+    @Provides
+    @JvmStatic
+    @Singleton
+    internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase): ServiceDao {
+      return catchUpDatabase.serviceDao()
+    }
   }
 }
 

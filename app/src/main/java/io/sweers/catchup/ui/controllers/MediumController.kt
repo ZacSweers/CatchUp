@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.controllers
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.serjltt.moshi.adapters.Wrapped
@@ -69,7 +68,7 @@ class MediumController : BaseNewsController<MediumPost> {
     holder.run {
       title(item.post().title())
 
-      score(Pair.create(
+      score(Pair(
           "\u2665\uFE0E", // Because lol: https://code.google.com/p/android/issues/detail?id=231068
           item.post()
               .virtuals()

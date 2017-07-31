@@ -20,6 +20,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import com.facebook.stetho.Stetho
+import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
 import com.squareup.leakcanary.LeakCanary
 import timber.log.Timber
@@ -50,6 +51,7 @@ class DebugCatchUpApplication : CatchUpApplication() {
     })
     Timber.plant(Timber.DebugTree())
     Timber.plant(lumberYard.tree())
+    Timber.plant(StethoTree())
     Stetho.initializeWithDefaults(this)
   }
 }

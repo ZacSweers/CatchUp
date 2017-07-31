@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.controllers
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.util.Pair
 import android.view.ContextThemeWrapper
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.squareup.moshi.Moshi
@@ -67,7 +66,7 @@ class RedditController : BaseNewsController<RedditLink> {
     holder.run {
       title(item.title())
 
-      score(Pair.create("+", item.score()))
+      score(Pair("+", item.score()))
       timestamp(item.createdUtc())
       author("/u/" + item.author())
 

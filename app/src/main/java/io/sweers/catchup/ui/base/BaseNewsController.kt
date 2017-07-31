@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.base
 
 import android.os.Bundle
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat
-import android.support.v4.util.Pair
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -351,7 +350,9 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     }
   }
 
-  data class DataRequest(val fromRefresh: Boolean, val multipage: Boolean, val page: Int)
+  data class DataRequest(val fromRefresh: Boolean,
+      val multipage: Boolean,
+      val page: Int)
 
   class NewsItemViewHolder(itemView: View) : RxViewHolder(itemView) {
 

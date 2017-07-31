@@ -27,6 +27,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import io.sweers.catchup.R.string
 import java.io.File
+import java.io.IOException
 
 fun Context.clearCache(): Long {
   return cleanDir(applicationContext.cacheDir)
@@ -34,15 +35,18 @@ fun Context.clearCache(): Long {
 
 private fun cleanDir(dir: File): Long {
   var bytesDeleted: Long = 0
-  val files = dir.listFiles()
-
-  for (file in files) {
-    val length = file.length()
-    if (file.delete()) {
-      d { "Deleted file" }
-      bytesDeleted += length
-    }
-  }
+  dir.listFiles()
+      .forEach {
+        val length = it.length()
+        try {
+          if (it.delete()) {
+            d { "Deleted file" }
+            bytesDeleted += length
+          }
+        } catch (e: IOException) {
+          // Ignore these for now
+        }
+      }
   return bytesDeleted
 }
 
