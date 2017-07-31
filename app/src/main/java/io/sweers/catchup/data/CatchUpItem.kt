@@ -132,50 +132,33 @@ internal class ListConverter {
 
 @Keep
 @Entity(tableName = "pages")
-open class ServicePage {
-
-  /**
-   * Combination of the sessionId and type
-   */
-  @PrimaryKey lateinit var id: String
-
-  lateinit var type: String
-
-  @TypeConverters(InstantConverter::class) lateinit var expiration: Instant
-
-  var sessionId: Long = -1
-
-  var page: Int = 0
-
-  @TypeConverters(ListConverter::class) lateinit var items: List<Long>
-}
+data class ServicePage(
+    /**
+     * Combination of the sessionId and type
+     */
+    @PrimaryKey val id: String,
+    val type: String,
+    @field:TypeConverters(InstantConverter::class) val expiration: Instant,
+    val sessionId: Long = -1,
+    val page: Int = 0,
+    @field:TypeConverters(ListConverter::class) val items: List<Long>
+)
 
 @Keep
 @Entity(tableName = "items")
-open class CatchUpItem2 : HasStableId {
-
-  @PrimaryKey var id: Long = -1
-
-  lateinit var title: String
-
-  @TypeConverters(InstantConverter::class) lateinit var timestamp: Instant
-
-  @TypeConverters(PairConverter::class) var score: Pair<String, Int>? = null
-
-  var tag: String? = null
-
-  var author: String? = null
-
-  var source: String? = null
-
-  var commentCount = 0
-
-  var hideComments: Boolean = false
-
-  var itemClickUrl: String? = null
-
-  var itemCommentClickUrl: String? = null
-
+data class CatchUpItem2(
+    @PrimaryKey var id: Long,
+    val title: String,
+    @field:TypeConverters(InstantConverter::class) val timestamp: Instant,
+    @field:TypeConverters(PairConverter::class) val score: Pair<String, Int>? = null,
+    val tag: String? = null,
+    val author: String? = null,
+    val source: String? = null,
+    val commentCount: Int = 0,
+    val hideComments: Boolean = false,
+    val itemClickUrl: String? = null,
+    val itemCommentClickUrl: String? = null
+) : HasStableId {
   override fun stableId() = id
 }
 

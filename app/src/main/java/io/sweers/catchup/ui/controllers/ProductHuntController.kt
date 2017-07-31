@@ -69,17 +69,17 @@ class ProductHuntController : StorageBackedNewsController {
         .flattenAsObservable { it }
         .map {
           with(it) {
-            CatchUpItem2().apply {
-              id = id()
-              title = name()
-              score = Pair("▲", votes_count())
-              timestamp = created_at()
-              author = user().name()
-              tag = firstTopic
-              commentCount = comments_count()
-              itemClickUrl = redirect_url()
-              itemCommentClickUrl = discussion_url()
-            }
+            CatchUpItem2(
+                id = id(),
+                title = name(),
+                score = Pair("▲", votes_count()),
+                timestamp = created_at(),
+                author = user().name(),
+                tag = firstTopic,
+                commentCount = comments_count(),
+                itemClickUrl = redirect_url(),
+                itemCommentClickUrl = discussion_url()
+            )
           }
         }
         .toList()

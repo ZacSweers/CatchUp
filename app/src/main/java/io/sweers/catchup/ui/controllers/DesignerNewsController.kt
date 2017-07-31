@@ -87,20 +87,20 @@ class DesignerNewsController : StorageBackedNewsController {
         }
         .map { (story, user) ->
           with(story) {
-            CatchUpItem2().apply {
-              id = java.lang.Long.parseLong(id())
-              title = title()
-              score = Pair("▲", voteCount())
-              timestamp = createdAt()
-              author = user?.displayName()
-              source = hostname()
-              commentCount = commentCount()
-              tag = badge()
-              itemClickUrl = url()
-              itemCommentClickUrl = href()
-                  .replace("api.", "www.")
-                  .replace("api/v2/", "")
-            }
+            CatchUpItem2(
+                id = java.lang.Long.parseLong(id()),
+                title = title(),
+                score = Pair("▲", voteCount()),
+                timestamp = createdAt(),
+                author = user?.displayName(),
+                source = hostname(),
+                commentCount = commentCount(),
+                tag = badge(),
+                itemClickUrl = url(),
+                itemCommentClickUrl = href()
+                    .replace("api.", "www.")
+                    .replace("api/v2/", "")
+            )
           }
         }
         .toList()

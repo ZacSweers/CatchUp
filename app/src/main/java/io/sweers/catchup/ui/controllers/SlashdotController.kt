@@ -67,18 +67,18 @@ class SlashdotController : StorageBackedNewsController {
         .map { it.itemList }
         .flattenAsObservable { it }
         .map { item ->
-          CatchUpItem2().apply {
-            id = item.id.hashCode().toLong()
-            title = item.title.unescapeJavaString()
-            score = null
-            timestamp = item.updated.parsePossiblyOffsetInstant()
-            author = item.author?.name
-            source = item.department
-            commentCount = item.comments
-            tag = item.section
-            itemClickUrl = item.id
-            itemCommentClickUrl = "${item.id}#comments"
-          }
+          CatchUpItem2(
+              id = item.id.hashCode().toLong(),
+              title = item.title.unescapeJavaString(),
+              score = null,
+              timestamp = item.updated.parsePossiblyOffsetInstant(),
+              author = item.author?.name,
+              source = item.department,
+              commentCount = item.comments,
+              tag = item.section,
+              itemClickUrl = item.id,
+              itemCommentClickUrl = "${item.id}#comments"
+          )
         }
         .toList()
   }
