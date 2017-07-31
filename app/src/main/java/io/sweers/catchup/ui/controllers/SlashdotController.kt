@@ -19,7 +19,6 @@ package io.sweers.catchup.ui.controllers
 import android.content.Context
 import android.os.Bundle
 import android.view.ContextThemeWrapper
-import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
@@ -27,12 +26,13 @@ import dagger.android.AndroidInjector
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
+import io.sweers.catchup.data.CatchUpItem
+import io.sweers.catchup.data.CatchUpItem2
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
-import io.sweers.catchup.data.slashdot.Entry
 import io.sweers.catchup.data.slashdot.SlashdotService
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.ui.base.StorageBackedNewsController
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import io.sweers.catchup.util.unescapeJavaString
 import okhttp3.OkHttpClient
@@ -42,7 +42,7 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class SlashdotController : BaseNewsController<Entry> {
+class SlashdotController : StorageBackedNewsController {
 
   @Inject lateinit var service: SlashdotService
   @Inject lateinit var linkManager: LinkManager
@@ -51,40 +51,36 @@ class SlashdotController : BaseNewsController<Entry> {
 
   constructor(args: Bundle) : super(args)
 
+  override fun serviceType() = "sd"
+
   override fun onThemeContext(context: Context): Context {
     return ContextThemeWrapper(context, R.style.CatchUp_Slashdot)
   }
 
-  override fun bindItemView(item: Entry, holder: BaseNewsController.NewsItemViewHolder) {
-    holder.run {
-      title(item.title.unescapeJavaString())
-
-      score(null)
-      timestamp(item.updated.parsePossiblyOffsetInstant())
-      author(item.author?.name)
-
-      source(item.department)
-
-      comments(item.comments)
-      tag(item.section)
-
-      itemClicks()
-          .compose<UrlMeta>(transformUrlToMeta<Any>(item.id))
-          .flatMapCompletable(linkManager)
-          .autoDisposeWith(this)
-          .subscribe()
-      itemCommentClicks()
-          .compose<UrlMeta>(transformUrlToMeta<Any>(item.id + "#comments"))
-          .flatMapCompletable(linkManager)
-          .autoDisposeWith(this)
-          .subscribe()
-    }
+  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.NewsItemViewHolder) {
+    holder.bind(this, item)
   }
 
-  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<Entry>> {
+  override fun getDataFromService(page: Int): Single<List<CatchUpItem2>> {
     setMoreDataAvailable(false)
     return service.main()
         .map { it.itemList }
+        .flattenAsObservable { it }
+        .map { item ->
+          CatchUpItem2().apply {
+            id = item.id.hashCode().toLong()
+            title = item.title.unescapeJavaString()
+            score = null
+            timestamp = item.updated.parsePossiblyOffsetInstant()
+            author = item.author?.name
+            source = item.department
+            commentCount = item.comments
+            tag = item.section
+            itemClickUrl = item.id
+            itemCommentClickUrl = "${item.id}#comments"
+          }
+        }
+        .toList()
   }
 
   @PerController
