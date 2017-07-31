@@ -17,6 +17,7 @@
 package io.sweers.catchup.ui.base
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.support.annotation.ColorInt
@@ -42,6 +43,11 @@ abstract class ServiceController : ButterKnifeController {
 
   constructor(args: Bundle) : super(args)
 
+  override fun onContextAvailable(context: Context) {
+    ConductorInjection.inject(this)
+    super.onContextAvailable(context)
+  }
+
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
     requestThemedContext(container.context).let {
       if (container.context !== it) {
@@ -49,11 +55,6 @@ abstract class ServiceController : ButterKnifeController {
       }
     }
     return super.onCreateView(inflater, container)
-  }
-
-  override fun onViewBound(view: View) {
-    ConductorInjection.inject(this)
-    super.onViewBound(view)
   }
 
   fun <T> transformUrlToMeta(url: String?): ObservableTransformer<T, UrlMeta> {
