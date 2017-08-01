@@ -58,7 +58,7 @@ class SlashdotController : StorageBackedNewsController {
   }
 
   override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.NewsItemViewHolder) {
-    holder.bind(this, item)
+    holder.bind(this, item, linkManager)
   }
 
   override fun getDataFromService(page: Int): Single<List<CatchUpItem2>> {
