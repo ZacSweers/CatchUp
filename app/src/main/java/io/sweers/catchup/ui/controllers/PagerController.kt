@@ -24,11 +24,13 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.support.design.widget.AppBarLayout
+import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.TabLayout
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
@@ -117,6 +119,7 @@ class PagerController : ButterKnifeController {
   private val argbEvaluator = ArgbEvaluator()
 
   @Inject lateinit var remoteConfig: FirebaseRemoteConfig
+  @BindView(R.id.pager_controller_root) lateinit var rootLayout: CoordinatorLayout
   @BindView(R.id.tab_layout) lateinit var tabLayout: TabLayout
   @BindView(R.id.view_pager) lateinit var viewPager: ViewPager
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
@@ -157,6 +160,27 @@ class PagerController : ButterKnifeController {
 
     // Invalidate the color cache up front
     Arrays.fill(resolvedColorCache, R.color.no_color)
+  }
+
+  override fun onSaveViewState(view: View, outState: Bundle) {
+    // Save the appbarlayout state to restore it on the other side
+    (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior?.let { behavior ->
+      outState.run {
+        putParcelable("collapsingToolbarState",
+            behavior.onSaveInstanceState(rootLayout, appBarLayout))
+      }
+    }
+    super.onSaveViewState(view, outState)
+  }
+
+  override fun onRestoreViewState(view: View, savedViewState: Bundle) {
+    super.onRestoreViewState(view, savedViewState)
+    with(savedViewState) {
+      getParcelable<Parcelable>("collapsingToolbarState")?.let {
+        (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior
+            ?.onRestoreInstanceState(rootLayout, appBarLayout, it)
+      }
+    }
   }
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View {

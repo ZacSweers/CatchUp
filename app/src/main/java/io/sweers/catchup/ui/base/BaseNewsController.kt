@@ -17,6 +17,7 @@
 package io.sweers.catchup.ui.base
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -72,9 +73,11 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
 
   private lateinit var adapter: Adapter<T>
   private var page = 0
-  private val fromSaveInstanceState = false
+  private var isRestoring = false
+  private var pageToRestoreTo = 0
   private var moreDataAvailable = true
   var dataLoading = false
+  private var pendingRVState: Parcelable? = null
 
   constructor() : super()
 
@@ -148,17 +151,21 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     super.onDetach(view)
   }
 
-  override fun onSaveInstanceState(outState: Bundle) {
-    // TODO Check when these are called in conductor, restore seems to be after attach.
-    //outState.putInt("pageNumber", page);
-    //outState.putBoolean("savedInstance", true);
-    super.onSaveInstanceState(outState)
+  override fun onSaveViewState(view: View, outState: Bundle) {
+    outState.run {
+      putInt("pageNumber", page)
+      putParcelable("layoutManagerState", recyclerView.layoutManager.onSaveInstanceState())
+    }
+    super.onSaveViewState(view, outState)
   }
 
-  override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-    super.onRestoreInstanceState(savedInstanceState)
-    //page = savedInstanceState.getInt("pageNumber");
-    //fromSaveInstanceState = savedInstanceState.getBoolean("savedInstance", false);
+  override fun onRestoreViewState(view: View, savedViewState: Bundle) {
+    super.onRestoreViewState(view, savedViewState)
+    with(savedViewState) {
+      pageToRestoreTo = getInt("pageNumber")
+      pendingRVState = getParcelable("layoutManagerState")
+      isRestoring = pendingRVState != null
+    }
   }
 
   protected fun setMoreDataAvailable(moreDataAvailable: Boolean) {
@@ -173,15 +180,20 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     if (!moreDataAvailable) {
       return
     }
-    val pageToRequest = page++
+    val pageToRequest = if (isRestoring) pageToRestoreTo.also { page = pageToRestoreTo } else page++
     dataLoading = true
     if (adapter.itemCount != 0) {
       recyclerView.post { adapter.dataStartedLoading() }
     }
     val timer = AtomicLong()
-    getDataSingle(DataRequest(fromRefresh,
-        fromSaveInstanceState && page != 0,
-        pageToRequest))
+    getDataSingle(
+        DataRequest(fromRefresh && !isRestoring,
+            pageToRequest != 0,
+            pageToRequest)
+            .also {
+              isRestoring = false
+              pageToRestoreTo = 0
+            })
         .observeOn(AndroidSchedulers.mainThread())
         .doOnEvent { _, _ ->
           swipeRefreshLayout.isEnabled = true
@@ -203,6 +215,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
               adapter.setData(data)
             } else {
               adapter.addData(data)
+            }
+            pendingRVState?.let {
+              recyclerView.layoutManager.onRestoreInstanceState(it)
+              pendingRVState = null
             }
           }
         }, { error ->
