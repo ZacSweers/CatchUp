@@ -141,6 +141,14 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
         }
         .map { HackerNewsStory.create(it) }
         .toList()
+        .doOnSuccess {
+          // HN will eventually run out of items. Ideally we'd want to push this up into something
+          // that maybe tries the next two pages and if both are empty, give up and don't infinitely
+          // load.
+          if (it.isEmpty()) {
+            setMoreDataAvailable(false)
+          }
+        }
   }
 
   @PerController
