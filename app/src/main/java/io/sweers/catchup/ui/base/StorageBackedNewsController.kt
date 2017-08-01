@@ -49,7 +49,7 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
     if (request.multipage) {
       // Backfill pages
       return Observable.range(0, request.page)
-          .flatMapSingle { this.getPage(it) }
+          .concatMapEager { this.getPage(it).toObservable() }
           .collectInto(mutableListOf<CatchUpItem>()) { list, collection ->
             list.addAll(collection.map { CatchUpItem.from(it) })
           }
