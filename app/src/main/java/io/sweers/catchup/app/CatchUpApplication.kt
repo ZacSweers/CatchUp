@@ -57,14 +57,24 @@ open class CatchUpApplication : Application(), HasActivityInjector {
       // This process is dedicated to LeakCanary for heap analysis.
       return
     }
+    LazyThreeTen.init(this)
     DaggerApplicationComponent.builder()
         .application(this)
         .build()
         .inject(this)
-    LazyThreeTen.init(this)
     P.init(this, false)
     P.setSharedPreferences(sharedPreferences, rxPreferences)
+    initVariant()
 
+    remoteConfig.fetch(resources.getInteger(R.integer.remote_config_cache_duration).toLong())
+        .addOnCompleteListener { task ->
+          if (task.isSuccessful) {
+            d { "Firebase fetch succeeded" }
+            remoteConfig.activateFetched()
+          } else {
+            d { "Firebase fetch failed" }
+          }
+        }
     P.DaynightAuto.rx()
         .asObservable()
         .subscribe { autoEnabled ->
@@ -78,16 +88,6 @@ open class CatchUpApplication : Application(), HasActivityInjector {
             nightMode = AppCompatDelegate.MODE_NIGHT_YES
           }
           AppCompatDelegate.setDefaultNightMode(nightMode)
-        }
-    initVariant()
-    remoteConfig.fetch(resources.getInteger(R.integer.remote_config_cache_duration).toLong())
-        .addOnCompleteListener { task ->
-          if (task.isSuccessful) {
-            d { "Firebase fetch succeeded" }
-            remoteConfig.activateFetched()
-          } else {
-            d { "Firebase fetch failed" }
-          }
         }
   }
 
