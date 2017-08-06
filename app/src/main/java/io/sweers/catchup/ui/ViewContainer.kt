@@ -17,7 +17,6 @@
 package io.sweers.catchup.ui
 
 import android.view.ViewGroup
-import butterknife.ButterKnife.findById
 import io.sweers.catchup.ui.base.BaseActivity
 
 /**
@@ -36,7 +35,7 @@ interface ViewContainer {
      */
     val DEFAULT = object : ViewContainer {
       override fun forActivity(activity: BaseActivity): ViewGroup {
-        return findById(activity, android.R.id.content)
+        return activity.findViewById(android.R.id.content)
       }
     }
   }

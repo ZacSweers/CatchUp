@@ -21,7 +21,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.ButterKnife.findById
 import io.sweers.catchup.ui.BindableAdapter
 
 internal class AnimationSpeedAdapter(context: Context) : BindableAdapter<Int>(context) {
@@ -43,7 +42,7 @@ internal class AnimationSpeedAdapter(context: Context) : BindableAdapter<Int>(co
   }
 
   override fun bindView(item: Int, position: Int, view: View) {
-    val tv = findById<TextView>(view, android.R.id.text1)
+    val tv = view.findViewById<TextView>(android.R.id.text1)
     if (item == 1) {
       tv.text = "Normal"
     } else {
