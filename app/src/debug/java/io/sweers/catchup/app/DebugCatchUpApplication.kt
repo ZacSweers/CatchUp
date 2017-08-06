@@ -19,6 +19,8 @@ package io.sweers.catchup.app
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import android.os.StrictMode
+import android.os.StrictMode.VmPolicy
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
@@ -27,6 +29,14 @@ import timber.log.Timber
 
 class DebugCatchUpApplication : CatchUpApplication() {
   override fun initVariant() {
+    StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
+        .detectAll()
+        .penaltyLog()
+        .build())
+    StrictMode.setVmPolicy(VmPolicy.Builder()
+        .detectAll()  // Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
+        .penaltyLog()
+        .build())
     refWatcher = LeakCanary.refWatcher(this).build()
     registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
       override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
