@@ -83,9 +83,9 @@ class SmmryResponseFactory : JsonAdapter.Factory {
     if (SmmryResponse::class.java != clazz) {
       return null
     }
-    return object : JsonAdapter<Any>() {
+    return object : JsonAdapter<SmmryResponse>() {
       @Throws(IOException::class)
-      override fun fromJson(reader: JsonReader): Any? {
+      override fun fromJson(reader: JsonReader): SmmryResponse? {
         val jsonValue = reader.readJsonValue()
 
         @Suppress("UNCHECKED_CAST")
@@ -105,8 +105,53 @@ class SmmryResponseFactory : JsonAdapter.Factory {
       }
 
       @Throws(IOException::class)
-      override fun toJson(writer: JsonWriter, value: Any?) {
-        TODO("Unsupported")
+      override fun toJson(writer: JsonWriter, value: SmmryResponse?) {
+        when (value) {
+          is UnknownErrorCode -> throw UnsupportedOperationException("Cannot serialize unknowns.")
+          is Success -> {
+            moshi.adapter(Success::class.java).toJson(writer, value)
+          }
+          is InternalError -> {
+            with(writer) {
+              beginObject()
+              name("sm_api_error")
+                  .value(0)
+                  .name("sm_api_message")
+                  .value(value.message)
+              endObject()
+            }
+          }
+          is IncorrectVariables -> {
+            with(writer) {
+              beginObject()
+              name("sm_api_error")
+                  .value(1)
+                  .name("sm_api_message")
+                  .value(value.message)
+              endObject()
+            }
+          }
+          is ApiRejection -> {
+            with(writer) {
+              beginObject()
+              name("sm_api_error")
+                  .value(2)
+                  .name("sm_api_message")
+                  .value(value.message)
+              endObject()
+            }
+          }
+          is SummarizationError -> {
+            with(writer) {
+              beginObject()
+              name("sm_api_error")
+                  .value(3)
+                  .name("sm_api_message")
+                  .value(value.message)
+              endObject()
+            }
+          }
+        }
       }
     }
   }
