@@ -180,6 +180,9 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
               nukeItems()
               nukePages()
             }
+            with(database.smmryDao()) {
+              nukeItems()
+            }
             val deletedFromDb = initialDbSize - dbFile.length()
             return@fromCallable cacheCleaned + deletedFromDb
           }.subscribeOn(Schedulers.io())

@@ -17,42 +17,18 @@
 package io.sweers.catchup.data
 
 import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Database
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 import android.arch.persistence.room.PrimaryKey
 import android.arch.persistence.room.Query
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverter
 import android.arch.persistence.room.TypeConverters
-import android.content.Context
 import android.support.annotation.Keep
 import com.google.auto.value.AutoValue
 import io.reactivex.Maybe
 import io.sweers.catchup.ui.base.HasStableId
 import org.threeten.bp.Instant
-
-
-@Database(entities = arrayOf(ServicePage::class, CatchUpItem2::class), version = 1)
-abstract class CatchUpDatabase : RoomDatabase() {
-
-  abstract fun serviceDao(): ServiceDao
-
-  companion object {
-
-    private var INSTANCE: CatchUpDatabase? = null
-
-    fun getDatabase(context: Context): CatchUpDatabase {
-      return INSTANCE ?: Room.databaseBuilder(context.applicationContext,
-          CatchUpDatabase::class.java,
-          "catchup.db")
-          .build()
-          .also { INSTANCE = it }
-    }
-  }
-}
 
 @Dao
 //@TypeConverters(arrayOf(InstantConverter::class, PairConverter::class)) // Why doesn't this work?

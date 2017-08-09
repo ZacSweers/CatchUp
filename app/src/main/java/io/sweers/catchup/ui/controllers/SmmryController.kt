@@ -18,6 +18,13 @@ package io.sweers.catchup.ui.controllers
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
+import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.Query
+import android.content.Context
 import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.v4.widget.NestedScrollView
@@ -39,12 +46,16 @@ import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
+import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
+import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.smmry.SmmryService
 import io.sweers.catchup.data.smmry.model.ApiRejection
 import io.sweers.catchup.data.smmry.model.IncorrectVariables
@@ -60,8 +71,10 @@ import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.rx.observers.adapter.SingleObserverAdapter
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.ServiceController
+import io.sweers.catchup.ui.controllers.SmmryController.Module.ForSmmry
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback
+import io.sweers.catchup.util.e
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -96,6 +109,8 @@ class SmmryController : ButterKnifeController {
   }
 
   @Inject lateinit var smmryService: SmmryService
+  @field:ForSmmry @Inject lateinit var moshi: Moshi
+  @Inject lateinit var smmryDao: SmmryDao
 
   @BindView(R.id.loading_view) lateinit var loadingView: View
   @BindView(R.id.progress) lateinit var lottieView: LottieAnimationView
@@ -125,6 +140,11 @@ class SmmryController : ButterKnifeController {
     this.fallbackTitle = fallbackTitle.trim { it <= ' ' }
   }
 
+  override fun onContextAvailable(context: Context) {
+    ConductorInjection.inject(this)
+    super.onContextAvailable(context)
+  }
+
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
     outState.putString(ID_TITLE, fallbackTitle)
@@ -150,14 +170,10 @@ class SmmryController : ButterKnifeController {
   }
 
   override fun onAttach(view: View) {
-    ConductorInjection.inject(this)
     super.onAttach(view)
     dragDismissFrameLayout.addListener(dragDismissListener)
-    smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(url)
-        .withBreak(true)
-        .keywordCount(5)
-        .sentenceCount(5)
-        .build())
+    Maybe.concatArray(tryRequestFromStorage(), getRequestSingle().toMaybe())
+        .firstOrError()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .autoDisposeWith(this)
@@ -185,12 +201,39 @@ class SmmryController : ButterKnifeController {
             }
           }
 
-          override fun onError(e: Throwable) {
-            Toast.makeText(activity, "API error", Toast.LENGTH_SHORT)
-                .show()
+          override fun onError(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") error: Throwable) {
+            Toast.makeText(activity, "Unknown error", Toast.LENGTH_SHORT).show()
+            e(error) { "Unknown error in smmry load" }
             router.popController(this@SmmryController)
           }
         })
+  }
+
+  private fun tryRequestFromStorage(): Maybe<SmmryResponse> {
+    return smmryDao.getItem(url)
+        .map { moshi.adapter(SmmryResponse::class.java).fromJson(it.json)!! }
+        .onErrorComplete { exception ->
+          e(exception) { "Error loading smmry cache." }
+          true
+        }
+  }
+
+  private fun getRequestSingle(): Single<SmmryResponse> {
+    return smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(url)
+        .withBreak(true)
+        .keywordCount(5)
+        .sentenceCount(5)
+        .build())
+        .doOnSuccess {
+          if (it !is UnknownErrorCode) {
+            Completable
+                .fromAction {
+                  smmryDao.putItem(SmmryStorageEntry(url,
+                      moshi.adapter(SmmryResponse::class.java).toJson(it)))
+                }
+                .blockingAwait()
+          }
+        }
   }
 
   override fun onDetach(view: View) {
@@ -252,11 +295,11 @@ class SmmryController : ButterKnifeController {
   object Module {
 
     @Qualifier
-    private annotation class InternalApi
+    annotation class ForSmmry
 
     @Provides
     @JvmStatic
-    @InternalApi
+    @ForSmmry
     @PerController
     internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
@@ -268,7 +311,7 @@ class SmmryController : ButterKnifeController {
     @JvmStatic
     @PerController
     internal fun provideSmmryService(client: Lazy<OkHttpClient>,
-        @InternalApi moshi: Moshi,
+        @ForSmmry moshi: Moshi,
         rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SmmryService {
       return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
           .callFactory { request ->
@@ -281,5 +324,31 @@ class SmmryController : ButterKnifeController {
           .build()
           .create(SmmryService::class.java)
     }
+
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase): SmmryDao {
+      return catchUpDatabase.smmryDao()
+    }
   }
+}
+
+@Entity(tableName = "smmryEntries")
+data class SmmryStorageEntry(
+    @PrimaryKey val url: String,
+    val json: String
+)
+
+@Dao
+interface SmmryDao {
+
+  @Query("SELECT * FROM smmryEntries WHERE url = :url")
+  fun getItem(url: String): Maybe<SmmryStorageEntry>
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  fun putItem(item: SmmryStorageEntry)
+
+  @Query("DELETE FROM smmryEntries")
+  fun nukeItems()
 }
