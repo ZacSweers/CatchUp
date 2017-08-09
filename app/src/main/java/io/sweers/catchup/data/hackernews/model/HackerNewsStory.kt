@@ -87,7 +87,7 @@ abstract class HackerNewsStory : HasStableId {
   companion object {
 
     fun create(dataSnapshot: DataSnapshot): HackerNewsStory {
-      return dataSnapshot.getValue(AutoValue_HackerNewsStory.FirebaseValue::class.java)
+      return dataSnapshot.getValue(AutoValue_HackerNewsStory.FirebaseValue::class.java)!!
           .toAutoValue()
     }
   }
