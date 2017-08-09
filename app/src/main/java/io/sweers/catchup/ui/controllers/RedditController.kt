@@ -62,7 +62,7 @@ class RedditController : BaseNewsController<RedditLink> {
     return ContextThemeWrapper(context, R.style.CatchUp_Reddit)
   }
 
-  override fun bindItemView(item: RedditLink, holder: BaseNewsController.NewsItemViewHolder) {
+  override fun bindItemView(item: RedditLink, holder: BaseNewsController.CatchUpItemViewHolder) {
     holder.run {
       title(item.title())
 

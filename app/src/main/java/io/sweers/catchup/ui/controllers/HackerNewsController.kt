@@ -57,7 +57,7 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
     return ContextThemeWrapper(context, R.style.CatchUp_HackerNews)
   }
 
-  override fun bindItemView(item: HackerNewsStory, holder: BaseNewsController.NewsItemViewHolder) {
+  override fun bindItemView(item: HackerNewsStory, holder: BaseNewsController.CatchUpItemViewHolder) {
     holder.run {
       title(item.title())
       score(Pair("+", item.score()))

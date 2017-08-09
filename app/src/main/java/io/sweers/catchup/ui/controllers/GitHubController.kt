@@ -83,7 +83,7 @@ class GitHubController : BaseNewsController<CatchUpItem> {
     return ContextThemeWrapper(context, R.style.CatchUp_GitHub)
   }
 
-  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.NewsItemViewHolder) {
+  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.CatchUpItemViewHolder) {
     holder.bind(this, item, linkManager)
   }
 

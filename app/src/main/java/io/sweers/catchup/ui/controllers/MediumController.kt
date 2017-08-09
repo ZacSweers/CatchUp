@@ -64,7 +64,7 @@ class MediumController : BaseNewsController<MediumPost> {
     return ContextThemeWrapper(context, R.style.CatchUp_Medium)
   }
 
-  override fun bindItemView(item: MediumPost, holder: BaseNewsController.NewsItemViewHolder) {
+  override fun bindItemView(item: MediumPost, holder: BaseNewsController.CatchUpItemViewHolder) {
     holder.run {
       title(item.post().title())
 

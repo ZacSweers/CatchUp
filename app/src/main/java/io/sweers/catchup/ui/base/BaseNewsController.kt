@@ -91,7 +91,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
    * @param item The datum to back the view with.
    * @param holder The item ViewHolder instance.
    */
-  protected abstract fun bindItemView(item: T, holder: NewsItemViewHolder)
+  protected abstract fun bindItemView(item: T, holder: CatchUpItemViewHolder)
 
   protected abstract fun getDataSingle(request: DataRequest): Single<List<T>>
 
@@ -274,7 +274,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
   }
 
   private class Adapter<in T : HasStableId>(
-      private val bindDelegate: (T, NewsItemViewHolder) -> Unit)
+      private val bindDelegate: (T, CatchUpItemViewHolder) -> Unit)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>(), DataLoadingSubject.DataLoadingCallbacks {
 
     private val data = LinkedHashSet<T>()
@@ -295,7 +295,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
       val layoutInflater = LayoutInflater.from(parent.context)
       when (viewType) {
-        ServiceController.TYPE_ITEM -> return NewsItemViewHolder(
+        ServiceController.TYPE_ITEM -> return CatchUpItemViewHolder(
             layoutInflater.inflate(R.layout.list_item_general,
                 parent,
                 false))
@@ -310,7 +310,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
       when (getItemViewType(position)) {
         ServiceController.TYPE_ITEM -> try {
-          bindDelegate(Iterables.get(data, position), holder as NewsItemViewHolder)
+          bindDelegate(Iterables.get(data, position), holder as CatchUpItemViewHolder)
         } catch (error: Exception) {
           e(error) { "Bind delegate failure!" }
         }
@@ -370,7 +370,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
       val multipage: Boolean,
       val page: Int)
 
-  class NewsItemViewHolder(itemView: View) : RxViewHolder(itemView) {
+  class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
 
     companion object {
       val COMPLETABLE_FUNC = Function<UrlMeta, Completable> { Completable.complete() }
@@ -391,7 +391,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
 
     init {
       unbinder?.unbind()
-      unbinder = `BaseNewsController$NewsItemViewHolder_ViewBinding`(this, itemView)
+      unbinder = `BaseNewsController$CatchUpItemViewHolder_ViewBinding`(this, itemView)
     }
 
     fun bind(controller: ServiceController, item: CatchUpItem, linkManager: LinkManager? = null) {

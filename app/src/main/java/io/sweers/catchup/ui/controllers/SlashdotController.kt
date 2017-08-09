@@ -57,7 +57,7 @@ class SlashdotController : StorageBackedNewsController {
     return ContextThemeWrapper(context, R.style.CatchUp_Slashdot)
   }
 
-  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.NewsItemViewHolder) {
+  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.CatchUpItemViewHolder) {
     holder.bind(this, item, linkManager)
   }
 
