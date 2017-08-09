@@ -81,11 +81,16 @@ class RedditController : BaseNewsController<RedditLink> {
           .autoDisposeWith(this)
           .subscribe()
 
-      if (remoteConfig.getBoolean(SMMRY_ENABLED)) {
+      val selfText = if (item.isSelf) item.selftext() else null
+      if (remoteConfig.getBoolean(SMMRY_ENABLED)
+          && SmmryController.canSummarize(item.url(), selfText)) {
         itemLongClicks()
             .autoDisposeWith(this)
             .subscribe(
-                SmmryController.showFor<Any>(this@RedditController, item.url(), item.title()))
+                SmmryController.showFor<Any>(this@RedditController,
+                    item.url(),
+                    item.title(),
+                    selfText))
       }
       itemCommentClicks()
           .compose<UrlMeta>(transformUrlToMeta<Any>("https://reddit.com/comments/" + item.id()))

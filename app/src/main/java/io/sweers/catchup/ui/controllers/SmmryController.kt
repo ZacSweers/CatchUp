@@ -75,6 +75,7 @@ import io.sweers.catchup.ui.controllers.SmmryController.Module.ForSmmry
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback
 import io.sweers.catchup.util.e
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -91,18 +92,52 @@ class SmmryController : ButterKnifeController {
 
     private val ID_TITLE = "smmrycontroller.title"
     private val ID_URL = "smmrycontroller.url"
+    private val ID_TEXT = "smmrycontroller.text"
     private val ID_ACCENT = "smmrycontroller.accent"
+
+    /**
+     * Really shallow sanity check
+     */
+    fun canSummarize(url: String, text: String? = null): Boolean {
+      text?.let {
+        if (it.isEmpty()) {
+          return false
+        } else if (it.length < 50) {
+          return false
+        }
+      }
+
+      if (url.endsWith(".png")
+          || url.endsWith(".gifv")
+          || url.endsWith(".jpg")
+          || url.endsWith(".jpeg")) {
+        return false
+      }
+
+      HttpUrl.parse(url)?.let {
+        it.host().let {
+          if (it.contains("imgur")
+              || it.contains("streamable")
+              || it.contains("gfycat")
+              || it.contains("i.reddit")
+              || it.contains("youtube")
+              || it.contains("youtu.be"))
+            return false
+        }
+      }
+
+      return true
+    }
 
     fun <T> showFor(controller: ServiceController,
         url: String,
-        fallbackTitle: String) = Consumer<T> { _ ->
-      // TODO Optimize this
-      // Exclude images
-      // Summarize reddit selftexts
+        inputTitle: String,
+        text: String? = null) = Consumer<T> { _ ->
       controller.router
           .pushController(RouterTransaction.with(SmmryController(url,
               controller.serviceThemeColor,
-              fallbackTitle))
+              inputTitle,
+              text))
               .pushChangeHandler(VerticalChangeHandler(false))
               .popChangeHandler(VerticalChangeHandler()))
     }
@@ -123,7 +158,8 @@ class SmmryController : ButterKnifeController {
 
   private lateinit var url: String
   @ColorInt private var accentColor: Int = 0
-  private lateinit var fallbackTitle: String
+  private lateinit var inputTitle: String
+  private var text: String? = null
 
   private val dragDismissListener = object : ElasticDragDismissCallback() {
     override fun onDragDismissed() {
@@ -134,10 +170,11 @@ class SmmryController : ButterKnifeController {
 
   constructor(args: Bundle) : super(args)
 
-  constructor(url: String, @ColorInt accentColor: Int, fallbackTitle: String) {
+  constructor(url: String, @ColorInt accentColor: Int, inputTitle: String, text: String? = null) {
     this.url = url
     this.accentColor = accentColor
-    this.fallbackTitle = fallbackTitle.trim { it <= ' ' }
+    this.inputTitle = inputTitle
+    this.text = text
   }
 
   override fun onContextAvailable(context: Context) {
@@ -147,15 +184,17 @@ class SmmryController : ButterKnifeController {
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    outState.putString(ID_TITLE, fallbackTitle)
+    outState.putString(ID_TITLE, inputTitle)
     outState.putString(ID_URL, url)
+    outState.putString(ID_TEXT, text)
     outState.putInt(ID_ACCENT, accentColor)
   }
 
   override fun onRestoreInstanceState(savedInstanceState: Bundle) {
     super.onRestoreInstanceState(savedInstanceState)
-    fallbackTitle = savedInstanceState.getString(ID_TITLE)
-    url = savedInstanceState.getString(ID_URL)
+    inputTitle = savedInstanceState.getString(ID_TITLE)!!
+    url = savedInstanceState.getString(ID_URL)!!
+    text = savedInstanceState.getString(ID_TEXT)
     accentColor = savedInstanceState.getInt(ID_ACCENT)
   }
 
@@ -192,10 +231,7 @@ class SmmryController : ButterKnifeController {
                   is UnknownErrorCode -> "Unknown error :("
                   else -> TODO("Placeholder because I've already checked for this")
                 }
-                Toast.makeText(activity,
-                    message,
-                    Toast.LENGTH_LONG)
-                    .show()
+                Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
                 router.popController(this@SmmryController)
               }
             }
@@ -219,11 +255,19 @@ class SmmryController : ButterKnifeController {
   }
 
   private fun getRequestSingle(): Single<SmmryResponse> {
-    return smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(url)
+    return text?.let {
+      smmryService.summarizeText(SmmryRequestBuilder.forText()
+          .withBreak(true)
+          .keywordCount(5)
+          .sentenceCount(5)
+          .build(),
+          it)
+    } ?: smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(url)
         .withBreak(true)
         .keywordCount(5)
         .sentenceCount(5)
-        .build())
+        .build()
+    )
         .doOnSuccess {
           if (it !is UnknownErrorCode) {
             Completable
@@ -258,7 +302,7 @@ class SmmryController : ButterKnifeController {
     }
     var smmryTitle = smmry.title()
     if (TextUtils.isEmpty(smmryTitle)) {
-      smmryTitle = fallbackTitle
+      smmryTitle = inputTitle
     }
     title.text = smmryTitle
     summary.text = smmry.content()
@@ -334,7 +378,9 @@ class SmmryController : ButterKnifeController {
   }
 }
 
-@Entity(tableName = "smmryEntries")
+private const val TABLE = "smmryEntries"
+
+@Entity(tableName = TABLE)
 data class SmmryStorageEntry(
     @PrimaryKey val url: String,
     val json: String
@@ -343,12 +389,12 @@ data class SmmryStorageEntry(
 @Dao
 interface SmmryDao {
 
-  @Query("SELECT * FROM smmryEntries WHERE url = :url")
+  @Query("SELECT * FROM $TABLE WHERE url = :url")
   fun getItem(url: String): Maybe<SmmryStorageEntry>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun putItem(item: SmmryStorageEntry)
 
-  @Query("DELETE FROM smmryEntries")
+  @Query("DELETE FROM $TABLE")
   fun nukeItems()
 }

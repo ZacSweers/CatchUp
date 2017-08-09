@@ -86,14 +86,17 @@ class MediumController : BaseNewsController<MediumPost> {
           .responsesCreatedCount())
       source(null)
 
-      if (remoteConfig.getBoolean(SMMRY_ENABLED)) {
-        itemLongClicks()
-            .autoDisposeWith(this)
-            .subscribe(SmmryController.showFor<Any>(
-                this@MediumController,
-                item.constructUrl(),
-                item.post()
-                    .title()))
+      item.constructUrl().let {
+        if (remoteConfig.getBoolean(SMMRY_ENABLED)
+            && SmmryController.canSummarize(it)) {
+          itemLongClicks()
+              .autoDisposeWith(this)
+              .subscribe(SmmryController.showFor<Any>(
+                  this@MediumController,
+                  it,
+                  item.post()
+                      .title()))
+        }
       }
 
       itemClicks()

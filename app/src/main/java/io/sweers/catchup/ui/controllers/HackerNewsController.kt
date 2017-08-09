@@ -72,26 +72,28 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
       comments(commentsCount)
       tag(null)
 
-      if (!url.isNullOrBlank()) {
-        if (remoteConfig.getBoolean(SMMRY_ENABLED)) {
-          itemLongClicks()
+      url?.let {
+        if (!it.isEmpty()) {
+          if (remoteConfig.getBoolean(SMMRY_ENABLED) && SmmryController.canSummarize(it)) {
+            itemLongClicks()
+                .autoDisposeWith(this)
+                .subscribe(
+                    SmmryController.showFor<Any>(this@HackerNewsController, it, item.title()))
+          }
+
+          itemClicks()
+              .compose<UrlMeta>(transformUrlToMeta<Any>(it))
+              .flatMapCompletable(linkManager)
               .autoDisposeWith(this)
-              .subscribe(
-                  SmmryController.showFor<Any>(this@HackerNewsController, url!!, item.title()))
+              .subscribe()
+
+          itemCommentClicks()
+              .compose<UrlMeta>(
+                  transformUrlToMeta<Any>("https://news.ycombinator.com/item?id=" + item.id()))
+              .flatMapCompletable(linkManager)
+              .autoDisposeWith(this)
+              .subscribe()
         }
-
-        itemClicks()
-            .compose<UrlMeta>(transformUrlToMeta<Any>(url))
-            .flatMapCompletable(linkManager)
-            .autoDisposeWith(this)
-            .subscribe()
-
-        itemCommentClicks()
-            .compose<UrlMeta>(
-                transformUrlToMeta<Any>("https://news.ycombinator.com/item?id=" + item.id()))
-            .flatMapCompletable(linkManager)
-            .autoDisposeWith(this)
-            .subscribe()
       }
     }
   }
