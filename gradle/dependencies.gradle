@@ -27,18 +27,18 @@ def versions = [
     conductor: '2.1.4',
     dagger: '2.11',
     espresso: '2.2.1',
-    firebase: '10.2.1',
+    firebase: '11.0.4',
     glide: '4.0.0',
     inspector: '0.2.0',
     kotlin: '1.1.4-eap-54',
     leakcanary: '1.5.1',
     okhttp: '3.8.1',
-    playServices: '10.2.1',
+    playServices: '11.0.4',
     retrofit: '2.3.0',
     rxbinding: '2.0.0',
     rxpalette: '0.3.0',
     stetho: '1.5.0',
-    support: "26.0.0"
+    support: "26.0.1"
 ]
 
 ext.versions = versions
