@@ -24,8 +24,6 @@ import android.widget.LinearLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.jakewharton.rxbinding2.widget.RxTextView
-import com.uber.autodispose.android.ViewScopeProvider
-import com.uber.autodispose.kotlin.autoDisposeWith
 import io.sweers.catchup.R
 
 class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
@@ -50,8 +48,7 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
       }
     }
     RxTextView.afterTextChangeEvents(titleView)
-        .autoDisposeWith(ViewScopeProvider.from(this))
-        .subscribe { s ->
+        .subscribe{ s ->
           listener?.onStateChanged(!s.editable().isNullOrBlank())
         }
 
@@ -68,6 +65,6 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
         descriptionView.text.toString(), screenshotView.isChecked,
         logsView.isChecked)
 
-  class Report(val title: String, val description: String, val includeScreenshot: Boolean,
+  data class Report(val title: String, val description: String, val includeScreenshot: Boolean,
       val includeLogs: Boolean)
 }
