@@ -27,6 +27,7 @@
       android:id="@+id/title"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:paddingBottom="16dp"
       android:hint="What's the problem?"
       android:inputType="textCapSentences|textAutoCorrect"
       android:maxLines="1"
@@ -36,6 +37,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="16dp"
+      android:paddingBottom="16dp"
       android:hint="Additional details"
       android:inputType="textCapSentences|textAutoCorrect"
       />
