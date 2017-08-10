@@ -69,8 +69,8 @@ class DebugViewContainer @Inject constructor(
             activity.findViewById<ViewGroup>(android.R.id.content), false)
     activity.setContentView(contentView)
 
-    val viewHolder = ViewHolder()
-    val unbinder = `DebugViewContainer$ViewHolder_ViewBinding`(viewHolder, contentView)
+    val viewHolder = DebugViewViewHolder()
+    val unbinder = `DebugViewViewHolder_ViewBinding`(viewHolder, contentView)
 
     val drawerContext = ContextThemeWrapper(activity, R.style.DebugDrawer)
     val debugView = DebugView(drawerContext, lazyOkHttpClient, lumberYard)
@@ -124,26 +124,18 @@ class DebugViewContainer @Inject constructor(
     return viewHolder.content
   }
 
-  private fun setupMadge(viewHolder: ViewHolder, subscriptions: CompositeDisposable) {
+  private fun setupMadge(viewHolder: DebugViewViewHolder, subscriptions: CompositeDisposable) {
     subscriptions.add(pixelGridEnabled.asObservable()
         .subscribe { enabled -> viewHolder.madgeFrameLayout.isOverlayEnabled = enabled })
     subscriptions.add(pixelRatioEnabled.asObservable()
         .subscribe { enabled -> viewHolder.madgeFrameLayout.isOverlayRatioEnabled = enabled })
   }
 
-  private fun setupScalpel(viewHolder: ViewHolder, subscriptions: CompositeDisposable) {
+  private fun setupScalpel(viewHolder: DebugViewViewHolder, subscriptions: CompositeDisposable) {
     subscriptions.add(scalpelEnabled.asObservable()
         .subscribe { enabled -> viewHolder.content.isLayerInteractionEnabled = enabled })
     subscriptions.add(scalpelWireframeEnabled.asObservable()
         .subscribe { enabled -> viewHolder.content.setDrawViews(!enabled) })
-  }
-
-  internal class ViewHolder {
-    @BindView(R.id.debug_drawer_layout) lateinit var drawerLayout: DrawerLayout
-    @BindView(R.id.debug_drawer) lateinit var debugDrawer: ViewGroup
-    @BindView(R.id.telescope_container) lateinit var telescopeLayout: TelescopeLayout
-    @BindView(R.id.madge_container) lateinit var madgeFrameLayout: MadgeFrameLayout
-    @BindView(R.id.debug_content) lateinit var content: ScalpelFrameLayout
   }
 
   companion object {
@@ -166,4 +158,12 @@ class DebugViewContainer @Inject constructor(
       }
     }
   }
+}
+
+internal class DebugViewViewHolder {
+  @BindView(R.id.debug_drawer_layout) lateinit var drawerLayout: DrawerLayout
+  @BindView(R.id.debug_drawer) lateinit var debugDrawer: ViewGroup
+  @BindView(R.id.telescope_container) lateinit var telescopeLayout: TelescopeLayout
+  @BindView(R.id.madge_container) lateinit var madgeFrameLayout: MadgeFrameLayout
+  @BindView(R.id.debug_content) lateinit var content: ScalpelFrameLayout
 }
