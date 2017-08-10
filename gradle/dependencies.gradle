@@ -31,7 +31,7 @@ def versions = [
     glide: '4.0.0',
     inspector: '0.2.0',
     kotlin: '1.1.4-eap-54',
-    leakcanary: '1.5.1',
+    leakcanary: '1.5.2',
     okhttp: '3.8.1',
     playServices: '11.0.4',
     retrofit: '2.3.0',
