@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package io.sweers.catchup.util
 
 import android.os.Build
@@ -35,4 +37,14 @@ fun View.clearLightStatusBar() {
     flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
     systemUiVisibility = flags
   }
+}
+
+inline fun View.isVisible() = visibility == View.VISIBLE
+inline fun View.makeVisible() {
+  visibility = View.VISIBLE
+}
+
+inline fun View.isGone() = visibility == View.GONE
+inline fun View.makeGone() {
+  visibility = View.GONE
 }
