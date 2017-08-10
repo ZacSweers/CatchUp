@@ -125,3 +125,14 @@ inline fun Palette.orderedSwatches(
       darkMutedSwatch?.let { it to darkAlpha }
   ).filterNotNull()
 }
+
+inline fun Palette.orderedSwatches(): Swatch? {
+  return listOf(
+      vibrantSwatch,
+      lightVibrantSwatch,
+      darkVibrantSwatch,
+      mutedSwatch,
+      lightMutedSwatch,
+      darkMutedSwatch
+  ).filterNotNull().firstOrNull()
+}

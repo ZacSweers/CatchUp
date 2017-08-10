@@ -41,6 +41,7 @@ import io.sweers.catchup.data.medium.model.MediumPost
 import io.sweers.catchup.data.medium.model.Post
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -64,7 +65,7 @@ class MediumController : BaseNewsController<MediumPost> {
     return ContextThemeWrapper(context, R.style.CatchUp_Medium)
   }
 
-  override fun bindItemView(item: MediumPost, holder: BaseNewsController.CatchUpItemViewHolder) {
+  override fun bindItemView(item: MediumPost, holder: CatchUpItemViewHolder) {
     holder.run {
       title(item.post().title())
 

@@ -34,12 +34,12 @@ abstract class Images {
 
   fun best(): String = hidpi() ?: normal()
 
-  fun bestSize(): IntArray = hidpi()?.let { TWO_X_IMAGE_SIZE } ?: NORMAL_IMAGE_SIZE
+  fun bestSize(): Pair<Int, Int> = hidpi()?.let { TWO_X_IMAGE_SIZE } ?: NORMAL_IMAGE_SIZE
 
   companion object {
 
-    private val NORMAL_IMAGE_SIZE = intArrayOf(400, 300)
-    private val TWO_X_IMAGE_SIZE = intArrayOf(800, 600)
+    private val NORMAL_IMAGE_SIZE = Pair(400, 300)
+    private val TWO_X_IMAGE_SIZE = Pair(800, 600)
 
     @JvmStatic
     fun jsonAdapter(moshi: Moshi): JsonAdapter<Images> {

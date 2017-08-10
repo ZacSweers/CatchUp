@@ -38,7 +38,7 @@ import io.sweers.catchup.data.designernews.DesignerNewsService
 import io.sweers.catchup.data.designernews.model.Story
 import io.sweers.catchup.data.designernews.model.User
 import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.StorageBackedNewsController
 import io.sweers.catchup.util.collect.toCommaJoinerList
 import okhttp3.OkHttpClient
@@ -64,7 +64,7 @@ class DesignerNewsController : StorageBackedNewsController {
     return ContextThemeWrapper(context, R.style.CatchUp_DesignerNews)
   }
 
-  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.CatchUpItemViewHolder) {
+  override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
     holder.bind(this, item, linkManager)
   }
 

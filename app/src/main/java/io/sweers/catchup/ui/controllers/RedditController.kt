@@ -38,6 +38,7 @@ import io.sweers.catchup.data.reddit.model.RedditLink
 import io.sweers.catchup.data.reddit.model.RedditObjectFactory
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -62,7 +63,7 @@ class RedditController : BaseNewsController<RedditLink> {
     return ContextThemeWrapper(context, R.style.CatchUp_Reddit)
   }
 
-  override fun bindItemView(item: RedditLink, holder: BaseNewsController.CatchUpItemViewHolder) {
+  override fun bindItemView(item: RedditLink, holder: CatchUpItemViewHolder) {
     holder.run {
       title(item.title())
 

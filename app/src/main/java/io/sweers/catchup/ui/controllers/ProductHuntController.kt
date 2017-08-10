@@ -35,7 +35,7 @@ import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.producthunt.ProductHuntService
 import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.StorageBackedNewsController
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
@@ -60,7 +60,7 @@ class ProductHuntController : StorageBackedNewsController {
     return ContextThemeWrapper(context, R.style.CatchUp_ProductHunt)
   }
 
-  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.CatchUpItemViewHolder) {
+  override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
     holder.bind(this, item, linkManager)
   }
 

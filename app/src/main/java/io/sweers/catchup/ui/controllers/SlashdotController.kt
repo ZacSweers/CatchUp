@@ -31,7 +31,7 @@ import io.sweers.catchup.data.CatchUpItem2
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.slashdot.SlashdotService
 import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.StorageBackedNewsController
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import io.sweers.catchup.util.unescapeJavaString
@@ -57,7 +57,7 @@ class SlashdotController : StorageBackedNewsController {
     return ContextThemeWrapper(context, R.style.CatchUp_Slashdot)
   }
 
-  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.CatchUpItemViewHolder) {
+  override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
     holder.bind(this, item, linkManager)
   }
 

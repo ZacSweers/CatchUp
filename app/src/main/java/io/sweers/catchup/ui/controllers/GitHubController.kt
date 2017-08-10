@@ -62,6 +62,7 @@ import io.sweers.catchup.data.github.type.OrderDirection
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.collect.emptyIfNull
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -83,7 +84,7 @@ class GitHubController : BaseNewsController<CatchUpItem> {
     return ContextThemeWrapper(context, R.style.CatchUp_GitHub)
   }
 
-  override fun bindItemView(item: CatchUpItem, holder: BaseNewsController.CatchUpItemViewHolder) {
+  override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
     holder.bind(this, item, linkManager)
   }
 
@@ -137,6 +138,8 @@ class GitHubController : BaseNewsController<CatchUpItem> {
                         .login()))
                     .starsCount(node.stargazers()
                         .totalCount())
+                    .description(node.description())
+                    .license(node.license())
                     .build()
               }
               // Should probably combine these, but I also like having separation here
@@ -145,11 +148,12 @@ class GitHubController : BaseNewsController<CatchUpItem> {
                   CatchUpItem.builder()
                       .id(id())
                       .hideComments(true)
-                      .title(fullName())
+                      .title("${fullName()} — ${description()}")
                       .score(Pair("★", starsCount()))
                       .timestamp(createdAt())
                       .author(owner().login())
                       .tag(language())
+                      .source(license())
                       .itemClickUrl(htmlUrl())
                       .build()
                 }

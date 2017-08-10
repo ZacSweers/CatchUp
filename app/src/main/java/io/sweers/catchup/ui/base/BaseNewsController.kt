@@ -22,12 +22,8 @@ import android.support.graphics.drawable.AnimatedVectorDrawableCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RxViewHolder
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
@@ -36,25 +32,19 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import butterknife.Unbinder
-import com.jakewharton.rxbinding2.view.RxView
 import com.uber.autodispose.kotlin.autoDisposeWith
-import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Function
 import io.sweers.catchup.R
-import io.sweers.catchup.data.CatchUpItem
-import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.util.Iterables
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
-import io.sweers.catchup.util.format
+import io.sweers.catchup.util.isVisible
+import io.sweers.catchup.util.makeGone
+import io.sweers.catchup.util.makeVisible
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
-import org.threeten.bp.Instant
 import retrofit2.HttpException
 import java.io.IOException
 import java.security.InvalidParameterException
@@ -129,8 +119,8 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
   }
 
   @OnClick(R.id.retry_button) internal fun onRetry() {
-    errorView.visibility = GONE
-    progress.visibility = VISIBLE
+    errorView.makeGone()
+    progress.makeVisible()
     onRefresh()
   }
 
@@ -173,6 +163,9 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
   }
 
   private fun loadData(fromRefresh: Boolean = false) {
+    if (!recyclerView.isVisible()) {
+      progress.makeVisible()
+    }
     if (fromRefresh) {
       moreDataAvailable = true
       page = 0
@@ -207,9 +200,9 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
         }
         .autoDisposeWith(this)
         .subscribe({ data ->
-          progress.visibility = GONE
-          errorView.visibility = GONE
-          swipeRefreshLayout.visibility = VISIBLE
+          progress.makeGone()
+          errorView.makeGone()
+          swipeRefreshLayout.makeVisible()
           recyclerView.post {
             if (fromRefresh) {
               adapter.setData(data)
@@ -225,30 +218,30 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
           val activity = activity
           if (pageToRequest == 0 && activity != null) {
             if (error is IOException) {
-              progress.visibility = GONE
+              progress.makeGone()
               errorTextView.text = "Connection Problem"
-              swipeRefreshLayout.visibility = GONE
-              errorView.visibility = VISIBLE
+              swipeRefreshLayout.makeGone()
+              errorView.makeVisible()
               AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
                 errorImage.setImageDrawable(this)
                 start()
               }
             } else if (error is HttpException) {
               // TODO Show some sort of API error response.
-              progress.visibility = GONE
+              progress.makeGone()
               errorTextView.text = "API Problem"
-              swipeRefreshLayout.visibility = GONE
-              errorView.visibility = VISIBLE
+              swipeRefreshLayout.makeGone()
+              errorView.makeVisible()
               AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
                 errorImage.setImageDrawable(this)
                 start()
               }
             } else {
               // TODO Show some sort of generic response error
-              progress.visibility = GONE
-              swipeRefreshLayout.visibility = GONE
+              progress.makeGone()
+              swipeRefreshLayout.makeGone()
               errorTextView.text = "Unknown issue."
-              errorView.visibility = VISIBLE
+              errorView.makeVisible()
               AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
                 errorImage.setImageDrawable(this)
                 start()
@@ -370,141 +363,4 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
       val multipage: Boolean,
       val page: Int)
 
-  class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
-
-    companion object {
-      val COMPLETABLE_FUNC = Function<UrlMeta, Completable> { Completable.complete() }
-    }
-
-    @BindView(R.id.container) lateinit var container: View
-    @BindView(R.id.title) lateinit var title: TextView
-    @BindView(R.id.score) lateinit var score: TextView
-    @BindView(R.id.score_divider) lateinit var scoreDivider: TextView
-    @BindView(R.id.timestamp) lateinit var timestamp: TextView
-    @BindView(R.id.author) lateinit var author: TextView
-    @BindView(R.id.author_divider) lateinit var authorDivider: TextView
-    @BindView(R.id.source) lateinit var source: TextView
-    @BindView(R.id.comments) lateinit var comments: TextView
-    @BindView(R.id.tag) lateinit var tag: TextView
-    @BindView(R.id.tag_divider) lateinit var tagDivider: View
-    private var unbinder: Unbinder? = null
-
-    init {
-      unbinder?.unbind()
-      unbinder = `BaseNewsController$CatchUpItemViewHolder_ViewBinding`(this, itemView)
-    }
-
-    fun bind(controller: ServiceController, item: CatchUpItem, linkManager: LinkManager? = null) {
-      title(item.title())
-      score(item.score())
-      timestamp(item.timestamp())
-      author(item.author())
-      source(item.source())
-      comments(item.commentCount())
-      tag(item.tag())
-
-      val itemClickUrl = item.itemClickUrl() ?: item.itemCommentClickUrl()
-      itemClickUrl?.let {
-        itemClicks()
-            .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
-            .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
-            .autoDisposeWith(this)
-            .subscribe()
-      }
-      item.itemCommentClickUrl()?.let {
-        itemCommentClicks()
-            .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
-            .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
-            .autoDisposeWith(this)
-            .subscribe()
-      } ?: hideComments()
-
-      if (item.hideComments()) {
-        hideComments()
-      }
-    }
-
-    fun itemClicks(): Observable<Any> {
-      return RxView.clicks(container)
-    }
-
-    fun itemLongClicks(): Observable<Any> {
-      return RxView.longClicks(container)
-    }
-
-    fun itemCommentClicks(): Observable<Any> {
-      return RxView.clicks(comments)
-    }
-
-    fun title(titleText: CharSequence?) {
-      title.text = titleText
-    }
-
-    fun score(scoreValue: Pair<String, Int>?) {
-      if (scoreValue == null) {
-        score.visibility = GONE
-        scoreDivider.visibility = GONE
-      } else {
-        scoreDivider.visibility = VISIBLE
-        score.visibility = VISIBLE
-        score.text = String.format("%s %s",
-            scoreValue.first,
-            scoreValue.second.toLong().format())
-      }
-    }
-
-    fun tag(text: String?) {
-      if (text == null) {
-        tag.visibility = GONE
-        tagDivider.visibility = GONE
-      } else {
-        tag.visibility = VISIBLE
-        tagDivider.visibility = VISIBLE
-        tag.text = text.capitalize()
-      }
-    }
-
-    fun timestamp(instant: Instant) {
-      timestamp(instant.toEpochMilli())
-    }
-
-    private fun timestamp(date: Long) {
-      timestamp.text = DateUtils.getRelativeTimeSpanString(date,
-          System.currentTimeMillis(),
-          0L,
-          DateUtils.FORMAT_ABBREV_ALL)
-    }
-
-    fun author(authorText: CharSequence?) {
-      if (authorText == null) {
-        author.visibility = GONE
-        authorDivider.visibility = GONE
-      } else {
-        authorDivider.visibility = VISIBLE
-        author.visibility = VISIBLE
-        author.text = authorText
-      }
-    }
-
-    fun source(sourceText: CharSequence?) {
-      if (sourceText == null) {
-        source.visibility = GONE
-        authorDivider.visibility = GONE
-      } else {
-        if (author.visibility == VISIBLE) {
-          authorDivider.visibility = VISIBLE
-        }
-        source.visibility = VISIBLE
-        source.text = sourceText
-      }
-    }
-
-    fun comments(commentsCount: Int) {
-      comments.text = commentsCount.toLong().format()
-    }
-
-    fun hideComments() {
-      comments.visibility = GONE
-    }
-  }
 }

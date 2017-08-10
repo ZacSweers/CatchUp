@@ -39,6 +39,7 @@ import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
+import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.d
 import okhttp3.HttpUrl
 import javax.inject.Inject
@@ -57,7 +58,7 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
     return ContextThemeWrapper(context, R.style.CatchUp_HackerNews)
   }
 
-  override fun bindItemView(item: HackerNewsStory, holder: BaseNewsController.CatchUpItemViewHolder) {
+  override fun bindItemView(item: HackerNewsStory, holder: CatchUpItemViewHolder) {
     holder.run {
       title(item.title())
       score(Pair("+", item.score()))

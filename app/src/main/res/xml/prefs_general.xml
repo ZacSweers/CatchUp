@@ -29,10 +29,10 @@
 
     <!-- Not doing this yet -->
     <!--<Preference-->
-        <!--android:key="services"-->
-        <!--android:summary="@string/pref_services_summary"-->
-        <!--android:title="@string/pref_services"-->
-        <!--/>-->
+    <!--android:key="services"-->
+    <!--android:summary="@string/pref_services_summary"-->
+    <!--android:title="@string/pref_services"-->
+    <!--/>-->
 
     <Preference
         android:key="clear_cache"
@@ -79,11 +79,6 @@
     <Preference
         android:key="about"
         android:title="@string/about"
-        />
-
-    <Preference
-        android:key="licenses"
-        android:title="@string/licenses"
         />
 
     <CheckBoxPreference

@@ -26,8 +26,8 @@
       android:name=".app.CatchUpApplication"
       android:allowBackup="true"
       android:icon="@mipmap/ic_launcher"
-      android:roundIcon="@mipmap/ic_launcher_round"
       android:label="@string/app_name"
+      android:roundIcon="@mipmap/ic_launcher_round"
       android:supportsRtl="true"
       android:theme="@style/CatchUp"
       >
@@ -46,11 +46,16 @@
     <activity
         android:name=".ui.activity.SettingsActivity"
         android:label="@string/title_activity_settings"
-        >
-      <meta-data
-          android:name="android.support.PARENT_ACTIVITY"
-          android:value=".ui.activity.MainActivity"/>
-    </activity>
+        android:parentActivityName=".ui.activity.MainActivity"
+        android:launchMode="singleTop"
+        />
+
+    <activity
+        android:name=".ui.activity.AboutActivity"
+        android:label="@string/title_activity_about"
+        android:parentActivityName=".ui.activity.SettingsActivity"
+        android:launchMode="singleTop"
+        />
 
     <meta-data
         android:name="io.sweers.catchup.GlideConfiguration"

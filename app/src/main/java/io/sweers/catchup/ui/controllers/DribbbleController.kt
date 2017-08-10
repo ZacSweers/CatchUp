@@ -408,7 +408,7 @@ class DribbbleController
       internal val image: BadgedFourThreeImageView = itemView as BadgedFourThreeImageView
 
       fun bindView(shot: Shot) {
-        val imageSize = shot.images()
+        val (x, y) = shot.images()
             .bestSize()
         Glide.with(itemView.context)
             .load(shot.images()
@@ -417,7 +417,7 @@ class DribbbleController
                 shotLoadingPlaceholders[adapterPosition % shotLoadingPlaceholders.size])
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .fitCenter()
-                .override(imageSize[0], imageSize[1]))
+                .override(x, y))
             .transition(DrawableTransitionOptions.withCrossFade())
             .listener(object : RequestListener<Drawable> {
               override fun onResourceReady(resource: Drawable,

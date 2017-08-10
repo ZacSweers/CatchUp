@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
-import butterknife.Unbinder
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
@@ -46,14 +45,14 @@ class MainActivity : BaseActivity() {
   @BindView(R.id.controller_container) internal lateinit var container: ViewGroup
 
   private lateinit var router: Router
-  private var unbinder: Unbinder? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    customTab.doOnDestroy { connectionCallback = null }
     val viewGroup = viewContainer.forActivity(this)
     layoutInflater.inflate(R.layout.activity_main, viewGroup)
 
-    unbinder = ButterKnife.bind(this)
+    ButterKnife.bind(this).doOnDestroy { unbind() }
 
     router = Conductor.attachRouter(this, container, savedInstanceState)
     if (!router.hasRootController()) {
@@ -76,12 +75,6 @@ class MainActivity : BaseActivity() {
     if (!router.handleBack()) {
       super.onBackPressed()
     }
-  }
-
-  override fun onDestroy() {
-    customTab.connectionCallback = null
-    unbinder?.unbind()
-    super.onDestroy()
   }
 
   @dagger.Module

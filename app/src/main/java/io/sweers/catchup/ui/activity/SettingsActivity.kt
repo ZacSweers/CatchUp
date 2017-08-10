@@ -18,13 +18,16 @@ package io.sweers.catchup.ui.activity
 
 import android.app.Activity
 import android.app.Fragment
+import android.content.Intent
 import android.os.Bundle
 import android.preference.CheckBoxPreference
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceScreen
 import android.support.design.widget.Snackbar
+import android.support.v4.app.NavUtils
 import android.support.v7.widget.Toolbar
+import android.view.MenuItem
 import android.widget.Toast
 import butterknife.BindView
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -92,6 +95,13 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
     } else if (savedInstanceState.getBoolean(ARG_FROM_RECREATE, false)) {
       resultMirror = NIGHT_MODE_UPDATED
     }
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    if (item.itemId == android.R.id.home) {
+      NavUtils.navigateUpFromSameTask(this)
+    }
+    return super.onOptionsItemSelected(item)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -196,12 +206,8 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
               }
           return true
         }
-        P.licenses.KEY -> {
-          Toast.makeText(activity, "TODO", Toast.LENGTH_SHORT).show()
-          return true
-        }
         P.about.KEY -> {
-          Toast.makeText(activity, "TODO", Toast.LENGTH_SHORT).show()
+          startActivity(Intent(activity, AboutActivity::class.java))
           return true
         }
       }

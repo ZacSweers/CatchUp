@@ -37,6 +37,10 @@ abstract class Repository {
 
   abstract fun name(): String
 
+  abstract fun description(): String?
+
+  abstract fun license(): String?
+
   abstract fun owner(): User
 
   @Json(name = "stargazers_count") abstract fun starsCount(): Int
@@ -56,6 +60,10 @@ abstract class Repository {
     fun name(name: String): Builder
 
     fun owner(owner: User): Builder
+
+    fun description(description: String?): Builder
+
+    fun license(license: String?): Builder
 
     fun starsCount(starsCount: Int): Builder
 
