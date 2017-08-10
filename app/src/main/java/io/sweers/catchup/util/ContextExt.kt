@@ -19,6 +19,7 @@ package io.sweers.catchup.util
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.support.annotation.AttrRes
 import android.support.annotation.ColorInt
 import android.support.annotation.UiThread
@@ -110,4 +111,12 @@ fun Context.isNavBarOnBottom(): Boolean {
   val dm = res.displayMetrics
   val canMove = dm.widthPixels != dm.heightPixels && cfg.smallestScreenWidthDp < 600
   return !canMove || dm.widthPixels < dm.heightPixels
+}
+
+inline fun Context.dp2px(dipValue: Float): Float {
+  return resources.dp2px(dipValue)
+}
+
+inline fun Resources.dp2px(dipValue: Float): Float {
+  return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
 }
