@@ -27,6 +27,8 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.ColorInt
+import android.support.annotation.Px
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.NavUtils
 import android.support.v4.view.animation.FastOutSlowInInterpolator
@@ -72,6 +74,7 @@ import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
+import io.sweers.catchup.util.dp2px
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.orderedSwatches
 import io.sweers.catchup.util.setLightStatusBar
@@ -136,7 +139,9 @@ class AboutController : ButterKnifeController() {
   @BindDimen(R.dimen.avatar) @JvmField var dimenSize: Int = 0
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.list) lateinit var recyclerView: RecyclerView
+  @BindView(R.id.appbarlayout) lateinit var appBarLayout: AppBarLayout
   @BindView(R.id.ctl) lateinit var collapsingToolbar: CollapsingToolbarLayout
+  @BindView(R.id.banner_container) lateinit var bannerContainer: View
   @BindView(R.id.banner_icon) lateinit var icon: ImageView
   @BindView(R.id.banner_title) lateinit var title: TextView
   @BindView(R.id.banner_text) lateinit var aboutText: TextView
@@ -167,13 +172,58 @@ class AboutController : ButterKnifeController() {
         setDisplayShowTitleEnabled(false)
       }
     }
+
+    val parallaxMultiplier
+        = (bannerContainer.layoutParams as CollapsingToolbarLayout.LayoutParams).parallaxMultiplier
+    appBarLayout.post {
+      // Wait till things are measured
+      val interpolator = FastOutSlowInInterpolator()
+
+      // TODO This all currently assumes left/right and not start/end
+      // X is pretty simple, we just want to end up 72dp to the end of start
+      @Px val translatableHeight = appBarLayout.measuredHeight - toolbar.measuredHeight
+      @Px val titleX = title.x
+      @Px val desiredTitleX = toolbar.resources.dp2px(72f)
+      @Px val xDelta = titleX - desiredTitleX
+
+      // Y values are a bit trickier - these need to figure out where they would be on the larger
+      // plane, so we calculate it upfront by predicting where it would land after collapse is done.
+      // This requires knowing the parallax multiplier and adjusting for the parent plane rather
+      // than the relative plane of the internal LL. Once we know the predicted global Y, easy to
+      // calculate desired delta from there.
+      @Px val titleY = title.y
+      @Px val desiredTitleY = (toolbar.measuredHeight - title.measuredHeight) / 2
+      @Px val predictedFinalY = titleY - (translatableHeight * parallaxMultiplier)
+      @Px val yDelta = desiredTitleY - predictedFinalY
+      appBarLayout.addOnOffsetChangedListener { _, verticalOffset ->
+        val percentage = Math.abs(verticalOffset).toFloat() / translatableHeight
+        if (percentage < 0.75F) {
+          // We want to accelerate fading to be the first 75% of the translation, so adjust
+          // accordingly below and use the new calculated percentage for our interpolation
+          val adjustedPercentage = 1 - (percentage * 1.33F)
+          val interpolation = interpolator.getInterpolation(adjustedPercentage)
+          icon.alpha = interpolation
+          aboutText.alpha = interpolation
+        }
+        if (percentage > 0.50F) {
+          // Start translating about halfway through (to give a staggered effect next to the alpha
+          // so they have time to fade out sufficiently). From here we just set translation offsets
+          // to adjust the position naturally to give the appearance of settling in to the right
+          // place.
+          val adjustedPercentage = (1 - percentage) * 2F
+          val interpolation = interpolator.getInterpolation(adjustedPercentage)
+          title.translationX = -(xDelta - (interpolation * xDelta))
+          title.translationY = yDelta - (interpolation * yDelta)
+        }
+      }
+    }
   }
 
   override fun onAttach(view: View) {
     super.onAttach(view)
     // Load data
     // Maybe for now manually add json
-    // Would be neat if we could just keep github URLs to projects and query graphql
+    // Would be neat if we could just keep GitHub URLs to projects and query GraphQL
     recyclerView.layoutManager = LinearLayoutManager(view.context)
     val itemList = mutableListOf<OssItem>()
     // Dummy data
