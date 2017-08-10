@@ -38,6 +38,7 @@
         >
 
       <LinearLayout
+          android:id="@+id/banner_container"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="vertical"
@@ -70,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="An app for catching up on things.\n\nBy Zac Sweers  —  Source code"
+            android:text="An app for catching up on things.\n\nv1.0\nBy Zac Sweers  —  Source code"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             />
