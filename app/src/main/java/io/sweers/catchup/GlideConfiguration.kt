@@ -24,6 +24,7 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
+import io.sweers.catchup.util.getSystemService
 
 /**
  * Configure Glide to set desired image quality.
@@ -33,7 +34,7 @@ class GlideConfiguration : AppGlideModule() {
 
   override fun applyOptions(context: Context, builder: GlideBuilder) {
     // Prefer higher quality images unless we're on a low RAM device
-    val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val activityManager = context.getSystemService<ActivityManager>()
     builder.setDefaultRequestOptions(RequestOptions().format(
         if (ActivityManagerCompat.isLowRamDevice(activityManager))
           DecodeFormat.PREFER_RGB_565
