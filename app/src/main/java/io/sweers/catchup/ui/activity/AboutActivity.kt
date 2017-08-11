@@ -197,6 +197,15 @@ class AboutController : ButterKnifeController() {
       @Px val yDelta = desiredTitleY - predictedFinalY
       appBarLayout.addOnOffsetChangedListener { _, verticalOffset ->
         val percentage = Math.abs(verticalOffset).toFloat() / translatableHeight
+        // Force versions outside boundaries to be safe
+        if (percentage > 0.75F) {
+          icon.alpha = 0F
+          aboutText.alpha = 0F
+        }
+        if (percentage < 0.5F) {
+          title.translationX = 0F
+          title.translationY = 0F
+        }
         if (percentage < 0.75F) {
           // We want to accelerate fading to be the first 75% of the translation, so adjust
           // accordingly below and use the new calculated percentage for our interpolation
