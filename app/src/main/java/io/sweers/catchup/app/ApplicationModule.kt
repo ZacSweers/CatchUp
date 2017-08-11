@@ -19,12 +19,14 @@ package io.sweers.catchup.app
 import android.app.Application
 import android.content.Context
 import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import io.sweers.catchup.BuildConfig
+import io.sweers.catchup.R
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
@@ -43,7 +45,19 @@ abstract class ApplicationModule {
     @JvmStatic
     @Singleton
     fun provideRemoteConfig(@ApplicationContext context: Context): FirebaseRemoteConfig {
-      FirebaseApp.initializeApp(context)
+      // Ugly but a hack to detect if we have firebase configs available. If not, we give it a shell
+      // of options so the app still runs.
+      val res = context.resources
+      val packageId = res.getResourcePackageName(R.string.common_google_play_services_unknown_issue)
+      val id = res.getIdentifier("google_app_id", "string", packageId)
+      val firebaseOptions = if (id != 0 && res.getString(id) != null) {
+        FirebaseOptions.fromResource(context)
+      } else {
+        FirebaseOptions.Builder()
+            .setApplicationId(BuildConfig.APPLICATION_ID)
+            .build()
+      }
+      FirebaseApp.initializeApp(context, firebaseOptions)
       return FirebaseRemoteConfig.getInstance()
           .apply {
             setConfigSettings(FirebaseRemoteConfigSettings.Builder()
