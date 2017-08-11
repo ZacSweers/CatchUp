@@ -57,7 +57,7 @@ abstract class ApplicationModule {
             .setApplicationId(BuildConfig.APPLICATION_ID)
             .build()
       }
-      FirebaseApp.initializeApp(context, firebaseOptions)
+      FirebaseApp.initializeApp(context, firebaseOptions, BuildConfig.APPLICATION_ID)
       return FirebaseRemoteConfig.getInstance()
           .apply {
             setConfigSettings(FirebaseRemoteConfigSettings.Builder()
