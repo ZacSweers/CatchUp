@@ -30,6 +30,7 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.widget.Toast
 import butterknife.BindView
+import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Module
@@ -172,9 +173,11 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
         }
         P.reports.KEY -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
+          FirebasePerformance.getInstance().isPerformanceCollectionEnabled = isChecked
           P.reports.put(isChecked).apply()
-          Snackbar.make(view, "Will take effect on next app restart", Snackbar.LENGTH_SHORT)
+          Snackbar.make(view, "Will take full effect on next app restart", Snackbar.LENGTH_SHORT)
               .setAction("Undo") {
+                // TODO Maybe this should actually be a restart button
                 P.reports.put(!isChecked).apply()
                 preference.isChecked = !isChecked
               }
