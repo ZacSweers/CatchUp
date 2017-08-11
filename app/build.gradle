@@ -24,6 +24,7 @@ buildscript {
   dependencies {
     classpath deps.android.gradlePlugin
     classpath deps.kotlin.gradlePlugin
+    classpath deps.android.firebase.gradlePlugin
     classpath deps.build.gradlePlugins.bugsnag
     classpath deps.build.gradlePlugins.psync
     classpath deps.build.gradlePlugins.versions
@@ -33,6 +34,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.sweers.psync'
 apply plugin: 'com.apollographql.android'
 apply plugin: 'org.jetbrains.kotlin.android'
@@ -296,6 +298,7 @@ dependencies {
   implementation deps.android.firebase.core
   implementation deps.android.firebase.config
   implementation deps.android.firebase.database
+  implementation deps.android.firebase.perf
   kapt deps.auto.value.extensions.firebase.apt.core
   compileOnly deps.auto.value.extensions.firebase.compileOnly.annotation
   implementation deps.auto.value.extensions.firebase.adapter

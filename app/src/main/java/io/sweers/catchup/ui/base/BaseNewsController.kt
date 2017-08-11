@@ -32,6 +32,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import butterknife.Unbinder
+import com.google.firebase.perf.FirebasePerformance
 import com.uber.autodispose.kotlin.autoDisposeWith
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -178,6 +179,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     if (adapter.itemCount != 0) {
       recyclerView.post { adapter.dataStartedLoading() }
     }
+    val trace = FirebasePerformance.getInstance().newTrace("Data load - ${javaClass.simpleName}")
     val timer = AtomicLong()
     getDataSingle(
         DataRequest(fromRefresh && !isRestoring,
@@ -192,8 +194,12 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
           swipeRefreshLayout.isEnabled = true
           swipeRefreshLayout.isRefreshing = false
         }
-        .doOnSubscribe { timer.set(System.currentTimeMillis()) }
+        .doOnSubscribe {
+          trace.start()
+          timer.set(System.currentTimeMillis())
+        }
         .doFinally {
+          trace.stop()
           d { "Data load - ${javaClass.simpleName} - took: ${System.currentTimeMillis() - timer.get()}ms" }
           dataLoading = false
           recyclerView.post { adapter.dataFinishedLoading() }

@@ -66,7 +66,9 @@ ext.deps = [
         firebase: [
             core: "com.google.firebase:firebase-core:${versions.firebase}",
             config: "com.google.firebase:firebase-config:${versions.firebase}",
-            database: "com.google.firebase:firebase-database:${versions.firebase}"
+            database: "com.google.firebase:firebase-database:${versions.firebase}",
+            gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.1',
+            perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
         gradlePlugin: 'com.android.tools.build:gradle:3.0.0-beta1',
         support: [
