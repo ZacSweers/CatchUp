@@ -84,9 +84,8 @@ android {
     buildConfigField 'String', 'SMMRY_API_KEY', /"${getPropertyOrEmpty("catchup_smmry_api_key")}"/
   }
   compileOptions {
-    // TODO temporary till desugar is fixed
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
   }
   signingConfigs {
     if (getPropertyOrEmpty("catchup_signing_location")) {
