@@ -240,36 +240,43 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
         }, { error ->
           val activity = activity
           if (pageToRequest == 0 && activity != null) {
-            if (error is IOException) {
-              progress.makeGone()
-              errorTextView.text = "Connection Problem"
-              swipeRefreshLayout.makeGone()
-              errorView.makeVisible()
-              AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
-                errorImage.setImageDrawable(this)
-                start()
+            when (error) {
+              is IOException -> {
+                progress.makeGone()
+                errorTextView.text = "Connection Problem"
+                swipeRefreshLayout.makeGone()
+                errorView.makeVisible()
+                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                    ?.let {
+                      errorImage.setImageDrawable(it)
+                      it.start()
+                    }
               }
-            } else if (error is HttpException) {
-              // TODO Show some sort of API error response.
-              progress.makeGone()
-              errorTextView.text = "API Problem"
-              swipeRefreshLayout.makeGone()
-              errorView.makeVisible()
-              AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
-                errorImage.setImageDrawable(this)
-                start()
+              is HttpException -> {
+                // TODO Show some sort of API error response.
+                progress.makeGone()
+                errorTextView.text = "API Problem"
+                swipeRefreshLayout.makeGone()
+                errorView.makeVisible()
+                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                    ?.let {
+                      errorImage.setImageDrawable(it)
+                      it.start()
+                    }
               }
-            } else {
-              // TODO Show some sort of generic response error
-              progress.makeGone()
-              swipeRefreshLayout.makeGone()
-              errorTextView.text = "Unknown issue."
-              errorView.makeVisible()
-              AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
-                errorImage.setImageDrawable(this)
-                start()
+              else -> {
+                // TODO Show some sort of generic response error
+                progress.makeGone()
+                swipeRefreshLayout.makeGone()
+                errorTextView.text = "Unknown issue."
+                errorView.makeVisible()
+                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                    ?.let {
+                      errorImage.setImageDrawable(it)
+                      it.start()
+                    }
+                e(error) { "Unknown issue." }
               }
-              e(error) { "Unknown issue." }
             }
           } else {
             page--
