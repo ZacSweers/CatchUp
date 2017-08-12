@@ -20,6 +20,8 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.util.DiffUtil
+import android.support.v7.util.DiffUtil.DiffResult
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -39,6 +41,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
+import io.sweers.catchup.ui.base.LoadResult.NewData
+import io.sweers.catchup.ui.base.LoadResult.RefreshData
 import io.sweers.catchup.util.Iterables
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
@@ -49,7 +53,6 @@ import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import retrofit2.HttpException
 import java.io.IOException
 import java.security.InvalidParameterException
-import java.util.LinkedHashSet
 import java.util.concurrent.atomic.AtomicLong
 
 abstract class BaseNewsController<T : HasStableId> : ServiceController,
@@ -189,6 +192,14 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
               isRestoring = false
               pageToRestoreTo = 0
             })
+        .map { newData ->
+          if (fromRefresh) {
+            LoadResult.RefreshData(newData,
+                DiffUtil.calculateDiff(ItemUpdateCallback(adapter.getItems(), newData)))
+          } else {
+            LoadResult.NewData(newData)
+          }
+        }
         .observeOn(AndroidSchedulers.mainThread())
         .doOnEvent { _, _ ->
           swipeRefreshLayout.isEnabled = true
@@ -205,15 +216,21 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
           recyclerView.post { adapter.dataFinishedLoading() }
         }
         .autoDisposeWith(this)
-        .subscribe({ data ->
+        .subscribe({ loadResult ->
           progress.makeGone()
           errorView.makeGone()
           swipeRefreshLayout.makeVisible()
           recyclerView.post {
-            if (fromRefresh) {
-              adapter.setData(data)
-            } else {
-              adapter.addData(data)
+            when (loadResult) {
+              is NewData -> {
+                adapter.addData(loadResult.newData, true)
+              }
+              is RefreshData -> {
+                with(loadResult) {
+                  adapter.setData(data)
+                  diffResult.dispatchUpdatesTo(adapter)
+                }
+              }
             }
             pendingRVState?.let {
               recyclerView.layoutManager.onRestoreInstanceState(it)
@@ -272,16 +289,18 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     }
   }
 
-  private class Adapter<in T : HasStableId>(
+  private class Adapter<T : HasStableId>(
       private val bindDelegate: (T, CatchUpItemViewHolder) -> Unit)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>(), DataLoadingSubject.DataLoadingCallbacks {
 
-    private val data = LinkedHashSet<T>()
+    private val data = mutableListOf<T>()
     private var showLoadingMore = false
 
     init {
       setHasStableIds(true)
     }
+
+    fun getItems(): List<T> = data
 
     override fun getItemId(position: Int): Long {
       if (getItemViewType(position) == ServiceController.TYPE_LOADING_MORE) {
@@ -352,16 +371,27 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
       notifyItemRemoved(loadingPos)
     }
 
-    fun addData(newData: List<T>) {
-      val prevSize = data.size
-      data.addAll(newData)
-      notifyItemRangeInserted(prevSize, data.size - prevSize)
+    fun clearData(notify: Boolean = false) {
+      data.clear()
+      if (notify) {
+        notifyDataSetChanged()
+      }
     }
 
-    fun setData(newData: List<T>) {
+    fun addData(newData: List<T>, notify: Boolean = false) {
+      val prevSize = data.size
+      data.addAll(newData)
+      if (notify) {
+        notifyItemRangeInserted(prevSize, data.size - prevSize)
+      }
+    }
+
+    fun setData(newData: List<T>, notify: Boolean = false) {
       data.clear()
       data.addAll(newData)
-      notifyDataSetChanged()
+      if (notify) {
+        notifyDataSetChanged()
+      }
     }
   }
 
@@ -369,4 +399,26 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
       val multipage: Boolean,
       val page: Int)
 
+}
+
+private sealed class LoadResult<T> {
+  data class RefreshData<T>(val data: List<T>, val diffResult: DiffResult) : LoadResult<T>()
+  data class NewData<T>(val newData: List<T>) : LoadResult<T>()
+}
+
+private class ItemUpdateCallback<T : HasStableId>(
+    private val oldItems: List<T>,
+    private val newItems: List<T>
+) : DiffUtil.Callback() {
+  override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+    return oldItems[oldItemPosition].stableId() == newItems[newItemPosition].stableId()
+  }
+
+  override fun getOldListSize() = oldItems.size
+
+  override fun getNewListSize() = newItems.size
+
+  override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+    return oldItems[oldItemPosition] == newItems[newItemPosition]
+  }
 }
