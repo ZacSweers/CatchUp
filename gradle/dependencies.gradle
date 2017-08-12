@@ -70,7 +70,7 @@ ext.deps = [
             gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.1',
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-beta1',
+        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-beta2',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
