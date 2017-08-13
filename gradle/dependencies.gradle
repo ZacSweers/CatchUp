@@ -30,7 +30,7 @@ def versions = [
     firebase: '11.0.4',
     glide: '4.0.0',
     inspector: '0.2.0',
-    kotlin: '1.1.4-eap-54',
+    kotlin: '1.1.4-eap-77',
     leakcanary: '1.5.1',
     okhttp: '3.8.1',
     playServices: '11.0.4',
