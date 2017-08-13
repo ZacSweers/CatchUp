@@ -30,6 +30,7 @@ import io.reactivex.functions.Function
 import io.sweers.catchup.injection.HasControllerInjector
 import io.sweers.catchup.rx.doOn
 import io.sweers.catchup.ui.base.ActivityEvent.DESTROY
+import io.sweers.catchup.ui.ViewContainer
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity(),
@@ -39,6 +40,7 @@ abstract class BaseActivity : AppCompatActivity(),
     lifecycle().doOn(DESTROY) { action() }
   }
 
+  @Inject protected lateinit var viewContainer: ViewContainer
   @Inject lateinit var controllerInjector: DispatchingAndroidInjector<Controller>
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
 

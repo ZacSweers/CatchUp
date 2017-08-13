@@ -80,7 +80,8 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_settings)
+    val viewGroup = viewContainer.forActivity(this)
+    layoutInflater.inflate(R.layout.activity_settings, viewGroup)
     SettingsActivity_ViewBinding(this)
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)

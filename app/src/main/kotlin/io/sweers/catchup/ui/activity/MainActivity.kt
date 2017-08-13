@@ -30,7 +30,6 @@ import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.ui.ViewContainer
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
@@ -39,7 +38,6 @@ import javax.inject.Inject
 class MainActivity : BaseActivity() {
 
   @Inject internal lateinit var customTab: CustomTabActivityHelper
-  @Inject internal lateinit var viewContainer: ViewContainer
   @Inject internal lateinit var linkManager: LinkManager
 
   @BindView(R.id.controller_container) internal lateinit var container: ViewGroup

@@ -90,7 +90,8 @@ class AboutActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     customTab.doOnDestroy { connectionCallback = null }
-    setContentView(R.layout.activity_about)
+    val viewGroup = viewContainer.forActivity(this)
+    layoutInflater.inflate(R.layout.activity_about, viewGroup)
 
     AboutActivity_ViewBinding(this).doOnDestroy { unbind() }
     router = Conductor.attachRouter(this, container, savedInstanceState)
