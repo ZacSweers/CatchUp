@@ -1,0 +1,7 @@
+query RepositoryByNameAndOwner($owner: String!, $name: String!) {
+  nodes(owner: $owner, name: $name) {
+    ... on Repository {
+      id
+    }
+  }
+}
