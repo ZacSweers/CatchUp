@@ -28,13 +28,13 @@ import io.sweers.catchup.ui.base.DataLoadingSubject
 abstract class InfiniteScrollListener(private val layoutManager: LinearLayoutManager,
     private val dataLoading: DataLoadingSubject) : RecyclerView.OnScrollListener() {
 
-  override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+  override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
     // bail out if scrolling upward or already loading data
     if (dy < 0 || dataLoading.isDataLoading()) {
       return
     }
 
-    val visibleItemCount = recyclerView!!.childCount
+    val visibleItemCount = recyclerView.childCount
     val totalItemCount = layoutManager.itemCount
     val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
 
