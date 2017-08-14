@@ -30,6 +30,7 @@ import android.support.annotation.ColorInt
 import android.support.annotation.Px
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
+import android.support.design.widget.Snackbar
 import android.support.v4.app.NavUtils
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.app.AppCompatActivity
@@ -41,10 +42,28 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindDimen
 import butterknife.BindView
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Operation
+import com.apollographql.apollo.api.ResponseField
+import com.apollographql.apollo.api.internal.Optional
+import com.apollographql.apollo.cache.http.DiskLruHttpCacheStore
+import com.apollographql.apollo.cache.http.HttpCache
+import com.apollographql.apollo.cache.http.HttpCachePolicy
+import com.apollographql.apollo.cache.http.HttpCacheStore
+import com.apollographql.apollo.cache.normalized.CacheKey
+import com.apollographql.apollo.cache.normalized.CacheKeyResolver
+import com.apollographql.apollo.cache.normalized.NormalizedCacheFactory
+import com.apollographql.apollo.cache.normalized.lru.EvictionPolicy
+import com.apollographql.apollo.cache.normalized.lru.LruNormalizedCacheFactory
+import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper
+import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
+import com.apollographql.apollo.internal.util.ApolloLogger
+import com.apollographql.apollo.rx2.Rx2Apollo
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
@@ -58,16 +77,33 @@ import com.bumptech.glide.request.transition.Transition
 import com.squareup.moshi.Moshi
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
 import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
+import io.sweers.catchup.data.AuthInterceptor
+import io.sweers.catchup.data.HttpUrlApolloAdapter
+import io.sweers.catchup.data.ISO8601InstantApolloAdapter
+import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery
+import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.Node
+import io.sweers.catchup.data.github.RepositoriesByIdsQuery
+import io.sweers.catchup.data.github.RepositoriesByIdsQuery.AsRepository
+import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
+import io.sweers.catchup.data.github.type.CustomType
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.ControllerKey
+import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseActivity
@@ -75,10 +111,16 @@ import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.dp2px
+import io.sweers.catchup.util.e
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.orderedSwatches
 import io.sweers.catchup.util.setLightStatusBar
+import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import org.threeten.bp.Instant
 import javax.inject.Inject
+import javax.inject.Qualifier
 
 class AboutActivity : BaseActivity() {
 
@@ -147,8 +189,11 @@ class AboutController : ButterKnifeController() {
   @BindView(R.id.banner_title) lateinit var title: TextView
   @BindView(R.id.banner_text) lateinit var aboutText: TextView
 
+  @Inject lateinit var apolloClient: ApolloClient
   @Inject internal lateinit var moshi: Moshi
   @Inject internal lateinit var customTab: CustomTabActivityHelper
+
+  private val adapter = Adapter()
 
   override fun onContextAvailable(context: Context) {
     ConductorInjection.inject(this)
@@ -172,6 +217,13 @@ class AboutController : ButterKnifeController() {
         setDisplayHomeAsUpEnabled(true)
         setDisplayShowTitleEnabled(false)
       }
+    }
+
+    recyclerView.adapter = adapter
+    recyclerView.layoutManager = LinearLayoutManager(view.context)
+    recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
+      addDuration = 300
+      removeDuration = 300
     }
 
     val parallaxMultiplier
@@ -231,29 +283,106 @@ class AboutController : ButterKnifeController() {
 
   override fun onAttach(view: View) {
     super.onAttach(view)
-    // Load data
-    // Maybe for now manually add json
-    // Would be neat if we could just keep GitHub URLs to projects and query GraphQL
-    recyclerView.layoutManager = LinearLayoutManager(view.context)
-    val itemList = mutableListOf<OssItem>()
-    // Dummy data
-    repeat(20) {
-      itemList.add(OssItem(
-          avatarUrl = "https://avatars3.githubusercontent.com/u/1361086?v=4&s=460",
-          author = "Zac Sweers",
-          name = "Barber",
-          clickUrl = "https://github.com/hzsweers/barber",
-          license = "Apache V2",
-          description = "A styled attributes \"injection\" library."
-      ))
-    }
-    recyclerView.adapter = Adapter(itemList)
+    requestItems()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { data, error ->
+          if (data != null) {
+            adapter.addItems(data)
+          } else {
+            // TODO Show a better error
+            e(error) { "Could not load open source licenses." }
+            Snackbar.make(recyclerView, "Could not load open source licenses.",
+                Snackbar.LENGTH_SHORT).show()
+          }
+        }
   }
 
-  private inner class Adapter(
-      private val items: List<OssItem>) : RecyclerView.Adapter<CatchUpItemViewHolder>() {
+  private fun requestItems(): Single<List<OssItem>> {
+    val repos = listOf(
+        // Dummy data for now
+        // Maybe some day might be nice to have groups in the list and group by owner
+        RepositoryByNameAndOwnerQuery("uber", "AutoDispose"),
+        RepositoryByNameAndOwnerQuery("airbnb", "lottie-android"),
+        RepositoryByNameAndOwnerQuery("apollographql", "apollo-android"),
+        RepositoryByNameAndOwnerQuery("reactivex", "RxJava"),
+        RepositoryByNameAndOwnerQuery("hzsweers", "Barber"),
+        RepositoryByNameAndOwnerQuery("jakewharton", "Timber")
+    )
+    return Observable
+        .fromIterable(repos)
+        .flatMapSingle {
+          // Fetch repos, send down a map of the ids to owner ids
+          Rx2Apollo.from(apolloClient.query(it)
+              .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+              .firstOrError()
+              .map {
+                with(it.data()!!.repository()!!) {
+                  Pair(id(), owner().id())
+                }
+              }
+              .subscribeOn(Schedulers.io())
+        }
+        .distinct()
+        .reduce(
+            mutableMapOf<String, String>()) { map: MutableMap<String, String>, (first, second) ->
+          map.apply {
+            put(first, second)
+          }
+        }
+        .flatMap {
+          Single.zip(
+              // Fetch the repositories by their IDs, map down to its
+              Rx2Apollo.from(apolloClient.query(RepositoriesByIdsQuery(it.keys.toList()))
+                  .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+                  .firstOrError()
+                  .map { it.data()!!.nodes().map { it.asRepository()!! } },
+              // Fetch the users by their IDs
+              Rx2Apollo.from(apolloClient.query(ProjectOwnersByIdsQuery(it.values.distinct()))
+                  .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+                  .flatMapIterable { it.data()!!.nodes() }
+                  // Reduce into a map of the owner ID -> display name
+                  .reduce(
+                      mutableMapOf<String, String>()) { map: MutableMap<String, String>, node: Node ->
+                    map.apply {
+                      val (id, name) = node.asOrganization()?.let {
+                        Pair(it.id(), it.name() ?: it.login())
+                      } ?: with(node.asUser()!!) {
+                        Pair(id(), name() ?: login())
+                      }
+                      map.put(id, name)
+                    }
+                  },
+              // Map the repos and their corresponding user display name into a list of their pairs
+              BiFunction { nodes: List<AsRepository>, userIdToNameMap: Map<String, String> ->
+                nodes.map {
+                  Pair(it, userIdToNameMap[it.owner().id()]!!)
+                }
+              })
+        }
+        .flattenAsObservable { it }
+        .map { (repo, ownerName) ->
+          OssItem(
+              avatarUrl = repo.owner().avatarUrl().toString(),
+              author = ownerName,
+              name = repo.name(),
+              clickUrl = repo.url().toString(),
+              license = repo.licenseInfo()?.name(),
+              description = repo.description()
+          )
+        }
+        .toSortedList { o1, o2 -> o1.name.compareTo(o2.name) }
+  }
+
+  private inner class Adapter : RecyclerView.Adapter<CatchUpItemViewHolder>() {
 
     private val argbEvaluator = ArgbEvaluator()
+    private val items = mutableListOf<OssItem>()
+
+    fun addItems(newItems: List<OssItem>) {
+      items.addAll(newItems)
+      notifyItemRangeInserted(0, newItems.size)
+    }
 
     override fun onBindViewHolder(holder: CatchUpItemViewHolder, position: Int) {
       val item = items[position]
@@ -348,26 +477,112 @@ class OssItem(
     val avatarUrl: String,
     val author: String,
     val name: String,
-    val license: String,
+    val license: String?,
     val clickUrl: String,
-    val description: String,
+    val description: String?,
     var textColorAnimator: Animator? = null
 )
 
 @PerController
-@Subcomponent
-interface Component : AndroidInjector<AboutController> {
+@Subcomponent(modules = arrayOf(AboutModule::class))
+interface AboutComponent : AndroidInjector<AboutController> {
 
   @Subcomponent.Builder
   abstract class Builder : AndroidInjector.Builder<AboutController>()
 }
 
-@Module(subcomponents = arrayOf(Component::class))
+@Module(subcomponents = arrayOf(AboutComponent::class))
 abstract class AboutControllerBindingModule {
 
   @Binds
   @IntoMap
   @ControllerKey(AboutController::class)
   internal abstract fun bindAboutControllerInjectorFactory(
-      builder: Component.Builder): AndroidInjector.Factory<out Controller>
+      builder: AboutComponent.Builder): AndroidInjector.Factory<out Controller>
+}
+
+@dagger.Module
+internal object AboutModule {
+
+  private val SERVER_URL = "https://api.github.com/graphql"
+
+  @Qualifier
+  private annotation class InternalApi
+
+  @Provides
+  @JvmStatic
+  @PerController
+  internal fun provideHttpCacheStore(@ApplicationContext context: Context): HttpCacheStore {
+    return DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
+  }
+
+  @Provides
+  @JvmStatic
+  @PerController
+  internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache {
+    return HttpCache(httpCacheStore, ApolloLogger(Optional.absent()))
+  }
+
+  @Provides
+  @InternalApi
+  @JvmStatic
+  @PerController
+  internal fun provideGitHubOkHttpClient(
+      client: OkHttpClient,
+      httpCache: HttpCache): OkHttpClient {
+    return client.newBuilder()
+        .addInterceptor(httpCache.interceptor())
+        .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
+        .build()
+  }
+
+  @Provides
+  @JvmStatic
+  @PerController
+  internal fun provideCacheKeyResolver(): CacheKeyResolver {
+    return object : CacheKeyResolver() {
+      override fun fromFieldRecordSet(field: ResponseField,
+          objectSource: Map<String, Any>): CacheKey {
+        // Use id as default case.
+        if (objectSource.containsKey("id")) {
+          val typeNameAndIDKey = objectSource["__typename"].toString() + "." + objectSource["id"]
+          return CacheKey.from(typeNameAndIDKey)
+        }
+        return CacheKey.NO_KEY
+      }
+
+      override fun fromFieldArguments(field: ResponseField,
+          variables: Operation.Variables): CacheKey {
+        return CacheKey.NO_KEY
+      }
+    }
+  }
+
+  @Provides
+  @JvmStatic
+  @PerController
+  internal fun provideNormalizedCacheFactory(
+      @ApplicationContext context: Context): NormalizedCacheFactory<*> {
+    val apolloSqlHelper = ApolloSqlHelper(context, "aboutdb")
+    return LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION,
+        SqlNormalizedCacheFactory(apolloSqlHelper))
+  }
+
+  @Provides
+  @JvmStatic
+  @PerController
+  internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
+      cacheFactory: NormalizedCacheFactory<*>,
+      resolver: CacheKeyResolver,
+      httpCacheStore: HttpCacheStore): ApolloClient {
+    return ApolloClient.builder()
+        .serverUrl(SERVER_URL)
+        .httpCacheStore(httpCacheStore)
+        .okHttpClient(client.get())
+//          .callFactory { client.get().newCall(it) }
+        .normalizedCache(cacheFactory, resolver)
+        .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
+        .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())
+        .build()
+  }
 }
