@@ -1,11 +1,16 @@
-query RepositoriesByIds($ids: [String!]!) {
+query RepositoriesByIds($ids: [ID!]!) {
   nodes(ids: $ids) {
     ... on Repository {
       name
       description
-      license
+      id
+      licenseInfo {
+        name
+        nickname
+      }
       owner {
-        avatarURL
+        avatarUrl
+        id
         login
       }
       url
