@@ -44,6 +44,7 @@ import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.LoadResult.NewData
 import io.sweers.catchup.ui.base.LoadResult.RefreshData
 import io.sweers.catchup.util.Iterables
+import io.sweers.catchup.util.applyOn
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.isVisible
@@ -113,13 +114,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     adapter = Adapter { t, holder -> this.bindItemView(t, holder) }
     recyclerView.adapter = adapter
     swipeRefreshLayout.setOnRefreshListener(this)
-
-    val itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f))
-    itemAnimator.addDuration = 300
-    itemAnimator.removeDuration = 300
-
-    // This blows up adding item ranges >_>. Items start going to random places
-//    recyclerView.itemAnimator = itemAnimator
+    recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
+      addDuration = 300
+      removeDuration = 300
+    }
   }
 
   @OnClick(R.id.retry_button) internal fun onRetry() {
@@ -181,6 +179,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
     dataLoading = true
     if (adapter.itemCount != 0) {
       recyclerView.post { adapter.dataStartedLoading() }
+      recyclerView.itemAnimator = null
     }
     val trace = FirebasePerformance.getInstance().newTrace("Data load - ${javaClass.simpleName}")
     val timer = AtomicLong()
@@ -213,12 +212,13 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
           trace.stop()
           d { "Data load - ${javaClass.simpleName} - took: ${System.currentTimeMillis() - timer.get()}ms" }
           dataLoading = false
-          recyclerView.post { adapter.dataFinishedLoading() }
+          recyclerView.post {
+            adapter.dataFinishedLoading()
+          }
         }
         .autoDisposeWith(this)
         .subscribe({ loadResult ->
-          progress.makeGone()
-          errorView.makeGone()
+          applyOn(progress, errorView) { makeGone() }
           swipeRefreshLayout.makeVisible()
           recyclerView.post {
             when (loadResult) {
