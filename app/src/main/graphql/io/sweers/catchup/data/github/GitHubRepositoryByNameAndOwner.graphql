@@ -2,6 +2,9 @@ query RepositoryByNameAndOwner($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
     ... on Repository {
       id
+      owner {
+        id
+      }
     }
   }
 }
