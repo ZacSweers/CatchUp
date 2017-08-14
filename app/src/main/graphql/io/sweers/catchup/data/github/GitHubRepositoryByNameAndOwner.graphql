@@ -1,5 +1,5 @@
 query RepositoryByNameAndOwner($owner: String!, $name: String!) {
-  nodes(owner: $owner, name: $name) {
+  repository(owner: $owner, name: $name) {
     ... on Repository {
       id
     }
