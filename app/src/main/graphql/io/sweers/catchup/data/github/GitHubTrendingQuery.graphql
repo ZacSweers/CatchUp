@@ -12,7 +12,9 @@ query GitHubSearch($queryString: String!, $firstCount: Int!, $order: LanguageOrd
             name
           }
         }
-        license
+        licenseInfo {
+          name
+        }
         owner {
           login
         }

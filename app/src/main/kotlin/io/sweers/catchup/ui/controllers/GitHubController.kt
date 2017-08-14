@@ -139,7 +139,7 @@ class GitHubController : BaseNewsController<CatchUpItem> {
                     .starsCount(node.stargazers()
                         .totalCount())
                     .description(node.description())
-                    .license(node.license())
+                    .license(node.licenseInfo()?.name())
                     .build()
               }
               // Should probably combine these, but I also like having separation here
