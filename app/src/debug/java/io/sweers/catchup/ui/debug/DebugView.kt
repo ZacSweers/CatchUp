@@ -48,6 +48,7 @@ import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.logs.LogsDialog
+import io.sweers.catchup.util.applyOn
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.truncateAt
 import okhttp3.OkHttpClient
@@ -183,9 +184,9 @@ class DebugView @JvmOverloads constructor(context: Context,
 
     if (!isMockMode) {
       // Disable network controls if we are not in mock mode.
-      networkDelayView.isEnabled = false
-      networkVarianceView.isEnabled = false
-      networkErrorView.isEnabled = false
+      applyOn(networkDelayView, networkVarianceView, networkErrorView) {
+        isEnabled = false
+      }
     }
   }
 
