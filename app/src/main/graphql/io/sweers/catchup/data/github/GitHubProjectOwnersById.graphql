@@ -1,0 +1,14 @@
+query ProjectOwnersByIds($ids: [ID!]!) {
+  nodes(ids: $ids) {
+    ... on User {
+      id
+      name
+      login
+    }
+    ... on Organization {
+      id
+      name
+      login
+    }
+  }
+}
