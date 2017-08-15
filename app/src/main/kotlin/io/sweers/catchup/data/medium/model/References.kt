@@ -42,8 +42,9 @@ abstract class References {
       return AutoValue_References.MoshiJsonAdapter(moshi)
     }
 
+    @Suppress("UNUSED_PARAMETER") // Remove when inspector supports 0 arg
     @JvmStatic
-    fun validator(inspector: Inspector /* Remove when inspector supports 0 arg */): Validator<References> {
+    fun validator(inspector: Inspector): Validator<References> {
       return object : Validator<References>() {
         override fun validate(references: References) {
           references.post().values.forEach {
