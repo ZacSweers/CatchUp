@@ -74,7 +74,11 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
 import dagger.Lazy
@@ -84,7 +88,6 @@ import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
@@ -106,6 +109,7 @@ import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.ui.activity.AboutModule.ForAbout
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
@@ -118,6 +122,7 @@ import io.sweers.catchup.util.setLightStatusBar
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
+import okio.Okio
 import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -190,7 +195,7 @@ class AboutController : ButterKnifeController() {
   @BindView(R.id.banner_text) lateinit var aboutText: TextView
 
   @Inject lateinit var apolloClient: ApolloClient
-  @Inject internal lateinit var moshi: Moshi
+  @Inject @ForAbout internal lateinit var moshi: Moshi
   @Inject internal lateinit var customTab: CustomTabActivityHelper
 
   private val adapter = Adapter()
@@ -303,18 +308,15 @@ class AboutController : ButterKnifeController() {
   }
 
   private fun requestItems(): Single<List<OssItem>> {
-    val repos = listOf(
-        // Dummy data for now
-        // Maybe some day might be nice to have groups in the list and group by owner
-        RepositoryByNameAndOwnerQuery("uber", "AutoDispose"),
-        RepositoryByNameAndOwnerQuery("airbnb", "lottie-android"),
-        RepositoryByNameAndOwnerQuery("apollographql", "apollo-android"),
-        RepositoryByNameAndOwnerQuery("reactivex", "RxJava"),
-        RepositoryByNameAndOwnerQuery("hzsweers", "Barber"),
-        RepositoryByNameAndOwnerQuery("jakewharton", "Timber")
-    )
-    return Observable
-        .fromIterable(repos)
+    // Maybe some day might be nice to have groups in the list and group by owner
+    return Single
+        .fromCallable {
+          moshi.adapter<List<OssGitHubEntry>>(
+              Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java))
+              .fromJson(Okio.buffer(Okio.source(resources!!.assets.open("licenses_github.json"))))
+        }
+        .flattenAsObservable { it }
+        .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
         .flatMapSingle {
           // Fetch repos, send down a map of the ids to owner ids
           Rx2Apollo.from(apolloClient.query(it)
@@ -375,10 +377,20 @@ class AboutController : ButterKnifeController() {
               description = repo.description()
           )
         }
+        .startWith(
+            Single
+                .fromCallable {
+                  moshi.adapter<List<OssItem>>(
+                      Types.newParameterizedType(List::class.java, OssItem::class.java))
+                      .fromJson(
+                          Okio.buffer(Okio.source(resources!!.assets.open("licenses_mixins.json"))))
+                }
+                .flattenAsObservable { it }
+        )
         .toSortedList { o1, o2 -> o1.name.compareTo(o2.name) }
   }
 
-  private inner class Adapter : RecyclerView.Adapter<CatchUpItemViewHolder>() {
+  private inner class Adapter : RecyclerView . Adapter <CatchUpItemViewHolder>() {
 
     private val argbEvaluator = ArgbEvaluator()
     private val items = mutableListOf<OssItem>()
@@ -443,7 +455,8 @@ class AboutController : ButterKnifeController() {
               }
             })
         holder.tag.setTextColor(Color.BLACK)
-        title("${item.name} — ${item.description}")
+        title(
+            "${item.name}${if (!item.description.isNullOrEmpty()) " — ${item.description}" else ""}")
         score(null)
         timestamp(null)
         author(item.license)
@@ -477,6 +490,37 @@ class AboutController : ButterKnifeController() {
   }
 }
 
+private data class OssGitHubEntry(val owner: String, val name: String) {
+  companion object {
+    fun adapter(): JsonAdapter<OssGitHubEntry> {
+      return object : JsonAdapter<OssGitHubEntry>() {
+        override fun toJson(writer: JsonWriter, value: OssGitHubEntry?) {
+          TODO("not implemented")
+        }
+
+        override fun fromJson(reader: JsonReader): OssGitHubEntry {
+          reader.beginObject()
+          // Ugly - these would preferably be lateinit
+          var owner: String? = null
+          var name: String? = null
+          while (reader.hasNext()) {
+            when (reader.nextName()) {
+              "owner" -> {
+                owner = reader.nextString()
+              }
+              "name" -> {
+                name = reader.nextString()
+              }
+            }
+          }
+          reader.endObject()
+          return OssGitHubEntry(owner!!, name!!)
+        }
+      }
+    }
+  }
+}
+
 class OssItem(
     val avatarUrl: String,
     val author: String,
@@ -484,8 +528,60 @@ class OssItem(
     val license: String?,
     val clickUrl: String,
     val description: String?,
-    var textColorAnimator: Animator? = null
-)
+    @field:Transient var textColorAnimator: Animator? = null
+) {
+  companion object {
+    fun adapter(): JsonAdapter<OssItem> {
+      return object : JsonAdapter<OssItem>() {
+        override fun toJson(writer: JsonWriter, value: OssItem?) {
+          TODO("not implemented")
+        }
+
+        override fun fromJson(reader: JsonReader): OssItem {
+          reader.beginObject()
+          // Ugly - these would preferably be lateinit
+          var author: String? = null
+          var name: String? = null
+          var avatarUrl: String? = null
+          var clickUrl: String? = null
+
+          // Actual nullable props
+          var license: String? = null
+          var description: String? = null
+          while (reader.hasNext()) {
+            when (reader.nextName()) {
+              "author" -> {
+                author = reader.nextString()
+              }
+              "name" -> {
+                name = reader.nextString()
+              }
+              "avatarUrl" -> {
+                avatarUrl = reader.nextString()
+              }
+              "license" -> {
+                license = reader.nextString()
+              }
+              "clickUrl" -> {
+                clickUrl = reader.nextString()
+              }
+              "description" -> {
+                description = reader.nextString()
+              }
+            }
+          }
+          reader.endObject()
+          return OssItem(author = author!!,
+              name = name!!,
+              avatarUrl = avatarUrl!!,
+              license = license,
+              clickUrl = clickUrl!!,
+              description = description)
+        }
+      }
+    }
+  }
+}
 
 @PerController
 @Subcomponent(modules = arrayOf(AboutModule::class))
@@ -512,6 +608,20 @@ internal object AboutModule {
 
   @Qualifier
   private annotation class InternalApi
+
+  @Qualifier
+  annotation class ForAbout
+
+  @Provides
+  @JvmStatic
+  @PerController
+  @ForAbout
+  internal fun provideAboutMoshi(moshi: Moshi): Moshi {
+    return moshi.newBuilder()
+        .add(OssItem::class.java, OssItem.adapter())
+        .add(OssGitHubEntry::class.java, OssGitHubEntry.adapter())
+        .build()
+  }
 
   @Provides
   @JvmStatic

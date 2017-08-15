@@ -1,0 +1,138 @@
+[
+  {
+    "owner": "mattlogan",
+    "name": "auto-value-firebase"
+  },
+  {
+    "owner": "jakewharton",
+    "name": "butterknife"
+  },
+  {
+    "owner": "jakewharton",
+    "name": "RxBinding"
+  },
+  {
+    "owner": "jakewharton",
+    "name": "Timber"
+  },
+  {
+    "owner": "jakewharton",
+    "name": "RxRelay"
+  },
+  {
+    "owner": "square",
+    "name": "okhttp"
+  },
+  {
+    "owner": "square",
+    "name": "okio"
+  },
+  {
+    "owner": "square",
+    "name": "moshi"
+  },
+  {
+    "owner": "square",
+    "name": "retrofit"
+  },
+  {
+    "owner": "reactivex",
+    "name": "rxjava"
+  },
+  {
+    "owner": "reactivex",
+    "name": "rxandroid"
+  },
+  {
+    "owner": "akarnokd",
+    "name": "RxJava2Interop"
+  },
+  {
+    "owner": "gabrielittner",
+    "name": "lazythreetenbp"
+  },
+  {
+    "owner": "bugsnag",
+    "name": "bugsnag-android"
+  },
+  {
+    "owner": "uber",
+    "name": "AutoDispose"
+  },
+  {
+    "owner": "hzsweers",
+    "name": "Barber"
+  },
+  {
+    "owner": "hzsweers",
+    "name": "Inspector"
+  },
+  {
+    "owner": "hzsweers",
+    "name": "psync"
+  },
+  {
+    "owner": "bumptech",
+    "name": "glide"
+  },
+  {
+    "owner": "Airbnb",
+    "name": "lottie-android"
+  },
+  {
+    "owner": "wasabeef",
+    "name": "recyclerview-animators"
+  },
+  {
+    "owner": "f2prateek",
+    "name": "rx-preferences"
+  },
+  {
+    "owner": "f2prateek",
+    "name": "rx-receivers"
+  },
+  {
+    "owner": "jetbrains",
+    "name": "kotlin"
+  },
+  {
+    "owner": "serj-lotutovici",
+    "name": "moshi-lazy-adapters"
+  },
+  {
+    "owner": "apollographql",
+    "name": "apollo-android"
+  },
+  {
+    "owner": "google",
+    "name": "dagger"
+  },
+  {
+    "owner": "google",
+    "name": "auto"
+  },
+  {
+    "owner": "bluelinelabs",
+    "name": "Conductor"
+  },
+  {
+    "owner": "unbescape",
+    "name": "unbescape"
+  },
+  {
+    "owner": "square",
+    "name": "LeakCanary"
+  },
+  {
+    "owner": "jgilfelt",
+    "name": "chuck"
+  },
+  {
+    "owner": "ngallagher",
+    "name": "simplexml"
+  },
+  {
+    "owner": "rharter",
+    "name": "auto-value-moshi"
+  }
+]

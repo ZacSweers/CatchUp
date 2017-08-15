@@ -1,0 +1,74 @@
+[
+  {
+    "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
+    "author": "Android",
+    "name": "AppCompat",
+    "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/v7/appcompat/",
+    "license": "Apache License 2.0",
+    "description": ""
+  },
+  {
+    "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
+    "author": "Android",
+    "name": "Custom Tabs",
+    "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/customtabs/",
+    "license": "Apache License 2.0",
+    "description": ""
+  },
+  {
+    "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
+    "author": "Android",
+    "name": "Design",
+    "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/design/",
+    "license": "Apache License 2.0",
+    "description": ""
+  },
+  {
+    "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
+    "author": "Android",
+    "name": "RecyclerView",
+    "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/v7/recyclerview/",
+    "license": "Apache License 2.0",
+    "description": ""
+  },
+  {
+    "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
+    "author": "Android",
+    "name": "Support (v4)",
+    "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/v4/",
+    "license": "Apache License 2.0",
+    "description": ""
+  },
+  {
+    "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
+    "author": "Android",
+    "name": "Support Annotations",
+    "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/annotations/",
+    "license": "Apache License 2.0",
+    "description": ""
+  },
+  {
+    "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
+    "author": "Android",
+    "name": "ConstraintLayout",
+    "clickUrl": "https://android.googlesource.com/",
+    "license": "Apache License 2.0",
+    "description": ""
+  },
+  {
+    "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
+    "author": "Android",
+    "name": "Palette",
+    "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/v7/palette/",
+    "license": "Apache License 2.0",
+    "description": ""
+  },
+  {
+    "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
+    "author": "Android",
+    "name": "Room (Arch Components)",
+    "clickUrl": "https://android.googlesource.com/",
+    "license": "Apache License 2.0",
+    "description": ""
+  }
+]
