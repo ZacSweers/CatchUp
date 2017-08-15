@@ -18,7 +18,6 @@ buildscript {
   repositories {
     jcenter()
     maven { url deps.build.repositories.google }
-    maven { url deps.build.repositories.kotlinEap }
   }
 
   dependencies {
@@ -55,7 +54,6 @@ repositories {
   jcenter()
   maven { url deps.build.repositories.jitpack }
   maven { url deps.build.repositories.google }
-  maven { url deps.build.repositories.kotlinEap }
   maven { url deps.build.repositories.snapshots }
 }
 
@@ -327,6 +325,7 @@ dependencies {
   implementation deps.rx.binding.design
   implementation deps.misc.lazythreeten
   implementation deps.misc.timber
+  implementation "ca.barrenechea.header-decor:header-decor:0.2.8"
   debugImplementation deps.misc.debug.madge
   debugImplementation deps.misc.debug.scalpel
   debugImplementation deps.misc.debug.processPhoenix

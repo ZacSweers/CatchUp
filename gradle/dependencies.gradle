@@ -30,7 +30,7 @@ def versions = [
     firebase: '11.0.4',
     glide: '4.0.0',
     inspector: '0.2.0',
-    kotlin: '1.1.4-eap-77',
+    kotlin: '1.1.4',
     leakcanary: '1.5.1',
     okhttp: '3.8.1',
     playServices: '11.0.4',
@@ -159,7 +159,6 @@ ext.deps = [
         repositories: [
             google: 'https://maven.google.com',
             jitpack: 'https://jitpack.io',
-            kotlinEap: 'http://dl.bintray.com/kotlin/kotlin-eap-1.1',
             snapshots: 'https://oss.sonatype.org/content/repositories/snapshots/'
         ]
     ],
