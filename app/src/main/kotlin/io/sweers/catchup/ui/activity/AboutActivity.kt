@@ -37,6 +37,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.graphics.Palette
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RxViewHolder
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -47,6 +48,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindDimen
 import butterknife.BindView
+import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderAdapter
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Operation
 import com.apollographql.apollo.api.ResponseField
@@ -184,18 +186,23 @@ class AboutActivity : BaseActivity() {
 
 class AboutController : ButterKnifeController() {
 
-  @BindDimen(R.dimen.avatar) @JvmField var dimenSize: Int = 0
+  @BindDimen(R.dimen.avatar)
+  @JvmField
+  var dimenSize: Int = 0
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.list) lateinit var recyclerView: RecyclerView
   @BindView(R.id.appbarlayout) lateinit var appBarLayout: AppBarLayout
-  @BindView(R.id.ctl) lateinit var collapsingToolbar: CollapsingToolbarLayout
   @BindView(R.id.banner_container) lateinit var bannerContainer: View
   @BindView(R.id.banner_icon) lateinit var icon: ImageView
   @BindView(R.id.banner_title) lateinit var title: TextView
   @BindView(R.id.banner_text) lateinit var aboutText: TextView
 
   @Inject lateinit var apolloClient: ApolloClient
-  @Inject @ForAbout internal lateinit var moshi: Moshi
+
+  @Inject
+  @ForAbout
+  lateinit var moshi: Moshi
+
   @Inject internal lateinit var customTab: CustomTabActivityHelper
 
   private val adapter = Adapter()
@@ -307,8 +314,10 @@ class AboutController : ButterKnifeController() {
     }
   }
 
+  /**
+   * I give you: the most over-engineered OSS licenses section ever.
+   */
   private fun requestItems(): Single<List<OssItem>> {
-    // Maybe some day might be nice to have groups in the list and group by owner
     return Single
         .fromCallable {
           moshi.adapter<List<OssGitHubEntry>>(
@@ -330,8 +339,7 @@ class AboutController : ButterKnifeController() {
               .subscribeOn(Schedulers.io())
         }
         .distinct()
-        .reduce(
-            mutableMapOf<String, String>()) { map: MutableMap<String, String>, (first, second) ->
+        .reduce(mutableMapOf()) { map: MutableMap<String, String>, (first, second) ->
           map.apply {
             put(first, second)
           }
@@ -349,7 +357,7 @@ class AboutController : ButterKnifeController() {
                   .flatMapIterable { it.data()!!.nodes() }
                   // Reduce into a map of the owner ID -> display name
                   .reduce(
-                      mutableMapOf<String, String>()) { map: MutableMap<String, String>, node: Node ->
+                      mutableMapOf()) { map: MutableMap<String, String>, node: Node ->
                     map.apply {
                       val (id, name) = node.asOrganization()?.let {
                         Pair(it.id(), it.name() ?: it.login())
@@ -387,10 +395,13 @@ class AboutController : ButterKnifeController() {
                 }
                 .flattenAsObservable { it }
         )
-        .toSortedList { o1, o2 -> o1.name.compareTo(o2.name) }
+        .groupBy { it.author }
+        .sorted { o1, o2 -> o1.key!!.compareTo(o2.key!!) }
+        .concatMapEager { it.sorted { o1, o2 -> o1.name.compareTo(o2.name) } }
+        .toList()
   }
 
-  private inner class Adapter : RecyclerView . Adapter <CatchUpItemViewHolder>() {
+  private inner class Adapter : RecyclerView.Adapter<CatchUpItemViewHolder>(), StickyHeaderAdapter<HeaderHolder> {
 
     private val argbEvaluator = ArgbEvaluator()
     private val items = mutableListOf<OssItem>()
@@ -487,6 +498,18 @@ class AboutController : ButterKnifeController() {
       return CatchUpItemViewHolder(LayoutInflater.from(parent.context)
           .inflate(layout.list_item_general, parent, false))
     }
+
+    override fun onCreateHeaderViewHolder(parent: ViewGroup): HeaderHolder {
+      // TODO
+    }
+
+    override fun onBindHeaderViewHolder(viewholder: HeaderHolder, position: Int) {
+      // TODO
+    }
+
+    override fun getHeaderId(position: Int): Long {
+      // TODO
+    }
   }
 }
 
@@ -521,7 +544,11 @@ private data class OssGitHubEntry(val owner: String, val name: String) {
   }
 }
 
-class OssItem(
+private class HeaderHolder(view: View) : RxViewHolder(view) {
+  // TODO
+}
+
+private class OssItem(
     val avatarUrl: String,
     val author: String,
     val name: String,
