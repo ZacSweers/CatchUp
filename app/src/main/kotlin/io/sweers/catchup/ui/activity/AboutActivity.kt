@@ -463,7 +463,7 @@ class AboutController : ButterKnifeController() {
                     Uri.parse(item.clickUrl))
               }
             }
-            .autoDisposeWith(this)
+            .autoDisposeWith(holder)
             .subscribe()
       }
     }
