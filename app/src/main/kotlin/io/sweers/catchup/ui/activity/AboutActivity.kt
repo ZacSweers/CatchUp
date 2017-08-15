@@ -541,14 +541,23 @@ internal object AboutModule {
   @PerController
   internal fun provideCacheKeyResolver(): CacheKeyResolver {
     return object : CacheKeyResolver() {
+      private val formatter = { id: String ->
+        if (id.isEmpty()) {
+          CacheKey.NO_KEY
+        } else {
+          CacheKey.from(id)
+        }
+      }
+
       override fun fromFieldRecordSet(field: ResponseField,
           objectSource: Map<String, Any>): CacheKey {
-        // Use id as default case.
-        if (objectSource.containsKey("id")) {
-          val typeNameAndIDKey = objectSource["__typename"].toString() + "." + objectSource["id"]
-          return CacheKey.from(typeNameAndIDKey)
+        // Most objects use id
+        objectSource["id"].let {
+          return when (it) {
+            is String -> formatter(it)
+            else -> CacheKey.NO_KEY
+          }
         }
-        return CacheKey.NO_KEY
       }
 
       override fun fromFieldArguments(field: ResponseField,

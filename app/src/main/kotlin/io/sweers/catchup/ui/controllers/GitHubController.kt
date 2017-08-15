@@ -211,24 +211,28 @@ class GitHubController : BaseNewsController<CatchUpItem> {
     @PerController
     internal fun provideCacheKeyResolver(): CacheKeyResolver {
       return object : CacheKeyResolver() {
+        private val formatter = { id: String ->
+          if (id.isEmpty()) {
+            CacheKey.NO_KEY
+          } else {
+            CacheKey.from(id)
+          }
+        }
+
         override fun fromFieldRecordSet(field: ResponseField,
             objectSource: Map<String, Any>): CacheKey {
-          //Specific id for User type.
-          if (objectSource["__typename"] == "User") {
-            val userKey = objectSource["__typename"].toString() + "." + objectSource["login"]
-            return CacheKey.from(userKey)
+          // Use id as default case.
+          objectSource["id"].let {
+            return when (it) {
+              is String -> formatter(it)
+              else -> CacheKey.NO_KEY
+            }
           }
-          //Use id as default case.
-          if (objectSource.containsKey("id")) {
-            val typeNameAndIDKey = objectSource["__typename"].toString() + "." + objectSource["id"]
-            return CacheKey.from(typeNameAndIDKey)
-          }
-          return CacheKey.NO_KEY
         }
 
         override fun fromFieldArguments(field: ResponseField,
             variables: Operation.Variables): CacheKey {
-          return CacheKey.NO_KEY
+          return formatter(field.resolveArgument("id", variables) as String)
         }
       }
     }
