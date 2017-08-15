@@ -203,6 +203,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
               .observeOn(AndroidSchedulers.mainThread())
               .autoDisposeWith(activity as BaseActivity)
               .subscribe { cleanedAmount, throwable ->
+                // TODO Use jw's byte units lib, this isn't totally accurate
                 val errorMessage = throwable?.let {
                   "There was an error cleaning cache"
                 } ?: getString(R.string.clear_cache_success, cleanedAmount.format())
