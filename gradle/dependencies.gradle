@@ -248,7 +248,6 @@ ext.deps = [
             scalpel: 'com.jakewharton.scalpel:scalpel:1.1.2',
             telescope: 'com.mattprecious.telescope:telescope:2.1.0'
         ],
-        diskLruCache: 'com.jakewharton:disklrucache:2.0.2',
         javaxInject: 'org.glassfish:javax.annotation:10.0-b28',
         jsr305: 'com.google.code.findbugs:jsr305:3.0.2',
         lazythreeten: 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0',

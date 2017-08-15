@@ -306,7 +306,6 @@ dependencies {
   // Square/JW
   implementation deps.butterKnife.runtime
   kapt deps.butterKnife.apt
-  implementation deps.misc.diskLruCache
   implementation deps.okhttp.core
   implementation deps.misc.okio
   implementation deps.misc.moshi
@@ -332,7 +331,7 @@ dependencies {
   debugImplementation deps.misc.debug.scalpel
   debugImplementation deps.misc.debug.processPhoenix
   debugImplementation deps.misc.debug.telescope
-  implementation deps.okhttp.debug.loggingInterceptor
+  debugImplementation deps.okhttp.debug.loggingInterceptor
   debugImplementation deps.retrofit.debug.mock
 
   releaseImplementation deps.misc.bugsnag
