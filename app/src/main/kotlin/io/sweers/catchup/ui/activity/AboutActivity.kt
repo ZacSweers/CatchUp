@@ -283,19 +283,23 @@ class AboutController : ButterKnifeController() {
 
   override fun onAttach(view: View) {
     super.onAttach(view)
-    requestItems()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { data, error ->
-          if (data != null) {
-            adapter.addItems(data)
-          } else {
-            // TODO Show a better error
-            e(error) { "Could not load open source licenses." }
-            Snackbar.make(recyclerView, "Could not load open source licenses.",
-                Snackbar.LENGTH_SHORT).show()
+    if (adapter.itemCount == 0) {
+      // Weird hack to avoid adding more unnecessarily. I'm not sure how to leave transient state
+      // during onPause in Conductor
+      requestItems()
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe { data, error ->
+            if (data != null) {
+              adapter.addItems(data)
+            } else {
+              // TODO Show a better error
+              e(error) { "Could not load open source licenses." }
+              Snackbar.make(recyclerView, "Could not load open source licenses.",
+                  Snackbar.LENGTH_SHORT).show()
+            }
           }
-        }
+    }
   }
 
   private fun requestItems(): Single<List<OssItem>> {
