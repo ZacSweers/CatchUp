@@ -97,7 +97,7 @@ ext.deps = [
     auto: [
         value: [
             apt: [
-                core: 'com.google.auto.value:auto-value:1.4.1',
+                core: 'com.google.auto.value:auto-value:1.5',
                 annotations: 'com.jakewharton.auto.value:auto-value-annotations:1.4'
             ],
             compileOnly: [
@@ -290,7 +290,7 @@ ext.deps = [
         preferences: 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3',
         receivers: 'com.f2prateek.rx.receivers:rx-receivers:0.1.0',
         relay: 'com.jakewharton.rxrelay2:rxrelay:2.0.0',
-        java2: 'io.reactivex.rxjava2:rxjava:2.1.2',
+        java2: 'io.reactivex.rxjava2:rxjava:2.1.3',
         android2: 'io.reactivex.rxjava2:rxandroid:2.0.1',
         java2Interop: 'com.github.akarnokd:rxjava2-interop:0.10.2',
         java2Extensions: 'com.github.akarnokd:rxjava2-extensions:0.17.5',
