@@ -30,10 +30,12 @@ import android.graphics.drawable.StateListDrawable
 import android.os.Build
 import android.support.annotation.ColorInt
 import android.support.annotation.FloatRange
+import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.app.AppCompatDelegate
 import android.support.v7.graphics.Palette
 import android.support.v7.graphics.Palette.Swatch
 import io.sweers.catchup.P
+
 
 object UiUtil {
 
@@ -63,20 +65,21 @@ object UiUtil {
    */
   inline fun createColorSelector(@ColorInt color: Int,
       mask: Drawable?): Drawable? {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      return RippleDrawable(ColorStateList.valueOf(color), null, mask)
-    } else if (mask == null) {
-      val colorDrawable = ColorDrawable(color)
-      val statefulDrawable = StateListDrawable()
-      statefulDrawable.setEnterFadeDuration(200)
-      statefulDrawable.setExitFadeDuration(200)
-      statefulDrawable.addState(intArrayOf(android.R.attr.state_pressed), colorDrawable)
-      statefulDrawable.addState(intArrayOf(android.R.attr.state_focused), colorDrawable)
-      statefulDrawable.addState(intArrayOf(), null)
-      return statefulDrawable
-    } else {
-      // We don't do it on pre-lollipop because normally selectors can't abide by a mask
-      return null
+    return when {
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> RippleDrawable(
+          ColorStateList.valueOf(color), null, mask)
+      mask == null -> {
+        val colorDrawable = ColorDrawable(color)
+        val statefulDrawable = StateListDrawable()
+        statefulDrawable.setEnterFadeDuration(200)
+        statefulDrawable.setExitFadeDuration(200)
+        statefulDrawable.addState(intArrayOf(android.R.attr.state_pressed), colorDrawable)
+        statefulDrawable.addState(intArrayOf(android.R.attr.state_focused), colorDrawable)
+        statefulDrawable.addState(intArrayOf(), null)
+        statefulDrawable
+      }
+      else -> // We don't do it on pre-lollipop because normally selectors can't abide by a mask
+        null
     }
   }
 
@@ -128,13 +131,15 @@ inline fun Palette.orderedSwatches(
   ).filterNotNull()
 }
 
-inline fun Palette.orderedSwatches(): Swatch? {
+inline fun Palette.orderedSwatches(predicate: (Swatch) -> Boolean): Swatch? {
   return listOf(
-      vibrantSwatch,
-      lightVibrantSwatch,
       darkVibrantSwatch,
-      mutedSwatch,
       lightMutedSwatch,
+      vibrantSwatch,
+      mutedSwatch,
+      lightVibrantSwatch,
       darkMutedSwatch
-  ).filterNotNull().firstOrNull()
+  ).filterNotNull().firstOrNull(predicate)
 }
+
+val fastOutSlowInInterpolator = FastOutSlowInInterpolator()

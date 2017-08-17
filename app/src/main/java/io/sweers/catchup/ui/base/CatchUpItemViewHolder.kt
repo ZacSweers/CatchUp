@@ -19,7 +19,6 @@ package io.sweers.catchup.ui.base
 import android.support.v7.widget.RxViewHolder
 import android.text.format.DateUtils
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -46,7 +45,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
   }
 
   @BindView(R.id.container) lateinit var container: View
-  @BindView(R.id.icon) lateinit var icon: ImageView
+  @BindView(R.id.tags_container) lateinit var tagsContainer: View
   @BindView(R.id.title) lateinit var title: TextView
   @BindView(R.id.score) lateinit var score: TextView
   @BindView(R.id.score_divider) lateinit var scoreDivider: TextView
@@ -140,8 +139,10 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
       0, 1 -> {
         scoreDivider.makeGone()
         tagDivider.makeGone()
+        tagsContainer.makeGone()
       }
       2 -> {
+        tagsContainer.makeVisible()
         if (score.isVisible()) {
           scoreDivider.makeVisible()
           tagDivider.makeGone()
@@ -151,6 +152,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
         }
       }
       3 -> {
+        tagsContainer.makeVisible()
         scoreDivider.makeVisible()
         tagDivider.makeVisible()
       }

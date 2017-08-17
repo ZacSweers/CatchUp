@@ -50,9 +50,9 @@
             android:id="@+id/banner_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@mipmap/ic_launcher"
-            android:layout_marginBottom="8dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:src="@mipmap/ic_launcher"
             />
 
         <TextView
@@ -60,10 +60,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
             android:text="@string/app_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:gravity="center"
-            android:layout_marginBottom="8dp"
             />
 
         <io.sweers.catchup.ui.widget.BaselineGridTextView
@@ -71,8 +71,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="An app for catching up on things.\n\nv1.0\nBy Zac Sweers  —  Source code"
             android:gravity="center"
+            android:text="An app for catching up on things.\n\nv1.0\nBy Zac Sweers  —  Source code"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             />
 
@@ -87,6 +87,15 @@
 
     </android.support.design.widget.CollapsingToolbarLayout>
   </android.support.design.widget.AppBarLayout>
+
+  <ProgressBar
+      android:id="@+id/progress"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:indeterminate="true"
+      style="@style/Widget.AppCompat.ProgressBar"
+      />
 
   <!-- Transparent background because scrollbars don't show up without it -->
   <android.support.v7.widget.RecyclerView

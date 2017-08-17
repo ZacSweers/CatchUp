@@ -132,6 +132,14 @@
     "name": "simplexml"
   },
   {
+    "owner": "nickbutcher",
+    "name": "plaid"
+  },
+  {
+    "owner": "Doist",
+    "name": "RecyclerViewExtensions"
+  },
+  {
     "owner": "rharter",
     "name": "auto-value-moshi"
   }

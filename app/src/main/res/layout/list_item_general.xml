@@ -30,18 +30,6 @@
     android:stateListAnimator="@animator/raise"
     >
 
-  <ImageView
-      android:id="@+id/icon"
-      android:layout_width="@dimen/avatar"
-      android:layout_height="@dimen/avatar"
-      android:layout_gravity="center_vertical"
-      android:layout_marginBottom="16dp"
-      android:layout_marginStart="16dp"
-      android:layout_marginTop="16dp"
-      android:contentDescription="Image"
-      android:visibility="gone"
-      />
-
   <LinearLayout
       android:layout_width="0dp"
       android:layout_height="wrap_content"
@@ -51,8 +39,10 @@
       >
 
     <LinearLayout
+        android:id="@+id/tags_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
         android:orientation="horizontal"
         >
 
@@ -124,7 +114,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
-        android:layout_marginTop="4dp"
         android:fontFamily="@font/nunito"
         app:fontFamily="@font/nunito"
         tools:text="Show HN: Into.js Hints"
