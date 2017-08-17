@@ -90,7 +90,6 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
-import io.reactivex.rxkotlin.Observables
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
@@ -111,7 +110,6 @@ import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.StickyHeaders
 import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
 import io.sweers.catchup.ui.activity.AboutModule.ForAbout
-import io.sweers.catchup.ui.activity.ScrollDirection.UP
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
@@ -270,32 +268,20 @@ class AboutController : ButterKnifeController() {
 
       /*
        * Here we want to get the appbar offset changes paired with the direction it's moving and
-       * using RxBinding's great `offsetChanges` API to make an rx Observable of this. The naive
-       * approach would be to spin off a single stream and buffer two events with a direction
-       * mapping, but this would come at the cost of effectively sampling the stream to 50% of
-       * emissions. To get around this, share the offsetChanges and split into two observables.
-       * 1 - "offsetChanges" - just emits offset changes downstream. The final stream will mostly
-       * emit at this one's cadence.
-       * 2 - "directionChanges", which does the buffering of two and emits "scroll direction" enums,
-       * starting with UP (since our appbar starts expanded), and distinctUntilChanged() to minimize
-       * noise.
+       * using RxBinding's great `offsetChanges` API to make an rx Observable of this. The first
+       * part buffers two while skipping one at a time and emits "scroll direction" enums. Second
+       * part is just a simple map to pair the offset with the resolved scroll direction comparing
+       * to the previous offset. This gives us a nice stream of (offset, direction) emissions.
        *
-       * With these two observables, we'll combine them with the `combineLatest` factory (SAM
-       * overload here provided by RxKotlin) and a function that simply pairs the offsets with
-       * the direction. This gives us a nice stream of (offset, direction) emissions.
+       * Note that the filter() is important if you manipulate child views of the ABL. If any child
+       * view requests layout again, it will trigger an emission from the offset listener with the
+       * same value as before, potentially causing measure/layout/draw thrashing if your logic
+       * reacting to the offset changes *is* manipulating those child views (vicious cycle).
        */
-      val offsetChanges = RxAppBarLayout.offsetChanges(appBarLayout).share()
-      val directionChanges = offsetChanges
-          .buffer(2, 1) // Buffer in pairs to compare the previous, skip the first
-          .filter { it[1] != it[0] } // We don't care about no changes. Shouldn't happen, but just in case
-          .map { ScrollDirection.resolve(it[1], it[0]) }  // Map to a direction
-          .startWith(UP)
-          .distinctUntilChanged() // Only emit when it changes
-
-      Observables
-          .combineLatest(offsetChanges, directionChanges) { offset, direction ->
-            Pair(offset, direction)
-          }
+      RxAppBarLayout.offsetChanges(appBarLayout)
+          .buffer(2, 1) // Buffer in pairs to compare the previous, skip none
+          .filter { it[1] != it[0] }
+          .map { Pair(it[1], ScrollDirection.resolve(it[1], it[0])) }  // Map to a direction
           .subscribe { (offset, _) ->
             // Note: Direction is unused for now but left because this was neat
             val percentage = Math.abs(offset).toFloat() / translatableHeight

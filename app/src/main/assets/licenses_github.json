@@ -41,10 +41,6 @@
   },
   {
     "owner": "reactivex",
-    "name": "rxkotlin"
-  },
-  {
-    "owner": "reactivex",
     "name": "rxandroid"
   },
   {

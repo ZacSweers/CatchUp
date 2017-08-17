@@ -320,7 +320,6 @@ dependencies {
   implementation deps.rx.java
   implementation deps.rx.java2
   implementation deps.rx.java2Interop
-  implementation deps.rx.kotlin
   implementation deps.rx.binding.core
   implementation deps.rx.binding.v4
   implementation deps.rx.binding.design
