@@ -72,6 +72,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
+import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
@@ -89,6 +90,7 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
@@ -109,6 +111,7 @@ import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.StickyHeaders
 import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
 import io.sweers.catchup.ui.activity.AboutModule.ForAbout
+import io.sweers.catchup.ui.activity.ScrollDirection.UP
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
@@ -231,6 +234,10 @@ class AboutController : ButterKnifeController() {
       }
     }
 
+    bannerIcon.setOnClickListener {
+      appBarLayout.setExpanded(false, true)
+    }
+
     recyclerView.adapter = adapter
     recyclerView.layoutManager = StickyHeadersLinearLayoutManager<Adapter>(view.context)
     recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
@@ -260,36 +267,67 @@ class AboutController : ButterKnifeController() {
       @Px val desiredTitleY = (toolbar.measuredHeight - title.measuredHeight) / 2
       @Px val predictedFinalY = titleY - (translatableHeight * parallaxMultiplier)
       @Px val yDelta = desiredTitleY - predictedFinalY
-      appBarLayout.addOnOffsetChangedListener { _, verticalOffset ->
-        val percentage = Math.abs(verticalOffset).toFloat() / translatableHeight
-        // Force versions outside boundaries to be safe
-        if (percentage > 0.75F) {
-          bannerIcon.alpha = 0F
-          aboutText.alpha = 0F
-        }
-        if (percentage < 0.5F) {
-          title.translationX = 0F
-          title.translationY = 0F
-        }
-        if (percentage < 0.75F) {
-          // We want to accelerate fading to be the first 75% of the translation, so adjust
-          // accordingly below and use the new calculated percentage for our interpolation
-          val adjustedPercentage = 1 - (percentage * 1.33F)
-          val interpolation = interpolator.getInterpolation(adjustedPercentage)
-          bannerIcon.alpha = interpolation
-          aboutText.alpha = interpolation
-        }
-        if (percentage > 0.50F) {
-          // Start translating about halfway through (to give a staggered effect next to the alpha
-          // so they have time to fade out sufficiently). From here we just set translation offsets
-          // to adjust the position naturally to give the appearance of settling in to the right
-          // place.
-          val adjustedPercentage = (1 - percentage) * 2F
-          val interpolation = interpolator.getInterpolation(adjustedPercentage)
-          title.translationX = -(xDelta - (interpolation * xDelta))
-          title.translationY = yDelta - (interpolation * yDelta)
-        }
-      }
+
+      /*
+       * Here we want to get the appbar offset changes paired with the direction it's moving and
+       * using RxBinding's great `offsetChanges` API to make an rx Observable of this. The naive
+       * approach would be to spin off a single stream and buffer two events with a direction
+       * mapping, but this would come at the cost of effectively sampling the stream to 50% of
+       * emissions. To get around this, share the offsetChanges and split into two observables.
+       * 1 - "offsetChanges" - just emits offset changes downstream. The final stream will mostly
+       * emit at this one's cadence.
+       * 2 - "directionChanges", which does the buffering of two and emits "scroll direction" enums,
+       * starting with UP (since our appbar starts expanded), and distinctUntilChanged() to minimize
+       * noise.
+       *
+       * With these two observables, we'll combine them with the `combineLatest` factory (SAM
+       * overload here provided by RxKotlin) and a function that simply pairs the offsets with
+       * the direction. This gives us a nice stream of (offset, direction) emissions.
+       */
+      val offsetChanges = RxAppBarLayout.offsetChanges(appBarLayout).share()
+      val directionChanges = offsetChanges
+          .buffer(2, 1) // Buffer in pairs to compare the previous, skip the first
+          .filter { it[1] != it[0] } // We don't care about no changes. Shouldn't happen, but just in case
+          .map { ScrollDirection.resolve(it[1], it[0]) }  // Map to a direction
+          .startWith(UP)
+          .distinctUntilChanged() // Only emit when it changes
+
+      Observables
+          .combineLatest(offsetChanges, directionChanges) { offset, direction ->
+            Pair(offset, direction)
+          }
+          .subscribe { (offset, _) ->
+            // Note: Direction is unused for now but left because this was neat
+            val percentage = Math.abs(offset).toFloat() / translatableHeight
+
+            // Force versions outside boundaries to be safe
+            if (percentage > 0.75F) {
+              bannerIcon.alpha = 0F
+              aboutText.alpha = 0F
+            }
+            if (percentage < 0.5F) {
+              title.translationX = 0F
+              title.translationY = 0F
+            }
+            if (percentage < 0.75F) {
+              // We want to accelerate fading to be the first 75% of the translation, so adjust
+              // accordingly below and use the new calculated percentage for our interpolation
+              val adjustedPercentage = 1 - (percentage * 1.33F)
+              val interpolation = interpolator.getInterpolation(adjustedPercentage)
+              bannerIcon.alpha = interpolation
+              aboutText.alpha = interpolation
+            }
+            if (percentage > 0.50F) {
+              // Start translating about halfway through (to give a staggered effect next to the alpha
+              // so they have time to fade out sufficiently). From here we just set translation offsets
+              // to adjust the position naturally to give the appearance of settling in to the right
+              // place.
+              val adjustedPercentage = (1 - percentage) * 2F
+              val interpolation = interpolator.getInterpolation(adjustedPercentage)
+              title.translationX = -(xDelta - (interpolation * xDelta))
+              title.translationY = yDelta - (interpolation * yDelta)
+            }
+          }
     }
   }
 
@@ -523,6 +561,20 @@ class AboutController : ButterKnifeController() {
     }
 
     override fun getItemViewType(position: Int) = items[position].itemType()
+  }
+}
+
+private enum class ScrollDirection {
+  UP, DOWN;
+
+  companion object {
+    fun resolve(current: Int, prev: Int): ScrollDirection {
+      return if (current > prev) {
+        DOWN
+      } else {
+        UP
+      }
+    }
   }
 }
 

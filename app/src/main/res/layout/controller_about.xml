@@ -64,6 +64,7 @@
             android:gravity="center"
             android:text="@string/app_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:clickable="true"
             />
 
         <io.sweers.catchup.ui.widget.BaselineGridTextView
@@ -80,7 +81,7 @@
 
       <android.support.v7.widget.Toolbar
           android:id="@+id/toolbar"
-          android:layout_width="match_parent"
+          android:layout_width="wrap_content"
           android:layout_height="?actionBarSize"
           app:layout_collapseMode="pin"
           />
