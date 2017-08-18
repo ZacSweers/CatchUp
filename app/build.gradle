@@ -125,8 +125,7 @@ android {
     release {
       buildConfigField 'String', 'BUGSNAG_KEY', /"${getPropertyOrEmpty("catchup_bugsnag_key")}"/
       signingConfig signingConfigs.release
-      postprocessing.proguardFiles =
-          [getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro']
+      postprocessing.proguardFiles = ['proguard-rules.pro']
       postprocessing.optimizeCode = true
       postprocessing.obfuscate = false
     }
