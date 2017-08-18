@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -41,11 +41,10 @@
 
   <io.sweers.catchup.ui.widget.BaselineGridTextView
       android:id="@+id/title"
-      android:layout_width="0dp"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      android:layout_marginStart="16dp"
-      android:layout_weight="1"
+      android:layout_marginStart="64dp"
       android:fontFamily="@font/nunito"
       android:orientation="vertical"
       android:textStyle="bold"
@@ -54,4 +53,4 @@
       style="@style/TextAppearance.AppCompat.Small"
       />
 
-</LinearLayout>
+</FrameLayout>
