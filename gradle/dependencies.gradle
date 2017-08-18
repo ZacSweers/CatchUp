@@ -17,7 +17,7 @@
 def versions = [
     androidTestSupport: '0.4.1',
     apollo: '0.4.0',
-    archComponents: '1.0.0-alpha8',
+    archComponents: '1.0.0-alpha9',
     autodispose: '0.2.0',
     avFirebase: '1.1.0',
     avMoshi: '0.4.3',
@@ -240,7 +240,7 @@ ext.deps = [
     ],
 
     misc: [
-        bugsnag: 'com.bugsnag:bugsnag-android:3.9.0',
+        bugsnag: 'com.bugsnag:bugsnag-android:4.0.0',
         debug: [
             madge: 'com.jakewharton.madge:madge:1.1.4',
             processPhoenix: 'com.jakewharton:process-phoenix:2.0.0',
@@ -250,7 +250,7 @@ ext.deps = [
         javaxInject: 'org.glassfish:javax.annotation:10.0-b28',
         jsr305: 'com.google.code.findbugs:jsr305:3.0.2',
         lazythreeten: 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0',
-        lottie: 'com.airbnb.android:lottie:2.1.2',
+        lottie: 'com.airbnb.android:lottie:2.2.0',
         moshi: "com.squareup.moshi:moshi:1.5.0",
         moshiLazyAdapters: 'com.serjltt.moshi:moshi-lazy-adapters:2.0',
         okio: 'com.squareup.okio:okio:1.13.0',
