@@ -67,7 +67,7 @@ android {
     targetSdkVersion deps.android.build.targetSdkVersion
     versionCode deps.build.gitCommitCount
     versionName deps.build.gitTag
-    multiDexEnabled true
+    multiDexEnabled false
     archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
 
