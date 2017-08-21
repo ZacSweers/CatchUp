@@ -14,29 +14,34 @@
  * limitations under the License.
  */
 
+def dependenciesFile = file('gradle/dependencies.gradle')
 subprojects {
-    buildscript {
-        repositories {
-            jcenter()
-            maven { url "https://plugins.gradle.org/m2/" }
-            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        }
-    }
-
+  apply from: dependenciesFile
+  buildscript {
     repositories {
-        jcenter()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        maven { url 'https://oss.jfrog.org/libs-snapshot' }
+      google()
+      jcenter()
+      maven { url deps.build.repositories.plugins }
+      maven { url deps.build.repositories.snapshots }
     }
+  }
+
+  repositories {
+    google()
+    jcenter()
+    maven { url deps.build.repositories.jitpack }
+    maven { url deps.build.repositories.snapshots }
+    maven { url 'https://oss.jfrog.org/libs-snapshot' }
+  }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
-    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+  gradleVersion = '4.1'
+  distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
 task clean(type: Delete) {
-    delete rootProject.buildDir
+  delete rootProject.buildDir
 }
 
 apply from: 'gradle/dependencies.gradle'

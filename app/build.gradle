@@ -16,8 +16,8 @@
 
 buildscript {
   repositories {
+    google()
     jcenter()
-    maven { url deps.build.repositories.google }
   }
 
   dependencies {
@@ -48,13 +48,6 @@ private String getPropertyOrEmpty(String property) {
   } else {
     return ""
   }
-}
-
-repositories {
-  jcenter()
-  maven { url deps.build.repositories.jitpack }
-  maven { url deps.build.repositories.google }
-  maven { url deps.build.repositories.snapshots }
 }
 
 android {
@@ -270,6 +263,9 @@ configurations.all {
 }
 
 dependencies {
+  // This fails gradle sync due to an obscure "AssertionError" only visible in console logs
+//  implementation project(':bypass')
+
   // Support libs
   supportImplementation deps.android.support.annotations
   supportImplementation deps.android.support.appCompat

@@ -15,3 +15,5 @@
  */
 
 include ':app'
+include ':bypass'
+project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')

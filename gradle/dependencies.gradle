@@ -159,6 +159,7 @@ ext.deps = [
         repositories: [
             google: 'https://maven.google.com',
             jitpack: 'https://jitpack.io',
+            plugins: 'https://plugins.gradle.org/m2/',
             snapshots: 'https://oss.sonatype.org/content/repositories/snapshots/'
         ]
     ],

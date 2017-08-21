@@ -1,0 +1,35 @@
+buildscript {
+  repositories {
+    google()
+    jcenter()
+  }
+
+  dependencies {
+    classpath deps.android.gradlePlugin
+    classpath deps.kotlin.gradlePlugin
+    classpath deps.build.gradlePlugins.versions
+  }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'org.jetbrains.kotlin.android'
+
+android {
+  compileSdkVersion deps.android.build.compileSdkVersion
+  buildToolsVersion deps.android.build.buildToolsVersion
+
+  defaultConfig {
+    minSdkVersion deps.android.build.minSdkVersion
+    targetSdkVersion deps.android.build.targetSdkVersion
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+}
+
+dependencies {
+  implementation deps.android.support.annotations
+  implementation deps.kotlin.stdlib.jre7
+}
