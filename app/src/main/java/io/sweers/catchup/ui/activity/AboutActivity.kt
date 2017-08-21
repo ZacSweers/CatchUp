@@ -201,7 +201,7 @@ class AboutController : ButterKnifeController() {
   @Inject lateinit var apolloClient: ApolloClient
 
   @Inject
-  @ForAbout
+  @field:ForAbout
   lateinit var moshi: Moshi
 
   @Inject internal lateinit var customTab: CustomTabActivityHelper
