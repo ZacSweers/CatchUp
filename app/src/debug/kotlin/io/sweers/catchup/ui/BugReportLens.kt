@@ -84,7 +84,7 @@ class BugReportLens(private val context: Activity,
         .setSubject(report.title)
 
     val body = StringBuilder()
-    if (!report.description.isNullOrBlank()) {
+    if (!report.description.isBlank()) {
       body.append("{panel:title=Description}\n").append(report.description).append("\n{panel}\n\n")
     }
 
@@ -127,15 +127,15 @@ class BugReportLens(private val context: Activity,
   }
 
   private fun getDensityString(displayMetrics: DisplayMetrics): String {
-    when (displayMetrics.densityDpi) {
-      DisplayMetrics.DENSITY_LOW -> return "ldpi"
-      DisplayMetrics.DENSITY_MEDIUM -> return "mdpi"
-      DisplayMetrics.DENSITY_HIGH -> return "hdpi"
-      DisplayMetrics.DENSITY_XHIGH -> return "xhdpi"
-      DisplayMetrics.DENSITY_XXHIGH -> return "xxhdpi"
-      DisplayMetrics.DENSITY_XXXHIGH -> return "xxxhdpi"
-      DisplayMetrics.DENSITY_TV -> return "tvdpi"
-      else -> return displayMetrics.densityDpi.toString()
+    return when (displayMetrics.densityDpi) {
+      DisplayMetrics.DENSITY_LOW -> "ldpi"
+      DisplayMetrics.DENSITY_MEDIUM -> "mdpi"
+      DisplayMetrics.DENSITY_HIGH -> "hdpi"
+      DisplayMetrics.DENSITY_XHIGH -> "xhdpi"
+      DisplayMetrics.DENSITY_XXHIGH -> "xxhdpi"
+      DisplayMetrics.DENSITY_XXXHIGH -> "xxxhdpi"
+      DisplayMetrics.DENSITY_TV -> "tvdpi"
+      else -> displayMetrics.densityDpi.toString()
     }
   }
 }

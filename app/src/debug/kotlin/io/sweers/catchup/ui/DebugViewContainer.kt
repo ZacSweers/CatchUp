@@ -66,7 +66,7 @@ class DebugViewContainer @Inject constructor(
   override fun forActivity(activity: BaseActivity): ViewGroup {
     val contentView = LayoutInflater.from(activity)
         .inflate(R.layout.debug_activity_frame,
-            activity.findViewById<ViewGroup>(android.R.id.content), false)
+            activity.findViewById(android.R.id.content), false)
     activity.setContentView(contentView)
 
     val viewHolder = DebugViewViewHolder()

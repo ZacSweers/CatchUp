@@ -70,7 +70,7 @@ class FlowLayout @JvmOverloads constructor(context: Context,
     var spacing = 0
 
     val count = childCount
-    for (i in 0..count - 1) {
+    for (i in 0 until count) {
       val child = getChildAt(i)
       measureChild(child, widthMeasureSpec, heightMeasureSpec)
 
@@ -113,7 +113,7 @@ class FlowLayout @JvmOverloads constructor(context: Context,
 
   override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
     val count = childCount
-    for (i in 0..count - 1) {
+    for (i in 0 until count) {
       val child = getChildAt(i)
       val lp = child.layoutParams as LayoutParams
       child.layout(lp.x, lp.y, lp.x + child.measuredWidth, lp.y + child.measuredHeight)
@@ -178,6 +178,6 @@ class FlowLayout @JvmOverloads constructor(context: Context,
       }
     }
 
-    constructor(w: Int, h: Int) : super(w, h) {}
+    constructor(w: Int, h: Int) : super(w, h)
   }
 }

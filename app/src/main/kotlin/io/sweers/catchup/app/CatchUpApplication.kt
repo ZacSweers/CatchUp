@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.app
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.SharedPreferences
@@ -35,6 +36,7 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.util.d
 import javax.inject.Inject
 
+@SuppressLint("Registered")
 open class CatchUpApplication : Application(), HasActivityInjector {
 
   companion object {
@@ -117,6 +119,9 @@ open class CatchUpApplication : Application(), HasActivityInjector {
       TRIM_MEMORY_MODERATE,
       TRIM_MEMORY_RUNNING_LOW,
       TRIM_MEMORY_RUNNING_MODERATE,
+      TRIM_MEMORY_BACKGROUND,
+      TRIM_MEMORY_UI_HIDDEN,
+      TRIM_MEMORY_COMPLETE,
       TRIM_MEMORY_RUNNING_CRITICAL -> d { "OnTrimMemory" }
     }
   }

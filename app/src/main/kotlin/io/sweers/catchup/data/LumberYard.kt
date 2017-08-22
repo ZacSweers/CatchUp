@@ -114,12 +114,9 @@ class LumberYard @Inject constructor(private val app: Application) {
   fun cleanUp() {
     Completable.fromAction {
       val folder = app.getExternalFilesDir(null)
-      if (folder != null) {
-        folder.listFiles()
-            .asSequence()
-            .filter { it.name.endsWith(".log") }
-            .forEach { it.delete() }
-      }
+      folder?.listFiles()?.asSequence()?.filter {
+        it.name.endsWith(".log")
+      }?.forEach { it.delete() }
     }
   }
 
@@ -131,14 +128,14 @@ class LumberYard @Inject constructor(private val app: Application) {
     }
 
     fun displayLevel(): String {
-      when (level) {
-        Log.VERBOSE -> return "V"
-        Log.DEBUG -> return "D"
-        Log.INFO -> return "I"
-        Log.WARN -> return "W"
-        Log.ERROR -> return "E"
-        Log.ASSERT -> return "A"
-        else -> return "?"
+      return when (level) {
+        Log.VERBOSE -> "V"
+        Log.DEBUG -> "D"
+        Log.INFO -> "I"
+        Log.WARN -> "W"
+        Log.ERROR -> "E"
+        Log.ASSERT -> "A"
+        else -> "?"
       }
     }
   }

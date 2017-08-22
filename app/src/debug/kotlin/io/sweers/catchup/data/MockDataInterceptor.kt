@@ -48,8 +48,8 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
     val host = url.host()
     val path = url.encodedPath()
     val serviceData = SUPPORTED_ENDPOINTS[host]
-    if (P.DebugMockModeEnabled.get() && serviceData != null && serviceData.supports(path)) {
-      return Response.Builder().request(request)
+    return if (P.DebugMockModeEnabled.get() && serviceData != null && serviceData.supports(path)) {
+      Response.Builder().request(request)
           .body(ResponseBody.create(
               MediaType.parse("application/json"),
               Okio.buffer(Okio.source(context.assets
@@ -59,7 +59,7 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
           .protocol(Protocol.HTTP_1_1)
           .build()
     } else {
-      return chain.proceed(request)
+      chain.proceed(request)
     }
   }
 

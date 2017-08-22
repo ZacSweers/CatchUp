@@ -71,7 +71,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
   private var isRestoring = false
   private var pageToRestoreTo = 0
   private var moreDataAvailable = true
-  var dataLoading = false
+  private var dataLoading = false
   private var pendingRVState: Parcelable? = null
 
   constructor() : super()

@@ -31,12 +31,12 @@ abstract class RxViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
     get() {
       synchronized(this) {
         var n = unbindNotifier
-        if (n == null) {
+        return if (n == null) {
           n = MaybeSubject.create<Any>()
           unbindNotifier = n
-          return n
+          n
         } else {
-          return n
+          n
         }
       }
     }

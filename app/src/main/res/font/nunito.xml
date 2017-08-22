@@ -17,6 +17,7 @@
 
 <font-family xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     app:fontProviderAuthority="com.google.android.gms.fonts"
     app:fontProviderPackage="com.google.android.gms"
     app:fontProviderQuery="Nunito"
@@ -24,4 +25,6 @@
     android:fontProviderAuthority="com.google.android.gms.fonts"
     android:fontProviderPackage="com.google.android.gms"
     android:fontProviderQuery="Nunito"
-    android:fontProviderCerts="@array/com_google_android_gms_fonts_certs" />
+    android:fontProviderCerts="@array/com_google_android_gms_fonts_certs"
+    tools:targetApi="o"
+    tools:ignore="FontValidationWarning"/>

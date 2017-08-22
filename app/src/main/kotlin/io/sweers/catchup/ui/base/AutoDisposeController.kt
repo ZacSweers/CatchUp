@@ -36,6 +36,7 @@ abstract class AutoDisposeController
     lifecycle().doOn(DESTROY) { action() }
   }
 
+  @Suppress("LeakingThis")
   private val lifecycleProvider = ControllerScopeProvider.from(this)
 
   protected constructor() : super()

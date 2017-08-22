@@ -73,6 +73,7 @@ class LinkManager(private val customTab: CustomTabActivityHelper,
     return match >= IntentFilter.MATCH_CATEGORY_HOST && match <= IntentFilter.MATCH_CATEGORY_PATH
   }
 
+  @Suppress("MemberVisibilityCanPrivate")
   fun openUrl(meta: UrlMeta): Completable {
     if (meta.uri == null) {
       Toast.makeText(meta.context, R.string.error_no_url, Toast.LENGTH_SHORT)
@@ -85,14 +86,14 @@ class LinkManager(private val customTab: CustomTabActivityHelper,
       return Completable.complete()
     }
 
-    if (!dumbCache.containsKey(meta.uri.host)) {
-      return queryAndOpen(meta.context, meta.uri, intent, meta.accentColor)
-    } else if (dumbCache[meta.uri.host] ?: false) {
+    return if (!dumbCache.containsKey(meta.uri.host)) {
+      queryAndOpen(meta.context, meta.uri, intent, meta.accentColor)
+    } else if (dumbCache[meta.uri.host] == true) {
       meta.context.startActivity(intent)
-      return Completable.complete()
+      Completable.complete()
     } else {
       openCustomTab(meta.context, meta.uri, meta.accentColor)
-      return Completable.complete()
+      Completable.complete()
     }
   }
 

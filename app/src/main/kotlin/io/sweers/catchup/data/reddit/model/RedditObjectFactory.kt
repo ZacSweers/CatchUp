@@ -48,11 +48,7 @@ class RedditObjectFactory : JsonAdapter.Factory {
         val redditType = RedditType.valueOf((value!!["kind"] as String).toUpperCase())
         val redditObject = value["data"]
         val adapter = moshi.adapter(redditType.derivedClass)
-        if (adapter == null) {
-          throw JsonDataException()
-        } else {
-          return adapter.fromJsonValue(redditObject)
-        }
+        return adapter?.fromJsonValue(redditObject) ?: throw JsonDataException()
       }
 
       @Throws(IOException::class)

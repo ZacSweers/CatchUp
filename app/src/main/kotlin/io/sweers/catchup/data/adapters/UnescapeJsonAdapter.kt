@@ -17,6 +17,7 @@
 package io.sweers.catchup.data.adapters
 
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonAdapter.Factory
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Types
@@ -33,10 +34,10 @@ class UnescapeJsonAdapter internal constructor(
 
   override fun fromJson(reader: JsonReader): String? {
     val fromJson: String? = delegate.fromJson(reader)
-    if (html) {
-      return HtmlEscape.unescapeHtml(fromJson)
+    return if (html) {
+      HtmlEscape.unescapeHtml(fromJson)
     } else {
-      return JavaEscape.unescapeJava(fromJson)
+      JavaEscape.unescapeJava(fromJson)
     }
   }
 
@@ -49,7 +50,8 @@ class UnescapeJsonAdapter internal constructor(
   }
 
   companion object {
-    @JvmField val FACTORY = Factory { type, annotations, moshi ->
+    @JvmField
+    val FACTORY = Factory { type, annotations, moshi ->
       if (annotations.size > 1) {
         // save the iterator
         return@Factory null

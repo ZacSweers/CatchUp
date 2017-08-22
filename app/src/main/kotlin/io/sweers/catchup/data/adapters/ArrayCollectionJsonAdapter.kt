@@ -17,6 +17,7 @@ package io.sweers.catchup.data.adapters
 
 import android.support.v4.util.ArraySet
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonAdapter.Factory
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
@@ -52,7 +53,8 @@ abstract class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T> private c
   }
 
   companion object {
-    @JvmField val FACTORY = Factory { type, annotations, moshi ->
+    @JvmField
+    val FACTORY = Factory { type, annotations, moshi ->
       if (annotations.isEmpty()) {
         val rawType = Types.getRawType(type)
         if (rawType.isAssignableFrom(Set::class.java)) {
@@ -64,7 +66,7 @@ abstract class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T> private c
       null
     }
 
-    internal fun <T> newListAdapter(type: Type, moshi: Moshi): JsonAdapter<MutableCollection<T>> {
+    private fun <T> newListAdapter(type: Type, moshi: Moshi): JsonAdapter<MutableCollection<T>> {
       val elementType = Types.collectionElementType(type, MutableCollection::class.java)
       val elementAdapter = moshi.adapter<T>(elementType)
       return object : ArrayCollectionJsonAdapter<MutableCollection<T>, T>(elementAdapter) {
@@ -74,7 +76,7 @@ abstract class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T> private c
       }
     }
 
-    internal fun <T> newSetAdapter(type: Type, moshi: Moshi): JsonAdapter<MutableCollection<T>> {
+    private fun <T> newSetAdapter(type: Type, moshi: Moshi): JsonAdapter<MutableCollection<T>> {
       val elementType = Types.collectionElementType(type, Collection::class.java)
       val elementAdapter = moshi.adapter<T>(elementType)
       return object : ArrayCollectionJsonAdapter<MutableCollection<T>, T>(elementAdapter) {

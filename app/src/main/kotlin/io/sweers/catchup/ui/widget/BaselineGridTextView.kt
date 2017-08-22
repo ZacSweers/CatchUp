@@ -53,27 +53,28 @@ class BaselineGridTextView @JvmOverloads constructor(context: Context,
         Resources.getSystem().displayMetrics)
   }
 
-  internal var extraTopPadding = 0
-  internal var extraBottomPadding = 0
+  private var extraTopPadding = 0
+  private var extraBottomPadding = 0
 
   var lineHeightMultiplierHint = 1f
     @StyledAttr(R.styleable.BaselineGridTextView_lineHeightMultiplierHint)
     set(value) {
-      this.lineHeightMultiplierHint = value
+      field = value
       computeLineHeight()
     }
 
   var lineHeightHint = 0f
-    @StyledAttr(value = R.styleable.BaselineGridTextView_lineHeightHint, kind = Kind.DIMEN_PIXEL_SIZE)
+    @StyledAttr(value = R.styleable.BaselineGridTextView_lineHeightHint,
+        kind = Kind.DIMEN_PIXEL_SIZE)
     set(value) {
-      this.lineHeightHint = value
+      field = value
       computeLineHeight()
     }
 
   var maxLinesByHeight = false
     @StyledAttr(R.styleable.BaselineGridTextView_maxLinesByHeight)
     set(value) {
-      this.maxLinesByHeight = value
+      field = value
       requestLayout()
     }
 

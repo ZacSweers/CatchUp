@@ -35,7 +35,7 @@ import javax.inject.Inject
 abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
 
   @Inject protected lateinit var dao: ServiceDao
-  protected var currentSessionId: Long = -1
+  private var currentSessionId: Long = -1
 
   constructor() : super()
 
@@ -46,16 +46,16 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
   protected abstract fun serviceType(): String
 
   override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<CatchUpItem>> {
-    if (request.multipage) {
+    return if (request.multipage) {
       // Backfill pages
-      return Observable.range(0, request.page)
+      Observable.range(0, request.page)
           .concatMapEager { this.getPage(it).toObservable() }
           .collectInto(mutableListOf<CatchUpItem>()) { list, collection ->
             list.addAll(collection.map { CatchUpItem.from(it) })
           }
           .map { it } // Weird
     } else {
-      return getPage(request.page, request.fromRefresh)
+      getPage(request.page, request.fromRefresh)
           .flattenAsObservable { it }
           .map { CatchUpItem.from(it) }
           .toList()

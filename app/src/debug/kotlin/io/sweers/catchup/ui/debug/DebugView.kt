@@ -319,15 +319,15 @@ class DebugView @JvmOverloads constructor(context: Context,
         .withZone(ZoneId.systemDefault())
 
     private fun getDensityString(displayMetrics: DisplayMetrics): String {
-      when (displayMetrics.densityDpi) {
-        DisplayMetrics.DENSITY_LOW -> return "ldpi"
-        DisplayMetrics.DENSITY_MEDIUM -> return "mdpi"
-        DisplayMetrics.DENSITY_HIGH -> return "hdpi"
-        DisplayMetrics.DENSITY_XHIGH -> return "xhdpi"
-        DisplayMetrics.DENSITY_XXHIGH -> return "xxhdpi"
-        DisplayMetrics.DENSITY_XXXHIGH -> return "xxxhdpi"
-        DisplayMetrics.DENSITY_TV -> return "tvdpi"
-        else -> return displayMetrics.densityDpi.toString()
+      return when (displayMetrics.densityDpi) {
+        DisplayMetrics.DENSITY_LOW -> "ldpi"
+        DisplayMetrics.DENSITY_MEDIUM -> "mdpi"
+        DisplayMetrics.DENSITY_HIGH -> "hdpi"
+        DisplayMetrics.DENSITY_XHIGH -> "xhdpi"
+        DisplayMetrics.DENSITY_XXHIGH -> "xxhdpi"
+        DisplayMetrics.DENSITY_XXXHIGH -> "xxxhdpi"
+        DisplayMetrics.DENSITY_TV -> "tvdpi"
+        else -> displayMetrics.densityDpi.toString()
       }
     }
 

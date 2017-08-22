@@ -53,8 +53,8 @@ class NonConsumingScrimInsetsFrameLayout : FrameLayout {
   private fun init(context: Context, attrs: AttributeSet?, defStyle: Int) {
     context.obtainStyledAttributes(attrs, R.styleable.NonConsumingScrimInsetsView, defStyle,
         0)?.run {
-      try {
-        insetForeground = getDrawable(R.styleable.NonConsumingScrimInsetsView_insetForeground)
+      insetForeground = try {
+        getDrawable(R.styleable.NonConsumingScrimInsetsView_insetForeground)
       } finally {
         recycle()
       }

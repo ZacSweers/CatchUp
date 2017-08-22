@@ -47,8 +47,9 @@ object Iterators {
    *
    * @return the number of elements the iterator was advanced
    */
-  @CanIgnoreReturnValue fun advance(iterator: Iterator<*>, numberToAdvance: Int): Int {
-    var i: Int = 0
+  @CanIgnoreReturnValue
+  fun advance(iterator: Iterator<*>, numberToAdvance: Int): Int {
+    var i = 0
     while (i < numberToAdvance && iterator.hasNext()) {
       iterator.next()
       i++

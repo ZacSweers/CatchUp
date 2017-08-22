@@ -119,7 +119,7 @@ class GitHubController : BaseNewsController<CatchUpItem> {
               .map { node ->
                 var primaryLanguage: String? = null
                 val langs = node.languages()
-                if (langs != null && langs.nodes() != null) {
+                if (langs?.nodes() != null) {
                   val nodes = langs.nodes()
                   if (nodes != null && !nodes.isEmpty()) {
                     primaryLanguage = nodes[0].name()

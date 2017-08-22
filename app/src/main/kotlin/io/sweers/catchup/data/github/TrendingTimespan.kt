@@ -22,7 +22,7 @@ import org.threeten.bp.temporal.ChronoUnit
 import org.threeten.bp.temporal.TemporalUnit
 
 // https://github.com/google/error-prone/issues/512
-enum class TrendingTimespan constructor(val contextualReference: String,
+enum class TrendingTimespan constructor(private val contextualReference: String,
     duration: Int,
     private val durationUnit: TemporalUnit) {
   DAY("today", 1, ChronoUnit.DAYS),

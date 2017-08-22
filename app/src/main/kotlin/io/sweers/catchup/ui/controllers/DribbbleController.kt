@@ -200,34 +200,38 @@ class DribbbleController
         }, { error ->
           val activity = activity
           if (activity != null) {
-            if (error is IOException) {
-              errorTextView.text = "Connection Problem"
-              progress.visibility = GONE
-              swipeRefreshLayout.visibility = GONE
-              errorView.visibility = VISIBLE
-              AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
-                errorImage.setImageDrawable(this)
-                start()
+            when (error) {
+              is IOException -> {
+                errorTextView.text = "Connection Problem"
+                progress.visibility = GONE
+                swipeRefreshLayout.visibility = GONE
+                errorView.visibility = VISIBLE
+                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
+                  errorImage.setImageDrawable(this)
+                  start()
+                }
               }
-            } else if (error is HttpException) {
-              // TODO Show some sort of API error response.
-              errorTextView.text = "API Problem"
-              progress.visibility = GONE
-              swipeRefreshLayout.visibility = GONE
-              errorView.visibility = VISIBLE
-              AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
-                errorImage.setImageDrawable(this)
-                start()
+              is HttpException -> {
+                // TODO Show some sort of API error response.
+                errorTextView.text = "API Problem"
+                progress.visibility = GONE
+                swipeRefreshLayout.visibility = GONE
+                errorView.visibility = VISIBLE
+                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
+                  errorImage.setImageDrawable(this)
+                  start()
+                }
               }
-            } else {
-              // TODO Show some sort of generic response error
-              progress.visibility = GONE
-              swipeRefreshLayout.visibility = GONE
-              errorTextView.text = "Unknown Issue"
-              errorView.visibility = VISIBLE
-              AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
-                errorImage.setImageDrawable(this)
-                start()
+              else -> {
+                // TODO Show some sort of generic response error
+                progress.visibility = GONE
+                swipeRefreshLayout.visibility = GONE
+                errorTextView.text = "Unknown Issue"
+                errorView.visibility = VISIBLE
+                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)?.run {
+                  errorImage.setImageDrawable(this)
+                  start()
+                }
               }
             }
             e(error) { "Update failed!" }
@@ -268,11 +272,10 @@ class DribbbleController
 
     init {
       setHasStableIds(true)
-      @ArrayRes val loadingColorArrayId: Int
-      if (context.isInNightMode()) {
-        loadingColorArrayId = R.array.loading_placeholders_dark
+      @ArrayRes val loadingColorArrayId = if (context.isInNightMode()) {
+        R.array.loading_placeholders_dark
       } else {
-        loadingColorArrayId = R.array.loading_placeholders_light
+        R.array.loading_placeholders_light
       }
       shotLoadingPlaceholders = context.resources.getIntArray(loadingColorArrayId)
           .iterator()
@@ -319,9 +322,9 @@ class DribbbleController
 
             // get the image and check if it's an animated GIF
             val drawable = holder.image.drawable ?: return@setOnTouchListener false
-            var gif: GifDrawable = when (drawable) {
+            val gif: GifDrawable = when (drawable) {
               is GifDrawable -> drawable
-              is TransitionDrawable -> (0..drawable.numberOfLayers - 1).asSequence()
+              is TransitionDrawable -> (0 until drawable.numberOfLayers).asSequence()
                   .map { i -> drawable.getDrawable(i) }
                   .filter { it is GifDrawable }
                   .cast<GifDrawable>()
@@ -397,9 +400,9 @@ class DribbbleController
     }
 
     fun getItemColumnSpan(position: Int): Int {
-      when (getItemViewType(position)) {
-        ServiceController.TYPE_LOADING_MORE -> return 2
-        else -> return 1
+      return when (getItemViewType(position)) {
+        ServiceController.TYPE_LOADING_MORE -> 2
+        else -> 1
       }
     }
 

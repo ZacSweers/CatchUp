@@ -31,10 +31,10 @@ import org.threeten.bp.OffsetDateTime
  * @return an Instant representation of the time
  */
 inline fun String.parsePossiblyOffsetInstant(): Instant {
-  if (!endsWith("Z")) {
-    return OffsetDateTime.parse(this)
+  return if (!endsWith("Z")) {
+    OffsetDateTime.parse(this)
         .toInstant()
   } else {
-    return Instant.parse(this)
+    Instant.parse(this)
   }
 }

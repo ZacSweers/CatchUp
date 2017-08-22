@@ -62,7 +62,7 @@ abstract class BindableAdapter<T>(val context: Context) : BaseAdapter() {
   /**
    * Bind the data for the specified `position` to the drop-down view.
    */
-  fun bindDropDownView(item: T, position: Int, view: View) {
+  private fun bindDropDownView(item: T, position: Int, view: View) {
     bindView(item, position, view)
   }
 }

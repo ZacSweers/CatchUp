@@ -24,7 +24,5 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class Author {
 
-  @Element(name = "name", required = true)
-  public String name;
-
+  @Element(name = "name") public String name;
 }

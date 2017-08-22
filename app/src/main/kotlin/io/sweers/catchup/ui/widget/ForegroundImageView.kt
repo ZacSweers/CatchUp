@@ -37,6 +37,7 @@ open class ForegroundImageView(context: Context, attrs: AttributeSet)
   private var foreground: Drawable? = null
 
   init {
+    @Suppress("LeakingThis")
     Barber.style(this, attrs, R.styleable.ForegroundView)
     outlineProvider = ViewOutlineProvider.BOUNDS
   }

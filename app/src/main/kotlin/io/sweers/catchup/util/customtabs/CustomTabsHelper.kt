@@ -30,20 +30,13 @@ import java.util.ArrayList
  * Adapted from github.com/GoogleChrome/custom-tabs-client
  */
 object CustomTabsHelper {
-  internal val STABLE_PACKAGE = "com.android.chrome"
-  internal val BETA_PACKAGE = "com.chrome.beta"
-  internal val DEV_PACKAGE = "com.chrome.dev"
-  internal val LOCAL_PACKAGE = "com.google.android.apps.chrome"
+  private val STABLE_PACKAGE = "com.android.chrome"
+  private val BETA_PACKAGE = "com.chrome.beta"
+  private val DEV_PACKAGE = "com.chrome.dev"
+  private val LOCAL_PACKAGE = "com.google.android.apps.chrome"
   private val TAG = "CustomTabsHelper"
-  private val EXTRA_CUSTOM_TABS_KEEP_ALIVE = "android.support.customtabs.extra.KEEP_ALIVE"
 
   private var sPackageNameToUse: String? = null
-
-  fun addKeepAliveExtra(context: Context, intent: Intent) {
-    val keepAliveIntent = Intent().setClassName(
-        context.packageName, KeepAliveService::class.java.canonicalName)
-    intent.putExtra(EXTRA_CUSTOM_TABS_KEEP_ALIVE, keepAliveIntent)
-  }
 
   /**
    * Goes through all apps that handle VIEW intents and have a warmup service. Picks

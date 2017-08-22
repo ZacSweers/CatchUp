@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.data
 
-import android.support.annotation.VisibleForTesting
 import okhttp3.Request
 import okhttp3.ResponseBody
 import okio.Buffer
@@ -115,10 +114,10 @@ class LoggingCallAdapterFactory(private val logger: Logger) : CallAdapter.Factor
 
     @Throws(IOException::class)
     override fun execute(): Response<R> {
-      try {
+      return try {
         val response = delegate.execute()
         logResponse(response)
-        return response
+        response
       } catch (e: IOException) {
         logger.onFailure(this, e)
         throw e
@@ -171,7 +170,7 @@ class AnalyticsNetworkLogger(private val analytics: Analytics) : LoggingCallAdap
 
   companion object {
 
-    @VisibleForTesting internal fun errorMessage(errorBody: ResponseBody?): String {
+    internal fun errorMessage(errorBody: ResponseBody?): String {
       if (errorBody == null) {
         return ""
       }
@@ -180,11 +179,11 @@ class AnalyticsNetworkLogger(private val analytics: Analytics) : LoggingCallAdap
       }
       val charset: Charset
       val contentType = errorBody.contentType()
-      if (contentType == null) {
-        charset = Charsets.UTF_8
+      charset = if (contentType == null) {
+        Charsets.UTF_8
       } else {
         try {
-          charset = contentType.charset(Charsets.UTF_8)!!
+          contentType.charset(Charsets.UTF_8)!!
         } catch (e: UnsupportedCharsetException) {
           // Charset is likely malformed.
           return "Unsupported Content-Type: " + contentType

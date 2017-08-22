@@ -33,7 +33,7 @@ interface ProductHuntService {
 
   companion object {
 
-    val SCHEME = "https"
+    private val SCHEME = "https"
     val HOST = "api.producthunt.com"
     val ENDPOINT = SCHEME + "://" + HOST
   }

@@ -71,16 +71,16 @@ fun Context.maybeStartChooser(intent: Intent): Boolean = maybeStartActivity(inte
 private fun Context.maybeStartActivity(inputIntent: Intent,
     chooser: Boolean): Boolean {
   var intent = inputIntent
-  if (hasHandler(intent)) {
+  return if (hasHandler(intent)) {
     if (chooser) {
       intent = Intent.createChooser(intent, null)
     }
     startActivity(intent)
-    return true
+    true
   } else {
     Toast.makeText(this, string.no_intent_handler,
         LENGTH_LONG).show()
-    return false
+    false
   }
 }
 
@@ -97,8 +97,7 @@ private val TYPED_VALUE = TypedValue()
 @UiThread
 fun Context.resolveAttribute(@AttrRes resId: Int): Int {
   theme.resolveAttribute(resId, TYPED_VALUE, true)
-  @ColorInt val color = TYPED_VALUE.data
-  return color
+  return TYPED_VALUE.data
 }
 
 fun Context.isInNightMode(): Boolean {

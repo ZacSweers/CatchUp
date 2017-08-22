@@ -39,11 +39,11 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(context: Context,
     defStyleRes: Int = 0) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
   // configurable attribs
-  var dragDismissDistance = java.lang.Float.MAX_VALUE
-  var dragDismissFraction = -1f
-  var dragDismissScale = 1f
-  var shouldScale = false
-  var dragElacticity = 0.8f
+  private var dragDismissDistance = java.lang.Float.MAX_VALUE
+  private var dragDismissFraction = -1f
+  private var dragDismissScale = 1f
+  private var shouldScale = false
+  private var dragElacticity = 0.8f
 
   // state
   private var totalDrag: Float = 0.toFloat()
@@ -148,7 +148,7 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(context: Context,
 
   fun addListener(listener: ElasticDragDismissCallback) {
     if (callbacks == null) {
-      callbacks = ArrayList<ElasticDragDismissCallback>()
+      callbacks = ArrayList()
     }
     callbacks!!.add(listener)
   }
@@ -246,20 +246,20 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(context: Context,
         elasticOffsetPixels: Float,
         rawOffset: Float,
         rawOffsetPixels: Float) {
-      if (elasticOffsetPixels > 0) {
-        // dragging downward, fade the status bar in proportion
-        activity.window.statusBarColor = ColorUtils.modifyAlpha(activity.window
-            .statusBarColor, ((1f - rawOffset) * statusBarAlpha).toInt())
-      } else if (elasticOffsetPixels == 0f) {
-        // reset
-        activity.window.statusBarColor = ColorUtils.modifyAlpha(activity.window
-            .statusBarColor, statusBarAlpha)
-        activity.window.navigationBarColor = ColorUtils.modifyAlpha(activity.window
-            .navigationBarColor, navBarAlpha)
-      } else if (fadeNavBar) {
-        // dragging upward, fade the navigation bar in proportion
-        activity.window.navigationBarColor = ColorUtils.modifyAlpha(activity.window
-            .navigationBarColor, ((1f - rawOffset) * navBarAlpha).toInt())
+      when {
+        elasticOffsetPixels > 0 -> // dragging downward, fade the status bar in proportion
+          activity.window.statusBarColor = ColorUtils.modifyAlpha(activity.window
+              .statusBarColor, ((1f - rawOffset) * statusBarAlpha).toInt())
+        elasticOffsetPixels == 0f -> {
+          // reset
+          activity.window.statusBarColor = ColorUtils.modifyAlpha(activity.window
+              .statusBarColor, statusBarAlpha)
+          activity.window.navigationBarColor = ColorUtils.modifyAlpha(activity.window
+              .navigationBarColor, navBarAlpha)
+        }
+        fadeNavBar -> // dragging upward, fade the navigation bar in proportion
+          activity.window.navigationBarColor = ColorUtils.modifyAlpha(activity.window
+              .navigationBarColor, ((1f - rawOffset) * navBarAlpha).toInt())
       }
     }
 

@@ -52,6 +52,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp"
             android:src="@mipmap/ic_launcher"
+            android:contentDescription="CatchUp icon"
             />
 
         <TextView
@@ -63,7 +64,6 @@
             android:gravity="center"
             android:text="@string/app_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:clickable="true"
             />
 
         <io.sweers.catchup.ui.widget.BaselineGridTextView

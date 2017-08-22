@@ -25,16 +25,19 @@ import retrofit2.http.QueryMap
 
 interface SmmryService {
 
-  @POST(".") fun summarizeUrl(
+  @POST(".")
+  fun summarizeUrl(
       @QueryMap params: Map<String, @JvmSuppressWildcards Any>): Single<SmmryResponse>
 
-  @POST(".") @FormUrlEncoded fun summarizeText(
+  @POST(".")
+  @FormUrlEncoded
+  fun summarizeText(
       @QueryMap params: Map<String, @JvmSuppressWildcards Any>,
       @Field("sm_api_input") text: String): Single<SmmryResponse>
 
   companion object {
 
-    val HOST = "api.smmry.com/"
+    private val HOST = "api.smmry.com/"
     val ENDPOINT = "http://" + HOST
   }
 }

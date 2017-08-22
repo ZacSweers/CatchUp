@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanPrivate")
+
 package io.sweers.catchup.util
 
 import android.graphics.Bitmap

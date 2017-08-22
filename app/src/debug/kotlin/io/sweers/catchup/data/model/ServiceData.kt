@@ -19,7 +19,7 @@ package io.sweers.catchup.data.model
 class ServiceData private constructor(
     val assetsPrefix: String,
     val fileType: String,
-    val supportedEndpoints: Set<String>) {
+    private val supportedEndpoints: Set<String>) {
 
   fun supports(path: String): Boolean {
     return supportedEndpoints.contains(path)

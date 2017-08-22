@@ -296,13 +296,12 @@ class PagerController : ButterKnifeController {
     viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
       override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
         if (canAnimateColor) {
-          val color: Int
-          if (position < pagerAdapter.count - 1 && position < PAGE_DATA.size - 1) {
-            color = argbEvaluator.evaluate(positionOffset,
+          val color: Int = if (position < pagerAdapter.count - 1 && position < PAGE_DATA.size - 1) {
+            argbEvaluator.evaluate(positionOffset,
                 getAndSaveColor(position),
                 getAndSaveColor(position + 1)) as Int
           } else {
-            color = getAndSaveColor(PAGE_DATA.size - 1)
+            getAndSaveColor(PAGE_DATA.size - 1)
           }
           tabLayout.setBackgroundColor(color)
           if (tabLayoutIsPinned) {
