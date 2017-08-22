@@ -237,7 +237,8 @@ class AboutController : ButterKnifeController() {
     }
 
     recyclerView.adapter = adapter
-    recyclerView.layoutManager = StickyHeadersLinearLayoutManager<Adapter>(view.context)
+    recyclerView.layoutManager = StickyHeadersLinearLayoutManager<Adapter>(
+        view.context)
     recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
       addDuration = 300
       removeDuration = 300

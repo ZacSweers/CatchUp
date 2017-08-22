@@ -98,8 +98,16 @@ android {
     }
   }
   sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+    debug.java.srcDirs += 'src/debug/kotlin'
+    release.java.srcDirs += 'src/release/kotlin'
+    test.java.srcDirs += 'src/test/kotlin'
+
     // For kapt
     main.java.srcDirs += [file("$buildDir/generated/source/kapt/main")]
+    debug.java.srcDirs += [file("$buildDir/generated/source/kapt/debug")]
+    release.java.srcDirs += [file("$buildDir/generated/source/kapt/release")]
+    test.java.srcDirs += [file("$buildDir/generated/source/kapt/test")]
   }
   packagingOptions {
     exclude 'META-INF/LICENSE'
