@@ -41,4 +41,6 @@ class GlideConfiguration : AppGlideModule() {
         else
           DecodeFormat.PREFER_ARGB_8888))
   }
+
+  override fun isManifestParsingEnabled() = false
 }
