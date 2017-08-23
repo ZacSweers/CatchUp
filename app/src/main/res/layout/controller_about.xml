@@ -18,6 +18,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/about_controller_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -51,8 +52,8 @@
             android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp"
-            android:src="@mipmap/ic_launcher"
             android:contentDescription="CatchUp icon"
+            android:src="@mipmap/ic_launcher"
             />
 
         <TextView
@@ -75,7 +76,6 @@
             android:text="An app for catching up on things.\n\nv1.0\nBy Zac Sweers  —  Source code"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             />
-
       </LinearLayout>
 
       <android.support.v7.widget.Toolbar
@@ -83,30 +83,26 @@
           android:layout_width="wrap_content"
           android:layout_height="?actionBarSize"
           app:layout_collapseMode="pin"
+          app:titleMarginStart="72dp"
           />
-
     </android.support.design.widget.CollapsingToolbarLayout>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@null"
+        app:tabMode="fixed"
+        style="@style/CatchUp.TabLayout.Inverted"
+        />
+
   </android.support.design.widget.AppBarLayout>
 
-  <ProgressBar
-      android:id="@+id/progress"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:indeterminate="true"
-      style="@style/Widget.AppCompat.ProgressBar"
-      />
-
-  <!-- Transparent background because scrollbars don't show up without it -->
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/list"
+  <android.support.v4.view.ViewPager
+      android:id="@+id/view_pager"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:background="@android:color/transparent"
-      android:fadeScrollbars="true"
+      android:layout_height="wrap_content"
       android:overScrollMode="never"
-      android:scrollbars="vertical"
-      android:splitMotionEvents="false"
       app:layout_behavior="@string/appbar_scrolling_view_behavior"
       />
 

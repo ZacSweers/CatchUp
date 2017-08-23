@@ -51,7 +51,7 @@
         />
 
     <activity
-        android:name=".ui.activity.AboutActivity"
+        android:name=".ui.about.AboutActivity"
         android:label="@string/title_activity_about"
         android:parentActivityName=".ui.activity.SettingsActivity"
         android:launchMode="singleTop"

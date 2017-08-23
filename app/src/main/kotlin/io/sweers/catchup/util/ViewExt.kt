@@ -48,3 +48,5 @@ inline fun View.isGone() = visibility == View.GONE
 inline fun View.makeGone() {
   visibility = View.GONE
 }
+
+inline fun View.isRtl() = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL

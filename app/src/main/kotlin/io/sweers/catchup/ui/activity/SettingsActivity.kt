@@ -47,6 +47,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.RemoteConfigKeys
 import io.sweers.catchup.injection.scopes.PerFragment
+import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.clearCache
@@ -55,7 +56,6 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
 import java.io.File
 import javax.inject.Inject
-
 
 class SettingsActivity : BaseActivity(), HasFragmentInjector {
 
