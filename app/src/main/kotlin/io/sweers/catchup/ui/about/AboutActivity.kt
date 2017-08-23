@@ -25,7 +25,6 @@ import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.TabLayout
 import android.support.v4.app.NavUtils
 import android.support.v4.view.ViewPager
-import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
@@ -48,6 +47,7 @@ import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
+import io.sweers.catchup.util.fastOutSlowInInterpolator
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.isRtl
 import io.sweers.catchup.util.setLightStatusBar
@@ -198,7 +198,14 @@ class AboutController : ButterKnifeController() {
       appBarLayout.setExpanded(false, true)
     }
     setUpPager()
-    setUpHeader()
+
+    // Wait till things are measured
+    val callSetUpHeader = { setUpHeader() }
+    if (!appBarLayout.isLaidOut) {
+      appBarLayout.post { callSetUpHeader() }
+    } else {
+      callSetUpHeader()
+    }
   }
 
   private fun setUpPager() {
@@ -226,87 +233,85 @@ class AboutController : ButterKnifeController() {
     // text before it's fully faded out
     val parallaxMultiplier
         = (bannerContainer.layoutParams as CollapsingToolbarLayout.LayoutParams).parallaxMultiplier
-    appBarLayout.post {
-      // Wait till things are measured
-      val interpolator = FastOutSlowInInterpolator()
 
-      // X is pretty simple, we just want to end up 72dp to the end of start
-      val finalAppBarHeight = toolbar.measuredHeight * 2
-      @Px val translatableHeight = appBarLayout.measuredHeight - finalAppBarHeight
-      @Px val titleX = title.x
-      @Px val titleInset = toolbar.titleMarginStart
-      @Px val desiredTitleX = if (toolbar.isRtl()) {
-        // I have to subtract 2x to line this up correctly
-        // I have no idea why
-        toolbar.measuredWidth - titleInset - titleInset
-      } else {
-        titleInset
-      }
-      @Px val xDelta = titleX - desiredTitleX
+    val interpolator = fastOutSlowInInterpolator
 
-      // Y values are a bit trickier - these need to figure out where they would be on the larger
-      // plane, so we calculate it upfront by predicting where it would land after collapse is done.
-      // This requires knowing the parallax multiplier and adjusting for the parent plane rather
-      // than the relative plane of the internal LL. Once we know the predicted global Y, easy to
-      // calculate desired delta from there.
-      @Px val titleY = title.y
-      @Px val desiredTitleY = (toolbar.measuredHeight - title.measuredHeight) / 2
-      @Px val predictedFinalY = titleY - (translatableHeight * parallaxMultiplier)
-      @Px val yDelta = desiredTitleY - predictedFinalY
-
-      /*
-       * Here we want to get the appbar offset changes paired with the direction it's moving and
-       * using RxBinding's great `offsetChanges` API to make an rx Observable of this. The first
-       * part buffers two while skipping one at a time and emits "scroll direction" enums. Second
-       * part is just a simple map to pair the offset with the resolved scroll direction comparing
-       * to the previous offset. This gives us a nice stream of (offset, direction) emissions.
-       *
-       * Note that the filter() is important if you manipulate child views of the ABL. If any child
-       * view requests layout again, it will trigger an emission from the offset listener with the
-       * same value as before, potentially causing measure/layout/draw thrashing if your logic
-       * reacting to the offset changes *is* manipulating those child views (vicious cycle).
-       */
-      RxAppBarLayout.offsetChanges(appBarLayout)
-          .buffer(2, 1) // Buffer in pairs to compare the previous, skip none
-          .filter { it[1] != it[0] }
-          .map {
-            // Map to a direction
-            Pair(it[1], ScrollDirection.resolve(it[1], it[0]))
-          }
-          .subscribe { (offset, _) ->
-            // Note: Direction is unused for now but left because this was neat
-            val percentage = Math.abs(offset).toFloat() / translatableHeight
-
-            // Force versions outside boundaries to be safe
-            if (percentage > FADE_PERCENT) {
-              bannerIcon.alpha = 0F
-              aboutText.alpha = 0F
-            }
-            if (percentage < TITLE_TRANSLATION_PERCENT) {
-              title.translationX = 0F
-              title.translationY = 0F
-            }
-            if (percentage < FADE_PERCENT) {
-              // We want to accelerate fading to be the first [FADE_PERCENT]% of the translation,
-              // so adjust accordingly below and use the new calculated percentage for our
-              // interpolation
-              val adjustedPercentage = 1 - (percentage * (1.0F / FADE_PERCENT))
-              val interpolation = interpolator.getInterpolation(adjustedPercentage)
-              bannerIcon.alpha = interpolation
-              aboutText.alpha = interpolation
-            }
-            if (percentage > TITLE_TRANSLATION_PERCENT) {
-              // Start translating about halfway through (to give a staggered effect next to the alpha
-              // so they have time to fade out sufficiently). From here we just set translation offsets
-              // to adjust the position naturally to give the appearance of settling in to the right
-              // place.
-              val adjustedPercentage = (1 - percentage) * (1.0F / TITLE_TRANSLATION_PERCENT)
-              val interpolation = interpolator.getInterpolation(adjustedPercentage)
-              title.translationX = -(xDelta - (interpolation * xDelta))
-              title.translationY = yDelta - (interpolation * yDelta)
-            }
-          }
+    // X is pretty simple, we just want to end up 72dp to the end of start
+    val finalAppBarHeight = toolbar.measuredHeight * 2
+    @Px val translatableHeight = appBarLayout.measuredHeight - finalAppBarHeight
+    @Px val titleX = title.x
+    @Px val titleInset = toolbar.titleMarginStart
+    @Px val desiredTitleX = if (toolbar.isRtl()) {
+      // I have to subtract 2x to line this up correctly
+      // I have no idea why
+      toolbar.measuredWidth - titleInset - titleInset
+    } else {
+      titleInset
     }
+    @Px val xDelta = titleX - desiredTitleX
+
+    // Y values are a bit trickier - these need to figure out where they would be on the larger
+    // plane, so we calculate it upfront by predicting where it would land after collapse is done.
+    // This requires knowing the parallax multiplier and adjusting for the parent plane rather
+    // than the relative plane of the internal LL. Once we know the predicted global Y, easy to
+    // calculate desired delta from there.
+    @Px val titleY = title.y
+    @Px val desiredTitleY = (toolbar.measuredHeight - title.measuredHeight) / 2
+    @Px val predictedFinalY = titleY - (translatableHeight * parallaxMultiplier)
+    @Px val yDelta = desiredTitleY - predictedFinalY
+
+    /*
+     * Here we want to get the appbar offset changes paired with the direction it's moving and
+     * using RxBinding's great `offsetChanges` API to make an rx Observable of this. The first
+     * part buffers two while skipping one at a time and emits "scroll direction" enums. Second
+     * part is just a simple map to pair the offset with the resolved scroll direction comparing
+     * to the previous offset. This gives us a nice stream of (offset, direction) emissions.
+     *
+     * Note that the filter() is important if you manipulate child views of the ABL. If any child
+     * view requests layout again, it will trigger an emission from the offset listener with the
+     * same value as before, potentially causing measure/layout/draw thrashing if your logic
+     * reacting to the offset changes *is* manipulating those child views (vicious cycle).
+     */
+    RxAppBarLayout.offsetChanges(appBarLayout)
+        .buffer(2, 1) // Buffer in pairs to compare the previous, skip none
+        .filter { it[1] != it[0] }
+        .map {
+          // Map to a direction
+          Pair(it[1], ScrollDirection.resolve(it[1], it[0]))
+        }
+        .subscribe { (offset, _) ->
+          // Note: Direction is unused for now but left because this was neat
+          val percentage = Math.abs(offset).toFloat() / translatableHeight
+
+          // Force versions outside boundaries to be safe
+          if (percentage > FADE_PERCENT) {
+            bannerIcon.alpha = 0F
+            aboutText.alpha = 0F
+          }
+          if (percentage < TITLE_TRANSLATION_PERCENT) {
+            title.translationX = 0F
+            title.translationY = 0F
+          }
+          if (percentage < FADE_PERCENT) {
+            // We want to accelerate fading to be the first [FADE_PERCENT]% of the translation,
+            // so adjust accordingly below and use the new calculated percentage for our
+            // interpolation
+            val adjustedPercentage = 1 - (percentage * (1.0F / FADE_PERCENT))
+            val interpolation = interpolator.getInterpolation(adjustedPercentage)
+            bannerIcon.alpha = interpolation
+            aboutText.alpha = interpolation
+          }
+          if (percentage > TITLE_TRANSLATION_PERCENT) {
+            // Start translating about halfway through (to give a staggered effect next to the alpha
+            // so they have time to fade out sufficiently). From here we just set translation offsets
+            // to adjust the position naturally to give the appearance of settling in to the right
+            // place.
+            val adjustedPercentage = (1 - percentage) * (1.0F / TITLE_TRANSLATION_PERCENT)
+            val interpolation = interpolator.getInterpolation(adjustedPercentage)
+            title.translationX = -(xDelta - (interpolation * xDelta))
+            title.translationY = yDelta - (interpolation * yDelta)
+          }
+        }
   }
 }
 
