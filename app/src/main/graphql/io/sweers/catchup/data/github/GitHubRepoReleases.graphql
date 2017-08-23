@@ -1,0 +1,19 @@
+query RepoReleases {
+  repository(owner: "hzsweers", name: "CatchUp") {
+    ... on Repository {
+      releases(first: 100) {
+        nodes {
+          ... on Release {
+            name
+            publishedAt
+            description
+            tag {
+              name
+            }
+            url
+          }
+        }
+      }
+    }
+  }
+}
