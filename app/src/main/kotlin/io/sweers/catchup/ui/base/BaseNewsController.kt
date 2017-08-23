@@ -66,6 +66,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
   @BindView(R.id.progress) lateinit var progress: ProgressBar
   @BindView(R.id.refresh) lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
+  private lateinit var layoutManager: LinearLayoutManager
   private lateinit var adapter: Adapter<T>
   private var page = 0
   private var isRestoring = false
@@ -103,7 +104,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
 
     swipeRefreshLayout.setColorSchemeColors(serviceThemeColor)
 
-    val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+    layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
     recyclerView.layoutManager = layoutManager
     recyclerView.addOnScrollListener(
         object : InfiniteScrollListener(layoutManager, this@BaseNewsController) {
@@ -289,7 +290,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
   }
 
   override fun onRequestScrollToTop() {
-    if (adapter.itemCount > 50) {
+    if (layoutManager.findFirstVisibleItemPosition() > 50) {
       recyclerView.scrollToPosition(0)
     } else {
       recyclerView.smoothScrollToPosition(0)

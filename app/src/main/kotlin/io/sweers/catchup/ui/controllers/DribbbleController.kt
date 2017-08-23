@@ -114,6 +114,7 @@ class DribbbleController
   @BindView(R.id.list) lateinit var recyclerView: RecyclerView
   @BindView(R.id.progress) lateinit var progress: ProgressBar
   @BindView(R.id.refresh) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+  private lateinit var layoutManager: GridLayoutManager
   private lateinit var adapter: Adapter
   private var page = 1
   private var isDataLoading = false
@@ -139,7 +140,7 @@ class DribbbleController
 
     swipeRefreshLayout.setColorSchemeColors(serviceThemeColor)
 
-    val layoutManager = GridLayoutManager(activity, 2)
+    layoutManager = GridLayoutManager(activity, 2)
     recyclerView.layoutManager = layoutManager
     adapter = Adapter(view.context,
         { shot, viewHolder ->
@@ -255,7 +256,7 @@ class DribbbleController
   }
 
   override fun onRequestScrollToTop() {
-    if (adapter.itemCount > 50) {
+    if (layoutManager.findFirstVisibleItemPosition() > 50) {
       recyclerView.scrollToPosition(0)
     } else {
       recyclerView.smoothScrollToPosition(0)
