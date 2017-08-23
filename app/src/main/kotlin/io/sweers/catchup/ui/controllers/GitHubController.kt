@@ -220,19 +220,12 @@ class GitHubController : BaseNewsController<CatchUpItem> {
         }
 
         override fun fromFieldRecordSet(field: ResponseField,
-            objectSource: Map<String, Any>): CacheKey {
-          // Use id as default case.
-          objectSource["id"].let {
-            return when (it) {
-              is String -> formatter(it)
-              else -> CacheKey.NO_KEY
-            }
-          }
-        }
+            objectSource: Map<String, Any>) = CacheKey.NO_KEY
 
         override fun fromFieldArguments(field: ResponseField,
             variables: Operation.Variables): CacheKey {
-          return formatter(field.resolveArgument("id", variables) as String)
+          // TODO how can we force this to be fresh on user refresh?
+          return formatter(field.resolveArgument("queryString", variables) as String)
         }
       }
     }
