@@ -371,7 +371,19 @@ class LicensesController : ButterKnifeController(), Scrollable {
                       customTab.customTabIntent
                           .setStartAnimations(context, R.anim.slide_up, R.anim.inset)
                           .setExitAnimations(context, R.anim.outset, R.anim.slide_down)
-                          .setToolbarColor(tag.textColors.defaultColor)
+                          .apply {
+                            // Search up to the first sticky header position
+                            // Maybe someday we should just return the groups rather than flattening
+                            // but this was neat to write in kotlin
+                            (holder.adapterPosition downTo 0)
+                                .find { isStickyHeader(it) }
+                                ?.let {
+                                  setToolbarColor(
+                                      (recyclerView.findViewHolderForAdapterPosition(it)
+                                          as HeaderHolder)
+                                          .title.textColors.defaultColor)
+                                }
+                          }
                           .build(),
                       Uri.parse(item.clickUrl))
                 }
