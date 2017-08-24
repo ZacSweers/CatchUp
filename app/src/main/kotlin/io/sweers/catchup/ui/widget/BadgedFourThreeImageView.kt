@@ -96,6 +96,11 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet)
     layoutBadge()
   }
 
+  // Here so the IDE stops complaining about not overriding this when using setOnTouchListener >_>
+  override fun performClick(): Boolean {
+    return super.performClick()
+  }
+
   private fun layoutBadge() {
     val badgeBounds = badge.bounds
     Gravity.apply(badgeGravity,
