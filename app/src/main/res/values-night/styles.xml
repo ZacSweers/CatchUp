@@ -24,4 +24,9 @@
     <item name="colorAccent">?android:textColorPrimary</item>
   </style>
 
+  <style name="CatchUp.TabLayout.Inverted" parent="Widget.Design.TabLayout">
+    <item name="android:theme">@style/Theme.AppCompat</item>
+    <item name="tabIndicatorColor">?android:textColorPrimary</item>
+  </style>
+
 </resources>
