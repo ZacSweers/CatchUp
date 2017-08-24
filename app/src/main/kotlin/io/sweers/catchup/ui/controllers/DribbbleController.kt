@@ -50,6 +50,9 @@ import butterknife.BindView
 import butterknife.OnClick
 import butterknife.Unbinder
 import com.bumptech.glide.Glide
+import com.bumptech.glide.ListPreloader.PreloadModelProvider
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -58,6 +61,7 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.jakewharton.rxbinding2.view.RxView
 import com.squareup.moshi.Moshi
 import com.uber.autodispose.kotlin.autoDisposeWith
@@ -68,6 +72,7 @@ import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
+import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.data.AuthInterceptor
 import io.sweers.catchup.data.ISO8601InstantAdapter
@@ -76,6 +81,7 @@ import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.dribbble.DribbbleService
 import io.sweers.catchup.data.dribbble.model.Shot
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.requestManager
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.DataLoadingSubject
@@ -103,6 +109,7 @@ class DribbbleController
   : ServiceController, SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
 
   companion object {
+    private const val PRELOAD_AHEAD_ITEMS = 6
     @ColorInt private const val INITIAL_GIF_BADGE_COLOR = 0x40ffffff
   }
 
@@ -139,7 +146,7 @@ class DribbbleController
     super.onViewBound(view)
 
     swipeRefreshLayout.setColorSchemeColors(serviceThemeColor)
-
+    recyclerView.setItemViewCacheSize(0)
     layoutManager = GridLayoutManager(activity, 2)
     recyclerView.layoutManager = layoutManager
     adapter = Adapter(view.context,
@@ -150,6 +157,10 @@ class DribbbleController
               .autoDisposeWith(viewHolder)
               .subscribe()
         })
+    val preloadSizeProvider = ViewPreloadSizeProvider<Shot>()
+    val preloader = RecyclerViewPreloader<Shot>(requestManager(), adapter, preloadSizeProvider,
+        PRELOAD_AHEAD_ITEMS)
+    recyclerView.addOnScrollListener(preloader)
     recyclerView.adapter = adapter
     recyclerView.addOnScrollListener(
         object : InfiniteScrollListener(layoutManager, this@DribbbleController) {
@@ -263,9 +274,11 @@ class DribbbleController
     }
   }
 
-  private class Adapter(context: Context,
+  private class Adapter(private val context: Context,
       private val bindDelegate: (Shot, Adapter.DribbbleShotHolder) -> Unit)
-    : RecyclerView.Adapter<RecyclerView.ViewHolder>(), DataLoadingSubject.DataLoadingCallbacks {
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
+      DataLoadingSubject.DataLoadingCallbacks,
+      PreloadModelProvider<Shot> {
 
     private val shots = ArrayList<Shot>()
     private val shotLoadingPlaceholders: Array<ColorDrawable>
@@ -292,6 +305,22 @@ class DribbbleController
       notifyItemRangeInserted(prevSize, shots.size - prevSize)
     }
 
+    override fun getPreloadItems(position: Int): List<Shot> {
+      return shots.subList(position, minOf(shots.size, position + 5))
+    }
+
+    override fun getPreloadRequestBuilder(shot: Shot): RequestBuilder<Drawable> {
+      val (x, y) = shot.images()
+          .bestSize()
+      return Glide.with(context)
+          .asDrawable()
+          .apply(RequestOptions()
+              .diskCacheStrategy(DiskCacheStrategy.DATA)
+              .fitCenter()
+              .override(x, y))
+          .load(shot.images().best())
+    }
+
     override fun getItemId(position: Int): Long {
       if (getItemViewType(position) == ServiceController.TYPE_LOADING_MORE) {
         return RecyclerView.NO_ID
@@ -300,7 +329,6 @@ class DribbbleController
           .stableId()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @TargetApi(Build.VERSION_CODES.M)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder? {
       val layoutInflater = LayoutInflater.from(parent.context)
@@ -309,8 +337,7 @@ class DribbbleController
           val holder = DribbbleShotHolder(LayoutInflater.from(parent.context)
               .inflate(R.layout.dribbble_shot_item, parent, false))
           holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR)
-          holder.image.foreground = UiUtil.createColorSelector(0x40808080,
-              null)
+          holder.image.foreground = UiUtil.createColorSelector(0x40808080, null)
           // play animated GIFs whilst touched
           holder.image.setOnTouchListener { _, event ->
             // check if it's an event we care about, else bail fast
@@ -360,6 +387,7 @@ class DribbbleController
     @SuppressLint("NewApi") override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
       if (holder is DribbbleShotHolder) {
         // reset the badge & ripple which are dynamically determined
+        GlideApp.with(holder.itemView).clear(holder.image)
         holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR)
         holder.image.showBadge(false)
         holder.image.foreground = UiUtil.createColorSelector(0x40808080, null)
@@ -415,11 +443,11 @@ class DribbbleController
         val (x, y) = shot.images()
             .bestSize()
         Glide.with(itemView.context)
-            .load(shot.images()
-                .best())
-            .apply(RequestOptions().placeholder(
-                shotLoadingPlaceholders[adapterPosition % shotLoadingPlaceholders.size])
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .load(shot.images().best())
+            .apply(RequestOptions()
+                .placeholder(
+                    shotLoadingPlaceholders[adapterPosition % shotLoadingPlaceholders.size])
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .fitCenter()
                 .override(x, y))
             .transition(DrawableTransitionOptions.withCrossFade())

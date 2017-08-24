@@ -342,6 +342,13 @@ dependencies {
 
   releaseImplementation deps.misc.bugsnag
 
+  // Glide
+  kapt deps.glide.apt.compiler
+  implementation deps.glide.annotations
+  implementation deps.glide.core
+  implementation deps.glide.okhttp
+  implementation deps.glide.recyclerView
+
   // Misc
   implementation deps.autoDispose.core
   implementation deps.autoDispose.android
@@ -350,8 +357,6 @@ dependencies {
   compileOnly deps.errorProne.compileOnly.annotations
   implementation deps.barber.api
   kapt deps.barber.apt
-  implementation deps.glide.core
-  implementation deps.glide.okhttp
   implementation deps.misc.lottie
   implementation deps.misc.recyclerViewAnimators
   implementation deps.rx.java
