@@ -21,7 +21,6 @@ package io.sweers.catchup.util
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build.VERSION_CODES
 import android.support.annotation.AttrRes
@@ -30,6 +29,7 @@ import android.support.annotation.UiThread
 import android.util.TypedValue
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import io.sweers.catchup.R
 import io.sweers.catchup.R.string
 import java.io.File
 import java.io.IOException
@@ -101,7 +101,7 @@ fun Context.resolveAttribute(@AttrRes resId: Int): Int {
 }
 
 fun Context.isInNightMode(): Boolean {
-  return resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+  return resources.getBoolean(R.bool.isInNightMode)
 }
 
 /**
