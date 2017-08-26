@@ -107,6 +107,7 @@ import io.sweers.catchup.util.e
 import io.sweers.catchup.util.fastOutSlowInInterpolator
 import io.sweers.catchup.util.findSwatch
 import io.sweers.catchup.util.isInNightMode
+import io.sweers.catchup.util.luminosity
 import io.sweers.catchup.util.makeGone
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import okhttp3.HttpUrl
@@ -305,9 +306,9 @@ class LicensesController : ButterKnifeController(), Scrollable {
     private val items = mutableListOf<OssBaseItem>()
     private val headerColorThresholdFun = { swatch: Swatch ->
       if (activity?.isInNightMode() == true) {
-        swatch.hsl[2] > 0.6F
+        swatch.luminosity > 0.6F
       } else {
-        swatch.hsl[2] < 0.5F
+        swatch.luminosity < 0.5F
       }
     }
 

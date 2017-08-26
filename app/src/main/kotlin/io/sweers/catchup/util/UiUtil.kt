@@ -33,9 +33,7 @@ import android.support.annotation.FloatRange
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.app.AppCompatDelegate
 import android.support.v7.graphics.Palette
-import android.support.v7.graphics.Palette.Swatch
 import io.sweers.catchup.P
-
 
 object UiUtil {
 
@@ -117,30 +115,6 @@ object UiUtil {
     return RippleDrawable(ColorStateList.valueOf(rippleColor), null,
         if (bounded) ColorDrawable(Color.WHITE) else null)
   }
-}
-
-inline fun Palette.orderedSwatches(
-    @FloatRange(from = 0.0, to = 1.0) darkAlpha: Float,
-    @FloatRange(from = 0.0, to = 1.0) lightAlpha: Float): List<Pair<Swatch, Float>> {
-  return listOf(
-      vibrantSwatch?.let { it to darkAlpha },
-      lightVibrantSwatch?.let { it to lightAlpha },
-      darkVibrantSwatch?.let { it to darkAlpha },
-      mutedSwatch?.let { it to darkAlpha },
-      lightMutedSwatch?.let { it to lightAlpha },
-      darkMutedSwatch?.let { it to darkAlpha }
-  ).filterNotNull()
-}
-
-inline fun Palette.findSwatch(predicate: (Swatch) -> Boolean): Swatch? {
-  return listOf(
-      darkVibrantSwatch,
-      lightMutedSwatch,
-      vibrantSwatch,
-      mutedSwatch,
-      lightVibrantSwatch,
-      darkMutedSwatch
-  ).filterNotNull().firstOrNull(predicate)
 }
 
 val fastOutSlowInInterpolator = FastOutSlowInInterpolator()
