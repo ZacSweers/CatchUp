@@ -34,6 +34,8 @@ import android.support.v7.graphics.Palette
 
 object UiUtil {
 
+  val fastOutSlowInInterpolator = FastOutSlowInInterpolator()
+
   /**
    * Creates a selector drawable that is API-aware. This will create a ripple for Lollipop+ and
    * supports masks. If this is pre-lollipop and no mask is provided, it will fall back to a simple
@@ -97,5 +99,3 @@ object UiUtil {
         if (bounded) ColorDrawable(Color.WHITE) else null)
   }
 }
-
-val fastOutSlowInInterpolator = FastOutSlowInInterpolator()

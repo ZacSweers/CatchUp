@@ -101,10 +101,10 @@ import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
 import io.sweers.catchup.ui.about.LicensesModule.ForLicenses
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
+import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.dp2px
 import io.sweers.catchup.util.e
-import io.sweers.catchup.util.fastOutSlowInInterpolator
 import io.sweers.catchup.util.findSwatch
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
@@ -321,7 +321,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
     override fun setupStickyHeaderView(stickyHeader: View) {
       stickyHeader.animate()
           .z(stickyHeader.resources.dp2px(4f))
-          .setInterpolator(fastOutSlowInInterpolator)
+          .setInterpolator(UiUtil.fastOutSlowInInterpolator)
           .setDuration(200)
           .start()
     }
@@ -331,7 +331,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
         findViewById<TextView>(R.id.title).setTextColor(defaultHeaderTextColor)
         animate()
             .z(0f)
-            .setInterpolator(fastOutSlowInInterpolator)
+            .setInterpolator(UiUtil.fastOutSlowInInterpolator)
             .setDuration(200)
             .start()
       }

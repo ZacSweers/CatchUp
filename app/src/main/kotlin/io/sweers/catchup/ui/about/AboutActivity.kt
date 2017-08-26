@@ -48,8 +48,8 @@ import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
+import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
-import io.sweers.catchup.util.fastOutSlowInInterpolator
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.isRtl
 import io.sweers.catchup.util.setLightStatusBar
@@ -231,7 +231,7 @@ class AboutController : ButterKnifeController() {
     val parallaxMultiplier
         = (bannerContainer.layoutParams as CollapsingToolbarLayout.LayoutParams).parallaxMultiplier
 
-    val interpolator = fastOutSlowInInterpolator
+    val interpolator = UiUtil.fastOutSlowInInterpolator
 
     // X is pretty simple, we just want to end up 72dp to the end of start
     val finalAppBarHeight = toolbar.measuredHeight * 2
