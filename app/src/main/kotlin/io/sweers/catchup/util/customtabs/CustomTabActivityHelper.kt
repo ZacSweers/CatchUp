@@ -43,9 +43,8 @@ class CustomTabActivityHelper {
   /**
    * Opens the URL on a Custom Tab if possible; otherwise falls back to opening it via
    * `Intent.ACTION_VIEW`
-
+   *
    * @param customTabsIntent a CustomTabsIntent to be used if Custom Tabs is available
-   * *
    * @param uri the Uri to be opened
    */
   fun openCustomTab(context: Context, customTabsIntent: CustomTabsIntent, uri: Uri) {
@@ -66,7 +65,7 @@ class CustomTabActivityHelper {
 
   /**
    * Binds the Activity to the Custom Tabs Service
-
+   *
    * @param activity the activity to be bound to the service
    */
   fun bindCustomTabsService(activity: Activity) {
@@ -92,7 +91,7 @@ class CustomTabActivityHelper {
 
   /**
    * Unbinds the Activity from the Custom Tabs Service
-
+   *
    * @param activity the activity that is bound to the service
    */
   fun unbindCustomTabsService(activity: Activity) {
@@ -120,7 +119,6 @@ class CustomTabActivityHelper {
 
   /**
    * @return true if call to mayLaunchUrl was accepted
-   * *
    * @see {@link CustomTabsSession.mayLaunchUrl
    */
   fun mayLaunchUrl(uri: Uri, extras: Bundle, otherLikelyBundles: List<Bundle>): Boolean {
