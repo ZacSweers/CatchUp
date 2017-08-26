@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.ui.about
 
+import android.app.Activity
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.annotation.Px
@@ -40,7 +41,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
-import dagger.Provides
+import dagger.Binds
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.Scrollable
@@ -97,14 +98,12 @@ class AboutActivity : BaseActivity() {
   }
 
   @dagger.Module
-  object Module {
+  abstract class Module {
 
-    @Provides
-    @JvmStatic
+    @Binds
     @PerActivity
-    internal fun provideCustomTabActivityHelper(): CustomTabActivityHelper {
-      return CustomTabActivityHelper()
-    }
+    abstract fun provideActivity(activity: AboutActivity): Activity
+
   }
 }
 

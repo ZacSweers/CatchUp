@@ -38,16 +38,16 @@ abstract class ActivityBindingModule {
   @PerActivity
   @ContributesAndroidInjector(modules = arrayOf(
       UiModule::class,
+      SettingsActivity.SettingsActivityModule::class,
       SettingsFragmentBindingModule::class
   ))
   internal abstract fun settingsActivity(): SettingsActivity
 
   @PerActivity
-  @ContributesAndroidInjector(
-      modules = arrayOf(
-          UiModule::class,
-          AboutActivity.Module::class,
-          LicensesControllerBindingModule::class
-      ))
+  @ContributesAndroidInjector(modules = arrayOf(
+      UiModule::class,
+      AboutActivity.Module::class,
+      LicensesControllerBindingModule::class
+  ))
   internal abstract fun aboutActivity(): AboutActivity
 }

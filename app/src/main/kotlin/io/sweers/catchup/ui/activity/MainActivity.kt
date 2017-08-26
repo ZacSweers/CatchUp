@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.ui.activity
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.ViewGroup
 import butterknife.BindView
@@ -23,12 +24,9 @@ import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
-import com.f2prateek.rx.preferences2.Preference
-import dagger.Provides
-import io.sweers.catchup.P
+import dagger.Binds
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.controllers.PagerController
@@ -76,29 +74,11 @@ class MainActivity : BaseActivity() {
   }
 
   @dagger.Module
-  object Module {
+  abstract class Module {
 
-    @Provides
-    @JvmStatic
+    @Binds
     @PerActivity
-    internal fun provideCustomTabActivityHelper(): CustomTabActivityHelper {
-      return CustomTabActivityHelper()
-    }
+    abstract fun provideActivity(activity: MainActivity): Activity
 
-    @Provides
-    @SmartLinking
-    @JvmStatic
-    @PerActivity
-    internal fun provideSmartLinkingPref(): Preference<Boolean> {
-      return P.SmartlinkingGlobal.rx()
-    }
-
-    @Provides
-    @JvmStatic
-    @PerActivity
-    internal fun provideLinkManager(helper: CustomTabActivityHelper,
-        @SmartLinking linkingPref: Preference<Boolean>): LinkManager {
-      return LinkManager(helper, linkingPref)
-    }
   }
 }

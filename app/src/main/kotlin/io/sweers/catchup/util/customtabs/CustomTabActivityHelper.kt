@@ -26,6 +26,8 @@ import android.support.customtabs.CustomTabsClient
 import android.support.customtabs.CustomTabsIntent
 import android.support.customtabs.CustomTabsServiceConnection
 import android.support.customtabs.CustomTabsSession
+import io.sweers.catchup.injection.scopes.PerActivity
+import javax.inject.Inject
 
 /**
  * This is a helper class to manage the connection to the Custom Tabs Service and
@@ -33,7 +35,8 @@ import android.support.customtabs.CustomTabsSession
  *
  * Adapted from github.com/GoogleChrome/custom-tabs-client
  */
-class CustomTabActivityHelper {
+@PerActivity
+class CustomTabActivityHelper @Inject constructor() {
   private var customTabsSession: CustomTabsSession? = null
   private var client: CustomTabsClient? = null
   private var connection: CustomTabsServiceConnection? = null

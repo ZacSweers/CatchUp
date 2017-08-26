@@ -55,6 +55,7 @@ import javax.inject.Inject
  */
 @PerActivity
 class DebugViewContainer @Inject constructor(
+    private val bugReportLens: BugReportLens,
     private val lumberYard: LumberYard,
     private val lazyOkHttpClient: Lazy<OkHttpClient>) : ViewContainer {
   private val seenDebugDrawer = P.DebugSeenDebugDrawer.rx()
@@ -91,7 +92,7 @@ class DebugViewContainer @Inject constructor(
 
     viewHolder.telescopeLayout.setPointerCount(3)
     TelescopeLayout.cleanUp(activity) // Clean up any old screenshots.
-    viewHolder.telescopeLayout.setLens(BugReportLens(activity, lumberYard))
+    viewHolder.telescopeLayout.setLens(bugReportLens)
 
     // If you have not seen the debug drawer before, show it with a message
     if (!(seenDebugDrawer.get())) {

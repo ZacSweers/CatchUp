@@ -33,6 +33,7 @@ import butterknife.BindView
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.uber.autodispose.kotlin.autoDisposeWith
+import dagger.Binds
 import dagger.Module
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
@@ -46,6 +47,7 @@ import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.RemoteConfigKeys
+import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.ui.base.BaseActivity
@@ -117,6 +119,13 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
   }
 
   override fun fragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
+
+  @Module
+  abstract class SettingsActivityModule {
+    @Binds
+    @PerActivity
+    abstract fun provideActivity(activity: SettingsActivity): Activity
+  }
 
   class SettingsFrag : PreferenceFragment() {
 

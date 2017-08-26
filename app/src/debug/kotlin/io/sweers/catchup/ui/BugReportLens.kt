@@ -29,16 +29,19 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.BugReportDialog.ReportListener
 import io.sweers.catchup.ui.BugReportView.Report
 import io.sweers.catchup.util.maybeStartActivity
 import java.io.File
+import javax.inject.Inject
 
 /**
  * Pops a dialog asking for more information about the bug report and then creates an email with a
  * JIRA-formatted body.
  */
-class BugReportLens(private val context: Activity,
+@PerActivity
+class BugReportLens @Inject constructor(private val activity: Activity,
     private val lumberYard: LumberYard) : Lens(), ReportListener {
 
   private var screenshot: File? = null
@@ -46,7 +49,7 @@ class BugReportLens(private val context: Activity,
   override fun onCapture(screenshot: File?) {
     this.screenshot = screenshot
 
-    val dialog = BugReportDialog(context)
+    val dialog = BugReportDialog(activity)
     dialog.setReportListener(this)
     dialog.show()
   }
@@ -66,7 +69,7 @@ class BugReportLens(private val context: Activity,
             }
 
             override fun onError(e: Throwable) {
-              Toast.makeText(context, "Couldn't attach the logs.", Toast.LENGTH_SHORT).show()
+              Toast.makeText(activity, "Couldn't attach the logs.", Toast.LENGTH_SHORT).show()
               submitReport(report, null)
             }
           })
@@ -76,10 +79,10 @@ class BugReportLens(private val context: Activity,
   }
 
   private fun submitReport(report: Report, logs: File?) {
-    val dm = context.resources.displayMetrics
+    val dm = activity.resources.displayMetrics
     val densityBucket = getDensityString(dm)
 
-    val intent = ShareCompat.IntentBuilder.from(context).setType("message/rfc822")
+    val intent = ShareCompat.IntentBuilder.from(activity).setType("message/rfc822")
         // TODO: .addEmailTo("u2020-bugs@blackhole.io")
         .setSubject(report.title)
 
@@ -116,14 +119,14 @@ class BugReportLens(private val context: Activity,
 
     if (screenshot != null && report.includeScreenshot) {
       intent.addStream(TelescopeFileProvider
-          .getUriForFile(context.applicationContext, screenshot))
+          .getUriForFile(activity.applicationContext, screenshot))
     }
     if (logs != null) {
       intent.addStream(TelescopeFileProvider
-          .getUriForFile(context.applicationContext, logs))
+          .getUriForFile(activity.applicationContext, logs))
     }
 
-    context.maybeStartActivity(intent.intent)
+    activity.maybeStartActivity(intent.intent)
   }
 
   private fun getDensityString(displayMetrics: DisplayMetrics): String {

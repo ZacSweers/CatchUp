@@ -34,15 +34,19 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
+import io.sweers.catchup.P
 import io.sweers.catchup.R
-import io.sweers.catchup.injection.qualifiers.preferences.SmartLinking
+import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.rx.doOnEmpty
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
+import javax.inject.Inject
 
-class LinkManager(private val customTab: CustomTabActivityHelper,
-    @SmartLinking private val globalSmartLinkingPref: Preference<Boolean>)
+@PerActivity
+class LinkManager @Inject constructor(private val customTab: CustomTabActivityHelper)
   : Function<LinkManager.UrlMeta, Completable> {
+
+  private val globalSmartLinkingPref: Preference<Boolean> = P.SmartlinkingGlobal.rx()
 
   // Naive cache that tracks if we've already resolved for activities that can handle a given host
   // TODO Eventually replace this with something that's mindful of per-service prefs
