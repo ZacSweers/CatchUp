@@ -28,31 +28,90 @@ import dagger.android.DispatchingAndroidInjector
 import io.reactivex.Observable
 import io.reactivex.functions.Function
 import io.sweers.catchup.injection.HasControllerInjector
-import io.sweers.catchup.rx.doOn
-import io.sweers.catchup.ui.base.ActivityEvent.DESTROY
 import io.sweers.catchup.ui.ViewContainer
+import io.sweers.catchup.ui.base.ActivityEvent.CREATE
+import io.sweers.catchup.ui.base.ActivityEvent.DESTROY
+import io.sweers.catchup.ui.base.ActivityEvent.PAUSE
+import io.sweers.catchup.ui.base.ActivityEvent.RESUME
+import io.sweers.catchup.ui.base.ActivityEvent.START
+import io.sweers.catchup.ui.base.ActivityEvent.STOP
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity(),
     LifecycleScopeProvider<ActivityEvent>, HasControllerInjector {
 
-  protected fun <T> T.doOnDestroy(action: T.() -> Unit): T = apply {
-    lifecycle().doOn(DESTROY) { action() }
+  private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
+
+  protected inline fun <T, R> Observable<T>.doOnCreate(r: R,
+      crossinline action: R.() -> Unit): Observable<T> = apply {
+    doOnNext {
+      if (it == CREATE) {
+        r.action()
+      }
+    }
+  }
+
+  protected inline fun <T, R> Observable<T>.doOnStart(r: R,
+      crossinline action: R.() -> Unit): Observable<T> = apply {
+    doOnNext {
+      if (it == START) {
+        r.action()
+      }
+    }
+  }
+
+  protected inline fun <T, R> Observable<T>.doOnResume(r: R,
+      crossinline action: R.() -> Unit): Observable<T> = apply {
+    doOnNext {
+      if (it == RESUME) {
+        r.action()
+      }
+    }
+  }
+
+  protected inline fun <T, R> Observable<T>.doOnPause(r: R,
+      crossinline action: R.() -> Unit): Observable<T> = apply {
+    doOnNext {
+      if (it == PAUSE) {
+        r.action()
+      }
+    }
+  }
+
+  protected inline fun <T, R> Observable<T>.doOnStop(r: R,
+      crossinline action: R.() -> Unit): Observable<T> = apply {
+    doOnNext {
+      if (it == STOP) {
+        r.action()
+      }
+    }
+  }
+
+  protected inline fun <T, R> Observable<T>.doOnDestroy(r: R,
+      crossinline action: R.() -> Unit): Observable<T> = apply {
+    doOnNext {
+      if (it == DESTROY) {
+        r.action()
+      }
+    }
+  }
+
+  protected inline fun <T> T.doOnDestroy(crossinline action: T.() -> Unit): T = apply {
+    lifecycle().doOnDestroy(this) { action() }.subscribe()
   }
 
   @Inject protected lateinit var viewContainer: ViewContainer
   @Inject lateinit var controllerInjector: DispatchingAndroidInjector<Controller>
-  private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
 
-  @CheckResult override fun lifecycle(): Observable<ActivityEvent> {
+  @CheckResult override final fun lifecycle(): Observable<ActivityEvent> {
     return lifecycleRelay
   }
 
-  override fun correspondingEvents(): Function<ActivityEvent, ActivityEvent> {
+  override final fun correspondingEvents(): Function<ActivityEvent, ActivityEvent> {
     return ActivityEvent.LIFECYCLE
   }
 
-  override fun peekLifecycle(): ActivityEvent {
+  override final fun peekLifecycle(): ActivityEvent {
     return lifecycleRelay.value
   }
 

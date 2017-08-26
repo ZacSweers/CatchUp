@@ -41,6 +41,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
+import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.scopes.PerActivity
@@ -63,7 +64,14 @@ class AboutActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    customTab.doOnDestroy { connectionCallback = null }
+
+    lifecycle()
+        .doOnStart(customTab) { bindCustomTabsService(this@AboutActivity) }
+        .doOnStop(customTab) { unbindCustomTabsService(this@AboutActivity) }
+        .doOnDestroy(customTab) { connectionCallback = null }
+        .autoDisposeWith(this)
+        .subscribe()
+
     val viewGroup = viewContainer.forActivity(this)
     layoutInflater.inflate(R.layout.activity_about, viewGroup)
 
@@ -79,16 +87,6 @@ class AboutActivity : BaseActivity() {
       NavUtils.navigateUpFromSameTask(this)
     }
     return super.onOptionsItemSelected(item)
-  }
-
-  override fun onStart() {
-    super.onStart()
-    customTab.bindCustomTabsService(this)
-  }
-
-  override fun onStop() {
-    customTab.unbindCustomTabsService(this)
-    super.onStop()
   }
 
   override fun onBackPressed() {

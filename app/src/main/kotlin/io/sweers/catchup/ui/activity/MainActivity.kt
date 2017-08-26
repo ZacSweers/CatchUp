@@ -24,6 +24,7 @@ import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
+import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
@@ -44,7 +45,14 @@ class MainActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    customTab.doOnDestroy { connectionCallback = null }
+    lifecycle()
+        .doOnStart(linkManager) { connect(this@MainActivity) }
+        .doOnStart(customTab) { bindCustomTabsService(this@MainActivity) }
+        .doOnStop(customTab) { unbindCustomTabsService(this@MainActivity) }
+        .doOnDestroy(customTab) { connectionCallback = null }
+        .autoDisposeWith(this)
+        .subscribe()
+
     val viewGroup = viewContainer.forActivity(this)
     layoutInflater.inflate(R.layout.activity_main, viewGroup)
 
@@ -56,16 +64,6 @@ class MainActivity : BaseActivity() {
     }
   }
 
-  override fun onStart() {
-    super.onStart()
-    customTab.bindCustomTabsService(this)
-    linkManager.connect(this)
-  }
-
-  override fun onStop() {
-    customTab.unbindCustomTabsService(this)
-    super.onStop()
-  }
 
   override fun onBackPressed() {
     if (!router.handleBack()) {

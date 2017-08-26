@@ -22,36 +22,54 @@ import com.bluelinelabs.conductor.autodispose.ControllerEvent.DESTROY
 import com.bluelinelabs.conductor.autodispose.ControllerEvent.DESTROY_VIEW
 import com.bluelinelabs.conductor.autodispose.ControllerScopeProvider
 import com.uber.autodispose.LifecycleScopeProvider
+import io.reactivex.Observable
 import io.reactivex.functions.Function
-import io.sweers.catchup.rx.doOn
 
 abstract class AutoDisposeController
   : RefWatchingController, LifecycleScopeProvider<ControllerEvent> {
 
-  protected fun <T> T.doOnDestroyView(action: T.() -> Unit): T = apply {
-    lifecycle().doOn(DESTROY_VIEW) { action() }
-  }
-
-  protected fun <T> T.doOnDestroy(action: T.() -> Unit): T = apply {
-    lifecycle().doOn(DESTROY) { action() }
-  }
-
   @Suppress("LeakingThis")
   private val lifecycleProvider = ControllerScopeProvider.from(this)
+
+  protected inline fun <T, R> Observable<T>.doOnDestroyView(r: R,
+      crossinline action: R.() -> Unit): Observable<T> = apply {
+    doOnNext {
+      if (it == DESTROY_VIEW) {
+        r.action()
+      }
+    }
+  }
+
+  protected inline fun <T, R> Observable<T>.doOnDestroy(r: R,
+      crossinline action: R.() -> Unit): Observable<T> = apply {
+    doOnNext {
+      if (it == DESTROY) {
+        r.action()
+      }
+    }
+  }
+
+  protected inline fun <T> T.doOnDestroyView(crossinline action: T.() -> Unit): T = apply {
+    lifecycle().doOnDestroyView(this) { action() }.subscribe()
+  }
+
+  protected inline fun <T> T.doOnDestroy(crossinline action: T.() -> Unit): T = apply {
+    lifecycle().doOnDestroy(this) { action() }.subscribe()
+  }
 
   protected constructor() : super()
 
   protected constructor(args: Bundle) : super(args)
 
-  override fun lifecycle(): io.reactivex.Observable<ControllerEvent> {
+  override final fun lifecycle(): io.reactivex.Observable<ControllerEvent> {
     return lifecycleProvider.lifecycle()
   }
 
-  override fun correspondingEvents(): Function<ControllerEvent, ControllerEvent> {
+  override final fun correspondingEvents(): Function<ControllerEvent, ControllerEvent> {
     return lifecycleProvider.correspondingEvents()
   }
 
-  override fun peekLifecycle(): ControllerEvent? {
+  override final fun peekLifecycle(): ControllerEvent? {
     return lifecycleProvider.peekLifecycle()
   }
 }
