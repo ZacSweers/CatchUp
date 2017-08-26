@@ -17,11 +17,13 @@
 package io.sweers.catchup.ui.about
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.support.design.widget.Snackbar
 import android.support.v7.graphics.Palette
+import android.support.v7.graphics.Palette.Swatch
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.RxViewHolder
@@ -103,8 +105,9 @@ import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.dp2px
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.fastOutSlowInInterpolator
+import io.sweers.catchup.util.findSwatch
+import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.makeGone
-import io.sweers.catchup.util.orderedSwatches
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -300,6 +303,17 @@ class LicensesController : ButterKnifeController(), Scrollable {
       StickyHeaders, StickyHeaders.ViewSetup {
 
     private val items = mutableListOf<OssBaseItem>()
+    private val headerColorThresholdFun = { swatch: Swatch ->
+      if (activity?.isInNightMode() == true) {
+        swatch.hsl[2] > 0.6F
+      } else {
+        swatch.hsl[2] < 0.5F
+      }
+    }
+
+    private val defaultHeaderTextColor by lazy {
+      if (activity?.isInNightMode() == true) Color.WHITE else Color.BLACK
+    }
 
     override fun isStickyHeader(position: Int) = items[position] is OssItemHeader
 
@@ -312,11 +326,14 @@ class LicensesController : ButterKnifeController(), Scrollable {
     }
 
     override fun teardownStickyHeaderView(stickyHeader: View) {
-      stickyHeader.animate()
-          .z(0f)
-          .setInterpolator(fastOutSlowInInterpolator)
-          .setDuration(200)
-          .start()
+      with(stickyHeader) {
+        findViewById<TextView>(R.id.title).setTextColor(defaultHeaderTextColor)
+        animate()
+            .z(0f)
+            .setInterpolator(fastOutSlowInInterpolator)
+            .setDuration(200)
+            .start()
+      }
     }
 
     fun setItems(newItems: List<OssBaseItem>) {
@@ -347,9 +364,8 @@ class LicensesController : ButterKnifeController(), Scrollable {
                 }
 
                 override fun onGenerated(palette: Palette) {
-                  palette.orderedSwatches { it.hsl[2] < 0.5F }?.let {
-                    holder.title.setTextColor(it.rgb)
-                  }
+                  holder.title.setTextColor(
+                      palette.findSwatch(headerColorThresholdFun)?.rgb ?: defaultHeaderTextColor)
                 }
               })
           title.text = item.name

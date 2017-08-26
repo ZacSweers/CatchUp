@@ -47,8 +47,9 @@ object UiUtil {
       P.DaynightNight.get() -> AppCompatDelegate.MODE_NIGHT_YES
       else -> AppCompatDelegate.MODE_NIGHT_NO
     }
-    if ((nightMode != AppCompatDelegate.MODE_NIGHT_YES && isCurrentlyInNightMode)
-        || nightMode == AppCompatDelegate.MODE_NIGHT_YES && !isCurrentlyInNightMode) {
+    if (nightMode == AppCompatDelegate.MODE_NIGHT_AUTO
+        || (isCurrentlyInNightMode && nightMode != AppCompatDelegate.MODE_NIGHT_YES)
+        || !isCurrentlyInNightMode && nightMode == AppCompatDelegate.MODE_NIGHT_YES) {
       AppCompatDelegate.setDefaultNightMode(nightMode)
       activity.recreate()
     }
@@ -131,7 +132,7 @@ inline fun Palette.orderedSwatches(
   ).filterNotNull()
 }
 
-inline fun Palette.orderedSwatches(predicate: (Swatch) -> Boolean): Swatch? {
+inline fun Palette.findSwatch(predicate: (Swatch) -> Boolean): Swatch? {
   return listOf(
       darkVibrantSwatch,
       lightMutedSwatch,
