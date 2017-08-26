@@ -251,6 +251,10 @@ apollo {
   customTypeMapping['URI'] = "okhttp3.HttpUrl"
 }
 
+tasks.withType(JavaCompile) {
+  options.compilerArgs += [ '-Xep:MissingOverride:OFF' ]
+}
+
 def supportLibraries = configurations.create("supportImplementation")
 configurations.all {
   resolutionStrategy.eachDependency { DependencyResolveDetails details ->
