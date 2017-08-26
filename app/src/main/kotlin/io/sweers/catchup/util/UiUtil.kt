@@ -20,7 +20,6 @@ package io.sweers.catchup.util
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
-import android.app.Activity
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -31,27 +30,9 @@ import android.os.Build
 import android.support.annotation.ColorInt
 import android.support.annotation.FloatRange
 import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.support.v7.app.AppCompatDelegate
 import android.support.v7.graphics.Palette
-import io.sweers.catchup.P
 
 object UiUtil {
-
-  inline fun updateNightMode(activity: Activity) {
-    // TODO Why doesn't this work as an extension function? IDE doesn't see it
-    val isCurrentlyInNightMode = activity.isInNightMode()
-    val nightMode = when {
-      P.DaynightAuto.get() -> AppCompatDelegate.MODE_NIGHT_AUTO
-      P.DaynightNight.get() -> AppCompatDelegate.MODE_NIGHT_YES
-      else -> AppCompatDelegate.MODE_NIGHT_NO
-    }
-    if (nightMode == AppCompatDelegate.MODE_NIGHT_AUTO
-        || (isCurrentlyInNightMode && nightMode != AppCompatDelegate.MODE_NIGHT_YES)
-        || !isCurrentlyInNightMode && nightMode == AppCompatDelegate.MODE_NIGHT_YES) {
-      AppCompatDelegate.setDefaultNightMode(nightMode)
-      activity.recreate()
-    }
-  }
 
   /**
    * Creates a selector drawable that is API-aware. This will create a ripple for Lollipop+ and

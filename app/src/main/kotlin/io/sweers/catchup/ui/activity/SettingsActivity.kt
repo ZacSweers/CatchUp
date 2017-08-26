@@ -49,11 +49,11 @@ import io.sweers.catchup.data.RemoteConfigKeys
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.ui.base.BaseActivity
-import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.format
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
+import io.sweers.catchup.util.updateNightMode
 import java.io.File
 import javax.inject.Inject
 
@@ -160,12 +160,12 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
                 }
               }
               .apply()
-          UiUtil.updateNightMode(activity)
+          activity.updateNightMode()
           return true
         }
         P.DaynightNight.KEY -> {
           P.DaynightNight.put((preference as CheckBoxPreference).isChecked).apply()
-          UiUtil.updateNightMode(activity)
+          activity.updateNightMode()
           return true
         }
         P.ThemeNavigationBar.KEY -> {

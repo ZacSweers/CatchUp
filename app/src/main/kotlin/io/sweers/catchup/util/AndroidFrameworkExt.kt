@@ -19,6 +19,7 @@
 package io.sweers.catchup.util
 
 import android.annotation.TargetApi
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
@@ -26,13 +27,19 @@ import android.os.Build.VERSION_CODES
 import android.support.annotation.AttrRes
 import android.support.annotation.ColorInt
 import android.support.annotation.UiThread
+import android.support.v7.app.AppCompatDelegate
 import android.util.TypedValue
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.R.string
 import java.io.File
 import java.io.IOException
+
+/*
+ * Android framework extension functions for things like Context, Activity, Resources, etc
+ */
 
 fun Context.clearCache(): Long {
   return cleanDir(applicationContext.cacheDir)
@@ -122,6 +129,21 @@ inline fun Context.dp2px(dipValue: Float): Float {
 
 inline fun Resources.dp2px(dipValue: Float): Float {
   return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
+}
+
+inline fun Activity.updateNightMode() {
+  val isCurrentlyInNightMode = isInNightMode()
+  val nightMode = when {
+    P.DaynightAuto.get() -> AppCompatDelegate.MODE_NIGHT_AUTO
+    P.DaynightNight.get() -> AppCompatDelegate.MODE_NIGHT_YES
+    else -> AppCompatDelegate.MODE_NIGHT_NO
+  }
+  if (nightMode == AppCompatDelegate.MODE_NIGHT_AUTO
+      || (isCurrentlyInNightMode && nightMode != AppCompatDelegate.MODE_NIGHT_YES)
+      || !isCurrentlyInNightMode && nightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+    AppCompatDelegate.setDefaultNightMode(nightMode)
+    recreate()
+  }
 }
 
 @TargetApi(VERSION_CODES.M)
