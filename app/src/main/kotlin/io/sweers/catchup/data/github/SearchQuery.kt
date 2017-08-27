@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.github.model
+package io.sweers.catchup.data.github
 
 import com.google.auto.value.AutoValue
 import org.threeten.bp.LocalDate

@@ -20,20 +20,11 @@ import android.content.Context
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Operation
-import com.apollographql.apollo.api.ResponseField
 import com.apollographql.apollo.api.internal.Optional
 import com.apollographql.apollo.cache.http.DiskLruHttpCacheStore
 import com.apollographql.apollo.cache.http.HttpCache
 import com.apollographql.apollo.cache.http.HttpCachePolicy
 import com.apollographql.apollo.cache.http.HttpCacheStore
-import com.apollographql.apollo.cache.normalized.CacheKey
-import com.apollographql.apollo.cache.normalized.CacheKeyResolver
-import com.apollographql.apollo.cache.normalized.NormalizedCacheFactory
-import com.apollographql.apollo.cache.normalized.lru.EvictionPolicy
-import com.apollographql.apollo.cache.normalized.lru.LruNormalizedCacheFactory
-import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper
-import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo.internal.util.ApolloLogger
 import com.apollographql.apollo.rx2.Rx2Apollo
 import dagger.Lazy
@@ -47,34 +38,35 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.AuthInterceptor
 import io.sweers.catchup.data.CatchUpItem
+import io.sweers.catchup.data.CatchUpItem2
 import io.sweers.catchup.data.HttpUrlApolloAdapter
 import io.sweers.catchup.data.ISO8601InstantApolloAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.GitHubSearchQuery
+import io.sweers.catchup.data.github.SearchQuery
 import io.sweers.catchup.data.github.TrendingTimespan
-import io.sweers.catchup.data.github.model.Repository
-import io.sweers.catchup.data.github.model.SearchQuery
-import io.sweers.catchup.data.github.model.User
 import io.sweers.catchup.data.github.type.CustomType
 import io.sweers.catchup.data.github.type.LanguageOrder
 import io.sweers.catchup.data.github.type.LanguageOrderField
 import io.sweers.catchup.data.github.type.OrderDirection
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.ui.base.BaseNewsController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
+import io.sweers.catchup.ui.base.StorageBackedNewsController
 import io.sweers.catchup.util.collect.emptyIfNull
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
-import java.util.concurrent.TimeUnit.DAYS
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class GitHubController : BaseNewsController<CatchUpItem> {
+class GitHubController : StorageBackedNewsController {
 
   @Inject lateinit var apolloClient: ApolloClient
   @Inject lateinit var linkManager: LinkManager
+
+  // TODO Placeholder for a better solution later
+//  private var endCursor: String? = null
 
   constructor() : super()
 
@@ -88,7 +80,9 @@ class GitHubController : BaseNewsController<CatchUpItem> {
     holder.bind(this, item, linkManager)
   }
 
-  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<CatchUpItem>> {
+  override fun serviceType() = "gh"
+
+  override fun getDataFromService(page: Int): Single<List<CatchUpItem2>> {
     setMoreDataAvailable(false)
     val query = SearchQuery.builder()
         .createdSince(TrendingTimespan.WEEK.createdSince())
@@ -101,61 +95,35 @@ class GitHubController : BaseNewsController<CatchUpItem> {
         LanguageOrder.builder()
             .direction(OrderDirection.DESC)
             .field(LanguageOrderField.SIZE)
-            .build()))
-        .httpCachePolicy(
-            if (request.fromRefresh) {
-              HttpCachePolicy.NETWORK_FIRST.expireAfter(1, DAYS)
-            } else {
-              HttpCachePolicy.CACHE_FIRST
-            }
-        )
+            .build(),
+        null))
+        .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
 
     return Rx2Apollo.from(searchQuery)
-        .firstOrError() // TODO Do we want to handle multiple?
+        .firstOrError()
         .map { it.data()!! }
         .flatMap { data ->
+          //          with(data.search().pageInfo()) {
+//            endCursor = endCursor()
+//            if (endCursor == null) {
+//              setMoreDataAvailable(false)
+//            }
+//          }
           Observable.fromIterable(data.search().nodes().emptyIfNull())
               .map { it.asRepository()!! }
-              .map { node ->
-                var primaryLanguage: String? = null
-                val langs = node.languages()
-                if (langs?.nodes() != null) {
-                  val nodes = langs.nodes()
-                  if (nodes != null && !nodes.isEmpty()) {
-                    primaryLanguage = nodes[0].name()
-                  }
-                }
-                Repository.builder()
-                    .createdAt(node.createdAt())
-                    .fullName(node.name())
-                    .htmlUrl(node.url()
-                        .toString())
-                    .id(node.id()
-                        .hashCode().toLong())
-                    .language(primaryLanguage)
-                    .name(node.name())
-                    .owner(User.create(node.owner()
-                        .login()))
-                    .starsCount(node.stargazers()
-                        .totalCount())
-                    .description(node.description())
-                    .license(node.licenseInfo()?.name())
-                    .build()
-              }
-              // Should probably combine these, but I also like having separation here
               .map {
                 with(it) {
-                  CatchUpItem.builder()
-                      .id(id())
-                      .hideComments(true)
-                      .title("${fullName()} — ${description()}")
-                      .score(Pair("★", starsCount()))
-                      .timestamp(createdAt())
-                      .author(owner().login())
-                      .tag(language())
-                      .source(license())
-                      .itemClickUrl(htmlUrl())
-                      .build()
+                  CatchUpItem2(
+                      id = id().hashCode().toLong(),
+                      hideComments = true,
+                      title = "${name()} — ${description()}",
+                      score = kotlin.Pair("★", stargazers().totalCount()),
+                      timestamp = createdAt(),
+                      author = owner().login(),
+                      tag = languages()?.nodes()?.firstOrNull()?.name(),
+                      source = licenseInfo()?.name(),
+                      itemClickUrl = url().toString()
+                  )
                 }
               }
               .toList()
@@ -209,50 +177,13 @@ class GitHubController : BaseNewsController<CatchUpItem> {
     @Provides
     @JvmStatic
     @PerController
-    internal fun provideCacheKeyResolver(): CacheKeyResolver {
-      return object : CacheKeyResolver() {
-        private val formatter = { id: String ->
-          if (id.isEmpty()) {
-            CacheKey.NO_KEY
-          } else {
-            CacheKey.from(id)
-          }
-        }
-
-        override fun fromFieldRecordSet(field: ResponseField,
-            objectSource: Map<String, Any>) = CacheKey.NO_KEY
-
-        override fun fromFieldArguments(field: ResponseField,
-            variables: Operation.Variables): CacheKey {
-          // TODO how can we force this to be fresh on user refresh?
-          return formatter(field.resolveArgument("queryString", variables) as String)
-        }
-      }
-    }
-
-    @Provides
-    @JvmStatic
-    @PerController
-    internal fun provideNormalizedCacheFactory(
-        @ApplicationContext context: Context): NormalizedCacheFactory<*> {
-      val apolloSqlHelper = ApolloSqlHelper(context, "githubdb")
-      return LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION,
-          SqlNormalizedCacheFactory(apolloSqlHelper))
-    }
-
-    @Provides
-    @JvmStatic
-    @PerController
     internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
-        cacheFactory: NormalizedCacheFactory<*>,
-        resolver: CacheKeyResolver,
         httpCacheStore: HttpCacheStore): ApolloClient {
       return ApolloClient.builder()
           .serverUrl(SERVER_URL)
           .httpCacheStore(httpCacheStore)
           .okHttpClient(client.get())
 //          .callFactory { client.get().newCall(it) }
-          .normalizedCache(cacheFactory, resolver)
           .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
           .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())
           .build()

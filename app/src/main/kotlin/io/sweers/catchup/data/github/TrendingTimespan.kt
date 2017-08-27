@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.data.github
 
-import io.sweers.catchup.data.github.model.SearchQuery
 import org.threeten.bp.LocalDate
 import org.threeten.bp.temporal.ChronoUnit
 import org.threeten.bp.temporal.TemporalUnit
