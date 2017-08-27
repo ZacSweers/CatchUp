@@ -31,7 +31,6 @@ import io.reactivex.functions.BiFunction
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpItem
-import io.sweers.catchup.data.CatchUpItem2
 import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.designernews.DesignerNewsService
@@ -68,7 +67,7 @@ class DesignerNewsController : StorageBackedNewsController {
     holder.bind(this, item, linkManager)
   }
 
-  override fun getDataFromService(page: Int): Single<List<CatchUpItem2>> {
+  override fun getDataFromService(page: Int): Single<List<CatchUpItem>> {
     return service.getTopStories(page)
         .flatMapObservable { stories ->
           Observable.zip(
@@ -87,7 +86,7 @@ class DesignerNewsController : StorageBackedNewsController {
         }
         .map { (story, user) ->
           with(story) {
-            CatchUpItem2(
+            CatchUpItem(
                 id = java.lang.Long.parseLong(id()),
                 title = title(),
                 score = Pair("▲", voteCount()),

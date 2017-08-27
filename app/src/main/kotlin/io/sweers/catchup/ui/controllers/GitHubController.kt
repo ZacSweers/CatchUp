@@ -38,7 +38,6 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.AuthInterceptor
 import io.sweers.catchup.data.CatchUpItem
-import io.sweers.catchup.data.CatchUpItem2
 import io.sweers.catchup.data.HttpUrlApolloAdapter
 import io.sweers.catchup.data.ISO8601InstantApolloAdapter
 import io.sweers.catchup.data.LinkManager
@@ -82,7 +81,7 @@ class GitHubController : StorageBackedNewsController {
 
   override fun serviceType() = "gh"
 
-  override fun getDataFromService(page: Int): Single<List<CatchUpItem2>> {
+  override fun getDataFromService(page: Int): Single<List<CatchUpItem>> {
     setMoreDataAvailable(false)
     val query = SearchQuery.builder()
         .createdSince(TrendingTimespan.WEEK.createdSince())
@@ -113,7 +112,7 @@ class GitHubController : StorageBackedNewsController {
               .map { it.asRepository()!! }
               .map {
                 with(it) {
-                  CatchUpItem2(
+                  CatchUpItem(
                       id = id().hashCode().toLong(),
                       hideComments = true,
                       title = "${name()} — ${description()}",

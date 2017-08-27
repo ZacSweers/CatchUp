@@ -28,7 +28,7 @@ import org.threeten.bp.Instant
 
 @Database(entities = arrayOf(
     ServicePage::class,
-    CatchUpItem2::class,
+    CatchUpItem::class,
     SmmryStorageEntry::class),
     version = 1)
 @TypeConverters(CatchUpConverters::class)

@@ -30,7 +30,6 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.AuthInterceptor
 import io.sweers.catchup.data.CatchUpItem
-import io.sweers.catchup.data.CatchUpItem2
 import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.producthunt.ProductHuntService
@@ -64,12 +63,12 @@ class ProductHuntController : StorageBackedNewsController {
     holder.bind(this, item, linkManager)
   }
 
-  override fun getDataFromService(page: Int): Single<List<CatchUpItem2>> {
+  override fun getDataFromService(page: Int): Single<List<CatchUpItem>> {
     return service.getPosts(page)
         .flattenAsObservable { it }
         .map {
           with(it) {
-            CatchUpItem2(
+            CatchUpItem(
                 id = id(),
                 title = name(),
                 score = Pair("▲", votes_count()),

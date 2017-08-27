@@ -27,7 +27,6 @@ import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpItem
-import io.sweers.catchup.data.CatchUpItem2
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.slashdot.SlashdotService
 import io.sweers.catchup.injection.scopes.PerController
@@ -61,13 +60,13 @@ class SlashdotController : StorageBackedNewsController {
     holder.bind(this, item, linkManager)
   }
 
-  override fun getDataFromService(page: Int): Single<List<CatchUpItem2>> {
+  override fun getDataFromService(page: Int): Single<List<CatchUpItem>> {
     setMoreDataAvailable(false)
     return service.main()
         .map { it.itemList }
         .flattenAsObservable { it }
         .map { item ->
-          CatchUpItem2(
+          CatchUpItem(
               id = item.id.hashCode().toLong(),
               title = item.title.unescapeJavaString(),
               score = null,

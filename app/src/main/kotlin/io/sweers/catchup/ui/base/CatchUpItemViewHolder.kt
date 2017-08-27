@@ -64,15 +64,15 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
   }
 
   fun bind(controller: ServiceController, item: CatchUpItem, linkManager: LinkManager? = null) {
-    title(item.title())
-    score(item.score())
-    timestamp(item.timestamp())
-    author(item.author())
-    source(item.source())
-    comments(item.commentCount())
-    tag(item.tag())
+    title(item.title)
+    score(item.score)
+    timestamp(item.timestamp)
+    author(item.author)
+    source(item.source)
+    comments(item.commentCount)
+    tag(item.tag)
 
-    val itemClickUrl = item.itemClickUrl() ?: item.itemCommentClickUrl()
+    val itemClickUrl = item.itemClickUrl ?: item.itemCommentClickUrl
     itemClickUrl?.let {
       itemClicks()
           .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
@@ -80,7 +80,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
           .autoDisposeWith(this)
           .subscribe()
     }
-    item.itemCommentClickUrl()?.let {
+    item.itemCommentClickUrl?.let {
       itemCommentClicks()
           .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
           .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
@@ -88,7 +88,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
           .subscribe()
     } ?: hideComments()
 
-    if (item.hideComments()) {
+    if (item.hideComments) {
       hideComments()
     }
   }

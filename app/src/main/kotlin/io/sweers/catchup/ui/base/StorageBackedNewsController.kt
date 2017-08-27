@@ -23,7 +23,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.CatchUpItem
-import io.sweers.catchup.data.CatchUpItem2
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.data.ServicePage
 import org.threeten.bp.Instant
@@ -41,7 +40,7 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
 
   constructor(args: Bundle) : super(args)
 
-  protected abstract fun getDataFromService(page: Int): Single<List<CatchUpItem2>>
+  protected abstract fun getDataFromService(page: Int): Single<List<CatchUpItem>>
 
   protected abstract fun serviceType(): String
 
@@ -51,18 +50,17 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
       Observable.range(0, request.page)
           .concatMapEager { this.getPage(it).toObservable() }
           .collectInto(mutableListOf<CatchUpItem>()) { list, collection ->
-            list.addAll(collection.map { CatchUpItem.from(it) })
+            list.addAll(collection)
           }
           .map { it } // Weird
     } else {
       getPage(request.page, request.fromRefresh)
           .flattenAsObservable { it }
-          .map { CatchUpItem.from(it) }
           .toList()
     }
   }
 
-  private fun getPage(page: Int, isRefresh: Boolean = false): Single<List<CatchUpItem2>> {
+  private fun getPage(page: Int, isRefresh: Boolean = false): Single<List<CatchUpItem>> {
     // If not refresh
     // If it's page 0, save session ID
     // If it's not page 0, use prev ID
@@ -76,7 +74,7 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
   }
 
   private fun fetchPageFromLocal(page: Int,
-      useLatest: Boolean = false): Maybe<List<CatchUpItem2>> {
+      useLatest: Boolean = false): Maybe<List<CatchUpItem>> {
     return with(dao) {
       if (page == 0 && useLatest) {
         getFirstServicePage(serviceType())
@@ -104,7 +102,7 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
         }
   }
 
-  private fun fetchPageFromNetwork(page: Int, isRefresh: Boolean): Single<List<CatchUpItem2>> {
+  private fun fetchPageFromNetwork(page: Int, isRefresh: Boolean): Single<List<CatchUpItem>> {
     return getDataFromService(page)
         .doOnSuccess { posts ->
           Completable.fromAction {
