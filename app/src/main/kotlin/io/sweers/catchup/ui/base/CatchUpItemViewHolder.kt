@@ -63,7 +63,11 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
     unbinder = ButterKnife.bind(this, itemView)
   }
 
-  fun bind(controller: ServiceController, item: CatchUpItem, linkManager: LinkManager? = null) {
+  fun bind(controller: ServiceController,
+      item: CatchUpItem,
+      linkManager: LinkManager? = null,
+      itemClickHandler: ((String) -> Unit)? = null,
+      commentClickHandler: ((String) -> Unit)? = null) {
     title(item.title)
     score(item.score)
     timestamp(item.timestamp)
@@ -74,18 +78,26 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
 
     val itemClickUrl = item.itemClickUrl ?: item.itemCommentClickUrl
     itemClickUrl?.let {
-      itemClicks()
-          .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
-          .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
-          .autoDisposeWith(this)
-          .subscribe()
+      if (itemClickHandler != null) {
+        itemClickHandler(it)
+      } else {
+        itemClicks()
+            .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
+            .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
+            .autoDisposeWith(this)
+            .subscribe()
+      }
     }
     item.itemCommentClickUrl?.let {
-      itemCommentClicks()
-          .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
-          .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
-          .autoDisposeWith(this)
-          .subscribe()
+      if (commentClickHandler != null) {
+        commentClickHandler(it)
+      } else {
+        itemCommentClicks()
+            .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
+            .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
+            .autoDisposeWith(this)
+            .subscribe()
+      }
     } ?: hideComments()
 
     if (item.hideComments) {
