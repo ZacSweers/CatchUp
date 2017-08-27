@@ -135,7 +135,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
   override fun onAttach(view: View) {
     super.onAttach(view)
     swipeRefreshLayout.isEnabled = false
-    loadData()
+    if (adapter.itemCount == 0) {
+      // What's the right way to do this in Conductor? This will always be called after onresume
+      loadData()
+    }
   }
 
   override fun onDetach(view: View) {
