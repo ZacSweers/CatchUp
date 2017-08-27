@@ -31,17 +31,17 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
+import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.EpochInstantJsonAdapter
 import io.sweers.catchup.data.InspectorConverterFactory
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
 import io.sweers.catchup.data.medium.MediumService
 import io.sweers.catchup.data.medium.model.MediumPost
 import io.sweers.catchup.data.medium.model.Post
 import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.ui.base.BaseNewsController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
+import io.sweers.catchup.ui.base.StorageBackedNewsController
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class MediumController : BaseNewsController<MediumPost> {
+class MediumController : StorageBackedNewsController {
 
   @Inject lateinit var linkManager: LinkManager
   @Inject lateinit var remoteConfig: FirebaseRemoteConfig
@@ -65,58 +65,27 @@ class MediumController : BaseNewsController<MediumPost> {
     return ContextThemeWrapper(context, R.style.CatchUp_Medium)
   }
 
-  override fun bindItemView(item: MediumPost, holder: CatchUpItemViewHolder) {
-    holder.run {
-      title(item.post().title())
-
-      score(Pair(
-          "\u2665\uFE0E", // Because lol: https://code.google.com/p/android/issues/detail?id=231068
-          item.post()
-              .virtuals()
-              .recommends()))
-      timestamp(item.post()
-          .createdAt())
-
-      author(item.user()
-          .name())
-
-      tag(item.collection()?.name())
-
-      comments(item.post()
-          .virtuals()
-          .responsesCreatedCount())
-      source(null)
-
-      item.constructUrl().let {
-        if (remoteConfig.getBoolean(SMMRY_ENABLED)
-            && SmmryController.canSummarize(it)) {
-          itemLongClicks()
-              .autoDisposeWith(this)
-              .subscribe(SmmryController.showFor<Any>(
-                  this@MediumController,
-                  it,
-                  item.post()
-                      .title()))
-        }
+  override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
+    holder.bind(this, item, linkManager)
+    item.itemClickUrl?.let {
+      if (remoteConfig.getBoolean(SMMRY_ENABLED)
+          && SmmryController.canSummarize(it)) {
+        holder.itemLongClicks()
+            .autoDisposeWith(this)
+            .subscribe(SmmryController.showFor<Any>(
+                this@MediumController,
+                it,
+                item.title))
       }
-
-      itemClicks()
-          .compose<UrlMeta>(transformUrlToMeta<Any>(item.constructUrl()))
-          .flatMapCompletable(linkManager)
-          .autoDisposeWith(this)
-          .subscribe()
-      itemCommentClicks()
-          .compose<UrlMeta>(transformUrlToMeta<Any>(item.constructCommentsUrl()))
-          .flatMapCompletable(linkManager)
-          .autoDisposeWith(this)
-          .subscribe()
     }
   }
 
-  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<MediumPost>> {
+  override fun serviceType() = "medium"
+
+  override fun getDataFromService(page: Int): Single<List<CatchUpItem>> {
     setMoreDataAvailable(false)
     return service.top()
-        .flatMap { references ->
+        .concatMapEager { references ->
           Observable.fromIterable<Post>(references.post()
               .values)
               .map { post ->
@@ -127,6 +96,23 @@ class MediumController : BaseNewsController<MediumPost> {
                     .collection(references.collection()[post.homeCollectionId()])
                     .build()
               }
+        }
+        .map {
+          with(it) {
+            CatchUpItem(
+                id = post().id().hashCode().toLong(),
+                title = post().title(),
+                score = Pair(
+                    "\u2665\uFE0E", // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+                    post().virtuals().recommends()),
+                timestamp = post().createdAt(),
+                author = user().name(),
+                commentCount = post().virtuals().responsesCreatedCount(),
+                tag = collection()?.name(),
+                itemClickUrl = constructUrl(),
+                itemCommentClickUrl = constructCommentsUrl()
+            )
+          }
         }
         .toList()
   }
