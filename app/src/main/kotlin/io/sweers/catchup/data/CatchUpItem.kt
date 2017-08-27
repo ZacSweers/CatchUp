@@ -22,8 +22,6 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 import android.arch.persistence.room.PrimaryKey
 import android.arch.persistence.room.Query
-import android.arch.persistence.room.TypeConverter
-import android.arch.persistence.room.TypeConverters
 import android.support.annotation.Keep
 import com.google.auto.value.AutoValue
 import io.reactivex.Maybe
@@ -31,14 +29,11 @@ import io.sweers.catchup.ui.base.HasStableId
 import org.threeten.bp.Instant
 
 @Dao
-//@TypeConverters(arrayOf(InstantConverter::class, PairConverter::class)) // Why doesn't this work?
 interface ServiceDao {
 
-  @TypeConverters(InstantConverter::class)
   @Query("SELECT * FROM pages WHERE type = :type AND page = 0 AND expiration > :expiration")
   fun getFirstServicePage(type: String, expiration: Instant): Maybe<ServicePage>
 
-  @TypeConverters(InstantConverter::class)
   @Query("SELECT * FROM pages WHERE type = :type AND page = 0 ORDER BY expiration DESC")
   fun getFirstServicePage(type: String): Maybe<ServicePage>
 
@@ -68,42 +63,6 @@ interface ServiceDao {
 
 }
 
-internal class InstantConverter {
-  @TypeConverter
-  fun toInstant(timestamp: Long?): Instant? {
-    return timestamp?.let { Instant.ofEpochMilli(it) }
-  }
-
-  @TypeConverter
-  fun toTimestamp(instant: Instant?): Long? {
-    return instant?.toEpochMilli()
-  }
-}
-
-internal class PairConverter {
-  @TypeConverter
-  fun toPair(pairString: String?): Pair<String, Int>? {
-    return pairString?.let { it.split(",").let { Pair(it[0], it[1].toInt()) } }
-  }
-
-  @TypeConverter
-  fun toPairString(pair: Pair<String, Int>?): String? {
-    return pair?.let { "${pair.first},${pair.second}" }
-  }
-}
-
-internal class ListConverter {
-  @TypeConverter
-  fun toList(listString: String?): List<Long>? {
-    return listString?.let { it.split(",").asSequence().toList().map { it.toLong() } }
-  }
-
-  @TypeConverter
-  fun toListString(list: List<Long>?): String? {
-    return list?.joinToString(",")
-  }
-}
-
 @Keep
 @Entity(tableName = "pages")
 data class ServicePage(
@@ -112,10 +71,10 @@ data class ServicePage(
      */
     @PrimaryKey val id: String,
     val type: String,
-    @field:TypeConverters(InstantConverter::class) val expiration: Instant,
+    val expiration: Instant,
     val sessionId: Long = -1,
     val page: Int = 0,
-    @field:TypeConverters(ListConverter::class) val items: List<Long>
+    val items: List<Long>
 )
 
 @Keep
@@ -123,8 +82,8 @@ data class ServicePage(
 data class CatchUpItem2(
     @PrimaryKey var id: Long,
     val title: String,
-    @field:TypeConverters(InstantConverter::class) val timestamp: Instant,
-    @field:TypeConverters(PairConverter::class) val score: Pair<String, Int>? = null,
+    val timestamp: Instant,
+    val score: Pair<String, Int>? = null,
     val tag: String? = null,
     val author: String? = null,
     val source: String? = null,

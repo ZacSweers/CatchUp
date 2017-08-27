@@ -19,15 +19,19 @@ package io.sweers.catchup.data
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.TypeConverter
+import android.arch.persistence.room.TypeConverters
 import android.content.Context
 import io.sweers.catchup.ui.controllers.SmmryDao
 import io.sweers.catchup.ui.controllers.SmmryStorageEntry
+import org.threeten.bp.Instant
 
 @Database(entities = arrayOf(
     ServicePage::class,
     CatchUpItem2::class,
     SmmryStorageEntry::class),
     version = 1)
+@TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {
 
   abstract fun serviceDao(): ServiceDao
@@ -44,5 +48,41 @@ abstract class CatchUpDatabase : RoomDatabase() {
           .build()
           .also { INSTANCE = it }
     }
+  }
+}
+
+internal class CatchUpConverters {
+
+  // Instant
+  @TypeConverter
+  fun toInstant(timestamp: Long?): Instant? {
+    return timestamp?.let { Instant.ofEpochMilli(it) }
+  }
+
+  @TypeConverter
+  fun toTimestamp(instant: Instant?): Long? {
+    return instant?.toEpochMilli()
+  }
+
+  // List<Long>
+  @TypeConverter
+  fun toList(listString: String?): List<Long>? {
+    return listString?.let { it.split(",").asSequence().toList().map { it.toLong() } }
+  }
+
+  @TypeConverter
+  fun toListString(list: List<Long>?): String? {
+    return list?.joinToString(",")
+  }
+
+  // Pair<String, Int>
+  @TypeConverter
+  fun toPair(pairString: String?): Pair<String, Int>? {
+    return pairString?.let { it.split(",").let { Pair(it[0], it[1].toInt()) } }
+  }
+
+  @TypeConverter
+  fun toPairString(pair: Pair<String, Int>?): String? {
+    return pair?.let { "${pair.first},${pair.second}" }
   }
 }
