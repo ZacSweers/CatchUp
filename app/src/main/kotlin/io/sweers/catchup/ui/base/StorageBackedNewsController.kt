@@ -44,7 +44,8 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
 
   protected abstract fun serviceType(): String
 
-  override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<CatchUpItem>> {
+  override final fun getDataSingle(
+      request: BaseNewsController.DataRequest): Single<List<CatchUpItem>> {
     return if (request.multipage) {
       // Backfill pages
       Observable.range(0, request.page)
