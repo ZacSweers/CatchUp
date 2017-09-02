@@ -51,8 +51,6 @@ import com.apollographql.apollo.cache.normalized.CacheKeyResolver
 import com.apollographql.apollo.cache.normalized.NormalizedCacheFactory
 import com.apollographql.apollo.cache.normalized.lru.EvictionPolicy
 import com.apollographql.apollo.cache.normalized.lru.LruNormalizedCacheFactory
-import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper
-import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo.internal.util.ApolloLogger
 import com.apollographql.apollo.rx2.Rx2Apollo
 import com.bluelinelabs.conductor.Controller
@@ -649,9 +647,7 @@ internal object LicensesModule {
   @PerController
   internal fun provideNormalizedCacheFactory(
       @ApplicationContext context: Context): NormalizedCacheFactory<*> {
-    val apolloSqlHelper = ApolloSqlHelper(context, "aboutdb")
-    return LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION,
-        SqlNormalizedCacheFactory(apolloSqlHelper))
+    return LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION)
   }
 
   @Provides

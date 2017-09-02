@@ -16,7 +16,7 @@
 
 def versions = [
     androidTestSupport: '0.4.1',
-    apollo: '0.4.0',
+    apollo: '0.4.1',
     archComponents: '1.0.0-alpha9',
     autodispose: '0.2.0',
     avFirebase: '1.1.0',
@@ -26,11 +26,12 @@ def versions = [
     chuck: '1.1.0',
     conductor: '2.1.4',
     dagger: '2.11',
+    errorProne: '2.1.1',
     espresso: '2.2.1',
     firebase: '11.0.4',
-    glide: '4.0.0',
+    glide: '4.1.0',
     inspector: '0.2.0',
-    kotlin: '1.1.4-2',
+    kotlin: '1.1.4-3',
     leakcanary: '1.5.1',
     okhttp: '3.8.1',
     playServices: '11.0.4',
@@ -70,7 +71,7 @@ ext.deps = [
             gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.1',
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-beta2',
+        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-beta4',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
@@ -98,10 +99,10 @@ ext.deps = [
         value: [
             apt: [
                 core: 'com.google.auto.value:auto-value:1.5',
-                annotations: 'com.jakewharton.auto.value:auto-value-annotations:1.4'
+                annotations: 'com.jakewharton.auto.value:auto-value-annotations:1.5'
             ],
             compileOnly: [
-                annotations: 'com.jakewharton.auto.value:auto-value-annotations:1.4'
+                annotations: 'com.jakewharton.auto.value:auto-value-annotations:1.5'
             ],
             extensions: [
                 firebase: [
@@ -195,10 +196,10 @@ ext.deps = [
 
     errorProne: [
         build: [
-            core: 'com.google.errorprone:error_prone_core:2.0.21'
+            core: "com.google.errorprone:error_prone_core:${versions.errorProne}"
         ],
         compileOnly: [
-            annotations: 'com.google.errorprone:error_prone_annotations:2.0.21'
+            annotations: "com.google.errorprone:error_prone_annotations:${versions.errorProne}"
         ],
         gradlePlugin: 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.10'
     ],
@@ -326,6 +327,6 @@ ext.deps = [
         ],
         junit: 'junit:junit:4.12',
         robolectric: 'org.robolectric:robolectric:3.2.2',
-        truth: 'com.google.truth:truth:0.34'
+        truth: 'com.google.truth:truth:0.35'
     ]
 ]
