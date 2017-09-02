@@ -71,7 +71,7 @@ class MediumController : StorageBackedNewsController {
       if (remoteConfig.getBoolean(SMMRY_ENABLED)
           && SmmryController.canSummarize(it)) {
         holder.itemLongClicks()
-            .autoDisposeWith(this)
+            .autoDisposeWith(holder)
             .subscribe(SmmryController.showFor<Any>(
                 this@MediumController,
                 it,
