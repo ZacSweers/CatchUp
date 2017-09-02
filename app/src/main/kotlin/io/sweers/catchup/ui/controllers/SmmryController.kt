@@ -120,6 +120,7 @@ class SmmryController : ButterKnifeController {
               || it.contains("streamable")
               || it.contains("gfycat")
               || it.contains("i.reddit")
+              || it.contains("v.reddit")
               || it.contains("youtube")
               || it.contains("youtu.be"))
             return false
