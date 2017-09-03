@@ -61,7 +61,7 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
   override fun bindItemView(item: HackerNewsStory, holder: CatchUpItemViewHolder) {
     holder.run {
       title(item.title())
-      score(Pair("+", item.score()))
+      score("+" to item.score())
       timestamp(item.time())
       author(item.by())
 

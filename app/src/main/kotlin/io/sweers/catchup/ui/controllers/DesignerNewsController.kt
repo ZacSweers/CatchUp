@@ -89,7 +89,7 @@ class DesignerNewsController : StorageBackedNewsController {
             CatchUpItem(
                 id = java.lang.Long.parseLong(id()),
                 title = title(),
-                score = Pair("▲", voteCount()),
+                score = "▲" to voteCount(),
                 timestamp = createdAt(),
                 author = user?.displayName(),
                 source = hostname(),

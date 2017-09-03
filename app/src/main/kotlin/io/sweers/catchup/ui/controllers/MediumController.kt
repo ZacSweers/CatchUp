@@ -102,9 +102,9 @@ class MediumController : StorageBackedNewsController {
             CatchUpItem(
                 id = post().id().hashCode().toLong(),
                 title = post().title(),
-                score = Pair(
-                    "\u2665\uFE0E", // Because lol: https://code.google.com/p/android/issues/detail?id=231068
-                    post().virtuals().recommends()),
+                score =
+                    "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+                    to post().virtuals().recommends(),
                 timestamp = post().createdAt(),
                 author = user().name(),
                 commentCount = post().virtuals().responsesCreatedCount(),

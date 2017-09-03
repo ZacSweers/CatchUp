@@ -274,7 +274,7 @@ class AboutController : ButterKnifeController() {
         .filter { it[1] != it[0] }
         .map {
           // Map to a direction
-          Pair(it[1], ScrollDirection.resolve(it[1], it[0]))
+          it[1] to ScrollDirection.resolve(it[1], it[0])
         }
         .subscribe { (offset, _) ->
           // Note: Direction is unused for now but left because this was neat

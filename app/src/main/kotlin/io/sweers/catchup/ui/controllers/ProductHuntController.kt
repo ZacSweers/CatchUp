@@ -71,7 +71,7 @@ class ProductHuntController : StorageBackedNewsController {
             CatchUpItem(
                 id = id(),
                 title = name(),
-                score = Pair("▲", votes_count()),
+                score = "▲" to votes_count(),
                 timestamp = created_at(),
                 author = user().name(),
                 tag = firstTopic,

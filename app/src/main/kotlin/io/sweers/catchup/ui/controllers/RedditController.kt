@@ -67,7 +67,7 @@ class RedditController : BaseNewsController<RedditLink> {
     holder.run {
       title(item.title())
 
-      score(Pair("+", item.score()))
+      score("+" to item.score())
       timestamp(item.createdUtc())
       author("/u/" + item.author())
 

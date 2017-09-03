@@ -203,7 +203,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
               .firstOrError()
               .map {
                 with(it.data()!!.repository()!!) {
-                  kotlin.Pair(id(), owner().id())
+                  id() to owner().id()
                 }
               }
               .subscribeOn(Schedulers.io())
@@ -229,9 +229,9 @@ class LicensesController : ButterKnifeController(), Scrollable {
                   .reduce(mutableMapOf()) { map, node ->
                     map.apply {
                       val (id, name) = node.asOrganization()?.let {
-                        Pair(it.id(), it.name() ?: it.login())
+                        it.id() to (it.name() ?: it.login())
                       } ?: with(node.asUser()!!) {
-                        kotlin.Pair(id(), name() ?: login())
+                        id() to (name() ?: login())
                       }
                       map.put(id, name)
                     }
@@ -239,7 +239,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
               // Map the repos and their corresponding user display name into a list of their pairs
               BiFunction { nodes: List<AsRepository>, userIdToNameMap: Map<String, String> ->
                 nodes.map {
-                  Pair(it, userIdToNameMap[it.owner().id()]!!)
+                  it to userIdToNameMap[it.owner().id()]!!
                 }
               })
         }

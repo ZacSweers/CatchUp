@@ -38,8 +38,8 @@ abstract class Images {
 
   companion object {
 
-    private val NORMAL_IMAGE_SIZE = Pair(400, 300)
-    private val TWO_X_IMAGE_SIZE = Pair(800, 600)
+    private val NORMAL_IMAGE_SIZE = 400 to 300
+    private val TWO_X_IMAGE_SIZE = 800 to 600
 
     @JvmStatic
     fun jsonAdapter(moshi: Moshi): JsonAdapter<Images> {

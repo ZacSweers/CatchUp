@@ -78,7 +78,7 @@ internal class CatchUpConverters {
   // Pair<String, Int>
   @TypeConverter
   fun toPair(pairString: String?): Pair<String, Int>? {
-    return pairString?.let { it.split(",").let { Pair(it[0], it[1].toInt()) } }
+    return pairString?.let { it.split(",").let { it[0] to it[1].toInt() } }
   }
 
   @TypeConverter

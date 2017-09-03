@@ -116,7 +116,7 @@ class GitHubController : StorageBackedNewsController {
                       id = id().hashCode().toLong(),
                       hideComments = true,
                       title = "${name()} — ${description()}",
-                      score = kotlin.Pair("★", stargazers().totalCount()),
+                      score = "★" to stargazers().totalCount(),
                       timestamp = createdAt(),
                       author = owner().login(),
                       tag = languages()?.nodes()?.firstOrNull()?.name(),
