@@ -29,7 +29,7 @@ def versions = [
     errorProne: '2.1.1',
     espresso: '2.2.1',
     firebase: '11.0.4',
-    glide: '4.1.0',
+    glide: '4.0.0',
     inspector: '0.2.0',
     kotlin: '1.1.4-3',
     leakcanary: '1.5.1',
