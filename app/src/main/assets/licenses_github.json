@@ -146,5 +146,13 @@
   {
     "owner": "simple-icons",
     "name": "simple-icons"
+  },
+  {
+    "owner": "PaulWoitaschek",
+    "name": "Slimber"
+  },
+  {
+    "owner": "GoogleChrome",
+    "name": "custom-tabs-client"
   }
 ]

@@ -4,72 +4,63 @@
     "author": "Android",
     "name": "AppCompat",
     "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/v7/appcompat/",
-    "license": "Apache License 2.0",
-    "description": ""
+    "license": "Apache License 2.0"
   },
   {
     "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
     "author": "Android",
     "name": "Custom Tabs",
     "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/customtabs/",
-    "license": "Apache License 2.0",
-    "description": ""
+    "license": "Apache License 2.0"
   },
   {
     "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
     "author": "Android",
     "name": "Design",
     "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/design/",
-    "license": "Apache License 2.0",
-    "description": ""
+    "license": "Apache License 2.0"
   },
   {
     "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
     "author": "Android",
     "name": "RecyclerView",
     "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/v7/recyclerview/",
-    "license": "Apache License 2.0",
-    "description": ""
+    "license": "Apache License 2.0"
   },
   {
     "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
     "author": "Android",
     "name": "Support (v4)",
     "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/v4/",
-    "license": "Apache License 2.0",
-    "description": ""
+    "license": "Apache License 2.0"
   },
   {
     "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
     "author": "Android",
     "name": "Support Annotations",
     "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/annotations/",
-    "license": "Apache License 2.0",
-    "description": ""
+    "license": "Apache License 2.0"
   },
   {
     "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
     "author": "Android",
     "name": "ConstraintLayout",
     "clickUrl": "https://android.googlesource.com/",
-    "license": "Apache License 2.0",
-    "description": ""
+    "license": "Apache License 2.0"
   },
   {
     "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
     "author": "Android",
     "name": "Palette",
     "clickUrl": "https://android.googlesource.com/platform/frameworks/support/+/master/v7/palette/",
-    "license": "Apache License 2.0",
-    "description": ""
+    "license": "Apache License 2.0"
   },
   {
     "avatarUrl": "http://i.imgur.com/Vt4njcR.png",
     "author": "Android",
     "name": "Room (Arch Components)",
     "clickUrl": "https://android.googlesource.com/",
-    "license": "Apache License 2.0",
-    "description": ""
+    "license": "Apache License 2.0"
   },
   {
     "avatarUrl": "https://i.imgur.com/ylbbSNy.png",
@@ -77,7 +68,40 @@
     "authorUrl": "https://twitter.com/superhighfives",
     "name": "Soda Loader",
     "clickUrl": "https://www.lottiefiles.com/94-soda-loader",
-    "license": "Creative Commons (CC) Attribution (BY)",
+    "license": "Creative Commons (CC) Attribution (BY)"
+  },
+  {
+    "avatarUrl": "",
+    "author": " ",
+    "authorUrl": "",
+    "name": "",
+    "clickUrl": "",
+    "license": "",
     "description": ""
+  },
+  {
+    "avatarUrl": "",
+    "author": " ",
+    "authorUrl": "",
+    "name": "",
+    "clickUrl": "",
+    "license": "",
+    "description": ""
+  },
+  {
+    "avatarUrl": "https://avatars2.githubusercontent.com/u/4032667?v=4&s=460",
+    "author": " Eric Cochran",
+    "authorUrl": "https://github.com/NightlyNexus",
+    "name": "AnalyticsNetworkLogger.java (adaptation)",
+    "clickUrl": "https://gist.github.com/NightlyNexus/2e880c86668815690cba8b61501c9e14",
+    "license": "Apache License 2.0",
+  },
+  {
+    "avatarUrl": "https://avatars3.githubusercontent.com/u/1166723?v=4&s=460",
+    "author": "WoongBi Kim",
+    "authorUrl": "https://github.com/ssinss",
+    "name": "EndlessRecyclerOnScrollListener.java (adaptation)",
+    "clickUrl": "https://gist.github.com/ssinss/e06f12ef66c51252563e",
+    "description": "Endless RecyclerView OnScrollListener"
   }
 ]

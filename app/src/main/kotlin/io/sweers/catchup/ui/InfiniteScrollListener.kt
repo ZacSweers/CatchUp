@@ -22,8 +22,8 @@ import io.sweers.catchup.ui.base.DataLoadingSubject
 
 /**
  * A scroll listener for RecyclerView to load more items as you approach the end.
-
- * Adapted from https://gist.github.com/ssinss/e06f12ef66c51252563e
+ *
+ * Adapted from [here](https://gist.github.com/ssinss/e06f12ef66c51252563e)
  */
 abstract class InfiniteScrollListener(private val layoutManager: LinearLayoutManager,
     private val dataLoading: DataLoadingSubject) : RecyclerView.OnScrollListener() {

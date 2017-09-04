@@ -31,7 +31,7 @@ import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
 
 /**
- * Adapted from https://gist.github.com/NightlyNexus/2e880c86668815690cba8b61501c9e14
+ * Adapted from [here](https://gist.github.com/NightlyNexus/2e880c86668815690cba8b61501c9e14)
  */
 class LoggingCallAdapterFactory(private val logger: Logger) : CallAdapter.Factory() {
   interface Logger {
