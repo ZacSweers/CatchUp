@@ -1,27 +1,19 @@
-<!--
-  ~ Copyright (c) 2017 Zac Sweers
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~    http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
-<!-- Exported to vector from https://simpleicons.org/ under Creative Commons Zero v1.0 Universal license -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:height="24dp"
-    android:viewportHeight="16.0"
-    android:viewportWidth="16.0"
+    android:viewportHeight="195.0"
+    android:viewportWidth="195.0"
     android:width="24dp">
   <path
-      android:fillColor="#FFFFFFFF"
-      android:pathData="M11.824,12.628l-0.276,0.45 0.798,0.398 2.744,1.372c0.15,0.076 0.294,0.11 0.418,0.11 0.278,0 0.467,-0.177 0.467,-0.492L15.975,5.883l-4.15,6.745zM15.92,3.958c-0.004,-0.003 0,-0.01 -0.003,-0.012l-4.825,-2.412c-0.06,-0.03 -0.123,-0.038 -0.187,-0.044 -0.016,0 -0.03,-0.01 -0.047,-0.01 -0.184,0 -0.368,0.092 -0.467,0.254l-0.24,0.39 -0.5,0.814 -1.89,3.08 1.89,3.076 0.5,0.813 0.5,0.812 0.59,0.95 4.71,-7.64c0.02,-0.03 0.01,-0.06 -0.02,-0.08zM9.65,11.003L7.17,6.97l-0.295,-0.477 -0.294,-0.477 -0.25,-0.416v4.867l3.32,1.663 0.5,0.25 0.5,0.25 -0.5,-0.813 -0.5,-0.813zM0.737,1.68L0.59,1.608c-0.085,-0.042 -0.166,-0.062 -0.24,-0.062 -0.206,0 -0.35,0.16 -0.35,0.427v10.162c0,0.272 0.2,0.594 0.442,0.716l4.145,2.08c0.107,0.06 0.208,0.08 0.3,0.08 0.257,0 0.438,-0.2 0.438,-0.53L5.325,4.01c0,-0.02 -0.012,-0.04 -0.03,-0.047L0.738,1.68z"
-      android:strokeLineJoin="round"/>
+      android:fillColor="#00000000"
+      android:fillType="nonZero"
+      android:pathData="M0,0h195v195h-195z"
+      android:strokeColor="#00000000"
+      android:strokeWidth="1"/>
+  <!-- I grew the M to be the full width because it's not being inset like the normal monogram here -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:fillType="nonZero"
+      android:pathData="M23.12,50.62C23.37,48.22 22.45,45.85 20.67,44.24L2.46,22.28L2.46,19L58.99,19L102.69,114.95L141.11,19L195,19L195,22.28L179.43,37.22C178.09,38.25 177.42,39.93 177.7,41.6L177.7,151.4C177.42,153.07 178.09,154.75 179.43,155.78L194.64,170.72L194.64,174L118.17,174L118.17,170.72L133.91,155.41C135.46,153.86 135.46,153.41 135.46,151.04L135.46,62.28L91.67,173.64L85.76,173.64L34.78,62.28L34.78,136.91C34.35,140.05 35.39,143.21 37.6,145.48L58.08,170.36L58.08,173.64L0,173.64L0,170.36L20.48,145.48C22.67,143.21 23.65,140.03 23.12,136.91L23.12,50.62Z"
+      android:strokeColor="#00000000"
+      android:strokeWidth="1"/>
 </vector>

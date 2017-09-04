@@ -1,7 +1,7 @@
 Icons
 =====
 
-These icons are used from https://simpleicons.org/ under `Creative Commons Zero v1.0 Universal` 
+These icons, if not specified otherwise, are used from https://simpleicons.org/ under `Creative Commons Zero v1.0 Universal` 
 and exported to AVDs.
 
-Medium is not using the new logo yet - https://github.com/simple-icons/simple-icons/issues/501
+Medium is from their site: https://medium.design/logos-and-brand-guidelines-f1a01a733592
