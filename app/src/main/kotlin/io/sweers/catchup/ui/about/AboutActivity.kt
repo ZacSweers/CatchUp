@@ -234,7 +234,7 @@ class AboutController : ButterKnifeController() {
     val interpolator = UiUtil.fastOutSlowInInterpolator
 
     // X is pretty simple, we just want to end up 72dp to the end of start
-    val finalAppBarHeight = toolbar.measuredHeight * 2
+    @Px val finalAppBarHeight = toolbar.measuredHeight * 2
     @Px val translatableHeight = appBarLayout.measuredHeight - finalAppBarHeight
     @Px val titleX = title.x
     @Px val titleInset = toolbar.titleMarginStart
