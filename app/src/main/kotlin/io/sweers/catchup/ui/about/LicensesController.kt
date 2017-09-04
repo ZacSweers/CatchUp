@@ -484,7 +484,8 @@ private data class OssItem(
     val name: String,
     val license: String?,
     val clickUrl: String,
-    val description: String?
+    val description: String?,
+    val authorUrl: String? = null
 ) : OssBaseItem() {
 
   override fun itemType() = 1
@@ -500,6 +501,7 @@ private data class OssItem(
           reader.beginObject()
           // Ugly - these would preferably be lateinit
           var author: String? = null
+          var authorUrl: String? = null
           var name: String? = null
           var avatarUrl: String? = null
           var clickUrl: String? = null
@@ -511,6 +513,9 @@ private data class OssItem(
             when (reader.nextName()) {
               "author" -> {
                 author = reader.nextString()
+              }
+              "authorUrl" -> {
+                authorUrl = reader.nextString()
               }
               "name" -> {
                 name = reader.nextString()
@@ -533,6 +538,7 @@ private data class OssItem(
           return OssItem(author = author!!,
               name = name!!,
               avatarUrl = avatarUrl!!,
+              authorUrl = authorUrl,
               license = license,
               clickUrl = clickUrl!!,
               description = description)
