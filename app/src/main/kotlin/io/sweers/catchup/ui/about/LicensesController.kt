@@ -660,8 +660,7 @@ internal object LicensesModule {
     return ApolloClient.builder()
         .serverUrl(SERVER_URL)
         .httpCacheStore(httpCacheStore)
-        .okHttpClient(client.get())
-//          .callFactory { client.get().newCall(it) }
+          .callFactory { client.get().newCall(it) }
         .normalizedCache(cacheFactory, resolver)
         .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
         .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())
