@@ -142,5 +142,9 @@
   {
     "owner": "rharter",
     "name": "auto-value-moshi"
+  },
+  {
+    "owner": "simple-icons",
+    "name": "simple-icons"
   }
 ]
