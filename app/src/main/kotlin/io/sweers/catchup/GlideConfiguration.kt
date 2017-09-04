@@ -68,7 +68,11 @@ inline fun Controller.requestManager(): RequestManager {
         }
 
         override fun preDestroy(controller: Controller) {
-          onDestroy()
+          try {
+            onDestroy()
+          } catch (e: IllegalStateException) {
+            // silently ignore this, glide aggressively crashes if not fully registered yet
+          }
           controller.removeLifecycleListener(this)
         }
       })
