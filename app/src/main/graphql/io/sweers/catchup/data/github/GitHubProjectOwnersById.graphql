@@ -4,11 +4,13 @@ query ProjectOwnersByIds($ids: [ID!]!) {
       id
       name
       login
+      url
     }
     ... on Organization {
       id
       name
       login
+      url
     }
   }
 }
