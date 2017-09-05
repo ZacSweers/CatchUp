@@ -33,13 +33,13 @@ def versions = [
     inspector: '0.2.0',
     kotlin: '1.1.4-3',
     leakcanary: '1.5.1',
-    okhttp: '3.8.1',
+    okhttp: '3.9.0',
     playServices: '11.0.4',
     retrofit: '2.3.0',
     rxbinding: '2.0.0',
     rxpalette: '0.3.0',
     stetho: '1.5.0',
-    support: "26.0.1"
+    support: "26.0.2"
 ]
 
 ext.versions = versions
