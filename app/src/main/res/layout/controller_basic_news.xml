@@ -38,6 +38,7 @@
         android:overScrollMode="never"
         android:scrollbars="vertical"
         android:splitMotionEvents="false"
+        tools:listitem="@layout/list_item_general"
         />
 
   </android.support.v4.widget.SwipeRefreshLayout>
