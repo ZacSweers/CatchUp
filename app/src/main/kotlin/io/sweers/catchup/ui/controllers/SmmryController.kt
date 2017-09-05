@@ -75,6 +75,10 @@ import io.sweers.catchup.ui.controllers.SmmryController.Module.ForSmmry
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback
 import io.sweers.catchup.util.e
+import io.sweers.catchup.util.hide
+import io.sweers.catchup.util.isGone
+import io.sweers.catchup.util.isVisible
+import io.sweers.catchup.util.show
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -94,6 +98,7 @@ class SmmryController : ButterKnifeController {
     private val ID_URL = "smmrycontroller.url"
     private val ID_TEXT = "smmrycontroller.text"
     private val ID_ACCENT = "smmrycontroller.accent"
+    private val ID_LOADED = "smmrycontroller.loaded"
 
     /**
      * Really shallow sanity check
@@ -161,6 +166,7 @@ class SmmryController : ButterKnifeController {
   @ColorInt private var accentColor: Int = 0
   private lateinit var inputTitle: String
   private var text: String? = null
+  private var alreadyLoaded = false
 
   private val dragDismissListener = object : ElasticDragDismissCallback() {
     override fun onDragDismissed() {
@@ -189,6 +195,7 @@ class SmmryController : ButterKnifeController {
     outState.putString(ID_URL, url)
     outState.putString(ID_TEXT, text)
     outState.putInt(ID_ACCENT, accentColor)
+    outState.putBoolean(ID_LOADED, alreadyLoaded)
   }
 
   override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -197,6 +204,7 @@ class SmmryController : ButterKnifeController {
     url = savedInstanceState.getString(ID_URL)!!
     text = savedInstanceState.getString(ID_TEXT)
     accentColor = savedInstanceState.getInt(ID_ACCENT)
+    alreadyLoaded = savedInstanceState.getBoolean(ID_LOADED, false)
   }
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View {
@@ -205,8 +213,14 @@ class SmmryController : ButterKnifeController {
 
   override fun onViewBound(view: View) {
     super.onViewBound(view)
-    val colorFilter = SimpleColorFilter(accentColor)
-    lottieView.addColorFilter(colorFilter)
+    content.isNestedScrollingEnabled = true
+    if (!alreadyLoaded) {
+      val colorFilter = SimpleColorFilter(accentColor)
+      lottieView.addColorFilter(colorFilter)
+    } else {
+      loadingView.hide()
+      content.show()
+    }
   }
 
   override fun onAttach(view: View) {
@@ -219,6 +233,7 @@ class SmmryController : ButterKnifeController {
         .autoDisposeWith(this)
         .subscribe(object : SingleObserverAdapter<SmmryResponse>() {
           override fun onSuccess(value: SmmryResponse) {
+            alreadyLoaded = true
             when (value) {
               is Success -> {
                 showSummary(value)
@@ -297,9 +312,9 @@ class SmmryController : ButterKnifeController {
               }
               .toList()
               .blockingGet())
-      tags.visibility = View.VISIBLE
+      tags.show()
     } else {
-      tags.visibility = View.GONE
+      tags.hide()
     }
     var smmryTitle = smmry.title()
     if (TextUtils.isEmpty(smmryTitle)) {
@@ -308,20 +323,23 @@ class SmmryController : ButterKnifeController {
     title.text = smmryTitle
     summary.text = smmry.content()
         .replace("[BREAK]", "\n\n")
-    loadingView.animate()
-        .alpha(0f)
-        .setListener(object : AnimatorListenerAdapter() {
-          override fun onAnimationEnd(animation: Animator) {
-            loadingView.visibility = View.GONE
-            loadingView.animate()
-                .setListener(null)
-          }
-        })
-    content.isNestedScrollingEnabled = true
-    content.alpha = 0f
-    content.visibility = View.VISIBLE
-    content.animate()
-        .alpha(1f)
+    if (loadingView.isVisible()) {
+      loadingView.animate()
+          .alpha(0f)
+          .setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+              loadingView.hide()
+              loadingView.animate()
+                  .setListener(null)
+            }
+          })
+    }
+    if (content.isGone()) {
+      content.alpha = 0f
+      content.show()
+      content.animate()
+          .alpha(1f)
+    }
   }
 
   override fun bind(view: View): Unbinder {
