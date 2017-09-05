@@ -37,7 +37,7 @@
       >
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/progress"
+        android:id="@+id/smmry_loading"
         android:layout_width="152dp"
         android:layout_height="152dp"
         android:layout_gravity="center_horizontal"

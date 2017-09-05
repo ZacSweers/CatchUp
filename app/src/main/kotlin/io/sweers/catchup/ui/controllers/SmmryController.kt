@@ -149,7 +149,7 @@ class SmmryController : ButterKnifeController {
   @Inject lateinit var smmryDao: SmmryDao
 
   @BindView(R.id.loading_view) lateinit var loadingView: View
-  @BindView(R.id.progress) lateinit var lottieView: LottieAnimationView
+  @BindView(R.id.smmry_loading) lateinit var lottieView: LottieAnimationView
   @BindView(R.id.content_container) lateinit var content: NestedScrollView
   @BindView(R.id.tags) lateinit var tags: TextView
   @BindView(R.id.title) lateinit var title: TextView
