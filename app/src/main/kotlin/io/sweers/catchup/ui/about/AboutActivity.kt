@@ -37,6 +37,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
+import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
@@ -129,9 +130,10 @@ class AboutController : ButterKnifeController() {
     pagerAdapter = object : RouterPagerAdapter(this) {
       override fun configureRouter(router: Router, position: Int) {
         if (!router.hasRootController()) {
-          val controller = when (position) {
+          val controller: Controller = when (position) {
             0 -> LicensesController()
-            else -> LicensesController()
+            1 -> ChangelogController()
+            else -> TODO("Not implemented")
           }
           router.setRoot(RouterTransaction.with(controller)
               .tag(PAGE_TAG))

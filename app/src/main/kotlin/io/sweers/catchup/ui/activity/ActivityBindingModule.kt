@@ -21,6 +21,7 @@ import dagger.android.ContributesAndroidInjector
 import io.sweers.catchup.injection.ControllerBindingModule
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.about.AboutActivity
+import io.sweers.catchup.ui.about.ChangelogControllerBindingModule
 import io.sweers.catchup.ui.about.LicensesControllerBindingModule
 import io.sweers.catchup.ui.activity.SettingsActivity.SettingsFrag.SettingsFragmentBindingModule
 
@@ -47,7 +48,8 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = arrayOf(
       UiModule::class,
       AboutActivity.Module::class,
-      LicensesControllerBindingModule::class
+      LicensesControllerBindingModule::class,
+      ChangelogControllerBindingModule::class
   ))
   internal abstract fun aboutActivity(): AboutActivity
 }

@@ -9,6 +9,9 @@ query RepoReleases {
             description
             tag {
               name
+              target {
+                abbreviatedOid
+              }
             }
             url
           }
