@@ -17,7 +17,6 @@
 package io.sweers.catchup.ui.about
 
 import android.content.Context
-import android.net.Uri
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -31,27 +30,22 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.rx2.Rx2Apollo
-import com.bluelinelabs.conductor.Controller
 import com.uber.autodispose.kotlin.autoDisposeWith
-import dagger.Binds
-import dagger.Module
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
-import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
+import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.github.RepoReleasesQuery
 import io.sweers.catchup.injection.ConductorInjection
-import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
-import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
@@ -61,7 +55,7 @@ import javax.inject.Inject
 class ChangelogController : ButterKnifeController(), Scrollable {
 
   @Inject lateinit var apolloClient: ApolloClient
-  @Inject internal lateinit var customTab: CustomTabActivityHelper
+  @Inject internal lateinit var linkManager: LinkManager
 
   @BindView(R.id.progress) lateinit var progressBar: ProgressBar
   @BindView(R.id.list) lateinit var recyclerView: RecyclerView
@@ -168,15 +162,7 @@ class ChangelogController : ButterKnifeController(), Scrollable {
         hideComments()
         itemClicks()
             .flatMapCompletable {
-              Completable.fromAction {
-                val context = itemView.context
-                customTab.openCustomTab(context,
-                    customTab.customTabIntent
-                        .setStartAnimations(context, R.anim.slide_up, R.anim.inset)
-                        .setExitAnimations(context, R.anim.outset, R.anim.slide_down)
-                        .build(),
-                    Uri.parse(item.url))
-              }
+              return@flatMapCompletable linkManager.openUrl(UrlMeta(item.url, 0, itemView.context))
             }
             .autoDisposeWith(holder)
             .subscribe()
@@ -200,14 +186,4 @@ interface ChangelogComponent : AndroidInjector<ChangelogController> {
 
   @Subcomponent.Builder
   abstract class Builder : AndroidInjector.Builder<ChangelogController>()
-}
-
-@Module(subcomponents = arrayOf(ChangelogComponent::class))
-abstract class ChangelogControllerBindingModule {
-
-  @Binds
-  @IntoMap
-  @ControllerKey(ChangelogController::class)
-  internal abstract fun bindChangelogControllerInjectorFactory(
-      builder: ChangelogComponent.Builder): AndroidInjector.Factory<out Controller>
 }

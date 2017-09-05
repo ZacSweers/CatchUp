@@ -22,6 +22,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
+import android.support.annotation.CheckResult
 import android.support.annotation.ColorInt
 import android.support.v4.util.ArrayMap
 import android.widget.Toast
@@ -78,6 +79,7 @@ class LinkManager @Inject constructor(private val customTab: CustomTabActivityHe
   }
 
   @Suppress("MemberVisibilityCanPrivate")
+  @CheckResult
   fun openUrl(meta: UrlMeta): Completable {
     if (meta.uri == null) {
       Toast.makeText(meta.context, R.string.error_no_url, Toast.LENGTH_SHORT)

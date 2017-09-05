@@ -18,6 +18,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/about_controller_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -73,8 +74,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:text="An app for catching up on things.\n\nv1.0\nBy Zac Sweers  —  Source code"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColorLink="?android:textColorPrimary"
+            tools:text="An app for catching up on things.\n\nv1.0\nBy Zac Sweers  —  Source code"
             />
       </LinearLayout>
 

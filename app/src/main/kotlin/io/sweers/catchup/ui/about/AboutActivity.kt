@@ -17,6 +17,8 @@
 package io.sweers.catchup.ui.about
 
 import android.app.Activity
+import android.content.Context
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.annotation.Px
@@ -28,6 +30,8 @@ import android.support.v4.app.NavUtils
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -44,11 +48,24 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
+import dagger.Module
+import dagger.Subcomponent
+import dagger.android.AndroidInjector
+import dagger.multibindings.IntoMap
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
+import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.data.LinkManager.UrlMeta
+import io.sweers.catchup.injection.ConductorInjection
+import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
+import io.sweers.catchup.util.LinkTouchMovementMethod
+import io.sweers.catchup.util.TouchableUrlSpan
+import io.sweers.catchup.util.Truss
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.isInNightMode
@@ -59,6 +76,7 @@ import javax.inject.Inject
 class AboutActivity : BaseActivity() {
 
   @Inject internal lateinit var customTab: CustomTabActivityHelper
+  @Inject internal lateinit var linkManager: LinkManager
   @BindView(R.id.controller_container) internal lateinit var container: ViewGroup
 
   private lateinit var router: Router
@@ -114,6 +132,9 @@ class AboutController : ButterKnifeController() {
     private const val TITLE_TRANSLATION_PERCENT = 0.50F
   }
 
+  @Inject internal lateinit var customTab: CustomTabActivityHelper
+  @Inject internal lateinit var linkManager: LinkManager
+
   @BindView(R.id.about_controller_root) lateinit var rootLayout: CoordinatorLayout
   @BindView(R.id.appbarlayout) lateinit var appBarLayout: AppBarLayout
   @BindView(R.id.banner_container) lateinit var bannerContainer: View
@@ -125,6 +146,14 @@ class AboutController : ButterKnifeController() {
   @BindView(R.id.view_pager) lateinit var viewPager: ViewPager
 
   private var pagerAdapter: RouterPagerAdapter
+  private fun clickableSpan(url: String): ClickableSpan {
+    return object : TouchableUrlSpan(url, aboutText.linkTextColors, 0) {
+      override fun onClick(url: String) {
+        linkManager.openUrl(UrlMeta(url, aboutText.highlightColor, activity!!))
+            .subscribe()
+      }
+    }
+  }
 
   init {
     pagerAdapter = object : RouterPagerAdapter(this) {
@@ -151,6 +180,11 @@ class AboutController : ButterKnifeController() {
         }
       }
     }
+  }
+
+  override fun onContextAvailable(context: Context) {
+    ConductorInjection.inject(this)
+    super.onContextAvailable(context)
   }
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View {
@@ -196,6 +230,29 @@ class AboutController : ButterKnifeController() {
     bannerIcon.setOnClickListener {
       appBarLayout.setExpanded(false, true)
     }
+
+    aboutText.movementMethod = LinkTouchMovementMethod.getInstance()
+    aboutText.text = Truss()
+        .append("An app for catching up on things.")
+        .append("\n")
+        .append("\n")
+        .append("Version ")
+        .append(BuildConfig.VERSION_NAME)
+        .append("\n")
+        .append("By ")
+        .pushSpan(StyleSpan(Typeface.BOLD))
+        .pushSpan(clickableSpan("https://twitter.com/pandanomic"))
+        .append("Zac Sweers")
+        .popSpan()
+        .popSpan()
+        .append("  —  ")
+        .pushSpan(StyleSpan(Typeface.BOLD))
+        .pushSpan(clickableSpan("https://github.com/hzsweers/CatchUp"))
+        .append("Source code")
+        .popSpan()
+        .popSpan()
+        .build()
+
     setUpPager()
 
     // Wait till things are measured
@@ -312,6 +369,40 @@ class AboutController : ButterKnifeController() {
           }
         }
   }
+}
+
+@PerController
+@Subcomponent
+interface AboutComponent : AndroidInjector<AboutController> {
+
+  @Subcomponent.Builder
+  abstract class Builder : AndroidInjector.Builder<AboutController>()
+}
+
+@Module(subcomponents = arrayOf(
+    AboutComponent::class,
+    LicensesComponent::class,
+    ChangelogComponent::class
+))
+abstract class AboutControllerBindingModule {
+
+  @Binds
+  @IntoMap
+  @ControllerKey(AboutController::class)
+  internal abstract fun bindAboutControllerInjectorFactory(
+      builder: AboutComponent.Builder): AndroidInjector.Factory<out Controller>
+
+  @Binds
+  @IntoMap
+  @ControllerKey(LicensesController::class)
+  internal abstract fun bindLicensesControllerInjectorFactory(
+      builder: LicensesComponent.Builder): AndroidInjector.Factory<out Controller>
+
+  @Binds
+  @IntoMap
+  @ControllerKey(ChangelogController::class)
+  internal abstract fun bindChangelogControllerInjectorFactory(
+      builder: ChangelogComponent.Builder): AndroidInjector.Factory<out Controller>
 }
 
 private enum class ScrollDirection {

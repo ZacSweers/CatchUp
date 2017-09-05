@@ -20,7 +20,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.support.design.widget.Snackbar
 import android.support.v7.graphics.Palette
 import android.support.v7.graphics.Palette.Swatch
@@ -41,7 +40,6 @@ import butterknife.Unbinder
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.http.HttpCachePolicy
 import com.apollographql.apollo.rx2.Rx2Apollo
-import com.bluelinelabs.conductor.Controller
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -54,25 +52,22 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.uber.autodispose.kotlin.autoDisposeWith
-import dagger.Binds
-import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
-import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
+import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery.AsRepository
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
 import io.sweers.catchup.injection.ConductorInjection
-import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.StickyHeaders
@@ -81,13 +76,12 @@ import io.sweers.catchup.ui.about.LicensesModule.ForLicenses
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.UiUtil
-import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.dp2px
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.findSwatch
+import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
-import io.sweers.catchup.util.hide
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import okio.Okio
 import javax.inject.Inject
@@ -104,7 +98,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
   @field:ForLicenses
   lateinit var moshi: Moshi
 
-  @Inject internal lateinit var customTab: CustomTabActivityHelper
+  @Inject internal lateinit var linkManager: LinkManager
 
   @BindDimen(R.dimen.avatar)
   @JvmField
@@ -358,28 +352,19 @@ class LicensesController : ButterKnifeController(), Scrollable {
           hideComments()
           itemClicks()
               .flatMapCompletable {
-                Completable.fromAction {
-                  val context = itemView.context
-                  customTab.openCustomTab(context,
-                      customTab.customTabIntent
-                          .setStartAnimations(context, R.anim.slide_up, R.anim.inset)
-                          .setExitAnimations(context, R.anim.outset, R.anim.slide_down)
-                          .apply {
-                            // Search up to the first sticky header position
-                            // Maybe someday we should just return the groups rather than flattening
-                            // but this was neat to write in kotlin
-                            (holder.adapterPosition downTo 0)
-                                .find { isStickyHeader(it) }
-                                ?.let {
-                                  setToolbarColor(
-                                      (recyclerView.findViewHolderForAdapterPosition(it)
-                                          as HeaderHolder)
-                                          .title.textColors.defaultColor)
-                                }
-                          }
-                          .build(),
-                      Uri.parse(item.clickUrl))
-                }
+                // Search up to the first sticky header position
+                // Maybe someday we should just return the groups rather than flattening
+                // but this was neat to write in kotlin
+                val accentColor = (holder.adapterPosition downTo 0)
+                    .find { isStickyHeader(it) }
+                    ?.let {
+                      (recyclerView.findViewHolderForAdapterPosition(it)
+                          as HeaderHolder)
+                          .title.textColors.defaultColor
+                    } ?: 0
+                val context = itemView.context
+                return@flatMapCompletable linkManager.openUrl(
+                    UrlMeta(item.clickUrl, accentColor, context))
               }
               .autoDisposeWith(holder)
               .subscribe()
@@ -532,16 +517,6 @@ interface LicensesComponent : AndroidInjector<LicensesController> {
 
   @Subcomponent.Builder
   abstract class Builder : AndroidInjector.Builder<LicensesController>()
-}
-
-@Module(subcomponents = arrayOf(LicensesComponent::class))
-abstract class LicensesControllerBindingModule {
-
-  @Binds
-  @IntoMap
-  @ControllerKey(LicensesController::class)
-  internal abstract fun bindLicensesControllerInjectorFactory(
-      builder: LicensesComponent.Builder): AndroidInjector.Factory<out Controller>
 }
 
 @dagger.Module
