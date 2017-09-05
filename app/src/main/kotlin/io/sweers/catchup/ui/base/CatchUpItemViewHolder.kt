@@ -33,9 +33,9 @@ import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.util.format
+import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isVisible
-import io.sweers.catchup.util.makeGone
-import io.sweers.catchup.util.makeVisible
+import io.sweers.catchup.util.show
 import org.threeten.bp.Instant
 
 class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
@@ -44,18 +44,18 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
     val COMPLETABLE_FUNC = Function<UrlMeta, Completable> { Completable.complete() }
   }
 
-  @BindView(R.id.container) lateinit var container: View
-  @BindView(R.id.tags_container) lateinit var tagsContainer: View
-  @BindView(R.id.title) lateinit var title: TextView
-  @BindView(R.id.score) lateinit var score: TextView
-  @BindView(R.id.score_divider) lateinit var scoreDivider: TextView
-  @BindView(R.id.timestamp) lateinit var timestamp: TextView
-  @BindView(R.id.author) lateinit var author: TextView
-  @BindView(R.id.author_divider) lateinit var authorDivider: TextView
-  @BindView(R.id.source) lateinit var source: TextView
-  @BindView(R.id.comments) lateinit var comments: TextView
-  @BindView(R.id.tag) lateinit var tag: TextView
-  @BindView(R.id.tag_divider) lateinit var tagDivider: View
+  @BindView(R.id.container) internal lateinit var container: View
+  @BindView(R.id.tags_container) internal lateinit var tagsContainer: View
+  @BindView(R.id.title) internal lateinit var title: TextView
+  @BindView(R.id.score) internal lateinit var score: TextView
+  @BindView(R.id.score_divider) internal lateinit var scoreDivider: TextView
+  @BindView(R.id.timestamp) internal lateinit var timestamp: TextView
+  @BindView(R.id.author) internal lateinit var author: TextView
+  @BindView(R.id.author_divider) internal lateinit var authorDivider: TextView
+  @BindView(R.id.source) internal lateinit var source: TextView
+  @BindView(R.id.comments) internal lateinit var comments: TextView
+  @BindView(R.id.tag) internal lateinit var tag: TextView
+  @BindView(R.id.tag_divider) internal lateinit var tagDivider: View
   private var unbinder: Unbinder? = null
 
   init {
@@ -122,11 +122,8 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
   }
 
   fun score(scoreValue: Pair<String, Int>?) {
-    if (scoreValue == null) {
-      score.makeGone()
-    } else {
-      score.makeVisible()
-      score.text = String.format("%s %s",
+    score.text = scoreValue?.let {
+      String.format("%s %s",
           scoreValue.first,
           scoreValue.second.toLong().format())
     }
@@ -134,39 +131,46 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
   }
 
   fun tag(text: String?) {
-    if (text == null) {
-      tag.makeGone()
-    } else {
-      tag.makeVisible()
-      tag.text = text.capitalize()
-    }
+    tag.text = text?.capitalize()
     updateDividerVisibility()
   }
 
   private fun updateDividerVisibility() {
     val numVisible = arrayOf(score, tag, timestamp)
         .asSequence()
-        .count { it.isVisible() }
+        .map { (it to it.text.isBlank()) }
+        .onEach { (view, isBlank) ->
+          if (isBlank) {
+            view.hide()
+          } else {
+            view.show()
+          }
+        }
+        .count { (_, isBlank) -> !isBlank }
     when (numVisible) {
       0, 1 -> {
-        scoreDivider.makeGone()
-        tagDivider.makeGone()
-        tagsContainer.makeGone()
+        scoreDivider.hide()
+        tagDivider.hide()
+        if (numVisible == 0) {
+          tagsContainer.hide()
+        } else {
+          tagsContainer.show()
+        }
       }
       2 -> {
-        tagsContainer.makeVisible()
+        tagsContainer.show()
         if (score.isVisible()) {
-          scoreDivider.makeVisible()
-          tagDivider.makeGone()
+          scoreDivider.show()
+          tagDivider.hide()
         } else {
-          tagDivider.makeVisible()
-          scoreDivider.makeGone()
+          tagDivider.show()
+          scoreDivider.hide()
         }
       }
       3 -> {
-        tagsContainer.makeVisible()
-        scoreDivider.makeVisible()
-        tagDivider.makeVisible()
+        tagsContainer.show()
+        scoreDivider.show()
+        tagDivider.show()
       }
     }
   }
@@ -176,50 +180,49 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
   }
 
   private fun timestamp(date: Long?) {
-    if (date != null) {
-      with(timestamp) {
-        makeVisible()
-        text = DateUtils.getRelativeTimeSpanString(date,
-            System.currentTimeMillis(),
-            0L,
-            DateUtils.FORMAT_ABBREV_ALL)
-      }
-    } else {
-      timestamp.makeGone()
+    timestamp.text = date?.let {
+      DateUtils.getRelativeTimeSpanString(it,
+          System.currentTimeMillis(),
+          0L,
+          DateUtils.FORMAT_ABBREV_ALL)
     }
     updateDividerVisibility()
   }
 
   fun author(authorText: CharSequence?) {
-    if (authorText == null) {
-      author.makeGone()
-      authorDivider.makeGone()
-    } else {
-      authorDivider.makeVisible()
-      author.makeVisible()
-      author.text = authorText
-    }
+    author.text = authorText
+    updateAttributionVisibility()
   }
 
   fun source(sourceText: CharSequence?) {
-    if (sourceText == null) {
-      source.makeGone()
-      authorDivider.makeGone()
+    source.text = sourceText
+    updateAttributionVisibility()
+  }
+
+  private fun updateAttributionVisibility() {
+    val sourceBlank = source.text.isBlank()
+    val authorBlank = author.text.isBlank()
+    if (sourceBlank || authorBlank) {
+      authorDivider.hide()
+    }
+    if (sourceBlank) {
+      source.hide()
     } else {
-      if (author.isVisible()) {
-        authorDivider.makeVisible()
-      }
-      source.makeVisible()
-      source.text = sourceText
+      source.show()
+    }
+    if (authorBlank) {
+      author.hide()
+    } else {
+      author.show()
     }
   }
 
   fun comments(commentsCount: Int) {
-    comments.makeVisible()
+    comments.show()
     comments.text = commentsCount.toLong().format()
   }
 
   fun hideComments() {
-    comments.makeGone()
+    comments.hide()
   }
 }

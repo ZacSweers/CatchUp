@@ -48,8 +48,8 @@ import io.sweers.catchup.util.applyOn
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.isVisible
-import io.sweers.catchup.util.makeGone
-import io.sweers.catchup.util.makeVisible
+import io.sweers.catchup.util.hide
+import io.sweers.catchup.util.show
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import retrofit2.HttpException
 import java.io.IOException
@@ -122,8 +122,8 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
   }
 
   @OnClick(R.id.retry_button) internal fun onRetry() {
-    errorView.makeGone()
-    progress.makeVisible()
+    errorView.hide()
+    progress.show()
     onRefresh()
   }
 
@@ -170,7 +170,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
 
   private fun loadData(fromRefresh: Boolean = false) {
     if (!recyclerView.isVisible()) {
-      progress.makeVisible()
+      progress.show()
     }
     if (fromRefresh) {
       moreDataAvailable = true
@@ -222,8 +222,8 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
         }
         .autoDisposeWith(this)
         .subscribe({ loadResult ->
-          applyOn(progress, errorView) { makeGone() }
-          swipeRefreshLayout.makeVisible()
+          applyOn(progress, errorView) { hide() }
+          swipeRefreshLayout.show()
           recyclerView.post {
             when (loadResult) {
               is NewData -> {
@@ -246,10 +246,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
           if (pageToRequest == 0 && activity != null) {
             when (error) {
               is IOException -> {
-                progress.makeGone()
+                progress.hide()
                 errorTextView.text = "Connection Problem"
-                swipeRefreshLayout.makeGone()
-                errorView.makeVisible()
+                swipeRefreshLayout.hide()
+                errorView.show()
                 AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
                     ?.let {
                       errorImage.setImageDrawable(it)
@@ -258,10 +258,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
               }
               is HttpException -> {
                 // TODO Show some sort of API error response.
-                progress.makeGone()
+                progress.hide()
                 errorTextView.text = "API Problem"
-                swipeRefreshLayout.makeGone()
-                errorView.makeVisible()
+                swipeRefreshLayout.hide()
+                errorView.show()
                 AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
                     ?.let {
                       errorImage.setImageDrawable(it)
@@ -270,10 +270,10 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
               }
               else -> {
                 // TODO Show some sort of generic response error
-                progress.makeGone()
-                swipeRefreshLayout.makeGone()
+                progress.hide()
+                swipeRefreshLayout.hide()
                 errorTextView.text = "Unknown issue."
-                errorView.makeVisible()
+                errorView.show()
                 AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
                     ?.let {
                       errorImage.setImageDrawable(it)

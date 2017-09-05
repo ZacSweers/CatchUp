@@ -87,7 +87,7 @@ import io.sweers.catchup.util.e
 import io.sweers.catchup.util.findSwatch
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
-import io.sweers.catchup.util.makeGone
+import io.sweers.catchup.util.hide
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import okio.Okio
 import javax.inject.Inject
@@ -146,7 +146,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .doFinally {
-            progressBar.makeGone()
+            progressBar.hide()
           }
           .subscribe { data, error ->
             if (data != null) {

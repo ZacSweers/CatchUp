@@ -40,12 +40,12 @@ fun View.clearLightStatusBar() {
 }
 
 inline fun View.isVisible() = visibility == View.VISIBLE
-inline fun View.makeVisible() {
+inline fun View.show() {
   visibility = View.VISIBLE
 }
 
 inline fun View.isGone() = visibility == View.GONE
-inline fun View.makeGone() {
+inline fun View.hide() {
   visibility = View.GONE
 }
 
