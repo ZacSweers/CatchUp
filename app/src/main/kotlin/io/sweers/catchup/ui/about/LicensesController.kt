@@ -39,19 +39,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Operation
-import com.apollographql.apollo.api.ResponseField
-import com.apollographql.apollo.api.internal.Optional
-import com.apollographql.apollo.cache.http.DiskLruHttpCacheStore
-import com.apollographql.apollo.cache.http.HttpCache
 import com.apollographql.apollo.cache.http.HttpCachePolicy
-import com.apollographql.apollo.cache.http.HttpCacheStore
-import com.apollographql.apollo.cache.normalized.CacheKey
-import com.apollographql.apollo.cache.normalized.CacheKeyResolver
-import com.apollographql.apollo.cache.normalized.NormalizedCacheFactory
-import com.apollographql.apollo.cache.normalized.lru.EvictionPolicy
-import com.apollographql.apollo.cache.normalized.lru.LruNormalizedCacheFactory
-import com.apollographql.apollo.internal.util.ApolloLogger
 import com.apollographql.apollo.rx2.Rx2Apollo
 import com.bluelinelabs.conductor.Controller
 import com.bumptech.glide.Glide
@@ -67,7 +55,6 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
-import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
@@ -78,20 +65,14 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
-import io.sweers.catchup.data.AuthInterceptor
-import io.sweers.catchup.data.HttpUrlApolloAdapter
-import io.sweers.catchup.data.ISO8601InstantApolloAdapter
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery.AsRepository
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
-import io.sweers.catchup.data.github.type.CustomType
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.ControllerKey
-import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.StickyHeaders
@@ -108,10 +89,7 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
 import io.sweers.catchup.util.makeGone
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
-import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import okio.Okio
-import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -562,17 +540,12 @@ abstract class LicensesControllerBindingModule {
   @Binds
   @IntoMap
   @ControllerKey(LicensesController::class)
-  internal abstract fun bindAboutControllerInjectorFactory(
+  internal abstract fun bindLicensesControllerInjectorFactory(
       builder: LicensesComponent.Builder): AndroidInjector.Factory<out Controller>
 }
 
 @dagger.Module
 internal object LicensesModule {
-
-  private val SERVER_URL = "https://api.github.com/graphql"
-
-  @Qualifier
-  private annotation class InternalApi
 
   @Qualifier
   annotation class ForLicenses
@@ -587,89 +560,6 @@ internal object LicensesModule {
             OssItem.adapter())
         .add(OssGitHubEntry::class.java,
             OssGitHubEntry.adapter())
-        .build()
-  }
-
-  @Provides
-  @JvmStatic
-  @PerController
-  internal fun provideHttpCacheStore(@ApplicationContext context: Context): HttpCacheStore {
-    return DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
-  }
-
-  @Provides
-  @JvmStatic
-  @PerController
-  internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache {
-    return HttpCache(httpCacheStore, ApolloLogger(Optional.absent()))
-  }
-
-  @Provides
-  @InternalApi
-  @JvmStatic
-  @PerController
-  internal fun provideGitHubOkHttpClient(
-      client: OkHttpClient,
-      httpCache: HttpCache): OkHttpClient {
-    return client.newBuilder()
-        .addInterceptor(httpCache.interceptor())
-        .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
-        .build()
-  }
-
-  @Provides
-  @JvmStatic
-  @PerController
-  internal fun provideCacheKeyResolver(): CacheKeyResolver {
-    return object : CacheKeyResolver() {
-      private val formatter = { id: String ->
-        if (id.isEmpty()) {
-          CacheKey.NO_KEY
-        } else {
-          CacheKey.from(id)
-        }
-      }
-
-      override fun fromFieldRecordSet(field: ResponseField,
-          objectSource: Map<String, Any>): CacheKey {
-        // Most objects use id
-        objectSource["id"].let {
-          return when (it) {
-            is String -> formatter(it)
-            else -> CacheKey.NO_KEY
-          }
-        }
-      }
-
-      override fun fromFieldArguments(field: ResponseField,
-          variables: Operation.Variables): CacheKey {
-        return CacheKey.NO_KEY
-      }
-    }
-  }
-
-  @Provides
-  @JvmStatic
-  @PerController
-  internal fun provideNormalizedCacheFactory(
-      @ApplicationContext context: Context): NormalizedCacheFactory<*> {
-    return LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION)
-  }
-
-  @Provides
-  @JvmStatic
-  @PerController
-  internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
-      cacheFactory: NormalizedCacheFactory<*>,
-      resolver: CacheKeyResolver,
-      httpCacheStore: HttpCacheStore): ApolloClient {
-    return ApolloClient.builder()
-        .serverUrl(SERVER_URL)
-        .httpCacheStore(httpCacheStore)
-          .callFactory { client.get().newCall(it) }
-        .normalizedCache(cacheFactory, resolver)
-        .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
-        .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())
         .build()
   }
 }

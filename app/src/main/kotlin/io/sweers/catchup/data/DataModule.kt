@@ -38,7 +38,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
-@Module
+@Module(includes = arrayOf(GithubApolloModule::class))
 abstract class DataModule {
 
   @NetworkInterceptor

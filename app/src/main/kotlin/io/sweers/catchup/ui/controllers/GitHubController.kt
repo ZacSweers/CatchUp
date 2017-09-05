@@ -20,44 +20,27 @@ import android.content.Context
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.internal.Optional
-import com.apollographql.apollo.cache.http.DiskLruHttpCacheStore
-import com.apollographql.apollo.cache.http.HttpCache
 import com.apollographql.apollo.cache.http.HttpCachePolicy
-import com.apollographql.apollo.cache.http.HttpCacheStore
-import com.apollographql.apollo.internal.util.ApolloLogger
 import com.apollographql.apollo.rx2.Rx2Apollo
-import dagger.Lazy
-import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
-import io.sweers.catchup.data.AuthInterceptor
 import io.sweers.catchup.data.CatchUpItem
-import io.sweers.catchup.data.HttpUrlApolloAdapter
-import io.sweers.catchup.data.ISO8601InstantApolloAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.GitHubSearchQuery
 import io.sweers.catchup.data.github.SearchQuery
 import io.sweers.catchup.data.github.TrendingTimespan
-import io.sweers.catchup.data.github.type.CustomType
 import io.sweers.catchup.data.github.type.LanguageOrder
 import io.sweers.catchup.data.github.type.LanguageOrderField
 import io.sweers.catchup.data.github.type.OrderDirection
-import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.StorageBackedNewsController
 import io.sweers.catchup.util.collect.emptyIfNull
-import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
-import org.threeten.bp.Instant
 import javax.inject.Inject
-import javax.inject.Qualifier
 
 class GitHubController : StorageBackedNewsController {
 
@@ -131,60 +114,10 @@ class GitHubController : StorageBackedNewsController {
   }
 
   @PerController
-  @Subcomponent(modules = arrayOf(Module::class))
+  @Subcomponent
   interface Component : AndroidInjector<GitHubController> {
 
     @Subcomponent.Builder
     abstract class Builder : AndroidInjector.Builder<GitHubController>()
-  }
-
-  @dagger.Module
-  object Module {
-
-    private val SERVER_URL = "https://api.github.com/graphql"
-
-    @Qualifier
-    private annotation class InternalApi
-
-    @Provides
-    @JvmStatic
-    @PerController
-    internal fun provideHttpCacheStore(@ApplicationContext context: Context): HttpCacheStore {
-      return DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
-    }
-
-    @Provides
-    @JvmStatic
-    @PerController
-    internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache {
-      return HttpCache(httpCacheStore, ApolloLogger(Optional.absent()))
-    }
-
-    @Provides
-    @InternalApi
-    @JvmStatic
-    @PerController
-    internal fun provideGitHubOkHttpClient(
-        client: OkHttpClient,
-        httpCache: HttpCache): OkHttpClient {
-      return client.newBuilder()
-          .addInterceptor(httpCache.interceptor())
-          .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
-          .build()
-    }
-
-    @Provides
-    @JvmStatic
-    @PerController
-    internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
-        httpCacheStore: HttpCacheStore): ApolloClient {
-      return ApolloClient.builder()
-          .serverUrl(SERVER_URL)
-          .httpCacheStore(httpCacheStore)
-          .callFactory { client.get().newCall(it) }
-          .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
-          .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())
-          .build()
-    }
   }
 }
