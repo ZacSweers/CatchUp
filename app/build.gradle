@@ -14,24 +14,6 @@
  * limitations under the License.
  */
 
-buildscript {
-  repositories {
-    google()
-    jcenter()
-  }
-
-  dependencies {
-    classpath deps.android.gradlePlugin
-    classpath deps.kotlin.gradlePlugin
-    classpath deps.android.firebase.gradlePlugin
-    classpath deps.build.gradlePlugins.bugsnag
-    classpath deps.build.gradlePlugins.psync
-    classpath deps.build.gradlePlugins.versions
-    classpath deps.errorProne.gradlePlugin
-    classpath deps.apollo.gradlePlugin
-  }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.sweers.psync'
@@ -276,7 +258,7 @@ configurations.all {
 
 dependencies {
   // This fails gradle sync due to an obscure "AssertionError" only visible in console logs
-//  implementation project(':bypass')
+  implementation project(':bypass')
 
   // Support libs
   supportImplementation deps.android.support.annotations

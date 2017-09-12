@@ -1,16 +1,3 @@
-buildscript {
-  repositories {
-    google()
-    jcenter()
-  }
-
-  dependencies {
-    classpath deps.android.gradlePlugin
-    classpath deps.kotlin.gradlePlugin
-    classpath deps.build.gradlePlugins.versions
-  }
-}
-
 apply plugin: 'com.android.library'
 apply plugin: 'org.jetbrains.kotlin.android'
 

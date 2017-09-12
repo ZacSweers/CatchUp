@@ -24,6 +24,20 @@ subprojects {
       maven { url deps.build.repositories.plugins }
       maven { url deps.build.repositories.snapshots }
     }
+
+    dependencies {
+      // Seemingly random other classpath dependencies are because of a gradle bug when sharing
+      // buildscript deps. Oddly, not only do all of these need to be here to match :app, but they
+      // need to also be in the same order.
+      classpath deps.android.gradlePlugin
+      classpath deps.kotlin.gradlePlugin
+      classpath deps.android.firebase.gradlePlugin
+      classpath deps.build.gradlePlugins.bugsnag
+      classpath deps.build.gradlePlugins.psync
+      classpath deps.build.gradlePlugins.versions
+      classpath deps.errorProne.gradlePlugin
+      classpath deps.apollo.gradlePlugin
+    }
   }
 
   repositories {
