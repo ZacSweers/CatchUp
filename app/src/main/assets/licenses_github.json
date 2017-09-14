@@ -154,5 +154,9 @@
   {
     "owner": "GoogleChrome",
     "name": "custom-tabs-client"
+  },
+  {
+    "owner": "Uncodin",
+    "name": "bypass"
   }
 ]
