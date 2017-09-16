@@ -59,7 +59,7 @@ abstract class DataModule {
     @Singleton
     internal fun provideCache(@ApplicationContext context: Context): Cache {
       if (Looper.myLooper() == Looper.getMainLooper()) {
-        throw IllegalStateException("Cache initialized on main thread.");
+        throw IllegalStateException("Cache initialized on main thread.")
       }
       return Cache(context.cacheDir, HTTP_RESPONSE_CACHE)
     }
@@ -71,7 +71,7 @@ abstract class DataModule {
         interceptors: Set<@JvmSuppressWildcards Interceptor>,
         @NetworkInterceptor networkInterceptors: Set<@JvmSuppressWildcards Interceptor>): OkHttpClient {
       if (Looper.myLooper() == Looper.getMainLooper()) {
-        throw IllegalStateException("HTTP client initialized on main thread.");
+        throw IllegalStateException("HTTP client initialized on main thread.")
       }
 
       val builder = OkHttpClient.Builder().connectTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
