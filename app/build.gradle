@@ -253,6 +253,10 @@ configurations.all {
       // We want to force all play services libraries to use the same version, even if they're transitive.
       details.useVersion versions.firebase
     }
+    if (details.requested.group == 'org.jetbrains.kotlin') {
+      // We want to force all kotlin libraries to use the same version, even if they're transitive.
+      details.useVersion versions.kotlin
+    }
   }
 }
 
