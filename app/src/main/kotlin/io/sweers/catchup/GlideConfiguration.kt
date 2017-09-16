@@ -42,11 +42,13 @@ class GlideConfiguration : AppGlideModule() {
   override fun applyOptions(context: Context, builder: GlideBuilder) {
     // Prefer higher quality images unless we're on a low RAM device
     val activityManager = context.getSystemService<ActivityManager>()
-    builder.setDefaultRequestOptions(RequestOptions().format(
-        if (ActivityManagerCompat.isLowRamDevice(activityManager))
+    builder.setDefaultRequestOptions(RequestOptions()
+        .format(if (ActivityManagerCompat.isLowRamDevice(activityManager))
           DecodeFormat.PREFER_RGB_565
         else
-          DecodeFormat.PREFER_ARGB_8888))
+          DecodeFormat.PREFER_ARGB_8888)
+        .disallowHardwareConfig() // So Palette can work
+    )
   }
 
   override fun isManifestParsingEnabled() = false
