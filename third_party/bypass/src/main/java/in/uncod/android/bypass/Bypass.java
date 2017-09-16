@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.ColorInt;
+import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -93,7 +94,9 @@ public class Bypass {
         builder.setSpan(new AbsoluteSizeSpan(height, true), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    public CharSequence markdownToSpannable(String markdown, TextView textView, LoadImageCallback loadImageCallback) {
+    public CharSequence markdownToSpannable(String markdown,
+        TextView textView,
+        @Nullable LoadImageCallback loadImageCallback) {
         Document document = processMarkdown(markdown);
 
         int size = document.getElementCount();
@@ -111,8 +114,11 @@ public class Bypass {
     // The 'numberOfSiblings' parameters refers to the number of siblings within the parent, including
     // the 'element' parameter, as in "How many siblings are you?" rather than "How many siblings do
     // you have?".
-    private CharSequence recurseElement(Element element, int indexWithinParent, int numberOfSiblings,
-                                        TextView textView, LoadImageCallback loadImageCallback) {
+    private CharSequence recurseElement(Element element,
+        int indexWithinParent,
+        int numberOfSiblings,
+        TextView textView,
+        @Nullable LoadImageCallback loadImageCallback) {
 
         Type type = element.getType();
 
