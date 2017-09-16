@@ -16,6 +16,8 @@
 
 package io.sweers.catchup.app
 
+import `in`.uncod.android.bypass.Bypass
+import `in`.uncod.android.bypass.Bypass.Options
 import android.app.Application
 import android.content.Context
 import com.google.firebase.FirebaseApp
@@ -40,6 +42,13 @@ abstract class ApplicationModule {
 
   @Module
   companion object {
+
+    @Provides
+    @JvmStatic
+    @Singleton
+    internal fun bypass(@ApplicationContext context: Context): Bypass {
+      return Bypass(context, Options())
+    }
 
     @Provides
     @JvmStatic

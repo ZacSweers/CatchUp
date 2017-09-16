@@ -16,6 +16,8 @@
 
 package io.sweers.catchup.ui.about
 
+import `in`.uncod.android.bypass.Bypass
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Typeface
@@ -30,7 +32,6 @@ import android.support.v4.app.NavUtils
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -65,11 +66,12 @@ import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.TouchableUrlSpan
-import io.sweers.catchup.util.Truss
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.isRtl
+import io.sweers.catchup.util.markdown
+import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.setLightStatusBar
 import javax.inject.Inject
 
@@ -134,6 +136,7 @@ class AboutController : ButterKnifeController() {
 
   @Inject internal lateinit var customTab: CustomTabActivityHelper
   @Inject internal lateinit var linkManager: LinkManager
+  @Inject internal lateinit var bypass: Bypass
 
   @BindView(R.id.about_controller_root) lateinit var rootLayout: CoordinatorLayout
   @BindView(R.id.appbarlayout) lateinit var appBarLayout: AppBarLayout
@@ -146,13 +149,16 @@ class AboutController : ButterKnifeController() {
   @BindView(R.id.view_pager) lateinit var viewPager: ViewPager
 
   private var pagerAdapter: RouterPagerAdapter
-  private fun clickableSpan(url: String): ClickableSpan {
-    return object : TouchableUrlSpan(url, aboutText.linkTextColors, 0) {
-      override fun onClick(url: String) {
-        linkManager.openUrl(UrlMeta(url, aboutText.highlightColor, activity!!))
-            .subscribe()
-      }
-    }
+  private val compositeClickSpan = { url: String ->
+    setOf(
+        object : TouchableUrlSpan(url, aboutText.linkTextColors, 0) {
+          override fun onClick(url: String) {
+            linkManager.openUrl(UrlMeta(url, aboutText.highlightColor, activity!!))
+                .subscribe()
+          }
+        },
+        StyleSpan(Typeface.BOLD)
+    )
   }
 
   init {
@@ -214,6 +220,7 @@ class AboutController : ButterKnifeController() {
     }
   }
 
+  @SuppressLint("SetTextI18n")
   override fun onViewBound(view: View) {
     super.onViewBound(view)
     with(activity as AppCompatActivity) {
@@ -232,26 +239,19 @@ class AboutController : ButterKnifeController() {
     }
 
     aboutText.movementMethod = LinkTouchMovementMethod.getInstance()
-    aboutText.text = Truss()
-        .append("An app for catching up on things.")
-        .append("\n")
-        .append("\n")
-        .append("Version ")
-        .append(BuildConfig.VERSION_NAME)
-        .append("\n")
-        .append("By ")
-        .pushSpan(StyleSpan(Typeface.BOLD))
-        .pushSpan(clickableSpan("https://twitter.com/pandanomic"))
-        .append("Zac Sweers")
-        .popSpan()
-        .popSpan()
-        .append("  —  ")
-        .pushSpan(StyleSpan(Typeface.BOLD))
-        .pushSpan(clickableSpan("https://github.com/hzsweers/CatchUp"))
-        .append("Source code")
-        .popSpan()
-        .popSpan()
-        .build()
+    aboutText.text = """
+      |An app for catching up on things.
+      |
+      |
+      |Version ${BuildConfig.VERSION_NAME}
+      |
+      |By [Zac Sweers](https://twitter.com/pandanomic)  —  [Source code](https://github.com/hzsweers/CatchUp)
+    """.trimMargin()
+        .markdown()
+        .parseMarkdownAndPlainLinks(
+            on = aboutText,
+            with = bypass,
+            alternateSpans = compositeClickSpan)
 
     setUpPager()
 
