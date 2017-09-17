@@ -26,7 +26,6 @@ import butterknife.Unbinder
 import com.jakewharton.rxbinding2.view.RxView
 import com.uber.autodispose.kotlin.autoDisposeWith
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.functions.Function
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpItem
@@ -105,17 +104,11 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
     }
   }
 
-  fun itemClicks(): Observable<Any> {
-    return RxView.clicks(container)
-  }
+  fun itemClicks() = RxView.clicks(container)
 
-  fun itemLongClicks(): Observable<Any> {
-    return RxView.longClicks(container)
-  }
+  fun itemLongClicks() = RxView.longClicks(container)
 
-  fun itemCommentClicks(): Observable<Any> {
-    return RxView.clicks(comments)
-  }
+  fun itemCommentClicks() = RxView.clicks(comments)
 
   fun title(titleText: CharSequence?) {
     title.text = titleText
@@ -175,9 +168,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
     }
   }
 
-  fun timestamp(instant: Instant?) {
-    timestamp(instant?.toEpochMilli())
-  }
+  fun timestamp(instant: Instant?) = timestamp(instant?.toEpochMilli())
 
   private fun timestamp(date: Long?) {
     timestamp.text = date?.let {
@@ -202,8 +193,12 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
   private fun updateAttributionVisibility() {
     val sourceBlank = source.text.isBlank()
     val authorBlank = author.text.isBlank()
-    if (sourceBlank || authorBlank) {
-      authorDivider.hide()
+    with(authorDivider) {
+      if (sourceBlank || authorBlank) {
+        hide()
+      } else {
+        show()
+      }
     }
     if (sourceBlank) {
       source.hide()
@@ -222,7 +217,5 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
     comments.text = commentsCount.toLong().format()
   }
 
-  fun hideComments() {
-    comments.hide()
-  }
+  fun hideComments() = comments.hide()
 }
