@@ -21,7 +21,6 @@ import android.app.Activity
 import android.app.Application
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatDelegate
-import com.bumptech.glide.Glide
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.gabrielittner.threetenbp.LazyThreeTen
 import com.google.firebase.perf.FirebasePerformance
@@ -113,8 +112,6 @@ open class CatchUpApplication : Application(), HasActivityInjector {
 
   override fun onTrimMemory(level: Int) {
     super.onTrimMemory(level)
-    Glide.with(this)
-        .onTrimMemory(level)
     when (level) {
       TRIM_MEMORY_MODERATE,
       TRIM_MEMORY_RUNNING_LOW,
