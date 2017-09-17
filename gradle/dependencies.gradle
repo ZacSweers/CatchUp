@@ -39,7 +39,8 @@ def versions = [
     rxbinding: '2.0.0',
     rxpalette: '0.3.0',
     stetho: '1.5.0',
-    support: '26.1.0'
+    support: '26.1.0',
+    tikxml: '0.8.13'
 ]
 
 ext.versions = versions
@@ -263,7 +264,6 @@ ext.deps = [
         moshiLazyAdapters: 'com.serjltt.moshi:moshi-lazy-adapters:2.0',
         okio: 'com.squareup.okio:okio:1.13.0',
         recyclerViewAnimators: 'jp.wasabeef:recyclerview-animators:2.2.7',
-        simpleXml: 'org.simpleframework:simple-xml:2.7.1',
         timber: 'com.jakewharton.timber:timber:4.5.1',
         unbescape: 'org.unbescape:unbescape:1.1.5.RELEASE'
     ],
@@ -283,7 +283,6 @@ ext.deps = [
         ],
         moshi: "com.squareup.retrofit2:converter-moshi:${versions.retrofit}",
         rxJava2: "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}",
-        xml: "com.squareup.retrofit2:converter-simplexml:${versions.retrofit}"
     ],
 
     rx: [
@@ -314,6 +313,13 @@ ext.deps = [
             okhttp: "com.facebook.stetho:stetho-okhttp3:${versions.stetho}",
             timber: "com.facebook.stetho:stetho-timber:${versions.stetho}"
         ]
+    ],
+
+    tikxml: [
+        annotation: "com.tickaroo.tikxml:annotation:${versions.tikxml}",
+        apt: "com.tickaroo.tikxml:processor:${versions.tikxml}",
+        core: "com.tickaroo.tikxml:core:${versions.tikxml}",
+        retrofit: "com.tickaroo.tikxml:retrofit-converter:${versions.tikxml}"
     ],
 
     test: [

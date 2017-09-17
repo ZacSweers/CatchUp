@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.slashdot;
+package io.sweers.catchup.data.slashdot
 
-import android.support.annotation.Keep;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.Xml
 
-@Keep
-@Root(strict = false)
-public class Author {
+@Xml
+data class Feed(
+    @Element
+    val itemList: List<Entry>,
 
-  @Element(name = "name") public String name;
-}
+    @PropertyElement
+    val title: String? = null,
+
+    @PropertyElement
+    val language: String? = null,
+
+    @PropertyElement
+    val updated: String? = null
+)

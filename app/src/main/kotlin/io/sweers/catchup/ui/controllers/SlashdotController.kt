@@ -19,6 +19,8 @@ package io.sweers.catchup.ui.controllers
 import android.content.Context
 import android.os.Bundle
 import android.view.ContextThemeWrapper
+import com.tickaroo.tikxml.TikXml
+import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
@@ -28,16 +30,15 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.data.slashdot.InstantTypeConverter
 import io.sweers.catchup.data.slashdot.SlashdotService
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.StorageBackedNewsController
-import io.sweers.catchup.util.parsePossiblyOffsetInstant
-import io.sweers.catchup.util.unescapeJavaString
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -52,9 +53,8 @@ class SlashdotController : StorageBackedNewsController {
 
   override fun serviceType() = "sd"
 
-  override fun onThemeContext(context: Context): Context {
-    return ContextThemeWrapper(context, R.style.CatchUp_Slashdot)
-  }
+  override fun onThemeContext(context: Context) =
+      ContextThemeWrapper(context, R.style.CatchUp_Slashdot)
 
   override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
     holder.bind(this, item, linkManager)
@@ -65,25 +65,25 @@ class SlashdotController : StorageBackedNewsController {
     return service.main()
         .map { it.itemList }
         .flattenAsObservable { it }
-        .map { item ->
+        .map { (title, id, _, _, updated, section, comments, author, department) ->
           CatchUpItem(
-              id = item.id.hashCode().toLong(),
-              title = item.title.unescapeJavaString(),
+              id = id.hashCode().toLong(),
+              title = title,
               score = null,
-              timestamp = item.updated.parsePossiblyOffsetInstant(),
-              author = item.author?.name,
-              source = item.department,
-              commentCount = item.comments,
-              tag = item.section,
-              itemClickUrl = item.id,
-              itemCommentClickUrl = "${item.id}#comments"
+              timestamp = updated,
+              author = author.name,
+              source = department,
+              commentCount = comments,
+              tag = section,
+              itemClickUrl = id,
+              itemCommentClickUrl = "$id#comments"
           )
         }
         .toList()
   }
 
   @PerController
-  @Subcomponent(modules = arrayOf(Module::class))
+  @Subcomponent(modules = [Module::class])
   interface Component : AndroidInjector<SlashdotController> {
 
     @Subcomponent.Builder
@@ -95,6 +95,16 @@ class SlashdotController : StorageBackedNewsController {
 
     @Qualifier
     private annotation class InternalApi
+
+    @Provides
+    @JvmStatic
+    @PerController
+    internal fun provideTikXml() = TikXml.Builder()
+        .exceptionOnUnreadXml(false)
+        .addTypeConverter(Instant::class.java,
+            InstantTypeConverter())
+        // TODO HtmlEscapeStringConverter? encode / decode html characters. This class ships as optional dependency
+        .build()
 
     @Provides
     @InternalApi
@@ -117,11 +127,12 @@ class SlashdotController : StorageBackedNewsController {
     @JvmStatic
     @PerController
     internal fun provideSlashdotService(@InternalApi client: Lazy<OkHttpClient>,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SlashdotService {
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+        tikXml: TikXml): SlashdotService {
       val retrofit = Retrofit.Builder().baseUrl(SlashdotService.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(SimpleXmlConverterFactory.createNonStrict())
+          .addConverterFactory(TikXmlConverterFactory.create(tikXml))
           .validateEagerly(BuildConfig.DEBUG)
           .build()
       return retrofit.create(SlashdotService::class.java)

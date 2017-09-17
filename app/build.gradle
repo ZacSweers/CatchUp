@@ -307,11 +307,6 @@ dependencies {
   implementation deps.retrofit.core
   implementation deps.retrofit.moshi
   implementation deps.retrofit.rxJava2
-  implementation(deps.retrofit.xml) {
-    exclude module: 'stax'
-    exclude module: 'stax-api'
-    exclude module: 'xpp3'
-  }
   implementation deps.rx.android
   implementation deps.rx.android2
   implementation deps.rx.java
@@ -339,6 +334,12 @@ dependencies {
   implementation deps.glide.okhttp
   implementation deps.glide.recyclerView
 
+  // Tikxml
+  kapt deps.tikxml.apt
+  implementation deps.tikxml.annotation
+  implementation deps.tikxml.core
+  implementation deps.tikxml.retrofit
+
   // Misc
   implementation deps.autoDispose.core
   implementation deps.autoDispose.android
@@ -353,11 +354,6 @@ dependencies {
   implementation deps.rx.preferences
   implementation deps.rx.receivers
   implementation deps.rx.relay
-  implementation(deps.misc.simpleXml) {
-    exclude module: 'stax'
-    exclude module: 'stax-api'
-    exclude module: 'xpp3'
-  }
   implementation deps.misc.moshiLazyAdapters
 
   // Apollo
