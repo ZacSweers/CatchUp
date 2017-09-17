@@ -53,16 +53,14 @@ internal object GithubApolloModule {
   @Provides
   @JvmStatic
   @Singleton
-  internal fun provideHttpCacheStore(@ApplicationContext context: Context): HttpCacheStore {
-    return DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
-  }
+  internal fun provideHttpCacheStore(@ApplicationContext context: Context): HttpCacheStore =
+      DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
 
   @Provides
   @JvmStatic
   @Singleton
-  internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache {
-    return HttpCache(httpCacheStore, ApolloLogger(Optional.absent()))
-  }
+  internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache =
+      HttpCache(httpCacheStore, ApolloLogger(Optional.absent()))
 
   @Provides
   @InternalApi
@@ -70,51 +68,41 @@ internal object GithubApolloModule {
   @Singleton
   internal fun provideGitHubOkHttpClient(
       client: OkHttpClient,
-      httpCache: HttpCache): OkHttpClient {
-    return client.newBuilder()
-        .addInterceptor(httpCache.interceptor())
-        .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
-        .build()
-  }
+      httpCache: HttpCache): OkHttpClient = client.newBuilder()
+          .addInterceptor(httpCache.interceptor())
+          .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
+          .build()
 
   @Provides
   @JvmStatic
   @Singleton
-  internal fun provideCacheKeyResolver(): CacheKeyResolver {
-    return object : CacheKeyResolver() {
-      private val formatter = { id: String ->
-        if (id.isEmpty()) {
-          CacheKey.NO_KEY
-        } else {
-          CacheKey.from(id)
-        }
+  internal fun provideCacheKeyResolver(): CacheKeyResolver = object : CacheKeyResolver() {
+    private val formatter = { id: String ->
+      if (id.isEmpty()) {
+        CacheKey.NO_KEY
+      } else {
+        CacheKey.from(id)
       }
+    }
 
-      override fun fromFieldRecordSet(field: ResponseField,
-          objectSource: Map<String, Any>): CacheKey {
-        // Most objects use id
+    override fun fromFieldRecordSet(field: ResponseField,
+        objectSource: Map<String, Any>): CacheKey =// Most objects use id
         objectSource["id"].let {
           return when (it) {
             is String -> formatter(it)
             else -> CacheKey.NO_KEY
           }
         }
-      }
 
-      override fun fromFieldArguments(field: ResponseField,
-          variables: Operation.Variables): CacheKey {
-        return CacheKey.NO_KEY
-      }
-    }
+    override fun fromFieldArguments(field: ResponseField,
+        variables: Operation.Variables): CacheKey = CacheKey.NO_KEY
   }
 
   @Provides
   @JvmStatic
   @Singleton
-  internal fun provideNormalizedCacheFactory(
-      @ApplicationContext context: Context): NormalizedCacheFactory<*> {
-    return LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION)
-  }
+  internal fun provideNormalizedCacheFactory(): NormalizedCacheFactory<*> =
+      LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION)
 
   @Provides
   @JvmStatic
@@ -122,14 +110,12 @@ internal object GithubApolloModule {
   internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
       cacheFactory: NormalizedCacheFactory<*>,
       resolver: CacheKeyResolver,
-      httpCacheStore: HttpCacheStore): ApolloClient {
-    return ApolloClient.builder()
-        .serverUrl(SERVER_URL)
-        .httpCacheStore(httpCacheStore)
-        .callFactory { client.get().newCall(it) }
-        .normalizedCache(cacheFactory, resolver)
-        .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
-        .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())
-        .build()
-  }
+      httpCacheStore: HttpCacheStore): ApolloClient = ApolloClient.builder()
+          .serverUrl(SERVER_URL)
+          .httpCacheStore(httpCacheStore)
+          .callFactory { client.get().newCall(it) }
+          .normalizedCache(cacheFactory, resolver)
+          .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
+          .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())
+          .build()
 }

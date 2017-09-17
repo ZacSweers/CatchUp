@@ -42,16 +42,14 @@ open class CatchUpApplication : Application(), HasActivityInjector {
 
     @JvmStatic lateinit var refWatcher: RefWatcher
 
-    fun refWatcher(): RefWatcher {
-      return refWatcher
-    }
+    fun refWatcher() = refWatcher
   }
 
-  @Inject lateinit internal var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
-  @Inject lateinit var sharedPreferences: SharedPreferences
-  @Inject lateinit var lumberYard: LumberYard
-  @Inject lateinit var remoteConfig: FirebaseRemoteConfig
-  @Inject lateinit var rxPreferences: RxSharedPreferences
+  @Inject internal lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
+  @Inject internal lateinit var sharedPreferences: SharedPreferences
+  @Inject internal lateinit var lumberYard: LumberYard
+  @Inject internal lateinit var remoteConfig: FirebaseRemoteConfig
+  @Inject internal lateinit var rxPreferences: RxSharedPreferences
 
   override fun onCreate() {
     super.onCreate()
@@ -102,13 +100,11 @@ open class CatchUpApplication : Application(), HasActivityInjector {
         sharedPreferences.getBoolean(P.reports.KEY, false)
   }
 
-  protected open fun initVariant() {
-    // Override this in variants
-  }
+  // Override this in variants
+  protected open fun initVariant() = Unit
 
-  override fun activityInjector(): DispatchingAndroidInjector<Activity> {
-    return dispatchingActivityInjector
-  }
+  override fun activityInjector(): DispatchingAndroidInjector<Activity> =
+      dispatchingActivityInjector
 
   override fun onTrimMemory(level: Int) {
     super.onTrimMemory(level)
