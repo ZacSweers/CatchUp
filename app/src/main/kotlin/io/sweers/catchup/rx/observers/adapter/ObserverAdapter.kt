@@ -21,27 +21,15 @@ import io.reactivex.disposables.Disposable
 
 abstract class ObserverAdapter<T> : Observer<T> {
 
-  override fun hashCode(): Int {
-    return super.hashCode()
-  }
+  override fun hashCode() = super.hashCode()
 
-  override fun equals(other: Any?): Boolean {
-    return super.equals(other)
-  }
+  override fun equals(other: Any?) = super.equals(other)
 
-  override fun onSubscribe(d: Disposable) {
+  override fun onSubscribe(d: Disposable) = Unit
 
-  }
+  override fun onNext(value: T) = Unit
 
-  override fun onNext(value: T) {
+  override fun onError(e: Throwable) = Unit
 
-  }
-
-  override fun onError(e: Throwable) {
-
-  }
-
-  override fun onComplete() {
-
-  }
+  override fun onComplete() = Unit
 }

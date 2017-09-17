@@ -21,27 +21,15 @@ import org.reactivestreams.Subscription
 
 abstract class SubscriberAdapter<T> : Subscriber<T> {
 
-  override fun hashCode(): Int {
-    return super.hashCode()
-  }
+  override fun hashCode() = super.hashCode()
 
-  override fun equals(other: Any?): Boolean {
-    return super.equals(other)
-  }
+  override fun equals(other: Any?) = super.equals(other)
 
-  override fun onSubscribe(s: Subscription) {
+  override fun onSubscribe(s: Subscription) = Unit
 
-  }
+  override fun onNext(t: T) = Unit
 
-  override fun onNext(t: T) {
+  override fun onError(t: Throwable) = Unit
 
-  }
-
-  override fun onError(t: Throwable) {
-
-  }
-
-  override fun onComplete() {
-
-  }
+  override fun onComplete() = Unit
 }
