@@ -40,84 +40,70 @@ abstract class OmniTransformer<Upstream, Downstream>
     MaybeTransformer<Upstream, Downstream>,
     CompletableTransformer {
 
-  override fun apply(upstream: Completable): CompletableSource {
-    return upstream
-  }
+  override fun apply(upstream: Completable): CompletableSource = upstream
 
-  override fun apply(upstream: Maybe<Upstream>): MaybeSource<Downstream> {
-    return upstream as MaybeSource<Downstream>
-  }
+  override fun apply(upstream: Maybe<Upstream>) = upstream as MaybeSource<Downstream>
 
-  override fun apply(upstream: Observable<Upstream>): ObservableSource<Downstream> {
-    return upstream as ObservableSource<Downstream>
-  }
+  override fun apply(upstream: Observable<Upstream>) = upstream as ObservableSource<Downstream>
 
-  override fun apply(upstream: Single<Upstream>): SingleSource<Downstream> {
-    return upstream as SingleSource<Downstream>
-  }
+  override fun apply(upstream: Single<Upstream>) = upstream as SingleSource<Downstream>
 }
 
-fun <T> Observable<T>.doOnEmpty(action: () -> Unit): Observable<T> {
-  return switchIfEmpty(Observable.empty<T>().doOnComplete(action))
-}
+fun <T> Observable<T>.doOnEmpty(action: () -> Unit): Observable<T> =
+    switchIfEmpty(Observable.empty<T>().doOnComplete(action))
 
-fun <T : Any> Observable<T>.delayedMessage(view: View, message: String): Observable<T> {
-  return compose(delayedMessageTransformer(view, message))
-}
+fun <T : Any> Observable<T>.delayedMessage(view: View, message: String): Observable<T> =
+    compose(delayedMessageTransformer(view, message))
 
-fun <T : Any> Single<T>.delayedMessage(view: View, message: String): Single<T> {
-  return compose(delayedMessageTransformer(view, message))
-}
+fun <T : Any> Single<T>.delayedMessage(view: View, message: String): Single<T> =
+    compose(delayedMessageTransformer(view, message))
 
-fun <T : Any> Maybe<T>.delayedMessage(view: View, message: String): Maybe<T> {
-  return compose(delayedMessageTransformer(view, message))
-}
+fun <T : Any> Maybe<T>.delayedMessage(view: View, message: String): Maybe<T> =
+    compose(delayedMessageTransformer(view, message))
 
-fun Completable.delayedMessage(view: View, message: String): Completable {
-  return compose(delayedMessageTransformer<Any>(view, message))
-}
+fun Completable.delayedMessage(view: View, message: String): Completable =
+    compose(delayedMessageTransformer<Any>(view, message))
 
-fun <T> delayedMessageTransformer(view: View, message: String): OmniTransformer<T, T> {
-  return object : OmniTransformer<T, T>() {
+fun <T> delayedMessageTransformer(view: View, message: String): OmniTransformer<T, T> =
+    object : OmniTransformer<T, T>() {
 
-    private val timer = Observable.timer(300, TimeUnit.MILLISECONDS)
-    private var snackbar: Snackbar? = null
+      private val timer = Observable.timer(300, TimeUnit.MILLISECONDS)
+      private var snackbar: Snackbar? = null
 
-    override fun apply(upstream: Observable<T>): Observable<T> {
-      verifyMainThread()
-      return upstream
-          .doOnSubscribe {
-            timer.takeUntil(upstream)
-                .subscribe {
-                  snackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).apply {
-                    show()
+      override fun apply(upstream: Observable<T>): Observable<T> {
+        verifyMainThread()
+        return upstream
+            .doOnSubscribe {
+              timer.takeUntil(upstream)
+                  .subscribe {
+                    snackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).apply {
+                      show()
+                    }
                   }
-                }
-          }
-          .doOnTerminate {
-            snackbar?.dismiss()
-            snackbar = null
-          }
-    }
+            }
+            .doOnTerminate {
+              snackbar?.dismiss()
+              snackbar = null
+            }
+      }
 
-    override fun apply(upstream: Completable): CompletableSource {
-      verifyMainThread()
-      return upstream
-          .doOnSubscribe {
-            timer.takeUntil(upstream.toObservable<Any>())
-                .subscribe {
-                  snackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).apply {
-                    show()
+      override fun apply(upstream: Completable): CompletableSource {
+        verifyMainThread()
+        return upstream
+            .doOnSubscribe {
+              timer.takeUntil(upstream.toObservable<Any>())
+                  .subscribe {
+                    snackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).apply {
+                      show()
+                    }
                   }
-                }
-          }
-          .doOnTerminate {
-            snackbar?.dismiss()
-            snackbar = null
-          }
+            }
+            .doOnTerminate {
+              snackbar?.dismiss()
+              snackbar = null
+            }
+      }
     }
-  }
-}
 
 /**
  * Utility for working with enums when you want to run actions only on specific values
