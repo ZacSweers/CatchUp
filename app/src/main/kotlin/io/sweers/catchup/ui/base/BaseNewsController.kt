@@ -47,8 +47,8 @@ import io.sweers.catchup.util.Iterables
 import io.sweers.catchup.util.applyOn
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
-import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.hide
+import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.show
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import retrofit2.HttpException
@@ -255,6 +255,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
                       errorImage.setImageDrawable(it)
                       it.start()
                     }
+                e(error) { "IOException" }
               }
               is HttpException -> {
                 // TODO Show some sort of API error response.
@@ -267,6 +268,7 @@ abstract class BaseNewsController<T : HasStableId> : ServiceController,
                       errorImage.setImageDrawable(it)
                       it.start()
                     }
+                e(error) { "HttpException" }
               }
               else -> {
                 // TODO Show some sort of generic response error
