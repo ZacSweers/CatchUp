@@ -128,9 +128,9 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
               .subscribe()
         }
         .doOnSuccess { posts ->
-          Completable.fromAction {
-            dao.putItems(*posts.toTypedArray())
-          }.subscribeOn(Schedulers.io())
+          Completable
+              .fromAction { dao.putItems(*posts.toTypedArray()) }
+              .subscribeOn(Schedulers.io())
               .subscribe()
         }
         .flattenAsObservable { it }
