@@ -107,8 +107,8 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
     return getDataFromService(page)
         .doOnSuccess { posts ->
           Completable.fromAction {
-            val calculatedExpiration = Instant.now().plus(2,
-                ChronoUnit.HOURS) // TODO preference this
+            val calculatedExpiration = Instant.now()
+                .plus(2, ChronoUnit.HOURS) // TODO preference this
             if (currentSessionId == -1L) {
               currentSessionId = calculatedExpiration.toEpochMilli()
             }
@@ -125,13 +125,13 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
                 }
             ))
           }.subscribeOn(Schedulers.io())
-              .blockingAwait()
+              .subscribe()
         }
         .doOnSuccess { posts ->
           Completable.fromAction {
             dao.putItems(*posts.toTypedArray())
           }.subscribeOn(Schedulers.io())
-              .blockingAwait()
+              .subscribe()
         }
         .flattenAsObservable { it }
         .onErrorResumeNext { throwable: Throwable ->
