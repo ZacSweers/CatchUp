@@ -43,7 +43,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import butterknife.BindView
-import butterknife.Unbinder
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
@@ -138,6 +137,7 @@ class PagerController : ButterKnifeController {
 
   constructor() : super()
 
+  @Suppress("unused")
   constructor(args: Bundle) : super(args)
 
   init {
@@ -149,13 +149,9 @@ class PagerController : ButterKnifeController {
         }
       }
 
-      override fun getCount(): Int {
-        return PAGE_DATA.size
-      }
+      override fun getCount() = PAGE_DATA.size
 
-      override fun getPageTitle(position: Int): CharSequence {
-        return ""
-      }
+      override fun getPageTitle(position: Int) = ""
     }
 
     // Invalidate the color cache up front
@@ -183,13 +179,10 @@ class PagerController : ButterKnifeController {
     }
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View {
-    return inflater.inflate(R.layout.controller_pager, container, false)
-  }
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
+      inflater.inflate(R.layout.controller_pager, container, false)
 
-  override fun bind(view: View): Unbinder {
-    return PagerController_ViewBinding(this, view)
-  }
+  override fun bind(view: View) = PagerController_ViewBinding(this, view)
 
   override fun onAttach(view: View) {
     ConductorInjection.inject(this)
@@ -209,9 +202,7 @@ class PagerController : ButterKnifeController {
         .distinctUntilChanged()
         .doOnNext(object : PredicateConsumer<Int>() {
           @Throws(Exception::class)
-          override fun test(verticalOffset: Int): Boolean {
-            return verticalOffset == -toolbar.height
-          }
+          override fun test(verticalOffset: Int) = verticalOffset == -toolbar.height
 
           @Throws(Exception::class)
           override fun acceptActual(value: Int) {
@@ -257,9 +248,7 @@ class PagerController : ButterKnifeController {
           }
 
           @Throws(Exception::class)
-          override fun test(verticalOffset: Int): Boolean {
-            return verticalOffset != -toolbar.height
-          }
+          override fun test(verticalOffset: Int) = verticalOffset != -toolbar.height
         })
         .autoDisposeWith(this)
         .subscribe()
