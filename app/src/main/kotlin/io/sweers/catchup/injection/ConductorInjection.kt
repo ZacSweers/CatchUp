@@ -19,6 +19,7 @@ package io.sweers.catchup.injection
 import android.util.Log
 import com.bluelinelabs.conductor.Controller
 import dagger.android.AndroidInjector
+import dagger.android.HasActivityInjector
 import dagger.internal.Preconditions.checkNotNull
 
 /** Injects core Conductor types.  */
@@ -31,12 +32,12 @@ object ConductorInjection {
    *
    * Uses the following algorithm to find the appropriate `DispatchingAndroidInjector<Controller>` to inject `controller`:
    *
-   *  1. Walks the parent-controller hierarchy to find the a controller that implements [ ], and if none do
+   *  1. Walks the parent-controller hierarchy to find the a controller that implements [HasControllerInjector], and if none do
    *  2. Uses the `controller`'s [activity][Controller.getActivity] if it implements
    * [HasControllerInjector], and if not
-   *  3. Uses the [android.app.Application] if it implements [ ].
+   *  3. Uses the [android.app.Application] if it implements [HasActivityInjector].
    *
-   * If none of them implement [HasControllerInjector], a [ ] is thrown.
+   * If none of them implement [HasControllerInjector], a [IllegalArgumentException] is thrown.
    *
    * @throws IllegalArgumentException if no `AndroidInjector.Factory<Controller, ?>` is bound
    * for `controller`.
