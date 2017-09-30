@@ -35,4 +35,7 @@
   <string name="title_activity_about">About</string>
   <string name="summarizing">Summarizing…</string>
   <string name="clear_cache_success">Cleaned %sB</string>
+  <string name="connection_issue">Connection Problem</string>
+  <string name="api_issue">API Problem</string>
+  <string name="unknown_issue">Unknown issue</string>
 </resources>
