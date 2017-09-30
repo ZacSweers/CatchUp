@@ -16,6 +16,9 @@
 
 package io.sweers.catchup.ui.base
 
+import android.content.res.ColorStateList
+import android.support.annotation.ColorInt
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.RxViewHolder
 import android.text.format.DateUtils
 import android.view.View
@@ -62,11 +65,18 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
     unbinder = ButterKnife.bind(this, itemView)
   }
 
-  fun bind(controller: ServiceController,
+  fun tint(@ColorInt color: Int) {
+    score.setTextColor(color)
+    tag.setTextColor(color)
+    scoreDivider.setTextColor(color)
+    DrawableCompat.setTintList(comments.compoundDrawables[1], ColorStateList.valueOf(color))
+  }
+
+  fun bind(controller: ServiceController?,
       item: CatchUpItem,
       linkManager: LinkManager? = null,
-      itemClickHandler: ((String) -> Unit)? = null,
-      commentClickHandler: ((String) -> Unit)? = null) {
+      itemClickHandler: ((String) -> Any)? = null,
+      commentClickHandler: ((String) -> Any)? = null) {
     title(item.title)
     score(item.score)
     timestamp(item.timestamp)
@@ -81,7 +91,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
         itemClickHandler(it)
       } else {
         itemClicks()
-            .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
+            .compose<UrlMeta>(controller!!.transformUrlToMeta<Any>(it))
             .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
             .autoDisposeWith(this)
             .subscribe()
@@ -92,7 +102,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
         commentClickHandler(it)
       } else {
         itemCommentClicks()
-            .compose<UrlMeta>(controller.transformUrlToMeta<Any>(it))
+            .compose<UrlMeta>(controller!!.transformUrlToMeta<Any>(it))
             .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
             .autoDisposeWith(this)
             .subscribe()
