@@ -21,6 +21,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
+import io.sweers.catchup.ui.base2.NewServiceController
 import io.sweers.catchup.ui.controllers.DesignerNewsController
 import io.sweers.catchup.ui.controllers.DribbbleController
 import io.sweers.catchup.ui.controllers.GitHubController
@@ -29,24 +30,28 @@ import io.sweers.catchup.ui.controllers.MediumController
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.ui.controllers.ProductHuntController
 import io.sweers.catchup.ui.controllers.RedditController
-import io.sweers.catchup.ui.controllers.SlashdotController
 import io.sweers.catchup.ui.controllers.SmmryController
 
 @Module(
-    subcomponents = arrayOf(
-        SmmryController.Component::class,
-        PagerController.Component::class,
-        HackerNewsController.Component::class,
-        RedditController.Component::class,
-        MediumController.Component::class,
-        ProductHuntController.Component::class,
-        SlashdotController.Component::class,
-        DribbbleController.Component::class,
-        DesignerNewsController.Component::class,
-        GitHubController.Component::class
-    )
+    subcomponents = [
+    NewServiceController.Component::class,
+    PagerController.Component::class,
+    SmmryController.Component::class,
+    HackerNewsController.Component::class,
+    RedditController.Component::class,
+    MediumController.Component::class,
+    ProductHuntController.Component::class,
+    DribbbleController.Component::class,
+    DesignerNewsController.Component::class,
+    GitHubController.Component::class
+    ]
 )
 abstract class ControllerBindingModule {
+  @Binds
+  @IntoMap
+  @ControllerKey(NewServiceController::class)
+  internal abstract fun bindNewServiceControllerInjectorFactory(
+      builder: NewServiceController.Component.Builder): AndroidInjector.Factory<out Controller>
 
   @Binds
   @IntoMap
@@ -83,12 +88,6 @@ abstract class ControllerBindingModule {
   @ControllerKey(ProductHuntController::class)
   internal abstract fun bindProductHuntControllerInjectorFactory(
       builder: ProductHuntController.Component.Builder): AndroidInjector.Factory<out Controller>
-
-  @Binds
-  @IntoMap
-  @ControllerKey(SlashdotController::class)
-  internal abstract fun bindSlashdotControllerInjectorFactory(
-      builder: SlashdotController.Component.Builder): AndroidInjector.Factory<out Controller>
 
   @Binds
   @IntoMap

@@ -16,25 +16,25 @@
 
 package io.sweers.catchup.ui.controllers
 
-import android.content.Context
-import android.os.Bundle
-import android.view.ContextThemeWrapper
 import com.tickaroo.tikxml.TikXml
 import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
+import dagger.Binds
 import dagger.Lazy
+import dagger.Module
 import dagger.Provides
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
-import io.reactivex.Single
+import dagger.multibindings.IntoMap
+import io.reactivex.Maybe
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.data.service.DataRequest
+import io.sweers.catchup.data.service.ServiceKey
+import io.sweers.catchup.data.service.ServiceMeta
+import io.sweers.catchup.data.service.ServiceMetaKey
+import io.sweers.catchup.data.service.TextService
 import io.sweers.catchup.data.slashdot.InstantTypeConverter
-import io.sweers.catchup.data.slashdot.SlashdotService
-import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.ui.base.CatchUpItemViewHolder
-import io.sweers.catchup.ui.base.StorageBackedNewsController
+import io.sweers.catchup.data.slashdot.SlashdotApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -42,26 +42,21 @@ import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class SlashdotController : StorageBackedNewsController {
+// TODO Wrap this in a storage-backed one
+class SlashdotService @Inject constructor(
+    private val serviceMeta: ServiceMeta,
+    private val service: SlashdotApi,
+    private val linkManager: LinkManager)
+  : TextService {
 
-  @Inject lateinit var service: SlashdotService
-  @Inject lateinit var linkManager: LinkManager
+  override fun meta() = serviceMeta
 
-  constructor() : super()
+  override fun firstPageKey() = "main"
 
-  constructor(args: Bundle) : super(args)
-
-  override fun serviceType() = "sd"
-
-  override fun onThemeContext(context: Context) =
-      ContextThemeWrapper(context, R.style.CatchUp_Slashdot)
-
-  override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
-    holder.bind(this, item, linkManager)
-  }
-
-  override fun getDataFromService(page: Int): Single<List<CatchUpItem>> {
-    setMoreDataAvailable(false)
+  override fun fetchPage(request: DataRequest): Maybe<List<CatchUpItem>> {
+    if (request.pageId != "main") {
+      return Maybe.empty()
+    }
     return service.main()
         .map { it.itemList }
         .flattenAsObservable { it }
@@ -80,26 +75,42 @@ class SlashdotController : StorageBackedNewsController {
           )
         }
         .toList()
+        .toMaybe()
   }
 
-  @PerController
-  @Subcomponent(modules = [Module::class])
-  interface Component : AndroidInjector<SlashdotController> {
+  override fun linkManager() = linkManager
+}
 
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<SlashdotController>()
-  }
+@Module
+abstract class NewSlashdotModule {
+  @Qualifier
+  private annotation class InternalApi
 
-  @dagger.Module
-  object Module {
+  @IntoMap
+  @ServiceMetaKey("sd")
+  @Binds
+  abstract fun slashdotServiceMeta(meta: ServiceMeta): ServiceMeta
 
-    @Qualifier
-    private annotation class InternalApi
+  @IntoMap
+  @ServiceKey("sd")
+  @Binds
+  abstract fun slashdotService(slashdotService: SlashdotService): TextService
+
+  @Module
+  companion object {
 
     @Provides
     @JvmStatic
-    @PerController
-    internal fun provideTikXml() = TikXml.Builder()
+    fun provideSlashdotServiceMeta() = ServiceMeta(
+        "sd",
+        R.string.slashdot,
+        R.color.slashdotAccent,
+        R.drawable.logo_sd
+    )
+
+    @Provides
+    @JvmStatic
+    fun provideTikXml(): TikXml = TikXml.Builder()
         .exceptionOnUnreadXml(false)
         .addTypeConverter(Instant::class.java,
             InstantTypeConverter())
@@ -109,8 +120,7 @@ class SlashdotController : StorageBackedNewsController {
     @Provides
     @InternalApi
     @JvmStatic
-    @PerController
-    internal fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
+    fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
       return okHttpClient.newBuilder()
           .addNetworkInterceptor { chain ->
             val originalResponse = chain.proceed(chain.request())
@@ -125,17 +135,16 @@ class SlashdotController : StorageBackedNewsController {
 
     @Provides
     @JvmStatic
-    @PerController
-    internal fun provideSlashdotService(@InternalApi client: Lazy<OkHttpClient>,
+    fun provideSlashdotService(@InternalApi client: Lazy<OkHttpClient>,
         rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
-        tikXml: TikXml): SlashdotService {
-      val retrofit = Retrofit.Builder().baseUrl(SlashdotService.ENDPOINT)
+        tikXml: TikXml): SlashdotApi {
+      val retrofit = Retrofit.Builder().baseUrl(SlashdotApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(TikXmlConverterFactory.create(tikXml))
           .validateEagerly(BuildConfig.DEBUG)
           .build()
-      return retrofit.create(SlashdotService::class.java)
+      return retrofit.create(SlashdotApi::class.java)
     }
   }
 }

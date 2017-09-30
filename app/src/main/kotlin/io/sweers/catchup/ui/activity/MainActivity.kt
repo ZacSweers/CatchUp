@@ -18,6 +18,7 @@ package io.sweers.catchup.ui.activity
 
 import android.app.Activity
 import android.os.Bundle
+import android.support.v7.widget.RecyclerView.RecycledViewPool
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -26,10 +27,16 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
+import dagger.Provides
+import dagger.multibindings.Multibinds
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.data.service.ServiceMeta
+import io.sweers.catchup.data.service.TextService
+import io.sweers.catchup.data.service.VisualService
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.base.BaseActivity
+import io.sweers.catchup.ui.controllers.NewSlashdotModule
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
@@ -71,8 +78,31 @@ class MainActivity : BaseActivity() {
     }
   }
 
-  @dagger.Module
+  @dagger.Module(
+      includes = [
+      NewSlashdotModule::class
+      ]
+  )
   abstract class Module {
+    @dagger.Module
+    companion object {
+      @Provides
+      @JvmStatic
+      @PerActivity
+      fun provideViewPool() = RecycledViewPool()
+    }
+
+    // TODO Eventually wrap elements from this into a storage-backed set
+    @Multibinds
+    @PerActivity
+    abstract fun textServices(): Map<String, TextService>
+
+    @Multibinds
+    @PerActivity
+    abstract fun visualServices(): Map<String, VisualService>
+
+    @Multibinds
+    abstract fun serviceMetas(): Map<String, ServiceMeta>
 
     @Binds
     @PerActivity

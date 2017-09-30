@@ -19,7 +19,7 @@ package io.sweers.catchup.data.slashdot
 import io.reactivex.Single
 import retrofit2.http.GET
 
-interface SlashdotService {
+interface SlashdotApi {
 
   @GET("/Slashdot/slashdotMainatom")
   fun main(): Single<Feed>

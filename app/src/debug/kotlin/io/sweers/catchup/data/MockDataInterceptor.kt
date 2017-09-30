@@ -25,7 +25,7 @@ import io.sweers.catchup.data.medium.MediumService
 import io.sweers.catchup.data.model.ServiceData
 import io.sweers.catchup.data.producthunt.ProductHuntService
 import io.sweers.catchup.data.reddit.RedditService
-import io.sweers.catchup.data.slashdot.SlashdotService
+import io.sweers.catchup.data.slashdot.SlashdotApi
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -77,7 +77,7 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
         put(ProductHuntService.HOST,
             ServiceData.Builder("ph").addEndpoint("/v1/posts")
                 .build())
-        put(SlashdotService.HOST,
+        put(SlashdotApi.HOST,
             ServiceData.Builder("sd").addEndpoint("/Slashdot/slashdotMainatom")
                 .fileType("xml")
                 .build())

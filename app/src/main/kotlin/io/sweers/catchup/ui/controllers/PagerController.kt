@@ -20,6 +20,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -55,12 +56,14 @@ import dagger.android.AndroidInjector
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.RemoteConfigKeys
+import io.sweers.catchup.data.service.ServiceMeta
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.rx.PredicateConsumer
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
+import io.sweers.catchup.ui.base2.NewServiceController
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttribute
@@ -68,7 +71,15 @@ import io.sweers.catchup.util.setLightStatusBar
 import java.util.Arrays
 import javax.inject.Inject
 
-data class Service(@StringRes val name: Int,
+// TODO Temporary till static services are removed
+fun ServiceMeta.toStaticService() = StaticService(
+    name,
+    icon,
+    themeColor,
+    { NewServiceController.newInstance(id) }
+)
+
+data class StaticService(@StringRes val name: Int,
     @DrawableRes val icon: Int,
     @ColorRes val accent: Int,
     val instantiator: () -> Controller)
@@ -79,44 +90,42 @@ class PagerController : ButterKnifeController {
 
     private const val SETTINGS_ACTIVITY_REQUEST = 100
     private const val PAGE_TAG = "PagerController.pageTag"
-    private val PAGE_DATA = arrayOf(
-        Service(R.string.hacker_news,
+    private lateinit var services: Array<StaticService>
+    private val staticServices = listOf(
+        StaticService(R.string.hacker_news,
             R.drawable.logo_hn,
             R.color.hackerNewsAccent,
             { HackerNewsController() }),
-        Service(R.string.reddit,
+        StaticService(R.string.reddit,
             R.drawable.logo_reddit,
             R.color.redditAccent,
             { RedditController() }),
-        Service(R.string.medium,
+        StaticService(R.string.medium,
             R.drawable.logo_medium,
             R.color.mediumAccent,
             { MediumController() }),
-        Service(R.string.product_hunt,
+        StaticService(R.string.product_hunt,
             R.drawable.logo_ph,
             R.color.productHuntAccent,
             { ProductHuntController() }),
-        Service(R.string.slashdot,
-            R.drawable.logo_sd,
-            R.color.slashdotAccent,
-            { SlashdotController() }),
-        Service(R.string.designer_news,
+        StaticService(R.string.designer_news,
             R.drawable.logo_dn,
             R.color.designerNewsAccent,
             { DesignerNewsController() }),
-        Service(R.string.dribbble,
+        StaticService(R.string.dribbble,
             R.drawable.logo_dribbble,
             R.color.dribbbleAccent,
             { DribbbleController() }),
-        Service(R.string.github,
+        StaticService(R.string.github,
             R.drawable.logo_github,
             R.color.githubAccent,
             { GitHubController() }))
   }
 
-  private val resolvedColorCache = IntArray(PAGE_DATA.size)
+  private lateinit var resolvedColorCache: IntArray
   private val argbEvaluator = ArgbEvaluator()
 
+  @Inject lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
   @Inject lateinit var remoteConfig: FirebaseRemoteConfig
   @BindView(R.id.pager_controller_root) lateinit var rootLayout: CoordinatorLayout
   @BindView(R.id.tab_layout) lateinit var tabLayout: TabLayout
@@ -144,18 +153,26 @@ class PagerController : ButterKnifeController {
     pagerAdapter = object : RouterPagerAdapter(this) {
       override fun configureRouter(router: Router, position: Int) {
         if (!router.hasRootController()) {
-          router.setRoot(RouterTransaction.with(PAGE_DATA[position].instantiator())
+          router.setRoot(RouterTransaction.with(services[position].instantiator())
               .tag(PAGE_TAG))
         }
       }
 
-      override fun getCount() = PAGE_DATA.size
+      override fun getCount() = services.size
 
       override fun getPageTitle(position: Int) = ""
     }
+  }
 
+  override fun onContextAvailable(context: Context) {
+    ConductorInjection.inject(this)
+    // TODO Temporary till services are all migrated
+    services = (staticServices + serviceMetas.values.map { it.toStaticService() }).toTypedArray()
+
+    resolvedColorCache = IntArray(services.size)
     // Invalidate the color cache up front
     Arrays.fill(resolvedColorCache, R.color.no_color)
+    super.onContextAvailable(context)
   }
 
   override fun onSaveViewState(view: View, outState: Bundle) {
@@ -265,7 +282,7 @@ class PagerController : ButterKnifeController {
     }
 
     // Initial title
-    toolbar.title = resources!!.getString(PAGE_DATA[0].name)
+    toolbar.title = resources!!.getString(services[0].name)
 
     // Set the initial color
     @ColorInt val initialColor = getAndSaveColor(0)
@@ -274,8 +291,8 @@ class PagerController : ButterKnifeController {
     tabLayout.setupWithViewPager(viewPager, false)
 
     // Set icons
-    for (i in PAGE_DATA.indices) {
-      val service = PAGE_DATA[i]
+    for (i in services.indices) {
+      val service = services[i]
       val d = VectorDrawableCompat.create(resources!!, service.icon, null)
       tabLayout.getTabAt(i)!!.icon = d
     }
@@ -285,12 +302,12 @@ class PagerController : ButterKnifeController {
     viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
       override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
         if (canAnimateColor) {
-          val color: Int = if (position < pagerAdapter.count - 1 && position < PAGE_DATA.size - 1) {
+          val color: Int = if (position < pagerAdapter.count - 1 && position < services.size - 1) {
             argbEvaluator.evaluate(positionOffset,
                 getAndSaveColor(position),
                 getAndSaveColor(position + 1)) as Int
           } else {
-            getAndSaveColor(PAGE_DATA.size - 1)
+            getAndSaveColor(services.size - 1)
           }
           tabLayout.setBackgroundColor(color)
           if (tabLayoutIsPinned) {
@@ -314,7 +331,7 @@ class PagerController : ButterKnifeController {
     tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
       override fun onTabSelected(tab: TabLayout.Tab) {
         val position = tab.position
-        toolbar.setTitle(PAGE_DATA[position].name)
+        toolbar.setTitle(services[position].name)
 
         // If we're switching between more than one page, we just want to manually set the color
         // once rather than let the usual page scroll logic cycle through all the colors in a weird
@@ -373,7 +390,7 @@ class PagerController : ButterKnifeController {
 
   @ColorInt private fun getAndSaveColor(position: Int): Int {
     if (resolvedColorCache[position] == R.color.no_color) {
-      resolvedColorCache[position] = ContextCompat.getColor(activity!!, PAGE_DATA[position].accent)
+      resolvedColorCache[position] = ContextCompat.getColor(activity!!, services[position].accent)
     }
     return resolvedColorCache[position]
   }
