@@ -146,11 +146,11 @@ ext.deps = [
     build: [
         ci: 'true' == System.getenv('CI'),
         // query git for the SHA, Tag and commit count. Use these to automate versioning.
-        gitSha: 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim(),
-        gitTag: 'git describe --tags'.execute([], project.rootDir).text.trim(),
+        gitSha: 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim() ?: "none",
+        gitTag: 'git describe --tags'.execute([], project.rootDir).text.trim() ?: "dev",
         gitCommitCount: 100 + Integer.parseInt(
             'git rev-list --count HEAD'.execute([], project.rootDir).text.trim() ?: '0'),
-        gitTimestamp: 'git log -n 1 --format=%at'.execute([], rootDir).text.trim(),
+        gitTimestamp: 'git log -n 1 --format=%at'.execute([], rootDir).text.trim() ?: 0,
 
         gradlePlugins: [
             bugsnag: 'com.bugsnag:bugsnag-android-gradle-plugin:2.4.2',
