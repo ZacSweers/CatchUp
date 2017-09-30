@@ -20,7 +20,7 @@ import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
-import io.sweers.catchup.ui.base.HasStableId
+import io.sweers.catchup.data.HasStableId
 
 @AutoValue
 abstract class MediumPost : HasStableId {

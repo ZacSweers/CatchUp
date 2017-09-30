@@ -25,7 +25,6 @@ import android.arch.persistence.room.PrimaryKey
 import android.arch.persistence.room.Query
 import android.support.annotation.Keep
 import io.reactivex.Maybe
-import io.sweers.catchup.ui.base.HasStableId
 import org.threeten.bp.Instant
 
 @Dao
@@ -89,7 +88,7 @@ enum class SummarizationType {
 @Keep
 @Entity(tableName = "items")
 data class CatchUpItem(
-    @PrimaryKey var id: Long,
+    @PrimaryKey val id: Long,
     val title: String,
     val timestamp: Instant,
     val score: Pair<String, Int>? = null,
@@ -103,4 +102,11 @@ data class CatchUpItem(
     @Embedded val summarizationInfo: SummarizationInfo? = null
 ) : HasStableId {
   override fun stableId() = id
+}
+
+/**
+ * Helper interface to generalize reporting stable IDs.
+ */
+interface HasStableId {
+  fun stableId(): Long
 }

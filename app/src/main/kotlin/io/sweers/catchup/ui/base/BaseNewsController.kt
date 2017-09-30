@@ -39,6 +39,7 @@ import com.uber.autodispose.kotlin.autoDisposeWith
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
+import io.sweers.catchup.data.HasStableId
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.LoadResult.NewData

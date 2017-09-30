@@ -18,7 +18,7 @@ package io.sweers.catchup.data.hackernews.model
 
 import com.google.auto.value.AutoValue
 import com.google.firebase.database.DataSnapshot
-import io.sweers.catchup.ui.base.HasStableId
+import io.sweers.catchup.data.HasStableId
 import me.mattlogan.auto.value.firebase.adapter.FirebaseAdapter
 import me.mattlogan.auto.value.firebase.adapter.TypeAdapter
 import me.mattlogan.auto.value.firebase.annotation.FirebaseValue

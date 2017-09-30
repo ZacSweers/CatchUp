@@ -17,7 +17,7 @@
 package io.sweers.catchup.data.reddit.model
 
 import com.squareup.moshi.Json
-import io.sweers.catchup.ui.base.HasStableId
+import io.sweers.catchup.data.HasStableId
 import org.threeten.bp.Instant
 
 abstract class RedditSubmission : RedditObject(), HasStableId {
