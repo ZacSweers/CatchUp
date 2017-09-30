@@ -43,7 +43,8 @@ interface Service<in ViewHolderType> {
   fun meta(): ServiceMeta
   fun fetchPage(request: DataRequest): Maybe<List<CatchUpItem>>
   fun bindItemView(item: CatchUpItem, holder: ViewHolderType)
-  fun setNextPage(page: String?) {}
+  fun firstPageKey(): String
+  fun getNextPage(): String? = null
   fun linkManager(): LinkManager? = null
 }
 
