@@ -56,7 +56,7 @@ import dagger.multibindings.IntoMap
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
+import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.injection.scopes.PerActivity
@@ -153,7 +153,9 @@ class AboutController : ButterKnifeController() {
     setOf(
         object : TouchableUrlSpan(url, aboutText.linkTextColors, 0) {
           override fun onClick(url: String) {
-            linkManager.openUrl(UrlMeta(url, aboutText.highlightColor, activity!!))
+            linkManager.openUrl(
+                UrlMeta(url, aboutText.highlightColor,
+                    activity!!))
                 .subscribe()
           }
         },

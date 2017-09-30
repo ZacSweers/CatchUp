@@ -28,7 +28,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import io.reactivex.ObservableTransformer
 import io.sweers.catchup.R
-import io.sweers.catchup.data.LinkManager.UrlMeta
+import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.util.resolveAttribute
 
@@ -37,7 +37,8 @@ import io.sweers.catchup.util.resolveAttribute
  */
 abstract class ServiceController : ButterKnifeController {
   @SuppressLint("SupportAnnotationUsage")
-  @ColorInt var serviceThemeColor = Color.BLACK
+  @ColorInt
+  var serviceThemeColor = Color.BLACK
 
   constructor() : super()
 
@@ -59,7 +60,9 @@ abstract class ServiceController : ButterKnifeController {
 
   fun <T> transformUrlToMeta(url: String?): ObservableTransformer<T, UrlMeta> {
     return ObservableTransformer { upstream ->
-      upstream.map { UrlMeta(url, serviceThemeColor, activity!!) }
+      upstream.map {
+        UrlMeta(url, serviceThemeColor, activity!!)
+      }
     }
   }
 

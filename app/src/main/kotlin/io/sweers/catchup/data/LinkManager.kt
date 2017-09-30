@@ -33,10 +33,11 @@ import hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Observable
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
+import io.sweers.catchup.data.service.LinkHandler
+import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.rx.doOnEmpty
 import io.sweers.catchup.ui.activity.MainActivity
@@ -45,7 +46,7 @@ import javax.inject.Inject
 
 @PerActivity
 class LinkManager @Inject constructor(private val customTab: CustomTabActivityHelper)
-  : Function<LinkManager.UrlMeta, Completable> {
+  : LinkHandler {
 
   private val globalSmartLinkingPref: Preference<Boolean> = P.SmartlinkingGlobal.rx()
 
@@ -138,15 +139,6 @@ class LinkManager @Inject constructor(private val customTab: CustomTabActivityHe
   }
 
   @Throws(Exception::class)
-  override fun apply(meta: UrlMeta): Completable {
-    return openUrl(meta)
-  }
+  override fun apply(meta: UrlMeta) = openUrl(meta)
 
-  data class UrlMeta(internal val uri: Uri?,
-      @ColorInt internal val accentColor: Int,
-      internal val context: Context) {
-
-    constructor(url: String?, @ColorInt accentColor: Int, context: Context) : this(
-        if (url.isNullOrBlank()) null else Uri.parse(url), accentColor, context)
-  }
 }

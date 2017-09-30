@@ -78,7 +78,7 @@ class SlashdotService @Inject constructor(
         .toMaybe()
   }
 
-  override fun linkManager() = linkManager
+  override fun linkHandler() = linkManager
 }
 
 @Module

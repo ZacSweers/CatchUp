@@ -39,8 +39,8 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.github.RepoReleasesQuery
+import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.Scrollable
@@ -162,7 +162,8 @@ class ChangelogController : ButterKnifeController(), Scrollable {
         hideComments()
         itemClicks()
             .flatMapCompletable {
-              return@flatMapCompletable linkManager.openUrl(UrlMeta(item.url, 0, itemView.context))
+              return@flatMapCompletable linkManager.openUrl(
+                  UrlMeta(item.url, 0, itemView.context))
             }
             .autoDisposeWith(holder)
             .subscribe()

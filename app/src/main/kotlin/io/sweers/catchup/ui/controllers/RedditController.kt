@@ -31,11 +31,11 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.EpochInstantJsonAdapter
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
 import io.sweers.catchup.data.reddit.RedditService
 import io.sweers.catchup.data.reddit.model.RedditLink
 import io.sweers.catchup.data.reddit.model.RedditObjectFactory
+import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.ui.base.BaseNewsController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder

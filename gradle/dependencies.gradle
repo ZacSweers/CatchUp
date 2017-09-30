@@ -287,11 +287,10 @@ ext.deps = [
 
     rx: [
         android: 'io.reactivex:rxandroid:1.2.1',
-        bindingVersion: '2.0.0',
         binding: [
-            core: "com.jakewharton.rxbinding2:rxbinding:${versions.rxbinding}",
-            v4: "com.jakewharton.rxbinding2:rxbinding-support-v4:${versions.rxbinding}",
-            design: "com.jakewharton.rxbinding2:rxbinding-design:${versions.rxbinding}",
+            core: "com.jakewharton.rxbinding2:rxbinding-kotlin:${versions.rxbinding}",
+            v4: "com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:${versions.rxbinding}",
+            design: "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}",
         ],
         java: 'io.reactivex:rxjava:1.3.0',
         preferences: 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3',

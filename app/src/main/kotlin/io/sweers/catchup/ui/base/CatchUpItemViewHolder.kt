@@ -26,21 +26,24 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
-import com.jakewharton.rxbinding2.view.RxView
+import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding2.view.longClicks
 import com.uber.autodispose.kotlin.autoDisposeWith
 import io.reactivex.Completable
 import io.reactivex.functions.Function
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpItem
-import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
+import io.sweers.catchup.data.service.BindableCatchUpItemViewHolder
+import io.sweers.catchup.data.service.LinkHandler
+import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.util.format
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.show
 import org.threeten.bp.Instant
 
-class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
+class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
+    itemView), BindableCatchUpItemViewHolder {
 
   companion object {
     val COMPLETABLE_FUNC = Function<UrlMeta, Completable> { Completable.complete() }
@@ -65,16 +68,25 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
     unbinder = ButterKnife.bind(this, itemView)
   }
 
-  fun tint(@ColorInt color: Int) {
+  override fun itemView(): View = itemView
+
+  override fun tint(@ColorInt color: Int) {
     score.setTextColor(color)
     tag.setTextColor(color)
     scoreDivider.setTextColor(color)
     DrawableCompat.setTintList(comments.compoundDrawables[1], ColorStateList.valueOf(color))
   }
 
+  override fun bind(item: CatchUpItem,
+      linkHandler: LinkHandler,
+      itemClickHandler: ((String) -> Any)?,
+      commentClickHandler: ((String) -> Any)?) {
+    bind(null, item, linkHandler, itemClickHandler, commentClickHandler)
+  }
+
   fun bind(controller: ServiceController?,
       item: CatchUpItem,
-      linkManager: LinkManager? = null,
+      linkHandler: LinkHandler? = null,
       itemClickHandler: ((String) -> Any)? = null,
       commentClickHandler: ((String) -> Any)? = null) {
     title(item.title)
@@ -92,7 +104,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
       } else {
         itemClicks()
             .compose<UrlMeta>(controller!!.transformUrlToMeta<Any>(it))
-            .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
+            .flatMapCompletable(linkHandler ?: COMPLETABLE_FUNC)
             .autoDisposeWith(this)
             .subscribe()
       }
@@ -103,7 +115,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
       } else {
         itemCommentClicks()
             .compose<UrlMeta>(controller!!.transformUrlToMeta<Any>(it))
-            .flatMapCompletable(linkManager ?: COMPLETABLE_FUNC)
+            .flatMapCompletable(linkHandler ?: COMPLETABLE_FUNC)
             .autoDisposeWith(this)
             .subscribe()
       }
@@ -114,11 +126,11 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(itemView) {
     }
   }
 
-  fun itemClicks() = RxView.clicks(container)
+  override fun itemClicks() = container.clicks()
 
-  fun itemLongClicks() = RxView.longClicks(container)
+  override fun itemLongClicks() = container.longClicks()
 
-  fun itemCommentClicks() = RxView.clicks(comments)
+  override fun itemCommentClicks() = comments.clicks()
 
   fun title(titleText: CharSequence?) {
     title.text = titleText

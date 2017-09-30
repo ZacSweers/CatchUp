@@ -77,9 +77,9 @@ import io.sweers.catchup.R
 import io.sweers.catchup.data.AuthInterceptor
 import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.LinkManager.UrlMeta
 import io.sweers.catchup.data.dribbble.DribbbleService
 import io.sweers.catchup.data.dribbble.model.Shot
+import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.requestManager
 import io.sweers.catchup.ui.InfiniteScrollListener
