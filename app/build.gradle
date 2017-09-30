@@ -109,7 +109,7 @@ android {
       buildConfigField 'String', 'BUGSNAG_KEY', /"${getPropertyOrEmpty("catchup_bugsnag_key")}"/
       signingConfig signingConfigs.release
       postprocessing.proguardFiles = ['proguard-rules.pro']
-      postprocessing.optimizeCode = true
+      postprocessing.optimizeCode = false
       postprocessing.obfuscate = false
     }
   }
