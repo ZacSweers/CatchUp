@@ -35,7 +35,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import butterknife.BindView
-import butterknife.Unbinder
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.SimpleColorFilter
 import com.bluelinelabs.conductor.RouterTransaction
@@ -207,9 +206,8 @@ class SmmryController : ButterKnifeController {
     alreadyLoaded = savedInstanceState.getBoolean(ID_LOADED, false)
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View {
-    return inflater.inflate(R.layout.controller_smmry, container, false)
-  }
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
+      inflater.inflate(R.layout.controller_smmry, container, false)
 
   override fun onViewBound(view: View) {
     super.onViewBound(view)
@@ -342,12 +340,10 @@ class SmmryController : ButterKnifeController {
     }
   }
 
-  override fun bind(view: View): Unbinder {
-    return SmmryController_ViewBinding(this, view)
-  }
+  override fun bind(view: View) = SmmryController_ViewBinding(this, view)
 
   @PerController
-  @Subcomponent(modules = arrayOf(Module::class))
+  @Subcomponent(modules = [Module::class])
   interface Component : AndroidInjector<SmmryController> {
 
     @Subcomponent.Builder
@@ -391,9 +387,7 @@ class SmmryController : ButterKnifeController {
     @Provides
     @JvmStatic
     @PerController
-    internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase): SmmryDao {
-      return catchUpDatabase.smmryDao()
-    }
+    internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase) = catchUpDatabase.smmryDao()
   }
 }
 
