@@ -17,6 +17,7 @@
 package io.sweers.catchup.data
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
@@ -76,6 +77,15 @@ data class ServicePage(
     val items: List<Long>
 )
 
+class SummarizationInfo(
+    val value: String,
+    val type: SummarizationType
+)
+
+enum class SummarizationType {
+  NONE, URL, TEXT, ALREADY_SUMMARIZED
+}
+
 @Keep
 @Entity(tableName = "items")
 data class CatchUpItem(
@@ -89,7 +99,8 @@ data class CatchUpItem(
     val commentCount: Int = 0,
     val hideComments: Boolean = false,
     val itemClickUrl: String? = null,
-    val itemCommentClickUrl: String? = null
+    val itemCommentClickUrl: String? = null,
+    @Embedded val summarizationInfo: SummarizationInfo? = null
 ) : HasStableId {
   override fun stableId() = id
 }

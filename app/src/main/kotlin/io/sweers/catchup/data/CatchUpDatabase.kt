@@ -53,36 +53,33 @@ abstract class CatchUpDatabase : RoomDatabase() {
 
 internal class CatchUpConverters {
 
-  // Instant
+  // SummarizationType
   @TypeConverter
-  fun toInstant(timestamp: Long?): Instant? {
-    return timestamp?.let { Instant.ofEpochMilli(it) }
-  }
+  fun toSummarizationType(summarizationType: String) = SummarizationType.valueOf(summarizationType)
 
   @TypeConverter
-  fun toTimestamp(instant: Instant?): Long? {
-    return instant?.toEpochMilli()
-  }
+  fun fromSummarizationType(summarizationType: SummarizationType) = summarizationType.name
+
+  // Instant
+  @TypeConverter
+  fun toInstant(timestamp: Long?) = timestamp?.let { Instant.ofEpochMilli(it) }
+
+  @TypeConverter
+  fun toTimestamp(instant: Instant?) = instant?.toEpochMilli()
 
   // List<Long>
   @TypeConverter
-  fun toList(listString: String?): List<Long>? {
-    return listString?.let { it.split(",").asSequence().toList().map { it.toLong() } }
-  }
+  fun toList(listString: String?) =
+      listString?.let { it.split(",").asSequence().toList().map { it.toLong() } }
 
   @TypeConverter
-  fun toListString(list: List<Long>?): String? {
-    return list?.joinToString(",")
-  }
+  fun toListString(list: List<Long>?) = list?.joinToString(",")
 
   // Pair<String, Int>
   @TypeConverter
-  fun toPair(pairString: String?): Pair<String, Int>? {
-    return pairString?.let { it.split(",").let { it[0] to it[1].toInt() } }
-  }
+  fun toPair(pairString: String?) =
+      pairString?.let { it.split(",").let { it[0] to it[1].toInt() } }
 
   @TypeConverter
-  fun toPairString(pair: Pair<String, Int>?): String? {
-    return pair?.let { "${pair.first},${pair.second}" }
-  }
+  fun toPairString(pair: Pair<String, Int>?) = pair?.let { "${pair.first},${pair.second}" }
 }
