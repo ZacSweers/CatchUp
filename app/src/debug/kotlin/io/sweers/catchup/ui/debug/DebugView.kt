@@ -50,6 +50,7 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.logs.LogsDialog
 import io.sweers.catchup.util.applyOn
 import io.sweers.catchup.util.d
+import io.sweers.catchup.util.isN
 import io.sweers.catchup.util.truncateAt
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
@@ -258,6 +259,11 @@ class DebugView @JvmOverloads constructor(context: Context,
 
   @OnClick(R.id.debug_network_logs) internal fun showNetworkLogs() {
     val intent = Intent(context, MainActivity::class.java)
+    if (isN()) {
+      // In case they're for some reason already in multiwindow
+      // annoying that we can't request that an app go to multiwindow if not in it already :/
+      intent.flags = Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT
+    }
     context.startActivity(intent)
   }
 
