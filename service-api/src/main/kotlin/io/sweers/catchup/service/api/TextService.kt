@@ -38,7 +38,7 @@ interface TextService : Service {
         },
         commentClickHandler = item.itemCommentClickUrl?.let {
           { url: String ->
-            holder.itemClicks()
+            holder.itemCommentClicks()
                 .map { UrlMeta(url, accentColor, context) }
                 .flatMapCompletable(linkHandler())
                 .autoDisposeWith(holder)
