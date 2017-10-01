@@ -32,10 +32,11 @@ import dagger.multibindings.Multibinds
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.service.slashdot.NewSlashdotModule
 import io.sweers.catchup.ui.base.BaseActivity
-import io.sweers.catchup.ui.controllers.NewSlashdotModule
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
@@ -102,6 +103,10 @@ class MainActivity : BaseActivity() {
     @Binds
     @PerActivity
     abstract fun provideActivity(activity: MainActivity): Activity
+
+    @Binds
+    @PerActivity
+    abstract fun provideLinkHandler(linkManager: LinkManager): LinkHandler
 
   }
 }

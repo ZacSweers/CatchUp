@@ -15,12 +15,6 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <string name="hacker_news">Hacker News</string>
-  <string name="reddit">reddit</string>
-  <string name="medium">Medium</string>
-  <string name="product_hunt">Product Hunt</string>
-  <string name="designer_news">Designer News</string>
-  <string name="dribbble">Dribbble</string>
-  <string name="github">GitHub</string>
-</resources>
+<manifest
+    package="io.sweers.catchup.service.slashdot"
+    />

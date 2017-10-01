@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
-include ':service-api'
-include ':slashdot'
-project(':slashdot').projectDir = new File(rootDir, 'services/slashdot')
-include ':util'
+package io.sweers.catchup.service.slashdot
+
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.Xml
+
+@Xml
+data class Author(@PropertyElement val name: String)

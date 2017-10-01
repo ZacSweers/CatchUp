@@ -239,7 +239,7 @@ ext.deps = [
         gradlePlugin: "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}",
         stdlib: [
             core: "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}",
-            jre7: "org.jetbrains.kotlin:kotlin-stdlib-jre7:${versions.kotlin}"
+            jdk7: "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
         ]
     ],
 
@@ -318,6 +318,7 @@ ext.deps = [
         annotation: "com.tickaroo.tikxml:annotation:${versions.tikxml}",
         apt: "com.tickaroo.tikxml:processor:${versions.tikxml}",
         core: "com.tickaroo.tikxml:core:${versions.tikxml}",
+        htmlEscape: "com.tickaroo.tikxml:converter-htmlescape:${versions.tikxml}",
         retrofit: "com.tickaroo.tikxml:retrofit-converter:${versions.tikxml}"
     ],
 

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.slashdot
+package io.sweers.catchup.service.slashdot
 
 import android.support.annotation.Keep
 import com.tickaroo.tikxml.TypeConverter
 import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
+import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
 import io.sweers.catchup.service.api.HasStableId
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
-import io.sweers.catchup.util.unescapeJavaString
 import org.threeten.bp.Instant
 
 private const val SLASH_PREFIX = "slash:"
@@ -31,7 +31,7 @@ private const val SLASH_PREFIX = "slash:"
 @Keep
 @Xml
 data class Entry(
-    @PropertyElement(converter = HtmlStringTypeConverter::class)
+    @PropertyElement(converter = HtmlEscapeStringConverter::class)
     val title: String,
     @PropertyElement
     val id: String,
@@ -53,14 +53,8 @@ data class Entry(
   override fun stableId(): Long = id.hashCode().toLong()
 }
 
-class InstantTypeConverter : TypeConverter<Instant> {
+internal class InstantTypeConverter : TypeConverter<Instant> {
   override fun write(value: Instant): String = TODO("Unsupported")
 
   override fun read(value: String) = value.parsePossiblyOffsetInstant()
-}
-
-class HtmlStringTypeConverter : TypeConverter<String> {
-  override fun write(value: String): String = TODO("Unsupported")
-
-  override fun read(value: String) = value.unescapeJavaString()
 }

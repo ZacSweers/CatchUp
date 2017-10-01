@@ -26,9 +26,7 @@ import java.io.IOException
 class ISO8601InstantAdapter : JsonAdapter<Instant>() {
 
   @Throws(IOException::class)
-  override fun fromJson(reader: JsonReader): Instant? {
-    return reader.nextString().parsePossiblyOffsetInstant()
-  }
+  override fun fromJson(reader: JsonReader) = reader.nextString().parsePossiblyOffsetInstant()
 
   @Throws(IOException::class)
   override fun toJson(writer: JsonWriter, instant: Instant?) {

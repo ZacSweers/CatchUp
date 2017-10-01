@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers
+package io.sweers.catchup.service.slashdot
 
 import com.tickaroo.tikxml.TikXml
 import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
@@ -24,15 +24,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
-import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.R.color
-import io.sweers.catchup.R.drawable
-import io.sweers.catchup.R.string
-import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.slashdot.InstantTypeConverter
-import io.sweers.catchup.data.slashdot.SlashdotApi
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
+import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
@@ -49,7 +43,7 @@ import javax.inject.Qualifier
 class SlashdotService @Inject constructor(
     private val serviceMeta: ServiceMeta,
     private val service: SlashdotApi,
-    private val linkManager: LinkManager)
+    private val linkHandler: LinkHandler)
   : TextService {
 
   override fun meta() = serviceMeta
@@ -81,7 +75,7 @@ class SlashdotService @Inject constructor(
         .toMaybe()
   }
 
-  override fun linkHandler() = linkManager
+  override fun linkHandler() = linkHandler
 }
 
 @Module
@@ -90,34 +84,34 @@ abstract class NewSlashdotModule {
   private annotation class InternalApi
 
   @IntoMap
-  @ServiceMetaKey("sd")
+  @ServiceMetaKey(SERVICE_KEY)
   @Binds
   abstract fun slashdotServiceMeta(meta: ServiceMeta): ServiceMeta
 
   @IntoMap
-  @ServiceKey("sd")
+  @ServiceKey(SERVICE_KEY)
   @Binds
   abstract fun slashdotService(slashdotService: SlashdotService): Service
 
   @Module
   companion object {
 
+    private const val SERVICE_KEY = "sd"
+
     @Provides
     @JvmStatic
     fun provideSlashdotServiceMeta() = ServiceMeta(
-        "sd",
-        string.slashdot,
-        color.slashdotAccent,
-        drawable.logo_sd
+        SERVICE_KEY,
+        R.string.slashdot,
+        R.color.slashdotAccent,
+        R.drawable.logo_sd
     )
 
     @Provides
     @JvmStatic
     fun provideTikXml(): TikXml = TikXml.Builder()
         .exceptionOnUnreadXml(false)
-        .addTypeConverter(Instant::class.java,
-            InstantTypeConverter())
-        // TODO HtmlEscapeStringConverter? encode / decode html characters. This class ships as optional dependency
+        .addTypeConverter(Instant::class.java, InstantTypeConverter())
         .build()
 
     @Provides

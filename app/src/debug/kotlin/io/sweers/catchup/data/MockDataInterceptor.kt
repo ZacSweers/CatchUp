@@ -25,7 +25,6 @@ import io.sweers.catchup.data.medium.MediumService
 import io.sweers.catchup.data.model.ServiceData
 import io.sweers.catchup.data.producthunt.ProductHuntService
 import io.sweers.catchup.data.reddit.RedditService
-import io.sweers.catchup.data.slashdot.SlashdotApi
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -38,6 +37,8 @@ import java.io.IOException
 
 /**
  * An interceptor that rewrites the response with mocked data instead.
+ *
+ * Note: This is pretty unmaintained right now.
  */
 class MockDataInterceptor(@ApplicationContext private val context: Context) : Interceptor {
 
@@ -77,10 +78,10 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
         put(ProductHuntService.HOST,
             ServiceData.Builder("ph").addEndpoint("/v1/posts")
                 .build())
-        put(SlashdotApi.HOST,
-            ServiceData.Builder("sd").addEndpoint("/Slashdot/slashdotMainatom")
-                .fileType("xml")
-                .build())
+//        put(SlashdotApi.HOST,
+//            ServiceData.Builder("sd").addEndpoint("/Slashdot/slashdotMainatom")
+//                .fileType("xml")
+//                .build())
         put(DesignerNewsService.HOST,
             ServiceData.Builder("dn").addEndpoint("/api/v1/stories")
                 .build())

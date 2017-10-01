@@ -18,5 +18,5 @@ android {
 
 dependencies {
   implementation deps.android.support.annotations
-  implementation deps.kotlin.stdlib.jre7
+  implementation deps.kotlin.stdlib.jdk7
 }

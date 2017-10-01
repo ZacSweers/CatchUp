@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.slashdot
+apply plugin: 'org.jetbrains.kotlin.jvm'
 
-import com.tickaroo.tikxml.annotation.PropertyElement
-import com.tickaroo.tikxml.annotation.Xml
-
-@Xml
-data class Author(@PropertyElement val name: String)
+dependencies {
+  compile deps.android.support.annotations
+  compile deps.dagger.runtime
+  compile deps.misc.lazythreeten
+  compile deps.rx.java2
+  compile deps.kotlin.stdlib.jdk7
+}

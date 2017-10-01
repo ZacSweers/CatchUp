@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.slashdot
+package io.sweers.catchup.service.slashdot
 
-import io.reactivex.Single
-import retrofit2.http.GET
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.Xml
 
-interface SlashdotApi {
+@Xml
+data class Feed(
+    @Element
+    val itemList: List<Entry>,
 
-  @GET("/Slashdot/slashdotMainatom")
-  fun main(): Single<Feed>
+    @PropertyElement
+    val title: String? = null,
 
-  companion object {
-    val HOST = "rss.slashdot.org"
-    val ENDPOINT = "http://" + HOST
-  }
-}
+    @PropertyElement
+    val language: String? = null,
+
+    @PropertyElement
+    val updated: String? = null
+)

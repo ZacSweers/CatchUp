@@ -264,6 +264,8 @@ dependencies {
   // This fails gradle sync due to an obscure "AssertionError" only visible in console logs
   implementation project(':bypass')
   implementation project(':service-api')
+  implementation project(':slashdot')
+  implementation project(':util')
 
   // Support libs
   supportImplementation deps.android.support.annotations
@@ -288,7 +290,7 @@ dependencies {
 
   // Kotlin
   implementation deps.kotlin.stdlib.core
-  implementation deps.kotlin.stdlib.jre7
+  implementation deps.kotlin.stdlib.jdk7
 
   // Firebase
   implementation deps.android.firebase.core
@@ -334,12 +336,6 @@ dependencies {
   implementation deps.glide.core
   implementation deps.glide.okhttp
   implementation deps.glide.recyclerView
-
-  // Tikxml
-  kapt deps.tikxml.apt
-  implementation deps.tikxml.annotation
-  implementation deps.tikxml.core
-  implementation deps.tikxml.retrofit
 
   // Misc
   implementation deps.autoDispose.core
