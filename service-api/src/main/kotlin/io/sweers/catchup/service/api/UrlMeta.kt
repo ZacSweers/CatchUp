@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':service-api'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
+package io.sweers.catchup.service.api
+
+import android.content.Context
+import android.net.Uri
+import android.support.annotation.ColorInt
+
+data class UrlMeta(val uri: Uri?,
+    @ColorInt val accentColor: Int,
+    val context: Context) {
+
+  constructor(url: String?, @ColorInt accentColor: Int, context: Context) : this(
+      if (url.isNullOrBlank()) null else Uri.parse(url), accentColor, context)
+}

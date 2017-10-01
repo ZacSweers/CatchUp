@@ -40,9 +40,9 @@ import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
-import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
@@ -68,9 +68,8 @@ class ChangelogController : ButterKnifeController(), Scrollable {
     super.onContextAvailable(context)
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View {
-    return inflater.inflate(R.layout.controller_changelog, container, false)
-  }
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
+      inflater.inflate(R.layout.controller_changelog, container, false)
 
   override fun bind(view: View) = ButterKnife.bind(this, view)
 

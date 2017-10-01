@@ -66,9 +66,9 @@ import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery.AsRepository
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
-import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.StickyHeaders
 import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager

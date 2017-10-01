@@ -36,8 +36,8 @@ import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory
-import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.base.BaseNewsController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.d

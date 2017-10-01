@@ -17,14 +17,14 @@
 package io.sweers.catchup.data
 
 import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy.REPLACE
+import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.PrimaryKey
 import android.arch.persistence.room.Query
 import android.support.annotation.Keep
 import io.reactivex.Maybe
+import io.sweers.catchup.service.api.CatchUpItem
 import org.threeten.bp.Instant
 
 @Dao
@@ -45,13 +45,13 @@ interface ServiceDao {
   @Query("SELECT * FROM items WHERE id IN(:ids)")
   fun getItemByIds(ids: Array<Long>): Maybe<List<CatchUpItem>>
 
-  @Insert(onConflict = REPLACE)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun putPage(page: ServicePage)
 
-  @Insert(onConflict = REPLACE)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun putItem(item: CatchUpItem)
 
-  @Insert(onConflict = REPLACE)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun putItems(vararg item: CatchUpItem)
 
   @Query("DELETE FROM pages")
@@ -75,38 +75,3 @@ data class ServicePage(
     val page: Int = 0,
     val items: List<Long>
 )
-
-class SummarizationInfo(
-    val value: String,
-    val type: SummarizationType
-)
-
-enum class SummarizationType {
-  NONE, URL, TEXT, ALREADY_SUMMARIZED
-}
-
-@Keep
-@Entity(tableName = "items")
-data class CatchUpItem(
-    @PrimaryKey val id: Long,
-    val title: String,
-    val timestamp: Instant,
-    val score: Pair<String, Int>? = null,
-    val tag: String? = null,
-    val author: String? = null,
-    val source: String? = null,
-    val commentCount: Int = 0,
-    val hideComments: Boolean = false,
-    val itemClickUrl: String? = null,
-    val itemCommentClickUrl: String? = null,
-    @Embedded val summarizationInfo: SummarizationInfo? = null
-) : HasStableId {
-  override fun stableId() = id
-}
-
-/**
- * Helper interface to generalize reporting stable IDs.
- */
-interface HasStableId {
-  fun stableId(): Long
-}

@@ -30,13 +30,13 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
-import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.designernews.DesignerNewsService
 import io.sweers.catchup.data.designernews.model.Story
 import io.sweers.catchup.data.designernews.model.User
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.StorageBackedNewsController
 import io.sweers.catchup.util.collect.toCommaJoinerList

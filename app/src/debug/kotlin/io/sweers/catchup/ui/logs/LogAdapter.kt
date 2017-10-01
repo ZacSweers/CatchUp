@@ -19,6 +19,10 @@ package io.sweers.catchup.ui.logs
 import android.content.Context
 import android.support.annotation.DrawableRes
 import android.util.Log
+import android.util.Log.ERROR
+import android.util.Log.INFO
+import android.util.Log.VERBOSE
+import android.util.Log.WARN
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,17 +48,11 @@ internal class LogAdapter(context: Context) : BindableAdapter<Entry>(context), C
     notifyDataSetChanged()
   }
 
-  override fun getCount(): Int {
-    return logs.size
-  }
+  override fun getCount() = logs.size
 
-  override fun getItem(position: Int): Entry {
-    return logs[position]
-  }
+  override fun getItem(position: Int) = logs[position]
 
-  override fun getItemId(i: Int): Long {
-    return i.toLong()
-  }
+  override fun getItemId(i: Int) = i.toLong()
 
   override fun newView(inflater: LayoutInflater, position: Int, container: ViewGroup): View {
     val view = inflater.inflate(R.layout.debug_logs_list_item, container, false)
@@ -88,14 +86,12 @@ internal class LogAdapter(context: Context) : BindableAdapter<Entry>(context), C
   companion object {
 
     @DrawableRes
-    fun backgroundForLevel(level: Int): Int {
-      return when (level) {
-        Log.VERBOSE, Log.DEBUG -> R.color.debug_log_accent_debug
-        Log.INFO -> R.color.debug_log_accent_info
-        Log.WARN -> R.color.debug_log_accent_warn
-        Log.ERROR, Log.ASSERT -> R.color.debug_log_accent_error
-        else -> R.color.debug_log_accent_unknown
-      }
+    fun backgroundForLevel(level: Int) = when (level) {
+      VERBOSE, Log.DEBUG -> R.color.debug_log_accent_debug
+      INFO -> R.color.debug_log_accent_info
+      WARN -> R.color.debug_log_accent_warn
+      ERROR, Log.ASSERT -> R.color.debug_log_accent_error
+      else -> R.color.debug_log_accent_unknown
     }
   }
 }

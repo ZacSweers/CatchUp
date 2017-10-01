@@ -32,10 +32,10 @@ import com.uber.autodispose.kotlin.autoDisposeWith
 import io.reactivex.Completable
 import io.reactivex.functions.Function
 import io.sweers.catchup.R
-import io.sweers.catchup.data.CatchUpItem
-import io.sweers.catchup.data.service.BindableCatchUpItemViewHolder
-import io.sweers.catchup.data.service.LinkHandler
-import io.sweers.catchup.data.service.UrlMeta
+import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
+import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.util.format
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isVisible

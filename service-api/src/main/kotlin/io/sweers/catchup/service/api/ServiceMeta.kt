@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':service-api'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
+package io.sweers.catchup.service.api
+
+import android.support.annotation.ColorRes
+import android.support.annotation.DrawableRes
+import android.support.annotation.StringRes
+
+data class ServiceMeta(
+    val id: String,
+    @StringRes val name: Int,
+    @ColorRes val themeColor: Int,
+    @DrawableRes val icon: Int,
+    val isVisual: Boolean = false
+)

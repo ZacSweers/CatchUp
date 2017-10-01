@@ -28,7 +28,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
-import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.GitHubSearchQuery
 import io.sweers.catchup.data.github.SearchQuery
@@ -37,6 +36,7 @@ import io.sweers.catchup.data.github.type.LanguageOrder
 import io.sweers.catchup.data.github.type.LanguageOrderField
 import io.sweers.catchup.data.github.type.OrderDirection
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.StorageBackedNewsController
 import io.sweers.catchup.util.collect.emptyIfNull

@@ -28,8 +28,8 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import io.reactivex.ObservableTransformer
 import io.sweers.catchup.R
-import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.ConductorInjection
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.util.resolveAttribute
 
 /**

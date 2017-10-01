@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':service-api'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
+package io.sweers.catchup.service.api
+
+import android.support.annotation.ColorInt
+import android.view.View
+import com.uber.autodispose.ScopeProvider
+import io.reactivex.Observable
+
+interface BindableCatchUpItemViewHolder : ScopeProvider {
+  fun itemView(): View
+  fun tint(@ColorInt color: Int)
+  fun bind(item: CatchUpItem,
+      linkHandler: LinkHandler,
+      itemClickHandler: ((String) -> Any)? = null,
+      commentClickHandler: ((String) -> Any)? = null)
+
+  fun itemClicks(): Observable<Unit>
+  fun itemLongClicks(): Observable<Unit>
+  fun itemCommentClicks(): Observable<Unit>
+}

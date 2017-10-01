@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':service-api'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
+package io.sweers.catchup.service.api
+
+import io.sweers.catchup.service.api.SummarizationType.NONE
+
+// Gross vars/constructors because of https://issuetracker.google.com/issues/67181813
+class SummarizationInfo(
+    var value: String,
+    var type: SummarizationType
+) {
+  constructor() : this("", NONE)
+}

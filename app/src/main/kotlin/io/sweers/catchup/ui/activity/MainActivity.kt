@@ -31,10 +31,9 @@ import dagger.Provides
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.service.ServiceMeta
-import io.sweers.catchup.data.service.TextService
-import io.sweers.catchup.data.service.VisualService
 import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.controllers.NewSlashdotModule
 import io.sweers.catchup.ui.controllers.PagerController
@@ -95,11 +94,7 @@ class MainActivity : BaseActivity() {
     // TODO Eventually wrap elements from this into a storage-backed set
     @Multibinds
     @PerActivity
-    abstract fun textServices(): Map<String, TextService>
-
-    @Multibinds
-    @PerActivity
-    abstract fun visualServices(): Map<String, VisualService>
+    abstract fun services(): Map<String, Service>
 
     @Multibinds
     abstract fun serviceMetas(): Map<String, ServiceMeta>

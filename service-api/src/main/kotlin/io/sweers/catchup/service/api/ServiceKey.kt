@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':service-api'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
+package io.sweers.catchup.service.api
+
+import dagger.MapKey
+
+@MapKey
+annotation class ServiceKey(val value: String)

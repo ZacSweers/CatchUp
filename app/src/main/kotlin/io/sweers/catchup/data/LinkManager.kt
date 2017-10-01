@@ -36,10 +36,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
-import io.sweers.catchup.data.service.LinkHandler
-import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.rx.doOnEmpty
+import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
@@ -87,19 +87,20 @@ class LinkManager @Inject constructor(private val customTab: CustomTabActivityHe
           .show()
       return Completable.complete()
     }
+    val uri = meta.uri!!
     val intent = Intent(Intent.ACTION_VIEW, meta.uri)
     if (!globalSmartLinkingPref.get()) {
-      openCustomTab(meta.context, meta.uri, meta.accentColor)
+      openCustomTab(meta.context, uri, meta.accentColor)
       return Completable.complete()
     }
 
-    return if (!dumbCache.containsKey(meta.uri.host)) {
-      queryAndOpen(meta.context, meta.uri, intent, meta.accentColor)
-    } else if (dumbCache[meta.uri.host] == true) {
+    return if (!dumbCache.containsKey(uri.host)) {
+      queryAndOpen(meta.context, uri, intent, meta.accentColor)
+    } else if (dumbCache[uri.host] == true) {
       meta.context.startActivity(intent)
       Completable.complete()
     } else {
-      openCustomTab(meta.context, meta.uri, meta.accentColor)
+      openCustomTab(meta.context, uri, meta.accentColor)
       Completable.complete()
     }
   }

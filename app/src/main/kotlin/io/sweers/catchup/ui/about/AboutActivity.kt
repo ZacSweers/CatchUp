@@ -56,11 +56,11 @@ import dagger.multibindings.IntoMap
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.service.UrlMeta
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
@@ -177,15 +177,11 @@ class AboutController : ButterKnifeController() {
         }
       }
 
-      override fun getCount(): Int {
-        return 2
-      }
+      override fun getCount() = 2
 
-      override fun getPageTitle(position: Int): CharSequence {
-        return when (position) {
-          0 -> "Licenses"
-          else -> "Changelog"
-        }
+      override fun getPageTitle(position: Int) = when (position) {
+        0 -> "Licenses"
+        else -> "Changelog"
       }
     }
   }
@@ -195,9 +191,8 @@ class AboutController : ButterKnifeController() {
     super.onContextAvailable(context)
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View {
-    return inflater.inflate(R.layout.controller_about, container, false)
-  }
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
+      inflater.inflate(R.layout.controller_about, container, false)
 
   override fun bind(view: View) = ButterKnife.bind(this, view)
 

@@ -25,16 +25,19 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.R
-import io.sweers.catchup.data.CatchUpItem
+import io.sweers.catchup.R.color
+import io.sweers.catchup.R.drawable
+import io.sweers.catchup.R.string
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.service.DataRequest
-import io.sweers.catchup.data.service.ServiceKey
-import io.sweers.catchup.data.service.ServiceMeta
-import io.sweers.catchup.data.service.ServiceMetaKey
-import io.sweers.catchup.data.service.TextService
 import io.sweers.catchup.data.slashdot.InstantTypeConverter
 import io.sweers.catchup.data.slashdot.SlashdotApi
+import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.DataRequest
+import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceKey
+import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.service.api.ServiceMetaKey
+import io.sweers.catchup.service.api.TextService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -94,7 +97,7 @@ abstract class NewSlashdotModule {
   @IntoMap
   @ServiceKey("sd")
   @Binds
-  abstract fun slashdotService(slashdotService: SlashdotService): TextService
+  abstract fun slashdotService(slashdotService: SlashdotService): Service
 
   @Module
   companion object {
@@ -103,9 +106,9 @@ abstract class NewSlashdotModule {
     @JvmStatic
     fun provideSlashdotServiceMeta() = ServiceMeta(
         "sd",
-        R.string.slashdot,
-        R.color.slashdotAccent,
-        R.drawable.logo_sd
+        string.slashdot,
+        color.slashdotAccent,
+        drawable.logo_sd
     )
 
     @Provides

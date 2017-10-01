@@ -234,7 +234,7 @@ apollo {
 }
 
 tasks.withType(JavaCompile) {
-  options.compilerArgs += [ '-Xep:MissingOverride:OFF' ]
+  options.compilerArgs += ['-Xep:MissingOverride:OFF']
 }
 
 def supportLibraries = configurations.create("supportImplementation")
@@ -263,6 +263,7 @@ configurations.all {
 dependencies {
   // This fails gradle sync due to an obscure "AssertionError" only visible in console logs
   implementation project(':bypass')
+  implementation project(':service-api')
 
   // Support libs
   supportImplementation deps.android.support.annotations

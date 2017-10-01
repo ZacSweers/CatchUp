@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':service-api'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
+package io.sweers.catchup.service.api
+
+/**
+ * Helper interface to generalize reporting stable IDs.
+ */
+interface HasStableId {
+  fun stableId(): Long
+}

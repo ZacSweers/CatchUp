@@ -31,7 +31,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
-import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.EpochInstantJsonAdapter
 import io.sweers.catchup.data.InspectorConverterFactory
 import io.sweers.catchup.data.LinkManager
@@ -40,6 +39,7 @@ import io.sweers.catchup.data.medium.MediumService
 import io.sweers.catchup.data.medium.model.MediumPost
 import io.sweers.catchup.data.medium.model.Post
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.StorageBackedNewsController
 import okhttp3.OkHttpClient
@@ -103,7 +103,7 @@ class MediumController : StorageBackedNewsController {
                 id = post().id().hashCode().toLong(),
                 title = post().title(),
                 score =
-                    "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+                "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
                     to post().virtuals().recommends(),
                 timestamp = post().createdAt(),
                 author = user().name(),

@@ -22,6 +22,8 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverter
 import android.arch.persistence.room.TypeConverters
 import android.content.Context
+import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.SummarizationType
 import io.sweers.catchup.ui.controllers.SmmryDao
 import io.sweers.catchup.ui.controllers.SmmryStorageEntry
 import org.threeten.bp.Instant

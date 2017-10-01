@@ -21,7 +21,7 @@ import com.tickaroo.tikxml.TypeConverter
 import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
-import io.sweers.catchup.data.HasStableId
+import io.sweers.catchup.service.api.HasStableId
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import io.sweers.catchup.util.unescapeJavaString
 import org.threeten.bp.Instant

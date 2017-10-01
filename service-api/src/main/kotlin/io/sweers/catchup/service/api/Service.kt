@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':service-api'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
+package io.sweers.catchup.service.api
+
+import io.reactivex.Maybe
+
+interface Service {
+  fun meta(): ServiceMeta
+  fun fetchPage(request: DataRequest): Maybe<List<CatchUpItem>>
+  fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder)
+  fun firstPageKey(): String
+  fun linkHandler(): LinkHandler
+  fun getNextPage(): String? = null
+}

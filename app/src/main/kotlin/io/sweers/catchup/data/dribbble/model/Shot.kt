@@ -20,7 +20,7 @@ import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import io.sweers.catchup.data.HasStableId
+import io.sweers.catchup.service.api.HasStableId
 import org.threeten.bp.Instant
 
 /**
@@ -29,7 +29,8 @@ import org.threeten.bp.Instant
 @AutoValue
 abstract class Shot : HasStableId {
 
-  @Transient var hasFadedIn = false
+  @Transient
+  var hasFadedIn = false
 
   abstract fun animated(): Boolean
 

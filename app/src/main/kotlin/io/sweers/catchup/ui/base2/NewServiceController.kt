@@ -44,11 +44,12 @@ import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
-import io.sweers.catchup.data.CatchUpItem
-import io.sweers.catchup.data.service.DataRequest
-import io.sweers.catchup.data.service.TextService
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.DataRequest
+import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.ButterKnifeController
@@ -98,12 +99,13 @@ class NewServiceController : ButterKnifeController,
   private var pendingRVState: Parcelable? = null
 
   @Inject lateinit var viewPool: RecycledViewPool
-  @Inject lateinit var textServices: Map<String, @JvmSuppressWildcards Provider<TextService>>
+  @Inject lateinit var textServices: Map<String, @JvmSuppressWildcards Provider<Service>>
   // TODO Make these injectable
   private val service: TextService
     get() {
       return args[ARG_SERVICE_KEY].let {
-        textServices[it]?.get() ?: throw IllegalArgumentException("No service provided for $it!")
+        textServices[it]?.get()?.let { it as TextService }
+            ?: throw IllegalArgumentException("No service provided for $it!")
       }
     }
 

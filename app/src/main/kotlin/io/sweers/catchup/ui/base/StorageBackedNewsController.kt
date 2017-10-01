@@ -22,9 +22,9 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.data.CatchUpItem
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.data.ServicePage
+import io.sweers.catchup.service.api.CatchUpItem
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
 import retrofit2.HttpException

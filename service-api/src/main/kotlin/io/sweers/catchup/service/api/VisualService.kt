@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':service-api'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
+package io.sweers.catchup.service.api
+
+// TODO This'll one day give you an image based impl
+interface VisualService : Service {
+  override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
+
+  }
+}
