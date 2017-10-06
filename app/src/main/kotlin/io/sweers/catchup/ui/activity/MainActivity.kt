@@ -31,15 +31,18 @@ import dagger.Provides
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.slashdot.NewSlashdotModule
 import io.sweers.catchup.ui.base.BaseActivity
+import io.sweers.catchup.ui.base2.StorageBackedService
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
+import javax.inject.Provider
 
 class MainActivity : BaseActivity() {
 
@@ -90,6 +93,17 @@ class MainActivity : BaseActivity() {
       @JvmStatic
       @PerActivity
       fun provideViewPool() = RecycledViewPool()
+
+      // TODO Can we make this just a qualified thing?
+      @Provides
+      @PerActivity
+      @JvmStatic
+      fun provideFinalServices(serviceDao: ServiceDao,
+          services: Map<String, @JvmSuppressWildcards Provider<Service>>): Map<String, Provider<StorageBackedService>> {
+        return services.mapValues { (_, value) ->
+          Provider<StorageBackedService> { StorageBackedService(serviceDao, value.get()) }
+        }
+      }
     }
 
     // TODO Eventually wrap elements from this into a storage-backed set

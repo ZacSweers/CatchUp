@@ -26,6 +26,7 @@ import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
+import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
@@ -39,7 +40,6 @@ import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-// TODO Wrap this in a storage-backed one
 class SlashdotService @Inject constructor(
     private val serviceMeta: ServiceMeta,
     private val service: SlashdotApi,
@@ -48,9 +48,7 @@ class SlashdotService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override fun firstPageKey() = "main"
-
-  override fun fetchPage(request: DataRequest): Maybe<List<CatchUpItem>> {
+  override fun fetchPage(request: DataRequest): Maybe<DataResult> {
     if (request.pageId != "main") {
       return Maybe.empty()
     }
@@ -73,6 +71,7 @@ class SlashdotService @Inject constructor(
         }
         .toList()
         .toMaybe()
+        .map { DataResult(it, null) }
   }
 
   override fun linkHandler() = linkHandler
@@ -104,7 +103,8 @@ abstract class NewSlashdotModule {
         SERVICE_KEY,
         R.string.slashdot,
         R.color.slashdotAccent,
-        R.drawable.logo_sd
+        R.drawable.logo_sd,
+        firstPageKey = "main"
     )
 
     @Provides

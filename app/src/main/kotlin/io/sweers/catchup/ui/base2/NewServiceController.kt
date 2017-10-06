@@ -49,7 +49,6 @@ import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.Service
-import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.ButterKnifeController
@@ -91,7 +90,7 @@ class NewServiceController : ButterKnifeController,
 
   private lateinit var layoutManager: LinearLayoutManager
   private lateinit var adapter: Adapter
-  private var pageId: String? = null
+  private var nextPage: String? = null
   private var isRestoring = false
   private var pageToRestoreTo: String? = null
   private var moreDataAvailable = true
@@ -99,12 +98,11 @@ class NewServiceController : ButterKnifeController,
   private var pendingRVState: Parcelable? = null
 
   @Inject lateinit var viewPool: RecycledViewPool
-  @Inject lateinit var textServices: Map<String, @JvmSuppressWildcards Provider<Service>>
-  // TODO Make these injectable
-  private val service: TextService
+  @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<StorageBackedService>>
+  private val service: Service
     get() {
       return args[ARG_SERVICE_KEY].let {
-        textServices[it]?.get()?.let { it as TextService }
+        services[it]?.get()
             ?: throw IllegalArgumentException("No service provided for $it!")
       }
     }
@@ -124,6 +122,7 @@ class NewServiceController : ButterKnifeController,
 
   override fun onContextAvailable(context: Context) {
     ConductorInjection.inject(this)
+    nextPage = service.meta().firstPageKey
     super.onContextAvailable(context)
   }
 
@@ -170,14 +169,14 @@ class NewServiceController : ButterKnifeController,
   }
 
   override fun onDetach(view: View) {
-    pageId = null
+    nextPage = null
     moreDataAvailable = true
     super.onDetach(view)
   }
 
   override fun onSaveViewState(view: View, outState: Bundle) {
     outState.run {
-      putString("pageId", pageId)
+      putString("pageId", nextPage)
       putParcelable("layoutManagerState", recyclerView.layoutManager.onSaveInstanceState())
     }
     super.onSaveViewState(view, outState)
@@ -198,14 +197,15 @@ class NewServiceController : ButterKnifeController,
     }
     if (fromRefresh || adapter.itemCount == 0) {
       moreDataAvailable = true
-      pageId = service.firstPageKey()
-    } else {
-      pageId = service.getNextPage()
+      nextPage = service.meta().firstPageKey
+    }
+    if (nextPage == null) {
+      moreDataAvailable = false
     }
     if (!moreDataAvailable) {
       return
     }
-    val pageToRequest = pageToRestoreTo?.also { pageId = pageToRestoreTo } ?: pageId
+    val pageToRequest = pageToRestoreTo ?: nextPage!!
     dataLoading = true
     if (adapter.itemCount != 0) {
       recyclerView.post { adapter.dataStartedLoading() }
@@ -216,12 +216,15 @@ class NewServiceController : ButterKnifeController,
     service.fetchPage(
         DataRequest(
             fromRefresh && !isRestoring,
-            pageId == pageToRestoreTo,
+            pageToRestoreTo != null,
             pageToRequest)
             .also {
               isRestoring = false
               pageToRestoreTo = null
             })
+        .map { result ->
+          result.data.also { nextPage = result.nextPageToken }
+        }
         .map { newData ->
           if (fromRefresh) {
             RefreshData(newData,
@@ -272,7 +275,7 @@ class NewServiceController : ButterKnifeController,
           }
         }, { error ->
           val activity = activity
-          if (pageToRequest == null && activity != null) {
+          if (activity != null) {
             when (error) {
               is IOException -> {
                 progress.hide()

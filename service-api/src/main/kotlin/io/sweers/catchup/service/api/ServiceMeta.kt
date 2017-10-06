@@ -25,5 +25,7 @@ data class ServiceMeta(
     @StringRes val name: Int,
     @ColorRes val themeColor: Int,
     @DrawableRes val icon: Int,
-    val isVisual: Boolean = false
+    val isVisual: Boolean = false,
+    val firstPageKey: String,
+    val pagesAreNumeric: Boolean = false
 )

@@ -83,7 +83,7 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
         getFirstServicePage(type = serviceType(),
             expiration = Instant.now())
       } else {
-        getServicePage(type = serviceType(), page = page, sessionId = currentSessionId)
+        getServicePage(type = serviceType(), page = page.toString(), sessionId = currentSessionId)
       }
     }
         .subscribeOn(Schedulers.io())
@@ -115,14 +115,15 @@ abstract class StorageBackedNewsController : BaseNewsController<CatchUpItem> {
             dao.putPage(ServicePage(
                 id = "${serviceType()}$page",
                 type = serviceType(),
-                page = page,
+                page = page.toString(),
                 items = posts.map { it.stableId() },
                 expiration = calculatedExpiration,
                 sessionId = if (page == 0 && isRefresh) {
                   calculatedExpiration.toEpochMilli()
                 } else {
                   currentSessionId
-                }
+                },
+                nextPageToken = null
             ))
           }.subscribeOn(Schedulers.io())
               .subscribe()

@@ -16,11 +16,4 @@
 
 package io.sweers.catchup.service.api
 
-import io.reactivex.Maybe
-
-interface Service {
-  fun meta(): ServiceMeta
-  fun fetchPage(request: DataRequest): Maybe<DataResult>
-  fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder)
-  fun linkHandler(): LinkHandler
-}
+data class DataResult(val data: List<CatchUpItem>, val nextPageToken: String?)

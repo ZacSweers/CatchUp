@@ -1,0 +1,198 @@
+/*
+ * Copyright (c) 2017 Zac Sweers
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.sweers.catchup.ui.base2
+
+import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
+import io.sweers.catchup.BuildConfig
+import io.sweers.catchup.data.ServiceDao
+import io.sweers.catchup.data.ServicePage
+import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
+import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.DataRequest
+import io.sweers.catchup.service.api.DataResult
+import io.sweers.catchup.service.api.Service
+import org.threeten.bp.Instant
+import org.threeten.bp.temporal.ChronoUnit
+import retrofit2.HttpException
+import java.io.IOException
+
+private fun <T> T.runIf(condition: Boolean, block: T.() -> T): T = if (condition) {
+  block(this)
+} else this
+
+class StorageBackedService(
+    private val dao: ServiceDao,
+    private val delegate: Service) : Service {
+
+  private var currentSessionId: Long = -1
+
+  override fun meta() = delegate.meta()
+
+  override fun fetchPage(request: DataRequest): Maybe<DataResult> {
+    if (request.multiPage) {
+      // Backfill pages
+
+      // If service has deterministic numeric paging, we can use range + concatMapEager to fast track it
+      if (meta().pagesAreNumeric) {
+        return Observable.range(0, request.pageId.toInt())
+            .concatMapEager { this.getPage(it.toString()).toObservable() }
+            .reduce { prev, result ->
+              DataResult(prev.data + result.data, result.nextPageToken)
+            }
+      }
+
+      // Strategy is a bit interesting here. We start with a synthesized initial "result"
+      // in a behavior subject. We start with this in the stream, and then from there flatmap the next
+      // page for every token. If the token is not null, we send it back to the stateHandler to fetch
+      // the next page. If that page is our final page or it was null, complete the state handler.
+      //
+      // Basically an RxJava way of generating an indefinite sequence. At the end, we reduce all the
+      // results, continuously appending new data and keeping the last seen page token. The result
+      // is the last emission has all the data we want plus the last "next page" token.
+      val stateHandler = BehaviorSubject.createDefault(
+          DataResult(emptyList(), meta().firstPageKey)).toSerialized()
+      return stateHandler
+          .flatMapMaybe { getPage(it.nextPageToken!!) }
+          .doAfterNext { result ->
+            val nextPage = result.nextPageToken
+            if (nextPage != null) {
+              // Always request the next page if it's not null. If it's the last page, we'll complete after this
+              stateHandler.onNext(result)
+            }
+            if (nextPage == null || nextPage == request.pageId) {
+              // Complete if there's no more pages or we've hit the target page
+              stateHandler.onComplete()
+            }
+          }
+          .reduce { prev, result ->
+            DataResult(prev.data + result.data, result.nextPageToken)
+          }
+    } else {
+      return getPage(request.pageId, request.fromRefresh)
+    }
+  }
+
+  private fun getPage(page: String, isRefresh: Boolean = false): Maybe<DataResult> {
+    return if (!isRefresh) {
+      // Try from local first
+      // If no prev session ID, grab the latest page
+      // If we do have a prev session ID, we want those pages
+      val useLatest = currentSessionId == -1L
+      if (BuildConfig.DEBUG && useLatest && page != meta().firstPageKey) {
+        // This shouldn't happen. If we have no session, we should be fetching the first page
+        throw IllegalStateException("Fetching first local but not first page!")
+      }
+      fetchPageFromLocal(page, useLatest)
+          .runIf(!useLatest) {
+            switchIfEmpty(Maybe.defer {
+              // If we were trying to a current session but failed, fall back to first local page
+              fetchPageFromLocal(page, true)
+            })
+          }
+          .switchIfEmpty(
+              Maybe.defer {
+                // Nothing local, fall to network
+                fetchPageFromNetwork(page, isRefresh)
+              })
+    } else {
+      fetchPageFromNetwork(page, true)
+    }
+  }
+
+  private fun fetchPageFromLocal(pageId: String,
+      useLatest: Boolean): Maybe<DataResult> {
+    val now = Instant.now()
+    val pageFetcher = with(dao) {
+      if (pageId == meta().firstPageKey && useLatest) {
+        getFirstServicePage(meta().id, page = pageId)
+      } else {
+        getServicePage(type = meta().id, page = pageId, sessionId = currentSessionId)
+      }
+    }
+    return pageFetcher
+        .subscribeOn(Schedulers.io())
+        .filter { it.expiration.isBefore(now) }
+        .flatMap { servicePage ->
+          if (pageId == meta().firstPageKey) {
+            currentSessionId = servicePage.sessionId
+          }
+          // We want to preserve the ordering that we stored before, map ID -> index
+          val idToIndex = servicePage.items.withIndex()
+              .associateBy(keySelector = { (_, value) -> value }) { (index, _) -> index }
+          dao.getItemByIds(servicePage.items.toTypedArray())
+              .flattenAsObservable { it }
+              .toSortedList { o1, o2 ->
+                idToIndex[o1.stableId()]!!.compareTo(idToIndex[o2.stableId()]!!)
+              }
+              .toMaybe()
+              .map { DataResult(it, servicePage.nextPageToken) }
+        }
+  }
+
+  private fun fetchPageFromNetwork(pageId: String, isRefresh: Boolean): Maybe<DataResult> {
+    return delegate.fetchPage(DataRequest(true, false, pageId))
+        .doOnSuccess { result ->
+          Completable.fromAction {
+            val calculatedExpiration = Instant.now()
+                .plus(2, ChronoUnit.HOURS) // TODO preference this
+            if (currentSessionId == -1L || isRefresh) {
+              currentSessionId = calculatedExpiration.toEpochMilli()
+            }
+            dao.putPage(ServicePage(
+                id = "${meta().id}$pageId",
+                type = meta().id,
+                page = pageId,
+                items = result.data.map { it.stableId() },
+                expiration = calculatedExpiration,
+                sessionId = if (pageId == meta().firstPageKey && isRefresh) {
+                  calculatedExpiration.toEpochMilli()
+                } else {
+                  currentSessionId
+                },
+                nextPageToken = result.nextPageToken
+            ))
+          }.subscribeOn(Schedulers.io())
+              .subscribe()
+        }
+        .doOnSuccess { result ->
+          Completable
+              .fromAction { dao.putItems(*result.data.toTypedArray()) }
+              .subscribeOn(Schedulers.io())
+              .subscribe()
+        }
+        .onErrorResumeNext { throwable: Throwable ->
+          // At least *try* to gracefully handle it
+          if (throwable is HttpException) {
+            Maybe.error(throwable)
+          } else if (pageId == meta().firstPageKey && !isRefresh && throwable is IOException) {
+            fetchPageFromLocal(pageId, true)
+          } else {
+            Maybe.error(throwable)
+          }
+        }
+  }
+
+  override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
+    delegate.bindItemView(item, holder)
+  }
+
+  override fun linkHandler() = delegate.linkHandler()
+}
