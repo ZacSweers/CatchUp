@@ -36,8 +36,8 @@ interface ServiceDao {
   @Query("SELECT * FROM pages WHERE type = :type AND page = 0 ORDER BY expiration DESC")
   fun getFirstServicePage(type: String): Maybe<ServicePage>
 
-  @Query("SELECT * FROM pages WHERE type = :type AND page = :page")
-  fun getServicePage(type: String, page: String): Maybe<ServicePage>
+  @Query("SELECT * FROM pages WHERE type = :type AND page = :page ORDER BY expiration DESC")
+  fun getFirstServicePage(type: String, page: String): Maybe<ServicePage>
 
   @Query("SELECT * FROM pages WHERE type = :type AND page = :page AND sessionId = :sessionId")
   fun getServicePage(type: String, page: String, sessionId: Long): Maybe<ServicePage>
