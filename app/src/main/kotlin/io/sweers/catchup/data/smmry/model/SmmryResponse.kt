@@ -23,7 +23,7 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import io.sweers.catchup.data.adapters.UnEscape
+import io.sweers.catchup.util.data.adapters.UnEscape
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.lang.reflect.Type
@@ -55,7 +55,8 @@ abstract class Success : SmmryResponse() {
   /**
    * Contains the title when available
    */
-  @Json(name = "sm_api_title") @UnEscape abstract fun title(): String
+  @Json(name = "sm_api_title")
+  @UnEscape abstract fun title(): String
 
   /**
    * Contains the summary

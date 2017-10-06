@@ -14,27 +14,32 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit
+package io.sweers.catchup.service.reddit
 
+import io.reactivex.Maybe
 import io.reactivex.Single
-import io.sweers.catchup.data.reddit.model.RedditResponse
+import io.sweers.catchup.service.reddit.model.RedditResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface RedditApi {
+internal interface RedditApi {
 
-  @GET("/r/{subreddit}/comments/{id}") fun comments(
+  @GET("/r/{subreddit}/comments/{id}")
+  fun comments(
       @Path("subreddit") subreddit: String, @Path("id") id: String): Single<List<RedditResponse>>
 
-  @GET("/") fun frontPage(@Query("limit") limit: Int,
-      @Query("after") after: String?): Single<RedditResponse>
+  @GET("/")
+  fun frontPage(@Query("limit") limit: Int,
+      @Query("after") after: String?): Maybe<RedditResponse>
 
-  @GET("/r/{subreddit}") fun subreddit(@Path("subreddit") subreddit: String,
+  @GET("/r/{subreddit}")
+  fun subreddit(@Path("subreddit") subreddit: String,
       @Query("after") after: String,
       @Query("limit") limit: Int): Single<RedditResponse>
 
-  @GET("/top") fun top(@Query("after") after: String,
+  @GET("/top")
+  fun top(@Query("after") after: String,
       @Query("limit") limit: Int): Single<RedditResponse>
 
   companion object {

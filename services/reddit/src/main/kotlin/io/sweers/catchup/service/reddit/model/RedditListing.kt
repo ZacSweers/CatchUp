@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model
+package io.sweers.catchup.service.reddit.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
 @AutoValue
-abstract class RedditListing : RedditObject() {
+internal abstract class RedditListing : RedditObject() {
 
   abstract fun after(): String
 

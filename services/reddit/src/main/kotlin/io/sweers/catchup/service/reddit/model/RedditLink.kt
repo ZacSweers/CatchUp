@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model
+package io.sweers.catchup.service.reddit.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import io.sweers.catchup.data.adapters.UnEscape
+import io.sweers.catchup.util.data.adapters.UnEscape
 
 @AutoValue
-abstract class RedditLink : RedditSubmission() {
+internal abstract class RedditLink : RedditSubmission() {
 
   abstract fun clicked(): Boolean
 

@@ -86,10 +86,6 @@
     <item name="colorAccent">@color/hackerNewsAccent</item>
   </style>
 
-  <style name="CatchUp.Slashdot" parent="CatchUp">
-    <item name="colorAccent">@color/slashdotAccent</item>
-  </style>
-
   <style name="CatchUp.DesignerNews" parent="CatchUp">
     <item name="colorAccent">@color/designerNewsAccent</item>
   </style>

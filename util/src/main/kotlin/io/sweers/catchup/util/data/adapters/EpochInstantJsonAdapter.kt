@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data
+package io.sweers.catchup.util.data.adapters
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
@@ -31,13 +31,15 @@ import java.util.concurrent.TimeUnit
 class EpochInstantJsonAdapter(
     private val timeUnit: TimeUnit = TimeUnit.SECONDS) : JsonAdapter<Instant>() {
 
-  @Synchronized @Throws(IOException::class)
+  @Synchronized
+  @Throws(IOException::class)
   override fun fromJson(reader: JsonReader): Instant? {
     val l = reader.nextLong()
     return Instant.ofEpochMilli(TimeUnit.MILLISECONDS.convert(l, timeUnit))
   }
 
-  @Synchronized @Throws(IOException::class)
+  @Synchronized
+  @Throws(IOException::class)
   override fun toJson(writer: JsonWriter, value: Instant?) {
     val longTime = value!!.toEpochMilli()
     writer.value(TimeUnit.MILLISECONDS.convert(longTime, timeUnit))

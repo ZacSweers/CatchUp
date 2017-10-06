@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model
+package io.sweers.catchup.service.reddit.model
 
-abstract class RedditObject
+internal abstract class RedditObject

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.adapters
+package io.sweers.catchup.util.data.adapters
 
 import com.squareup.moshi.JsonQualifier
 

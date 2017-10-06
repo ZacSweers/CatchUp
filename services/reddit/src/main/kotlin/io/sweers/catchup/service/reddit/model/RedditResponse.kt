@@ -14,41 +14,32 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model
+package io.sweers.catchup.service.reddit.model
 
 import com.google.auto.value.AutoValue
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
 @AutoValue
-abstract class RedditComment : RedditSubmission() {
+internal abstract class RedditResponse {
 
-  abstract fun body(): String
+  abstract fun data(): RedditListing
 
-  @Json(name = "body_html") abstract fun bodyHtml(): String
+  @AutoValue.Builder
+  interface Builder {
+    fun data(listing: RedditListing): Builder
 
-  abstract fun controversiality(): Int
-
-  abstract fun depth(): Int
-
-  @Json(name = "link_id") abstract fun linkId(): String
-
-  @Json(name = "parent_id") abstract fun parentId(): String
-
-  /**
-   * Ugh-asaurus
-   *
-   * @return list of comments. Or false. Because yeah.
-   */
-  abstract fun replies(): RedditObject
-
-  @Json(name = "subreddit_id") abstract fun subredditId(): String
+    fun build(): RedditResponse
+  }
 
   companion object {
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<RedditComment> {
-      return AutoValue_RedditComment.MoshiJsonAdapter(moshi)
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<RedditResponse> {
+      return AutoValue_RedditResponse.MoshiJsonAdapter(moshi)
+    }
+
+    fun builder(): Builder {
+      return `$AutoValue_RedditResponse`.Builder()
     }
   }
 }

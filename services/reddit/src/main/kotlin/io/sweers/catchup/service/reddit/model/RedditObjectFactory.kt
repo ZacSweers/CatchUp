@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model
+package io.sweers.catchup.service.reddit.model
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
@@ -22,11 +22,15 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import io.sweers.catchup.service.reddit.model.RedditType.LISTING
+import io.sweers.catchup.service.reddit.model.RedditType.MORE
+import io.sweers.catchup.service.reddit.model.RedditType.T1
+import io.sweers.catchup.service.reddit.model.RedditType.T3
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.lang.reflect.Type
 
-class RedditObjectFactory : JsonAdapter.Factory {
+internal class RedditObjectFactory : JsonAdapter.Factory {
 
   override fun create(type: Type, annotations: Set<Annotation>, moshi: Moshi): JsonAdapter<*>? {
     val clazz = Types.getRawType(type)
@@ -56,25 +60,29 @@ class RedditObjectFactory : JsonAdapter.Factory {
         when (value) {
           is RedditComment -> {
             writer.name("kind")
-            moshi.adapter(RedditType::class.java).toJson(writer, RedditType.T1)
+            moshi.adapter(RedditType::class.java).toJson(writer,
+                T1)
             writer.name("data")
             moshi.adapter(RedditComment::class.java).toJson(writer, value)
           }
           is RedditLink -> {
             writer.name("kind")
-            moshi.adapter(RedditType::class.java).toJson(writer, RedditType.T3)
+            moshi.adapter(RedditType::class.java).toJson(writer,
+                T3)
             writer.name("data")
             moshi.adapter(RedditLink::class.java).toJson(writer, value)
           }
           is RedditListing -> {
             writer.name("kind")
-            moshi.adapter(RedditType::class.java).toJson(writer, RedditType.LISTING)
+            moshi.adapter(RedditType::class.java).toJson(writer,
+                LISTING)
             writer.name("data")
             moshi.adapter(RedditListing::class.java).toJson(writer, value)
           }
           is RedditMore -> {
             writer.name("kind")
-            moshi.adapter(RedditType::class.java).toJson(writer, RedditType.MORE)
+            moshi.adapter(RedditType::class.java).toJson(writer,
+                MORE)
             writer.name("data")
             moshi.adapter(RedditMore::class.java).toJson(writer, value)
           }

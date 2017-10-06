@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.adapters
+package io.sweers.catchup.util.data.adapters
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonAdapter.Factory
@@ -28,7 +28,7 @@ import org.unbescape.java.JavaEscape
  * [JsonAdapter] that defaults the given element if it is a collection to an empty form
  * if it is null, denoted via [UnEscape].
  */
-class UnescapeJsonAdapter internal constructor(
+class UnescapeJsonAdapter constructor(
     private val delegate: JsonAdapter<String>,
     private val html: Boolean) : JsonAdapter<String>() {
 
@@ -45,9 +45,7 @@ class UnescapeJsonAdapter internal constructor(
     delegate.toJson(writer, value)
   }
 
-  override fun toString(): String {
-    return "$delegate.unescaping(html=$html)"
-  }
+  override fun toString() = "$delegate.unescaping(html=$html)"
 
   companion object {
     @JvmField
@@ -59,7 +57,8 @@ class UnescapeJsonAdapter internal constructor(
       val unescape = annotations.find { it is UnEscape } ?: return@Factory null
 
       return@Factory UnescapeJsonAdapter(moshi.adapter(type,
-          Types.nextAnnotations(annotations, UnEscape::class.java)!!),
+          Types.nextAnnotations(annotations,
+              UnEscape::class.java)!!),
           (unescape as UnEscape).html)
     }
   }

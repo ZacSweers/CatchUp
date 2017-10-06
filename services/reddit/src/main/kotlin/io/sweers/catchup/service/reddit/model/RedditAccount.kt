@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model
+package io.sweers.catchup.service.reddit.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
@@ -22,22 +22,36 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
 @AutoValue
-abstract class RedditMore : RedditObject() {
+internal abstract class RedditAccount : RedditObject() {
 
-  abstract fun children(): List<String>
+  @Json(name = "comment_karma") abstract fun commentKarma(): Int
 
-  abstract fun count(): Int
+  @Json(name = "has_mail") abstract fun hasMail(): Boolean
+
+  @Json(name = "has_mod_mail") abstract fun hasModMail(): Boolean
+
+  @Json(name = "has_verified_email") abstract fun hasVerifiedEmail(): Boolean
 
   abstract fun id(): String
 
+  @get:Json(name = "is_friend") abstract val isFriend: Boolean
+
+  @get:Json(name = "is_gold") abstract val isGold: Boolean
+
+  @get:Json(name = "is_mod") abstract val isMod: Boolean
+
+  @Json(name = "link_karma") abstract fun linkKarma(): Int
+
+  abstract fun modhash(): String
+
   abstract fun name(): String
 
-  @Json(name = "parent_id") abstract fun parentId(): String
+  @Json(name = "over_18") abstract fun nsfw(): Boolean
 
   companion object {
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<RedditMore> {
-      return AutoValue_RedditMore.MoshiJsonAdapter(moshi)
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<RedditAccount> {
+      return AutoValue_RedditAccount.MoshiJsonAdapter(moshi)
     }
   }
 }

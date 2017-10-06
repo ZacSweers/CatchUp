@@ -14,37 +14,30 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model
+package io.sweers.catchup.service.reddit.model
 
+import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
-import io.sweers.catchup.service.api.HasStableId
-import org.threeten.bp.Instant
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 
-abstract class RedditSubmission : RedditObject(), HasStableId {
+@AutoValue
+internal abstract class RedditMore : RedditObject() {
 
-  abstract fun author(): String
+  abstract fun children(): List<String>
 
-  @Json(name = "author_flair_text") abstract fun authorFlairText(): String?
-
-  @Json(name = "banned_by") abstract fun bannedBy(): String?
-
-  abstract fun created(): Instant
-
-  @Json(name = "created_utc") abstract fun createdUtc(): Instant
-
-  abstract fun gilded(): Int
+  abstract fun count(): Int
 
   abstract fun id(): String
 
   abstract fun name(): String
 
-  abstract fun saved(): Boolean
+  @Json(name = "parent_id") abstract fun parentId(): String
 
-  abstract fun score(): Int
-
-  abstract fun subreddit(): String
-
-  abstract fun ups(): Int
-
-  override fun stableId(): Long = id().hashCode().toLong()
+  companion object {
+    @JvmStatic
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<RedditMore> {
+      return AutoValue_RedditMore.MoshiJsonAdapter(moshi)
+    }
+  }
 }

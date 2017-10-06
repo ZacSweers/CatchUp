@@ -40,8 +40,11 @@ import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
+@Qualifier
+private annotation class InternalApi
+
 class SlashdotService @Inject constructor(
-    private val serviceMeta: ServiceMeta,
+    @InternalApi private val serviceMeta: ServiceMeta,
     private val service: SlashdotApi,
     private val linkHandler: LinkHandler)
   : TextService {
@@ -79,13 +82,11 @@ class SlashdotService @Inject constructor(
 
 @Module
 abstract class NewSlashdotModule {
-  @Qualifier
-  private annotation class InternalApi
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  abstract fun slashdotServiceMeta(meta: ServiceMeta): ServiceMeta
+  abstract fun slashdotServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
   @IntoMap
   @ServiceKey(SERVICE_KEY)
@@ -99,6 +100,7 @@ abstract class NewSlashdotModule {
 
     @Provides
     @JvmStatic
+    @InternalApi
     fun provideSlashdotServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.slashdot,

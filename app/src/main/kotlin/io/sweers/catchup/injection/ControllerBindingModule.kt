@@ -29,7 +29,6 @@ import io.sweers.catchup.ui.controllers.HackerNewsController
 import io.sweers.catchup.ui.controllers.MediumController
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.ui.controllers.ProductHuntController
-import io.sweers.catchup.ui.controllers.RedditController
 import io.sweers.catchup.ui.controllers.SmmryController
 
 @Module(
@@ -38,7 +37,6 @@ import io.sweers.catchup.ui.controllers.SmmryController
     PagerController.Component::class,
     SmmryController.Component::class,
     HackerNewsController.Component::class,
-    RedditController.Component::class,
     MediumController.Component::class,
     ProductHuntController.Component::class,
     DribbbleController.Component::class,
@@ -70,12 +68,6 @@ abstract class ControllerBindingModule {
   @ControllerKey(HackerNewsController::class)
   internal abstract fun bindHackerNewsControllerInjectorFactory(
       builder: HackerNewsController.Component.Builder): AndroidInjector.Factory<out Controller>
-
-  @Binds
-  @IntoMap
-  @ControllerKey(RedditController::class)
-  internal abstract fun bindRedditControllerInjectorFactory(
-      builder: RedditController.Component.Builder): AndroidInjector.Factory<out Controller>
 
   @Binds
   @IntoMap

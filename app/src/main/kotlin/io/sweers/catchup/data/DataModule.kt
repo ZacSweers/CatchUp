@@ -27,9 +27,9 @@ import dagger.Provides
 import dagger.multibindings.Multibinds
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
-import io.sweers.catchup.data.adapters.UnescapeJsonAdapter
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.injection.qualifiers.NetworkInterceptor
+import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
 import io.sweers.inspector.Inspector
 import okhttp3.Cache
 import okhttp3.Interceptor

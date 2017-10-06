@@ -75,12 +75,25 @@ configurations.all {
 }
 
 dependencies {
-  kapt deps.android.arch.room.apt
-  api deps.android.arch.room.runtime
+  implementation project(':service-api')
+  implementation project(':util')
+
+  compileOnly deps.auto.value.compileOnly.annotations
+  compileOnly deps.auto.value.extensions.moshi.compileOnly.annotations
+  kapt deps.dagger.apt.compiler
+  kapt deps.auto.value.apt.core
+  kapt deps.auto.value.extensions.moshi.apt.core
+  kapt deps.auto.value.extensions.redacted.apt.core
+
+  implementation deps.misc.okio
+  implementation deps.misc.moshi
+  implementation deps.retrofit.core
+  implementation deps.retrofit.moshi
+  implementation deps.retrofit.rxJava2
+  implementation deps.okhttp.core
+
   api deps.android.support.annotations
-  api deps.autoDispose.kotlin
   api deps.dagger.runtime
   api deps.misc.lazythreeten
   api deps.rx.java2
-  implementation deps.okhttp.core
 }

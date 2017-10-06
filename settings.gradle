@@ -20,4 +20,6 @@ project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
 include ':service-api'
 include ':slashdot'
 project(':slashdot').projectDir = new File(rootDir, 'services/slashdot')
+include ':reddit'
+project(':reddit').projectDir = new File(rootDir, 'services/reddit')
 include ':util'

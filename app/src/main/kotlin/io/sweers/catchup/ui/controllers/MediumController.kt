@@ -31,7 +31,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
-import io.sweers.catchup.data.EpochInstantJsonAdapter
 import io.sweers.catchup.data.InspectorConverterFactory
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
@@ -40,14 +39,16 @@ import io.sweers.catchup.data.medium.model.MediumPost
 import io.sweers.catchup.data.medium.model.Post
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.StorageBackedNewsController
+import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -69,7 +70,7 @@ class MediumController : StorageBackedNewsController {
     holder.bind(this, item, linkManager)
     item.itemClickUrl?.let {
       if (remoteConfig.getBoolean(SMMRY_ENABLED)
-          && SmmryController.canSummarize(it)) {
+          && SummarizationInfo.canSummarize(it)) {
         holder.itemLongClicks()
             .autoDisposeWith(holder)
             .subscribe(SmmryController.showFor<Any>(
@@ -162,7 +163,8 @@ class MediumController : StorageBackedNewsController {
     @PerController
     internal fun provideMediumMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Instant::class.java, EpochInstantJsonAdapter(TimeUnit.MILLISECONDS))
+          .add(Instant::class.java,
+              EpochInstantJsonAdapter(MILLISECONDS))
           .add(Wrapped.ADAPTER_FACTORY)
           .build()
     }

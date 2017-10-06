@@ -20,6 +20,10 @@ dependencies {
   compile deps.android.support.annotations
   compile deps.dagger.runtime
   compile deps.misc.lazythreeten
+  compile deps.misc.moshi
   compile deps.rx.java2
   compile deps.kotlin.stdlib.jdk7
+
+  // Implementation
+  compile deps.misc.unbescape
 }

@@ -17,6 +17,7 @@
 package io.sweers.catchup.service.api
 
 import io.sweers.catchup.service.api.SummarizationType.NONE
+import okhttp3.HttpUrl
 
 // Gross vars/constructors because of https://issuetracker.google.com/issues/67181813
 class SummarizationInfo(
@@ -24,4 +25,41 @@ class SummarizationInfo(
     var type: SummarizationType
 ) {
   constructor() : this("", NONE)
+
+  companion object {
+    /**
+     * Really shallow sanity check
+     */
+    fun canSummarize(url: String, text: String? = null): Boolean {
+      text?.let {
+        if (it.isEmpty()) {
+          return false
+        } else if (it.length < 50) {
+          return false
+        }
+      }
+
+      if (url.endsWith(".png")
+          || url.endsWith(".gifv")
+          || url.endsWith(".jpg")
+          || url.endsWith(".jpeg")) {
+        return false
+      }
+
+      HttpUrl.parse(url)?.let {
+        it.host().let {
+          if (it.contains("imgur")
+              || it.contains("streamable")
+              || it.contains("gfycat")
+              || it.contains("i.reddit")
+              || it.contains("v.reddit")
+              || it.contains("youtube")
+              || it.contains("youtu.be"))
+            return false
+        }
+      }
+
+      return true
+    }
+  }
 }

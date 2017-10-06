@@ -90,6 +90,7 @@ class NewServiceController : ButterKnifeController,
 
   private lateinit var layoutManager: LinearLayoutManager
   private lateinit var adapter: Adapter
+  private var currentPage: String? = null
   private var nextPage: String? = null
   private var isRestoring = false
   private var pageToRestoreTo: String? = null
@@ -99,13 +100,12 @@ class NewServiceController : ButterKnifeController,
 
   @Inject lateinit var viewPool: RecycledViewPool
   @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<StorageBackedService>>
-  private val service: Service
-    get() {
-      return args[ARG_SERVICE_KEY].let {
-        services[it]?.get()
-            ?: throw IllegalArgumentException("No service provided for $it!")
-      }
+  private val service: Service by lazy {
+    args[ARG_SERVICE_KEY].let {
+      services[it]?.get()
+          ?: throw IllegalArgumentException("No service provided for $it!")
     }
+  }
 
   @Suppress("unused")
   constructor() : super()
@@ -176,7 +176,9 @@ class NewServiceController : ButterKnifeController,
 
   override fun onSaveViewState(view: View, outState: Bundle) {
     outState.run {
-      putString("pageId", nextPage)
+      if (currentPage != service.meta().firstPageKey) {
+        putString("currentPage", currentPage)
+      }
       putParcelable("layoutManagerState", recyclerView.layoutManager.onSaveInstanceState())
     }
     super.onSaveViewState(view, outState)
@@ -185,7 +187,7 @@ class NewServiceController : ButterKnifeController,
   override fun onRestoreViewState(view: View, savedViewState: Bundle) {
     super.onRestoreViewState(view, savedViewState)
     with(savedViewState) {
-      pageToRestoreTo = getString("pageNumber", null)
+      pageToRestoreTo = getString("currentPage", null)
       pendingRVState = getParcelable("layoutManagerState")
       isRestoring = pendingRVState != null
     }
@@ -223,7 +225,10 @@ class NewServiceController : ButterKnifeController,
               pageToRestoreTo = null
             })
         .map { result ->
-          result.data.also { nextPage = result.nextPageToken }
+          result.data.also {
+            nextPage = result.nextPageToken
+            currentPage = pageToRequest
+          }
         }
         .map { newData ->
           if (fromRefresh) {

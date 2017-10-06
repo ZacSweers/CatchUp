@@ -14,32 +14,14 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model
+package io.sweers.catchup.service.reddit
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import com.ryanharter.auto.value.moshi.MoshiAdapterFactory
+import com.squareup.moshi.JsonAdapter.Factory
 
-@AutoValue
-abstract class RedditResponse {
-
-  abstract fun data(): RedditListing
-
-  @AutoValue.Builder
-  interface Builder {
-    fun data(listing: RedditListing): Builder
-
-    fun build(): RedditResponse
-  }
-
+@MoshiAdapterFactory(nullSafe = true)
+internal abstract class RedditAdapterFactory : Factory {
   companion object {
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<RedditResponse> {
-      return AutoValue_RedditResponse.MoshiJsonAdapter(moshi)
-    }
-
-    fun builder(): Builder {
-      return `$AutoValue_RedditResponse`.Builder()
-    }
+    fun create(): RedditAdapterFactory = AutoValueMoshi_RedditAdapterFactory()
   }
 }

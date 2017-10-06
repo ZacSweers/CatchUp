@@ -78,7 +78,6 @@ import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isGone
 import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.show
-import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -99,41 +98,6 @@ class SmmryController : ButterKnifeController {
     private val ID_ACCENT = "smmrycontroller.accent"
     private val ID_LOADED = "smmrycontroller.loaded"
 
-    /**
-     * Really shallow sanity check
-     */
-    fun canSummarize(url: String, text: String? = null): Boolean {
-      text?.let {
-        if (it.isEmpty()) {
-          return false
-        } else if (it.length < 50) {
-          return false
-        }
-      }
-
-      if (url.endsWith(".png")
-          || url.endsWith(".gifv")
-          || url.endsWith(".jpg")
-          || url.endsWith(".jpeg")) {
-        return false
-      }
-
-      HttpUrl.parse(url)?.let {
-        it.host().let {
-          if (it.contains("imgur")
-              || it.contains("streamable")
-              || it.contains("gfycat")
-              || it.contains("i.reddit")
-              || it.contains("v.reddit")
-              || it.contains("youtube")
-              || it.contains("youtu.be"))
-            return false
-        }
-      }
-
-      return true
-    }
-
     fun <T> showFor(controller: ServiceController,
         url: String,
         inputTitle: String,
@@ -149,7 +113,8 @@ class SmmryController : ButterKnifeController {
   }
 
   @Inject lateinit var smmryService: SmmryService
-  @field:ForSmmry @Inject lateinit var moshi: Moshi
+  @field:ForSmmry
+  @Inject lateinit var moshi: Moshi
   @Inject lateinit var smmryDao: SmmryDao
 
   @BindView(R.id.loading_view) lateinit var loadingView: View

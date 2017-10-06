@@ -24,7 +24,6 @@ import io.sweers.catchup.data.dribbble.DribbbleService
 import io.sweers.catchup.data.medium.MediumService
 import io.sweers.catchup.data.model.ServiceData
 import io.sweers.catchup.data.producthunt.ProductHuntService
-import io.sweers.catchup.data.reddit.RedditApi
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -69,9 +68,9 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
     // TODO Generate this?
     private val SUPPORTED_ENDPOINTS = object : ArrayMap<String, ServiceData>() {
       init {
-        put(RedditApi.HOST,
-            ServiceData.Builder("r").addEndpoint("/")
-                .build())
+//        put(RedditApi.HOST,
+//            ServiceData.Builder("r").addEndpoint("/")
+//                .build())
         put(MediumService.HOST,
             ServiceData.Builder("m").addEndpoint("/browse/top")
                 .build())

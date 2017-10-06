@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.reddit.model
+package io.sweers.catchup.service.reddit.model
 
 import com.squareup.moshi.Json
 
-enum class RedditType constructor(val derivedClass: Class<*>) {
+internal enum class RedditType constructor(val derivedClass: Class<*>) {
 
   @Json(name = "t1")
   T1(RedditComment::class.java),
