@@ -36,8 +36,11 @@ interface ServiceDao {
   @Query("SELECT * FROM pages WHERE type = :type AND page = 0 ORDER BY expiration DESC")
   fun getFirstServicePage(type: String): Maybe<ServicePage>
 
+  @Query("SELECT * FROM pages WHERE type = :type AND page = :page ORDER BY expiration DESC")
+  fun getServicePage(type: String, page: String): Maybe<ServicePage>
+
   @Query("SELECT * FROM pages WHERE type = :type AND page = :page AND sessionId = :sessionId")
-  fun getServicePage(type: String, page: Int, sessionId: Long): Maybe<ServicePage>
+  fun getServicePage(type: String, page: String, sessionId: Long): Maybe<ServicePage>
 
   @Query("SELECT * FROM items WHERE id = :id")
   fun getItemById(id: Long): Maybe<CatchUpItem>
@@ -71,7 +74,8 @@ data class ServicePage(
     @PrimaryKey val id: String,
     val type: String,
     val expiration: Instant,
+    val page: String,
     val sessionId: Long = -1,
-    val page: Int = 0,
-    val items: List<Long>
+    val items: List<Long>,
+    val nextPageToken: String?
 )
