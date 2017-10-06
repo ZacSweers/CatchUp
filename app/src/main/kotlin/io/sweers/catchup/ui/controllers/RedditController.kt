@@ -32,7 +32,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.data.EpochInstantJsonAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
-import io.sweers.catchup.data.reddit.RedditService
+import io.sweers.catchup.data.reddit.RedditApi
 import io.sweers.catchup.data.reddit.model.RedditLink
 import io.sweers.catchup.data.reddit.model.RedditObjectFactory
 import io.sweers.catchup.injection.scopes.PerController
@@ -49,7 +49,7 @@ import javax.inject.Qualifier
 
 class RedditController : BaseNewsController<RedditLink> {
 
-  @Inject lateinit var service: RedditService
+  @Inject lateinit var api: RedditApi
   @Inject lateinit var linkManager: LinkManager
   @Inject lateinit var remoteConfig: FirebaseRemoteConfig
 
@@ -102,7 +102,7 @@ class RedditController : BaseNewsController<RedditLink> {
   }
 
   override fun getDataSingle(request: BaseNewsController.DataRequest): Single<List<RedditLink>> {
-    return service.frontPage(25, if (request.fromRefresh) null else lastSeen)
+    return api.frontPage(25, if (request.fromRefresh) null else lastSeen)
         .map { redditListingRedditResponse ->
           lastSeen = redditListingRedditResponse.data().after()
           //noinspection CodeBlock2Expr,unchecked
@@ -163,14 +163,14 @@ class RedditController : BaseNewsController<RedditLink> {
     @PerController
     internal fun provideRedditService(@InternalApi client: Lazy<OkHttpClient>,
         rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
-        @InternalApi moshi: Moshi): RedditService {
-      val retrofit = Retrofit.Builder().baseUrl(RedditService.ENDPOINT)
+        @InternalApi moshi: Moshi): RedditApi {
+      val retrofit = Retrofit.Builder().baseUrl(RedditApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .validateEagerly(BuildConfig.DEBUG)
           .build()
-      return retrofit.create(RedditService::class.java)
+      return retrofit.create(RedditApi::class.java)
     }
   }
 }

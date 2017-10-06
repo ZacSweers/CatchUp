@@ -22,7 +22,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface RedditService {
+interface RedditApi {
 
   @GET("/r/{subreddit}/comments/{id}") fun comments(
       @Path("subreddit") subreddit: String, @Path("id") id: String): Single<List<RedditResponse>>
