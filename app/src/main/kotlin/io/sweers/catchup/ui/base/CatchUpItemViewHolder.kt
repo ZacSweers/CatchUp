@@ -89,13 +89,13 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
       linkHandler: LinkHandler? = null,
       itemClickHandler: ((String) -> Any)? = null,
       commentClickHandler: ((String) -> Any)? = null) {
-    title(item.title)
+    title(item.title.trim())
     score(item.score)
     timestamp(item.timestamp)
-    author(item.author)
-    source(item.source)
+    author(item.author?.trim())
+    source(item.source?.trim())
     comments(item.commentCount)
-    tag(item.tag)
+    tag(item.tag?.trim())
 
     val itemClickUrl = item.itemClickUrl ?: item.itemCommentClickUrl
     itemClickUrl?.let {
