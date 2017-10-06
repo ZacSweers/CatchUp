@@ -17,7 +17,7 @@
 def versions = [
     androidTestSupport: '0.4.1',
     apollo: '0.4.1',
-    archComponents: '1.0.0-beta1',
+    archComponents: '1.0.0-beta2',
     autodispose: '0.3.0',
     avFirebase: '1.1.0',
     avMoshi: '0.4.3',
