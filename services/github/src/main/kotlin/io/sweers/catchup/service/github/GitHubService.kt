@@ -25,6 +25,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.LinkHandler
@@ -66,24 +67,18 @@ internal class GitHubService @Inject constructor(
             .direction(OrderDirection.DESC)
             .field(LanguageOrderField.SIZE)
             .build(),
-        null))
+        request.pageId))
         .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
 
     return Rx2Apollo.from(searchQuery)
         .firstOrError()
         .map { it.data()!! }
         .flatMap { data ->
-          //          with(data.search().pageInfo()) {
-//            endCursor = endCursor()
-//            if (endCursor == null) {
-//              setMoreDataAvailable(false)
-//            }
-//          }
           Observable.fromIterable(data.search().nodes().emptyIfNull())
               .map { it.asRepository()!! }
               .map {
                 with(it) {
-                  io.sweers.catchup.service.api.CatchUpItem(
+                  CatchUpItem(
                       id = id().hashCode().toLong(),
                       hideComments = true,
                       title = "${name()} — ${description()}",
@@ -97,8 +92,8 @@ internal class GitHubService @Inject constructor(
                 }
               }
               .toList()
+              .map { DataResult(it, data.search().pageInfo().endCursor()) }
         }
-        .map { DataResult(it, null) }
         .toMaybe()
   }
 
