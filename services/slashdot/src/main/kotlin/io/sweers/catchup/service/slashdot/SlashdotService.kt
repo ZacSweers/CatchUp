@@ -54,9 +54,6 @@ internal class SlashdotService @Inject constructor(
   override fun meta() = serviceMeta
 
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
-    if (request.pageId != "main") {
-      return Maybe.empty()
-    }
     return service.main()
         .map { it.itemList }
         .flattenAsObservable { it }
