@@ -50,6 +50,28 @@ subprojects {
     maven { url deps.build.repositories.snapshots }
     maven { url 'https://oss.jfrog.org/libs-snapshot' }
   }
+
+  configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+      if (details.requested.group == 'com.android.support' &&
+          !details.requested.name.contains('multidex')) {
+        // We want to force all support libraries to use the same version, even if they're transitive.
+        details.useVersion versions.support
+      }
+      if (details.requested.group == 'com.google.android.gms') {
+        // We want to force all play services libraries to use the same version, even if they're transitive.
+        details.useVersion versions.playServices
+      }
+      if (details.requested.group == 'com.google.firebase') {
+        // We want to force all play services libraries to use the same version, even if they're transitive.
+        details.useVersion versions.firebase
+      }
+      if (details.requested.group == 'org.jetbrains.kotlin') {
+        // We want to force all kotlin libraries to use the same version, even if they're transitive.
+        details.useVersion versions.kotlin
+      }
+    }
+  }
 }
 
 task wrapper(type: Wrapper) {

@@ -68,20 +68,6 @@ apollo {
   customTypeMapping['URI'] = "okhttp3.HttpUrl"
 }
 
-configurations.all {
-  resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-    if (details.requested.group == 'com.android.support' &&
-        !details.requested.name.contains('multidex')) {
-      // We want to force all support libraries to use the same version, even if they're transitive.
-      details.useVersion versions.support
-    }
-    if (details.requested.group == 'org.jetbrains.kotlin') {
-      // We want to force all kotlin libraries to use the same version, even if they're transitive.
-      details.useVersion versions.kotlin
-    }
-  }
-}
-
 dependencies {
   api project(':service-api')
   implementation project(':util')
