@@ -39,11 +39,13 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
+import io.sweers.catchup.data.RemoteConfigKeys
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.CatchUpItem
@@ -57,6 +59,7 @@ import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
 import io.sweers.catchup.ui.base2.LoadResult.NewData
 import io.sweers.catchup.ui.base2.LoadResult.RefreshData
+import io.sweers.catchup.ui.controllers.SmmryController
 import io.sweers.catchup.util.Iterables
 import io.sweers.catchup.util.applyOn
 import io.sweers.catchup.util.d
@@ -98,6 +101,7 @@ class NewServiceController : ButterKnifeController,
   private var dataLoading = false
   private var pendingRVState: Parcelable? = null
 
+  @Inject lateinit var remoteConfig: FirebaseRemoteConfig
   @Inject lateinit var viewPool: RecycledViewPool
   @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<StorageBackedService>>
   private val service: Service by lazy {
@@ -112,6 +116,8 @@ class NewServiceController : ButterKnifeController,
 
   @Suppress("unused")
   constructor(args: Bundle) : super(args)
+
+  override fun toString() = "ServiceController: ${args[ARG_SERVICE_KEY]}"
 
   override fun isDataLoading(): Boolean = dataLoading
 
@@ -140,7 +146,20 @@ class NewServiceController : ButterKnifeController,
             loadData()
           }
         })
-    adapter = Adapter { t, holder -> service.bindItemView(t, holder) }
+    adapter = Adapter { item, holder ->
+      service.bindItemView(item, holder)
+      item.summarizationInfo?.let {
+        if (remoteConfig.getBoolean(RemoteConfigKeys.SMMRY_ENABLED)) {
+          holder.itemLongClicks()
+              .autoDisposeWith(this)
+              .subscribe(SmmryController.showFor<Any>(controller = this,
+                  service = service,
+                  title = item.title,
+                  id = item.id.toString(),
+                  info = it))
+        }
+      }
+    }
         .also { recyclerView.adapter = it }
     swipeRefreshLayout.setOnRefreshListener(this)
     recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
@@ -213,7 +232,7 @@ class NewServiceController : ButterKnifeController,
       recyclerView.post { adapter.dataStartedLoading() }
       recyclerView.itemAnimator = null
     }
-    val trace = FirebasePerformance.getInstance().newTrace("Data load - ${javaClass.simpleName}")
+    val trace = FirebasePerformance.getInstance().newTrace("Data load - ${service.meta().id}")
     val timer = AtomicLong()
     service.fetchPage(
         DataRequest(
