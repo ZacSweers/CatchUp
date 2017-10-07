@@ -32,8 +32,6 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.SummarizationInfo
-import io.sweers.catchup.service.api.SummarizationType.TEXT
-import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.reddit.model.RedditLink
 import io.sweers.catchup.service.reddit.model.RedditObjectFactory
@@ -77,10 +75,7 @@ internal class RedditService @Inject constructor(
                     tag = it.subreddit(),
                     itemClickUrl = it.url(),
                     itemCommentClickUrl = "https://reddit.com/comments/${it.id()}",
-                    summarizationInfo = if (SummarizationInfo.canSummarize(it.url(),
-                        it.selftext())) SummarizationInfo(it.selftext() ?: it.url(),
-                        it.selftext()?.let { TEXT } ?: URL
-                    ) else null
+                    summarizationInfo = SummarizationInfo.from(it.url(), it.selftext())
                 )
               }
           DataResult(data, redditListingRedditResponse.data().after())
