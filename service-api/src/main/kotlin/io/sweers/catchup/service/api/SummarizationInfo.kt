@@ -17,6 +17,8 @@
 package io.sweers.catchup.service.api
 
 import io.sweers.catchup.service.api.SummarizationType.NONE
+import io.sweers.catchup.service.api.SummarizationType.TEXT
+import io.sweers.catchup.service.api.SummarizationType.URL
 import okhttp3.HttpUrl
 
 // Gross vars/constructors because of https://issuetracker.google.com/issues/67181813
@@ -27,14 +29,20 @@ class SummarizationInfo(
   constructor() : this("", NONE)
 
   companion object {
+    fun from(url: String, text: String? = null): SummarizationInfo? {
+      return if (canSummarize(url, text)) {
+        SummarizationInfo(text ?: url, text?.let { TEXT } ?: URL)
+      } else null
+    }
+
     /**
      * Really shallow sanity check
      */
     fun canSummarize(url: String, text: String? = null): Boolean {
       text?.let {
-        if (it.isEmpty()) {
+        if (it.isBlank()) {
           return false
-        } else if (it.length < 50) {
+        } else if (it.length < 100) {
           return false
         }
       }
