@@ -27,6 +27,7 @@ import android.arch.persistence.room.Query
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.ColorInt
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.NestedScrollView
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -37,6 +38,7 @@ import android.widget.Toast
 import butterknife.BindView
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.SimpleColorFilter
+import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.squareup.moshi.Moshi
@@ -68,8 +70,13 @@ import io.sweers.catchup.data.smmry.model.UnknownErrorCode
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.rx.observers.adapter.SingleObserverAdapter
+import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.SummarizationInfo
+import io.sweers.catchup.service.api.SummarizationType
+import io.sweers.catchup.service.api.SummarizationType.NONE
+import io.sweers.catchup.service.api.SummarizationType.TEXT
+import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.ui.base.ButterKnifeController
-import io.sweers.catchup.ui.base.ServiceController
 import io.sweers.catchup.ui.controllers.SmmryController.Module.ForSmmry
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback
@@ -93,20 +100,22 @@ class SmmryController : ButterKnifeController {
   companion object {
 
     private val ID_TITLE = "smmrycontroller.title"
-    private val ID_URL = "smmrycontroller.url"
-    private val ID_TEXT = "smmrycontroller.text"
+    private val ID_ID = "smmrycontroller.id"
+    private val ID_VALUE = "smmrycontroller.value"
+    private val ID_TYPE = "smmrycontroller.type"
     private val ID_ACCENT = "smmrycontroller.accent"
     private val ID_LOADED = "smmrycontroller.loaded"
 
-    fun <T> showFor(controller: ServiceController,
-        url: String,
-        inputTitle: String,
-        text: String? = null) = Consumer<T> { _ ->
+    fun <T> showFor(controller: Controller,
+        service: Service,
+        title: String,
+        id: String,
+        info: SummarizationInfo) = Consumer<T> { _ ->
       controller.router
-          .pushController(RouterTransaction.with(SmmryController(url,
-              controller.serviceThemeColor,
-              inputTitle,
-              text))
+          .pushController(RouterTransaction.with(SmmryController(id,
+              ContextCompat.getColor(controller.activity, service.meta().themeColor),
+              title,
+              info))
               .pushChangeHandler(VerticalChangeHandler(false))
               .popChangeHandler(VerticalChangeHandler()))
     }
@@ -126,10 +135,10 @@ class SmmryController : ButterKnifeController {
   @BindView(R.id.drag_dismiss_layout)
   lateinit var dragDismissFrameLayout: ElasticDragDismissFrameLayout
 
-  private lateinit var url: String
+  private lateinit var id: String
+  private lateinit var info: SummarizationInfo
   @ColorInt private var accentColor: Int = 0
   private lateinit var inputTitle: String
-  private var text: String? = null
   private var alreadyLoaded = false
 
   private val dragDismissListener = object : ElasticDragDismissCallback() {
@@ -141,11 +150,11 @@ class SmmryController : ButterKnifeController {
 
   constructor(args: Bundle) : super(args)
 
-  constructor(url: String, @ColorInt accentColor: Int, inputTitle: String, text: String? = null) {
-    this.url = url
+  constructor(id: String, @ColorInt accentColor: Int, inputTitle: String, info: SummarizationInfo) {
+    this.id = id
     this.accentColor = accentColor
     this.inputTitle = inputTitle
-    this.text = text
+    this.info = info
   }
 
   override fun onContextAvailable(context: Context) {
@@ -156,8 +165,9 @@ class SmmryController : ButterKnifeController {
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
     outState.putString(ID_TITLE, inputTitle)
-    outState.putString(ID_URL, url)
-    outState.putString(ID_TEXT, text)
+    outState.putString(ID_ID, id)
+    outState.putString(ID_VALUE, info.value)
+    outState.putString(ID_TYPE, info.type.name)
     outState.putInt(ID_ACCENT, accentColor)
     outState.putBoolean(ID_LOADED, alreadyLoaded)
   }
@@ -165,8 +175,10 @@ class SmmryController : ButterKnifeController {
   override fun onRestoreInstanceState(savedInstanceState: Bundle) {
     super.onRestoreInstanceState(savedInstanceState)
     inputTitle = savedInstanceState.getString(ID_TITLE)!!
-    url = savedInstanceState.getString(ID_URL)!!
-    text = savedInstanceState.getString(ID_TEXT)
+    id = savedInstanceState.getString(ID_ID)!!
+    val value = savedInstanceState.getString(ID_VALUE)!!
+    val type = SummarizationType.valueOf(savedInstanceState.getString(ID_TYPE)!!)
+    info = SummarizationInfo(value, type)
     accentColor = savedInstanceState.getInt(ID_ACCENT)
     alreadyLoaded = savedInstanceState.getBoolean(ID_LOADED, false)
   }
@@ -225,7 +237,7 @@ class SmmryController : ButterKnifeController {
   }
 
   private fun tryRequestFromStorage(): Maybe<SmmryResponse> {
-    return smmryDao.getItem(url)
+    return smmryDao.getItem(id)
         .map { moshi.adapter(SmmryResponse::class.java).fromJson(it.json)!! }
         .onErrorComplete { exception ->
           e(exception) { "Error loading smmry cache." }
@@ -234,29 +246,30 @@ class SmmryController : ButterKnifeController {
   }
 
   private fun getRequestSingle(): Single<SmmryResponse> {
-    return text?.let {
-      smmryService.summarizeText(SmmryRequestBuilder.forText()
+    val summarizer: Single<SmmryResponse> = when (info.type) {
+      TEXT -> smmryService.summarizeText(SmmryRequestBuilder.forText()
           .withBreak(true)
           .keywordCount(5)
           .sentenceCount(5)
           .build(),
-          it)
-    } ?: smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(url)
-        .withBreak(true)
-        .keywordCount(5)
-        .sentenceCount(5)
-        .build()
-    )
-        .doOnSuccess {
-          if (it !is UnknownErrorCode) {
-            Completable
-                .fromAction {
-                  smmryDao.putItem(SmmryStorageEntry(url,
-                      moshi.adapter(SmmryResponse::class.java).toJson(it)))
-                }
-                .blockingAwait()
-          }
-        }
+          info.value)
+      URL -> smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(info.value)
+          .withBreak(true)
+          .keywordCount(5)
+          .sentenceCount(5)
+          .build())
+      NONE -> Single.just(Success.just(inputTitle, info.value))
+    }
+    return summarizer.doOnSuccess {
+      if (it !is UnknownErrorCode) {
+        Completable
+            .fromAction {
+              smmryDao.putItem(SmmryStorageEntry(id,
+                  moshi.adapter(SmmryResponse::class.java).toJson(it)))
+            }
+            .blockingAwait()
+      }
+    }
   }
 
   override fun onDetach(view: View) {
