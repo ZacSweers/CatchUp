@@ -38,6 +38,7 @@ import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.reddit.model.RedditLink
 import io.sweers.catchup.service.reddit.model.RedditObjectFactory
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
+import io.sweers.catchup.util.nullIfBlank
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -58,7 +59,8 @@ internal class RedditService @Inject constructor(
   override fun meta() = serviceMeta
 
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
-    return api.frontPage(25, request.pageId)
+    // We special case the front page
+    return api.frontPage(25, request.pageId.nullIfBlank())
         .map { redditListingRedditResponse ->
           @Suppress("UNCHECKED_CAST")
           val data = (redditListingRedditResponse.data()
@@ -81,7 +83,6 @@ internal class RedditService @Inject constructor(
                     ) else null
                 )
               }
-          //noinspection CodeBlock2Expr,unchecked
           DataResult(data, redditListingRedditResponse.data().after())
         }
   }

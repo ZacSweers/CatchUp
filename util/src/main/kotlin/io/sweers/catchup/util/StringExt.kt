@@ -29,3 +29,5 @@ inline infix fun String.truncateAt(length: Int): String =
  * @return The unescaped string.
  */
 inline fun String.unescapeJavaString(): String = JavaEscape.unescapeJava(this)
+
+inline fun String.nullIfBlank() = if (isBlank()) null else this
