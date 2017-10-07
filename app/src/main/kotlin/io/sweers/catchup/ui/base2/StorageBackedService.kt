@@ -49,12 +49,11 @@ class StorageBackedService(
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
     if (request.multiPage) {
       // Backfill pages
-      // TODO If we could add hinting to this, like the "next page" tokens to do, we could eagerly do those
 
       // If service has deterministic numeric paging, we can use range + concatMapEager to fast track it
       if (meta().pagesAreNumeric) {
         return Observable.range(0, request.pageId.toInt())
-            .concatMapEager { this.getPage(it.toString()).toObservable() }
+            .concatMapEager { getPage(it.toString()).toObservable() }
             .reduce { prev, result ->
               DataResult(prev.data + result.data, result.nextPageToken)
             }
