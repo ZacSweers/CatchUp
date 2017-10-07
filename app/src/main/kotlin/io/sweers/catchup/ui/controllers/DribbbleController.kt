@@ -75,7 +75,7 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.data.AuthInterceptor
-import io.sweers.catchup.data.ISO8601InstantAdapter
+import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.dribbble.DribbbleService
 import io.sweers.catchup.data.dribbble.model.Shot

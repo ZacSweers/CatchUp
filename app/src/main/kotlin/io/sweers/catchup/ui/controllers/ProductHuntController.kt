@@ -29,7 +29,7 @@ import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.AuthInterceptor
-import io.sweers.catchup.data.ISO8601InstantAdapter
+import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.producthunt.ProductHuntService
 import io.sweers.catchup.injection.scopes.PerController
