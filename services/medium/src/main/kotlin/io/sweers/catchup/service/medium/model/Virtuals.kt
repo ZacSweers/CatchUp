@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.medium.model
+package io.sweers.catchup.service.medium.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
 @AutoValue
-abstract class StreamItem {
+internal abstract class Virtuals {
 
-  abstract fun bmPostPreview(): PostPreview
+  abstract fun recommends(): Int
 
-  abstract fun createdAt(): Long
+  abstract fun responsesCreatedCount(): Int
 
   companion object {
-
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<StreamItem> {
-      return AutoValue_StreamItem.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Virtuals> =
+        AutoValue_Virtuals.MoshiJsonAdapter(moshi)
   }
 }

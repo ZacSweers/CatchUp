@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.medium.model
+package io.sweers.catchup.service.medium.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
 @AutoValue
-abstract class BodyModel {
+internal abstract class Paragraph {
 
-  abstract val isFullContent: Boolean
+  abstract fun markups(): List<Markup>
 
-  abstract fun paragraphs(): List<Paragraph>
+  abstract fun name(): String
 
-  val title: Paragraph
-    get() = paragraphs()[0]
+  abstract fun text(): String
+
+  abstract fun type(): Int
 
   companion object {
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<BodyModel> {
-      return AutoValue_BodyModel.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Paragraph> =
+        AutoValue_Paragraph.MoshiJsonAdapter(moshi)
   }
 }

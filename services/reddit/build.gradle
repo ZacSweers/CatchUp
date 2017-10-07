@@ -75,7 +75,7 @@ configurations.all {
 }
 
 dependencies {
-  implementation project(':service-api')
+  api project(':service-api')
   implementation project(':util')
 
   compileOnly deps.auto.value.compileOnly.annotations

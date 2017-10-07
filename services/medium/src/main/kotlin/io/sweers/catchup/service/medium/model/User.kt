@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
-include ':service-api'
-include ':slashdot'
-project(':slashdot').projectDir = new File(rootDir, 'services/slashdot')
-include ':reddit'
-project(':reddit').projectDir = new File(rootDir, 'services/reddit')
-include ':medium'
-project(':medium').projectDir = new File(rootDir, 'services/medium')
-include ':util'
+package io.sweers.catchup.service.medium.model
+
+import com.google.auto.value.AutoValue
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+
+@AutoValue
+internal abstract class User {
+
+  abstract fun name(): String
+
+  abstract fun userId(): String
+
+  abstract fun username(): String
+
+  companion object {
+    @JvmStatic
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<User> = AutoValue_User.MoshiJsonAdapter(moshi)
+  }
+}

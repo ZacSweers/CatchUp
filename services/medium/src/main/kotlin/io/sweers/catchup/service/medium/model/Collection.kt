@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.medium.model
+package io.sweers.catchup.service.medium.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
 @AutoValue
-abstract class Collection {
+internal abstract class Collection {
 
   abstract fun domain(): String?
 
@@ -31,8 +31,7 @@ abstract class Collection {
 
   companion object {
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Collection> {
-      return AutoValue_Collection.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Collection> =
+        AutoValue_Collection.MoshiJsonAdapter(moshi)
   }
 }

@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers
+package io.sweers.catchup.service.medium
 
-import android.content.Context
-import android.os.Bundle
-import android.view.ContextThemeWrapper
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
+import dagger.Binds
 import dagger.Lazy
+import dagger.Module
 import dagger.Provides
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
+import dagger.multibindings.IntoMap
+import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.Single
-import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.R
-import io.sweers.catchup.data.InspectorConverterFactory
-import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.medium.MediumService
-import io.sweers.catchup.data.medium.model.MediumPost
-import io.sweers.catchup.data.medium.model.Post
-import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.ui.base.CatchUpItemViewHolder
-import io.sweers.catchup.ui.base.StorageBackedNewsController
+import io.sweers.catchup.service.api.DataRequest
+import io.sweers.catchup.service.api.DataResult
+import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceKey
+import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.service.api.ServiceMetaKey
+import io.sweers.catchup.service.api.SummarizationInfo
+import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.service.medium.model.MediumPost
+import io.sweers.catchup.service.medium.model.Post
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
+import io.sweers.inspector.Inspector
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -49,40 +48,19 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class MediumController : StorageBackedNewsController {
+@Qualifier
+private annotation class InternalApi
 
-  @Inject lateinit var linkManager: LinkManager
-  @Inject lateinit var remoteConfig: FirebaseRemoteConfig
-  @Inject lateinit var service: MediumService
+internal class MediumService @Inject constructor(
+    @InternalApi private val serviceMeta: ServiceMeta,
+    private val api: MediumApi,
+    private val linkHandler: LinkHandler)
+  : TextService {
 
-  constructor() : super()
+  override fun meta() = serviceMeta
 
-  constructor(args: Bundle) : super(args)
-
-  override fun onThemeContext(context: Context): Context {
-    return ContextThemeWrapper(context, R.style.CatchUp_Medium)
-  }
-
-  override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
-    holder.bind(this, item, linkManager)
-    item.itemClickUrl?.let {
-      //      if (remoteConfig.getBoolean(SMMRY_ENABLED)
-//          && SummarizationInfo.canSummarize(it)) {
-//        holder.itemLongClicks()
-//            .autoDisposeWith(holder)
-//            .subscribe(SmmryController.showFor<Any>(
-//                this@MediumController,
-//                it,
-//                item.title))
-//      }
-    }
-  }
-
-  override fun serviceType() = "medium"
-
-  override fun getDataFromService(page: Int): Single<List<CatchUpItem>> {
-    setMoreDataAvailable(false)
-    return service.top()
+  override fun fetchPage(request: DataRequest): Maybe<DataResult> {
+    return api.top()
         .concatMapEager { references ->
           Observable.fromIterable<Post>(references.post()
               .values)
@@ -97,6 +75,7 @@ class MediumController : StorageBackedNewsController {
         }
         .map {
           with(it) {
+            val url = constructUrl()
             CatchUpItem(
                 id = post().id().hashCode().toLong(),
                 title = post().title(),
@@ -107,34 +86,53 @@ class MediumController : StorageBackedNewsController {
                 author = user().name(),
                 commentCount = post().virtuals().responsesCreatedCount(),
                 tag = collection()?.name(),
-                itemClickUrl = constructUrl(),
-                itemCommentClickUrl = constructCommentsUrl()
+                itemClickUrl = url,
+                itemCommentClickUrl = constructCommentsUrl(),
+                summarizationInfo = SummarizationInfo.from(url)
             )
           }
         }
         .toList()
+        .map { DataResult(it, null) }
+        .toMaybe()
   }
 
-  @PerController
-  @Subcomponent(modules = arrayOf(Module::class))
-  interface Component : AndroidInjector<MediumController> {
+  override fun linkHandler() = linkHandler
+}
 
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<MediumController>()
-  }
+@Module
+abstract class MediumModule {
 
-  @dagger.Module
-  object Module {
+  @IntoMap
+  @ServiceMetaKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun mediumServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-    @Qualifier
-    private annotation class InternalApi
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun mediumService(mediumService: MediumService): Service
+
+  @Module
+  companion object {
+
+    private const val SERVICE_KEY = "medium"
+
+    @InternalApi
+    @Provides
+    @JvmStatic
+    internal fun provideMediumServiceMeta() = ServiceMeta(
+        SERVICE_KEY,
+        R.string.medium,
+        R.color.mediumAccent,
+        R.drawable.logo_medium,
+        firstPageKey = ""
+    )
 
     @Provides
     @InternalApi
     @JvmStatic
-    @PerController
-    internal fun provideMediumOkHttpClient(
-        client: OkHttpClient): OkHttpClient {
+    internal fun provideMediumOkHttpClient(client: OkHttpClient): OkHttpClient {
       return client.newBuilder()
           .addInterceptor { chain ->
             var request = chain.request()
@@ -157,30 +155,36 @@ class MediumController : StorageBackedNewsController {
     @Provides
     @InternalApi
     @JvmStatic
-    @PerController
     internal fun provideMediumMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Instant::class.java,
-              EpochInstantJsonAdapter(MILLISECONDS))
+          .add(MediumModelArbiter.createMoshiAdapterFactory())
+          .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
           .add(Wrapped.ADAPTER_FACTORY)
           .build()
     }
 
     @Provides
     @JvmStatic
-    @PerController
+    internal fun provideInspector(): Inspector {
+      return Inspector.Builder()
+          .add(MediumModelArbiter.createValidatorFactory())
+          .build()
+    }
+
+    @Provides
+    @JvmStatic
     internal fun provideMediumService(@InternalApi client: Lazy<OkHttpClient>,
         @InternalApi moshi: Moshi,
         inspectorConverterFactory: InspectorConverterFactory,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): MediumService {
-      val retrofit = Retrofit.Builder().baseUrl(MediumService.ENDPOINT)
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): MediumApi {
+      val retrofit = Retrofit.Builder().baseUrl(MediumApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(inspectorConverterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .validateEagerly(BuildConfig.DEBUG)
           .build()
-      return retrofit.create(MediumService::class.java)
+      return retrofit.create(MediumApi::class.java)
     }
   }
 }

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data
+package io.sweers.catchup.service.medium
 
-import io.sweers.catchup.util.e
+import android.util.Log
 import io.sweers.inspector.Inspector
 import io.sweers.inspector.ValidationException
 import okhttp3.ResponseBody
@@ -25,15 +25,12 @@ import retrofit2.Retrofit
 import java.io.IOException
 import java.lang.reflect.Type
 import javax.inject.Inject
-import javax.inject.Singleton
-
 
 /**
  * A converter factory that uses Inspector to validate responses and fails fast if the response
  * models are invalid.
  */
-@Singleton
-class InspectorConverterFactory @Inject constructor(private val inspector: Inspector)
+internal class InspectorConverterFactory @Inject constructor(private val inspector: Inspector)
   : Converter.Factory() {
   override fun responseBodyConverter(
       type: Type,
@@ -59,7 +56,7 @@ private class InspectorResponseConverter internal constructor(
       inspector.validator<Any>(type).validate(convert)
     } catch (validationException: ValidationException) {
       // This response didn't pass validation, throw the exception.
-      e(validationException) { "Validation exception: $type" }
+      Log.e("MediumService", "Validation exception: $type", validationException)
       throw IOException(validationException)
     }
 

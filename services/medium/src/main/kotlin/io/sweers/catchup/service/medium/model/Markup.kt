@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.medium.model
+package io.sweers.catchup.service.medium.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
 @AutoValue
-abstract class Paragraph {
+internal abstract class Markup {
 
-  abstract fun markups(): List<Markup>
+  abstract fun end(): Int
 
-  abstract fun name(): String
-
-  abstract fun text(): String
+  abstract fun start(): Int
 
   abstract fun type(): Int
 
   companion object {
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Paragraph> {
-      return AutoValue_Paragraph.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Markup> = AutoValue_Markup.MoshiJsonAdapter(moshi)
   }
 }

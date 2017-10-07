@@ -96,10 +96,6 @@ class PagerController : ButterKnifeController {
             R.drawable.logo_hn,
             R.color.hackerNewsAccent,
             { HackerNewsController() }),
-        StaticService(R.string.medium,
-            R.drawable.logo_medium,
-            R.color.mediumAccent,
-            { MediumController() }),
         StaticService(R.string.product_hunt,
             R.drawable.logo_ph,
             R.color.productHuntAccent,
@@ -163,7 +159,7 @@ class PagerController : ButterKnifeController {
   override fun onContextAvailable(context: Context) {
     ConductorInjection.inject(this)
     // TODO Temporary till services are all migrated
-    services = (staticServices + serviceMetas.values.map { it.toStaticService() }).toTypedArray()
+    services = (serviceMetas.values.map { it.toStaticService() } + staticServices).toTypedArray()
 
     resolvedColorCache = IntArray(services.size)
     // Invalidate the color cache up front

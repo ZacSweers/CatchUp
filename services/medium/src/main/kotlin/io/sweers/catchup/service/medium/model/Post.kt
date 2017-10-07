@@ -14,24 +14,33 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.medium.model
+package io.sweers.catchup.service.medium.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
+import org.threeten.bp.Instant
+
 @AutoValue
-abstract class Payload {
+internal abstract class Post {
 
-  abstract fun references(): References
+  abstract fun createdAt(): Instant
 
-  abstract fun streamItems(): List<StreamItem>
+  abstract fun creatorId(): String
+
+  abstract fun homeCollectionId(): String
+
+  abstract fun id(): String
+
+  abstract fun title(): String
+
+  abstract fun uniqueSlug(): String
+
+  abstract fun virtuals(): Virtuals
 
   companion object {
-
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Payload> {
-      return AutoValue_Payload.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Post> = AutoValue_Post.MoshiJsonAdapter(moshi)
   }
 }

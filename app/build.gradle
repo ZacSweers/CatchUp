@@ -265,6 +265,7 @@ dependencies {
   implementation project(':bypass')
   implementation project(':service-api')
   implementation project(':reddit')
+  implementation project(':medium')
   implementation project(':slashdot')
   implementation project(':util')
 

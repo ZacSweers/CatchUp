@@ -36,6 +36,7 @@ import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.service.medium.MediumModule
 import io.sweers.catchup.service.reddit.RedditModule
 import io.sweers.catchup.service.slashdot.NewSlashdotModule
 import io.sweers.catchup.ui.base.BaseActivity
@@ -85,6 +86,7 @@ class MainActivity : BaseActivity() {
   @dagger.Module(
       includes = [
       RedditModule::class,
+      MediumModule::class,
       NewSlashdotModule::class
       ]
   )

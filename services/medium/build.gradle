@@ -78,16 +78,29 @@ dependencies {
   api project(':service-api')
   implementation project(':util')
 
+  compileOnly deps.auto.value.compileOnly.annotations
+  compileOnly deps.auto.value.extensions.moshi.compileOnly.annotations
   kapt deps.dagger.apt.compiler
-  kapt deps.tikxml.apt
+  kapt deps.auto.value.apt.core
+  kapt deps.auto.value.extensions.moshi.apt.core
+  kapt deps.auto.value.extensions.redacted.apt.core
 
-  implementation deps.tikxml.annotation
-  implementation deps.tikxml.core
-  api deps.tikxml.htmlEscape
-  implementation deps.tikxml.retrofit
-  implementation deps.okhttp.core
+  implementation deps.misc.okio
+  implementation deps.misc.moshi
   implementation deps.retrofit.core
+  implementation deps.retrofit.moshi
   implementation deps.retrofit.rxJava2
+  implementation deps.okhttp.core
+  implementation deps.misc.moshiLazyAdapters
+
+  // Inspector
+  compileOnly deps.inspector.factoryCompiler.compileOnly.annotations
+  compileOnly deps.inspector.apt.extensions.android
+  compileOnly deps.inspector.apt.extensions.nullability
+  kapt deps.inspector.apt.extensions.autovalue
+  kapt deps.inspector.apt.compiler
+  kapt deps.inspector.factoryCompiler.apt
+  implementation deps.inspector.core
 
   api deps.android.support.annotations
   api deps.dagger.runtime

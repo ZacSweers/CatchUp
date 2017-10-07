@@ -24,9 +24,7 @@
   <color name="colorAccent">#ffFC4D29</color>
   <color name="headerBackground">#eeeeee</color>
 
-  <color name="mediumAccent">#ff00AB6B</color>
   <color name="productHuntAccent">#ffDA552F</color>
-  <color name="redditAccent">#336699</color>
   <color name="githubAccent">#181717</color>
   <color name="hackerNewsAccent">#ffF0652F</color>
   <color name="designerNewsAccent">#ff2D72D9</color>

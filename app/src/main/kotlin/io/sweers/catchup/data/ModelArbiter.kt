@@ -16,27 +16,15 @@
 
 package io.sweers.catchup.data
 
-import com.google.auto.value.AutoValue
 import com.ryanharter.auto.value.moshi.MoshiAdapterFactory
 import com.squareup.moshi.JsonAdapter
-import io.sweers.inspector.Validator
-import io.sweers.inspector.factorycompiler.InspectorFactory
 
 /**
  * Eventually this should go away in favor of each controller handling its own models
  */
 object ModelArbiter {
-    fun createMoshiAdapterFactory(): JsonAdapter.Factory {
-      return AutoValueMoshi_MoshiAdapterFactory()
-    }
-
-    fun createValidatorFactory(): Validator.Factory {
-      return InspectorFactory_ValidatorFactory()
-    }
+  fun createMoshiAdapterFactory(): JsonAdapter.Factory = AutoValueMoshi_MoshiAdapterFactory()
 }
 
 @MoshiAdapterFactory(nullSafe = true)
 abstract class MoshiAdapterFactory : JsonAdapter.Factory
-
-@InspectorFactory(include = arrayOf(AutoValue::class))
-abstract class ValidatorFactory : Validator.Factory

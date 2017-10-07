@@ -66,16 +66,8 @@
     <item name="tabIndicatorColor">?android:textColorPrimary</item>
   </style>
 
-  <style name="CatchUp.Medium" parent="CatchUp">
-    <item name="colorAccent">@color/mediumAccent</item>
-  </style>
-
   <style name="CatchUp.ProductHunt" parent="CatchUp">
     <item name="colorAccent">@color/productHuntAccent</item>
-  </style>
-
-  <style name="CatchUp.Reddit" parent="CatchUp">
-    <item name="colorAccent">@color/redditAccent</item>
   </style>
 
   <style name="CatchUp.GitHub" parent="CatchUp">

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.medium.model
+package io.sweers.catchup.service.medium.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
@@ -25,7 +25,7 @@ import io.sweers.inspector.ValidationException
 import io.sweers.inspector.Validator
 
 @AutoValue
-abstract class References {
+internal abstract class References {
 
   @Json(name = "Collection")
   abstract fun collection(): Map<String, Collection>
@@ -38,9 +38,8 @@ abstract class References {
 
   companion object {
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<References> {
-      return AutoValue_References.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<References> =
+        AutoValue_References.MoshiJsonAdapter(moshi)
 
     @Suppress("UNUSED_PARAMETER") // Remove when inspector supports 0 arg
     @JvmStatic

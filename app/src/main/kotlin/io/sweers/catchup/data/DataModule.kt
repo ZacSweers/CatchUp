@@ -30,7 +30,6 @@ import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.injection.qualifiers.NetworkInterceptor
 import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
-import io.sweers.inspector.Inspector
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -38,7 +37,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
-@Module(includes = arrayOf(GithubApolloModule::class))
+@Module(includes = [GithubApolloModule::class])
 abstract class DataModule {
 
   @NetworkInterceptor
@@ -95,15 +94,6 @@ abstract class DataModule {
           .add(UnescapeJsonAdapter.FACTORY)
           .add(ArrayMapJsonAdapter.FACTORY)
           .add(ArrayCollectionJsonAdapter.FACTORY)
-          .build()
-    }
-
-    @Provides
-    @JvmStatic
-    @Singleton
-    internal fun provideInspector(): Inspector {
-      return Inspector.Builder()
-          .add(ModelArbiter.createValidatorFactory())
           .build()
     }
 

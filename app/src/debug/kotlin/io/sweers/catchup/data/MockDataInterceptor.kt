@@ -21,7 +21,6 @@ import android.support.v4.util.ArrayMap
 import io.sweers.catchup.P
 import io.sweers.catchup.data.designernews.DesignerNewsService
 import io.sweers.catchup.data.dribbble.DribbbleService
-import io.sweers.catchup.data.medium.MediumService
 import io.sweers.catchup.data.model.ServiceData
 import io.sweers.catchup.data.producthunt.ProductHuntService
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
@@ -71,9 +70,9 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
 //        put(RedditApi.HOST,
 //            ServiceData.Builder("r").addEndpoint("/")
 //                .build())
-        put(MediumService.HOST,
-            ServiceData.Builder("m").addEndpoint("/browse/top")
-                .build())
+//        put(MediumApi.HOST,
+//            ServiceData.Builder("m").addEndpoint("/browse/top")
+//                .build())
         put(ProductHuntService.HOST,
             ServiceData.Builder("ph").addEndpoint("/v1/posts")
                 .build())

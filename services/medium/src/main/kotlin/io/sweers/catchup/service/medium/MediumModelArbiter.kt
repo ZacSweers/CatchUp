@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.medium.model
+package io.sweers.catchup.service.medium
 
 import com.google.auto.value.AutoValue
+import com.ryanharter.auto.value.moshi.MoshiAdapterFactory
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.inspector.Validator
+import io.sweers.inspector.factorycompiler.InspectorFactory
 
-@AutoValue
-abstract class PostPreview {
+object MediumModelArbiter {
+  fun createMoshiAdapterFactory(): JsonAdapter.Factory = AutoValueMoshi_MediumAdapterFactory()
 
-  abstract fun postId(): String
-
-  abstract fun postPreviewContent(): PostPreviewContent
-
-  companion object {
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<PostPreview> {
-      return AutoValue_PostPreview.MoshiJsonAdapter(moshi)
-    }
-  }
+  fun createValidatorFactory(): Validator.Factory = InspectorFactory_MediumValidatorFactory()
 }
+
+@MoshiAdapterFactory(nullSafe = true)
+abstract class MediumAdapterFactory : JsonAdapter.Factory
+
+@InspectorFactory(include = [AutoValue::class])
+abstract class MediumValidatorFactory : Validator.Factory
