@@ -32,6 +32,8 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
+import io.sweers.catchup.service.api.SummarizationInfo
+import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.TextService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -58,7 +60,7 @@ internal class SlashdotService @Inject constructor(
     return service.main()
         .map { it.itemList }
         .flattenAsObservable { it }
-        .map { (title, id, _, _, updated, section, comments, author, department) ->
+        .map { (title, id, _, summary, updated, section, comments, author, department) ->
           CatchUpItem(
               id = id.hashCode().toLong(),
               title = title,
@@ -69,7 +71,8 @@ internal class SlashdotService @Inject constructor(
               commentCount = comments,
               tag = section,
               itemClickUrl = id,
-              itemCommentClickUrl = "$id#comments"
+              itemCommentClickUrl = "$id#comments",
+              summarizationInfo = SummarizationInfo(summary.substringBefore("&lt"), NONE)
           )
         }
         .toList()
