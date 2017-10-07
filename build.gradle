@@ -30,7 +30,8 @@ subprojects {
       // Seemingly random other classpath dependencies are because of a gradle bug when sharing
       // buildscript deps. Oddly, not only do all of these need to be here to match :app, but they
       // need to also be in the same order.
-      classpath deps.android.gradlePlugin
+      classpath 'com.android.tools.build:gradle:3.0.0-beta7'  // TODO temporary due to bug in beta7
+//      classpath deps.android.gradlePlugin
       classpath deps.kotlin.gradlePlugin
       classpath deps.android.firebase.gradlePlugin
       classpath deps.build.gradlePlugins.bugsnag

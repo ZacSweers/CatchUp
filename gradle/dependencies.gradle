@@ -34,7 +34,7 @@ def versions = [
     kotlin: '1.2.0-beta-31',
     leakcanary: '1.5.4',
     okhttp: '3.9.0',
-    playServices: '11.4.0',
+    playServices: '11.2.0',
     retrofit: '2.3.0',
     rxbinding: '2.0.0',
     rxpalette: '0.3.0',
@@ -60,7 +60,7 @@ ext.deps = [
 
         ],
         build: [
-            buildToolsVersion: '26.0.0',
+            buildToolsVersion: '26.0.2',
             compileSdkVersion: 26,
             minSdkVersion: 21,
             targetSdkVersion: 26
@@ -72,7 +72,7 @@ ext.deps = [
             gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.1',
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-beta6',
+        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-beta7',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
