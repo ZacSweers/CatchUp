@@ -23,7 +23,6 @@ import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
 import io.sweers.catchup.ui.base2.NewServiceController
 import io.sweers.catchup.ui.controllers.DribbbleController
-import io.sweers.catchup.ui.controllers.GitHubController
 import io.sweers.catchup.ui.controllers.HackerNewsController
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.ui.controllers.ProductHuntController
@@ -36,8 +35,7 @@ import io.sweers.catchup.ui.controllers.SmmryController
     SmmryController.Component::class,
     HackerNewsController.Component::class,
     ProductHuntController.Component::class,
-    DribbbleController.Component::class,
-    GitHubController.Component::class
+    DribbbleController.Component::class
     ]
 )
 abstract class ControllerBindingModule {
@@ -76,11 +74,5 @@ abstract class ControllerBindingModule {
   @ControllerKey(DribbbleController::class)
   internal abstract fun bindDribbbleControllerInjectorFactory(
       builder: DribbbleController.Component.Builder): AndroidInjector.Factory<out Controller>
-
-  @Binds
-  @IntoMap
-  @ControllerKey(GitHubController::class)
-  internal abstract fun bindGitHubControllerInjectorFactory(
-      builder: GitHubController.Component.Builder): AndroidInjector.Factory<out Controller>
 
 }

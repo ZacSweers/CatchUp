@@ -26,4 +26,6 @@ include ':medium'
 project(':medium').projectDir = new File(rootDir, 'services/medium')
 include ':designernews'
 project(':designernews').projectDir = new File(rootDir, 'services/designernews')
+include ':github'
+project(':github').projectDir = new File(rootDir, 'services/github')
 include ':util'

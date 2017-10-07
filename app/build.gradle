@@ -268,6 +268,7 @@ dependencies {
   implementation project(':medium')
   implementation project(':slashdot')
   implementation project(':designernews')
+  implementation project(':github')
   implementation project(':util')
 
   // Support libs

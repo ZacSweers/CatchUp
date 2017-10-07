@@ -70,10 +70,6 @@
     <item name="colorAccent">@color/productHuntAccent</item>
   </style>
 
-  <style name="CatchUp.GitHub" parent="CatchUp">
-    <item name="colorAccent">@color/githubAccent</item>
-  </style>
-
   <style name="CatchUp.HackerNews" parent="CatchUp">
     <item name="colorAccent">@color/hackerNewsAccent</item>
   </style>

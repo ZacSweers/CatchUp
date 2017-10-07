@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2017 Zac Sweers
   ~
@@ -14,15 +15,6 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
-
-  <style name="CatchUp" parent="Base">
-    <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
-  </style>
-
-  <style name="CatchUp.TabLayout.Inverted" parent="Widget.Design.TabLayout">
-    <item name="android:theme">@style/Theme.AppCompat</item>
-    <item name="tabIndicatorColor">?android:textColorPrimary</item>
-  </style>
-
+<resources>
+  <color name="githubAccent">?android:textColorPrimary</color>
 </resources>

@@ -14,58 +14,46 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers
+package io.sweers.catchup.service.github
 
-import android.content.Context
-import android.os.Bundle
-import android.view.ContextThemeWrapper
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.http.HttpCachePolicy
 import com.apollographql.apollo.rx2.Rx2Apollo
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.multibindings.IntoMap
+import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.R
-import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.github.GitHubSearchQuery
-import io.sweers.catchup.data.github.SearchQuery
-import io.sweers.catchup.data.github.TrendingTimespan
-import io.sweers.catchup.data.github.type.LanguageOrder
-import io.sweers.catchup.data.github.type.LanguageOrderField
-import io.sweers.catchup.data.github.type.OrderDirection
-import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.ui.base.CatchUpItemViewHolder
-import io.sweers.catchup.ui.base.StorageBackedNewsController
+import io.sweers.catchup.service.api.DataRequest
+import io.sweers.catchup.service.api.DataResult
+import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceKey
+import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.service.api.ServiceMetaKey
+import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.service.github.model.SearchQuery
+import io.sweers.catchup.service.github.model.TrendingTimespan
+import io.sweers.catchup.service.github.type.LanguageOrder
+import io.sweers.catchup.service.github.type.LanguageOrderField
+import io.sweers.catchup.service.github.type.OrderDirection
 import io.sweers.catchup.util.collect.emptyIfNull
 import javax.inject.Inject
+import javax.inject.Qualifier
 
-class GitHubController : StorageBackedNewsController {
+@Qualifier
+private annotation class InternalApi
 
-  @Inject lateinit var apolloClient: ApolloClient
-  @Inject lateinit var linkManager: LinkManager
+internal class GitHubService @Inject constructor(
+    @InternalApi private val serviceMeta: ServiceMeta,
+    private val apolloClient: ApolloClient,
+    private val linkHandler: LinkHandler)
+  : TextService {
 
-  // TODO Placeholder for a better solution later
-//  private var endCursor: String? = null
+  override fun meta() = serviceMeta
 
-  constructor() : super()
-
-  constructor(args: Bundle) : super(args)
-
-  override fun onThemeContext(context: Context): Context {
-    return ContextThemeWrapper(context, R.style.CatchUp_GitHub)
-  }
-
-  override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
-    holder.bind(this, item, linkManager)
-  }
-
-  override fun serviceType() = "gh"
-
-  override fun getDataFromService(page: Int): Single<List<CatchUpItem>> {
-    setMoreDataAvailable(false)
+  override fun fetchPage(request: DataRequest): Maybe<DataResult> {
     val query = SearchQuery.builder()
         .createdSince(TrendingTimespan.WEEK.createdSince())
         .minStars(50)
@@ -95,7 +83,7 @@ class GitHubController : StorageBackedNewsController {
               .map { it.asRepository()!! }
               .map {
                 with(it) {
-                  CatchUpItem(
+                  io.sweers.catchup.service.api.CatchUpItem(
                       id = id().hashCode().toLong(),
                       hideComments = true,
                       title = "${name()} — ${description()}",
@@ -110,14 +98,40 @@ class GitHubController : StorageBackedNewsController {
               }
               .toList()
         }
-        .subscribeOn(Schedulers.io())
+        .map { DataResult(it, null) }
+        .toMaybe()
   }
 
-  @PerController
-  @Subcomponent
-  interface Component : AndroidInjector<GitHubController> {
+  override fun linkHandler() = linkHandler
+}
 
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<GitHubController>()
+@Module
+abstract class GitHubModule {
+
+  @IntoMap
+  @ServiceMetaKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun githubServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
+
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun githubService(githubService: GitHubService): Service
+
+  @Module
+  companion object {
+
+    private const val SERVICE_KEY = "github"
+
+    @InternalApi
+    @Provides
+    @JvmStatic
+    internal fun provideGitHubServiceMeta() = ServiceMeta(
+        SERVICE_KEY,
+        R.string.github,
+        R.color.githubAccent,
+        R.drawable.logo_github,
+        firstPageKey = ""
+    )
   }
 }

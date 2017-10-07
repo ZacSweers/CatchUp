@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.github
+package io.sweers.catchup.service.github.model
 
 import com.google.auto.value.AutoValue
 import org.threeten.bp.LocalDate
@@ -22,7 +22,7 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 @AutoValue
-abstract class SearchQuery {
+internal abstract class SearchQuery {
 
   abstract fun createdSince(): LocalDate?
 
@@ -54,8 +54,6 @@ abstract class SearchQuery {
   }
 
   companion object {
-    fun builder(): Builder {
-      return AutoValue_SearchQuery.Builder()
-    }
+    fun builder(): Builder = AutoValue_SearchQuery.Builder()
   }
 }

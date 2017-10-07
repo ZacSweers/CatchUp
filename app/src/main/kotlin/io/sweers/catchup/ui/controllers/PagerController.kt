@@ -103,11 +103,7 @@ class PagerController : ButterKnifeController {
         StaticService(R.string.dribbble,
             R.drawable.logo_dribbble,
             R.color.dribbbleAccent,
-            { DribbbleController() }),
-        StaticService(R.string.github,
-            R.drawable.logo_github,
-            R.color.githubAccent,
-            { GitHubController() }))
+            { DribbbleController() }))
   }
 
   private lateinit var resolvedColorCache: IntArray

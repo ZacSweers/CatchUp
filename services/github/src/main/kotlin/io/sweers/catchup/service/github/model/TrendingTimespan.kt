@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.github
+package io.sweers.catchup.service.github.model
 
 import org.threeten.bp.LocalDate
 import org.threeten.bp.temporal.ChronoUnit
 import org.threeten.bp.temporal.TemporalUnit
 
 // https://github.com/google/error-prone/issues/512
-enum class TrendingTimespan constructor(private val contextualReference: String,
+internal enum class TrendingTimespan constructor(private val contextualReference: String,
     duration: Int,
     private val durationUnit: TemporalUnit) {
   DAY("today", 1, ChronoUnit.DAYS),
@@ -38,7 +38,5 @@ enum class TrendingTimespan constructor(private val contextualReference: String,
         .minus(duration, durationUnit)
   }
 
-  override fun toString(): String {
-    return contextualReference
-  }
+  override fun toString(): String = contextualReference
 }
