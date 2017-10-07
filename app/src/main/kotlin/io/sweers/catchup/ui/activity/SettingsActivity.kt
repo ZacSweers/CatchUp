@@ -56,6 +56,7 @@ import io.sweers.catchup.util.format
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNightMode
+import okhttp3.Cache
 import java.io.File
 import javax.inject.Inject
 
@@ -66,7 +67,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
     const val ARG_FROM_RECREATE = "fromRecreate"
   }
 
-  @Inject lateinit internal var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
+  @Inject internal lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
 
   /**
@@ -129,6 +130,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
 
   class SettingsFrag : PreferenceFragment() {
 
+    @Inject lateinit var cache: dagger.Lazy<Cache>
     @Inject lateinit var remoteConfig: FirebaseRemoteConfig
     @Inject lateinit var database: CatchUpDatabase
 
@@ -197,6 +199,11 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
         P.ClearCache.KEY -> {
           Single.fromCallable {
             val cacheCleaned = activity.applicationContext.clearCache()
+            val networkCacheCleaned = with(cache.get()) {
+              val initialSize = size()
+              evictAll()
+              return@with initialSize - size()
+            }
             val dbFile = File(database.openHelper.readableDatabase.path)
             val initialDbSize = dbFile.length()
             with(database.serviceDao()) {
@@ -207,7 +214,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
               nukeItems()
             }
             val deletedFromDb = initialDbSize - dbFile.length()
-            return@fromCallable cacheCleaned + deletedFromDb
+            return@fromCallable cacheCleaned + deletedFromDb + networkCacheCleaned
           }.subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .autoDisposeWith(activity as BaseActivity)
