@@ -70,10 +70,11 @@ abstract class Success : SmmryResponse() {
 
   companion object {
 
+    fun just(title: String, text: String): Success =
+        AutoValue_Success(text.length.toString(), title, text, null)
+
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Success> {
-      return AutoValue_Success.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Success> = AutoValue_Success.MoshiJsonAdapter(moshi)
   }
 }
 
@@ -160,9 +161,8 @@ class SmmryResponseFactory : JsonAdapter.Factory {
   companion object {
     private var instance: WeakReference<SmmryResponseFactory>? = null
 
-    fun getInstance(): SmmryResponseFactory {
-      return instance?.get() ?: SmmryResponseFactory().also { instance = WeakReference(it) }
-    }
+    fun getInstance() =
+        instance?.get() ?: SmmryResponseFactory().also { instance = WeakReference(it) }
   }
 }
 
