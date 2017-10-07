@@ -129,7 +129,7 @@ class StorageBackedService(
     }
     return pageFetcher
         .subscribeOn(Schedulers.io())
-        .filter { it.expiration.isBefore(now) }
+        .filter { it.expiration.isAfter(now) }
         .flatMap { servicePage ->
           if (pageId == meta().firstPageKey) {
             currentSessionId = servicePage.sessionId
