@@ -32,7 +32,6 @@ import android.support.v7.widget.RecyclerView.RecycledViewPool
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -67,7 +66,6 @@ import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.show
-import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import retrofit2.HttpException
 import java.io.IOException
 import java.security.InvalidParameterException
@@ -106,8 +104,7 @@ class NewServiceController : ButterKnifeController,
   @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<StorageBackedService>>
   private val service: Service by lazy {
     args[ARG_SERVICE_KEY].let {
-      services[it]?.get()
-          ?: throw IllegalArgumentException("No service provided for $it!")
+      services[it]?.get() ?: throw IllegalArgumentException("No service provided for $it!")
     }
   }
 
@@ -162,10 +159,10 @@ class NewServiceController : ButterKnifeController,
     }
         .also { recyclerView.adapter = it }
     swipeRefreshLayout.setOnRefreshListener(this)
-    recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
-      addDuration = 300
-      removeDuration = 300
-    }
+//    recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
+//      addDuration = 300
+//      removeDuration = 300
+//    }
   }
 
   @OnClick(R.id.retry_button) internal fun onRetry() {
