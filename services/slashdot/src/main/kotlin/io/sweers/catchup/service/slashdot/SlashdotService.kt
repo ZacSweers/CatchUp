@@ -43,7 +43,7 @@ import javax.inject.Qualifier
 @Qualifier
 private annotation class InternalApi
 
-class SlashdotService @Inject constructor(
+internal class SlashdotService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
     private val service: SlashdotApi,
     private val linkHandler: LinkHandler)
@@ -86,12 +86,12 @@ abstract class NewSlashdotModule {
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  abstract fun slashdotServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
+  internal abstract fun slashdotServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
   @IntoMap
   @ServiceKey(SERVICE_KEY)
   @Binds
-  abstract fun slashdotService(slashdotService: SlashdotService): Service
+  internal abstract fun slashdotService(slashdotService: SlashdotService): Service
 
   @Module
   companion object {
@@ -101,7 +101,7 @@ abstract class NewSlashdotModule {
     @Provides
     @JvmStatic
     @InternalApi
-    fun provideSlashdotServiceMeta() = ServiceMeta(
+    internal fun provideSlashdotServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.slashdot,
         R.color.slashdotAccent,
@@ -111,7 +111,7 @@ abstract class NewSlashdotModule {
 
     @Provides
     @JvmStatic
-    fun provideTikXml(): TikXml = TikXml.Builder()
+    internal fun provideTikXml(): TikXml = TikXml.Builder()
         .exceptionOnUnreadXml(false)
         .addTypeConverter(Instant::class.java, InstantTypeConverter())
         .build()
@@ -119,7 +119,7 @@ abstract class NewSlashdotModule {
     @Provides
     @InternalApi
     @JvmStatic
-    fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
+    internal fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
       return okHttpClient.newBuilder()
           .addNetworkInterceptor { chain ->
             val originalResponse = chain.proceed(chain.request())
@@ -134,7 +134,7 @@ abstract class NewSlashdotModule {
 
     @Provides
     @JvmStatic
-    fun provideSlashdotService(@InternalApi client: Lazy<OkHttpClient>,
+    internal fun provideSlashdotApi(@InternalApi client: Lazy<OkHttpClient>,
         rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
         tikXml: TikXml): SlashdotApi {
       val retrofit = Retrofit.Builder().baseUrl(SlashdotApi.ENDPOINT)

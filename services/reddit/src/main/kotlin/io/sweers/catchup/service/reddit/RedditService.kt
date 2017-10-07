@@ -111,7 +111,7 @@ abstract class RedditModule {
     @InternalApi
     @Provides
     @JvmStatic
-    fun provideRedditServiceMeta() = ServiceMeta(
+    internal fun provideRedditServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.reddit,
         R.color.redditAccent,
@@ -152,7 +152,7 @@ abstract class RedditModule {
 
     @Provides
     @JvmStatic
-    internal fun provideRedditService(@InternalApi client: Lazy<OkHttpClient>,
+    internal fun provideRedditApi(@InternalApi client: Lazy<OkHttpClient>,
         rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
         @InternalApi moshi: Moshi): RedditApi {
       val retrofit = Retrofit.Builder().baseUrl(RedditApi.ENDPOINT)

@@ -30,7 +30,7 @@ private const val SLASH_PREFIX = "slash:"
 
 @Keep
 @Xml
-data class Entry(
+internal data class Entry(
     @PropertyElement(converter = HtmlEscapeStringConverter::class)
     val title: String,
     @PropertyElement
