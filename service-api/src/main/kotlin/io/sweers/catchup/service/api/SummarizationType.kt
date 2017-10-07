@@ -17,5 +17,5 @@
 package io.sweers.catchup.service.api
 
 enum class SummarizationType {
-  NONE, URL, TEXT, ALREADY_SUMMARIZED
+  NONE, URL, TEXT
 }
