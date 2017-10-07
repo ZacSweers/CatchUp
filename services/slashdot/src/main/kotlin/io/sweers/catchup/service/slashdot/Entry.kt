@@ -37,7 +37,7 @@ internal data class Entry(
     val id: String,
     @PropertyElement
     val link: String,
-    @PropertyElement
+    @PropertyElement(converter = HtmlEscapeStringConverter::class)
     val summary: String,
     @PropertyElement(converter = InstantTypeConverter::class)
     val updated: Instant,
