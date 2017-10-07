@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data
+package io.sweers.catchup.service.designernews
 
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import io.sweers.catchup.util.parsePossiblyOffsetInstant
-import org.threeten.bp.Instant
-import java.io.IOException
+import com.ryanharter.auto.value.moshi.MoshiAdapterFactory
+import com.squareup.moshi.JsonAdapter.Factory
 
-class ISO8601InstantAdapter : JsonAdapter<Instant>() {
-
-  @Throws(IOException::class)
-  override fun fromJson(reader: JsonReader) = reader.nextString().parsePossiblyOffsetInstant()
-
-  @Throws(IOException::class)
-  override fun toJson(writer: JsonWriter, instant: Instant?) {
-    writer.value(instant!!.toString())
+@MoshiAdapterFactory(nullSafe = true)
+internal abstract class DesignerNewsAdapterFactory : Factory {
+  companion object {
+    fun create(): DesignerNewsAdapterFactory = AutoValueMoshi_DesignerNewsAdapterFactory()
   }
 }

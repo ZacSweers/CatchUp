@@ -14,28 +14,46 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.designernews.model
+package io.sweers.catchup.service.designernews.model
 
 import com.google.auto.value.AutoValue
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
+/**
+ * Models a Designer News User
+ */
 @AutoValue
-abstract class Links {
+internal abstract class User {
 
-  abstract fun user(): String
+  @Json(name = "cover_photo_url") abstract fun coverPhotoUrl(): String
 
-  abstract fun comments(): List<String>
+  @Json(name = "display_name") abstract fun displayName(): String
 
-  abstract fun upvotes(): List<String>
+  @Json(name = "first_name") abstract fun firstName(): String
 
-  abstract fun downvotes(): List<String>
+  abstract fun id(): Long
+
+  abstract fun job(): String
+
+  @Json(name = "last_name") abstract fun lastName(): String
+
+  @Json(name = "portrait_url") abstract fun portraitUrl(): String
 
   companion object {
 
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Links> {
-      return AutoValue_Links.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<User> = AutoValue_User.MoshiJsonAdapter(moshi)
+
+    val NONE: User = AutoValue_User(
+        "",
+        "",
+        "",
+        0,
+        "",
+        "",
+        ""
+    )
   }
 }

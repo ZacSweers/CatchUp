@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers
+package io.sweers.catchup.service.designernews
 
-import android.content.Context
-import android.os.Bundle
-import android.view.ContextThemeWrapper
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
+import dagger.Binds
 import dagger.Lazy
+import dagger.Module
 import dagger.Provides
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
+import dagger.multibindings.IntoMap
+import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.functions.BiFunction
-import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.R
-import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.designernews.DesignerNewsService
-import io.sweers.catchup.data.designernews.model.Story
-import io.sweers.catchup.data.designernews.model.User
-import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.ui.base.CatchUpItemViewHolder
-import io.sweers.catchup.ui.base.StorageBackedNewsController
+import io.sweers.catchup.service.api.DataRequest
+import io.sweers.catchup.service.api.DataResult
+import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceKey
+import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.service.api.ServiceMetaKey
+import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.service.designernews.model.Story
+import io.sweers.catchup.service.designernews.model.User
 import io.sweers.catchup.util.collect.toCommaJoinerList
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import okhttp3.OkHttpClient
@@ -48,27 +46,20 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-class DesignerNewsController : StorageBackedNewsController {
+@Qualifier
+private annotation class InternalApi
 
-  @Inject lateinit var service: DesignerNewsService
-  @Inject lateinit var linkManager: LinkManager
+internal class DesignerNewsService @Inject constructor(
+    @InternalApi private val serviceMeta: ServiceMeta,
+    private val api: DesignerNewsApi,
+    private val linkHandler: LinkHandler)
+  : TextService {
 
-  constructor() : super()
+  override fun meta() = serviceMeta
 
-  constructor(args: Bundle) : super(args)
-
-  override fun serviceType() = "dn"
-
-  override fun onThemeContext(context: Context): Context {
-    return ContextThemeWrapper(context, R.style.CatchUp_DesignerNews)
-  }
-
-  override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
-    holder.bind(this, item, linkManager)
-  }
-
-  override fun getDataFromService(page: Int): Single<List<CatchUpItem>> {
-    return service.getTopStories(page)
+  override fun fetchPage(request: DataRequest): Maybe<DataResult> {
+    val page = request.pageId.toInt()
+    return api.getTopStories(page)
         .flatMapObservable { stories ->
           Observable.zip(
               // TODO This needs to update to the new /users endpoint behavior, which will only give a best effort result and not necessarily all
@@ -76,7 +67,7 @@ class DesignerNewsController : StorageBackedNewsController {
               Observable.fromIterable(stories)
                   .map { it.links().user() }
                   .toList()
-                  .flatMap { ids -> service.getUsers(ids.toCommaJoinerList()) }
+                  .flatMap { ids -> api.getUsers(ids.toCommaJoinerList()) }
                   .onErrorReturn { (0..stories.size).map { User.NONE } }
                   .flattenAsObservable { it },
               // RxKotlin might help here
@@ -86,7 +77,7 @@ class DesignerNewsController : StorageBackedNewsController {
         }
         .map { (story, user) ->
           with(story) {
-            CatchUpItem(
+            io.sweers.catchup.service.api.CatchUpItem(
                 id = java.lang.Long.parseLong(id()),
                 title = title(),
                 score = "▲" to voteCount(),
@@ -103,28 +94,49 @@ class DesignerNewsController : StorageBackedNewsController {
           }
         }
         .toList()
+        .map { DataResult(it, (page + 1).toString()) }
+        .toMaybe()
   }
 
-  @PerController
-  @Subcomponent(modules = arrayOf(Module::class))
-  interface Component : AndroidInjector<DesignerNewsController> {
+  override fun linkHandler() = linkHandler
+}
 
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<DesignerNewsController>()
-  }
+@Module
+abstract class DesignerNewsModule {
 
-  @dagger.Module
-  object Module {
+  @IntoMap
+  @ServiceMetaKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun designerNewsServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-    @Qualifier
-    private annotation class InternalApi
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun designerNewsService(service: DesignerNewsService): Service
+
+  @Module
+  companion object {
+
+    private const val SERVICE_KEY = "dn"
+
+    @InternalApi
+    @Provides
+    @JvmStatic
+    internal fun provideDesignerNewsMeta() = ServiceMeta(
+        SERVICE_KEY,
+        R.string.dn,
+        R.color.dnAccent,
+        R.drawable.logo_dn,
+        pagesAreNumeric = true,
+        firstPageKey = "0"
+    )
 
     @Provides
     @InternalApi
     @JvmStatic
-    @PerController
     internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
+          .add(DesignerNewsAdapterFactory.create())
           .add(Instant::class.java, ISO8601InstantAdapter())
           .add(Wrapped.ADAPTER_FACTORY)
           .build()
@@ -132,20 +144,20 @@ class DesignerNewsController : StorageBackedNewsController {
 
     @Provides
     @JvmStatic
-    @PerController
     internal fun provideDesignerNewsService(client: Lazy<OkHttpClient>,
         @InternalApi moshi: Moshi,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DesignerNewsService {
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DesignerNewsApi {
 
-      val retrofit = Retrofit.Builder().baseUrl(DesignerNewsService.ENDPOINT)
+      val retrofit = Retrofit.Builder().baseUrl(
+          DesignerNewsApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .validateEagerly(BuildConfig.DEBUG)
           .build()
-      return retrofit.create(DesignerNewsService::class.java)
+      return retrofit.create(DesignerNewsApi::class.java)
     }
   }
-
-  private data class StoryAndUserHolder(val story: Story, val user: User?)
 }
+
+private data class StoryAndUserHolder(val story: Story, val user: User?)

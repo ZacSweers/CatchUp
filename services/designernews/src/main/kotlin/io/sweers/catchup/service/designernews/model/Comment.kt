@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.designernews.model
+package io.sweers.catchup.service.designernews.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
@@ -23,42 +23,38 @@ import com.squareup.moshi.Moshi
 import org.threeten.bp.Instant
 
 /**
- * Models a Designer News story
+ * Models a comment on a designer news story.
  */
 @AutoValue
-abstract class Story {
+internal abstract class Comment {
 
-  abstract fun badge(): String?
+  abstract fun body(): String
 
-  abstract fun comment(): String?
+  @Json(name = "body_html") abstract fun bodyHtml(): String
 
-  @Json(name = "comment_count") abstract fun commentCount(): Int
-
-  @Json(name = "comment_html") abstract fun commentHtml(): String?
+  abstract fun comments(): List<Comment>
 
   @Json(name = "created_at") abstract fun createdAt(): Instant
 
-  abstract fun hostname(): String?
+  abstract fun depth(): Int
 
-  abstract fun id(): String
+  abstract fun id(): Long
 
-  abstract fun href(): String
+  abstract fun upvoted(): Boolean
 
-  abstract fun title(): String
+  @Json(name = "user_display_name") abstract fun userDisplayName(): String
 
-  abstract fun url(): String?
+  @Json(name = "user_id") abstract fun userId(): Long
 
-  abstract fun links(): Links
+  @Json(name = "user_job") abstract fun userJob(): String?
+
+  @Json(name = "user_portrait_url") abstract fun userPortraitUrl(): String?
 
   @Json(name = "vote_count") abstract fun voteCount(): Int
-
-  @Json(name = "twitter_handles") abstract fun twitterHandles(): List<String>
 
   companion object {
 
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Story> {
-      return AutoValue_Story.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Comment> = AutoValue_Comment.MoshiJsonAdapter(moshi)
   }
 }

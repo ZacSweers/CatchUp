@@ -17,8 +17,6 @@
 
 package io.sweers.catchup.util.collect
 
-inline fun <T> List<T>?.emptyIfNull(): List<T> {
-  return this ?: emptyList()
-}
+inline fun <T> List<T>?.emptyIfNull() = this ?: emptyList()
 
 inline fun <reified T : Any> Sequence<Any>.cast(): Sequence<T> = map { it as T }

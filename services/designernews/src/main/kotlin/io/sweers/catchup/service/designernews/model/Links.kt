@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.designernews.model
+package io.sweers.catchup.service.designernews.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
-/**
- * Models a response from the Designer News API that returns a single story
- */
 @AutoValue
-abstract class StoryResponse {
+abstract class Links {
 
-  abstract fun story(): Story
+  abstract fun user(): String
+
+  abstract fun comments(): List<String>
+
+  abstract fun upvotes(): List<String>
+
+  abstract fun downvotes(): List<String>
 
   companion object {
 
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<StoryResponse> {
-      return AutoValue_StoryResponse.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Links> = AutoValue_Links.MoshiJsonAdapter(moshi)
   }
 }

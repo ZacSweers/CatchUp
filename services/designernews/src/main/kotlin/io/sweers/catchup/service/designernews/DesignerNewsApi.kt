@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.designernews
+package io.sweers.catchup.service.designernews
 
 import com.serjltt.moshi.adapters.Wrapped
 import io.reactivex.Single
-import io.sweers.catchup.data.designernews.model.Story
-import io.sweers.catchup.data.designernews.model.User
+import io.sweers.catchup.service.designernews.model.Story
+import io.sweers.catchup.service.designernews.model.User
 import io.sweers.catchup.util.collect.CommaJoinerList
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -31,13 +31,15 @@ import retrofit2.http.Query
  *
  * v2 docs: https://github.com/DesignerNews/dn_api_v2
  */
-interface DesignerNewsService {
+internal interface DesignerNewsApi {
 
-  @GET("stories") @Wrapped(path = arrayOf("stories")) fun getTopStories(
-      @Query("page") page: Int): Single<List<Story>>
+  @GET("stories")
+  @Wrapped(path = ["stories"])
+  fun getTopStories(@Query("page") page: Int): Single<List<Story>>
 
-  @GET("users/{ids}") @Wrapped(path = arrayOf("users")) fun getUsers(
-      @Path("ids") ids: CommaJoinerList<String>): Single<List<User>>
+  @GET("users/{ids}")
+  @Wrapped(path = ["users"])
+  fun getUsers(@Path("ids") ids: CommaJoinerList<String>): Single<List<User>>
 
   companion object {
 
