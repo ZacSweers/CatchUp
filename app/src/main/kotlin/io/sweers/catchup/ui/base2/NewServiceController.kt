@@ -32,6 +32,7 @@ import android.support.v7.widget.RecyclerView.RecycledViewPool
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -66,6 +67,7 @@ import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.show
+import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import retrofit2.HttpException
 import java.io.IOException
 import java.security.InvalidParameterException
@@ -159,10 +161,10 @@ class NewServiceController : ButterKnifeController,
     }
         .also { recyclerView.adapter = it }
     swipeRefreshLayout.setOnRefreshListener(this)
-//    recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
-//      addDuration = 300
-//      removeDuration = 300
-//    }
+    recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
+      addDuration = 300
+      removeDuration = 300
+    }
   }
 
   @OnClick(R.id.retry_button) internal fun onRetry() {
@@ -206,6 +208,10 @@ class NewServiceController : ButterKnifeController,
       pageToRestoreTo = getString("currentPage", null)
       pendingRVState = getParcelable("layoutManagerState")
       isRestoring = pendingRVState != null
+      if (isRestoring) {
+        errorView.hide()
+        recyclerView.show()
+      }
     }
   }
 
@@ -231,11 +237,15 @@ class NewServiceController : ButterKnifeController,
     }
     val trace = FirebasePerformance.getInstance().newTrace("Data load - ${service.meta().id}")
     val timer = AtomicLong()
+    val multiPageage = pageToRestoreTo != null
+    if (multiPageage) {
+      recyclerView.itemAnimator = null
+    }
     service.fetchPage(
         DataRequest(
-            fromRefresh && !isRestoring,
-            pageToRestoreTo != null,
-            pageToRequest)
+            fromRefresh = fromRefresh && !isRestoring,
+            multiPage = multiPageage,
+            pageId = pageToRequest)
             .also {
               isRestoring = false
               pageToRestoreTo = null
