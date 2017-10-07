@@ -34,10 +34,8 @@ import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
 import io.sweers.catchup.data.hackernews.model.HackerNewsStory
 import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.base.BaseNewsController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
@@ -76,12 +74,12 @@ class HackerNewsController : BaseNewsController<HackerNewsStory> {
 
       url?.let {
         if (!it.isEmpty()) {
-          if (remoteConfig.getBoolean(SMMRY_ENABLED) && SummarizationInfo.canSummarize(it)) {
-            itemLongClicks()
-                .autoDisposeWith(this)
-                .subscribe(
-                    SmmryController.showFor<Any>(this@HackerNewsController, it, item.title()))
-          }
+//          if (remoteConfig.getBoolean(SMMRY_ENABLED) && SummarizationInfo.canSummarize(it)) {
+//            itemLongClicks()
+//                .autoDisposeWith(this)
+//                .subscribe(
+//                    SmmryController.showFor<Any>(this@HackerNewsController, it, item.title()))
+//          }
 
           itemClicks()
               .compose<UrlMeta>(transformUrlToMeta<Any>(it))

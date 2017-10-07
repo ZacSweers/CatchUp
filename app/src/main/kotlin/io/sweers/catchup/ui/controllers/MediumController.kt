@@ -22,7 +22,6 @@ import android.view.ContextThemeWrapper
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
-import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
@@ -33,13 +32,11 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.InspectorConverterFactory
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.RemoteConfigKeys.SMMRY_ENABLED
 import io.sweers.catchup.data.medium.MediumService
 import io.sweers.catchup.data.medium.model.MediumPost
 import io.sweers.catchup.data.medium.model.Post
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.StorageBackedNewsController
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
@@ -69,15 +66,15 @@ class MediumController : StorageBackedNewsController {
   override fun bindItemView(item: CatchUpItem, holder: CatchUpItemViewHolder) {
     holder.bind(this, item, linkManager)
     item.itemClickUrl?.let {
-      if (remoteConfig.getBoolean(SMMRY_ENABLED)
-          && SummarizationInfo.canSummarize(it)) {
-        holder.itemLongClicks()
-            .autoDisposeWith(holder)
-            .subscribe(SmmryController.showFor<Any>(
-                this@MediumController,
-                it,
-                item.title))
-      }
+      //      if (remoteConfig.getBoolean(SMMRY_ENABLED)
+//          && SummarizationInfo.canSummarize(it)) {
+//        holder.itemLongClicks()
+//            .autoDisposeWith(holder)
+//            .subscribe(SmmryController.showFor<Any>(
+//                this@MediumController,
+//                it,
+//                item.title))
+//      }
     }
   }
 
