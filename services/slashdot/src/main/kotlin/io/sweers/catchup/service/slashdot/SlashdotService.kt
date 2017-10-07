@@ -72,7 +72,7 @@ internal class SlashdotService @Inject constructor(
               tag = section,
               itemClickUrl = id,
               itemCommentClickUrl = "$id#comments",
-              summarizationInfo = SummarizationInfo(summary.substringBefore("&lt"), NONE)
+              summarizationInfo = SummarizationInfo(summary.substringBefore("<p>"), NONE)
           )
         }
         .toList()
