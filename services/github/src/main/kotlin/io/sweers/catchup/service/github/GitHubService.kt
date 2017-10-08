@@ -18,6 +18,7 @@ package io.sweers.catchup.service.github
 
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.http.HttpCachePolicy
+import com.apollographql.apollo.exception.ApolloException
 import com.apollographql.apollo.rx2.Rx2Apollo
 import dagger.Binds
 import dagger.Module
@@ -40,6 +41,7 @@ import io.sweers.catchup.service.github.type.LanguageOrder
 import io.sweers.catchup.service.github.type.LanguageOrderField
 import io.sweers.catchup.service.github.type.OrderDirection
 import io.sweers.catchup.util.collect.emptyIfNull
+import io.sweers.catchup.util.nullIfBlank
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -67,11 +69,16 @@ internal class GitHubService @Inject constructor(
             .direction(OrderDirection.DESC)
             .field(LanguageOrderField.SIZE)
             .build(),
-        request.pageId))
+        request.pageId.nullIfBlank()))
         .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
 
     return Rx2Apollo.from(searchQuery)
         .firstOrError()
+        .doOnSuccess {
+          if (it.hasErrors()) {
+            throw ApolloException(it.errors().toString())
+          }
+        }
         .map { it.data()!! }
         .flatMap { data ->
           Observable.fromIterable(data.search().nodes().emptyIfNull())
@@ -92,7 +99,8 @@ internal class GitHubService @Inject constructor(
                 }
               }
               .toList()
-              .map { DataResult(it, data.search().pageInfo().endCursor()) }
+//              .map { DataResult(it, data.search().pageInfo().endCursor()) } // TODO This should make paging work, but gets no results
+              .map { DataResult(it, null) }
         }
         .toMaybe()
   }
