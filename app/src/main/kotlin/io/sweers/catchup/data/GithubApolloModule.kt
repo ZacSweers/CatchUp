@@ -110,12 +110,18 @@ internal object GithubApolloModule {
   internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
       cacheFactory: NormalizedCacheFactory<*>,
       resolver: CacheKeyResolver,
-      httpCacheStore: HttpCacheStore): ApolloClient = ApolloClient.builder()
-          .serverUrl(SERVER_URL)
-          .httpCacheStore(httpCacheStore)
-          .callFactory { client.get().newCall(it) }
-          .normalizedCache(cacheFactory, resolver)
-          .addCustomTypeAdapter<Instant>(CustomType.DATETIME, ISO8601InstantApolloAdapter())
-          .addCustomTypeAdapter<HttpUrl>(CustomType.URI, HttpUrlApolloAdapter())
-          .build()
+      httpCacheStore: HttpCacheStore): ApolloClient {
+    val instantAdapter = ISO8601InstantApolloAdapter()
+    val httpUrlAdapter = HttpUrlApolloAdapter()
+    return ApolloClient.builder()
+        .serverUrl(SERVER_URL)
+        .httpCacheStore(httpCacheStore)
+        .callFactory { client.get().newCall(it) }
+        .normalizedCache(cacheFactory, resolver)
+        .addCustomTypeAdapter<Instant>(io.sweers.catchup.service.github.type.CustomType.DATETIME, instantAdapter)
+        .addCustomTypeAdapter<HttpUrl>(io.sweers.catchup.service.github.type.CustomType.URI, httpUrlAdapter)
+        .addCustomTypeAdapter<Instant>(CustomType.DATETIME, instantAdapter)
+        .addCustomTypeAdapter<HttpUrl>(CustomType.URI, httpUrlAdapter)
+        .build()
+  }
 }
