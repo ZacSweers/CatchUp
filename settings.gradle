@@ -22,6 +22,8 @@ include ':slashdot'
 project(':slashdot').projectDir = new File(rootDir, 'services/slashdot')
 include ':reddit'
 project(':reddit').projectDir = new File(rootDir, 'services/reddit')
+include ':hackernews'
+project(':hackernews').projectDir = new File(rootDir, 'services/hackernews')
 include ':medium'
 project(':medium').projectDir = new File(rootDir, 'services/medium')
 include ':producthunt'

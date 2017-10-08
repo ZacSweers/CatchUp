@@ -92,10 +92,6 @@ class PagerController : ButterKnifeController {
     private const val PAGE_TAG = "PagerController.pageTag"
     private lateinit var services: Array<StaticService>
     private val staticServices = listOf(
-        StaticService(R.string.hacker_news,
-            R.drawable.logo_hn,
-            R.color.hackerNewsAccent,
-            { HackerNewsController() }),
         StaticService(R.string.dribbble,
             R.drawable.logo_dribbble,
             R.color.dribbbleAccent,

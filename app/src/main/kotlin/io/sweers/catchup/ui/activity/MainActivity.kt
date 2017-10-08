@@ -38,6 +38,7 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.designernews.DesignerNewsModule
 import io.sweers.catchup.service.github.GitHubModule
+import io.sweers.catchup.service.hackernews.HackerNewsModule
 import io.sweers.catchup.service.medium.MediumModule
 import io.sweers.catchup.service.producthunt.ProductHuntModule
 import io.sweers.catchup.service.reddit.RedditModule
@@ -88,6 +89,7 @@ class MainActivity : BaseActivity() {
 
   @dagger.Module(
       includes = [
+      HackerNewsModule::class,
       RedditModule::class,
       MediumModule::class,
       ProductHuntModule::class,

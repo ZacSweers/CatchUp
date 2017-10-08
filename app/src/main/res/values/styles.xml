@@ -66,10 +66,6 @@
     <item name="tabIndicatorColor">?android:textColorPrimary</item>
   </style>
 
-  <style name="CatchUp.HackerNews" parent="CatchUp">
-    <item name="colorAccent">@color/hackerNewsAccent</item>
-  </style>
-
   <style name="CatchUp.Dribbble" parent="CatchUp">
     <item name="colorAccent">@color/dribbbleAccent</item>
   </style>

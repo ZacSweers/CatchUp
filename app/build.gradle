@@ -241,6 +241,7 @@ dependencies {
   // This fails gradle sync due to an obscure "AssertionError" only visible in console logs
   implementation project(':bypass')
   implementation project(':service-api')
+  implementation project(':hackernews')
   implementation project(':reddit')
   implementation project(':medium')
   implementation project(':producthunt')

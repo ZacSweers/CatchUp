@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.hackernews.model
+package io.sweers.catchup.service.hackernews.model
 
 import com.google.auto.value.AutoValue
 import com.google.firebase.database.DataSnapshot
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 
 @AutoValue
 @FirebaseValue
-abstract class HackerNewsStory : HasStableId {
+internal abstract class HackerNewsStory : HasStableId {
 
   abstract fun by(): String
 
@@ -54,18 +54,16 @@ abstract class HackerNewsStory : HasStableId {
 
   abstract fun text(): String?
 
-  @FirebaseAdapter(HNTypeAdapter::class) abstract fun type(): HNType
+  @FirebaseAdapter(
+      HNTypeAdapter::class) abstract fun type(): HNType
 
   abstract fun url(): String?
 
-  override fun stableId(): Long {
-    return id()
-  }
+  override fun stableId() = id()
 
   class InstantAdapter : TypeAdapter<Instant, Long> {
-    override fun fromFirebaseValue(value: Long?): Instant {
-      return Instant.ofEpochMilli(TimeUnit.MILLISECONDS.convert(value!!, TimeUnit.SECONDS))
-    }
+    override fun fromFirebaseValue(value: Long?): Instant =
+        Instant.ofEpochMilli(TimeUnit.MILLISECONDS.convert(value!!, TimeUnit.SECONDS))
 
     override fun toFirebaseValue(value: Instant): Long? {
       val longTime = value.toEpochMilli()
@@ -74,9 +72,8 @@ abstract class HackerNewsStory : HasStableId {
   }
 
   class HNTypeAdapter : TypeAdapter<HNType, String> {
-    override fun fromFirebaseValue(value: String): HNType {
-      return HNType.valueOf(value.toUpperCase(Locale.US))
-    }
+    override fun fromFirebaseValue(value: String): HNType =
+        HNType.valueOf(value.toUpperCase(Locale.US))
 
     override fun toFirebaseValue(value: HNType): String {
       return value.name

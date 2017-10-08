@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.hackernews.model
+package io.sweers.catchup.service.hackernews.model
 
-enum class HNType {
+internal enum class HNType {
   COMMENT, JOB, POLL, POLLOPT, STORY;
 
   fun tag(): String = name.toLowerCase().capitalize()
