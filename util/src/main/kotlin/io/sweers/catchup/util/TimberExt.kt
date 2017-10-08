@@ -84,5 +84,7 @@ inline fun log(priority: Int, t: Throwable, message: () -> String) = ifPlanted {
 }
 
 /** Delegates the provided message to [Timber.log] if any trees are planted. */
-inline fun log(priority: Int, message: () -> String) = ifPlanted { Timber.log(priority, message()) }
+inline fun log(priority: Int, message: () -> String) = ifPlanted {
+  Timber.log(priority, message())
+}
 

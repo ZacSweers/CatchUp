@@ -20,7 +20,7 @@ import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-//import io.sweers.catchup.util.e
+import io.sweers.catchup.util.e
 import okhttp3.HttpUrl
 import org.threeten.bp.Instant
 
@@ -84,7 +84,7 @@ internal abstract class Post {
           break
         }
       } catch (nfe: NumberFormatException) {
-//        e(nfe) { "FailedGetScreenshotUrl" }
+        e(nfe) { "FailedGetScreenshotUrl" }
       }
 
     }

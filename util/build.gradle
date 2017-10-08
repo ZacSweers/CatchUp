@@ -43,6 +43,7 @@ dependencies {
   api deps.kotlin.stdlib.jdk7
   api deps.misc.lazythreeten
   api deps.misc.moshi
+  api deps.misc.timber
   api deps.okhttp.core
   api deps.rx.java2
 
