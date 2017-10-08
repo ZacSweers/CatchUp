@@ -38,6 +38,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
+import com.apollographql.apollo.exception.ApolloException
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.uber.autodispose.kotlin.autoDisposeWith
@@ -320,7 +321,7 @@ class NewServiceController : ButterKnifeController,
                     }
                 e(error) { "IOException" }
               }
-              is HttpException -> {
+              is HttpException, is ApolloException -> {
                 // TODO Show some sort of API error response.
                 progress.hide()
                 errorTextView.text = activity.getString(R.string.api_issue)
