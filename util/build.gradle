@@ -38,14 +38,13 @@ android {
 }
 
 dependencies {
-  compile deps.android.support.annotations
-  compile deps.dagger.runtime
-  compile deps.kotlin.stdlib.jdk7
-  compile deps.misc.lazythreeten
-  compile deps.misc.moshi
-  compile deps.okhttp.core
-  compile deps.rx.java2
+  api deps.android.support.annotations
+  api deps.dagger.runtime
+  api deps.kotlin.stdlib.jdk7
+  api deps.misc.lazythreeten
+  api deps.misc.moshi
+  api deps.okhttp.core
+  api deps.rx.java2
 
-  // Implementation
-  compile deps.misc.unbescape
+  implementation deps.misc.unbescape
 }
