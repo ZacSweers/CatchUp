@@ -280,9 +280,6 @@ dependencies {
   implementation deps.android.firebase.config
   implementation deps.android.firebase.database
   implementation deps.android.firebase.perf
-  kapt deps.auto.value.extensions.firebase.apt.core
-  compileOnly deps.auto.value.extensions.firebase.compileOnly.annotation
-  implementation deps.auto.value.extensions.firebase.adapter
 
   // Square/JW
   implementation deps.butterKnife.runtime
@@ -367,7 +364,6 @@ dependencies {
   compileOnly deps.auto.value.extensions.moshi.compileOnly.annotations
   kapt deps.auto.value.apt.core
   kapt deps.auto.value.extensions.moshi.apt.core
-  kapt deps.auto.value.extensions.redacted.apt.core
 
   // Conductor
   implementation deps.conductor.core
