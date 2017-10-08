@@ -16,5 +16,5 @@
   -->
 
 <resources>
-  <color name="githubAccent">?android:textColorPrimary</color>
+  <color name="githubAccent">@android:color/white</color>
 </resources>
