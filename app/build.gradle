@@ -48,8 +48,6 @@ android {
 
     buildConfigField 'String', 'GIT_SHA', /"$deps.build.gitSha"/
     buildConfigField 'long', 'GIT_TIMESTAMP', "$deps.build.gitTimestamp"
-    buildConfigField 'String', 'PROCUCT_HUNT_DEVELOPER_TOKEN',
-        /"${getPropertyOrEmpty("catchup_product_hunt_developer_token")}"/
     buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN',
         /"${getPropertyOrEmpty("catchup_github_developer_token")}"/
     buildConfigField 'String', 'DRIBBBLE_CLIENT_ACCESS_TOKEN',
@@ -245,6 +243,7 @@ dependencies {
   implementation project(':service-api')
   implementation project(':reddit')
   implementation project(':medium')
+  implementation project(':producthunt')
   implementation project(':slashdot')
   implementation project(':designernews')
   implementation project(':github')

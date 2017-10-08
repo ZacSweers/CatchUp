@@ -14,38 +14,27 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data
+package io.sweers.catchup.util.network
 
-import com.google.auto.value.AutoValue
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
 
 /**
  * A [Interceptor] that adds an auth token to requests.
- *
- * Can't be a data class because we want @Redacted.
  */
-@AutoValue
-abstract class AuthInterceptor : Interceptor {
-
-  @Redacted abstract fun accessToken(): String
-
-  abstract fun method(): String
+data class AuthInterceptor(private val method: String,
+    private val accessToken: String) : Interceptor {
 
   @Throws(IOException::class)
   override fun intercept(chain: Interceptor.Chain): Response {
     val request = chain.request()
         .newBuilder()
-        .addHeader("Authorization", method() + " " + accessToken())
+        .addHeader("Authorization", method + " " + accessToken)
         .build()
     return chain.proceed(request)
   }
 
-  companion object {
+  override fun toString() = "AuthInterceptor(accessToken='██', method='$method')"
 
-    fun create(method: String, accessToken: String): AuthInterceptor {
-      return AutoValue_AuthInterceptor(accessToken, method)
-    }
-  }
 }

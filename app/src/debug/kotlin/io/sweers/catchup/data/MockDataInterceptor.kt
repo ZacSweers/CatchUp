@@ -21,7 +21,6 @@ import android.support.v4.util.ArrayMap
 import io.sweers.catchup.P
 import io.sweers.catchup.data.dribbble.DribbbleService
 import io.sweers.catchup.data.model.ServiceData
-import io.sweers.catchup.data.producthunt.ProductHuntService
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -72,9 +71,9 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
 //        put(MediumApi.HOST,
 //            ServiceData.Builder("m").addEndpoint("/browse/top")
 //                .build())
-        put(ProductHuntService.HOST,
-            ServiceData.Builder("ph").addEndpoint("/v1/posts")
-                .build())
+//        put(ProductHuntApi.HOST,
+//            ServiceData.Builder("ph").addEndpoint("/v1/posts")
+//                .build())
 //        put(SlashdotApi.HOST,
 //            ServiceData.Builder("sd").addEndpoint("/Slashdot/slashdotMainatom")
 //                .fileType("xml")

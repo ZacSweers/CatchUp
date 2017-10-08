@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.producthunt.model
+package io.sweers.catchup.service.producthunt.model
 
 import com.google.auto.value.AutoValue
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import io.sweers.catchup.util.e
+//import io.sweers.catchup.util.e
 import okhttp3.HttpUrl
 import org.threeten.bp.Instant
 
@@ -27,25 +28,25 @@ import org.threeten.bp.Instant
  * Models a post on Product Hunt.
  */
 @AutoValue
-abstract class Post {
+internal abstract class Post {
 
-  abstract fun comments_count(): Int
+  @Json(name = "comments_count") abstract fun commentsCount(): Int
 
-  abstract fun created_at(): Instant
+  @Json(name = "created_at") abstract fun createdAt(): Instant
 
-  abstract fun discussion_url(): String?
+  @Json(name = "discussion_url") abstract fun discussionUrl(): String?
 
   abstract fun id(): Long
 
   abstract fun makers(): List<User>
 
-  abstract fun maker_inside(): Boolean
+  @Json(name = "maker_inside") abstract fun makerInside(): Boolean
 
   abstract fun name(): String
 
-  abstract fun redirect_url(): String
+  @Json(name = "redirect_url") abstract fun redirectUrl(): String
 
-  abstract fun screenshot_url(): Map<String, String>
+  @Json(name = "screenshot_url") abstract fun screenshotUrl(): Map<String, String>
 
   abstract fun tagline(): String
 
@@ -53,7 +54,7 @@ abstract class Post {
 
   abstract fun user(): User
 
-  abstract fun votes_count(): Int
+  @Json(name = "votes_count") abstract fun votesCount(): Int
 
   val firstTopic: String?
     get() {
@@ -66,7 +67,7 @@ abstract class Post {
 
   val category: String?
     get() {
-      val discussion = discussion_url()
+      val discussion = discussionUrl()
       if (discussion != null) {
         return HttpUrl.parse(discussion)!!.pathSegments()[0]
       }
@@ -75,15 +76,15 @@ abstract class Post {
 
   fun getScreenshotUrl(width: Int): String? {
     var url: String? = null
-    for (widthStr in screenshot_url().keys) {
-      url = screenshot_url()[widthStr]
+    for (widthStr in screenshotUrl().keys) {
+      url = screenshotUrl()[widthStr]
       try {
         val screenshotWidth = Integer.parseInt(widthStr.substring(0, widthStr.length - 2))
         if (screenshotWidth > width) {
           break
         }
       } catch (nfe: NumberFormatException) {
-        e(nfe) { "FailedGetScreenshotUrl" }
+//        e(nfe) { "FailedGetScreenshotUrl" }
       }
 
     }
@@ -93,23 +94,23 @@ abstract class Post {
 
   @AutoValue.Builder
   interface Builder {
-    fun comments_count(count: Int): Builder
+    fun commentsCount(count: Int): Builder
 
-    fun created_at(date: Instant): Builder
+    fun createdAt(date: Instant): Builder
 
-    fun discussion_url(url: String): Builder
+    fun discussionUrl(url: String): Builder
 
     fun id(id: Long): Builder
 
     fun makers(makers: List<@JvmSuppressWildcards User>): Builder
 
-    fun maker_inside(makerInside: Boolean): Builder
+    fun makerInside(makerInside: Boolean): Builder
 
     fun name(name: String): Builder
 
-    fun redirect_url(url: String): Builder
+    fun redirectUrl(url: String): Builder
 
-    fun screenshot_url(url: Map<String, String>): Builder
+    fun screenshotUrl(url: Map<String, String>): Builder
 
     fun tagline(tagline: String): Builder
 
@@ -117,7 +118,7 @@ abstract class Post {
 
     fun user(user: User): Builder
 
-    fun votes_count(count: Int): Builder
+    fun votesCount(count: Int): Builder
 
     fun build(): Post
   }
@@ -125,13 +126,9 @@ abstract class Post {
   companion object {
 
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Post> {
-      return AutoValue_Post.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Post> = AutoValue_Post.MoshiJsonAdapter(moshi)
 
-    fun builder(): Builder {
-      // Ew
-      return `$AutoValue_Post`.Builder()
-    }
+    // Ew
+    fun builder(): Builder = `$AutoValue_Post`.Builder()
   }
 }

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.producthunt.model
+package io.sweers.catchup.service.producthunt.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
 @AutoValue
-abstract class Topic {
+internal abstract class Topic {
 
   abstract fun id(): Long
 
@@ -43,14 +43,10 @@ abstract class Topic {
   companion object {
 
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Topic> {
-      return AutoValue_Topic.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Topic> = AutoValue_Topic.MoshiJsonAdapter(moshi)
 
-    fun builder(): Builder {
-      // Ew
-      return `$AutoValue_Topic`.Builder()
-    }
+    // Ew
+    fun builder(): Builder = `$AutoValue_Topic`.Builder()
   }
 
 }

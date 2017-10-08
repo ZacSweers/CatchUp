@@ -39,6 +39,7 @@ import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.designernews.DesignerNewsModule
 import io.sweers.catchup.service.github.GitHubModule
 import io.sweers.catchup.service.medium.MediumModule
+import io.sweers.catchup.service.producthunt.ProductHuntModule
 import io.sweers.catchup.service.reddit.RedditModule
 import io.sweers.catchup.service.slashdot.NewSlashdotModule
 import io.sweers.catchup.ui.base.BaseActivity
@@ -89,6 +90,7 @@ class MainActivity : BaseActivity() {
       includes = [
       RedditModule::class,
       MediumModule::class,
+      ProductHuntModule::class,
       NewSlashdotModule::class,
       DesignerNewsModule::class,
       GitHubModule::class

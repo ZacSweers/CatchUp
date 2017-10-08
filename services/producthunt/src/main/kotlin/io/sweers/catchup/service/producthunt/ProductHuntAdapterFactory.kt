@@ -14,27 +14,14 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.producthunt
+package io.sweers.catchup.service.producthunt
 
-import com.serjltt.moshi.adapters.Wrapped
-import io.reactivex.Single
-import io.sweers.catchup.data.producthunt.model.Post
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.ryanharter.auto.value.moshi.MoshiAdapterFactory
+import com.squareup.moshi.JsonAdapter.Factory
 
-/**
- * Models the Product Hunt API. See https://api.producthunt.com/v1/docs
- */
-interface ProductHuntService {
-
-  @GET("/v1/posts")
-  @Wrapped(path = arrayOf("posts"))
-  fun getPosts(@Query("days_ago") page: Int): Single<List<Post>>
-
+@MoshiAdapterFactory(nullSafe = true)
+internal abstract class ProductHuntAdapterFactory : Factory {
   companion object {
-
-    private val SCHEME = "https"
-    val HOST = "api.producthunt.com"
-    val ENDPOINT = SCHEME + "://" + HOST
+    fun create(): ProductHuntAdapterFactory = AutoValueMoshi_ProductHuntAdapterFactory()
   }
 }

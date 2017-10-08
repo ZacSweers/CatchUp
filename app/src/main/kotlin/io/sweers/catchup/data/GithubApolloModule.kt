@@ -36,6 +36,7 @@ import dagger.Provides
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.github.type.CustomType
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
+import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
@@ -70,7 +71,7 @@ internal object GithubApolloModule {
       client: OkHttpClient,
       httpCache: HttpCache): OkHttpClient = client.newBuilder()
           .addInterceptor(httpCache.interceptor())
-          .addInterceptor(AuthInterceptor.create("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
+          .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
           .build()
 
   @Provides

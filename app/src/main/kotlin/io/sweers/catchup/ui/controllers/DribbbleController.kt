@@ -74,8 +74,6 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
-import io.sweers.catchup.data.AuthInterceptor
-import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.dribbble.DribbbleService
 import io.sweers.catchup.data.dribbble.model.Shot
@@ -91,9 +89,11 @@ import io.sweers.catchup.util.Iterables
 import io.sweers.catchup.util.ObservableColorMatrix
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.collect.cast
+import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.glide.DribbbleTarget
 import io.sweers.catchup.util.isInNightMode
+import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.HttpException
@@ -518,7 +518,7 @@ class DribbbleController
     internal fun provideDribbbleOkHttpClient(
         client: OkHttpClient): OkHttpClient {
       return client.newBuilder()
-          .addInterceptor(AuthInterceptor.create("Bearer",
+          .addInterceptor(AuthInterceptor("Bearer",
               BuildConfig.DRIBBBLE_CLIENT_ACCESS_TOKEN))
           .build()
     }
