@@ -29,10 +29,12 @@ class SummarizationInfo(
   constructor() : this("", NONE)
 
   companion object {
-    fun from(url: String, text: String? = null): SummarizationInfo? {
-      return if (canSummarize(url, text)) {
-        SummarizationInfo(text ?: url, text?.let { TEXT } ?: URL)
-      } else null
+    fun from(url: String?, text: String? = null): SummarizationInfo? {
+      return url?.let {
+        if (canSummarize(url, text)) {
+          SummarizationInfo(text ?: url, text?.let { TEXT } ?: URL)
+        } else null
+      }
     }
 
     /**
