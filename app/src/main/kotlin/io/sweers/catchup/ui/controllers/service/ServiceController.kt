@@ -242,9 +242,11 @@ class ServiceController : ButterKnifeController,
         })
     recyclerView.recycledViewPool = viewPool
     recyclerView.adapter = adapter
-    recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
-      addDuration = 300
-      removeDuration = 300
+    if (!service.meta().isVisual) {
+      recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
+        addDuration = 300
+        removeDuration = 300
+      }
     }
   }
 
