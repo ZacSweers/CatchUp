@@ -63,7 +63,7 @@ import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
-import io.sweers.catchup.ui.base2.NewServiceController
+import io.sweers.catchup.ui.controllers.service.ServiceController
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttribute
@@ -76,7 +76,7 @@ fun ServiceMeta.toStaticService() = StaticService(
     name,
     icon,
     themeColor,
-    { NewServiceController.newInstance(id) }
+    { ServiceController.newInstance(id) }
 )
 
 data class StaticService(@StringRes val name: Int,

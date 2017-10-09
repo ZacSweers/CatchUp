@@ -21,13 +21,13 @@ import dagger.Binds
 import dagger.Module
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
-import io.sweers.catchup.ui.base2.NewServiceController
+import io.sweers.catchup.ui.controllers.service.ServiceController
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.ui.controllers.SmmryController
 
 @Module(
     subcomponents = [
-    NewServiceController.Component::class,
+    ServiceController.Component::class,
     PagerController.Component::class,
     SmmryController.Component::class
     ]
@@ -35,9 +35,9 @@ import io.sweers.catchup.ui.controllers.SmmryController
 abstract class ControllerBindingModule {
   @Binds
   @IntoMap
-  @ControllerKey(NewServiceController::class)
+  @ControllerKey(ServiceController::class)
   internal abstract fun bindNewServiceControllerInjectorFactory(
-      builder: NewServiceController.Component.Builder): AndroidInjector.Factory<out Controller>
+      builder: ServiceController.Component.Builder): AndroidInjector.Factory<out Controller>
 
   @Binds
   @IntoMap

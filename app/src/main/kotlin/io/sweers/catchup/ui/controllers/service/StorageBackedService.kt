@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.base2
+package io.sweers.catchup.ui.controllers.service
 
 import io.reactivex.Completable
 import io.reactivex.Maybe

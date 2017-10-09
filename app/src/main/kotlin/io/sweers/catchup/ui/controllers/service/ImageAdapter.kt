@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.base2
+package io.sweers.catchup.ui.controllers.service
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -31,6 +31,7 @@ import android.support.annotation.ArrayRes
 import android.support.annotation.ColorInt
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.RxViewHolder
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -50,6 +51,7 @@ import com.bumptech.glide.request.target.Target
 import com.jakewharton.rxbinding2.view.clicks
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
+import io.sweers.catchup.R.layout
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.LinkHandler
@@ -62,8 +64,8 @@ import io.sweers.catchup.util.glide.DribbbleTarget
 import io.sweers.catchup.util.isInNightMode
 
 internal class ImageAdapter(private val context: Context,
-    private val bindDelegate: (ImageItem, ImageAdapter.ImageHolder) -> Unit)
-  : DisplayableItemAdapter<ImageItem, RecyclerView.ViewHolder>(columnCount = 2),
+    private val bindDelegate: (ImageItem, ImageHolder) -> Unit)
+  : DisplayableItemAdapter<ImageItem, ViewHolder>(columnCount = 2),
     DataLoadingSubject.DataLoadingCallbacks,
     PreloadModelProvider<ImageItem> {
 
@@ -118,7 +120,8 @@ internal class ImageAdapter(private val context: Context,
       TYPE_ITEM -> {
         val holder = ImageHolder(LayoutInflater.from(parent.context)
             .inflate(R.layout.image_item, parent, false))
-        holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR)
+        holder.image.setBadgeColor(
+            INITIAL_GIF_BADGE_COLOR)
         holder.image.foreground = UiUtil.createColorSelector(0x40808080, null)
         // play animated GIFs whilst touched
         holder.image.setOnTouchListener { _, event ->
@@ -151,7 +154,7 @@ internal class ImageAdapter(private val context: Context,
         return holder
       }
       TYPE_LOADING_MORE -> return LoadingMoreHolder(
-          layoutInflater.inflate(R.layout.infinite_loading, parent, false))
+          layoutInflater.inflate(layout.infinite_loading, parent, false))
     }
     return null
   }
@@ -169,7 +172,8 @@ internal class ImageAdapter(private val context: Context,
     if (holder is ImageHolder) {
       // reset the badge & ripple which are dynamically determined
       GlideApp.with(holder.itemView).clear(holder.image)
-      holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR)
+      holder.image.setBadgeColor(
+          INITIAL_GIF_BADGE_COLOR)
       holder.image.showBadge(false)
       holder.image.foreground = UiUtil.createColorSelector(0x40808080, null)
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.base2
+package io.sweers.catchup.ui.controllers.service
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -52,6 +52,7 @@ import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.R.drawable
+import io.sweers.catchup.R.layout
 import io.sweers.catchup.R.string
 import io.sweers.catchup.data.RemoteConfigKeys
 import io.sweers.catchup.injection.ConductorInjection
@@ -69,6 +70,7 @@ import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
 import io.sweers.catchup.ui.base2.LoadResult.DiffResultData
 import io.sweers.catchup.ui.base2.LoadResult.NewData
+import io.sweers.catchup.ui.base2.NewServiceController_ViewBinding
 import io.sweers.catchup.ui.controllers.SmmryController
 import io.sweers.catchup.util.Iterables
 import io.sweers.catchup.util.applyOn
@@ -118,13 +120,17 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   }
 }
 
-class NewServiceController : ButterKnifeController,
+class ServiceController : ButterKnifeController,
     SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
 
   companion object {
     val ARG_SERVICE_KEY = "serviceKey"
     fun newInstance(serviceKey: String) =
-        NewServiceController(Bundle().apply { putString(ARG_SERVICE_KEY, serviceKey) })
+        ServiceController(Bundle().apply {
+          putString(
+              ARG_SERVICE_KEY,
+              serviceKey)
+        })
   }
 
   @BindView(R.id.error_container) lateinit var errorView: View
@@ -166,7 +172,8 @@ class NewServiceController : ButterKnifeController,
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
       inflater.inflate(R.layout.controller_basic_news, container, false)
 
-  override fun bind(view: View) = NewServiceController_ViewBinding(this, view)
+  override fun bind(view: View) = NewServiceController_ViewBinding(this,
+      view)
 
   override fun onContextAvailable(context: Context) {
     ConductorInjection.inject(this)
@@ -222,14 +229,14 @@ class NewServiceController : ButterKnifeController,
     @ColorInt val accentColor = ContextCompat.getColor(view.context, service.meta().themeColor)
     swipeRefreshLayout.run {
       setColorSchemeColors(accentColor)
-      setOnRefreshListener(this@NewServiceController)
+      setOnRefreshListener(this@ServiceController)
     }
     progress.indeterminateTintList = ColorStateList.valueOf(accentColor)
     adapter = createAdapter(view.context)
     layoutManager = createLayoutManager(view.context, adapter)
     recyclerView.layoutManager = layoutManager
     recyclerView.addOnScrollListener(
-        object : InfiniteScrollListener(layoutManager, this@NewServiceController) {
+        object : InfiniteScrollListener(layoutManager, this@ServiceController) {
           override fun onLoadMore() {
             loadData()
           }
@@ -345,7 +352,8 @@ class NewServiceController : ButterKnifeController,
           if (fromRefresh) {
             DiffResultData(newData,
                 DiffUtil.calculateDiff(
-                    ItemUpdateCallback(adapter.getItems(), newData)))
+                    ItemUpdateCallback(adapter.getItems(),
+                        newData)))
           } else {
             NewData(newData)
           }
@@ -451,7 +459,7 @@ class NewServiceController : ButterKnifeController,
 
   private class TextAdapter(
       private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder) -> Unit)
-    : DisplayableItemAdapter<CatchUpItem, RecyclerView.ViewHolder>() {
+    : DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
 
     private var showLoadingMore = false
 
@@ -475,7 +483,7 @@ class NewServiceController : ButterKnifeController,
                 parent,
                 false))
         TYPE_LOADING_MORE -> return LoadingMoreHolder(
-            layoutInflater.inflate(R.layout.infinite_loading,
+            layoutInflater.inflate(layout.infinite_loading,
                 parent,
                 false))
       }
@@ -529,10 +537,10 @@ class NewServiceController : ButterKnifeController,
 
   @Subcomponent
   @PerController
-  interface Component : AndroidInjector<NewServiceController> {
+  interface Component : AndroidInjector<ServiceController> {
 
     @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<NewServiceController>()
+    abstract class Builder : AndroidInjector.Builder<ServiceController>()
   }
 }
 
