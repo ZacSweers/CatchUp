@@ -91,11 +91,6 @@ class PagerController : ButterKnifeController {
     private const val SETTINGS_ACTIVITY_REQUEST = 100
     private const val PAGE_TAG = "PagerController.pageTag"
     private lateinit var services: Array<StaticService>
-    private val staticServices = listOf(
-        StaticService(R.string.dribbble,
-            R.drawable.logo_dribbble,
-            R.color.dribbbleAccent,
-            { DribbbleController() }))
   }
 
   private lateinit var resolvedColorCache: IntArray
@@ -142,8 +137,7 @@ class PagerController : ButterKnifeController {
 
   override fun onContextAvailable(context: Context) {
     ConductorInjection.inject(this)
-    // TODO Temporary till services are all migrated
-    services = (serviceMetas.values.map { it.toStaticService() } + staticServices).toTypedArray()
+    services = (serviceMetas.values.map { it.toStaticService() }).toTypedArray()
 
     resolvedColorCache = IntArray(services.size)
     // Invalidate the color cache up front

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.dribbble.model
+package io.sweers.catchup.service.dribbble.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
@@ -25,7 +25,7 @@ import com.squareup.moshi.Moshi
  * Models a Dribbble team.
  */
 @AutoValue
-abstract class Team {
+internal abstract class Team {
 
   @Json(name = "avatar_url") abstract fun avatarUrl(): String
 
@@ -46,8 +46,7 @@ abstract class Team {
   companion object {
 
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Team> {
-      return AutoValue_Team.MoshiJsonAdapter(moshi).nullSafe()
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Team> =
+        AutoValue_Team.MoshiJsonAdapter(moshi).nullSafe()
   }
 }

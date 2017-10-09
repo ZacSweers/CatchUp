@@ -30,6 +30,8 @@ include ':producthunt'
 project(':producthunt').projectDir = new File(rootDir, 'services/producthunt')
 include ':designernews'
 project(':designernews').projectDir = new File(rootDir, 'services/designernews')
+include ':dribbble'
+project(':dribbble').projectDir = new File(rootDir, 'services/dribbble')
 include ':github'
 project(':github').projectDir = new File(rootDir, 'services/github')
 include ':util'

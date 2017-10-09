@@ -14,35 +14,38 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.dribbble.model
+package io.sweers.catchup.service.dribbble.model
 
 import com.google.auto.value.AutoValue
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import org.threeten.bp.Instant
+import java.util.Date
 
 /**
- * Models links to the various quality of images of a shot.
+ * Models a commend on a Dribbble shot.
  */
 @AutoValue
-abstract class Images {
+internal abstract class Comment {
 
-  abstract fun hidpi(): String?
+  abstract fun body(): String
 
-  abstract fun normal(): String
+  @Json(name = "created_at") abstract fun createdAt(): Instant
 
-  abstract fun teaser(): String
+  abstract fun id(): Long
 
-  fun best(): String = hidpi() ?: normal()
+  @Json(name = "likes_count") abstract fun likesCount(): Long
 
-  fun bestSize(): Pair<Int, Int> = hidpi()?.let { TWO_X_IMAGE_SIZE } ?: NORMAL_IMAGE_SIZE
+  @Json(name = "likes_url") abstract fun likesUrl(): String
+
+  @Json(name = "updated_at") abstract fun updatedAt(): Date
+
+  abstract fun user(): User
 
   companion object {
 
-    private val NORMAL_IMAGE_SIZE = 400 to 300
-    private val TWO_X_IMAGE_SIZE = 800 to 600
-
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Images> = AutoValue_Images.MoshiJsonAdapter(moshi)
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Comment> = AutoValue_Comment.MoshiJsonAdapter(moshi)
   }
-
 }

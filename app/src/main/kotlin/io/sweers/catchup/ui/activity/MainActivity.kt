@@ -37,6 +37,7 @@ import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.designernews.DesignerNewsModule
+import io.sweers.catchup.service.dribbble.DribbbleModule
 import io.sweers.catchup.service.github.GitHubModule
 import io.sweers.catchup.service.hackernews.HackerNewsModule
 import io.sweers.catchup.service.medium.MediumModule
@@ -95,6 +96,7 @@ class MainActivity : BaseActivity() {
       ProductHuntModule::class,
       NewSlashdotModule::class,
       DesignerNewsModule::class,
+      DribbbleModule::class,
       GitHubModule::class
       ]
   )

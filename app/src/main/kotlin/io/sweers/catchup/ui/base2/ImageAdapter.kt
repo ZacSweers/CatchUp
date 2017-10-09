@@ -60,7 +60,6 @@ import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.collect.cast
 import io.sweers.catchup.util.glide.DribbbleTarget
 import io.sweers.catchup.util.isInNightMode
-import java.util.ArrayList
 
 internal class ImageAdapter(private val context: Context,
     private val bindDelegate: (ImageItem, ImageAdapter.ImageHolder) -> Unit)
@@ -73,7 +72,6 @@ internal class ImageAdapter(private val context: Context,
     @ColorInt private const val INITIAL_GIF_BADGE_COLOR = 0x40ffffff
   }
 
-  private val items = ArrayList<ImageItem>()
   private val loadingPlaceholders: Array<ColorDrawable>
   private var showLoadingMore = false
 
@@ -93,7 +91,7 @@ internal class ImageAdapter(private val context: Context,
   }
 
   override fun getPreloadItems(position: Int) =
-      items.subList(position, minOf(items.size, position + 5))
+      data.subList(position, minOf(data.size, position + 5))
 
   override fun getPreloadRequestBuilder(item: ImageItem): RequestBuilder<Drawable> {
     val (x, y) = item.imageInfo.bestSize ?: Pair(0, 0)
@@ -110,7 +108,7 @@ internal class ImageAdapter(private val context: Context,
     if (getItemViewType(position) == TYPE_LOADING_MORE) {
       return RecyclerView.NO_ID
     }
-    return items[position].delegate.id
+    return data[position].delegate.id
   }
 
   @TargetApi(Build.VERSION_CODES.M)
@@ -161,7 +159,7 @@ internal class ImageAdapter(private val context: Context,
   override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
     when (getItemViewType(position)) {
       TYPE_ITEM -> {
-        bindDelegate(items[position], holder as ImageHolder)
+        bindDelegate(data[position], holder as ImageHolder)
       }
       TYPE_LOADING_MORE -> (holder as LoadingMoreHolder).progress.visibility = if (position > 0) View.VISIBLE else View.INVISIBLE
     }
@@ -180,7 +178,7 @@ internal class ImageAdapter(private val context: Context,
   override fun getItemCount() = dataItemCount + if (showLoadingMore) 1 else 0
 
   private val dataItemCount: Int
-    get() = items.size
+    get() = data.size
 
   private val loadingMoreItemPosition: Int
     get() = if (showLoadingMore) itemCount - 1 else RecyclerView.NO_POSITION

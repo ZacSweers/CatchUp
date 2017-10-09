@@ -50,8 +50,6 @@ android {
     buildConfigField 'long', 'GIT_TIMESTAMP', "$deps.build.gitTimestamp"
     buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN',
         /"${getPropertyOrEmpty("catchup_github_developer_token")}"/
-    buildConfigField 'String', 'DRIBBBLE_CLIENT_ACCESS_TOKEN',
-        /"${getPropertyOrEmpty("catchup_dribbble_access_token")}"/
     buildConfigField 'String', 'SMMRY_API_KEY', /"${getPropertyOrEmpty("catchup_smmry_api_key")}"/
   }
   compileOptions {
@@ -247,6 +245,7 @@ dependencies {
   implementation project(':producthunt')
   implementation project(':slashdot')
   implementation project(':designernews')
+  implementation project(':dribbble')
   implementation project(':github')
   implementation project(':util')
 

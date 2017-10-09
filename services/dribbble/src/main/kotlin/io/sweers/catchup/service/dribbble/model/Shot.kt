@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.dribbble.model
+package io.sweers.catchup.service.dribbble.model
 
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import io.sweers.catchup.service.api.HasStableId
 import org.threeten.bp.Instant
 
 /**
  * Models a dibbble shot
  */
 @AutoValue
-abstract class Shot : HasStableId {
-
-  @Transient
-  var hasFadedIn = false
+internal abstract class Shot {
 
   abstract fun animated(): Boolean
 
@@ -94,8 +90,6 @@ abstract class Shot : HasStableId {
   abstract fun viewsCount(): Long
 
   abstract fun width(): Long
-
-  override fun stableId(): Long = id()
 
   companion object {
 

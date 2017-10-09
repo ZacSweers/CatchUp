@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.dribbble
+package io.sweers.catchup.service.dribbble
 
 import io.reactivex.Single
-import io.sweers.catchup.data.dribbble.model.Shot
+import io.sweers.catchup.service.dribbble.model.Shot
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 /**
  * Dribbble API - http://developer.dribbble.com/v1/
  */
-interface DribbbleService {
+internal interface DribbbleApi {
 
   @GET("/v1/shots")
   fun getPopular(
