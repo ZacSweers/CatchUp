@@ -32,7 +32,7 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
-import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
@@ -50,7 +50,7 @@ internal class DribbbleService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
     private val api: DribbbleApi,
     private val linkHandler: LinkHandler)
-  : TextService {
+  : VisualService {
 
   override fun meta() = serviceMeta
 
