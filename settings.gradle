@@ -32,6 +32,8 @@ include ':designernews'
 project(':designernews').projectDir = new File(rootDir, 'services/designernews')
 include ':dribbble'
 project(':dribbble').projectDir = new File(rootDir, 'services/dribbble')
+include ':imgur'
+project(':imgur').projectDir = new File(rootDir, 'services/imgur')
 include ':github'
 project(':github').projectDir = new File(rootDir, 'services/github')
 include ':util'

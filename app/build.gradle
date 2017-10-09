@@ -243,6 +243,7 @@ dependencies {
   implementation project(':reddit')
   implementation project(':medium')
   implementation project(':producthunt')
+  implementation project(':imgur')
   implementation project(':slashdot')
   implementation project(':designernews')
   implementation project(':dribbble')

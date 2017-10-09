@@ -40,13 +40,14 @@ import io.sweers.catchup.service.designernews.DesignerNewsModule
 import io.sweers.catchup.service.dribbble.DribbbleModule
 import io.sweers.catchup.service.github.GitHubModule
 import io.sweers.catchup.service.hackernews.HackerNewsModule
+import io.sweers.catchup.service.imgur.ImgurModule
 import io.sweers.catchup.service.medium.MediumModule
 import io.sweers.catchup.service.producthunt.ProductHuntModule
 import io.sweers.catchup.service.reddit.RedditModule
 import io.sweers.catchup.service.slashdot.NewSlashdotModule
 import io.sweers.catchup.ui.base.BaseActivity
-import io.sweers.catchup.ui.controllers.service.StorageBackedService
 import io.sweers.catchup.ui.controllers.PagerController
+import io.sweers.catchup.ui.controllers.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
 import javax.inject.Provider
@@ -97,7 +98,8 @@ class MainActivity : BaseActivity() {
       NewSlashdotModule::class,
       DesignerNewsModule::class,
       DribbbleModule::class,
-      GitHubModule::class
+      GitHubModule::class,
+      ImgurModule::class
       ]
   )
   abstract class Module {
