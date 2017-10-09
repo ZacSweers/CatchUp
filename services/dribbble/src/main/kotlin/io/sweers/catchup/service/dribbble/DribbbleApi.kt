@@ -26,14 +26,14 @@ import retrofit2.http.Query
  */
 internal interface DribbbleApi {
 
-  @GET("/v1/shots")
+  @GET("v1/shots")
   fun getPopular(
       @Query("page") page: Int,
       @Query("per_page") pageSize: Int): Single<List<Shot>>
 
   companion object {
 
-    val HOST = "api.dribbble.com"
+    val HOST = "api.dribbble.com/"
     val ENDPOINT = "https://" + HOST
   }
 
