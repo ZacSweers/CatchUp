@@ -40,7 +40,7 @@ class SummarizationInfo(
     /**
      * Really shallow sanity check
      */
-    fun canSummarize(url: String, text: String? = null): Boolean {
+    private fun canSummarize(url: String, text: String? = null): Boolean {
       text?.let {
         if (it.isBlank()) {
           return false
@@ -63,6 +63,8 @@ class SummarizationInfo(
               || it.contains("gfycat")
               || it.contains("i.reddit")
               || it.contains("v.reddit")
+              || it.contains("twitter.com")
+              || it.contains("t.co")
               || it.contains("youtube")
               || it.contains("youtu.be"))
             return false
