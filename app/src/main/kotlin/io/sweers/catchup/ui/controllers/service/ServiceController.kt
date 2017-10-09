@@ -68,10 +68,9 @@ import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
-import io.sweers.catchup.ui.base2.LoadResult.DiffResultData
-import io.sweers.catchup.ui.base2.LoadResult.NewData
-import io.sweers.catchup.ui.base2.NewServiceController_ViewBinding
 import io.sweers.catchup.ui.controllers.SmmryController
+import io.sweers.catchup.ui.controllers.service.LoadResult.DiffResultData
+import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
 import io.sweers.catchup.util.Iterables
 import io.sweers.catchup.util.applyOn
 import io.sweers.catchup.util.d
@@ -172,7 +171,7 @@ class ServiceController : ButterKnifeController,
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
       inflater.inflate(R.layout.controller_basic_news, container, false)
 
-  override fun bind(view: View) = NewServiceController_ViewBinding(this,
+  override fun bind(view: View) = ServiceController_ViewBinding(this,
       view)
 
   override fun onContextAvailable(context: Context) {
