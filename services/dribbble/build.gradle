@@ -79,15 +79,12 @@ dependencies {
   kapt deps.dagger.apt.compiler
   kapt deps.auto.value.apt.core
   kapt deps.auto.value.extensions.moshi.apt.core
-  kapt deps.auto.value.extensions.redacted.apt.core
 
-  implementation deps.misc.okio
   implementation deps.misc.moshi
   implementation deps.retrofit.core
   implementation deps.retrofit.moshi
   implementation deps.retrofit.rxJava2
   implementation deps.okhttp.core
-  implementation deps.misc.moshiLazyAdapters
 
   api deps.android.support.annotations
   api deps.dagger.runtime
