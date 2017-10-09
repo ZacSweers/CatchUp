@@ -223,13 +223,16 @@ internal class ImageAdapter(private val context: Context,
         itemClickHandler: ((String) -> Any)?,
         commentClickHandler: ((String) -> Any)?) {
       val imageItem = data[adapterPosition]
-      val (x, y) = imageItem.imageInfo.bestSize ?: Pair(0, 0)
+      item.itemClickUrl?.let {
+        itemClickHandler?.invoke(it)
+      }
+      val (x, y) = imageItem.imageInfo.bestSize ?: Pair(image.measuredWidth, image.measuredHeight)
       Glide.with(itemView.context)
           .load(imageItem.imageInfo.url)
           .apply(RequestOptions()
               .placeholder(loadingPlaceholders[adapterPosition % loadingPlaceholders.size])
               .diskCacheStrategy(DiskCacheStrategy.DATA)
-              .fitCenter()
+              .centerCrop()
               .override(x, y))
           .transition(DrawableTransitionOptions.withCrossFade())
           .listener(object : RequestListener<Drawable> {
