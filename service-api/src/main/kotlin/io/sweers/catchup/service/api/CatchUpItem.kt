@@ -37,8 +37,9 @@ data class CatchUpItem(
     var hideComments: Boolean = false,
     var itemClickUrl: String? = null,
     var itemCommentClickUrl: String? = null,
-    @Embedded var summarizationInfo: SummarizationInfo? = null
-) : HasStableId {
+    @Embedded var summarizationInfo: SummarizationInfo? = null,
+    @Embedded var imageInfo: ImageInfo? = null
+) : DisplayableItem {
   constructor() : this(0, "", Instant.now())
 
   override fun stableId() = id

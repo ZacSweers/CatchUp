@@ -84,4 +84,12 @@ internal class CatchUpConverters {
 
   @TypeConverter
   fun toPairString(pair: Pair<String, Int>?) = pair?.let { "${pair.first},${pair.second}" }
+
+  // Pair<Int, Int>
+  @TypeConverter
+  fun toIntPair(pairString: String?) =
+      pairString?.let { it.split(",").let { it[0].toInt() to it[1].toInt() } }
+
+  @TypeConverter
+  fun toIntPairString(pair: Pair<Int, Int>?) = pair?.let { "${pair.first},${pair.second}" }
 }

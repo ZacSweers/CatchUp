@@ -1,0 +1,277 @@
+/*
+ * Copyright (c) 2017 Zac Sweers
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.sweers.catchup.ui.base2
+
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
+import android.annotation.TargetApi
+import android.content.Context
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.TransitionDrawable
+import android.os.Build
+import android.support.annotation.ArrayRes
+import android.support.annotation.ColorInt
+import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RxViewHolder
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.ListPreloader.PreloadModelProvider
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.jakewharton.rxbinding2.view.clicks
+import io.sweers.catchup.GlideApp
+import io.sweers.catchup.R
+import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
+import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.ui.base.DataLoadingSubject
+import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
+import io.sweers.catchup.util.ObservableColorMatrix
+import io.sweers.catchup.util.UiUtil
+import io.sweers.catchup.util.collect.cast
+import io.sweers.catchup.util.glide.DribbbleTarget
+import io.sweers.catchup.util.isInNightMode
+import java.util.ArrayList
+
+internal class ImageAdapter(private val context: Context,
+    private val bindDelegate: (ImageItem, ImageAdapter.ImageHolder) -> Unit)
+  : DisplayableItemAdapter<ImageItem, RecyclerView.ViewHolder>(columnCount = 2),
+    DataLoadingSubject.DataLoadingCallbacks,
+    PreloadModelProvider<ImageItem> {
+
+  companion object {
+    const val PRELOAD_AHEAD_ITEMS = 6
+    @ColorInt private const val INITIAL_GIF_BADGE_COLOR = 0x40ffffff
+  }
+
+  private val items = ArrayList<ImageItem>()
+  private val loadingPlaceholders: Array<ColorDrawable>
+  private var showLoadingMore = false
+
+  init {
+    setHasStableIds(true)
+    @ArrayRes val loadingColorArrayId = if (context.isInNightMode()) {
+      R.array.loading_placeholders_dark
+    } else {
+      R.array.loading_placeholders_light
+    }
+    loadingPlaceholders = context.resources.getIntArray(loadingColorArrayId)
+        .iterator()
+        .asSequence()
+        .map { ColorDrawable(it) }
+        .toList()
+        .toTypedArray()
+  }
+
+  override fun getPreloadItems(position: Int) =
+      items.subList(position, minOf(items.size, position + 5))
+
+  override fun getPreloadRequestBuilder(item: ImageItem): RequestBuilder<Drawable> {
+    val (x, y) = item.imageInfo.bestSize ?: Pair(0, 0)
+    return Glide.with(context)
+        .asDrawable()
+        .apply(RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+            .fitCenter()
+            .override(x, y))
+        .load(item.delegate)
+  }
+
+  override fun getItemId(position: Int): Long {
+    if (getItemViewType(position) == TYPE_LOADING_MORE) {
+      return RecyclerView.NO_ID
+    }
+    return items[position].delegate.id
+  }
+
+  @TargetApi(Build.VERSION_CODES.M)
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder? {
+    val layoutInflater = LayoutInflater.from(parent.context)
+    when (viewType) {
+      TYPE_ITEM -> {
+        val holder = ImageHolder(LayoutInflater.from(parent.context)
+            .inflate(R.layout.image_item, parent, false))
+        holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR)
+        holder.image.foreground = UiUtil.createColorSelector(0x40808080, null)
+        // play animated GIFs whilst touched
+        holder.image.setOnTouchListener { _, event ->
+          // check if it's an event we care about, else bail fast
+          val action = event.action
+          if (!(action == MotionEvent.ACTION_DOWN
+              || action == MotionEvent.ACTION_UP
+              || action == MotionEvent.ACTION_CANCEL)) {
+            return@setOnTouchListener false
+          }
+
+          // get the image and check if it's an animated GIF
+          val drawable = holder.image.drawable ?: return@setOnTouchListener false
+          val gif: GifDrawable = when (drawable) {
+            is GifDrawable -> drawable
+            is TransitionDrawable -> (0 until drawable.numberOfLayers).asSequence()
+                .map { i -> drawable.getDrawable(i) }
+                .filter { it is GifDrawable }
+                .cast<GifDrawable>()
+                .firstOrNull()
+            else -> null
+          } ?: return@setOnTouchListener false
+          // GIF found, start/stop it on press/lift
+          when (action) {
+            MotionEvent.ACTION_DOWN -> gif.start()
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> gif.stop()
+          }
+          false
+        }
+        return holder
+      }
+      TYPE_LOADING_MORE -> return LoadingMoreHolder(
+          layoutInflater.inflate(R.layout.infinite_loading, parent, false))
+    }
+    return null
+  }
+
+  override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    when (getItemViewType(position)) {
+      TYPE_ITEM -> {
+        bindDelegate(items[position], holder as ImageHolder)
+      }
+      TYPE_LOADING_MORE -> (holder as LoadingMoreHolder).progress.visibility = if (position > 0) View.VISIBLE else View.INVISIBLE
+    }
+  }
+
+  @SuppressLint("NewApi") override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
+    if (holder is ImageHolder) {
+      // reset the badge & ripple which are dynamically determined
+      GlideApp.with(holder.itemView).clear(holder.image)
+      holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR)
+      holder.image.showBadge(false)
+      holder.image.foreground = UiUtil.createColorSelector(0x40808080, null)
+    }
+  }
+
+  override fun getItemCount() = dataItemCount + if (showLoadingMore) 1 else 0
+
+  private val dataItemCount: Int
+    get() = items.size
+
+  private val loadingMoreItemPosition: Int
+    get() = if (showLoadingMore) itemCount - 1 else RecyclerView.NO_POSITION
+
+  override fun getItemViewType(position: Int): Int {
+    if (position < dataItemCount && dataItemCount > 0) {
+      return TYPE_ITEM
+    }
+    return TYPE_LOADING_MORE
+  }
+
+  override fun dataStartedLoading() {
+    if (showLoadingMore) {
+      return
+    }
+    showLoadingMore = true
+    notifyItemInserted(loadingMoreItemPosition)
+  }
+
+  override fun dataFinishedLoading() {
+    if (!showLoadingMore) {
+      return
+    }
+    val loadingPos = loadingMoreItemPosition
+    showLoadingMore = false
+    notifyItemRemoved(loadingPos)
+  }
+
+  internal inner class ImageHolder(itemView: View)
+    : RxViewHolder(itemView), BindableCatchUpItemViewHolder {
+
+    internal val image: BadgedFourThreeImageView = itemView as BadgedFourThreeImageView
+
+    override fun itemView(): View = itemView
+
+    override fun bind(item: CatchUpItem,
+        linkHandler: LinkHandler,
+        itemClickHandler: ((String) -> Any)?,
+        commentClickHandler: ((String) -> Any)?) {
+      val imageItem = data[adapterPosition]
+      val (x, y) = imageItem.imageInfo.bestSize ?: Pair(0, 0)
+      Glide.with(itemView.context)
+          .load(imageItem.imageInfo.url)
+          .apply(RequestOptions()
+              .placeholder(loadingPlaceholders[adapterPosition % loadingPlaceholders.size])
+              .diskCacheStrategy(DiskCacheStrategy.DATA)
+              .fitCenter()
+              .override(x, y))
+          .transition(DrawableTransitionOptions.withCrossFade())
+          .listener(object : RequestListener<Drawable> {
+            override fun onResourceReady(resource: Drawable,
+                model: Any,
+                target: Target<Drawable>,
+                dataSource: DataSource,
+                isFirstResource: Boolean): Boolean {
+              if (!imageItem.hasFadedIn) {
+                image.setHasTransientState(true)
+                val cm = ObservableColorMatrix()
+                val saturation = ObjectAnimator.ofFloat(cm, ObservableColorMatrix.SATURATION, 0f,
+                    1f)
+                saturation.addUpdateListener { _ ->
+                  // just animating the color matrix does not invalidate the
+                  // drawable so need this update listener.  Also have to create a
+                  // new CMCF as the matrix is immutable :(
+                  image.colorFilter = ColorMatrixColorFilter(cm)
+                }
+                saturation.duration = 2000L
+                saturation.interpolator = FastOutSlowInInterpolator()
+                saturation.addListener(object : AnimatorListenerAdapter() {
+                  override fun onAnimationEnd(animation: Animator) {
+                    image.clearColorFilter()
+                    image.setHasTransientState(false)
+                  }
+                })
+                saturation.start()
+                imageItem.hasFadedIn = true
+              }
+              return false
+            }
+
+            override fun onLoadFailed(e: GlideException?,
+                model: Any,
+                target: Target<Drawable>,
+                isFirstResource: Boolean) = false
+          })
+          .into(DribbbleTarget(image, false))
+      // need both placeholder & background to prevent seeing through image as it fades in
+      image.background = loadingPlaceholders[adapterPosition % loadingPlaceholders.size]
+      image.showBadge(imageItem.imageInfo.animatable)
+    }
+
+    override fun itemClicks() = itemView().clicks()
+  }
+}

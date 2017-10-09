@@ -26,9 +26,12 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.util.DiffUtil
 import android.support.v7.util.DiffUtil.DiffResult
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RecyclerView.Adapter
 import android.support.v7.widget.RecyclerView.RecycledViewPool
+import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +42,8 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import com.apollographql.apollo.exception.ApolloException
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
+import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.uber.autodispose.kotlin.autoDisposeWith
@@ -46,11 +51,15 @@ import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
+import io.sweers.catchup.R.drawable
+import io.sweers.catchup.R.string
 import io.sweers.catchup.data.RemoteConfigKeys
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.requestManager
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
+import io.sweers.catchup.service.api.DisplayableItem
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
@@ -58,8 +67,8 @@ import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
+import io.sweers.catchup.ui.base2.LoadResult.DiffResultData
 import io.sweers.catchup.ui.base2.LoadResult.NewData
-import io.sweers.catchup.ui.base2.LoadResult.RefreshData
 import io.sweers.catchup.ui.controllers.SmmryController
 import io.sweers.catchup.util.Iterables
 import io.sweers.catchup.util.applyOn
@@ -75,6 +84,39 @@ import java.security.InvalidParameterException
 import java.util.concurrent.atomic.AtomicLong
 import javax.inject.Inject
 import javax.inject.Provider
+
+abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
+    val columnCount: Int = 1)
+  : Adapter<VH>(), DataLoadingCallbacks {
+
+  companion object Blah {
+    const val TYPE_ITEM = 0
+    const val TYPE_LOADING_MORE = -1
+  }
+
+  protected val data = mutableListOf<T>()
+
+  internal fun update(loadResult: LoadResult<T>) {
+    when (loadResult) {
+      is NewData -> {
+        data.addAll(loadResult.newData)
+        notifyItemRangeInserted(data.size - loadResult.newData.size, loadResult.newData.size)
+      }
+      is DiffResultData -> {
+        data.clear()
+        data.addAll(loadResult.data)
+        loadResult.diffResult.dispatchUpdatesTo(this)
+      }
+    }
+  }
+
+  fun getItems() = data.toList()
+
+  fun getItemColumnSpan(position: Int) = when (getItemViewType(position)) {
+    TYPE_LOADING_MORE -> columnCount
+    else -> 1
+  }
+}
 
 class NewServiceController : ButterKnifeController,
     SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
@@ -93,7 +135,7 @@ class NewServiceController : ButterKnifeController,
   @BindView(R.id.refresh) lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
   private lateinit var layoutManager: LinearLayoutManager
-  private lateinit var adapter: Adapter
+  private lateinit var adapter: DisplayableItemAdapter<out DisplayableItem, ViewHolder>
   private var currentPage: String? = null
   private var nextPage: String? = null
   private var isRestoring = false
@@ -132,13 +174,59 @@ class NewServiceController : ButterKnifeController,
     super.onContextAvailable(context)
   }
 
+  private fun createLayoutManager(context: Context,
+      adapter: DisplayableItemAdapter<*, *>): LinearLayoutManager {
+    return if (service.meta().isVisual) {
+      GridLayoutManager(context, 2).apply {
+        spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+          override fun getSpanSize(position: Int) = adapter.getItemColumnSpan(position)
+        }
+      }
+    } else {
+      LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+    }
+  }
+
+  private fun createAdapter(
+      context: Context): DisplayableItemAdapter<out DisplayableItem, ViewHolder> {
+    if (service.meta().isVisual) {
+      val adapter = ImageAdapter(context) { item, holder ->
+        service.bindItemView(item.delegate, holder)
+      }
+      val preloader = RecyclerViewPreloader<ImageItem>(requestManager(),
+          adapter,
+          ViewPreloadSizeProvider<ImageItem>(),
+          ImageAdapter.PRELOAD_AHEAD_ITEMS)
+      recyclerView.addOnScrollListener(preloader)
+      return adapter
+    } else {
+      return TextAdapter { item, holder ->
+        service.bindItemView(item, holder)
+        item.summarizationInfo?.let {
+          if (remoteConfig.getBoolean(RemoteConfigKeys.SMMRY_ENABLED)) {
+            holder.itemLongClicks()
+                .autoDisposeWith(this)
+                .subscribe(SmmryController.showFor<Any>(controller = this,
+                    service = service,
+                    title = item.title,
+                    id = item.id.toString(),
+                    info = it))
+          }
+        }
+      }
+    }
+  }
+
   override fun onViewBound(view: View) {
     super.onViewBound(view)
     @ColorInt val accentColor = ContextCompat.getColor(view.context, service.meta().themeColor)
-    swipeRefreshLayout.setColorSchemeColors(accentColor)
+    swipeRefreshLayout.run {
+      setColorSchemeColors(accentColor)
+      setOnRefreshListener(this@NewServiceController)
+    }
     progress.indeterminateTintList = ColorStateList.valueOf(accentColor)
-    layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-    recyclerView.recycledViewPool = viewPool
+    adapter = createAdapter(view.context)
+    layoutManager = createLayoutManager(view.context, adapter)
     recyclerView.layoutManager = layoutManager
     recyclerView.addOnScrollListener(
         object : InfiniteScrollListener(layoutManager, this@NewServiceController) {
@@ -146,22 +234,8 @@ class NewServiceController : ButterKnifeController,
             loadData()
           }
         })
-    adapter = Adapter { item, holder ->
-      service.bindItemView(item, holder)
-      item.summarizationInfo?.let {
-        if (remoteConfig.getBoolean(RemoteConfigKeys.SMMRY_ENABLED)) {
-          holder.itemLongClicks()
-              .autoDisposeWith(this)
-              .subscribe(SmmryController.showFor<Any>(controller = this,
-                  service = service,
-                  title = item.title,
-                  id = item.id.toString(),
-                  info = it))
-        }
-      }
-    }
-        .also { recyclerView.adapter = it }
-    swipeRefreshLayout.setOnRefreshListener(this)
+    recyclerView.recycledViewPool = viewPool
+    recyclerView.adapter = adapter
     recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
       addDuration = 300
       removeDuration = 300
@@ -238,14 +312,14 @@ class NewServiceController : ButterKnifeController,
     }
     val trace = FirebasePerformance.getInstance().newTrace("Data load - ${service.meta().id}")
     val timer = AtomicLong()
-    val multiPageage = pageToRestoreTo != null
-    if (multiPageage) {
+    val multiPage = pageToRestoreTo != null
+    if (multiPage) {
       recyclerView.itemAnimator = null
     }
     service.fetchPage(
         DataRequest(
             fromRefresh = fromRefresh && !isRestoring,
-            multiPage = multiPageage,
+            multiPage = multiPage,
             pageId = pageToRequest)
             .also {
               isRestoring = false
@@ -257,9 +331,19 @@ class NewServiceController : ButterKnifeController,
             currentPage = pageToRequest
           }
         }
+        .flattenAsObservable { it }
+        .let {
+          // If these are images, wrap in our visual item
+          if (service.meta().isVisual) {
+            it.map { ImageItem(it) }
+          } else it
+        }
+        .cast(DisplayableItem::class.java)
+        .toList()
+        .toMaybe()
         .map { newData ->
           if (fromRefresh) {
-            RefreshData(newData,
+            DiffResultData(newData,
                 DiffUtil.calculateDiff(
                     ItemUpdateCallback(adapter.getItems(), newData)))
           } else {
@@ -277,7 +361,7 @@ class NewServiceController : ButterKnifeController,
         }
         .doFinally {
           trace.stop()
-          d { "Data load - ${javaClass.simpleName} - took: ${System.currentTimeMillis() - timer.get()}ms" }
+          d { "Data load - ${service.meta().id} - took: ${System.currentTimeMillis() - timer.get()}ms" }
           dataLoading = false
           recyclerView.post {
             adapter.dataFinishedLoading()
@@ -289,15 +373,14 @@ class NewServiceController : ButterKnifeController,
           applyOn(progress, errorView) { hide() }
           swipeRefreshLayout.show()
           recyclerView.post {
-            when (loadResult) {
-              is NewData -> {
-                adapter.addData(loadResult.newData, true)
+            when (adapter) {
+              is TextAdapter -> {
+                @Suppress("UNCHECKED_CAST") // badpokerface.png
+                (adapter as TextAdapter).update((loadResult as LoadResult<CatchUpItem>))
               }
-              is RefreshData -> {
-                with(loadResult) {
-                  adapter.setData(data)
-                  diffResult.dispatchUpdatesTo(adapter)
-                }
+              is ImageAdapter -> {
+                @Suppress("UNCHECKED_CAST")
+                (adapter as ImageAdapter).update((loadResult as LoadResult<ImageItem>))
               }
             }
             pendingRVState?.let {
@@ -305,16 +388,16 @@ class NewServiceController : ButterKnifeController,
               pendingRVState = null
             }
           }
-        }, { error ->
+        }, { error: Throwable ->
           val activity = activity
           if (activity != null) {
             when (error) {
               is IOException -> {
                 progress.hide()
-                errorTextView.text = activity.getString(R.string.connection_issue)
+                errorTextView.text = activity.getString(string.connection_issue)
                 swipeRefreshLayout.hide()
                 errorView.show()
-                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                AnimatedVectorDrawableCompat.create(activity, drawable.avd_no_connection)
                     ?.let {
                       errorImage.setImageDrawable(it)
                       it.start()
@@ -324,10 +407,10 @@ class NewServiceController : ButterKnifeController,
               is HttpException, is ApolloException -> {
                 // TODO Show some sort of API error response.
                 progress.hide()
-                errorTextView.text = activity.getString(R.string.api_issue)
+                errorTextView.text = activity.getString(string.api_issue)
                 swipeRefreshLayout.hide()
                 errorView.show()
-                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                AnimatedVectorDrawableCompat.create(activity, drawable.avd_no_connection)
                     ?.let {
                       errorImage.setImageDrawable(it)
                       it.start()
@@ -338,9 +421,9 @@ class NewServiceController : ButterKnifeController,
                 // TODO Show some sort of generic response error
                 progress.hide()
                 swipeRefreshLayout.hide()
-                errorTextView.text = activity.getString(R.string.unknown_issue)
+                errorTextView.text = activity.getString(string.unknown_issue)
                 errorView.show()
-                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                AnimatedVectorDrawableCompat.create(activity, drawable.avd_no_connection)
                     ?.let {
                       errorImage.setImageDrawable(it)
                       it.start()
@@ -366,24 +449,15 @@ class NewServiceController : ButterKnifeController,
     }
   }
 
-  private class Adapter(
+  private class TextAdapter(
       private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder) -> Unit)
-    : RecyclerView.Adapter<RecyclerView.ViewHolder>(), DataLoadingCallbacks {
+    : DisplayableItemAdapter<CatchUpItem, RecyclerView.ViewHolder>() {
 
-    companion object Blah {
-
-      const val TYPE_ITEM = 0
-      const val TYPE_LOADING_MORE = -1
-    }
-
-    private val data = mutableListOf<CatchUpItem>()
     private var showLoadingMore = false
 
     init {
       setHasStableIds(true)
     }
-
-    fun getItems(): List<CatchUpItem> = data
 
     override fun getItemId(position: Int): Long {
       if (getItemViewType(position) == TYPE_LOADING_MORE) {
@@ -451,22 +525,6 @@ class NewServiceController : ButterKnifeController,
       showLoadingMore = false
       notifyItemRemoved(loadingPos)
     }
-
-    fun addData(newData: List<CatchUpItem>, notify: Boolean = false) {
-      val prevSize = data.size
-      data.addAll(newData)
-      if (notify) {
-        notifyItemRangeInserted(prevSize, data.size - prevSize)
-      }
-    }
-
-    fun setData(newData: List<CatchUpItem>, notify: Boolean = false) {
-      data.clear()
-      data.addAll(newData)
-      if (notify) {
-        notifyDataSetChanged()
-      }
-    }
   }
 
   @Subcomponent
@@ -478,18 +536,21 @@ class NewServiceController : ButterKnifeController,
   }
 }
 
-private class LoadingMoreHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class LoadingMoreHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
   val progress: ProgressBar = itemView as ProgressBar
 }
 
-private sealed class LoadResult {
-  data class RefreshData(val data: List<CatchUpItem>, val diffResult: DiffResult) : LoadResult()
-  data class NewData(val newData: List<CatchUpItem>) : LoadResult()
+@Suppress("unused")
+internal sealed class LoadResult<T : DisplayableItem> {
+  data class DiffResultData<T : DisplayableItem>(val data: List<T>,
+      val diffResult: DiffResult) : LoadResult<T>()
+
+  data class NewData<T : DisplayableItem>(val newData: List<T>) : LoadResult<T>()
 }
 
-private class ItemUpdateCallback(
-    private val oldItems: List<CatchUpItem>,
-    private val newItems: List<CatchUpItem>
+internal class ItemUpdateCallback<T : DisplayableItem>(
+    private val oldItems: List<T>,
+    private val newItems: List<T>
 ) : DiffUtil.Callback() {
   override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
       oldItems[oldItemPosition].stableId() == newItems[newItemPosition].stableId()

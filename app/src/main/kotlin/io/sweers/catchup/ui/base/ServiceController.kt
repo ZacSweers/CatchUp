@@ -67,9 +67,7 @@ abstract class ServiceController : ButterKnifeController {
   }
 
   class LoadingMoreHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
     val progress: ProgressBar = itemView as ProgressBar
-
   }
 
   companion object {

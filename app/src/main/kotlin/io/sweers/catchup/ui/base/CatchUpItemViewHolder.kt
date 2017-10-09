@@ -28,7 +28,6 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.view.longClicks
-import com.uber.autodispose.kotlin.autoDisposeWith
 import io.reactivex.Completable
 import io.reactivex.functions.Function
 import io.sweers.catchup.R
@@ -81,14 +80,6 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
       linkHandler: LinkHandler,
       itemClickHandler: ((String) -> Any)?,
       commentClickHandler: ((String) -> Any)?) {
-    bind(null, item, linkHandler, itemClickHandler, commentClickHandler)
-  }
-
-  fun bind(controller: ServiceController?,
-      item: CatchUpItem,
-      linkHandler: LinkHandler? = null,
-      itemClickHandler: ((String) -> Any)? = null,
-      commentClickHandler: ((String) -> Any)? = null) {
     title(item.title.trim())
     score(item.score)
     timestamp(item.timestamp)
@@ -101,23 +92,11 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
     itemClickUrl?.let {
       if (itemClickHandler != null) {
         itemClickHandler(it)
-      } else {
-        itemClicks()
-            .compose<UrlMeta>(controller!!.transformUrlToMeta<Any>(it))
-            .flatMapCompletable(linkHandler ?: COMPLETABLE_FUNC)
-            .autoDisposeWith(this)
-            .subscribe()
       }
     }
     item.itemCommentClickUrl?.let {
       if (commentClickHandler != null) {
         commentClickHandler(it)
-      } else {
-        itemCommentClicks()
-            .compose<UrlMeta>(controller!!.transformUrlToMeta<Any>(it))
-            .flatMapCompletable(linkHandler ?: COMPLETABLE_FUNC)
-            .autoDisposeWith(this)
-            .subscribe()
       }
     } ?: hideComments()
 

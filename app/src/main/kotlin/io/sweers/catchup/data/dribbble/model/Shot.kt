@@ -100,8 +100,6 @@ abstract class Shot : HasStableId {
   companion object {
 
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Shot> {
-      return AutoValue_Shot.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Shot> = AutoValue_Shot.MoshiJsonAdapter(moshi)
   }
 }

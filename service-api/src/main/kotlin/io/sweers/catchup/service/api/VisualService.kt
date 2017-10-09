@@ -16,9 +16,26 @@
 
 package io.sweers.catchup.service.api
 
-// TODO This'll one day give you an image based impl
+import android.support.v4.content.ContextCompat
+import com.uber.autodispose.kotlin.autoDisposeWith
+
 interface VisualService : Service {
   override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
-
+    val context = holder.itemView().context
+    val accentColor = ContextCompat.getColor(context, meta().themeColor)
+    holder.tint(accentColor)
+    holder.bind(
+        item = item,
+        linkHandler = linkHandler(),
+        itemClickHandler = item.itemClickUrl?.let {
+          { url: String ->
+            holder.itemClicks()
+                .map { UrlMeta(url, accentColor, context) }
+                .flatMapCompletable(linkHandler())
+                .autoDisposeWith(holder)
+                .subscribe()
+          }
+        }
+    )
   }
 }

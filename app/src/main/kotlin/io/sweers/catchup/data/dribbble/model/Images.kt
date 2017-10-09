@@ -42,9 +42,7 @@ abstract class Images {
     private val TWO_X_IMAGE_SIZE = 800 to 600
 
     @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Images> {
-      return AutoValue_Images.MoshiJsonAdapter(moshi)
-    }
+    fun jsonAdapter(moshi: Moshi): JsonAdapter<Images> = AutoValue_Images.MoshiJsonAdapter(moshi)
   }
 
 }

@@ -23,13 +23,24 @@ import io.reactivex.Observable
 
 interface BindableCatchUpItemViewHolder : ScopeProvider {
   fun itemView(): View
-  fun tint(@ColorInt color: Int)
+  fun tint(@ColorInt color: Int) {
+    // NOOP
+  }
+
   fun bind(item: CatchUpItem,
       linkHandler: LinkHandler,
       itemClickHandler: ((String) -> Any)? = null,
       commentClickHandler: ((String) -> Any)? = null)
 
-  fun itemClicks(): Observable<Unit>
-  fun itemLongClicks(): Observable<Unit>
-  fun itemCommentClicks(): Observable<Unit>
+  fun itemClicks(): Observable<Unit> {
+    TODO("itemClicks not implemented!")
+  }
+
+  fun itemLongClicks(): Observable<Unit> {
+    TODO("itemLongClicks not implemented!")
+  }
+
+  fun itemCommentClicks(): Observable<Unit> {
+    TODO("itemCommentClicks not implemented!")
+  }
 }

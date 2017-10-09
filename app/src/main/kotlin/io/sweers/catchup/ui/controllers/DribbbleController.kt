@@ -169,9 +169,7 @@ class DribbbleController
           }
         })
     layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-      override fun getSpanSize(position: Int): Int {
-        return adapter.getItemColumnSpan(position)
-      }
+      override fun getSpanSize(position: Int) = adapter.getItemColumnSpan(position)
     }
     swipeRefreshLayout.setOnRefreshListener(this)
   }
@@ -182,9 +180,7 @@ class DribbbleController
     loadData()
   }
 
-  override fun isDataLoading(): Boolean {
-    return isDataLoading
-  }
+  override fun isDataLoading() = isDataLoading
 
   private fun loadData() {
     val currentPage = page++
@@ -305,9 +301,8 @@ class DribbbleController
       notifyItemRangeInserted(prevSize, shots.size - prevSize)
     }
 
-    override fun getPreloadItems(position: Int): List<Shot> {
-      return shots.subList(position, minOf(shots.size, position + 5))
-    }
+    override fun getPreloadItems(position: Int) =
+        shots.subList(position, minOf(shots.size, position + 5))
 
     override fun getPreloadRequestBuilder(shot: Shot): RequestBuilder<Drawable> {
       val (x, y) = shot.images()
@@ -335,7 +330,7 @@ class DribbbleController
       when (viewType) {
         ServiceController.TYPE_ITEM -> {
           val holder = DribbbleShotHolder(LayoutInflater.from(parent.context)
-              .inflate(R.layout.dribbble_shot_item, parent, false))
+              .inflate(R.layout.image_item, parent, false))
           holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR)
           holder.image.foreground = UiUtil.createColorSelector(0x40808080, null)
           // play animated GIFs whilst touched
@@ -394,9 +389,7 @@ class DribbbleController
       }
     }
 
-    override fun getItemCount(): Int {
-      return dataItemCount + if (showLoadingMore) 1 else 0
-    }
+    override fun getItemCount() = dataItemCount + if (showLoadingMore) 1 else 0
 
     val dataItemCount: Int
       get() = shots.size
@@ -428,11 +421,9 @@ class DribbbleController
       notifyItemRemoved(loadingPos)
     }
 
-    fun getItemColumnSpan(position: Int): Int {
-      return when (getItemViewType(position)) {
-        ServiceController.TYPE_LOADING_MORE -> 2
-        else -> 1
-      }
+    fun getItemColumnSpan(position: Int) = when (getItemViewType(position)) {
+      ServiceController.TYPE_LOADING_MORE -> 2
+      else -> 1
     }
 
     internal inner class DribbbleShotHolder(itemView: View) : RxViewHolder(itemView) {
@@ -498,7 +489,7 @@ class DribbbleController
   }
 
   @PerController
-  @Subcomponent(modules = arrayOf(Module::class))
+  @Subcomponent(modules = [Module::class])
   interface Component : AndroidInjector<DribbbleController> {
 
     @Subcomponent.Builder
