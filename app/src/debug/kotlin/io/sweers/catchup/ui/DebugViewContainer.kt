@@ -43,6 +43,7 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.base.ActivityEvent
 import io.sweers.catchup.ui.base.BaseActivity
+import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
@@ -54,7 +55,7 @@ import javax.inject.Inject
  * all of the debug information and settings.
  */
 @PerActivity
-class DebugViewContainer @Inject constructor(
+internal class DebugViewContainer @Inject constructor(
     private val bugReportLens: BugReportLens,
     private val lumberYard: LumberYard,
     private val lazyOkHttpClient: Lazy<OkHttpClient>) : ViewContainer {

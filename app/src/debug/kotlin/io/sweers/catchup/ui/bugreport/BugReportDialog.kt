@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui
+package io.sweers.catchup.ui.bugreport
 
 import android.app.Dialog
 import android.content.Context
@@ -22,10 +22,11 @@ import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import io.sweers.catchup.R
-import io.sweers.catchup.ui.BugReportView.Report
+import io.sweers.catchup.ui.bugreport.BugReportView.Report
+import io.sweers.catchup.ui.bugreport.BugReportView.ReportDetailsListener
 
 class BugReportDialog(context: Context)
-  : AlertDialog(context), BugReportView.ReportDetailsListener {
+  : AlertDialog(context), ReportDetailsListener {
   interface ReportListener {
     fun onBugReportSubmit(report: Report)
   }

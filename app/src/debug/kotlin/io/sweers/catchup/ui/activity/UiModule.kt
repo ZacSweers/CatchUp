@@ -21,14 +21,14 @@ import dagger.Provides
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.DebugViewContainer
 import io.sweers.catchup.ui.ViewContainer
+import io.sweers.catchup.ui.bugreport.BugReportModule
 
-@Module
+@Module(includes = [BugReportModule::class])
 object UiModule {
 
   @Provides
   @JvmStatic
   @PerActivity
-  internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer {
-    return viewContainer
-  }
+  internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer =
+      viewContainer
 }

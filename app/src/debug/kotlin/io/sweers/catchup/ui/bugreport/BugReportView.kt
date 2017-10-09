@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui
+package io.sweers.catchup.ui.bugreport
 
 import android.content.Context
 import android.util.AttributeSet
@@ -27,6 +27,7 @@ import com.jakewharton.rxbinding2.widget.RxTextView
 import io.sweers.catchup.R
 
 class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+  @BindView(R.id.username) lateinit var usernameView: EditText
   @BindView(R.id.title) lateinit var titleView: EditText
   @BindView(R.id.description) lateinit var descriptionView: EditText
   @BindView(R.id.screenshot) lateinit var screenshotView: CheckBox
@@ -42,14 +43,22 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
     super.onFinishInflate()
     ButterKnife.bind(this)
 
+    usernameView.setOnFocusChangeListener { _, hasFocus ->
+      if (!hasFocus) {
+        usernameView.error = if (usernameView.text.isNullOrBlank()) "Cannot be empty." else null
+      }
+    }
     titleView.setOnFocusChangeListener { _, hasFocus ->
       if (!hasFocus) {
         titleView.error = if (titleView.text.isNullOrBlank()) "Cannot be empty." else null
       }
     }
     RxTextView.afterTextChangeEvents(titleView)
-        .subscribe{ s ->
-          listener?.onStateChanged(!s.editable().isNullOrBlank())
+        .mergeWith(RxTextView.afterTextChangeEvents(usernameView))
+        .subscribe { s ->
+          val titleIsBlank = titleView.text.isNullOrBlank()
+          val userNameIsBlank = usernameView.text.isNullOrBlank()
+          listener?.onStateChanged(!titleIsBlank && !userNameIsBlank)
         }
 
     screenshotView.isChecked = true
@@ -61,10 +70,15 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
   }
 
   val report: Report
-    get() = Report(titleView.text.toString(),
-        descriptionView.text.toString(), screenshotView.isChecked,
+    get() = Report(usernameView.text.toString().trim().removePrefix("@"),
+        titleView.text.toString(),
+        descriptionView.text.toString(),
+        screenshotView.isChecked,
         logsView.isChecked)
 
-  data class Report(val title: String, val description: String, val includeScreenshot: Boolean,
+  data class Report(val username: String,
+      val title: String,
+      val description: String,
+      val includeScreenshot: Boolean,
       val includeLogs: Boolean)
 }
