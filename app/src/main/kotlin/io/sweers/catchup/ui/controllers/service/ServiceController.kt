@@ -152,8 +152,8 @@ class ServiceController : ButterKnifeController,
   private var pendingRVState: Parcelable? = null
 
   @Inject lateinit var remoteConfig: FirebaseRemoteConfig
-  @TextViewPool @Inject lateinit var textViewPool: RecycledViewPool
-  @VisualViewPool @Inject lateinit var visualViewPool: RecycledViewPool
+  @field:TextViewPool @Inject lateinit var textViewPool: RecycledViewPool
+  @field:VisualViewPool @Inject lateinit var visualViewPool: RecycledViewPool
   @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<StorageBackedService>>
   private val service: Service by lazy {
     args[ARG_SERVICE_KEY].let {
