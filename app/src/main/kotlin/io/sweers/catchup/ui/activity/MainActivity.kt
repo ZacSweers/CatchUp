@@ -51,6 +51,7 @@ import io.sweers.catchup.ui.controllers.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
 import javax.inject.Provider
+import javax.inject.Qualifier
 
 class MainActivity : BaseActivity() {
 
@@ -105,10 +106,17 @@ class MainActivity : BaseActivity() {
   abstract class Module {
     @dagger.Module
     companion object {
+      @TextViewPool
       @Provides
       @JvmStatic
       @PerActivity
-      fun provideViewPool() = RecycledViewPool()
+      fun provideTextViewPool() = RecycledViewPool()
+
+      @VisualViewPool
+      @Provides
+      @JvmStatic
+      @PerActivity
+      fun provideVisualViewPool() = RecycledViewPool()
 
       // TODO Can we make this just a qualified thing?
       @Provides
@@ -142,3 +150,9 @@ class MainActivity : BaseActivity() {
 
   }
 }
+
+@Qualifier
+annotation class TextViewPool
+
+@Qualifier
+annotation class VisualViewPool

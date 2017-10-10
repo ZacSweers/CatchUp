@@ -64,6 +64,8 @@ import io.sweers.catchup.service.api.DisplayableItem
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
+import io.sweers.catchup.ui.activity.TextViewPool
+import io.sweers.catchup.ui.activity.VisualViewPool
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
@@ -150,7 +152,8 @@ class ServiceController : ButterKnifeController,
   private var pendingRVState: Parcelable? = null
 
   @Inject lateinit var remoteConfig: FirebaseRemoteConfig
-  @Inject lateinit var viewPool: RecycledViewPool
+  @TextViewPool @Inject lateinit var textViewPool: RecycledViewPool
+  @VisualViewPool @Inject lateinit var visualViewPool: RecycledViewPool
   @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<StorageBackedService>>
   private val service: Service by lazy {
     args[ARG_SERVICE_KEY].let {
@@ -240,7 +243,11 @@ class ServiceController : ButterKnifeController,
             loadData()
           }
         })
-    recyclerView.recycledViewPool = viewPool
+    if (service.meta().isVisual) {
+      recyclerView.recycledViewPool = visualViewPool
+    } else {
+      recyclerView.recycledViewPool = textViewPool
+    }
     recyclerView.adapter = adapter
     if (!service.meta().isVisual) {
       recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
