@@ -51,24 +51,20 @@ object VariantDataModule {
   @IntoSet
   @JvmStatic
   @Singleton
-  internal fun provideStethoInterceptor(): Interceptor {
-    return StethoInterceptor()
-  }
+  internal fun provideStethoInterceptor(): Interceptor = StethoInterceptor()
 
   @Provides
   @NetworkInterceptor
   @IntoSet
   @JvmStatic
   @Singleton
-  internal fun provideChuckInterceptor(@ApplicationContext context: Context): Interceptor {
-    return ChuckInterceptor(context)
-  }
+  internal fun provideChuckInterceptor(@ApplicationContext context: Context): Interceptor =
+      ChuckInterceptor(context)
 
   @Provides
   @IntoSet
   @JvmStatic
   @Singleton
-  internal fun provideMockDataInterceptor(@ApplicationContext context: Context): Interceptor {
-    return MockDataInterceptor(context)
-  }
+  internal fun provideMockDataInterceptor(@ApplicationContext context: Context): Interceptor =
+      MockDataInterceptor(context)
 }
