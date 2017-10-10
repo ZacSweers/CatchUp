@@ -67,7 +67,7 @@ internal class RedditService @Inject constructor(
                 CatchUpItem(
                     id = it.id().hashCode().toLong(),
                     title = it.title(),
-                    score = "⬆" to it.score(),
+                    score = "+" to it.score(),
                     timestamp = it.createdUtc(),
                     author = "/u/" + it.author(),
                     source = it.domain() ?: "self",
