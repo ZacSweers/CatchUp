@@ -55,7 +55,7 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
     }
     RxTextView.afterTextChangeEvents(titleView)
         .mergeWith(RxTextView.afterTextChangeEvents(usernameView))
-        .subscribe { s ->
+        .subscribe {
           val titleIsBlank = titleView.text.isNullOrBlank()
           val userNameIsBlank = usernameView.text.isNullOrBlank()
           listener?.onStateChanged(!titleIsBlank && !userNameIsBlank)
