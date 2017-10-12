@@ -37,7 +37,7 @@ class DebugCatchUpApplication : CatchUpApplication() {
         .detectAll()  // Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
         .penaltyLog()
         .build())
-    refWatcher = LeakCanary.refWatcher(this).build()
+    refWatcher = LeakCanary.refWatcher(this).buildAndInstall()
     registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
       override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
