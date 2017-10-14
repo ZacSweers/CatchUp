@@ -53,7 +53,7 @@ class StorageBackedService(
       // If service has deterministic numeric paging, we can use range + concatMapEager to fast track it
       if (meta().pagesAreNumeric) {
         return Observable.range(0, request.pageId.toInt())
-            .concatMapEager { getPage(it.toString()).toObservable() }
+            .concatMapEager { getPage(it.toString(), allowNetworkFallback = false).toObservable() }
             .reduce { prev, result ->
               DataResult(prev.data + result.data, result.nextPageToken)
             }
@@ -70,7 +70,7 @@ class StorageBackedService(
       val stateHandler = BehaviorSubject.createDefault(
           DataResult(emptyList(), meta().firstPageKey)).toSerialized()
       return stateHandler
-          .flatMapMaybe { getPage(it.nextPageToken!!) }
+          .flatMapMaybe { getPage(it.nextPageToken!!, allowNetworkFallback = false) }
           .doAfterNext { result ->
             val nextPage = result.nextPageToken
             if (nextPage != null) {
@@ -85,12 +85,20 @@ class StorageBackedService(
           .reduce { prev, result ->
             DataResult(prev.data + result.data, result.nextPageToken)
           }
+          .switchIfEmpty(Maybe.defer {
+            // Ultimately fall back to just trying to request the first page
+            getPage(page = meta().firstPageKey,
+                isRefresh = false,
+                allowNetworkFallback = true)
+          })
     } else {
       return getPage(request.pageId, request.fromRefresh)
     }
   }
 
-  private fun getPage(page: String, isRefresh: Boolean = false): Maybe<DataResult> {
+  private fun getPage(page: String,
+      isRefresh: Boolean = false,
+      allowNetworkFallback: Boolean = false): Maybe<DataResult> {
     return if (!isRefresh) {
       // Try from local first
       // If no prev session ID, grab the latest page
@@ -107,11 +115,13 @@ class StorageBackedService(
               fetchPageFromLocal(page, true)
             })
           }
-          .switchIfEmpty(
-              Maybe.defer {
-                // Nothing local, fall to network
-                fetchPageFromNetwork(page, isRefresh)
-              })
+          .runIf(allowNetworkFallback) {
+            switchIfEmpty(
+                Maybe.defer {
+                  // Nothing local, fall to network
+                  fetchPageFromNetwork(page, isRefresh)
+                })
+          }
     } else {
       fetchPageFromNetwork(page, true)
     }
