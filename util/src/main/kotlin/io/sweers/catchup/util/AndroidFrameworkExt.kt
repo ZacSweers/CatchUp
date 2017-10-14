@@ -21,6 +21,7 @@ package io.sweers.catchup.util
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build.VERSION_CODES
 import android.support.annotation.AttrRes
@@ -99,7 +100,14 @@ fun Context.resolveAttribute(@AttrRes resId: Int): Int {
   return typedValue.data
 }
 
-fun Context.isInNightMode() = resources.getBoolean(R.bool.isInNightMode)
+fun Context.isInNightMode(): Boolean {
+  val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+  return when (currentNightMode) {
+    Configuration.UI_MODE_NIGHT_NO -> false // Night mode is not active, we're in day time
+    Configuration.UI_MODE_NIGHT_YES -> true // Night mode is active, we're at night!
+    else -> false // We don't know what mode we're in, assume notnight
+  }
+}
 
 /**
  * Determine if the navigation bar will be on the bottom of the screen, based on logic in
