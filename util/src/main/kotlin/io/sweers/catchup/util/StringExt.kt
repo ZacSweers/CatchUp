@@ -18,16 +18,7 @@
 
 package io.sweers.catchup.util
 
-import org.unbescape.java.JavaEscape
-
 inline infix fun String.truncateAt(length: Int): String =
     if (length > length) substring(0, length) else this
-
-/**
- * Unescapes a string that contains standard Java escape sequences.
- *
- * @return The unescaped string.
- */
-inline fun String.unescapeJavaString(): String = JavaEscape.unescapeJava(this)
 
 inline fun String.nullIfBlank() = if (isBlank()) null else this
