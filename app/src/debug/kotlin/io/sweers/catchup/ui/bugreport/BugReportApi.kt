@@ -66,7 +66,7 @@ data class GitHubIssue(
   companion object {
     fun adapter(): JsonAdapter<GitHubIssue> {
       return object : JsonAdapter<GitHubIssue>() {
-        override fun fromJson(reader: JsonReader?): GitHubIssue? {
+        override fun fromJson(reader: JsonReader): GitHubIssue? {
           TODO("Not supported")
         }
 

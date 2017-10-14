@@ -22,7 +22,7 @@ apply plugin: 'org.jetbrains.kotlin.kapt'
 apply plugin: 'com.apollographql.android'
 apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
-//apply plugin: 'com.bugsnag.android.gradle'
+apply plugin: 'com.bugsnag.android.gradle'
 
 private String getPropertyOrEmpty(String property) {
   if (hasProperty(property)) {
@@ -199,14 +199,17 @@ android {
   }
 }
 
-//if (getPropertyOrEmpty("catchup_bugsnag_key")) {
-//  bugsnag {
-//    apiKey getPropertyOrEmpty("catchup_bugsnag_key")
-//  }
-//}
+if (getPropertyOrEmpty("catchup_bugsnag_key")) {
+  bugsnag {
+    apiKey getPropertyOrEmpty("catchup_bugsnag_key")
+  }
+}
 
 kapt {
   correctErrorTypes = true
+  arguments {
+    arg("room.schemaLocation", "${buildDir}/generated/schemas")
+  }
 }
 
 psync {
@@ -231,6 +234,14 @@ apollo {
 
 tasks.withType(JavaCompile) {
   options.compilerArgs += ['-Xep:MissingOverride:OFF']
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+  kotlinOptions {
+    freeCompilerArgs = [
+        "-Xjsr305=strict"
+    ]
+  }
 }
 
 def supportLibraries = configurations.create("supportImplementation")
