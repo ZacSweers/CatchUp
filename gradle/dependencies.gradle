@@ -20,12 +20,12 @@ def versions = [
     archComponents: '1.0.0-beta2',
     autodispose: '0.3.0',
     avFirebase: '1.1.0',
-    avMoshi: '0.4.3',
+    avMoshi: '0.4.4',
     barber: '1.3.1',
     butterknife: '8.8.1',
     chuck: '1.1.0',
     conductor: '2.1.4',
-    dagger: '2.11',
+    dagger: '2.12',
     errorProne: '2.1.1',
     espresso: '2.2.1',
     firebase: '11.2.0',
@@ -72,12 +72,12 @@ ext.deps = [
             gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.1',
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-beta7',
+        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-rc1',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
             cardView: "com.android.support:cardview-v7:${versions.support}",
-            constraintLayout: 'com.android.support.constraint:constraint-layout:1.1.0-beta1',
+            constraintLayout: 'com.android.support.constraint:constraint-layout:1.1.0-beta3',
             customTabs: "com.android.support:customtabs:${versions.support}",
             design: "com.android.support:design:${versions.support}",
             multidex: 'com.android.support:multidex:1.0.2',
@@ -99,7 +99,7 @@ ext.deps = [
     auto: [
         value: [
             apt: [
-                core: 'com.google.auto.value:auto-value:1.5',
+                core: 'com.google.auto.value:auto-value:1.5.1',
                 annotations: 'com.jakewharton.auto.value:auto-value-annotations:1.5'
             ],
             compileOnly: [
@@ -153,7 +153,7 @@ ext.deps = [
         gitTimestamp: 'git log -n 1 --format=%at'.execute([], rootDir).text.trim() ?: 0,
 
         gradlePlugins: [
-            bugsnag: 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta2',
+            bugsnag: 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta3',
             psync: 'io.sweers.psync:psync:2.0.0-SNAPSHOT',
             versions: 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
         ],
@@ -249,19 +249,20 @@ ext.deps = [
     ],
 
     misc: [
-        bugsnag: 'com.bugsnag:bugsnag-android:4.1.0',
+        bugsnag: 'com.bugsnag:bugsnag-android:4.1.1',
         debug: [
             madge: 'com.jakewharton.madge:madge:1.1.4',
             processPhoenix: 'com.jakewharton:process-phoenix:2.0.0',
             scalpel: 'com.jakewharton.scalpel:scalpel:1.1.2',
             telescope: 'com.mattprecious.telescope:telescope:2.1.0'
         ],
+        guava: 'com.google.guava:guava:23.2-android',
         javaxInject: 'org.glassfish:javax.annotation:10.0-b28',
         jsr305: 'com.google.code.findbugs:jsr305:3.0.2',
         lazythreeten: 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0',
-        lottie: 'com.airbnb.android:lottie:2.2.0',
+        lottie: 'com.airbnb.android:lottie:2.2.5',
         moshi: "com.squareup.moshi:moshi:1.5.0",
-        moshiLazyAdapters: 'com.serjltt.moshi:moshi-lazy-adapters:2.0',
+        moshiLazyAdapters: 'com.serjltt.moshi:moshi-lazy-adapters:2.1',
         okio: 'com.squareup.okio:okio:1.13.0',
         recyclerViewAnimators: 'jp.wasabeef:recyclerview-animators:2.2.7',
         timber: 'com.jakewharton.timber:timber:4.5.1',
@@ -292,14 +293,14 @@ ext.deps = [
             v4: "com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:${versions.rxbinding}",
             design: "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}",
         ],
-        java: 'io.reactivex:rxjava:1.3.0',
+        java: 'io.reactivex:rxjava:1.3.2',
         preferences: 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3',
         receivers: 'com.f2prateek.rx.receivers:rx-receivers:0.1.0',
         relay: 'com.jakewharton.rxrelay2:rxrelay:2.0.0',
-        java2: 'io.reactivex.rxjava2:rxjava:2.1.3',
+        java2: 'io.reactivex.rxjava2:rxjava:2.1.5',
         android2: 'io.reactivex.rxjava2:rxandroid:2.0.1',
-        java2Interop: 'com.github.akarnokd:rxjava2-interop:0.10.3',
-        java2Extensions: 'com.github.akarnokd:rxjava2-extensions:0.17.6',
+        java2Interop: 'com.github.akarnokd:rxjava2-interop:0.10.7',
+        java2Extensions: 'com.github.akarnokd:rxjava2-extensions:0.17.8',
         palette: [
             core: "io.sweers.rxpalette:rxpalette:${versions.rxpalette}",
             kotlin: "io.sweers.rxpalette:rxpalette-kotlin:${versions.rxpalette}"
@@ -334,6 +335,6 @@ ext.deps = [
         ],
         junit: 'junit:junit:4.12',
         robolectric: 'org.robolectric:robolectric:3.2.2',
-        truth: 'com.google.truth:truth:0.35'
+        truth: 'com.google.truth:truth:0.36'
     ]
 ]
