@@ -40,10 +40,7 @@ import retrofit2.http.Part
 
 internal interface ImgurUploadApi {
   @Multipart
-//  @Headers("Authorization: Client-ID ${BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN}")
-  // I should explain this. I found this on someone's github repo. I can't make a new ID because
-  // imgur clowntown: https://twitter.com/pandanomic/status/917338438705176576
-  @Headers("Authorization: Client-ID 0b5e46b0ac7b39f")
+  @Headers("Authorization: Client-ID ${BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN}")
   @POST("image")
   @Wrapped(path = ["data", "link"])
   fun postImage(
