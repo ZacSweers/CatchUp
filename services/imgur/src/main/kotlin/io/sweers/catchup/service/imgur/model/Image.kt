@@ -16,11 +16,16 @@
 
 package io.sweers.catchup.service.imgur.model
 
+import android.app.ActivityManager
+import android.content.Context
+import android.content.res.Configuration
 import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import io.sweers.catchup.util.getSystemService
 import org.threeten.bp.Instant
+
 
 @AutoValue
 internal abstract class Image {
@@ -31,6 +36,7 @@ internal abstract class Image {
   abstract fun cover(): String?
   abstract fun link(): String
   abstract fun downs(): Int?
+  abstract fun type(): String?
   abstract fun ups(): Int?
   abstract fun score(): Int?
   @Json(name = "account_url") abstract fun accountUrl(): String?
@@ -46,9 +52,45 @@ internal abstract class Image {
     return 0
   }
 
-  fun resolveLink() = cover()?.let { "https://i.imgur.com/$it.png" } ?: link()
+  fun resolveClickLink() = link()
+
+  fun resolveDisplayLink(size: String = "l"): String {
+    cover()?.let { return "https://i.imgur.com/$it$size.webp" }
+    val type = resolveType()
+    return "https://i.imgur.com/${id()}$size.$type"
+  }
+
+  private fun resolveType(): String? {
+    val type = type()
+    return when (type) {
+      null -> null
+      "image/gif" -> "gif"
+      else -> "webp"
+    }
+  }
 
   companion object {
+    /**
+     * Not used yet as I'm not sure where to call this
+     */
+    fun resolveBestSize(context: Context): String {
+//      t	Small Thumbnail	160x160	Yes
+//      m	Medium Thumbnail	320x320	Yes
+//      l	Large Thumbnail	640x640	Yes
+//      h	Huge Thumbnail	1024x1024	Yes
+      val smallLayout = context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_SMALL
+      val lowRam = context.getSystemService<ActivityManager>().isLowRamDevice
+      return if (lowRam) {
+        if (smallLayout) {
+          "t"
+        } else {
+          "m"
+        }
+      } else {
+        "l"
+      }
+    }
+
     @JvmStatic
     fun jsonAdapter(moshi: Moshi): JsonAdapter<Image> =
         AutoValue_Image.MoshiJsonAdapter(moshi)
