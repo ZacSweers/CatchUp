@@ -253,12 +253,14 @@ class DebugView @JvmOverloads constructor(context: Context,
   }
 
   @OnClick(R.id.debug_leaks_show) internal fun showLeaks() {
-    val intent = Intent(context, DisplayLeakActivity::class.java)
-    context.startActivity(intent)
+    startDebugActivity(Intent(context, DisplayLeakActivity::class.java))
   }
 
   @OnClick(R.id.debug_network_logs) internal fun showNetworkLogs() {
-    val intent = Intent(context, MainActivity::class.java)
+    startDebugActivity(Intent(context, MainActivity::class.java))
+  }
+
+  private fun startDebugActivity(intent: Intent) {
     if (isN()) {
       // In case they're for some reason already in multiwindow
       // annoying that we can't request that an app go to multiwindow if not in it already :/
