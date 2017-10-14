@@ -22,7 +22,6 @@ import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -92,9 +91,6 @@ class PagerController : ButterKnifeController {
     private const val SETTINGS_ACTIVITY_REQUEST = 100
     private const val PAGE_TAG = "PagerController.pageTag"
     private lateinit var services: Array<StaticService>
-    private val DAY_MODE_CONF = Configuration().apply {
-      uiMode = Configuration.UI_MODE_NIGHT_NO
-    }
   }
 
   private lateinit var resolvedColorCache: IntArray
@@ -107,7 +103,6 @@ class PagerController : ButterKnifeController {
   @BindView(R.id.view_pager) lateinit var viewPager: ViewPager
   @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
   @BindView(R.id.appbarlayout) lateinit var appBarLayout: AppBarLayout
-  private var dayOnlyContext: Context? = null
   private var statusBarColorAnimator: ValueAnimator? = null
   private var tabLayoutColorAnimator: Animator? = null
   private var colorNavBar: Boolean
@@ -147,12 +142,6 @@ class PagerController : ButterKnifeController {
     resolvedColorCache = IntArray(services.size)
     // Invalidate the color cache up front
     Arrays.fill(resolvedColorCache, R.color.no_color)
-    dayOnlyContext = context.createConfigurationContext(DAY_MODE_CONF)
-        .also {
-          doOnDestroy {
-            dayOnlyContext = null
-          }
-        }
     super.onContextAvailable(context)
   }
 

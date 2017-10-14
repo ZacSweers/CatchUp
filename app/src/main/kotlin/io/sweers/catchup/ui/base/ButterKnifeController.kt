@@ -17,6 +17,7 @@
 package io.sweers.catchup.ui.base
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,29 +26,28 @@ import butterknife.Unbinder
 
 abstract class ButterKnifeController : AutoDisposeController {
 
-  private var themedContext: Context? = null
+  companion object {
+    private val DAY_MODE_CONF = Configuration().apply {
+      uiMode = Configuration.UI_MODE_NIGHT_NO
+    }
+  }
+
+  protected var dayOnlyContext: Context? = null
 
   protected constructor() : super()
 
   protected constructor(args: Bundle) : super(args)
 
+  override fun onContextAvailable(context: Context) {
+    super.onContextAvailable(context)
+    dayOnlyContext = context.createConfigurationContext(DAY_MODE_CONF)
+  }
+
   protected abstract fun inflateView(inflater: LayoutInflater,
       container: ViewGroup): View
 
-  /**
-   * Callback for wrapping context. Override for your own theme. Result will be cached
-   */
-  protected open fun onThemeContext(context: Context): Context {
-    return context
-  }
-
-  protected fun requestThemedContext(context: Context): Context {
-    return themedContext ?: onThemeContext(context).also { themedContext = it }
-  }
-
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
-    val themedContext = requestThemedContext(container.context)
-    val view = inflateView(LayoutInflater.from(themedContext), container)
+    val view = inflateView(LayoutInflater.from(container.context), container)
     bind(view).doOnDestroyView { unbind() }
     onViewBound(view)
     return view
@@ -58,7 +58,7 @@ abstract class ButterKnifeController : AutoDisposeController {
   protected open fun onViewBound(view: View) {}
 
   override fun onDestroyView(view: View) {
-    themedContext = null
+    dayOnlyContext = null
     super.onDestroyView(view)
   }
 }
