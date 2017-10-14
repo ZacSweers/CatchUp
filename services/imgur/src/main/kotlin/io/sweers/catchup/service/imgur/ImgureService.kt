@@ -120,9 +120,8 @@ abstract class ImgurModule {
     internal fun provideImgurOkHttpClient(
         client: OkHttpClient): OkHttpClient {
       return client.newBuilder()
-//          .addInterceptor(AuthInterceptor("Client-ID",
-//              BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN))
-          .addInterceptor(AuthInterceptor("Client-ID", "4e2bb69101e4b13"))
+          .addInterceptor(AuthInterceptor("Client-ID",
+              BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN))
           .build()
     }
 
