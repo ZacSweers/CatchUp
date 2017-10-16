@@ -98,7 +98,7 @@ class StorageBackedService(
 
   private fun getPage(page: String,
       isRefresh: Boolean = false,
-      allowNetworkFallback: Boolean = false): Maybe<DataResult> {
+      allowNetworkFallback: Boolean = true): Maybe<DataResult> {
     return if (!isRefresh) {
       // Try from local first
       // If no prev session ID, grab the latest page
