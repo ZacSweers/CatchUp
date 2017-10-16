@@ -51,9 +51,6 @@ import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
-import io.sweers.catchup.R.drawable
-import io.sweers.catchup.R.layout
-import io.sweers.catchup.R.string
 import io.sweers.catchup.data.RemoteConfigKeys
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
@@ -411,10 +408,10 @@ class ServiceController : ButterKnifeController,
             when (error) {
               is IOException -> {
                 progress.hide()
-                errorTextView.text = activity.getString(string.connection_issue)
+                errorTextView.text = activity.getString(R.string.connection_issue)
                 swipeRefreshLayout.hide()
                 errorView.show()
-                AnimatedVectorDrawableCompat.create(activity, drawable.avd_no_connection)
+                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
                     ?.let {
                       errorImage.setImageDrawable(it)
                       it.start()
@@ -424,10 +421,10 @@ class ServiceController : ButterKnifeController,
               is HttpException, is ApolloException -> {
                 // TODO Show some sort of API error response.
                 progress.hide()
-                errorTextView.text = activity.getString(string.api_issue)
+                errorTextView.text = activity.getString(R.string.api_issue)
                 swipeRefreshLayout.hide()
                 errorView.show()
-                AnimatedVectorDrawableCompat.create(activity, drawable.avd_no_connection)
+                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
                     ?.let {
                       errorImage.setImageDrawable(it)
                       it.start()
@@ -438,9 +435,9 @@ class ServiceController : ButterKnifeController,
                 // TODO Show some sort of generic response error
                 progress.hide()
                 swipeRefreshLayout.hide()
-                errorTextView.text = activity.getString(string.unknown_issue)
+                errorTextView.text = activity.getString(R.string.unknown_issue)
                 errorView.show()
-                AnimatedVectorDrawableCompat.create(activity, drawable.avd_no_connection)
+                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
                     ?.let {
                       errorImage.setImageDrawable(it)
                       it.start()
@@ -492,7 +489,7 @@ class ServiceController : ButterKnifeController,
                 parent,
                 false))
         TYPE_LOADING_MORE -> return LoadingMoreHolder(
-            layoutInflater.inflate(layout.infinite_loading,
+            layoutInflater.inflate(R.layout.infinite_loading,
                 parent,
                 false))
       }
