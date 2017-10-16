@@ -274,12 +274,6 @@ class ServiceController : ButterKnifeController,
     }
   }
 
-  override fun onDetach(view: View) {
-    nextPage = null
-    moreDataAvailable = true
-    super.onDetach(view)
-  }
-
   override fun onSaveViewState(view: View, outState: Bundle) {
     outState.run {
       if (currentPage != service.meta().firstPageKey) {
