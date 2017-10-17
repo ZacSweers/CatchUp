@@ -72,6 +72,20 @@
 -keep class io.sweers.catchup.data.github.**{ *; }
 -keep class io.sweers.catchup.data.hackernews.model.**{ *; }
 
+# Bugsnag - https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/55
+-keepattributes SourceFile,LineNumberTable
+-keep class com.bugsnag.android.NativeInterface { *; }
+-keep class com.bugsnag.android.Breadcrumbs { *; }
+-keep class com.bugsnag.android.Breadcrumbs$Breadcrumb { *; }
+-keep class com.bugsnag.android.BreadcrumbType { *; }
+-keep class com.bugsnag.android.Severity { *; }
+-keep class com.bugsnag.android.ndk.BugsnagObserver { *; }
+
+# Weird support library issue
+-keep class android.support.v4.media.VolumeProviderCompat {
+    *;
+}
+
 # Okio
 -dontwarn okio.**
 
