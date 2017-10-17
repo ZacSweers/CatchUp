@@ -88,7 +88,7 @@ internal class GitHubService @Inject constructor(
                   CatchUpItem(
                       id = id().hashCode().toLong(),
                       hideComments = true,
-                      title = "${name()} — ${description()}",
+                      title = "${name()}${description()?.let { " — $it" } ?: ""}",
                       score = "★" to stargazers().totalCount(),
                       timestamp = createdAt(),
                       author = owner().login(),
