@@ -7,7 +7,7 @@ openssl aes-256-cbc -d -in signing/app-release.aes -out signing/app-release.jks 
 openssl aes-256-cbc -d -in signing/play-account.aes -out signing/play-account.p12 -k $CATCHUP_P12_ENCRYPT_KEY
 echo "Keys decrypted"
 echo "Publishing"
-# ./gradlew publishApkRelease --no-daemon
+./gradlew publishApkRelease --no-daemon
 echo "Deleting keys"
 rm -f signing/app-release.jks
 rm -f signing/play-account.p12
