@@ -104,7 +104,7 @@ internal class HackerNewsService @Inject constructor(
           with(it) {
             CatchUpItem(
                 id = id(),
-                title = title(),
+                title = title() ?: "Untitled",
                 score = "+" to score(),
                 timestamp = time(),
                 author = by(),
