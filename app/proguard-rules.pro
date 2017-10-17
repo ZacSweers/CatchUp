@@ -91,6 +91,9 @@
     *;
 }
 
+# Database/Room stuff
+-keep class * implements android.arch.lifecycle.GeneratedAdapter {<init>(...);}
+
 # Okio
 -dontwarn okio.**
 
