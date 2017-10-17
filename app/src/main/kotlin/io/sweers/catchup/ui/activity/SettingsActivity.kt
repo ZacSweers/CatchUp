@@ -143,7 +143,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
           P.SmartlinkingGlobal.KEY) as CheckBoxPreference).isChecked = P.SmartlinkingGlobal.get()
       (findPreference(P.DaynightAuto.KEY) as CheckBoxPreference).isChecked = P.DaynightAuto.get()
       (findPreference(P.DaynightNight.KEY) as CheckBoxPreference).isChecked = P.DaynightNight.get()
-      (findPreference(P.reports.KEY) as CheckBoxPreference).isChecked = P.reports.get()
+      (findPreference(P.Reports.KEY) as CheckBoxPreference).isChecked = P.Reports.get()
 
       val themeNavBarPref = findPreference(P.ThemeNavigationBar.KEY) as CheckBoxPreference
       if (remoteConfig.getBoolean(RemoteConfigKeys.THEME_NAV_BAR_ENABLED)) {
@@ -183,14 +183,14 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
           P.ThemeNavigationBar.put((preference as CheckBoxPreference).isChecked).apply()
           return true
         }
-        P.reports.KEY -> {
+        P.Reports.KEY -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
           FirebasePerformance.getInstance().isPerformanceCollectionEnabled = isChecked
-          P.reports.put(isChecked).apply()
+          P.Reports.put(isChecked).apply()
           Snackbar.make(view, "Will take full effect on next app restart", Snackbar.LENGTH_SHORT)
               .setAction("Undo") {
                 // TODO Maybe this should actually be a restart button
-                P.reports.put(!isChecked).apply()
+                P.Reports.put(!isChecked).apply()
                 preference.isChecked = !isChecked
               }
               .show()
@@ -227,7 +227,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
               }
           return true
         }
-        P.about.KEY -> {
+        P.About.KEY -> {
           startActivity(Intent(activity, AboutActivity::class.java))
           return true
         }

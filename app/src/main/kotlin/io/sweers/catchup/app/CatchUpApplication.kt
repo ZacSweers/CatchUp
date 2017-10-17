@@ -97,7 +97,7 @@ open class CatchUpApplication : Application(), HasActivityInjector {
   @Inject
   protected fun initPerformanceMonitoring(sharedPreferences: SharedPreferences) {
     FirebasePerformance.getInstance().isPerformanceCollectionEnabled =
-        sharedPreferences.getBoolean(P.reports.KEY, false)
+        sharedPreferences.getBoolean(P.Reports.KEY, false)
   }
 
   // Override this in variants
