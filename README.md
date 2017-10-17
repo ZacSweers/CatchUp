@@ -1,5 +1,5 @@
 <p>
-  <img src="https://github.com/hzsweers/CatchUp/blob/master/art/app-icon/main/round/catchup_round.png?raw=true" width="250" height="250"/>
+  <img src="https://github.com/hzsweers/CatchUp/blob/master/app/src/main/play/en-us/listing/featureGraphic/feature.png?raw=true" width="250" height="250"/>
 </p>
 
 CatchUp
@@ -42,8 +42,11 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 
 - Kotlin
 - RxJava 2/AutoDispose
+- Debugging tooling as a first class citizen in the debug build
+  - Leak Canary, Chuck, Scalpel, Debug drawer, the works
 - Conductor
 - Dagger 2
+  - One of the more interesting parts of CatchUp is that its service architecture is a Dagger-powered plugin system
 - AutoValue + extensions
 - Firebase
 - Glide
@@ -51,6 +54,7 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Standard Square buffet of Okio/OkHttp 3/Retrofit 2/Moshi
 - ThreetenABP
 - Inspector
+- PSync
 
 There's a lot of neat/interesting little tidbits in the CatchUp source code that I plan to write a 
 mini blog series about. Each service has its own nuances that make them unique to work with in code.
@@ -63,9 +67,8 @@ While this is a personal pet project, extensive tests can be found [here](https:
 
 This app owes a lot of its inspiration, implementation details, and general inner workings to the 
 work of others. Particularly:
-- Nick Butcher and his Plaid app
-- Jake Wharton and his u2020 demo app
-- UI color patterning inspired by Sagrada Familia. Don't ask me how to explain that, it just felt right.
+- [Nick Butcher](https://twitter.com/@crafty) and his [Plaid](https://github.com/nickbutcher/plaid) app
+- [Jake Wharton](https://twitter.com/@jakewharton) and his [u2020](https://github.com/jakewharton/u2020) demo app
 
 License
 -------
