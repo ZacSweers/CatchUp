@@ -100,12 +100,13 @@ android {
     debug {
       applicationIdSuffix ".debug"
       versionNameSuffix "-dev"
+      ext.enableBugsnag = false
     }
     release {
       buildConfigField 'String', 'BUGSNAG_KEY', /"${getPropertyOrEmpty("catchup_bugsnag_key")}"/
       signingConfig signingConfigs.release
       postprocessing.proguardFiles = ['proguard-rules.pro']
-      postprocessing.optimizeCode = false
+      postprocessing.optimizeCode = true
       postprocessing.obfuscate = false
     }
   }
@@ -199,10 +200,10 @@ android {
   }
 }
 
-if (getPropertyOrEmpty("catchup_bugsnag_key")) {
-  bugsnag {
-    apiKey getPropertyOrEmpty("catchup_bugsnag_key")
-  }
+bugsnag {
+  apiKey getPropertyOrEmpty("catchup_bugsnag_key")
+  autoProguardConfig false
+  ndk true
 }
 
 kapt {
