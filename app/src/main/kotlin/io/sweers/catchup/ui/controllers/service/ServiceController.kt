@@ -77,6 +77,7 @@ import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.show
+import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import retrofit2.HttpException
 import java.io.IOException
@@ -410,7 +411,7 @@ class ServiceController : ButterKnifeController,
                       errorImage.setImageDrawable(it)
                       it.start()
                     }
-                e(error) { "IOException" }
+                w(error) { "IOException" }
               }
               is HttpException, is ApolloException -> {
                 // TODO Show some sort of API error response.
