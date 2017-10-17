@@ -209,7 +209,7 @@ bugsnag {
 kapt {
   correctErrorTypes = true
   arguments {
-    arg("room.schemaLocation", "${buildDir}/generated/schemas")
+    arg("room.schemaLocation", "${projectDir}/schemas")
   }
 }
 
