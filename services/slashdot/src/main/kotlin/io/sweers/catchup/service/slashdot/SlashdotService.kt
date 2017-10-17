@@ -36,9 +36,9 @@ import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.TextService
 import okhttp3.OkHttpClient
+import org.threeten.bp.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
