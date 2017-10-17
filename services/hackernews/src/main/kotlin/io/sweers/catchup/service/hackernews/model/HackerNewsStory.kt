@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit
 @FirebaseValue
 internal abstract class HackerNewsStory : HasStableId {
 
-  abstract fun by(): String?
+  abstract fun by(): String
 
   abstract fun dead(): Boolean
 

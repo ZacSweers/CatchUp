@@ -98,6 +98,7 @@ internal class HackerNewsService @Inject constructor(
             ref.addValueEventListener(listener)
           }
         }
+        .filter { it.hasChild("title") }  // Some HN items are just empty junk
         .map { HackerNewsStory.create(it) }
         .map {
           val url = it.url()
