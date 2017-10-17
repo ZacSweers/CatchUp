@@ -5,7 +5,7 @@
 CatchUp
 =======
 
-An app for catching up on things.
+An app for catching up on things.https://medium.com/@sweers/catching-up-on-catchup-introduction-7581c099f4bc
 
 ## Motivations
 
