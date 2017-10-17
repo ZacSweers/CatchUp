@@ -2,14 +2,6 @@
   <img src="https://github.com/hzsweers/CatchUp/blob/master/app/src/main/play/en-us/listing/featureGraphic/feature.png?raw=true"/>
 </p>
 
-<a href='https://play.google.com/store/apps/details?id=io.sweers.catchup'>
-    <img alt='Get it on Google Play' 
-         src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'
-         height="116" width="300"/>
-</a>
-
-[![Bugsnag](https://img.shields.io/badge/crash_reporting_by-bugsnag-green.png)](https://bugsnag.com/platforms/android)
-
 CatchUp
 =======
 
@@ -77,6 +69,14 @@ This app owes a lot of its inspiration, implementation details, and general inne
 work of others. Particularly:
 - [Nick Butcher](https://twitter.com/@crafty) and his [Plaid](https://github.com/nickbutcher/plaid) app
 - [Jake Wharton](https://twitter.com/@jakewharton) and his [u2020](https://github.com/jakewharton/u2020) demo app
+
+## Download
+
+<a href='https://play.google.com/store/apps/details?id=io.sweers.catchup'>
+    <img alt='Get it on Google Play' 
+         src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'
+         height="116" width="300"/>
+</a>
 
 License
 -------
