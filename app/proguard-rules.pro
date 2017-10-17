@@ -82,7 +82,12 @@
 -keep class com.bugsnag.android.ndk.BugsnagObserver { *; }
 
 # Weird support library issue
--keep class android.support.v4.media.VolumeProviderCompat {
+-keep class android.support.** {
+    *;
+}
+
+# Keep generated firebase AV class
+-keep class io.sweers.catchup.service.hackernews.model.** {
     *;
 }
 
