@@ -71,8 +71,13 @@ internal class CatchUpConverters {
 
   // List<Long>
   @TypeConverter
-  fun toList(listString: String?) =
+  fun toList(listString: String?): List<Long>? {
+    return if (listString.isNullOrBlank()) {
+      emptyList()
+    } else {
       listString?.let { it.split(",").asSequence().toList().map { it.toLong() } }
+    }
+  }
 
   @TypeConverter
   fun toListString(list: List<Long>?) = list?.joinToString(",")
