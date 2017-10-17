@@ -27,6 +27,7 @@ import android.arch.persistence.room.Query
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.ColorInt
+import android.support.annotation.Keep
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.NestedScrollView
 import android.text.TextUtils
@@ -371,6 +372,7 @@ class SmmryController : ButterKnifeController {
 
 private const val TABLE = "smmryEntries"
 
+@Keep
 @Entity(tableName = TABLE)
 data class SmmryStorageEntry(
     @PrimaryKey val url: String,
