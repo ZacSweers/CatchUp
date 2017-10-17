@@ -59,7 +59,7 @@
         android:defaultValue="false"
         android:dependency="daynight_auto"
         android:key="daynight_night"
-        android:summaryOff="Dark theme is disabled, light them is the default."
+        android:summaryOff="Dark theme is disabled, light theme is the default."
         android:summaryOn="Dark theme is enabled"
         android:title="Use dark theme."
         android:icon="@drawable/ic_brightness_3_black_24dp"
