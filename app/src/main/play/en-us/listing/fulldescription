@@ -1,0 +1,1 @@
+CatchUp is effectively a multi-service “front page” app, displaying the front page of a number of different services in a per-service-themed, consistent, at-a-glance UI. It would be explicitly un-comprehensive by design, and just deeplink into one of those dedicated apps accordingly if the user wants to deep dive.

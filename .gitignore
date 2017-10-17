@@ -109,3 +109,7 @@ tmp/
 private.props
 google-services.json
 .tasks.cache.json
+
+# Do not commit plain release keys
+signing/app-release.jks
+signing/play-account.p12

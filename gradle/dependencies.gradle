@@ -154,6 +154,7 @@ ext.deps = [
 
         gradlePlugins: [
             bugsnag: 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta3',
+            playPublisher: 'com.github.triplet.gradle:play-publisher:1.2.0',
             psync: 'io.sweers.psync:psync:2.0.0-SNAPSHOT',
             versions: 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
         ],

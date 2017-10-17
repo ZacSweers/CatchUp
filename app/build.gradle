@@ -23,6 +23,7 @@ apply plugin: 'com.apollographql.android'
 apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
 apply plugin: 'com.bugsnag.android.gradle'
+apply plugin: 'com.github.triplet.play'
 
 private String getPropertyOrEmpty(String property) {
   if (hasProperty(property)) {
@@ -36,6 +37,13 @@ android {
   compileSdkVersion deps.android.build.compileSdkVersion
   buildToolsVersion deps.android.build.buildToolsVersion
 
+  playAccountConfigs {
+    defaultAccountConfig {
+      serviceAccountEmail = getPropertyOrEmpty('catchup_play_publisher_account')
+      pk12File = rootProject.file('signing/play-account.p12')
+    }
+  }
+
   defaultConfig {
     applicationId "io.sweers.catchup"
     minSdkVersion deps.android.build.minSdkVersion
@@ -45,6 +53,7 @@ android {
     multiDexEnabled false
     archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
+    playAccountConfig = playAccountConfigs.defaultAccountConfig
 
     buildConfigField 'String', 'GIT_SHA', /"$deps.build.gitSha"/
     buildConfigField 'long', 'GIT_TIMESTAMP', "$deps.build.gitTimestamp"
@@ -57,22 +66,12 @@ android {
     targetCompatibility JavaVersion.VERSION_1_8
   }
   signingConfigs {
-    if (getPropertyOrEmpty("catchup_signing_location")) {
-      release {
-        storeFile file(getPropertyOrEmpty("catchup_signing_location"))
-        keyAlias getPropertyOrEmpty("catchup_signing_alias")
-        storePassword getPropertyOrEmpty("catchup_signing_store_password")
-        keyPassword getPropertyOrEmpty("catchup_signing_key_password")
-        v2SigningEnabled true
-      }
-    } else {
-      release {
-        storeFile file("placeholder")
-        keyAlias "placeholder"
-        storePassword "placeholder"
-        keyPassword "placeholder"
-        v2SigningEnabled true
-      }
+    release {
+      keyAlias "catchupkey"
+      storeFile rootProject.file('signing/app-release.jks')
+      storePassword getPropertyOrEmpty("catchup_signing_store_password")
+      keyPassword getPropertyOrEmpty("catchup_signing_key_password")
+      v2SigningEnabled true
     }
   }
   sourceSets {
@@ -106,7 +105,7 @@ android {
       buildConfigField 'String', 'BUGSNAG_KEY', /"${getPropertyOrEmpty("catchup_bugsnag_key")}"/
       signingConfig signingConfigs.release
       postprocessing.proguardFiles = ['proguard-rules.pro']
-      postprocessing.optimizeCode = true
+      postprocessing.optimizeCode = false
       postprocessing.obfuscate = false
     }
   }
@@ -125,19 +124,20 @@ android {
     htmlReport !deps.build.ci
     xmlReport !deps.build.ci
   }
-  splits {
-    density {
-      enable true
-      reset()
-      include "mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"
-    }
-    abi {
-      enable true
-      reset()
-      include 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
-      universalApk true
-    }
-  }
+  // Disabled for now - https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/59
+//  splits {
+//    density {
+//      enable true
+//      reset()
+//      include "mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"
+//    }
+//    abi {
+//      enable true
+//      reset()
+//      include 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+//      universalApk true
+//    }
+//  }
   applicationVariants.all {
     // Configure firebase
     String apiKey = null
@@ -198,6 +198,11 @@ android {
       it.resValue 'string', 'project_id', projectId
     }
   }
+}
+
+play {
+  track = 'alpha'
+  uploadImages = true
 }
 
 bugsnag {

@@ -38,6 +38,7 @@ subprojects {
       classpath deps.build.gradlePlugins.versions
       classpath deps.errorProne.gradlePlugin
       classpath deps.apollo.gradlePlugin
+      classpath deps.build.gradlePlugins.playPublisher
     }
   }
 
