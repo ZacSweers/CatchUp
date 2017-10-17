@@ -77,11 +77,11 @@ import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.dp2px
-import io.sweers.catchup.util.e
 import io.sweers.catchup.util.findSwatch
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
+import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import okio.Okio
 import javax.inject.Inject
@@ -147,7 +147,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
               adapter.setItems(data)
             } else {
               // TODO Show a better error
-              e(error) { "Could not load open source licenses." }
+              w(error) { "Could not load open source licenses." }
               Snackbar.make(recyclerView, "Could not load open source licenses.",
                   Snackbar.LENGTH_SHORT).show()
             }
