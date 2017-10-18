@@ -48,8 +48,10 @@ import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
+import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import org.threeten.bp.Instant
+import java.io.IOException
 import javax.inject.Inject
 
 class ChangelogController : ButterKnifeController(), Scrollable {
@@ -100,7 +102,11 @@ class ChangelogController : ButterKnifeController(), Scrollable {
               adapter.setItems(data)
             } else {
               // TODO Show a better error
-              e(error) { "Could not load changelog." }
+              if (error is IOException) {
+                w(error) { "Could not load changelog." }
+              } else {
+                e(error) { "Could not load changelog." }
+              }
               Snackbar.make(recyclerView, "Could not load changelog.",
                   Snackbar.LENGTH_SHORT).show()
             }

@@ -86,10 +86,12 @@ import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isGone
 import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.show
+import io.sweers.catchup.util.w
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -231,7 +233,11 @@ class SmmryController : ButterKnifeController {
 
           override fun onError(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") error: Throwable) {
             Toast.makeText(activity, "Unknown error", Toast.LENGTH_SHORT).show()
-            e(error) { "Unknown error in smmry load" }
+            if (error is IOException) {
+              w(error) { "Unknown error in smmry load" }
+            } else {
+              e(error) { "Unknown error in smmry load" }
+            }
             router.popController(this@SmmryController)
           }
         })
