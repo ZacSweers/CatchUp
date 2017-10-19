@@ -31,7 +31,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import butterknife.BindView
 import com.google.firebase.perf.FirebasePerformance
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Binds
 import dagger.Module
@@ -46,7 +45,6 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpDatabase
-import io.sweers.catchup.data.RemoteConfigKeys
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
@@ -63,7 +61,9 @@ import javax.inject.Inject
 class SettingsActivity : BaseActivity(), HasFragmentInjector {
 
   companion object {
-    const val NIGHT_MODE_UPDATED = 100
+    const val SETTINGS_RESULT_DATA = 100
+    const val NIGHT_MODE_UPDATED = "nightModeUpdated"
+    const val NAV_COLOR_UPDATED = "navColorUpdated"
     const val ARG_FROM_RECREATE = "fromRecreate"
   }
 
@@ -73,13 +73,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
   /**
    * Backpress hijacks activity result codes, so store ours here in case
    */
-  private var _resultMirror: Int = Activity.RESULT_CANCELED
-  private var resultMirror: Int
-    set(value) {
-      setResult(value)
-      _resultMirror = value
-    }
-    get() = _resultMirror
+  private val resultData = Bundle()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -98,12 +92,15 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
           .add(R.id.container, SettingsFrag())
           .commit()
     } else if (savedInstanceState.getBoolean(ARG_FROM_RECREATE, false)) {
-      resultMirror = NIGHT_MODE_UPDATED
+      resultData.putBoolean(NIGHT_MODE_UPDATED, true)
     }
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     if (item.itemId == android.R.id.home) {
+      if (!resultData.isEmpty) {
+        setResult(SETTINGS_RESULT_DATA, Intent().putExtras(resultData))
+      }
       NavUtils.navigateUpFromSameTask(this)
     }
     return super.onOptionsItemSelected(item)
@@ -115,7 +112,9 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
   }
 
   override fun onBackPressed() {
-    setResult(resultMirror)
+    if (!resultData.isEmpty) {
+      setResult(SETTINGS_RESULT_DATA, Intent().putExtras(resultData))
+    }
     super.onBackPressed()
   }
 
@@ -131,7 +130,6 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
   class SettingsFrag : PreferenceFragment() {
 
     @Inject lateinit var cache: dagger.Lazy<Cache>
-    @Inject lateinit var remoteConfig: FirebaseRemoteConfig
     @Inject lateinit var database: CatchUpDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,11 +144,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
       (findPreference(P.Reports.KEY) as CheckBoxPreference).isChecked = P.Reports.get()
 
       val themeNavBarPref = findPreference(P.ThemeNavigationBar.KEY) as CheckBoxPreference
-      if (remoteConfig.getBoolean(RemoteConfigKeys.THEME_NAV_BAR_ENABLED)) {
-        themeNavBarPref.isChecked = P.ThemeNavigationBar.get()
-      } else {
-        preferenceScreen.removePreference(themeNavBarPref)
-      }
+      themeNavBarPref.isChecked = P.ThemeNavigationBar.get()
     }
 
     override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen,
@@ -181,6 +175,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
         }
         P.ThemeNavigationBar.KEY -> {
           P.ThemeNavigationBar.put((preference as CheckBoxPreference).isChecked).apply()
+          (activity as SettingsActivity).resultData.putBoolean(NAV_COLOR_UPDATED, true)
           return true
         }
         P.Reports.KEY -> {

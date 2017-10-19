@@ -22,7 +22,6 @@ import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Parcelable
@@ -55,7 +54,6 @@ import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.sweers.catchup.P
 import io.sweers.catchup.R
-import io.sweers.catchup.data.RemoteConfigKeys
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.rx.PredicateConsumer
@@ -360,7 +358,8 @@ class PagerController : ButterKnifeController {
 
   @ColorInt private fun getAndSaveColor(position: Int): Int {
     if (resolvedColorCache[position] == R.color.no_color) {
-      resolvedColorCache[position] = ContextCompat.getColor(dayOnlyContext!!, services[position].accent)
+      resolvedColorCache[position] = ContextCompat.getColor(dayOnlyContext!!,
+          services[position].accent)
     }
     return resolvedColorCache[position]
   }
@@ -368,17 +367,18 @@ class PagerController : ButterKnifeController {
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
     if (requestCode == SETTINGS_ACTIVITY_REQUEST) {
-      if (resultCode == SettingsActivity.NIGHT_MODE_UPDATED) {
-        activity?.recreate()
-      } else {
-        if (remoteConfig.getBoolean(RemoteConfigKeys.THEME_NAV_BAR_ENABLED)) {
+      if (resultCode == SettingsActivity.SETTINGS_RESULT_DATA && data != null) {
+        val extras = data.extras
+        if (extras.getBoolean(SettingsActivity.NIGHT_MODE_UPDATED, false)) {
+          activity?.recreate()
+        }
+        if (extras.getBoolean(SettingsActivity.NAV_COLOR_UPDATED, false)) {
           // Update the nav bar with whatever prefs we had
-          val navBarColor = if (P.ThemeNavigationBar.get()) {
-            (tabLayout.background as ColorDrawable).color
+          if (P.ThemeNavigationBar.get()) {
+            activity?.window?.navigationBarColor = (tabLayout.background as ColorDrawable).color
           } else {
-            Color.BLACK // TODO is this actually a safe default?
+            activity?.recreate()
           }
-          activity?.window?.navigationBarColor = navBarColor
         }
       }
     }

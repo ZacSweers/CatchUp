@@ -22,5 +22,4 @@ package io.sweers.catchup.data
 object RemoteConfigKeys {
 
   const val SMMRY_ENABLED = "smmry_enabled"
-  const val THEME_NAV_BAR_ENABLED = "theme_nav_bar_enabled"
 }
