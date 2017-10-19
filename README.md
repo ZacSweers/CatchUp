@@ -45,10 +45,11 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Kotlin
 - RxJava 2/AutoDispose
 - Debugging tooling as a first class citizen in the debug build
-  - Leak Canary, Chuck, Scalpel, Debug drawer, the works
+  - Leak Canary, Chuck, Scalpel, debug drawer, Stetho, bug reporting, the works
 - Conductor
 - Dagger 2
   - One of the more interesting parts of CatchUp is that its service architecture is a Dagger-powered plugin system
+- Room (Arch components)
 - AutoValue + extensions
 - Firebase
 - Glide
@@ -73,6 +74,8 @@ work of others. Particularly:
 - [Jake Wharton](https://twitter.com/@jakewharton) and his [u2020](https://github.com/jakewharton/u2020) demo app
 
 ## Download
+
+CatchUp is in open alpha.
 
 <a href='https://play.google.com/store/apps/details?id=io.sweers.catchup'>
     <img alt='Get it on Google Play' 
