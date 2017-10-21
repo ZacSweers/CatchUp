@@ -10,7 +10,6 @@ query GitHubSearch($queryString: String!, $firstCount: Int!, $order: LanguageOrd
         name
         createdAt
         description
-        homepageUrl
         id
         languages(first: 1, orderBy: $order) {
           nodes {
