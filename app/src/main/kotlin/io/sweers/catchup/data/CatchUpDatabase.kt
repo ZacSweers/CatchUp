@@ -22,17 +22,20 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverter
 import android.arch.persistence.room.TypeConverters
 import android.content.Context
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.SummarizationType
 import io.sweers.catchup.ui.controllers.SmmryDao
 import io.sweers.catchup.ui.controllers.SmmryStorageEntry
 import org.threeten.bp.Instant
 
-@Database(entities = arrayOf(
+@Database(
+    entities = [
     ServicePage::class,
     CatchUpItem::class,
-    SmmryStorageEntry::class),
-    version = 1)
+    SmmryStorageEntry::class
+    ],
+    version = BuildConfig.VERSION_CODE)
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {
 
