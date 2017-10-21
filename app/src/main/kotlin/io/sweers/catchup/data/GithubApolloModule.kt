@@ -20,16 +20,15 @@ import android.content.Context
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Operation
 import com.apollographql.apollo.api.ResponseField
-import com.apollographql.apollo.api.internal.Optional
+import com.apollographql.apollo.api.cache.http.HttpCache
+import com.apollographql.apollo.api.cache.http.HttpCacheStore
+import com.apollographql.apollo.cache.http.ApolloHttpCache
 import com.apollographql.apollo.cache.http.DiskLruHttpCacheStore
-import com.apollographql.apollo.cache.http.HttpCache
-import com.apollographql.apollo.cache.http.HttpCacheStore
 import com.apollographql.apollo.cache.normalized.CacheKey
 import com.apollographql.apollo.cache.normalized.CacheKeyResolver
 import com.apollographql.apollo.cache.normalized.NormalizedCacheFactory
 import com.apollographql.apollo.cache.normalized.lru.EvictionPolicy
 import com.apollographql.apollo.cache.normalized.lru.LruNormalizedCacheFactory
-import com.apollographql.apollo.internal.util.ApolloLogger
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
@@ -61,7 +60,7 @@ internal object GithubApolloModule {
   @JvmStatic
   @Singleton
   internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache =
-      HttpCache(httpCacheStore, ApolloLogger(Optional.absent()))
+      ApolloHttpCache(httpCacheStore, null)
 
   @Provides
   @InternalApi
@@ -111,12 +110,12 @@ internal object GithubApolloModule {
   internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
       cacheFactory: NormalizedCacheFactory<*>,
       resolver: CacheKeyResolver,
-      httpCacheStore: HttpCacheStore): ApolloClient {
+      httpCache: HttpCache): ApolloClient {
     val instantAdapter = ISO8601InstantApolloAdapter()
     val httpUrlAdapter = HttpUrlApolloAdapter()
     return ApolloClient.builder()
         .serverUrl(SERVER_URL)
-        .httpCacheStore(httpCacheStore)
+        .httpCache(httpCache)
         .callFactory { client.get().newCall(it) }
         .normalizedCache(cacheFactory, resolver)
         .addCustomTypeAdapter<Instant>(io.sweers.catchup.service.github.type.CustomType.DATETIME, instantAdapter)

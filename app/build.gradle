@@ -351,9 +351,10 @@ dependencies {
   implementation deps.misc.moshiLazyAdapters
 
   // Apollo
+  implementation deps.apollo.androidSupport
+  implementation deps.apollo.httpcache
   implementation deps.apollo.runtime
   implementation deps.apollo.rx2Support
-  implementation deps.apollo.androidSupport
 
   // Stetho
   debugImplementation deps.stetho.debug.core

@@ -38,7 +38,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.cache.http.HttpCachePolicy
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.rx2.Rx2Apollo
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -114,9 +114,8 @@ class LicensesController : ButterKnifeController(), Scrollable {
     super.onContextAvailable(context)
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View {
-    return inflater.inflate(R.layout.controller_licenses, container, false)
-  }
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
+      inflater.inflate(R.layout.controller_licenses, container, false)
 
   override fun bind(view: View) = ButterKnife.bind(this, view)
 
@@ -513,7 +512,7 @@ private data class OssItem(
 }
 
 @PerController
-@Subcomponent(modules = arrayOf(LicensesModule::class))
+@Subcomponent(modules = [LicensesModule::class])
 interface LicensesComponent : AndroidInjector<LicensesController> {
 
   @Subcomponent.Builder

@@ -17,7 +17,7 @@
 package io.sweers.catchup.service.github
 
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.cache.http.HttpCachePolicy
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.exception.ApolloException
 import com.apollographql.apollo.rx2.Rx2Apollo
 import dagger.Binds

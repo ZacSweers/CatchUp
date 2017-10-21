@@ -22,12 +22,8 @@ import okhttp3.HttpUrl
 /**
  * An Apollo adapter for converting between URI types to HttpUrl.
  */
-class HttpUrlApolloAdapter : CustomTypeAdapter<HttpUrl?> {
-  override fun decode(s: String): HttpUrl? {
-    return HttpUrl.parse(s)
-  }
+class HttpUrlApolloAdapter : CustomTypeAdapter<HttpUrl> {
+  override fun decode(s: String) = HttpUrl.parse(s)!!
 
-  override fun encode(o: HttpUrl?): String {
-    return o.toString()
-  }
+  override fun encode(o: HttpUrl) = o.toString()
 }
