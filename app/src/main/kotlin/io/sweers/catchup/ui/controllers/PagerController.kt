@@ -47,7 +47,6 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Subcomponent
@@ -95,7 +94,6 @@ class PagerController : ButterKnifeController {
   private val argbEvaluator = ArgbEvaluator()
 
   @Inject lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
-  @Inject lateinit var remoteConfig: FirebaseRemoteConfig
   @BindView(R.id.pager_controller_root) lateinit var rootLayout: CoordinatorLayout
   @BindView(R.id.tab_layout) lateinit var tabLayout: TabLayout
   @BindView(R.id.view_pager) lateinit var viewPager: ViewPager

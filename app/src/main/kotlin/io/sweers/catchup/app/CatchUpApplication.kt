@@ -24,13 +24,11 @@ import android.support.v7.app.AppCompatDelegate
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.gabrielittner.threetenbp.LazyThreeTen
 import com.google.firebase.perf.FirebasePerformance
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import io.sweers.catchup.P
-import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.util.d
 import javax.inject.Inject
@@ -48,7 +46,6 @@ open class CatchUpApplication : Application(), HasActivityInjector {
   @Inject internal lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
   @Inject internal lateinit var sharedPreferences: SharedPreferences
   @Inject internal lateinit var lumberYard: LumberYard
-  @Inject internal lateinit var remoteConfig: FirebaseRemoteConfig
   @Inject internal lateinit var rxPreferences: RxSharedPreferences
 
   override fun onCreate() {
@@ -66,15 +63,6 @@ open class CatchUpApplication : Application(), HasActivityInjector {
     P.setSharedPreferences(sharedPreferences, rxPreferences)
     initVariant()
 
-    remoteConfig.fetch(resources.getInteger(R.integer.remote_config_cache_duration).toLong())
-        .addOnCompleteListener { task ->
-          if (task.isSuccessful) {
-            d { "Firebase fetch succeeded" }
-            remoteConfig.activateFetched()
-          } else {
-            d { "Firebase fetch failed" }
-          }
-        }
     P.DaynightAuto.rx()
         .asObservable()
         .subscribe { autoEnabled ->
