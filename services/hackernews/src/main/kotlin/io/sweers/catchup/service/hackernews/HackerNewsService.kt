@@ -33,6 +33,7 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceException
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
@@ -126,6 +127,15 @@ internal class HackerNewsService @Inject constructor(
           DataResult(it, if (it.isEmpty()) null else (page + 1).toString())
         }
         .toMaybe()
+        .onErrorResumeNext { t: Throwable ->
+          if (BuildConfig.DEBUG && t is IllegalArgumentException) {
+            // Firebase didn't init
+            Maybe.error(ServiceException(
+                "Firebase wasn't able to initialize, likely due to missing credentials."))
+          } else {
+            Maybe.error(t)
+          }
+        }
   }
 
   override fun linkHandler() = linkHandler

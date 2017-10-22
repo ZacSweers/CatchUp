@@ -57,6 +57,7 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
 import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceException
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.TextViewPool
@@ -413,6 +414,18 @@ class ServiceController : ButterKnifeController,
                       it.start()
                     }
                 w(error) { "IOException" }
+              }
+              is ServiceException -> {
+                progress.hide()
+                errorTextView.text = error.message
+                swipeRefreshLayout.hide()
+                errorView.show()
+                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                    ?.let {
+                      errorImage.setImageDrawable(it)
+                      it.start()
+                    }
+                e(error) { "ServiceException: ${error.message}" }
               }
               is HttpException, is ApolloException -> {
                 // TODO Show some sort of API error response.
