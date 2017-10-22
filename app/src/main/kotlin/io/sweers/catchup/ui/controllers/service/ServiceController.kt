@@ -289,6 +289,7 @@ class ServiceController : ButterKnifeController,
       if (isRestoring) {
         errorView.hide()
         recyclerView.show()
+        recyclerView.itemAnimator = null
       }
     }
   }
