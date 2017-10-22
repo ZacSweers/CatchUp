@@ -45,13 +45,11 @@ import com.apollographql.apollo.exception.ApolloException
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.google.firebase.perf.FirebasePerformance
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
-import io.sweers.catchup.data.RemoteConfigKeys
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.requestManager
@@ -67,7 +65,6 @@ import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
-import io.sweers.catchup.ui.controllers.SmmryController
 import io.sweers.catchup.ui.controllers.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
 import io.sweers.catchup.util.Iterables
@@ -149,7 +146,6 @@ class ServiceController : ButterKnifeController,
   private var dataLoading = false
   private var pendingRVState: Parcelable? = null
 
-  @Inject lateinit var remoteConfig: FirebaseRemoteConfig
   @field:TextViewPool @Inject lateinit var textViewPool: RecycledViewPool
   @field:VisualViewPool @Inject lateinit var visualViewPool: RecycledViewPool
   @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<StorageBackedService>>
@@ -210,15 +206,14 @@ class ServiceController : ButterKnifeController,
       return TextAdapter { item, holder ->
         service.bindItemView(item, holder)
         item.summarizationInfo?.let {
-          if (remoteConfig.getBoolean(RemoteConfigKeys.SMMRY_ENABLED)) {
-            holder.itemLongClicks()
-                .autoDisposeWith(this)
-                .subscribe(SmmryController.showFor<Any>(controller = this,
-                    service = service,
-                    title = item.title,
-                    id = item.id.toString(),
-                    info = it))
-          }
+          // We're not supporting this for now since it's not ready yet
+//          holder.itemLongClicks()
+//              .autoDisposeWith(this)
+//              .subscribe(SmmryController.showFor<Any>(controller = this,
+//                  service = service,
+//                  title = item.title,
+//                  id = item.id.toString(),
+//                  info = it))
         }
       }
     }
