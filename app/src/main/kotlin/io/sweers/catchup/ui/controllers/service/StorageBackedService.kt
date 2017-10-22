@@ -55,7 +55,7 @@ class StorageBackedService(
         return Observable.range(0, request.pageId.toInt())
             .concatMapEager { getPage(it.toString(), allowNetworkFallback = false).toObservable() }
             .reduce { prev, result ->
-              DataResult(prev.data + result.data, result.nextPageToken)
+              DataResult(prev.data + result.data, result.nextPageToken, wasFresh = false)
             }
       }
 
@@ -83,7 +83,9 @@ class StorageBackedService(
             }
           }
           .reduce { prev, result ->
-            DataResult(prev.data + result.data, result.nextPageToken)
+            DataResult(data = prev.data + result.data,
+                nextPageToken = result.nextPageToken,
+                wasFresh = false)
           }
           .switchIfEmpty(Maybe.defer {
             // Ultimately fall back to just trying to request the first page
@@ -153,7 +155,7 @@ class StorageBackedService(
                 idToIndex[o1.stableId()]!!.compareTo(idToIndex[o2.stableId()]!!)
               }
               .toMaybe()
-              .map { DataResult(it, servicePage.nextPageToken) }
+              .map { DataResult(it, servicePage.nextPageToken, wasFresh = false) }
         }
   }
 

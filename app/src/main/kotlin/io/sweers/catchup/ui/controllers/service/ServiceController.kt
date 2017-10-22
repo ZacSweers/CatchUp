@@ -333,6 +333,11 @@ class ServiceController : ButterKnifeController,
           result.data.also {
             nextPage = result.nextPageToken
             currentPage = pageToRequest
+            if (result.wasFresh) {
+              // If it was fresh data but we thought we were restoring (i.e. stale cache or
+              // something), don't restore to to some now-random position
+              pendingRVState = null
+            }
           }
         }
         .flattenAsObservable { it }

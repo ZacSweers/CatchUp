@@ -16,4 +16,7 @@
 
 package io.sweers.catchup.service.api
 
-data class DataResult(val data: List<CatchUpItem>, val nextPageToken: String?)
+data class DataResult(
+    val data: List<CatchUpItem>,
+    val nextPageToken: String?,
+    val wasFresh: Boolean = true)
