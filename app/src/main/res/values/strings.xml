@@ -15,7 +15,7 @@
   -->
 
 <resources>
-  <string name="app_name">CatchUp</string>
+  <string name="app_name" translatable="false">CatchUp</string>
   <string name="retry">Retry</string>
   <string name="pref_services">Services</string>
   <string name="pref_services_summary">Configure service preferences</string>
