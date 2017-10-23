@@ -242,7 +242,7 @@ class AboutController : ButterKnifeController() {
       |
       |${aboutText.resources.getString(R.string.about_version, BuildConfig.VERSION_NAME)}
       |
-      |${aboutText.resources.getString(R.string.about_attribution, "[Zac Sweers](https://twitter.com/pandanomic)", "[Source code](https://github.com/hzsweers/CatchUp)")}
+      |${aboutText.resources.getString(R.string.about_attribution)}
     """.trimMargin()
         .markdown()
         .parseMarkdownAndPlainLinks(
