@@ -92,7 +92,7 @@ class SmmryRequestBuilder private constructor() {
       try {
         builder.url = if (isAlreadyEncoded) url else URLEncoder.encode(url, "UTF-8")
       } catch (e: UnsupportedEncodingException) {
-        throw RuntimeException("Invalid url - " + url)
+        throw RuntimeException("Invalid url - $url")
       }
 
       return builder

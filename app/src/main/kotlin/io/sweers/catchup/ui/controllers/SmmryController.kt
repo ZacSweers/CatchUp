@@ -232,7 +232,7 @@ class SmmryController : ButterKnifeController {
           }
 
           override fun onError(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") error: Throwable) {
-            Toast.makeText(activity, "Unknown error", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, R.string.unknown_issue, Toast.LENGTH_SHORT).show()
             if (error is IOException) {
               w(error) { "Unknown error in smmry load" }
             } else {

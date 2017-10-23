@@ -182,8 +182,8 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
           val isChecked = (preference as CheckBoxPreference).isChecked
           FirebasePerformance.getInstance().isPerformanceCollectionEnabled = isChecked
           P.Reports.put(isChecked).apply()
-          Snackbar.make(view, "Will take full effect on next app restart", Snackbar.LENGTH_SHORT)
-              .setAction("Undo") {
+          Snackbar.make(view, R.string.settings_reset, Snackbar.LENGTH_SHORT)
+              .setAction(R.string.undo) {
                 // TODO Maybe this should actually be a restart button
                 P.Reports.put(!isChecked).apply()
                 preference.isChecked = !isChecked
@@ -216,7 +216,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
               .subscribe { cleanedAmount, throwable ->
                 // TODO Use jw's byte units lib, this isn't totally accurate
                 val errorMessage = throwable?.let {
-                  "There was an error cleaning cache"
+                  getString(R.string.settings_error_cleaning_cache)
                 } ?: getString(R.string.clear_cache_success, cleanedAmount.format())
                 Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show()
               }

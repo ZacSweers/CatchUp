@@ -147,7 +147,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
             } else {
               // TODO Show a better error
               w(error) { "Could not load open source licenses." }
-              Snackbar.make(recyclerView, "Could not load open source licenses.",
+              Snackbar.make(recyclerView, R.string.licenses_error,
                   Snackbar.LENGTH_SHORT).show()
             }
           }

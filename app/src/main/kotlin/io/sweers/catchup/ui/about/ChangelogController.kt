@@ -107,8 +107,10 @@ class ChangelogController : ButterKnifeController(), Scrollable {
               } else {
                 e(error) { "Could not load changelog." }
               }
-              Snackbar.make(recyclerView, "Could not load changelog.",
-                  Snackbar.LENGTH_SHORT).show()
+              Snackbar.make(recyclerView,
+                  R.string.changelog_error,
+                  Snackbar.LENGTH_SHORT)
+                  .show()
             }
           }
     }

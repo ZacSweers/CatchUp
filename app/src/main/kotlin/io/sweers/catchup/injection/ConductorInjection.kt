@@ -16,15 +16,14 @@
 
 package io.sweers.catchup.injection
 
-import android.util.Log
 import com.bluelinelabs.conductor.Controller
 import dagger.android.AndroidInjector
 import dagger.android.HasActivityInjector
 import dagger.internal.Preconditions.checkNotNull
+import io.sweers.catchup.util.d
 
 /** Injects core Conductor types.  */
 object ConductorInjection {
-  private val TAG = "ConductorInjection"
 
   /**
    * Injects `controller` if an associated [AndroidInjector.Factory] implementation can be
@@ -44,12 +43,14 @@ object ConductorInjection {
    */
   fun inject(controller: Controller) {
     val hasDispatchingControllerInjector = findHasControllerInjector(controller)
-    Log.d(TAG, String.format(
-        "An injector for %s was found in %s",
-        controller.javaClass
-            .canonicalName,
-        hasDispatchingControllerInjector.javaClass
-            .canonicalName))
+    d {
+      String.format(
+          "An injector for %s was found in %s",
+          controller.javaClass
+              .canonicalName,
+          hasDispatchingControllerInjector.javaClass
+              .canonicalName)
+    }
 
     val controllerInjector = hasDispatchingControllerInjector.controllerInjector()
     checkNotNull(
