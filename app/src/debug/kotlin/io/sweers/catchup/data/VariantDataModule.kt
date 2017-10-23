@@ -42,7 +42,7 @@ object VariantDataModule {
       Timber.tag("OkHttp")
           .v(message)
     }
-    loggingInterceptor.level = HttpLoggingInterceptor.Level.HEADERS
+    loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
     return loggingInterceptor
   }
 
