@@ -18,6 +18,7 @@
 
   <style name="CatchUp" parent="Base">
     <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
+    <item name="android:navigationBarColor">@color/navbarBackground</item>
   </style>
 
   <style name="CatchUp.TabLayout.Inverted" parent="Widget.Design.TabLayout">
