@@ -26,6 +26,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.util.DiffUtil
 import android.support.v7.util.DiffUtil.DiffResult
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -146,6 +147,7 @@ class ServiceController : ButterKnifeController,
   private var moreDataAvailable = true
   private var dataLoading = false
   private var pendingRVState: Parcelable? = null
+  private val defaultItemAnimator = DefaultItemAnimator()
 
   @field:TextViewPool @Inject lateinit var textViewPool: RecycledViewPool
   @field:VisualViewPool @Inject lateinit var visualViewPool: RecycledViewPool
@@ -290,7 +292,7 @@ class ServiceController : ButterKnifeController,
       if (isRestoring) {
         errorView.hide()
         recyclerView.show()
-        recyclerView.itemAnimator = null
+        recyclerView.itemAnimator = defaultItemAnimator
       }
     }
   }
@@ -313,13 +315,13 @@ class ServiceController : ButterKnifeController,
     dataLoading = true
     if (adapter.itemCount != 0) {
       recyclerView.post { adapter.dataStartedLoading() }
-      recyclerView.itemAnimator = null
+      recyclerView.itemAnimator = defaultItemAnimator
     }
     val trace = FirebasePerformance.getInstance().newTrace("Data load - ${service.meta().id}")
     val timer = AtomicLong()
     val multiPage = pageToRestoreTo != null
     if (multiPage) {
-      recyclerView.itemAnimator = null
+      recyclerView.itemAnimator = defaultItemAnimator
     }
     service.fetchPage(
         DataRequest(
