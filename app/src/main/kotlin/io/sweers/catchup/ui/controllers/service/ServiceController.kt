@@ -223,7 +223,7 @@ class ServiceController : ButterKnifeController,
   override fun onViewBound(view: View) {
     super.onViewBound(view)
     @ColorInt val accentColor = ContextCompat.getColor(view.context, service.meta().themeColor)
-    @ColorInt val dayAccentColor = ContextCompat.getColor(dayOnlyContext, service.meta().themeColor)
+    @ColorInt val dayAccentColor = ContextCompat.getColor(dayOnlyContext!!, service.meta().themeColor)
     swipeRefreshLayout.run {
       setColorSchemeColors(dayAccentColor)
       setOnRefreshListener(this@ServiceController)

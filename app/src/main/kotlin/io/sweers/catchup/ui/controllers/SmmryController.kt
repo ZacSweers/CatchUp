@@ -116,7 +116,7 @@ class SmmryController : ButterKnifeController {
         info: SummarizationInfo) = Consumer<T> { _ ->
       controller.router
           .pushController(RouterTransaction.with(SmmryController(id,
-              ContextCompat.getColor(controller.activity, service.meta().themeColor),
+              ContextCompat.getColor(controller.activity!!, service.meta().themeColor),
               title,
               info))
               .pushChangeHandler(VerticalChangeHandler(false))
