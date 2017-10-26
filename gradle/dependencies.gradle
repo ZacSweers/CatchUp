@@ -15,7 +15,7 @@
  */
 
 def versions = [
-    androidTestSupport: '0.4.1',
+    androidTestSupport: '1.0.1',
     apollo: '0.4.2',
     archComponents: '1.0.0-rc1',
     autodispose: '0.3.0',
@@ -27,7 +27,7 @@ def versions = [
     conductor: '2.1.4',
     dagger: '2.12',
     errorProne: '2.1.2',
-    espresso: '2.2.1',
+    espresso: '3.0.1',
     firebase: '11.2.0',
     glide: '4.2.0',
     inspector: '0.2.0',
@@ -39,7 +39,7 @@ def versions = [
     rxbinding: '2.0.0',
     rxpalette: '0.3.0',
     stetho: '1.5.0',
-    support: '26.1.0',
+    support: '27.0.0',
     tikxml: '0.8.13'
 ]
 
@@ -60,10 +60,10 @@ ext.deps = [
 
         ],
         build: [
-            buildToolsVersion: '26.0.2',
-            compileSdkVersion: 26,
+            buildToolsVersion: '27.0.0',
+            compileSdkVersion: 27,
             minSdkVersion: 21,
-            targetSdkVersion: 26
+            targetSdkVersion: 27
         ],
         firebase: [
             core: "com.google.firebase:firebase-core:${versions.firebase}",
@@ -72,7 +72,7 @@ ext.deps = [
             gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.1',
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.0.0-rc2',
+        gradlePlugin: 'com.android.tools.build:gradle:3.0.0',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
@@ -157,7 +157,7 @@ ext.deps = [
             bugsnag: 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta4',
             playPublisher: 'com.github.triplet.gradle:play-publisher:1.2.0',
             psync: 'io.sweers.psync:psync:2.0.0-SNAPSHOT',
-            versions: 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
+            versions: 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         ],
 
         repositories: [
