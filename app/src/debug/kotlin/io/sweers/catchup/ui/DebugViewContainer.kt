@@ -18,6 +18,7 @@ package io.sweers.catchup.ui
 
 import android.app.Activity
 import android.content.Context.POWER_SERVICE
+import android.os.Build.VERSION
 import android.os.PowerManager
 import android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP
 import android.os.PowerManager.FULL_WAKE_LOCK
@@ -148,8 +149,13 @@ internal class DebugViewContainer @Inject constructor(
      * save you from hundreds of power button presses and pattern swiping per day!
      */
     fun riseAndShine(activity: Activity) {
-      activity.window
-          .addFlags(FLAG_SHOW_WHEN_LOCKED)
+      if (VERSION.SDK_INT >= 27) {
+        activity.setShowWhenLocked(true)
+      } else {
+        @Suppress("DEPRECATION")
+        activity.window
+            .addFlags(FLAG_SHOW_WHEN_LOCKED)
+      }
 
       val power = activity.getSystemService(POWER_SERVICE) as PowerManager
       @Suppress("DEPRECATION")
