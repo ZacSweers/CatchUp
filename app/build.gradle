@@ -311,7 +311,6 @@ dependencies {
   implementation deps.rx.android2
   implementation deps.rx.java
   implementation deps.rx.java2
-  implementation deps.rx.java2Interop
   implementation deps.rx.binding.core
   implementation deps.rx.binding.v4
   implementation deps.rx.binding.design
@@ -346,7 +345,6 @@ dependencies {
   implementation deps.misc.recyclerViewAnimators
   implementation deps.rx.java
   implementation deps.rx.preferences
-  implementation deps.rx.receivers
   implementation deps.rx.relay
   implementation deps.misc.moshiLazyAdapters
 

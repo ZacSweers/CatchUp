@@ -27,9 +27,7 @@ import android.support.annotation.ColorInt
 import android.support.v4.util.ArrayMap
 import android.widget.Toast
 import com.f2prateek.rx.preferences2.Preference
-import com.f2prateek.rx.receivers.RxBroadcastReceiver
 import com.uber.autodispose.kotlin.autoDisposeWith
-import hu.akarnokd.rxjava.interop.RxJavaInterop.toV2Observable
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -42,6 +40,7 @@ import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
+import io.sweers.catchup.util.registerReceiver
 import javax.inject.Inject
 
 @PerActivity
@@ -59,8 +58,7 @@ class LinkManager @Inject constructor(private val customTab: CustomTabActivityHe
     val filter = IntentFilter()
     filter.addAction(Intent.ACTION_INSTALL_PACKAGE)
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED)
-    Observable.merge(toV2Observable(RxBroadcastReceiver.create(activity, filter)),
-        globalSmartLinkingPref.asObservable())
+    Observable.merge(activity.registerReceiver(filter), globalSmartLinkingPref.asObservable())
         .autoDisposeWith(activity)
         .subscribe { dumbCache.clear() }
   }
