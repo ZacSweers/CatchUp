@@ -21,10 +21,6 @@ import io.reactivex.disposables.Disposable
 
 abstract class CompletableObserverAdapter : CompletableObserver {
 
-  override fun hashCode() = super.hashCode()
-
-  override fun equals(other: Any?) = super.equals(other)
-
   override fun onSubscribe(d: Disposable) = Unit
 
   override fun onComplete() = Unit

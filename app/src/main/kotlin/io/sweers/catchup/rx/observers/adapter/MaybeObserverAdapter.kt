@@ -21,10 +21,6 @@ import io.reactivex.disposables.Disposable
 
 abstract class MaybeObserverAdapter<T> : MaybeObserver<T> {
 
-  override fun hashCode() = super.hashCode()
-
-  override fun equals(other: Any?) = super.equals(other)
-
   override fun onSubscribe(d: Disposable) = Unit
 
   override fun onSuccess(value: T) = Unit
