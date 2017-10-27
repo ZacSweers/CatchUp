@@ -40,7 +40,6 @@ import io.sweers.catchup.service.github.model.TrendingTimespan
 import io.sweers.catchup.service.github.type.LanguageOrder
 import io.sweers.catchup.service.github.type.LanguageOrderField
 import io.sweers.catchup.service.github.type.OrderDirection
-import io.sweers.catchup.util.collect.emptyIfNull
 import io.sweers.catchup.util.nullIfBlank
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -81,7 +80,7 @@ internal class GitHubService @Inject constructor(
         }
         .map { it.data()!! }
         .flatMap { data ->
-          Observable.fromIterable(data.search().nodes().emptyIfNull())
+          Observable.fromIterable(data.search().nodes().orEmpty())
               .map { it.asRepository()!! }
               .map {
                 with(it) {

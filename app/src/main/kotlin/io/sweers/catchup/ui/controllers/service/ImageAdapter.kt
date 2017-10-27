@@ -59,7 +59,6 @@ import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.ObservableColorMatrix
 import io.sweers.catchup.util.UiUtil
-import io.sweers.catchup.util.collect.cast
 import io.sweers.catchup.util.glide.DribbbleTarget
 import io.sweers.catchup.util.isInNightMode
 
@@ -139,8 +138,7 @@ internal class ImageAdapter(private val context: Context,
             is GifDrawable -> drawable
             is TransitionDrawable -> (0 until drawable.numberOfLayers).asSequence()
                 .map { i -> drawable.getDrawable(i) }
-                .filter { it is GifDrawable }
-                .cast<GifDrawable>()
+                .filterIsInstance<GifDrawable>()
                 .firstOrNull()
             else -> null
           } ?: return@setOnTouchListener false
