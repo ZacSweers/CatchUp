@@ -31,7 +31,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        app:title="Settings"
+        app:title="@string/title_activity_settings"
         />
 
   </android.support.design.widget.AppBarLayout>
