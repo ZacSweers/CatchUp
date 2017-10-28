@@ -70,7 +70,6 @@ import io.sweers.catchup.data.smmry.model.SummarizationError
 import io.sweers.catchup.data.smmry.model.UnknownErrorCode
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.rx.observers.adapter.SingleObserverAdapter
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.SummarizationType
@@ -209,37 +208,33 @@ class SmmryController : ButterKnifeController {
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .autoDisposeWith(this)
-        .subscribe(object : SingleObserverAdapter<SmmryResponse>() {
-          override fun onSuccess(value: SmmryResponse) {
-            alreadyLoaded = true
-            when (value) {
-              is Success -> {
-                showSummary(value)
+        .subscribe({ smmryResponse ->
+          alreadyLoaded = true
+          when (smmryResponse) {
+            is Success -> {
+              showSummary(smmryResponse)
+            }
+            else -> {
+              val message = when (smmryResponse) {
+                is InternalError -> "Smmry internal error - ${smmryResponse.message}"
+                is IncorrectVariables -> "Smmry invalid input - ${smmryResponse.message}"
+                is ApiRejection -> "Smmry API error - ${smmryResponse.message}"
+                is SummarizationError -> "Smmry summarization error - ${smmryResponse.message}"
+                is UnknownErrorCode -> "Unknown error :("
+                else -> TODO("Placeholder because I've already checked for this")
               }
-              else -> {
-                val message = when (value) {
-                  is InternalError -> "Smmry internal error - ${value.message}"
-                  is IncorrectVariables -> "Smmry invalid input - ${value.message}"
-                  is ApiRejection -> "Smmry API error - ${value.message}"
-                  is SummarizationError -> "Smmry summarization error - ${value.message}"
-                  is UnknownErrorCode -> "Unknown error :("
-                  else -> TODO("Placeholder because I've already checked for this")
-                }
-                Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
-                router.popController(this@SmmryController)
-              }
+              Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+              router.popController(this@SmmryController)
             }
           }
-
-          override fun onError(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") error: Throwable) {
-            Toast.makeText(activity, R.string.unknown_issue, Toast.LENGTH_SHORT).show()
-            if (error is IOException) {
-              w(error) { "Unknown error in smmry load" }
-            } else {
-              e(error) { "Unknown error in smmry load" }
-            }
-            router.popController(this@SmmryController)
+        }, { error ->
+          Toast.makeText(activity, R.string.unknown_issue, Toast.LENGTH_SHORT).show()
+          if (error is IOException) {
+            w(error) { "Unknown error in smmry load" }
+          } else {
+            e(error) { "Unknown error in smmry load" }
           }
+          router.popController(this@SmmryController)
         })
   }
 
