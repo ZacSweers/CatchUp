@@ -17,8 +17,7 @@
 package io.sweers.catchup.ui
 
 import android.app.Activity
-import android.content.Context.POWER_SERVICE
-import android.os.Build.VERSION
+import android.os.Build
 import android.os.PowerManager
 import android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP
 import android.os.PowerManager.FULL_WAKE_LOCK
@@ -46,6 +45,7 @@ import io.sweers.catchup.ui.base.ActivityEvent
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
+import io.sweers.catchup.util.getSystemService
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
@@ -148,21 +148,22 @@ internal class DebugViewContainer @Inject constructor(
      * both of these conditions are already true. If you deployed from the IDE, however, this will
      * save you from hundreds of power button presses and pattern swiping per day!
      */
+    @Suppress("DEPRECATION")
     fun riseAndShine(activity: Activity) {
-      if (VERSION.SDK_INT >= 27) {
-        activity.setShowWhenLocked(true)
+      if (Build.VERSION.SDK_INT >= 27) {
+        activity.run {
+          setShowWhenLocked(true)
+          setTurnScreenOn(true)
+        }
       } else {
-        @Suppress("DEPRECATION")
         activity.window
             .addFlags(FLAG_SHOW_WHEN_LOCKED)
-      }
-
-      val power = activity.getSystemService(POWER_SERVICE) as PowerManager
-      @Suppress("DEPRECATION")
-      power.newWakeLock(FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
-          "wakeup!").run {
-        acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
-        release()
+        val power = activity.getSystemService<PowerManager>()
+        power.newWakeLock(FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
+            "wakeup!").run {
+          acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
+          release()
+        }
       }
     }
   }
