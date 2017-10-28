@@ -19,8 +19,10 @@
 package io.sweers.catchup.util
 
 import android.annotation.TargetApi
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build.VERSION_CODES
@@ -30,6 +32,7 @@ import android.support.annotation.UiThread
 import android.util.TypedValue
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import io.reactivex.Observable
 import java.io.File
 import java.io.IOException
 
@@ -156,5 +159,19 @@ inline fun <reified T> Context.getSystemService(): T {
       android.app.usage.NetworkStatsManager::class -> Context.NETWORK_STATS_SERVICE
       else -> throw UnsupportedOperationException("Unsupported service: ${T::class.java}")
     }.let { getSystemService(it) as T }
+  }
+}
+
+fun Context.registerReceiver(intentFilter: IntentFilter): Observable<Intent> {
+  return Observable.create { emitter ->
+    val receiver = object : BroadcastReceiver() {
+      override fun onReceive(context: Context, intent: Intent) {
+        emitter.onNext(intent)
+      }
+    }
+
+    registerReceiver(receiver, intentFilter)
+
+    emitter.setCancellable { unregisterReceiver(receiver) }
   }
 }

@@ -44,10 +44,6 @@
     "name": "rxandroid"
   },
   {
-    "owner": "akarnokd",
-    "name": "RxJava2Interop"
-  },
-  {
     "owner": "gabrielittner",
     "name": "lazythreetenbp"
   },
@@ -86,10 +82,6 @@
   {
     "owner": "f2prateek",
     "name": "rx-preferences"
-  },
-  {
-    "owner": "f2prateek",
-    "name": "rx-receivers"
   },
   {
     "owner": "jetbrains",

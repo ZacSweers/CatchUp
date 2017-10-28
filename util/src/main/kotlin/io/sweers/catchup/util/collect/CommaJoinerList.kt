@@ -16,10 +16,7 @@
 
 package io.sweers.catchup.util.collect
 
-import android.os.Build.VERSION_CODES
-import android.support.annotation.RequiresApi
 import android.text.TextUtils
-import java.util.function.Consumer
 
 /**
  * A List implementation that emits toString() calls as comma separated values, useful for
@@ -27,50 +24,8 @@ import java.util.function.Consumer
  *
  * @param <E> the element type
  */
-class CommaJoinerList<E> constructor(private val delegate: List<E>) : List<E> {
-
-  override val size: Int
-    get() = delegate.size
-
-  override fun isEmpty() = delegate.isEmpty()
-
-  override fun contains(element: E) = delegate.contains(element)
-
-  override fun iterator() = delegate.iterator()
-
-  override fun get(index: Int) = delegate[index]
-
-  @RequiresApi(VERSION_CODES.N)
-  override fun forEach(action: Consumer<in E>?) {
-    delegate.forEach(action)
-  }
-
-  @RequiresApi(VERSION_CODES.N)
-  override fun stream() = delegate.stream()
-
-  override fun indexOf(element: E) = delegate.indexOf(element)
-
-  override fun equals(other: Any?) = delegate == other
-
-  @RequiresApi(VERSION_CODES.N)
-  override fun parallelStream() = delegate.parallelStream()
-
-  @RequiresApi(VERSION_CODES.N)
-  override fun spliterator() = delegate.spliterator()
-
-  override fun containsAll(elements: Collection<E>) = delegate.containsAll(elements)
-
-  override fun lastIndexOf(element: E) = delegate.lastIndexOf(element)
-
-  override fun hashCode() = delegate.hashCode()
-
-  override fun listIterator() = delegate.listIterator()
-
-  override fun listIterator(index: Int) = delegate.listIterator(index)
-
-  override fun subList(fromIndex: Int, toIndex: Int) = delegate.subList(fromIndex, toIndex)
-
+class CommaJoinerList<E> constructor(delegate: List<E>) : List<E> by delegate {
   override fun toString(): String = TextUtils.join(",", this)
 }
 
-fun <T : Any> List<T>.toCommaJoinerList() = CommaJoinerList(this)
+fun <T> List<T>.toCommaJoinerList() = CommaJoinerList(this)
