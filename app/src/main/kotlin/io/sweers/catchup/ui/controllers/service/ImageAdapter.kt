@@ -118,7 +118,7 @@ internal class ImageAdapter(private val context: Context,
     when (viewType) {
       TYPE_ITEM -> {
         val holder = ImageHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.image_item, parent, false))
+            .inflate(R.layout.image_item, parent, false), loadingPlaceholders)
         holder.image.setBadgeColor(
             INITIAL_GIF_BADGE_COLOR)
         holder.image.foreground = UiUtil.createColorSelector(0x40808080, null)
@@ -160,7 +160,13 @@ internal class ImageAdapter(private val context: Context,
   override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
     when (getItemViewType(position)) {
       TYPE_ITEM -> {
-        bindDelegate(data[position], holder as ImageHolder)
+        val imageItem = data[position]
+        // TODO This is kind of ugly but not sure what else to do. Holder can't be an inner class to avoid mem leaks
+        (holder as ImageHolder).backingImageItem = imageItem
+        bindDelegate(imageItem, holder)
+            .also {
+              holder.backingImageItem = null
+            }
       }
       TYPE_LOADING_MORE -> (holder as LoadingMoreHolder).progress.visibility = if (position > 0) View.VISIBLE else View.INVISIBLE
     }
@@ -209,9 +215,11 @@ internal class ImageAdapter(private val context: Context,
     notifyItemRemoved(loadingPos)
   }
 
-  internal inner class ImageHolder(itemView: View)
+  internal class ImageHolder(itemView: View,
+      private val loadingPlaceholders: Array<ColorDrawable>)
     : RxViewHolder(itemView), BindableCatchUpItemViewHolder {
 
+    internal var backingImageItem: ImageItem? = null
     internal val image: BadgedFourThreeImageView = itemView as BadgedFourThreeImageView
 
     override fun itemView(): View = itemView
@@ -220,59 +228,60 @@ internal class ImageAdapter(private val context: Context,
         linkHandler: LinkHandler,
         itemClickHandler: ((String) -> Any)?,
         commentClickHandler: ((String) -> Any)?) {
-      val imageItem = data[adapterPosition]
-      item.itemClickUrl?.let {
-        itemClickHandler?.invoke(it)
-      }
-      val (x, y) = imageItem.imageInfo.bestSize ?: Pair(image.measuredWidth, image.measuredHeight)
-      Glide.with(itemView.context)
-          .load(imageItem.imageInfo.url)
-          .apply(RequestOptions()
-              .placeholder(loadingPlaceholders[adapterPosition % loadingPlaceholders.size])
-              .diskCacheStrategy(DiskCacheStrategy.DATA)
-              .centerCrop()
-              .override(x, y))
-          .transition(DrawableTransitionOptions.withCrossFade())
-          .listener(object : RequestListener<Drawable> {
-            override fun onResourceReady(resource: Drawable,
-                model: Any,
-                target: Target<Drawable>,
-                dataSource: DataSource,
-                isFirstResource: Boolean): Boolean {
-              if (!imageItem.hasFadedIn) {
-                image.setHasTransientState(true)
-                val cm = ObservableColorMatrix()
-                val saturation = ObjectAnimator.ofFloat(cm, ObservableColorMatrix.SATURATION, 0f,
-                    1f)
-                saturation.addUpdateListener { _ ->
-                  // just animating the color matrix does not invalidate the
-                  // drawable so need this update listener.  Also have to create a
-                  // new CMCF as the matrix is immutable :(
-                  image.colorFilter = ColorMatrixColorFilter(cm)
-                }
-                saturation.duration = 2000L
-                saturation.interpolator = FastOutSlowInInterpolator()
-                saturation.addListener(object : AnimatorListenerAdapter() {
-                  override fun onAnimationEnd(animation: Animator) {
-                    image.clearColorFilter()
-                    image.setHasTransientState(false)
+      backingImageItem?.let { imageItem ->
+        item.itemClickUrl?.let {
+          itemClickHandler?.invoke(it)
+        }
+        val (x, y) = imageItem.imageInfo.bestSize ?: Pair(image.measuredWidth, image.measuredHeight)
+        Glide.with(itemView.context)
+            .load(imageItem.imageInfo.url)
+            .apply(RequestOptions()
+                .placeholder(loadingPlaceholders[adapterPosition % loadingPlaceholders.size])
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .centerCrop()
+                .override(x, y))
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .listener(object : RequestListener<Drawable> {
+              override fun onResourceReady(resource: Drawable,
+                  model: Any,
+                  target: Target<Drawable>,
+                  dataSource: DataSource,
+                  isFirstResource: Boolean): Boolean {
+                if (!imageItem.hasFadedIn) {
+                  image.setHasTransientState(true)
+                  val cm = ObservableColorMatrix()
+                  val saturation = ObjectAnimator.ofFloat(cm, ObservableColorMatrix.SATURATION, 0f,
+                      1f)
+                  saturation.addUpdateListener { _ ->
+                    // just animating the color matrix does not invalidate the
+                    // drawable so need this update listener.  Also have to create a
+                    // new CMCF as the matrix is immutable :(
+                    image.colorFilter = ColorMatrixColorFilter(cm)
                   }
-                })
-                saturation.start()
-                imageItem.hasFadedIn = true
+                  saturation.duration = 2000L
+                  saturation.interpolator = FastOutSlowInInterpolator()
+                  saturation.addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                      image.clearColorFilter()
+                      image.setHasTransientState(false)
+                    }
+                  })
+                  saturation.start()
+                  imageItem.hasFadedIn = true
+                }
+                return false
               }
-              return false
-            }
 
-            override fun onLoadFailed(e: GlideException?,
-                model: Any,
-                target: Target<Drawable>,
-                isFirstResource: Boolean) = false
-          })
-          .into(DribbbleTarget(image, false))
-      // need both placeholder & background to prevent seeing through image as it fades in
-      image.background = loadingPlaceholders[adapterPosition % loadingPlaceholders.size]
-      image.showBadge(imageItem.imageInfo.animatable)
+              override fun onLoadFailed(e: GlideException?,
+                  model: Any,
+                  target: Target<Drawable>,
+                  isFirstResource: Boolean) = false
+            })
+            .into(DribbbleTarget(image, false))
+        // need both placeholder & background to prevent seeing through image as it fades in
+        image.background = loadingPlaceholders[adapterPosition % loadingPlaceholders.size]
+        image.showBadge(imageItem.imageInfo.animatable)
+      }
     }
 
     override fun itemClicks() = itemView().clicks()
