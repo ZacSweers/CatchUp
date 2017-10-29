@@ -24,6 +24,7 @@ import android.support.annotation.ColorInt
 import android.support.annotation.FloatRange
 import android.support.annotation.IntDef
 import android.support.annotation.IntRange
+import android.support.v4.graphics.ColorUtils.colorToHSL
 import android.support.v7.graphics.Palette
 import io.sweers.catchup.util.ColorUtils.Lightness
 import kotlin.annotation.AnnotationRetention.SOURCE
@@ -120,7 +121,7 @@ object ColorUtils {
   fun isDark(
       @ColorInt color: Int): Boolean {
     val hsl = FloatArray(3)
-    android.support.v4.graphics.ColorUtils.colorToHSL(color, hsl)
+    colorToHSL(color, hsl)
     return isDark(hsl)
   }
 }
