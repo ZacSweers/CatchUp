@@ -49,6 +49,7 @@ abstract class CatchUpDatabase : RoomDatabase() {
       return INSTANCE ?: Room.databaseBuilder(context.applicationContext,
           CatchUpDatabase::class.java,
           "catchup.db")
+          .fallbackToDestructiveMigration()
           .build()
           .also { INSTANCE = it }
     }
