@@ -39,6 +39,24 @@ fun View.clearLightStatusBar() {
   }
 }
 
+fun View.setLightNavBar() {
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    var flags = systemUiVisibility
+    // TODO noop if it's already set
+    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+    systemUiVisibility = flags
+  }
+}
+
+fun View.clearLightNavBar() {
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    var flags = systemUiVisibility
+    // TODO noop if it's already not set
+    flags = flags and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
+    systemUiVisibility = flags
+  }
+}
+
 inline fun View.isVisible() = visibility == View.VISIBLE
 inline fun View.show() {
   visibility = View.VISIBLE
