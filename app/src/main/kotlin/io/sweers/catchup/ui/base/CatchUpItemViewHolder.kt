@@ -28,25 +28,19 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.view.longClicks
-import io.reactivex.Completable
-import io.reactivex.functions.Function
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.LinkHandler
-import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.util.format
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.show
+import io.sweers.catchup.util.showIf
 import org.threeten.bp.Instant
 
 class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
     itemView), BindableCatchUpItemViewHolder {
-
-  companion object {
-    val COMPLETABLE_FUNC = Function<UrlMeta, Completable> { Completable.complete() }
-  }
 
   @BindView(R.id.container) internal lateinit var container: View
   @BindView(R.id.tags_container) internal lateinit var tagsContainer: View
@@ -141,28 +135,29 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
           }
         }
         .count { (_, isBlank) -> !isBlank }
+    tagsContainer showIf (numVisible > 0)
     when (numVisible) {
       0, 1 -> {
         scoreDivider.hide()
         tagDivider.hide()
-        if (numVisible == 0) {
-          tagsContainer.hide()
-        } else {
-          tagsContainer.show()
-        }
       }
       2 -> {
-        tagsContainer.show()
-        if (score.isVisible()) {
-          scoreDivider.show()
-          tagDivider.hide()
-        } else {
-          tagDivider.show()
-          scoreDivider.hide()
+        when {
+          timestamp.isVisible() -> {
+            tagDivider.show()
+            scoreDivider.hide()
+          }
+          score.isVisible() -> {
+            scoreDivider.show()
+            tagDivider.hide()
+          }
+          else -> {
+            tagDivider.show()
+            scoreDivider.hide()
+          }
         }
       }
       3 -> {
-        tagsContainer.show()
         scoreDivider.show()
         tagDivider.show()
       }

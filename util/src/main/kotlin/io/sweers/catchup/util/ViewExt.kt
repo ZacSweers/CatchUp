@@ -43,10 +43,24 @@ inline fun View.isVisible() = visibility == View.VISIBLE
 inline fun View.show() {
   visibility = View.VISIBLE
 }
+infix inline fun View.showIf(condition: Boolean) {
+  if (condition) {
+    show()
+  } else {
+    hide()
+  }
+}
 
 inline fun View.isGone() = visibility == View.GONE
 inline fun View.hide() {
   visibility = View.GONE
+}
+infix inline fun View.hideIf(condition: Boolean) {
+  if (condition) {
+    hide()
+  } else {
+    show()
+  }
 }
 
 inline fun View.isRtl() = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
