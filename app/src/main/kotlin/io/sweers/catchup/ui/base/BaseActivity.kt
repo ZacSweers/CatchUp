@@ -120,7 +120,6 @@ abstract class BaseActivity : AppCompatActivity(),
     AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     lifecycleRelay.accept(ActivityEvent.CREATE)
-    updateNavBarColor()
   }
 
   @CallSuper override fun onStart() {
