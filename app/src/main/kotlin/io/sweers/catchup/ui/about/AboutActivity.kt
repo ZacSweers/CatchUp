@@ -39,6 +39,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
@@ -233,6 +234,13 @@ class AboutController : ButterKnifeController() {
 
     bannerIcon.setOnClickListener {
       appBarLayout.setExpanded(false, true)
+    }
+    bannerIcon.setOnLongClickListener {
+      Toast.makeText(activity, R.string.icon_attribution, Toast.LENGTH_SHORT).show()
+      linkManager.openUrl(
+          UrlMeta("https://cookicons.co", aboutText.highlightColor, activity!!))
+          .subscribe()
+      true
     }
 
     aboutText.movementMethod = LinkTouchMovementMethod.getInstance()
