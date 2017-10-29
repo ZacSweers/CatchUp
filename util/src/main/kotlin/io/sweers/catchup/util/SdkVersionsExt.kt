@@ -21,3 +21,8 @@ import android.os.Build
 fun isM(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 fun isN(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 fun isO(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+fun isOMR1(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1
+
+inline fun sdk(level: Int, func: () -> Unit) {
+  if (Build.VERSION.SDK_INT >= level) func.invoke()
+}
