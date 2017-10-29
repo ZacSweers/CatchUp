@@ -51,7 +51,6 @@ import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
@@ -65,6 +64,7 @@ import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttribute
 import io.sweers.catchup.util.setLightStatusBar
+import io.sweers.catchup.util.updateNavBarColor
 import java.util.Arrays
 import javax.inject.Inject
 
@@ -101,11 +101,6 @@ class PagerController : ButterKnifeController {
   @BindView(R.id.appbarlayout) lateinit var appBarLayout: AppBarLayout
   private var statusBarColorAnimator: ValueAnimator? = null
   private var tabLayoutColorAnimator: Animator? = null
-  private var colorNavBar: Boolean
-    set(value) {
-      P.ThemeNavigationBar.put(value).commit()
-    }
-    get() = P.ThemeNavigationBar.get()
   private var tabLayoutIsPinned = false
   private var canAnimateColor = true
   private var lastPosition = 0
@@ -279,9 +274,8 @@ class PagerController : ButterKnifeController {
           if (tabLayoutIsPinned) {
             activity?.window?.statusBarColor = color
           }
-          if (colorNavBar) {
-            activity?.window?.navigationBarColor = color
-          }
+          activity?.updateNavBarColor(color,
+              context = view.context)
         }
       }
 
@@ -331,9 +325,8 @@ class PagerController : ButterKnifeController {
                   if (tabLayoutIsPinned) {
                     activity?.window?.statusBarColor = color
                   }
-                  if (colorNavBar) {
-                    activity?.window?.navigationBarColor = color
-                  }
+                  activity?.updateNavBarColor(color,
+                      context = view.context)
                 }
                 start()
               }
@@ -371,12 +364,9 @@ class PagerController : ButterKnifeController {
           activity?.recreate()
         }
         if (extras.getBoolean(SettingsActivity.NAV_COLOR_UPDATED, false)) {
-          // Update the nav bar with whatever prefs we had
-          if (P.ThemeNavigationBar.get()) {
-            activity?.window?.navigationBarColor = (tabLayout.background as ColorDrawable).color
-          } else {
-            activity?.recreate()
-          }
+          activity?.updateNavBarColor(color = (tabLayout.background as ColorDrawable).color,
+              context = view!!.context,
+              recreate = true)
         }
       }
     }

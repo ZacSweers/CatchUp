@@ -35,6 +35,7 @@ import io.sweers.catchup.ui.base.ActivityEvent.PAUSE
 import io.sweers.catchup.ui.base.ActivityEvent.RESUME
 import io.sweers.catchup.ui.base.ActivityEvent.START
 import io.sweers.catchup.ui.base.ActivityEvent.STOP
+import io.sweers.catchup.util.updateNavBarColor
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity(),
@@ -119,6 +120,7 @@ abstract class BaseActivity : AppCompatActivity(),
     AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     lifecycleRelay.accept(ActivityEvent.CREATE)
+    updateNavBarColor()
   }
 
   @CallSuper override fun onStart() {
@@ -129,6 +131,11 @@ abstract class BaseActivity : AppCompatActivity(),
   @CallSuper override fun onResume() {
     super.onResume()
     lifecycleRelay.accept(ActivityEvent.RESUME)
+  }
+
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    updateNavBarColor()
   }
 
   @CallSuper override fun onPause() {

@@ -53,6 +53,7 @@ import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.format
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
+import io.sweers.catchup.util.updateNavBarColor
 import io.sweers.catchup.util.updateNightMode
 import okhttp3.Cache
 import java.io.File
@@ -176,6 +177,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
         P.ThemeNavigationBar.KEY -> {
           P.ThemeNavigationBar.put((preference as CheckBoxPreference).isChecked).apply()
           (activity as SettingsActivity).resultData.putBoolean(NAV_COLOR_UPDATED, true)
+          activity.updateNavBarColor(recreate = true)
           return true
         }
         P.Reports.KEY -> {
