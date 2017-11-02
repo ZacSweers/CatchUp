@@ -18,6 +18,8 @@ package io.sweers.catchup.ui.base
 
 import android.content.res.ColorStateList
 import android.support.annotation.ColorInt
+import android.support.constraint.ConstraintLayout
+import android.support.constraint.ConstraintSet
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.RxViewHolder
 import android.text.format.DateUtils
@@ -42,7 +44,7 @@ import org.threeten.bp.Instant
 class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
     itemView), BindableCatchUpItemViewHolder {
 
-  @BindView(R.id.container) internal lateinit var container: View
+  @BindView(R.id.container) internal lateinit var container: ConstraintLayout
   @BindView(R.id.tags_container) internal lateinit var tagsContainer: View
   @BindView(R.id.title) internal lateinit var title: TextView
   @BindView(R.id.score) internal lateinit var score: TextView
@@ -56,9 +58,12 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
   @BindView(R.id.tag_divider) internal lateinit var tagDivider: View
   private var unbinder: Unbinder? = null
 
+  private val constraintSet: ConstraintSet
+
   init {
     unbinder?.unbind()
     unbinder = ButterKnife.bind(this, itemView)
+    constraintSet = ConstraintSet()
   }
 
   override fun itemView(): View = itemView
@@ -206,6 +211,13 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
     } else {
       author.show()
     }
+
+    constraintSet.apply {
+      clone(container)
+      // Set the vertical bias on the timestamp view since it is the head of the vertical chain.
+      setVerticalBias(R.id.timestamp, getVerticalBias(sourceBlank, authorBlank))
+      applyTo(container)
+    }
   }
 
   fun comments(commentsCount: Int) {
@@ -214,4 +226,12 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
   }
 
   fun hideComments() = comments.hide()
+
+  private fun getVerticalBias(sourceBlank: Boolean, authorBlank: Boolean) = if (sourceBlank && authorBlank) {
+    0.5f // Center
+  } else if (sourceBlank) {
+    0f // Top
+  } else {
+    0.5f // Center
+  }
 }

@@ -341,6 +341,9 @@ class LicensesController : ButterKnifeController(), Scrollable {
           title.text = item.name
         }
         is OssItem -> (holder as CatchUpItemViewHolder).apply {
+          // Set the title top margin to 0dp as layout_goneMarginTop doesn't work.
+          // See https://issuetracker.google.com/issues/68768935
+          setTitleTopMargin(holder)
           title(
               "${item.name}${if (!item.description.isNullOrEmpty()) " — ${item.description}" else ""}")
           score(null)
@@ -385,6 +388,15 @@ class LicensesController : ButterKnifeController(), Scrollable {
     }
 
     override fun getItemViewType(position: Int) = items[position].itemType()
+  }
+
+  private fun setTitleTopMargin(holder: CatchUpItemViewHolder) = with(holder) {
+    with(title) {
+      val lp = layoutParams as ViewGroup.MarginLayoutParams
+      if (lp.topMargin != 0) {
+        layoutParams = lp.apply { this.topMargin = 0 }
+      }
+    }
   }
 }
 
