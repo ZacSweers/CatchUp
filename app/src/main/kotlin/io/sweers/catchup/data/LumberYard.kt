@@ -17,6 +17,7 @@
 package io.sweers.catchup.data
 
 import android.app.Application
+import android.support.annotation.WorkerThread
 import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -25,7 +26,6 @@ import okio.BufferedSink
 import okio.Okio
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
-import rx.Completable
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -42,7 +42,7 @@ class LumberYard @Inject constructor(private val app: Application) {
 
   fun tree(): Timber.Tree {
     return object : Timber.DebugTree() {
-      override fun log(priority: Int, tag: String, message: String, t: Throwable?) {
+      override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         addEntry(Entry(priority, tag, message))
       }
     }
@@ -57,13 +57,9 @@ class LumberYard @Inject constructor(private val app: Application) {
     entrySubject.onNext(entry)
   }
 
-  fun bufferedLogs(): List<Entry> {
-    return ArrayList(entries)
-  }
+  fun bufferedLogs() = ArrayList(entries)
 
-  fun logs(): Observable<Entry> {
-    return entrySubject
-  }
+  fun logs(): Observable<Entry> = entrySubject.hide()
 
   /**
    * Save the current logs to disk.
@@ -111,32 +107,31 @@ class LumberYard @Inject constructor(private val app: Application) {
    * Delete all of the log files saved to disk. Be careful not to call this before any intents have
    * finished using the file reference.
    */
-  fun cleanUp() {
-    Completable.fromAction {
-      val folder = app.getExternalFilesDir(null)
-      folder?.listFiles()?.asSequence()?.filter {
-        it.name.endsWith(".log")
-      }?.forEach { it.delete() }
-    }
+  @WorkerThread
+  fun cleanUp(): Long {
+    val folder = app.getExternalFilesDir(null)
+    val initialSize = folder.length()
+    folder?.listFiles()?.asSequence()?.filter {
+      it.name.endsWith(".log")
+    }?.forEach { it.delete() }
+    return initialSize - folder.length()
   }
 
-  data class Entry(val level: Int, val tag: String, val message: String) {
+  data class Entry(val level: Int, val tag: String?, val message: String) {
     fun prettyPrint(): String {
-      return String.format("%22s %s %s", tag, displayLevel(),
+      return String.format("%22s %s %s", tag ?: "CATCHUP", displayLevel(),
           // Indent newlines to match the original indentation.
           message.replace("\\n".toRegex(), "\n                         "))
     }
 
-    fun displayLevel(): String {
-      return when (level) {
-        Log.VERBOSE -> "V"
-        Log.DEBUG -> "D"
-        Log.INFO -> "I"
-        Log.WARN -> "W"
-        Log.ERROR -> "E"
-        Log.ASSERT -> "A"
-        else -> "?"
-      }
+    fun displayLevel() = when (level) {
+      Log.VERBOSE -> "V"
+      Log.DEBUG -> "D"
+      Log.INFO -> "I"
+      Log.WARN -> "W"
+      Log.ERROR -> "E"
+      Log.ASSERT -> "A"
+      else -> "?"
     }
   }
 
