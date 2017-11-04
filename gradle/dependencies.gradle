@@ -18,7 +18,7 @@ def versions = [
     androidTestSupport: '1.0.1',
     apollo: '0.4.2',
     archComponents: '1.0.0-rc1',
-    autodispose: '0.3.0',
+    autodispose: '0.4.0',
     avFirebase: '1.1.0',
     avMoshi: '0.4.4',
     barber: '1.3.1',
@@ -31,7 +31,7 @@ def versions = [
     firebase: '11.2.0',
     glide: '4.3.0',
     inspector: '0.2.0',
-    kotlin: '1.2.0-beta-88',
+    kotlin: '1.2.0-rc-39',
     leakcanary: '1.5.4',
     okhttp: '3.9.0',
     playServices: '11.2.0',
@@ -154,7 +154,7 @@ ext.deps = [
         gitTimestamp: 'git log -n 1 --format=%at'.execute([], rootDir).text.trim() ?: 0,
 
         gradlePlugins: [
-            bugsnag: 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0-beta4',
+            bugsnag: 'com.bugsnag:bugsnag-android-gradle-plugin:3.0.0',
             playPublisher: 'com.github.triplet.gradle:play-publisher:1.2.0',
             psync: 'io.sweers.psync:psync:2.0.0-SNAPSHOT',
             versions: 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
@@ -251,7 +251,7 @@ ext.deps = [
     ],
 
     misc: [
-        bugsnag: 'com.bugsnag:bugsnag-android:4.1.1',
+        bugsnag: 'com.bugsnag:bugsnag-android:4.1.2',
         debug: [
             madge: 'com.jakewharton.madge:madge:1.1.4',
             processPhoenix: 'com.jakewharton:process-phoenix:2.0.0',
@@ -267,7 +267,7 @@ ext.deps = [
         moshiLazyAdapters: 'com.serjltt.moshi:moshi-lazy-adapters:2.1',
         okio: 'com.squareup.okio:okio:1.13.0',
         recyclerViewAnimators: 'jp.wasabeef:recyclerview-animators:2.2.7',
-        timber: 'com.jakewharton.timber:timber:4.5.1',
+        timber: 'com.jakewharton.timber:timber:4.6.0',
         unbescape: 'org.unbescape:unbescape:1.1.5.RELEASE'
     ],
 
@@ -300,7 +300,6 @@ ext.deps = [
         relay: 'com.jakewharton.rxrelay2:rxrelay:2.0.0',
         java2: 'io.reactivex.rxjava2:rxjava:2.1.6',
         android2: 'io.reactivex.rxjava2:rxandroid:2.0.1',
-        java2Extensions: 'com.github.akarnokd:rxjava2-extensions:0.17.8',
         palette: [
             core: "io.sweers.rxpalette:rxpalette:${versions.rxpalette}",
             kotlin: "io.sweers.rxpalette:rxpalette-kotlin:${versions.rxpalette}"

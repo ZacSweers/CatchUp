@@ -316,7 +316,6 @@ dependencies {
   implementation deps.rx.binding.design
   implementation deps.misc.lazythreeten
   implementation deps.misc.timber
-  implementation "ca.barrenechea.header-decor:header-decor:0.2.8"
   debugImplementation deps.misc.debug.madge
   debugImplementation deps.misc.debug.scalpel
   debugImplementation deps.misc.debug.processPhoenix
@@ -389,7 +388,6 @@ dependencies {
   implementation deps.misc.jsr305
 
   // Test
-  testImplementation deps.rx.java2Extensions
   testImplementation deps.rx.relay
   androidTestCompileOnly deps.errorProne.compileOnly.annotations
   androidTestImplementation deps.rx.java2
