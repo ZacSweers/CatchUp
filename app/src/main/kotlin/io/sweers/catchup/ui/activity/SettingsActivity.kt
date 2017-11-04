@@ -45,6 +45,7 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpDatabase
+import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
@@ -132,6 +133,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
 
     @Inject lateinit var cache: dagger.Lazy<Cache>
     @Inject lateinit var database: CatchUpDatabase
+    @Inject lateinit var lumberYard: LumberYard
 
     override fun onCreate(savedInstanceState: Bundle?) {
       AndroidInjection.inject(this)
@@ -211,7 +213,8 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
               nukeItems()
             }
             val deletedFromDb = initialDbSize - dbFile.length()
-            return@fromCallable cacheCleaned + deletedFromDb + networkCacheCleaned
+            val clearedLogs = lumberYard.cleanUp()
+            return@fromCallable cacheCleaned + deletedFromDb + networkCacheCleaned + clearedLogs
           }.subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .autoDisposeWith(activity as BaseActivity)
