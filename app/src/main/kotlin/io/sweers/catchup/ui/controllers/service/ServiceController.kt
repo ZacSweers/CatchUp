@@ -43,7 +43,6 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import com.apollographql.apollo.exception.ApolloException
-import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.google.firebase.perf.FirebasePerformance
@@ -51,6 +50,7 @@ import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
@@ -199,7 +199,7 @@ class ServiceController : ButterKnifeController,
       val adapter = ImageAdapter(context) { item, holder ->
         service.bindItemView(item.delegate, holder)
       }
-      val preloader = RecyclerViewPreloader<ImageItem>(Glide.with(activity),
+      val preloader = RecyclerViewPreloader<ImageItem>(GlideApp.with(activity),
           adapter,
           ViewPreloadSizeProvider<ImageItem>(),
           ImageAdapter.PRELOAD_AHEAD_ITEMS)

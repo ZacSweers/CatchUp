@@ -40,7 +40,6 @@ import butterknife.Unbinder
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.rx2.Rx2Apollo
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
@@ -59,6 +58,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
+import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.data.LinkManager
@@ -315,7 +315,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
       val item = items[position]
       when (item) {
         is OssItemHeader -> (holder as HeaderHolder).run {
-          Glide.with(itemView)
+          GlideApp.with(itemView)
               .load(item.avatarUrl)
               .apply(RequestOptions()
                   .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
