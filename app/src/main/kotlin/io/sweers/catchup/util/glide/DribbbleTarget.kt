@@ -22,7 +22,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.v7.graphics.Palette
 import com.bumptech.glide.load.resource.gif.GifDrawable
-import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.ColorUtils
@@ -34,14 +33,14 @@ import io.sweers.catchup.util.UiUtil
  * images, can prevent GIFs from auto-playing & applies a palette generated ripple.
  */
 class DribbbleTarget(view: BadgedFourThreeImageView,
-    private val autoplayGifs: Boolean) : DrawableImageViewTarget(view),
+    private val autoplayGifs: Boolean) : NonAutoStartDrawableImageViewTarget(view),
     Palette.PaletteAsyncListener {
 
   override fun onResourceReady(resource: Drawable,
       transition: Transition<in Drawable>?) {
     super.onResourceReady(resource, transition)
-    if (!autoplayGifs && resource is GifDrawable) {
-      resource.stop()
+    if (autoplayGifs && resource is GifDrawable) {
+      resource.start()
     }
 
     val badgedImageView = getView() as BadgedFourThreeImageView
@@ -66,18 +65,6 @@ class DribbbleTarget(view: BadgedFourThreeImageView,
       val isDark = ColorUtils.isDark(corner)
       corner.recycle()
       badgedImageView.setBadgeColor(if (isDark) 0xb3ffffff.toInt() else 0x40000000)
-    }
-  }
-
-  override fun onStart() {
-    if (autoplayGifs) {
-      super.onStart()
-    }
-  }
-
-  override fun onStop() {
-    if (autoplayGifs) {
-      super.onStop()
     }
   }
 

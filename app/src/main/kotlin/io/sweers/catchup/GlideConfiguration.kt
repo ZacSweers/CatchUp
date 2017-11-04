@@ -21,12 +21,7 @@ package io.sweers.catchup
 import android.app.ActivityManager
 import android.content.Context
 import android.support.v4.app.ActivityManagerCompat
-import android.view.View
-import com.bluelinelabs.conductor.Controller
-import com.bluelinelabs.conductor.Controller.LifecycleListener
-import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
-import com.bumptech.glide.RequestManager
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.module.AppGlideModule
@@ -52,33 +47,4 @@ class GlideConfiguration : AppGlideModule() {
   }
 
   override fun isManifestParsingEnabled() = false
-}
-
-/**
- * TODO Make this a GlideExtension one day
- */
-inline fun Controller.requestManager(): RequestManager {
-  return activity?.let {
-    Glide.with(activity).apply {
-      addLifecycleListener(object : LifecycleListener() {
-        override fun postCreateView(controller: Controller, view: View) {
-          onStart()
-        }
-
-        override fun postDestroyView(controller: Controller) {
-          onStop()
-        }
-
-        override fun preDestroy(controller: Controller) {
-          try {
-            onDestroy()
-          } catch (e: IllegalStateException) {
-            // silently ignore this, glide aggressively crashes if not fully registered yet
-          }
-          controller.removeLifecycleListener(this)
-        }
-      })
-    }
-  } ?: throw IllegalArgumentException(
-      "You cannot start a load until the Controller has been bound to a Context.")
 }

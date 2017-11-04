@@ -37,7 +37,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader.PreloadModelProvider
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
@@ -96,7 +95,7 @@ internal class ImageAdapter(private val context: Context,
 
   override fun getPreloadRequestBuilder(item: ImageItem): RequestBuilder<Drawable> {
     val (x, y) = item.imageInfo.bestSize ?: Pair(0, 0)
-    return Glide.with(context)
+    return GlideApp.with(context)
         .asDrawable()
         .apply(RequestOptions()
             .diskCacheStrategy(DiskCacheStrategy.DATA)
@@ -233,7 +232,7 @@ internal class ImageAdapter(private val context: Context,
           itemClickHandler?.invoke(it)
         }
         val (x, y) = imageItem.imageInfo.bestSize ?: Pair(image.measuredWidth, image.measuredHeight)
-        Glide.with(itemView.context)
+        GlideApp.with(itemView.context)
             .load(imageItem.imageInfo.url)
             .apply(RequestOptions()
                 .placeholder(loadingPlaceholders[adapterPosition % loadingPlaceholders.size])
