@@ -30,7 +30,7 @@ abstract class ActivityBindingModule {
   @PerActivity
   @ContributesAndroidInjector(modules = arrayOf(
       UiModule::class,
-      MainActivity.Module::class,
+      MainActivity.IntegrationModule::class,
       ControllerBindingModule::class
   ))
   internal abstract fun mainActivity(): MainActivity
