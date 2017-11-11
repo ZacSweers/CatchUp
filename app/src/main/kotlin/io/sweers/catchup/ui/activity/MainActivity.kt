@@ -117,14 +117,14 @@ class MainActivity : BaseActivity() {
       @PerActivity
       fun provideVisualViewPool() = RecycledViewPool()
 
-      // TODO Can we make this just a qualified thing?
       @Provides
       @PerActivity
       @JvmStatic
+      @FinalServices
       fun provideFinalServices(serviceDao: ServiceDao,
-          services: Map<String, @JvmSuppressWildcards Provider<Service>>): Map<String, Provider<StorageBackedService>> {
+          services: Map<String, @JvmSuppressWildcards Provider<Service>>): Map<String, Provider<Service>> {
         return services.mapValues { (_, value) ->
-          Provider<StorageBackedService> {
+          Provider<Service> {
             StorageBackedService(serviceDao, value.get())
           }
         }
@@ -155,3 +155,6 @@ annotation class TextViewPool
 
 @Qualifier
 annotation class VisualViewPool
+
+@Qualifier
+annotation class FinalServices

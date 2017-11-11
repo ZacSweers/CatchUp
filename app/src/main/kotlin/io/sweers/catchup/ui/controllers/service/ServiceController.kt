@@ -61,6 +61,7 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
+import io.sweers.catchup.ui.activity.FinalServices
 import io.sweers.catchup.ui.activity.TextViewPool
 import io.sweers.catchup.ui.activity.VisualViewPool
 import io.sweers.catchup.ui.base.ButterKnifeController
@@ -151,7 +152,7 @@ class ServiceController : ButterKnifeController,
 
   @field:TextViewPool @Inject lateinit var textViewPool: RecycledViewPool
   @field:VisualViewPool @Inject lateinit var visualViewPool: RecycledViewPool
-  @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<StorageBackedService>>
+  @field:FinalServices @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
   private val service: Service by lazy {
     args[ARG_SERVICE_KEY].let {
       services[it]?.get() ?: throw IllegalArgumentException("No service provided for $it!")
