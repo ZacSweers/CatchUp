@@ -131,7 +131,6 @@ class MainActivity : BaseActivity() {
       }
     }
 
-    // TODO Eventually wrap elements from this into a storage-backed set
     @Multibinds
     @PerActivity
     abstract fun services(): Map<String, Service>
