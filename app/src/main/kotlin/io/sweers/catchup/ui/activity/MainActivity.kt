@@ -102,7 +102,7 @@ class MainActivity : BaseActivity() {
 //      ImgurModule::class
       ]
   )
-  abstract class IntegrationModule {
+  abstract class ServiceIntegrationModule {
     @dagger.Module
     companion object {
       @TextViewPool
