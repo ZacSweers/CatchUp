@@ -16,26 +16,25 @@
 
 package io.sweers.catchup.util
 
-/**
+/*
  * Utils for Iterables
  */
-object Iterables {
 
-  /**
-   * Returns the element at the specified position in an iterable.
-   *
-   * **`Stream` equivalent:** `stream.skip(position).findFirst().get()`
-   * (throws `NoSuchElementException` if out of bounds)
-  *
-   * @param position position of the element to return
-   * @return the element at the specified position in `iterable`
-   * @throws IndexOutOfBoundsException if `position` is negative or
-   * greater than or equal to the size of `iterable`
-   */
-  fun <T> get(iterable: Iterable<T>, position: Int): T {
-    return if (iterable is List<*>)
-      (iterable as List<T>)[position]
-    else
-      Iterators.get(iterable.iterator(), position)
+/**
+ * Returns the element at the specified position in an iterable.
+ *
+ * **`Stream` equivalent:** `stream.skip(position).findFirst().get()`
+ * (throws `NoSuchElementException` if out of bounds)
+ *
+ * @param position position of the element to return
+ * @return the element at the specified position in `iterable`
+ * @throws IndexOutOfBoundsException if `position` is negative or
+ * greater than or equal to the size of `iterable`
+ */
+operator fun <T> Iterable<T>.get(position: Int): T {
+  return if (this is List<*>) {
+    (this as List<T>)[position]
+  } else {
+    iterator()[position]
   }
 }

@@ -70,7 +70,6 @@ import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
 import io.sweers.catchup.ui.controllers.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
-import io.sweers.catchup.util.Iterables
 import io.sweers.catchup.util.applyOn
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
@@ -111,7 +110,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
     }
   }
 
-  fun getItems() = data.toList()
+  fun getItems(): List<DisplayableItem> = data
 
   fun getItemColumnSpan(position: Int) = when (getItemViewType(position)) {
     TYPE_LOADING_MORE -> columnCount
@@ -198,7 +197,7 @@ class ServiceController : ButterKnifeController,
       context: Context): DisplayableItemAdapter<out DisplayableItem, ViewHolder> {
     if (service.meta().isVisual) {
       val adapter = ImageAdapter(context) { item, holder ->
-        service.bindItemView(item.delegate, holder)
+        service.bindItemView(item.realItem(), holder)
       }
       val preloader = RecyclerViewPreloader<ImageItem>(GlideApp.with(activity),
           adapter,
@@ -348,7 +347,17 @@ class ServiceController : ButterKnifeController,
         .let {
           // If these are images, wrap in our visual item
           if (service.meta().isVisual) {
-            it.map { ImageItem(it) }
+            it.map { catchupItem ->
+              // If any already exist, we don't need to re-fade them in
+              ImageItem(catchupItem)
+                  .apply {
+                    adapter.getItems()
+                        .find { it.realItem().id == catchupItem.id }
+                        ?.let {
+                          hasFadedIn = (it as ImageItem).hasFadedIn
+                        }
+                  }
+            }
           } else it
         }
         .cast(DisplayableItem::class.java)
@@ -489,8 +498,7 @@ class ServiceController : ButterKnifeController,
       if (getItemViewType(position) == TYPE_LOADING_MORE) {
         return RecyclerView.NO_ID
       }
-      return Iterables.get(data, position)
-          .stableId()
+      return data[position].stableId()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -511,7 +519,7 @@ class ServiceController : ButterKnifeController,
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
       when (getItemViewType(position)) {
         TYPE_ITEM -> try {
-          bindDelegate(Iterables.get(data, position), holder as CatchUpItemViewHolder)
+          bindDelegate(data[position], holder as CatchUpItemViewHolder)
         } catch (error: Exception) {
           e(error) { "Bind delegate failure!" }
         }

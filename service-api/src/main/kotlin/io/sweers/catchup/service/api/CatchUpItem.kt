@@ -43,5 +43,7 @@ data class CatchUpItem(
   constructor() : this(0, "", Instant.now())
 
   override fun stableId() = id
+
+  override fun realItem() = this
 }
 

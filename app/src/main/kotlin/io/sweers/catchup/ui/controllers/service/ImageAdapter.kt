@@ -101,14 +101,14 @@ internal class ImageAdapter(private val context: Context,
             .diskCacheStrategy(DiskCacheStrategy.DATA)
             .fitCenter()
             .override(x, y))
-        .load(item.delegate)
+        .load(item.realItem())
   }
 
   override fun getItemId(position: Int): Long {
     if (getItemViewType(position) == TYPE_LOADING_MORE) {
       return RecyclerView.NO_ID
     }
-    return data[position].delegate.id
+    return data[position].realItem().id
   }
 
   @TargetApi(Build.VERSION_CODES.M)
@@ -160,8 +160,13 @@ internal class ImageAdapter(private val context: Context,
     when (getItemViewType(position)) {
       TYPE_ITEM -> {
         val imageItem = data[position]
+        val imageHolder = holder as ImageHolder
+        if (imageHolder.backingImageItem?.stableId() == imageItem.stableId()) {
+          // This is the same item, no need to reset. Possible from a refresh.
+          return
+        }
         // TODO This is kind of ugly but not sure what else to do. Holder can't be an inner class to avoid mem leaks
-        (holder as ImageHolder).backingImageItem = imageItem
+        imageHolder.backingImageItem = imageItem
         bindDelegate(imageItem, holder)
             .also {
               holder.backingImageItem = null

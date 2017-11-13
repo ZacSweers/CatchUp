@@ -18,28 +18,29 @@ package io.sweers.catchup.util
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 
-/**
+/*
  * Utils for iterators.
  */
-object Iterators {
 
-  /**
-   * Advances `iterator` `position + 1` times, returning the
-   * element at the `position`th position.
-   *
-   * @param position position of the element to return
-   * @return the element at the specified position in `iterator`
-   * @throws IndexOutOfBoundsException if `position` is negative or
-   * greater than or equal to the number of elements remaining in `iterator`
-   */
-  fun <T> get(iterator: Iterator<T>, position: Int): T {
-    val skipped = advance(iterator, position)
-    if (!iterator.hasNext()) {
-      throw IndexOutOfBoundsException(
-          "position ($position) must be less than the number of elements that remained ($skipped)")
-    }
-    return iterator.next()
+/**
+ * Advances `iterator` `position + 1` times, returning the
+ * element at the `position`th position.
+ *
+ * @param position position of the element to return
+ * @return the element at the specified position in `iterator`
+ * @throws IndexOutOfBoundsException if `position` is negative or
+ * greater than or equal to the number of elements remaining in `iterator`
+ */
+operator fun <T> Iterator<T>.get(position: Int): T {
+  val skipped = Iterators.advance(this, position)
+  if (!hasNext()) {
+    throw IndexOutOfBoundsException(
+        "position ($position) must be less than the number of elements that remained ($skipped)")
   }
+  return next()
+}
+
+object Iterators {
 
   /**
    * Calls [Iterator.next] on `iterator`, either [numberToAdvance] times
@@ -55,5 +56,9 @@ object Iterators {
       i++
     }
     return i
+  }
+
+  operator fun <E> Collection<E>.get(element: E): Int {
+    return asSequence().indexOfFirst { it == element }
   }
 }

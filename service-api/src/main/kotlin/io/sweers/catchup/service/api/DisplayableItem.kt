@@ -16,4 +16,6 @@
 
 package io.sweers.catchup.service.api
 
-interface DisplayableItem : HasStableId
+interface DisplayableItem : HasStableId {
+  fun realItem(): CatchUpItem
+}
