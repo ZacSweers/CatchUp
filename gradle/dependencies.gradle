@@ -31,9 +31,9 @@ def versions = [
     firebase: '11.2.0',
     glide: '4.3.1',
     inspector: '0.2.0',
-    kotlin: '1.2.0-rc-39',
+    kotlin: '1.2.0-rc-84',
     leakcanary: '1.5.4',
-    okhttp: '3.9.0',
+    okhttp: '3.9.1',
     playServices: '11.2.0',
     retrofit: '2.3.0',
     rxbinding: '2.0.0',
@@ -72,7 +72,7 @@ ext.deps = [
             gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.4',
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.0.0',
+        gradlePlugin: 'com.android.tools.build:gradle:3.0.1',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
@@ -267,6 +267,7 @@ ext.deps = [
         moshiLazyAdapters: 'com.serjltt.moshi:moshi-lazy-adapters:2.1',
         okio: 'com.squareup.okio:okio:1.13.0',
         recyclerViewAnimators: 'jp.wasabeef:recyclerview-animators:2.2.7',
+        tapTargetView: 'com.getkeepsafe.taptargetview:taptargetview:1.10.0',
         timber: 'com.jakewharton.timber:timber:4.6.0',
         unbescape: 'org.unbescape:unbescape:1.1.5.RELEASE'
     ],
