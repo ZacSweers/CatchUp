@@ -19,6 +19,7 @@ package io.sweers.catchup.ui.activity
 import android.app.Activity
 import android.app.Fragment
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.CheckBoxPreference
 import android.preference.Preference
@@ -134,6 +135,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
     @Inject lateinit var cache: dagger.Lazy<Cache>
     @Inject lateinit var database: CatchUpDatabase
     @Inject lateinit var lumberYard: LumberYard
+    @Inject lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
       AndroidInjection.inject(this)
@@ -197,6 +199,8 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
         }
         P.ClearCache.KEY -> {
           Single.fromCallable {
+            // TODO would be nice to measure the size impact of this file ¯\_(ツ)_/¯
+            sharedPreferences.edit().clear().apply()
             val cacheCleaned = activity.applicationContext.clearCache()
             val networkCacheCleaned = with(cache.get()) {
               val initialSize = size()
