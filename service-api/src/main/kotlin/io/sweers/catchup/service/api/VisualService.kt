@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.service.api
 
+import android.content.res.Configuration
 import android.support.v4.content.ContextCompat
 import com.uber.autodispose.kotlin.autoDisposeWith
 
@@ -30,7 +31,16 @@ interface VisualService : Service {
         itemClickHandler = item.itemClickUrl?.let {
           { url: String ->
             holder.itemClicks()
-                .map { UrlMeta(url, accentColor, context) }
+                .map {
+                  UrlMeta(
+                      url = url,
+                      // Use "day" accents as those are usually the "real" accent colors
+                      accentColor = ContextCompat.getColor(
+                          context.createConfigurationContext(
+                              Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }),
+                          meta().themeColor),
+                      context = context)
+                }
                 .flatMapCompletable(linkHandler())
                 .autoDisposeWith(holder)
                 .subscribe()
