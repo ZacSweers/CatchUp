@@ -53,4 +53,5 @@
   <string name="pref_dark_theme_disabled">Dark theme is disabled, light theme is the default.</string>
   <string name="pref_auto_set_theme">Automatically set theme</string>
   <string name="pref_auto_set_theme_summary">Sets the theme automatically via depending on the time of day (via DayNight).</string>
+  <string name="changes">Changes</string>
 </resources>

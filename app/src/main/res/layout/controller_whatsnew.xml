@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+  <android.support.v7.widget.AppCompatImageView
+      android:id="@+id/icon"
+      android:layout_width="56dp"
+      android:layout_height="56dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="32dp"
+      android:contentDescription="@string/app_name"
+      android:src="@mipmap/ic_launcher"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      />
+
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/build_name"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="32dp"
+      android:layout_marginStart="32dp"
+      android:layout_marginTop="16dp"
+      app:fontFamily="@font/nunito"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/icon"
+      tools:text="0.1.0-88-g8fa4a5f"
+      style="@style/TextAppearance.AppCompat.Title"
+      />
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:clipToPadding="false"
+      android:nestedScrollingEnabled="true"
+      android:paddingBottom="16dp"
+      android:paddingEnd="16dp"
+      android:paddingStart="16dp"
+      android:paddingTop="16dp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/build_name"
+      >
+    <io.sweers.catchup.ui.widget.BaselineGridTextView
+        android:id="@+id/changes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="start"
+        app:fontFamily="@font/nunito"
+        tools:text="Text on text on text!"
+        style="@style/TextAppearance.AppCompat.Small"
+        />
+
+  </ScrollView>
+
+</android.support.constraint.ConstraintLayout>
