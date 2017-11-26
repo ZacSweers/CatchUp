@@ -157,7 +157,7 @@ abstract class MediumModule {
     @JvmStatic
     internal fun provideMediumMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(MediumModelArbiter.createMoshiAdapterFactory())
+          .add(MediumModels.createMoshiAdapterFactory())
           .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
           .add(Wrapped.ADAPTER_FACTORY)
           .build()
@@ -167,7 +167,7 @@ abstract class MediumModule {
     @JvmStatic
     internal fun provideInspector(): Inspector {
       return Inspector.Builder()
-          .add(MediumModelArbiter.createValidatorFactory())
+          .add(MediumModels.createValidatorFactory())
           .build()
     }
 
