@@ -17,6 +17,8 @@
 package io.sweers.catchup.ui
 
 import android.app.Activity
+import android.graphics.Color
+import android.graphics.Rect
 import android.os.Build
 import android.os.PowerManager
 import android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP
@@ -25,27 +27,34 @@ import android.os.PowerManager.ON_AFTER_RELEASE
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.view.ContextThemeWrapper
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-import android.widget.Toast
 import butterknife.BindView
+import com.getkeepsafe.taptargetview.TapTarget
 import com.jakewharton.madge.MadgeFrameLayout
+import com.jakewharton.rxbinding2.support.v4.widget.drawerOpen
 import com.jakewharton.scalpel.ScalpelFrameLayout
 import com.mattprecious.telescope.TelescopeLayout
+import com.uber.autodispose.android.ViewScopeProvider
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Lazy
 import io.reactivex.disposables.CompositeDisposable
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.edu.HintArbiter
+import io.sweers.catchup.edu.HintRequest
+import io.sweers.catchup.edu.id
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.base.ActivityEvent
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
 import io.sweers.catchup.util.getSystemService
+import io.sweers.catchup.util.onLaidOut
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
@@ -59,7 +68,9 @@ import javax.inject.Inject
 internal class DebugViewContainer @Inject constructor(
     private val bugReportLens: BugReportLens,
     private val lumberYard: LumberYard,
-    private val lazyOkHttpClient: Lazy<OkHttpClient>) : ViewContainer {
+    private val lazyOkHttpClient: Lazy<OkHttpClient>,
+    private val hintArbiter: HintArbiter,
+    private val fontArbiter: FontArbiter) : ViewContainer {
   private val seenDebugDrawer = P.DebugSeenDebugDrawer.rx()
   private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
   private val pixelRatioEnabled = P.DebugPixelRatioEnabled.rx()
@@ -97,14 +108,36 @@ internal class DebugViewContainer @Inject constructor(
     viewHolder.telescopeLayout.setLens(bugReportLens)
 
     // If you have not seen the debug drawer before, show it with a message
-    if (!(seenDebugDrawer.get())) {
-      viewHolder.drawerLayout.postDelayed({
-        viewHolder.drawerLayout.openDrawer(GravityCompat.END)
-        Toast.makeText(drawerContext, R.string.debug_drawer_welcome, Toast.LENGTH_LONG)
-            .show()
-      }, 1000)
-      seenDebugDrawer.set(true)
-    }
+    hintArbiter.showIfNeverSeen(seenDebugDrawer.key(), HintRequest(
+        target = {
+          DrawerTapTarget(
+              delegateTarget = TapTarget.forView(debugView.icon,
+                  debugView.resources.getString(R.string.development_settings),
+                  debugView.resources.getString(R.string.debug_drawer_welcome)),
+              drawerLayout = viewHolder.drawerLayout,
+              gravity = Gravity.END,
+              title = debugView.resources.getString(R.string.development_settings),
+              description = debugView.resources.getString(R.string.debug_drawer_welcome)
+          )
+              .outerCircleColorInt(Color.parseColor("#EE222222"))
+              .outerCircleAlpha(0.96f)
+              .titleTextColorInt(Color.WHITE)
+              .descriptionTextColorInt(Color.parseColor("#33FFFFFF"))
+              .targetCircleColorInt(Color.WHITE)
+              .drawShadow(true)
+              .transparentTarget(true)
+              .id("DebugDrawer")
+              .apply {
+                // fontArbiter.getFont()?.let(::textTypeface)  // Uncomment this to make the kotlin compiler explode
+                fontArbiter.getFont()?.let {
+                  textTypeface(it)
+                }
+              }
+        },
+        postDisplay = {
+          viewHolder.drawerLayout.closeDrawer(GravityCompat.END)
+        }
+    ))
 
     val disposables = CompositeDisposable()
     setupMadge(viewHolder, disposables)
@@ -175,4 +208,35 @@ internal class DebugViewViewHolder {
   @BindView(R.id.telescope_container) lateinit var telescopeLayout: TelescopeLayout
   @BindView(R.id.madge_container) lateinit var madgeFrameLayout: MadgeFrameLayout
   @BindView(R.id.debug_content) lateinit var content: ScalpelFrameLayout
+}
+
+class DrawerTapTarget(
+    private val delegateTarget: TapTarget,
+    private val drawerLayout: DrawerLayout,
+    private val gravity: Int,
+    title: CharSequence,
+    description: CharSequence?
+) : TapTarget(title, description) {
+
+  override fun bounds(): Rect {
+    return delegateTarget.bounds()
+  }
+
+  override fun onReady(runnable: Runnable) {
+    drawerLayout.onLaidOut {
+      if (drawerLayout.isDrawerOpen(gravity)) {
+        delegateTarget.onReady(runnable)
+      } else {
+        drawerLayout.drawerOpen(gravity)
+            .filter { it }
+            .take(1)
+            .autoDisposeWith(ViewScopeProvider.from(drawerLayout))
+            .subscribe {
+              delegateTarget.onReady(runnable)
+            }
+
+        drawerLayout.openDrawer(gravity)
+      }
+    }
+  }
 }

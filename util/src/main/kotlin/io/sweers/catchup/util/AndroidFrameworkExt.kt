@@ -98,8 +98,14 @@ private val typedValue = TypedValue()
 
 @ColorInt
 @UiThread
-fun Context.resolveAttribute(@AttrRes resId: Int): Int {
+fun Context.resolveAttributeColor(@AttrRes resId: Int): Int {
   theme.resolveAttribute(resId, typedValue, true)
+  if (typedValue.type in TypedValue.TYPE_FIRST_COLOR_INT..TypedValue.TYPE_LAST_COLOR_INT) {
+    return typedValue.data
+  }
+  if (typedValue.type == TypedValue.TYPE_ATTRIBUTE) {
+    return resources.getColorStateList(typedValue.data).defaultColor
+  }
   return typedValue.data
 }
 
