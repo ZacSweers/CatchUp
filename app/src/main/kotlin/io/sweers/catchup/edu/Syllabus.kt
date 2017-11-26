@@ -21,7 +21,7 @@ import javax.inject.Inject
 class Syllabus @Inject constructor(val activity: Activity,
     private val preferences: SharedPreferences) {
 
-  private val queue = PublishRelay.create<HintRequest>()
+  private val queue = PublishRelay.create<TargetRequest>()
   private var displaying = BehaviorRelay.createDefault(false)
 
   fun bind(activity: BaseActivity) {
@@ -37,10 +37,10 @@ class Syllabus @Inject constructor(val activity: Activity,
   }
 
   fun showIfNeverSeen(key: String, body: () -> TapTarget) {
-    showIfNeverSeen(key, HintRequest(body))
+    showIfNeverSeen(key, TargetRequest(body))
   }
 
-  fun showIfNeverSeen(key: String, request: HintRequest) {
+  fun showIfNeverSeen(key: String, request: TargetRequest) {
     if (!preferences.getBoolean(key, false)) {
       preferences.edit().putBoolean(key, true).apply()
       show(request)
@@ -48,14 +48,14 @@ class Syllabus @Inject constructor(val activity: Activity,
   }
 
   fun show(body: () -> TapTarget) {
-    show(HintRequest(body))
+    show(TargetRequest(body))
   }
 
-  fun show(request: HintRequest) {
+  fun show(request: TargetRequest) {
     queue.accept(request)
   }
 
-  private fun show(requests: List<HintRequest>) {
+  private fun show(requests: List<TargetRequest>) {
     displaying.accept(true)
     var index = 0
     requests[index].preDisplay?.invoke()
@@ -92,7 +92,7 @@ inline fun TapTarget.id(id: String): TapTarget = id(id.hashCode())
  * @property preDisplay a hook for pre-display callbacks. Note that you may want to create a custom
  * TapTarget instead and override [TapTarget.onReady] for a more dynamic waiting.
  */
-data class HintRequest(
+data class TargetRequest(
     val target: () -> TapTarget,
     val preDisplay: (() -> Unit)? = null,
     val postDisplay: (() -> Unit)? = null

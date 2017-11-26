@@ -49,7 +49,7 @@ import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.edu.Syllabus
-import io.sweers.catchup.edu.HintRequest
+import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.base.ActivityEvent
@@ -119,7 +119,7 @@ internal class DebugViewContainer @Inject constructor(
         }
 
     // If you have not seen the debug drawer before, show it with a message
-    syllabus.showIfNeverSeen(seenDebugDrawer.key(), HintRequest(
+    syllabus.showIfNeverSeen(seenDebugDrawer.key(), TargetRequest(
         target = {
           DrawerTapTarget(
               delegateTarget = TapTarget.forView(debugView.icon,
