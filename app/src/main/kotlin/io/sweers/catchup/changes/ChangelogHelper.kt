@@ -1,6 +1,7 @@
 package io.sweers.catchup.changes
 
 import `in`.uncod.android.bypass.Bypass
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.ColorStateList
@@ -8,6 +9,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.support.annotation.ColorInt
 import android.support.design.widget.BottomSheetDialog
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.Toolbar
 import android.text.style.StyleSpan
 import android.widget.TextView
@@ -22,10 +24,13 @@ import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.util.ColorUtils
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.TouchableUrlSpan
+import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.ifNotEmpty
 import io.sweers.catchup.util.markdown
+import io.sweers.catchup.util.onLaidOut
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.resolveActivity
+import io.sweers.catchup.util.show
 import javax.inject.Inject
 
 class ChangelogHelper @Inject constructor(
@@ -44,12 +49,12 @@ class ChangelogHelper @Inject constructor(
       changelog.ifNotEmpty {
         toolbar.inflateMenu(R.menu.changes)
         with(toolbar.menu) {
-            findItem(R.id.changes).let { item ->
-              item.setOnMenuItemClickListener {
-                removeItem(R.id.changes)
-                showChangelog(changelog, toolbar.context, linkColor())
-              }
+          findItem(R.id.changes).let { item ->
+            item.setOnMenuItemClickListener {
+              removeItem(R.id.changes)
+              showChangelog(changelog, toolbar.context, linkColor())
             }
+          }
         }
         syllabus.showIfNeverSeen("changelog_seen") {
           TapTarget.forToolbarMenuItem(toolbar, R.id.changes, "Changes",
@@ -72,19 +77,22 @@ class ChangelogHelper @Inject constructor(
     }
   }
 
+  @SuppressLint("InflateParams")
   private fun showChangelog(changelog: String,
       context: Context,
       @ColorInt highlightColor: Int): Boolean {
-    // TODO Make this a custom controller instead
-    // TODO Animate this! Inspiration - https://dribbble.com/shots/3965908--Place-Notification
-    //   and https://robinhood.engineering/beautiful-animations-using-android-constraintlayout-eee5b72ecae3
+    // TODO Make this a custom controller instead, which should make the animation less jarring
     BottomSheetDialog(context)
         .apply {
           val contentView = layoutInflater
               .inflate(R.layout.controller_whatsnew, null, false)
           setContentView(contentView)
-          contentView.findViewById<TextView>(R.id.build_name)?.text = BuildConfig.VERSION_NAME
-          contentView.findViewById<TextView>(R.id.changes)?.let { changesTextView ->
+          val title = contentView.findViewById<TextView>(R.id.build_name)!!.apply {
+            typeface = fontHelper.getFont()
+            text = BuildConfig.VERSION_NAME
+          }
+          val changes = contentView.findViewById<TextView>(R.id.changes)!!.also { changesTextView ->
+            changesTextView.typeface = fontHelper.getFont()
             changesTextView.movementMethod = LinkTouchMovementMethod.getInstance()
             changesTextView.highlightColor = highlightColor
             changesTextView.setLinkTextColor(highlightColor)
@@ -107,6 +115,34 @@ class ChangelogHelper @Inject constructor(
                           StyleSpan(Typeface.BOLD)
                       )
                     })
+          }
+
+          contentView.onLaidOut {
+            val duration = 400L
+            val height = contentView.bottom
+            title.translationY = (height - title.y) * 0.25f
+            title.alpha = 0f
+            title.show()
+            changes.translationY = (height - changes.y) * 0.25f
+            changes.alpha = 0f
+            changes.show()
+            val interpolator = UiUtil.fastOutSlowInInterpolator
+            ViewCompat.animate(title)
+                .alpha(1f)
+                .withLayer()
+                .translationY(0f)
+                .setInterpolator(interpolator)
+                .setDuration(duration)
+                .setStartDelay(100)
+                .start()
+            ViewCompat.animate(changes)
+                .alpha(1f)
+                .withLayer()
+                .translationY(0f)
+                .setInterpolator(interpolator)
+                .setStartDelay(150)
+                .setDuration(duration)
+                .start()
           }
         }
         .show()
