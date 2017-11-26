@@ -150,7 +150,7 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="4dp"
       android:fontFamily="@font/nunito"
-      android:maxLines="4"
+      android:maxLines="5"
       android:ellipsize="end"
       app:fontFamily="@font/nunito"
       app:layout_constraintBottom_toTopOf="@+id/source"
