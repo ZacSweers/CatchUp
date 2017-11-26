@@ -23,6 +23,7 @@
       android:id="@+id/settings"
       android:icon="@drawable/ic_settings"
       android:title="Settings"
+      android:orderInCategory="99"
       app:iconTint="?android:textColorPrimary"
       app:showAsAction="always"
       />
