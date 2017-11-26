@@ -30,6 +30,7 @@
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
       android:orientation="horizontal"
+      android:theme="@style/ThemeOverlay.AppCompat.Dark"
       >
 
     <LinearLayout
@@ -42,14 +43,14 @@
         >
 
       <TextView
-          style="@android:style/TextAppearance.Holo.Widget.ActionBar.Title"
+          style="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="@string/app_name"
           />
 
       <TextView
-          style="@android:style/TextAppearance.Holo.Widget.ActionBar.Subtitle"
+          style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="@string/development_settings"
@@ -58,6 +59,7 @@
 
     <!-- TODO use drawable -->
     <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/debug_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@mipmap/ic_launcher"
