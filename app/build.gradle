@@ -60,6 +60,7 @@ android {
     buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN',
         /"${getPropertyOrEmpty("catchup_github_developer_token")}"/
     buildConfigField 'String', 'SMMRY_API_KEY', /"${getPropertyOrEmpty("catchup_smmry_api_key")}"/
+    resValue "string", "changelog_text", /"${getChangelog()}"/
   }
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
@@ -125,19 +126,19 @@ android {
     xmlReport !deps.build.ci
   }
   // Disabled for now - https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/59
-//  splits {
-//    density {
-//      enable true
-//      reset()
-//      include "mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"
-//    }
-//    abi {
-//      enable true
-//      reset()
-//      include 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
-//      universalApk true
-//    }
-//  }
+  //  splits {
+  //    density {
+  //      enable true
+  //      reset()
+  //      include "mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"
+  //    }
+  //    abi {
+  //      enable true
+  //      reset()
+  //      include 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+  //      universalApk true
+  //    }
+  //  }
   applicationVariants.all {
     // Configure firebase
     String apiKey = null
@@ -250,10 +251,125 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
   }
 }
 
+class CutChangelogTask extends DefaultTask {
+
+  @Input
+  String versionName
+
+  @TaskAction
+  void run() {
+    File changelog = project.rootProject.file("CHANGELOG.md")
+
+    String whatsNewPath = "${project.projectDir}/src/main/play/en-US/whatsnew"
+    String newChangelog = getChangelog(changelog, "")
+    if (!newChangelog.isEmpty()) {
+      project.file(whatsNewPath).text = newChangelog
+    }
+
+    String currentContent = changelog.text
+    changelog.write(
+        "\n\n## ${versionName} (${new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date())})\n")
+    changelog.append(currentContent)
+  }
+
+  private static String getChangelog(File changelog, String defaultIfEmpty) {
+    StringBuilder log = new StringBuilder()
+    changelog.withReader('utf-8') { reader ->
+      String line
+      while ((line = reader.readLine()) != null) {
+        if (line.startsWith("#")) {
+          break
+        } else if (!line.isEmpty()) {
+          log.append(line).append("\n")
+        }
+      }
+    }
+    String finalLog = log.toString().trim()
+    return finalLog.isEmpty() ? defaultIfEmpty : finalLog
+  }
+}
+
+tasks.create("cutChangelog", CutChangelogTask.class) {
+  versionName = deps.build.gitTag
+  group "build"
+  description "Cuts the current changelog version and updates the play store changelog file"
+}
+
+String getChangelog() {
+  // Only return a changelog if we're publishing a release
+  if (!hasProperty("includeChangelog")) {
+    return ""
+  }
+
+  File changelog = rootProject.file("CHANGELOG.md")
+
+  StringBuilder log = new StringBuilder()
+  changelog.withReader('utf-8') { reader ->
+    String line
+    boolean seenChanges = false
+    int headerCount = 0
+    while ((line = reader.readLine()) != null) {
+      if (line.startsWith("#")) {
+        // We might see the first header from the last cut here. If so, skip it till the next
+        if (seenChanges || headerCount > 0) {
+          break
+        } else {
+          headerCount++
+        }
+      } else if (!line.isEmpty()) {
+        seenChanges = true
+        log.append(line).append("\n")
+      }
+    }
+  }
+  return log.toString().trim()
+}
+
+class UpdateVersion extends DefaultTask {
+  @Input
+  String type
+
+  @TaskAction
+  void run() {
+    String latestTag = 'git describe --tags'.execute([], project.rootDir).text.trim() ?: "dev"
+    if (latestTag == "dev") {
+      throw new IllegalStateException("No recent tag found!")
+    }
+    String[] latestVersion = latestTag.substring(0, latestTag.indexOf("-")).split("\\.")
+    int major = latestVersion[0].toInteger()
+    int minor = latestVersion[1].toInteger()
+    int patch = latestVersion[2].toInteger()
+    switch (type) {
+      case "M":
+        major++
+        minor = 0
+        patch = 0
+        break
+      case "m":
+        minor++
+        patch = 0
+        break
+      case "p":
+        patch++
+        break
+      default:
+        throw new IllegalArgumentException("Unrecognized version type \"$type\"")
+    }
+    String latestVersionString = "$major.$minor.$patch"
+    println "Updating version to $latestVersionString"
+    //    "git tag -a $latestVersionString -m \"Version ${latestVersionString}.\"".execute([], project.rootDir)
+  }
+}
+
+tasks.create("updateVersion", UpdateVersion.class) {
+  type getProperty("version")
+  group "build"
+  description "Updates the current version. Supports CLI property flag -Pversion={type} where type is (Mmp)"
+}
+
 def supportLibraries = configurations.create("supportImplementation")
 
 dependencies {
-  // This fails gradle sync due to an obscure "AssertionError" only visible in console logs
   implementation project(':bypass')
   implementation project(':service-api')
   implementation project(':hackernews')
@@ -315,6 +431,7 @@ dependencies {
   implementation deps.rx.binding.v4
   implementation deps.rx.binding.design
   implementation deps.misc.lazythreeten
+  implementation deps.misc.tapTargetView
   implementation deps.misc.timber
   debugImplementation deps.misc.debug.madge
   debugImplementation deps.misc.debug.scalpel
