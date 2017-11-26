@@ -32,6 +32,7 @@ import dagger.multibindings.Multibinds
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.ServiceDao
+import io.sweers.catchup.edu.HintArbiter
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
@@ -56,6 +57,7 @@ class MainActivity : BaseActivity() {
 
   @Inject internal lateinit var customTab: CustomTabActivityHelper
   @Inject internal lateinit var linkManager: LinkManager
+  @Inject internal lateinit var hintArbiter: HintArbiter
 
   @BindView(R.id.controller_container) internal lateinit var container: ViewGroup
 
@@ -63,6 +65,7 @@ class MainActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    hintArbiter.bind(this)
     lifecycle()
         .doOnStart(linkManager) { connect(this@MainActivity) }
         .doOnStart(customTab) { bindCustomTabsService(this@MainActivity) }
