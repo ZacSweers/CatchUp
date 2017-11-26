@@ -14,8 +14,11 @@ import io.sweers.catchup.ui.base.BaseActivity
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
+/**
+ * Syllabus is a helper that orchestrates feature EDUs and hints via TapTargets.
+ */
 @PerActivity
-class HintArbiter @Inject constructor(val activity: Activity,
+class Syllabus @Inject constructor(val activity: Activity,
     private val preferences: SharedPreferences) {
 
   private val queue = PublishRelay.create<HintRequest>()

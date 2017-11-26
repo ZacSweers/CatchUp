@@ -15,7 +15,7 @@ import com.getkeepsafe.taptargetview.TapTarget
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.edu.HintArbiter
+import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.FontArbiter
@@ -32,7 +32,7 @@ class ChangelogArbiter @Inject constructor(
     private val linkManager: LinkManager,
     private val bypass: Bypass,
     private val fontArbiter: FontArbiter,
-    private val hintArbiter: HintArbiter,
+    private val syllabus: Syllabus,
     private val sharedPreferences: SharedPreferences) {
 
   fun bindWith(toolbar: Toolbar, @ColorInt hintColor: Int, linkColor: () -> Int) {
@@ -51,7 +51,7 @@ class ChangelogArbiter @Inject constructor(
               }
             }
         }
-        hintArbiter.showIfNeverSeen("changelog_seen") {
+        syllabus.showIfNeverSeen("changelog_seen") {
           TapTarget.forToolbarMenuItem(toolbar, R.id.changes, "Changes",
               "Click here for new changes")
               .outerCircleColorInt(hintColor)

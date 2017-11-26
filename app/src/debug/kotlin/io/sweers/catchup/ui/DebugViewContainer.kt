@@ -48,7 +48,7 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
-import io.sweers.catchup.edu.HintArbiter
+import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.HintRequest
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.injection.scopes.PerActivity
@@ -72,7 +72,7 @@ internal class DebugViewContainer @Inject constructor(
     private val bugReportLens: BugReportLens,
     private val lumberYard: LumberYard,
     private val lazyOkHttpClient: Lazy<OkHttpClient>,
-    private val hintArbiter: HintArbiter,
+    private val syllabus: Syllabus,
     private val fontArbiter: FontArbiter) : ViewContainer {
   private val seenDebugDrawer = P.DebugSeenDebugDrawer.rx()
   private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
@@ -119,7 +119,7 @@ internal class DebugViewContainer @Inject constructor(
         }
 
     // If you have not seen the debug drawer before, show it with a message
-    hintArbiter.showIfNeverSeen(seenDebugDrawer.key(), HintRequest(
+    syllabus.showIfNeverSeen(seenDebugDrawer.key(), HintRequest(
         target = {
           DrawerTapTarget(
               delegateTarget = TapTarget.forView(debugView.icon,
