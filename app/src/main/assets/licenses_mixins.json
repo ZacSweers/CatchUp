@@ -77,5 +77,13 @@
     "name": "EndlessRecyclerOnScrollListener.java (adaptation)",
     "clickUrl": "https://gist.github.com/ssinss/e06f12ef66c51252563e",
     "description": "Endless RecyclerView OnScrollListener"
+  },
+  {
+    "avatarUrl": "https://pbs.twimg.com/profile_images/838472776360943616/twPWHvSo_400x400.jpg",
+    "author": "Austin Andrews",
+    "authorUrl": "http://twitter.com/Templarian",
+    "name": "Material Design Icons (gift)",
+    "clickUrl": "https://materialdesignicons.com",
+    "license": "SIL Open Font License 1.1"
   }
 ]
