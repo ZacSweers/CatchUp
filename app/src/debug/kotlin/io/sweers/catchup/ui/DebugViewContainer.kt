@@ -41,7 +41,10 @@ import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.android.ViewScopeProvider
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Lazy
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
@@ -104,8 +107,16 @@ internal class DebugViewContainer @Inject constructor(
     })
 
     viewHolder.telescopeLayout.setPointerCount(3)
-    TelescopeLayout.cleanUp(activity) // Clean up any old screenshots.
-    viewHolder.telescopeLayout.setLens(bugReportLens)
+    Completable
+        .fromAction {
+          TelescopeLayout.cleanUp(activity) // Clean up any old screenshots.
+        }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .autoDisposeWith(activity)
+        .subscribe {
+          viewHolder.telescopeLayout.setLens(bugReportLens)
+        }
 
     // If you have not seen the debug drawer before, show it with a message
     hintArbiter.showIfNeverSeen(seenDebugDrawer.key(), HintRequest(
