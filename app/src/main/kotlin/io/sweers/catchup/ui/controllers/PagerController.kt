@@ -52,6 +52,7 @@ import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.sweers.catchup.R
+import io.sweers.catchup.changes.ChangelogArbiter
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.rx.PredicateConsumer
@@ -62,7 +63,7 @@ import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.controllers.service.ServiceController
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
-import io.sweers.catchup.util.resolveAttribute
+import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNavBarColor
 import java.util.Arrays
@@ -94,6 +95,7 @@ class PagerController : ButterKnifeController {
   private val argbEvaluator = ArgbEvaluator()
 
   @Inject lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
+  @Inject lateinit var changelogArbiter: ChangelogArbiter
   @BindView(R.id.pager_controller_root) lateinit var rootLayout: CoordinatorLayout
   @BindView(R.id.tab_layout) lateinit var tabLayout: TabLayout
   @BindView(R.id.view_pager) lateinit var viewPager: ViewPager
@@ -170,7 +172,7 @@ class PagerController : ButterKnifeController {
   override fun onViewBound(view: View) {
     super.onViewBound(view)
 
-    @ColorInt val colorPrimaryDark = view.context.resolveAttribute(R.attr.colorPrimaryDark)
+    @ColorInt val colorPrimaryDark = view.context.resolveAttributeColor(R.attr.colorPrimaryDark)
     val isInNightMode = view.context.isInNightMode()
     if (!isInNightMode) {
       // Start with a light status bar in normal mode
@@ -250,6 +252,9 @@ class PagerController : ButterKnifeController {
     tabLayout.setBackgroundColor(initialColor)
     viewPager.adapter = pagerAdapter
     tabLayout.setupWithViewPager(viewPager, false)
+    changelogArbiter.bindWith(toolbar, initialColor) {
+      getAndSaveColor(tabLayout.selectedTabPosition)
+    }
 
     // Set icons
     for (i in services.indices) {
