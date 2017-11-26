@@ -19,6 +19,8 @@
 package io.sweers.catchup.util
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.support.v7.app.AppCompatDelegate
 import io.sweers.catchup.P
 
@@ -35,4 +37,14 @@ inline fun Activity.updateNightMode() {
     AppCompatDelegate.setDefaultNightMode(nightMode)
     recreate()
   }
+}
+
+fun Context.resolveActivity(): Activity {
+  if (this is Activity) {
+    return this
+  }
+  if (this is ContextWrapper) {
+    return baseContext.resolveActivity()
+  }
+  throw UnsupportedOperationException("Given context was not an activity! Is a $this")
 }
