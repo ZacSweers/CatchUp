@@ -63,6 +63,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 @SuppressLint("SetTextI18n")
 class DebugView @JvmOverloads constructor(context: Context,
     attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
+  @BindView(R.id.debug_icon) lateinit var icon: View
   @BindView(R.id.debug_contextual_title) lateinit var contextualTitleView: View
   @BindView(R.id.debug_contextual_list) lateinit var contextualListView: LinearLayout
   @BindView(R.id.debug_network_delay) lateinit var networkDelayView: Spinner
