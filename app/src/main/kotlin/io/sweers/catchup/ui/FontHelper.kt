@@ -15,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FontArbiter @Inject constructor(@ApplicationContext context: Context) {
+class FontHelper @Inject constructor(@ApplicationContext context: Context) {
 
   private var font: Typeface? = null
 

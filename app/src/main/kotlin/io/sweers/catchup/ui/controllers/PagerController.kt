@@ -52,7 +52,7 @@ import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.sweers.catchup.R
-import io.sweers.catchup.changes.ChangelogArbiter
+import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.rx.PredicateConsumer
@@ -95,7 +95,7 @@ class PagerController : ButterKnifeController {
   private val argbEvaluator = ArgbEvaluator()
 
   @Inject lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
-  @Inject lateinit var changelogArbiter: ChangelogArbiter
+  @Inject lateinit var changelogHelper: ChangelogHelper
   @BindView(R.id.pager_controller_root) lateinit var rootLayout: CoordinatorLayout
   @BindView(R.id.tab_layout) lateinit var tabLayout: TabLayout
   @BindView(R.id.view_pager) lateinit var viewPager: ViewPager
@@ -252,7 +252,7 @@ class PagerController : ButterKnifeController {
     tabLayout.setBackgroundColor(initialColor)
     viewPager.adapter = pagerAdapter
     tabLayout.setupWithViewPager(viewPager, false)
-    changelogArbiter.bindWith(toolbar, initialColor) {
+    changelogHelper.bindWith(toolbar, initialColor) {
       getAndSaveColor(tabLayout.selectedTabPosition)
     }
 

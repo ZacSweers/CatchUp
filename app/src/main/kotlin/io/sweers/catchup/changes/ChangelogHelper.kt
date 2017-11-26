@@ -18,7 +18,7 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.service.api.UrlMeta
-import io.sweers.catchup.ui.FontArbiter
+import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.util.ColorUtils
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.TouchableUrlSpan
@@ -28,10 +28,10 @@ import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.resolveActivity
 import javax.inject.Inject
 
-class ChangelogArbiter @Inject constructor(
+class ChangelogHelper @Inject constructor(
     private val linkManager: LinkManager,
     private val bypass: Bypass,
-    private val fontArbiter: FontArbiter,
+    private val fontHelper: FontHelper,
     private val syllabus: Syllabus,
     private val sharedPreferences: SharedPreferences) {
 
@@ -63,7 +63,7 @@ class ChangelogArbiter @Inject constructor(
               .id("changelog")
               .apply {
                 // fontArbiter.getFont()?.let(::textTypeface)  // Uncomment this to make the kotlin compiler explode
-                fontArbiter.getFont()?.let {
+                fontHelper.getFont()?.let {
                   textTypeface(it)
                 }
               }

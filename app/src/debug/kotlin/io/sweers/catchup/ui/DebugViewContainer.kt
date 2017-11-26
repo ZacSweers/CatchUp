@@ -73,7 +73,7 @@ internal class DebugViewContainer @Inject constructor(
     private val lumberYard: LumberYard,
     private val lazyOkHttpClient: Lazy<OkHttpClient>,
     private val syllabus: Syllabus,
-    private val fontArbiter: FontArbiter) : ViewContainer {
+    private val fontHelper: FontHelper) : ViewContainer {
   private val seenDebugDrawer = P.DebugSeenDebugDrawer.rx()
   private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
   private val pixelRatioEnabled = P.DebugPixelRatioEnabled.rx()
@@ -140,7 +140,7 @@ internal class DebugViewContainer @Inject constructor(
               .id("DebugDrawer")
               .apply {
                 // fontArbiter.getFont()?.let(::textTypeface)  // Uncomment this to make the kotlin compiler explode
-                fontArbiter.getFont()?.let {
+                fontHelper.getFont()?.let {
                   textTypeface(it)
                 }
               }
