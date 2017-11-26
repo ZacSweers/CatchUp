@@ -240,7 +240,7 @@ class DrawerTapTarget(
       } else {
         drawerLayout.drawerOpen(gravity)
             .filter { it }
-            .take(1)
+            .firstElement()
             .autoDisposeWith(ViewScopeProvider.from(drawerLayout))
             .subscribe {
               delegateTarget.onReady(runnable)
