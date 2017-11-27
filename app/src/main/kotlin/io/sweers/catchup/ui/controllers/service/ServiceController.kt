@@ -52,6 +52,7 @@ import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
+import io.sweers.catchup.analytics.trace
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.CatchUpItem
@@ -317,8 +318,6 @@ class ServiceController : ButterKnifeController,
       recyclerView.post { adapter.dataStartedLoading() }
       recyclerView.itemAnimator = defaultItemAnimator
     }
-    val trace = FirebasePerformance.getInstance().newTrace("Data load - ${service.meta().id}")
-    val timer = AtomicLong()
     val multiPage = pageToRestoreTo != null
     if (multiPage) {
       recyclerView.itemAnimator = defaultItemAnimator
@@ -378,18 +377,7 @@ class ServiceController : ButterKnifeController,
           swipeRefreshLayout.isEnabled = true
           swipeRefreshLayout.isRefreshing = false
         }
-        .doOnSubscribe {
-          trace.start()
-          timer.set(System.currentTimeMillis())
-        }
-        .doFinally {
-          trace.stop()
-          d { "Data load - ${service.meta().id} - took: ${System.currentTimeMillis() - timer.get()}ms" }
-          dataLoading = false
-          recyclerView.post {
-            adapter.dataFinishedLoading()
-          }
-        }
+        .trace("Data load - ${service.meta().id}")
         .doOnComplete { moreDataAvailable = false }
         .autoDisposeWith(this)
         .subscribe({ loadResult ->
