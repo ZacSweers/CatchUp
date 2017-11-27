@@ -22,6 +22,7 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.sweers.catchup.BuildConfig
+import io.sweers.catchup.analytics.trace
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.data.ServicePage
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
@@ -157,10 +158,12 @@ class StorageBackedService(
               .toMaybe()
               .map { DataResult(it, servicePage.nextPageToken, wasFresh = false) }
         }
+        .trace("Local data load - ${delegate.meta().id}")
   }
 
   private fun fetchPageFromNetwork(pageId: String, isRefresh: Boolean): Maybe<DataResult> {
     return delegate.fetchPage(DataRequest(true, false, pageId))
+        .trace("Network data load - ${delegate.meta().id}")
         .doOnSuccess { result ->
           Completable.fromAction {
             val calculatedExpiration = Instant.now()
@@ -182,6 +185,7 @@ class StorageBackedService(
                 nextPageToken = result.nextPageToken
             ))
           }.subscribeOn(Schedulers.io())
+              .trace("Network data store - ${delegate.meta().id}")
               .subscribe()
         }
         .doOnSuccess { result ->
