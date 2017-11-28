@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar
 import android.text.style.StyleSpan
 import android.widget.TextView
 import com.getkeepsafe.taptargetview.TapTarget
+import dagger.Lazy
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
@@ -35,7 +36,7 @@ import javax.inject.Inject
 
 class ChangelogHelper @Inject constructor(
     private val linkManager: LinkManager,
-    private val bypass: Bypass,
+    private val bypass: Lazy<Bypass>,
     private val fontHelper: FontHelper,
     private val syllabus: Syllabus,
     private val sharedPreferences: SharedPreferences) {
@@ -100,7 +101,7 @@ class ChangelogHelper @Inject constructor(
                 .markdown()
                 .parseMarkdownAndPlainLinks(
                     on = changesTextView,
-                    with = bypass,
+                    with = bypass.get(),
                     alternateSpans = { url: String ->
                       setOf(
                           object : TouchableUrlSpan(url,
