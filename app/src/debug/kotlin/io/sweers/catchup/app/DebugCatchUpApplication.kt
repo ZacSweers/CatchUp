@@ -21,11 +21,13 @@ import android.app.Application
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
+import android.util.Log
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
 import com.squareup.leakcanary.LeakCanary
 import timber.log.Timber
+import timber.log.Timber.Tree
 
 class DebugCatchUpApplication : CatchUpApplication() {
   override fun initVariant() {
@@ -62,6 +64,13 @@ class DebugCatchUpApplication : CatchUpApplication() {
     Timber.plant(Timber.DebugTree())
     Timber.plant(lumberYard.tree())
     Timber.plant(StethoTree())
+    Timber.plant(object : Tree() {
+      override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        if (priority == Log.ERROR) {
+          throw RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
+        }
+      }
+    })
     Stetho.initializeWithDefaults(this)
   }
 }
