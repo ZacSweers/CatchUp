@@ -29,12 +29,14 @@ import io.reactivex.Observable
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
+import io.sweers.catchup.service.api.EmojiMarkdownConverter
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.service.api.replaceMarkdownEmojis
 import io.sweers.catchup.service.github.model.SearchQuery
 import io.sweers.catchup.service.github.model.TrendingTimespan
 import io.sweers.catchup.service.github.type.LanguageOrder
@@ -50,6 +52,7 @@ private annotation class InternalApi
 internal class GitHubService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
     private val apolloClient: ApolloClient,
+    private val emojiMarkdownConverter: EmojiMarkdownConverter,
     private val linkHandler: LinkHandler)
   : TextService {
 
@@ -84,10 +87,14 @@ internal class GitHubService @Inject constructor(
               .map { it.asRepository()!! }
               .map {
                 with(it) {
+                  val description = description()
+                      ?.let { " — ${replaceMarkdownEmojis(it, emojiMarkdownConverter)}" }
+                      .orEmpty()
+
                   CatchUpItem(
                       id = id().hashCode().toLong(),
                       hideComments = true,
-                      title = "${name()}${description()?.let { " — $it" } ?: ""}",
+                      title = "${name()}$description",
                       score = "★" to stargazers().totalCount(),
                       timestamp = createdAt(),
                       author = owner().login(),
