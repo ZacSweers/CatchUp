@@ -381,6 +381,7 @@ dependencies {
   implementation project(':designernews')
   implementation project(':dribbble')
   implementation project(':github')
+  implementation project(':gemoji')
   implementation project(':util')
 
   // Support libs

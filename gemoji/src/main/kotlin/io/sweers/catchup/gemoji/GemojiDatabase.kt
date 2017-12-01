@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.gemoji
+package io.sweers.catchup.gemoji
 
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
@@ -25,7 +25,6 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import io.sweers.catchup.R
 import okio.Okio
 
 fun GemojiDatabase(context: Context, name: String, moshi: Moshi,

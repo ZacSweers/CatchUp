@@ -69,7 +69,4 @@ dependencies {
   api deps.misc.lazythreeten
   api deps.rx.java2
   implementation deps.okhttp.core
-
-  testImplementation deps.test.junit
-  testImplementation deps.test.truth
 }

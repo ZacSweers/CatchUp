@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.service.api
+package io.sweers.catchup.gemoji
 
-/**
- * Converts a markdown emoji alias (eg, ":smile:") into an android render-able emoji.
- */
-typealias EmojiMarkdownConverter = (@JvmSuppressWildcards String) -> String?
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Query
 
-/**
- * Returns a [String] that replaces occurrences of markdown emojis with android render-able emojis.
- */
-fun replaceMarkdownEmojis(markdown: String, converter: EmojiMarkdownConverter): String {
-  return Regex(":(\\w+):")
-      .replace(markdown) {
-        converter(it.value) ?: it.value
-      }
+@Dao
+interface GemojiDao {
+
+  @Query("select emoji from gemoji where alias = :alias")
+  fun getEmoji(alias: String): String?
 }

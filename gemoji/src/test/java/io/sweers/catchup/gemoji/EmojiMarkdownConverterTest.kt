@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.service.api
+package io.sweers.catchup.gemoji
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -23,7 +23,9 @@ class EmojiMarkdownConverterTest {
 
   val replaced = "replaced"
   val emoji = ":emoji:"
-  val converter = { alias: String ->  if (alias == "emoji") replaced else null }
+  val converter = object: EmojiMarkdownConverter {
+    override fun convert(alias: String) = if (alias == ":emoji:") replaced else null
+  }
 
   @Test
   fun testEmpty() {
@@ -62,12 +64,8 @@ class EmojiMarkdownConverterTest {
 
     converted = convert(":other text $emoji")
     assertThat(converted).isEqualTo(":other text $replaced")
-  }
 
-  // Does this scenario matter, think we'd need to move away from `Regex(":(\\w+):")` to solve.
-  @Test
-  fun FAILING_ONE_REPLACE() {
-    var converted = convert(":text$emoji")
+    converted = convert(":text$emoji")
     assertThat(converted).isEqualTo(":text$replaced")
 
     converted = convert(":$emoji")
@@ -87,6 +85,12 @@ class EmojiMarkdownConverterTest {
 
     converted = convert(": $emoji other text $emoji")
     assertThat(converted).isEqualTo(": $replaced other text $replaced")
+
+    converted = convert("$emoji:notEmoji:$emoji")
+    assertThat(converted).isEqualTo("$replaced:notEmoji:$replaced")
+
+    converted = convert("$emoji:notEmoji:$emoji:")
+    assertThat(converted).isEqualTo("$replaced:notEmoji:$replaced:")
   }
 
   private fun convert(markdown: String) = replaceMarkdownEmojis(markdown, converter)

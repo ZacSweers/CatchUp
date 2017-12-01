@@ -20,8 +20,8 @@ import android.content.Context
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
-import io.sweers.catchup.data.gemoji.GemojiDao
-import io.sweers.catchup.data.gemoji.GemojiDatabase
+import io.sweers.catchup.gemoji.GemojiDao
+import io.sweers.catchup.gemoji.GemojiDatabase
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import javax.inject.Singleton
 

@@ -17,7 +17,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'org.jetbrains.kotlin.kapt'
-apply plugin: 'com.apollographql.android'
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
@@ -61,33 +60,13 @@ kapt {
   correctErrorTypes = true
 }
 
-apollo {
-  customTypeMapping {
-    DateTime = "org.threeten.bp.Instant"
-  }
-  customTypeMapping['URI'] = "okhttp3.HttpUrl"
-}
-
 dependencies {
-  api project(':service-api')
+  kapt deps.android.arch.room.apt
 
-  implementation project(':gemoji')
-  implementation project(':util')
+  api deps.kotlin.stdlib.jdk7
+  api deps.android.arch.room.runtime
+  api deps.misc.moshi
 
-  compileOnly deps.auto.value.compileOnly.annotations
-  compileOnly deps.auto.value.extensions.moshi.compileOnly.annotations
-  kapt deps.dagger.apt.compiler
-  kapt deps.auto.value.apt.core
-  kapt deps.auto.value.extensions.moshi.apt.core
-  kapt deps.auto.value.extensions.redacted.apt.core
-
-  // Apollo
-  implementation deps.apollo.runtime
-  implementation deps.apollo.rx2Support
-  implementation deps.apollo.androidSupport
-
-  api deps.android.support.annotations
-  api deps.dagger.runtime
-  api deps.misc.lazythreeten
-  api deps.rx.java2
+  testImplementation deps.test.junit
+  testImplementation deps.test.truth
 }

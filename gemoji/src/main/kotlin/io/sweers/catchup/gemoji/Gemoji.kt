@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data.gemoji
+package io.sweers.catchup.gemoji
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity

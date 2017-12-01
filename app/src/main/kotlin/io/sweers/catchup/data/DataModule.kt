@@ -27,10 +27,11 @@ import dagger.Provides
 import dagger.multibindings.Multibinds
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
-import io.sweers.catchup.data.gemoji.GemojiDao
+import io.sweers.catchup.gemoji.EmojiMarkdownConverter
+import io.sweers.catchup.gemoji.GemojiDao
+import io.sweers.catchup.gemoji.GemojiEmojiMarkdownConverter
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.injection.qualifiers.NetworkInterceptor
-import io.sweers.catchup.service.api.EmojiMarkdownConverter
 import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
 import okhttp3.Cache
 import okhttp3.Interceptor
@@ -138,9 +139,7 @@ abstract class DataModule {
     @JvmStatic
     @Singleton
     fun provideEmojiMarkdownConverter(gemojiDao: GemojiDao): EmojiMarkdownConverter {
-      return { alias ->
-        gemojiDao.getEmoji(alias.removePrefix(":").removeSuffix(":"))
-      }
+      return GemojiEmojiMarkdownConverter(gemojiDao)
     }
   }
 }
