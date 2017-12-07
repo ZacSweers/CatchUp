@@ -21,7 +21,6 @@ import android.arch.persistence.room.Query
 
 @Dao
 interface GemojiDao {
-
   @Query("select emoji from gemoji where alias = :alias")
   fun getEmoji(alias: String): String?
 }

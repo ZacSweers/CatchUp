@@ -17,7 +17,6 @@
 package io.sweers.catchup.data
 
 import android.content.Context
-import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import io.sweers.catchup.gemoji.GemojiDao
@@ -31,9 +30,9 @@ internal object GithubEmojiModule {
   @Provides
   @JvmStatic
   @Singleton
-  internal fun provideGemojiDatabase(@ApplicationContext context: Context, moshi: Moshi):
+  internal fun provideGemojiDatabase(@ApplicationContext context: Context):
       GemojiDatabase {
-    return GemojiDatabase(context, "gemoji.db", moshi)
+    return GemojiDatabase(context, "gemoji.db")
   }
 
   @Provides

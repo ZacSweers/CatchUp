@@ -23,7 +23,7 @@ interface EmojiMarkdownConverter {
   fun convert(alias: String): String?
 }
 
-class GemojiEmojiMarkdownConverter(private val gemojiDao: GemojiDao): EmojiMarkdownConverter {
+class GemojiEmojiMarkdownConverter(val gemojiDao: GemojiDao): EmojiMarkdownConverter {
   override fun convert(alias: String): String? {
     if (alias.startsWith(':') && alias.endsWith(":")) {
       return gemojiDao.getEmoji(alias.substring(1, alias.lastIndex))

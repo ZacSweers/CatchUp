@@ -20,15 +20,11 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 
-internal const val GEMOJI_TABLE_NAME = "gemoji"
-internal const val GEMOJI_ALIAS_COLUMN_NAME = "alias"
-internal const val GEMOJI_EMOJI_COLUMN_NAME = "emoji"
-
-@Entity(tableName = GEMOJI_TABLE_NAME)
+@Entity(tableName = "gemoji")
 data class Gemoji(
     @PrimaryKey
-    @ColumnInfo(name = GEMOJI_ALIAS_COLUMN_NAME)
+    @ColumnInfo(name = "alias")
     var alias: String,
-    @ColumnInfo(name = GEMOJI_EMOJI_COLUMN_NAME)
-    var emoji: String
+    @ColumnInfo(name = "emoji")
+    var emoji: String?
 )
