@@ -30,8 +30,7 @@ internal object GithubEmojiModule {
   @Provides
   @JvmStatic
   @Singleton
-  internal fun provideGemojiDatabase(@ApplicationContext context: Context):
-      GemojiDatabase {
+  internal fun provideGemojiDatabase(@ApplicationContext context: Context): GemojiDatabase {
     return GemojiDatabase(context, "gemoji.db")
   }
 

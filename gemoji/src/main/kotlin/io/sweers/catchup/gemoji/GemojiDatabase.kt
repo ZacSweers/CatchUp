@@ -16,7 +16,7 @@
 
 package io.sweers.catchup.gemoji
 
-import android.arch.persistence.db.framework.AssetSQLiteOpenHelper
+import android.arch.persistence.db.framework.SupportAssetSQLiteOpenHelper
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
@@ -25,7 +25,7 @@ import android.content.Context
 fun GemojiDatabase(context: Context, name: String): GemojiDatabase {
   return Room.databaseBuilder(context, GemojiDatabase::class.java, name)
       .openHelperFactory {
-        AssetSQLiteOpenHelper(it.context, it.name!!, it.callback.version, it.callback)
+        SupportAssetSQLiteOpenHelper(it.context, it.name!!, it.callback.version, it.callback)
       }
       .build()
 }

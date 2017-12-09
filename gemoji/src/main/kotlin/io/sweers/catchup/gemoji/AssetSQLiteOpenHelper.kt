@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
- * Modifications (c) 2017 CommonsWare, LLC
+ * Copyright (C) 2011 readyState Software Ltd, 2007 The Android Open Source Project
  * Modifications (c) 2017 Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,92 +15,113 @@
  * limitations under the License.
  */
 
-// Need package to access FrameworkSQLiteDatabase
-@file:Suppress("PackageDirectoryMismatch")
-package android.arch.persistence.db.framework
+package io.sweers.catchup.gemoji
 
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.db.SupportSQLiteOpenHelper
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.readystatesoftware.sqliteasset.SQLiteAssetHelper
+import android.database.sqlite.SQLiteOpenHelper
+import java.io.File
+import java.io.FileOutputStream
 
-internal class AssetSQLiteOpenHelper(context: Context, name: String, version: Int,
-    callback: SupportSQLiteOpenHelper.Callback): SupportSQLiteOpenHelper {
+/**
+ * A minimal implementation of an [SQLiteOpenHelper] that is backed by an sqlite db from
+ * `/assets/databases/`.
+ *
+ * This implementation does not support proper migrations. Instead, when a new version
+ * is detected the database from `/assets/databases/` is re-copied into the internal database
+ * directory.
+ *
+ * @param context the context.
+ * @param name the db name, the db should be placed under `/assets/databases/name`.
+ * @param version the db version, when a new version is detected, the asset db is re-copied into
+ * the internal database directory.
+ */
+abstract class AssetSQLiteOpenHelper(private val context: Context,
+    name: String, private val version: Int): SQLiteOpenHelper(context, name, null, version) {
 
-  val assetHelper = AssetHelper(context, name, version, callback)
+  private val databasePath = "${context.applicationInfo.dataDir}/databases/$name"
+  private val assetPath = "databases/$name"
 
-  override fun getDatabaseName(): String {
-    return assetHelper.databaseName
-  }
+  private var database: SQLiteDatabase? = null
 
-  override fun setWriteAheadLoggingEnabled(enabled: Boolean) {
-    assetHelper.setWriteAheadLoggingEnabled(enabled)
-  }
-
-  override fun getWritableDatabase(): SupportSQLiteDatabase {
-    return assetHelper.writableSupportDatabase
-  }
-
-  override fun getReadableDatabase(): SupportSQLiteDatabase {
-    return assetHelper.readableSupportDatabase
-  }
-
-  override fun close() {
-    assetHelper.close()
-  }
-}
-
-internal class AssetHelper(context: Context, name: String, private val version: Int,
-    private val callback: SupportSQLiteOpenHelper.Callback):
-    SQLiteAssetHelper(context, name, null, null, version, null) {
-
-  private var wrappedDb: FrameworkSQLiteDatabase? = null
-  private var updateIdentity = false
-
-  init {
-    setForcedUpgrade()
-  }
-
-  val writableSupportDatabase: SupportSQLiteDatabase
-    @Synchronized get() {
-      val database = wrap(super.getWritableDatabase())
-      updateIdentity = database.version != version
-      return database
+  @Synchronized override fun getWritableDatabase(): SQLiteDatabase {
+    database?.let {
+      if (it.isOpen && !it.isReadOnly) {
+        return@getWritableDatabase it
+      }
     }
 
-  val readableSupportDatabase: SupportSQLiteDatabase
-    @Synchronized get() = wrap(super.getReadableDatabase())
+    var success = false
+    var db: SQLiteDatabase? = null
+    try {
+      if (!databaseExists()) {
+        db = createDatabaseFromAssets(version)
+      } else {
+        db = openDatabase()
+        if (db.version < version) {
+          db = createDatabaseFromAssets(version)
+        }
+      }
 
-  override fun onCreate(sqLiteDatabase: SQLiteDatabase) {
-    callback.onCreate(wrap(sqLiteDatabase))
+      onOpen(db)
+      success = true
+      return db
+    } finally {
+      if (success) {
+        database?.close()
+        database = db
+      } else {
+        db?.close()
+      }
+    }
   }
 
-  override fun onUpgrade(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-    callback.onUpgrade(wrap(sqLiteDatabase), oldVersion, newVersion)
-  }
+  @Synchronized override fun getReadableDatabase(): SQLiteDatabase {
+    database?.let {
+      if (it.isOpen) {
+        return@getReadableDatabase it
+      }
+    }
 
-  override fun onConfigure(sqLiteDatabase: SQLiteDatabase) {
-    callback.onConfigure(wrap(sqLiteDatabase))
-  }
-
-  override fun onDowngrade(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-    callback.onDowngrade(wrap(sqLiteDatabase), oldVersion, newVersion)
-  }
-
-  override fun onOpen(sqLiteDatabase: SQLiteDatabase) {
-    callback.onOpen(wrap(sqLiteDatabase))
+    return try {
+      writableDatabase
+    } catch (e: Exception) {
+      openDatabase(SQLiteDatabase.OPEN_READONLY).also {
+        onOpen(it)
+        database = it
+      }
+    }
   }
 
   @Synchronized override fun close() {
-    super.close()
-    wrappedDb = null
+    database?.let {
+      if (it.isOpen) {
+        it.close()
+      }
+      database = null
+    }
   }
 
-  @Synchronized private fun wrap(sqLiteDatabase: SQLiteDatabase): FrameworkSQLiteDatabase {
-    if (wrappedDb == null) {
-      wrappedDb = FrameworkSQLiteDatabase(sqLiteDatabase)
+  private fun databaseExists() = File(databasePath).exists()
+
+  private fun openDatabase(flags: Int = SQLiteDatabase.OPEN_READWRITE): SQLiteDatabase {
+    return SQLiteDatabase.openDatabase(databasePath, null, flags)
+  }
+
+  private fun createDatabaseFromAssets(version: Int): SQLiteDatabase {
+    val input = context.assets.open(assetPath)
+    val output = FileOutputStream(databasePath)
+
+    try {
+      input.copyTo(output)
+    } finally {
+      input.close()
+      output.close()
     }
-    return wrappedDb!!
+
+    val db = openDatabase()
+    db.version = version
+    onCreate(db)
+    return db
   }
 }
