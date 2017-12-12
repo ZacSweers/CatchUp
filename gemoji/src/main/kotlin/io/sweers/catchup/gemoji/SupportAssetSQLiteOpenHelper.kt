@@ -26,6 +26,16 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import io.sweers.catchup.gemoji.AssetSQLiteOpenHelper
 
+/**
+ * A support version of [AssetSQLiteOpenHelper].
+ *
+ * Can be hooked up to a Room db by adding an open helper factory to a room database builder.
+ * ```
+ * builder.openHelperFactory {
+ *   SupportAssetSQLiteOpenHelper(it.context, it.name, it.callback.version, it.callback)
+ * }
+ * ```
+ */
 internal class SupportAssetSQLiteOpenHelper(context: Context, name: String, version: Int,
     callback: SupportSQLiteOpenHelper.Callback): SupportSQLiteOpenHelper {
 
@@ -52,6 +62,10 @@ internal class SupportAssetSQLiteOpenHelper(context: Context, name: String, vers
   }
 }
 
+/**
+ * Wraps a [SQLiteDatabase] into a [SupportSQLiteDatabase] by using room's internal
+ * [FrameworkSQLiteDatabase].
+ */
 private class SQLiteOpenHelperWrapper(context: Context, name: String, version: Int,
     private val callback: SupportSQLiteOpenHelper.Callback):
     AssetSQLiteOpenHelper(context, name, version) {
