@@ -43,6 +43,12 @@ abstract class AssetSQLiteOpenHelper(private val context: Context,
   private val assetPath = "databases/$name"
 
   private var database: SQLiteDatabase? = null
+    set(value) {
+      if (field?.isOpen == true) {
+        field?.close()
+      }
+      field = value
+    }
 
   @Synchronized override fun getWritableDatabase(): SQLiteDatabase {
     database?.let {
@@ -68,7 +74,6 @@ abstract class AssetSQLiteOpenHelper(private val context: Context,
       return db
     } finally {
       if (success) {
-        database?.close()
         database = db
       } else {
         db?.close()
@@ -94,12 +99,7 @@ abstract class AssetSQLiteOpenHelper(private val context: Context,
   }
 
   @Synchronized override fun close() {
-    database?.let {
-      if (it.isOpen) {
-        it.close()
-      }
-      database = null
-    }
+    database = null
   }
 
   private fun databaseExists() = File(databasePath).exists()
