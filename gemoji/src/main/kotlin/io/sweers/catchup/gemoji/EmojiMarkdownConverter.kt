@@ -38,36 +38,36 @@ class GemojiEmojiMarkdownConverter(val gemojiDao: GemojiDao): EmojiMarkdownConve
  */
 fun replaceMarkdownEmojis(markdown: String, converter: EmojiMarkdownConverter): String {
   val sb = StringBuilder(markdown.length)
-  var potentialAliasStart: Int? = null
+  var potentialAliasStart = -1
 
   markdown.forEachIndexed { index, char ->
     if (char == ':') {
-      potentialAliasStart = if (potentialAliasStart == null) {
+      potentialAliasStart = if (potentialAliasStart == -1) {
         // If we have no potential start, any : is a potential start
         index
       } else {
-        val potentialAlias = markdown.substring(potentialAliasStart!!, index + 1)
+        val potentialAlias = markdown.substring(potentialAliasStart, index + 1)
         val potentialEmoji = converter.convert(potentialAlias)
         // If we find an emoji append it and reset alias start, if we don't find an emoji
         // append between the potential start and this index *and* consider this index the new
         // potential start.
         if (potentialEmoji != null) {
           sb.append(potentialEmoji)
-          null
+          -1
         } else {
-          sb.append(markdown, potentialAliasStart!!, index)
+          sb.append(markdown, potentialAliasStart, index)
           index
         }
       }
       // While not looking for an alias end append all non possible alias chars to the string
-    } else if (potentialAliasStart == null) {
+    } else if (potentialAliasStart == -1) {
       sb.append(char)
     }
   }
 
   // Finished iterating markdown while looking for an end, append anything remaining
-  if (potentialAliasStart != null) {
-    sb.append(markdown, potentialAliasStart!!, markdown.length)
+  if (potentialAliasStart != -1) {
+    sb.append(markdown, potentialAliasStart, markdown.length)
   }
 
   return sb.toString()
