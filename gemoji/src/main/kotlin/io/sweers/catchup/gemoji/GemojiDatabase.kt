@@ -22,7 +22,7 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 
-fun GemojiDatabase(context: Context, name: String): GemojiDatabase {
+fun createGemojiDatabase(context: Context, name: String): GemojiDatabase {
   return Room.databaseBuilder(context, GemojiDatabase::class.java, name)
       .openHelperFactory {
         SupportAssetSQLiteOpenHelper(it.context, it.name!!, it.callback.version, it.callback)

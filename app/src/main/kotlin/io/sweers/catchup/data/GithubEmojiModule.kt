@@ -21,6 +21,7 @@ import dagger.Module
 import dagger.Provides
 import io.sweers.catchup.gemoji.GemojiDao
 import io.sweers.catchup.gemoji.GemojiDatabase
+import io.sweers.catchup.gemoji.createGemojiDatabase
 import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
@@ -31,7 +32,7 @@ internal object GithubEmojiModule {
   @JvmStatic
   @Singleton
   internal fun provideGemojiDatabase(@ApplicationContext context: Context): GemojiDatabase {
-    return GemojiDatabase(context, "gemoji.db")
+    return createGemojiDatabase(context, "gemoji.db")
   }
 
   @Provides
