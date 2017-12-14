@@ -45,7 +45,6 @@ import butterknife.OnClick
 import com.apollographql.apollo.exception.ApolloException
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
-import com.google.firebase.perf.FirebasePerformance
 import com.uber.autodispose.kotlin.autoDisposeWith
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
@@ -72,7 +71,6 @@ import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
 import io.sweers.catchup.ui.controllers.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
 import io.sweers.catchup.util.applyOn
-import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isVisible
@@ -82,7 +80,6 @@ import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import retrofit2.HttpException
 import java.io.IOException
 import java.security.InvalidParameterException
-import java.util.concurrent.atomic.AtomicLong
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -150,9 +147,12 @@ class ServiceController : ButterKnifeController,
   private var pendingRVState: Parcelable? = null
   private val defaultItemAnimator = DefaultItemAnimator()
 
-  @field:TextViewPool @Inject lateinit var textViewPool: RecycledViewPool
-  @field:VisualViewPool @Inject lateinit var visualViewPool: RecycledViewPool
-  @field:FinalServices @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
+  @field:TextViewPool
+  @Inject lateinit var textViewPool: RecycledViewPool
+  @field:VisualViewPool
+  @Inject lateinit var visualViewPool: RecycledViewPool
+  @field:FinalServices
+  @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
   private val service: Service by lazy {
     args[ARG_SERVICE_KEY].let {
       services[it]?.get() ?: throw IllegalArgumentException("No service provided for $it!")
@@ -226,7 +226,8 @@ class ServiceController : ButterKnifeController,
   override fun onViewBound(view: View) {
     super.onViewBound(view)
     @ColorInt val accentColor = ContextCompat.getColor(view.context, service.meta().themeColor)
-    @ColorInt val dayAccentColor = ContextCompat.getColor(dayOnlyContext!!, service.meta().themeColor)
+    @ColorInt val dayAccentColor = ContextCompat.getColor(dayOnlyContext!!,
+        service.meta().themeColor)
     swipeRefreshLayout.run {
       setColorSchemeColors(dayAccentColor)
       setOnRefreshListener(this@ServiceController)
@@ -384,6 +385,7 @@ class ServiceController : ButterKnifeController,
           applyOn(progress, errorView) { hide() }
           swipeRefreshLayout.show()
           recyclerView.post {
+            //            traceFrameMetrics(activity!!, "display_data_${loadResult.kind()}_${service.meta().id}") {
             when (adapter) {
               is TextAdapter -> {
                 @Suppress("UNCHECKED_CAST") // badpokerface.png
@@ -398,6 +400,7 @@ class ServiceController : ButterKnifeController,
               recyclerView.layoutManager.onRestoreInstanceState(it)
               pendingRVState = null
             }
+//            }
           }
         }, { error: Throwable ->
           val activity = activity
@@ -564,10 +567,16 @@ class LoadingMoreHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 @Suppress("unused")
 internal sealed class LoadResult<T : DisplayableItem> {
-  data class DiffResultData<T : DisplayableItem>(val data: List<T>,
-      val diffResult: DiffResult) : LoadResult<T>()
+  abstract fun kind(): String
 
-  data class NewData<T : DisplayableItem>(val newData: List<T>) : LoadResult<T>()
+  data class DiffResultData<T : DisplayableItem>(val data: List<T>,
+      val diffResult: DiffResult) : LoadResult<T>() {
+    override fun kind() = "diffresult"
+  }
+
+  data class NewData<T : DisplayableItem>(val newData: List<T>) : LoadResult<T>() {
+    override fun kind() = "newdata"
+  }
 }
 
 internal class ItemUpdateCallback<T : DisplayableItem>(
