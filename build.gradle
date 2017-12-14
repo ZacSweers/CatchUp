@@ -30,7 +30,6 @@ subprojects {
     repositories {
       google()
       jcenter()
-      maven { url deps.build.repositories.kotlin12EAPSnapshots }
       maven { url deps.build.repositories.plugins }
       maven { url deps.build.repositories.snapshots }
     }
@@ -54,7 +53,6 @@ subprojects {
   repositories {
     google()
     jcenter()
-    maven { url deps.build.repositories.kotlin12EAPSnapshots }
     maven { url deps.build.repositories.jitpack }
     maven { url deps.build.repositories.snapshots }
     maven { url 'https://oss.jfrog.org/libs-snapshot' }
@@ -84,7 +82,7 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '4.3.1'
+  gradleVersion = '4.4'
   distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
