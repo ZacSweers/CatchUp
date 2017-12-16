@@ -42,7 +42,7 @@ object GemojiModule {
   @JvmStatic
   @Singleton
   internal fun provideGemojiDao(gemojiDatabase: GemojiDatabase): GemojiDao {
-    return gemojiDatabase.GemojiDao()
+    return gemojiDatabase.gemojiDao()
   }
 
   @Provides

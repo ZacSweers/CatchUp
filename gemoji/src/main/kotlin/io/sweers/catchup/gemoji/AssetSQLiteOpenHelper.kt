@@ -36,8 +36,9 @@ import java.io.FileOutputStream
  * @param version the db version, when a new version is detected, the asset db is re-copied into
  * the internal database directory.
  */
-abstract class AssetSQLiteOpenHelper(private val context: Context,
-    name: String, private val version: Int): SQLiteOpenHelper(context, name, null, version) {
+internal abstract class AssetSQLiteOpenHelper(private val context: Context,
+    name: String,
+    private val version: Int) : SQLiteOpenHelper(context, name, null, version) {
 
   private val databasePath = "${context.applicationInfo.dataDir}/databases/$name"
   private val assetPath = "databases/$name"

@@ -20,6 +20,6 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 
 @Database(entities = [(Gemoji::class)], version = 1)
-abstract class GemojiDatabase: RoomDatabase() {
-  abstract fun GemojiDao(): GemojiDao
+internal abstract class GemojiDatabase: RoomDatabase() {
+  abstract fun gemojiDao(): GemojiDao
 }

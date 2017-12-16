@@ -18,9 +18,11 @@ package io.sweers.catchup.gemoji
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
+import org.intellij.lang.annotations.Language
 
 @Dao
 interface GemojiDao {
+  @Language("RoomSql")
   @Query("select emoji from gemoji where alias = :alias")
   fun getEmoji(alias: String): String?
 }

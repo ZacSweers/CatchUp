@@ -21,7 +21,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 
 @Entity(tableName = "gemoji")
-data class Gemoji(
+internal data class Gemoji(
     @PrimaryKey
     @ColumnInfo(name = "alias")
     var alias: String,
