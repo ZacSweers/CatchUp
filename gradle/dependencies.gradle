@@ -39,7 +39,7 @@ def versions = [
     rxbinding: '2.0.0',
     rxpalette: '0.3.0',
     stetho: '1.5.0',
-    support: '27.0.1',
+    support: '27.0.2',
     tikxml: '0.8.13'
 ]
 
