@@ -8,9 +8,9 @@ import android.support.v4.provider.FontRequest
 import android.support.v4.provider.FontsContractCompat
 import android.support.v4.provider.FontsContractCompat.FontRequestCallback
 import io.sweers.catchup.R
-import io.sweers.catchup.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.data
+package io.sweers.catchup.gemoji
 
+import android.arch.persistence.db.framework.SupportAssetSQLiteOpenHelper
+import android.arch.persistence.room.Room
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import io.sweers.catchup.gemoji.GemojiDao
-import io.sweers.catchup.gemoji.GemojiDatabase
-import io.sweers.catchup.gemoji.createGemojiDatabase
-import io.sweers.catchup.injection.qualifiers.ApplicationContext
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
 @Module
-internal object GithubEmojiModule {
+object GemojiModule {
 
   @Provides
   @JvmStatic
   @Singleton
   internal fun provideGemojiDatabase(@ApplicationContext context: Context): GemojiDatabase {
-    return createGemojiDatabase(context, "gemoji.db")
+    return Room.databaseBuilder(context, GemojiDatabase::class.java, "gemoji.db")
+        .openHelperFactory {
+          SupportAssetSQLiteOpenHelper(it.context, it.name!!, it.callback.version, it.callback)
+        }
+        .build()
   }
 
   @Provides
@@ -40,5 +43,12 @@ internal object GithubEmojiModule {
   @Singleton
   internal fun provideGemojiDao(gemojiDatabase: GemojiDatabase): GemojiDao {
     return gemojiDatabase.GemojiDao()
+  }
+
+  @Provides
+  @JvmStatic
+  @Singleton
+  fun provideEmojiMarkdownConverter(gemojiDao: GemojiDao): EmojiMarkdownConverter {
+    return GemojiEmojiMarkdownConverter(gemojiDao)
   }
 }

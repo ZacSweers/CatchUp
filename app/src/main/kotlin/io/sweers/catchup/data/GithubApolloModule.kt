@@ -34,7 +34,7 @@ import dagger.Module
 import dagger.Provides
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.github.type.CustomType
-import io.sweers.catchup.injection.qualifiers.ApplicationContext
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient

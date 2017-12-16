@@ -25,10 +25,10 @@ interface EmojiMarkdownConverter {
 
 class GemojiEmojiMarkdownConverter(val gemojiDao: GemojiDao): EmojiMarkdownConverter {
   override fun convert(alias: String): String? {
-    if (alias.startsWith(':') && alias.endsWith(":")) {
-      return gemojiDao.getEmoji(alias.substring(1, alias.lastIndex))
+    return if (alias.startsWith(':') && alias.endsWith(":")) {
+      gemojiDao.getEmoji(alias.substring(1, alias.lastIndex))
     } else {
-      return null
+      null
     }
   }
 }

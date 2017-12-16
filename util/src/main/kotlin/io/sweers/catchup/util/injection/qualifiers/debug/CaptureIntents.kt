@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.injection.qualifiers
+package io.sweers.catchup.util.injection.qualifiers.debug
 
 import javax.inject.Qualifier
+import kotlin.annotation.AnnotationRetention.RUNTIME
 
 @Qualifier
-annotation class NetworkInterceptor
+@Retention(RUNTIME)
+annotation class CaptureIntents

@@ -27,12 +27,10 @@ import dagger.Provides
 import dagger.multibindings.Multibinds
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
-import io.sweers.catchup.gemoji.EmojiMarkdownConverter
-import io.sweers.catchup.gemoji.GemojiDao
-import io.sweers.catchup.gemoji.GemojiEmojiMarkdownConverter
-import io.sweers.catchup.injection.qualifiers.ApplicationContext
-import io.sweers.catchup.injection.qualifiers.NetworkInterceptor
+import io.sweers.catchup.gemoji.GemojiModule
 import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -40,7 +38,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
-@Module(includes = [GithubApolloModule::class, GithubEmojiModule::class])
+@Module(includes = [GithubApolloModule::class, GemojiModule::class])
 abstract class DataModule {
 
   @NetworkInterceptor
@@ -133,13 +131,6 @@ abstract class DataModule {
     @Singleton
     internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase): ServiceDao {
       return catchUpDatabase.serviceDao()
-    }
-
-    @Provides
-    @JvmStatic
-    @Singleton
-    fun provideEmojiMarkdownConverter(gemojiDao: GemojiDao): EmojiMarkdownConverter {
-      return GemojiEmojiMarkdownConverter(gemojiDao)
     }
   }
 }
