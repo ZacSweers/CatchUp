@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong
  * Utilities for tracing.
  */
 
-inline fun <T> Maybe<T>.trace(tag: String): Maybe<T> {
+fun <T> Maybe<T>.trace(tag: String): Maybe<T> {
   val trace = FirebasePerformance.getInstance().newTrace(tag)
   val timer = AtomicLong()
   return this
@@ -33,7 +33,7 @@ inline fun <T> Maybe<T>.trace(tag: String): Maybe<T> {
       }
 }
 
-inline fun Completable.trace(tag: String): Completable {
+fun Completable.trace(tag: String): Completable {
   val trace = FirebasePerformance.getInstance().newTrace(tag)
   val timer = AtomicLong()
   return this

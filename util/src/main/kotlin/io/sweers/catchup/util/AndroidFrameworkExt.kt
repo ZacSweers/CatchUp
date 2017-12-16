@@ -104,6 +104,7 @@ fun Context.resolveAttributeColor(@AttrRes resId: Int): Int {
     return typedValue.data
   }
   if (typedValue.type == TypedValue.TYPE_ATTRIBUTE) {
+    @Suppress("DEPRECATION")
     return resources.getColorStateList(typedValue.data).defaultColor
   }
   return typedValue.data

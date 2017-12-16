@@ -17,6 +17,7 @@
 package io.sweers.catchup.service.github
 
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Input
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.exception.ApolloException
 import com.apollographql.apollo.rx2.Rx2Apollo
@@ -37,6 +38,7 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.service.github.GitHubSearchQuery.AsRepository
 import io.sweers.catchup.service.github.model.SearchQuery
 import io.sweers.catchup.service.github.model.TrendingTimespan
 import io.sweers.catchup.service.github.type.LanguageOrder
@@ -71,7 +73,7 @@ internal class GitHubService @Inject constructor(
             .direction(OrderDirection.DESC)
             .field(LanguageOrderField.SIZE)
             .build(),
-        request.pageId.nullIfBlank()))
+        Input.fromNullable(request.pageId.nullIfBlank())))
         .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
 
     return Rx2Apollo.from(searchQuery)
@@ -84,7 +86,8 @@ internal class GitHubService @Inject constructor(
         .map { it.data()!! }
         .flatMap { data ->
           Observable.fromIterable(data.search().nodes().orEmpty())
-              .map { it.asRepository()!! }
+              .cast(AsRepository::class.java)
+//              .map { it.asRepository()!! }
               .map {
                 with(it) {
                   val description = description()
@@ -95,7 +98,7 @@ internal class GitHubService @Inject constructor(
                       id = id().hashCode().toLong(),
                       hideComments = true,
                       title = "${name()}$description",
-                      score = "★" to stargazers().totalCount(),
+                      score = "★" to stargazers().totalCount().toInt(),
                       timestamp = createdAt(),
                       author = owner().login(),
                       tag = languages()?.nodes()?.firstOrNull()?.name(),

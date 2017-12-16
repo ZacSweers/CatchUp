@@ -63,6 +63,8 @@ import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery
+import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsOrganization
+import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsUser
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery.AsRepository
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
@@ -191,7 +193,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
               Rx2Apollo.from(apolloClient.query(RepositoriesByIdsQuery(it.keys.toList()))
                   .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
                   .firstOrError()
-                  .map { it.data()!!.nodes().map { it.asRepository()!! } },
+                  .map { it.data()!!.nodes().map { it as AsRepository } },
               // Fetch the users by their IDs
               Rx2Apollo.from(apolloClient.query(ProjectOwnersByIdsQuery(it.values.distinct()))
                   .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
@@ -199,10 +201,10 @@ class LicensesController : ButterKnifeController(), Scrollable {
                   // Reduce into a map of the owner ID -> display name
                   .reduce(mutableMapOf()) { map, node ->
                     map.apply {
-                      val (id, name) = node.asOrganization()?.let {
-                        it.id() to (it.name() ?: it.login())
-                      } ?: with(node.asUser()!!) {
-                        id() to (name() ?: login())
+                      val (id, name) = when (node) {
+                        is AsOrganization -> with(node) { id() to (name() ?: login()) }
+                        is AsUser -> with(node) { id() to (name() ?: login()) }
+                        else -> throw IllegalStateException("Unrecognized node type: $node")
                       }
                       map.put(id, name)
                     }
