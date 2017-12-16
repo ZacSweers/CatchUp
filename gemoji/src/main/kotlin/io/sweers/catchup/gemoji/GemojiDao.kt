@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.injection.qualifiers.debug
+package io.sweers.catchup.gemoji
 
-import javax.inject.Qualifier
-import kotlin.annotation.AnnotationRetention.RUNTIME
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Query
 
-@Qualifier
-@Retention(RUNTIME)
-annotation class CaptureIntents
+@Dao
+interface GemojiDao {
+  @Query("select emoji from gemoji where alias = :alias")
+  fun getEmoji(alias: String): String?
+}

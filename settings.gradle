@@ -36,4 +36,5 @@ include ':imgur'
 project(':imgur').projectDir = new File(rootDir, 'services/imgur')
 include ':github'
 project(':github').projectDir = new File(rootDir, 'services/github')
+include ':gemoji'
 include ':util'

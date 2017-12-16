@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.injection.qualifiers
+package io.sweers.catchup.util.injection.qualifiers.preferences
 
 import javax.inject.Qualifier
 
 @Qualifier
-annotation class ActivityContext
+annotation class SmartLinking

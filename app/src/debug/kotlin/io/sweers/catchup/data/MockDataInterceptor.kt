@@ -20,7 +20,7 @@ import android.content.Context
 import android.support.v4.util.ArrayMap
 import io.sweers.catchup.P
 import io.sweers.catchup.data.model.ServiceData
-import io.sweers.catchup.injection.qualifiers.ApplicationContext
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.MediaType

@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.injection.qualifiers
+package io.sweers.catchup.gemoji
 
-import javax.inject.Qualifier
+import android.arch.persistence.room.Database
+import android.arch.persistence.room.RoomDatabase
 
-@Qualifier
-annotation class NetworkInterceptor
+@Database(entities = [(Gemoji::class)], version = 1)
+abstract class GemojiDatabase: RoomDatabase() {
+  abstract fun GemojiDao(): GemojiDao
+}

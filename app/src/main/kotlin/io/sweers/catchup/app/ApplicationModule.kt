@@ -23,7 +23,7 @@ import android.content.Context
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import io.sweers.catchup.injection.qualifiers.ApplicationContext
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
 @Module

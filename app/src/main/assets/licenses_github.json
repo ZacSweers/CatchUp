@@ -96,6 +96,14 @@
     "name": "apollo-android"
   },
   {
+    "owner": "github",
+    "name": "gemoji"
+  },
+  {
+    "owner": "jgilfelt",
+    "name": "android-sqlite-asset-helper"
+  },
+  {
     "owner": "google",
     "name": "dagger"
   },

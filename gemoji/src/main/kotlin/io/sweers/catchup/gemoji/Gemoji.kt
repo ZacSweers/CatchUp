@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.injection.qualifiers.preferences
+package io.sweers.catchup.gemoji
 
-import javax.inject.Qualifier
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 
-@Qualifier
-annotation class SmartLinking
+@Entity(tableName = "gemoji")
+data class Gemoji(
+    @PrimaryKey
+    @ColumnInfo(name = "alias")
+    var alias: String,
+    @ColumnInfo(name = "emoji")
+    var emoji: String?
+)

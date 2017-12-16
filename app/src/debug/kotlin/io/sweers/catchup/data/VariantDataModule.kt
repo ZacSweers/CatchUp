@@ -22,8 +22,8 @@ import com.readystatesoftware.chuck.ChuckInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
-import io.sweers.catchup.injection.qualifiers.ApplicationContext
-import io.sweers.catchup.injection.qualifiers.NetworkInterceptor
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
