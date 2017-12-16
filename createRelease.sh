@@ -117,7 +117,12 @@ if [ "$UPDATE_CHANGELOG" = true ]
     VERSION_NAME=`git describe --tags`
     echo "Committing new tags for changelog update"
     execIfNotDry git commit -m "Prepare for release ${VERSION_NAME}." -- CHANGELOG.md "${WORKING_DIR}/app/src/main/play/en-US/whatsnew"
-    execIfNotDry git tag -a ${VERSION_NAME} -m "Version ${VERSION_NAME}."
+    # Only cut a tag if
+    if [ -z ${VERSION_UPDATE_TYPE} ]
+      then
+        log "Cutting tag during changelog"
+        execIfNotDry git tag -a ${VERSION_NAME} -m "Version ${VERSION_NAME}."
+    fi
 fi
 
 echo "Decrypting keys"
@@ -128,4 +133,4 @@ execIfNotDry openssl aes-256-cbc -d -in signing/play-account.aes -out signing/pl
 log "Keys decrypted"
 
 echo "Publishing"
-execIfNotDry gradleExec clean publishApkRelease --no-daemon -PincludeChangelog
+execIfNotDry execGradle clean publishApkRelease --no-daemon -PincludeChangelog
