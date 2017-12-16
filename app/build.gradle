@@ -59,7 +59,7 @@ android {
     buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN',
         /"${getPropertyOrEmpty("catchup_github_developer_token")}"/
     buildConfigField 'String', 'SMMRY_API_KEY', /"${getPropertyOrEmpty("catchup_smmry_api_key")}"/
-    resValue "string", "changelog_text", /"${getChangelog()}"/
+    resValue "string", "changelog_text", getChangelog()
   }
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
