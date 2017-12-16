@@ -356,7 +356,7 @@ class UpdateVersion extends DefaultTask {
     }
     String latestVersionString = "$major.$minor.$patch"
     println "Updating version to $latestVersionString"
-    "git tag -a $latestVersionString -m \"Version ${latestVersionString}.\"".execute([], rootProject.rootDir)
+    "git tag -a $latestVersionString -m \"Version ${latestVersionString}.\"".execute([], project.rootDir)
   }
 }
 
