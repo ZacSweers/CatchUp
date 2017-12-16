@@ -26,16 +26,19 @@ import com.bumptech.glide.request.transition.Transition
 /**
  * Like [ImageViewTarget] but will not automatically start playing its resource.
  */
-abstract class NonAutoStartImageViewTarget<Z>(view: ImageView)
-  : ViewTarget<ImageView, Z>(view), Transition.ViewAdapter {
+abstract class NonAutoStartImageViewTarget<Z> : ViewTarget<ImageView, Z>, Transition.ViewAdapter {
 
   private var animatable: Animatable? = null
   private var runningWhenStopped = false
 
+  constructor(view: ImageView) : super(view)
+
+  @Suppress("DEPRECATION")
+  constructor(view: ImageView, waitForLayout: Boolean) : super(view, waitForLayout)
+
   override fun getCurrentDrawable(): Drawable? {
     return view.drawable
   }
-
   override fun setDrawable(drawable: Drawable?) {
     view.setImageDrawable(drawable)
   }
