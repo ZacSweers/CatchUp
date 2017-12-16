@@ -21,7 +21,6 @@ apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'org.jetbrains.kotlin.kapt'
 apply plugin: 'com.apollographql.android'
 apply plugin: "net.ltgt.errorprone"
-apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
 apply plugin: 'com.bugsnag.android.gradle'
 apply plugin: 'com.github.triplet.play'
 
