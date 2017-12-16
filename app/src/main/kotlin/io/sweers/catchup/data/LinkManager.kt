@@ -27,7 +27,7 @@ import android.support.annotation.ColorInt
 import android.support.v4.util.ArrayMap
 import android.widget.Toast
 import com.f2prateek.rx.preferences2.Preference
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -59,7 +59,7 @@ class LinkManager @Inject constructor(private val customTab: CustomTabActivityHe
     filter.addAction(Intent.ACTION_INSTALL_PACKAGE)
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED)
     Observable.merge(activity.registerReceiver(filter), globalSmartLinkingPref.asObservable())
-        .autoDisposeWith(activity)
+        .autoDisposable(activity)
         .subscribe { dumbCache.clear() }
   }
 

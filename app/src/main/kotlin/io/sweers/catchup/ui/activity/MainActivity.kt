@@ -25,7 +25,7 @@ import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Binds
 import dagger.Provides
 import dagger.multibindings.Multibinds
@@ -71,7 +71,7 @@ class MainActivity : BaseActivity() {
         .doOnStart(customTab) { bindCustomTabsService(this@MainActivity) }
         .doOnStop(customTab) { unbindCustomTabsService(this@MainActivity) }
         .doOnDestroy(customTab) { connectionCallback = null }
-        .autoDisposeWith(this)
+        .autoDisposable(this)
         .subscribe()
 
     val viewGroup = viewContainer.forActivity(this)

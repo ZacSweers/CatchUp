@@ -39,7 +39,7 @@ import com.jakewharton.rxbinding2.support.v4.widget.drawerOpen
 import com.jakewharton.scalpel.ScalpelFrameLayout
 import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.android.ViewScopeProvider
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Lazy
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -113,7 +113,7 @@ internal class DebugViewContainer @Inject constructor(
         }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .autoDisposeWith(activity)
+        .autoDisposable(activity)
         .subscribe {
           viewHolder.telescopeLayout.setLens(bugReportLens)
         }
@@ -163,7 +163,7 @@ internal class DebugViewContainer @Inject constructor(
           unbinder.unbind()
           disposables.clear()
         }
-        .autoDisposeWith(activity)
+        .autoDisposable(activity)
         .subscribe {
           unbinder.unbind()
           disposables.clear()
@@ -241,7 +241,7 @@ class DrawerTapTarget(
         drawerLayout.drawerOpen(gravity)
             .filter { it }
             .firstElement()
-            .autoDisposeWith(ViewScopeProvider.from(drawerLayout))
+            .autoDisposable(ViewScopeProvider.from(drawerLayout))
             .subscribe {
               delegateTarget.onReady(runnable)
             }

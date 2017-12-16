@@ -48,7 +48,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Binds
 import dagger.Module
 import dagger.Subcomponent
@@ -91,7 +91,7 @@ class AboutActivity : BaseActivity() {
         .doOnStart(customTab) { bindCustomTabsService(this@AboutActivity) }
         .doOnStop(customTab) { unbindCustomTabsService(this@AboutActivity) }
         .doOnDestroy(customTab) { connectionCallback = null }
-        .autoDisposeWith(this)
+        .autoDisposable(this)
         .subscribe()
 
     val viewGroup = viewContainer.forActivity(this)

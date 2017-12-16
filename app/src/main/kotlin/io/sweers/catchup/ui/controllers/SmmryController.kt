@@ -43,7 +43,7 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.squareup.moshi.Moshi
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Lazy
 import dagger.Provides
 import dagger.Subcomponent
@@ -207,7 +207,7 @@ class SmmryController : ButterKnifeController {
         .firstOrError()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .autoDisposeWith(this)
+        .autoDisposable(this)
         .subscribe({ smmryResponse ->
           alreadyLoaded = true
           when (smmryResponse) {

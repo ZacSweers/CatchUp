@@ -30,7 +30,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.rx2.Rx2Apollo
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.Single
@@ -172,7 +172,7 @@ class ChangelogController : ButterKnifeController(), Scrollable {
               return@flatMapCompletable linkManager.openUrl(
                   UrlMeta(item.url, 0, itemView.context))
             }
-            .autoDisposeWith(holder)
+            .autoDisposable(holder)
             .subscribe()
       }
     }

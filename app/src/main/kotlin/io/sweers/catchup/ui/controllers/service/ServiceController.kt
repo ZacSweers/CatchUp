@@ -45,7 +45,7 @@ import butterknife.OnClick
 import com.apollographql.apollo.exception.ApolloException
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -209,7 +209,7 @@ class ServiceController : ButterKnifeController,
         item.summarizationInfo?.let {
           // We're not supporting this for now since it's not ready yet
 //          holder.itemLongClicks()
-//              .autoDisposeWith(this)
+//              .autoDisposable(this)
 //              .subscribe(SmmryController.showFor<Any>(controller = this,
 //                  service = service,
 //                  title = item.title,
@@ -376,7 +376,7 @@ class ServiceController : ButterKnifeController,
         }
         .trace("Data load - ${service.meta().id}")
         .doOnComplete { moreDataAvailable = false }
-        .autoDisposeWith(this)
+        .autoDisposable(this)
         .subscribe({ loadResult ->
           applyOn(progress, errorView) { hide() }
           swipeRefreshLayout.show()

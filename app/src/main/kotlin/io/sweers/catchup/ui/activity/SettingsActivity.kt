@@ -32,7 +32,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import butterknife.BindView
 import com.google.firebase.perf.FirebasePerformance
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Binds
 import dagger.Module
 import dagger.android.AndroidInjection
@@ -221,7 +221,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
             return@fromCallable cacheCleaned + deletedFromDb + networkCacheCleaned + clearedLogs
           }.subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
-              .autoDisposeWith(activity as BaseActivity)
+              .autoDisposable(activity as BaseActivity)
               .subscribe { cleanedAmount, throwable ->
                 // TODO Use jw's byte units lib, this isn't totally accurate
                 val errorMessage = throwable?.let {

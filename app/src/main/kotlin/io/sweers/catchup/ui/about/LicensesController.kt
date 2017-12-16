@@ -50,7 +50,7 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
@@ -369,7 +369,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
                     UrlMeta(item.clickUrl, accentColor,
                         context))
               }
-              .autoDisposeWith(holder)
+              .autoDisposable(holder)
               .subscribe()
         }
       }

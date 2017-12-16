@@ -19,7 +19,7 @@ package io.sweers.catchup.service.api
 import android.content.Context
 import android.content.res.Configuration
 import android.support.v4.content.ContextCompat
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 
 interface TextService : Service {
   override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
@@ -34,7 +34,7 @@ interface TextService : Service {
             holder.itemClicks()
                 .map { createUrlMeta(url, context) }
                 .flatMapCompletable(linkHandler())
-                .autoDisposeWith(holder)
+                .autoDisposable(holder)
                 .subscribe()
           }
         },
@@ -43,14 +43,14 @@ interface TextService : Service {
             holder.itemCommentClicks()
                 .map { createUrlMeta(url, context) }
                 .flatMapCompletable(linkHandler())
-                .autoDisposeWith(holder)
+                .autoDisposable(holder)
                 .subscribe()
           }
         }
     )
     item.summarizationInfo?.let {
       holder.itemLongClicks()
-          .autoDisposeWith(holder)
+          .autoDisposable(holder)
           .subscribe {
             // TODO Handle summarizations
           }

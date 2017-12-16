@@ -30,7 +30,7 @@ import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.widget.Toast
 import com.mattprecious.telescope.Lens
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -210,7 +210,7 @@ internal class BugReportLens @Inject constructor(private val activity: Activity,
               }
               .let { notificationManager.notify(notificationId, it.build()) }
         }
-        .autoDisposeWith(activity as BaseActivity)
+        .autoDisposable(activity as BaseActivity)
         .subscribe { issueUrl, error ->
           issueUrl?.let {
             NotificationCompat.Builder(activity, channelId)

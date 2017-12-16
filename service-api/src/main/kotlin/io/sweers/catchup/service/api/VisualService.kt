@@ -18,7 +18,7 @@ package io.sweers.catchup.service.api
 
 import android.content.res.Configuration
 import android.support.v4.content.ContextCompat
-import com.uber.autodispose.kotlin.autoDisposeWith
+import com.uber.autodispose.kotlin.autoDisposable
 
 interface VisualService : Service {
   override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
@@ -42,7 +42,7 @@ interface VisualService : Service {
                       context = context)
                 }
                 .flatMapCompletable(linkHandler())
-                .autoDisposeWith(holder)
+                .autoDisposable(holder)
                 .subscribe()
           }
         }
