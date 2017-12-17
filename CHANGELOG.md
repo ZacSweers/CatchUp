@@ -1,3 +1,6 @@
+
+
+## 0.2.1 (2017-12-16)
 * Don't show changelog on first display
 * Make changelog section sort by descending date
 
