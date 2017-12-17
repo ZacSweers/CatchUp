@@ -330,11 +330,12 @@ class UpdateVersion extends DefaultTask {
 
   @TaskAction
   void run() {
-    String latestTag = 'git describe --tags'.execute([], project.rootDir).text.trim() ?: "dev"
+    File workingDir = project.rootProject.projectDir
+    String latestTag = 'git describe --abbrev=0 --tags'.execute([], workingDir).text.trim() ?: "dev"
     if (latestTag == "dev") {
       throw new IllegalStateException("No recent tag found!")
     }
-    String[] latestVersion = latestTag.substring(0, latestTag.indexOf("-")).split("\\.")
+    String[] latestVersion = latestTag.split("\\.")
     int major = latestVersion[0].toInteger()
     int minor = latestVersion[1].toInteger()
     int patch = latestVersion[2].toInteger()
@@ -356,7 +357,11 @@ class UpdateVersion extends DefaultTask {
     }
     String latestVersionString = "$major.$minor.$patch"
     println "Updating version to $latestVersionString"
-    "git tag -a $latestVersionString -m \"Version ${latestVersionString}.\"".execute([], project.rootProject.projectDir)
+    "git tag -a $latestVersionString -m \"Version ${latestVersionString}.\"".execute([], workingDir)
+    String newTag = 'git describe --abbrev=0 --tags'.execute([], workingDir).text.trim() ?: "dev"
+    if (newTag == latestTag) {
+      throw new AssertionError("Git tag didn't work!")
+    }
   }
 }
 
