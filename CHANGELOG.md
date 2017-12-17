@@ -1,3 +1,6 @@
+
+
+## 0.2.0 (2017-12-16)
 * **New:** Changelog notifications in the app
 * **New:** In-app hints implementation using [TapTargetView](https://github.com/keepsafe/TapTargetView)
 * **New:** French translations (thanks to [@anicolas](https://github.com/anicolas)!)
