@@ -62,7 +62,7 @@ usage() {
 
 # Executes a command if DRY_RUN is not true
 function execIfNotDry {
-  if [ "$DRY_RUN" = false  ]
+  if [ "$DRY_RUN" = true  ]
     then
       echo "$*"
       return 0
