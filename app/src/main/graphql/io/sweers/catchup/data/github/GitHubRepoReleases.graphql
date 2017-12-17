@@ -1,7 +1,7 @@
 query RepoReleases {
   repository(owner: "hzsweers", name: "CatchUp") {
     ... on Repository {
-      releases(first: 100) {
+      releases(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
         nodes {
           ... on Release {
             name
