@@ -1,4 +1,5 @@
-
+* Don't show changelog on first display
+* Make changelog section sort by descending date
 
 ## 0.2.0 (2017-12-16)
 * **New:** Changelog notifications in the app
