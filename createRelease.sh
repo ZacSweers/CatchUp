@@ -120,7 +120,7 @@ if [ "$UPDATE_CHANGELOG" = true ]
       then
         VERSION_NAME=`git describe --tags`
     fi
-    echo "Committing new tags for changelog update"
+    echo "Committing new tags for changelog update with version ${VERSION_NAME}"
     git commit -m "Prepare for release ${VERSION_NAME}." CHANGELOG.md app/src/main/play/en-US/whatsnew
     # Only cut a tag if we didn't update a version above
     if [ -z ${VERSION_UPDATE_TYPE} ]
