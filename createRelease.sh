@@ -62,10 +62,13 @@ usage() {
 
 # Executes a command if DRY_RUN is not true
 function execIfNotDry {
-  if [ "$DRY_RUN" = false ]
+  if [ "$DRY_RUN" = false  ]
     then
-      $@
+      echo "$*"
+      return 0
   fi
+
+  eval "$@"
 }
 
 # If we don't have these two envs, bomb out early because this won't work
