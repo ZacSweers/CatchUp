@@ -43,10 +43,15 @@ class ChangelogHelper @Inject constructor(
 
   fun bindWith(toolbar: Toolbar, @ColorInt hintColor: Int, linkColor: () -> Int) {
     val changelog = toolbar.resources.getString(R.string.changelog_text)
+    val lastVersion = sharedPreferences.getString("last_version", null)
     // Check if version name changed and if there's a changelog
-    if (sharedPreferences.getString("last_version", null) != BuildConfig.VERSION_NAME) {
+    if (lastVersion != BuildConfig.VERSION_NAME) {
       // Write the new version in
       sharedPreferences.edit().putString("last_version", BuildConfig.VERSION_NAME).apply()
+      if (lastVersion == null) {
+        // This was the first load it seems, so ignore it
+        return
+      }
       changelog.ifNotEmpty {
         toolbar.inflateMenu(R.menu.changes)
         with(toolbar.menu) {
