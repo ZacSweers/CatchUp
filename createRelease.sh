@@ -114,10 +114,15 @@ if [ "$UPDATE_CHANGELOG" = true ]
   then
     echo "Cutting changelog via gradle..."
     execIfNotDry execGradle cutChangelog -PincludeChangelog
-    VERSION_NAME=`git describe --tags`
+    VERSION_NAME=`git describe --abbrev=0 --tags`
+    # If we didn't update a version here, use the described tag
+    if [ -z ${VERSION_UPDATE_TYPE} ]
+      then
+        VERSION_NAME=`git describe --tags`
+    fi
     echo "Committing new tags for changelog update"
-    execIfNotDry git commit -m "Prepare for release ${VERSION_NAME}." -- CHANGELOG.md "${WORKING_DIR}/app/src/main/play/en-US/whatsnew"
-    # Only cut a tag if
+    git commit -m "Prepare for release ${VERSION_NAME}." -- CHANGELOG.md app/src/main/play/en-US/whatsnew
+    # Only cut a tag if we didn't update a version above
     if [ -z ${VERSION_UPDATE_TYPE} ]
       then
         log "Cutting tag during changelog"
