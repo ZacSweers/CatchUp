@@ -146,3 +146,7 @@ log "Keys decrypted"
 
 echo "Publishing"
 execIfNotDry execGradle clean publishApkRelease --no-daemon -PincludeChangelog
+
+echo "Finishing up"
+execIfNotDry git push
+execIfNotDry git push --tags
