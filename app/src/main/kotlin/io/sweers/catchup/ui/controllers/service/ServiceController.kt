@@ -391,14 +391,15 @@ class ServiceController : ButterKnifeController,
           applyOn(progress, errorView) { hide() }
           swipeRefreshLayout.show()
           recyclerView.post {
-            when (adapter) {
-              is TextAdapter -> {
-                @Suppress("UNCHECKED_CAST") // badpokerface.png
-                (adapter as TextAdapter).update((loadResult as LoadResult<CatchUpItem>))
-              }
-              is ImageAdapter -> {
-                @Suppress("UNCHECKED_CAST")
-                (adapter as ImageAdapter).update((loadResult as LoadResult<ImageItem>))
+            @Suppress("UNCHECKED_CAST") // badpokerface.png
+            adapter.let {
+              when (it) {
+                is TextAdapter -> {
+                  it.update((loadResult as LoadResult<CatchUpItem>))
+                }
+                is ImageAdapter -> {
+                  it.update((loadResult as LoadResult<ImageItem>))
+                }
               }
             }
             pendingRVState?.let {
