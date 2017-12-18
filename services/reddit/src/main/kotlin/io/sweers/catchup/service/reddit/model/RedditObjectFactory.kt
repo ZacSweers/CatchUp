@@ -33,6 +33,7 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
       return null
     }
     return object : JsonAdapter<RedditObject>() {
+
       override fun fromJson(reader: JsonReader): RedditObject? {
         val jsonValue = reader.readJsonValue()
         if (jsonValue is String || jsonValue == null) {
