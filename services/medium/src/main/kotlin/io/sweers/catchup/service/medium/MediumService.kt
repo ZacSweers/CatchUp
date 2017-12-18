@@ -135,19 +135,20 @@ abstract class MediumModule {
     internal fun provideMediumOkHttpClient(client: OkHttpClient): OkHttpClient {
       return client.newBuilder()
           .addInterceptor { chain ->
-            var request = chain.request()
-            request = request.newBuilder()
-                .url(request.url()
+            chain.proceed(chain.request().newBuilder()
+                // Tack format=json to the end
+                .url(chain.request().url()
                     .newBuilder()
                     .addQueryParameter("format", "json")
                     .build())
-                .build()
-            val response = chain.proceed(request)
-            val source = response.body()!!.source()
-            // Medium prefixes with a while loop to prevent javascript eval attacks, so skip to
-            // the first open curly brace
-            source.skip(source.indexOf('{'.toByte()))
-            response
+                .build())
+                .apply {
+                  body()?.source()?.let {
+                    // Medium prefixes with a while loop to prevent javascript eval attacks, so
+                    // skip to the first open curly brace
+                    it.skip(it.indexOf('{'.toByte()))
+                  }
+                }
           }
           .build()
     }
