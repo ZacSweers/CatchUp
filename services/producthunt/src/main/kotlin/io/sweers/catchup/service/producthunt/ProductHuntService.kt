@@ -49,6 +49,7 @@ private annotation class InternalApi
 internal class ProductHuntService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
     private val api: ProductHuntApi,
+    private val urlHunter: UrlHunter,
     private val linkHandler: LinkHandler)
   : TextService {
 
@@ -58,8 +59,15 @@ internal class ProductHuntService @Inject constructor(
     val page = request.pageId.toInt()
     return api.getPosts(page)
         .flattenAsObservable { it }
-        .map {
-          with(it) {
+        .concatMapEager { post ->
+          urlHunter.hunt(post.redirectUrl())
+              .map {
+                post to it.response()?.raw()?.request()?.url()?.host()
+              }
+              .toObservable()
+        }
+        .map { (post, host) ->
+          with(post) {
             CatchUpItem(
                 id = id(),
                 title = name(),
@@ -67,6 +75,7 @@ internal class ProductHuntService @Inject constructor(
                 timestamp = createdAt(),
                 author = user().name(),
                 tag = firstTopic,
+                source = host,
                 commentCount = commentsCount(),
                 itemClickUrl = redirectUrl(),
                 itemCommentClickUrl = discussionUrl()
@@ -146,6 +155,19 @@ abstract class ProductHuntModule {
           .validateEagerly(BuildConfig.DEBUG)
           .build()
           .create(ProductHuntApi::class.java)
+    }
+
+    @Provides
+    @JvmStatic
+    internal fun provideUrlHunter(
+        client: Lazy<OkHttpClient>,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): UrlHunter {
+      return Retrofit.Builder().baseUrl(UrlHunter.ENDPOINT)
+          .callFactory { client.get().newCall(it) }
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .validateEagerly(BuildConfig.DEBUG)
+          .build()
+          .create(UrlHunter::class.java)
     }
   }
 }
