@@ -147,9 +147,12 @@ class ServiceController : ButterKnifeController,
   private var pendingRVState: Parcelable? = null
   private val defaultItemAnimator = DefaultItemAnimator()
 
-  @field:TextViewPool @Inject lateinit var textViewPool: RecycledViewPool
-  @field:VisualViewPool @Inject lateinit var visualViewPool: RecycledViewPool
-  @field:FinalServices @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
+  @field:TextViewPool
+  @Inject lateinit var textViewPool: RecycledViewPool
+  @field:VisualViewPool
+  @Inject lateinit var visualViewPool: RecycledViewPool
+  @field:FinalServices
+  @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
   private val service: Service by lazy {
     args[ARG_SERVICE_KEY].let {
       services[it]?.get() ?: throw IllegalArgumentException("No service provided for $it!")
@@ -223,7 +226,8 @@ class ServiceController : ButterKnifeController,
   override fun onViewBound(view: View) {
     super.onViewBound(view)
     @ColorInt val accentColor = ContextCompat.getColor(view.context, service.meta().themeColor)
-    @ColorInt val dayAccentColor = ContextCompat.getColor(dayOnlyContext!!, service.meta().themeColor)
+    @ColorInt val dayAccentColor = ContextCompat.getColor(dayOnlyContext!!,
+        service.meta().themeColor)
     swipeRefreshLayout.run {
       setColorSchemeColors(dayAccentColor)
       setOnRefreshListener(this@ServiceController)
@@ -375,6 +379,12 @@ class ServiceController : ButterKnifeController,
           swipeRefreshLayout.isRefreshing = false
         }
         .trace("Data load - ${service.meta().id}")
+        .doFinally {
+          dataLoading = false
+          recyclerView.post {
+            adapter.dataFinishedLoading()
+          }
+        }
         .doOnComplete { moreDataAvailable = false }
         .autoDisposable(this)
         .subscribe({ loadResult ->
