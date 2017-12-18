@@ -50,7 +50,7 @@ internal abstract class HackerNewsStory : HasStableId {
 
   @FirebaseAdapter(InstantAdapter::class) abstract fun time(): Instant
 
-  abstract fun title(): String?
+  abstract fun title(): String
 
   abstract fun text(): String?
 
