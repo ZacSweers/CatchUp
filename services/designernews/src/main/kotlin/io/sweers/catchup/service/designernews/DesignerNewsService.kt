@@ -26,6 +26,7 @@ import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
+import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.LinkHandler
@@ -43,6 +44,7 @@ import org.threeten.bp.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.lang.Long
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -76,8 +78,8 @@ internal class DesignerNewsService @Inject constructor(
         }
         .map { (story, user) ->
           with(story) {
-            io.sweers.catchup.service.api.CatchUpItem(
-                id = java.lang.Long.parseLong(id()),
+            CatchUpItem(
+                id = Long.parseLong(id()),
                 title = title(),
                 score = "▲" to voteCount(),
                 timestamp = createdAt(),
