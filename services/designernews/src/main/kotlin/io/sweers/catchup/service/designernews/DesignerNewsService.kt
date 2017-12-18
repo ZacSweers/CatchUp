@@ -62,7 +62,6 @@ internal class DesignerNewsService @Inject constructor(
     return api.getTopStories(page)
         .flatMapObservable { stories ->
           Observable.zip(
-              // TODO This needs to update to the new /users endpoint behavior, which will only give a best effort result and not necessarily all
               Observable.fromIterable(stories),
               Observable.fromIterable(stories)
                   .map { it.links().user() }
