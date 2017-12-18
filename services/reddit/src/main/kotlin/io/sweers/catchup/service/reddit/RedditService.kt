@@ -120,7 +120,7 @@ abstract class RedditModule {
     internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
       return upstreamMoshi.newBuilder()
           .add(RedditAdapterFactory.create())
-          .add(RedditObjectFactory.getInstance())
+          .add(RedditObjectFactory.INSTANCE)
           .add(Instant::class.java, EpochInstantJsonAdapter())
           .build()
     }
@@ -138,6 +138,7 @@ abstract class RedditModule {
                 .header("User-Agent", "CatchUp app by /u/pandanomic")
                 .url(url.newBuilder()
                     .encodedPath(url.encodedPath() + ".json")
+                    .addQueryParameter("raw_json", "1") // So tokens aren't escaped
                     .build())
                 .build()
             chain.proceed(request)
