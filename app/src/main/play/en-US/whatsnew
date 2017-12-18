@@ -1,2 +1,1 @@
-* Don't show changelog on first display
-* Make changelog section sort by descending date
+* Fix pagination not working
