@@ -60,7 +60,7 @@ ext.deps = [
 
         ],
         build: [
-            buildToolsVersion: '27.0.0',
+            buildToolsVersion: '27.0.1',
             compileSdkVersion: 27,
             minSdkVersion: 21,
             targetSdkVersion: 27
@@ -72,7 +72,7 @@ ext.deps = [
             gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.5',
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.0.1',
+        gradlePlugin: 'com.android.tools.build:gradle:3.1.0-alpha05',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
