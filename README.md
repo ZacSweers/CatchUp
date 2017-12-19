@@ -1,5 +1,5 @@
 <p>
-  <img src="https://github.com/hzsweers/CatchUp/blob/master/app/src/main/play/en-us/listing/featureGraphic/feature.png?raw=true"/>
+  <img src="https://github.com/hzsweers/CatchUp/blob/master/app/src/main/play/en-US/listing/featureGraphic/feature.png?raw=true"/>
 </p>
 
 CatchUp
