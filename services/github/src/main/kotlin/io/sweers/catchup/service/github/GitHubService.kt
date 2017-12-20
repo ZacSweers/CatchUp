@@ -107,8 +107,13 @@ internal class GitHubService @Inject constructor(
                 }
               }
               .toList()
-//              .map { DataResult(it, data.search().pageInfo().endCursor()) } // TODO This should make paging work, but gets no results
-              .map { DataResult(it, null) }
+              .map {
+                if (data.search().pageInfo().hasNextPage()) {
+                  DataResult(it, data.search().pageInfo().endCursor())
+                } else {
+                  DataResult(it, null)
+                }
+              }
         }
         .toMaybe()
   }
