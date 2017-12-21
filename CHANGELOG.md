@@ -1,4 +1,4 @@
-
+* **Enhancement:** GitHub is now paginated when there are more results (thanks to [@charlesdurham](https://github.com/charlesdurham)!)
 
 ## 0.2.2 (2017-12-17)
 * Fix pagination not working
