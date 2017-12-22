@@ -44,7 +44,6 @@ import org.threeten.bp.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.lang.Long
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -79,7 +78,7 @@ internal class DesignerNewsService @Inject constructor(
         .map { (story, user) ->
           with(story) {
             CatchUpItem(
-                id = Long.parseLong(id()),
+                id = id().toLong(),
                 title = title(),
                 score = "▲" to voteCount(),
                 timestamp = createdAt(),
