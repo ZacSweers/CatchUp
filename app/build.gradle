@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.firebase.firebase-perf'
-apply plugin: 'io.sweers.psync'
-apply plugin: 'org.jetbrains.kotlin.android'
-apply plugin: 'org.jetbrains.kotlin.kapt'
-apply plugin: 'com.apollographql.android'
-apply plugin: "net.ltgt.errorprone"
-apply plugin: 'com.bugsnag.android.gradle'
-apply plugin: 'com.github.triplet.play'
-
 private String getPropertyOrEmpty(String property) {
   if (hasProperty(property)) {
     return project.properties[property]
@@ -31,6 +21,18 @@ private String getPropertyOrEmpty(String property) {
     return ""
   }
 }
+
+apply plugin: 'com.android.application'
+if (hasProperty("enableFirebasePerf")) {
+  apply plugin: 'com.google.firebase.firebase-perf'
+}
+apply plugin: 'io.sweers.psync'
+apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'org.jetbrains.kotlin.kapt'
+apply plugin: 'com.apollographql.android'
+apply plugin: "net.ltgt.errorprone"
+apply plugin: 'com.bugsnag.android.gradle'
+apply plugin: 'com.github.triplet.play'
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
