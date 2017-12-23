@@ -120,7 +120,7 @@ class ServiceController : ButterKnifeController,
     SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
 
   companion object {
-    val ARG_SERVICE_KEY = "serviceKey"
+    const val ARG_SERVICE_KEY = "serviceKey"
     fun newInstance(serviceKey: String) =
         ServiceController(Bundle().apply {
           putString(
