@@ -22,6 +22,7 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
@@ -46,6 +47,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 private annotation class InternalApi
+
+private const val SERVICE_KEY = "imgur"
 
 internal class ImgurService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
@@ -84,25 +87,19 @@ internal class ImgurService @Inject constructor(
 }
 
 @Module
-abstract class ImgurModule {
+abstract class ImgurMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
   internal abstract fun imgurServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun imgurService(imgurService: ImgurService): Service
-
   @Module
   companion object {
 
-    private const val SERVICE_KEY = "imgur"
-
     @InternalApi
     @Provides
+    @Reusable
     @JvmStatic
     internal fun provideImgurServiceMeta() = ServiceMeta(
         SERVICE_KEY,
@@ -113,6 +110,19 @@ abstract class ImgurModule {
         pagesAreNumeric = true,
         firstPageKey = "0"
     )
+  }
+}
+
+@Module(includes = [ImgurMetaModule::class])
+abstract class ImgurModule {
+
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun imgurService(imgurService: ImgurService): Service
+
+  @Module
+  companion object {
 
     @Provides
     @InternalApi

@@ -21,6 +21,7 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
@@ -47,6 +48,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 private annotation class InternalApi
+
+private const val SERVICE_KEY = "reddit"
 
 internal class RedditService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
@@ -86,25 +89,19 @@ internal class RedditService @Inject constructor(
 }
 
 @Module
-abstract class RedditModule {
+abstract class RedditMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
   internal abstract fun redditServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun redditService(redditService: RedditService): Service
-
   @Module
   companion object {
 
-    private const val SERVICE_KEY = "reddit"
-
     @InternalApi
     @Provides
+    @Reusable
     @JvmStatic
     internal fun provideRedditServiceMeta() = ServiceMeta(
         SERVICE_KEY,
@@ -113,6 +110,19 @@ abstract class RedditModule {
         R.drawable.logo_reddit,
         firstPageKey = ""
     )
+  }
+}
+
+@Module(includes = [RedditMetaModule::class])
+abstract class RedditModule {
+
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun redditService(redditService: RedditService): Service
+
+  @Module
+  companion object {
 
     @InternalApi
     @Provides

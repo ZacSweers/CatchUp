@@ -22,6 +22,7 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -51,6 +52,8 @@ import javax.inject.Qualifier
 @Qualifier
 private annotation class InternalApi
 
+private const val SERVICE_KEY = "medium"
+
 internal class MediumService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
     private val api: MediumApi,
@@ -62,8 +65,7 @@ internal class MediumService @Inject constructor(
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
     return api.top()
         .concatMapEager { references ->
-          Observable.fromIterable<Post>(references.post()
-              .values)
+          Observable.fromIterable<Post>(references.post().values)
               .map { post ->
                 MediumPost.builder()
                     .post(post)
@@ -101,25 +103,19 @@ internal class MediumService @Inject constructor(
 }
 
 @Module
-abstract class MediumModule {
+abstract class MediumMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
   internal abstract fun mediumServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun mediumService(mediumService: MediumService): Service
-
   @Module
   companion object {
 
-    private const val SERVICE_KEY = "medium"
-
     @InternalApi
     @Provides
+    @Reusable
     @JvmStatic
     internal fun provideMediumServiceMeta() = ServiceMeta(
         SERVICE_KEY,
@@ -128,6 +124,19 @@ abstract class MediumModule {
         R.drawable.logo_medium,
         firstPageKey = ""
     )
+  }
+}
+
+@Module(includes = [MediumMetaModule::class])
+abstract class MediumModule {
+
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun mediumService(mediumService: MediumService): Service
+
+  @Module
+  companion object {
 
     @Provides
     @InternalApi

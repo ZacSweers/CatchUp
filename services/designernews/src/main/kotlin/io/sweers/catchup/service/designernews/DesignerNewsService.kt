@@ -22,6 +22,7 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -49,6 +50,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 private annotation class InternalApi
+
+private const val SERVICE_KEY = "dn"
 
 internal class DesignerNewsService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
@@ -102,25 +105,19 @@ internal class DesignerNewsService @Inject constructor(
 }
 
 @Module
-abstract class DesignerNewsModule {
+abstract class DesignerNewsMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
   internal abstract fun designerNewsServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun designerNewsService(service: DesignerNewsService): Service
-
   @Module
   companion object {
 
-    private const val SERVICE_KEY = "dn"
-
     @InternalApi
     @Provides
+    @Reusable
     @JvmStatic
     internal fun provideDesignerNewsMeta() = ServiceMeta(
         SERVICE_KEY,
@@ -130,6 +127,19 @@ abstract class DesignerNewsModule {
         pagesAreNumeric = true,
         firstPageKey = "0"
     )
+  }
+}
+
+@Module(includes = [DesignerNewsMetaModule::class])
+abstract class DesignerNewsModule {
+
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun designerNewsService(service: DesignerNewsService): Service
+
+  @Module
+  companion object {
 
     @Provides
     @InternalApi

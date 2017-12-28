@@ -44,7 +44,7 @@ import io.sweers.catchup.service.hackernews.HackerNewsModule
 import io.sweers.catchup.service.medium.MediumModule
 import io.sweers.catchup.service.producthunt.ProductHuntModule
 import io.sweers.catchup.service.reddit.RedditModule
-import io.sweers.catchup.service.slashdot.NewSlashdotModule
+import io.sweers.catchup.service.slashdot.SlashdotModule
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.ui.controllers.service.StorageBackedService
@@ -98,7 +98,7 @@ class MainActivity : BaseActivity() {
       RedditModule::class,
       MediumModule::class,
       ProductHuntModule::class,
-      NewSlashdotModule::class,
+      SlashdotModule::class,
       DesignerNewsModule::class,
       DribbbleModule::class,
       GitHubModule::class

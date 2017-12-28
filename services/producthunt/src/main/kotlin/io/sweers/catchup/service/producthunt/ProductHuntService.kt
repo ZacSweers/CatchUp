@@ -22,6 +22,7 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
@@ -45,6 +46,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 private annotation class InternalApi
+
+private const val SERVICE_KEY = "ph"
 
 internal class ProductHuntService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
@@ -82,25 +85,19 @@ internal class ProductHuntService @Inject constructor(
 }
 
 @Module
-abstract class ProductHuntModule {
+abstract class ProductHuntMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
   internal abstract fun productHuntServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun productHuntService(productHuntService: ProductHuntService): Service
-
   @Module
   companion object {
 
-    private const val SERVICE_KEY = "ph"
-
     @InternalApi
     @Provides
+    @Reusable
     @JvmStatic
     internal fun provideProductHuntServiceMeta() = ServiceMeta(
         SERVICE_KEY,
@@ -110,6 +107,19 @@ abstract class ProductHuntModule {
         pagesAreNumeric = true,
         firstPageKey = "0"
     )
+  }
+}
+
+@Module(includes = [ProductHuntMetaModule::class])
+abstract class ProductHuntModule {
+
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun productHuntService(productHuntService: ProductHuntService): Service
+
+  @Module
+  companion object {
 
     @Provides
     @InternalApi

@@ -22,6 +22,7 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
@@ -44,6 +45,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 private annotation class InternalApi
+
+private const val SERVICE_KEY = "sd"
 
 internal class SlashdotService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
@@ -81,25 +84,19 @@ internal class SlashdotService @Inject constructor(
 }
 
 @Module
-abstract class NewSlashdotModule {
+abstract class SlashdotMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
   internal abstract fun slashdotServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun slashdotService(slashdotService: SlashdotService): Service
-
   @Module
   companion object {
 
-    private const val SERVICE_KEY = "sd"
-
     @Provides
     @JvmStatic
+    @Reusable
     @InternalApi
     internal fun provideSlashdotServiceMeta() = ServiceMeta(
         SERVICE_KEY,
@@ -108,6 +105,19 @@ abstract class NewSlashdotModule {
         R.drawable.logo_sd,
         firstPageKey = "main"
     )
+  }
+}
+
+@Module(includes = [SlashdotMetaModule::class])
+abstract class SlashdotModule {
+
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun slashdotService(slashdotService: SlashdotService): Service
+
+  @Module
+  companion object {
 
     @Provides
     @JvmStatic

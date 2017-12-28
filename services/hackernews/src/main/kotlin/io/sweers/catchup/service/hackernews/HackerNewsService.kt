@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -47,6 +48,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 private annotation class InternalApi
+
+private const val SERVICE_KEY = "hn"
 
 internal class HackerNewsService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
@@ -136,25 +139,19 @@ internal class HackerNewsService @Inject constructor(
 }
 
 @Module
-abstract class HackerNewsModule {
+abstract class HackerNewsMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
   internal abstract fun hackerNewsServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun hackerNewsService(hackerNewsService: HackerNewsService): Service
-
   @Module
   companion object {
 
-    private const val SERVICE_KEY = "hn"
-
     @InternalApi
     @Provides
+    @Reusable
     @JvmStatic
     internal fun provideMediumServiceMeta() = ServiceMeta(
         SERVICE_KEY,
@@ -164,11 +161,23 @@ abstract class HackerNewsModule {
         pagesAreNumeric = true,
         firstPageKey = "0"
     )
+  }
+}
+
+@Module(includes = [HackerNewsMetaModule::class])
+abstract class HackerNewsModule {
+
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun hackerNewsService(hackerNewsService: HackerNewsService): Service
+
+  @Module
+  companion object {
 
     @Provides
     @JvmStatic
     internal fun provideDataBase() =
         FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/")
-
   }
 }

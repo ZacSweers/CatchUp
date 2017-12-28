@@ -21,6 +21,7 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
@@ -45,6 +46,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 private annotation class InternalApi
+
+private const val SERVICE_KEY = "dribbble"
 
 internal class DribbbleService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
@@ -85,25 +88,19 @@ internal class DribbbleService @Inject constructor(
 }
 
 @Module
-abstract class DribbbleModule {
+abstract class DribbbleMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
   internal abstract fun dribbbleServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun dribbbleService(dribbbleService: DribbbleService): Service
-
   @Module
   companion object {
 
-    private const val SERVICE_KEY = "dribbble"
-
     @InternalApi
     @Provides
+    @Reusable
     @JvmStatic
     internal fun provideDribbbleServiceMeta() = ServiceMeta(
         SERVICE_KEY,
@@ -114,6 +111,19 @@ abstract class DribbbleModule {
         pagesAreNumeric = true,
         firstPageKey = "0"
     )
+  }
+}
+
+@Module(includes = [DribbbleMetaModule::class])
+abstract class DribbbleModule {
+
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun dribbbleService(dribbbleService: DribbbleService): Service
+
+  @Module
+  companion object {
 
     @Provides
     @InternalApi

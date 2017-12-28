@@ -24,6 +24,7 @@ import com.apollographql.apollo.rx2.Rx2Apollo
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -50,6 +51,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 private annotation class InternalApi
+
+private const val SERVICE_KEY = "github"
 
 internal class GitHubService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
@@ -122,25 +125,19 @@ internal class GitHubService @Inject constructor(
 }
 
 @Module
-abstract class GitHubModule {
+abstract class GitHubMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
   internal abstract fun githubServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun githubService(githubService: GitHubService): Service
-
   @Module
   companion object {
 
-    private const val SERVICE_KEY = "github"
-
     @InternalApi
     @Provides
+    @Reusable
     @JvmStatic
     internal fun provideGitHubServiceMeta() = ServiceMeta(
         SERVICE_KEY,
@@ -150,4 +147,14 @@ abstract class GitHubModule {
         firstPageKey = ""
     )
   }
+}
+
+@Module(includes = [GitHubMetaModule::class])
+abstract class GitHubModule {
+
+  @IntoMap
+  @ServiceKey(SERVICE_KEY)
+  @Binds
+  internal abstract fun githubService(githubService: GitHubService): Service
+
 }
