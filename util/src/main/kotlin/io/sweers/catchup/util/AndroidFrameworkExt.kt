@@ -29,6 +29,7 @@ import android.os.Build.VERSION_CODES
 import android.support.annotation.AttrRes
 import android.support.annotation.ColorInt
 import android.support.annotation.UiThread
+import android.support.v4.content.ContextCompat
 import android.util.TypedValue
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
@@ -103,11 +104,12 @@ fun Context.resolveAttributeColor(@AttrRes resId: Int): Int {
   if (typedValue.type in TypedValue.TYPE_FIRST_COLOR_INT..TypedValue.TYPE_LAST_COLOR_INT) {
     return typedValue.data
   }
-  if (typedValue.type == TypedValue.TYPE_ATTRIBUTE) {
-    @Suppress("DEPRECATION")
-    return resources.getColorStateList(typedValue.data).defaultColor
+  val colorRes = if (typedValue.resourceId != 0) {
+    typedValue.resourceId
+  } else {
+    typedValue.data
   }
-  return typedValue.data
+  return ContextCompat.getColor(this, colorRes)
 }
 
 fun Context.isInNightMode(): Boolean {
