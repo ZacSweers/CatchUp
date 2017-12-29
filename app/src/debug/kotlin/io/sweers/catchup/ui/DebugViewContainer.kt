@@ -139,7 +139,7 @@ internal class DebugViewContainer @Inject constructor(
               .transparentTarget(true)
               .id("DebugDrawer")
               .apply {
-                // fontArbiter.getFont()?.let(::textTypeface)  // Uncomment this to make the kotlin compiler explode
+                // fontHelper.getFont()?.let(::textTypeface)  // Uncomment this to make the kotlin compiler explode
                 fontHelper.getFont()?.let {
                   textTypeface(it)
                 }
