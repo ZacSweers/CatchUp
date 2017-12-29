@@ -28,7 +28,7 @@ class Syllabus @Inject constructor(
   fun bind(activity: BaseActivity) {
     // TODO would be nice to handle starting mid-sequence for state restoration someday
     // Debounced buffer
-    queue.buffer(queue.debounce(2, SECONDS))
+    queue.buffer(queue.debounce(1, SECONDS))
         .delay { displaying.filter { !it } }
         .observeOn(mainThread())
         .autoDisposable(activity)
@@ -53,6 +53,9 @@ class Syllabus @Inject constructor(
   }
 
   fun show(request: TargetRequest) {
+    if (!queue.hasObservers()) {
+      throw IllegalStateException("Syllabus is not active!")
+    }
     queue.accept(request)
   }
 
