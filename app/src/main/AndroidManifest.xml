@@ -59,6 +59,13 @@
         android:launchMode="singleTop"
         />
 
+    <activity
+        android:name=".ui.activity.OrderServicesActivity"
+        android:label="@string/title_activity_about"
+        android:parentActivityName=".ui.activity.SettingsActivity"
+        android:launchMode="singleTop"
+        />
+
     <meta-data
         android:name="preloaded_fonts"
         android:resource="@array/preloaded_fonts"/>

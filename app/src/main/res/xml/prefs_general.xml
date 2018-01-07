@@ -27,6 +27,11 @@
         android:title="@string/pref_smart_linking_title"
         />
 
+    <Preference
+        android:key="reorder_services_section"
+        android:title="@string/pref_reorder_services"
+        />
+
     <!-- Not doing this yet -->
     <!--<Preference-->
     <!--android:key="services"-->

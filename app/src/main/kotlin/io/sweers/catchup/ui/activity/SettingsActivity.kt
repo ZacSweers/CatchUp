@@ -67,11 +67,14 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
     const val SETTINGS_RESULT_DATA = 100
     const val NIGHT_MODE_UPDATED = "nightModeUpdated"
     const val NAV_COLOR_UPDATED = "navColorUpdated"
+    const val SERVICE_ORDER_UPDATED = "serviceOrderUpdated"
     const val ARG_FROM_RECREATE = "fromRecreate"
   }
 
-  @Inject internal lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
-  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+  @Inject
+  internal lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
+  @BindView(R.id.toolbar)
+  lateinit var toolbar: Toolbar
 
   /**
    * Backpress hijacks activity result codes, so store ours here in case
@@ -132,10 +135,14 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
 
   class SettingsFrag : PreferenceFragment() {
 
-    @Inject lateinit var cache: dagger.Lazy<Cache>
-    @Inject lateinit var database: CatchUpDatabase
-    @Inject lateinit var lumberYard: LumberYard
-    @Inject lateinit var sharedPreferences: SharedPreferences
+    @Inject
+    lateinit var cache: dagger.Lazy<Cache>
+    @Inject
+    lateinit var database: CatchUpDatabase
+    @Inject
+    lateinit var lumberYard: LumberYard
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
       AndroidInjection.inject(this)
@@ -182,6 +189,11 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
           P.ThemeNavigationBar.put((preference as CheckBoxPreference).isChecked).apply()
           (activity as SettingsActivity).resultData.putBoolean(NAV_COLOR_UPDATED, true)
           activity.updateNavBarColor(recreate = true)
+          return true
+        }
+        P.ReorderServicesSection.KEY -> {
+          (activity as SettingsActivity).resultData.putBoolean(SERVICE_ORDER_UPDATED, true)
+          activity.startActivity(Intent(activity, OrderServicesActivity::class.java))
           return true
         }
         P.Reports.KEY -> {

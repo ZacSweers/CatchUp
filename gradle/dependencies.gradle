@@ -266,7 +266,7 @@ ext.deps = [
         moshiLazyAdapters: 'com.serjltt.moshi:moshi-lazy-adapters:2.1',
         okio: 'com.squareup.okio:okio:1.13.0',
         recyclerViewAnimators: 'jp.wasabeef:recyclerview-animators:2.2.7',
-        tapTargetView: 'com.getkeepsafe.taptargetview:taptargetview:1.10.0',
+        tapTargetView: 'com.getkeepsafe.taptargetview:taptargetview:1.11.0',
         timber: 'com.jakewharton.timber:timber:4.6.0',
         unbescape: 'org.unbescape:unbescape:1.1.5.RELEASE'
     ],

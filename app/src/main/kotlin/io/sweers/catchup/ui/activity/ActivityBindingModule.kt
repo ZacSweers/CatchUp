@@ -50,4 +50,21 @@ abstract class ActivityBindingModule {
       AboutControllerBindingModule::class
   ))
   internal abstract fun aboutActivity(): AboutActivity
+
+  @PerActivity
+  @ContributesAndroidInjector(
+      modules = [
+        UiModule::class,
+        OrderServicesActivity.Module::class,
+        OrderServicesBindingModule::class
+      ]
+  )
+  internal abstract fun orderServicesActivity(): OrderServicesActivity
 }
+
+// TODO Why can't I do this?
+//interface BaseActivityModule<in T : Activity> {
+//  @Binds
+//  @PerActivity
+//  fun provideActivity(activity: T): Activity
+//}
