@@ -72,12 +72,7 @@ class ChangelogHelper @Inject constructor(
               .descriptionTextColorInt(Color.parseColor("#33FFFFFF"))
               .drawShadow(true)
               .id("changelog")
-              .apply {
-                // fontArbiter.getFont()?.let(::textTypeface)  // Uncomment this to make the kotlin compiler explode
-                fontHelper.getFont()?.let {
-                  textTypeface(it)
-                }
-              }
+              .apply { fontHelper.getFont()?.let(::textTypeface) }
         }
       }
     }
