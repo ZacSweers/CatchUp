@@ -78,9 +78,12 @@ import javax.inject.Inject
 
 class AboutActivity : BaseActivity() {
 
-  @Inject internal lateinit var customTab: CustomTabActivityHelper
-  @Inject internal lateinit var linkManager: LinkManager
-  @BindView(R.id.controller_container) internal lateinit var container: ViewGroup
+  @Inject
+  internal lateinit var customTab: CustomTabActivityHelper
+  @Inject
+  internal lateinit var linkManager: LinkManager
+  @BindView(R.id.controller_container)
+  internal lateinit var container: ViewGroup
 
   private lateinit var router: Router
 
@@ -95,7 +98,7 @@ class AboutActivity : BaseActivity() {
         .subscribe()
 
     val viewGroup = viewContainer.forActivity(this)
-    layoutInflater.inflate(R.layout.activity_about, viewGroup)
+    layoutInflater.inflate(R.layout.activity_generic_container, viewGroup)
 
     ButterKnife.bind(this).doOnDestroy { unbind() }
     router = Conductor.attachRouter(this, container, savedInstanceState)
@@ -135,19 +138,31 @@ class AboutController : ButterKnifeController() {
     private const val TITLE_TRANSLATION_PERCENT = 0.50F
   }
 
-  @Inject internal lateinit var customTab: CustomTabActivityHelper
-  @Inject internal lateinit var linkManager: LinkManager
-  @Inject internal lateinit var bypass: Bypass
+  @Inject
+  internal lateinit var customTab: CustomTabActivityHelper
+  @Inject
+  internal lateinit var linkManager: LinkManager
+  @Inject
+  internal lateinit var bypass: Bypass
 
-  @BindView(R.id.about_controller_root) lateinit var rootLayout: CoordinatorLayout
-  @BindView(R.id.appbarlayout) lateinit var appBarLayout: AppBarLayout
-  @BindView(R.id.banner_container) lateinit var bannerContainer: View
-  @BindView(R.id.banner_icon) lateinit var bannerIcon: ImageView
-  @BindView(R.id.banner_text) lateinit var aboutText: TextView
-  @BindView(R.id.banner_title) lateinit var title: TextView
-  @BindView(R.id.tab_layout) lateinit var tabLayout: TabLayout
-  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-  @BindView(R.id.view_pager) lateinit var viewPager: ViewPager
+  @BindView(R.id.about_controller_root)
+  lateinit var rootLayout: CoordinatorLayout
+  @BindView(R.id.appbarlayout)
+  lateinit var appBarLayout: AppBarLayout
+  @BindView(R.id.banner_container)
+  lateinit var bannerContainer: View
+  @BindView(R.id.banner_icon)
+  lateinit var bannerIcon: ImageView
+  @BindView(R.id.banner_text)
+  lateinit var aboutText: TextView
+  @BindView(R.id.banner_title)
+  lateinit var title: TextView
+  @BindView(R.id.tab_layout)
+  lateinit var tabLayout: TabLayout
+  @BindView(R.id.toolbar)
+  lateinit var toolbar: Toolbar
+  @BindView(R.id.view_pager)
+  lateinit var viewPager: ViewPager
 
   private var pagerAdapter: RouterPagerAdapter
   private val compositeClickSpan = { url: String ->
@@ -280,10 +295,10 @@ class AboutController : ButterKnifeController() {
 
       override fun onTabReselected(tab: TabLayout.Tab) {
         pagerAdapter.getRouter(tab.position)?.getControllerWithTag(PAGE_TAG)?.let {
-          if (it is Scrollable) {
-            it.onRequestScrollToTop()
-          }
-        }
+              if (it is Scrollable) {
+                it.onRequestScrollToTop()
+              }
+            }
       }
     })
   }
@@ -292,8 +307,7 @@ class AboutController : ButterKnifeController() {
     // TODO would be good if we could be smarter about scroll distance and tweak the offset
     // thresholds to dynamically adjust. Case and point - don't want tablayout below to cover the
     // text before it's fully faded out
-    val parallaxMultiplier
-        = (bannerContainer.layoutParams as CollapsingToolbarLayout.LayoutParams).parallaxMultiplier
+    val parallaxMultiplier = (bannerContainer.layoutParams as CollapsingToolbarLayout.LayoutParams).parallaxMultiplier
 
     val interpolator = UiUtil.fastOutSlowInInterpolator
 
