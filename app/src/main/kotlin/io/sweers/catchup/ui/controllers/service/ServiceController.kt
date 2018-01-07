@@ -200,7 +200,7 @@ class ServiceController : ButterKnifeController,
       val adapter = ImageAdapter(context) { item, holder ->
         service.bindItemView(item.realItem(), holder)
       }
-      val preloader = RecyclerViewPreloader<ImageItem>(GlideApp.with(activity),
+      val preloader = RecyclerViewPreloader<ImageItem>(GlideApp.with(context),
           adapter,
           ViewPreloadSizeProvider<ImageItem>(),
           ImageAdapter.PRELOAD_AHEAD_ITEMS)

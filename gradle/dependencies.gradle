@@ -29,7 +29,7 @@ def versions = [
     errorProne: '2.1.3',
     espresso: '3.0.1',
     firebase: '11.2.0',
-    glide: '4.4.0',
+    glide: '4.5.0',
     inspector: '0.2.0',
     kotlin: '1.2.10',
     leakcanary: '1.5.4',
@@ -72,7 +72,7 @@ ext.deps = [
             gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.5',
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.1.0-alpha06',
+        gradlePlugin: 'com.android.tools.build:gradle:3.1.0-alpha07',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
@@ -250,7 +250,7 @@ ext.deps = [
     ],
 
     misc: [
-        bugsnag: 'com.bugsnag:bugsnag-android:4.1.5',
+        bugsnag: 'com.bugsnag:bugsnag-android:4.2.0',
         debug: [
             madge: 'com.jakewharton.madge:madge:1.1.4',
             processPhoenix: 'com.jakewharton:process-phoenix:2.0.0',
@@ -334,6 +334,6 @@ ext.deps = [
         ],
         junit: 'junit:junit:4.12',
         robolectric: 'org.robolectric:robolectric:3.2.2',
-        truth: 'com.google.truth:truth:0.37'
+        truth: 'com.google.truth:truth:0.39'
     ]
 ]
