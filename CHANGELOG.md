@@ -1,5 +1,6 @@
 * **New:** You can now reorder services in settings
 * **Enhancement:** GitHub is now paginated when there are more results (thanks to [@charlesdurham](https://github.com/charlesdurham)!)
+* **Fix:** Building with a new version of D8 that should avoid some bizarre VM crashes on some Mediatek devices ಠ_ಠ
 
 ## 0.2.2 (2017-12-17)
 * Fix pagination not working
