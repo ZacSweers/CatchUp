@@ -43,7 +43,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.SimpleColorFilter
 import com.airbnb.lottie.model.KeyPath
-import com.airbnb.lottie.value.LottieStaticValueCallback
+import com.airbnb.lottie.value.LottieStaticValue
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
@@ -200,7 +200,7 @@ class SmmryController : ButterKnifeController {
     if (!alreadyLoaded) {
       lottieView.addValueCallback<ColorFilter>(KeyPath("**"),
           LottieProperty.COLOR_FILTER,
-          LottieStaticValueCallback(SimpleColorFilter(accentColor)))
+          LottieStaticValue(SimpleColorFilter(accentColor)))
     } else {
       loadingView.hide()
       content.show()
