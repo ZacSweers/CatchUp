@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.service.producthunt
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'org.jetbrains.kotlin.kapt'
 
-import com.ryanharter.auto.value.moshi.MoshiAdapterFactory
-import com.squareup.moshi.JsonAdapter.Factory
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
 
-@MoshiAdapterFactory(nullSafe = true)
-internal abstract class ProductHuntAdapterFactory : Factory {
-  companion object {
-    fun create(): ProductHuntAdapterFactory = AutoValueMoshi_ProductHuntAdapterFactory()
-  }
+dependencies {
+  compile deps.kotlin.stdlib.jdk7
+  compile deps.misc.moshi
 }

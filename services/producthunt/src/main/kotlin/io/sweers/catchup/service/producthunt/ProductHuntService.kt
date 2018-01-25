@@ -25,6 +25,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
+import io.sweers.moshkt.api.MoshiSerializableFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -64,15 +65,15 @@ internal class ProductHuntService @Inject constructor(
         .map {
           with(it) {
             CatchUpItem(
-                id = id(),
-                title = name(),
-                score = "▲" to votesCount(),
-                timestamp = createdAt(),
-                author = user().name(),
+                id = id,
+                title = name,
+                score = "▲" to votesCount,
+                timestamp = createdAt,
+                author = user.name,
                 tag = firstTopic,
-                commentCount = commentsCount(),
-                itemClickUrl = redirectUrl(),
-                itemCommentClickUrl = discussionUrl()
+                commentCount = commentsCount,
+                itemClickUrl = redirectUrl,
+                itemCommentClickUrl = discussionUrl
             )
           }
         }
@@ -137,7 +138,7 @@ abstract class ProductHuntModule {
     @JvmStatic
     internal fun provideProductHuntMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(ProductHuntAdapterFactory.create())
+          .add(MoshiSerializableFactory.INSTANCE)
           .add(Instant::class.java, ISO8601InstantAdapter())
           .add(Wrapped.ADAPTER_FACTORY)
           .build()

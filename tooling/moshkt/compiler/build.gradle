@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.service.producthunt.model
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'org.jetbrains.kotlin.kapt'
 
-import io.sweers.moshkt.api.MoshiSerializable
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 
-@MoshiSerializable
-internal data class Topic(
-    val id: Long,
-    val name: String,
-    val slug: String
-)
+compileKotlin {
+  kotlinOptions.jvmTarget = 1.8
+}
+
+dependencies {
+  compile deps.kotlin.stdlib.jdk8
+  compile deps.kotlin.metadata
+  compile deps.kotlin.poet
+  compile deps.misc.moshi
+  compileOnly deps.auto.service
+  kapt deps.auto.service
+  compile project(':tooling:moshkt:api')
+}

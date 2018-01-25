@@ -37,4 +37,7 @@ project(':imgur').projectDir = new File(rootDir, 'services/imgur')
 include ':github'
 project(':github').projectDir = new File(rootDir, 'services/github')
 include ':gemoji'
+include ':tooling:moshkt:api'
+include ':tooling:moshkt:compiler'
+//include ':tooling:moshkt:integration'
 include ':util'
