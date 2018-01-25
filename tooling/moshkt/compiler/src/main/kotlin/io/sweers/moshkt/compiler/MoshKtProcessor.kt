@@ -378,11 +378,24 @@ private data class Adapter(
             .endControlFlow()
             .endControlFlow()
             .addStatement("%N.endObject()", reader)
-            // TODO How can we skip params with default values without doing all permutations?
-            // TODO one idea - maybe we can read default value initializers and inline them somehow to the placeholder fields
-            .addStatement("return %T(%L)",
-                originalTypeName,
-                propertyList.joinToString(",\n") { "${it.name} = ${it.name}" })
+            .apply {
+              val propertiesWithDefaults = propertyList.filter { it.hasDefault }
+              if (propertiesWithDefaults.isEmpty()) {
+                addStatement("return %T(%L)",
+                    originalTypeName,
+                    propertyList.joinToString(",\n") { "${it.name} = ${it.name}" })
+              } else {
+                addStatement("return %T(%L).let { it.copy(%L) }",
+                    originalTypeName,
+                    propertyList
+                        .filter { !it.hasDefault }
+                        .joinToString(",\n") { "${it.name} = ${it.name}" },
+                    propertiesWithDefaults
+                        .joinToString(",\n") {
+                          "${it.name} = if (${it.name} != null) { ${it.name} } else { ${it.name} }"
+                        })
+              }
+            }
             .build())
         .addFunction(FunSpec.builder("toJson")
             .addModifiers(OVERRIDE)
