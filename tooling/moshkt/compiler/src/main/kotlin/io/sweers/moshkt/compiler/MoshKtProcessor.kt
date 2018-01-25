@@ -90,7 +90,7 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
             .any { !it.generateAndWrite() }) true else true
   }
 
-  private fun processElement(element: Element): ClassToAdapt? {
+  private fun processElement(element: Element): Adapter? {
     val metadata = element.kotlinMetadata
 
     if (metadata !is KotlinClassMetadata) {
@@ -160,7 +160,7 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
         }
 
 
-    return ClassToAdapt(
+    return Adapter(
         fqClassName = fqClassName,
         packageName = packageName,
         parameterList = parameters,
@@ -175,7 +175,7 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
         element)
   }
 
-  private fun ClassToAdapt.generateAndWrite(): Boolean {
+  private fun Adapter.generateAndWrite(): Boolean {
     val generatedDir = generatedDir ?: run {
       messager.printMessage(ERROR, "Can't find option '$kaptGeneratedOption'")
       return false
@@ -302,7 +302,7 @@ private data class Parameter(
     val nullable: Boolean,
     val typeName: TypeName)
 
-private data class ClassToAdapt(
+private data class Adapter(
     val fqClassName: String,
     val packageName: String,
     val parameterList: List<Parameter>,
