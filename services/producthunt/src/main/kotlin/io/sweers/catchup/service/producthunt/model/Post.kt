@@ -37,7 +37,7 @@ internal data class Post(
     @Json(name = "redirect_url") val redirectUrl: String,
     @Json(name = "screenshot_url") val screenshotUrl: Map<String, String>,
     val tagline: String,
-    val topics: List<Topic>?,
+    val topics: List<Topic>? = null,
     val user: User,
     @Json(name = "votes_count") val votesCount: Int
 ) {

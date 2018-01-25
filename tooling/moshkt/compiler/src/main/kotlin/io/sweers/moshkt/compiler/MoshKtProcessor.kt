@@ -347,13 +347,13 @@ private data class Adapter(
               propertyList.forEach { param ->
                 if (param.nullable) {
                   addStatement("var ${param.name}: %T = null", param.typeName)
+                } else if (param.hasDefault) {
+                  addStatement("var ${param.name}: %T = null", param.typeName.asNullable())
+                } else if (param.typeName.isPrimitive) {
+                  addStatement("var ${param.name} = %L",
+                      primitiveDefaultFor(param.typeName))
                 } else {
-                  if (param.typeName.isPrimitive) {
-                    addStatement("var ${param.name} = %L",
-                        primitiveDefaultFor(param.typeName))
-                  } else {
-                    addStatement("lateinit var ${param.name}: %T", param.typeName)
-                  }
+                  addStatement("lateinit var ${param.name}: %T", param.typeName)
                 }
               }
             }
@@ -378,11 +378,24 @@ private data class Adapter(
             .endControlFlow()
             .endControlFlow()
             .addStatement("%N.endObject()", reader)
-            // TODO How can we skip params with default values without doing all permutations?
-            // TODO one idea - maybe we can read default value initializers and inline them somehow to the placeholder fields
-            .addStatement("return %T(%L)",
-                originalTypeName,
-                propertyList.joinToString(",\n") { "${it.name} = ${it.name}" })
+            .apply {
+              val propertiesWithDefaults = propertyList.filter { it.hasDefault }
+              if (propertiesWithDefaults.isEmpty()) {
+                addStatement("return %T(%L)",
+                    originalTypeName,
+                    propertyList.joinToString(",\n") { "${it.name} = ${it.name}" })
+              } else {
+                addStatement("return %T(%L).let {\n  it.copy(%L)\n}",
+                    originalTypeName,
+                    propertyList
+                        .filter { !it.hasDefault }
+                        .joinToString(",\n") { "${it.name} = ${it.name}" },
+                    propertiesWithDefaults
+                        .joinToString(",\n      ") {
+                          "${it.name} = ${it.name} ?: it.${it.name}"
+                        })
+              }
+            }
             .build())
         .addFunction(FunSpec.builder("toJson")
             .addModifiers(OVERRIDE)
