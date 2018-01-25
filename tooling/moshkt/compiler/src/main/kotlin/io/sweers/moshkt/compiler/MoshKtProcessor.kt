@@ -74,7 +74,7 @@ import javax.tools.Diagnostic.Kind.ERROR
  *   * Leveraging default values on params where possible. This might not be feasible though.
  */
 @AutoService(Processor::class)
-class MoshiKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
+class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
   private val annotationName = MoshiSerializable::class.java.canonicalName
 
