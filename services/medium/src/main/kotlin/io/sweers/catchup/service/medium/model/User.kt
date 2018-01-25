@@ -16,21 +16,7 @@
 
 package io.sweers.catchup.service.medium.model
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 
-@AutoValue
-internal abstract class User {
-
-  abstract fun name(): String
-
-  abstract fun userId(): String
-
-  abstract fun username(): String
-
-  companion object {
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<User> = AutoValue_User.MoshiJsonAdapter(moshi)
-  }
-}
+@MoshiSerializable
+internal data class User(val name: String, val userId: String, val username: String)

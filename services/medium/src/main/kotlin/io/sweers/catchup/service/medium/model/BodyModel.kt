@@ -16,23 +16,12 @@
 
 package io.sweers.catchup.service.medium.model
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 
-@AutoValue
-internal abstract class BodyModel {
-
-  abstract val isFullContent: Boolean
-
-  abstract fun paragraphs(): List<Paragraph>
+@MoshiSerializable
+internal data class BodyModel(val isFullContent: Boolean, val paragraphs: List<Paragraph>) {
 
   val title: Paragraph
-    get() = paragraphs()[0]
+    get() = paragraphs[0]
 
-  companion object {
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<BodyModel> =
-        AutoValue_BodyModel.MoshiJsonAdapter(moshi)
-  }
 }

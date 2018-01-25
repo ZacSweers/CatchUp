@@ -40,6 +40,7 @@ import io.sweers.catchup.service.medium.model.MediumPost
 import io.sweers.catchup.service.medium.model.Post
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.inspector.Inspector
+import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -65,29 +66,28 @@ internal class MediumService @Inject constructor(
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
     return api.top()
         .concatMapEager { references ->
-          Observable.fromIterable<Post>(references.post().values)
+          Observable.fromIterable<Post>(references.post.values)
               .map { post ->
-                MediumPost.builder()
-                    .post(post)
-                    .user(references.user()[post.creatorId()]
-                        ?: throw IllegalStateException("Missing user on post!"))
-                    .collection(references.collection()[post.homeCollectionId()])
-                    .build()
+                MediumPost(
+                    post = post,
+                    user = references.user[post.creatorId]
+                        ?: throw IllegalStateException("Missing user on post!"),
+                    collection = references.collection[post.homeCollectionId])
               }
         }
         .map {
           with(it) {
             val url = constructUrl()
             CatchUpItem(
-                id = post().id().hashCode().toLong(),
-                title = post().title(),
+                id = post.id.hashCode().toLong(),
+                title = post.title,
                 score =
                 "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
-                    to post().virtuals().recommends(),
-                timestamp = post().createdAt(),
-                author = user().name(),
-                commentCount = post().virtuals().responsesCreatedCount(),
-                tag = collection()?.name(),
+                    to post.virtuals.recommends,
+                timestamp = post.createdAt,
+                author = user.name,
+                commentCount = post.virtuals.responsesCreatedCount,
+                tag = collection?.name,
                 itemClickUrl = url,
                 itemCommentClickUrl = constructCommentsUrl(),
                 summarizationInfo = SummarizationInfo.from(url)
@@ -167,9 +167,9 @@ abstract class MediumModule {
     @JvmStatic
     internal fun provideMediumMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(MediumModels.createMoshiAdapterFactory())
-          .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
           .add(Wrapped.ADAPTER_FACTORY)
+          .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
+          .add(MoshiSerializableFactory.INSTANCE)
           .build()
     }
 

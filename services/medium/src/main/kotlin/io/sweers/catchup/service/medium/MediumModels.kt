@@ -16,20 +16,13 @@
 
 package io.sweers.catchup.service.medium
 
-import com.google.auto.value.AutoValue
-import com.ryanharter.auto.value.moshi.MoshiAdapterFactory
-import com.squareup.moshi.JsonAdapter
 import io.sweers.inspector.Validator
 import io.sweers.inspector.factorycompiler.InspectorFactory
+import io.sweers.moshkt.api.MoshiSerializable
 
 object MediumModels {
-  fun createMoshiAdapterFactory(): JsonAdapter.Factory = AutoValueMoshi_MediumAdapterFactory()
-
   fun createValidatorFactory(): Validator.Factory = InspectorFactory_MediumValidatorFactory()
 }
 
-@MoshiAdapterFactory(nullSafe = true)
-abstract class MediumAdapterFactory : JsonAdapter.Factory
-
-@InspectorFactory(include = [AutoValue::class])
+@InspectorFactory(include = [MoshiSerializable::class])
 abstract class MediumValidatorFactory : Validator.Factory

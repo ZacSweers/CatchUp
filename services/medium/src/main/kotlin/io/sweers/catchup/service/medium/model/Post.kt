@@ -16,31 +16,14 @@
 
 package io.sweers.catchup.service.medium.model
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-
+import io.sweers.moshkt.api.MoshiSerializable
 import org.threeten.bp.Instant
 
-@AutoValue
-internal abstract class Post {
-
-  abstract fun createdAt(): Instant
-
-  abstract fun creatorId(): String
-
-  abstract fun homeCollectionId(): String
-
-  abstract fun id(): String
-
-  abstract fun title(): String
-
-  abstract fun uniqueSlug(): String
-
-  abstract fun virtuals(): Virtuals
-
-  companion object {
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Post> = AutoValue_Post.MoshiJsonAdapter(moshi)
-  }
-}
+@MoshiSerializable
+internal data class Post(val createdAt: Instant,
+    val creatorId: String,
+    val homeCollectionId: String,
+    val id: String,
+    val title: String,
+    val uniqueSlug: String,
+    val virtuals: Virtuals)

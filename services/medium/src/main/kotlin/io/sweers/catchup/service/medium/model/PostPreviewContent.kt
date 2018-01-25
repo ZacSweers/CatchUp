@@ -16,21 +16,7 @@
 
 package io.sweers.catchup.service.medium.model
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 
-@AutoValue
-internal abstract class PostPreviewContent {
-
-  abstract fun bodyModel(): BodyModel
-
-  abstract fun isFullContent(): Boolean
-
-  companion object {
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<PostPreviewContent> =
-        AutoValue_PostPreviewContent.MoshiJsonAdapter(moshi)
-  }
-}
+@MoshiSerializable
+internal data class PostPreviewContent(val bodyModel: BodyModel, val isFullContent: Boolean)

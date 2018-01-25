@@ -16,24 +16,10 @@
 
 package io.sweers.catchup.service.medium.model
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 
-@AutoValue
-internal abstract class Paragraph {
-
-  abstract fun markups(): List<Markup>
-
-  abstract fun name(): String
-
-  abstract fun text(): String
-
-  abstract fun type(): Int
-
-  companion object {
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Paragraph> =
-        AutoValue_Paragraph.MoshiJsonAdapter(moshi)
-  }
-}
+@MoshiSerializable
+internal data class Paragraph(val markups: List<Markup>,
+    val name: String,
+    val text: String,
+    val type: Int)

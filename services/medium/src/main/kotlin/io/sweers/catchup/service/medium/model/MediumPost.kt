@@ -16,44 +16,18 @@
 
 package io.sweers.catchup.service.medium.model
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-
 import io.sweers.catchup.service.api.HasStableId
+import io.sweers.moshkt.api.MoshiSerializable
 
-@AutoValue
-internal abstract class MediumPost : HasStableId {
+@MoshiSerializable
+internal data class MediumPost(val collection: Collection?,
+    val post: Post,
+    val user: User) : HasStableId {
 
-  abstract fun collection(): Collection?
-
-  abstract fun post(): Post
-
-  abstract fun user(): User
-
-  fun constructUrl() = "https://medium.com/@${user().username()}/${post().uniqueSlug()}"
+  fun constructUrl() = "https://medium.com/@${user.username}/${post.uniqueSlug}"
 
   fun constructCommentsUrl() = "${constructUrl()}#--responses"
 
-  override fun stableId(): Long = post().id().hashCode().toLong()
+  override fun stableId(): Long = post.id.hashCode().toLong()
 
-  @AutoValue.Builder
-  abstract class Builder {
-    abstract fun collection(value: Collection?): Builder
-
-    abstract fun post(value: Post): Builder
-
-    abstract fun user(value: User): Builder
-
-    abstract fun build(): MediumPost
-  }
-
-  companion object {
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<MediumPost> =
-        AutoValue_MediumPost.MoshiJsonAdapter(moshi)
-
-    // Ew
-    fun builder(): Builder = `$AutoValue_MediumPost`.Builder()
-  }
 }

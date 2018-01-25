@@ -16,39 +16,28 @@
 
 package io.sweers.catchup.service.medium.model
 
-import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
 import io.sweers.inspector.Inspector
 import io.sweers.inspector.ValidationException
 import io.sweers.inspector.Validator
+import io.sweers.moshkt.api.MoshiSerializable
 
-@AutoValue
-internal abstract class References {
-
-  @Json(name = "Collection")
-  abstract fun collection(): Map<String, Collection>
-
-  @Json(name = "Post")
-  abstract fun post(): Map<String, Post>
-
-  @Json(name = "User")
-  abstract fun user(): Map<String, User>
+@MoshiSerializable
+internal data class References(
+    @Json(name = "Collection") val collection: Map<String, Collection>,
+    @Json(name = "Post") val post: Map<String, Post>,
+    @Json(name = "User") val user: Map<String, User>) {
 
   companion object {
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<References> =
-        AutoValue_References.MoshiJsonAdapter(moshi)
 
     @Suppress("UNUSED_PARAMETER") // Remove when inspector supports 0 arg
     @JvmStatic
     fun validator(inspector: Inspector): Validator<References> {
       return object : Validator<References>() {
         override fun validate(references: References) {
-          references.post().values.forEach {
-            if (it.creatorId() !in references.user()) {
-              throw ValidationException("Medium Post ${it.id()} creator not in user map.")
+          references.post.values.forEach {
+            if (it.creatorId !in references.user) {
+              throw ValidationException("Medium Post ${it.id} creator not in user map.")
             }
           }
         }
