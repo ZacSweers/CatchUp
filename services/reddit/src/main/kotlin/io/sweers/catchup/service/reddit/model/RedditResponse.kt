@@ -16,30 +16,7 @@
 
 package io.sweers.catchup.service.reddit.model
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 
-@AutoValue
-internal abstract class RedditResponse {
-
-  abstract fun data(): RedditListing
-
-  @AutoValue.Builder
-  interface Builder {
-    fun data(listing: RedditListing): Builder
-
-    fun build(): RedditResponse
-  }
-
-  companion object {
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<RedditResponse> {
-      return AutoValue_RedditResponse.MoshiJsonAdapter(moshi)
-    }
-
-    fun builder(): Builder {
-      return `$AutoValue_RedditResponse`.Builder()
-    }
-  }
-}
+@MoshiSerializable
+internal data class RedditResponse(val data: RedditListing)

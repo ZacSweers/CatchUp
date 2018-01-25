@@ -38,6 +38,7 @@ import io.sweers.catchup.service.reddit.model.RedditLink
 import io.sweers.catchup.service.reddit.model.RedditObjectFactory
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.catchup.util.nullIfBlank
+import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -64,24 +65,23 @@ internal class RedditService @Inject constructor(
     return api.frontPage(25, request.pageId.nullIfBlank())
         .map { redditListingRedditResponse ->
           @Suppress("UNCHECKED_CAST")
-          val data = (redditListingRedditResponse.data()
-              .children() as List<RedditLink>)
+          val data = (redditListingRedditResponse.data.children as List<RedditLink>)
               .map {
                 CatchUpItem(
-                    id = it.id().hashCode().toLong(),
-                    title = it.title(),
-                    score = "+" to it.score(),
-                    timestamp = it.createdUtc(),
-                    author = "/u/" + it.author(),
-                    source = it.domain() ?: "self",
-                    commentCount = it.commentsCount(),
-                    tag = it.subreddit(),
-                    itemClickUrl = it.url(),
-                    itemCommentClickUrl = "https://reddit.com/comments/${it.id()}",
-                    summarizationInfo = SummarizationInfo.from(it.url(), it.selftext())
+                    id = it.id.hashCode().toLong(),
+                    title = it.title,
+                    score = "+" to it.score,
+                    timestamp = it.createdUtc,
+                    author = "/u/" + it.author,
+                    source = it.domain ?: "self",
+                    commentCount = it.commentsCount,
+                    tag = it.subreddit,
+                    itemClickUrl = it.url,
+                    itemCommentClickUrl = "https://reddit.com/comments/${it.id}",
+                    summarizationInfo = SummarizationInfo.from(it.url, it.selftext)
                 )
               }
-          DataResult(data, redditListingRedditResponse.data().after())
+          DataResult(data, redditListingRedditResponse.data.after)
         }
   }
 
@@ -129,7 +129,7 @@ abstract class RedditModule {
     @JvmStatic
     internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
       return upstreamMoshi.newBuilder()
-          .add(RedditAdapterFactory.create())
+          .add(MoshiSerializableFactory.INSTANCE)
           .add(RedditObjectFactory.INSTANCE)
           .add(Instant::class.java, EpochInstantJsonAdapter())
           .build()
