@@ -147,7 +147,7 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
           val serializedName = actualElement.getAnnotation(Json::class.java)?.name
               ?: paramName
 
-          Parameter(
+          Property(
               name = paramName,
               fqClassName = paramFqcn,
               serializedName = serializedName,
@@ -163,7 +163,7 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
     return Adapter(
         fqClassName = fqClassName,
         packageName = packageName,
-        parameterList = parameters,
+        propertyList = parameters,
         originalElement = element,
         hasCompanionObject = hasCompanionObject,
         visibility = classProto.visibility!!)
@@ -294,7 +294,7 @@ private fun TypeName.makeType(): CodeBlock {
   }
 }
 
-private data class Parameter(
+private data class Property(
     val name: String,
     val fqClassName: String,
     val serializedName: String,
@@ -305,7 +305,7 @@ private data class Parameter(
 private data class Adapter(
     val fqClassName: String,
     val packageName: String,
-    val parameterList: List<Parameter>,
+    val propertyList: List<Property>,
     val originalElement: Element,
     val name: String = fqClassName.substringAfter(packageName).replace('.',
         '_').removePrefix("_"),
@@ -343,7 +343,7 @@ private data class Adapter(
             .addStatement("%N.nextNull<%T>()", reader, ANY)
             .endControlFlow()
             .apply {
-              parameterList.forEach { param ->
+              propertyList.forEach { param ->
                 if (param.nullable) {
                   addStatement("var ${param.name}: %T = null", param.typeName)
                 } else {
@@ -361,7 +361,7 @@ private data class Adapter(
             .beginControlFlow("while (%N.hasNext())", reader)
             .beginControlFlow("when (%N.nextName())", reader)
             .apply {
-              parameterList.forEach { param ->
+              propertyList.forEach { param ->
                 // TODO we should probably track which ones are required and haven't been set instead of using lateinit
                 val possibleBangs = if (param.nullable) "" else "!!"
                 addStatement("%S -> %L = %N.adapter%L(%L).fromJson(%N)$possibleBangs",
@@ -381,7 +381,7 @@ private data class Adapter(
             // TODO one idea - maybe we can read default value initializers and inline them somehow to the placeholder fields
             .addStatement("return %T(%L)",
                 originalTypeName,
-                parameterList.joinToString(",\n") { "${it.name} = ${it.name}" })
+                propertyList.joinToString(",\n") { "${it.name} = ${it.name}" })
             .build())
         .addFunction(FunSpec.builder("toJson")
             .addModifiers(OVERRIDE)
@@ -393,7 +393,7 @@ private data class Adapter(
             .endControlFlow()
             .addStatement("%N.beginObject()", writer)
             .apply {
-              parameterList.forEach { param ->
+              propertyList.forEach { param ->
                 if (param.nullable) {
                   beginControlFlow("if (%N.%L != null)", value, param.name)
                 }
