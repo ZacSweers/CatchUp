@@ -347,13 +347,13 @@ private data class Adapter(
               propertyList.forEach { param ->
                 if (param.nullable) {
                   addStatement("var ${param.name}: %T = null", param.typeName)
+                } else if (param.typeName.isPrimitive) {
+                  addStatement("var ${param.name} = %L",
+                      primitiveDefaultFor(param.typeName))
+                } else if (param.hasDefault) {
+                  addStatement("var ${param.name}: %T = null", param.typeName.asNullable())
                 } else {
-                  if (param.typeName.isPrimitive) {
-                    addStatement("var ${param.name} = %L",
-                        primitiveDefaultFor(param.typeName))
-                  } else {
-                    addStatement("lateinit var ${param.name}: %T", param.typeName)
-                  }
+                  addStatement("lateinit var ${param.name}: %T", param.typeName)
                 }
               }
             }
