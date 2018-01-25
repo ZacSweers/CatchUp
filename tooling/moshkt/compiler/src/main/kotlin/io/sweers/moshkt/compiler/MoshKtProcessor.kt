@@ -385,7 +385,7 @@ private data class Adapter(
                     originalTypeName,
                     propertyList.joinToString(",\n") { "${it.name} = ${it.name}" })
               } else {
-                addStatement("return %T(%L)\n.let {\n  it.copy(%L)\n}",
+                addStatement("return %T(%L).let {\n  it.copy(%L)\n}",
                     originalTypeName,
                     propertyList
                         .filter { !it.hasDefault }
