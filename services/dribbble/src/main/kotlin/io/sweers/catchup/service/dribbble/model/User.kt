@@ -16,73 +16,37 @@
 
 package io.sweers.catchup.service.dribbble.model
 
-import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 import org.threeten.bp.Instant
 
 /**
  * Models a dribbble user
  */
-@AutoValue
-internal abstract class User {
-
-  @Json(name = "avatar_url") abstract fun avatarUrl(): String
-
-  abstract fun bio(): String
-
-  @Json(name = "buckets_count") abstract fun bucketsCount(): Int
-
-  @Json(name = "buckets_url") abstract fun bucketsUrl(): String
-
-  @Json(name = "created_at") abstract fun createdAt(): Instant
-
-  @Json(name = "followers_count") abstract fun followersCount(): Int
-
-  @Json(name = "followers_url") abstract fun followersUrl(): String
-
-  @Json(name = "following_url") abstract fun followingUrl(): String
-
-  @Json(name = "followings_count") abstract fun followingsCount(): Int
-
-  @Json(name = "html_url") abstract fun htmlUrl(): String
-
-  abstract fun id(): Long
-
-  @Json(name = "likes_count") abstract fun likesCount(): Int
-
-  @Json(name = "likes_url") abstract fun likesUrl(): String
-
-  abstract fun links(): Map<String, String>
-
-  abstract fun location(): String?
-
-  abstract fun name(): String
-
-  abstract fun pro(): Boolean?
-
-  @Json(name = "projects_count") abstract fun projectsCount(): Int
-
-  @Json(name = "projects_url") abstract fun projectsUrl(): String
-
-  @Json(name = "shots_count") abstract fun shotsCount(): Int
-
-  @Json(name = "shots_url") abstract fun shotsUrl(): String
-
-  @Json(name = "teams_count") abstract fun teamsCount(): Int
-
-  @Json(name = "teams_url") abstract fun teamsUrl(): String?
-
-  abstract fun type(): String
-
-  @Json(name = "updated_at") abstract fun updatedAt(): Instant
-
-  abstract fun username(): String
-
-  companion object {
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<User> = AutoValue_User.MoshiJsonAdapter(moshi)
-  }
-}
+@MoshiSerializable
+internal data class User(@Json(name = "avatar_url") val avatarUrl: String,
+    val bio: String,
+    @Json(name = "buckets_count") val bucketsCount: Int,
+    @Json(name = "buckets_url") val bucketsUrl: String,
+    @Json(name = "created_at") val createdAt: Instant,
+    @Json(name = "followers_count") val followersCount: Int,
+    @Json(name = "followers_url") val followersUrl: String,
+    @Json(name = "following_url") val followingUrl: String,
+    @Json(name = "followings_count") val followingsCount: Int,
+    @Json(name = "html_url") val htmlUrl: String,
+    val id: Long,
+    @Json(name = "likes_count") val likesCount: Int,
+    @Json(name = "likes_url") val likesUrl: String,
+    val links: Map<String, String>,
+    val location: String?,
+    val name: String,
+    val pro: Boolean?,
+    @Json(name = "projects_count") val projectsCount: Int,
+    @Json(name = "projects_url") val projectsUrl: String,
+    @Json(name = "shots_count") val shotsCount: Int,
+    @Json(name = "shots_url") val shotsUrl: String,
+    @Json(name = "teams_count") val teamsCount: Int,
+    @Json(name = "teams_url") val teamsUrl: String?,
+    val type: String,
+    @Json(name = "updated_at") val updatedAt: Instant,
+    val username: String)

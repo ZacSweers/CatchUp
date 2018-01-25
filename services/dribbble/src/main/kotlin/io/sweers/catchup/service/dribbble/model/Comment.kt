@@ -16,36 +16,19 @@
 
 package io.sweers.catchup.service.dribbble.model
 
-import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 import org.threeten.bp.Instant
 import java.util.Date
 
 /**
  * Models a commend on a Dribbble shot.
  */
-@AutoValue
-internal abstract class Comment {
-
-  abstract fun body(): String
-
-  @Json(name = "created_at") abstract fun createdAt(): Instant
-
-  abstract fun id(): Long
-
-  @Json(name = "likes_count") abstract fun likesCount(): Long
-
-  @Json(name = "likes_url") abstract fun likesUrl(): String
-
-  @Json(name = "updated_at") abstract fun updatedAt(): Date
-
-  abstract fun user(): User
-
-  companion object {
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Comment> = AutoValue_Comment.MoshiJsonAdapter(moshi)
-  }
-}
+@MoshiSerializable
+internal data class Comment(val body: String,
+    @Json(name = "created_at") val createdAt: Instant,
+    val id: Long,
+    @Json(name = "likes_count") val likesCount: Long,
+    @Json(name = "likes_url") val likesUrl: String,
+    @Json(name = "updated_at") val updatedAt: Date,
+    val user: User)

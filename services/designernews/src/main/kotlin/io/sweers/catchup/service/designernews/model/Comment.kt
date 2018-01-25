@@ -16,45 +16,23 @@
 
 package io.sweers.catchup.service.designernews.model
 
-import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 import org.threeten.bp.Instant
 
 /**
  * Models a comment on a designer news story.
  */
-@AutoValue
-internal abstract class Comment {
-
-  abstract fun body(): String
-
-  @Json(name = "body_html") abstract fun bodyHtml(): String
-
-  abstract fun comments(): List<Comment>
-
-  @Json(name = "created_at") abstract fun createdAt(): Instant
-
-  abstract fun depth(): Int
-
-  abstract fun id(): Long
-
-  abstract fun upvoted(): Boolean
-
-  @Json(name = "user_display_name") abstract fun userDisplayName(): String
-
-  @Json(name = "user_id") abstract fun userId(): Long
-
-  @Json(name = "user_job") abstract fun userJob(): String?
-
-  @Json(name = "user_portrait_url") abstract fun userPortraitUrl(): String?
-
-  @Json(name = "vote_count") abstract fun voteCount(): Int
-
-  companion object {
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Comment> = AutoValue_Comment.MoshiJsonAdapter(moshi)
-  }
-}
+@MoshiSerializable
+internal data class Comment(val body: String,
+    @Json(name = "body_html") val bodyHtml: String,
+    val comments: List<Comment>,
+    @Json(name = "created_at") val createdAt: Instant,
+    val depth: Int,
+    val id: Long,
+    val upvoted: Boolean,
+    @Json(name = "user_display_name") val userDisplayName: String,
+    @Json(name = "user_id") val userId: Long,
+    @Json(name = "user_job") val userJob: String?,
+    @Json(name = "user_portrait_url") val userPortraitUrl: String?,
+    @Json(name = "vote_count") val voteCount: Int)

@@ -40,6 +40,7 @@ import io.sweers.catchup.service.designernews.model.Story
 import io.sweers.catchup.service.designernews.model.User
 import io.sweers.catchup.util.collect.toCommaJoinerList
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
+import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -68,7 +69,7 @@ internal class DesignerNewsService @Inject constructor(
           Observable.zip(
               Observable.fromIterable(stories),
               Observable.fromIterable(stories)
-                  .map { it.links().user() }
+                  .map { it.links.user }
                   .toList()
                   .flatMap { ids -> api.getUsers(ids.toCommaJoinerList()) }
                   .onErrorReturn { (0..stories.size).map { User.NONE } }
@@ -81,16 +82,16 @@ internal class DesignerNewsService @Inject constructor(
         .map { (story, user) ->
           with(story) {
             CatchUpItem(
-                id = id().toLong(),
-                title = title(),
-                score = "▲" to voteCount(),
-                timestamp = createdAt(),
-                author = user?.displayName(),
-                source = hostname(),
-                commentCount = commentCount(),
-                tag = badge(),
-                itemClickUrl = url(),
-                itemCommentClickUrl = href()
+                id = id.toLong(),
+                title = title,
+                score = "▲" to voteCount,
+                timestamp = createdAt,
+                author = user?.displayName,
+                source = hostname,
+                commentCount = commentCount,
+                tag = badge,
+                itemClickUrl = url,
+                itemCommentClickUrl = href
                     .replace("api.", "www.")
                     .replace("api/v2/", "")
             )
@@ -146,9 +147,9 @@ abstract class DesignerNewsModule {
     @JvmStatic
     internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(DesignerNewsAdapterFactory.create())
-          .add(Instant::class.java, ISO8601InstantAdapter())
           .add(Wrapped.ADAPTER_FACTORY)
+          .add(MoshiSerializableFactory.getInstance())
+          .add(Instant::class.java, ISO8601InstantAdapter())
           .build()
     }
 

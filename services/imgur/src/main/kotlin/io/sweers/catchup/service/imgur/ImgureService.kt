@@ -37,6 +37,7 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
+import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit.Builder
@@ -65,11 +66,11 @@ internal class ImgurService @Inject constructor(
         .map {
           val resolvedLink = it.resolveDisplayLink()
           CatchUpItem(
-              id = it.id().hashCode().toLong(),
-              title = it.title(),
+              id = it.id.hashCode().toLong(),
+              title = it.title,
               score = "⬆" to it.resolveScore(),
-              timestamp = it.datetime(),
-              author = it.accountUrl(),
+              timestamp = it.datetime,
+              author = it.accountUrl,
               itemClickUrl = it.resolveClickLink(),
               imageInfo = ImageInfo(
                   resolvedLink,
@@ -140,8 +141,8 @@ abstract class ImgurModule {
     @JvmStatic
     internal fun provideImgurMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(ImgurAdapterFactory.create())
           .add(Wrapped.ADAPTER_FACTORY)
+          .add(MoshiSerializableFactory.getInstance())
           .add(Instant::class.java, EpochInstantJsonAdapter())
           .build()
     }

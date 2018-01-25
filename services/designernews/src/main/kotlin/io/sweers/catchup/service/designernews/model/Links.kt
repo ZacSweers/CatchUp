@@ -16,24 +16,10 @@
 
 package io.sweers.catchup.service.designernews.model
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 
-@AutoValue
-abstract class Links {
-
-  abstract fun user(): String
-
-  abstract fun comments(): List<String>
-
-  abstract fun upvotes(): List<String>
-
-  abstract fun downvotes(): List<String>
-
-  companion object {
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Links> = AutoValue_Links.MoshiJsonAdapter(moshi)
-  }
-}
+@MoshiSerializable
+data class Links(val user: String,
+    val comments: List<String>,
+    val upvotes: List<String>,
+    val downvotes: List<String>)

@@ -129,7 +129,7 @@ abstract class RedditModule {
     @JvmStatic
     internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
       return upstreamMoshi.newBuilder()
-          .add(MoshiSerializableFactory.INSTANCE)
+          .add(MoshiSerializableFactory.getInstance())
           .add(RedditObjectFactory.INSTANCE)
           .add(Instant::class.java, EpochInstantJsonAdapter())
           .build()

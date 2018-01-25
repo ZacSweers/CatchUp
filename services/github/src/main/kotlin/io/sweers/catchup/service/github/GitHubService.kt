@@ -64,10 +64,9 @@ internal class GitHubService @Inject constructor(
   override fun meta() = serviceMeta
 
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
-    val query = SearchQuery.builder()
-        .createdSince(TrendingTimespan.WEEK.createdSince())
-        .minStars(50)
-        .build()
+    val query = SearchQuery(
+        createdSince = TrendingTimespan.WEEK.createdSince(),
+        minStars = 50)
         .toString()
 
     val searchQuery = apolloClient.query(GitHubSearchQuery(query,

@@ -33,6 +33,7 @@ apply plugin: 'com.apollographql.android'
 apply plugin: "net.ltgt.errorprone"
 apply plugin: 'com.bugsnag.android.gradle'
 apply plugin: 'com.github.triplet.play'
+apply from: rootProject.file('gradle/config-kotlin-sources.gradle')
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
@@ -75,18 +76,6 @@ android {
       keyPassword getPropertyOrEmpty("catchup_signing_key_password")
       v2SigningEnabled true
     }
-  }
-  sourceSets {
-    main.java.srcDirs += 'src/main/kotlin'
-    debug.java.srcDirs += 'src/debug/kotlin'
-    release.java.srcDirs += 'src/release/kotlin'
-    test.java.srcDirs += 'src/test/kotlin'
-
-    // For kapt
-    main.java.srcDirs += [file("$buildDir/generated/source/kapt/main")]
-    debug.java.srcDirs += [file("$buildDir/generated/source/kapt/debug")]
-    release.java.srcDirs += [file("$buildDir/generated/source/kapt/release")]
-    test.java.srcDirs += [file("$buildDir/generated/source/kapt/test")]
   }
   packagingOptions {
     exclude 'META-INF/LICENSE'
@@ -420,6 +409,10 @@ dependencies {
   implementation deps.kotlin.stdlib.core
   implementation deps.kotlin.stdlib.jdk7
 
+  // MoshKt
+  kapt project(':tooling:moshkt:compiler')
+  implementation project(':tooling:moshkt:api')
+
   // Firebase
   implementation deps.android.firebase.core
   implementation deps.android.firebase.config
@@ -494,20 +487,8 @@ dependencies {
   implementation deps.dagger.runtime
   implementation deps.dagger.android.runtime
 
-  // Inspector
-  compileOnly deps.inspector.factoryCompiler.compileOnly.annotations
-  compileOnly deps.inspector.apt.extensions.android
-  compileOnly deps.inspector.apt.extensions.nullability
-  kapt deps.inspector.apt.extensions.autovalue
-  kapt deps.inspector.apt.compiler
-  kapt deps.inspector.factoryCompiler.apt
+  // Inspector exposed for dagger
   implementation deps.inspector.core
-
-  // AutoValue
-  compileOnly deps.auto.value.compileOnly.annotations
-  compileOnly deps.auto.value.extensions.moshi.compileOnly.annotations
-  kapt deps.auto.value.apt.core
-  kapt deps.auto.value.extensions.moshi.apt.core
 
   // Conductor
   implementation deps.conductor.core

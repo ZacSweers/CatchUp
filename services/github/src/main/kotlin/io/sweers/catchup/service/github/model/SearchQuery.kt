@@ -16,44 +16,24 @@
 
 package io.sweers.catchup.service.github.model
 
-import com.google.auto.value.AutoValue
 import org.threeten.bp.LocalDate
-
 import org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE
 
-@AutoValue
-internal abstract class SearchQuery {
-
-  abstract fun createdSince(): LocalDate?
-
-  abstract fun minStars(): Int
+internal data class SearchQuery(val createdSince: LocalDate?, val minStars: Int) {
 
   override fun toString(): String {
     // Returning null here is not ideal, but it lets retrofit drop the query param altogether.
     val builder = StringBuilder()
-    if (createdSince() != null) {
+    if (createdSince != null) {
       builder.append("created:>=")
-          .append(ISO_LOCAL_DATE.format(createdSince()!!))
+          .append(ISO_LOCAL_DATE.format(createdSince))
           .append(' ')
     }
-    if (minStars() != 0) {
+    if (minStars != 0) {
       builder.append("stars:>=")
-          .append(minStars())
+          .append(minStars)
     }
     return builder.toString()
         .trim { it <= ' ' }
-  }
-
-  @AutoValue.Builder
-  abstract class Builder {
-    abstract fun createdSince(createdSince: LocalDate): Builder
-
-    abstract fun minStars(minStars: Int): Builder
-
-    abstract fun build(): SearchQuery
-  }
-
-  companion object {
-    fun builder(): Builder = AutoValue_SearchQuery.Builder()
   }
 }

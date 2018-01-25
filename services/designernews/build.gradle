@@ -17,6 +17,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'org.jetbrains.kotlin.kapt'
+apply from: rootProject.file('gradle/config-kotlin-sources.gradle')
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
@@ -29,18 +30,6 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
-  }
-  sourceSets {
-    main.java.srcDirs += 'src/main/kotlin'
-    debug.java.srcDirs += 'src/debug/kotlin'
-    release.java.srcDirs += 'src/release/kotlin'
-    test.java.srcDirs += 'src/test/kotlin'
-
-    // For kapt
-    main.java.srcDirs += [file("$buildDir/generated/source/kapt/main")]
-    debug.java.srcDirs += [file("$buildDir/generated/source/kapt/debug")]
-    release.java.srcDirs += [file("$buildDir/generated/source/kapt/release")]
-    test.java.srcDirs += [file("$buildDir/generated/source/kapt/test")]
   }
   lintOptions {
     lintConfig file("lint.xml")
@@ -61,16 +50,11 @@ kapt {
 }
 
 dependencies {
-  api project(':service-api')
-  implementation project(':util')
-
-  compileOnly deps.auto.value.compileOnly.annotations
-  compileOnly deps.auto.value.extensions.moshi.compileOnly.annotations
+  kapt project(':tooling:moshkt:compiler')
   kapt deps.dagger.apt.compiler
-  kapt deps.auto.value.apt.core
-  kapt deps.auto.value.extensions.moshi.apt.core
-  kapt deps.auto.value.extensions.redacted.apt.core
 
+  implementation project(':tooling:moshkt:api')
+  implementation project(':util')
   implementation deps.misc.okio
   implementation deps.misc.moshi
   implementation deps.retrofit.core
@@ -79,6 +63,7 @@ dependencies {
   implementation deps.okhttp.core
   implementation deps.misc.moshiLazyAdapters
 
+  api project(':service-api')
   api deps.android.support.annotations
   api deps.dagger.runtime
   api deps.misc.lazythreeten

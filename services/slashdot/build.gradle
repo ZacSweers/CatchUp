@@ -17,6 +17,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'org.jetbrains.kotlin.kapt'
+apply from: rootProject.file('gradle/config-kotlin-sources.gradle')
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
@@ -29,18 +30,6 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
-  }
-  sourceSets {
-    main.java.srcDirs += 'src/main/kotlin'
-    debug.java.srcDirs += 'src/debug/kotlin'
-    release.java.srcDirs += 'src/release/kotlin'
-    test.java.srcDirs += 'src/test/kotlin'
-
-    // For kapt
-    main.java.srcDirs += [file("$buildDir/generated/source/kapt/main")]
-    debug.java.srcDirs += [file("$buildDir/generated/source/kapt/debug")]
-    release.java.srcDirs += [file("$buildDir/generated/source/kapt/release")]
-    test.java.srcDirs += [file("$buildDir/generated/source/kapt/test")]
   }
   lintOptions {
     lintConfig file("lint.xml")
@@ -61,22 +50,21 @@ kapt {
 }
 
 dependencies {
-  api project(':service-api')
-  implementation project(':util')
-
   kapt deps.dagger.apt.compiler
   kapt deps.tikxml.apt
 
-  implementation deps.tikxml.annotation
-  implementation deps.tikxml.core
-  api deps.tikxml.htmlEscape
-  implementation deps.tikxml.retrofit
+  implementation project(':util')
   implementation deps.okhttp.core
   implementation deps.retrofit.core
   implementation deps.retrofit.rxJava2
+  implementation deps.tikxml.annotation
+  implementation deps.tikxml.core
+  implementation deps.tikxml.retrofit
 
+  api project(':service-api')
   api deps.android.support.annotations
   api deps.dagger.runtime
   api deps.misc.lazythreeten
   api deps.rx.java2
+  api deps.tikxml.htmlEscape
 }

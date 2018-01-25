@@ -203,6 +203,14 @@ private fun TypeName.fixTypes(): TypeName {
         this == java.util.Map::class.java.asClassName() -> Map::class.asTypeName()
         this == java.lang.Object::class.java.asClassName() -> ANY
         this == java.lang.Void::class.java.asClassName() -> UNIT
+        this == java.lang.Boolean::class.java.asClassName() -> BOOLEAN
+        this == java.lang.Byte::class.java.asClassName() -> BYTE
+        this == java.lang.Short::class.java.asClassName() -> SHORT
+        this == java.lang.Integer::class.java.asClassName() -> INT
+        this == java.lang.Long::class.java.asClassName() -> LONG
+        this == java.lang.Character::class.java.asClassName() -> CHAR
+        this == java.lang.Float::class.java.asClassName() -> FLOAT
+        this == java.lang.Double::class.java.asClassName() -> DOUBLE
         else -> this
       }
     }

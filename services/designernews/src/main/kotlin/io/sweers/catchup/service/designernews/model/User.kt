@@ -16,37 +16,23 @@
 
 package io.sweers.catchup.service.designernews.model
 
-import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 
 /**
  * Models a Designer News User
  */
-@AutoValue
-internal abstract class User {
-
-  @Json(name = "cover_photo_url") abstract fun coverPhotoUrl(): String
-
-  @Json(name = "display_name") abstract fun displayName(): String
-
-  @Json(name = "first_name") abstract fun firstName(): String
-
-  abstract fun id(): Long
-
-  abstract fun job(): String
-
-  @Json(name = "last_name") abstract fun lastName(): String
-
-  @Json(name = "portrait_url") abstract fun portraitUrl(): String
+@MoshiSerializable
+internal data class User(@Json(name = "cover_photo_url") val coverPhotoUrl: String,
+    @Json(name = "display_name") val displayName: String,
+    @Json(name = "first_name") val firstName: String,
+    val id: Long,
+    val job: String,
+    @Json(name = "last_name") val lastName: String,
+    @Json(name = "portrait_url") val portraitUrl: String) {
 
   companion object {
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<User> = AutoValue_User.MoshiJsonAdapter(moshi)
-
-    val NONE: User = AutoValue_User(
+    val NONE: User = User(
         "",
         "",
         "",

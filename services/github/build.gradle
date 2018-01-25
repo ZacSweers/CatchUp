@@ -18,6 +18,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'org.jetbrains.kotlin.kapt'
 apply plugin: 'com.apollographql.android'
+apply from: rootProject.file('gradle/config-kotlin-sources.gradle')
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
@@ -30,18 +31,6 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
-  }
-  sourceSets {
-    main.java.srcDirs += 'src/main/kotlin'
-    debug.java.srcDirs += 'src/debug/kotlin'
-    release.java.srcDirs += 'src/release/kotlin'
-    test.java.srcDirs += 'src/test/kotlin'
-
-    // For kapt
-    main.java.srcDirs += [file("$buildDir/generated/source/kapt/main")]
-    debug.java.srcDirs += [file("$buildDir/generated/source/kapt/debug")]
-    release.java.srcDirs += [file("$buildDir/generated/source/kapt/release")]
-    test.java.srcDirs += [file("$buildDir/generated/source/kapt/test")]
   }
   lintOptions {
     lintConfig file("lint.xml")
@@ -69,23 +58,17 @@ apollo {
 }
 
 dependencies {
-  api project(':service-api')
+  kapt deps.dagger.apt.compiler
 
   implementation project(':gemoji')
   implementation project(':util')
-
-  compileOnly deps.auto.value.compileOnly.annotations
-  compileOnly deps.auto.value.extensions.moshi.compileOnly.annotations
-  kapt deps.dagger.apt.compiler
-  kapt deps.auto.value.apt.core
-  kapt deps.auto.value.extensions.moshi.apt.core
-  kapt deps.auto.value.extensions.redacted.apt.core
 
   // Apollo
   implementation deps.apollo.runtime
   implementation deps.apollo.rx2Support
   implementation deps.apollo.androidSupport
 
+  api project(':service-api')
   api deps.android.support.annotations
   api deps.dagger.runtime
   api deps.misc.lazythreeten

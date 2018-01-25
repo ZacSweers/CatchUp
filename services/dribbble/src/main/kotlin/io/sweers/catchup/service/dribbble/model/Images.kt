@@ -16,33 +16,23 @@
 
 package io.sweers.catchup.service.dribbble.model
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 
 /**
  * Models links to the various quality of images of a shot.
  */
-@AutoValue
-internal abstract class Images {
+@MoshiSerializable
+internal data class Images(val hidpi: String?,
+    val normal: String,
+    val teaser: String) {
 
-  abstract fun hidpi(): String?
+  fun best(): String = hidpi ?: normal
 
-  abstract fun normal(): String
-
-  abstract fun teaser(): String
-
-  fun best(): String = hidpi() ?: normal()
-
-  fun bestSize(): Pair<Int, Int> = hidpi()?.let { TWO_X_IMAGE_SIZE } ?: NORMAL_IMAGE_SIZE
+  fun bestSize(): Pair<Int, Int> = hidpi?.let { TWO_X_IMAGE_SIZE } ?: NORMAL_IMAGE_SIZE
 
   companion object {
-
     private val NORMAL_IMAGE_SIZE = 400 to 300
     private val TWO_X_IMAGE_SIZE = 800 to 600
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Images> = AutoValue_Images.MoshiJsonAdapter(moshi)
   }
 
 }

@@ -36,6 +36,7 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
+import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -63,19 +64,19 @@ internal class DribbbleService @Inject constructor(
         .flattenAsObservable { it }
         .map {
           CatchUpItem(
-              id = it.id(),
+              id = it.id,
               title = "",
-              score = "+" to it.likesCount().toInt(),
-              timestamp = it.createdAt(),
-              author = "/u/" + it.user().name(),
+              score = "+" to it.likesCount.toInt(),
+              timestamp = it.createdAt,
+              author = "/u/" + it.user.name,
               source = null,
-              commentCount = it.commentsCount().toInt(),
+              commentCount = it.commentsCount.toInt(),
               tag = null,
-              itemClickUrl = it.htmlUrl(),
+              itemClickUrl = it.htmlUrl,
               imageInfo = ImageInfo(
-                  it.images().best(),
-                  it.animated(),
-                  it.images().bestSize()
+                  it.images.best(),
+                  it.animated,
+                  it.images.bestSize()
               )
           )
         }
@@ -141,7 +142,7 @@ abstract class DribbbleModule {
     @JvmStatic
     internal fun provideDribbbleMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(DribbbleAdapterFactory.create())
+          .add(MoshiSerializableFactory.getInstance())
           .add(Instant::class.java, ISO8601InstantAdapter())
           .build()
     }

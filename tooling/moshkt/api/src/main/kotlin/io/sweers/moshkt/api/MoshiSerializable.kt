@@ -3,6 +3,7 @@ package io.sweers.moshkt.api
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import java.lang.ref.WeakReference
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Type
@@ -91,6 +92,9 @@ class MoshiSerializableFactory : JsonAdapter.Factory {
   }
 
   companion object {
-    val INSTANCE = MoshiSerializableFactory()
+    private var instance: WeakReference<MoshiSerializableFactory>? = null
+
+    fun getInstance() =
+        instance?.get() ?: MoshiSerializableFactory().also { instance = WeakReference(it) }
   }
 }

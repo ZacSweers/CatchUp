@@ -16,37 +16,18 @@
 
 package io.sweers.catchup.service.dribbble.model
 
-import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 
 /**
  * Models a Dribbble team.
  */
-@AutoValue
-internal abstract class Team {
-
-  @Json(name = "avatar_url") abstract fun avatarUrl(): String
-
-  abstract fun bio(): String
-
-  @Json(name = "html_url") abstract fun htmlUrl(): String
-
-  abstract fun id(): Long
-
-  abstract fun links(): Map<String, String>
-
-  abstract fun location(): String?
-
-  abstract fun name(): String
-
-  abstract fun username(): String
-
-  companion object {
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Team> =
-        AutoValue_Team.MoshiJsonAdapter(moshi).nullSafe()
-  }
-}
+@MoshiSerializable
+internal data class Team(@Json(name = "avatar_url") val avatarUrl: String,
+    val bio: String,
+    @Json(name = "html_url") val htmlUrl: String,
+    val id: Long,
+    val links: Map<String, String>,
+    val location: String?,
+    val name: String,
+    val username: String)

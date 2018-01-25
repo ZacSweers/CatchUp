@@ -169,7 +169,7 @@ abstract class MediumModule {
       return moshi.newBuilder()
           .add(Wrapped.ADAPTER_FACTORY)
           .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
-          .add(MoshiSerializableFactory.INSTANCE)
+          .add(MoshiSerializableFactory.getInstance())
           .build()
     }
 

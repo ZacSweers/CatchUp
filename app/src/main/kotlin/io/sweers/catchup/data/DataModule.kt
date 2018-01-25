@@ -31,6 +31,7 @@ import io.sweers.catchup.gemoji.GemojiModule
 import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
+import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -51,8 +52,8 @@ abstract class DataModule {
   @Module
   companion object {
 
-    private val HTTP_RESPONSE_CACHE = (10 * 1024 * 1024).toLong()
-    private val HTTP_TIMEOUT_S = 30
+    private const val HTTP_RESPONSE_CACHE = (10 * 1024 * 1024).toLong()
+    private const val HTTP_TIMEOUT_S = 30
 
     @Provides
     @JvmStatic
@@ -91,7 +92,8 @@ abstract class DataModule {
     @JvmStatic
     @Singleton
     internal fun provideMoshi(): Moshi {
-      return Moshi.Builder().add(ModelArbiter.createMoshiAdapterFactory())
+      return Moshi.Builder()
+          .add(MoshiSerializableFactory.getInstance())
           .add(UnescapeJsonAdapter.FACTORY)
           .add(ArrayMapJsonAdapter.FACTORY)
           .add(ArrayCollectionJsonAdapter.FACTORY)

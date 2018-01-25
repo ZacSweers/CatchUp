@@ -16,6 +16,7 @@
 
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'org.jetbrains.kotlin.kapt'
+apply from: rootProject.file('gradle/config-kotlin-sources.gradle')
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"

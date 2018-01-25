@@ -25,7 +25,6 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
-import io.sweers.moshkt.api.MoshiSerializableFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -37,6 +36,7 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
+import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -138,7 +138,7 @@ abstract class ProductHuntModule {
     @JvmStatic
     internal fun provideProductHuntMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(MoshiSerializableFactory.INSTANCE)
+          .add(MoshiSerializableFactory.getInstance())
           .add(Instant::class.java, ISO8601InstantAdapter())
           .add(Wrapped.ADAPTER_FACTORY)
           .build()

@@ -106,12 +106,12 @@ class SmmryController : ButterKnifeController {
 
   companion object {
 
-    private val ID_TITLE = "smmrycontroller.title"
-    private val ID_ID = "smmrycontroller.id"
-    private val ID_VALUE = "smmrycontroller.value"
-    private val ID_TYPE = "smmrycontroller.type"
-    private val ID_ACCENT = "smmrycontroller.accent"
-    private val ID_LOADED = "smmrycontroller.loaded"
+    private const val ID_TITLE = "smmrycontroller.title"
+    private const val ID_ID = "smmrycontroller.id"
+    private const val ID_VALUE = "smmrycontroller.value"
+    private const val ID_TYPE = "smmrycontroller.type"
+    private const val ID_ACCENT = "smmrycontroller.accent"
+    private const val ID_LOADED = "smmrycontroller.loaded"
 
     fun <T> showFor(controller: Controller,
         service: Service,
@@ -128,23 +128,33 @@ class SmmryController : ButterKnifeController {
     }
   }
 
-  @Inject lateinit var smmryService: SmmryService
+  @Inject
+  lateinit var smmryService: SmmryService
   @field:ForSmmry
-  @Inject lateinit var moshi: Moshi
-  @Inject lateinit var smmryDao: SmmryDao
+  @Inject
+  lateinit var moshi: Moshi
+  @Inject
+  lateinit var smmryDao: SmmryDao
 
-  @BindView(R.id.loading_view) lateinit var loadingView: View
-  @BindView(R.id.smmry_loading) lateinit var lottieView: LottieAnimationView
-  @BindView(R.id.content_container) lateinit var content: NestedScrollView
-  @BindView(R.id.tags) lateinit var tags: TextView
-  @BindView(R.id.title) lateinit var title: TextView
-  @BindView(R.id.summary) lateinit var summary: TextView
+  @BindView(R.id.loading_view)
+  lateinit var loadingView: View
+  @BindView(R.id.smmry_loading)
+  lateinit var lottieView: LottieAnimationView
+  @BindView(R.id.content_container)
+  lateinit var content: NestedScrollView
+  @BindView(R.id.tags)
+  lateinit var tags: TextView
+  @BindView(R.id.title)
+  lateinit var title: TextView
+  @BindView(R.id.summary)
+  lateinit var summary: TextView
   @BindView(R.id.drag_dismiss_layout)
   lateinit var dragDismissFrameLayout: ElasticDragDismissFrameLayout
 
   private lateinit var id: String
   private lateinit var info: SummarizationInfo
-  @ColorInt private var accentColor: Int = 0
+  @ColorInt
+  private var accentColor: Int = 0
   private lateinit var inputTitle: String
   private var alreadyLoaded = false
 
@@ -227,7 +237,7 @@ class SmmryController : ButterKnifeController {
                 is IncorrectVariables -> "Smmry invalid input - ${smmryResponse.message}"
                 is ApiRejection -> "Smmry API error - ${smmryResponse.message}"
                 is SummarizationError -> "Smmry summarization error - ${smmryResponse.message}"
-                is UnknownErrorCode -> "Unknown error :("
+                UnknownErrorCode -> "Unknown error :("
                 else -> TODO("Placeholder because I've already checked for this")
               }
               Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
@@ -270,7 +280,7 @@ class SmmryController : ButterKnifeController {
       NONE -> Single.just(Success.just(inputTitle, info.value))
     }
     return summarizer.doOnSuccess {
-      if (it !is UnknownErrorCode) {
+      if (it != UnknownErrorCode) {
         Completable
             .fromAction {
               smmryDao.putItem(SmmryStorageEntry(id,
@@ -287,10 +297,10 @@ class SmmryController : ButterKnifeController {
   }
 
   private fun showSummary(smmry: Success) {
-    if (smmry.keywords() != null) {
+    if (smmry.keywords != null) {
       tags.setTextColor(accentColor)
       tags.text = TextUtils.join("  —  ",
-          Observable.fromIterable(smmry.keywords()!!)
+          Observable.fromIterable(smmry.keywords)
               .map { s ->
                 s.trim { it <= ' ' }
                     .toUpperCase()
@@ -301,12 +311,12 @@ class SmmryController : ButterKnifeController {
     } else {
       tags.hide()
     }
-    var smmryTitle = smmry.title()
+    var smmryTitle = smmry.title
     if (TextUtils.isEmpty(smmryTitle)) {
       smmryTitle = inputTitle
     }
     title.text = smmryTitle
-    summary.text = smmry.content()
+    summary.text = smmry.content
         .replace("[BREAK]", "\n\n")
     if (loadingView.isVisible()) {
       loadingView.animate()

@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.data.smmry.model
 
-import com.google.auto.value.AutoValue
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
@@ -24,6 +23,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import io.sweers.catchup.util.data.adapters.UnEscape
+import io.sweers.moshkt.api.MoshiSerializable
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.lang.reflect.Type
@@ -44,37 +44,34 @@ data class SummarizationError(val message: String) : SmmryResponse()
 
 object UnknownErrorCode : SmmryResponse()
 
-@AutoValue
-abstract class Success : SmmryResponse() {
+@MoshiSerializable
+data class Success(
 
-  /**
-   * Contains the amount of characters returned
-   */
-  @Json(name = "sm_api_character_count") abstract fun characterCount(): String
+    /**
+     * Contains the amount of characters returned
+     */
+    @Json(name = "sm_api_character_count") val characterCount: String,
 
-  /**
-   * Contains the title when available
-   */
-  @Json(name = "sm_api_title")
-  @UnEscape abstract fun title(): String
+    /**
+     * Contains the title when available
+     */
+    @Json(name = "sm_api_title")
+    @UnEscape val title: String,
 
-  /**
-   * Contains the summary
-   */
-  @Json(name = "sm_api_content") abstract fun content(): String
+    /**
+     * Contains the summary
+     */
+    @Json(name = "sm_api_content") val content: String,
 
-  /**
-   * Contains top ranked keywords in descending order
-   */
-  @Json(name = "sm_api_keyword_array") abstract fun keywords(): List<String>?
+    /**
+     * Contains top ranked keywords in descending order
+     */
+    @Json(name = "sm_api_keyword_array") val keywords: List<String>? = null) : SmmryResponse() {
 
   companion object {
 
     fun just(title: String, text: String): Success =
-        AutoValue_Success(text.length.toString(), title, text, null)
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<Success> = AutoValue_Success.MoshiJsonAdapter(moshi)
+        Success(text.length.toString(), title, text, null)
   }
 }
 
@@ -109,7 +106,7 @@ class SmmryResponseFactory : JsonAdapter.Factory {
       @Throws(IOException::class)
       override fun toJson(writer: JsonWriter, value: SmmryResponse?) {
         when (value) {
-          is UnknownErrorCode -> throw UnsupportedOperationException("Cannot serialize unknowns.")
+          UnknownErrorCode -> throw UnsupportedOperationException("Cannot serialize unknowns.")
           is Success -> {
             moshi.adapter(Success::class.java).toJson(writer, value)
           }

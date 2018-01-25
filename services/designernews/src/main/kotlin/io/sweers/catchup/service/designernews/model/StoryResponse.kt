@@ -16,22 +16,10 @@
 
 package io.sweers.catchup.service.designernews.model
 
-import com.google.auto.value.AutoValue
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import io.sweers.moshkt.api.MoshiSerializable
 
 /**
  * Models a response from the Designer News API that returns a single story
  */
-@AutoValue
-internal abstract class StoryResponse {
-
-  abstract fun story(): Story
-
-  companion object {
-
-    @JvmStatic
-    fun jsonAdapter(moshi: Moshi): JsonAdapter<StoryResponse> =
-        AutoValue_StoryResponse.MoshiJsonAdapter(moshi)
-  }
-}
+@MoshiSerializable
+internal data class StoryResponse(val story: Story)
