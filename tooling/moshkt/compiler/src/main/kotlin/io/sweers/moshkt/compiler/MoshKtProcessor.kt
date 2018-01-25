@@ -392,7 +392,7 @@ private data class Adapter(
                         .joinToString(",\n") { "${it.name} = ${it.name}" },
                     propertiesWithDefaults
                         .joinToString(",\n") {
-                          "${it.name} = if (${it.name} != null) { ${it.name} } else { ${it.name} }"
+                          "${it.name} = if (${it.name} != null) { ${it.name} } else { it.${it.name} }"
                         })
               }
             }
