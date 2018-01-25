@@ -385,14 +385,14 @@ private data class Adapter(
                     originalTypeName,
                     propertyList.joinToString(",\n") { "${it.name} = ${it.name}" })
               } else {
-                addStatement("return %T(%L).let { it.copy(%L) }",
+                addStatement("return %T(%L)\n.let {\n  it.copy(%L)\n}",
                     originalTypeName,
                     propertyList
                         .filter { !it.hasDefault }
                         .joinToString(",\n") { "${it.name} = ${it.name}" },
                     propertiesWithDefaults
-                        .joinToString(",\n") {
-                          "${it.name} = if (${it.name} != null) { ${it.name} } else { it.${it.name} }"
+                        .joinToString(",\n      ") {
+                          "${it.name} = ${it.name} ?: it.${it.name}"
                         })
               }
             }
