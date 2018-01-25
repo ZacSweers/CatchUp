@@ -25,3 +25,4 @@ Things that are not implemented yet:
   * Generics support
   * Leveraging default values on params where possible. This might not be feasible though.
   * Custom constructors
+  * JsonQualifier annotations
