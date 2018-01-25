@@ -307,8 +307,9 @@ private data class Adapter(
     val packageName: String,
     val propertyList: List<Property>,
     val originalElement: Element,
-    val name: String = fqClassName.substringAfter(packageName).replace('.',
-        '_').removePrefix("_"),
+    val name: String = fqClassName.substringAfter(packageName)
+        .replace('.', '_')
+        .removePrefix("_"),
     val hasCompanionObject: Boolean,
     val visibility: Visibility) {
   fun generate(adapterName: String, fileSpecBuilder: FileSpec.Builder) {
