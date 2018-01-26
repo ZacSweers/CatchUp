@@ -15,4 +15,12 @@ data class Foo(
     val hasChildren: Boolean = false,
     val favoriteFood: String? = null,
     val favoriteDrink: String? = "Water"
+
+    /*
+     * TODO not supported yet
+     * IntArray is seen as Array<Int>
+     * Both need to specify their generic in the adapter lookup
+     */
+//    val favoriteThreeNumbers: IntArray,
+//    val favoriteArrayValues: Array<String>
 )
