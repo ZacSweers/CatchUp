@@ -426,17 +426,16 @@ private data class Adapter(
               if (propertiesWithDefaults.isEmpty()) {
                 addStatement("return %T(%L)",
                     originalTypeName,
-                    propertyList
-                        .joinToString(",\n") { "${allocatedNames[it]} = ${allocatedNames[it]}" })
+                    propertyList.joinToString(",\n") { "${it.name} = ${allocatedNames[it]}" })
               } else {
                 addStatement("return %T(%L).let {\n  it.copy(%L)\n}",
                     originalTypeName,
                     propertyList
                         .filter { !it.hasDefault }
-                        .joinToString(",\n") { "${allocatedNames[it]} = ${allocatedNames[it]}" },
+                        .joinToString(",\n") { "${it.name} = ${allocatedNames[it]}" },
                     propertiesWithDefaults
                         .joinToString(",\n      ") {
-                          "${allocatedNames[it]} = ${allocatedNames[it]} ?: it.${allocatedNames[it]}"
+                          "${it.name} = ${allocatedNames[it]} ?: it.${allocatedNames[it]}"
                         })
               }
             }
