@@ -16,6 +16,7 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.KModifier.OVERRIDE
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.LONG
+import com.squareup.kotlinpoet.NameAllocator
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.PropertySpec
@@ -140,10 +141,6 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
               .first()
               .parameters
               .find { it.simpleName.toString() == paramName }!!
-          if (paramName == "commentsCount"
-              && actualElement.getAnnotation(Json::class.java) == null) {
-            throw RuntimeException("Wat")
-          }
           val serializedName = actualElement.getAnnotation(Json::class.java)?.name
               ?: paramName
 
@@ -261,6 +258,29 @@ private fun primitiveDefaultFor(typeName: TypeName): String {
   }
 }
 
+/**
+ * Creates a joined string representation of simplified typename names.
+ */
+private fun List<TypeName>.simplifiedNames(): String {
+  return joinToString("") { it.simplifiedName() }
+}
+
+/**
+ * Creates a simplified string representation of a TypeName's name
+ */
+private fun TypeName.simplifiedName(): String {
+  return when (this) {
+    is ClassName -> simpleName().decapitalize()
+    is ParameterizedTypeName -> {
+      rawType.simpleName().decapitalize() + if (typeArguments.isEmpty()) "" else "__" + typeArguments.simplifiedNames()
+    }
+    is WildcardTypeName -> "wildcard__" + (lowerBounds + upperBounds).simplifiedNames()
+    is TypeVariableName -> name.decapitalize() + if (bounds.isEmpty()) "" else "__" + bounds.simplifiedNames()
+  // Shouldn't happen
+    else -> toString().decapitalize()
+  }
+}
+
 private fun TypeName.makeType(): CodeBlock {
   val targetType = this.asNonNullable()
   return when (targetType) {
@@ -313,16 +333,38 @@ private data class Adapter(
     val hasCompanionObject: Boolean,
     val visibility: Visibility) {
   fun generate(adapterName: String, fileSpecBuilder: FileSpec.Builder) {
+    val nameAllocator = NameAllocator()
+    fun String.allocate() = nameAllocator.newName(this)
+
     val originalTypeName = originalElement.asType().asTypeName() as ClassName
-    val moshiParam = ParameterSpec.builder("moshi", Moshi::class.asClassName()).build()
-    val moshiProperty = PropertySpec.builder("moshi", Moshi::class.asClassName(), PRIVATE)
-        .initializer("%N", moshiParam)
-        .build()
-    val reader = ParameterSpec.builder("reader", JsonReader::class.asClassName()).build()
-    val writer = ParameterSpec.builder("writer", JsonWriter::class.asClassName()).build()
-    val value = ParameterSpec.builder("value", originalTypeName.asNullable()).build()
+    val moshiName = "moshi".allocate()
+    val moshiParam = ParameterSpec.builder(moshiName, Moshi::class.asClassName()).build()
+    val reader = ParameterSpec.builder("reader".allocate(),
+        JsonReader::class.asClassName()).build()
+    val writer = ParameterSpec.builder("writer".allocate(),
+        JsonWriter::class.asClassName()).build()
+    val value = ParameterSpec.builder("value".allocate(),
+        originalTypeName.asNullable()).build()
     val jsonAdapterTypeName = ParameterizedTypeName.get(JsonAdapter::class.asClassName(),
         originalTypeName)
+
+    // Create fields
+    val adapterProperties = propertyList
+        .map { it.typeName }
+        .distinct()
+        .associate { typeName ->
+          val propertyName = "${typeName.simplifiedName().allocate()}_Adapter"
+          val adapterTypeName = ParameterizedTypeName.get(JsonAdapter::class.asTypeName(), typeName)
+          typeName to PropertySpec.builder(propertyName, adapterTypeName, PRIVATE)
+              .initializer("%N.adapter%L(%L)",
+                  moshiParam,
+                  if (typeName is ClassName) "" else CodeBlock.of("<%T>", typeName),
+                  typeName.makeType())
+              .build()
+        }
+
+    val allocatedNames = propertyList.associate { it to it.name.allocate() }
+
     val adapter = TypeSpec.classBuilder(adapterName)
         .superclass(jsonAdapterTypeName)
         .apply {
@@ -331,10 +373,10 @@ private data class Adapter(
             addModifiers(KModifier.INTERNAL)
           }
         }
-        .addProperty(moshiProperty)
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter(moshiParam)
             .build())
+        .addProperties(adapterProperties.values)
         .addFunction(FunSpec.builder("fromJson")
             .addModifiers(OVERRIDE)
             .addParameter(reader)
@@ -344,16 +386,20 @@ private data class Adapter(
             .addStatement("%N.nextNull<%T>()", reader, ANY)
             .endControlFlow()
             .apply {
-              propertyList.forEach { param ->
-                if (param.nullable) {
-                  addStatement("var ${param.name}: %T = null", param.typeName)
-                } else if (param.hasDefault) {
-                  addStatement("var ${param.name}: %T = null", param.typeName.asNullable())
-                } else if (param.typeName.isPrimitive) {
-                  addStatement("var ${param.name} = %L",
-                      primitiveDefaultFor(param.typeName))
-                } else {
-                  addStatement("lateinit var ${param.name}: %T", param.typeName)
+              propertyList.forEach { prop ->
+                when {
+                  prop.nullable -> {
+                    addStatement("var ${allocatedNames[prop]}: %T = null", prop.typeName)
+                  }
+                  prop.hasDefault -> {
+                    addStatement("var ${allocatedNames[prop]}: %T = null",
+                        prop.typeName.asNullable())
+                  }
+                  prop.typeName.isPrimitive -> {
+                    addStatement("var ${allocatedNames[prop]} = %L",
+                        primitiveDefaultFor(prop.typeName))
+                  }
+                  else -> addStatement("lateinit var ${allocatedNames[prop]}: %T", prop.typeName)
                 }
               }
             }
@@ -362,15 +408,12 @@ private data class Adapter(
             .beginControlFlow("while (%N.hasNext())", reader)
             .beginControlFlow("when (%N.nextName())", reader)
             .apply {
-              propertyList.forEach { param ->
-                // TODO we should probably track which ones are required and haven't been set instead of using lateinit
-                val possibleBangs = if (param.nullable) "" else "!!"
-                addStatement("%S -> %L = %N.adapter%L(%L).fromJson(%N)$possibleBangs",
-                    param.serializedName,
-                    param.name,
-                    moshiParam,
-                    if (param.typeName is ClassName) "" else CodeBlock.of("<%T>", param.typeName),
-                    param.typeName.makeType(),
+              propertyList.forEach { prop ->
+                val possibleBangs = if (prop.nullable) "" else "!!"
+                addStatement("%S -> %L = %N.fromJson(%N)$possibleBangs",
+                    prop.serializedName,
+                    prop.name,
+                    adapterProperties[prop.typeName]!!,
                     reader)
               }
             }
@@ -383,16 +426,17 @@ private data class Adapter(
               if (propertiesWithDefaults.isEmpty()) {
                 addStatement("return %T(%L)",
                     originalTypeName,
-                    propertyList.joinToString(",\n") { "${it.name} = ${it.name}" })
+                    propertyList
+                        .joinToString(",\n") { "${allocatedNames[it]} = ${allocatedNames[it]}" })
               } else {
                 addStatement("return %T(%L).let {\n  it.copy(%L)\n}",
                     originalTypeName,
                     propertyList
                         .filter { !it.hasDefault }
-                        .joinToString(",\n") { "${it.name} = ${it.name}" },
+                        .joinToString(",\n") { "${allocatedNames[it]} = ${allocatedNames[it]}" },
                     propertiesWithDefaults
                         .joinToString(",\n      ") {
-                          "${it.name} = ${it.name} ?: it.${it.name}"
+                          "${allocatedNames[it]} = ${allocatedNames[it]} ?: it.${allocatedNames[it]}"
                         })
               }
             }
@@ -407,19 +451,17 @@ private data class Adapter(
             .endControlFlow()
             .addStatement("%N.beginObject()", writer)
             .apply {
-              propertyList.forEach { param ->
-                if (param.nullable) {
-                  beginControlFlow("if (%N.%L != null)", value, param.name)
+              propertyList.forEach { prop ->
+                if (prop.nullable) {
+                  beginControlFlow("if (%N.%L != null)", value, prop.name)
                 }
-                addStatement("%N.name(%S)", writer, param.serializedName)
-                addStatement("%N.adapter%L(%L).toJson(%N, %N.%L)",
-                    moshiParam,
-                    if (param.typeName is ClassName) "" else CodeBlock.of("<%T>", param.typeName),
-                    param.typeName.makeType(),
+                addStatement("%N.name(%S)", writer, prop.serializedName)
+                addStatement("%N.toJson(%N, %N.%L)",
+                    adapterProperties[prop.typeName]!!,
                     writer,
                     value,
-                    param.name)
-                if (param.nullable) {
+                    prop.name)
+                if (prop.nullable) {
                   endControlFlow()
                 }
               }
