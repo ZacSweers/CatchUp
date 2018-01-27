@@ -435,7 +435,7 @@ private data class Adapter(
                         .joinToString(",\n") { "${it.name} = ${allocatedNames[it]}" },
                     propertiesWithDefaults
                         .joinToString(",\n      ") {
-                          "${it.name} = ${allocatedNames[it]} ?: it.${allocatedNames[it]}"
+                          "${it.name} = ${allocatedNames[it]} ?: it.${it.name}"
                         })
               }
             }
