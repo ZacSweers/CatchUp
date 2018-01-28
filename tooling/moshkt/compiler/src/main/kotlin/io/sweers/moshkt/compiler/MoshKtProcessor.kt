@@ -363,6 +363,8 @@ private data class Adapter(
               .build()
         }
 
+    // TODO in the fiture make these propertyspecs directly. Not reasonable right now because
+    // kotlinpoet only toString()'s it
     val allocatedNames = propertyList.associate { it to it.name.allocate() }
 
     val adapter = TypeSpec.classBuilder(adapterName)
