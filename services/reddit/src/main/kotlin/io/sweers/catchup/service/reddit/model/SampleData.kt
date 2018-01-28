@@ -14,5 +14,14 @@ data class Foo(
     val race: String?,
     val hasChildren: Boolean = false,
     val favoriteFood: String? = null,
-    val favoriteDrink: String? = "Water"
+    val favoriteDrink: String? = "Water",
+    val wildcardOut: List<out String> = emptyList(),
+    val wildcardIn: Array<in String>,
+    val any: List<*>,
+    val anyTwo: List<Any>,
+    val anyOut: List<out Any>,
+    val favoriteThreeNumbers: IntArray,
+    val favoriteArrayValues: Array<String>,
+    val favoriteNullableArrayValues: Array<String?>,
+    val nullableSetListMapArrayNullableIntWithDefault: Set<List<Map<String, Array<IntArray?>>>>? = null
 )

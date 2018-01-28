@@ -17,12 +17,12 @@ Things that are implemented:
   * Standard, parameterized, and wildcard types
   * Read/write
   * Delegation to moshi instance
+  * Caching of 
   * Companion object extension functions
   * Kotlin nullability
   * Default values (presence only, not actionable yet)
 
 Things that are not implemented yet:
   * Generics support
-  * Leveraging default values on params where possible. This might not be feasible though.
   * Custom constructors
   * JsonQualifier annotations
