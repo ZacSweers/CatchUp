@@ -2,6 +2,7 @@ package io.sweers.moshkt.compiler
 
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.ANY
+import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.BOOLEAN
 import com.squareup.kotlinpoet.BYTE
 import com.squareup.kotlinpoet.CHAR
@@ -13,6 +14,8 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.INT
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.KModifier.IN
+import com.squareup.kotlinpoet.KModifier.OUT
 import com.squareup.kotlinpoet.KModifier.OVERRIDE
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.LONG
@@ -24,7 +27,6 @@ import com.squareup.kotlinpoet.SHORT
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.TypeVariableName
-import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
@@ -46,14 +48,19 @@ import me.eugeniomarletti.kotlin.metadata.kotlinMetadata
 import me.eugeniomarletti.kotlin.metadata.visibility
 import me.eugeniomarletti.kotlin.processing.KotlinAbstractProcessor
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
+import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.serialization.ProtoBuf.Visibility
 import org.jetbrains.kotlin.serialization.ProtoBuf.Visibility.INTERNAL
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.ElementFilter
+import javax.lang.model.util.Elements
 import javax.tools.Diagnostic.Kind.ERROR
 
 /**
@@ -66,13 +73,6 @@ import javax.tools.Diagnostic.Kind.ERROR
  *
  * If you define a companion object, a jsonAdapter() extension function will be generated onto it.
  * If you don't want this though, you can use the runtime [MoshiSerializable] factory implementation.
- *
- * Things that are implemented:
- *   * Standard, parameterized, and wildcard types
- *
- * Things that are not implemented yet:
- *   * Generics support
- *   * Leveraging default values on params where possible. This might not be feasible though.
  */
 @AutoService(Processor::class)
 class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
@@ -150,10 +150,7 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
               serializedName = serializedName,
               hasDefault = valueParameter.declaresDefaultValue,
               nullable = nullable,
-              typeName = actualElement.asType()
-                  .asTypeName()
-                  .fixTypes()
-                  .let { if (nullable) it.asNullable() else it })
+              typeName = valueParameter.type.asTypeName(nameResolver, classProto::getTypeParameter))
         }
 
 
@@ -163,7 +160,8 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
         propertyList = parameters,
         originalElement = element,
         hasCompanionObject = hasCompanionObject,
-        visibility = classProto.visibility!!)
+        visibility = classProto.visibility!!,
+        elementUtils = elementUtils)
   }
 
   private fun errorMustBeDataClass(element: Element) {
@@ -185,49 +183,6 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
         .writeTo(generatedDir)
     return true
   }
-}
-
-private fun TypeName.fixTypes(): TypeName {
-  // TODO Would like to make this more elegant.... ¯\_(ツ)_/¯
-  // Not necessary though if we can properly read the type name off the class
-  val targetType = this
-  when (targetType) {
-    is ClassName -> {
-      return when {
-        this == java.lang.String::class.java.asClassName() -> String::class.asTypeName()
-        this == java.util.List::class.java.asClassName() -> List::class.asTypeName()
-        this == java.util.Set::class.java.asClassName() -> Set::class.asTypeName()
-        this == java.util.Map::class.java.asClassName() -> Map::class.asTypeName()
-        this == java.lang.Object::class.java.asClassName() -> ANY
-        this == java.lang.Void::class.java.asClassName() -> UNIT
-        this == java.lang.Boolean::class.java.asClassName() -> BOOLEAN
-        this == java.lang.Byte::class.java.asClassName() -> BYTE
-        this == java.lang.Short::class.java.asClassName() -> SHORT
-        this == java.lang.Integer::class.java.asClassName() -> INT
-        this == java.lang.Long::class.java.asClassName() -> LONG
-        this == java.lang.Character::class.java.asClassName() -> CHAR
-        this == java.lang.Float::class.java.asClassName() -> FLOAT
-        this == java.lang.Double::class.java.asClassName() -> DOUBLE
-        else -> this
-      }
-    }
-    is ParameterizedTypeName -> return ParameterizedTypeName.get(
-        targetType.rawType.fixTypes() as ClassName,
-        *(targetType.typeArguments.map { it.fixTypes() }.toTypedArray()))
-    is WildcardTypeName -> {
-      return when {
-        targetType.lowerBounds.isNotEmpty() -> {
-          WildcardTypeName.supertypeOf(targetType.lowerBounds[1].fixTypes())
-        }
-        targetType.upperBounds.isNotEmpty() -> {
-          WildcardTypeName.subtypeOf(targetType.upperBounds[0].fixTypes())
-        }
-        else -> throw IllegalArgumentException(
-            "Unrepresentable wildcard type. Cannot have more than one bound: " + targetType)
-      }
-    }
-  }
-  return this
 }
 
 private val TypeName.isPrimitive: Boolean
@@ -262,7 +217,7 @@ private fun primitiveDefaultFor(typeName: TypeName): String {
  * Creates a joined string representation of simplified typename names.
  */
 private fun List<TypeName>.simplifiedNames(): String {
-  return joinToString("") { it.simplifiedName() }
+  return joinToString("_") { it.simplifiedName() }
 }
 
 /**
@@ -281,36 +236,68 @@ private fun TypeName.simplifiedName(): String {
   }
 }
 
-private fun TypeName.makeType(): CodeBlock {
-  val targetType = this.asNonNullable()
-  return when (targetType) {
-    is ClassName -> CodeBlock.of("%T::class.java", targetType)
-    is ParameterizedTypeName -> CodeBlock.of(
-        "%T.newParameterizedType(%T::class.java, ${targetType.typeArguments
-            .joinToString(", ") { "%L" }})",
-        Types::class.asTypeName(),
-        targetType.rawType,
-        *(targetType.typeArguments.map { it.makeType() }.toTypedArray()))
+private fun ClassName.isClass(elementUtils: Elements): Boolean {
+  val fqcn = toString()
+  if (fqcn.startsWith("kotlin.collections.")) {
+    // These are special kotlin interfaces are only visible in kotlin, because they're replaced by
+    // the compiler with concrete java classes
+    return false
+  } else if (this == ARRAY) {
+    // This is a "fake" class and not visible to Elements
+    return true
+  }
+  return elementUtils.getTypeElement(fqcn).kind == ElementKind.INTERFACE
+}
+
+private fun TypeName.makeType(elementUtils: Elements): CodeBlock {
+  if (nullable) {
+    return asNonNullable().makeType(elementUtils)
+  }
+  return when (this) {
+    is ClassName -> CodeBlock.of("%T::class.java", this)
+    is ParameterizedTypeName -> {
+      // If it's a Class type, we have to specify the generics.
+      val rawTypeParameters = if (rawType.isClass(elementUtils)) {
+        CodeBlock.of(
+            typeArguments.joinTo(
+                buffer = StringBuilder(),
+                separator = ", ",
+                prefix = "<",
+                postfix = ">") { "%T" }
+                .toString(),
+            *(typeArguments.toTypedArray())
+        )
+      } else {
+        CodeBlock.of("")
+      }
+      CodeBlock.of(
+          "%T.newParameterizedType(%T%L::class.java, ${typeArguments
+              .joinToString(", ") { "%L" }})",
+          Types::class.asTypeName(),
+          rawType,
+          rawTypeParameters,
+          *(typeArguments.map { it.makeType(elementUtils) }.toTypedArray()))
+    }
     is WildcardTypeName -> {
       val target: TypeName
       val method: String
       when {
-        targetType.lowerBounds.size == 1 -> {
-          target = targetType.lowerBounds[0]
+        lowerBounds.size == 1 -> {
+          target = lowerBounds[0]
           method = "supertypeOf"
         }
-        targetType.upperBounds.size == 1 -> {
-          target = targetType.upperBounds[0]
+        upperBounds.size == 1 -> {
+          target = upperBounds[0]
           method = "subtypeOf"
         }
         else -> throw IllegalArgumentException(
-            "Unrepresentable wildcard type. Cannot have more than one bound: " + targetType)
+            "Unrepresentable wildcard type. Cannot have more than one bound: " + this)
       }
       CodeBlock.of("%T.%L(%T::class.java)", Types::class.asTypeName(), method, target)
     }
     is TypeVariableName -> TODO()
   // Shouldn't happen
-    else -> throw IllegalArgumentException("Unrepresentable type: " + targetType)
+    else -> throw IllegalArgumentException("Unrepresentable type: " + this)
   }
 }
 
@@ -331,7 +318,8 @@ private data class Adapter(
         .replace('.', '_')
         .removePrefix("_"),
     val hasCompanionObject: Boolean,
-    val visibility: Visibility) {
+    val visibility: Visibility,
+    val elementUtils: Elements) {
   fun generate(adapterName: String, fileSpecBuilder: FileSpec.Builder) {
     val nameAllocator = NameAllocator()
     fun String.allocate() = nameAllocator.newName(this)
@@ -359,7 +347,7 @@ private data class Adapter(
               .initializer("%N.adapter%L(%L)",
                   moshiParam,
                   if (typeName is ClassName) "" else CodeBlock.of("<%T>", typeName),
-                  typeName.makeType())
+                  typeName.makeType(elementUtils))
               .build()
         }
 
@@ -487,4 +475,99 @@ private data class Adapter(
     }
     fileSpecBuilder.addType(adapter)
   }
+}
+
+private fun ProtoBuf.TypeParameter.asTypeName(
+    nameResolver: NameResolver,
+    getTypeParameter: (index: Int) -> ProtoBuf.TypeParameter): TypeName {
+  return TypeVariableName(
+      name = nameResolver.getString(name),
+      bounds = *(upperBoundList.map { it.asTypeName(nameResolver, getTypeParameter) }
+          .toTypedArray()),
+      variance = variance.asKModifier()
+  )
+}
+
+private fun ProtoBuf.TypeParameter.Variance.asKModifier(): KModifier {
+  return when (this) {
+    Variance.IN -> IN
+    Variance.OUT -> OUT
+    Variance.INV -> TODO("INV variance is unsupported")
+  }
+}
+
+/**
+ * Returns the TypeName of this type as it would be seen in the source code,
+ * including nullability and generic type parameters.
+ *
+ * @param [nameResolver] a [NameResolver] instance from the source proto
+ * @param [getTypeParameter]
+ * A function that returns the type parameter for the given index.
+ * **Only called if [ProtoBuf.Type.hasTypeParameter] is `true`!**
+ */
+private fun ProtoBuf.Type.asTypeName(
+    nameResolver: NameResolver,
+    getTypeParameter: (index: Int) -> ProtoBuf.TypeParameter
+): TypeName {
+
+  val argumentList = when {
+    hasAbbreviatedType() -> abbreviatedType.argumentList
+    else -> argumentList
+  }
+
+  if (hasFlexibleUpperBound()) {
+    return WildcardTypeName.subtypeOf(
+        flexibleUpperBound.asTypeName(nameResolver, getTypeParameter))
+  } else if (hasOuterType()) {
+    return WildcardTypeName.supertypeOf(outerType.asTypeName(nameResolver, getTypeParameter))
+  }
+
+  val realType = when {
+    hasTypeParameter() -> return getTypeParameter(typeParameter)
+        .asTypeName(nameResolver, getTypeParameter)
+    hasTypeParameterName() -> typeParameterName
+    hasAbbreviatedType() -> abbreviatedType.typeAliasName
+    else -> className
+  }
+
+  var typeName: TypeName = ClassName.bestGuess(nameResolver.getString(realType)
+      .replace("/", "."))
+
+  if (argumentList.isNotEmpty()) {
+    val remappedArgs: Array<TypeName> = argumentList.map {
+      val projection = if (it.hasProjection()) {
+        it.projection
+      } else null
+      if (it.hasType()) {
+        it.type.asTypeName(nameResolver, getTypeParameter)
+            .let { typeName ->
+              projection?.let {
+                when (it) {
+                  Projection.IN -> WildcardTypeName.supertypeOf(typeName)
+                  Projection.OUT -> {
+                    if (typeName == ANY) {
+                      // This becomes a *, which we actually don't want here.
+                      // List<Any> works with List<*>, but List<*> doesn't work with List<Any>
+                      typeName
+                    } else {
+                      WildcardTypeName.subtypeOf(typeName)
+                    }
+                  }
+                  Projection.STAR -> WildcardTypeName.subtypeOf(ANY)
+                  Projection.INV -> TODO("INV projection is unsupported")
+                }
+              } ?: typeName
+            }
+      } else {
+        WildcardTypeName.subtypeOf(ANY)
+      }
+    }.toTypedArray()
+    typeName = ParameterizedTypeName.get(typeName as ClassName, *remappedArgs)
+  }
+
+  if (nullable) {
+    typeName = typeName.asNullable()
+  }
+
+  return typeName
 }
