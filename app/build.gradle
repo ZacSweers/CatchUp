@@ -204,6 +204,7 @@ bugsnag {
 
 kapt {
   correctErrorTypes = true
+  useBuildCache = true
   arguments {
     arg("room.schemaLocation", "${projectDir}/schemas")
   }

@@ -16,8 +16,9 @@
 
 def versions = [
     androidTestSupport: '1.0.1',
-    apollo: '0.4.3',
-    archComponents: '1.0.0',
+    apollo: '0.4.4',
+    archComponentsLifecycle: '1.1.0',
+    archComponentsRoom: '1.1.0-alpha1',
     autodispose: '0.5.1',
     avFirebase: '1.1.0',
     avMoshi: '0.4.5',
@@ -29,7 +30,7 @@ def versions = [
     errorProne: '2.2.0',
     espresso: '3.0.1',
     firebase: '11.2.0',
-    glide: '4.5.0',
+    glide: '4.6.1',
     inspector: '0.2.0',
     kotlin: '1.2.21',
     leakcanary: '1.5.4',
@@ -49,18 +50,18 @@ ext.deps = [
     android: [
         arch: [
             lifecycle: [
-                apt: "android.arch.lifecycle:compiler:${versions.archComponents}",
-                extensions: "android.arch.lifecycle:extensions:${versions.archComponents}"
+                apt: "android.arch.lifecycle:compiler:${versions.archComponentsLifecycle}",
+                extensions: "android.arch.lifecycle:extensions:${versions.archComponentsLifecycle}"
             ],
             room: [
-                apt: "android.arch.persistence.room:compiler:${versions.archComponents}",
-                runtime: "android.arch.persistence.room:runtime:${versions.archComponents}",
-                rxJava2: "android.arch.persistence.room:rxjava2:${versions.archComponents}"
+                apt: "android.arch.persistence.room:compiler:${versions.archComponentsRoom}",
+                runtime: "android.arch.persistence.room:runtime:${versions.archComponentsRoom}",
+                rxJava2: "android.arch.persistence.room:rxjava2:${versions.archComponentsRoom}"
             ]
 
         ],
         build: [
-            buildToolsVersion: '27.0.1',
+            buildToolsVersion: '27.0.3',
             compileSdkVersion: 27,
             minSdkVersion: 21,
             targetSdkVersion: 27
@@ -72,7 +73,7 @@ ext.deps = [
             gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.5',
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.1.0-alpha09',
+        gradlePlugin: 'com.android.tools.build:gradle:3.1.0-beta1',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
@@ -261,11 +262,11 @@ ext.deps = [
             scalpel: 'com.jakewharton.scalpel:scalpel:1.1.2',
             telescope: 'com.mattprecious.telescope:telescope:2.1.0'
         ],
-        guava: 'com.google.guava:guava:23.6-android',
+        guava: 'com.google.guava:guava:24.0-android',
         javaxInject: 'org.glassfish:javax.annotation:10.0-b28',
         jsr305: 'com.google.code.findbugs:jsr305:3.0.2',
         lazythreeten: 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0',
-        lottie: 'com.airbnb.android:lottie:2.5.0-beta3',
+        lottie: 'com.airbnb.android:lottie:2.5.0-rc1',
         moshi: "com.squareup.moshi:moshi:1.5.0",
         moshiLazyAdapters: 'com.serjltt.moshi:moshi-lazy-adapters:2.1',
         okio: 'com.squareup.okio:okio:1.13.0',
