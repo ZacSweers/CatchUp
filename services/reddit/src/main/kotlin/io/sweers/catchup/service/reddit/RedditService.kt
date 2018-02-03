@@ -38,7 +38,6 @@ import io.sweers.catchup.service.reddit.model.RedditLink
 import io.sweers.catchup.service.reddit.model.RedditObjectFactory
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.catchup.util.nullIfBlank
-import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -129,7 +128,6 @@ abstract class RedditModule {
     @JvmStatic
     internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
       return upstreamMoshi.newBuilder()
-          .add(MoshiSerializableFactory.getInstance())
           .add(RedditObjectFactory.INSTANCE)
           .add(Instant::class.java, EpochInstantJsonAdapter())
           .build()

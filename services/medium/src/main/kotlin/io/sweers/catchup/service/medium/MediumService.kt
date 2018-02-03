@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.medium
 
-import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -40,7 +39,6 @@ import io.sweers.catchup.service.medium.model.MediumPost
 import io.sweers.catchup.service.medium.model.Post
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.inspector.Inspector
-import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -167,9 +165,7 @@ abstract class MediumModule {
     @JvmStatic
     internal fun provideMediumMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Wrapped.ADAPTER_FACTORY)
           .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
-          .add(MoshiSerializableFactory.getInstance())
           .build()
     }
 

@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Looper
 import com.f2prateek.rx.preferences2.RxSharedPreferences
+import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.ArrayMapJsonAdapter
 import com.squareup.moshi.Moshi
 import dagger.Module
@@ -93,6 +94,7 @@ abstract class DataModule {
     @Singleton
     internal fun provideMoshi(): Moshi {
       return Moshi.Builder()
+          .add(Wrapped.ADAPTER_FACTORY)
           .add(MoshiSerializableFactory.getInstance())
           .add(UnescapeJsonAdapter.FACTORY)
           .add(ArrayMapJsonAdapter.FACTORY)

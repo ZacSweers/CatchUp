@@ -193,7 +193,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
               Rx2Apollo.from(apolloClient.query(RepositoriesByIdsQuery(it.keys.toList()))
                   .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
                   .firstOrError()
-                  .map { it.data()!!.nodes().map { it as AsRepository } },
+                  .map { it.data()!!.nodes()!!.map { it as AsRepository } },
               // Fetch the users by their IDs
               Rx2Apollo.from(apolloClient.query(ProjectOwnersByIdsQuery(it.values.distinct()))
                   .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))

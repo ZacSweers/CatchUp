@@ -36,7 +36,6 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
-import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -142,7 +141,6 @@ abstract class DribbbleModule {
     @JvmStatic
     internal fun provideDribbbleMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(MoshiSerializableFactory.getInstance())
           .add(Instant::class.java, ISO8601InstantAdapter())
           .build()
     }

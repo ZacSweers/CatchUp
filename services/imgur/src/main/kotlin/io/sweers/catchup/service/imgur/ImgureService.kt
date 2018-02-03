@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.imgur
 
-import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -37,7 +36,6 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
-import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit.Builder
@@ -141,8 +139,6 @@ abstract class ImgurModule {
     @JvmStatic
     internal fun provideImgurMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Wrapped.ADAPTER_FACTORY)
-          .add(MoshiSerializableFactory.getInstance())
           .add(Instant::class.java, EpochInstantJsonAdapter())
           .build()
     }

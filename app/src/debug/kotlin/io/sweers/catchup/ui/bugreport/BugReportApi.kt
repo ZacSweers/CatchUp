@@ -25,7 +25,6 @@ import io.reactivex.Single
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.imgur.BuildConfig
 import io.sweers.moshkt.api.MoshiSerializable
-import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -95,11 +94,7 @@ internal object BugReportModule {
         .baseUrl("https://api.github.com/")
         .callFactory { client.get().newCall(it) }
         .addCallAdapterFactory(rxJavaCallAdapterFactory)
-        .addConverterFactory(MoshiConverterFactory.create(moshi
-            .newBuilder()
-            .add(Wrapped.ADAPTER_FACTORY)
-            .add(MoshiSerializableFactory.getInstance())
-            .build()))
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
         .validateEagerly(BuildConfig.DEBUG)
         .build()
         .create(GitHubIssueApi::class.java)

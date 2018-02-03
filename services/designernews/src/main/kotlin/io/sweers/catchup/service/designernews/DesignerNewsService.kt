@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.designernews
 
-import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -40,7 +39,6 @@ import io.sweers.catchup.service.designernews.model.Story
 import io.sweers.catchup.service.designernews.model.User
 import io.sweers.catchup.util.collect.toCommaJoinerList
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
-import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -147,8 +145,6 @@ abstract class DesignerNewsModule {
     @JvmStatic
     internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Wrapped.ADAPTER_FACTORY)
-          .add(MoshiSerializableFactory.getInstance())
           .add(Instant::class.java, ISO8601InstantAdapter())
           .build()
     }
