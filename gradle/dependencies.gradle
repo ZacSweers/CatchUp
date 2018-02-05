@@ -206,7 +206,7 @@ ext.deps = [
         compileOnly: [
             annotations: "com.google.errorprone:error_prone_annotations:${versions.errorProne}"
         ],
-        gradlePlugin: 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.10'
+        gradlePlugin: 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.13'
     ],
 
     glide: [
