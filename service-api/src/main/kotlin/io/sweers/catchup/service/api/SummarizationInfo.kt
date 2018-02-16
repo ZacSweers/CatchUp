@@ -20,7 +20,6 @@ import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import okhttp3.HttpUrl
 
-// Gross vars/constructors because of https://issuetracker.google.com/issues/67181813
 class SummarizationInfo(
     val value: String,
     val type: SummarizationType

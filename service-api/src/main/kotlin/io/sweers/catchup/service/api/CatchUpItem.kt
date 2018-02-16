@@ -22,7 +22,6 @@ import android.arch.persistence.room.PrimaryKey
 import android.support.annotation.Keep
 import org.threeten.bp.Instant
 
-// Gross vars/constructors because of https://issuetracker.google.com/issues/67181813
 @Keep
 @Entity(tableName = "items")
 data class CatchUpItem(
