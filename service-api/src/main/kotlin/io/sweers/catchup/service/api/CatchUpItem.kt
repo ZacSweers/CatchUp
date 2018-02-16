@@ -29,16 +29,16 @@ data class CatchUpItem(
     @PrimaryKey val id: Long,
     val title: String,
     val timestamp: Instant,
-    var score: Pair<String, Int>? = null,
-    var tag: String? = null,
-    var author: String? = null,
-    var source: String? = null,
+    val score: Pair<String, Int>? = null,
+    val tag: String? = null,
+    val author: String? = null,
+    val source: String? = null,
     val commentCount: Int = 0,
     val hideComments: Boolean = false,
-    var itemClickUrl: String? = null,
-    var itemCommentClickUrl: String? = null,
-    @Embedded var summarizationInfo: SummarizationInfo? = null,
-    @Embedded var imageInfo: ImageInfo? = null
+    val itemClickUrl: String? = null,
+    val itemCommentClickUrl: String? = null,
+    @Embedded val summarizationInfo: SummarizationInfo? = null,
+    @Embedded val imageInfo: ImageInfo? = null
 ) : DisplayableItem {
 
   override fun stableId() = id
