@@ -49,6 +49,7 @@ android {
 kapt {
   correctErrorTypes = true
   useBuildCache = true
+  //mapDiagnosticLocations = true
 }
 
 apollo {

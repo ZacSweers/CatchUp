@@ -21,6 +21,13 @@ apply from: rootProject.file('gradle/config-kotlin-sources.gradle')
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
+repositories {
+  jcenter()
+  maven {
+    url deps.build.repositories.snapshots
+  }
+}
+
 compileKotlin {
   kotlinOptions.jvmTarget = 1.8
 }
@@ -30,6 +37,7 @@ dependencies {
   compile deps.kotlin.metadata
   compile deps.kotlin.poet
   compile deps.misc.moshi
+  compile deps.auto.common
   compileOnly deps.auto.service
   kapt deps.auto.service
   compile project(':tooling:moshkt:api')

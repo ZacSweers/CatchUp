@@ -104,19 +104,19 @@ internal class HackerNewsService @Inject constructor(
         .filter { it.hasChild("title") }  // Some HN items are just empty junk
         .map { HackerNewsStory.create(it) }
         .map {
-          val url = it.url()
+          val url = it.url
           with(it) {
             CatchUpItem(
-                id = id(),
-                title = title(),
-                score = "+" to score(),
-                timestamp = time(),
-                author = by(),
+                id = id,
+                title = title,
+                score = "+" to score,
+                timestamp = resolveTime(),
+                author = by,
                 source = url?.let { HttpUrl.parse(it)!!.host() },
-                commentCount = kids()?.size ?: 0,
+                commentCount = kids?.size ?: 0,
                 tag = null,
                 itemClickUrl = url,
-                itemCommentClickUrl = "https://news.ycombinator.com/item?id=${id()}",
+                itemCommentClickUrl = "https://news.ycombinator.com/item?id=$id",
                 summarizationInfo = SummarizationInfo.from(url)
             )
           }

@@ -32,7 +32,7 @@ def versions = [
     firebase: '11.2.0',
     glide: '4.6.1',
     inspector: '0.2.0',
-    kotlin: '1.2.21',
+    kotlin: '1.2.30-eap-47',
     leakcanary: '1.5.4',
     okhttp: '3.9.1',
     playServices: '11.2.0',
@@ -73,7 +73,7 @@ ext.deps = [
             gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.5',
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
-        gradlePlugin: 'com.android.tools.build:gradle:3.1.0-beta2',
+        gradlePlugin: 'com.android.tools.build:gradle:3.1.0-beta3',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
@@ -99,6 +99,7 @@ ext.deps = [
     ],
 
     auto: [
+        common: 'com.google.auto:auto-common:0.10',
         service: 'com.google.auto.service:auto-service:1.0-rc4',
         value: [
             apt: [
@@ -165,6 +166,7 @@ ext.deps = [
         repositories: [
             google: 'https://maven.google.com',
             jitpack: 'https://jitpack.io',
+            kotlineap: 'https://dl.bintray.com/kotlin/kotlin-eap',
             plugins: 'https://plugins.gradle.org/m2/',
             snapshots: 'https://oss.sonatype.org/content/repositories/snapshots/'
         ]
@@ -241,7 +243,7 @@ ext.deps = [
     kotlin: [
         gradlePlugin: "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}",
         metadata: 'me.eugeniomarletti:kotlin-metadata:1.2.1',
-        poet: 'com.squareup:kotlinpoet:0.6.0',
+        poet: 'com.squareup:kotlinpoet:0.7.0-20180211.200114-25',
         stdlib: [
             core: "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}",
             jdk7: "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}",

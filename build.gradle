@@ -34,6 +34,7 @@ subprojects {
       google()
       jcenter()
       maven { url deps.build.repositories.plugins }
+      maven { url deps.build.repositories.kotlineap }
       maven { url deps.build.repositories.snapshots }
     }
 
@@ -55,6 +56,7 @@ subprojects {
   repositories {
     google()
     jcenter()
+    maven { url deps.build.repositories.kotlineap }
     maven { url deps.build.repositories.jitpack }
     maven { url deps.build.repositories.snapshots }
     maven { url 'https://oss.jfrog.org/libs-snapshot' }

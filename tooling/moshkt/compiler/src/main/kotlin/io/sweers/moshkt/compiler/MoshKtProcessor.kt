@@ -1,5 +1,6 @@
 package io.sweers.moshkt.compiler
 
+import com.google.auto.common.AnnotationMirrors
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.ARRAY
@@ -19,6 +20,7 @@ import com.squareup.kotlinpoet.KModifier.OUT
 import com.squareup.kotlinpoet.KModifier.OVERRIDE
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.LONG
+import com.squareup.kotlinpoet.LambdaTypeName
 import com.squareup.kotlinpoet.NameAllocator
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName
@@ -32,6 +34,7 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonQualifier
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
@@ -45,7 +48,6 @@ import me.eugeniomarletti.kotlin.metadata.extractFullName
 import me.eugeniomarletti.kotlin.metadata.isDataClass
 import me.eugeniomarletti.kotlin.metadata.isPrimary
 import me.eugeniomarletti.kotlin.metadata.jvm.getJvmConstructorSignature
-import me.eugeniomarletti.kotlin.metadata.kaptGeneratedOption
 import me.eugeniomarletti.kotlin.metadata.kotlinMetadata
 import me.eugeniomarletti.kotlin.metadata.visibility
 import me.eugeniomarletti.kotlin.processing.KotlinAbstractProcessor
@@ -55,6 +57,8 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.serialization.ProtoBuf.Visibility
 import org.jetbrains.kotlin.serialization.ProtoBuf.Visibility.INTERNAL
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import java.io.File
+import java.lang.reflect.Type
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
@@ -65,6 +69,7 @@ import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 import javax.tools.Diagnostic.Kind.ERROR
+
 
 /**
  * An annotation processor that reads Kotlin data classes and generates Moshi JsonAdapters for them.
@@ -118,7 +123,6 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
         '/', '.')
 
     val hasCompanionObject = classProto.hasCompanionObjectName()
-
     // todo allow custom constructor
     val protoConstructor = classProto.constructorList
         .single { it.isPrimary }
@@ -130,7 +134,9 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
         .let(elementUtils::getTypeElement)
         .enclosedElements
         .mapNotNull { it.takeIf { it.kind == ElementKind.CONSTRUCTOR }?.let { it as ExecutableElement } }
-        .single { it.jvmMethodSignature == constructorJvmSignature }
+        .first()
+    // TODO Temporary until jvm method signature matching is better
+//        .single { it.jvmMethodSignature == constructorJvmSignature }
     val parameters = protoConstructor
         .valueParameterList
         .mapIndexed { index, valueParameter ->
@@ -146,8 +152,8 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
           val serializedName = actualElement.getAnnotation(Json::class.java)?.name
               ?: paramName
 
-          val jsonQualifiers = actualElement.annotationMirrors
-              .filter { it.annotationType.getAnnotation(JsonQualifier::class.java) != null }
+          val jsonQualifiers = AnnotationMirrors.getAnnotatedAnnotations(actualElement,
+              JsonQualifier::class.java)
 
           Property(
               name = paramName,
@@ -159,6 +165,30 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
               jsonQualifiers = jsonQualifiers)
         }
 
+    val genericTypeNames = classProto.typeParameterList
+        .map {
+          val variance = it.variance.asKModifier().let {
+            // We don't redeclare out variance here
+            if (it == OUT) {
+              null
+            } else {
+              it
+            }
+          }
+          TypeVariableName.invoke(
+              name = nameResolver.getString(it.name),
+              bounds = *(it.upperBoundList
+                  .map { it.asTypeName(nameResolver, classProto::getTypeParameter) }
+                  .toTypedArray()),
+              variance = variance)
+              .reified(it.reified)
+        }.let {
+          if (it.isEmpty()) {
+            null
+          } else {
+            it
+          }
+        }
 
     return Adapter(
         fqClassName = fqClassName,
@@ -167,6 +197,7 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
         originalElement = element,
         hasCompanionObject = hasCompanionObject,
         visibility = classProto.visibility!!,
+        genericTypeNames = genericTypeNames,
         elementUtils = elementUtils)
   }
 
@@ -177,45 +208,21 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
   }
 
   private fun Adapter.generateAndWrite(): Boolean {
-    val generatedDir = generatedDir ?: run {
-      messager.printMessage(ERROR, "Can't find option '$kaptGeneratedOption'")
-      return false
-    }
     val adapterName = "${name}_JsonAdapter"
+    val outputDir = generatedDir ?: mavenGeneratedDir(adapterName)
     val fileBuilder = FileSpec.builder(packageName, adapterName)
     generate(adapterName, fileBuilder)
     fileBuilder
         .build()
-        .writeTo(generatedDir)
+        .writeTo(outputDir)
     return true
   }
-}
 
-private val TypeName.isPrimitive: Boolean
-  get() = !nullable && this in PRIMITIVE_TYPES
-
-private val PRIMITIVE_TYPES = setOf(
-    BOOLEAN,
-    BYTE,
-    SHORT,
-    INT,
-    LONG,
-    CHAR,
-    FLOAT,
-    DOUBLE
-)
-
-private fun primitiveDefaultFor(typeName: TypeName): String {
-  return when (typeName) {
-    BOOLEAN -> "false"
-    BYTE -> "0 as Byte"
-    SHORT -> "0 as Short"
-    INT -> "0"
-    LONG -> "0L"
-    CHAR -> "'0'"
-    FLOAT -> "0.0f"
-    DOUBLE -> "0.0d"
-    else -> throw IllegalArgumentException("Non-primitive type! $typeName")
+  private fun mavenGeneratedDir(adapterName: String): File {
+    // Hack since the maven plugin doesn't supply `kapt.kotlin.generated` option
+    // Bug filed at https://youtrack.jetbrains.com/issue/KT-22783
+    val file = filer.createSourceFile(adapterName).toUri().let(::File)
+    return file.parentFile.also { file.delete() }
   }
 }
 
@@ -224,6 +231,14 @@ private fun primitiveDefaultFor(typeName: TypeName): String {
  */
 private fun List<TypeName>.simplifiedNames(): String {
   return joinToString("_") { it.simplifiedName() }
+}
+
+private fun TypeName.resolveRawType(): ClassName {
+  return when (this) {
+    is ClassName -> this
+    is ParameterizedTypeName -> rawType
+    else -> throw UnsupportedOperationException("Cannot get raw type from $this")
+  }
 }
 
 /**
@@ -239,7 +254,7 @@ private fun TypeName.simplifiedName(): String {
     is TypeVariableName -> name.decapitalize() + if (bounds.isEmpty()) "" else "__" + bounds.simplifiedNames()
   // Shouldn't happen
     else -> toString().decapitalize()
-  }
+  }.let { if (nullable) "${it}_nullable" else it }
 }
 
 private fun ClassName.isClass(elementUtils: Elements): Boolean {
@@ -255,13 +270,36 @@ private fun ClassName.isClass(elementUtils: Elements): Boolean {
   return elementUtils.getTypeElement(fqcn).kind == ElementKind.INTERFACE
 }
 
-private fun TypeName.makeType(elementUtils: Elements): CodeBlock {
+private fun TypeName.objectType(): TypeName {
+  return when (this) {
+    BOOLEAN -> Boolean::class.javaObjectType.asTypeName()
+    BYTE -> Byte::class.javaObjectType.asTypeName()
+    SHORT -> Short::class.javaObjectType.asTypeName()
+    INT -> Integer::class.javaObjectType.asTypeName()
+    LONG -> Long::class.javaObjectType.asTypeName()
+    CHAR -> Character::class.javaObjectType.asTypeName()
+    FLOAT -> Float::class.javaObjectType.asTypeName()
+    DOUBLE -> Double::class.javaObjectType.asTypeName()
+    else -> this
+  }
+}
+
+private fun TypeName.makeType(
+    elementUtils: Elements,
+    typesArray: ParameterSpec,
+    genericTypeNames: List<TypeVariableName>): CodeBlock {
   if (nullable) {
-    return asNonNullable().makeType(elementUtils)
+    return asNonNullable().makeType(elementUtils, typesArray, genericTypeNames)
   }
   return when (this) {
     is ClassName -> CodeBlock.of("%T::class.java", this)
     is ParameterizedTypeName -> {
+      // If it's an Array type, we shortcut this to return Types.arrayOf()
+      if (rawType == ARRAY) {
+        return CodeBlock.of("%T.arrayOf(%L)",
+            Types::class.asTypeName(),
+            typeArguments[0].objectType().makeType(elementUtils, typesArray, genericTypeNames))
+      }
       // If it's a Class type, we have to specify the generics.
       val rawTypeParameters = if (rawType.isClass(elementUtils)) {
         CodeBlock.of(
@@ -271,7 +309,7 @@ private fun TypeName.makeType(elementUtils: Elements): CodeBlock {
                 prefix = "<",
                 postfix = ">") { "%T" }
                 .toString(),
-            *(typeArguments.toTypedArray())
+            *(typeArguments.map { objectType() }.toTypedArray())
         )
       } else {
         CodeBlock.of("")
@@ -280,9 +318,11 @@ private fun TypeName.makeType(elementUtils: Elements): CodeBlock {
           "%T.newParameterizedType(%T%L::class.java, ${typeArguments
               .joinToString(", ") { "%L" }})",
           Types::class.asTypeName(),
-          rawType,
+          rawType.objectType(),
           rawTypeParameters,
-          *(typeArguments.map { it.makeType(elementUtils) }.toTypedArray()))
+          *(typeArguments.map {
+            it.objectType().makeType(elementUtils, typesArray, genericTypeNames)
+          }.toTypedArray()))
     }
     is WildcardTypeName -> {
       val target: TypeName
@@ -301,7 +341,9 @@ private fun TypeName.makeType(elementUtils: Elements): CodeBlock {
       }
       CodeBlock.of("%T.%L(%T::class.java)", Types::class.asTypeName(), method, target)
     }
-    is TypeVariableName -> TODO()
+    is TypeVariableName -> {
+      CodeBlock.of("%N[%L]", typesArray, genericTypeNames.indexOfFirst { it == this })
+    }
   // Shouldn't happen
     else -> throw IllegalArgumentException("Unrepresentable type: " + this)
   }
@@ -314,7 +356,11 @@ private data class Property(
     val hasDefault: Boolean,
     val nullable: Boolean,
     val typeName: TypeName,
-    val jsonQualifiers: List<AnnotationMirror>)
+    val jsonQualifiers: Set<AnnotationMirror>) {
+
+  val isNullablyBoundedTypeVariable = typeName is TypeVariableName
+      && with(typeName.bounds) { isEmpty() || any { it.nullable } }
+}
 
 private data class Adapter(
     val fqClassName: String,
@@ -326,14 +372,18 @@ private data class Adapter(
         .removePrefix("_"),
     val hasCompanionObject: Boolean,
     val visibility: Visibility,
-    val elementUtils: Elements) {
+    val elementUtils: Elements,
+    val genericTypeNames: List<TypeVariableName>?) {
+
   fun generate(adapterName: String, fileSpecBuilder: FileSpec.Builder) {
     val nameAllocator = NameAllocator()
     fun String.allocate() = nameAllocator.newName(this)
 
-    val originalTypeName = originalElement.asType().asTypeName() as ClassName
+    val originalTypeName = originalElement.asType().asTypeName()
     val moshiName = "moshi".allocate()
     val moshiParam = ParameterSpec.builder(moshiName, Moshi::class.asClassName()).build()
+    val typesParam = ParameterSpec.builder("types".allocate(),
+        ParameterizedTypeName.get(ARRAY, Type::class.asTypeName())).build()
     val reader = ParameterSpec.builder("reader".allocate(),
         JsonReader::class.asClassName()).build()
     val writer = ParameterSpec.builder("writer".allocate(),
@@ -345,43 +395,100 @@ private data class Adapter(
 
     // Create fields
     val adapterProperties = propertyList
-        .map { it.typeName }
-        .distinct()
-        .associate { typeName ->
-          val propertyName = "${typeName.simplifiedName().allocate()}_Adapter"
+        .distinctBy { it.typeName to it.jsonQualifiers }
+        .associate { prop ->
+          val typeName = prop.typeName
+          val qualifierNames = prop.jsonQualifiers.joinToString("_") {
+            it.annotationType.asElement().simpleName.toString()
+          }
+          val propertyName = "${typeName.simplifiedName().allocate()}_Adapter".let {
+            if (qualifierNames.isBlank()) {
+              it
+            } else {
+              "${it}_for_$qualifierNames"
+            }
+          }.let { "${it}_Adapter" }
           val adapterTypeName = ParameterizedTypeName.get(JsonAdapter::class.asTypeName(), typeName)
-          typeName to PropertySpec.builder(propertyName, adapterTypeName, PRIVATE)
-              .initializer("%N.adapter%L(%L)",
-                  moshiParam,
-                  if (typeName is ClassName) "" else CodeBlock.of("<%T>", typeName),
-                  typeName.makeType(elementUtils))
+          val key = typeName to prop.jsonQualifiers
+          return@associate key to PropertySpec.builder(propertyName, adapterTypeName, PRIVATE)
+              .apply {
+                val qualifiers = prop.jsonQualifiers.toList()
+                val standardArgs = arrayOf(moshiParam,
+                    if (typeName is ClassName && qualifiers.isEmpty()) {
+                      ""
+                    } else {
+                      CodeBlock.of("<%T>",
+                          typeName)
+                    },
+                    typeName.makeType(elementUtils, typesParam, genericTypeNames ?: emptyList()))
+                val standardArgsSize = standardArgs.size + 1
+                val (initializerString, args) = when {
+                  qualifiers.isEmpty() -> "" to emptyArray()
+                  qualifiers.size == 1 -> {
+                    ", %${standardArgsSize}T::class.java" to arrayOf(
+                        qualifiers.first().annotationType.asTypeName())
+                  }
+                  else -> {
+                    val initString = qualifiers
+                        .mapIndexed { index, _ ->
+                          val annoClassIndex = standardArgsSize + index + 1
+                          return@mapIndexed "%${standardArgsSize}T.createJsonQualifierImplementation(%${annoClassIndex}T::class.java)"
+                        }
+                        .joinToString()
+                    val initArgs = (listOf(Types::class.asTypeName())
+                        + qualifiers.map { it.annotationType.asTypeName() })
+                        .toTypedArray()
+                    ", setOf($initString)" to initArgs
+                  }
+                }
+                val finalArgs = arrayOf(*standardArgs, *args)
+                try {
+                  initializer("%1N.adapter%2L(%3L$initializerString).nullSafe()", *finalArgs)
+                } catch (e: IllegalArgumentException) {
+                  throw RuntimeException(
+                      "$e " + "InitString is " + "%1N.adapter%2L(%3L$initializerString).nullSafe()" + " and args are " + finalArgs.joinToString())
+                }
+              }
               .build()
         }
 
-    // TODO in the future make these propertyspecs directly.
-    // Pending https://github.com/square/kotlinpoet/pull/317
-    val allocatedNames = propertyList.associate { it to it.name.allocate() }
+    val localProperties =
+        propertyList.associate { prop ->
+          prop to PropertySpec.builder(prop.name.allocate(), prop.typeName.asNullable())
+              .mutable(true)
+              .initializer("null")
+              .build()
+        }
     val optionsByIndex = propertyList
         .associateBy { it.serializedName }.entries.withIndex()
 
     // selectName() API setup
+    val namesArray = PropertySpec.builder("NAMES".allocate(),
+        ParameterizedTypeName.get(ARRAY, String::class.asTypeName()), PRIVATE)
+        .initializer("arrayOf(${optionsByIndex.map { it.value.key }
+            .joinToString(", ") { "\"$it\"" }})")
+        .build()
     val optionsCN = JsonReader.Options::class.asTypeName()
     val optionsProperty = PropertySpec.builder(
         "OPTIONS".allocate(),
         optionsCN,
         PRIVATE)
-        .delegate(
-            "lazy { %T.of(${optionsByIndex.map { it.value.key }
-                .joinToString(", ") { "\"$it\"" }}) }",
-            optionsCN)
+        .initializer("%T.of(*%N)",
+            optionsCN,
+            namesArray)
         .build()
     val companionObject = TypeSpec.companionObjectBuilder("SelectOptions")
         .addModifiers(PRIVATE)
+        .addProperty(namesArray)
         .addProperty(optionsProperty)
         .build()
-
     val adapter = TypeSpec.classBuilder(adapterName)
         .superclass(jsonAdapterTypeName)
+        .apply {
+          genericTypeNames?.let {
+            addTypeVariables(genericTypeNames)
+          }
+        }
         .apply {
           // TODO make this configurable. Right now it just matches the source model
           if (visibility == INTERNAL) {
@@ -390,9 +497,22 @@ private data class Adapter(
         }
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter(moshiParam)
+            .apply {
+              genericTypeNames?.let {
+                addParameter(typesParam)
+              }
+            }
             .build())
         .addType(companionObject)
         .addProperties(adapterProperties.values)
+        .addFunction(FunSpec.builder("toString")
+            .addModifiers(OVERRIDE)
+            .returns(String::class)
+            .addStatement("return %S",
+                "GeneratedJsonAdapter(${originalTypeName.resolveRawType()
+                    .simpleNames()
+                    .joinToString(".")})")
+            .build())
         .addFunction(FunSpec.builder("fromJson")
             .addModifiers(OVERRIDE)
             .addParameter(reader)
@@ -402,21 +522,8 @@ private data class Adapter(
             .addStatement("%N.nextNull<%T>()", reader, ANY)
             .endControlFlow()
             .apply {
-              propertyList.forEach { prop ->
-                when {
-                  prop.nullable -> {
-                    addStatement("var ${allocatedNames[prop]}: %T = null", prop.typeName)
-                  }
-                  prop.hasDefault -> {
-                    addStatement("var ${allocatedNames[prop]}: %T = null",
-                        prop.typeName.asNullable())
-                  }
-                  prop.typeName.isPrimitive -> {
-                    addStatement("var ${allocatedNames[prop]} = %L",
-                        primitiveDefaultFor(prop.typeName))
-                  }
-                  else -> addStatement("lateinit var ${allocatedNames[prop]}: %T", prop.typeName)
-                }
+              localProperties.values.forEach {
+                addCode("%L", it)
               }
             }
             .addStatement("%N.beginObject()", reader)
@@ -425,11 +532,11 @@ private data class Adapter(
             .apply {
               optionsByIndex.map { (index, entry) -> index to entry.value }
                   .forEach { (index, prop) ->
-                    val possibleBangs = if (prop.nullable) "" else "!!"
-                    addStatement("%L -> %L = %N.fromJson(%N)$possibleBangs",
+                    val spec = localProperties[prop]!!
+                    addStatement("%L -> %N = %N.fromJson(%N)",
                         index,
-                        allocatedNames[prop]!!,
-                        adapterProperties[prop.typeName]!!,
+                        spec,
+                        adapterProperties[prop.typeName to prop.jsonQualifiers]!!,
                         reader)
                   }
             }
@@ -442,20 +549,76 @@ private data class Adapter(
             .endControlFlow()
             .addStatement("%N.endObject()", reader)
             .apply {
-              val propertiesWithDefaults = propertyList.filter { it.hasDefault }
+              if (localProperties.keys.any {
+                    it.isNullablyBoundedTypeVariable || (!it.nullable && !it.hasDefault)
+                  }) {
+                val indexParam = ParameterSpec.builder("index".allocate(), INT)
+                    .build()
+                val lambdaType = LambdaTypeName.get(
+                    returnType = JsonDataException::class.asTypeName()
+                )
+                val missingLambda = PropertySpec.builder("missingArguments".allocate(), lambdaType)
+                    .initializer(CodeBlock.builder()
+                        .add("{\n")
+                        .add("%N.filterIndexed { %N, _ ->", namesArray, indexParam)
+                        .add("%>")
+                        // Begin controlflow
+                        .add("\nwhen (%N) {", indexParam)
+                        .add("%>")
+                        .apply {
+                          optionsByIndex
+                              .map { (index, entry) -> index to entry.value }
+                              .filter { (_, prop) ->
+                                prop.isNullablyBoundedTypeVariable
+                                    || with(prop) { !nullable && !hasDefault }
+                              }
+                              .forEach { (index, prop) ->
+                                add("\n%L -> %N == null",
+                                    index,
+                                    localProperties[prop]!!)
+                              }
+                        }
+                        .add("\nelse -> false")
+                        // End controlflow
+                        .add("%<")
+                        .add("\n}")
+                        .add("%<")
+                        .add("\n}")
+                        .add(
+                            ".let { %T(\"The following required properties were missing: \${%L}\") }",
+                            JsonDataException::class,
+                            CodeBlock.of("it.joinToString()"))
+                        .add("\n}")
+                        .build())
+                    .build()
+                addCode("%L", missingLambda)
+                localProperties.forEach { (property, spec) ->
+                  if (property.isNullablyBoundedTypeVariable
+                      || (!property.nullable && !property.hasDefault)) {
+                    beginControlFlow("if (%N == null)", spec)
+                    addStatement("throw %N()", missingLambda)
+                    endControlFlow()
+                  }
+                }
+              }
+              val propertiesWithDefaults = localProperties.entries.filter { it.key.hasDefault }
               if (propertiesWithDefaults.isEmpty()) {
                 addStatement("return %T(%L)",
                     originalTypeName,
-                    propertyList.joinToString(",\n") { "${it.name} = ${allocatedNames[it]}" })
+                    localProperties.entries.joinToString(",\n") { (property, spec) ->
+                      "${property.name} = ${spec.name}"
+                    })
               } else {
                 addStatement("return %T(%L).let {\n  it.copy(%L)\n}",
                     originalTypeName,
-                    propertyList
-                        .filter { !it.hasDefault }
-                        .joinToString(",\n") { "${it.name} = ${allocatedNames[it]}" },
+                    localProperties.entries
+                        .filter { !it.key.hasDefault }
+                        .joinToString(",\n") { (property, spec) ->
+                          "${property.name} = ${spec.name}"
+                        },
                     propertiesWithDefaults
-                        .joinToString(",\n      ") {
-                          "${it.name} = ${allocatedNames[it]} ?: it.${it.name}"
+                        .joinToString(",\n      ") { (property, spec) ->
+                          "${property.name} = ${spec.name} ?: it.${property.name}"
                         })
               }
             }
@@ -476,7 +639,7 @@ private data class Adapter(
                 }
                 addStatement("%N.name(%S)", writer, prop.serializedName)
                 addStatement("%N.toJson(%N, %N.%L)",
-                    adapterProperties[prop.typeName]!!,
+                    adapterProperties[prop.typeName to prop.jsonQualifiers]!!,
                     writer,
                     value,
                     prop.name)
@@ -490,6 +653,12 @@ private data class Adapter(
         .build()
 
     if (hasCompanionObject) {
+      val rawType = when (originalTypeName) {
+        is TypeVariableName -> throw IllegalArgumentException(
+            "Cannot get raw type of TypeVariable!")
+        is ParameterizedTypeName -> originalTypeName.rawType
+        else -> originalTypeName as ClassName
+      }
       fileSpecBuilder.addFunction(FunSpec.builder("jsonAdapter")
           .apply {
             // TODO make this configurable. Right now it just matches the source model
@@ -497,10 +666,22 @@ private data class Adapter(
               addModifiers(KModifier.INTERNAL)
             }
           }
-          .receiver(originalTypeName.nestedClass("Companion"))
+          .receiver(rawType.nestedClass("Companion"))
           .returns(jsonAdapterTypeName)
           .addParameter(moshiParam)
-          .addStatement("return %N(%N)", adapter, moshiParam)
+          .apply {
+            genericTypeNames?.let {
+              addParameter(typesParam)
+              addTypeVariables(it)
+            }
+          }
+          .apply {
+            if (genericTypeNames != null) {
+              addStatement("return %N(%N, %N)", adapter, moshiParam, typesParam)
+            } else {
+              addStatement("return %N(%N)", adapter, moshiParam)
+            }
+          }
           .build())
     }
     fileSpecBuilder.addType(adapter)
@@ -518,11 +699,11 @@ private fun ProtoBuf.TypeParameter.asTypeName(
   )
 }
 
-private fun ProtoBuf.TypeParameter.Variance.asKModifier(): KModifier {
+private fun ProtoBuf.TypeParameter.Variance.asKModifier(): KModifier? {
   return when (this) {
     Variance.IN -> IN
     Variance.OUT -> OUT
-    Variance.INV -> TODO("INV variance is unsupported")
+    Variance.INV -> null
   }
 }
 
