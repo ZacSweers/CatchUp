@@ -44,6 +44,7 @@ subprojects {
       // need to also be in the same order.
       classpath deps.android.gradlePlugin
       classpath deps.kotlin.gradlePlugin
+      classpath deps.kotlin.noArgGradlePlugin
       classpath deps.android.firebase.gradlePlugin
       classpath deps.build.gradlePlugins.bugsnag
       classpath deps.build.gradlePlugins.psync

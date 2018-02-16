@@ -110,11 +110,11 @@ internal class HackerNewsService @Inject constructor(
                 id = id,
                 title = title,
                 score = "+" to score,
-                timestamp = resolveTime(),
+                timestamp = realTime(),
                 author = by,
                 source = url?.let { HttpUrl.parse(it)!!.host() },
                 commentCount = kids?.size ?: 0,
-                tag = null,
+                tag = realType()?.tag(),
                 itemClickUrl = url,
                 itemCommentClickUrl = "https://news.ycombinator.com/item?id=$id",
                 summarizationInfo = SummarizationInfo.from(url)

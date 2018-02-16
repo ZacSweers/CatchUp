@@ -243,6 +243,7 @@ ext.deps = [
     kotlin: [
         gradlePlugin: "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}",
         metadata: 'me.eugeniomarletti:kotlin-metadata:1.2.1',
+        noArgGradlePlugin: "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}",
         poet: 'com.squareup:kotlinpoet:0.7.0-20180211.200114-25',
         stdlib: [
             core: "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}",
