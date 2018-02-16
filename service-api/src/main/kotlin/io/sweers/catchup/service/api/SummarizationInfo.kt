@@ -16,17 +16,15 @@
 
 package io.sweers.catchup.service.api
 
-import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import okhttp3.HttpUrl
 
 // Gross vars/constructors because of https://issuetracker.google.com/issues/67181813
 class SummarizationInfo(
-    var value: String,
-    var type: SummarizationType
+    val value: String,
+    val type: SummarizationType
 ) {
-  constructor() : this("", NONE)
 
   companion object {
     fun from(url: String?, text: String? = null): SummarizationInfo? {

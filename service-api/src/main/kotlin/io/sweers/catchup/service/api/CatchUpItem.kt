@@ -26,21 +26,20 @@ import org.threeten.bp.Instant
 @Keep
 @Entity(tableName = "items")
 data class CatchUpItem(
-    @PrimaryKey var id: Long,
-    var title: String,
-    var timestamp: Instant,
+    @PrimaryKey val id: Long,
+    val title: String,
+    val timestamp: Instant,
     var score: Pair<String, Int>? = null,
     var tag: String? = null,
     var author: String? = null,
     var source: String? = null,
-    var commentCount: Int = 0,
-    var hideComments: Boolean = false,
+    val commentCount: Int = 0,
+    val hideComments: Boolean = false,
     var itemClickUrl: String? = null,
     var itemCommentClickUrl: String? = null,
     @Embedded var summarizationInfo: SummarizationInfo? = null,
     @Embedded var imageInfo: ImageInfo? = null
 ) : DisplayableItem {
-  constructor() : this(0, "", Instant.now())
 
   override fun stableId() = id
 
