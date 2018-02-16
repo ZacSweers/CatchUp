@@ -6,12 +6,12 @@ import com.squareup.moshi.Types
 import java.lang.ref.WeakReference
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.util.Collections
 import java.util.LinkedHashMap
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.CLASS
-
 
 @Retention(RUNTIME)
 @Target(CLASS)
@@ -35,7 +35,11 @@ class MoshiSerializableFactory : JsonAdapter.Factory {
       return if (constructor.parameterTypes.size == 1) {
         constructor.newInstance(moshi)
       } else {
-        constructor.newInstance(moshi, type)
+        if (type is ParameterizedType) {
+          constructor.newInstance(moshi, type.actualTypeArguments)
+        } else {
+          throw IllegalStateException("Unable to handle type $type")
+        }
       }
     } catch (e: IllegalAccessException) {
       throw RuntimeException("Unable to invoke " + constructor, e)
@@ -60,7 +64,7 @@ class MoshiSerializableFactory : JsonAdapter.Factory {
     if (adapterCtor != null) {
       return adapterCtor
     }
-    val clsName = cls.name
+    val clsName = cls.name.replace("$", "_")
     if (clsName.startsWith("android.")
         || clsName.startsWith("java.")
         || clsName.startsWith("kotlin.")) {
@@ -78,7 +82,7 @@ class MoshiSerializableFactory : JsonAdapter.Factory {
         // Try the moshi + type constructor
         @Suppress("UNCHECKED_CAST")
         bindingClass.getConstructor(Moshi::class.java,
-            Type::class.java) as Constructor<out JsonAdapter<*>>
+            Array<Type>::class.java) as Constructor<out JsonAdapter<*>>
       }
 
     } catch (e: ClassNotFoundException) {
