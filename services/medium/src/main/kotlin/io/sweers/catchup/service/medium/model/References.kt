@@ -18,30 +18,22 @@ package io.sweers.catchup.service.medium.model
 
 import com.squareup.moshi.Json
 import io.sweers.inspector.Inspector
+import io.sweers.inspector.SelfValidating
 import io.sweers.inspector.ValidationException
-import io.sweers.inspector.Validator
 import io.sweers.moshkt.api.MoshiSerializable
 
 @MoshiSerializable
 internal data class References(
     @Json(name = "Collection") val collection: Map<String, Collection>,
     @Json(name = "Post") val post: Map<String, Post>,
-    @Json(name = "User") val user: Map<String, User>) {
+    @Json(name = "User") val user: Map<String, User>) : SelfValidating {
 
-  companion object {
-
-    @Suppress("UNUSED_PARAMETER") // Remove when inspector supports 0 arg
-    @JvmStatic
-    fun validator(inspector: Inspector): Validator<References> {
-      return object : Validator<References>() {
-        override fun validate(references: References) {
-          references.post.values.forEach {
-            if (it.creatorId !in references.user) {
-              throw ValidationException("Medium Post ${it.id} creator not in user map.")
-            }
-          }
-        }
-      }.nullSafe()
+  override fun validate(inspector: Inspector) {
+    post.values.forEach {
+      if (it.creatorId !in user) {
+        throw ValidationException("Medium Post ${it.id} creator not in user map.")
+      }
     }
   }
+
 }

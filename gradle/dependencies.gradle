@@ -31,7 +31,7 @@ def versions = [
     espresso: '3.0.1',
     firebase: '11.2.0',
     glide: '4.6.1',
-    inspector: '0.2.0',
+    inspector: '0.3.0',
     kotlin: '1.2.30-eap-47',
     leakcanary: '1.5.4',
     okhttp: '3.9.1',

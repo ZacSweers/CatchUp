@@ -171,11 +171,7 @@ abstract class MediumModule {
 
     @Provides
     @JvmStatic
-    internal fun provideInspector(): Inspector {
-      return Inspector.Builder()
-          .add(MediumModels.createValidatorFactory())
-          .build()
-    }
+    internal fun provideInspector() = Inspector.Builder().build()
 
     @Provides
     @JvmStatic
