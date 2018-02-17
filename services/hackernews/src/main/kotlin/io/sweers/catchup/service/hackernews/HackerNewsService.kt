@@ -153,7 +153,7 @@ abstract class HackerNewsMetaModule {
     @Provides
     @Reusable
     @JvmStatic
-    internal fun provideMediumServiceMeta() = ServiceMeta(
+    internal fun provideHackerNewsServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.hn,
         R.color.hnAccent,
