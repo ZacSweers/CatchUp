@@ -358,8 +358,7 @@ private data class Property(
     val typeName: TypeName,
     val jsonQualifiers: Set<AnnotationMirror>) {
 
-  val isNullablyBoundedTypeVariable = typeName is TypeVariableName
-      && with(typeName.bounds) { isEmpty() || any { it.nullable } }
+  val isRequired = !nullable && !hasDefault
 }
 
 private data class Adapter(
@@ -482,6 +481,7 @@ private data class Adapter(
         .addProperty(namesArray)
         .addProperty(optionsProperty)
         .build()
+
     val adapter = TypeSpec.classBuilder(adapterName)
         .superclass(jsonAdapterTypeName)
         .apply {
@@ -549,9 +549,7 @@ private data class Adapter(
             .endControlFlow()
             .addStatement("%N.endObject()", reader)
             .apply {
-              if (localProperties.keys.any {
-                    it.isNullablyBoundedTypeVariable || (!it.nullable && !it.hasDefault)
-                  }) {
+              if (localProperties.keys.any { it.isRequired }) {
                 val indexParam = ParameterSpec.builder("index".allocate(), INT)
                     .build()
                 val lambdaType = LambdaTypeName.get(
@@ -568,10 +566,7 @@ private data class Adapter(
                         .apply {
                           optionsByIndex
                               .map { (index, entry) -> index to entry.value }
-                              .filter { (_, prop) ->
-                                prop.isNullablyBoundedTypeVariable
-                                    || with(prop) { !nullable && !hasDefault }
-                              }
+                              .filter { (_, prop) -> prop.isRequired }
                               .forEach { (index, prop) ->
                                 add("\n%L -> %N == null",
                                     index,
@@ -593,8 +588,7 @@ private data class Adapter(
                     .build()
                 addCode("%L", missingLambda)
                 localProperties.forEach { (property, spec) ->
-                  if (property.isNullablyBoundedTypeVariable
-                      || (!property.nullable && !property.hasDefault)) {
+                  if (property.isRequired) {
                     beginControlFlow("if (%N == null)", spec)
                     addStatement("throw %N()", missingLambda)
                     endControlFlow()
