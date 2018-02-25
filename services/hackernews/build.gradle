@@ -60,16 +60,9 @@ dependencies {
   api project(':service-api')
   implementation project(':util')
 
-  compileOnly deps.auto.value.compileOnly.annotations
-  compileOnly deps.auto.value.extensions.moshi.compileOnly.annotations
   kapt deps.dagger.apt.compiler
-  kapt deps.auto.value.apt.core
 
-  // Firebase
   implementation deps.android.firebase.database
-  kapt deps.auto.value.extensions.firebase.apt.core
-  compileOnly deps.auto.value.extensions.firebase.compileOnly.annotation
-  implementation deps.auto.value.extensions.firebase.adapter
 
   api deps.android.support.annotations
   api deps.dagger.runtime
