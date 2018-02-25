@@ -49,6 +49,7 @@ import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.analytics.trace
@@ -68,6 +69,7 @@ import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
+import io.sweers.catchup.ui.controllers.SmmryController
 import io.sweers.catchup.ui.controllers.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
 import io.sweers.catchup.util.applyOn
@@ -209,15 +211,17 @@ class ServiceController : ButterKnifeController,
     } else {
       return TextAdapter { item, holder ->
         service.bindItemView(item, holder)
-        item.summarizationInfo?.let {
-          // We're not supporting this for now since it's not ready yet
-//          holder.itemLongClicks()
-//              .autoDisposable(this)
-//              .subscribe(SmmryController.showFor<Any>(controller = this,
-//                  service = service,
-//                  title = item.title,
-//                  id = item.id.toString(),
-//                  info = it))
+        if (BuildConfig.DEBUG) {
+          item.summarizationInfo?.let {
+            // We're not supporting this for now since it's not ready yet
+            holder.itemLongClicks()
+                .autoDisposable(this)
+                .subscribe(SmmryController.showFor<Any>(controller = this,
+                    service = service,
+                    title = item.title,
+                    id = item.id.toString(),
+                    info = it))
+          }
         }
       }
     }
