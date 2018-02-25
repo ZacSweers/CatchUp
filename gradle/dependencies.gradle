@@ -29,7 +29,7 @@ def versions = [
     dagger: '2.14.1',
     errorProne: '2.2.0',
     espresso: '3.0.1',
-    firebase: '11.2.0',
+    firebase: '11.8.0',
     glide: '4.6.1',
     inspector: '0.3.0',
     kotlin: '1.2.30-eap-47',
@@ -211,7 +211,7 @@ ext.deps = [
         gradlePlugin: "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}",
         metadata: 'me.eugeniomarletti:kotlin-metadata:1.2.1',
         noArgGradlePlugin: "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}",
-        poet: 'com.squareup:kotlinpoet:0.7.0-20180211.200114-25',
+        poet: 'com.squareup:kotlinpoet:0.7.0',
         stdlib: [
             core: "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}",
             jdk7: "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}",
