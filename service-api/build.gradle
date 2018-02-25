@@ -58,6 +58,6 @@ dependencies {
   api deps.autoDispose.kotlin
   api deps.dagger.runtime
   api deps.misc.lazythreeten
-  api deps.rx.java2
+  api deps.rx.java
   implementation deps.okhttp.core
 }

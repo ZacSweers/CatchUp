@@ -67,6 +67,6 @@ dependencies {
   api deps.android.support.annotations
   api deps.dagger.runtime
   api deps.misc.lazythreeten
-  api deps.rx.java2
+  api deps.rx.java
   api deps.tikxml.htmlEscape
 }

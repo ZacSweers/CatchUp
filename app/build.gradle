@@ -431,9 +431,7 @@ dependencies {
   implementation deps.retrofit.moshi
   implementation deps.retrofit.rxJava2
   implementation deps.rx.android
-  implementation deps.rx.android2
   implementation deps.rx.java
-  implementation deps.rx.java2
   implementation deps.rx.binding.core
   implementation deps.rx.binding.v4
   implementation deps.rx.binding.design
@@ -466,7 +464,6 @@ dependencies {
   kapt deps.barber.apt
   implementation deps.misc.lottie
   implementation deps.misc.recyclerViewAnimators
-  implementation deps.rx.java
   implementation deps.rx.preferences
   implementation deps.rx.relay
   implementation deps.misc.moshiLazyAdapters
@@ -502,7 +499,7 @@ dependencies {
   // Test
   testImplementation deps.rx.relay
   androidTestCompileOnly deps.errorProne.compileOnly.annotations
-  androidTestImplementation deps.rx.java2
+  androidTestImplementation deps.rx.java
   androidTestImplementation deps.misc.jsr305
   testImplementation deps.misc.jsr305
   testCompileOnly deps.errorProne.compileOnly.annotations

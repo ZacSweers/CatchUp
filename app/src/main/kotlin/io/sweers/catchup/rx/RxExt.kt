@@ -30,7 +30,7 @@ import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import io.reactivex.SingleSource
 import io.reactivex.SingleTransformer
-import rx.android.MainThreadSubscription.verifyMainThread
+import io.reactivex.android.MainThreadDisposable.verifyMainThread
 import java.util.concurrent.TimeUnit
 
 @Suppress("UNCHECKED_CAST")

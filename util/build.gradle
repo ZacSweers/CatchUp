@@ -48,7 +48,7 @@ dependencies {
   api deps.misc.moshi
   api deps.misc.timber
   api deps.okhttp.core
-  api deps.rx.java2
+  api deps.rx.java
 
   implementation deps.misc.unbescape
 }
