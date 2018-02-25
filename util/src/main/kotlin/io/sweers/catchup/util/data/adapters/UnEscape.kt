@@ -17,10 +17,15 @@
 package io.sweers.catchup.util.data.adapters
 
 import com.squareup.moshi.JsonQualifier
+import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.annotation.AnnotationTarget.FIELD
+import kotlin.annotation.AnnotationTarget.FUNCTION
+import kotlin.annotation.AnnotationTarget.PROPERTY_GETTER
+import kotlin.annotation.AnnotationTarget.PROPERTY_SETTER
+import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
 
 @MustBeDocumented
 @JsonQualifier
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FIELD, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.VALUE_PARAMETER)
-annotation class UnEscape(val html: Boolean = false)
+@Retention(RUNTIME)
+@Target(FIELD, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, VALUE_PARAMETER)
+annotation class UnEscape

@@ -21,31 +21,24 @@ import com.squareup.moshi.JsonAdapter.Factory
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Types
-import org.unbescape.html.HtmlEscape
 import org.unbescape.java.JavaEscape
 
 /**
  * [JsonAdapter] that defaults the given element if it is a collection to an empty form
  * if it is null, denoted via [UnEscape].
  */
-class UnescapeJsonAdapter constructor(
-    private val delegate: JsonAdapter<String>,
-    private val html: Boolean) : JsonAdapter<String>() {
+class UnescapeJsonAdapter(private val delegate: JsonAdapter<String>) : JsonAdapter<String>() {
 
   override fun fromJson(reader: JsonReader): String? {
     val fromJson: String? = delegate.fromJson(reader)
-    return if (html) {
-      HtmlEscape.unescapeHtml(fromJson)
-    } else {
-      JavaEscape.unescapeJava(fromJson)
-    }
+    return JavaEscape.unescapeJava(fromJson)
   }
 
   override fun toJson(writer: JsonWriter, value: String?) {
     delegate.toJson(writer, value)
   }
 
-  override fun toString() = "$delegate.unescaping(html=$html)"
+  override fun toString() = "$delegate.unescaping()"
 
   companion object {
     @JvmField
@@ -54,12 +47,14 @@ class UnescapeJsonAdapter constructor(
         // save the iterator
         return@Factory null
       }
-      val unescape = annotations.find { it is UnEscape } ?: return@Factory null
 
-      return@Factory UnescapeJsonAdapter(moshi.adapter(type,
-          Types.nextAnnotations(annotations,
-              UnEscape::class.java)!!),
-          (unescape as UnEscape).html)
+      annotations
+          .find { it is UnEscape }
+          ?.let {
+            UnescapeJsonAdapter(moshi.adapter(type,
+                Types.nextAnnotations(annotations,
+                    UnEscape::class.java)!!))
+          }
     }
   }
 }
