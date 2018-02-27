@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':third_party:bypass'
-include ':service-api'
-include ':services:slashdot'
-include ':services:reddit'
-include ':services:hackernews'
-include ':services:medium'
-include ':services:producthunt'
-include ':services:designernews'
-include ':services:dribbble'
-include ':services:imgur'
-include ':services:github'
-include ':gemoji'
-include ':tooling:moshkt:api'
-include ':tooling:moshkt:compiler'
-//include ':tooling:moshkt:integration'
-include ':util'
+include(
+  ":app",
+  ":third_party:bypass",
+  ":service-api",
+  ":services:slashdot",
+  ":services:reddit",
+  ":services:hackernews",
+  ":services:medium",
+  ":services:producthunt",
+  ":services:designernews",
+  ":services:dribbble",
+  ":services:imgur",
+  ":services:github",
+  ":gemoji",
+  ":tooling:moshkt:api",
+  ":tooling:moshkt:compiler",
+  //":tooling:moshkt:integration",
+  ":util"
+)
