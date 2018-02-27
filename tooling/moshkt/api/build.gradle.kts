@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-apply plugin: 'org.jetbrains.kotlin.jvm'
-apply plugin: 'org.jetbrains.kotlin.kapt'
+plugins {
+  kotlin("jvm")
+  kotlin("kapt")
+}
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_7
+  targetCompatibility = JavaVersion.VERSION_1_7
+}
 
 dependencies {
-  compile deps.kotlin.stdlib.jdk7
-  compile deps.misc.moshi
+  compile(deps.kotlin.stdlib.jdk7)
+  compile(deps.misc.moshi)
 }
