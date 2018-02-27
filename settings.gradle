@@ -15,27 +15,17 @@
  */
 
 include ':app'
-include ':bypass'
-project(':bypass').projectDir = new File(rootDir, 'third_party/bypass')
+include ':third_party:bypass'
 include ':service-api'
-include ':slashdot'
-project(':slashdot').projectDir = new File(rootDir, 'services/slashdot')
-include ':reddit'
-project(':reddit').projectDir = new File(rootDir, 'services/reddit')
-include ':hackernews'
-project(':hackernews').projectDir = new File(rootDir, 'services/hackernews')
-include ':medium'
-project(':medium').projectDir = new File(rootDir, 'services/medium')
-include ':producthunt'
-project(':producthunt').projectDir = new File(rootDir, 'services/producthunt')
-include ':designernews'
-project(':designernews').projectDir = new File(rootDir, 'services/designernews')
-include ':dribbble'
-project(':dribbble').projectDir = new File(rootDir, 'services/dribbble')
-include ':imgur'
-project(':imgur').projectDir = new File(rootDir, 'services/imgur')
-include ':github'
-project(':github').projectDir = new File(rootDir, 'services/github')
+include ':services:slashdot'
+include ':services:reddit'
+include ':services:hackernews'
+include ':services:medium'
+include ':services:producthunt'
+include ':services:designernews'
+include ':services:dribbble'
+include ':services:imgur'
+include ':services:github'
 include ':gemoji'
 include ':tooling:moshkt:api'
 include ':tooling:moshkt:compiler'
