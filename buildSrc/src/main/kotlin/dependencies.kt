@@ -1,5 +1,27 @@
 @file:Suppress("ClassName")
 
+import org.gradle.api.Project
+import java.io.File
+
+fun String?.letIfEmpty(fallback: String): String {
+  return if (this == null || isEmpty()) {
+    fallback
+  } else {
+    this
+  }
+}
+
+fun String?.execute(workingDir: File, fallback: String): String {
+  Runtime.getRuntime().exec(this, null, workingDir).let {
+    it.waitFor()
+    return try {
+      it.inputStream.reader().readText().trim().letIfEmpty(fallback)
+    } catch (e: Exception) {
+      fallback
+    }
+  }
+}
+
 object deps {
   object versions {
     const val androidTestSupport = "1.0.1"
@@ -19,7 +41,7 @@ object deps {
     const val firebase = "11.8.0"
     const val glide = "4.6.1"
     const val inspector = "0.3.0"
-    const val kotlin = "1.2.30-eap-47"
+    const val kotlin = "1.2.30"
     const val leakcanary = "1.5.4"
     const val okhttp = "3.10.0"
     const val playServices = "11.8.0"
@@ -103,18 +125,29 @@ object deps {
   }
 
   object build {
-//    const val ci = "true" == System.getenv("CI"),
-    // query git for the SHA, Tag and commit count. Use these to automate versioning.
-//  const val gitSha = "git rev-parse --short HEAD".execute([} project.rootDir).text.trim() const val ? = "none"
-//  const val gitTag = "git describe --tags".execute([} project.rootDir).text.trim() const val ? = "dev"
-//  const val gitCommitCount = 100 + Integer.parseInt(
-//  "git rev-list --count HEAD".execute([} project.rootDir).text.trim() const val ? = "0"),
-//  const val gitTimestamp = "git log -n 1 --format=%at".execute([} rootDir).text.trim() const val ? = 0,
+    val ci = "true" == System.getenv("CI")
+
+    fun gitSha(project: Project): String {
+      // query git for the SHA, Tag and commit count. Use these to automate versioning.
+      return "git rev-parse --short HEAD".execute(project.rootDir, "none")
+    }
+
+    fun gitTag(project: Project): String {
+      return "git describe --tags".execute(project.rootDir, "dev")
+    }
+
+    fun gitCommitCount(project: Project): Int {
+      return 100 + Integer.parseInt("git rev-list --count HEAD".execute(project.rootDir, "0"))
+    }
+
+    fun gitTimestamp(project: Project): String {
+      return "git log -n 1 --format=%at".execute(project.rootDir, "0")
+    }
 
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.2.4"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.0"
-      const val psync = "io.sweers.psync:psync:2.0.0-SNAPSHOT"
+      const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
     }
 
