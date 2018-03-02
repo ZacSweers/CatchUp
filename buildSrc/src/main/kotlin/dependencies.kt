@@ -137,11 +137,11 @@ object deps {
     }
 
     fun gitCommitCount(project: Project): Int {
-      return 100 + Integer.parseInt("git rev-list --count HEAD".execute(project.rootDir, "0"))
+      return 100 + "git rev-list --count HEAD".execute(project.rootDir, "0").toInt()
     }
 
-    fun gitTimestamp(project: Project): String {
-      return "git log -n 1 --format=%at".execute(project.rootDir, "0")
+    fun gitTimestamp(project: Project): Int {
+      return "git log -n 1 --format=%at".execute(project.rootDir, "0").toInt()
     }
 
     object gradlePlugins {

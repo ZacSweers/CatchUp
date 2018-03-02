@@ -62,7 +62,7 @@ android {
     (this as ExtensionAware).extensions.add("playAccountConfig", defaultAccountConfig)
 
     buildConfigField("String", "GIT_SHA", "\"${deps.build.gitSha(project)}\"")
-    buildConfigField("long", "GIT_TIMESTAMP", "\"${deps.build.gitTimestamp(project)}\"")
+    buildConfigField("long", "GIT_TIMESTAMP", deps.build.gitTimestamp(project).toString())
     buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
         "\"${properties["catchup_github_developer_token"]}\"")
     buildConfigField("String", "SMMRY_API_KEY",
