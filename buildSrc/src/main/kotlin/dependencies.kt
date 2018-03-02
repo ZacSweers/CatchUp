@@ -1,4 +1,4 @@
-@file:Suppress("ClassName")
+@file:Suppress("ClassName", "unused")
 
 import org.gradle.api.Project
 import java.io.File
@@ -29,8 +29,6 @@ object deps {
     const val archComponentsLifecycle = "1.1.0"
     const val archComponentsRoom = "1.1.0-alpha2"
     const val autodispose = "0.6.1"
-    const val avFirebase = "1.1.0"
-    const val avMoshi = "0.4.5"
     const val barber = "1.3.1"
     const val butterknife = "8.8.1"
     const val chuck = "1.1.0"

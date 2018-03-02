@@ -339,10 +339,7 @@ open class UpdateVersion : DefaultTask() {
     if (latestTag == "dev") {
       throw IllegalStateException("No recent tag found!")
     }
-    val latestVersion = latestTag.split("\\.")
-    var major = latestVersion[0].toInt()
-    var minor = latestVersion[1].toInt()
-    var patch = latestVersion[2].toInt()
+    var (major, minor, patch) = latestTag.split(".").map(String::toInt)
     when (type) {
       "M" -> {
         major++
@@ -362,16 +359,19 @@ open class UpdateVersion : DefaultTask() {
     }
     val latestVersionString = "$major.$minor.$patch"
     println("Updating version to $latestVersionString")
-    val outputStream = ByteArrayOutputStream()
-    project.rootProject.exec {
-      commandLine("git", "tag", "-a", latestVersionString, "-m",
-          "\"Version $latestVersionString.\"")
-      standardOutput = outputStream
-      errorOutput = outputStream
-    }
-    val newTag = "git describe --abbrev=0 --tags".execute(workingDir, "dev")
-    if (newTag == latestTag) {
-      throw AssertionError("Git tag didn't work! ${outputStream.toString().trim()}")
+    ByteArrayOutputStream().use { os ->
+      project.rootProject.exec {
+        commandLine("git",
+            "tag",
+            "-a", latestVersionString,
+            "-m", "\"Version $latestVersionString.\"")
+        standardOutput = os
+        errorOutput = os
+      }
+      val newTag = "git describe --abbrev=0 --tags".execute(workingDir, "dev")
+      if (newTag == latestTag) {
+        throw AssertionError("Git tag didn't work! ${os.toString().trim()}")
+      }
     }
   }
 }
