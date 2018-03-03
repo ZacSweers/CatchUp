@@ -1,0 +1,312 @@
+/*
+ * Copyright (c) 2017 Zac Sweers
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+def versions = [
+    androidTestSupport: '1.0.1',
+    apollo: '0.4.4',
+    archComponentsLifecycle: '1.1.0',
+    archComponentsRoom: '1.1.0-alpha2',
+    autodispose: '0.6.1',
+    avFirebase: '1.1.0',
+    avMoshi: '0.4.5',
+    barber: '1.3.1',
+    butterknife: '8.8.1',
+    chuck: '1.1.0',
+    conductor: '2.1.4',
+    dagger: '2.14.1',
+    errorProne: '2.2.0',
+    espresso: '3.0.1',
+    firebase: '11.8.0',
+    glide: '4.6.1',
+    inspector: '0.3.0',
+    kotlin: '1.2.30-eap-47',
+    leakcanary: '1.5.4',
+    okhttp: '3.10.0',
+    playServices: '11.8.0',
+    retrofit: '2.3.0',
+    rxbinding: '2.0.0',
+    rxpalette: '0.3.0',
+    stetho: '1.5.0',
+    support: '27.0.2',
+    tikxml: '0.8.13'
+]
+
+ext.versions = versions
+
+ext.deps = [
+    android: [
+        arch: [
+            lifecycle: [
+                apt: "android.arch.lifecycle:compiler:${versions.archComponentsLifecycle}",
+                extensions: "android.arch.lifecycle:extensions:${versions.archComponentsLifecycle}"
+            ],
+            room: [
+                apt: "android.arch.persistence.room:compiler:${versions.archComponentsRoom}",
+                runtime: "android.arch.persistence.room:runtime:${versions.archComponentsRoom}",
+                rxJava2: "android.arch.persistence.room:rxjava2:${versions.archComponentsRoom}"
+            ]
+
+        ],
+        build: [
+            buildToolsVersion: '27.0.3',
+            compileSdkVersion: 27,
+            minSdkVersion: 21,
+            targetSdkVersion: 27
+        ],
+        firebase: [
+            core: "com.google.firebase:firebase-core:${versions.firebase}",
+            config: "com.google.firebase:firebase-config:${versions.firebase}",
+            database: "com.google.firebase:firebase-database:${versions.firebase}",
+            gradlePlugin: 'com.google.firebase:firebase-plugins:1.1.5',
+            perf: "com.google.firebase:firebase-perf:${versions.firebase}"
+        ],
+        gradlePlugin: 'com.android.tools.build:gradle:3.2.0-alpha04',
+        support: [
+            annotations: "com.android.support:support-annotations:${versions.support}",
+            appCompat: "com.android.support:appcompat-v7:${versions.support}",
+            cardView: "com.android.support:cardview-v7:${versions.support}",
+            constraintLayout: 'com.android.support.constraint:constraint-layout:1.1.0-beta4',
+            customTabs: "com.android.support:customtabs:${versions.support}",
+            design: "com.android.support:design:${versions.support}",
+            multidex: 'com.android.support:multidex:1.0.2',
+            palette: "com.android.support:palette-v7:${versions.support}",
+            percent: "com.android.support:percent:${versions.support}",
+            recyclerView: "com.android.support:recyclerview-v7:${versions.support}",
+            compat: "com.android.support:support-compat:${versions.support}",
+            v4: "com.android.support:support-v4:${versions.support}"
+        ]
+    ],
+
+    apollo: [
+        androidSupport: "com.apollographql.apollo:apollo-android-support:${versions.apollo}",
+        gradlePlugin: "com.apollographql.apollo:apollo-gradle-plugin:${versions.apollo}",
+        httpcache: "com.apollographql.apollo:apollo-http-cache:${versions.apollo}",
+        runtime: "com.apollographql.apollo:apollo-runtime:${versions.apollo}",
+        rx2Support: "com.apollographql.apollo:apollo-rx2-support:${versions.apollo}"
+    ],
+
+    auto: [
+        common: 'com.google.auto:auto-common:0.10',
+        service: 'com.google.auto.service:auto-service:1.0-rc4'
+    ],
+
+    autoDispose: [
+        core: "com.uber.autodispose:autodispose:${versions.autodispose}",
+        android: "com.uber.autodispose:autodispose-android:${versions.autodispose}",
+        kotlin: "com.uber.autodispose:autodispose-kotlin:${versions.autodispose}"
+    ],
+
+    barber: [
+        apt: "io.sweers.barber:barber-compiler:${versions.barber}",
+        api: "io.sweers.barber:barber-api:${versions.barber}"
+    ],
+
+    build: [
+        ci: 'true' == System.getenv('CI'),
+        // query git for the SHA, Tag and commit count. Use these to automate versioning.
+        gitSha: 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim() ?: "none",
+        gitTag: 'git describe --tags'.execute([], project.rootDir).text.trim() ?: "dev",
+        gitCommitCount: 100 + Integer.parseInt(
+            'git rev-list --count HEAD'.execute([], project.rootDir).text.trim() ?: '0'),
+        gitTimestamp: 'git log -n 1 --format=%at'.execute([], rootDir).text.trim() ?: 0,
+
+        gradlePlugins: [
+            bugsnag: 'com.bugsnag:bugsnag-android-gradle-plugin:3.2.4',
+            playPublisher: 'com.github.triplet.gradle:play-publisher:1.2.0',
+            psync: 'io.sweers.psync:psync:2.0.0-SNAPSHOT',
+            versions: 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
+        ],
+
+        repositories: [
+            google: 'https://maven.google.com',
+            jitpack: 'https://jitpack.io',
+            kotlineap: 'https://dl.bintray.com/kotlin/kotlin-eap',
+            plugins: 'https://plugins.gradle.org/m2/',
+            snapshots: 'https://oss.sonatype.org/content/repositories/snapshots/'
+        ]
+    ],
+
+    butterKnife: [
+        apt: "com.jakewharton:butterknife-compiler:${versions.butterknife}",
+        runtime: "com.jakewharton:butterknife:${versions.butterknife}",
+    ],
+
+    chuck: [
+        debug: "com.readystatesoftware.chuck:library:${versions.chuck}",
+        release: "com.readystatesoftware.chuck:library-no-op:${versions.chuck}"
+    ],
+
+    conductor: [
+        core: "com.bluelinelabs:conductor:${versions.conductor}",
+        autoDispose: "com.bluelinelabs:conductor-autodispose:${versions.conductor}",
+        support: "com.bluelinelabs:conductor-support:${versions.conductor}"
+    ],
+
+    dagger: [
+        android: [
+            apt: [
+                processor: "com.google.dagger:dagger-android-processor:${versions.dagger}"
+            ],
+            runtime: "com.google.dagger:dagger-android:${versions.dagger}",
+        ],
+        apt: [
+            compiler: "com.google.dagger:dagger-compiler:${versions.dagger}"
+        ],
+        runtime: "com.google.dagger:dagger:${versions.dagger}",
+    ],
+
+    errorProne: [
+        build: [
+            core: "com.google.errorprone:error_prone_core:${versions.errorProne}"
+        ],
+        compileOnly: [
+            annotations: "com.google.errorprone:error_prone_annotations:${versions.errorProne}"
+        ],
+        gradlePlugin: 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.13'
+    ],
+
+    glide: [
+        apt: [
+            compiler: "com.github.bumptech.glide:compiler:${versions.glide}"
+        ],
+        annotations: "com.github.bumptech.glide:annotations:${versions.glide}",
+        core: "com.github.bumptech.glide:glide:${versions.glide}",
+        okhttp: "com.github.bumptech.glide:okhttp3-integration:${versions.glide}",
+        recyclerView: "com.github.bumptech.glide:recyclerview-integration:${versions.glide}"
+    ],
+
+    inspector: [
+        apt: [
+            compiler: "io.sweers.inspector:inspector-compiler:${versions.inspector}",
+            extensions: [
+                android: "io.sweers.inspector:inspector-android-compiler-extension:${versions.inspector}",
+                autovalue: "io.sweers.inspector:inspector-autovalue-compiler-extension:${versions.inspector}",
+                nullability: "io.sweers.inspector:inspector-nullability-compiler-extension:${versions.inspector}",
+            ]
+        ],
+        core: "io.sweers.inspector:inspector:${versions.inspector}",
+        factoryCompiler: [
+            apt: "io.sweers.inspector:inspector-factory-compiler:${versions.inspector}",
+            compileOnly: [
+                annotations: "io.sweers.inspector:inspector-factory-compiler-annotations:${versions.inspector}"
+            ]
+        ]
+
+    ],
+
+    kotlin: [
+        gradlePlugin: "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}",
+        metadata: 'me.eugeniomarletti:kotlin-metadata:1.2.1',
+        noArgGradlePlugin: "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}",
+        poet: 'com.squareup:kotlinpoet:0.7.0',
+        stdlib: [
+            core: "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}",
+            jdk7: "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}",
+            jdk8: "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
+        ]
+    ],
+
+    leakCanary: [
+        debug: "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}",
+        release: "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
+    ],
+
+    misc: [
+        bugsnag: 'com.bugsnag:bugsnag-android:4.3.0',
+        debug: [
+            madge: 'com.jakewharton.madge:madge:1.1.4',
+            processPhoenix: 'com.jakewharton:process-phoenix:2.0.0',
+            scalpel: 'com.jakewharton.scalpel:scalpel:1.1.2',
+            telescope: 'com.mattprecious.telescope:telescope:2.1.0'
+        ],
+        guava: 'com.google.guava:guava:24.0-android',
+        javaxInject: 'org.glassfish:javax.annotation:10.0-b28',
+        jsr305: 'com.google.code.findbugs:jsr305:3.0.2',
+        lazythreeten: 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0',
+        lottie: 'com.airbnb.android:lottie:2.5.0',
+        moshi: "com.squareup.moshi:moshi:1.5.0",
+        moshiLazyAdapters: 'com.serjltt.moshi:moshi-lazy-adapters:2.1',
+        okio: 'com.squareup.okio:okio:1.14.0',
+        recyclerViewAnimators: 'jp.wasabeef:recyclerview-animators:2.2.7',
+        tapTargetView: 'com.getkeepsafe.taptargetview:taptargetview:1.11.0',
+        timber: 'com.jakewharton.timber:timber:4.6.0',
+        unbescape: 'org.unbescape:unbescape:1.1.5.RELEASE'
+    ],
+
+    okhttp: [
+        core: "com.squareup.okhttp3:okhttp:${versions.okhttp}",
+        debug: [
+            loggingInterceptor: "com.squareup.okhttp3:logging-interceptor:${versions.okhttp}"
+        ],
+        webSockets: "com.squareup.okhttp3:okhttp-ws:${versions.okhttp}"
+    ],
+
+    retrofit: [
+        core: "com.squareup.retrofit2:retrofit:${versions.retrofit}",
+        debug: [
+            mock: "com.squareup.retrofit2:retrofit-mock:${versions.retrofit}"
+        ],
+        moshi: "com.squareup.retrofit2:converter-moshi:${versions.retrofit}",
+        rxJava2: "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}",
+    ],
+
+    rx: [
+        android: 'io.reactivex.rxjava2:rxandroid:2.0.2',
+        binding: [
+            core: "com.jakewharton.rxbinding2:rxbinding-kotlin:${versions.rxbinding}",
+            v4: "com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:${versions.rxbinding}",
+            design: "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}",
+        ],
+        java: 'io.reactivex.rxjava2:rxjava:2.1.10',
+        palette: [
+            core: "io.sweers.rxpalette:rxpalette:${versions.rxpalette}",
+            kotlin: "io.sweers.rxpalette:rxpalette-kotlin:${versions.rxpalette}"
+        ],
+        preferences: 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3',
+        relay: 'com.jakewharton.rxrelay2:rxrelay:2.0.0',
+    ],
+
+    stetho: [
+        debug: [
+            core: "com.facebook.stetho:stetho:${versions.stetho}",
+            okhttp: "com.facebook.stetho:stetho-okhttp3:${versions.stetho}",
+            timber: "com.facebook.stetho:stetho-timber:${versions.stetho}"
+        ]
+    ],
+
+    tikxml: [
+        annotation: "com.tickaroo.tikxml:annotation:${versions.tikxml}",
+        apt: "com.tickaroo.tikxml:processor:${versions.tikxml}",
+        core: "com.tickaroo.tikxml:core:${versions.tikxml}",
+        htmlEscape: "com.tickaroo.tikxml:converter-htmlescape:${versions.tikxml}",
+        retrofit: "com.tickaroo.tikxml:retrofit-converter:${versions.tikxml}"
+    ],
+
+    test: [
+        android: [
+            espresso: [
+                core: "com.android.support.test.espresso:espresso-core:${versions.espresso}",
+                contrib: "com.android.support.test.espresso:espresso-contrib:${versions.espresso}",
+                web: "com.android.support.test.espresso:espresso-web:${versions.espresso}"
+            ],
+            runner: "com.android.support.test:runner:${versions.androidTestSupport}",
+            rules: "com.android.support.test:rules:${versions.androidTestSupport}"
+        ],
+        junit: 'junit:junit:4.12',
+        robolectric: 'org.robolectric:robolectric:3.2.2',
+        truth: 'com.google.truth:truth:0.39'
+    ]
+]

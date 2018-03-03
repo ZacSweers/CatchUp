@@ -1,0 +1,516 @@
+/*
+ * Copyright (c) 2017 Zac Sweers
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+private String getPropertyOrEmpty(String property) {
+  if (hasProperty(property)) {
+    return project.properties[property]
+  } else {
+    return ""
+  }
+}
+
+apply plugin: 'com.android.application'
+if (hasProperty("enableFirebasePerf")) {
+  apply plugin: 'com.google.firebase.firebase-perf'
+}
+apply plugin: 'io.sweers.psync'
+apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'org.jetbrains.kotlin.kapt'
+apply plugin: 'com.apollographql.android'
+apply plugin: "net.ltgt.errorprone"
+apply plugin: 'com.bugsnag.android.gradle'
+apply plugin: 'com.github.triplet.play'
+apply from: rootProject.file('gradle/config-kotlin-sources.gradle')
+
+android {
+  compileSdkVersion deps.android.build.compileSdkVersion
+  buildToolsVersion deps.android.build.buildToolsVersion
+
+  playAccountConfigs {
+    defaultAccountConfig {
+      serviceAccountEmail = getPropertyOrEmpty('catchup_play_publisher_account')
+      pk12File = rootProject.file('signing/play-account.p12')
+    }
+  }
+
+  defaultConfig {
+    applicationId "io.sweers.catchup"
+    minSdkVersion deps.android.build.minSdkVersion
+    targetSdkVersion deps.android.build.targetSdkVersion
+    versionCode deps.build.gitCommitCount
+    versionName deps.build.gitTag
+    multiDexEnabled false
+    archivesBaseName = "catchup"
+    vectorDrawables.useSupportLibrary = true
+    playAccountConfig = playAccountConfigs.defaultAccountConfig
+
+    buildConfigField 'String', 'GIT_SHA', /"$deps.build.gitSha"/
+    buildConfigField 'long', 'GIT_TIMESTAMP', "$deps.build.gitTimestamp"
+    buildConfigField 'String', 'GITHUB_DEVELOPER_TOKEN',
+        /"${getPropertyOrEmpty("catchup_github_developer_token")}"/
+    buildConfigField 'String', 'SMMRY_API_KEY', /"${getPropertyOrEmpty("catchup_smmry_api_key")}"/
+    resValue "string", "changelog_text", /"${getChangelog()}"/
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+  signingConfigs {
+    release {
+      keyAlias "catchupkey"
+      storeFile rootProject.file('signing/app-release.jks')
+      storePassword getPropertyOrEmpty("catchup_signing_store_password")
+      keyPassword getPropertyOrEmpty("catchup_signing_key_password")
+      v2SigningEnabled true
+    }
+  }
+  packagingOptions {
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/NOTICE'
+    exclude 'LICENSE.txt'
+    exclude 'META-INF/rxjava.properties'
+    exclude 'META-INF/NOTICE.txt'
+    exclude 'META-INF/LICENSE.txt'
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
+  buildTypes {
+    debug {
+      applicationIdSuffix ".debug"
+      versionNameSuffix "-dev"
+      ext.enableBugsnag = false
+    }
+    release {
+      buildConfigField 'String', 'BUGSNAG_KEY', /"${getPropertyOrEmpty("catchup_bugsnag_key")}"/
+      signingConfig signingConfigs.release
+      postprocessing.proguardFiles = ['proguard-rules.pro']
+      postprocessing.optimizeCode = false
+      postprocessing.obfuscate = false
+    }
+  }
+  dexOptions {
+    javaMaxHeapSize "2g"
+  }
+  lintOptions {
+    lintConfig file("lint.xml")
+    abortOnError true
+    check 'NewApi', 'InlinedApi'
+    fatal 'NewApi', 'InlinedApi'
+    enable 'UnusedResources'
+    checkReleaseBuilds true
+    textReport deps.build.ci
+    textOutput 'stdout'
+    htmlReport !deps.build.ci
+    xmlReport !deps.build.ci
+  }
+  // Disabled for now - https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/59
+  //  splits {
+  //    density {
+  //      enable true
+  //      reset()
+  //      include "mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"
+  //    }
+  //    abi {
+  //      enable true
+  //      reset()
+  //      include 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+  //      universalApk true
+  //    }
+  //  }
+  applicationVariants.all {
+    // Configure firebase
+    String apiKey = null
+    String appId = null
+    String databaseUrl = null
+    String gaTrackingId = null
+    String gcmDefaultSender = null
+    String storageBucket = null
+    String defaultWebClientId = null
+    String crashReportingApiKey = null
+    String projectId = null
+    if (it.buildType.name == "debug") {
+      apiKey = project.properties.get('catchup.google_api_key.debug')
+      appId = project.properties.get('catchup.google_app_id.debug')
+      databaseUrl = project.properties.get('catchup.firebase_database_url.debug')
+      gaTrackingId = project.properties.get('catchup.ga_trackingId.debug')
+      gcmDefaultSender = project.properties.get('catchup.gcm_defaultSenderId.debug')
+      storageBucket = project.properties.get('catchup.google_storage_bucket.debug')
+      defaultWebClientId = project.properties.get('catchup.default_web_client_id.debug')
+      crashReportingApiKey = project.properties.get('catchup.google_crash_reporting_api_key.debug')
+      projectId = 'catchup.project_id.debug'
+    } else if (it.buildType.name == "release") {
+      apiKey = project.properties.get('catchup.google_api_key')
+      appId = project.properties.get('catchup.google_app_id')
+      databaseUrl = project.properties.get('catchup.firebase_database_url')
+      gaTrackingId = project.properties.get('catchup.ga_trackingId')
+      gcmDefaultSender = project.properties.get('catchup.gcm_defaultSenderId')
+      storageBucket = project.properties.get('catchup.google_storage_bucket')
+      defaultWebClientId = project.properties.get('catchup.default_web_client_id')
+      crashReportingApiKey = project.properties.get('catchup.google_crash_reporting_api_key')
+      projectId = project.properties.get('catchup.project_id')
+    }
+    if (apiKey) {
+      it.resValue 'string', 'google_api_key', apiKey
+    }
+    if (appId) {
+      it.resValue 'string', 'google_app_id', appId
+    }
+    if (databaseUrl) {
+      it.resValue 'string', 'firebase_database_url', databaseUrl
+    }
+    if (gaTrackingId) {
+      it.resValue 'string', 'ga_trackingId', gaTrackingId
+    }
+    if (gcmDefaultSender) {
+      it.resValue 'string', 'gcm_defaultSenderId', gcmDefaultSender
+    }
+    if (storageBucket) {
+      it.resValue 'string', 'google_storage_bucket', storageBucket
+    }
+    if (defaultWebClientId) {
+      it.resValue 'string', 'default_web_client_id', defaultWebClientId
+    }
+    if (crashReportingApiKey) {
+      it.resValue 'string', 'google_crash_reporting_api_key', crashReportingApiKey
+    }
+    if (projectId) {
+      it.resValue 'string', 'project_id', projectId
+    }
+  }
+}
+
+play {
+  track = 'alpha'
+  uploadImages = true
+}
+
+bugsnag {
+  apiKey getPropertyOrEmpty("catchup_bugsnag_key")
+  autoProguardConfig false
+  ndk true
+}
+
+kapt {
+  correctErrorTypes = true
+  useBuildCache = true
+  mapDiagnosticLocations = true
+  arguments {
+    arg("room.schemaLocation", "${projectDir}/schemas")
+  }
+}
+
+psync {
+  includesPattern = "**/xml/prefs_*.xml"
+  generateRx = true
+  packageName = "io.sweers.catchup"
+}
+
+if (gradle.startParameter.isOffline()) {
+  afterEvaluate {
+    // Because this stalls in offline mode
+    tasks.installApolloCodegen.deleteAllActions()
+  }
+}
+
+apollo {
+  customTypeMapping {
+    DateTime = "org.threeten.bp.Instant"
+  }
+  customTypeMapping['URI'] = "okhttp3.HttpUrl"
+}
+
+tasks.withType(JavaCompile) {
+  options.compilerArgs += ['-Xep:MissingOverride:OFF']
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+  kotlinOptions {
+    freeCompilerArgs = [
+        "-Xjsr305=strict"
+    ]
+  }
+}
+
+class CutChangelogTask extends DefaultTask {
+
+  @Input
+  String versionName
+
+  @TaskAction
+  void run() {
+    File changelog = project.rootProject.file("CHANGELOG.md")
+
+    String whatsNewPath = "${project.projectDir}/src/main/play/en-US/whatsnew"
+    String newChangelog = getChangelog(changelog, "")
+    if (!newChangelog.isEmpty()) {
+      project.file(whatsNewPath).text = newChangelog
+    }
+
+    String currentContent = changelog.text
+    changelog.write(
+        "\n\n## ${versionName} (${new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date())})\n")
+    changelog.append(currentContent)
+  }
+
+  private static String getChangelog(File changelog, String defaultIfEmpty) {
+    StringBuilder log = new StringBuilder()
+    changelog.withReader('utf-8') { reader ->
+      String line
+      while ((line = reader.readLine()) != null) {
+        if (line.startsWith("#")) {
+          break
+        } else if (!line.isEmpty()) {
+          log.append(line).append("\n")
+        }
+      }
+    }
+    String finalLog = log.toString().trim()
+    return finalLog.isEmpty() ? defaultIfEmpty : finalLog
+  }
+}
+
+tasks.create("cutChangelog", CutChangelogTask.class) {
+  versionName = deps.build.gitTag
+  group "build"
+  description "Cuts the current changelog version and updates the play store changelog file"
+}
+
+String getChangelog() {
+  // Only return a changelog if we're publishing a release
+  if (!hasProperty("includeChangelog")) {
+    return ""
+  }
+
+  File changelog = rootProject.file("CHANGELOG.md")
+
+  StringBuilder log = new StringBuilder()
+  changelog.withReader('utf-8') { reader ->
+    String line
+    boolean seenChanges = false
+    int headerCount = 0
+    while ((line = reader.readLine()) != null) {
+      if (line.startsWith("#")) {
+        // We might see the first header from the last cut here. If so, skip it till the next
+        if (seenChanges || headerCount > 0) {
+          break
+        } else {
+          headerCount++
+        }
+      } else if (!line.isEmpty()) {
+        seenChanges = true
+        log.append(line).append("\n")
+      }
+    }
+  }
+  return log.toString().trim()
+}
+
+class UpdateVersion extends DefaultTask {
+  @Input
+  String type
+
+  @TaskAction
+  void run() {
+    File workingDir = project.rootProject.projectDir
+    String latestTag = 'git describe --abbrev=0 --tags'.execute([], workingDir).text.trim() ?: "dev"
+    if (latestTag == "dev") {
+      throw new IllegalStateException("No recent tag found!")
+    }
+    String[] latestVersion = latestTag.split("\\.")
+    int major = latestVersion[0].toInteger()
+    int minor = latestVersion[1].toInteger()
+    int patch = latestVersion[2].toInteger()
+    switch (type) {
+      case "M":
+        major++
+        minor = 0
+        patch = 0
+        break
+      case "m":
+        minor++
+        patch = 0
+        break
+      case "p":
+        patch++
+        break
+      default:
+        throw new IllegalArgumentException("Unrecognized version type \"$type\"")
+    }
+    String latestVersionString = "$major.$minor.$patch"
+    println "Updating version to $latestVersionString"
+    def outputStream = new ByteArrayOutputStream()
+    project.rootProject.exec {
+      commandLine 'git', 'tag', '-a', latestVersionString, '-m', "\"Version $latestVersionString.\""
+      standardOutput = outputStream
+      errorOutput = outputStream
+    }
+    String newTag = 'git describe --abbrev=0 --tags'.execute([], workingDir).text.trim() ?: "dev"
+    if (newTag == latestTag) {
+      throw new AssertionError("Git tag didn't work! ${outputStream.toString().trim()}")
+    }
+  }
+}
+
+tasks.create("updateVersion", UpdateVersion.class) {
+  type getProperty("version")
+  group "build"
+  description "Updates the current version. Supports CLI property flag -Pversion={type} where type is (Mmp)"
+}
+
+def supportLibraries = configurations.create("supportImplementation")
+
+dependencies {
+  implementation project(':third_party:bypass')
+  implementation project(':service-api')
+  implementation project(':services:hackernews')
+  implementation project(':services:reddit')
+  implementation project(':services:medium')
+  implementation project(':services:producthunt')
+  implementation project(':services:imgur')
+  implementation project(':services:slashdot')
+  implementation project(':services:designernews')
+  implementation project(':services:dribbble')
+  implementation project(':services:github')
+  implementation project(':gemoji')
+  implementation project(':util')
+
+  // Support libs
+  supportImplementation deps.android.support.annotations
+  supportImplementation deps.android.support.appCompat
+  supportImplementation deps.android.support.compat
+  supportImplementation deps.android.support.constraintLayout
+  supportImplementation deps.android.support.customTabs
+  supportImplementation deps.android.support.design
+  supportImplementation deps.android.support.palette
+  supportImplementation deps.android.support.v4
+
+  implementation supportLibraries
+  testImplementation supportLibraries
+  androidTestImplementation supportLibraries
+
+  // Arch components
+  implementation deps.android.arch.lifecycle.extensions
+  kapt deps.android.arch.lifecycle.apt
+  implementation deps.android.arch.room.runtime
+  implementation deps.android.arch.room.rxJava2
+  kapt deps.android.arch.room.apt
+
+  // Kotlin
+  implementation deps.kotlin.stdlib.core
+  implementation deps.kotlin.stdlib.jdk7
+
+  // MoshKt
+  kapt project(':tooling:moshkt:compiler')
+  implementation project(':tooling:moshkt:api')
+
+  // Firebase
+  implementation deps.android.firebase.core
+  implementation deps.android.firebase.config
+  implementation deps.android.firebase.database
+  implementation deps.android.firebase.perf
+
+  // Square/JW
+  implementation deps.butterKnife.runtime
+  kapt deps.butterKnife.apt
+  implementation deps.okhttp.core
+  implementation deps.misc.okio
+  implementation deps.misc.moshi
+  implementation deps.retrofit.core
+  implementation deps.retrofit.moshi
+  implementation deps.retrofit.rxJava2
+  implementation deps.rx.android
+  implementation deps.rx.java
+  implementation deps.rx.binding.core
+  implementation deps.rx.binding.v4
+  implementation deps.rx.binding.design
+  implementation deps.misc.lazythreeten
+  implementation deps.misc.tapTargetView
+  implementation deps.misc.timber
+  debugImplementation deps.misc.debug.madge
+  debugImplementation deps.misc.debug.scalpel
+  debugImplementation deps.misc.debug.processPhoenix
+  debugImplementation deps.misc.debug.telescope
+  debugImplementation deps.okhttp.debug.loggingInterceptor
+  debugImplementation deps.retrofit.debug.mock
+
+  releaseImplementation deps.misc.bugsnag
+
+  // Glide
+  kapt deps.glide.apt.compiler
+  implementation deps.glide.annotations
+  implementation deps.glide.core
+  implementation deps.glide.okhttp
+  implementation deps.glide.recyclerView
+
+  // Misc
+  implementation deps.autoDispose.core
+  implementation deps.autoDispose.android
+  implementation deps.autoDispose.kotlin
+  errorprone deps.errorProne.build.core
+  compileOnly deps.errorProne.compileOnly.annotations
+  implementation deps.barber.api
+  kapt deps.barber.apt
+  implementation deps.misc.lottie
+  implementation deps.misc.recyclerViewAnimators
+  implementation deps.rx.preferences
+  implementation deps.rx.relay
+  implementation deps.misc.moshiLazyAdapters
+
+  // Apollo
+  implementation deps.apollo.androidSupport
+  implementation deps.apollo.httpcache
+  implementation deps.apollo.runtime
+  implementation deps.apollo.rx2Support
+
+  // Stetho
+  debugImplementation deps.stetho.debug.core
+  debugImplementation deps.stetho.debug.okhttp
+  debugImplementation deps.stetho.debug.timber
+
+  // Dagger
+  kapt deps.dagger.apt.compiler
+  kapt deps.dagger.android.apt.processor
+  compileOnly deps.misc.javaxInject
+  implementation deps.dagger.runtime
+  implementation deps.dagger.android.runtime
+
+  // Inspector exposed for dagger
+  implementation deps.inspector.core
+
+  // Conductor
+  implementation deps.conductor.core
+  implementation deps.conductor.autoDispose
+  implementation deps.conductor.support
+
+  implementation deps.misc.jsr305
+
+  // Test
+  testImplementation deps.rx.relay
+  androidTestCompileOnly deps.errorProne.compileOnly.annotations
+  androidTestImplementation deps.rx.java
+  androidTestImplementation deps.misc.jsr305
+  testImplementation deps.misc.jsr305
+  testCompileOnly deps.errorProne.compileOnly.annotations
+  testImplementation deps.test.junit
+  testImplementation deps.test.truth
+
+  // LeakCanary
+  debugImplementation deps.leakCanary.debug
+  releaseImplementation deps.leakCanary.release
+
+  // Chuck
+  debugImplementation deps.chuck.debug
+  releaseImplementation deps.chuck.release
+}
