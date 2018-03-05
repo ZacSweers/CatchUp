@@ -14,31 +14,45 @@
  * limitations under the License.
  */
 
-apply plugin: 'org.jetbrains.kotlin.jvm'
-apply plugin: 'org.jetbrains.kotlin.kapt'
-apply from: rootProject.file('gradle/config-kotlin-sources.gradle')
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
+plugins {
+  kotlin("jvm")
+  kotlin("kapt")
+}
+
+apply {
+  from(rootProject.file("gradle/config-kotlin-sources.gradle"))
+}
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 repositories {
   jcenter()
   maven {
-    url deps.build.repositories.snapshots
+    url = uri(deps.build.repositories.snapshots)
   }
 }
 
-compileKotlin {
-  kotlinOptions.jvmTarget = 1.8
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
 }
 
 dependencies {
-  compile deps.kotlin.stdlib.jdk8
-  compile deps.kotlin.metadata
-  compile deps.kotlin.poet
-  compile deps.misc.moshi
-  compile deps.auto.common
-  compileOnly deps.auto.service
-  kapt deps.auto.service
-  compile project(':tooling:moshkt:api')
+  compile(deps.kotlin.stdlib.jdk8)
+  compile(deps.kotlin.metadata)
+  compile(deps.kotlin.poet)
+  compile(deps.misc.moshi)
+  compile(deps.auto.common)
+
+  compileOnly(deps.auto.service)
+
+  kapt(deps.auto.service)
+
+  compile(project(":tooling:moshkt:api"))
 }
