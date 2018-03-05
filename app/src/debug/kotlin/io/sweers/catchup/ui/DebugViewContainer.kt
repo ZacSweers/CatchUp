@@ -32,6 +32,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+import androidx.content.systemService
 import androidx.view.doOnLayout
 import butterknife.BindView
 import com.getkeepsafe.taptargetview.TapTarget
@@ -57,7 +58,6 @@ import io.sweers.catchup.ui.base.ActivityEvent
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
-import io.sweers.catchup.util.getSystemService
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
@@ -197,7 +197,7 @@ internal class DebugViewContainer @Inject constructor(
       } else {
         activity.window
             .addFlags(FLAG_SHOW_WHEN_LOCKED)
-        val power = activity.getSystemService<PowerManager>()
+        val power = activity.systemService<PowerManager>()
         power.newWakeLock(FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
             "wakeup!").run {
           acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))

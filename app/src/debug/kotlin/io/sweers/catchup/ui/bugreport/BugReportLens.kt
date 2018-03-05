@@ -28,6 +28,7 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.widget.Toast
+import androidx.content.systemService
 import androidx.net.toUri
 import com.mattprecious.telescope.Lens
 import com.uber.autodispose.kotlin.autoDisposable
@@ -43,7 +44,6 @@ import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
-import io.sweers.catchup.util.getSystemService
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -139,7 +139,7 @@ internal class BugReportLens @Inject constructor(private val activity: Activity,
 
   private fun uploadIssue(report: Report, body: StringBuilder, logs: File?) {
     val channelId = "bugreports"
-    val notificationManager = activity.getSystemService<NotificationManager>()
+    val notificationManager = activity.systemService<NotificationManager>()
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
       val channels = notificationManager.notificationChannels
       if (channels.none { it.id == channelId }) {

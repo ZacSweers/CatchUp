@@ -19,8 +19,8 @@ package io.sweers.catchup.service.imgur.model
 import android.app.ActivityManager
 import android.content.Context
 import android.content.res.Configuration
+import androidx.content.systemService
 import com.squareup.moshi.Json
-import io.sweers.catchup.util.getSystemService
 import io.sweers.moshkt.api.MoshiSerializable
 import org.threeten.bp.Instant
 
@@ -74,7 +74,7 @@ internal data class Image(
 //      l	Large Thumbnail	640x640	Yes
 //      h	Huge Thumbnail	1024x1024	Yes
       val smallLayout = context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_SMALL
-      val lowRam = context.getSystemService<ActivityManager>().isLowRamDevice
+      val lowRam = context.systemService<ActivityManager>().isLowRamDevice
       return if (lowRam) {
         if (smallLayout) {
           "t"
