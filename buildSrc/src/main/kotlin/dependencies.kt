@@ -27,7 +27,7 @@ object deps {
     const val androidTestSupport = "1.0.1"
     const val apollo = "0.4.4"
     const val archComponentsLifecycle = "1.1.0"
-    const val archComponentsRoom = "1.1.0-alpha2"
+    const val archComponentsRoom = "1.1.0-alpha3"
     const val autodispose = "0.6.1"
     const val barber = "1.3.1"
     const val butterknife = "8.8.1"
@@ -47,7 +47,7 @@ object deps {
     const val rxbinding = "2.0.0"
     const val rxpalette = "0.3.0"
     const val stetho = "1.5.0"
-    const val support = "27.0.2"
+    const val support = "27.1.0"
     const val tikxml = "0.8.13"
   }
 
