@@ -1,8 +1,3 @@
-import deps
-import deps.versions
-import org.gradle.initialization.StartParameterBuildOptions.BuildScanOption
-import org.gradle.internal.scan.config.BuildScanConfig
-
 /*
  * Copyright (c) 2017 Zac Sweers
  *
@@ -18,6 +13,11 @@ import org.gradle.internal.scan.config.BuildScanConfig
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import deps
+import deps.versions
+import org.gradle.initialization.StartParameterBuildOptions.BuildScanOption
+import org.gradle.internal.scan.config.BuildScanConfig
 
 buildscript {
   repositories {
