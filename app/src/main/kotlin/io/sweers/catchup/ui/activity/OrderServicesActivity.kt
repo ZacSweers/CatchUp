@@ -25,6 +25,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.view.doOnLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
@@ -61,7 +62,6 @@ import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.util.ColorUtils
 import io.sweers.catchup.util.isInNightMode
-import io.sweers.catchup.util.onLaidOut
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
 import java.util.Collections
@@ -398,7 +398,7 @@ private class FabShowTapTarget(
   }
 
   override fun onReady(runnable: Runnable) {
-    fab.onLaidOut {
+    fab.doOnLayout {
       if (fab.isShown) {
         delegateTarget().onReady(runnable)
       } else {

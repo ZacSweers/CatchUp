@@ -19,9 +19,9 @@ package io.sweers.catchup.util.customtabs
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.support.customtabs.CustomTabsService
 import android.util.Log
+import androidx.net.toUri
 import java.util.ArrayList
 
 /**
@@ -30,11 +30,11 @@ import java.util.ArrayList
  * Adapted from github.com/GoogleChrome/custom-tabs-client
  */
 object CustomTabsHelper {
-  private val STABLE_PACKAGE = "com.android.chrome"
-  private val BETA_PACKAGE = "com.chrome.beta"
-  private val DEV_PACKAGE = "com.chrome.dev"
-  private val LOCAL_PACKAGE = "com.google.android.apps.chrome"
-  private val TAG = "CustomTabsHelper"
+  private const val STABLE_PACKAGE = "com.android.chrome"
+  private const val BETA_PACKAGE = "com.chrome.beta"
+  private const val DEV_PACKAGE = "com.chrome.dev"
+  private const val LOCAL_PACKAGE = "com.google.android.apps.chrome"
+  private const val TAG = "CustomTabsHelper"
 
   private var sPackageNameToUse: String? = null
 
@@ -53,7 +53,7 @@ object CustomTabsHelper {
 
     val pm = context.packageManager
     // Get default VIEW intent handler.
-    val activityIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com"))
+    val activityIntent = Intent(Intent.ACTION_VIEW, "http://www.example.com".toUri())
     val defaultViewHandlerInfo = pm.resolveActivity(activityIntent, 0)
     var defaultViewHandlerPackageName: String? = null
     if (defaultViewHandlerInfo != null) {

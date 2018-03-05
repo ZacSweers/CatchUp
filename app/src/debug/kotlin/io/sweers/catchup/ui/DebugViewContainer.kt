@@ -32,6 +32,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+import androidx.view.doOnLayout
 import butterknife.BindView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.jakewharton.madge.MadgeFrameLayout
@@ -57,7 +58,6 @@ import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
 import io.sweers.catchup.util.getSystemService
-import io.sweers.catchup.util.onLaidOut
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
@@ -200,9 +200,9 @@ internal class DebugViewContainer @Inject constructor(
         val power = activity.getSystemService<PowerManager>()
         power.newWakeLock(FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
             "wakeup!").run {
-              acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
-              release()
-            }
+          acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
+          release()
+        }
       }
     }
   }
@@ -234,7 +234,8 @@ class DrawerTapTarget(
   }
 
   override fun onReady(runnable: Runnable) {
-    drawerLayout.onLaidOut {
+    // Use `it` eventually: https://github.com/android/android-ktx/pull/177
+    drawerLayout.doOnLayout {
       if (drawerLayout.isDrawerOpen(gravity)) {
         delegateTarget.onReady(runnable)
       } else {

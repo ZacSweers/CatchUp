@@ -117,11 +117,11 @@ class LinkManager @Inject constructor(private val customTab: CustomTabActivityHe
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnEmpty {
-          dumbCache.put(uri.host, false)
+          dumbCache[uri.host] = false
           openCustomTab(context, uri, accentColor)
         }
         .doOnNext {
-          dumbCache.put(uri.host, true)
+          dumbCache[uri.host] = true
           context.startActivity(intent)
         }
         .ignoreElements()

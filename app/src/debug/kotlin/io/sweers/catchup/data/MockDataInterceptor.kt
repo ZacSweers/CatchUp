@@ -62,6 +62,7 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
   companion object {
 
     // TODO Generate this?
+    // Can also use arrayMapOf()
     private val SUPPORTED_ENDPOINTS = object : ArrayMap<String, ServiceData>() {
       init {
 //        put(RedditApi.HOST,

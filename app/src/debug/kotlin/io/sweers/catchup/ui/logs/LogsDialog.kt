@@ -19,10 +19,10 @@ package io.sweers.catchup.ui.logs
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
 import android.support.v7.app.AlertDialog
 import android.widget.ListView
 import android.widget.Toast
+import androidx.os.toUri
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -79,7 +79,7 @@ class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDi
           override fun onSuccess(file: File) {
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.type = "text/plain"
-            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file))
+            sendIntent.putExtra(Intent.EXTRA_STREAM, file.toUri())
             context.maybeStartChooser(sendIntent)
           }
 

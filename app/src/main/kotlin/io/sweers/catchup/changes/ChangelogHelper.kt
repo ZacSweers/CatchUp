@@ -13,6 +13,7 @@ import android.support.v4.view.ViewCompat
 import android.support.v7.widget.Toolbar
 import android.text.style.StyleSpan
 import android.widget.TextView
+import androidx.view.doOnLayout
 import com.getkeepsafe.taptargetview.TapTarget
 import dagger.Lazy
 import io.sweers.catchup.BuildConfig
@@ -28,7 +29,6 @@ import io.sweers.catchup.util.TouchableUrlSpan
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.ifNotEmpty
 import io.sweers.catchup.util.markdown
-import io.sweers.catchup.util.onLaidOut
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.resolveActivity
 import io.sweers.catchup.util.show
@@ -118,7 +118,7 @@ class ChangelogHelper @Inject constructor(
                     })
           }
 
-          contentView.onLaidOut {
+          contentView.doOnLayout {
             val duration = 400L
             val height = contentView.bottom
             title.translationY = (height - title.y) * 0.25f

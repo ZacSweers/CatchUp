@@ -16,8 +16,6 @@
 
 package io.sweers.catchup.ui.controllers.service
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
@@ -37,6 +35,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.animation.doOnEnd
 import com.bumptech.glide.ListPreloader.PreloadModelProvider
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
@@ -257,24 +256,27 @@ internal class ImageAdapter(private val context: Context,
                 if (!imageItem.hasFadedIn) {
                   image.setHasTransientState(true)
                   val cm = ObservableColorMatrix()
-                  val saturation = ObjectAnimator.ofFloat(cm, ObservableColorMatrix.SATURATION, 0f,
+                  // Saturation
+                  ObjectAnimator.ofFloat(cm,
+                      ObservableColorMatrix.SATURATION,
+                      0f,
                       1f)
-                  saturation.addUpdateListener { _ ->
-                    // just animating the color matrix does not invalidate the
-                    // drawable so need this update listener.  Also have to create a
-                    // new CMCF as the matrix is immutable :(
-                    image.colorFilter = ColorMatrixColorFilter(cm)
-                  }
-                  saturation.duration = 2000L
-                  saturation.interpolator = FastOutSlowInInterpolator()
-                  saturation.addListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                      image.clearColorFilter()
-                      image.setHasTransientState(false)
-                    }
-                  })
-                  saturation.start()
-                  imageItem.hasFadedIn = true
+                      .apply {
+                        addUpdateListener { _ ->
+                          // just animating the color matrix does not invalidate the
+                          // drawable so need this update listener.  Also have to create a
+                          // new CMCF as the matrix is immutable :(
+                          image.colorFilter = ColorMatrixColorFilter(cm)
+                        }
+                        duration = 2000L
+                        interpolator = FastOutSlowInInterpolator()
+                        doOnEnd {
+                          image.clearColorFilter()
+                          image.setHasTransientState(false)
+                        }
+                        start()
+                        imageItem.hasFadedIn = true
+                      }
                 }
                 return false
               }

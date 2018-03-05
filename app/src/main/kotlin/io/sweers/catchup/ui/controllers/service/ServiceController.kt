@@ -40,6 +40,8 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.os.bundleOf
+import androidx.view.isVisible
 import butterknife.BindView
 import butterknife.OnClick
 import com.apollographql.apollo.exception.ApolloException
@@ -75,7 +77,6 @@ import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
 import io.sweers.catchup.util.applyOn
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
-import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
@@ -124,19 +125,21 @@ class ServiceController : ButterKnifeController,
   companion object {
     const val ARG_SERVICE_KEY = "serviceKey"
     fun newInstance(serviceKey: String) =
-        ServiceController(Bundle().apply {
-          putString(
-              ARG_SERVICE_KEY,
-              serviceKey)
-        })
+        ServiceController(bundleOf(ARG_SERVICE_KEY to serviceKey))
   }
 
-  @BindView(R.id.error_container) lateinit var errorView: View
-  @BindView(R.id.error_message) lateinit var errorTextView: TextView
-  @BindView(R.id.error_image) lateinit var errorImage: ImageView
-  @BindView(R.id.list) lateinit var recyclerView: RecyclerView
-  @BindView(R.id.progress) lateinit var progress: ProgressBar
-  @BindView(R.id.refresh) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+  @BindView(R.id.error_container)
+  lateinit var errorView: View
+  @BindView(R.id.error_message)
+  lateinit var errorTextView: TextView
+  @BindView(R.id.error_image)
+  lateinit var errorImage: ImageView
+  @BindView(R.id.list)
+  lateinit var recyclerView: RecyclerView
+  @BindView(R.id.progress)
+  lateinit var progress: ProgressBar
+  @BindView(R.id.refresh)
+  lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
   private lateinit var layoutManager: LinearLayoutManager
   private lateinit var adapter: DisplayableItemAdapter<out DisplayableItem, ViewHolder>
@@ -150,11 +153,14 @@ class ServiceController : ButterKnifeController,
   private val defaultItemAnimator = DefaultItemAnimator()
 
   @field:TextViewPool
-  @Inject lateinit var textViewPool: RecycledViewPool
+  @Inject
+  lateinit var textViewPool: RecycledViewPool
   @field:VisualViewPool
-  @Inject lateinit var visualViewPool: RecycledViewPool
+  @Inject
+  lateinit var visualViewPool: RecycledViewPool
   @field:FinalServices
-  @Inject lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
+  @Inject
+  lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
   private val service: Service by lazy {
     args[ARG_SERVICE_KEY].let {
       services[it]?.get() ?: throw IllegalArgumentException("No service provided for $it!")
@@ -260,13 +266,15 @@ class ServiceController : ButterKnifeController,
     }
   }
 
-  @OnClick(R.id.retry_button) internal fun onRetry() {
+  @OnClick(R.id.retry_button)
+  internal fun onRetry() {
     errorView.hide()
     progress.show()
     onRefresh()
   }
 
-  @OnClick(R.id.error_image) internal fun onErrorClick(imageView: ImageView) {
+  @OnClick(R.id.error_image)
+  internal fun onErrorClick(imageView: ImageView) {
     (imageView.drawable as AnimatedVectorDrawableCompat).start()
   }
 
@@ -304,7 +312,7 @@ class ServiceController : ButterKnifeController,
   }
 
   private fun loadData(fromRefresh: Boolean = false) {
-    if (!recyclerView.isVisible()) {
+    if (!recyclerView.isVisible) {
       progress.show()
     }
     if (fromRefresh || adapter.itemCount == 0) {

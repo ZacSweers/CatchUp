@@ -38,6 +38,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.view.isGone
+import androidx.view.isVisible
 import butterknife.BindView
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieProperty
@@ -87,8 +89,6 @@ import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
-import io.sweers.catchup.util.isGone
-import io.sweers.catchup.util.isVisible
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
 import okhttp3.OkHttpClient
@@ -318,7 +318,7 @@ class SmmryController : ButterKnifeController {
     title.text = smmryTitle
     summary.text = smmry.content
         .replace("[BREAK]", "\n\n")
-    if (loadingView.isVisible()) {
+    if (loadingView.isVisible) {
       loadingView.animate()
           .alpha(0f)
           .setListener(object : AnimatorListenerAdapter() {
@@ -329,7 +329,7 @@ class SmmryController : ButterKnifeController {
             }
           })
     }
-    if (content.isGone()) {
+    if (content.isGone) {
       content.alpha = 0f
       content.show()
       content.animate()

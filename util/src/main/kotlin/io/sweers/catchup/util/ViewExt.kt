@@ -20,7 +20,6 @@ package io.sweers.catchup.util
 
 import android.os.Build
 import android.view.View
-import android.view.ViewTreeObserver
 
 fun View.setLightStatusBar() {
   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -58,7 +57,6 @@ fun View.clearLightNavBar() {
   }
 }
 
-inline fun View.isVisible() = visibility == View.VISIBLE
 inline fun View.show() {
   visibility = View.VISIBLE
 }
@@ -71,7 +69,6 @@ inline infix fun View.showIf(condition: Boolean) {
   }
 }
 
-inline fun View.isGone() = visibility == View.GONE
 inline fun View.hide() {
   visibility = View.GONE
 }
@@ -82,27 +79,4 @@ inline infix fun View.hideIf(condition: Boolean) {
   } else {
     show()
   }
-}
-
-inline fun View.isRtl() = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
-
-/** Executes the given [java.lang.Runnable] when the view is laid out  */
-inline fun View.onLaidOut(crossinline body: () -> Unit) {
-  if (isLaidOut) {
-    body()
-    return
-  }
-
-  val observer = viewTreeObserver
-  observer.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-    override fun onGlobalLayout() {
-      if (observer.isAlive) {
-        observer
-      } else {
-        viewTreeObserver
-      }.removeOnGlobalLayoutListener(this)
-
-      body()
-    }
-  })
 }

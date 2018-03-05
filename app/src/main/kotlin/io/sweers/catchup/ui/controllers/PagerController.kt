@@ -17,7 +17,6 @@
 package io.sweers.catchup.ui.controllers
 
 import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Context
@@ -43,6 +42,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import androidx.animation.doOnEnd
+import androidx.animation.doOnStart
 import butterknife.BindView
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
@@ -316,17 +317,14 @@ class PagerController : ButterKnifeController {
               .run {
                 interpolator = FastOutSlowInInterpolator()  // TODO Use singleton
                 duration = 400
-                addListener(object : AnimatorListenerAdapter() {
-                  override fun onAnimationStart(animator: Animator, isReverse: Boolean) {
-                    tabLayoutColorAnimator = animator
-                  }
-
-                  override fun onAnimationEnd(animator: Animator) {
-                    removeAllUpdateListeners()
-                    removeListener(this)
-                    tabLayoutColorAnimator = null
-                  }
-                })
+                doOnStart {
+                  tabLayoutColorAnimator = it
+                }
+                doOnEnd {
+                  removeAllUpdateListeners()
+//                  removeListener(it)
+                  tabLayoutColorAnimator = null
+                }
                 addUpdateListener { animator ->
                   @ColorInt val color = argbEvaluator.evaluate(animator.animatedValue as Float,
                       startColor,
@@ -348,11 +346,11 @@ class PagerController : ButterKnifeController {
 
       override fun onTabReselected(tab: TabLayout.Tab) {
         pagerAdapter.getRouter(tab.position)?.getControllerWithTag(PAGE_TAG)?.let {
-              if (it is Scrollable) {
-                it.onRequestScrollToTop()
-                appBarLayout.setExpanded(true, true)
-              }
-            }
+          if (it is Scrollable) {
+            it.onRequestScrollToTop()
+            appBarLayout.setExpanded(true, true)
+          }
+        }
       }
     })
   }

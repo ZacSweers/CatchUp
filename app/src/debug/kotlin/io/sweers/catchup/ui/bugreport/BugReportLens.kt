@@ -21,7 +21,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -29,6 +28,7 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.widget.Toast
+import androidx.net.toUri
 import com.mattprecious.telescope.Lens
 import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.Single
@@ -219,11 +219,12 @@ internal class BugReportLens @Inject constructor(private val activity: Activity,
                   color = ContextCompat.getColor(activity, R.color.colorAccent)
                   setContentTitle("Bug report successfully uploaded")
                   setContentText(it)
-                  val resultIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                  val uri = it.toUri()
+                  val resultIntent = Intent(Intent.ACTION_VIEW, uri)
                   setContentIntent(PendingIntent.getActivity(activity, 0, resultIntent, 0))
                   setAutoCancel(true)
 
-                  val shareIntent = Intent(Intent.ACTION_SEND, Uri.parse(it))
+                  val shareIntent = Intent(Intent.ACTION_SEND, uri)
                   shareIntent.type = "text/plain"
                   shareIntent.putExtra(Intent.EXTRA_TEXT, it)
                   shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

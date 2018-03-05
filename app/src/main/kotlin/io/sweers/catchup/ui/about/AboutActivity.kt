@@ -40,6 +40,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.util.layoutDirection
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
@@ -70,10 +71,10 @@ import io.sweers.catchup.util.TouchableUrlSpan
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.isInNightMode
-import io.sweers.catchup.util.isRtl
 import io.sweers.catchup.util.markdown
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.setLightStatusBar
+import java.util.Locale
 import javax.inject.Inject
 
 class AboutActivity : BaseActivity() {
@@ -295,10 +296,10 @@ class AboutController : ButterKnifeController() {
 
       override fun onTabReselected(tab: TabLayout.Tab) {
         pagerAdapter.getRouter(tab.position)?.getControllerWithTag(PAGE_TAG)?.let {
-              if (it is Scrollable) {
-                it.onRequestScrollToTop()
-              }
-            }
+          if (it is Scrollable) {
+            it.onRequestScrollToTop()
+          }
+        }
       }
     })
   }
@@ -316,7 +317,7 @@ class AboutController : ButterKnifeController() {
     @Px val translatableHeight = appBarLayout.measuredHeight - finalAppBarHeight
     @Px val titleX = title.x
     @Px val titleInset = toolbar.titleMarginStart
-    @Px val desiredTitleX = if (toolbar.isRtl()) {
+    @Px val desiredTitleX = if (Locale.getDefault().layoutDirection == View.LAYOUT_DIRECTION_RTL) {
       // I have to subtract 2x to line this up correctly
       // I have no idea why
       toolbar.measuredWidth - titleInset - titleInset
