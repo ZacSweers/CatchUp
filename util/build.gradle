@@ -41,6 +41,7 @@ dependencies {
   api deps.android.support.annotations
   implementation deps.android.support.appCompat
   implementation deps.android.support.compat
+  implementation deps.android.ktx
   api deps.dagger.runtime
   api deps.kotlin.stdlib.jdk7
   api deps.misc.guava

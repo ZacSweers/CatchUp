@@ -410,6 +410,7 @@ dependencies {
   // Kotlin
   implementation deps.kotlin.stdlib.core
   implementation deps.kotlin.stdlib.jdk7
+  implementation deps.android.ktx
 
   // MoshKt
   kapt project(':tooling:moshkt:compiler')

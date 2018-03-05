@@ -69,7 +69,8 @@ internal class ImageAdapter(private val context: Context,
 
   companion object {
     const val PRELOAD_AHEAD_ITEMS = 6
-    @ColorInt private const val INITIAL_GIF_BADGE_COLOR = 0x40ffffff
+    @ColorInt
+    private const val INITIAL_GIF_BADGE_COLOR = 0x40ffffff
   }
 
   private val loadingPlaceholders: Array<ColorDrawable>
@@ -112,48 +113,49 @@ internal class ImageAdapter(private val context: Context,
   }
 
   @TargetApi(Build.VERSION_CODES.M)
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder? {
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
     val layoutInflater = LayoutInflater.from(parent.context)
-    when (viewType) {
+    return when (viewType) {
       TYPE_ITEM -> {
-        val holder = ImageHolder(LayoutInflater.from(parent.context)
+        ImageHolder(LayoutInflater.from(parent.context)
             .inflate(R.layout.image_item, parent, false), loadingPlaceholders)
-        holder.image.setBadgeColor(
-            INITIAL_GIF_BADGE_COLOR)
-        holder.image.foreground = UiUtil.createColorSelector(0x40808080, null)
-        // play animated GIFs whilst touched
-        holder.image.setOnTouchListener { _, event ->
-          // check if it's an event we care about, else bail fast
-          val action = event.action
-          if (!(action == MotionEvent.ACTION_DOWN
-              || action == MotionEvent.ACTION_UP
-              || action == MotionEvent.ACTION_CANCEL)) {
-            return@setOnTouchListener false
-          }
+            .apply {
+              image.setBadgeColor(
+                  INITIAL_GIF_BADGE_COLOR)
+              image.foreground = UiUtil.createColorSelector(0x40808080, null)
+              // play animated GIFs whilst touched
+              image.setOnTouchListener { _, event ->
+                // check if it's an event we care about, else bail fast
+                val action = event.action
+                if (!(action == MotionEvent.ACTION_DOWN
+                        || action == MotionEvent.ACTION_UP
+                        || action == MotionEvent.ACTION_CANCEL)) {
+                  return@setOnTouchListener false
+                }
 
-          // get the image and check if it's an animated GIF
-          val drawable = holder.image.drawable ?: return@setOnTouchListener false
-          val gif: GifDrawable = when (drawable) {
-            is GifDrawable -> drawable
-            is TransitionDrawable -> (0 until drawable.numberOfLayers).asSequence()
-                .map { i -> drawable.getDrawable(i) }
-                .filterIsInstance<GifDrawable>()
-                .firstOrNull()
-            else -> null
-          } ?: return@setOnTouchListener false
-          // GIF found, start/stop it on press/lift
-          when (action) {
-            MotionEvent.ACTION_DOWN -> gif.start()
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> gif.stop()
-          }
-          false
-        }
-        return holder
+                // get the image and check if it's an animated GIF
+                val drawable = image.drawable ?: return@setOnTouchListener false
+                val gif: GifDrawable = when (drawable) {
+                  is GifDrawable -> drawable
+                  is TransitionDrawable -> (0 until drawable.numberOfLayers).asSequence()
+                      .map { i -> drawable.getDrawable(i) }
+                      .filterIsInstance<GifDrawable>()
+                      .firstOrNull()
+                  else -> null
+                } ?: return@setOnTouchListener false
+                // GIF found, start/stop it on press/lift
+                when (action) {
+                  MotionEvent.ACTION_DOWN -> gif.start()
+                  MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> gif.stop()
+                }
+                false
+              }
+            }
       }
-      TYPE_LOADING_MORE -> return LoadingMoreHolder(
+      TYPE_LOADING_MORE -> LoadingMoreHolder(
           layoutInflater.inflate(layout.infinite_loading, parent, false))
+      else -> TODO("Unknown type")
     }
-    return null
   }
 
   override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -176,7 +178,8 @@ internal class ImageAdapter(private val context: Context,
     }
   }
 
-  @SuppressLint("NewApi") override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
+  @SuppressLint("NewApi")
+  override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
     if (holder is ImageHolder) {
       // reset the badge & ripple which are dynamically determined
       GlideApp.with(holder.itemView).clear(holder.image)

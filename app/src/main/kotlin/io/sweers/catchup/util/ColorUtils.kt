@@ -64,9 +64,9 @@ object ColorUtils {
   @IntDef(IS_LIGHT, IS_DARK, LIGHTNESS_UNKNOWN)
   annotation class Lightness
 
-  const val IS_LIGHT: Long = 0
-  const val IS_DARK: Long = 1
-  const val LIGHTNESS_UNKNOWN: Long = 2
+  const val IS_LIGHT = 0
+  const val IS_DARK = 1
+  const val LIGHTNESS_UNKNOWN = 2
 
   /**
    * Set the alpha component of `color` to be `alpha`.

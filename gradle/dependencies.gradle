@@ -18,9 +18,8 @@ def versions = [
     androidTestSupport: '1.0.1',
     apollo: '0.4.4',
     archComponentsLifecycle: '1.1.0',
-    archComponentsRoom: '1.1.0-alpha2',
+    archComponentsRoom: '1.1.0-alpha3',
     autodispose: '0.6.1',
-    avFirebase: '1.1.0',
     avMoshi: '0.4.5',
     barber: '1.3.1',
     butterknife: '8.8.1',
@@ -32,7 +31,7 @@ def versions = [
     firebase: '11.8.0',
     glide: '4.6.1',
     inspector: '0.3.0',
-    kotlin: '1.2.30-eap-47',
+    kotlin: '1.2.30',
     leakcanary: '1.5.4',
     okhttp: '3.10.0',
     playServices: '11.8.0',
@@ -40,7 +39,7 @@ def versions = [
     rxbinding: '2.0.0',
     rxpalette: '0.3.0',
     stetho: '1.5.0',
-    support: '27.0.2',
+    support: '27.1.0',
     tikxml: '0.8.13'
 ]
 
@@ -74,6 +73,7 @@ ext.deps = [
             perf: "com.google.firebase:firebase-perf:${versions.firebase}"
         ],
         gradlePlugin: 'com.android.tools.build:gradle:3.2.0-alpha04',
+        ktx: 'androidx.core:core-ktx:0.2',
         support: [
             annotations: "com.android.support:support-annotations:${versions.support}",
             appCompat: "com.android.support:appcompat-v7:${versions.support}",
