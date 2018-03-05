@@ -92,7 +92,7 @@ android {
     exclude("META-INF/services/javax.annotation.processing.Processor")
   }
   buildTypes {
-    getByName("release") {
+    getByName("debug") {
       applicationIdSuffix = ".debug"
       versionNameSuffix = "-dev"
       ext["enableBugsnag"] = false
@@ -140,58 +140,31 @@ android {
       isUniversalApk = true
     }
   }
-  applicationVariants.forEach { variant ->
-    // Configure firebase
-    val propertyName = { property: String ->
-      if (variant.buildType.name == "debug") {
-        "$property.debug"
-      } else property
-    }
-
-    fun fbProperty(property: String, fromProperties: Boolean = true): String? {
-      val name = propertyName(property)
-      return when {
-        variant.buildType.name == "debug" -> {
-          if (fromProperties) {
-            return name
-          }
-          project.properties[name].toString()
+  afterEvaluate {
+    val firebaseVariants = setOf("release", "debug")
+    applicationVariants.forEach { variant ->
+      // Configure firebase
+      fun firebaseProperty(property: String, resolveName: Boolean = true) {
+        val buildTypeName = variant.buildType.name
+        if (buildTypeName in firebaseVariants) {
+          val name = if (resolveName && buildTypeName == "debug") {
+            "$property.debug"
+          } else property
+          val value = project.properties[name].toString()
+          variant.resValue("string", property.removePrefix("catchup."), value)
+        } else {
+          return
         }
-        variant.buildType.name == "release" -> {
-          if (fromProperties) {
-            return name
-          }
-          project.properties[property].toString()
-        }
-        else -> null
       }
-    }
-    fbProperty("catchup.google_api_key")?.let {
-      variant.resValue("string", "google_api_key", it)
-    }
-    fbProperty("catchup.google_app_id")?.let {
-      variant.resValue("string", "google_app_id", it)
-    }
-    fbProperty("catchup.firebase_database_url")?.let {
-      variant.resValue("string", "firebase_database_url", it)
-    }
-    fbProperty("catchup.ga_trackingId")?.let {
-      variant.resValue("string", "ga_trackingId", it)
-    }
-    fbProperty("catchup.gcm_defaultSenderId")?.let {
-      variant.resValue("string", "gcm_defaultSenderId", it)
-    }
-    fbProperty("catchup.google_storage_bucket")?.let {
-      variant.resValue("string", "google_storage_bucket", it)
-    }
-    fbProperty("catchup.default_web_client_id")?.let {
-      variant.resValue("string", "default_web_client_id", it)
-    }
-    fbProperty("catchup.google_crash_reporting_api_key")?.let {
-      variant.resValue("string", "google_crash_reporting_api_key", it)
-    }
-    fbProperty("catchup.project_id")?.let {
-      variant.resValue("string", "project_id", it)
+      firebaseProperty("catchup.google_api_key")
+      firebaseProperty("catchup.google_app_id")
+      firebaseProperty("catchup.firebase_database_url")
+      firebaseProperty("catchup.ga_trackingId")
+      firebaseProperty("catchup.gcm_defaultSenderId")
+      firebaseProperty("catchup.google_storage_bucket")
+      firebaseProperty("catchup.default_web_client_id")
+      firebaseProperty("catchup.google_crash_reporting_api_key")
+      firebaseProperty("catchup.project_id", false)
     }
   }
 }
