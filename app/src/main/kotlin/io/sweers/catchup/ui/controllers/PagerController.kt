@@ -263,10 +263,10 @@ class PagerController : ButterKnifeController {
     }
 
     // Set icons
-    for (i in serviceHandlers.indices) {
-      val service = serviceHandlers[i]
-      val d = VectorDrawableCompat.create(resources!!, service.icon, null)
-      tabLayout.getTabAt(i)!!.icon = d
+    serviceHandlers.forEachIndexed { index, serviceHandler ->
+      tabLayout.getTabAt(index)?.icon = VectorDrawableCompat.create(resources!!,
+          serviceHandler.icon,
+          null)
     }
 
     // Animate color changes
