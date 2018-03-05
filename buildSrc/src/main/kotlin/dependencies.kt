@@ -44,7 +44,7 @@ object deps {
     const val okhttp = "3.10.0"
     const val playServices = "11.8.0"
     const val retrofit = "2.3.0"
-    const val rxbinding = "2.0.0"
+    const val rxbinding = "2.1.1"
     const val rxpalette = "0.3.0"
     const val stetho = "1.5.0"
     const val support = "27.1.0"
@@ -87,7 +87,7 @@ object deps {
       const val annotations = "com.android.support:support-annotations:${versions.support}"
       const val appCompat = "com.android.support:appcompat-v7:${versions.support}"
       const val cardView = "com.android.support:cardview-v7:${versions.support}"
-      const val constraintLayout = "com.android.support.constraint:constraint-layout:1.1.0-beta4"
+      const val constraintLayout = "com.android.support.constraint:constraint-layout:1.1.0-beta5"
       const val customTabs = "com.android.support:customtabs:${versions.support}"
       const val design = "com.android.support:design:${versions.support}"
       const val multidex = "com.android.support:multidex:1.0.2"
@@ -144,7 +144,7 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.2.4"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.2.5"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.0"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
@@ -256,7 +256,7 @@ object deps {
   }
 
   object misc {
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.3.0"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.3.1"
 
     object debug {
       const val madge = "com.jakewharton.madge:madge:1.1.4"
@@ -273,9 +273,9 @@ object deps {
     const val moshi = "com.squareup.moshi:moshi:1.5.0"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.1"
     const val okio = "com.squareup.okio:okio:1.14.0"
-    const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:2.2.7"
+    const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:2.3.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.11.0"
-    const val timber = "com.jakewharton.timber:timber:4.6.0"
+    const val timber = "com.jakewharton.timber:timber:4.6.1"
     const val unbescape = "org.unbescape:unbescape:1.1.5.RELEASE"
   }
 
