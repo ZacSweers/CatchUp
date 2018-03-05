@@ -322,7 +322,6 @@ class PagerController : ButterKnifeController {
                 }
                 doOnEnd {
                   removeAllUpdateListeners()
-//                  removeListener(it)
                   tabLayoutColorAnimator = null
                 }
                 addUpdateListener { animator ->
