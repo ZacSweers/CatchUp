@@ -268,7 +268,7 @@ object deps {
     const val guava = "com.google.guava:guava:24.0-android"
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
-    const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.2.0"
+    const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
     const val lottie = "com.airbnb.android:lottie:2.5.0"
     const val moshi = "com.squareup.moshi:moshi:1.5.0"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.1"
