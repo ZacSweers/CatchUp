@@ -193,7 +193,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
         }
         P.ReorderServicesSection.KEY -> {
           (activity as SettingsActivity).resultData.putBoolean(SERVICE_ORDER_UPDATED, true)
-          activity.startActivity(Intent(activity, OrderServicesActivity::class.java))
+          startActivity(Intent(activity, OrderServicesActivity::class.java))
           return true
         }
         P.Reports.KEY -> {
