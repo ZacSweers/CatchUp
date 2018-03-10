@@ -10,7 +10,6 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.FloatingActionButton.OnVisibilityChangedListener
-import android.support.v4.app.NavUtils
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -20,7 +19,6 @@ import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.Toolbar
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -40,7 +38,6 @@ import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.P
-import io.sweers.catchup.R
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
@@ -87,13 +84,6 @@ class OrderServicesActivity : BaseActivity() {
     if (!router.hasRootController()) {
       router.setRoot(RouterTransaction.with(OrderServicesController()))
     }
-  }
-
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    if (item.itemId == android.R.id.home) {
-      NavUtils.navigateUpFromSameTask(this)
-    }
-    return super.onOptionsItemSelected(item)
   }
 
   override fun onBackPressed() {

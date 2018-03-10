@@ -28,13 +28,11 @@ import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.TabLayout
-import android.support.v4.app.NavUtils
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -55,8 +53,6 @@ import dagger.Module
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
-import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.ControllerKey
@@ -106,13 +102,6 @@ class AboutActivity : BaseActivity() {
     if (!router.hasRootController()) {
       router.setRoot(RouterTransaction.with(AboutController()))
     }
-  }
-
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    if (item.itemId == android.R.id.home) {
-      NavUtils.navigateUpFromSameTask(this)
-    }
-    return super.onOptionsItemSelected(item)
   }
 
   override fun onBackPressed() {

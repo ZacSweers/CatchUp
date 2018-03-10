@@ -19,7 +19,9 @@ package io.sweers.catchup.ui.base
 import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.annotation.CheckResult
+import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import com.bluelinelabs.conductor.Controller
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.uber.autodispose.LifecycleScopeProvider
@@ -130,6 +132,13 @@ abstract class BaseActivity : AppCompatActivity(),
   @CallSuper override fun onResume() {
     super.onResume()
     lifecycleRelay.accept(ActivityEvent.RESUME)
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    if (item.itemId == android.R.id.home) {
+      NavUtils.navigateUpFromSameTask(this)
+    }
+    return super.onOptionsItemSelected(item)
   }
 
   override fun onAttachedToWindow() {
