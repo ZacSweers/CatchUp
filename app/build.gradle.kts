@@ -358,6 +358,9 @@ tasks {
 }
 
 dependencies {
+  kapt(project(":tooling:spi-visualizer"))
+  compileOnly(project(":tooling:spi-visualizer"))
+
   implementation(project(":third_party:bypass"))
   implementation(project(":service-api"))
   implementation(project(":services:hackernews"))
