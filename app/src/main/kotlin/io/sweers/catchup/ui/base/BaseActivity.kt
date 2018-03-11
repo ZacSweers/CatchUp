@@ -106,15 +106,16 @@ abstract class BaseActivity : AppCompatActivity(),
   @Inject protected lateinit var viewContainer: ViewContainer
   @Inject lateinit var controllerInjector: DispatchingAndroidInjector<Controller>
 
-  @CheckResult override final fun lifecycle(): Observable<ActivityEvent> {
+  @CheckResult
+  override fun lifecycle(): Observable<ActivityEvent> {
     return lifecycleRelay
   }
 
-  override final fun correspondingEvents(): Function<ActivityEvent, ActivityEvent> {
+  final override fun correspondingEvents(): Function<ActivityEvent, ActivityEvent> {
     return ActivityEvent.LIFECYCLE
   }
 
-  override final fun peekLifecycle(): ActivityEvent {
+  final override fun peekLifecycle(): ActivityEvent {
     return lifecycleRelay.value
   }
 
