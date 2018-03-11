@@ -95,7 +95,7 @@ abstract class DataModule {
     internal fun provideMoshi(): Moshi {
       return Moshi.Builder()
           .add(Wrapped.ADAPTER_FACTORY)
-          .add(MoshiSerializableFactory.getInstance())
+          .add(MoshiSerializableFactory())
           .add(UnescapeJsonAdapter.FACTORY)
           .add(ArrayMapJsonAdapter.FACTORY)
           .add(ArrayCollectionJsonAdapter.FACTORY)

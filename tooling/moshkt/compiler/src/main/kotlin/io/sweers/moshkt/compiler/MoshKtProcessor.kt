@@ -20,7 +20,6 @@ import com.squareup.kotlinpoet.KModifier.OUT
 import com.squareup.kotlinpoet.KModifier.OVERRIDE
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.LONG
-import com.squareup.kotlinpoet.LambdaTypeName
 import com.squareup.kotlinpoet.NameAllocator
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName
@@ -70,7 +69,6 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 import javax.tools.Diagnostic.Kind.ERROR
 
-
 /**
  * An annotation processor that reads Kotlin data classes and generates Moshi JsonAdapters for them.
  * This generates Kotlin code, and understands basic Kotlin language features like default values
@@ -93,10 +91,12 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
   override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
     val annotationElement = elementUtils.getTypeElement(annotationName)
-    return if (roundEnv.getElementsAnnotatedWith(annotationElement)
-            .asSequence()
-            .mapNotNull { processElement(it) }
-            .any { !it.generateAndWrite() }) true else true
+    roundEnv.getElementsAnnotatedWith(annotationElement)
+        .asSequence()
+        .mapNotNull { processElement(it) }
+        .forEach { it.generateAndWrite() }
+
+    return true
   }
 
   private fun processElement(element: Element): Adapter? {
@@ -162,6 +162,8 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
               hasDefault = valueParameter.declaresDefaultValue,
               nullable = nullable,
               typeName = valueParameter.type.asTypeName(nameResolver, classProto::getTypeParameter),
+              unaliasedName = valueParameter.type.asTypeName(nameResolver,
+                  classProto::getTypeParameter, true),
               jsonQualifiers = jsonQualifiers)
         }
 
@@ -207,15 +209,14 @@ class MoshKtProcessor : KotlinAbstractProcessor(), KotlinMetadataUtils {
         element)
   }
 
-  private fun Adapter.generateAndWrite(): Boolean {
-    val adapterName = "${name}_JsonAdapter"
+  private fun Adapter.generateAndWrite() {
+    val adapterName = "${name}JsonAdapter"
     val outputDir = generatedDir ?: mavenGeneratedDir(adapterName)
     val fileBuilder = FileSpec.builder(packageName, adapterName)
     generate(adapterName, fileBuilder)
     fileBuilder
         .build()
         .writeTo(outputDir)
-    return true
   }
 
   private fun mavenGeneratedDir(adapterName: String): File {
@@ -237,7 +238,7 @@ private fun TypeName.resolveRawType(): ClassName {
   return when (this) {
     is ClassName -> this
     is ParameterizedTypeName -> rawType
-    else -> throw UnsupportedOperationException("Cannot get raw type from $this")
+    else -> throw IllegalArgumentException("Cannot get raw type from $this")
   }
 }
 
@@ -252,8 +253,7 @@ private fun TypeName.simplifiedName(): String {
     }
     is WildcardTypeName -> "wildcard__" + (lowerBounds + upperBounds).simplifiedNames()
     is TypeVariableName -> name.decapitalize() + if (bounds.isEmpty()) "" else "__" + bounds.simplifiedNames()
-  // Shouldn't happen
-    else -> toString().decapitalize()
+    else -> throw IllegalArgumentException("Unrecognized type! $this")
   }.let { if (nullable) "${it}_nullable" else it }
 }
 
@@ -297,7 +297,7 @@ private fun TypeName.makeType(
       // If it's an Array type, we shortcut this to return Types.arrayOf()
       if (rawType == ARRAY) {
         return CodeBlock.of("%T.arrayOf(%L)",
-            Types::class.asTypeName(),
+            Types::class,
             typeArguments[0].objectType().makeType(elementUtils, typesArray, genericTypeNames))
       }
       // If it's a Class type, we have to specify the generics.
@@ -317,7 +317,7 @@ private fun TypeName.makeType(
       CodeBlock.of(
           "%T.newParameterizedType(%T%L::class.java, ${typeArguments
               .joinToString(", ") { "%L" }})",
-          Types::class.asTypeName(),
+          Types::class,
           rawType.objectType(),
           rawTypeParameters,
           *(typeArguments.map {
@@ -339,12 +339,11 @@ private fun TypeName.makeType(
         else -> throw IllegalArgumentException(
             "Unrepresentable wildcard type. Cannot have more than one bound: " + this)
       }
-      CodeBlock.of("%T.%L(%T::class.java)", Types::class.asTypeName(), method, target)
+      CodeBlock.of("%T.%L(%T::class.java)", Types::class, method, target)
     }
     is TypeVariableName -> {
       CodeBlock.of("%N[%L]", typesArray, genericTypeNames.indexOfFirst { it == this })
     }
-  // Shouldn't happen
     else -> throw IllegalArgumentException("Unrepresentable type: " + this)
   }
 }
@@ -356,6 +355,7 @@ private data class Property(
     val hasDefault: Boolean,
     val nullable: Boolean,
     val typeName: TypeName,
+    val unaliasedName: TypeName,
     val jsonQualifiers: Set<AnnotationMirror>) {
 
   val isRequired = !nullable && !hasDefault
@@ -380,13 +380,13 @@ private data class Adapter(
 
     val originalTypeName = originalElement.asType().asTypeName()
     val moshiName = "moshi".allocate()
-    val moshiParam = ParameterSpec.builder(moshiName, Moshi::class.asClassName()).build()
+    val moshiParam = ParameterSpec.builder(moshiName, Moshi::class).build()
     val typesParam = ParameterSpec.builder("types".allocate(),
         ParameterizedTypeName.get(ARRAY, Type::class.asTypeName())).build()
     val reader = ParameterSpec.builder("reader".allocate(),
-        JsonReader::class.asClassName()).build()
+        JsonReader::class).build()
     val writer = ParameterSpec.builder("writer".allocate(),
-        JsonWriter::class.asClassName()).build()
+        JsonWriter::class).build()
     val value = ParameterSpec.builder("value".allocate(),
         originalTypeName.asNullable()).build()
     val jsonAdapterTypeName = ParameterizedTypeName.get(JsonAdapter::class.asClassName(),
@@ -394,19 +394,19 @@ private data class Adapter(
 
     // Create fields
     val adapterProperties = propertyList
-        .distinctBy { it.typeName to it.jsonQualifiers }
+        .distinctBy { it.unaliasedName to it.jsonQualifiers }
         .associate { prop ->
-          val typeName = prop.typeName
-          val qualifierNames = prop.jsonQualifiers.joinToString("_") {
-            it.annotationType.asElement().simpleName.toString()
+          val typeName = prop.unaliasedName
+          val qualifierNames = prop.jsonQualifiers.joinToString("") {
+            "at${it.annotationType.asElement().simpleName.toString().capitalize()}"
           }
-          val propertyName = "${typeName.simplifiedName().allocate()}_Adapter".let {
+          val propertyName = typeName.simplifiedName().allocate().let {
             if (qualifierNames.isBlank()) {
               it
             } else {
-              "${it}_for_$qualifierNames"
+              "$it$qualifierNames"
             }
-          }.let { "${it}_Adapter" }
+          }.let { "${it}Adapter" }
           val adapterTypeName = ParameterizedTypeName.get(JsonAdapter::class.asTypeName(), typeName)
           val key = typeName to prop.jsonQualifiers
           return@associate key to PropertySpec.builder(propertyName, adapterTypeName, PRIVATE)
@@ -430,56 +430,53 @@ private data class Adapter(
                   else -> {
                     val initString = qualifiers
                         .mapIndexed { index, _ ->
-                          val annoClassIndex = standardArgsSize + index + 1
-                          return@mapIndexed "%${standardArgsSize}T.createJsonQualifierImplementation(%${annoClassIndex}T::class.java)"
+                          val annoClassIndex = standardArgsSize + index
+                          return@mapIndexed "%${annoClassIndex}T::class.java"
                         }
                         .joinToString()
-                    val initArgs = (listOf(Types::class.asTypeName())
-                        + qualifiers.map { it.annotationType.asTypeName() })
+                    val initArgs = qualifiers
+                        .map { it.annotationType.asTypeName() }
                         .toTypedArray()
-                    ", setOf($initString)" to initArgs
+                    ", $initString" to initArgs
                   }
                 }
                 val finalArgs = arrayOf(*standardArgs, *args)
-                try {
-                  initializer("%1N.adapter%2L(%3L$initializerString).nullSafe()", *finalArgs)
-                } catch (e: IllegalArgumentException) {
-                  throw RuntimeException(
-                      "$e " + "InitString is " + "%1N.adapter%2L(%3L$initializerString).nullSafe()" + " and args are " + finalArgs.joinToString())
-                }
+                initializer(
+                    "%1N.adapter%2L(%3L$initializerString)${if (prop.nullable) ".nullSafe()" else ""}",
+                    *finalArgs)
               }
               .build()
         }
 
     val localProperties =
         propertyList.associate { prop ->
-          prop to PropertySpec.builder(prop.name.allocate(), prop.typeName.asNullable())
+          val propertySpec = PropertySpec.builder(prop.name.allocate(), prop.typeName.asNullable())
               .mutable(true)
               .initializer("null")
               .build()
+          val propertySetSpec = if (prop.hasDefault && prop.nullable) {
+            PropertySpec.builder("${propertySpec.name}Set".allocate(), BOOLEAN)
+                .mutable(true)
+                .initializer("false")
+                .build()
+          } else {
+            null
+          }
+          val specs = propertySpec to propertySetSpec
+          prop to specs
         }
     val optionsByIndex = propertyList
         .associateBy { it.serializedName }.entries.withIndex()
 
     // selectName() API setup
-    val namesArray = PropertySpec.builder("NAMES".allocate(),
-        ParameterizedTypeName.get(ARRAY, String::class.asTypeName()), PRIVATE)
-        .initializer("arrayOf(${optionsByIndex.map { it.value.key }
-            .joinToString(", ") { "\"$it\"" }})")
-        .build()
     val optionsCN = JsonReader.Options::class.asTypeName()
     val optionsProperty = PropertySpec.builder(
-        "OPTIONS".allocate(),
+        "options".allocate(),
         optionsCN,
         PRIVATE)
-        .initializer("%T.of(*%N)",
-            optionsCN,
-            namesArray)
-        .build()
-    val companionObject = TypeSpec.companionObjectBuilder("SelectOptions")
-        .addModifiers(PRIVATE)
-        .addProperty(namesArray)
-        .addProperty(optionsProperty)
+        .initializer("%T.of(${optionsByIndex.map { it.value.key }
+            .joinToString(", ") { "\"$it\"" }})",
+            optionsCN)
         .build()
 
     val adapter = TypeSpec.classBuilder(adapterName)
@@ -503,7 +500,7 @@ private data class Adapter(
               }
             }
             .build())
-        .addType(companionObject)
+        .addProperty(optionsProperty)
         .addProperties(adapterProperties.values)
         .addFunction(FunSpec.builder("toString")
             .addModifiers(OVERRIDE)
@@ -516,14 +513,13 @@ private data class Adapter(
         .addFunction(FunSpec.builder("fromJson")
             .addModifiers(OVERRIDE)
             .addParameter(reader)
-            .returns(originalTypeName.asNullable())
-            .beginControlFlow("if (%N.peek() == %T.NULL)", reader,
-                JsonReader.Token.NULL.declaringClass.asTypeName())
-            .addStatement("%N.nextNull<%T>()", reader, ANY)
-            .endControlFlow()
+            .returns(originalTypeName)
             .apply {
               localProperties.values.forEach {
-                addCode("%L", it)
+                addCode("%L", it.first)
+                it.second?.let {
+                  addCode("%L", it)
+                }
               }
             }
             .addStatement("%N.beginObject()", reader)
@@ -532,16 +528,28 @@ private data class Adapter(
             .apply {
               optionsByIndex.map { (index, entry) -> index to entry.value }
                   .forEach { (index, prop) ->
-                    val spec = localProperties[prop]!!
-                    addStatement("%L -> %N = %N.fromJson(%N)",
-                        index,
-                        spec,
-                        adapterProperties[prop.typeName to prop.jsonQualifiers]!!,
-                        reader)
+                    val specs = localProperties[prop]!!
+                    val spec = specs.first
+                    val setterSpec = specs.second
+                    if (setterSpec != null) {
+                      beginControlFlow("%L -> ", index)
+                      addStatement("%N = %N.fromJson(%N)",
+                          spec,
+                          adapterProperties[prop.unaliasedName to prop.jsonQualifiers]!!,
+                          reader)
+                      addStatement("%N = true", setterSpec)
+                      endControlFlow()
+                    } else {
+                      addStatement("%L -> %N = %N.fromJson(%N)",
+                          index,
+                          spec,
+                          adapterProperties[prop.unaliasedName to prop.jsonQualifiers]!!,
+                          reader)
+                    }
                   }
             }
             .beginControlFlow("-1 ->")
-            .addCode("// Unknown name, skip it\n")
+            .addComment("Unknown name, skip it.")
             .addStatement("%N.nextName()", reader)
             .addStatement("%N.skipValue()", reader)
             .endControlFlow()
@@ -549,70 +557,46 @@ private data class Adapter(
             .endControlFlow()
             .addStatement("%N.endObject()", reader)
             .apply {
-              if (localProperties.keys.any { it.isRequired }) {
-                val indexParam = ParameterSpec.builder("index".allocate(), INT)
-                    .build()
-                val lambdaType = LambdaTypeName.get(
-                    returnType = JsonDataException::class.asTypeName()
-                )
-                val missingLambda = PropertySpec.builder("missingArguments".allocate(), lambdaType)
-                    .initializer(CodeBlock.builder()
-                        .add("{\n")
-                        .add("%N.filterIndexed { %N, _ ->", namesArray, indexParam)
-                        .add("%>")
-                        // Begin controlflow
-                        .add("\nwhen (%N) {", indexParam)
-                        .add("%>")
-                        .apply {
-                          optionsByIndex
-                              .map { (index, entry) -> index to entry.value }
-                              .filter { (_, prop) -> prop.isRequired }
-                              .forEach { (index, prop) ->
-                                add("\n%L -> %N == null",
-                                    index,
-                                    localProperties[prop]!!)
-                              }
-                        }
-                        .add("\nelse -> false")
-                        // End controlflow
-                        .add("%<")
-                        .add("\n}")
-                        .add("%<")
-                        .add("\n}")
-                        .add(
-                            ".let { %T(\"The following required properties were missing: \${%L}\") }",
-                            JsonDataException::class,
-                            CodeBlock.of("it.joinToString()"))
-                        .add("\n}")
-                        .build())
-                    .build()
-                addCode("%L", missingLambda)
-                localProperties.forEach { (property, spec) ->
-                  if (property.isRequired) {
-                    beginControlFlow("if (%N == null)", spec)
-                    addStatement("throw %N()", missingLambda)
-                    endControlFlow()
-                  }
-                }
-              }
               val propertiesWithDefaults = localProperties.entries.filter { it.key.hasDefault }
+              val propertiesWithoutDefaults = localProperties.entries.filter { !it.key.hasDefault }
+              val requiredPropertiesCodeBlock = CodeBlock.of(
+                  propertiesWithoutDefaults.joinToString(",\n") { (property, specs) ->
+                    val spec = specs.first
+                    "${property.name} = ${spec.name}%L"
+                  },
+                  *(propertiesWithoutDefaults
+                      .map { (property, _) ->
+                        if (property.isRequired) {
+                          @Suppress("IMPLICIT_CAST_TO_ANY")
+                          CodeBlock.of(
+                              " ?: throw %T(\"Required property '%L' missing at \${%N.path}\")",
+                              JsonDataException::class,
+                              property.name,
+                              reader
+                          )
+                        } else {
+                          @Suppress("IMPLICIT_CAST_TO_ANY")
+                          ""
+                        }
+                      }
+                      .toTypedArray()))
               if (propertiesWithDefaults.isEmpty()) {
                 addStatement("return %T(%L)",
                     originalTypeName,
-                    localProperties.entries.joinToString(",\n") { (property, spec) ->
-                      "${property.name} = ${spec.name}"
-                    })
+                    requiredPropertiesCodeBlock)
               } else {
-                addStatement("return %T(%L).let {\n  it.copy(%L)\n}",
+                addStatement("return %T(%L)\n.let {\n  it.copy(%L)\n}",
                     originalTypeName,
-                    localProperties.entries
-                        .filter { !it.key.hasDefault }
-                        .joinToString(",\n") { (property, spec) ->
-                          "${property.name} = ${spec.name}"
-                        },
+                    requiredPropertiesCodeBlock,
                     propertiesWithDefaults
-                        .joinToString(",\n      ") { (property, spec) ->
-                          "${property.name} = ${spec.name} ?: it.${property.name}"
+                        .joinToString(",\n      ") { (property, specs) ->
+                          val spec = specs.first
+                          val setSpec = specs.second
+                          if (setSpec != null) {
+                            "${property.name} = if (${setSpec.name}) ${spec.name} else it.${property.name}"
+                          } else {
+                            "${property.name} = ${spec.name} ?: it.${property.name}"
+                          }
                         })
               }
             }
@@ -622,24 +606,20 @@ private data class Adapter(
             .addParameter(writer)
             .addParameter(value)
             .beginControlFlow("if (%N == null)", value)
-            .addStatement("%N.nullValue()", writer)
-            .addStatement("return")
+            .addStatement("throw %T(%S)", NullPointerException::class,
+                "${value.name} was null! Wrap in .nullSafe() to write nullable values.")
             .endControlFlow()
             .addStatement("%N.beginObject()", writer)
             .apply {
               propertyList.forEach { prop ->
-                if (prop.nullable) {
-                  beginControlFlow("if (%N.%L != null)", value, prop.name)
-                }
-                addStatement("%N.name(%S)", writer, prop.serializedName)
+                addStatement("%N.name(%S)",
+                    writer,
+                    prop.serializedName)
                 addStatement("%N.toJson(%N, %N.%L)",
-                    adapterProperties[prop.typeName to prop.jsonQualifiers]!!,
+                    adapterProperties[prop.unaliasedName to prop.jsonQualifiers]!!,
                     writer,
                     value,
                     prop.name)
-                if (prop.nullable) {
-                  endControlFlow()
-                }
               }
             }
             .addStatement("%N.endObject()", writer)
@@ -684,10 +664,13 @@ private data class Adapter(
 
 private fun ProtoBuf.TypeParameter.asTypeName(
     nameResolver: NameResolver,
-    getTypeParameter: (index: Int) -> ProtoBuf.TypeParameter): TypeName {
+    getTypeParameter: (index: Int) -> ProtoBuf.TypeParameter,
+    resolveAliases: Boolean = false): TypeName {
   return TypeVariableName(
       name = nameResolver.getString(name),
-      bounds = *(upperBoundList.map { it.asTypeName(nameResolver, getTypeParameter) }
+      bounds = *(upperBoundList.map {
+        it.asTypeName(nameResolver, getTypeParameter, resolveAliases)
+      }
           .toTypedArray()),
       variance = variance.asKModifier()
   )
@@ -712,7 +695,8 @@ private fun ProtoBuf.TypeParameter.Variance.asKModifier(): KModifier? {
  */
 private fun ProtoBuf.Type.asTypeName(
     nameResolver: NameResolver,
-    getTypeParameter: (index: Int) -> ProtoBuf.TypeParameter
+    getTypeParameter: (index: Int) -> ProtoBuf.TypeParameter,
+    resolveAliases: Boolean = false
 ): TypeName {
 
   val argumentList = when {
@@ -722,16 +706,17 @@ private fun ProtoBuf.Type.asTypeName(
 
   if (hasFlexibleUpperBound()) {
     return WildcardTypeName.subtypeOf(
-        flexibleUpperBound.asTypeName(nameResolver, getTypeParameter))
+        flexibleUpperBound.asTypeName(nameResolver, getTypeParameter, resolveAliases))
   } else if (hasOuterType()) {
-    return WildcardTypeName.supertypeOf(outerType.asTypeName(nameResolver, getTypeParameter))
+    return WildcardTypeName.supertypeOf(
+        outerType.asTypeName(nameResolver, getTypeParameter, resolveAliases))
   }
 
   val realType = when {
     hasTypeParameter() -> return getTypeParameter(typeParameter)
-        .asTypeName(nameResolver, getTypeParameter)
+        .asTypeName(nameResolver, getTypeParameter, resolveAliases)
     hasTypeParameterName() -> typeParameterName
-    hasAbbreviatedType() -> abbreviatedType.typeAliasName
+    hasAbbreviatedType() && !resolveAliases -> abbreviatedType.typeAliasName
     else -> className
   }
 
@@ -744,7 +729,7 @@ private fun ProtoBuf.Type.asTypeName(
         it.projection
       } else null
       if (it.hasType()) {
-        it.type.asTypeName(nameResolver, getTypeParameter)
+        it.type.asTypeName(nameResolver, getTypeParameter, resolveAliases)
             .let { typeName ->
               projection?.let {
                 when (it) {

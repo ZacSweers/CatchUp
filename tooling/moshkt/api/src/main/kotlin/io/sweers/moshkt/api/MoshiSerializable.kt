@@ -3,13 +3,9 @@ package io.sweers.moshkt.api
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import java.lang.ref.WeakReference
-import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import java.util.Collections
-import java.util.LinkedHashMap
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.CLASS
 
@@ -18,33 +14,42 @@ import kotlin.annotation.AnnotationTarget.CLASS
 annotation class MoshiSerializable
 
 class MoshiSerializableFactory : JsonAdapter.Factory {
-  private val adapters = Collections.synchronizedMap(
-      LinkedHashMap<Class<*>, Constructor<out JsonAdapter<*>>>())
 
-  override fun create(type: Type, annotations: MutableSet<out Annotation>,
-      moshi: Moshi): JsonAdapter<*>? {
+  override fun create(type: Type, annotations: Set<Annotation>, moshi: Moshi): JsonAdapter<*>? {
 
     val rawType = Types.getRawType(type)
     if (!rawType.isAnnotationPresent(MoshiSerializable::class.java)) {
       return null
     }
 
-    val constructor = findConstructorForClass(rawType) ?: return null
+    val clsName = rawType.name.replace("$", "_")
+    val constructor = try {
+      @Suppress("UNCHECKED_CAST")
+      val bindingClass = rawType.classLoader
+          .loadClass(clsName + "JsonAdapter") as Class<out JsonAdapter<*>>
+      if (type is ParameterizedType) {
+        // This is generic, use the two param moshi + type constructor
+        bindingClass.getDeclaredConstructor(Moshi::class.java, Array<Type>::class.java)
+      } else {
+        // The standard single param moshi constructor
+        bindingClass.getDeclaredConstructor(Moshi::class.java)
+      }
+    } catch (e: ClassNotFoundException) {
+      throw RuntimeException("Unable to find generated Moshi adapter class for $clsName", e)
+    } catch (e: NoSuchMethodException) {
+      throw RuntimeException("Unable to find generated Moshi adapter constructor for $clsName", e)
+    }
 
     try {
-      return if (constructor.parameterTypes.size == 1) {
-        constructor.newInstance(moshi)
-      } else {
-        if (type is ParameterizedType) {
-          constructor.newInstance(moshi, type.actualTypeArguments)
-        } else {
-          throw IllegalStateException("Unable to handle type $type")
-        }
+      return when {
+        constructor.parameterTypes.size == 1 -> constructor.newInstance(moshi)
+        type is ParameterizedType -> constructor.newInstance(moshi, type.actualTypeArguments)
+        else -> throw IllegalStateException("Unable to handle type $type")
       }
     } catch (e: IllegalAccessException) {
-      throw RuntimeException("Unable to invoke " + constructor, e)
+      throw RuntimeException("Unable to invoke $constructor", e)
     } catch (e: InstantiationException) {
-      throw RuntimeException("Unable to invoke " + constructor, e)
+      throw RuntimeException("Unable to invoke $constructor", e)
     } catch (e: InvocationTargetException) {
       val cause = e.cause
       if (cause is RuntimeException) {
@@ -54,51 +59,7 @@ class MoshiSerializableFactory : JsonAdapter.Factory {
         throw cause
       }
       throw RuntimeException(
-          "Could not create generated JsonAdapter instance for type " + rawType, cause)
+          "Could not create generated JsonAdapter instance for type $rawType", cause)
     }
-
-  }
-
-  private fun findConstructorForClass(cls: Class<*>): Constructor<out JsonAdapter<*>>? {
-    var adapterCtor: Constructor<out JsonAdapter<*>>? = adapters[cls]
-    if (adapterCtor != null) {
-      return adapterCtor
-    }
-    val clsName = cls.name.replace("$", "_")
-    if (clsName.startsWith("android.")
-        || clsName.startsWith("java.")
-        || clsName.startsWith("kotlin.")) {
-      return null
-    }
-    try {
-      val bindingClass = cls.classLoader
-          .loadClass(clsName + "_JsonAdapter")
-      adapterCtor = try {
-        // Try the moshi constructor
-        @Suppress("UNCHECKED_CAST")
-        bindingClass.getConstructor(
-            Moshi::class.java) as Constructor<out JsonAdapter<*>>
-      } catch (e: NoSuchMethodException) {
-        // Try the moshi + type constructor
-        @Suppress("UNCHECKED_CAST")
-        bindingClass.getConstructor(Moshi::class.java,
-            Array<Type>::class.java) as Constructor<out JsonAdapter<*>>
-      }
-
-    } catch (e: ClassNotFoundException) {
-      adapterCtor = findConstructorForClass(cls.superclass)
-    } catch (e: NoSuchMethodException) {
-      throw RuntimeException("Unable to find binding constructor for " + clsName, e)
-    }
-
-    adapters[cls] = adapterCtor
-    return adapterCtor
-  }
-
-  companion object {
-    private var instance: WeakReference<MoshiSerializableFactory>? = null
-
-    fun getInstance() =
-        instance?.get() ?: MoshiSerializableFactory().also { instance = WeakReference(it) }
   }
 }
