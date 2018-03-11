@@ -53,6 +53,8 @@ import dagger.Module
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
+import io.sweers.catchup.BuildConfig
+import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.ControllerKey

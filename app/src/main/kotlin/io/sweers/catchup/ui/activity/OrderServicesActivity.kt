@@ -38,6 +38,7 @@ import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.P
+import io.sweers.catchup.R
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
