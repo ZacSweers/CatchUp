@@ -33,7 +33,7 @@ object deps {
     const val butterknife = "8.8.1"
     const val chuck = "1.1.0"
     const val conductor = "2.1.4"
-    const val dagger = "2.14.1"
+    const val dagger = "2.15"
     const val errorProne = "2.2.0"
     const val espresso = "3.0.1"
     const val firebase = "11.8.0"
@@ -157,6 +157,8 @@ object deps {
       const val plugins = "https://plugins.gradle.org/m2/"
       const val snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
+
+    const val javapoet = "com.squareup:javapoet:1.10.0"
   }
 
   object butterKnife {
@@ -189,6 +191,7 @@ object deps {
     }
 
     const val runtime = "com.google.dagger:dagger:${versions.dagger}"
+    const val spi = "com.google.dagger:dagger-spi:${versions.dagger}"
   }
 
   object errorProne {

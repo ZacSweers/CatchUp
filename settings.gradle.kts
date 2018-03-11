@@ -30,6 +30,6 @@ include(
   ":gemoji",
   ":tooling:moshkt:api",
   ":tooling:moshkt:compiler",
-  //":tooling:moshkt:integration",
+  ":tooling:spi-visualizer",
   ":util"
 )
