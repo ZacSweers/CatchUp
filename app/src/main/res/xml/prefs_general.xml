@@ -32,12 +32,11 @@
         android:title="@string/pref_reorder_services"
         />
 
-    <!-- Not doing this yet -->
-    <!--<Preference-->
-    <!--android:key="services"-->
-    <!--android:summary="@string/pref_services_summary"-->
-    <!--android:title="@string/pref_services"-->
-    <!--/>-->
+    <Preference
+        android:key="services"
+        android:summary="@string/pref_services_summary"
+        android:title="@string/pref_services"
+        />
 
     <Preference
         android:key="clear_cache"
@@ -54,20 +53,20 @@
     <CheckBoxPreference
         android:defaultValue="true"
         android:disableDependentsState="true"
-        android:key="daynight_auto"
-        android:title="@string/pref_auto_set_theme"
-        android:summary="@string/pref_auto_set_theme_summary"
         android:icon="@drawable/ic_brightness_4_black_24dp"
+        android:key="daynight_auto"
+        android:summary="@string/pref_auto_set_theme_summary"
+        android:title="@string/pref_auto_set_theme"
         />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:dependency="daynight_auto"
+        android:icon="@drawable/ic_brightness_3_black_24dp"
         android:key="daynight_night"
         android:summaryOff="@string/pref_dark_theme_disabled"
         android:summaryOn="@string/pref_dark_theme_enabled"
         android:title="@string/pref_use_dark_theme"
-        android:icon="@drawable/ic_brightness_3_black_24dp"
         />
 
     <CheckBoxPreference

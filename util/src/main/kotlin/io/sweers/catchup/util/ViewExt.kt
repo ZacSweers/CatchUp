@@ -18,6 +18,8 @@
 
 package io.sweers.catchup.util
 
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.view.View
 
@@ -79,4 +81,12 @@ inline infix fun View.hideIf(condition: Boolean) {
   } else {
     show()
   }
+}
+
+fun Context.asDayContext(): Context {
+  return if (isInNightMode()) {
+    createConfigurationContext(
+        Configuration(resources.configuration)
+            .apply { uiMode = Configuration.UI_MODE_NIGHT_NO })
+  } else this
 }

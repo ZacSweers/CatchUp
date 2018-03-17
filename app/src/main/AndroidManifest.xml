@@ -32,7 +32,7 @@
       android:supportsRtl="true"
       android:theme="@style/CatchUp"
       android:colorMode="wideColorGamut"
-      tools:ignore="GoogleAppIndexingWarning">
+      tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
     <activity
         android:name=".ui.activity.MainActivity"
         android:launchMode="singleTask"
@@ -62,6 +62,13 @@
     <activity
         android:name=".ui.activity.OrderServicesActivity"
         android:label="@string/title_activity_about"
+        android:parentActivityName=".ui.activity.SettingsActivity"
+        android:launchMode="singleTop"
+        />
+
+    <activity
+        android:name=".ui.activity.ServiceSettingsActivity"
+        android:label="@string/pref_services"
         android:parentActivityName=".ui.activity.SettingsActivity"
         android:launchMode="singleTop"
         />

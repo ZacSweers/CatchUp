@@ -170,11 +170,6 @@ class PagerController : ButterKnifeController {
 
   override fun bind(view: View) = PagerController_ViewBinding(this, view)
 
-  override fun onAttach(view: View) {
-    ConductorInjection.inject(this)
-    super.onAttach(view)
-  }
-
   override fun onViewBound(view: View) {
     super.onViewBound(view)
 
@@ -344,7 +339,8 @@ class PagerController : ButterKnifeController {
       override fun onTabUnselected(tab: TabLayout.Tab) {}
 
       override fun onTabReselected(tab: TabLayout.Tab) {
-        pagerAdapter.getRouter(tab.position)?.getControllerWithTag(PAGE_TAG)?.let {
+        val controllerTag = "$PAGE_TAG.${serviceHandlers[tab.position].name}"
+        pagerAdapter.getRouter(tab.position)?.getControllerWithTag(controllerTag)?.let {
           if (it is Scrollable) {
             it.onRequestScrollToTop()
             appBarLayout.setExpanded(true, true)
@@ -401,6 +397,7 @@ class PagerController : ButterKnifeController {
         serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>): Array<ServiceHandler> {
       val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
       return (serviceMetas.values
+          .filter { sharedPrefs.getBoolean(it.enabledKey, true) }
           .sortedBy { currentOrder.indexOf(it.id) }
           .map { it.toServiceHandler() })
           .toTypedArray()

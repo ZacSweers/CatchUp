@@ -17,6 +17,7 @@
 package io.sweers.catchup.ui.activity
 
 import android.app.Activity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView.RecycledViewPool
 import android.view.ViewGroup
@@ -55,11 +56,15 @@ import javax.inject.Qualifier
 
 class MainActivity : BaseActivity() {
 
-  @Inject internal lateinit var customTab: CustomTabActivityHelper
-  @Inject internal lateinit var linkManager: LinkManager
-  @Inject internal lateinit var syllabus: Syllabus
+  @Inject
+  internal lateinit var customTab: CustomTabActivityHelper
+  @Inject
+  internal lateinit var linkManager: LinkManager
+  @Inject
+  internal lateinit var syllabus: Syllabus
 
-  @BindView(R.id.controller_container) internal lateinit var container: ViewGroup
+  @BindView(R.id.controller_container)
+  internal lateinit var container: ViewGroup
 
   private lateinit var router: Router
 
@@ -94,14 +99,14 @@ class MainActivity : BaseActivity() {
 
   @dagger.Module(
       includes = [
-      HackerNewsModule::class,
-      RedditModule::class,
-      MediumModule::class,
-      ProductHuntModule::class,
-      SlashdotModule::class,
-      DesignerNewsModule::class,
-      DribbbleModule::class,
-      GitHubModule::class
+        HackerNewsModule::class,
+        RedditModule::class,
+        MediumModule::class,
+        ProductHuntModule::class,
+        SlashdotModule::class,
+        DesignerNewsModule::class,
+        DribbbleModule::class,
+        GitHubModule::class
 //      ImgurModule::class
       ]
   )
@@ -125,12 +130,16 @@ class MainActivity : BaseActivity() {
       @JvmStatic
       @FinalServices
       fun provideFinalServices(serviceDao: ServiceDao,
+          serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>,
+          sharedPreferences: SharedPreferences,
           services: Map<String, @JvmSuppressWildcards Provider<Service>>): Map<String, Provider<Service>> {
-        return services.mapValues { (_, value) ->
-          Provider<Service> {
-            StorageBackedService(serviceDao, value.get())
-          }
-        }
+        return services
+            .filter { sharedPreferences.getBoolean(serviceMetas[it.key]!!.enabledKey, true) }
+            .mapValues { (_, value) ->
+              Provider<Service> {
+                StorageBackedService(serviceDao, value.get())
+              }
+            }
       }
     }
 

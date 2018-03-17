@@ -26,7 +26,6 @@ import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceScreen
 import android.support.design.widget.Snackbar
-import android.support.v4.app.NavUtils
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.widget.Toast
@@ -107,7 +106,6 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
       if (!resultData.isEmpty) {
         setResult(SETTINGS_RESULT_DATA, Intent().putExtras(resultData))
       }
-      NavUtils.navigateUpFromSameTask(this)
     }
     return super.onOptionsItemSelected(item)
   }
@@ -245,6 +243,11 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
         }
         P.About.KEY -> {
           startActivity(Intent(activity, AboutActivity::class.java))
+          return true
+        }
+        P.Services.KEY -> {
+          (activity as SettingsActivity).resultData.putBoolean(SERVICE_ORDER_UPDATED, true)
+          startActivity(Intent(activity, ServiceSettingsActivity::class.java))
           return true
         }
       }

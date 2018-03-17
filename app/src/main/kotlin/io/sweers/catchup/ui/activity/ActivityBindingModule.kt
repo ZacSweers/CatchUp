@@ -22,6 +22,7 @@ import io.sweers.catchup.injection.ControllerBindingModule
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.ui.about.AboutControllerBindingModule
+import io.sweers.catchup.ui.activity.ServiceSettingsActivity.ServiceSettingsFrag.ServiceSettingsModule
 import io.sweers.catchup.ui.activity.SettingsActivity.SettingsFrag.SettingsFragmentBindingModule
 
 @Module
@@ -42,6 +43,14 @@ abstract class ActivityBindingModule {
       SettingsFragmentBindingModule::class
   ))
   internal abstract fun settingsActivity(): SettingsActivity
+
+  @PerActivity
+  @ContributesAndroidInjector(modules = arrayOf(
+      UiModule::class,
+      ServiceSettingsActivity.ServiceSettingsActivityModule::class,
+      ServiceSettingsModule::class
+  ))
+  internal abstract fun serviceSettingsActivity(): ServiceSettingsActivity
 
   @PerActivity
   @ContributesAndroidInjector(modules = arrayOf(

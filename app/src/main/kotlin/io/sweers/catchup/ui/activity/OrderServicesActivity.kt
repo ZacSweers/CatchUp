@@ -5,7 +5,6 @@ import android.animation.StateListAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -59,6 +58,7 @@ import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.util.ColorUtils
+import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
@@ -159,9 +159,7 @@ class OrderServicesController : ButterKnifeController() {
     val currentItemsSorted = serviceMetas.values.sortedBy { currentOrder.indexOf(it.id) }
     val adapter = Adapter(
         // Use a day context since this is like the tablayout UI
-        recyclerView.context.createConfigurationContext(
-            Configuration(recyclerView.context.resources.configuration)
-                .apply { uiMode = Configuration.UI_MODE_NIGHT_NO }),
+        recyclerView.context.asDayContext(),
         currentItemsSorted) { newItemOrder ->
       pendingChanges = if (newItemOrder != currentItemsSorted) {
         newItemOrder

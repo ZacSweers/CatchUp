@@ -27,5 +27,8 @@ data class ServiceMeta(
     @DrawableRes val icon: Int,
     val isVisual: Boolean = false,
     val firstPageKey: String,
-    val pagesAreNumeric: Boolean = false
-)
+    val pagesAreNumeric: Boolean = false,
+    val serviceConfiguration: ServiceConfiguration? = null
+) {
+  val enabledKey = "service_config_${id}_enabled"
+}

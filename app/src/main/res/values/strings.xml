@@ -48,6 +48,7 @@
   <string name="settings_error_cleaning_cache">There was an error cleaning cache</string>
   <string name="settings_reset">Will take full effect on next app restart</string>
   <string name="undo">Undo</string>
+  <string name="enabled">Enabled</string>
   <string name="pref_use_dark_theme">Use dark theme.</string>
   <string name="pref_dark_theme_enabled">Dark theme is enabled</string>
   <string name="pref_dark_theme_disabled">Dark theme is disabled, light theme is the default.</string>
