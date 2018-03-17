@@ -43,7 +43,7 @@ object deps {
     const val leakcanary = "1.5.4"
     const val okhttp = "3.10.0"
     const val playServices = "11.8.0"
-    const val retrofit = "2.3.0"
+    const val retrofit = "2.4.0"
     const val rxbinding = "2.1.1"
     const val rxpalette = "0.3.0"
     const val stetho = "1.5.0"
@@ -259,7 +259,7 @@ object deps {
   }
 
   object misc {
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.3.1"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.3.2"
 
     object debug {
       const val madge = "com.jakewharton.madge:madge:1.1.4"
@@ -268,11 +268,11 @@ object deps {
       const val telescope = "com.mattprecious.telescope:telescope:2.1.0"
     }
 
-    const val guava = "com.google.guava:guava:24.0-android"
+    const val guava = "com.google.guava:guava:24.1-android"
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
-    const val lottie = "com.airbnb.android:lottie:2.5.0"
+    const val lottie = "com.airbnb.android:lottie:2.5.1"
     const val moshi = "com.squareup.moshi:moshi:1.5.0"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.1"
     const val okio = "com.squareup.okio:okio:1.14.0"
