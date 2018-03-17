@@ -23,7 +23,7 @@ import retrofit2.http.GET
 
 internal interface MediumApi {
 
-  @GET("/browse/top")
+  @GET("/topic/popular")
   @Wrapped(path = ["payload", "references"])
   fun top(): Observable<References>
 
