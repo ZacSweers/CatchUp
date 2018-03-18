@@ -51,7 +51,6 @@ dependencies {
   api(deps.android.ktx)
   api(deps.dagger.runtime)
   api(deps.kotlin.stdlib.jdk7)
-  api(deps.misc.guava)
   api(deps.misc.lazythreeten)
   api(deps.misc.moshi)
   api(deps.misc.timber)

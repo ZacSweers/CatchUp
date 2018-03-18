@@ -268,7 +268,6 @@ object deps {
       const val telescope = "com.mattprecious.telescope:telescope:2.1.0"
     }
 
-    const val guava = "com.google.guava:guava:24.1-android"
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
