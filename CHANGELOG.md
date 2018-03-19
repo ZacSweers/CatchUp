@@ -1,3 +1,6 @@
+
+
+## 0.3.0 (2018-03-18)
 * **New:** You can now reorder services in settings
 * **New:** You can now enable/disable services in settings. Note this is WIP and not polished yet.
 * **Enhancement:** GitHub is now paginated when there are more results (thanks to [@charlesdurham](https://github.com/charlesdurham)!)
