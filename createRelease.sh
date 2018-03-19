@@ -127,6 +127,7 @@ if [ "$UPDATE_CHANGELOG" = true ]
     # Not using execIfNotDry because args get screwed up and my bash is not good
     if [ "$DRY_RUN" = false  ]
       then
+        log "Committing changelog"
         git commit -m "Prepare for release ${VERSION_NAME}." -- CHANGELOG.md app/src/main/play/en-US/whatsnew
     fi
     # Only cut a tag if we didn't update a version above
