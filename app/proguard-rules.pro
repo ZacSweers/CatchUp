@@ -52,48 +52,6 @@
 # Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
 
-# Glide
--keep public class * implements com.bumptech.glide.module.GlideModule
--keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
-    **[] $VALUES;
-    public *;
-}
-
-# SimpleXML
--dontwarn com.bea.xml.stream.**
--dontwarn org.simpleframework.xml.stream.**
--keep class org.simpleframework.xml.**{ *; }
--keepclassmembers,allowobfuscation class * {
-    @org.simpleframework.xml.* <fields>;
-    @org.simpleframework.xml.* <init>(...);
-}
-
-# Some models that need to be reflective
--keep class io.sweers.catchup.data.github.**{ *; }
--keep class io.sweers.catchup.data.hackernews.model.**{ *; }
-
-# Bugsnag - https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/55
--keepattributes SourceFile,LineNumberTable
--keep class com.bugsnag.android.NativeInterface { *; }
--keep class com.bugsnag.android.Breadcrumbs { *; }
--keep class com.bugsnag.android.Breadcrumbs$Breadcrumb { *; }
--keep class com.bugsnag.android.BreadcrumbType { *; }
--keep class com.bugsnag.android.Severity { *; }
--keep class com.bugsnag.android.ndk.BugsnagObserver { *; }
-
-# Weird support library issue
--keep class android.support.** {
-    *;
-}
-
-# Keep generated firebase AV class
--keep class io.sweers.catchup.service.hackernews.model.** {
-    *;
-}
-
-# Database/Room stuff
--keep class * implements android.arch.lifecycle.GeneratedAdapter {<init>(...);}
-
 # Okio
 -dontwarn okio.**
 
@@ -147,3 +105,29 @@
 # Glide
 -keep public class * extends com.bumptech.glide.module.AppGlideModule
 -keep class com.bumptech.glide.GeneratedAppGlideModuleImpl
+
+# CheckerFramework/EP
+-dontwarn org.checkerframework.**
+-dontwarn afu.org.checkerframework.**
+-dontwarn com.google.errorprone.annotations.**
+
+# Bypass
+-keep class in.uncod.android.bypass.Document { <init>(...); }
+-keep class in.uncod.android.bypass.Element {
+    <init>(...);
+    void setChildren(...);
+    void setParent(...);
+    void addAttribute(...);
+}
+
+# Tikxml
+-keepnames class **$$TypeAdapter
+-keepnames @com.tickaroo.tikxml.annotation.Xml class *
+
+# MoshKt
+# Retain generated classes that end in the suffix
+-keepnames class **JsonAdapter
+
+# Prevent obfuscation of types which use @MoshiSerializable since the simple name
+# is used to reflectively look up the generated adapter.
+-keepnames @io.sweers.moshkt.api.MoshiSerializable class *
