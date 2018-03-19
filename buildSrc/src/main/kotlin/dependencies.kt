@@ -90,12 +90,10 @@ object deps {
       const val constraintLayout = "com.android.support.constraint:constraint-layout:1.1.0-beta5"
       const val customTabs = "com.android.support:customtabs:${versions.support}"
       const val design = "com.android.support:design:${versions.support}"
-      const val multidex = "com.android.support:multidex:1.0.2"
       const val palette = "com.android.support:palette-v7:${versions.support}"
       const val percent = "com.android.support:percent:${versions.support}"
       const val recyclerView = "com.android.support:recyclerview-v7:${versions.support}"
       const val compat = "com.android.support:support-compat:${versions.support}"
-      const val v4 = "com.android.support:support-v4:${versions.support}"
     }
   }
 

@@ -103,8 +103,8 @@ android {
       signingConfig = signingConfigs.getByName("release")
       postprocessing.apply {
         proguardFiles("proguard-rules.pro")
-        isOptimizeCode = false
-        isObfuscate = false
+        isOptimizeCode = true
+        isObfuscate = true
       }
     }
   }
@@ -383,7 +383,6 @@ dependencies {
   implementation(deps.android.support.customTabs)
   implementation(deps.android.support.design)
   implementation(deps.android.support.palette)
-  implementation(deps.android.support.v4)
 
   // Arch components
   implementation(deps.android.arch.lifecycle.extensions)
