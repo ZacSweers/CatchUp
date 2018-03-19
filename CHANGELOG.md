@@ -2,6 +2,7 @@
 * **New:** You can now enable/disable services in settings
 * **Enhancement:** GitHub is now paginated when there are more results (thanks to [@charlesdurham](https://github.com/charlesdurham)!)
 * **Enhancement:** All models have been moved to native kotlin data classes using a new Moshi code gen implementation. Not really a user facing feature, but I'm really proud of it :)
+* **Enhancement:** APK size went on a diet! Fully enabled shrinking and APK splits, so now download size is ~4.9MB.
 * **Fix:** Medium is now fixed via pointing to the new `/topic/popular` endpoint
 * **Fix:** Building with a new version of D8 that should avoid some bizarre VM crashes on some Mediatek devices ಠ_ಠ
 
