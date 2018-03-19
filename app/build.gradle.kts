@@ -42,13 +42,6 @@ android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
   buildToolsVersion(deps.android.build.buildToolsVersion)
 
-  @Suppress("UNCHECKED_CAST")
-  val playConfigs = (this as ExtensionAware).extensions["playAccountConfigs"] as NamedDomainObjectContainer<PlayAccountConfig>
-  val defaultAccountConfig = playConfigs.create("defaultAccountConfig") {
-    serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
-    pk12File = rootProject.file("signing/play-account.p12")
-  }
-
   defaultConfig {
     applicationId = "io.sweers.catchup"
     minSdkVersion(deps.android.build.minSdkVersion)
@@ -59,7 +52,6 @@ android {
 
     the<BasePluginConvention>().archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
-    (this as ExtensionAware).extensions.add("playAccountConfig", defaultAccountConfig)
 
     buildConfigField("String", "GIT_SHA", "\"${deps.build.gitSha(project)}\"")
     buildConfigField("long", "GIT_TIMESTAMP", deps.build.gitTimestamp(project).toString())
@@ -181,6 +173,8 @@ kapt {
 play {
   setTrack("alpha")
   uploadImages = true
+  serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
+  pk12File = rootProject.file("signing/play-account.p12")
 }
 
 bugsnag {
