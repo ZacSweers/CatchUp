@@ -1,5 +1,5 @@
 * **New:** You can now reorder services in settings
-* **New:** You can now enable/disable services in settings
+* **New:** You can now enable/disable services in settings. Note this is WIP and not polished yet.
 * **Enhancement:** GitHub is now paginated when there are more results (thanks to [@charlesdurham](https://github.com/charlesdurham)!)
 * **Enhancement:** All models have been moved to native kotlin data classes using a new Moshi code gen implementation. Not really a user facing feature, but I'm really proud of it :)
 * **Enhancement:** APK size went on a diet! Fully enabled shrinking and APK splits, so now download size is ~4.9MB.
