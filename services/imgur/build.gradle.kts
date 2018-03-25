@@ -31,6 +31,7 @@ android {
   defaultConfig {
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
+    vectorDrawables.useSupportLibrary = true
     buildConfigField("String", "IMGUR_CLIENT_ACCESS_TOKEN",
         "\"${project.properties["catchup_imgur_access_token"].toString()}\"")
   }

@@ -31,6 +31,7 @@ android {
   defaultConfig {
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
+    vectorDrawables.useSupportLibrary = true
     buildConfigField("String", "PROCUCT_HUNT_DEVELOPER_TOKEN",
         "\"${project.properties["catchup_product_hunt_developer_token"].toString()}\"")
   }

@@ -32,6 +32,7 @@ android {
   defaultConfig {
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
+    vectorDrawables.useSupportLibrary = true
   }
   compileOptions {
     setSourceCompatibility(JavaVersion.VERSION_1_8)
