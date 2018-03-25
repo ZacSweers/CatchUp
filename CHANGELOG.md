@@ -1,4 +1,6 @@
-
+* **Enhancement:** Hacker News stories only show the tag if it's *not* `STORY`, as almost all are `STORY`. Little less noisy
+* **Fix:** Crash due to rastered vector drawable pngs being used as vectors at runtime. This was a pretty gnarly issue and weird to track down, sorry for the trouble!
+* **Misc:** Goodbye to Dribbble for now, as their v1 API is being shut down this week and the v2 API only allows for content production and management rather than reading feeds. This could return in the future but as an unofficial API.
 
 ## 0.3.0 (2018-03-18)
 * **New:** You can now reorder services in settings
