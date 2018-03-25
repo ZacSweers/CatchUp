@@ -39,7 +39,7 @@ object deps {
     const val firebase = "11.8.0"
     const val glide = "4.6.1"
     const val inspector = "0.3.0"
-    const val kotlin = "1.2.30"
+    const val kotlin = "1.2.31"
     const val leakcanary = "1.5.4"
     const val okhttp = "3.10.0"
     const val playServices = "11.8.0"
@@ -80,7 +80,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha06"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha07"
     const val ktx = "androidx.core:core-ktx:0.2"
 
     object support {
