@@ -1,5 +1,8 @@
 
 
+## 0.3.2 (2018-03-25)
+
+
 ## 0.3.1 (2018-03-25)
 * **Enhancement:** Hacker News stories only show the tag if it's *not* `STORY`, as almost all are `STORY`. Little less noisy
 * **Fix:** Crash due to rastered vector drawable pngs being used as vectors at runtime. This was a pretty gnarly issue and weird to track down, sorry for the trouble!
