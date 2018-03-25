@@ -119,19 +119,19 @@ android {
   }
   // Should be fixed now, disable if need be
   // https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/59
-  splits {
-    density {
-      isEnable = true
-      reset()
-      include("mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi")
-    }
-    abi {
-      isEnable = true
-      reset()
-      include("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-      isUniversalApk = true
-    }
-  }
+//  splits {
+//    density {
+//      isEnable = true
+//      reset()
+//      include("mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi")
+//    }
+//    abi {
+//      isEnable = true
+//      reset()
+//      include("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+//      isUniversalApk = true
+//    }
+//  }
   afterEvaluate {
     val firebaseVariants = setOf("release", "debug")
     applicationVariants.forEach { variant ->
