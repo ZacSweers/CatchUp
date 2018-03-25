@@ -46,7 +46,6 @@ import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.designernews.DesignerNewsMetaModule
-import io.sweers.catchup.service.dribbble.DribbbleMetaModule
 import io.sweers.catchup.service.github.GitHubMetaModule
 import io.sweers.catchup.service.hackernews.HackerNewsMetaModule
 import io.sweers.catchup.service.medium.MediumMetaModule
@@ -190,7 +189,7 @@ class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
           ProductHuntMetaModule::class,
           SlashdotMetaModule::class,
           DesignerNewsMetaModule::class,
-          DribbbleMetaModule::class,
+//          DribbbleMetaModule::class,
           GitHubMetaModule::class
 //      ImgurModule::class
         ]

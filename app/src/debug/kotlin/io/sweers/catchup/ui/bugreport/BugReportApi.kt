@@ -23,7 +23,7 @@ import dagger.Module
 import dagger.Provides
 import io.reactivex.Single
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.service.imgur.BuildConfig
+import io.sweers.catchup.BuildConfig
 import io.sweers.moshkt.api.MoshiSerializable
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient

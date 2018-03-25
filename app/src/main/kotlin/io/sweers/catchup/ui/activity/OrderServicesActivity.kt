@@ -47,7 +47,6 @@ import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.designernews.DesignerNewsMetaModule
-import io.sweers.catchup.service.dribbble.DribbbleMetaModule
 import io.sweers.catchup.service.github.GitHubMetaModule
 import io.sweers.catchup.service.hackernews.HackerNewsMetaModule
 import io.sweers.catchup.service.medium.MediumMetaModule
@@ -361,7 +360,7 @@ interface OrderServicesComponent : AndroidInjector<OrderServicesController> {
       ProductHuntMetaModule::class,
       SlashdotMetaModule::class,
       DesignerNewsMetaModule::class,
-      DribbbleMetaModule::class,
+//      DribbbleMetaModule::class,
       GitHubMetaModule::class
 //      ImgurModule::class
     ]

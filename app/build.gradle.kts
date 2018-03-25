@@ -88,6 +88,8 @@ android {
       applicationIdSuffix = ".debug"
       versionNameSuffix = "-dev"
       ext["enableBugsnag"] = false
+      buildConfigField("String", "IMGUR_CLIENT_ACCESS_TOKEN",
+          "\"${project.properties["catchup_imgur_access_token"].toString()}\"")
     }
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
@@ -361,10 +363,10 @@ dependencies {
   implementation(project(":services:reddit"))
   implementation(project(":services:medium"))
   implementation(project(":services:producthunt"))
-  implementation(project(":services:imgur"))
+//  implementation(project(":services:imgur"))
   implementation(project(":services:slashdot"))
   implementation(project(":services:designernews"))
-  implementation(project(":services:dribbble"))
+//  implementation(project(":services:dribbble"))
   implementation(project(":services:github"))
   implementation(project(":gemoji"))
   implementation(project(":util"))
