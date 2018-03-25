@@ -45,8 +45,7 @@ buildscript {
 }
 
 plugins {
-  `build-scan`
-//  id("com.gradle.build-scan") version "1.11"
+  id("com.gradle.build-scan") version "1.12.1"
   id("com.github.ben-manes.versions") version "0.17.0"
 }
 
@@ -54,6 +53,10 @@ buildScan {
   setTermsOfServiceAgree("yes")
   setTermsOfServiceUrl("https://gradle.com/terms-of-service")
 }
+
+// Due to https://github.com/gradle/gradle/issues/4823
+// Breaks configure on demand
+subprojects { parent!!.path.takeIf { it != rootProject.path }?.let { evaluationDependsOn(it) } }
 
 allprojects {
 
