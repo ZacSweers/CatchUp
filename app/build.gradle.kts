@@ -224,6 +224,9 @@ open class CutChangelogTask : DefaultTask() {
 
     val whatsNewPath = "${project.projectDir}/src/main/play/en-US/whatsnew"
     val newChangelog = getChangelog(changelog, "")
+    if (newChangelog.length > 500) {
+      throw IllegalStateException("Changelog length exceeds 500ch max. Is ${newChangelog.length}")
+    }
     if (!newChangelog.isEmpty()) {
       project.file(whatsNewPath).writer().use {
         it.write(newChangelog)
