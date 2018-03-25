@@ -114,7 +114,7 @@ internal class HackerNewsService @Inject constructor(
                 author = by,
                 source = url?.let { HttpUrl.parse(it)!!.host() },
                 commentCount = kids?.size ?: 0,
-                tag = realType()?.tag(),
+                tag = realType()?.tag(nullIfStory = true),
                 itemClickUrl = url,
                 itemCommentClickUrl = "https://news.ycombinator.com/item?id=$id",
                 summarizationInfo = SummarizationInfo.from(url)

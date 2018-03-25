@@ -19,5 +19,11 @@ package io.sweers.catchup.service.hackernews.model
 internal enum class HNType {
   COMMENT, JOB, POLL, POLLOPT, STORY;
 
-  fun tag(): String = name.toLowerCase().capitalize()
+  fun tag(nullIfStory: Boolean = false): String? {
+    return if (nullIfStory && this == STORY) {
+      null
+    } else {
+      name.toLowerCase().capitalize()
+    }
+  }
 }
