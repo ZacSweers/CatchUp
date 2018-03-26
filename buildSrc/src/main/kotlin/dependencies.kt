@@ -80,7 +80,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha07"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha08"
     const val ktx = "androidx.core:core-ktx:0.2"
 
     object support {
