@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.service.dribbble
 
+import android.support.annotation.Keep
 import io.reactivex.Single
 import io.sweers.catchup.service.dribbble.model.Shot
 import retrofit2.http.GET
@@ -24,6 +25,7 @@ import retrofit2.http.Query
 /**
  * Dribbble API - http://developer.dribbble.com/v1/
  */
+@Keep
 internal interface DribbbleApi {
 
   @GET("v1/shots")
@@ -33,8 +35,8 @@ internal interface DribbbleApi {
 
   companion object {
 
-    val HOST = "api.dribbble.com/"
-    val ENDPOINT = "https://" + HOST
+    const val HOST = "api.dribbble.com/"
+    const val ENDPOINT = "https://$HOST"
   }
 
 }

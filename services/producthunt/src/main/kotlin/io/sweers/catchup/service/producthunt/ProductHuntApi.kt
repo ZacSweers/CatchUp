@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.service.producthunt
 
+import android.support.annotation.Keep
 import com.serjltt.moshi.adapters.Wrapped
 import io.reactivex.Single
 import io.sweers.catchup.service.producthunt.model.Post
@@ -25,6 +26,7 @@ import retrofit2.http.Query
 /**
  * Models the Product Hunt API. See https://api.producthunt.com/v1/docs
  */
+@Keep
 internal interface ProductHuntApi {
 
   @GET("/v1/posts")
@@ -33,8 +35,8 @@ internal interface ProductHuntApi {
 
   companion object {
 
-    private val SCHEME = "https"
-    val HOST = "api.producthunt.com"
-    val ENDPOINT = SCHEME + "://" + HOST
+    private const val SCHEME = "https"
+    const val HOST = "api.producthunt.com"
+    const val ENDPOINT = "$SCHEME://$HOST"
   }
 }

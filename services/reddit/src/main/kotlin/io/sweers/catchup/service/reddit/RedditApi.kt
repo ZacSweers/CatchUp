@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.service.reddit
 
+import android.support.annotation.Keep
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.sweers.catchup.service.reddit.model.RedditResponse
@@ -23,6 +24,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+@Keep
 internal interface RedditApi {
 
   @GET("/r/{subreddit}/comments/{id}")
@@ -43,7 +45,7 @@ internal interface RedditApi {
       @Query("limit") limit: Int): Single<RedditResponse>
 
   companion object {
-    val HOST = "www.reddit.com"
-    val ENDPOINT = "https://" + HOST
+    const val HOST = "www.reddit.com"
+    const val ENDPOINT = "https://$HOST"
   }
 }

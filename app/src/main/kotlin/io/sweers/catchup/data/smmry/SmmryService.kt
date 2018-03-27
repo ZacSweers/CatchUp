@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.data.smmry
 
+import android.support.annotation.Keep
 import io.reactivex.Single
 import io.sweers.catchup.data.smmry.model.SmmryResponse
 import retrofit2.http.Field
@@ -23,6 +24,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 import retrofit2.http.QueryMap
 
+@Keep
 interface SmmryService {
 
   @POST(".")

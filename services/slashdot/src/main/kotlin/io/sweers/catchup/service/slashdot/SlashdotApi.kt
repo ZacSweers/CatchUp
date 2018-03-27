@@ -16,16 +16,18 @@
 
 package io.sweers.catchup.service.slashdot
 
+import android.support.annotation.Keep
 import io.reactivex.Single
 import retrofit2.http.GET
 
+@Keep
 internal interface SlashdotApi {
 
   @GET("/Slashdot/slashdotMainatom")
   fun main(): Single<Feed>
 
   companion object {
-    val HOST = "rss.slashdot.org"
-    val ENDPOINT = "http://" + HOST
+    const val HOST = "rss.slashdot.org"
+    const val ENDPOINT = "http://$HOST"
   }
 }

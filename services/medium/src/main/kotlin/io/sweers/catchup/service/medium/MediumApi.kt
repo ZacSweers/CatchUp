@@ -16,11 +16,13 @@
 
 package io.sweers.catchup.service.medium
 
+import android.support.annotation.Keep
 import com.serjltt.moshi.adapters.Wrapped
 import io.reactivex.Observable
 import io.sweers.catchup.service.medium.model.References
 import retrofit2.http.GET
 
+@Keep
 internal interface MediumApi {
 
   @GET("/topic/popular")
@@ -29,7 +31,7 @@ internal interface MediumApi {
 
   companion object {
 
-    val HOST = "medium.com"
-    val ENDPOINT = "https://" + HOST
+    const val HOST = "medium.com"
+    const val ENDPOINT = "https://$HOST"
   }
 }

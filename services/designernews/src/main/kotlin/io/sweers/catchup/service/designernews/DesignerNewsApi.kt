@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.service.designernews
 
+import android.support.annotation.Keep
 import com.serjltt.moshi.adapters.Wrapped
 import io.reactivex.Single
 import io.sweers.catchup.service.designernews.model.Story
@@ -28,9 +29,9 @@ import retrofit2.http.Query
 /**
  * Models the Designer News API.
  *
- *
  * v2 docs: https://github.com/DesignerNews/dn_api_v2
  */
+@Keep
 internal interface DesignerNewsApi {
 
   @GET("stories")
@@ -43,7 +44,7 @@ internal interface DesignerNewsApi {
 
   companion object {
 
-    val HOST = "www.designernews.co/api/v2/"
-    val ENDPOINT = "https://" + HOST
+    const val HOST = "www.designernews.co/api/v2/"
+    const val ENDPOINT = "https://$HOST"
   }
 }
