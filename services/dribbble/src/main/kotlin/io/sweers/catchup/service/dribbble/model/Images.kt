@@ -16,15 +16,12 @@
 
 package io.sweers.catchup.service.dribbble.model
 
-import io.sweers.moshkt.api.MoshiSerializable
-
 /**
  * Models links to the various quality of images of a shot.
  */
-@MoshiSerializable
 internal data class Images(val hidpi: String?,
     val normal: String,
-    val teaser: String) {
+    val teaser: String?) {
 
   fun best(): String = hidpi ?: normal
 

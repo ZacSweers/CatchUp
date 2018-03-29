@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.dribbble
 
-import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
 import dagger.Module
@@ -34,13 +33,9 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
-import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
-import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
-import org.threeten.bp.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -109,7 +104,7 @@ abstract class DribbbleMetaModule {
         R.drawable.logo_dribbble,
         isVisual = true,
         pagesAreNumeric = true,
-        firstPageKey = "0"
+        firstPageKey = "1"
     )
   }
 }
@@ -126,34 +121,13 @@ abstract class DribbbleModule {
   companion object {
 
     @Provides
-    @InternalApi
     @JvmStatic
-    internal fun provideDribbbleOkHttpClient(
-        client: OkHttpClient): OkHttpClient {
-      return client.newBuilder()
-          .addInterceptor(AuthInterceptor("Bearer",
-              BuildConfig.DRIBBBLE_CLIENT_ACCESS_TOKEN))
-          .build()
-    }
-
-    @Provides
-    @InternalApi
-    @JvmStatic
-    internal fun provideDribbbleMoshi(moshi: Moshi): Moshi {
-      return moshi.newBuilder()
-          .add(Instant::class.java, ISO8601InstantAdapter())
-          .build()
-    }
-
-    @Provides
-    @JvmStatic
-    internal fun provideDribbbleService(@InternalApi client: Lazy<OkHttpClient>,
-        @InternalApi moshi: Moshi,
+    internal fun provideDribbbleService(client: Lazy<OkHttpClient>,
         rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DribbbleApi {
       return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
+          .addConverterFactory(DribbbleJsoupConverter.Factory())
           .validateEagerly(BuildConfig.DEBUG)
           .build()
           .create(DribbbleApi::class.java)

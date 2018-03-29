@@ -16,37 +16,12 @@
 
 package io.sweers.catchup.service.dribbble.model
 
-import com.squareup.moshi.Json
-import io.sweers.moshkt.api.MoshiSerializable
-import org.threeten.bp.Instant
-
 /**
  * Models a dribbble user
  */
-@MoshiSerializable
-internal data class User(@Json(name = "avatar_url") val avatarUrl: String,
-    val bio: String,
-    @Json(name = "buckets_count") val bucketsCount: Int,
-    @Json(name = "buckets_url") val bucketsUrl: String,
-    @Json(name = "created_at") val createdAt: Instant,
-    @Json(name = "followers_count") val followersCount: Int,
-    @Json(name = "followers_url") val followersUrl: String,
-    @Json(name = "following_url") val followingUrl: String,
-    @Json(name = "followings_count") val followingsCount: Int,
-    @Json(name = "html_url") val htmlUrl: String,
+internal data class User(val avatarUrl: String,
+    val htmlUrl: String,
     val id: Long,
-    @Json(name = "likes_count") val likesCount: Int,
-    @Json(name = "likes_url") val likesUrl: String,
-    val links: Map<String, String>,
-    val location: String?,
     val name: String,
     val pro: Boolean?,
-    @Json(name = "projects_count") val projectsCount: Int,
-    @Json(name = "projects_url") val projectsUrl: String,
-    @Json(name = "shots_count") val shotsCount: Int,
-    @Json(name = "shots_url") val shotsUrl: String,
-    @Json(name = "teams_count") val teamsCount: Int?,
-    @Json(name = "teams_url") val teamsUrl: String?,
-    val type: String,
-    @Json(name = "updated_at") val updatedAt: Instant,
-    val username: String)
+    val username: String?)

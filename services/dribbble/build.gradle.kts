@@ -32,8 +32,6 @@ android {
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
     vectorDrawables.useSupportLibrary = true
-    buildConfigField("String", "DRIBBBLE_CLIENT_ACCESS_TOKEN",
-        "\"${project.properties["catchup_dribbble_access_token"].toString()}\"")
   }
   compileOptions {
     setSourceCompatibility(JavaVersion.VERSION_1_8)
@@ -67,9 +65,8 @@ dependencies {
 
   implementation(project(":tooling:moshkt:api"))
   implementation(project(":util"))
-  implementation(deps.misc.moshi)
+  implementation(deps.misc.jsoup)
   implementation(deps.retrofit.core)
-  implementation(deps.retrofit.moshi)
   implementation(deps.retrofit.rxJava2)
   implementation(deps.okhttp.core)
 

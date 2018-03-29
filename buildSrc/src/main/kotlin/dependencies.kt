@@ -267,6 +267,7 @@ object deps {
     }
 
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
+    const val jsoup = "org.jsoup:jsoup:1.11.2"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
     const val lottie = "com.airbnb.android:lottie:2.5.1"
