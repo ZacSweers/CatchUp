@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.producthunt
 
-import android.support.annotation.Keep
 import com.serjltt.moshi.adapters.Wrapped
 import io.reactivex.Single
 import io.sweers.catchup.service.producthunt.model.Post
@@ -26,7 +25,6 @@ import retrofit2.http.Query
 /**
  * Models the Product Hunt API. See https://api.producthunt.com/v1/docs
  */
-@Keep
 internal interface ProductHuntApi {
 
   @GET("/v1/posts")

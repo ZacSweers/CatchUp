@@ -16,11 +16,9 @@
 
 package io.sweers.catchup.service.slashdot
 
-import android.support.annotation.Keep
 import io.reactivex.Single
 import retrofit2.http.GET
 
-@Keep
 internal interface SlashdotApi {
 
   @GET("/Slashdot/slashdotMainatom")

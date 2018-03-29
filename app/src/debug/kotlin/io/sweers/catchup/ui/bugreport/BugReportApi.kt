@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.ui.bugreport
 
-import android.support.annotation.Keep
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.Moshi
 import dagger.Lazy
@@ -37,7 +36,6 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-@Keep
 internal interface ImgurUploadApi {
   @Multipart
   @Headers("Authorization: Client-ID ${BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN}")
@@ -47,7 +45,6 @@ internal interface ImgurUploadApi {
       @Part file: MultipartBody.Part): Single<String>
 }
 
-@Keep
 internal interface GitHubIssueApi {
   @Headers(
       value = [

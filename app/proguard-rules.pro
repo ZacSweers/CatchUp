@@ -51,6 +51,11 @@
 -keepattributes Signature
 # Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
+# This is to keep parameters on retrofit2.http-annotated methods while still allowing removal of unused ones
+-keep,allowobfuscation @interface retrofit2.http.**
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.** <methods>;
+}
 
 # Okio
 -dontwarn okio.**

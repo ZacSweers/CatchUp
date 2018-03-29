@@ -16,13 +16,11 @@
 
 package io.sweers.catchup.service.medium
 
-import android.support.annotation.Keep
 import com.serjltt.moshi.adapters.Wrapped
 import io.reactivex.Observable
 import io.sweers.catchup.service.medium.model.References
 import retrofit2.http.GET
 
-@Keep
 internal interface MediumApi {
 
   @GET("/topic/popular")

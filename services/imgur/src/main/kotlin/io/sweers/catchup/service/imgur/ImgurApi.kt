@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.imgur
 
-import android.support.annotation.Keep
 import com.serjltt.moshi.adapters.Wrapped
 import io.reactivex.Single
 import io.sweers.catchup.service.imgur.model.Image
@@ -27,7 +26,6 @@ import retrofit2.http.Query
 /**
  * Imgur API - https://apidocs.imgur.com/
  */
-@Keep
 internal interface ImgurApi {
 
   // For "front page", use gallery/hot/viral?showMature=false
