@@ -1,3 +1,6 @@
+
+
+## 0.3.5 (2018-03-29)
 * **Fix:** Accidental proguard issue that would break HackerNews
 
 ## 0.3.4 (2018-03-29)
