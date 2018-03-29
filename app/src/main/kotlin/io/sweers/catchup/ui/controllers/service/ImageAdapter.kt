@@ -57,7 +57,7 @@ import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.ObservableColorMatrix
 import io.sweers.catchup.util.UiUtil
-import io.sweers.catchup.util.glide.DribbbleTarget
+import io.sweers.catchup.util.glide.CatchUpTarget
 import io.sweers.catchup.util.isInNightMode
 
 internal class ImageAdapter(private val context: Context,
@@ -286,7 +286,7 @@ internal class ImageAdapter(private val context: Context,
                   target: Target<Drawable>,
                   isFirstResource: Boolean) = false
             })
-            .into(DribbbleTarget(image, false))
+            .into(CatchUpTarget(image, false))
         // need both placeholder & background to prevent seeing through image as it fades in
         image.background = loadingPlaceholders[adapterPosition % loadingPlaceholders.size]
         image.showBadge(imageItem.imageInfo.animatable)

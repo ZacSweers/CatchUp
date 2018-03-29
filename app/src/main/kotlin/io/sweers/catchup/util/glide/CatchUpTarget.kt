@@ -32,7 +32,7 @@ import io.sweers.catchup.util.UiUtil
  * A Glide {@see ViewTarget} for [BadgedFourThreeImageView]s. It applies a badge for animated
  * images, can prevent GIFs from auto-playing & applies a palette generated ripple.
  */
-class DribbbleTarget(view: BadgedFourThreeImageView,
+class CatchUpTarget(view: BadgedFourThreeImageView,
     private val autoplayGifs: Boolean) : NonAutoStartDrawableImageViewTarget(view),
     Palette.PaletteAsyncListener {
 
