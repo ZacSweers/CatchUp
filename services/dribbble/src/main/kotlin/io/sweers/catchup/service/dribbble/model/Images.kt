@@ -20,12 +20,15 @@ package io.sweers.catchup.service.dribbble.model
  * Models links to the various quality of images of a shot.
  */
 internal data class Images(val hidpi: String?,
-    val normal: String,
-    val teaser: String?) {
+    val normal: String) {
 
-  fun best(): String = hidpi ?: normal
+  fun best(preferHidpi: Boolean = false): String {
+    return if (preferHidpi && hidpi != null) hidpi else normal
+  }
 
-  fun bestSize(): Pair<Int, Int> = hidpi?.let { TWO_X_IMAGE_SIZE } ?: NORMAL_IMAGE_SIZE
+  fun bestSize(preferHidpi: Boolean = false): Pair<Int, Int> {
+    return if (preferHidpi && hidpi != null) TWO_X_IMAGE_SIZE else  NORMAL_IMAGE_SIZE
+  }
 
   companion object {
     private val NORMAL_IMAGE_SIZE = 400 to 300

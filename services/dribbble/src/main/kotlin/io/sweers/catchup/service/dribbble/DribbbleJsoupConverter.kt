@@ -93,7 +93,7 @@ internal class DribbbleJsoupConverter private constructor() : Converter<Response
           htmlUrl = "$ENDPOINT${element.select("a.dribbble-link").first().attr("href")}",
           title = descriptionBlock.select("strong").first().text(),
           description = description,
-          images = Images(null, imgUrl, null),
+          images = Images(null, imgUrl),
           animated = element.select("div.gif-indicator").first() != null,
           createdAt = createdAt,
           likesCount = element.select("li.fav")
