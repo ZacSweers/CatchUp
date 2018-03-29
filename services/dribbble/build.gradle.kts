@@ -60,10 +60,8 @@ kapt {
 }
 
 dependencies {
-  kapt(project(":tooling:moshkt:compiler"))
   kapt(deps.dagger.apt.compiler)
 
-  implementation(project(":tooling:moshkt:api"))
   implementation(project(":util"))
   implementation(deps.misc.jsoup)
   implementation(deps.retrofit.core)
