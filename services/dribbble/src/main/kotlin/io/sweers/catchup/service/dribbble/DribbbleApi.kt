@@ -28,10 +28,14 @@ import retrofit2.http.Query
 @Keep
 internal interface DribbbleApi {
 
-  @GET("/")
+  @GET("/shots")
   fun getPopular(
       @Query("page") page: Int,
       @Query("per_page") pageSize: Int): Single<List<Shot>>
+
+  // list=...
+  // sort=...
+  // timeframe=...
 
   companion object {
 
