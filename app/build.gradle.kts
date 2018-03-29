@@ -369,7 +369,7 @@ dependencies {
 //  implementation(project(":services:imgur"))
   implementation(project(":services:slashdot"))
   implementation(project(":services:designernews"))
-//  implementation(project(":services:dribbble"))
+  implementation(project(":services:dribbble"))
   implementation(project(":services:github"))
   implementation(project(":gemoji"))
   implementation(project(":util"))
