@@ -1,4 +1,4 @@
-
+* **Fix:** Accidental proguard issue that would break HackerNews
 
 ## 0.3.4 (2018-03-29)
 * **New:** Dribbble is back! This is an unofficial API now via scraping the webpage directly. Let's see how long this lasts.
