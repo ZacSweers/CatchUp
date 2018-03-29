@@ -1,4 +1,4 @@
-
+* **New:** Dribbble is back! This is an unofficial API now via scraping the webpage directly. Let's see how long this lasts.
 
 ## 0.3.3 (2018-03-26)
 * **Fix:** Paging not working. Sorry for this! Was a super weird issue with the proguard optimization turned on and stripping retrofit service parameters.
