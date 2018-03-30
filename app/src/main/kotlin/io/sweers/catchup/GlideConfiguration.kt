@@ -20,6 +20,7 @@ package io.sweers.catchup
 
 import android.app.ActivityManager
 import android.content.Context
+import android.support.annotation.Keep
 import android.support.v4.app.ActivityManagerCompat
 import androidx.content.systemService
 import com.bumptech.glide.GlideBuilder
@@ -31,6 +32,7 @@ import com.bumptech.glide.request.RequestOptions
 /**
  * Configure Glide to set desired image quality.
  */
+@Keep
 @GlideModule
 class GlideConfiguration : AppGlideModule() {
 
