@@ -58,13 +58,15 @@ internal data class HackerNewsStory(
    */
 
   @Exclude
-  fun realTime(): Instant = Instant.ofEpochMilli(
-      TimeUnit.MILLISECONDS.convert(time!!, TimeUnit.SECONDS))
+  fun realTime(): Instant = time?.let {
+    Instant.ofEpochMilli(
+        TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS))
+  } ?: Instant.now()
 
-  @Exclude
-  fun realType() = type?.let { HNType.valueOf(it.toUpperCase(Locale.US)) }
+    @Exclude
+    fun realType() = type?.let { HNType.valueOf(it.toUpperCase(Locale.US)) }
 
-  companion object {
+    companion object {
 
     fun create(dataSnapshot: DataSnapshot): HackerNewsStory {
       return dataSnapshot.getValue(HackerNewsStory::class.java)!!
