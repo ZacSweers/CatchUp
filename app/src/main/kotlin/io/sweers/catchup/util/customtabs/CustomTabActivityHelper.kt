@@ -27,6 +27,7 @@ import android.support.customtabs.CustomTabsIntent
 import android.support.customtabs.CustomTabsServiceConnection
 import android.support.customtabs.CustomTabsSession
 import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.util.maybeStartActivity
 import javax.inject.Inject
 
 /**
@@ -58,7 +59,7 @@ class CustomTabActivityHelper @Inject constructor() {
     packageName?.let {
       customTabsIntent.intent.`package` = it
       customTabsIntent.launchUrl(context, uri)
-    } ?: context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+    } ?: context.maybeStartActivity(Intent(Intent.ACTION_VIEW, uri))
   }
 
   val customTabIntent: CustomTabsIntent.Builder
