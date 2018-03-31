@@ -352,9 +352,11 @@ class PagerController : ButterKnifeController {
 
   @ColorInt
   private fun getAndSaveColor(position: Int): Int {
-    if (resolvedColorCache[position] == R.color.no_color) {
-      resolvedColorCache[position] = ContextCompat.getColor(dayOnlyContext!!,
-          serviceHandlers[position].accent)
+    dayOnlyContext?.let {
+      if (resolvedColorCache[position] == R.color.no_color) {
+        resolvedColorCache[position] = ContextCompat.getColor(it,
+            serviceHandlers[position].accent)
+      }
     }
     return resolvedColorCache[position]
   }
