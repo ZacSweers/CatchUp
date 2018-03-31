@@ -84,6 +84,9 @@
 -keep public class * extends com.bumptech.glide.module.AppGlideModule
 -keep class com.bumptech.glide.GeneratedAppGlideModuleImpl
 
+# Fonts have a messed up proguard config
+-keep class android.support.v4.provider.** { *; }
+
 # CheckerFramework/EP
 -dontwarn org.checkerframework.**
 -dontwarn afu.org.checkerframework.**
