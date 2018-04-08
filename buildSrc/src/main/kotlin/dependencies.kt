@@ -33,6 +33,7 @@ object deps {
     const val butterknife = "8.8.1"
     const val chuck = "1.1.0"
     const val conductor = "2.1.4"
+    const val crumb = "0.0.1"
     const val dagger = "2.15"
     const val errorProne = "2.2.0"
     const val espresso = "3.0.1"
@@ -80,7 +81,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha08"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha09"
     const val ktx = "androidx.core:core-ktx:0.2"
 
     object support {
@@ -173,6 +174,12 @@ object deps {
     const val core = "com.bluelinelabs:conductor:${versions.conductor}"
     const val autoDispose = "com.bluelinelabs:conductor-autodispose:${versions.conductor}"
     const val support = "com.bluelinelabs:conductor-support:${versions.conductor}"
+  }
+
+  object crumb {
+    const val annotations = "com.uber.crumb:crumb-annotations:${versions.crumb}"
+    const val compiler = "com.uber.crumb:crumb-compiler:${versions.crumb}"
+    const val compilerApi = "com.uber.crumb:crumb-compiler-api:${versions.crumb}"
   }
 
   object dagger {
