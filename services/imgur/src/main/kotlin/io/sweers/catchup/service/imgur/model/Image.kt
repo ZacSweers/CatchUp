@@ -19,7 +19,7 @@ package io.sweers.catchup.service.imgur.model
 import android.app.ActivityManager
 import android.content.Context
 import android.content.res.Configuration
-import androidx.content.systemService
+import androidx.core.content.systemService
 import com.squareup.moshi.Json
 import io.sweers.moshkt.api.MoshiSerializable
 import org.threeten.bp.Instant

@@ -28,7 +28,7 @@ import android.preference.PreferenceFragment
 import android.preference.SwitchPreference
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
 import butterknife.BindView
 import dagger.Binds
 import dagger.Module

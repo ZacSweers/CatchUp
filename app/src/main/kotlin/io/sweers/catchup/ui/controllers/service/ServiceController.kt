@@ -40,8 +40,8 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.os.bundleOf
-import androidx.view.isVisible
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import butterknife.BindView
 import butterknife.OnClick
 import com.apollographql.apollo.exception.ApolloException

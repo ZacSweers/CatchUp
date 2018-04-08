@@ -33,7 +33,7 @@ import android.support.v4.content.ContextCompat
 import android.util.TypedValue
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
-import androidx.content.systemService
+import androidx.core.content.systemService
 import io.reactivex.Observable
 import java.io.File
 import java.io.IOException

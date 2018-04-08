@@ -22,7 +22,7 @@ import android.content.Intent
 import android.support.v7.app.AlertDialog
 import android.widget.ListView
 import android.widget.Toast
-import androidx.os.toUri
+import androidx.core.net.toUri
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

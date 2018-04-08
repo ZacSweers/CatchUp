@@ -32,8 +32,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-import androidx.content.systemService
-import androidx.view.doOnLayout
+import androidx.core.content.systemService
+import androidx.core.view.doOnLayout
 import butterknife.BindView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.jakewharton.madge.MadgeFrameLayout

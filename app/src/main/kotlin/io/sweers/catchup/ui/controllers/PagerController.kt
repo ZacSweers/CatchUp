@@ -42,8 +42,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
-import androidx.animation.doOnEnd
-import androidx.animation.doOnStart
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import butterknife.BindView
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router

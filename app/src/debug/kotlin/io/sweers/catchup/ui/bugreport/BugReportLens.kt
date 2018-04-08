@@ -28,8 +28,8 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.widget.Toast
-import androidx.content.systemService
-import androidx.net.toUri
+import androidx.core.content.systemService
+import androidx.core.net.toUri
 import com.mattprecious.telescope.Lens
 import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.Single

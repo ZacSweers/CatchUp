@@ -25,7 +25,7 @@ import android.support.v7.widget.RxViewHolder
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.TextView
-import androidx.view.isVisible
+import androidx.core.view.isVisible
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder

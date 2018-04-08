@@ -13,7 +13,7 @@ import android.support.v4.view.ViewCompat
 import android.support.v7.widget.Toolbar
 import android.text.style.StyleSpan
 import android.widget.TextView
-import androidx.view.doOnLayout
+import androidx.core.view.doOnLayout
 import com.getkeepsafe.taptargetview.TapTarget
 import dagger.Lazy
 import io.sweers.catchup.BuildConfig

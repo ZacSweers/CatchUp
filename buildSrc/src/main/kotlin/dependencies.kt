@@ -27,7 +27,7 @@ object deps {
     const val androidTestSupport = "1.0.1"
     const val apollo = "0.4.4"
     const val archComponentsLifecycle = "1.1.0"
-    const val archComponentsRoom = "1.1.0-alpha3"
+    const val archComponentsRoom = "1.1.0-beta2"
     const val autodispose = "0.6.1"
     const val barber = "1.3.1"
     const val butterknife = "8.8.1"
@@ -37,18 +37,18 @@ object deps {
     const val dagger = "2.15"
     const val errorProne = "2.2.0"
     const val espresso = "3.0.1"
-    const val firebase = "11.8.0"
+    const val firebase = "12.0.1"
     const val glide = "4.6.1"
     const val inspector = "0.3.0"
     const val kotlin = "1.2.31"
     const val leakcanary = "1.5.4"
     const val okhttp = "3.10.0"
-    const val playServices = "11.8.0"
+    const val playServices = firebase
     const val retrofit = "2.4.0"
     const val rxbinding = "2.1.1"
     const val rxpalette = "0.3.0"
     const val stetho = "1.5.0"
-    const val support = "27.1.0"
+    const val support = "27.1.1"
     const val tikxml = "0.8.13"
   }
 
@@ -82,7 +82,7 @@ object deps {
     }
 
     const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha09"
-    const val ktx = "androidx.core:core-ktx:0.2"
+    const val ktx = "androidx.core:core-ktx:0.3"
 
     object support {
       const val annotations = "com.android.support:support-annotations:${versions.support}"
