@@ -67,9 +67,9 @@ import io.sweers.catchup.ui.base.ButterKnifeController
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.TouchableUrlSpan
 import io.sweers.catchup.util.UiUtil
+import io.sweers.catchup.util.buildMarkdown
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.isInNightMode
-import io.sweers.catchup.util.markdown
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.setLightStatusBar
 import java.util.Locale
@@ -251,19 +251,21 @@ class AboutController : ButterKnifeController() {
     }
 
     aboutText.movementMethod = LinkTouchMovementMethod.getInstance()
-    aboutText.text = """
-      |${aboutText.resources.getString(R.string.about_description)}
-      |
-      |
-      |${aboutText.resources.getString(R.string.about_version, BuildConfig.VERSION_NAME)}
-      |
-      |${aboutText.resources.getString(R.string.about_attribution)}
-    """.trimMargin()
-        .markdown()
-        .parseMarkdownAndPlainLinks(
-            on = aboutText,
-            with = bypass,
-            alternateSpans = compositeClickSpan)
+    aboutText.text = buildMarkdown {
+      text(aboutText.resources.getString(R.string.about_description))
+      newline(3)
+      text(aboutText.resources.getString(R.string.about_version, BuildConfig.VERSION_NAME))
+      newline(2)
+      text(aboutText.resources.getString(R.string.about_by))
+      space()
+      link("https://twitter.com/pandanomic", "Zac Sweers")
+      text(" - ")
+      link("https://github.com/hzsweers/CatchUp",
+          aboutText.resources.getString(R.string.about_source_code))
+    }.parseMarkdownAndPlainLinks(
+        on = aboutText,
+        with = bypass,
+        alternateSpans = compositeClickSpan)
 
     setUpPager()
 

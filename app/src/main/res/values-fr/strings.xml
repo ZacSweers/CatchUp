@@ -41,7 +41,8 @@
     <string name="unknown_issue">Erreur inconnue</string>
     <string name="about_description">Une application pour rester à jour sur divers sujets.</string>
     <string name="about_version">Version %1s</string>
-    <string name="about_attribution">Par [Zac Sweers](https://twitter.com/pandanomic) — [Code source](https://github.com/hzsweers/CatchUp)</string>
+    <string name="about_by">Par</string>
+    <string name="about_source_code">Code source</string>
     <string name="icon_attribution">Icône par Michael Cook</string>
     <string name="changelog_error">Impossible de charger le changelog.</string>
     <string name="licenses_error">Impossible de charger les licences open source.</string>

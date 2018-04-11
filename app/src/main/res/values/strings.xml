@@ -41,7 +41,8 @@
   <string name="unknown_issue">Unknown issue</string>
   <string name="about_description">An app for catching up on things.</string>
   <string name="about_version">Version %1s</string>
-  <string name="about_attribution">By [Zac Sweers](https://twitter.com/pandanomic) — [Source code](https://github.com/hzsweers/CatchUp)</string>
+  <string name="about_by">By</string>
+  <string name="about_source_code">Source code</string>
   <string name="icon_attribution">Icon by Michael Cook</string>
   <string name="changelog_error">Could not load changelog.</string>
   <string name="licenses_error">Could not load open source licenses.</string>
