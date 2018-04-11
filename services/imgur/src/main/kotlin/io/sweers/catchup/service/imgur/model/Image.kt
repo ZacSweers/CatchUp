@@ -21,10 +21,10 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.core.content.systemService
 import com.squareup.moshi.Json
-import io.sweers.moshkt.api.MoshiSerializable
+import com.squareup.moshi.JsonClass
 import org.threeten.bp.Instant
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class Image(
     val id: String,
     val title: String,

@@ -32,7 +32,6 @@ import io.sweers.catchup.gemoji.GemojiModule
 import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
-import io.sweers.moshkt.api.MoshiSerializableFactory
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -95,7 +94,6 @@ abstract class DataModule {
     internal fun provideMoshi(): Moshi {
       return Moshi.Builder()
           .add(Wrapped.ADAPTER_FACTORY)
-          .add(MoshiSerializableFactory())
           .add(UnescapeJsonAdapter.FACTORY)
           .add(ArrayMapJsonAdapter.FACTORY)
           .add(ArrayCollectionJsonAdapter.FACTORY)

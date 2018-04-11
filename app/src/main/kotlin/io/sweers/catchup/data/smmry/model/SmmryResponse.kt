@@ -18,12 +18,12 @@ package io.sweers.catchup.data.smmry.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import io.sweers.catchup.util.data.adapters.UnEscape
-import io.sweers.moshkt.api.MoshiSerializable
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.lang.reflect.Type
@@ -44,7 +44,7 @@ data class SummarizationError(val message: String) : SmmryResponse()
 
 object UnknownErrorCode : SmmryResponse()
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 data class Success(
 
     /**

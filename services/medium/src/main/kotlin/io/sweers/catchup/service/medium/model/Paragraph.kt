@@ -16,9 +16,9 @@
 
 package io.sweers.catchup.service.medium.model
 
-import io.sweers.moshkt.api.MoshiSerializable
+import com.squareup.moshi.JsonClass
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class Paragraph(val markups: List<Markup>,
     val name: String,
     val text: String,

@@ -28,8 +28,6 @@ include(
   ":services:imgur",
   ":services:github",
   ":gemoji",
-  ":tooling:moshkt:api",
-  ":tooling:moshkt:compiler",
   ":tooling:spi-visualizer",
   ":util"
 )

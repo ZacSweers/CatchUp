@@ -43,6 +43,7 @@ object deps {
     const val hyperion = "0.9.21"
     const val kotlin = "1.2.31"
     const val leakcanary = "1.5.4"
+    const val moshi = "1.6.0-20180411.022429-77"
     const val okhttp = "3.10.0"
     const val playServices = firebase
     const val retrofit = "2.4.0"
@@ -298,13 +299,17 @@ object deps {
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
     const val lottie = "com.airbnb.android:lottie:2.5.1"
-    const val moshi = "com.squareup.moshi:moshi:1.5.0"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.1"
     const val okio = "com.squareup.okio:okio:1.14.0"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:2.3.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.11.0"
     const val timber = "com.jakewharton.timber:timber:4.6.1"
     const val unbescape = "org.unbescape:unbescape:1.1.5.RELEASE"
+  }
+
+  object moshi {
+    const val core = "com.squareup.moshi:moshi:${versions.moshi}"
+    const val compiler = "com.squareup.moshi:moshi-kotlin-codegen-compiler:1.6.0-20180411.022459-25"
   }
 
   object okhttp {

@@ -17,6 +17,7 @@
 package io.sweers.catchup.ui.bugreport
 
 import com.serjltt.moshi.adapters.Wrapped
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
@@ -24,7 +25,6 @@ import dagger.Provides
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.moshkt.api.MoshiSerializable
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -57,7 +57,7 @@ internal interface GitHubIssueApi {
   fun createIssue(@Body issue: GitHubIssue): Single<String>
 }
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 data class GitHubIssue(
     val title: String,
     val body: String

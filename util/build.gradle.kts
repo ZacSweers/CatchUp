@@ -52,7 +52,7 @@ dependencies {
   api(deps.dagger.runtime)
   api(deps.kotlin.stdlib.jdk7)
   api(deps.misc.lazythreeten)
-  api(deps.misc.moshi)
+  api(deps.moshi.core)
   api(deps.misc.timber)
   api(deps.okhttp.core)
   api(deps.rx.java)

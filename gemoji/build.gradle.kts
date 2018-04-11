@@ -72,7 +72,7 @@ dependencies {
   api(deps.android.arch.room.runtime)
   api(deps.dagger.runtime)
   api(deps.kotlin.stdlib.jdk7)
-  api(deps.misc.moshi)
+  api(deps.moshi.core)
 
   testImplementation(deps.test.junit)
   testImplementation(deps.test.truth)

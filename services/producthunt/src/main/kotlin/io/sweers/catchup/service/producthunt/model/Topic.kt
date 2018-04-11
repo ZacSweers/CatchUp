@@ -16,9 +16,9 @@
 
 package io.sweers.catchup.service.producthunt.model
 
-import io.sweers.moshkt.api.MoshiSerializable
+import com.squareup.moshi.JsonClass
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class Topic(
     val id: Long,
     val name: String,

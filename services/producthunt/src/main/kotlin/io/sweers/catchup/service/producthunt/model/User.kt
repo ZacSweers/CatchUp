@@ -17,12 +17,12 @@
 package io.sweers.catchup.service.producthunt.model
 
 import com.squareup.moshi.Json
-import io.sweers.moshkt.api.MoshiSerializable
+import com.squareup.moshi.JsonClass
 
 /**
  * Models a user on Product Hunt.
  */
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class User(
     @Json(name = "created_at") val createdAt: String,
     val headline: String?,

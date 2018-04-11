@@ -17,12 +17,12 @@
 package io.sweers.catchup.service.medium.model
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import io.sweers.inspector.Inspector
 import io.sweers.inspector.SelfValidating
 import io.sweers.inspector.ValidationException
-import io.sweers.moshkt.api.MoshiSerializable
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class References(
     @Json(name = "Collection") val collection: Map<String, Collection>,
     @Json(name = "Post") val post: Map<String, Post>,

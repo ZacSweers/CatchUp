@@ -17,15 +17,15 @@
 package io.sweers.catchup.service.producthunt.model
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import io.sweers.catchup.util.e
-import io.sweers.moshkt.api.MoshiSerializable
 import okhttp3.HttpUrl
 import org.threeten.bp.Instant
 
 /**
  * Models a post on Product Hunt.
  */
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class Post(
     @Json(name = "comments_count") val commentsCount: Int,
     @Json(name = "created_at") val createdAt: Instant,

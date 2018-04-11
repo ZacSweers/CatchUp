@@ -17,13 +17,13 @@
 package io.sweers.catchup.service.designernews.model
 
 import com.squareup.moshi.Json
-import io.sweers.moshkt.api.MoshiSerializable
+import com.squareup.moshi.JsonClass
 import org.threeten.bp.Instant
 
 /**
  * Models a comment on a designer news story.
  */
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class Comment(val body: String,
     @Json(name = "body_html") val bodyHtml: String,
     val comments: List<Comment>,

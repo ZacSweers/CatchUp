@@ -16,10 +16,10 @@
 
 package io.sweers.catchup.service.medium.model
 
-import io.sweers.moshkt.api.MoshiSerializable
+import com.squareup.moshi.JsonClass
 import org.threeten.bp.Instant
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class Post(val createdAt: Instant,
     val creatorId: String,
     val homeCollectionId: String,

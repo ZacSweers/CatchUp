@@ -59,16 +59,18 @@ kapt {
   correctErrorTypes = true
   useBuildCache = true
   mapDiagnosticLocations = true
+  arguments {
+    arg("moshi.generated", "javax.annotation.Generated")
+  }
 }
 
 dependencies {
-  kapt(project(":tooling:moshkt:compiler"))
   kapt(deps.dagger.apt.compiler)
+  kapt(deps.moshi.compiler)
 
-  implementation(project(":tooling:moshkt:api"))
   implementation(project(":util"))
   implementation(deps.misc.okio)
-  implementation(deps.misc.moshi)
+  implementation(deps.moshi.core)
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
   implementation(deps.retrofit.rxJava2)

@@ -16,10 +16,10 @@
 
 package io.sweers.catchup.service.designernews.model
 
-import io.sweers.moshkt.api.MoshiSerializable
+import com.squareup.moshi.JsonClass
 
 /**
  * Models a response from the Designer News API that returns a single story
  */
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class StoryResponse(val story: Story)

@@ -17,12 +17,12 @@
 package io.sweers.catchup.service.designernews.model
 
 import com.squareup.moshi.Json
-import io.sweers.moshkt.api.MoshiSerializable
+import com.squareup.moshi.JsonClass
 
 /**
  * Models a Designer News User
  */
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class User(@Json(name = "cover_photo_url") val coverPhotoUrl: String,
     @Json(name = "display_name") val displayName: String,
     @Json(name = "first_name") val firstName: String,

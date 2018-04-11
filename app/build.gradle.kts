@@ -169,6 +169,7 @@ kapt {
   mapDiagnosticLocations = true
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
+    arg("moshi.generated", "javax.annotation.Generated")
   }
 }
 
@@ -395,9 +396,9 @@ dependencies {
   implementation(deps.kotlin.stdlib.jdk7)
   implementation(deps.kotlin.stdlib.jdk7)
 
-  // MoshKt
-  kapt(project(":tooling:moshkt:compiler"))
-  implementation(project(":tooling:moshkt:api"))
+  // Moshi
+  kapt(deps.moshi.compiler)
+  implementation(deps.moshi.core)
 
   // Firebase
   implementation(deps.android.firebase.core)
@@ -410,7 +411,6 @@ dependencies {
   kapt(deps.butterKnife.apt)
   implementation(deps.okhttp.core)
   implementation(deps.misc.okio)
-  implementation(deps.misc.moshi)
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
   implementation(deps.retrofit.rxJava2)

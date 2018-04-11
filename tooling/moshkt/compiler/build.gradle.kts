@@ -44,11 +44,11 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
+  compile(deps.auto.common)
   compile(deps.kotlin.stdlib.jdk8)
   compile(deps.kotlin.metadata)
   compile(deps.kotlin.poet)
-  compile(deps.misc.moshi)
-  compile(deps.auto.common)
+  compile(deps.moshi.core)
 
   compileOnly(deps.auto.service)
 

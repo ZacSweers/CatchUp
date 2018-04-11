@@ -111,4 +111,4 @@
 
 # Prevent obfuscation of types which use @MoshiSerializable since the simple name
 # is used to reflectively look up the generated adapter.
--keepnames @io.sweers.moshkt.api.MoshiSerializable class *
+-keepnames @com.squareup.moshi.JsonClass class *

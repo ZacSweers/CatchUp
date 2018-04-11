@@ -17,8 +17,8 @@
 package io.sweers.catchup.service.reddit.model
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import io.sweers.catchup.service.api.HasStableId
-import io.sweers.moshkt.api.MoshiSerializable
 import org.threeten.bp.Instant
 
 internal sealed class RedditObject
@@ -42,7 +42,7 @@ internal interface RedditSubmission : HasStableId {
   override fun stableId(): Long = id.hashCode().toLong()
 }
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class RedditComment(
     val body: String,
     @Json(name = "body_html") val bodyHtml: String,
@@ -73,7 +73,7 @@ internal data class RedditComment(
     override val ups: Int
 ) : RedditObject(), RedditSubmission
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class RedditLink(
     val clicked: Boolean,
     val domain: String?,
@@ -105,7 +105,7 @@ internal data class RedditLink(
     override val ups: Int
 ) : RedditObject(), RedditSubmission
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class RedditListing(
     val after: String,
     val before: String?,

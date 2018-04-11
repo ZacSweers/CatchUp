@@ -16,10 +16,10 @@
 
 package io.sweers.catchup.service.medium.model
 
+import com.squareup.moshi.JsonClass
 import io.sweers.catchup.service.api.HasStableId
-import io.sweers.moshkt.api.MoshiSerializable
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class MediumPost(val collection: Collection?,
     val post: Post,
     val user: User) : HasStableId {

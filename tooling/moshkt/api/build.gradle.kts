@@ -26,5 +26,5 @@ java {
 
 dependencies {
   compile(deps.kotlin.stdlib.jdk7)
-  compile(deps.misc.moshi)
+  compile(deps.moshi.core)
 }

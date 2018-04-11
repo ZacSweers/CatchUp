@@ -16,9 +16,9 @@
 
 package io.sweers.catchup.service.designernews.model
 
-import io.sweers.moshkt.api.MoshiSerializable
+import com.squareup.moshi.JsonClass
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 data class Links(val user: String,
     val comments: List<String>,
     val upvotes: List<String>,

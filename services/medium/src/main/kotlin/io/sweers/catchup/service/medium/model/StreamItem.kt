@@ -16,7 +16,7 @@
 
 package io.sweers.catchup.service.medium.model
 
-import io.sweers.moshkt.api.MoshiSerializable
+import com.squareup.moshi.JsonClass
 
-@MoshiSerializable
+@JsonClass(generateAdapter = true)
 internal data class StreamItem(val bmPostPreview: PostPreview, val createdAt: Long)
