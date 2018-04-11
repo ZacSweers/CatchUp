@@ -463,6 +463,20 @@ dependencies {
   debugImplementation(deps.stetho.debug.okhttp)
   debugImplementation(deps.stetho.debug.timber)
 
+  // Hyperion
+  releaseImplementation(deps.hyperion.core.release)
+  debugImplementation(deps.hyperion.core.debug)
+  debugImplementation(deps.hyperion.plugins.appInfo)
+  debugImplementation(deps.hyperion.plugins.attr)
+  debugImplementation(deps.hyperion.plugins.chuck)
+  debugImplementation(deps.hyperion.plugins.crash)
+  debugImplementation(deps.hyperion.plugins.disk)
+//  debugImplementation(deps.hyperion.plugins.geigerCounter)
+  debugImplementation(deps.hyperion.plugins.measurement)
+  debugImplementation(deps.hyperion.plugins.phoenix)
+  debugImplementation(deps.hyperion.plugins.recorder)
+  debugImplementation(deps.hyperion.plugins.sharedPreferences)
+
   // Dagger
   kapt(deps.dagger.apt.compiler)
   kapt(deps.dagger.android.apt.processor)

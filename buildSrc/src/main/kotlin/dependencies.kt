@@ -40,6 +40,7 @@ object deps {
     const val firebase = "12.0.1"
     const val glide = "4.6.1"
     const val inspector = "0.3.0"
+    const val hyperion = "0.9.21"
     const val kotlin = "1.2.31"
     const val leakcanary = "1.5.4"
     const val okhttp = "3.10.0"
@@ -81,7 +82,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha09"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha10"
     const val ktx = "androidx.core:core-ktx:0.3"
 
     object support {
@@ -222,6 +223,25 @@ object deps {
     const val recyclerView = "com.github.bumptech.glide:recyclerview-integration:${versions.glide}"
   }
 
+  object hyperion {
+    object core {
+      const val debug = "com.willowtreeapps.hyperion:hyperion-core:${versions.hyperion}"
+      const val release = "com.willowtreeapps.hyperion:hyperion-core-no-op:${versions.hyperion}"
+    }
+    object plugins {
+      const val appInfo = "com.star_zero:hyperion-appinfo:1.0.0"
+      const val attr = "com.willowtreeapps.hyperion:hyperion-attr:${versions.hyperion}"
+      const val chuck = "com.github.Commit451:Hyperion-Chuck:1.0.0"
+      const val crash = "com.willowtreeapps.hyperion:hyperion-crash:${versions.hyperion}"
+      const val disk = "com.willowtreeapps.hyperion:hyperion-disk:${versions.hyperion}"
+      const val geigerCounter = "com.willowtreeapps.hyperion:hyperion-geiger-counter:${versions.hyperion}"
+      const val measurement = "com.willowtreeapps.hyperion:hyperion-measurement:${versions.hyperion}"
+      const val phoenix = "com.willowtreeapps.hyperion:hyperion-phoenix:${versions.hyperion}"
+      const val recorder = "com.willowtreeapps.hyperion:hyperion-recorder:${versions.hyperion}"
+      const val sharedPreferences = "com.willowtreeapps.hyperion:hyperion-shared-preferences:${versions.hyperion}"
+    }
+  }
+
   object inspector {
     object apt {
       const val compiler = "io.sweers.inspector:inspector-compiler:${versions.inspector}"
@@ -357,7 +377,7 @@ object deps {
     }
 
     const val junit = "junit:junit:4.12"
-    const val robolectric = "org.robolectric:robolectric:3.2.2"
-    const val truth = "com.google.truth:truth:0.39"
+    const val robolectric = "org.robolectric:robolectric:3.8"
+    const val truth = "com.google.truth:truth:0.40"
   }
 }
