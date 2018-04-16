@@ -42,13 +42,23 @@ abstract class MarkerElement(val marker: String) : MarkdownElement() {
   }
 }
 
-class LinkElement(var url: String, var text: String) : Element {
+class LinkElement(val url: String, val text: String) : Element {
   override fun render(builder: StringBuilder) {
     builder.append("[")
         .append(text)
         .append("](")
         .append(url)
         .append(")")
+  }
+}
+
+class CodeBlockElement(val text: String, val language: String = "") : Element {
+  override fun render(builder: StringBuilder) {
+    builder.append("```")
+        .append(language)
+        .append("\n")
+        .append(text)
+        .append("\n```")
   }
 }
 
@@ -65,7 +75,9 @@ class Document : MarkdownElement() {
   fun bold(init: Bold.() -> Unit) = initTag(Bold(), init)
   fun italic(init: Italic.() -> Unit) = initTag(Italic(), init)
   fun strikethrough(init: StrikeThrough.() -> Unit) = initTag(StrikeThrough(), init)
+  fun code(init: Code.() -> Unit) = initTag(Code(), init)
   fun link(url: String, text: String) = children.add(LinkElement(url, text))
+  fun codeBlock(text: String, language: String = "") = children.add(CodeBlockElement(text, language))
   fun h1(init: H1.() -> Unit) = initTag(H1(), init)
   fun h2(init: H2.() -> Unit) = initTag(H2(), init)
   fun h3(init: H3.() -> Unit) = initTag(H3(), init)
@@ -76,6 +88,7 @@ class Document : MarkdownElement() {
 class Bold : MarkerElementWithText("*")
 class Italic : MarkerElementWithText("_")
 class StrikeThrough : MarkerElementWithText("~~")
+class Code : MarkerElementWithText("`")
 class H1 : MarkerElementWithText("#")
 class H2 : MarkerElementWithText("##")
 class H3 : MarkerElementWithText("###")
