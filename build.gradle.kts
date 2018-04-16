@@ -45,7 +45,7 @@ buildscript {
 }
 
 plugins {
-  id("com.gradle.build-scan") version "1.12.1"
+  id("com.gradle.build-scan") version "1.13.1"
   id("com.github.ben-manes.versions") version "0.17.0"
 }
 

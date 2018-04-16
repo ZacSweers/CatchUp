@@ -26,9 +26,9 @@ object deps {
   object versions {
     const val androidTestSupport = "1.0.1"
     const val apollo = "0.4.4"
-    const val archComponentsLifecycle = "1.1.0"
+    const val archComponentsLifecycle = "1.1.1"
     const val archComponentsRoom = "1.1.0-beta2"
-    const val autodispose = "0.6.1"
+    const val autodispose = "0.7.0"
     const val barber = "1.3.1"
     const val butterknife = "8.8.1"
     const val chuck = "1.1.0"
@@ -38,9 +38,9 @@ object deps {
     const val errorProne = "2.2.0"
     const val espresso = "3.0.1"
     const val firebase = "12.0.1"
-    const val glide = "4.6.1"
+    const val glide = "4.7.1"
     const val inspector = "0.3.0"
-    const val hyperion = "0.9.21"
+    const val hyperion = "0.9.22"
     const val kotlin = "1.2.31"
     const val leakcanary = "1.5.4"
     const val moshi = "1.6.0-20180411.022429-77"
@@ -90,7 +90,7 @@ object deps {
       const val annotations = "com.android.support:support-annotations:${versions.support}"
       const val appCompat = "com.android.support:appcompat-v7:${versions.support}"
       const val cardView = "com.android.support:cardview-v7:${versions.support}"
-      const val constraintLayout = "com.android.support.constraint:constraint-layout:1.1.0-beta5"
+      const val constraintLayout = "com.android.support.constraint:constraint-layout:1.1.0"
       const val customTabs = "com.android.support:customtabs:${versions.support}"
       const val design = "com.android.support:design:${versions.support}"
       const val palette = "com.android.support:palette-v7:${versions.support}"
@@ -146,7 +146,7 @@ object deps {
 
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.2.5"
-      const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.0"
+      const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.1-beta1"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
     }
@@ -285,7 +285,7 @@ object deps {
   }
 
   object misc {
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.3.2"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.3.3"
 
     object debug {
       const val madge = "com.jakewharton.madge:madge:1.1.4"
@@ -295,16 +295,16 @@ object deps {
     }
 
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
-    const val jsoup = "org.jsoup:jsoup:1.11.2"
+    const val jsoup = "org.jsoup:jsoup:1.11.3"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
-    const val lottie = "com.airbnb.android:lottie:2.5.1"
+    const val lottie = "com.airbnb.android:lottie:2.5.4"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.1"
     const val okio = "com.squareup.okio:okio:1.14.0"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:2.3.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.11.0"
-    const val timber = "com.jakewharton.timber:timber:4.6.1"
-    const val unbescape = "org.unbescape:unbescape:1.1.5.RELEASE"
+    const val timber = "com.jakewharton.timber:timber:4.7.0"
+    const val unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"
   }
 
   object moshi {
@@ -342,7 +342,7 @@ object deps {
       const val design = "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
     }
 
-    const val java = "io.reactivex.rxjava2:rxjava:2.1.10"
+    const val java = "io.reactivex.rxjava2:rxjava:2.1.12"
 
     object palette {
       const val core = "io.sweers.rxpalette:rxpalette:${versions.rxpalette}"
