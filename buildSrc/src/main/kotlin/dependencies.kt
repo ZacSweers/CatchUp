@@ -41,9 +41,9 @@ object deps {
     const val glide = "4.7.1"
     const val inspector = "0.3.0"
     const val hyperion = "0.9.22"
-    const val kotlin = "1.2.31"
+    const val kotlin = "1.2.40"
     const val leakcanary = "1.5.4"
-    const val moshi = "1.6.0-20180411.022429-77"
+    const val moshi = "1.6.0-SNAPSHOT"
     const val okhttp = "3.10.0"
     const val playServices = firebase
     const val retrofit = "2.4.0"
@@ -309,7 +309,7 @@ object deps {
 
   object moshi {
     const val core = "com.squareup.moshi:moshi:${versions.moshi}"
-    const val compiler = "com.squareup.moshi:moshi-kotlin-codegen-compiler:1.6.0-20180411.022459-25"
+    const val compiler = "com.squareup.moshi:moshi-kotlin-codegen-compiler:${versions.moshi}"
   }
 
   object okhttp {
