@@ -69,6 +69,7 @@ abstract class MarkerElementWithText(name: String) : MarkerElement(name) {
 }
 
 class Document : MarkdownElement() {
+  operator fun String.unaryPlus() = text(this)
   fun text(text: String) = children.add(TextElement(text))
   fun space(count: Int = 1) = children.add(TextElement(" ".repeat(count)))
   fun newline(count: Int = 1) = children.add(TextElement("\n".repeat(count)))
