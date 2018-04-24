@@ -41,6 +41,8 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
+import io.sweers.catchup.serviceregistry.annotations.Meta
+import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.d
 import okhttp3.HttpUrl
 import javax.inject.Inject
@@ -138,6 +140,8 @@ internal class HackerNewsService @Inject constructor(
   override fun linkHandler() = linkHandler
 }
 
+@Meta
+@ServiceModule
 @Module
 abstract class HackerNewsMetaModule {
 
@@ -164,6 +168,7 @@ abstract class HackerNewsMetaModule {
   }
 }
 
+@ServiceModule
 @Module(includes = [HackerNewsMetaModule::class])
 abstract class HackerNewsModule {
 

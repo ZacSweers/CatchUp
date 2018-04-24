@@ -61,6 +61,7 @@ kapt {
 dependencies {
   kapt(deps.android.arch.room.apt)
 
+  api(project(":service-registry:service-registry-annotations"))
   api(deps.android.arch.room.runtime)
   api(deps.android.support.annotations)
   api(deps.autoDispose.kotlin)

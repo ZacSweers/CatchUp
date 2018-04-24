@@ -34,6 +34,8 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.serviceregistry.annotations.Meta
+import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
@@ -87,6 +89,8 @@ internal class DesignerNewsService @Inject constructor(
   override fun linkHandler() = linkHandler
 }
 
+@Meta
+@ServiceModule
 @Module
 abstract class DesignerNewsMetaModule {
 
@@ -113,6 +117,7 @@ abstract class DesignerNewsMetaModule {
   }
 }
 
+@ServiceModule
 @Module(includes = [DesignerNewsMetaModule::class])
 abstract class DesignerNewsModule {
 

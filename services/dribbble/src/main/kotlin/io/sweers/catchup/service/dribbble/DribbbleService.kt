@@ -33,6 +33,8 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
+import io.sweers.catchup.serviceregistry.annotations.Meta
+import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -82,6 +84,8 @@ internal class DribbbleService @Inject constructor(
   override fun linkHandler() = linkHandler
 }
 
+@Meta
+@ServiceModule
 @Module
 abstract class DribbbleMetaModule {
 
@@ -109,6 +113,7 @@ abstract class DribbbleMetaModule {
   }
 }
 
+@ServiceModule
 @Module(includes = [DribbbleMetaModule::class])
 abstract class DribbbleModule {
 

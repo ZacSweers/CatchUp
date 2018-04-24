@@ -66,6 +66,8 @@ apollo {
 }
 
 dependencies {
+  kapt(project(":service-registry:service-registry-compiler"))
+  kapt(deps.crumb.compiler)
   kapt(deps.dagger.apt.compiler)
 
   implementation(project(":gemoji"))

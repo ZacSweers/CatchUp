@@ -45,6 +45,8 @@ import io.sweers.catchup.service.github.model.TrendingTimespan
 import io.sweers.catchup.service.github.type.LanguageOrder
 import io.sweers.catchup.service.github.type.LanguageOrderField
 import io.sweers.catchup.service.github.type.OrderDirection
+import io.sweers.catchup.serviceregistry.annotations.Meta
+import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.nullIfBlank
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -123,6 +125,8 @@ internal class GitHubService @Inject constructor(
   override fun linkHandler() = linkHandler
 }
 
+@Meta
+@ServiceModule
 @Module
 abstract class GitHubMetaModule {
 
@@ -148,6 +152,7 @@ abstract class GitHubMetaModule {
   }
 }
 
+@ServiceModule
 @Module(includes = [GitHubMetaModule::class])
 abstract class GitHubModule {
 

@@ -45,14 +45,7 @@ import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.service.designernews.DesignerNewsMetaModule
-import io.sweers.catchup.service.dribbble.DribbbleMetaModule
-import io.sweers.catchup.service.github.GitHubMetaModule
-import io.sweers.catchup.service.hackernews.HackerNewsMetaModule
-import io.sweers.catchup.service.medium.MediumMetaModule
-import io.sweers.catchup.service.producthunt.ProductHuntMetaModule
-import io.sweers.catchup.service.reddit.RedditMetaModule
-import io.sweers.catchup.service.slashdot.SlashdotMetaModule
+import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
@@ -182,19 +175,7 @@ class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
           }
     }
 
-    @Module(
-        includes = [
-          HackerNewsMetaModule::class,
-          RedditMetaModule::class,
-          MediumMetaModule::class,
-          ProductHuntMetaModule::class,
-          SlashdotMetaModule::class,
-          DesignerNewsMetaModule::class,
-          DribbbleMetaModule::class,
-          GitHubMetaModule::class
-//      ImgurModule::class
-        ]
-    )
+    @Module(includes = [ResolvedCatchUpServiceMetaRegistry::class])
     abstract class ServiceSettingsModule {
 
       @Multibinds

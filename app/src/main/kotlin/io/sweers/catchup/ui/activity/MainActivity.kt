@@ -38,14 +38,7 @@ import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.service.designernews.DesignerNewsModule
-import io.sweers.catchup.service.dribbble.DribbbleModule
-import io.sweers.catchup.service.github.GitHubModule
-import io.sweers.catchup.service.hackernews.HackerNewsModule
-import io.sweers.catchup.service.medium.MediumModule
-import io.sweers.catchup.service.producthunt.ProductHuntModule
-import io.sweers.catchup.service.reddit.RedditModule
-import io.sweers.catchup.service.slashdot.SlashdotModule
+import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.ui.controllers.service.StorageBackedService
@@ -97,19 +90,7 @@ class MainActivity : BaseActivity() {
     }
   }
 
-  @dagger.Module(
-      includes = [
-        HackerNewsModule::class,
-        RedditModule::class,
-        MediumModule::class,
-        ProductHuntModule::class,
-        SlashdotModule::class,
-        DesignerNewsModule::class,
-        DribbbleModule::class,
-        GitHubModule::class
-//      ImgurModule::class
-      ]
-  )
+  @dagger.Module(includes = [ResolvedCatchUpServiceRegistry::class])
   abstract class ServiceIntegrationModule {
     @dagger.Module
     companion object {

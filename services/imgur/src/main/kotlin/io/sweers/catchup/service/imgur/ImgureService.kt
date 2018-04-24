@@ -34,6 +34,8 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
+import io.sweers.catchup.serviceregistry.annotations.Meta
+import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
@@ -85,6 +87,8 @@ internal class ImgurService @Inject constructor(
   override fun linkHandler() = linkHandler
 }
 
+@Meta
+@ServiceModule
 @Module
 abstract class ImgurMetaModule {
 
@@ -112,6 +116,7 @@ abstract class ImgurMetaModule {
   }
 }
 
+@ServiceModule
 @Module(includes = [ImgurMetaModule::class])
 abstract class ImgurModule {
 

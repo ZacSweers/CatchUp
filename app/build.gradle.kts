@@ -364,15 +364,7 @@ dependencies {
 
   implementation(project(":third_party:bypass"))
   implementation(project(":service-api"))
-  implementation(project(":services:hackernews"))
-  implementation(project(":services:reddit"))
-  implementation(project(":services:medium"))
-  implementation(project(":services:producthunt"))
-//  implementation(project(":services:imgur"))
-  implementation(project(":services:slashdot"))
-  implementation(project(":services:designernews"))
-  implementation(project(":services:dribbble"))
-  implementation(project(":services:github"))
+  implementation(project(":service-registry:service-registry"))
   implementation(project(":gemoji"))
   implementation(project(":util"))
 

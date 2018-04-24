@@ -36,6 +36,8 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.serviceregistry.annotations.Meta
+import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
@@ -83,6 +85,8 @@ internal class SlashdotService @Inject constructor(
   override fun linkHandler() = linkHandler
 }
 
+@Meta
+@ServiceModule
 @Module
 abstract class SlashdotMetaModule {
 
@@ -108,6 +112,7 @@ abstract class SlashdotMetaModule {
   }
 }
 
+@ServiceModule
 @Module(includes = [SlashdotMetaModule::class])
 abstract class SlashdotModule {
 

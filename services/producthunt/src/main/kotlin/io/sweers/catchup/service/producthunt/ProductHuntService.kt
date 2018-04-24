@@ -33,6 +33,8 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.serviceregistry.annotations.Meta
+import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
@@ -83,6 +85,8 @@ internal class ProductHuntService @Inject constructor(
   override fun linkHandler() = linkHandler
 }
 
+@Meta
+@ServiceModule
 @Module
 abstract class ProductHuntMetaModule {
 
@@ -109,6 +113,7 @@ abstract class ProductHuntMetaModule {
   }
 }
 
+@ServiceModule
 @Module(includes = [ProductHuntMetaModule::class])
 abstract class ProductHuntModule {
 

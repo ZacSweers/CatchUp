@@ -46,14 +46,7 @@ import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.service.designernews.DesignerNewsMetaModule
-import io.sweers.catchup.service.dribbble.DribbbleMetaModule
-import io.sweers.catchup.service.github.GitHubMetaModule
-import io.sweers.catchup.service.hackernews.HackerNewsMetaModule
-import io.sweers.catchup.service.medium.MediumMetaModule
-import io.sweers.catchup.service.producthunt.ProductHuntMetaModule
-import io.sweers.catchup.service.reddit.RedditMetaModule
-import io.sweers.catchup.service.slashdot.SlashdotMetaModule
+import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.ButterKnifeController
@@ -353,19 +346,7 @@ interface OrderServicesComponent : AndroidInjector<OrderServicesController> {
   abstract class Builder : AndroidInjector.Builder<OrderServicesController>()
 }
 
-@Module(
-    includes = [
-      HackerNewsMetaModule::class,
-      RedditMetaModule::class,
-      MediumMetaModule::class,
-      ProductHuntMetaModule::class,
-      SlashdotMetaModule::class,
-      DesignerNewsMetaModule::class,
-      DribbbleMetaModule::class,
-      GitHubMetaModule::class
-//      ImgurModule::class
-    ]
-)
+@Module(includes = [ResolvedCatchUpServiceMetaRegistry::class])
 abstract class OrderServicesModule {
 
   @Multibinds

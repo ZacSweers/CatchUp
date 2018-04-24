@@ -37,6 +37,8 @@ import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.medium.model.MediumPost
 import io.sweers.catchup.service.medium.model.Post
+import io.sweers.catchup.serviceregistry.annotations.Meta
+import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.inspector.Inspector
 import okhttp3.OkHttpClient
@@ -100,6 +102,8 @@ internal class MediumService @Inject constructor(
   override fun linkHandler() = linkHandler
 }
 
+@Meta
+@ServiceModule
 @Module
 abstract class MediumMetaModule {
 
@@ -125,6 +129,7 @@ abstract class MediumMetaModule {
   }
 }
 
+@ServiceModule
 @Module(includes = [MediumMetaModule::class])
 abstract class MediumModule {
 
