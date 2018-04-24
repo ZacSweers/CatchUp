@@ -83,7 +83,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha11"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha12"
     const val ktx = "androidx.core:core-ktx:0.3"
 
     object support {
@@ -268,7 +268,7 @@ object deps {
 
   object kotlin {
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
-    const val metadata = "me.eugeniomarletti:kotlin-metadata:1.2.1"
+    const val metadata = "me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.3.0"
     const val noArgGradlePlugin = "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
     const val poet = "com.squareup:kotlinpoet:0.7.0"
 
