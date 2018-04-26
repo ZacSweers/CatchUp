@@ -30,7 +30,7 @@ data class AuthInterceptor(private val method: String,
   override fun intercept(chain: Interceptor.Chain): Response {
     val request = chain.request()
         .newBuilder()
-        .addHeader("Authorization", method + " " + accessToken)
+        .addHeader("Authorization", "$method $accessToken")
         .build()
     return chain.proceed(request)
   }
