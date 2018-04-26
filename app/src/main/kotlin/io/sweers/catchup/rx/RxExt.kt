@@ -21,6 +21,7 @@ import android.view.View
 import io.reactivex.Completable
 import io.reactivex.CompletableSource
 import io.reactivex.CompletableTransformer
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.MaybeSource
 import io.reactivex.MaybeTransformer
@@ -124,4 +125,20 @@ fun <T> timeoutActionTransformer(onTimeout: (() -> Unit)? = null,
 inline fun <T : Enum<T>> Observable<T>.doOn(target: T,
     crossinline action: () -> Unit): Observable<T> = apply {
   doOnNext { if (it == target) action() }
+}
+
+inline fun <reified R> Observable<*>.filterIsInstance(): Observable<R> {
+  return filter { it is R }.cast(R::class.java)
+}
+
+inline fun <reified R> Flowable<*>.filterIsInstance(): Flowable<R> {
+  return filter { it is R }.cast(R::class.java)
+}
+
+inline fun <reified R> Single<*>.filterIsInstance(): Maybe<R> {
+  return filter { it is R }.cast(R::class.java)
+}
+
+inline fun <reified R> Maybe<*>.filterIsInstance(): Maybe<R> {
+  return filter { it is R }.cast(R::class.java)
 }
