@@ -132,7 +132,7 @@ abstract class ProductHuntModule {
         client: OkHttpClient): OkHttpClient {
       return client.newBuilder()
           .addInterceptor(AuthInterceptor("Bearer",
-              BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
+              BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN))
           .build()
     }
 
