@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.rx
+package io.sweers.catchup.util.rx
 
 import android.support.design.widget.Snackbar
 import android.view.View

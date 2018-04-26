@@ -47,6 +47,8 @@ dependencies {
 
   implementation(deps.android.support.appCompat)
   implementation(deps.android.support.compat)
+  implementation(deps.android.support.design)
+  implementation(deps.rx.android)
 
   api(deps.android.ktx)
   api(deps.dagger.runtime)

@@ -59,7 +59,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.rx.PredicateConsumer
+import io.sweers.catchup.util.rx.PredicateConsumer
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity

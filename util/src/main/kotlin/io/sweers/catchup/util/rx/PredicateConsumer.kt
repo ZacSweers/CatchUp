@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.rx
+package io.sweers.catchup.util.rx
 
 import io.reactivex.functions.Consumer
 import io.reactivex.functions.Predicate

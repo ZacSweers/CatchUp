@@ -35,7 +35,7 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.rx.doOnEmpty
+import io.sweers.catchup.util.rx.doOnEmpty
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.MainActivity
