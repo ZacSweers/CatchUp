@@ -68,4 +68,5 @@ dependencies {
   api(project(":services:designernews"))
   api(project(":services:dribbble"))
   api(project(":services:github"))
+//  api(project(":services:newsapi"))
 }

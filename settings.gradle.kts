@@ -25,6 +25,7 @@ include(
   ":services:reddit",
   ":services:hackernews",
   ":services:medium",
+  ":services:newsapi",
   ":services:producthunt",
   ":services:designernews",
   ":services:dribbble",
