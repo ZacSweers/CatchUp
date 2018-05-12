@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("PackageDirectoryMismatch")
+
 package androidx.recyclerview.widget
 
 import android.view.View
