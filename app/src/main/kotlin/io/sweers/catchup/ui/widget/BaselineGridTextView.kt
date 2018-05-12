@@ -18,11 +18,11 @@ package io.sweers.catchup.ui.widget
 
 import android.content.Context
 import android.content.res.Resources
-import androidx.appcompat.widget.AppCompatTextView
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.view.View.MeasureSpec.getMode
+import androidx.appcompat.widget.AppCompatTextView
 import io.sweers.barber.Barber
 import io.sweers.barber.Kind
 import io.sweers.barber.StyledAttr

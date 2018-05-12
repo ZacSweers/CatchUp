@@ -16,12 +16,12 @@
 
 package io.sweers.catchup.data
 
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import android.content.Context
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.SummarizationType
 import io.sweers.catchup.ui.controllers.SmmryDao

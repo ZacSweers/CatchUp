@@ -19,9 +19,9 @@ package io.sweers.catchup.ui.logs
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import androidx.appcompat.app.AlertDialog
 import android.widget.ListView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers

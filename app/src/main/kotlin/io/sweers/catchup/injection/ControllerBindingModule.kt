@@ -21,9 +21,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
-import io.sweers.catchup.ui.controllers.service.ServiceController
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.ui.controllers.SmmryController
+import io.sweers.catchup.ui.controllers.service.ServiceController
 
 @Module(
     subcomponents = [

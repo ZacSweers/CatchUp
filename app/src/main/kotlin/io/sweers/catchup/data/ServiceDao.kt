@@ -16,13 +16,13 @@
 
 package io.sweers.catchup.data
 
+import androidx.annotation.Keep
 import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import androidx.annotation.Keep
 import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
 import org.threeten.bp.Instant

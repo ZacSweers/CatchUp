@@ -17,14 +17,12 @@
 package io.sweers.catchup.ui.about
 
 import android.content.Context
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.ProgressBar
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.apollographql.apollo.ApolloClient

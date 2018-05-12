@@ -18,9 +18,9 @@ package in.uncod.android.bypass.style;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import androidx.annotation.ColorInt;
 import android.text.Layout;
 import android.text.style.LeadingMarginSpan;
+import androidx.annotation.ColorInt;
 
 /**
  * A quote span with a nicer presentation

@@ -16,9 +16,9 @@
 
 package io.sweers.catchup.gemoji
 
-import androidx.sqlite.db.framework.SupportAssetSQLiteOpenHelper
-import androidx.room.Room
 import android.content.Context
+import androidx.room.Room
+import androidx.sqlite.db.framework.SupportAssetSQLiteOpenHelper
 import dagger.Module
 import dagger.Provides
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext

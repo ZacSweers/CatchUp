@@ -20,10 +20,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import androidx.appcompat.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.view.ViewOutlineProvider
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import io.sweers.barber.Barber
 import io.sweers.barber.StyledAttr
 import io.sweers.catchup.R

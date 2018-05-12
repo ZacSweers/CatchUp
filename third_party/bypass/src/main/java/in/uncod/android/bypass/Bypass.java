@@ -19,8 +19,6 @@ package in.uncod.android.bypass;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import androidx.annotation.ColorInt;
-import androidx.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -35,14 +33,13 @@ import android.util.DisplayMetrics;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.widget.TextView;
-
-import in.uncod.android.bypass.style.FancyQuoteSpan;
-import in.uncod.android.bypass.style.ImageLoadingSpan;
-
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
 import in.uncod.android.bypass.Element.Type;
+import in.uncod.android.bypass.style.FancyQuoteSpan;
 import in.uncod.android.bypass.style.HorizontalLineSpan;
+import in.uncod.android.bypass.style.ImageLoadingSpan;
 import in.uncod.android.bypass.style.TouchableUrlSpan;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

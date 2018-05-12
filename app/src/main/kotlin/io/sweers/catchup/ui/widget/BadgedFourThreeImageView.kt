@@ -28,10 +28,10 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import androidx.annotation.ColorInt
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.Gravity
+import androidx.annotation.ColorInt
 import io.sweers.barber.Barber
 import io.sweers.barber.Kind
 import io.sweers.barber.StyledAttr

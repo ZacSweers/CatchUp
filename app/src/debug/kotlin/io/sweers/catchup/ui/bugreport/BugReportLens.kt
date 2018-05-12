@@ -24,10 +24,10 @@ import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import android.util.DisplayMetrics
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.systemService
 import androidx.core.net.toUri
 import com.mattprecious.telescope.Lens

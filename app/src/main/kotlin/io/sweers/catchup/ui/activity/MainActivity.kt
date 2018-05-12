@@ -19,8 +19,8 @@ package io.sweers.catchup.ui.activity
 import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor

@@ -16,10 +16,10 @@
 
 package io.sweers.catchup.service.api
 
+import androidx.annotation.Keep
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.annotation.Keep
 import org.threeten.bp.Instant
 
 @Keep

@@ -17,8 +17,8 @@
 package io.sweers.catchup.data
 
 import android.app.Application
-import androidx.annotation.WorkerThread
 import android.util.Log
+import androidx.annotation.WorkerThread
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject

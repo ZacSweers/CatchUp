@@ -19,8 +19,8 @@ package io.sweers.catchup.ui.bugreport
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
+import androidx.appcompat.app.AlertDialog
 import io.sweers.catchup.R
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
 import io.sweers.catchup.ui.bugreport.BugReportView.ReportDetailsListener

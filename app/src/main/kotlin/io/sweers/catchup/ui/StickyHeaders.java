@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.ui;
 
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Adds sticky headers capabilities to the {@link RecyclerView.Adapter}. Should return {@code true}
