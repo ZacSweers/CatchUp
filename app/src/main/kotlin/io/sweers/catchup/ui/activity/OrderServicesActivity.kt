@@ -29,6 +29,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
 import dagger.Binds
 import dagger.Module
 import dagger.Subcomponent
@@ -303,7 +304,7 @@ private class MoveCallback(
     return true
   }
 
-  override fun onSwiped(viewHolder: ViewHolder?, direction: Int) {
+  override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
     // Noop
   }
 

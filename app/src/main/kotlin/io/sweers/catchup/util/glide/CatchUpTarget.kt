@@ -70,8 +70,10 @@ class CatchUpTarget(view: BadgedFourThreeImageView,
 
   @SuppressLint("NewApi")
   override fun onGenerated(palette: Palette?) {
-    (getView() as BadgedFourThreeImageView).foreground =
-        UiUtil.createRipple(palette, 0.25f, 0.5f, 0x40808080, true)
+    palette?.let {
+      (getView() as BadgedFourThreeImageView).foreground =
+          UiUtil.createRipple(it, 0.25f, 0.5f, 0x40808080, true)
+    }
   }
 
 }

@@ -19,10 +19,11 @@ package io.sweers.catchup.ui.widget
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
-import androidx.core.view.animation.FastOutSlowInInterpolator
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import androidx.core.content.res.use
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import io.sweers.catchup.R
 import io.sweers.catchup.util.ColorUtils
 import io.sweers.catchup.util.isNavBarOnBottom
@@ -53,27 +54,27 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(context: Context,
   private var callbacks: MutableList<ElasticDragDismissCallback>? = null
 
   init {
-    val a = getContext()
-        .obtainStyledAttributes(attrs, R.styleable.ElasticDragDismissFrameLayout, 0, 0)
-
-    if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragDismissDistance)) {
-      dragDismissDistance = a.getDimensionPixelSize(
-          R.styleable.ElasticDragDismissFrameLayout_dragDismissDistance, 0).toFloat()
-    } else if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragDismissFraction)) {
-      dragDismissFraction = a.getFloat(
-          R.styleable.ElasticDragDismissFrameLayout_dragDismissFraction,
-          dragDismissFraction)
-    }
-    if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragDismissScale)) {
-      dragDismissScale = a.getFloat(R.styleable.ElasticDragDismissFrameLayout_dragDismissScale,
-          dragDismissScale)
-      shouldScale = dragDismissScale != 1f
-    }
-    if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragElasticity)) {
-      dragElacticity = a.getFloat(R.styleable.ElasticDragDismissFrameLayout_dragElasticity,
-          dragElacticity)
-    }
-    a.recycle()
+    getContext()
+        .obtainStyledAttributes(attrs, R.styleable.ElasticDragDismissFrameLayout, 0, 0).use { a ->
+          if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragDismissDistance)) {
+            dragDismissDistance = a.getDimensionPixelSize(
+                R.styleable.ElasticDragDismissFrameLayout_dragDismissDistance, 0).toFloat()
+          } else if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragDismissFraction)) {
+            dragDismissFraction = a.getFloat(
+                R.styleable.ElasticDragDismissFrameLayout_dragDismissFraction,
+                dragDismissFraction)
+          }
+          if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragDismissScale)) {
+            dragDismissScale = a.getFloat(
+                R.styleable.ElasticDragDismissFrameLayout_dragDismissScale,
+                dragDismissScale)
+            shouldScale = dragDismissScale != 1f
+          }
+          if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragElasticity)) {
+            dragElacticity = a.getFloat(R.styleable.ElasticDragDismissFrameLayout_dragElasticity,
+                dragElacticity)
+          }
+        }
   }
 
   abstract class ElasticDragDismissCallback {

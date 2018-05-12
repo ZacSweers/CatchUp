@@ -20,12 +20,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.support.design.widget.Snackbar
-import androidx.appcompat.graphics.Palette
-import androidx.appcompat.graphics.Palette.Swatch
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import androidx.appcompat.widget.RxViewHolder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +27,11 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.recyclerview.widget.RxViewHolder
 import butterknife.BindDimen
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -46,6 +44,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
@@ -95,19 +94,23 @@ import javax.inject.Qualifier
  */
 class LicensesController : ButterKnifeController(), Scrollable {
 
-  @Inject lateinit var apolloClient: ApolloClient
+  @Inject
+  lateinit var apolloClient: ApolloClient
 
   @Inject
   @field:ForLicenses
   lateinit var moshi: Moshi
 
-  @Inject internal lateinit var linkManager: LinkManager
+  @Inject
+  internal lateinit var linkManager: LinkManager
 
   @BindDimen(R.dimen.avatar)
   @JvmField
   var dimenSize: Int = 0
-  @BindView(R.id.progress) lateinit var progressBar: ProgressBar
-  @BindView(R.id.list) lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
+  @BindView(R.id.progress)
+  lateinit var progressBar: ProgressBar
+  @BindView(R.id.list)
+  lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
 
   private val adapter = Adapter()
   private lateinit var layoutManager: StickyHeadersLinearLayoutManager<Adapter>
@@ -207,7 +210,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
                         is AsUser -> with(node) { id() to (name() ?: login()) }
                         else -> throw IllegalStateException("Unrecognized node type: $node")
                       }
-                      map.put(id, name)
+                      map[id] = name
                     }
                   },
               // Map the repos and their corresponding user display name into a list of their pairs
@@ -336,9 +339,9 @@ class LicensesController : ButterKnifeController(), Scrollable {
                   }
                 }
 
-                override fun onGenerated(palette: Palette) {
+                override fun onGenerated(palette: Palette?) {
                   holder.title.setTextColor(
-                      palette.findSwatch(headerColorThresholdFun)?.rgb ?: defaultHeaderTextColor)
+                      palette?.findSwatch(headerColorThresholdFun)?.rgb ?: defaultHeaderTextColor)
                 }
               })
           title.text = item.name
@@ -435,8 +438,10 @@ private data class OssGitHubEntry(val owner: String, val name: String) {
 }
 
 private class HeaderHolder(view: View) : RxViewHolder(view) {
-  @BindView(R.id.icon) lateinit var icon: ImageView
-  @BindView(R.id.title) lateinit var title: TextView
+  @BindView(R.id.icon)
+  lateinit var icon: ImageView
+  @BindView(R.id.title)
+  lateinit var title: TextView
   private var unbinder: Unbinder? = null
 
   init {

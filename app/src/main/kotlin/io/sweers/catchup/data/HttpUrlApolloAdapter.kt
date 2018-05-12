@@ -16,14 +16,22 @@
 
 package io.sweers.catchup.data
 
-import com.apollographql.apollo.CustomTypeAdapter
+import com.apollographql.apollo.response.CustomTypeAdapter
+import com.apollographql.apollo.response.CustomTypeValue
+import com.apollographql.apollo.response.CustomTypeValue.GraphQLString
 import okhttp3.HttpUrl
 
 /**
  * An Apollo adapter for converting between URI types to HttpUrl.
  */
 class HttpUrlApolloAdapter : CustomTypeAdapter<HttpUrl> {
-  override fun decode(s: String) = HttpUrl.parse(s)!!
+  override fun encode(value: HttpUrl): CustomTypeValue<*> {
+    return GraphQLString.fromRawValue(value.toString())
+  }
 
-  override fun encode(o: HttpUrl) = o.toString()
+  override fun decode(value: CustomTypeValue<*>): HttpUrl {
+    if (value is GraphQLString) {
+      return HttpUrl.parse(value.value)!!
+    } else throw IllegalArgumentException("Value wasn't a string!")
+  }
 }

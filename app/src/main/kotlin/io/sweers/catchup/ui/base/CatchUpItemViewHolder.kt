@@ -21,10 +21,10 @@ import android.text.format.DateUtils
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import androidx.appcompat.widget.RxViewHolder
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RxViewHolder
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder

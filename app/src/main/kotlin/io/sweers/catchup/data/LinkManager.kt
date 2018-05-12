@@ -22,10 +22,10 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
+import android.widget.Toast
 import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
-import androidx.core.util.ArrayMap
-import android.widget.Toast
+import androidx.collection.ArrayMap
 import com.f2prateek.rx.preferences2.Preference
 import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.Completable
@@ -35,12 +35,12 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.util.rx.doOnEmpty
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.registerReceiver
+import io.sweers.catchup.util.rx.doOnEmpty
 import javax.inject.Inject
 
 @PerActivity
