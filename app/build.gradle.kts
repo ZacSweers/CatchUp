@@ -378,6 +378,7 @@ dependencies {
   debugImplementation(deps.android.support.drawerLayout)
   implementation(deps.android.support.palette)
   implementation(deps.android.support.viewPager)
+  implementation(deps.android.support.swipeRefresh)
   implementation(deps.android.support.legacyAnnotations)
 
   // Arch components
