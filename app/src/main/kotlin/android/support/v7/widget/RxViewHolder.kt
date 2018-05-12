@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.appcompat.widget
+package androidx.recyclerview.widget
 
 import android.view.View
 import com.uber.autodispose.ScopeProvider
@@ -23,7 +23,7 @@ import io.reactivex.subjects.MaybeSubject
 
 private object NOTIFICATION
 
-abstract class RxViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), ScopeProvider {
+abstract class RxViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ScopeProvider {
 
   private var unbindNotifier: MaybeSubject<Any>? = null
 

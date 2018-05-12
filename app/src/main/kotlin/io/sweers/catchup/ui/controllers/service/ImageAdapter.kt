@@ -106,13 +106,13 @@ internal class ImageAdapter(private val context: Context,
 
   override fun getItemId(position: Int): Long {
     if (getItemViewType(position) == TYPE_LOADING_MORE) {
-      return androidx.recyclerview.widget.RecyclerView.NO_ID
+      return RecyclerView.NO_ID
     }
     return data[position].realItem().id
   }
 
   @TargetApi(Build.VERSION_CODES.M)
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
     val layoutInflater = LayoutInflater.from(parent.context)
     return when (viewType) {
       TYPE_ITEM -> {
@@ -157,7 +157,7 @@ internal class ImageAdapter(private val context: Context,
     }
   }
 
-  override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+  override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
     when (getItemViewType(position)) {
       TYPE_ITEM -> {
         val imageItem = data[position]
@@ -178,7 +178,7 @@ internal class ImageAdapter(private val context: Context,
   }
 
   @SuppressLint("NewApi")
-  override fun onViewRecycled(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder) {
+  override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
     if (holder is ImageHolder) {
       // reset the badge & ripple which are dynamically determined
       GlideApp.with(holder.itemView).clear(holder.image)
@@ -195,7 +195,7 @@ internal class ImageAdapter(private val context: Context,
     get() = data.size
 
   private val loadingMoreItemPosition: Int
-    get() = if (showLoadingMore) itemCount - 1 else androidx.recyclerview.widget.RecyclerView.NO_POSITION
+    get() = if (showLoadingMore) itemCount - 1 else RecyclerView.NO_POSITION
 
   override fun getItemViewType(position: Int): Int {
     if (position < dataItemCount && dataItemCount > 0) {

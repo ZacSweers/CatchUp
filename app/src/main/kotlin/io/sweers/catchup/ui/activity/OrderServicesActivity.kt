@@ -220,7 +220,7 @@ class OrderServicesController : ButterKnifeController() {
 private class Adapter(
     private val context: Context,
     inputItems: List<ServiceMeta>,
-    private val changeListener: (List<ServiceMeta>) -> Unit) : androidx.recyclerview.widget.RecyclerView.Adapter<Holder>() {
+    private val changeListener: (List<ServiceMeta>) -> Unit) : RecyclerView.Adapter<Holder>() {
 
   private val items = inputItems.toMutableList()
 
@@ -259,7 +259,7 @@ private class Adapter(
   }
 }
 
-private class Holder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
   @BindView(R.id.container)
   lateinit var container: View

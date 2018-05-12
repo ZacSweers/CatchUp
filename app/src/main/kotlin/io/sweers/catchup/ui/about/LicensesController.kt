@@ -33,6 +33,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.palette.graphics.Palette.Swatch
 import butterknife.BindDimen
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -271,7 +272,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
     }
   }
 
-  private inner class Adapter : androidx.recyclerview.widget.RecyclerView.Adapter<ViewHolder>(),
+  private inner class Adapter : RecyclerView.Adapter<ViewHolder>(),
       StickyHeaders, StickyHeaders.ViewSetup {
 
     private val items = mutableListOf<OssBaseItem>()
