@@ -19,13 +19,13 @@
 package io.sweers.catchup.util
 
 import android.graphics.Bitmap
-import android.support.annotation.CheckResult
-import android.support.annotation.ColorInt
-import android.support.annotation.FloatRange
-import android.support.annotation.IntDef
-import android.support.annotation.IntRange
-import android.support.v4.graphics.ColorUtils.colorToHSL
-import android.support.v7.graphics.Palette
+import androidx.annotation.CheckResult
+import androidx.annotation.ColorInt
+import androidx.annotation.FloatRange
+import androidx.annotation.IntDef
+import androidx.annotation.IntRange
+import androidx.core.graphics.ColorUtils.colorToHSL
+import androidx.appcompat.graphics.Palette
 import io.sweers.catchup.util.ColorUtils.Lightness
 import kotlin.annotation.AnnotationRetention.SOURCE
 

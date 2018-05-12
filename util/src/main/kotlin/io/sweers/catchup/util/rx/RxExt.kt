@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.util.rx
 
-import android.support.design.widget.Snackbar
 import android.view.View
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Completable
 import io.reactivex.CompletableSource
 import io.reactivex.CompletableTransformer

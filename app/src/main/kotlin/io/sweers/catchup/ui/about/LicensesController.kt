@@ -21,11 +21,11 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.design.widget.Snackbar
-import android.support.v7.graphics.Palette
-import android.support.v7.graphics.Palette.Swatch
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.ViewHolder
-import android.support.v7.widget.RxViewHolder
+import androidx.appcompat.graphics.Palette
+import androidx.appcompat.graphics.Palette.Swatch
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.appcompat.widget.RxViewHolder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -106,7 +106,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
   @JvmField
   var dimenSize: Int = 0
   @BindView(R.id.progress) lateinit var progressBar: ProgressBar
-  @BindView(R.id.list) lateinit var recyclerView: RecyclerView
+  @BindView(R.id.list) lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
 
   private val adapter = Adapter()
   private lateinit var layoutManager: StickyHeadersLinearLayoutManager<Adapter>
@@ -271,7 +271,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
     }
   }
 
-  private inner class Adapter : RecyclerView.Adapter<ViewHolder>(),
+  private inner class Adapter : androidx.recyclerview.widget.RecyclerView.Adapter<ViewHolder>(),
       StickyHeaders, StickyHeaders.ViewSetup {
 
     private val items = mutableListOf<OssBaseItem>()

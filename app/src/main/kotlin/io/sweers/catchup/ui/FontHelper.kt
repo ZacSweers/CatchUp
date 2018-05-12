@@ -4,9 +4,9 @@ import android.content.Context
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.HandlerThread
-import android.support.v4.provider.FontRequest
-import android.support.v4.provider.FontsContractCompat
-import android.support.v4.provider.FontsContractCompat.FontRequestCallback
+import androidx.core.provider.FontRequest
+import androidx.core.provider.FontsContractCompat
+import androidx.core.provider.FontsContractCompat.FontRequestCallback
 import io.sweers.catchup.R
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e

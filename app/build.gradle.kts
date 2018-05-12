@@ -375,7 +375,10 @@ dependencies {
   implementation(deps.android.support.constraintLayout)
   implementation(deps.android.support.customTabs)
   implementation(deps.android.support.design)
+  debugImplementation(deps.android.support.drawerLayout)
   implementation(deps.android.support.palette)
+  implementation(deps.android.support.viewPager)
+  implementation(deps.android.support.legacyAnnotations)
 
   // Arch components
   implementation(deps.android.arch.lifecycle.extensions)

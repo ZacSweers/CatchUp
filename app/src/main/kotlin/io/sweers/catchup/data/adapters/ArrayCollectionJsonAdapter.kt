@@ -15,7 +15,7 @@
  */
 package io.sweers.catchup.data.adapters
 
-import android.support.v4.util.ArraySet
+import androidx.core.util.ArraySet
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonAdapter.Factory
 import com.squareup.moshi.JsonReader

@@ -17,7 +17,7 @@
 package io.sweers.catchup.service.api
 
 import android.content.res.Configuration
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import com.uber.autodispose.kotlin.autoDisposable
 
 interface VisualService : Service {

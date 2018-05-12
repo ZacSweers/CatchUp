@@ -18,7 +18,7 @@ package io.sweers.catchup.service.api
 
 import android.content.Context
 import android.net.Uri
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 
 data class UrlMeta(val uri: Uri?,
     @ColorInt val accentColor: Int,

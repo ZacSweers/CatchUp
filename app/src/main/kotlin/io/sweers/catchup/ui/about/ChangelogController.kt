@@ -18,9 +18,9 @@ package io.sweers.catchup.ui.about
 
 import android.content.Context
 import android.support.design.widget.Snackbar
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,9 +60,9 @@ class ChangelogController : ButterKnifeController(), Scrollable {
   @Inject internal lateinit var linkManager: LinkManager
 
   @BindView(R.id.progress) lateinit var progressBar: ProgressBar
-  @BindView(R.id.list) lateinit var recyclerView: RecyclerView
+  @BindView(R.id.list) lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
 
-  private lateinit var layoutManager: LinearLayoutManager
+  private lateinit var layoutManager: androidx.recyclerview.widget.LinearLayoutManager
   private val adapter = ChangelogAdapter()
 
   override fun onContextAvailable(context: Context) {
@@ -78,7 +78,7 @@ class ChangelogController : ButterKnifeController(), Scrollable {
   override fun onViewBound(view: View) {
     super.onViewBound(view)
     recyclerView.adapter = adapter
-    layoutManager = LinearLayoutManager(view.context)
+    layoutManager = androidx.recyclerview.widget.LinearLayoutManager(view.context)
     recyclerView.layoutManager = layoutManager
     recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
       addDuration = 300

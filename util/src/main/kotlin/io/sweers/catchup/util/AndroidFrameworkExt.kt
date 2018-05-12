@@ -26,10 +26,10 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build.VERSION_CODES
-import android.support.annotation.AttrRes
-import android.support.annotation.ColorInt
-import android.support.annotation.UiThread
-import android.support.v4.content.ContextCompat
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.annotation.UiThread
+import androidx.core.content.ContextCompat
 import android.util.TypedValue
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG

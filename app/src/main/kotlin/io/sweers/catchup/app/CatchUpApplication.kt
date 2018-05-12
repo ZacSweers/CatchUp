@@ -20,7 +20,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.SharedPreferences
-import android.support.v7.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.gabrielittner.threetenbp.LazyThreeTen
 import com.google.firebase.perf.FirebasePerformance

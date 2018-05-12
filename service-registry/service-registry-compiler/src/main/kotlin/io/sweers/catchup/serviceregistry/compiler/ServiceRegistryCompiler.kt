@@ -20,7 +20,7 @@ import me.eugeniomarletti.kotlin.metadata.KotlinClassMetadata
 import me.eugeniomarletti.kotlin.metadata.classKind
 import me.eugeniomarletti.kotlin.metadata.kaptGeneratedOption
 import me.eugeniomarletti.kotlin.metadata.kotlinMetadata
-import org.jetbrains.kotlin.serialization.ProtoBuf.Class.Kind
+import me.eugeniomarletti.kotlin.metadata.shadow.metadata.ProtoBuf.Class.Kind
 import java.io.File
 import java.io.IOException
 import javax.lang.model.element.AnnotationMirror

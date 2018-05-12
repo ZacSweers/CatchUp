@@ -19,7 +19,7 @@ package io.sweers.catchup.ui.widget
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
-import android.support.v4.view.animation.FastOutSlowInInterpolator
+import androidx.core.view.animation.FastOutSlowInInterpolator
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout

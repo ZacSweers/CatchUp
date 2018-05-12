@@ -7,10 +7,10 @@ import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 import android.support.design.widget.BottomSheetDialog
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.appcompat.widget.Toolbar
 import android.text.style.StyleSpan
 import android.widget.TextView
 import androidx.core.view.doOnLayout

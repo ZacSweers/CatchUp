@@ -17,7 +17,7 @@
 package io.sweers.catchup.ui.logs
 
 import android.content.Context
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 import android.util.Log
 import android.util.Log.ERROR
 import android.util.Log.INFO

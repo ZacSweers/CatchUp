@@ -22,7 +22,7 @@
     android:layout_height="match_parent"
     >
 
-  <android.support.v4.widget.SwipeRefreshLayout
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
       android:id="@+id/refresh"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
@@ -41,7 +41,7 @@
         tools:listitem="@layout/list_item_general"
         />
 
-  </android.support.v4.widget.SwipeRefreshLayout>
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
   <ProgressBar
       android:id="@+id/progress"
@@ -63,7 +63,7 @@
       tools:visibility="visible"
       >
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/error_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
         tools:src="@drawable/avd_no_connection"
         />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/error_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
         tools:text="Something went wrong :("
         />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/retry_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

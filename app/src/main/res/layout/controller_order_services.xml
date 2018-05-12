@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -24,7 +24,7 @@
     android:layout_height="match_parent"
     >
 
-  <android.support.design.widget.AppBarLayout
+  <com.google.android.material.appbar.AppBarLayout
       android:id="@+id/appbarlayout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -36,10 +36,10 @@
         android:layout_height="?actionBarSize"
         />
 
-  </android.support.design.widget.AppBarLayout>
+  </com.google.android.material.appbar.AppBarLayout>
 
   <!-- Transparent background because scrollbars don't show up without it -->
-  <android.support.v7.widget.RecyclerView
+  <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/list"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
@@ -52,7 +52,7 @@
       tools:listitem="@layout/list_item_general"
       />
 
-  <android.support.design.widget.FloatingActionButton
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
       android:id="@+id/save"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -70,4 +70,4 @@
       app:srcCompat="@drawable/ic_save_black_24dp"
       />
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

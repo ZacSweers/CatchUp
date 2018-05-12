@@ -16,7 +16,7 @@
 
 package io.sweers.catchup.service.api
 
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 import android.view.View
 import com.uber.autodispose.ScopeProvider
 import io.reactivex.Observable
