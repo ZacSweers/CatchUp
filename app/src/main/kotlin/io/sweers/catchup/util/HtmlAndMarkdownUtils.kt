@@ -20,7 +20,6 @@ import `in`.uncod.android.bypass.Bypass
 import `in`.uncod.android.bypass.style.TouchableUrlSpan
 import android.content.res.ColorStateList
 import android.os.Build
-import androidx.annotation.ColorInt
 import android.text.Html
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -29,6 +28,7 @@ import android.text.TextUtils
 import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.widget.TextView
+import androidx.annotation.ColorInt
 
 /*
  * Utility methods for working with HTML and markdown.

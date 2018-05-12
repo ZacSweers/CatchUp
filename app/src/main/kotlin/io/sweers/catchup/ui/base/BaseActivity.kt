@@ -17,11 +17,11 @@
 package io.sweers.catchup.ui.base
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.annotation.CallSuper
 import androidx.annotation.CheckResult
-import androidx.core.app.NavUtils
 import androidx.appcompat.app.AppCompatActivity
-import android.view.MenuItem
+import androidx.core.app.NavUtils
 import com.bluelinelabs.conductor.Controller
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.uber.autodispose.LifecycleScopeProvider

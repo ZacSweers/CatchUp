@@ -17,7 +17,6 @@
 package io.sweers.catchup.ui.logs
 
 import android.content.Context
-import androidx.annotation.DrawableRes
 import android.util.Log
 import android.util.Log.ERROR
 import android.util.Log.INFO
@@ -27,6 +26,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import butterknife.BindView
 import butterknife.ButterKnife
 import io.reactivex.functions.Consumer

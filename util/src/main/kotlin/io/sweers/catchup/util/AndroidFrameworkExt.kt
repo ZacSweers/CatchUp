@@ -26,13 +26,13 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build.VERSION_CODES
+import android.util.TypedValue
+import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.UiThread
 import androidx.core.content.ContextCompat
-import android.util.TypedValue
-import android.widget.Toast
-import android.widget.Toast.LENGTH_LONG
 import androidx.core.content.systemService
 import io.reactivex.Observable
 import java.io.File
