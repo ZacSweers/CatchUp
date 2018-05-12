@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Zac Sweers
+ * Copyright (c) ()2017 Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,16 +34,18 @@ import androidx.core.content.systemService
 import androidx.core.view.GravityCompat
 import androidx.core.view.doOnLayout
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import butterknife.BindView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.jakewharton.madge.MadgeFrameLayout
 import com.jakewharton.scalpel.ScalpelFrameLayout
-import com.jakewharton.rxbinding2.support.v4.widget.drawerOpen
 import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.android.ViewScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Lazy
 import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.android.MainThreadDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -239,9 +241,34 @@ class DrawerTapTarget(
       if (drawerLayout.isDrawerOpen(gravity)) {
         delegateTarget.onReady(runnable)
       } else {
-        drawerLayout.drawerOpen(gravity)
-            .filter { it }
-            .firstElement()
+        // TODO Jetifier bug. Want to use RxBinding here
+        Maybe.create<Unit> { e ->
+          val listener = object : MainThreadDisposable(), DrawerListener {
+            override fun onDrawerStateChanged(newState: Int) {
+              // Noop
+            }
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+              // Noop
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+              // Noop
+            }
+
+            override fun onDispose() {
+              drawerLayout.removeDrawerListener(this)
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+              if (!isDisposed) {
+                e.onSuccess(Unit)
+              }
+            }
+          }
+          e.setDisposable(listener)
+          drawerLayout.addDrawerListener(listener)
+        }
             .autoDisposable(ViewScopeProvider.from(drawerLayout))
             .subscribe {
               delegateTarget.onReady(runnable)
