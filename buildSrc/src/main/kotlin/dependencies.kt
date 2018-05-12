@@ -95,6 +95,7 @@ object deps {
       const val design = "com.google.android.material:material:${versions.jetpack}"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:${versions.jetpack}"
       const val viewPager = "androidx.viewpager:viewpager:${versions.jetpack}"
+      const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${versions.jetpack}"
       const val palette = "androidx.palette:palette:${versions.jetpack}"
       const val percent = "androidx.percentlayout:percentlayout:${versions.jetpack}"
       const val recyclerView = "androidx.recyclerview:recyclerview:${versions.jetpack}"
