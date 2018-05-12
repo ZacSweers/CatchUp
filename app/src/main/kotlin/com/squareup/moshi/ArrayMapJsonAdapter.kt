@@ -15,7 +15,8 @@
  */
 package com.squareup.moshi
 
-import androidx.core.util.ArrayMap
+import androidx.collection.ArrayMap
+import com.squareup.moshi.JsonAdapter.Factory
 import java.lang.reflect.Type
 
 /**

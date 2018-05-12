@@ -25,11 +25,11 @@ import android.preference.CheckBoxPreference
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceScreen
-import android.support.design.widget.Snackbar
-import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import butterknife.BindView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.perf.FirebasePerformance
 import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Binds

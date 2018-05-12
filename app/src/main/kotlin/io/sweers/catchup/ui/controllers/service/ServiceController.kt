@@ -50,6 +50,7 @@ import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.BuildConfig
+import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.analytics.trace
 import io.sweers.catchup.injection.ConductorInjection
@@ -251,9 +252,9 @@ class ServiceController : ButterKnifeController,
           }
         })
     if (service.meta().isVisual) {
-      recyclerView.recycledViewPool = visualViewPool
+      recyclerView.setRecycledViewPool(visualViewPool)
     } else {
-      recyclerView.recycledViewPool = textViewPool
+      recyclerView.setRecycledViewPool(textViewPool)
     }
     recyclerView.adapter = adapter
     if (!service.meta().isVisual) {
@@ -413,7 +414,7 @@ class ServiceController : ButterKnifeController,
               }
             }
             pendingRVState?.let {
-              recyclerView.layoutManager.onRestoreInstanceState(it)
+              recyclerView.layoutManager?.onRestoreInstanceState(it)
               pendingRVState = null
             }
           }

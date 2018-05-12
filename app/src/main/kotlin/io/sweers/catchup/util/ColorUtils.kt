@@ -25,10 +25,9 @@ import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
 import androidx.annotation.IntRange
 import androidx.core.graphics.ColorUtils.colorToHSL
-import androidx.appcompat.graphics.Palette
+import androidx.palette.graphics.Palette
 import io.sweers.catchup.util.ColorUtils.Lightness
 import kotlin.annotation.AnnotationRetention.SOURCE
-
 
 /**
  * Checks if the most populous color in the given palette is dark
@@ -38,9 +37,9 @@ import kotlin.annotation.AnnotationRetention.SOURCE
  */
 @Lightness
 fun Palette.isDark(): Int {
-  val mostPopulous = getMostPopulousSwatch() ?: return ColorUtils.LIGHTNESS_UNKNOWN.toInt()
+  val mostPopulous = getMostPopulousSwatch() ?: return ColorUtils.LIGHTNESS_UNKNOWN
   return if (ColorUtils.isDark(
-      mostPopulous.hsl)) ColorUtils.IS_DARK.toInt() else ColorUtils.IS_LIGHT.toInt()
+      mostPopulous.hsl)) ColorUtils.IS_DARK else ColorUtils.IS_LIGHT
 }
 
 fun Palette.getMostPopulousSwatch(): Palette.Swatch? {
@@ -101,7 +100,7 @@ object ColorUtils {
     // first try palette with a small color quant size
     val palette = Palette.from(bitmap).maximumColorCount(3).generate()
     return if (palette.swatches.size > 0) {
-      palette.isDark() == IS_DARK.toInt()
+      palette.isDark() == IS_DARK
     } else {
       // if palette failed, then check the color of the specified pixel
       isDark(bitmap.getPixel(backupPixelX, backupPixelY))

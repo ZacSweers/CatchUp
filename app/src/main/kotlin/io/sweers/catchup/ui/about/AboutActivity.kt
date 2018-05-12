@@ -23,10 +23,6 @@ import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Parcelable
-import androidx.annotation.Px
-import androidx.core.view.ViewPager
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -34,9 +30,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.Px
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.util.layoutDirection
-import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
