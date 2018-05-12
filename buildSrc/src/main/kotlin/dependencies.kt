@@ -24,55 +24,54 @@ fun String?.execute(workingDir: File, fallback: String): String {
 
 object deps {
   object versions {
-    const val androidTestSupport = "1.0.1"
-    const val apollo = "0.4.4"
-    const val archComponentsLifecycle = "1.1.1"
-    const val archComponentsRoom = "1.1.0-beta2"
-    const val autodispose = "0.7.0"
+    const val androidTestSupport = "1.1.0-alpha1"
+    const val apollo = "0.5.0"
+    const val autodispose = "0.8.0"
     const val barber = "1.3.1"
     const val butterknife = "8.8.1"
     const val chuck = "1.1.0"
     const val conductor = "2.1.4"
     const val crumb = "0.0.1"
-    const val dagger = "2.15"
-    const val errorProne = "2.2.0"
-    const val espresso = "3.0.1"
+    const val dagger = "2.16"
+    const val errorProne = "2.3.1"
+    const val espresso = "3.1.0-alpha1"
     const val firebase = "12.0.1"
     const val glide = "4.7.1"
+    const val hyperion = "0.9.23"
     const val inspector = "0.3.0"
-    const val hyperion = "0.9.22"
+    const val jetpack = "1.0.0-alpha1"
+    const val jetpackArch = "2.0.0-alpha1"
     const val kotlin = "1.2.41"
     const val leakcanary = "1.5.4"
-    const val moshi = "1.6.0-SNAPSHOT"
+    const val moshi = "1.6.0-RC1"
     const val okhttp = "3.10.0"
     const val playServices = firebase
     const val retrofit = "2.4.0"
     const val rxbinding = "2.1.1"
     const val rxpalette = "0.3.0"
     const val stetho = "1.5.0"
-    const val support = "27.1.1"
     const val tikxml = "0.8.13"
   }
 
   object android {
     object arch {
       object lifecycle {
-        const val apt = "android.arch.lifecycle:compiler:${versions.archComponentsLifecycle}"
-        const val extensions = "android.arch.lifecycle:extensions:${versions.archComponentsLifecycle}"
+        const val apt = "androidx.lifecycle:lifecycle-compiler:${versions.jetpackArch}"
+        const val extensions = "androidx.lifecycle:lifecycle-extensions:${versions.jetpackArch}"
       }
 
       object room {
-        const val apt = "android.arch.persistence.room:compiler:${versions.archComponentsRoom}"
-        const val runtime = "android.arch.persistence.room:runtime:${versions.archComponentsRoom}"
-        const val rxJava2 = "android.arch.persistence.room:rxjava2:${versions.archComponentsRoom}"
+        const val apt = "androidx.room:room-compiler:${versions.jetpackArch}"
+        const val runtime = "androidx.room:room-runtime:${versions.jetpackArch}"
+        const val rxJava2 = "androidx.room:room-rxjava2:${versions.jetpackArch}"
       }
     }
 
     object build {
       const val buildToolsVersion = "27.0.3"
-      const val compileSdkVersion = 27
+      const val compileSdkVersion = "android-P"
       const val minSdkVersion = 21
-      const val targetSdkVersion = 27
+      const val targetSdkVersion = "P"
     }
 
     object firebase {
@@ -83,20 +82,23 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha12"
-    const val ktx = "androidx.core:core-ktx:0.3"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha14"
+    const val ktx = "androidx.core:core-ktx:1.0.0-alpha1"
 
     object support {
-      const val annotations = "com.android.support:support-annotations:${versions.support}"
-      const val appCompat = "com.android.support:appcompat-v7:${versions.support}"
-      const val cardView = "com.android.support:cardview-v7:${versions.support}"
-      const val constraintLayout = "com.android.support.constraint:constraint-layout:1.1.0"
-      const val customTabs = "com.android.support:customtabs:${versions.support}"
-      const val design = "com.android.support:design:${versions.support}"
-      const val palette = "com.android.support:palette-v7:${versions.support}"
-      const val percent = "com.android.support:percent:${versions.support}"
-      const val recyclerView = "com.android.support:recyclerview-v7:${versions.support}"
-      const val compat = "com.android.support:support-compat:${versions.support}"
+      const val annotations = "androidx.annotation:annotation:${versions.jetpack}"
+      const val legacyAnnotations = "com.android.support:support-annotations:28.0.0-alpha1"
+      const val appCompat = "androidx.appcompat:appcompat:${versions.jetpack}"
+      const val cardView = "androidx.cardview:cardview:${versions.jetpack}"
+      const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.0"
+      const val customTabs = "androidx.browser:browser:${versions.jetpack}"
+      const val design = "com.google.android.material:material:${versions.jetpack}"
+      const val drawerLayout = "androidx.drawerlayout:drawerlayout:${versions.jetpack}"
+      const val viewPager = "androidx.viewpager:viewpager:${versions.jetpack}"
+      const val palette = "androidx.palette:palette:${versions.jetpack}"
+      const val percent = "androidx.percentlayout:percentlayout:${versions.jetpack}"
+      const val recyclerView = "androidx.recyclerview:recyclerview:${versions.jetpack}"
+      const val compat = "androidx.core:core:${versions.jetpack}"
     }
   }
 
@@ -159,7 +161,7 @@ object deps {
       const val snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
 
-    const val javapoet = "com.squareup:javapoet:1.10.0"
+    const val javapoet = "com.squareup:javapoet:1.11.0"
   }
 
   object butterKnife {
@@ -210,7 +212,7 @@ object deps {
       const val annotations = "com.google.errorprone:error_prone_annotations:${versions.errorProne}"
     }
 
-    const val gradlePlugin = "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
+    const val gradlePlugin = "net.ltgt.gradle:gradle-errorprone-plugin:0.0.14"
   }
 
   object glide {
@@ -268,7 +270,7 @@ object deps {
 
   object kotlin {
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
-    const val metadata = "me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.3.0"
+    const val metadata = "me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.4.0"
     const val noArgGradlePlugin = "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
     const val poet = "com.squareup:kotlinpoet:0.7.0"
 
@@ -285,7 +287,7 @@ object deps {
   }
 
   object misc {
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.3.3"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.3.4"
 
     object debug {
       const val madge = "com.jakewharton.madge:madge:1.1.4"
@@ -298,8 +300,8 @@ object deps {
     const val jsoup = "org.jsoup:jsoup:1.11.3"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
-    const val lottie = "com.airbnb.android:lottie:2.5.4"
-    const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.1"
+    const val lottie = "com.airbnb.android:lottie:2.5.5"
+    const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
     const val okio = "com.squareup.okio:okio:1.14.0"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:2.3.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.11.0"
@@ -342,14 +344,14 @@ object deps {
       const val design = "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
     }
 
-    const val java = "io.reactivex.rxjava2:rxjava:2.1.12"
+    const val java = "io.reactivex.rxjava2:rxjava:2.1.13"
 
     object palette {
       const val core = "io.sweers.rxpalette:rxpalette:${versions.rxpalette}"
       const val kotlin = "io.sweers.rxpalette:rxpalette-kotlin:${versions.rxpalette}"
     }
 
-    const val preferences = "com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3"
+    const val preferences = "com.f2prateek.rx.preferences2:rx-preferences:2.0.0"
     const val relay = "com.jakewharton.rxrelay2:rxrelay:2.0.0"
   }
 
@@ -372,17 +374,17 @@ object deps {
   object test {
     object android {
       object espresso {
-        const val core = "com.android.support.test.espresso:espresso-core:${versions.espresso}"
-        const val contrib = "com.android.support.test.espresso:espresso-contrib:${versions.espresso}"
-        const val web = "com.android.support.test.espresso:espresso-web:${versions.espresso}"
+        const val core = "androidx.test.espresso:espresso-core:${versions.espresso}"
+        const val contrib = "androidx.test.espresso:espresso-contrib:${versions.espresso}"
+        const val web = "androidx.test.espresso:espresso-web:${versions.espresso}"
       }
 
-      const val runner = "com.android.support.test:runner:${versions.androidTestSupport}"
-      const val rules = "com.android.support.test:rules:${versions.androidTestSupport}"
+      const val runner = "androidx.test:runner:${versions.androidTestSupport}"
+      const val rules = "androidx.test:rules:${versions.androidTestSupport}"
     }
 
     const val junit = "junit:junit:4.12"
-    const val robolectric = "org.robolectric:robolectric:3.8"
+    const val robolectric = "org.robolectric:robolectric:4.0-alpha-1"
     const val truth = "com.google.truth:truth:0.40"
   }
 }

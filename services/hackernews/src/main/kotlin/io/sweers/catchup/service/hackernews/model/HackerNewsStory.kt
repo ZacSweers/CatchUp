@@ -16,7 +16,7 @@
 
 package io.sweers.catchup.service.hackernews.model
 
-import android.support.annotation.Keep
+import androidx.annotation.Keep
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.Exclude
 import io.sweers.catchup.service.api.HasStableId

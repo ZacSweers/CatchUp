@@ -17,7 +17,7 @@
 package io.sweers.catchup.data
 
 import android.content.Context
-import android.support.v4.util.ArrayMap
+import androidx.core.util.ArrayMap
 import io.sweers.catchup.P
 import io.sweers.catchup.data.model.ServiceData
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext

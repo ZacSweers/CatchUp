@@ -26,7 +26,7 @@ import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceScreen
 import android.support.design.widget.Snackbar
-import android.support.v7.widget.Toolbar
+import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.widget.Toast
 import butterknife.BindView

@@ -21,7 +21,7 @@ package io.sweers.catchup.util
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import android.support.v7.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate
 import io.sweers.catchup.P
 
 inline fun Activity.updateNightMode() {

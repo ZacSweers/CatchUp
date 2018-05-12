@@ -27,10 +27,10 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.graphics.drawable.StateListDrawable
 import android.os.Build
-import android.support.annotation.ColorInt
-import android.support.annotation.FloatRange
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.support.v7.graphics.Palette
+import androidx.annotation.ColorInt
+import androidx.annotation.FloatRange
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.palette.graphics.Palette
 
 object UiUtil {
 

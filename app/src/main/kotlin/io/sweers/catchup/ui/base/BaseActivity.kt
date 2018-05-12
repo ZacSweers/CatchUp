@@ -17,10 +17,10 @@
 package io.sweers.catchup.ui.base
 
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.annotation.CheckResult
-import android.support.v4.app.NavUtils
-import android.support.v7.app.AppCompatActivity
+import androidx.annotation.CallSuper
+import androidx.annotation.CheckResult
+import androidx.core.app.NavUtils
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import com.bluelinelabs.conductor.Controller
 import com.jakewharton.rxrelay2.BehaviorRelay

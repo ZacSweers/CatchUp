@@ -18,12 +18,12 @@
 
 // Need package to access FrameworkSQLiteDatabase
 @file:Suppress("PackageDirectoryMismatch")
-package android.arch.persistence.db.framework
+package androidx.sqlite.db.framework
 
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.db.SupportSQLiteOpenHelper
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.db.SupportSQLiteOpenHelper
 import io.sweers.catchup.gemoji.AssetSQLiteOpenHelper
 
 /**

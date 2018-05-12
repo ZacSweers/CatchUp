@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -30,7 +30,7 @@
     android:stateListAnimator="@animator/raise"
     >
 
-  <android.support.constraint.Group
+  <androidx.constraintlayout.widget.Group
       android:id="@+id/tags_container"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -38,7 +38,7 @@
             tag,timestamp"
       />
 
-  <android.support.constraint.Guideline
+  <androidx.constraintlayout.widget.Guideline
       android:id="@+id/guideline"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -46,7 +46,7 @@
       app:layout_constraintGuide_begin="16dp"
       />
 
-  <android.support.constraint.Guideline
+  <androidx.constraintlayout.widget.Guideline
       android:id="@+id/guideline_top"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -54,7 +54,7 @@
       app:layout_constraintGuide_begin="16dp"
       />
 
-  <android.support.constraint.Guideline
+  <androidx.constraintlayout.widget.Guideline
       android:id="@+id/guideline_bottom"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -62,7 +62,7 @@
       app:layout_constraintGuide_end="16dp"
       />
 
-  <android.support.v7.widget.AppCompatTextView
+  <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/score"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
       style="@style/TextAppearance.AppCompat.Caption"
       />
 
-  <android.support.v7.widget.AppCompatTextView
+  <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/score_divider"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
       style="@style/TextAppearance.AppCompat.Caption"
       />
 
-  <android.support.v7.widget.AppCompatTextView
+  <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/tag"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
       style="@style/TextAppearance.AppCompat.Caption"
       />
 
-  <android.support.v7.widget.AppCompatTextView
+  <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/tag_divider"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
       style="@style/TextAppearance.AppCompat.Caption"
       />
 
-  <android.support.v7.widget.AppCompatTextView
+  <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/timestamp"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -163,7 +163,7 @@
       style="@style/TextAppearance.AppCompat.Subhead"
       />
 
-  <android.support.v7.widget.AppCompatTextView
+  <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/author"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -180,7 +180,7 @@
       style="@style/TextAppearance.AppCompat.Caption"
       />
 
-  <android.support.v7.widget.AppCompatTextView
+  <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/author_divider"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -196,7 +196,7 @@
       style="@style/TextAppearance.AppCompat.Caption"
       />
 
-  <android.support.v7.widget.AppCompatTextView
+  <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/source"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -229,4 +229,4 @@
       tools:text="39"
       />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

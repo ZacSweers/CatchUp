@@ -18,9 +18,9 @@
 
 package io.sweers.catchup.util
 
-import android.support.annotation.FloatRange
-import android.support.v7.graphics.Palette
-import android.support.v7.graphics.Palette.Swatch
+import androidx.annotation.FloatRange
+import androidx.palette.graphics.Palette
+import androidx.palette.graphics.Palette.Swatch
 
 /*
  * Extension functions for the Palette library.
@@ -29,25 +29,26 @@ import android.support.v7.graphics.Palette.Swatch
 inline fun Palette.orderedSwatches(
     @FloatRange(from = 0.0, to = 1.0) darkAlpha: Float,
     @FloatRange(from = 0.0, to = 1.0) lightAlpha: Float): List<Pair<Swatch, Float>> {
-  return listOf(
+  return listOfNotNull(
       vibrantSwatch?.let { it to darkAlpha },
       lightVibrantSwatch?.let { it to lightAlpha },
       darkVibrantSwatch?.let { it to darkAlpha },
       mutedSwatch?.let { it to darkAlpha },
       lightMutedSwatch?.let { it to lightAlpha },
       darkMutedSwatch?.let { it to darkAlpha }
-  ).filterNotNull()
+  )
 }
 
 inline fun Palette.findSwatch(predicate: (Swatch) -> Boolean): Swatch? {
-  return listOf(
+  return listOfNotNull(
       darkVibrantSwatch,
       lightMutedSwatch,
       vibrantSwatch,
       mutedSwatch,
       lightVibrantSwatch,
       darkMutedSwatch
-  ).filterNotNull().firstOrNull(predicate)
+  )
+      .firstOrNull(predicate)
 }
 
 val Swatch.hue: Float

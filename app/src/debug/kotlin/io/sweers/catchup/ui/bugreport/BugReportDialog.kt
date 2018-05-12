@@ -19,7 +19,7 @@ package io.sweers.catchup.ui.bugreport
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import io.sweers.catchup.R
 import io.sweers.catchup.ui.bugreport.BugReportView.Report

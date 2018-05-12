@@ -24,8 +24,6 @@ import android.os.PowerManager
 import android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP
 import android.os.PowerManager.FULL_WAKE_LOCK
 import android.os.PowerManager.ON_AFTER_RELEASE
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -33,17 +31,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
 import androidx.core.content.systemService
+import androidx.core.view.GravityCompat
 import androidx.core.view.doOnLayout
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import butterknife.BindView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.jakewharton.madge.MadgeFrameLayout
-import com.jakewharton.rxbinding2.support.v4.widget.drawerOpen
+import com.jakewharton.rxbinding2.InitialValueObservable
 import com.jakewharton.scalpel.ScalpelFrameLayout
 import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.android.ViewScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Lazy
 import io.reactivex.Completable
+import io.reactivex.Observer
+import io.reactivex.android.MainThreadDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -199,7 +202,7 @@ internal class DebugViewContainer @Inject constructor(
             .addFlags(FLAG_SHOW_WHEN_LOCKED)
         val power = activity.systemService<PowerManager>()
         power.newWakeLock(FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
-            "wakeup!").run {
+            "CatchUp:wakeup!").run {
           acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
           release()
         }

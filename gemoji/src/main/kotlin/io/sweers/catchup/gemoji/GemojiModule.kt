@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.gemoji
 
-import android.arch.persistence.db.framework.SupportAssetSQLiteOpenHelper
-import android.arch.persistence.room.Room
+import androidx.sqlite.db.framework.SupportAssetSQLiteOpenHelper
+import androidx.room.Room
 import android.content.Context
 import dagger.Module
 import dagger.Provides

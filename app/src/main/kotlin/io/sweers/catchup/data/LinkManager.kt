@@ -22,9 +22,9 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
-import android.support.annotation.CheckResult
-import android.support.annotation.ColorInt
-import android.support.v4.util.ArrayMap
+import androidx.annotation.CheckResult
+import androidx.annotation.ColorInt
+import androidx.core.util.ArrayMap
 import android.widget.Toast
 import com.f2prateek.rx.preferences2.Preference
 import com.uber.autodispose.kotlin.autoDisposable

@@ -20,19 +20,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.annotation.ColorInt
-import android.support.graphics.drawable.AnimatedVectorDrawableCompat
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.util.DiffUtil
-import android.support.v7.util.DiffUtil.DiffResult
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.Adapter
-import android.support.v7.widget.RecyclerView.RecycledViewPool
-import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,8 +27,19 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.DiffResult
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import butterknife.BindView
 import butterknife.OnClick
 import com.apollographql.apollo.exception.ApolloException
@@ -52,7 +50,6 @@ import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.analytics.trace
 import io.sweers.catchup.injection.ConductorInjection
@@ -135,13 +132,13 @@ class ServiceController : ButterKnifeController,
   @BindView(R.id.error_image)
   lateinit var errorImage: ImageView
   @BindView(R.id.list)
-  lateinit var recyclerView: RecyclerView
+  lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
   @BindView(R.id.progress)
   lateinit var progress: ProgressBar
   @BindView(R.id.refresh)
   lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
-  private lateinit var layoutManager: LinearLayoutManager
+  private lateinit var layoutManager: androidx.recyclerview.widget.LinearLayoutManager
   private lateinit var adapter: DisplayableItemAdapter<out DisplayableItem, ViewHolder>
   private var currentPage: String? = null
   private var nextPage: String? = null
@@ -150,7 +147,7 @@ class ServiceController : ButterKnifeController,
   private var moreDataAvailable = true
   private var dataLoading = false
   private var pendingRVState: Parcelable? = null
-  private val defaultItemAnimator = DefaultItemAnimator()
+  private val defaultItemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
 
   @field:TextViewPool
   @Inject
@@ -190,15 +187,16 @@ class ServiceController : ButterKnifeController,
   }
 
   private fun createLayoutManager(context: Context,
-      adapter: DisplayableItemAdapter<*, *>): LinearLayoutManager {
+      adapter: DisplayableItemAdapter<*, *>): androidx.recyclerview.widget.LinearLayoutManager {
     return if (service.meta().isVisual) {
-      GridLayoutManager(context, 2).apply {
-        spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+      androidx.recyclerview.widget.GridLayoutManager(context, 2).apply {
+        spanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
           override fun getSpanSize(position: Int) = adapter.getItemColumnSpan(position)
         }
       }
     } else {
-      LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+      androidx.recyclerview.widget.LinearLayoutManager(activity,
+          androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
     }
   }
 
@@ -292,7 +290,7 @@ class ServiceController : ButterKnifeController,
       if (currentPage != service.meta().firstPageKey) {
         putString("currentPage", currentPage)
       }
-      putParcelable("layoutManagerState", recyclerView.layoutManager.onSaveInstanceState())
+      putParcelable("layoutManagerState", recyclerView.layoutManager?.onSaveInstanceState())
     }
     super.onSaveViewState(view, outState)
   }
@@ -504,12 +502,12 @@ class ServiceController : ButterKnifeController,
 
     override fun getItemId(position: Int): Long {
       if (getItemViewType(position) == TYPE_LOADING_MORE) {
-        return RecyclerView.NO_ID
+        return androidx.recyclerview.widget.RecyclerView.NO_ID
       }
       return data[position].stableId()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
       val layoutInflater = LayoutInflater.from(parent.context)
       when (viewType) {
         TYPE_ITEM -> return CatchUpItemViewHolder(
@@ -524,7 +522,7 @@ class ServiceController : ButterKnifeController,
       throw InvalidParameterException("Unrecognized view type - " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
       when (getItemViewType(position)) {
         TYPE_ITEM -> try {
           bindDelegate(data[position], holder as CatchUpItemViewHolder)
@@ -542,7 +540,7 @@ class ServiceController : ButterKnifeController,
       get() = data.size
 
     private val loadingMoreItemPosition: Int
-      get() = if (showLoadingMore) itemCount - 1 else RecyclerView.NO_POSITION
+      get() = if (showLoadingMore) itemCount - 1 else androidx.recyclerview.widget.RecyclerView.NO_POSITION
 
     override fun getItemViewType(position: Int): Int {
       if (position < dataItemCount && dataItemCount > 0) {
@@ -578,7 +576,7 @@ class ServiceController : ButterKnifeController,
   }
 }
 
-class LoadingMoreHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class LoadingMoreHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
   val progress: ProgressBar = itemView as ProgressBar
 }
 

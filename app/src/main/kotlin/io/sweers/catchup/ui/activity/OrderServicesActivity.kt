@@ -7,22 +7,20 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Rect
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.FloatingActionButton.OnVisibilityChangedListener
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.ViewHolder
-import android.support.v7.widget.Toolbar
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.appcompat.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.doOnLayout
+import androidx.recyclerview.widget.ItemTouchHelper
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
@@ -30,6 +28,7 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.getkeepsafe.taptargetview.TapTarget
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.Binds
 import dagger.Module
 import dagger.Subcomponent
@@ -109,7 +108,7 @@ class OrderServicesController : ButterKnifeController() {
   @BindView(R.id.toolbar)
   lateinit var toolbar: Toolbar
   @BindView(R.id.list)
-  lateinit var recyclerView: RecyclerView
+  lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
 
   private var _pendingChanges: List<ServiceMeta>? = null
   private var pendingChanges: List<ServiceMeta>?
@@ -146,7 +145,7 @@ class OrderServicesController : ButterKnifeController() {
       }
     }
     toolbar.title = toolbar.context.getString(R.string.pref_reorder_services)
-    recyclerView.layoutManager = LinearLayoutManager(view.context)
+    recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(view.context)
     val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
 
     val currentItemsSorted = serviceMetas.values.sortedBy { currentOrder.indexOf(it.id) }
@@ -221,7 +220,7 @@ class OrderServicesController : ButterKnifeController() {
 private class Adapter(
     private val context: Context,
     inputItems: List<ServiceMeta>,
-    private val changeListener: (List<ServiceMeta>) -> Unit) : RecyclerView.Adapter<Holder>() {
+    private val changeListener: (List<ServiceMeta>) -> Unit) : androidx.recyclerview.widget.RecyclerView.Adapter<Holder>() {
 
   private val items = inputItems.toMutableList()
 
@@ -260,7 +259,7 @@ private class Adapter(
   }
 }
 
-private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+private class Holder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
   @BindView(R.id.container)
   lateinit var container: View
@@ -298,7 +297,7 @@ private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 private class MoveCallback(
     private val callback: (Int, Int) -> Unit) : ItemTouchHelper.SimpleCallback(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
-  override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder,
+  override fun onMove(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: ViewHolder,
       target: ViewHolder): Boolean {
     callback(viewHolder.adapterPosition, target.adapterPosition)
     return true
@@ -321,7 +320,7 @@ private class MoveCallback(
     }
   }
 
-  override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder) {
+  override fun clearView(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: ViewHolder) {
     super.clearView(recyclerView, viewHolder)
     (viewHolder as Holder).updateSelection(false)
   }

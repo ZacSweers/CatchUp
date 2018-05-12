@@ -45,7 +45,7 @@ buildscript {
 }
 
 plugins {
-  id("com.gradle.build-scan") version "1.13.1"
+  id("com.gradle.build-scan") version "1.13.2"
   id("com.github.ben-manes.versions") version "0.17.0"
 }
 
@@ -75,16 +75,11 @@ allprojects {
           useTarget(
               "${requested.group}:${requested.name.replace("jre", "jdk")}:${requested.version}")
         }
-        requested.name == "kotlin-compiler-embeddable" -> {
-          // Kotlin 1.2.40 broke something with metadata
-          // https://github.com/Takhion/kotlin-metadata/issues/8
-          useVersion("1.2.30")
-        }
         else -> when (requested.group) {
         // We want to force all support libraries to use the same version, even if they"re transitive.
           "com.android.support" -> {
             if ("multidex" !in requested.name) {
-              useVersion(versions.support)
+              useVersion(versions.jetpack)
             }
           }
         // We want to force all play services libraries to use the same version, even if they"re transitive.

@@ -25,12 +25,12 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import android.os.Build
-import android.support.annotation.ArrayRes
-import android.support.annotation.ColorInt
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.ViewHolder
-import android.support.v7.widget.RxViewHolder
+import androidx.annotation.ArrayRes
+import androidx.annotation.ColorInt
+import androidx.core.view.animation.FastOutSlowInInterpolator
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.appcompat.widget.RxViewHolder
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -106,13 +106,13 @@ internal class ImageAdapter(private val context: Context,
 
   override fun getItemId(position: Int): Long {
     if (getItemViewType(position) == TYPE_LOADING_MORE) {
-      return RecyclerView.NO_ID
+      return androidx.recyclerview.widget.RecyclerView.NO_ID
     }
     return data[position].realItem().id
   }
 
   @TargetApi(Build.VERSION_CODES.M)
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
     val layoutInflater = LayoutInflater.from(parent.context)
     return when (viewType) {
       TYPE_ITEM -> {
@@ -157,7 +157,7 @@ internal class ImageAdapter(private val context: Context,
     }
   }
 
-  override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+  override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
     when (getItemViewType(position)) {
       TYPE_ITEM -> {
         val imageItem = data[position]
@@ -178,7 +178,7 @@ internal class ImageAdapter(private val context: Context,
   }
 
   @SuppressLint("NewApi")
-  override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+  override fun onViewRecycled(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder) {
     if (holder is ImageHolder) {
       // reset the badge & ripple which are dynamically determined
       GlideApp.with(holder.itemView).clear(holder.image)
@@ -195,7 +195,7 @@ internal class ImageAdapter(private val context: Context,
     get() = data.size
 
   private val loadingMoreItemPosition: Int
-    get() = if (showLoadingMore) itemCount - 1 else RecyclerView.NO_POSITION
+    get() = if (showLoadingMore) itemCount - 1 else androidx.recyclerview.widget.RecyclerView.NO_POSITION
 
   override fun getItemViewType(position: Int): Int {
     if (position < dataItemCount && dataItemCount > 0) {

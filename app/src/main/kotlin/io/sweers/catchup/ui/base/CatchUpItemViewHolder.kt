@@ -17,14 +17,13 @@
 package io.sweers.catchup.ui.base
 
 import android.content.res.ColorStateList
-import android.support.annotation.ColorInt
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.ConstraintSet
-import android.support.v4.graphics.drawable.DrawableCompat
-import android.support.v7.widget.RxViewHolder
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.appcompat.widget.RxViewHolder
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -45,7 +44,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
     itemView), BindableCatchUpItemViewHolder {
 
   @BindView(R.id.container)
-  internal lateinit var container: ConstraintLayout
+  internal lateinit var container: androidx.constraintlayout.widget.ConstraintLayout
   @BindView(R.id.tags_container)
   internal lateinit var tagsContainer: View
   @BindView(R.id.title)

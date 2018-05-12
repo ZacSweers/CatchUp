@@ -16,7 +16,7 @@
 
 package io.sweers.catchup.service.slashdot
 
-import android.support.annotation.Keep
+import androidx.annotation.Keep
 import com.tickaroo.tikxml.TypeConverter
 import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement

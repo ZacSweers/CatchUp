@@ -18,8 +18,8 @@ package io.sweers.catchup.util
 
 import android.app.Activity
 import android.content.Context
-import android.support.annotation.ColorInt
-import android.support.v4.content.ContextCompat
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 

@@ -20,8 +20,8 @@ package io.sweers.catchup
 
 import android.app.ActivityManager
 import android.content.Context
-import android.support.annotation.Keep
-import android.support.v4.app.ActivityManagerCompat
+import androidx.annotation.Keep
+import androidx.core.app.ActivityManagerCompat
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat

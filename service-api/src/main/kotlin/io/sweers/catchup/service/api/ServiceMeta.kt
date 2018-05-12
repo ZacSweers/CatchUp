@@ -16,9 +16,9 @@
 
 package io.sweers.catchup.service.api
 
-import android.support.annotation.ColorRes
-import android.support.annotation.DrawableRes
-import android.support.annotation.StringRes
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 
 data class ServiceMeta(
     val id: String,
