@@ -17,7 +17,6 @@
 package io.sweers.catchup.ui.about
 
 import android.content.Context
-import android.support.design.widget.Snackbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
@@ -30,6 +29,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.rx2.Rx2Apollo
+import com.google.android.material.snackbar.Snackbar
 import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Subcomponent
 import dagger.android.AndroidInjector

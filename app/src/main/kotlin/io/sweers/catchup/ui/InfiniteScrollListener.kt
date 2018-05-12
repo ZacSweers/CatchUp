@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.ui
 
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.sweers.catchup.ui.base.DataLoadingSubject
 
@@ -26,7 +25,7 @@ import io.sweers.catchup.ui.base.DataLoadingSubject
  * Adapted from [here](https://gist.github.com/ssinss/e06f12ef66c51252563e)
  */
 abstract class InfiniteScrollListener(private val layoutManager: androidx.recyclerview.widget.LinearLayoutManager,
-    private val dataLoading: DataLoadingSubject) : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+    private val dataLoading: DataLoadingSubject) : RecyclerView.OnScrollListener() {
 
   override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
     // bail out if scrolling upward or already loading data
