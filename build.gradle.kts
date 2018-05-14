@@ -92,10 +92,10 @@ allprojects {
               "${requested.group}:${requested.name.replace("jre", "jdk")}:${requested.version}")
         }
         else -> when (requested.group) {
-        // We want to force all support libraries to use the same version, even if they"re transitive.
+        // We want to force all support libraries to use the same version, even if they're transitive.
           "com.android.support" -> {
             if ("multidex" !in requested.name) {
-              useVersion(versions.jetpack)
+              useVersion(versions.legacySupport)
             }
           }
         // We want to force all play services libraries to use the same version, even if they"re transitive.

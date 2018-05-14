@@ -41,6 +41,8 @@ fun String?.execute(workingDir: File, fallback: String): String {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-alpha1"
+    const val androidx = "1.0.0-alpha1"
+    const val androidxArch = "2.0.0-alpha1"
     const val apollo = "0.5.0"
     const val autodispose = "0.8.0"
     const val barber = "1.3.1"
@@ -55,10 +57,9 @@ object deps {
     const val glide = "4.7.1"
     const val hyperion = "0.9.23"
     const val inspector = "0.3.0"
-    const val jetpack = "1.0.0-alpha1"
-    const val jetpackArch = "2.0.0-alpha1"
     const val kotlin = "1.2.41"
     const val leakcanary = "1.5.4"
+    const val legacySupport = "28.0.0-alpha1"
     const val moshi = "1.6.0-RC1"
     const val okhttp = "3.10.0"
     const val playServices = firebase
@@ -72,14 +73,14 @@ object deps {
   object android {
     object arch {
       object lifecycle {
-        const val apt = "androidx.lifecycle:lifecycle-compiler:${versions.jetpackArch}"
-        const val extensions = "androidx.lifecycle:lifecycle-extensions:${versions.jetpackArch}"
+        const val apt = "androidx.lifecycle:lifecycle-compiler:${versions.androidxArch}"
+        const val extensions = "androidx.lifecycle:lifecycle-extensions:${versions.androidxArch}"
       }
 
       object room {
-        const val apt = "androidx.room:room-compiler:${versions.jetpackArch}"
-        const val runtime = "androidx.room:room-runtime:${versions.jetpackArch}"
-        const val rxJava2 = "androidx.room:room-rxjava2:${versions.jetpackArch}"
+        const val apt = "androidx.room:room-compiler:${versions.androidxArch}"
+        const val runtime = "androidx.room:room-runtime:${versions.androidxArch}"
+        const val rxJava2 = "androidx.room:room-rxjava2:${versions.androidxArch}"
       }
     }
 
@@ -102,20 +103,20 @@ object deps {
     const val ktx = "androidx.core:core-ktx:1.0.0-alpha1"
 
     object support {
-      const val annotations = "androidx.annotation:annotation:${versions.jetpack}"
-      const val legacyAnnotations = "com.android.support:support-annotations:28.0.0-alpha1"
-      const val appCompat = "androidx.appcompat:appcompat:${versions.jetpack}"
-      const val cardView = "androidx.cardview:cardview:${versions.jetpack}"
+      const val annotations = "androidx.annotation:annotation:${versions.androidx}"
+      const val legacyAnnotations = "com.android.support:support-annotations:${versions.legacySupport}"
+      const val appCompat = "androidx.appcompat:appcompat:${versions.androidx}"
+      const val cardView = "androidx.cardview:cardview:${versions.androidx}"
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.0"
-      const val customTabs = "androidx.browser:browser:${versions.jetpack}"
-      const val design = "com.google.android.material:material:${versions.jetpack}"
-      const val drawerLayout = "androidx.drawerlayout:drawerlayout:${versions.jetpack}"
-      const val viewPager = "androidx.viewpager:viewpager:${versions.jetpack}"
-      const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${versions.jetpack}"
-      const val palette = "androidx.palette:palette:${versions.jetpack}"
-      const val percent = "androidx.percentlayout:percentlayout:${versions.jetpack}"
-      const val recyclerView = "androidx.recyclerview:recyclerview:${versions.jetpack}"
-      const val compat = "androidx.core:core:${versions.jetpack}"
+      const val customTabs = "androidx.browser:browser:${versions.androidx}"
+      const val design = "com.google.android.material:material:${versions.androidx}"
+      const val drawerLayout = "androidx.drawerlayout:drawerlayout:${versions.androidx}"
+      const val viewPager = "androidx.viewpager:viewpager:${versions.androidx}"
+      const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${versions.androidx}"
+      const val palette = "androidx.palette:palette:${versions.androidx}"
+      const val percent = "androidx.percentlayout:percentlayout:${versions.androidx}"
+      const val recyclerView = "androidx.recyclerview:recyclerview:${versions.androidx}"
+      const val compat = "androidx.core:core:${versions.androidx}"
     }
   }
 
