@@ -60,7 +60,7 @@ object deps {
     const val kotlin = "1.2.41"
     const val leakcanary = "1.5.4"
     const val legacySupport = "28.0.0-alpha1"
-    const val moshi = "1.6.0-RC1"
+    const val moshi = "1.6.0"
     const val okhttp = "3.10.0"
     const val playServices = firebase
     const val retrofit = "2.4.0"
@@ -329,7 +329,7 @@ object deps {
 
   object moshi {
     const val core = "com.squareup.moshi:moshi:${versions.moshi}"
-    const val compiler = "com.squareup.moshi:moshi-kotlin-codegen-compiler:${versions.moshi}"
+    const val compiler = "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi}"
   }
 
   object okhttp {
