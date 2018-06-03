@@ -67,7 +67,9 @@ internal class UnsplashService @Inject constructor(
           CatchUpItem(
               id = it.id.hashCode().toLong(),
               title = "",
-              score = "+" to it.likes,
+              score =
+              "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+                  to it.likes,
               timestamp = it.createdAt,
               author = "/u/" + it.user.name,
               source = null,
