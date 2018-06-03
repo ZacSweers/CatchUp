@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.service.dribbble
+package io.sweers.catchup.service.unsplash
 
 import io.reactivex.Single
 import io.sweers.catchup.service.unsplash.model.UnsplashPhoto
