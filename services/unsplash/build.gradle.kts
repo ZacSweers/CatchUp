@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import org.gradle.api.JavaVersion.VERSION_1_8
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("com.android.library")
   kotlin("android")
@@ -34,6 +31,9 @@ android {
   defaultConfig {
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
+    vectorDrawables.useSupportLibrary = true
+    buildConfigField("String", "UNSPLASH_API_KEY",
+        "\"${project.properties["catchup_unsplash_api_key"].toString()}\"")
   }
   compileOptions {
     setSourceCompatibility(JavaVersion.VERSION_1_8)
@@ -55,12 +55,6 @@ android {
   }
 }
 
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = listOf("-Xjsr305=strict")
-  }
-}
-
 kapt {
   correctErrorTypes = true
   useBuildCache = true
@@ -68,22 +62,20 @@ kapt {
 }
 
 dependencies {
-  kapt(kapt(deps.dagger.apt.compiler))
-  kapt(kapt(deps.crumb.compiler))
   kapt(project(":service-registry:service-registry-compiler"))
+  kapt(deps.crumb.compiler)
+  kapt(deps.dagger.apt.compiler)
+  kapt(deps.moshi.compiler)
 
-  implementation(project(":service-registry:service-registry-annotations"))
-  implementation(deps.kotlin.stdlib.jdk7)
+  implementation(project(":util"))
+  implementation(deps.retrofit.core)
+  implementation(deps.retrofit.moshi)
+  implementation(deps.retrofit.rxJava2)
+  implementation(deps.okhttp.core)
 
-  api(project(":services:hackernews"))
-  api(project(":services:reddit"))
-  api(project(":services:medium"))
-  api(project(":services:producthunt"))
-//  api(project(":services:imgur"))
-  api(project(":services:slashdot"))
-  api(project(":services:designernews"))
-  api(project(":services:dribbble"))
-  api(project(":services:github"))
-//  api(project(":services:newsapi"))
-  api(project(":services:unsplash"))
+  api(project(":service-api"))
+  api(deps.android.support.annotations)
+  api(deps.dagger.runtime)
+  api(deps.misc.lazythreeten)
+  api(deps.rx.java)
 }

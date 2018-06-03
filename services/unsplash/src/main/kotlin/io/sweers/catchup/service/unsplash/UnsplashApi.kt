@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
-include(
-  ":app",
-  ":third_party:bypass",
-  ":service-api",
-  ":service-registry:service-registry",
-  ":service-registry:service-registry-annotations",
-  ":service-registry:service-registry-compiler",
-  ":services:slashdot",
-  ":services:reddit",
-  ":services:hackernews",
-  ":services:medium",
-  ":services:newsapi",
-  ":services:producthunt",
-  ":services:designernews",
-  ":services:dribbble",
-  ":services:imgur",
-  ":services:github",
-  ":services:unsplash",
-  ":gemoji",
-  ":tooling:spi-visualizer",
-  ":util"
-)
+package io.sweers.catchup.service.dribbble
+
+import io.reactivex.Single
+import io.sweers.catchup.service.unsplash.model.UnsplashPhoto
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+/**
+ * Unsplash API - https://unsplash.com/documentation
+ */
+internal interface UnsplashApi {
+
+  @GET("/photos/curated")
+  fun getCurated(
+      @Query("page") page: Int, // Default 1
+      @Query("per_page") pageSize: Int // Default 10
+  ): Single<List<UnsplashPhoto>>
+
+  companion object {
+
+    const val HOST = "api.unsplash.com"
+    const val ENDPOINT = "https://$HOST"
+  }
+
+}

@@ -1,0 +1,26 @@
+<!--
+  ~ Copyright (c) 2018 Zac Sweers
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- Exported to vector from https://simpleicons.org/ under Creative Commons Zero v1.0 Universal license -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:fillColor="#FFFFFFFF"
+      android:pathData="M15.6,13.575C15.6,15.6 13.95,17.175 12,17.175C10.05,17.175 8.4,15.6 8.4,13.575C8.4,11.55 10.05,9.975 12,9.975C14.025,10.05 15.6,11.625 15.6,13.575ZM24,8.025L24,19.2C24,20.925 22.575,22.425 20.775,22.425L3.225,22.425C1.425,22.425 0,21 0,19.2L0,7.95C0,6.225 1.425,4.725 3.225,4.725L6,4.725L6.6,3C6.9,2.175 7.875,1.5 8.775,1.5L15.225,1.5C16.125,1.5 17.1,2.175 17.4,3L18,4.8L20.775,4.8C22.575,4.8 24,6.225 24,8.025ZM17.55,13.65C17.55,10.575 15.075,8.025 11.925,8.025C8.85,8.025 6.3,10.575 6.3,13.65C6.3,16.725 8.775,19.275 11.925,19.275C15.075,19.2 17.55,16.725 17.55,13.65Z"/>
+</vector>
