@@ -85,7 +85,7 @@ internal class ImageAdapter(private val context: Context,
     loadingPlaceholders = context.resources.getIntArray(loadingColorArrayId)
         .iterator()
         .asSequence()
-        .map { ColorDrawable(it) }
+        .map(::ColorDrawable)
         .toList()
         .toTypedArray()
   }
@@ -137,7 +137,7 @@ internal class ImageAdapter(private val context: Context,
                 val gif: GifDrawable = when (drawable) {
                   is GifDrawable -> drawable
                   is TransitionDrawable -> (0 until drawable.numberOfLayers).asSequence()
-                      .map { i -> drawable.getDrawable(i) }
+                      .map(drawable::getDrawable)
                       .filterIsInstance<GifDrawable>()
                       .firstOrNull()
                   else -> null
