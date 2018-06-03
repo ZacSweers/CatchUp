@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-include(
-  ":app",
-  ":third_party:bypass",
-  ":service-api",
-  ":service-registry:service-registry",
-  ":service-registry:service-registry-annotations",
-  ":service-registry:service-registry-compiler",
-  ":services:slashdot",
-  ":services:reddit",
-  ":services:hackernews",
-  ":services:medium",
-  ":services:newsapi",
-  ":services:producthunt",
-  ":services:designernews",
-  ":services:dribbble",
-  ":services:imgur",
-  ":services:github",
-  ":services:unsplash",
-  ":services:uplabs",
-  ":gemoji",
-  ":tooling:spi-visualizer",
-  ":util"
-)
+package io.sweers.catchup.service.uplabs
+
+import io.reactivex.Single
+import io.sweers.catchup.service.uplabs.model.UplabsImage
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+/**
+ * Uplabds API - https://www.uplabs.com/all.json ¯\_(ツ)_/¯
+ */
+internal interface UplabsApi {
+
+  @GET("/all.json")
+  fun getPopular(
+      @Query("days_ago") daysAgo: Int, // Default 0
+      @Query("page") page: Int // Default 1
+  ): Single<List<UplabsImage>>
+
+  companion object {
+    const val HOST = "www.uplabs.com"
+    const val ENDPOINT = "https://$HOST"
+  }
+
+}

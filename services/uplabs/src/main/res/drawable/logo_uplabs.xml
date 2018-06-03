@@ -1,0 +1,27 @@
+<!--
+  ~ Copyright (c) 2018 Zac Sweers
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="24dp"
+    android:viewportHeight="110"
+    android:viewportWidth="171"
+    android:width="24dp">
+  <path
+      android:fillColor="#FFFFFF"
+      android:fillType="evenOdd"
+      android:pathData="M77.219-19.531v65.556c0 10.892-3.407 19.506-10.22 25.84-6.813 6.335-16.121 9.502-27.925 9.502-11.621 0-20.849-3.076-27.685-9.228C4.553 65.986 1.066 57.533 0.93 46.777v-66.308h20.508v65.693c0 6.517 1.56 11.268 4.682 14.253 3.122 2.985 7.44 4.478 12.954 4.478 11.53 0 17.386-6.062 17.569-18.184v-66.24h20.576zM1 194.898v-65.556c0-10.892 3.407-19.505 10.22-25.84C18.033 97.167 27.341 94 39.145 94c11.621 0 20.849 3.076 27.685 9.229 6.836 6.152 10.322 14.606 10.459 25.361v66.308H56.781v-65.693c0-6.517-1.561-11.268-4.682-14.253-3.122-2.985-7.44-4.477-12.954-4.477-11.53 0-17.387 6.061-17.569 18.183v66.24H1zM170.766 44.516c0 13.021-2.956 23.45-8.868 31.289-5.911 7.838-13.893 11.758-23.945 11.758-8.542 0-15.443-2.969-20.703-8.907V118.5H94.672V1.469h20.937l0.782 8.281c5.468-6.563 12.604-9.844 21.406-9.844 10.417 0 18.515 3.854 24.297 11.563 5.781 7.708 8.672 18.333 8.672 31.875v1.172zm-22.578-1.641c0-7.865-1.394-13.932-4.18-18.203-2.787-4.271-6.836-6.406-12.149-6.406-7.083 0-11.953 2.708-14.609 8.125V61c2.76 5.573 7.682 8.359 14.766 8.359 10.781 0 16.172-8.828 16.172-26.484z"
+      android:strokeWidth="1"/>
+</vector>
