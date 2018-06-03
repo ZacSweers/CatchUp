@@ -147,7 +147,8 @@ abstract class GitHubMetaModule {
         R.string.github,
         R.color.githubAccent,
         R.drawable.logo_github,
-        firstPageKey = ""
+        firstPageKey = "",
+        enabled = BuildConfig.GITHUB_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
     )
   }
 }

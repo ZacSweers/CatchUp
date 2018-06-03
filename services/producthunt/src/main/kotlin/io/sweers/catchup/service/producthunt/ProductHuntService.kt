@@ -108,7 +108,8 @@ abstract class ProductHuntMetaModule {
         R.color.phAccent,
         R.drawable.logo_ph,
         pagesAreNumeric = true,
-        firstPageKey = "0"
+        firstPageKey = "0",
+        enabled = BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
     )
   }
 }

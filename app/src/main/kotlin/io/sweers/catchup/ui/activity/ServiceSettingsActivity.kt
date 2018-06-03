@@ -140,7 +140,7 @@ class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
               // Create an "enabled" pref
               val enabledPref = SwitchPreference(activity).apply {
                 title = resources.getString(R.string.enabled)
-                key = meta.enabledKey
+                key = meta.enabledPreferenceKey
 //                themeColor = metaColor
                 setDefaultValue(true)
               }
@@ -151,7 +151,7 @@ class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
                 when (config) {
                   is ActivityConfiguration -> {
                     category.addPreference(Preference(activity).apply {
-                      dependency = meta.enabledKey
+                      dependency = meta.enabledPreferenceKey
                       setOnPreferenceClickListener {
                         startActivity(Intent(activity, config.activity))
                         true
@@ -160,7 +160,7 @@ class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
                   }
                   is PreferencesConfiguration -> {
                     category.addPreference(Preference(activity).apply {
-                      dependency = meta.enabledKey
+                      dependency = meta.enabledPreferenceKey
                       setOnPreferenceClickListener {
                         startActivity(Intent(activity, ServiceSettingsActivity::class.java).apply {
                           putExtra(TARGET_PREF_RESOURCE, config.preferenceResource)

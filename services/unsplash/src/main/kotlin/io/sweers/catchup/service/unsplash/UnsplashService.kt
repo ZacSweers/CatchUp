@@ -114,7 +114,8 @@ abstract class UnsplashMetaModule {
         R.drawable.logo_unsplash,
         isVisual = true,
         pagesAreNumeric = true,
-        firstPageKey = "1"
+        firstPageKey = "1",
+        enabled = BuildConfig.UNSPLASH_API_KEY.run { !isNullOrEmpty() && !equals("null") }
     )
   }
 }

@@ -111,7 +111,8 @@ abstract class ImgurMetaModule {
         R.drawable.logo_imgur,
         isVisual = true,
         pagesAreNumeric = true,
-        firstPageKey = "0"
+        firstPageKey = "0",
+        enabled = BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN.run { !isNullOrEmpty() && !equals("null") }
     )
   }
 }
@@ -153,7 +154,7 @@ abstract class ImgurModule {
     internal fun provideImgurService(@InternalApi client: Lazy<OkHttpClient>,
         @InternalApi moshi: Moshi,
         rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): ImgurApi {
-      return Builder().baseUrl(ImgurApi.Companion.ENDPOINT)
+      return Builder().baseUrl(ImgurApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))

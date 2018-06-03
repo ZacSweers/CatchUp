@@ -115,7 +115,10 @@ class MainActivity : BaseActivity() {
           sharedPreferences: SharedPreferences,
           services: Map<String, @JvmSuppressWildcards Provider<Service>>): Map<String, Provider<Service>> {
         return services
-            .filter { sharedPreferences.getBoolean(serviceMetas[it.key]!!.enabledKey, true) }
+            .filter {
+              serviceMetas[it.key]!!.enabled && sharedPreferences.getBoolean(
+                  serviceMetas[it.key]!!.enabledPreferenceKey, true)
+            }
             .mapValues { (_, value) ->
               Provider<Service> {
                 StorageBackedService(serviceDao, value.get())

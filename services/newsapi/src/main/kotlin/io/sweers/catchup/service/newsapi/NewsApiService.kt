@@ -132,7 +132,8 @@ abstract class NewsApiMetaModule {
         R.color.nsAccent,
         R.drawable.logo_ns,
         pagesAreNumeric = true,
-        firstPageKey = "1"
+        firstPageKey = "1",
+        enabled = BuildConfig.NEWS_API_API_KEY.run { !isNullOrEmpty() && !equals("null") }
     )
   }
 }

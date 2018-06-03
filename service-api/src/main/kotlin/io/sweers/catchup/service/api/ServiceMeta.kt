@@ -28,7 +28,8 @@ data class ServiceMeta(
     val isVisual: Boolean = false,
     val firstPageKey: String,
     val pagesAreNumeric: Boolean = false,
-    val serviceConfiguration: ServiceConfiguration? = null
+    val serviceConfiguration: ServiceConfiguration? = null,
+    val enabled: Boolean = true
 ) {
-  val enabledKey = "service_config_${id}_enabled"
+  val enabledPreferenceKey = "service_config_${id}_enabled"
 }
