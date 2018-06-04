@@ -18,6 +18,8 @@ package io.sweers.catchup.util
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
+import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import io.sweers.catchup.P
@@ -31,16 +33,32 @@ fun Activity.updateNavBarColor(
   @Suppress("CascadeIf") // Because I think if-else makes more sense readability-wise
   if (color != null && P.ThemeNavigationBar.get()) {
     window.navigationBarColor = color
+    window.navigationBarDividerColor = Color.TRANSPARENT
+    window.decorView.clearLightNavBar() // TODO why do I need to do this every time?
   } else if (recreate) {
     recreate()
   } else {
-    // SOME devices have naturally light status bars, try to cover for that here if we're in
-    // night mode
     val currentColor = window.navigationBarColor
-    if (context.isInNightMode() && !ColorUtils.isDark(currentColor)) {
-      if (!ColorUtils.isDark(currentColor)) {
+    val isDark = ColorUtils.isDark(currentColor)
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+      // SOME devices have naturally light status bars, try to cover for that here if we're in
+      // night mode
+      if (context.isInNightMode() && !isDark) {
         window.navigationBarColor = ContextCompat.getColor(context,
             R.color.colorPrimaryDark)
+      }
+    } else {
+      if (context.isInNightMode()) {
+        window.navigationBarColor = ContextCompat.getColor(context,
+            R.color.colorPrimaryDark)
+        window.navigationBarDividerColor = Color.TRANSPARENT
+        window.decorView.clearLightNavBar()
+      } else {
+        window.navigationBarColor = ContextCompat.getColor(context,
+            R.color.colorPrimary)
+        window.navigationBarDividerColor = ContextCompat.getColor(context,
+            R.color.colorPrimaryDark)
+        window.decorView.setLightNavBar()
       }
     }
   }

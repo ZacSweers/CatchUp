@@ -25,17 +25,18 @@ import android.view.View
 
 fun View.setLightStatusBar() {
   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-    var flags = systemUiVisibility
-    // TODO noop if it's already set
-    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-    systemUiVisibility = flags
+    if ((View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR and systemUiVisibility) != View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) {
+      var flags = systemUiVisibility
+      flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+      systemUiVisibility = flags
+    }
   }
 }
 
 fun View.clearLightStatusBar() {
   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
     var flags = systemUiVisibility
-    // TODO noop if it's already not set
+    // TODO noop if it's already not set. My bitwise-fu is not strong enough to figure out the inverse of setting it
     flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
     systemUiVisibility = flags
   }
@@ -43,17 +44,18 @@ fun View.clearLightStatusBar() {
 
 fun View.setLightNavBar() {
   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-    var flags = systemUiVisibility
-    // TODO noop if it's already set
-    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-    systemUiVisibility = flags
+    if ((View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR and systemUiVisibility) != View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR) {
+      var flags = systemUiVisibility
+      flags = flags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+      systemUiVisibility = flags
+    }
   }
 }
 
 fun View.clearLightNavBar() {
   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
     var flags = systemUiVisibility
-    // TODO noop if it's already not set
+    // TODO noop if it's already not set. My bitwise-fu is not strong enough to figure out the inverse of setting it
     flags = flags and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
     systemUiVisibility = flags
   }
