@@ -40,8 +40,8 @@ fun String?.execute(workingDir: File, fallback: String): String {
 
 object deps {
   object versions {
-    const val androidTestSupport = "1.1.0-alpha1"
-    const val androidx = "1.0.0-alpha1"
+    const val androidTestSupport = "1.1.0-alpha3"
+    const val androidx = "1.0.0-alpha3"
     const val androidxArch = "2.0.0-alpha1"
     const val apollo = "0.5.0"
     const val autodispose = "0.8.0"
@@ -85,10 +85,10 @@ object deps {
     }
 
     object build {
-      const val buildToolsVersion = "27.0.3"
-      const val compileSdkVersion = "android-P"
+      const val buildToolsVersion = "28.0.0"
+      const val compileSdkVersion = 28
       const val minSdkVersion = 21
-      const val targetSdkVersion = "P"
+      const val targetSdkVersion = 28
     }
 
     object firebase {
@@ -114,6 +114,7 @@ object deps {
       const val viewPager = "androidx.viewpager:viewpager:${versions.androidx}"
       const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${versions.androidx}"
       const val palette = "androidx.palette:palette:${versions.androidx}"
+      const val paletteKtx = "androidx.palette:palette-ktx:${versions.androidx}"
       const val percent = "androidx.percentlayout:percentlayout:${versions.androidx}"
       const val recyclerView = "androidx.recyclerview:recyclerview:${versions.androidx}"
       const val compat = "androidx.core:core:${versions.androidx}"
@@ -166,7 +167,7 @@ object deps {
 
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.2.6"
-      const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.1-beta1"
+      const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.2"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
     }

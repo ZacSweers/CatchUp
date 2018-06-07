@@ -87,6 +87,7 @@ android {
     exclude("META-INF/*.kotlin_module")
     exclude("META-INF/*.version")
     exclude("META-INF/com.uber.crumb/**")
+    exclude("META-INF/androidx.*")
   }
   buildTypes {
     getByName("debug") {
@@ -382,6 +383,7 @@ dependencies {
   implementation(deps.android.support.design)
   debugImplementation(deps.android.support.drawerLayout)
   implementation(deps.android.support.palette)
+  implementation(deps.android.support.paletteKtx)
   implementation(deps.android.support.viewPager)
   implementation(deps.android.support.swipeRefresh)
   implementation(deps.android.support.legacyAnnotations)
