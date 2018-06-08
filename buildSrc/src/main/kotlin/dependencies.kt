@@ -99,15 +99,15 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha16"
-    const val ktx = "androidx.core:core-ktx:1.0.0-alpha1"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha17"
+    const val ktx = "androidx.core:core-ktx:${versions.androidx}"
 
     object support {
       const val annotations = "androidx.annotation:annotation:${versions.androidx}"
       const val legacyAnnotations = "com.android.support:support-annotations:${versions.legacySupport}"
       const val appCompat = "androidx.appcompat:appcompat:${versions.androidx}"
       const val cardView = "androidx.cardview:cardview:${versions.androidx}"
-      const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.0"
+      const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.1"
       const val customTabs = "androidx.browser:browser:${versions.androidx}"
       const val design = "com.google.android.material:material:${versions.androidx}"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:${versions.androidx}"
@@ -166,7 +166,7 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.2.6"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.2.7"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.2"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
@@ -180,7 +180,7 @@ object deps {
       const val snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
 
-    const val javapoet = "com.squareup:javapoet:1.11.0"
+    const val javapoet = "com.squareup:javapoet:1.11.1"
   }
 
   object butterKnife {
@@ -306,7 +306,7 @@ object deps {
   }
 
   object misc {
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.3.4"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.4.1"
 
     object debug {
       const val madge = "com.jakewharton.madge:madge:1.1.4"
@@ -321,7 +321,7 @@ object deps {
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
     const val lottie = "com.airbnb.android:lottie:2.5.5"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-    const val okio = "com.squareup.okio:okio:1.14.0"
+    const val okio = "com.squareup.okio:okio:1.14.1"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:2.3.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.11.0"
     const val timber = "com.jakewharton.timber:timber:4.7.0"
@@ -363,7 +363,7 @@ object deps {
       const val design = "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
     }
 
-    const val java = "io.reactivex.rxjava2:rxjava:2.1.13"
+    const val java = "io.reactivex.rxjava2:rxjava:2.1.14"
 
     object palette {
       const val core = "io.sweers.rxpalette:rxpalette:${versions.rxpalette}"

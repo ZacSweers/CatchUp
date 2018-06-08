@@ -21,7 +21,8 @@ import android.text.format.DateUtils
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import androidx.constraintlayout.widget.ConstraintSet
+import androidx.constraintlayout.ConstraintLayout
+import androidx.constraintlayout.ConstraintSet
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RxViewHolder
@@ -44,7 +45,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
     itemView), BindableCatchUpItemViewHolder {
 
   @BindView(R.id.container)
-  internal lateinit var container: androidx.constraintlayout.widget.ConstraintLayout
+  internal lateinit var container: ConstraintLayout
   @BindView(R.id.tags_container)
   internal lateinit var tagsContainer: View
   @BindView(R.id.title)

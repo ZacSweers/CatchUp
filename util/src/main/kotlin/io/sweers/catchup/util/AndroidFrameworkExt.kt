@@ -33,7 +33,7 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.UiThread
 import androidx.core.content.ContextCompat
-import androidx.core.content.systemService
+import androidx.core.content.getSystemService
 import io.reactivex.Observable
 import java.io.File
 import java.io.IOException
@@ -142,7 +142,7 @@ inline fun Resources.dp2px(dipValue: Float) =
 @TargetApi(VERSION_CODES.M)
 inline fun <reified T> Context.getSystemService(): T {
   if (isM()) {
-    return systemService<T>()
+    return getSystemService<T>()!!
   } else {
     return when (T::class) {
       android.view.WindowManager::class -> Context.WINDOW_SERVICE

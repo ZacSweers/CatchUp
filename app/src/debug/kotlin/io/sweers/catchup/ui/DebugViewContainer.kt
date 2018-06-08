@@ -199,11 +199,12 @@ internal class DebugViewContainer @Inject constructor(
       } else {
         activity.window
             .addFlags(FLAG_SHOW_WHEN_LOCKED)
-        val power = activity.systemService<PowerManager>()
-        power.newWakeLock(FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
-            "CatchUp:wakeup!").run {
-          acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
-          release()
+        activity.systemService<PowerManager>()?.run {
+          newWakeLock(FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
+              "CatchUp:wakeup!").run {
+            acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
+            release()
+          }
         }
       }
     }
