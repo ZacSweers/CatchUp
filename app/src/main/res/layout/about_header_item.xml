@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.constraintlayout.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -59,4 +59,4 @@
       style="@style/TextAppearance.AppCompat.Small"
       />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.ConstraintLayout>
