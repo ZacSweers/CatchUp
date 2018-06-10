@@ -26,6 +26,7 @@ fun isP(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
 
 // Not totally safe to use yet
 // https://issuetracker.google.com/issues/64550633
-inline fun sdk(level: Int, func: () -> Unit) {
+inline fun sdk(level: Int, func: () -> Unit): String {
   if (Build.VERSION.SDK_INT >= level) func.invoke()
+  return ""
 }
