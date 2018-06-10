@@ -25,7 +25,6 @@ inline fun String.nullIfBlank() = if (isBlank()) null else this
 
 inline fun CharSequence?.ifNotEmpty(body: () -> Unit) {
   if (!isNullOrEmpty()) {
-    println("Hello world")
     body()
   }
 }
