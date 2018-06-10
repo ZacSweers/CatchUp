@@ -64,4 +64,5 @@
   <string name="save">Save</string>
   <string name="service_icon">Service icon</string>
   <string name="transition_image" translatable="false">image</string>
+  <string name="shuffle">Shuffle</string>
 </resources>
