@@ -21,6 +21,7 @@ import com.apollographql.apollo.api.Input
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.exception.ApolloException
 import com.apollographql.apollo.rx2.Rx2Apollo
+import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -142,7 +143,7 @@ abstract class GitHubMetaModule {
     @Provides
     @Reusable
     @JvmStatic
-    internal fun provideGitHubServiceMeta() = ServiceMeta(
+    internal fun provideGitHubServiceMeta(moshi: Moshi) = ServiceMeta(
         SERVICE_KEY,
         R.string.github,
         R.color.githubAccent,
