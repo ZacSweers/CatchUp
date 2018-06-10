@@ -210,11 +210,6 @@ class OrderServicesController : ButterKnifeController() {
             },
             postDisplay = { save.hide() }
         ))
-    printStuff3()
-  }
-
-  fun printStuff3() {
-    println("Foo")
   }
 
   override fun handleBack(): Boolean {
