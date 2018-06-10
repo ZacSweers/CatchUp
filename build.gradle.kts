@@ -82,6 +82,7 @@ allprojects {
     maven { url = uri(deps.build.repositories.jitpack) }
     maven { url = uri(deps.build.repositories.snapshots) }
     maven { url = uri("https://oss.jfrog.org/libs-snapshot") }
+    maven { url = uri(deps.build.repositories.kotlineap) }
   }
 
   configurations.all {
