@@ -43,9 +43,9 @@ internal class DribbbleJsoupConverter private constructor() : Converter<Response
   /** Factory for creating converter. We only care about decoding responses.  */
   class Factory : Converter.Factory() {
 
-    override fun responseBodyConverter(type: Type?,
-        annotations: Array<Annotation>?,
-        retrofit: Retrofit?): Converter<ResponseBody, *>? {
+    override fun responseBodyConverter(type: Type,
+        annotations: Array<Annotation>,
+        retrofit: Retrofit): Converter<ResponseBody, *>? {
       return INSTANCE
     }
   }

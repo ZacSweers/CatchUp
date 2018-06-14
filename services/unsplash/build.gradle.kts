@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   id("com.android.library")
   kotlin("android")
@@ -52,6 +54,12 @@ android {
     textOutput("stdout")
     htmlReport = !deps.build.ci
     xmlReport = !deps.build.ci
+  }
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xjsr305=strict", "-Xprogressive")
   }
 }
 

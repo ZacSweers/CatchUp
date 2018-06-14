@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   id("com.android.library")
   kotlin("android")
@@ -26,6 +28,12 @@ android {
   defaultConfig {
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
+  }
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xjsr305=strict", "-Xprogressive")
   }
 }
 

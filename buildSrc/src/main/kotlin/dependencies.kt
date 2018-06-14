@@ -57,7 +57,7 @@ object deps {
     const val glide = "4.7.1"
     const val hyperion = "0.9.23"
     const val inspector = "0.3.0"
-    const val kotlin = "1.2.50-eap-62"
+    const val kotlin = "1.2.50"
     const val leakcanary = "1.5.4"
     const val legacySupport = "28.0.0-alpha1"
     const val moshi = "1.6.0"
@@ -99,7 +99,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha17"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-alpha18"
     const val ktx = "androidx.core:core-ktx:${versions.androidx}"
 
     object support {
@@ -111,6 +111,8 @@ object deps {
       const val customTabs = "androidx.browser:browser:${versions.androidx}"
       const val design = "com.google.android.material:material:${versions.androidx}"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:${versions.androidx}"
+      const val emoji = "androidx:emoji:emoji:${versions.androidx}"
+      const val emojiAppcompat = "androidx:emoji:emoji-appcompat:${versions.androidx}"
       const val viewPager = "androidx.viewpager:viewpager:${versions.androidx}"
       const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${versions.androidx}"
       const val palette = "androidx.palette:palette:${versions.androidx}"

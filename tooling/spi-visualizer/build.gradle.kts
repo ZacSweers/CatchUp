@@ -1,20 +1,8 @@
 import org.gradle.api.JavaVersion.VERSION_1_8
 
 plugins {
-//  kotlin("jvm")
-//  kotlin("kapt")
   id("java-library")
 }
-
-//apply {
-//  from(rootProject.file("gradle/config-kotlin-sources.gradle"))
-//}
-
-//kapt {
-//  correctErrorTypes = true
-//  useBuildCache = true
-//  mapDiagnosticLocations = true
-//}
 
 java {
   sourceCompatibility = VERSION_1_8
