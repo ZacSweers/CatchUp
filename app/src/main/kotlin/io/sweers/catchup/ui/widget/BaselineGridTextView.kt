@@ -31,12 +31,10 @@ import io.sweers.catchup.R
 /**
  * An extension to [android.widget.TextView] which aligns text to a 4dp baseline grid.
  *
- *
  * To achieve this we expose a `lineHeightHint` allowing you to specify the desired line
  * height (alternatively a `lineHeightMultiplierHint` to use a multiplier of the text size).
  * This line height will be adjusted to be a multiple of 4dp to ensure that baselines sit on
  * the grid.
- *
  *
  * We also adjust the `topPadding` to ensure that the first line's baseline is on the grid
  * (relative to the view's top) and the `bottomPadding` to ensure this view's height is a
