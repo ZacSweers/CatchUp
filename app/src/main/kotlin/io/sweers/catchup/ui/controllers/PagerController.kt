@@ -75,9 +75,8 @@ import javax.inject.Inject
 fun ServiceMeta.toServiceHandler() = ServiceHandler(
     name,
     icon,
-    themeColor,
-    { ServiceController.newInstance(id) }
-)
+    themeColor
+) { ServiceController.newInstance(id) }
 
 data class ServiceHandler(@StringRes val name: Int,
     @DrawableRes val icon: Int,
