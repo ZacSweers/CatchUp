@@ -68,8 +68,8 @@ kapt {
 }
 
 dependencies {
-  kapt(kapt(deps.dagger.apt.compiler))
-  kapt(kapt(deps.crumb.compiler))
+  kapt(deps.dagger.apt.compiler)
+  kapt(deps.crumb.compiler)
   kapt(project(":service-registry:service-registry-compiler"))
 
   implementation(project(":service-registry:service-registry-annotations"))
