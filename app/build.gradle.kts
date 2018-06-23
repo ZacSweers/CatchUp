@@ -381,6 +381,8 @@ dependencies {
   implementation(deps.android.support.constraintLayout)
   implementation(deps.android.support.customTabs)
   implementation(deps.android.support.design)
+  implementation(deps.android.support.emoji)
+  implementation(deps.android.support.emojiAppcompat)
   debugImplementation(deps.android.support.drawerLayout)
   implementation(deps.android.support.palette)
   implementation(deps.android.support.paletteKtx)

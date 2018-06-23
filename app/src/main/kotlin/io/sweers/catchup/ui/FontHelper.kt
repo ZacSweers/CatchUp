@@ -17,12 +17,17 @@
 package io.sweers.catchup.ui
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.HandlerThread
 import androidx.core.provider.FontRequest
 import androidx.core.provider.FontsContractCompat
 import androidx.core.provider.FontsContractCompat.FontRequestCallback
+import androidx.emoji.text.EmojiCompat
+import androidx.emoji.text.EmojiCompat.InitCallback
+import androidx.emoji.text.FontRequestEmojiCompatConfig
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
@@ -40,7 +45,22 @@ class FontHelper @Inject constructor(@ApplicationContext context: Context) {
   }
 
   fun load(context: Context) {
-    d { "Downloading font" }
+    d { "Downloading fonts" }
+    val emojiRequest = FontRequest("com.google.android.gms.fonts",
+        "com.google.android.gms",
+        "Noto Color Emoji Compat",
+        R.array.com_google_android_gms_fonts_certs)
+    val emojiConfig = FontRequestEmojiCompatConfig(context, emojiRequest)
+        .setEmojiSpanIndicatorEnabled(BuildConfig.DEBUG)
+        .setEmojiSpanIndicatorColor(Color.GREEN)
+        .registerInitCallback(object : InitCallback() {
+          override fun onInitialized() = d { "EmojiCompat initialized" }
+
+          override fun onFailed(throwable: Throwable?) {
+            e(throwable) { "EmojiCompat initialization failure." }
+          }
+        })
+    EmojiCompat.init(emojiConfig)
     val request = FontRequest("com.google.android.gms.fonts",
         "com.google.android.gms",
         "Nunito",
