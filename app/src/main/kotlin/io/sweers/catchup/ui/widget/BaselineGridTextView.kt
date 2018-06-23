@@ -22,7 +22,7 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.view.View.MeasureSpec.getMode
-import androidx.appcompat.widget.AppCompatTextView
+import androidx.emoji.widget.EmojiAppCompatTextView
 import io.sweers.barber.Barber
 import io.sweers.barber.Kind
 import io.sweers.barber.StyledAttr
@@ -43,7 +43,7 @@ import io.sweers.catchup.R
 class BaselineGridTextView @JvmOverloads constructor(context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = android.R.attr.textViewStyle)
-  : AppCompatTextView(context, attrs, defStyleAttr) {
+  : EmojiAppCompatTextView(context, attrs, defStyleAttr) {
 
   companion object {
     private val FOUR_DIP: Float = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
