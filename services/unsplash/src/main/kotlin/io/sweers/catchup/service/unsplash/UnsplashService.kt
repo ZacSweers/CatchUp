@@ -34,6 +34,7 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
+import io.sweers.catchup.service.unsplash.UnsplashApi.OrderBy.POPULAR
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
@@ -61,7 +62,7 @@ internal class UnsplashService @Inject constructor(
 
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
     val page = request.pageId.toInt()
-    return api.getCurated(page, 50)
+    return api.getPhotos(page, 50, POPULAR)
         .flattenAsObservable { it }
         .map {
           CatchUpItem(

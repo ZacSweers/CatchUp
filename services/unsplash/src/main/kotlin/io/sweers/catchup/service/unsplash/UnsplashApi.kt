@@ -26,15 +26,23 @@ import retrofit2.http.Query
  */
 internal interface UnsplashApi {
 
-  @GET("/photos/curated")
-  fun getCurated(
+  @GET("/photos")
+  fun getPhotos(
       @Query("page") page: Int, // Default 1
-      @Query("per_page") pageSize: Int // Default 10
+      @Query("per_page") pageSize: Int, // Default 10
+      @Query("order_by") orderBy: OrderBy // latest
   ): Single<List<UnsplashPhoto>>
 
   companion object {
     const val HOST = "api.unsplash.com"
     const val ENDPOINT = "https://$HOST"
   }
+
+  enum class OrderBy {
+    LATEST, OLDEST, POPULAR;
+
+    override fun toString(): String {
+      return super.toString().toLowerCase()
+    }}
 
 }
