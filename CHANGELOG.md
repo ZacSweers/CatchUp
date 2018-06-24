@@ -1,4 +1,8 @@
+* **New:** Integrate EmojiCompat for futureproofing emojis on all API versions
+* **New:** Build against Android P (SDK 28)
+* **New:** Use light nav bar in Marshmallow+
 * **Fix:** A bunch of miscellaneous rare crash cases
+* **Under the hood:** Building against AndroidX libraries
 
 ## 0.3.5 (2018-03-29)
 * **Fix:** Accidental proguard issue that would break HackerNews
