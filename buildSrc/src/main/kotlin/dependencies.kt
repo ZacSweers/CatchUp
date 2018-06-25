@@ -107,7 +107,7 @@ object deps {
       const val legacyAnnotations = "com.android.support:support-annotations:${versions.legacySupport}"
       const val appCompat = "androidx.appcompat:appcompat:${versions.androidx}"
       const val cardView = "androidx.cardview:cardview:${versions.androidx}"
-      const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.1"
+      const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.2"
       const val customTabs = "androidx.browser:browser:${versions.androidx}"
       const val design = "com.google.android.material:material:${versions.androidx}"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:${versions.androidx}"
@@ -168,7 +168,7 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.2.7"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.2.8"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.2"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
@@ -308,7 +308,7 @@ object deps {
   }
 
   object misc {
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.4.1"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.5.0"
 
     object debug {
       const val madge = "com.jakewharton.madge:madge:1.1.4"
@@ -365,7 +365,7 @@ object deps {
       const val design = "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
     }
 
-    const val java = "io.reactivex.rxjava2:rxjava:2.1.14"
+    const val java = "io.reactivex.rxjava2:rxjava:2.1.15"
 
     object palette {
       const val core = "io.sweers.rxpalette:rxpalette:${versions.rxpalette}"
@@ -406,6 +406,6 @@ object deps {
 
     const val junit = "junit:junit:4.12"
     const val robolectric = "org.robolectric:robolectric:4.0-alpha-1"
-    const val truth = "com.google.truth:truth:0.40"
+    const val truth = "com.google.truth:truth:0.41"
   }
 }

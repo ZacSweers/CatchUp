@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<androidx.constraintlayout.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -30,7 +30,7 @@
     android:stateListAnimator="@animator/raise"
     >
 
-  <androidx.constraintlayout.Group
+  <androidx.constraintlayout.widget.Group
       android:id="@+id/tags_container"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -38,7 +38,7 @@
             tag,timestamp"
       />
 
-  <androidx.constraintlayout.Guideline
+  <androidx.constraintlayout.widget.Guideline
       android:id="@+id/guideline"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -46,7 +46,7 @@
       app:layout_constraintGuide_begin="16dp"
       />
 
-  <androidx.constraintlayout.Guideline
+  <androidx.constraintlayout.widget.Guideline
       android:id="@+id/guideline_top"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -54,7 +54,7 @@
       app:layout_constraintGuide_begin="16dp"
       />
 
-  <androidx.constraintlayout.Guideline
+  <androidx.constraintlayout.widget.Guideline
       android:id="@+id/guideline_bottom"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -229,4 +229,4 @@
       tools:text="39"
       />
 
-</androidx.constraintlayout.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
