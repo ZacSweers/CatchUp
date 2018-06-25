@@ -16,12 +16,14 @@
 
 package io.sweers.catchup.service.github
 
+import android.graphics.Color
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Input
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.exception.ApolloException
 import com.apollographql.apollo.rx2.Rx2Apollo
 import dagger.Binds
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
@@ -30,6 +32,7 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojis
+import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -40,6 +43,8 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.service.github.GitHubApi.Language.All
+import io.sweers.catchup.service.github.GitHubApi.Since.DAILY
 import io.sweers.catchup.service.github.GitHubSearchQuery.AsRepository
 import io.sweers.catchup.service.github.model.SearchQuery
 import io.sweers.catchup.service.github.model.TrendingTimespan
@@ -48,7 +53,11 @@ import io.sweers.catchup.service.github.type.LanguageOrderField
 import io.sweers.catchup.service.github.type.OrderDirection
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
+import io.sweers.catchup.util.e
 import io.sweers.catchup.util.nullIfBlank
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -59,20 +68,61 @@ private const val SERVICE_KEY = "github"
 
 internal class GitHubService @Inject constructor(
     @InternalApi private val serviceMeta: ServiceMeta,
-    private val apolloClient: ApolloClient,
-    private val emojiMarkdownConverter: EmojiMarkdownConverter,
+    private val apolloClient: Lazy<ApolloClient>,
+    private val emojiMarkdownConverter: Lazy<EmojiMarkdownConverter>,
+    private val gitHubApi: Lazy<GitHubApi>,
     private val linkHandler: LinkHandler)
   : TextService {
 
   override fun meta() = serviceMeta
 
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
+    return fetchByScraping()
+        .onErrorResumeNext { t: Throwable ->
+          e(t) { "GitHub trending scraping failed." }
+          fetchByQuery(request)
+        }
+  }
+
+  override fun linkHandler() = linkHandler
+
+  private fun fetchByScraping(): Maybe<DataResult> {
+    return gitHubApi
+        .get()
+        .getTrending(language = All, since = DAILY)
+        .flattenAsObservable { it }
+        .map {
+          with(it) {
+            CatchUpItem(
+                id = "$author/$repoName".hashCode().toLong(),
+                title = "$repoName — $description",
+                author = author,
+                timestamp = null,
+                score = "★" to stars,
+                tag = language,
+                itemClickUrl = url,
+                mark = starsToday?.let {
+                  Mark(text = it.toString(),
+                      textPrefix = "+",
+                      icon = R.drawable.ic_star_black_24dp,
+                      iconTintColor = languageColor?.let { Color.parseColor(it) }
+                  )
+                }
+            )
+          }
+        }
+        .toList()
+        .map { DataResult(it, null) }
+        .toMaybe()
+  }
+
+  private fun fetchByQuery(request: DataRequest): Maybe<DataResult> {
     val query = SearchQuery(
         createdSince = TrendingTimespan.WEEK.createdSince(),
         minStars = 50)
         .toString()
 
-    val searchQuery = apolloClient.query(GitHubSearchQuery(query,
+    val searchQuery = apolloClient.get().query(GitHubSearchQuery(query,
         50,
         LanguageOrder.builder()
             .direction(OrderDirection.DESC)
@@ -95,7 +145,7 @@ internal class GitHubService @Inject constructor(
               .map {
                 with(it) {
                   val description = description()
-                      ?.let { " — ${replaceMarkdownEmojis(it, emojiMarkdownConverter)}" }
+                      ?.let { " — ${replaceMarkdownEmojis(it, emojiMarkdownConverter.get())}" }
                       .orEmpty()
 
                   CatchUpItem(
@@ -121,8 +171,6 @@ internal class GitHubService @Inject constructor(
         }
         .toMaybe()
   }
-
-  override fun linkHandler() = linkHandler
 }
 
 @Meta
@@ -161,5 +209,21 @@ abstract class GitHubModule {
   @ServiceKey(SERVICE_KEY)
   @Binds
   internal abstract fun githubService(githubService: GitHubService): Service
+
+  @Module
+  companion object {
+    @Provides
+    @JvmStatic
+    internal fun provideGitHubService(client: Lazy<OkHttpClient>,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): GitHubApi {
+      return Retrofit.Builder().baseUrl(GitHubApi.ENDPOINT)
+          .callFactory { client.get().newCall(it) }
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))
+          .validateEagerly(BuildConfig.DEBUG)
+          .build()
+          .create(GitHubApi::class.java)
+    }
+  }
 
 }

@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-include(
-  ":app",
-  ":libraries:retrofitconverters",
-  ":third_party:bypass",
-  ":service-api",
-  ":service-registry:service-registry",
-  ":service-registry:service-registry-annotations",
-  ":service-registry:service-registry-compiler",
-  ":services:slashdot",
-  ":services:reddit",
-  ":services:hackernews",
-  ":services:medium",
-  ":services:newsapi",
-  ":services:producthunt",
-  ":services:designernews",
-  ":services:dribbble",
-  ":services:imgur",
-  ":services:github",
-  ":services:unsplash",
-  ":services:uplabs",
-  ":gemoji",
-  ":tooling:spi-visualizer",
-  ":util"
+package io.sweers.catchup.service.github.model
+
+internal data class TrendingItem(
+    val author: String,
+    val repoName: String,
+    val url: String,
+    val description: String,
+    val stars: Int,
+    val forks: Int?,
+    val starsToday: Int?,
+    val language: String,
+    val languageColor: String?
 )

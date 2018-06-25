@@ -23,6 +23,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Maybe
+import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -133,7 +134,7 @@ abstract class DribbbleModule {
       return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(DribbbleJsoupConverter.Factory())
+          .addConverterFactory(DecodingConverter.newFactory(DribbbleParser::parse))
           .validateEagerly(BuildConfig.DEBUG)
           .build()
           .create(DribbbleApi::class.java)
