@@ -96,6 +96,8 @@ android {
       ext["enableBugsnag"] = false
       buildConfigField("String", "IMGUR_CLIENT_ACCESS_TOKEN",
           "\"${project.properties["catchup_imgur_access_token"].toString()}\"")
+      buildConfigField("boolean", "CRASH_ON_TIMBER_ERROR",
+          "${project.properties["CRASH_ON_TIMBER_ERROR"].toString()}")
     }
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",

@@ -26,6 +26,7 @@ import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
 import com.squareup.leakcanary.LeakCanary
+import io.sweers.catchup.BuildConfig
 import timber.log.Timber
 import timber.log.Timber.Tree
 
@@ -64,13 +65,16 @@ class DebugCatchUpApplication : CatchUpApplication() {
     Timber.plant(Timber.DebugTree())
     Timber.plant(lumberYard.tree())
     Timber.plant(StethoTree())
-    Timber.plant(object : Tree() {
-      override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        if (priority == Log.ERROR) {
-          throw RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
+
+    if (BuildConfig.CRASH_ON_TIMBER_ERROR) {
+      Timber.plant(object : Tree() {
+        override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+          if (priority == Log.ERROR) {
+            throw RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
+          }
         }
-      }
-    })
+      })
+    }
     Stetho.initializeWithDefaults(this)
   }
 }
