@@ -20,7 +20,7 @@ import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import okhttp3.HttpUrl
 
-class SummarizationInfo(
+data class SummarizationInfo(
     val value: String,
     val type: SummarizationType
 ) {
