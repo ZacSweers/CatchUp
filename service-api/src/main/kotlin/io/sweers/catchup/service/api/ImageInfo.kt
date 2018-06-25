@@ -17,7 +17,7 @@
 package io.sweers.catchup.service.api
 
 // Gross vars/constructors because of https://issuetracker.google.com/issues/67181813
-class ImageInfo(
+data class ImageInfo(
     var url: String,
     var animatable: Boolean,
     var bestSize: Pair<Int, Int>?

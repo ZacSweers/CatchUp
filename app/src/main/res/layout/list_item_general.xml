@@ -135,7 +135,7 @@
       android:fontFamily="@font/nunito"
       app:fontFamily="@font/nunito"
       app:layout_constraintBottom_toTopOf="@+id/title"
-      app:layout_constraintEnd_toStartOf="@+id/comments"
+      app:layout_constraintEnd_toStartOf="@+id/mark"
       app:layout_constraintStart_toEndOf="@+id/tag_divider"
       app:layout_constraintTop_toTopOf="@+id/guideline_top"
       app:layout_constraintVertical_bias="0"
@@ -156,7 +156,7 @@
       app:layout_constraintBottom_toTopOf="@+id/source"
       app:layout_constraintLeft_toLeftOf="@+id/guideline"
       app:layout_constraintLeft_toRightOf="@+id/guideline"
-      app:layout_constraintRight_toLeftOf="@+id/comments"
+      app:layout_constraintRight_toLeftOf="@+id/mark"
       app:layout_constraintTop_toBottomOf="@+id/timestamp"
       app:layout_goneMarginTop="0dp"
       tools:text="Show HN: Into.js Hints"
@@ -204,7 +204,7 @@
       android:fontFamily="@font/nunito"
       app:fontFamily="@font/nunito"
       app:layout_constraintBottom_toBottomOf="@+id/guideline_bottom"
-      app:layout_constraintEnd_toStartOf="@+id/comments"
+      app:layout_constraintEnd_toStartOf="@+id/mark"
       app:layout_constraintStart_toEndOf="@+id/author_divider"
       app:layout_constraintTop_toBottomOf="@+id/title"
       tools:text="medium.com"
@@ -212,7 +212,7 @@
       />
 
   <io.sweers.catchup.ui.widget.BaselineGridTextView
-      android:id="@+id/comments"
+      android:id="@+id/mark"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center"

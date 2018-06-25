@@ -34,7 +34,7 @@ import org.threeten.bp.Instant
     CatchUpItem::class,
     SmmryStorageEntry::class
     ],
-    version = 1)
+    version = 2)
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {
 

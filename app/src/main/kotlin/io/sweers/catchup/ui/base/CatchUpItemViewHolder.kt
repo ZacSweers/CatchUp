@@ -16,11 +16,14 @@
 
 package io.sweers.catchup.ui.base
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.ConstraintLayout
 import androidx.constraintlayout.ConstraintSet
 import androidx.core.graphics.drawable.DrawableCompat
@@ -35,6 +38,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.Mark
 import io.sweers.catchup.util.format
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
@@ -62,12 +66,14 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
   internal lateinit var authorDivider: TextView
   @BindView(R.id.source)
   internal lateinit var source: TextView
-  @BindView(R.id.comments)
-  internal lateinit var comments: TextView
+  @BindView(R.id.mark)
+  internal lateinit var mark: TextView
   @BindView(R.id.tag)
   internal lateinit var tag: TextView
   @BindView(R.id.tag_divider)
   internal lateinit var tagDivider: View
+
+  private val markBackground: Drawable
   private var unbinder: Unbinder? = null
 
   private val constraintSet: ConstraintSet
@@ -75,6 +81,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
   init {
     unbinder?.unbind()
     unbinder = ButterKnife.bind(this, itemView)
+    markBackground = mark.background
     constraintSet = ConstraintSet()
   }
 
@@ -84,43 +91,54 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
     score.setTextColor(color)
     tag.setTextColor(color)
     scoreDivider.setTextColor(color)
-    DrawableCompat.setTintList(comments.compoundDrawables[1], ColorStateList.valueOf(color))
+    tintComments(color)
+  }
+
+  private fun tintComments(@ColorInt color: Int) {
+    if (mark.background == null) {
+      mark.background = markBackground.mutate()
+    }
+    DrawableCompat.setTintList(mark.compoundDrawables[1], ColorStateList.valueOf(color))
   }
 
   override fun bind(item: CatchUpItem,
       linkHandler: LinkHandler,
       itemClickHandler: ((String) -> Any)?,
-      commentClickHandler: ((String) -> Any)?) {
+      markClickHandler: ((String) -> Any)?) {
     title(item.title.trim())
     score(item.score)
     timestamp(item.timestamp)
     author(item.author?.trim())
     source(item.source?.trim())
-    comments(item.commentCount)
     tag(item.tag?.trim())
 
-    val itemClickUrl = item.itemClickUrl ?: item.itemCommentClickUrl
+    val markClickUrl = item.mark?.clickUrl
+    val itemClickUrl = item.itemClickUrl ?: markClickUrl
     itemClickUrl?.let {
       if (itemClickHandler != null) {
         itemClickHandler(it)
       }
     }
-    item.itemCommentClickUrl?.let {
-      if (commentClickHandler != null) {
-        commentClickHandler(it)
-      }
-    } ?: hideComments()
 
-    if (item.hideComments) {
-      hideComments()
-    }
+    item.mark?.let { sourceMark ->
+      mark(sourceMark)
+      if (markClickUrl != null && markClickHandler != null) {
+        mark.isClickable = true
+        mark.isFocusable = true
+        markClickHandler(markClickUrl)
+      } else {
+        mark.background = null
+        mark.isClickable = false
+        mark.isFocusable = false
+      }
+    } ?: run { hideMark() }
   }
 
   override fun itemClicks() = container.clicks()
 
   override fun itemLongClicks() = container.longClicks()
 
-  override fun itemCommentClicks() = comments.clicks()
+  override fun itemCommentClicks() = mark.clicks()
 
   fun title(titleText: CharSequence?) {
     title.text = titleText
@@ -232,12 +250,28 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
     }
   }
 
-  fun comments(commentsCount: Int) {
-    comments.show()
-    comments.text = commentsCount.toLong().format()
+  @SuppressLint("SetTextI18n")
+  fun mark(sourceMark: Mark) {
+    mark.show()
+    sourceMark.text?.let { text ->
+      val finalText = if (sourceMark.formatTextAsCount) {
+        text.toLong().format()
+      } else text
+      mark.text = "${sourceMark.textPrefix.orEmpty()}$finalText"
+    }
+
+    sourceMark.icon?.let { color ->
+      mark.setCompoundDrawablesWithIntrinsicBounds(null,
+          AppCompatResources.getDrawable(mark.context, color),
+          null,
+          null)
+
+      tintComments(sourceMark.iconTintColor ?: score.currentTextColor)
+    }
+
   }
 
-  fun hideComments() = comments.hide()
+  fun hideMark() = mark.hide()
 
   private fun getVerticalBias(sourceBlank: Boolean,
       authorBlank: Boolean) = if (sourceBlank && authorBlank) {

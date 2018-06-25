@@ -357,7 +357,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
           author(item.license)
           source(null)
           tag(null)
-          hideComments()
+          hideMark()
           itemClicks()
               .flatMapCompletable {
                 // Search up to the first sticky header position

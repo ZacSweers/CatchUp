@@ -28,6 +28,7 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.ImageInfo
 import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
@@ -66,14 +67,14 @@ internal class DribbbleService @Inject constructor(
               timestamp = it.createdAt,
               author = "/u/" + it.user.name,
               source = null,
-              commentCount = it.commentsCount.toInt(),
               tag = null,
               itemClickUrl = it.htmlUrl,
               imageInfo = ImageInfo(
                   it.images.best(),
                   it.animated,
                   it.images.bestSize()
-              )
+              ),
+              mark = createCommentMark(count = it.commentsCount.toInt())
           )
         }
         .toList()

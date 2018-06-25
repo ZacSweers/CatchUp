@@ -29,6 +29,7 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
@@ -70,11 +71,13 @@ internal class SlashdotService @Inject constructor(
               timestamp = updated,
               author = author.name,
               source = department,
-              commentCount = comments,
               tag = section,
               itemClickUrl = id,
-              itemCommentClickUrl = "$id#comments",
-              summarizationInfo = SummarizationInfo(summary.substringBefore("<p>"), NONE)
+              summarizationInfo = SummarizationInfo(summary.substringBefore("<p>"), NONE),
+              mark = createCommentMark(
+                  count = comments,
+                  clickUrl = "$id#comments"
+              )
           )
         }
         .toList()

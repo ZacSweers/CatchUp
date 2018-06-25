@@ -28,6 +28,7 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
@@ -71,9 +72,11 @@ internal class ProductHuntService @Inject constructor(
                 timestamp = createdAt,
                 author = user.name,
                 tag = firstTopic,
-                commentCount = commentsCount,
                 itemClickUrl = redirectUrl,
-                itemCommentClickUrl = discussionUrl
+                mark = createCommentMark(
+                    count = commentsCount,
+                    clickUrl = discussionUrl
+                )
             )
           }
         }

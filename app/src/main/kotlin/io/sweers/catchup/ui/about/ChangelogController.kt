@@ -164,7 +164,7 @@ class ChangelogController : ButterKnifeController(), Scrollable {
         timestamp(item.timestamp)
         source(item.sha)
         author(null)
-        hideComments()
+        hideMark()
         itemClicks()
             .flatMapCompletable {
               return@flatMapCompletable linkManager.openUrl(
