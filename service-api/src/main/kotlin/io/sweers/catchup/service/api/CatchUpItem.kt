@@ -27,7 +27,7 @@ import org.threeten.bp.Instant
 data class CatchUpItem(
     @PrimaryKey val id: Long,
     val title: String,
-    val timestamp: Instant,
+    val timestamp: Instant?,
     val score: Pair<String, Int>? = null,
     val tag: String? = null,
     val author: String? = null,
