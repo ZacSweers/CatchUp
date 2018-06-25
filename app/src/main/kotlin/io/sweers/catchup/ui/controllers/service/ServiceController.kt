@@ -72,9 +72,9 @@ import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
 import io.sweers.catchup.ui.controllers.SmmryController
 import io.sweers.catchup.ui.controllers.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
-import io.sweers.catchup.util.applyOn
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
+import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
@@ -139,7 +139,7 @@ class ServiceController : ButterKnifeController,
   @BindView(R.id.refresh)
   lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
-  private lateinit var layoutManager: androidx.recyclerview.widget.LinearLayoutManager
+  private lateinit var layoutManager: LinearLayoutManager
   private lateinit var adapter: DisplayableItemAdapter<out DisplayableItem, ViewHolder>
   private var currentPage: String? = null
   private var nextPage: String? = null
@@ -520,7 +520,7 @@ class ServiceController : ButterKnifeController,
                 parent,
                 false))
       }
-      throw InvalidParameterException("Unrecognized view type - " + viewType)
+      throw InvalidParameterException("Unrecognized view type - $viewType")
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

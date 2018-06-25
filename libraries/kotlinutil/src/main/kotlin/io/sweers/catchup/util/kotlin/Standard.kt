@@ -49,3 +49,10 @@ inline fun <T> T.switchIf(condition: Boolean, block: T.() -> T): T = switch {
     block()
   } else this
 }
+
+/**
+ * Applies a [block] on a set of [args].
+ */
+inline fun <T> applyOn(vararg args: T, crossinline block: T.() -> Unit) {
+  args.asSequence().forEach { block(it) }
+}
