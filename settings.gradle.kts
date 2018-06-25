@@ -17,6 +17,7 @@
 include(
   ":app",
   ":libraries:gemoji",
+  ":libraries:kotlinutil",
   ":libraries:retrofitconverters",
   ":libraries:third_party:bypass",
   ":libraries:tooling:spi-visualizer",
