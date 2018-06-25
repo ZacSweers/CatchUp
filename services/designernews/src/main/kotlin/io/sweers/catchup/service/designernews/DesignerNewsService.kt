@@ -112,7 +112,7 @@ abstract class DesignerNewsMetaModule {
         R.color.dnAccent,
         R.drawable.logo_dn,
         pagesAreNumeric = true,
-        firstPageKey = "0"
+        firstPageKey = "1"
     )
   }
 }
