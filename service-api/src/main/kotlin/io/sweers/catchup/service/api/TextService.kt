@@ -38,7 +38,7 @@ interface TextService : Service {
                 .subscribe()
           }
         },
-        commentClickHandler = item.itemCommentClickUrl?.let {
+        markClickHandler = item.mark?.clickUrl?.let {
           { url: String ->
             holder.itemCommentClicks()
                 .map { createUrlMeta(url, context) }

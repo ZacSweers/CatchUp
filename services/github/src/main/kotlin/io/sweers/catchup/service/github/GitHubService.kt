@@ -34,6 +34,7 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.Mark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
@@ -99,7 +100,6 @@ internal class GitHubService @Inject constructor(
 
                   CatchUpItem(
                       id = id().hashCode().toLong(),
-                      hideComments = true,
                       title = "${name()}$description",
                       score = "★" to stargazers().totalCount().toInt(),
                       timestamp = createdAt(),

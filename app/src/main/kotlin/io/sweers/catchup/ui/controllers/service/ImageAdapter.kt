@@ -233,7 +233,7 @@ internal class ImageAdapter(private val context: Context,
     override fun bind(item: CatchUpItem,
         linkHandler: LinkHandler,
         itemClickHandler: ((String) -> Any)?,
-        commentClickHandler: ((String) -> Any)?) {
+        markClickHandler: ((String) -> Any)?) {
       backingImageItem?.let { imageItem ->
         item.itemClickUrl?.let {
           itemClickHandler?.invoke(it)

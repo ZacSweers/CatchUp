@@ -33,6 +33,7 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
 import io.sweers.catchup.service.api.ServiceKey
@@ -115,11 +116,13 @@ internal class HackerNewsService @Inject constructor(
                 timestamp = realTime(),
                 author = by,
                 source = url?.let { HttpUrl.parse(it)!!.host() },
-                commentCount = kids?.size ?: 0,
                 tag = realType()?.tag(nullIfStory = true),
                 itemClickUrl = url,
-                itemCommentClickUrl = "https://news.ycombinator.com/item?id=$id",
-                summarizationInfo = SummarizationInfo.from(url)
+                summarizationInfo = SummarizationInfo.from(url),
+                mark = kids?.size?.let {
+                  createCommentMark(count = it,
+                      clickUrl = "https://news.ycombinator.com/item?id=$id")
+                }
             )
           }
         }

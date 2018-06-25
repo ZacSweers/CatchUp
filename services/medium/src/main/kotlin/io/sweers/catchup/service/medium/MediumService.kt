@@ -29,6 +29,7 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
@@ -86,11 +87,13 @@ internal class MediumService @Inject constructor(
                     to post.virtuals.recommends,
                 timestamp = post.createdAt,
                 author = user.name,
-                commentCount = post.virtuals.responsesCreatedCount,
                 tag = collection?.name,
                 itemClickUrl = url,
-                itemCommentClickUrl = constructCommentsUrl(),
-                summarizationInfo = SummarizationInfo.from(url)
+                summarizationInfo = SummarizationInfo.from(url),
+                mark = createCommentMark(
+                    count = post.virtuals.responsesCreatedCount,
+                    clickUrl = constructCommentsUrl()
+                )
             )
           }
         }

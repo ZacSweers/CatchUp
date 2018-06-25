@@ -30,7 +30,7 @@ interface BindableCatchUpItemViewHolder : ScopeProvider {
   fun bind(item: CatchUpItem,
       linkHandler: LinkHandler,
       itemClickHandler: ((String) -> Any)? = null,
-      commentClickHandler: ((String) -> Any)? = null)
+      markClickHandler: ((String) -> Any)? = null)
 
   fun itemClicks(): Observable<Unit> {
     TODO("itemClicks not implemented!")
