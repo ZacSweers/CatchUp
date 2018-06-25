@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.util
+package io.sweers.catchup.util.kotlin
 
 /*
  * Utils for Iterables

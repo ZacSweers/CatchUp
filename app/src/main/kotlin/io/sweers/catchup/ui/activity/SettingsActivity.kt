@@ -51,7 +51,7 @@ import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.util.clearCache
-import io.sweers.catchup.util.format
+import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNavBarColor

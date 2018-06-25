@@ -14,7 +14,41 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.util
+package io.sweers.catchup.util.kotlin
+
+inline fun <T, R> T.letIf(condition: Boolean, block: (T) -> R): R? = let {
+  if (condition) {
+    block(it)
+  } else null
+}
+
+inline fun <T, R> T.runIf(condition: Boolean, block: T.() -> R): R? = run {
+  if (condition) {
+    block()
+  } else null
+}
+
+inline fun <T> T.applyIf(condition: Boolean, block: T.() -> T): T = apply {
+  if (condition) {
+    block()
+  }
+}
+
+inline fun <T> T.alsoIf(condition: Boolean, block: (T) -> T): T = also {
+  if (condition) {
+    block(it)
+  }
+}
+
+inline fun <T> T.switch(block: T.() -> T): T = run {
+  block()
+}
+
+inline fun <T> T.switchIf(condition: Boolean, block: T.() -> T): T = switch {
+  if (condition) {
+    block()
+  } else this
+}
 
 /**
  * Applies a [block] on a set of [args].

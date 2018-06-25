@@ -374,6 +374,7 @@ dependencies {
   implementation(project(":service-api"))
   implementation(project(":service-registry:service-registry"))
   implementation(project(":libraries:gemoji"))
+  implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:util"))
 
   // Support libs

@@ -30,14 +30,11 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.util.kotlin.switchIf
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
 import retrofit2.HttpException
 import java.io.IOException
-
-private fun <T> T.runIf(condition: Boolean, block: T.() -> T): T = if (condition) {
-  block(this)
-} else this
 
 class StorageBackedService(
     private val dao: ServiceDao,
@@ -112,13 +109,13 @@ class StorageBackedService(
         throw IllegalStateException("Fetching first local but not first page! Received $page")
       }
       fetchPageFromLocal(page, useLatest)
-          .runIf(!useLatest) {
+          .switchIf(!useLatest) {
             switchIfEmpty(Maybe.defer {
               // If we were trying to a current session but failed, fall back to first local page
               fetchPageFromLocal(page, true)
             })
           }
-          .runIf(allowNetworkFallback) {
+          .switchIf(allowNetworkFallback) {
             switchIfEmpty(
                 Maybe.defer {
                   // Nothing local, fall to network
