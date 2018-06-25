@@ -32,12 +32,10 @@ data class CatchUpItem(
     val tag: String? = null,
     val author: String? = null,
     val source: String? = null,
-    val commentCount: Int = 0,
-    val hideComments: Boolean = false,
     val itemClickUrl: String? = null,
-    val itemCommentClickUrl: String? = null,
     @Embedded val summarizationInfo: SummarizationInfo? = null,
-    @Embedded val imageInfo: ImageInfo? = null
+    @Embedded val imageInfo: ImageInfo? = null,
+    @Embedded val mark: Mark? = null
 ) : DisplayableItem {
 
   override fun stableId() = id
