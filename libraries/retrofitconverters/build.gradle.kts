@@ -14,27 +14,33 @@
  * limitations under the License.
  */
 
-include(
-  ":app",
-  ":libraries:retrofitconverters",
-  ":third_party:bypass",
-  ":service-api",
-  ":service-registry:service-registry",
-  ":service-registry:service-registry-annotations",
-  ":service-registry:service-registry-compiler",
-  ":services:slashdot",
-  ":services:reddit",
-  ":services:hackernews",
-  ":services:medium",
-  ":services:newsapi",
-  ":services:producthunt",
-  ":services:designernews",
-  ":services:dribbble",
-  ":services:imgur",
-  ":services:github",
-  ":services:unsplash",
-  ":services:uplabs",
-  ":gemoji",
-  ":tooling:spi-visualizer",
-  ":util"
-)
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+  kotlin("jvm")
+  kotlin("kapt")
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xjsr305=strict", "-Xprogressive")
+  }
+}
+
+kapt {
+  correctErrorTypes = true
+  useBuildCache = true
+  mapDiagnosticLocations = true
+}
+
+dependencies {
+  kapt(deps.dagger.apt.compiler)
+
+  compile(deps.retrofit.core)
+  compile(deps.okhttp.core)
+  compile(deps.misc.jsoup)
+  compile(deps.android.support.annotations)
+  compile(deps.dagger.runtime)
+  compile(deps.kotlin.stdlib.core)
+  compile(deps.rx.java)
+}
