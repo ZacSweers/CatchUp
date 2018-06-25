@@ -83,6 +83,26 @@ CatchUp is in open alpha.
          height="116" width="300"/>
 </a>
 
+## Development
+
+If you'd like to build CatchUp locally, you _should_ be able to just clone and build with no issues.
+
+CatchUp tends to keep up with Android Studio canaries, so you may have to use a canary version. 
+Check the Android Gradle Plugin `deps.android.gradlePlugin` dependency in `gradle/dependencies.kt`.
+
+If you want to build with working services, some require API keys. See the 
+[wiki](https://github.com/hzsweers/CatchUp/wiki/Authentication-information) for more details on 
+which services require keys.
+
+Bug fixes are always welcome. Tests are too if you're into that kinda thing, but I'm not actively
+trying to make this project a shining icon of TDD. For new features or otherwise significant work, 
+please discuss in an issue first.
+
+Note that by default, I have a Timber tree that crashes the app in the event of an error in debug
+(fix me now!). This may be problematic if you don't have services authenticated (especially Firebase
+and its ever shifting requirements), so you can disable this behavior via setting the `CRASH_ON_TIMBER_ERROR`
+property in the root `gradle.properties` file to `false`.
+
 License
 -------
 
