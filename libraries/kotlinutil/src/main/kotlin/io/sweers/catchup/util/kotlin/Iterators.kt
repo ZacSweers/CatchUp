@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.util
-
-import com.google.errorprone.annotations.CanIgnoreReturnValue
+package io.sweers.catchup.util.kotlin
 
 /*
  * Utils for iterators.
@@ -46,7 +44,6 @@ operator fun <T> Iterator<T>.get(position: Int): T {
  *
  * @return the number of elements the iterator was advanced
  */
-@CanIgnoreReturnValue
 fun Iterator<*>.advance(numberToAdvance: Int): Int {
   var i = 0
   while (i < numberToAdvance && hasNext()) {
