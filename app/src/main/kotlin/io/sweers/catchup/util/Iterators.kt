@@ -32,7 +32,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue
  * greater than or equal to the number of elements remaining in `iterator`
  */
 operator fun <T> Iterator<T>.get(position: Int): T {
-  val skipped = Iterators.advance(this, position)
+  val skipped = advance(position)
   if (!hasNext()) {
     throw IndexOutOfBoundsException(
         "position ($position) must be less than the number of elements that remained ($skipped)")
@@ -40,25 +40,18 @@ operator fun <T> Iterator<T>.get(position: Int): T {
   return next()
 }
 
-object Iterators {
-
-  /**
-   * Calls [Iterator.next] on `iterator`, either [numberToAdvance] times
-   * or until [Iterator.hasNext] returns `false`, whichever comes first.
-   *
-   * @return the number of elements the iterator was advanced
-   */
-  @CanIgnoreReturnValue
-  fun advance(iterator: Iterator<*>, numberToAdvance: Int): Int {
-    var i = 0
-    while (i < numberToAdvance && iterator.hasNext()) {
-      iterator.next()
-      i++
-    }
-    return i
+/**
+ * Calls [Iterator.next] on `iterator`, either [numberToAdvance] times
+ * or until [Iterator.hasNext] returns `false`, whichever comes first.
+ *
+ * @return the number of elements the iterator was advanced
+ */
+@CanIgnoreReturnValue
+fun Iterator<*>.advance(numberToAdvance: Int): Int {
+  var i = 0
+  while (i < numberToAdvance && hasNext()) {
+    next()
+    i++
   }
-
-  operator fun <E> Collection<E>.get(element: E): Int {
-    return asSequence().indexOfFirst { it == element }
-  }
+  return i
 }
