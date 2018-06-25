@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.util
+package io.sweers.catchup.util.kotlin
 
 import java.text.DecimalFormatSymbols
 import java.util.Locale

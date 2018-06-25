@@ -17,6 +17,8 @@
 package io.sweers.catchup.util
 
 import com.google.common.truth.Truth.assertThat
+import io.sweers.catchup.util.kotlin.format
+import io.sweers.catchup.util.kotlin.shorten
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

@@ -39,7 +39,7 @@ import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Mark
-import io.sweers.catchup.util.format
+import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.showIf
