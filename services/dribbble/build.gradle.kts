@@ -73,7 +73,7 @@ dependencies {
   kapt(deps.dagger.apt.compiler)
 
   implementation(project(":libraries:retrofitconverters"))
-  implementation(project(":util"))
+  implementation(project(":libraries:util"))
   implementation(deps.misc.jsoup)
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.rxJava2)

@@ -74,7 +74,7 @@ kapt {
 
 dependencies {
   api(project(":service-api"))
-  implementation(project(":util"))
+  implementation(project(":libraries:util"))
 
   kapt(project(":service-registry:service-registry-compiler"))
   kapt(deps.crumb.compiler)

@@ -367,14 +367,14 @@ tasks {
 }
 
 dependencies {
-  kapt(project(":tooling:spi-visualizer"))
-  compileOnly(project(":tooling:spi-visualizer"))
+  kapt(project(":libraries:tooling:spi-visualizer"))
+  compileOnly(project(":libraries:tooling:spi-visualizer"))
 
-  implementation(project(":third_party:bypass"))
+  implementation(project(":libraries:third_party:bypass"))
   implementation(project(":service-api"))
   implementation(project(":service-registry:service-registry"))
-  implementation(project(":gemoji"))
-  implementation(project(":util"))
+  implementation(project(":libraries:gemoji"))
+  implementation(project(":libraries:util"))
 
   // Support libs
   implementation(deps.android.support.annotations)

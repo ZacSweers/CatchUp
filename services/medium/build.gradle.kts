@@ -76,7 +76,7 @@ dependencies {
   kapt(deps.dagger.apt.compiler)
   kapt(deps.moshi.compiler)
 
-  implementation(project(":util"))
+  implementation(project(":libraries:util"))
   implementation(deps.misc.okio)
   implementation(deps.moshi.core)
   implementation(deps.retrofit.core)

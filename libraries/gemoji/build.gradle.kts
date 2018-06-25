@@ -70,7 +70,7 @@ kapt {
 }
 
 dependencies {
-  implementation(project(":util"))
+  implementation(project(":libraries:util"))
 
   kapt(deps.android.arch.room.apt)
   kapt(deps.dagger.apt.compiler)

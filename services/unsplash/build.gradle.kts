@@ -75,7 +75,7 @@ dependencies {
   kapt(deps.dagger.apt.compiler)
   kapt(deps.moshi.compiler)
 
-  implementation(project(":util"))
+  implementation(project(":libraries:util"))
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
   implementation(deps.retrofit.rxJava2)

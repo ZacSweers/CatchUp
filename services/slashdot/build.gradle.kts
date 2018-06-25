@@ -73,7 +73,7 @@ dependencies {
   kapt(deps.dagger.apt.compiler)
   kapt(deps.tikxml.apt)
 
-  implementation(project(":util"))
+  implementation(project(":libraries:util"))
   implementation(deps.okhttp.core)
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.rxJava2)
