@@ -51,13 +51,17 @@ fun Activity.updateNavBarColor(
       if (context.isInNightMode()) {
         window.navigationBarColor = ContextCompat.getColor(context,
             R.color.colorPrimaryDark)
-        window.navigationBarDividerColor = Color.TRANSPARENT
+        sdk(Build.VERSION_CODES.P) {
+          window.navigationBarDividerColor = Color.TRANSPARENT
+        }
         window.decorView.clearLightNavBar()
       } else {
         window.navigationBarColor = ContextCompat.getColor(context,
             R.color.colorPrimary)
-        window.navigationBarDividerColor = ContextCompat.getColor(context,
-            R.color.colorPrimaryDark)
+        sdk(Build.VERSION_CODES.P) {
+          window.navigationBarDividerColor = ContextCompat.getColor(context,
+              R.color.colorPrimaryDark)
+        }
         window.decorView.setLightNavBar()
       }
     }
