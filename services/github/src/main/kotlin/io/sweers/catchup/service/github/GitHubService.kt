@@ -32,6 +32,7 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojis
+import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -218,7 +219,7 @@ abstract class GitHubModule {
       return Retrofit.Builder().baseUrl(GitHubApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(GitHubTrendingJsoupConverter.Factory())
+          .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))
           .validateEagerly(BuildConfig.DEBUG)
           .build()
           .create(GitHubApi::class.java)

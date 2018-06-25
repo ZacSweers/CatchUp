@@ -81,9 +81,9 @@ dependencies {
   kapt(deps.dagger.apt.compiler)
 
   implementation(project(":gemoji"))
+  implementation(project(":libraries:retrofitconverters"))
   implementation(project(":util"))
   implementation(deps.misc.jsoup)
-  implementation(deps.retrofit.core)
   implementation(deps.retrofit.rxJava2)
   implementation(deps.okhttp.core)
 
