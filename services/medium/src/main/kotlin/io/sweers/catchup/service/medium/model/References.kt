@@ -24,7 +24,7 @@ import io.sweers.inspector.ValidationException
 
 @JsonClass(generateAdapter = true)
 internal data class References(
-    @Json(name = "Collection") val collection: Map<String, Collection>,
+    @Json(name = "Collection") val collection: Map<String, Collection>?,
     @Json(name = "Post") val post: Map<String, Post>,
     @Json(name = "User") val user: Map<String, User>) : SelfValidating {
 

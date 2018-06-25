@@ -72,7 +72,7 @@ internal class MediumService @Inject constructor(
                     post = post,
                     user = references.user[post.creatorId]
                         ?: throw IllegalStateException("Missing user on post!"),
-                    collection = references.collection[post.homeCollectionId])
+                    collection = references.collection?.get(post.homeCollectionId))
               }
         }
         .map {
