@@ -82,6 +82,10 @@ dependencies {
 
   implementation(project(":gemoji"))
   implementation(project(":util"))
+  implementation(deps.misc.jsoup)
+  implementation(deps.retrofit.core)
+  implementation(deps.retrofit.rxJava2)
+  implementation(deps.okhttp.core)
 
   // Apollo
   implementation(deps.apollo.runtime)
