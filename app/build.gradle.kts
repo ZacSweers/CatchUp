@@ -391,7 +391,6 @@ dependencies {
   implementation(deps.android.support.paletteKtx)
   implementation(deps.android.support.viewPager)
   implementation(deps.android.support.swipeRefresh)
-  implementation(deps.android.support.legacyAnnotations)
 
   // Arch components
   implementation(deps.android.arch.lifecycle.extensions)
