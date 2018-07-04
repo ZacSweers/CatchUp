@@ -43,7 +43,7 @@ object deps {
     const val androidTestSupport = "1.1.0-alpha3"
     const val androidx = "1.0.0-alpha3"
     const val androidxArch = "2.0.0-alpha1"
-    const val apollo = "0.5.0"
+    const val apollo = "1.0.0-alpha"
     const val autodispose = "0.8.0"
     const val barber = "1.3.1"
     const val butterknife = "8.8.1"
