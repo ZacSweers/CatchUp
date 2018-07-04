@@ -26,7 +26,6 @@ plugins {
   kotlin("android")
   kotlin("kapt")
   id("com.apollographql.android")
-  id("net.ltgt.errorprone")
   id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
 }
@@ -211,10 +210,6 @@ if (gradle.startParameter.isOffline) {
 apollo {
   customTypeMapping["DateTime"] = "org.threeten.bp.Instant"
   customTypeMapping["URI"] = "okhttp3.HttpUrl"
-}
-
-tasks.withType<JavaCompile> {
-  options.compilerArgs = listOf("-Xep:MissingOverride:OFF")
 }
 
 tasks.withType<KotlinCompile> {
@@ -451,7 +446,6 @@ dependencies {
   implementation(deps.autoDispose.core)
   implementation(deps.autoDispose.android)
   implementation(deps.autoDispose.kotlin)
-  errorprone(deps.errorProne.build.core)
   compileOnly(deps.errorProne.compileOnly.annotations)
   implementation(deps.barber.api)
   kapt(deps.barber.apt)

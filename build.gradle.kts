@@ -38,7 +38,6 @@ buildscript {
     classpath(deps.android.firebase.gradlePlugin)
     classpath(deps.build.gradlePlugins.bugsnag)
     classpath(deps.build.gradlePlugins.psync)
-    classpath(deps.errorProne.gradlePlugin)
     classpath(deps.apollo.gradlePlugin)
     classpath(deps.build.gradlePlugins.playPublisher)
   }
