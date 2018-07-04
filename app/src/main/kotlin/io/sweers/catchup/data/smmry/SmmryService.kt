@@ -38,6 +38,6 @@ interface SmmryService {
   companion object {
 
     private val HOST = "api.smmry.com/"
-    val ENDPOINT = "http://" + HOST
+    val ENDPOINT = "https://" + HOST
   }
 }
