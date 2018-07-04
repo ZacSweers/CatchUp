@@ -225,15 +225,9 @@ object deps {
   }
 
   object errorProne {
-    object build {
-      const val core = "com.google.errorprone:error_prone_core:${versions.errorProne}"
-    }
-
     object compileOnly {
       const val annotations = "com.google.errorprone:error_prone_annotations:${versions.errorProne}"
     }
-
-    const val gradlePlugin = "net.ltgt.gradle:gradle-errorprone-plugin:0.0.14"
   }
 
   object glide {

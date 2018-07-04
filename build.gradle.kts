@@ -38,7 +38,6 @@ buildscript {
     classpath(deps.android.firebase.gradlePlugin)
     classpath(deps.build.gradlePlugins.bugsnag)
     classpath(deps.build.gradlePlugins.psync)
-    classpath(deps.errorProne.gradlePlugin)
     classpath(deps.apollo.gradlePlugin)
     classpath(deps.build.gradlePlugins.playPublisher)
   }
@@ -97,7 +96,7 @@ allprojects {
 
 tasks {
   "wrapper"(Wrapper::class) {
-    gradleVersion = "4.7"
+    gradleVersion = "4.9-rc-1"
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
   }
 }
