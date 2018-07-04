@@ -40,8 +40,8 @@ fun String?.execute(workingDir: File, fallback: String): String {
 
 object deps {
   object versions {
-    const val androidTestSupport = "1.1.0-alpha3"
-    const val androidx = "1.0.0-alpha3"
+    const val androidTestSupport = "1.1.0-beta01"
+    const val androidx = "1.0.0-beta01"
     const val androidxArch = "2.0.0-alpha1"
     const val apollo = "1.0.0-alpha"
     const val autodispose = "0.8.0"

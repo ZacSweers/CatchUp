@@ -30,7 +30,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-import androidx.core.content.systemService
+import androidx.core.content.getSystemService
 import androidx.core.view.GravityCompat
 import androidx.core.view.doOnLayout
 import androidx.drawerlayout.widget.DrawerLayout
@@ -199,7 +199,7 @@ internal class DebugViewContainer @Inject constructor(
       } else {
         activity.window
             .addFlags(FLAG_SHOW_WHEN_LOCKED)
-        activity.systemService<PowerManager>()?.run {
+        activity.getSystemService<PowerManager>()?.run {
           newWakeLock(FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
               "CatchUp:wakeup!").run {
             acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
