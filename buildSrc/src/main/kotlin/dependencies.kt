@@ -58,7 +58,7 @@ object deps {
     const val hyperion = "0.9.23"
     const val inspector = "0.3.0"
     const val kotlin = "1.2.51"
-    const val leakcanary = "1.5.4"
+    const val leakcanary = "1.6.0-SNAPSHOT"
     const val legacySupport = "28.0.0-alpha1"
     const val moshi = "1.6.0"
     const val okhttp = "3.10.0"
