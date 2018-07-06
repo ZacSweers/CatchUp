@@ -474,11 +474,12 @@ dependencies {
   debugImplementation(deps.hyperion.plugins.chuck)
   debugImplementation(deps.hyperion.plugins.crash)
   debugImplementation(deps.hyperion.plugins.disk)
-//  debugImplementation(deps.hyperion.plugins.geigerCounter)
+  debugImplementation(deps.hyperion.plugins.geigerCounter)
   debugImplementation(deps.hyperion.plugins.measurement)
   debugImplementation(deps.hyperion.plugins.phoenix)
   debugImplementation(deps.hyperion.plugins.recorder)
   debugImplementation(deps.hyperion.plugins.sharedPreferences)
+  debugImplementation(deps.hyperion.plugins.timber)
 
   // Dagger
   kapt(deps.dagger.apt.compiler)

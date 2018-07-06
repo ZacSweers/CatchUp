@@ -257,6 +257,7 @@ object deps {
       const val phoenix = "com.willowtreeapps.hyperion:hyperion-phoenix:${versions.hyperion}"
       const val recorder = "com.willowtreeapps.hyperion:hyperion-recorder:${versions.hyperion}"
       const val sharedPreferences = "com.willowtreeapps.hyperion:hyperion-shared-preferences:${versions.hyperion}"
+      const val timber = "com.willowtreeapps.hyperion:hyperion-timber:${versions.hyperion}"
     }
   }
 
