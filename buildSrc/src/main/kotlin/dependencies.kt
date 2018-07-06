@@ -38,6 +38,15 @@ fun String?.execute(workingDir: File, fallback: String): String {
   }
 }
 
+/**
+ * Round up to the nearest [multiple].
+ *
+ * Borrowed from https://gist.github.com/aslakhellesoy/1134482
+ */
+fun Int.roundUpToNearest(multiple: Int): Int {
+  return if (this >= 0) (this + multiple - 1) / multiple * multiple else this / multiple * multiple
+}
+
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-beta01"
@@ -159,8 +168,10 @@ object deps {
       return "git describe --tags".execute(project.rootDir, "dev")
     }
 
-    fun gitCommitCount(project: Project): Int {
-      return 100 + "git rev-list --count HEAD".execute(project.rootDir, "0").toInt()
+    fun gitCommitCount(project: Project, isRelease: Boolean): Int {
+      return 100 + ("git rev-list --count HEAD".execute(project.rootDir, "0").toInt().let {
+        if (isRelease) it else it.roundUpToNearest(100)
+      })
     }
 
     fun gitTimestamp(project: Project): Int {

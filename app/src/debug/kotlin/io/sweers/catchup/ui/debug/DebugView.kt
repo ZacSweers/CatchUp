@@ -48,9 +48,9 @@ import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.logs.LogsDialog
-import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.isN
+import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.truncateAt
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
@@ -273,9 +273,9 @@ class DebugView @JvmOverloads constructor(context: Context,
   private fun setupBuildSection() {
     buildNameView.text = BuildConfig.VERSION_NAME
     buildCodeView.text = BuildConfig.VERSION_CODE.toString()
-    buildShaView.text = BuildConfig.GIT_SHA
+    buildShaView.text = buildNameView.resources.getString(R.string.git_sha)
 
-    val buildTime = Instant.ofEpochSecond(BuildConfig.GIT_TIMESTAMP)
+    val buildTime = Instant.ofEpochSecond(buildNameView.resources.getInteger(R.integer.git_timestamp).toLong())
     buildDateView.text = DATE_DISPLAY_FORMAT.format(buildTime)
   }
 

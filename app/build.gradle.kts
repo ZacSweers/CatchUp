@@ -37,6 +37,9 @@ apply {
   }
 }
 
+// TODO Can stop doing this when BuildConfig becomes a class rather than a java file
+val isRelease = gradle.startParameter.taskNames.any { it.endsWith("Release") }
+
 android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
   buildToolsVersion(deps.android.build.buildToolsVersion)
@@ -45,15 +48,15 @@ android {
     applicationId = "io.sweers.catchup"
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
-    versionCode = deps.build.gitCommitCount(project)
+    versionCode = deps.build.gitCommitCount(project, isRelease)
     versionName = deps.build.gitTag(project)
     multiDexEnabled = false
 
     the<BasePluginConvention>().archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
 
-    buildConfigField("String", "GIT_SHA", "\"${deps.build.gitSha(project)}\"")
-    buildConfigField("long", "GIT_TIMESTAMP", deps.build.gitTimestamp(project).toString())
+    resValue("string", "git_sha", "\"${deps.build.gitSha(project)}\"")
+    resValue("integer", "git_timestamp", "${deps.build.gitTimestamp(project)}")
     buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
         "\"${properties["catchup_github_developer_token"]}\"")
     buildConfigField("String", "SMMRY_API_KEY",
