@@ -403,7 +403,6 @@ dependencies {
   // Kotlin
   implementation(deps.android.ktx)
   implementation(deps.kotlin.stdlib.jdk7)
-  implementation(deps.kotlin.stdlib.jdk8)
 
   // Moshi
   kapt(deps.moshi.compiler)
