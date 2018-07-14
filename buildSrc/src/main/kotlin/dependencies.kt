@@ -64,7 +64,7 @@ object deps {
     const val espresso = "3.1.0-alpha1"
     const val firebase = "12.0.1"
     const val glide = "4.7.1"
-    const val hyperion = "0.9.23"
+    const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
     const val kotlin = "1.2.51"
     const val leakcanary = "1.5.4"
