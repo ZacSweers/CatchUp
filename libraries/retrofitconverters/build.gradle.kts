@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
-  kotlin("kapt")
 }
 
 tasks.withType<KotlinCompile> {
@@ -27,20 +26,11 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  useBuildCache = true
-  mapDiagnosticLocations = true
-}
-
 dependencies {
-  kapt(deps.dagger.apt.compiler)
-
   compile(deps.retrofit.core)
   compile(deps.okhttp.core)
   compile(deps.misc.jsoup)
   compile(deps.android.support.annotations)
-  compile(deps.dagger.runtime)
   compile(deps.kotlin.stdlib.core)
   compile(deps.rx.java)
 }
