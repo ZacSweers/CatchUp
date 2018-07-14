@@ -96,7 +96,7 @@ allprojects {
 
 tasks {
   "wrapper"(Wrapper::class) {
-    gradleVersion = "4.9-rc-1"
+    gradleVersion = "4.9-rc-2"
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
   }
 }
