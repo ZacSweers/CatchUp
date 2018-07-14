@@ -14,7 +14,7 @@ trap cleanup EXIT
 WORKING_DIR=`pwd`
 
 #### CLI options
-# -t Can be set to (Mmp) for version updates
+# -t Can be set to (major|minor|patch) for version updates
 VERSION_UPDATE_TYPE=""
 # -c Updates changelog with a new cut, off by default
 UPDATE_CHANGELOG=false
@@ -109,7 +109,7 @@ if [[ ! -z ${VERSION_UPDATE_TYPE} ]]
   then
     # Update the version first. Easiest to do this in gradle because my bash-fu is not great
     echo "Updating version '${VERSION_UPDATE_TYPE}' via gradle..."
-    execIfNotDry execGradle :app:updateVersion -Pversion=${VERSION_UPDATE_TYPE}
+    execIfNotDry execGradle :app:updateVersion -updateType=${VERSION_UPDATE_TYPE}
 fi
 
 #### Changelog cuts

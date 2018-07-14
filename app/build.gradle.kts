@@ -223,7 +223,7 @@ tasks.withType<KotlinCompile> {
 
 open class CutChangelogTask : DefaultTask() {
 
-  @Input
+  @get:Input
   lateinit var versionName: String
 
   @TaskAction
@@ -231,9 +231,22 @@ open class CutChangelogTask : DefaultTask() {
     val changelog = project.rootProject.file("CHANGELOG.md")
 
     val whatsNewPath = "${project.projectDir}/src/main/play/en-US/whatsnew"
-    val newChangelog = getChangelog(changelog, "")
-    if (newChangelog.length > 500) {
-      throw IllegalStateException("Changelog length exceeds 500ch max. Is ${newChangelog.length}")
+    val newChangelog = getChangelog(changelog, "").let {
+      if (it.length > 500) {
+        logger.log(LogLevel.WARN, "Changelog length (${it.length}) exceeds 500 char max. Truncating...")
+        val warning = "\n(Truncated due to store restrictions. Full changelog in app!)"
+        val warningLength = warning.length
+        val remainingAmount = 500 - warningLength
+        val builder = StringBuilder()
+        for (line in it.lineSequence()) {
+          if (builder.length + line.length + 1 < remainingAmount) {
+            builder.appendln(line)
+          } else {
+            break
+          }
+        }
+        builder.append(warning).toString()
+      } else it
     }
     if (!newChangelog.isEmpty()) {
       project.file(whatsNewPath).writer().use {
@@ -269,12 +282,10 @@ open class CutChangelogTask : DefaultTask() {
   }
 }
 
-tasks {
-  "cutChangelog"(CutChangelogTask::class) {
-    versionName = deps.build.gitTag(project)
-    group = "build"
-    description = "Cuts the current changelog version and updates the play store changelog file"
-  }
+tasks.register("cutChangelog", CutChangelogTask::class.java) {
+  versionName = deps.build.gitTag(project)
+  group = "build"
+  description = "Cuts the current changelog version and updates the play store changelog file"
 }
 
 fun getChangelog(): String {
@@ -309,7 +320,9 @@ fun getChangelog(): String {
 }
 
 open class UpdateVersion : DefaultTask() {
-  @Input
+
+  @set:Option(option = "updateType", description = "Configures the version update type. Can be (major|minor|patch).")
+  @get:Input
   lateinit var type: String
 
   @TaskAction
@@ -321,20 +334,20 @@ open class UpdateVersion : DefaultTask() {
     }
     var (major, minor, patch) = latestTag.split(".").map(String::toInt)
     when (type) {
-      "M" -> {
+      "major" -> {
         major++
         minor = 0
         patch = 0
       }
-      "m" -> {
+      "minor" -> {
         minor++
         patch = 0
       }
-      "p" -> {
+      "patch" -> {
         patch++
       }
       else -> {
-        throw IllegalArgumentException("Unrecognized version type \"$type\"")
+        throw IllegalArgumentException("Unrecognized updateType \"$type\"")
       }
     }
     val latestVersionString = "$major.$minor.$patch"
@@ -356,12 +369,9 @@ open class UpdateVersion : DefaultTask() {
   }
 }
 
-tasks {
-  "updateVersion"(UpdateVersion::class) {
-    type = properties["version"].toString()
-    group = "build"
-    description = "Updates the current version. Supports CLI property flag -Pversion={type} where type is (Mmp)"
-  }
+tasks.create("updateVersion", UpdateVersion::class.java) {
+  group = "build"
+  description = "Updates the current version. Supports CLI option --updateType={type} where type is (major|minor|patch)"
 }
 
 dependencies {
