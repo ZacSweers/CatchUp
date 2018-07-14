@@ -70,7 +70,7 @@ object deps {
     const val leakcanary = "1.5.4"
     const val legacySupport = "28.0.0-alpha1"
     const val moshi = "1.6.0"
-    const val okhttp = "3.10.0"
+    const val okhttp = "3.11.0"
     const val playServices = firebase
     const val retrofit = "2.4.0"
     const val rxbinding = "2.1.1"
@@ -148,6 +148,7 @@ object deps {
   object autoDispose {
     const val core = "com.uber.autodispose:autodispose:${versions.autodispose}"
     const val android = "com.uber.autodispose:autodispose-android:${versions.autodispose}"
+    const val androidKotlin = "com.uber.autodispose:autodispose-android-kotlin:${versions.autodispose}"
     const val kotlin = "com.uber.autodispose:autodispose-kotlin:${versions.autodispose}"
   }
 

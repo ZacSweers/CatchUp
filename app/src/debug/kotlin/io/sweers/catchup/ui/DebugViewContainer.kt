@@ -40,7 +40,7 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.jakewharton.madge.MadgeFrameLayout
 import com.jakewharton.scalpel.ScalpelFrameLayout
 import com.mattprecious.telescope.TelescopeLayout
-import com.uber.autodispose.android.ViewScopeProvider
+import com.uber.autodispose.android.scope
 import com.uber.autodispose.kotlin.autoDisposable
 import dagger.Lazy
 import io.reactivex.Completable
@@ -270,7 +270,7 @@ class DrawerTapTarget(
           e.setDisposable(listener)
           drawerLayout.addDrawerListener(listener)
         }
-            .autoDisposable(ViewScopeProvider.from(drawerLayout))
+            .autoDisposable(drawerLayout.scope())
             .subscribe {
               delegateTarget.onReady(runnable)
             }

@@ -466,6 +466,7 @@ dependencies {
   implementation(deps.rx.preferences)
   implementation(deps.rx.relay)
   implementation(deps.misc.moshiLazyAdapters)
+  implementation(deps.autoDispose.androidKotlin)
 
   // Apollo
   implementation(deps.apollo.androidSupport)
