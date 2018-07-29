@@ -34,9 +34,9 @@ import androidx.annotation.ColorInt
  * Utility methods for working with HTML and markdown.
  */
 
-typealias Markdown = String
+inline class Markdown(internal val rawMarkdown: String)
 
-fun String.markdown(): Markdown = this
+fun String.markdown(): Markdown = Markdown(this)
 
 /**
  * Parse Markdown and plain-text links.
@@ -54,7 +54,7 @@ fun Markdown.parseMarkdownAndPlainLinks(
     with: Bypass,
     loadImageCallback: Bypass.LoadImageCallback? = null,
     alternateSpans: ((String) -> Set<Any>)? = null): CharSequence {
-  return with.markdownToSpannable(this, on, loadImageCallback)
+  return with.markdownToSpannable(rawMarkdown, on, loadImageCallback)
       .linkifyPlainLinks(on.linkTextColors, on.highlightColor, alternateSpans)
 }
 
@@ -67,7 +67,7 @@ fun Markdown.parseMarkdownAndSetText(
     markdown: Bypass,
     loadImageCallback: Bypass.LoadImageCallback? = null,
     alternateUrlSpan: ((String) -> Set<Any>)? = null) {
-  if (TextUtils.isEmpty(this)) {
+  if (TextUtils.isEmpty(rawMarkdown)) {
     return
   }
   textView.setTextWithNiceLinks(
@@ -133,7 +133,8 @@ private fun CharSequence.linkifyPlainLinks(
     alternateUrlSpan
         ?.invoke(urlSpan.url)
         ?.forEach { setSpan(ssb, urlSpan, plainLinks, it) }
-        ?: setSpan(ssb, urlSpan, plainLinks, TouchableUrlSpan(urlSpan.url, linkTextColor, linkHighlightColor))
+        ?: setSpan(ssb, urlSpan, plainLinks,
+            TouchableUrlSpan(urlSpan.url, linkTextColor, linkHighlightColor))
   }
 
   return ssb
