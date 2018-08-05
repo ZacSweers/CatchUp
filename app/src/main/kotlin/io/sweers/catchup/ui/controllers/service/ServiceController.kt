@@ -403,14 +403,12 @@ class ServiceController : ButterKnifeController,
           swipeRefreshLayout.show()
           recyclerView.post {
             @Suppress("UNCHECKED_CAST") // badpokerface.png
-            adapter.let {
-              when (it) {
-                is TextAdapter -> {
-                  it.update((loadResult as LoadResult<CatchUpItem>))
-                }
-                is ImageAdapter -> {
-                  it.update((loadResult as LoadResult<ImageItem>))
-                }
+            when (val finalAdapter = adapter) {
+              is TextAdapter -> {
+                finalAdapter.update((loadResult as LoadResult<CatchUpItem>))
+              }
+              is ImageAdapter -> {
+                finalAdapter.update((loadResult as LoadResult<ImageItem>))
               }
             }
             pendingRVState?.let {
