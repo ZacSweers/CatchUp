@@ -100,7 +100,7 @@ please discuss in an issue first.
 
 Note that by default, I have a Timber tree that crashes the app in the event of an error in debug
 (fix me now!). This may be problematic if you don't have services authenticated (especially Firebase
-and its ever shifting requirements), so you can disable this behavior via setting the `CRASH_ON_TIMBER_ERROR`
+and its ever shifting requirements), so you can disable this behavior via setting the `catchup.crashOnTimberError`
 property in the root `gradle.properties` file to `false`.
 
 For apollo-android's code generation: if you want to use a local installation of the `apollo-codegen`
