@@ -29,6 +29,7 @@ import dagger.multibindings.Multibinds
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
 import io.sweers.catchup.gemoji.GemojiModule
+import io.sweers.catchup.injection.SharedPreferencesName
 import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
@@ -110,8 +111,16 @@ abstract class DataModule {
     @Provides
     @JvmStatic
     @Singleton
-    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-      return context.getSharedPreferences("catchup", Context.MODE_PRIVATE)
+    @SharedPreferencesName
+    fun provideSharedPreferencesName(): String {
+      return "catchup"
+    }
+
+    @Provides
+    @JvmStatic
+    @Singleton
+    fun provideSharedPreferences(@ApplicationContext context: Context, @SharedPreferencesName name: String): SharedPreferences {
+      return context.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
 
     @Provides

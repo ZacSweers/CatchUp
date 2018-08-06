@@ -320,6 +320,7 @@ object deps {
     const val bugsnag = "com.bugsnag:bugsnag-android:4.5.0"
 
     object debug {
+      const val flipper = "com.facebook.sonar:sonar:0.6.13"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"
       const val scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"

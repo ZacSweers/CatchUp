@@ -481,6 +481,9 @@ dependencies {
   debugImplementation(deps.stetho.debug.okhttp)
   debugImplementation(deps.stetho.debug.timber)
 
+  // Flipper
+  debugImplementation(deps.misc.debug.flipper)
+
   // Hyperion
   releaseImplementation(deps.hyperion.core.release)
   debugImplementation(deps.hyperion.core.debug)

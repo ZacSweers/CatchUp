@@ -34,7 +34,7 @@ import io.sweers.catchup.util.d
 import javax.inject.Inject
 
 @SuppressLint("Registered")
-open class CatchUpApplication : Application(), HasActivityInjector {
+abstract class CatchUpApplication : Application(), HasActivityInjector {
 
   companion object {
 
@@ -48,6 +48,15 @@ open class CatchUpApplication : Application(), HasActivityInjector {
   @Inject internal lateinit var lumberYard: LumberYard
   @Inject internal lateinit var rxPreferences: RxSharedPreferences
 
+  open fun onPreInject() {
+
+  }
+
+  abstract fun inject()
+
+  // Override this in variants
+  protected open fun initVariant() = Unit
+
   override fun onCreate() {
     super.onCreate()
     if (LeakCanary.isInAnalyzerProcess(this)) {
@@ -55,10 +64,8 @@ open class CatchUpApplication : Application(), HasActivityInjector {
       return
     }
     LazyThreeTen.init(this)
-    DaggerApplicationComponent.builder()
-        .application(this)
-        .build()
-        .inject(this)
+    onPreInject()
+    inject()
     P.init(this, false)
     P.setSharedPreferences(sharedPreferences, rxPreferences)
     initVariant()
@@ -87,9 +94,6 @@ open class CatchUpApplication : Application(), HasActivityInjector {
     FirebasePerformance.getInstance().isPerformanceCollectionEnabled =
         sharedPreferences.getBoolean(P.Reports.KEY, false)
   }
-
-  // Override this in variants
-  protected open fun initVariant() = Unit
 
   override fun activityInjector(): DispatchingAndroidInjector<Activity> =
       dispatchingActivityInjector

@@ -22,6 +22,13 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import android.util.Log
+import com.facebook.soloader.SoLoader
+import com.facebook.sonar.android.AndroidSonarClient
+import com.facebook.sonar.android.utils.SonarUtils
+import com.facebook.sonar.core.SonarPlugin
+import com.facebook.sonar.plugins.inspector.DescriptorMapping
+import com.facebook.sonar.plugins.inspector.InspectorSonarPlugin
+import com.facebook.sonar.plugins.sharedpreferences.SharedPreferencesSonarPlugin
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
@@ -29,8 +36,23 @@ import com.squareup.leakcanary.LeakCanary
 import io.sweers.catchup.BuildConfig
 import timber.log.Timber
 import timber.log.Timber.Tree
+import javax.inject.Inject
 
 class DebugCatchUpApplication : CatchUpApplication() {
+
+  @Inject lateinit var flipperPlugins: Set<@JvmSuppressWildcards SonarPlugin>
+
+  override fun onPreInject() {
+    SoLoader.init(this, false)
+  }
+
+  override fun inject() {
+    DaggerApplicationComponent.builder()
+        .application(this)
+        .build()
+        .inject(this)
+  }
+
   override fun initVariant() {
     StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
         .detectAll()
@@ -65,6 +87,12 @@ class DebugCatchUpApplication : CatchUpApplication() {
     Timber.plant(Timber.DebugTree())
     Timber.plant(lumberYard.tree())
     Timber.plant(StethoTree())
+
+    if (SonarUtils.shouldEnableSonar(this)) {
+      val client = AndroidSonarClient.getInstance(this)
+      flipperPlugins.forEach(client::addPlugin)
+      client.start()
+    }
 
     if (BuildConfig.CRASH_ON_TIMBER_ERROR) {
       Timber.plant(object : Tree() {
