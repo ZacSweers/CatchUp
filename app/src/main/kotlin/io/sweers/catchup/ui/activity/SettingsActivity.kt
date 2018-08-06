@@ -31,7 +31,7 @@ import androidx.appcompat.widget.Toolbar
 import butterknife.BindView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.perf.FirebasePerformance
-import com.uber.autodispose.kotlin.autoDisposable
+import com.uber.autodispose.autoDisposable
 import dagger.Binds
 import dagger.Module
 import dagger.android.AndroidInjection

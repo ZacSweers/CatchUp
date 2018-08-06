@@ -41,7 +41,7 @@ import com.jakewharton.madge.MadgeFrameLayout
 import com.jakewharton.scalpel.ScalpelFrameLayout
 import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.android.scope
-import com.uber.autodispose.kotlin.autoDisposable
+import com.uber.autodispose.autoDisposable
 import dagger.Lazy
 import io.reactivex.Completable
 import io.reactivex.Maybe

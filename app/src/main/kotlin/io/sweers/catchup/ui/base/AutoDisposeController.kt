@@ -21,12 +21,12 @@ import com.bluelinelabs.conductor.autodispose.ControllerEvent
 import com.bluelinelabs.conductor.autodispose.ControllerEvent.DESTROY
 import com.bluelinelabs.conductor.autodispose.ControllerEvent.DESTROY_VIEW
 import com.bluelinelabs.conductor.autodispose.ControllerScopeProvider
-import com.uber.autodispose.LifecycleScopeProvider
+import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
+import com.uber.autodispose.lifecycle.KotlinLifecycleScopeProvider
 import io.reactivex.Observable
-import io.reactivex.functions.Function
 
 abstract class AutoDisposeController
-  : RefWatchingController, LifecycleScopeProvider<ControllerEvent> {
+  : RefWatchingController, KotlinLifecycleScopeProvider<ControllerEvent> {
 
   @Suppress("LeakingThis")
   private val lifecycleProvider = ControllerScopeProvider.from(this)
@@ -61,15 +61,17 @@ abstract class AutoDisposeController
 
   protected constructor(args: Bundle) : super(args)
 
-  override final fun lifecycle(): io.reactivex.Observable<ControllerEvent> {
+  final override fun lifecycle(): io.reactivex.Observable<ControllerEvent> {
     return lifecycleProvider.lifecycle()
   }
 
-  override final fun correspondingEvents(): Function<ControllerEvent, ControllerEvent> {
-    return lifecycleProvider.correspondingEvents()
+  final override fun correspondingEvents(): CorrespondingEventsFunction<ControllerEvent> {
+    return CorrespondingEventsFunction {
+      lifecycleProvider.correspondingEvents().apply(it)
+    }
   }
 
-  override final fun peekLifecycle(): ControllerEvent? {
+  final override fun peekLifecycle(): ControllerEvent? {
     return lifecycleProvider.peekLifecycle()
   }
 }

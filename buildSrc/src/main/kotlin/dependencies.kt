@@ -53,7 +53,7 @@ object deps {
     const val androidx = "1.0.0-beta01"
     const val androidxArch = "2.0.0-alpha1"
     const val apollo = "1.0.0-alpha"
-    const val autodispose = "0.8.0"
+    const val autodispose = "1.0.0-RC1"
     const val barber = "1.3.1"
     const val butterknife = "8.8.1"
     const val chuck = "1.1.0"
@@ -148,8 +148,10 @@ object deps {
   object autoDispose {
     const val core = "com.uber.autodispose:autodispose:${versions.autodispose}"
     const val android = "com.uber.autodispose:autodispose-android:${versions.autodispose}"
-    const val androidKotlin = "com.uber.autodispose:autodispose-android-kotlin:${versions.autodispose}"
-    const val kotlin = "com.uber.autodispose:autodispose-kotlin:${versions.autodispose}"
+    const val androidKotlin = "com.uber.autodispose:autodispose-android-ktx:${versions.autodispose}"
+    const val kotlin = "com.uber.autodispose:autodispose-ktx:${versions.autodispose}"
+    const val lifecycle = "com.uber.autodispose:autodispose-lifecycle:${versions.autodispose}"
+    const val lifecycleKtx = "com.uber.autodispose:autodispose-lifecycle-ktx:${versions.autodispose}"
   }
 
   object barber {

@@ -20,21 +20,19 @@ package androidx.recyclerview.widget
 
 import android.view.View
 import com.uber.autodispose.ScopeProvider
-import io.reactivex.Maybe
-import io.reactivex.subjects.MaybeSubject
-
-private object NOTIFICATION
+import io.reactivex.CompletableSource
+import io.reactivex.subjects.CompletableSubject
 
 abstract class RxViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ScopeProvider {
 
-  private var unbindNotifier: MaybeSubject<Any>? = null
+  private var unbindNotifier: CompletableSubject? = null
 
-  private val notifier: MaybeSubject<Any>
+  private val notifier: CompletableSubject
     get() {
       synchronized(this) {
         var n = unbindNotifier
         return if (n == null) {
-          n = MaybeSubject.create<Any>()
+          n = CompletableSubject.create()
           unbindNotifier = n
           n
         } else {
@@ -51,12 +49,12 @@ abstract class RxViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
   private fun emitUnBindIfPresent() {
     unbindNotifier?.let {
       if (!it.hasComplete()) {
-        it.onSuccess(NOTIFICATION)
+        it.onComplete()
       }
     }
   }
 
-  override fun requestScope(): Maybe<*> {
+  override fun requestScope(): CompletableSource {
     return notifier
   }
 

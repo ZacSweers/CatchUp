@@ -458,6 +458,8 @@ dependencies {
   implementation(deps.autoDispose.core)
   implementation(deps.autoDispose.android)
   implementation(deps.autoDispose.kotlin)
+  implementation(deps.autoDispose.lifecycle)
+  implementation(deps.autoDispose.lifecycleKtx)
   compileOnly(deps.errorProne.compileOnly.annotations)
   implementation(deps.barber.api)
   kapt(deps.barber.apt)

@@ -50,7 +50,7 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
-import com.uber.autodispose.kotlin.autoDisposable
+import com.uber.autodispose.autoDisposable
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector

@@ -27,7 +27,7 @@ import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
 import androidx.collection.ArrayMap
 import com.f2prateek.rx.preferences2.Preference
-import com.uber.autodispose.kotlin.autoDisposable
+import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

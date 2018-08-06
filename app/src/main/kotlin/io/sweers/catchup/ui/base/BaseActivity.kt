@@ -24,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
 import com.bluelinelabs.conductor.Controller
 import com.jakewharton.rxrelay2.BehaviorRelay
-import com.uber.autodispose.LifecycleScopeProvider
+import com.uber.autodispose.lifecycle.KotlinLifecycleScopeProvider
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import io.reactivex.Observable
@@ -41,7 +41,7 @@ import io.sweers.catchup.util.updateNavBarColor
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity(),
-    LifecycleScopeProvider<ActivityEvent>, HasControllerInjector {
+    KotlinLifecycleScopeProvider<ActivityEvent>, HasControllerInjector {
 
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
 
@@ -103,8 +103,10 @@ abstract class BaseActivity : AppCompatActivity(),
     lifecycle().doOnDestroy(this) { action() }.subscribe()
   }
 
-  @Inject protected lateinit var viewContainer: ViewContainer
-  @Inject lateinit var controllerInjector: DispatchingAndroidInjector<Controller>
+  @Inject
+  protected lateinit var viewContainer: ViewContainer
+  @Inject
+  lateinit var controllerInjector: DispatchingAndroidInjector<Controller>
 
   @CheckResult
   override fun lifecycle(): Observable<ActivityEvent> {
@@ -119,18 +121,21 @@ abstract class BaseActivity : AppCompatActivity(),
     return lifecycleRelay.value
   }
 
-  @CallSuper override fun onCreate(savedInstanceState: Bundle?) {
+  @CallSuper
+  override fun onCreate(savedInstanceState: Bundle?) {
     AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     lifecycleRelay.accept(ActivityEvent.CREATE)
   }
 
-  @CallSuper override fun onStart() {
+  @CallSuper
+  override fun onStart() {
     super.onStart()
     lifecycleRelay.accept(ActivityEvent.START)
   }
 
-  @CallSuper override fun onResume() {
+  @CallSuper
+  override fun onResume() {
     super.onResume()
     lifecycleRelay.accept(ActivityEvent.RESUME)
   }
@@ -147,17 +152,20 @@ abstract class BaseActivity : AppCompatActivity(),
     updateNavBarColor()
   }
 
-  @CallSuper override fun onPause() {
+  @CallSuper
+  override fun onPause() {
     lifecycleRelay.accept(ActivityEvent.PAUSE)
     super.onPause()
   }
 
-  @CallSuper override fun onStop() {
+  @CallSuper
+  override fun onStop() {
     lifecycleRelay.accept(ActivityEvent.STOP)
     super.onStop()
   }
 
-  @CallSuper override fun onDestroy() {
+  @CallSuper
+  override fun onDestroy() {
     lifecycleRelay.accept(ActivityEvent.DESTROY)
     super.onDestroy()
   }

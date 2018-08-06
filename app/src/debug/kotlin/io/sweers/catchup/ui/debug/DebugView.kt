@@ -40,7 +40,7 @@ import com.jakewharton.rxbinding2.widget.RxAdapterView
 import com.readystatesoftware.chuck.internal.ui.MainActivity
 import com.squareup.leakcanary.internal.DisplayLeakActivity
 import com.uber.autodispose.android.scope
-import com.uber.autodispose.kotlin.autoDisposable
+import com.uber.autodispose.autoDisposable
 import dagger.Lazy
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers

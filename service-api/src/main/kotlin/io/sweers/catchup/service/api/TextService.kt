@@ -19,7 +19,7 @@ package io.sweers.catchup.service.api
 import android.content.Context
 import android.content.res.Configuration
 import androidx.core.content.ContextCompat
-import com.uber.autodispose.kotlin.autoDisposable
+import com.uber.autodispose.autoDisposable
 
 interface TextService : Service {
   override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {

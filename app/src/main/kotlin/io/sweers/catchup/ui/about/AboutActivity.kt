@@ -47,7 +47,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
-import com.uber.autodispose.kotlin.autoDisposable
+import com.uber.autodispose.autoDisposable
 import dagger.Binds
 import dagger.Module
 import dagger.Subcomponent
