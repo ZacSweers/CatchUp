@@ -20,7 +20,6 @@ import android.os.Bundle
 import com.bluelinelabs.conductor.autodispose.ControllerEvent
 import com.bluelinelabs.conductor.autodispose.ControllerEvent.DESTROY
 import com.bluelinelabs.conductor.autodispose.ControllerEvent.DESTROY_VIEW
-import com.bluelinelabs.conductor.autodispose.ControllerScopeProvider
 import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
 import com.uber.autodispose.lifecycle.KotlinLifecycleScopeProvider
 import io.reactivex.Observable
@@ -29,7 +28,7 @@ abstract class AutoDisposeController
   : RefWatchingController, KotlinLifecycleScopeProvider<ControllerEvent> {
 
   @Suppress("LeakingThis")
-  private val lifecycleProvider = ControllerScopeProvider.from(this)
+  private val lifecycleProvider = KotlinControllerScopeProvider.from(this)
 
   protected inline fun <T, R> Observable<T>.doOnDestroyView(r: R,
       crossinline action: R.() -> Unit): Observable<T> = apply {

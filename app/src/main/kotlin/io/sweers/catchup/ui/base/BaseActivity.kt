@@ -24,11 +24,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
 import com.bluelinelabs.conductor.Controller
 import com.jakewharton.rxrelay2.BehaviorRelay
+import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
 import com.uber.autodispose.lifecycle.KotlinLifecycleScopeProvider
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import io.reactivex.Observable
-import io.reactivex.functions.Function
 import io.sweers.catchup.injection.HasControllerInjector
 import io.sweers.catchup.ui.ViewContainer
 import io.sweers.catchup.ui.base.ActivityEvent.CREATE
@@ -113,7 +113,7 @@ abstract class BaseActivity : AppCompatActivity(),
     return lifecycleRelay
   }
 
-  final override fun correspondingEvents(): Function<ActivityEvent, ActivityEvent> {
+  final override fun correspondingEvents(): CorrespondingEventsFunction<ActivityEvent> {
     return ActivityEvent.LIFECYCLE
   }
 

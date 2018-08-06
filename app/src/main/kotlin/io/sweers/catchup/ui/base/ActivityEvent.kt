@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.ui.base
 
-import com.uber.autodispose.LifecycleEndedException
-import io.reactivex.functions.Function
+import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
+import com.uber.autodispose.lifecycle.LifecycleEndedException
 
 /**
  * Activity lifecycle events.
@@ -26,8 +26,8 @@ enum class ActivityEvent {
   CREATE, START, RESUME, PAUSE, STOP, DESTROY;
 
   companion object {
-    val LIFECYCLE = Function { lastEvent: ActivityEvent ->
-      return@Function when (lastEvent) {
+    val LIFECYCLE = CorrespondingEventsFunction { lastEvent: ActivityEvent ->
+      return@CorrespondingEventsFunction when (lastEvent) {
         CREATE -> DESTROY
         START -> STOP
         RESUME -> PAUSE
