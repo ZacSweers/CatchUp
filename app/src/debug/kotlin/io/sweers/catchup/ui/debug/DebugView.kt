@@ -178,7 +178,6 @@ class DebugView @JvmOverloads constructor(context: Context,
     RxAdapterView.itemSelections<SpinnerAdapter>(networkDelayView)
         .map { delayAdapter.getItem(it) }
         .filter { item -> item != behavior.delay(MILLISECONDS) }
-        .autoDisposable(scope())
         .subscribe { selected ->
           d { "Setting network delay to ${selected}ms" }
           behavior.setDelay(selected, MILLISECONDS)
@@ -193,7 +192,6 @@ class DebugView @JvmOverloads constructor(context: Context,
     RxAdapterView.itemSelections<SpinnerAdapter>(networkVarianceView)
         .map { varianceAdapter.getItem(it) }
         .filter { item -> item != behavior.variancePercent() }
-        .autoDisposable(scope())
         .subscribe { selected ->
           d { "Setting network variance to $selected%" }
           behavior.setVariancePercent(selected)
@@ -208,7 +206,6 @@ class DebugView @JvmOverloads constructor(context: Context,
     RxAdapterView.itemSelections<SpinnerAdapter>(networkErrorView)
         .map { errorAdapter.getItem(it) }
         .filter { item -> item != behavior.failurePercent() }
-        .autoDisposable(scope())
         .subscribe { selected ->
           d { "Setting network error to $selected%" }
           behavior.setFailurePercent(selected)
@@ -226,7 +223,6 @@ class DebugView @JvmOverloads constructor(context: Context,
   private fun setupMockBehaviorSection() {
     enableMockModeView.isChecked = P.DebugMockModeEnabled.get()
     RxView.clicks(enableMockModeView)
-        .autoDisposable(scope())
         .subscribe {
           P.DebugMockModeEnabled.put(enableMockModeView.isChecked).commit()
           ProcessPhoenix.triggerRebirth(context)
@@ -243,7 +239,6 @@ class DebugView @JvmOverloads constructor(context: Context,
     RxAdapterView.itemSelections<SpinnerAdapter>(uiAnimationSpeedView)
         .map { speedAdapter.getItem(it) }
         .filter { item -> item != animationSpeed.get() }
-        .autoDisposable(scope())
         .subscribe { selected ->
           d { "Setting animation speed to ${selected}x" }
           animationSpeed.set(selected)
@@ -338,7 +333,6 @@ class DebugView @JvmOverloads constructor(context: Context,
         }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .autoDisposable(scope())
         .subscribe { cache ->
           if (setup) {
             okHttpCacheMaxSizeView.text = getSizeString(cache.maxSize())
