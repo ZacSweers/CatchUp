@@ -23,7 +23,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 import okio.BufferedSink
-import okio.Okio
+import okio.buffer
+import okio.sink
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import timber.log.Timber
@@ -77,14 +78,14 @@ class LumberYard @Inject constructor(private val app: Application) {
 
       var sink: BufferedSink? = null
       try {
-        sink = Okio.buffer(Okio.sink(output))
+        sink = output.sink().buffer()
         val entries1 = bufferedLogs()
         for (entry in entries1) {
-          sink!!.writeUtf8(entry.prettyPrint()).writeByte('\n'.toInt())
+          sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.toInt())
         }
         // need to close before emiting file to the subscriber, because when subscriber receives
         // data in the same thread the file may be truncated
-        sink!!.close()
+        sink.close()
         sink = null
 
         subscriber.onSuccess(output)

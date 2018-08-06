@@ -27,7 +27,8 @@ import okhttp3.MediaType
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody
-import okio.Okio
+import okio.buffer
+import okio.source
 import java.io.IOException
 
 /**
@@ -48,8 +49,8 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
       Response.Builder().request(request)
           .body(ResponseBody.create(
               MediaType.parse("application/json"),
-              Okio.buffer(Okio.source(context.assets
-                  .open(formatUrl(serviceData, url))))
+              context.assets
+                  .open(formatUrl(serviceData, url)).source().buffer()
                   .readUtf8()))
           .code(200)
           .protocol(Protocol.HTTP_1_1)

@@ -51,13 +51,13 @@ object deps {
   object versions {
     const val androidTestSupport = "1.1.0-beta01"
     const val androidx = "1.0.0-beta01"
-    const val androidxArch = "2.0.0-alpha1"
+    const val androidxArch = "2.0.0-beta01"
     const val apollo = "1.0.0-alpha"
     const val autodispose = "1.0.0-RC1"
     const val barber = "1.3.1"
     const val butterknife = "8.8.1"
     const val chuck = "1.1.0"
-    const val conductor = "2.1.4"
+    const val conductor = "2.1.5"
     const val crumb = "0.0.1"
     const val dagger = "2.16"
     const val errorProne = "2.3.1"
@@ -182,7 +182,7 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.2.8"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.3.0"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.2"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
@@ -302,7 +302,7 @@ object deps {
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     const val metadata = "me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.4.0"
     const val noArgGradlePlugin = "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
-    const val poet = "com.squareup:kotlinpoet:0.7.0"
+    const val poet = "com.squareup:kotlinpoet:1.0.0-RC1"
 
     object stdlib {
       const val core = "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
@@ -317,7 +317,7 @@ object deps {
   }
 
   object misc {
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.5.0"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.6.0"
 
     object debug {
       const val flipper = "com.facebook.sonar:sonar:0.6.13"
@@ -333,10 +333,10 @@ object deps {
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
     const val lottie = "com.airbnb.android:lottie:2.5.6"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-    const val okio = "com.squareup.okio:okio:1.14.1"
+    const val okio = "com.squareup.okio:okio:2.0.0-RC1"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:2.3.0"
-    const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.11.0"
-    const val timber = "com.jakewharton.timber:timber:4.7.0"
+    const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.12.0"
+    const val timber = "com.jakewharton.timber:timber:4.7.1"
     const val unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"
   }
 
@@ -375,7 +375,7 @@ object deps {
       const val design = "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
     }
 
-    const val java = "io.reactivex.rxjava2:rxjava:2.1.15"
+    const val java = "io.reactivex.rxjava2:rxjava:2.2.0"
 
     object palette {
       const val core = "io.sweers.rxpalette:rxpalette:${versions.rxpalette}"
@@ -416,6 +416,6 @@ object deps {
 
     const val junit = "junit:junit:4.12"
     const val robolectric = "org.robolectric:robolectric:4.0-alpha-1"
-    const val truth = "com.google.truth:truth:0.41"
+    const val truth = "com.google.truth:truth:0.42"
   }
 }

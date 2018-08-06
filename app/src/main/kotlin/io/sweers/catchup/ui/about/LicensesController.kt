@@ -85,7 +85,8 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
-import okio.Okio
+import okio.buffer
+import okio.source
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -169,7 +170,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
           // Start with a fetch of our github entries from assets
           moshi.adapter<List<OssGitHubEntry>>(
               Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java))
-              .fromJson(Okio.buffer(Okio.source(resources!!.assets.open("licenses_github.json"))))
+              .fromJson(resources!!.assets.open("licenses_github.json").source().buffer())
         }
         .flattenAsObservable { it }
         .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
@@ -236,8 +237,7 @@ class LicensesController : ButterKnifeController(), Scrollable {
                 .fromCallable {
                   moshi.adapter<List<OssItem>>(
                       Types.newParameterizedType(List::class.java, OssItem::class.java))
-                      .fromJson(
-                          Okio.buffer(Okio.source(resources!!.assets.open("licenses_mixins.json"))))
+                      .fromJson(resources!!.assets.open("licenses_mixins.json").source().buffer())
                 }
                 .flattenAsObservable { it }
         )
