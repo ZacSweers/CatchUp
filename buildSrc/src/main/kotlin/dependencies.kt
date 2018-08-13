@@ -59,7 +59,7 @@ object deps {
     const val chuck = "1.1.0"
     const val conductor = "2.1.5"
     const val crumb = "0.0.1"
-    const val dagger = "2.16"
+    const val dagger = "2.17"
     const val errorProne = "2.3.1"
     const val espresso = "3.1.0-alpha1"
     const val firebase = "12.0.1"
