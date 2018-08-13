@@ -49,7 +49,8 @@ class LumberYard @Inject constructor(private val app: Application) {
     }
   }
 
-  @Synchronized private fun addEntry(entry: Entry) {
+  @Synchronized
+  private fun addEntry(entry: Entry) {
     entries.addLast(entry)
     if (entries.size > BUFFER_SIZE) {
       entries.removeFirst()
@@ -110,12 +111,14 @@ class LumberYard @Inject constructor(private val app: Application) {
    */
   @WorkerThread
   fun cleanUp(): Long {
-    val folder = app.getExternalFilesDir(null)
-    val initialSize = folder.length()
-    folder?.listFiles()?.asSequence()?.filter {
-      it.name.endsWith(".log")
-    }?.forEach { it.delete() }
-    return initialSize - folder.length()
+    return app.getExternalFilesDir(null)?.let { folder ->
+      val initialSize = folder.length()
+      folder.listFiles()
+          .asSequence()
+          .filter { it.name.endsWith(".log") }
+          .forEach { it.delete() }
+      return@let initialSize - folder.length()
+    } ?: -1L
   }
 
   data class Entry(val level: Int, val tag: String?, val message: String) {
@@ -137,6 +140,6 @@ class LumberYard @Inject constructor(private val app: Application) {
   }
 
   companion object {
-    private val BUFFER_SIZE = 200
+    private const val BUFFER_SIZE = 200
   }
 }

@@ -19,7 +19,7 @@ package io.sweers.catchup.app
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
-import dagger.android.AndroidInjectionModule
+import dagger.android.support.AndroidSupportInjectionModule
 import io.sweers.catchup.data.DataModule
 import io.sweers.catchup.data.VariantDataModule
 import io.sweers.catchup.flipper.FlipperModule
@@ -30,7 +30,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [
   ActivityBindingModule::class,
-  AndroidInjectionModule::class,
+  AndroidSupportInjectionModule::class,
   ApplicationModule::class,
   ConductorInjectionModule::class,
   DataModule::class,
@@ -45,6 +45,7 @@ interface ApplicationComponent {
   interface Builder {
     fun build(): ApplicationComponent
 
-    @BindsInstance fun application(application: Application): Builder
+    @BindsInstance
+    fun application(application: Application): Builder
   }
 }

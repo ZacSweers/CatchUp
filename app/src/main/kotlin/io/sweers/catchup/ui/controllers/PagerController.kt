@@ -364,18 +364,19 @@ class PagerController : ButterKnifeController {
     super.onActivityResult(requestCode, resultCode, data)
     if (requestCode == SETTINGS_ACTIVITY_REQUEST) {
       if (resultCode == SettingsActivity.SETTINGS_RESULT_DATA && data != null) {
-        val extras = data.extras
-        if (extras.getBoolean(SettingsActivity.NIGHT_MODE_UPDATED, false)
-            || extras.getBoolean(SettingsActivity.SERVICE_ORDER_UPDATED, false)) {
-          for (i in 0 until tabLayout.tabCount) {
-            pagerAdapter.getRouter(i)?.setBackstack(emptyList(), null)
+        data.extras?.let { extras ->
+          if (extras.getBoolean(SettingsActivity.NIGHT_MODE_UPDATED, false)
+              || extras.getBoolean(SettingsActivity.SERVICE_ORDER_UPDATED, false)) {
+            for (i in 0 until tabLayout.tabCount) {
+              pagerAdapter.getRouter(i)?.setBackstack(emptyList(), null)
+            }
+            activity?.recreate()
           }
-          activity?.recreate()
-        }
-        if (extras.getBoolean(SettingsActivity.NAV_COLOR_UPDATED, false)) {
-          activity?.updateNavBarColor(color = (tabLayout.background as ColorDrawable).color,
-              context = view!!.context,
-              recreate = true)
+          if (extras.getBoolean(SettingsActivity.NAV_COLOR_UPDATED, false)) {
+            activity?.updateNavBarColor(color = (tabLayout.background as ColorDrawable).color,
+                context = view!!.context,
+                recreate = true)
+          }
         }
       }
     }

@@ -233,7 +233,8 @@ open class CutChangelogTask : DefaultTask() {
     val whatsNewPath = "${project.projectDir}/src/main/play/en-US/whatsnew"
     val newChangelog = getChangelog(changelog, "").let {
       if (it.length > 500) {
-        logger.log(LogLevel.WARN, "Changelog length (${it.length}) exceeds 500 char max. Truncating...")
+        logger.log(LogLevel.WARN,
+            "Changelog length (${it.length}) exceeds 500 char max. Truncating...")
         val warning = "\n(Truncated due to store restrictions. Full changelog in app!)"
         val warningLength = warning.length
         val remainingAmount = 500 - warningLength
@@ -321,7 +322,8 @@ fun getChangelog(): String {
 
 open class UpdateVersion : DefaultTask() {
 
-  @set:Option(option = "updateType", description = "Configures the version update type. Can be (major|minor|patch).")
+  @set:Option(option = "updateType",
+      description = "Configures the version update type. Can be (major|minor|patch).")
   @get:Input
   lateinit var type: String
 
@@ -397,6 +399,8 @@ dependencies {
   debugImplementation(deps.android.support.drawerLayout)
   implementation(deps.android.support.palette)
   implementation(deps.android.support.paletteKtx)
+  implementation(deps.android.support.preference)
+  implementation(deps.android.support.preferenceKtx)
   implementation(deps.android.support.viewPager)
   implementation(deps.android.support.swipeRefresh)
   implementation(deps.android.support.legacyAnnotations)
@@ -505,6 +509,7 @@ dependencies {
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.android.runtime)
+  implementation(deps.dagger.android.support)
 
   // Inspector exposed for dagger
   implementation(deps.inspector.core)

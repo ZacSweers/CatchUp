@@ -17,28 +17,29 @@
 package io.sweers.catchup.ui.activity
 
 import android.app.Activity
-import android.app.Fragment
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.CheckBoxPreference
-import android.preference.Preference
-import android.preference.PreferenceFragment
-import android.preference.PreferenceScreen
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.preference.CheckBoxPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceGroup
+import androidx.preference.children
 import butterknife.BindView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.perf.FirebasePerformance
 import com.uber.autodispose.autoDisposable
 import dagger.Binds
 import dagger.Module
-import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.ContributesAndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasFragmentInjector
+import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.HasSupportFragmentInjector
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -51,8 +52,8 @@ import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.util.clearCache
-import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.isInNightMode
+import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNavBarColor
 import io.sweers.catchup.util.updateNightMode
@@ -60,7 +61,7 @@ import okhttp3.Cache
 import java.io.File
 import javax.inject.Inject
 
-class SettingsActivity : BaseActivity(), HasFragmentInjector {
+class SettingsActivity : BaseActivity(), HasSupportFragmentInjector {
 
   companion object {
     const val SETTINGS_RESULT_DATA = 100
@@ -93,7 +94,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
     }
 
     if (savedInstanceState == null) {
-      fragmentManager.beginTransaction()
+      supportFragmentManager.beginTransaction()
           .add(R.id.container, SettingsFrag())
           .commit()
     } else if (savedInstanceState.getBoolean(ARG_FROM_RECREATE, false)) {
@@ -122,7 +123,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
     super.onBackPressed()
   }
 
-  override fun fragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
+  override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
 
   @Module
   abstract class SettingsActivityModule {
@@ -131,7 +132,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
     abstract fun provideActivity(activity: SettingsActivity): Activity
   }
 
-  class SettingsFrag : PreferenceFragment() {
+  class SettingsFrag : PreferenceFragmentCompat() {
 
     @Inject
     lateinit var cache: dagger.Lazy<Cache>
@@ -142,10 +143,15 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-      AndroidInjection.inject(this)
-      super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+      AndroidSupportInjection.inject(this)
       addPreferencesFromResource(R.xml.prefs_general)
+
+      // Because why on earth is the default true
+      // Note categories don't work yet due to https://issuetracker.google.com/issues/111662669
+      preferenceScreen.allChildren.forEach {
+        it.isIconSpaceReserved = false
+      }
 
       (findPreference(
           P.SmartlinkingGlobal.KEY) as CheckBoxPreference).isChecked = P.SmartlinkingGlobal.get()
@@ -157,8 +163,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
       themeNavBarPref.isChecked = P.ThemeNavigationBar.get()
     }
 
-    override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen,
-        preference: Preference): Boolean {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
       when (preference.key) {
         P.SmartlinkingGlobal.KEY -> {
           P.SmartlinkingGlobal.put((preference as CheckBoxPreference).isChecked).apply()
@@ -175,18 +180,20 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
                 }
               }
               .apply()
-          activity.updateNightMode()
+          activity?.updateNightMode()
           return true
         }
         P.DaynightNight.KEY -> {
           P.DaynightNight.put((preference as CheckBoxPreference).isChecked).apply()
-          activity.updateNightMode()
+          activity?.updateNightMode()
           return true
         }
         P.ThemeNavigationBar.KEY -> {
           P.ThemeNavigationBar.put((preference as CheckBoxPreference).isChecked).apply()
-          (activity as SettingsActivity).resultData.putBoolean(NAV_COLOR_UPDATED, true)
-          activity.updateNavBarColor(recreate = true)
+          (activity as SettingsActivity).run {
+            resultData.putBoolean(NAV_COLOR_UPDATED, true)
+            updateNavBarColor(recreate = true)
+          }
           return true
         }
         P.ReorderServicesSection.KEY -> {
@@ -198,7 +205,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
           val isChecked = (preference as CheckBoxPreference).isChecked
           FirebasePerformance.getInstance().isPerformanceCollectionEnabled = isChecked
           P.Reports.put(isChecked).apply()
-          Snackbar.make(view, R.string.settings_reset, Snackbar.LENGTH_SHORT)
+          Snackbar.make(view!!, R.string.settings_reset, Snackbar.LENGTH_SHORT)
               .setAction(R.string.undo) {
                 // TODO Maybe this should actually be a restart button
                 P.Reports.put(!isChecked).apply()
@@ -211,7 +218,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
           Single.fromCallable {
             // TODO would be nice to measure the size impact of this file ¯\_(ツ)_/¯
             sharedPreferences.edit().clear().apply()
-            val cacheCleaned = activity.applicationContext.clearCache()
+            val cacheCleaned = activity!!.applicationContext.clearCache()
             val networkCacheCleaned = with(cache.get()) {
               val initialSize = size()
               evictAll()
@@ -252,7 +259,7 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
         }
       }
 
-      return super.onPreferenceTreeClick(preferenceScreen, preference)
+      return super.onPreferenceTreeClick(preference)
     }
 
     @Module
@@ -264,3 +271,15 @@ class SettingsActivity : BaseActivity(), HasFragmentInjector {
     }
   }
 }
+
+/**
+ * Recursively gets all children in a preference (group).
+ */
+val Preference.allChildren: Sequence<Preference>
+  get() {
+    return if (this is PreferenceGroup) {
+      children + children.flatMap(Preference::allChildren)
+    } else {
+      sequenceOf(this)
+    }
+  }

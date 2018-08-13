@@ -127,6 +127,8 @@ object deps {
       const val palette = "androidx.palette:palette:${versions.androidx}"
       const val paletteKtx = "androidx.palette:palette-ktx:${versions.androidx}"
       const val percent = "androidx.percentlayout:percentlayout:${versions.androidx}"
+      const val preference = "androidx.preference:preference:${versions.androidx}"
+      const val preferenceKtx = "androidx.preference:preference-ktx:${versions.androidx}"
       const val recyclerView = "androidx.recyclerview:recyclerview:${versions.androidx}"
       const val compat = "androidx.core:core:${versions.androidx}"
     }
@@ -228,6 +230,7 @@ object deps {
       }
 
       const val runtime = "com.google.dagger:dagger-android:${versions.dagger}"
+      const val support = "com.google.dagger:dagger-android-support:${versions.dagger}"
     }
 
     object apt {
@@ -260,6 +263,7 @@ object deps {
       const val debug = "com.willowtreeapps.hyperion:hyperion-core:${versions.hyperion}"
       const val release = "com.willowtreeapps.hyperion:hyperion-core-no-op:${versions.hyperion}"
     }
+
     object plugins {
       const val appInfo = "com.star_zero:hyperion-appinfo:1.0.0"
       const val attr = "com.willowtreeapps.hyperion:hyperion-attr:${versions.hyperion}"

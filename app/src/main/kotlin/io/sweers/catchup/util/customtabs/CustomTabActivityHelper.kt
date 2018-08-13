@@ -99,8 +99,7 @@ class CustomTabActivityHelper @Inject constructor() {
    * @param activity the activity that is bound to the service
    */
   fun unbindCustomTabsService(activity: Activity) {
-    connection ?: return
-    activity.unbindService(connection)
+    connection?.let(activity::unbindService)
     client = null
     customTabsSession = null
   }

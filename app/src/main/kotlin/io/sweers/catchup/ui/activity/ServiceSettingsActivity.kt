@@ -17,26 +17,26 @@
 package io.sweers.catchup.ui.activity
 
 import android.app.Activity
-import android.app.Fragment
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceCategory
-import android.preference.PreferenceFragment
-import android.preference.SwitchPreference
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import butterknife.BindView
 import dagger.Binds
 import dagger.Module
-import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.ContributesAndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasFragmentInjector
+import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.HasSupportFragmentInjector
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.P
 import io.sweers.catchup.R
@@ -54,7 +54,7 @@ import javax.inject.Inject
 
 private const val TARGET_PREF_RESOURCE = "catchup.servicesettings.resource"
 
-class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
+class ServiceSettingsActivity : BaseActivity(), HasSupportFragmentInjector {
 
   @Inject
   internal lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
@@ -74,7 +74,7 @@ class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
     }
 
     if (savedInstanceState == null) {
-      fragmentManager.beginTransaction()
+      supportFragmentManager.beginTransaction()
           .add(R.id.container, ServiceSettingsFrag().apply {
             if (intent.extras?.containsKey(TARGET_PREF_RESOURCE) == true) {
               arguments = bundleOf(
@@ -85,7 +85,7 @@ class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
     }
   }
 
-  override fun fragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
+  override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
 
   @Module
   abstract class ServiceSettingsActivityModule {
@@ -94,7 +94,7 @@ class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
     abstract fun provideActivity(activity: ServiceSettingsActivity): Activity
   }
 
-  class ServiceSettingsFrag : PreferenceFragment() {
+  class ServiceSettingsFrag : PreferenceFragmentCompat() {
 
     @Inject
     lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
@@ -102,17 +102,17 @@ class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
     @Inject
     lateinit var sharedPrefs: SharedPreferences
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-      AndroidInjection.inject(this)
-      super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+      AndroidSupportInjection.inject(this)
       // Replace backing sharedPreferences with ours
       preferenceManager.apply {
         sharedPreferencesName = "catchup"
         sharedPreferencesMode = Context.MODE_PRIVATE
       }
 
-      if (arguments?.containsKey(TARGET_PREF_RESOURCE) == true) {
-        addPreferencesFromResource(arguments.getInt(TARGET_PREF_RESOURCE))
+      val args = arguments
+      if (args?.containsKey(TARGET_PREF_RESOURCE) == true) {
+        addPreferencesFromResource(args.getInt(TARGET_PREF_RESOURCE))
       } else {
         setUpGeneralSettings()
       }
@@ -130,7 +130,7 @@ class ServiceSettingsActivity : BaseActivity(), HasFragmentInjector {
           .forEach { meta ->
             meta.run {
               // Create a category
-              val metaColor = ContextCompat.getColor(activity.asDayContext(), meta.themeColor)
+              val metaColor = ContextCompat.getColor(activity!!.asDayContext(), meta.themeColor)
               val category = PreferenceCategory(activity).apply {
                 title = resources.getString(meta.name)
 //                titleColor = metaColor
