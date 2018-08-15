@@ -31,6 +31,12 @@
   <style name="CatchUp" parent="Base">
   </style>
 
+  <style name="CatchUp.Launcher" parent="@style/CatchUp">
+    <item name="android:windowBackground">@drawable/preview_window</item>
+    <item name="android:windowLightStatusBar">true</item>
+    <item name="android:windowLightNavigationBar">true</item>
+  </style>
+
   <style name="CatchUp.TextView" parent="android:Widget.TextView">
     <item name="android:textAppearance">@style/CatchUp.TextAppearance</item>
   </style>

@@ -1,6 +1,7 @@
 * **New:** Integrate EmojiCompat for futureproofing emojis on all API versions
 * **New:** Build against Android P (SDK 28)
 * **New:** Use light nav bar in Marshmallow+
+* **New:** Splash screen on startup, for your viewing pleasure.
 * **New:** GitHub now scrapes the "trending" page rather than the "most popular repos created in the last week" logic from before. These might be reconciled in the future.
 * **Fix:** Fix Medium API often (never?) returning collections information anymore
 * **Fix:** Designer news API starting on page 0, when it in fact starts on page 1 because reasons
