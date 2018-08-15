@@ -26,13 +26,12 @@ import com.facebook.soloader.SoLoader
 import com.facebook.sonar.android.AndroidSonarClient
 import com.facebook.sonar.android.utils.SonarUtils
 import com.facebook.sonar.core.SonarPlugin
-import com.facebook.sonar.plugins.inspector.DescriptorMapping
-import com.facebook.sonar.plugins.inspector.InspectorSonarPlugin
-import com.facebook.sonar.plugins.sharedpreferences.SharedPreferencesSonarPlugin
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
 import com.squareup.leakcanary.LeakCanary
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import timber.log.Timber
 import timber.log.Timber.Tree
@@ -40,7 +39,8 @@ import javax.inject.Inject
 
 class DebugCatchUpApplication : CatchUpApplication() {
 
-  @Inject lateinit var flipperPlugins: Set<@JvmSuppressWildcards SonarPlugin>
+  @Inject
+  lateinit var flipperPlugins: Set<@JvmSuppressWildcards SonarPlugin>
 
   override fun onPreInject() {
     SoLoader.init(this, false)
@@ -89,9 +89,15 @@ class DebugCatchUpApplication : CatchUpApplication() {
     Timber.plant(StethoTree())
 
     if (SonarUtils.shouldEnableSonar(this)) {
-      val client = AndroidSonarClient.getInstance(this)
-      flipperPlugins.forEach(client::addPlugin)
-      client.start()
+      Completable
+          .fromAction {
+            AndroidSonarClient.getInstance(this).apply {
+              flipperPlugins.forEach(::addPlugin)
+              start()
+            }
+          }
+          .subscribeOn(Schedulers.io())
+          .subscribe()
     }
 
     if (BuildConfig.CRASH_ON_TIMBER_ERROR) {
@@ -103,6 +109,11 @@ class DebugCatchUpApplication : CatchUpApplication() {
         }
       })
     }
-    Stetho.initializeWithDefaults(this)
+    Completable
+        .fromAction {
+          Stetho.initializeWithDefaults(this)
+        }
+        .subscribeOn(Schedulers.io())
+        .subscribe()
   }
 }
