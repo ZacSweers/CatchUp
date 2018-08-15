@@ -253,7 +253,7 @@ internal class BugReportLens @Inject constructor(private val activity: Activity,
   }
 
   private fun getDensityString(displayMetrics: DisplayMetrics) =
-      when (val dpi = displayMetrics.densityDpi) {
+      when (displayMetrics.densityDpi) {
         DisplayMetrics.DENSITY_LOW -> "ldpi"
         DisplayMetrics.DENSITY_MEDIUM -> "mdpi"
         DisplayMetrics.DENSITY_HIGH -> "hdpi"
@@ -261,6 +261,6 @@ internal class BugReportLens @Inject constructor(private val activity: Activity,
         DisplayMetrics.DENSITY_XXHIGH -> "xxhdpi"
         DisplayMetrics.DENSITY_XXXHIGH -> "xxxhdpi"
         DisplayMetrics.DENSITY_TV -> "tvdpi"
-        else -> dpi.toString()
+        else -> displayMetrics.densityDpi.toString()
       }
 }

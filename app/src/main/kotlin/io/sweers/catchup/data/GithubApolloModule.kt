@@ -69,9 +69,9 @@ internal object GithubApolloModule {
   internal fun provideGitHubOkHttpClient(
       client: OkHttpClient,
       httpCache: HttpCache): OkHttpClient = client.newBuilder()
-      .addInterceptor(httpCache.interceptor())
-      .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
-      .build()
+          .addInterceptor(httpCache.interceptor())
+          .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
+          .build()
 
   @Provides
   @JvmStatic
@@ -86,14 +86,13 @@ internal object GithubApolloModule {
     }
 
     override fun fromFieldRecordSet(field: ResponseField,
-        objectSource: Map<String, Any>): CacheKey {
-      // Most objects use id
-      return when (val value = objectSource["id"]) {
-        is String -> formatter(value)
-        else -> CacheKey.NO_KEY
-      }
-    }
-
+        objectSource: Map<String, Any>): CacheKey =// Most objects use id
+        objectSource["id"].let {
+          return when (it) {
+            is String -> formatter(it)
+            else -> CacheKey.NO_KEY
+          }
+        }
 
     override fun fromFieldArguments(field: ResponseField,
         variables: Operation.Variables): CacheKey = CacheKey.NO_KEY
@@ -119,10 +118,8 @@ internal object GithubApolloModule {
         .httpCache(httpCache)
         .callFactory { client.get().newCall(it) }
         .normalizedCache(cacheFactory, resolver)
-        .addCustomTypeAdapter<Instant>(io.sweers.catchup.service.github.type.CustomType.DATETIME,
-            instantAdapter)
-        .addCustomTypeAdapter<HttpUrl>(io.sweers.catchup.service.github.type.CustomType.URI,
-            httpUrlAdapter)
+        .addCustomTypeAdapter<Instant>(io.sweers.catchup.service.github.type.CustomType.DATETIME, instantAdapter)
+        .addCustomTypeAdapter<HttpUrl>(io.sweers.catchup.service.github.type.CustomType.URI, httpUrlAdapter)
         .addCustomTypeAdapter<Instant>(CustomType.DATETIME, instantAdapter)
         .addCustomTypeAdapter<HttpUrl>(CustomType.URI, httpUrlAdapter)
         .build()

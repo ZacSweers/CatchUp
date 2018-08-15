@@ -318,7 +318,8 @@ class LicensesController : ButterKnifeController(), Scrollable {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-      when (val item = items[position]) {
+      val item = items[position]
+      when (item) {
         is OssItemHeader -> (holder as HeaderHolder).run {
           GlideApp.with(itemView)
               .load(item.avatarUrl)
