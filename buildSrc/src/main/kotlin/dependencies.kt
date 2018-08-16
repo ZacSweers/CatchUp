@@ -371,7 +371,7 @@ object deps {
   }
 
   object rx {
-    const val android = "io.reactivex.rxjava2:rxandroid:2.0.2"
+    const val android = "io.reactivex.rxjava2:rxandroid:2.1.0"
 
     object binding {
       const val core = "com.jakewharton.rxbinding2:rxbinding-kotlin:${versions.rxbinding}"
