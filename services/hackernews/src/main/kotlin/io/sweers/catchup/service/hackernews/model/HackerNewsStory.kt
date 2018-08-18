@@ -63,10 +63,10 @@ internal data class HackerNewsStory(
         TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS))
   } ?: Instant.now()
 
-    @Exclude
-    fun realType() = type?.let { HNType.valueOf(it.toUpperCase(Locale.US)) }
+  @Exclude
+  fun realType() = type?.let { HNType.valueOf(it.toUpperCase(Locale.US)) }
 
-    companion object {
+  companion object {
 
     fun create(dataSnapshot: DataSnapshot): HackerNewsStory {
       return dataSnapshot.getValue(HackerNewsStory::class.java)!!
