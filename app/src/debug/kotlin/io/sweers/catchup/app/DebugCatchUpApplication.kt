@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import android.util.Log
+import androidx.lifecycle.ReportFragment
 import com.facebook.soloader.SoLoader
 import com.facebook.sonar.android.AndroidSonarClient
 import com.facebook.sonar.android.utils.SonarUtils
@@ -29,6 +30,7 @@ import com.facebook.sonar.core.SonarPlugin
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
+import com.squareup.leakcanary.ExcludedRefs
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
@@ -62,7 +64,11 @@ class DebugCatchUpApplication : CatchUpApplication() {
         .detectAll()  // Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
         .penaltyLog()
         .build())
-    refWatcher = LeakCanary.refWatcher(this).buildAndInstall()
+    refWatcher = LeakCanary.refWatcher(this)
+        .excludedRefs(ExcludedRefs.builder()
+            .clazz(ReportFragment::class.java.simpleName) // https://issuetracker.google.com/issues/112792715
+            .build())
+        .buildAndInstall()
     registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
       override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
