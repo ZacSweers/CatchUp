@@ -287,6 +287,7 @@ internal class ImageAdapter(private val context: Context,
                   isFirstResource: Boolean) = false
             })
             .into(CatchUpTarget(image, false))
+            .clearOnDetach()
         // need both placeholder & background to prevent seeing through image as it fades in
         image.background = loadingPlaceholders[adapterPosition % loadingPlaceholders.size]
         image.showBadge(imageItem.imageInfo.animatable)
