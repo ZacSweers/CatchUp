@@ -66,7 +66,7 @@ object deps {
     const val glide = "4.7.1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
-    const val kotlin = "1.2.60"
+    const val kotlin = "1.2.61"
     const val leakcanary = "1.6.1"
     const val legacySupport = "28.0.0-rc01"
     const val moshi = "1.6.0"
@@ -331,6 +331,8 @@ object deps {
       const val telescope = "com.mattprecious.telescope:telescope:2.1.0"
     }
 
+    const val flick = "me.saket:flick:1.3.0"
+    const val gestureViews = "com.alexvasilkov:gesture-views:2.2.0"
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
     const val jsoup = "org.jsoup:jsoup:1.11.3"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
