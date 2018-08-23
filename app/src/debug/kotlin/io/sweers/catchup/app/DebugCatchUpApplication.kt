@@ -30,7 +30,7 @@ import com.facebook.sonar.core.SonarPlugin
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
-import com.squareup.leakcanary.ExcludedRefs
+import com.squareup.leakcanary.AndroidExcludedRefs
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
@@ -65,8 +65,8 @@ class DebugCatchUpApplication : CatchUpApplication() {
         .penaltyLog()
         .build())
     refWatcher = LeakCanary.refWatcher(this)
-        .excludedRefs(ExcludedRefs.builder()
-            .clazz(ReportFragment::class.java.simpleName) // https://issuetracker.google.com/issues/112792715
+        .excludedRefs(AndroidExcludedRefs.createAppDefaults()
+            .instanceField("android.view.ViewGroup\$ViewLocationHolder", "mRoot") // https://github.com/square/leakcanary/issues/1081
             .build())
         .buildAndInstall()
     registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
