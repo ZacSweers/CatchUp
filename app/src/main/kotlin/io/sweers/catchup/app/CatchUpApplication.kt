@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.SharedPreferences
+import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.gabrielittner.threetenbp.LazyThreeTen
@@ -28,6 +29,8 @@ import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
+import io.reactivex.android.plugins.RxAndroidPlugins
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.util.d
@@ -37,6 +40,12 @@ import javax.inject.Inject
 abstract class CatchUpApplication : Application(), HasActivityInjector {
 
   companion object {
+
+    init {
+      RxAndroidPlugins.setInitMainThreadSchedulerHandler {
+        AndroidSchedulers.from(Looper.getMainLooper(), true)
+      }
+    }
 
     @JvmStatic lateinit var refWatcher: RefWatcher
 
