@@ -24,10 +24,13 @@ import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.text.PrecomputedTextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RxViewHolder
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -39,8 +42,8 @@ import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Mark
-import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.hide
+import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.showIf
 import org.threeten.bp.Instant
@@ -53,7 +56,7 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
   @BindView(R.id.tags_container)
   internal lateinit var tagsContainer: View
   @BindView(R.id.title)
-  internal lateinit var title: TextView
+  internal lateinit var title: AppCompatTextView
   @BindView(R.id.score)
   internal lateinit var score: TextView
   @BindView(R.id.score_divider)
@@ -141,7 +144,9 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
   override fun itemCommentClicks() = mark.clicks()
 
   fun title(titleText: CharSequence?) {
-    title.text = titleText
+    title.setTextFuture(
+        PrecomputedTextCompat.getTextFuture(titleText ?: "",
+            TextViewCompat.getTextMetricsParams(title), null))
   }
 
   fun score(scoreValue: Pair<String, Int>?) {
