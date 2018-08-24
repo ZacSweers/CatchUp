@@ -17,68 +17,77 @@
 package io.sweers.catchup.ui.widget
 
 import android.content.Context
-import android.content.res.Resources
+import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.View
-import android.view.View.MeasureSpec.getMode
+import androidx.annotation.FontRes
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.use
-import androidx.emoji.widget.EmojiAppCompatTextView
 import io.sweers.catchup.R
 
+
 /**
- * An extension to [android.widget.TextView] which aligns text to a 4dp baseline grid.
+ * An extension to [AppCompatTextView] which aligns text to a 4dp baseline grid.
  *
  * To achieve this we expose a `lineHeightHint` allowing you to specify the desired line
  * height (alternatively a `lineHeightMultiplierHint` to use a multiplier of the text size).
  * This line height will be adjusted to be a multiple of 4dp to ensure that baselines sit on
  * the grid.
  *
- * We also adjust the `topPadding` to ensure that the first line's baseline is on the grid
- * (relative to the view's top) and the `bottomPadding` to ensure this view's height is a
- * multiple of 4dp so that subsequent views start on the grid.
+ * We also adjust spacing above and below the text to ensure that the first line's baseline sits on
+ * the grid (relative to the view's top) & that this view's height is a multiple of 4dp so that
+ * subsequent views start on the grid.
  */
 class BaselineGridTextView @JvmOverloads constructor(context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = android.R.attr.textViewStyle)
-  : EmojiAppCompatTextView(context, attrs, defStyleAttr) {
+    defStyleAttr: Int = android.R.attr.textViewStyle) : AppCompatTextView(context, attrs,
+    defStyleAttr) {
 
-  companion object {
-    private val FOUR_DIP: Float = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-        4f,
-        Resources.getSystem().displayMetrics)
-  }
-
-  private var extraTopPadding = 0
-  private var extraBottomPadding = 0
+  private val FOUR_DIP: Float
 
   var lineHeightMultiplierHint = 1f
     set(value) {
       field = value
       computeLineHeight()
     }
-
   var lineHeightHint = 0f
     set(value) {
       field = value
       computeLineHeight()
     }
-
   var maxLinesByHeight = false
     set(value) {
       field = value
       requestLayout()
     }
+  private var extraTopPadding = 0
+  private var extraBottomPadding = 0
 
+  @FontRes
+  var fontResId = 0
+    private set
 
   init {
-    context.obtainStyledAttributes(attrs, R.styleable.BaselineGridTextView, defStyleAttr, 0).use {
-      lineHeightMultiplierHint = it.getFloat(
-          R.styleable.BaselineGridTextView_lineHeightMultiplierHint, 1f)
-      lineHeightHint = it.getDimensionPixelSize(R.styleable.BaselineGridTextView_lineHeightHint,
-          1).toFloat()
+    context.obtainStyledAttributes(
+        attrs, R.styleable.BaselineGridTextView, defStyleAttr, 0).use {
+      // first check TextAppearance for line height & font attributes
+      if (it.hasValue(R.styleable.BaselineGridTextView_android_textAppearance)) {
+        val textAppearanceId = it.getResourceId(
+            R.styleable.BaselineGridTextView_android_textAppearance,
+            android.R.style.TextAppearance)
+        context.obtainStyledAttributes(
+            textAppearanceId, R.styleable.BaselineGridTextView).use {
+          parseTextAttrs(it)
+        }
+      }
+
+      // then check view attrs
+      parseTextAttrs(it)
       maxLinesByHeight = it.getBoolean(R.styleable.BaselineGridTextView_maxLinesByHeight, false)
     }
+
+    FOUR_DIP = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, 4f, resources.displayMetrics)
     computeLineHeight()
   }
 
@@ -100,20 +109,37 @@ class BaselineGridTextView @JvmOverloads constructor(context: Context,
     height += ensureBaselineOnGrid()
     height += ensureHeightGridAligned(height)
     setMeasuredDimension(measuredWidth, height)
-    checkMaxLines(height, getMode(heightMeasureSpec))
+    checkMaxLines(height, MeasureSpec.getMode(heightMeasureSpec))
+  }
+
+  private fun parseTextAttrs(a: TypedArray) {
+    if (a.hasValue(R.styleable.BaselineGridTextView_lineHeightMultiplierHint)) {
+      lineHeightMultiplierHint = a.getFloat(
+          R.styleable.BaselineGridTextView_lineHeightMultiplierHint, 1f)
+    }
+    if (a.hasValue(R.styleable.BaselineGridTextView_lineHeightHint)) {
+      lineHeightHint = a.getDimensionPixelSize(
+          R.styleable.BaselineGridTextView_lineHeightHint, 0).toFloat()
+    }
+    if (a.hasValue(R.styleable.BaselineGridTextView_android_fontFamily)) {
+      fontResId = a.getResourceId(R.styleable.BaselineGridTextView_android_fontFamily, 0)
+    }
   }
 
   /**
    * Ensures line height is a multiple of 4dp.
    */
   private fun computeLineHeight() {
-    val fm = paint.fontMetricsInt
+    val fm = paint.fontMetrics
     val fontHeight = Math.abs(fm.ascent - fm.descent) + fm.leading
-    val desiredLineHeight = if (lineHeightHint > 0) lineHeightHint else lineHeightMultiplierHint * fontHeight
+    val desiredLineHeight = if (lineHeightHint > 0)
+      lineHeightHint
+    else
+      lineHeightMultiplierHint * fontHeight
 
     val baselineAlignedLineHeight = (FOUR_DIP * Math.ceil(
-        (desiredLineHeight / FOUR_DIP).toDouble()).toFloat()).toInt()
-    setLineSpacing((baselineAlignedLineHeight - fontHeight).toFloat(), 1f)
+        (desiredLineHeight / FOUR_DIP).toDouble()).toFloat() + 0.5f).toInt()
+    setLineSpacing(baselineAlignedLineHeight - fontHeight, 1f)
   }
 
   /**
@@ -144,7 +170,7 @@ class BaselineGridTextView @JvmOverloads constructor(context: Context,
    * this by setting the `maxLines` property based on the available space.
    */
   private fun checkMaxLines(height: Int, heightMode: Int) {
-    if (!maxLinesByHeight || heightMode != View.MeasureSpec.EXACTLY) return
+    if (!maxLinesByHeight || heightMode != MeasureSpec.EXACTLY) return
 
     val textHeight = height - compoundPaddingTop - compoundPaddingBottom
     val completeLines = Math.floor((textHeight / lineHeight).toDouble()).toInt()
