@@ -53,7 +53,7 @@ object deps {
     const val androidx = "1.0.0-rc01"
     const val androidxArch = "2.0.0-rc01"
     const val apollo = "1.0.0-alpha"
-    const val autodispose = "1.0.0-RC1"
+    const val autodispose = "1.0.0-RC2"
     const val butterknife = "8.8.1"
     const val chuck = "1.1.0"
     const val conductor = "2.1.5"
@@ -62,7 +62,7 @@ object deps {
     const val errorProne = "2.3.1"
     const val espresso = "3.1.0-alpha1"
     const val firebase = "12.0.1"
-    const val glide = "4.7.1"
+    const val glide = "4.8.0"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
     const val kotlin = "1.2.61"
@@ -315,10 +315,10 @@ object deps {
   }
 
   object misc {
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.6.0"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.6.1"
 
     object debug {
-      const val flipper = "com.facebook.flipper:flipper:0.6.16"
+      const val flipper = "com.facebook.flipper:flipper:0.6.17"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"
       const val scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
@@ -375,7 +375,7 @@ object deps {
       const val design = "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
     }
 
-    const val java = "io.reactivex.rxjava2:rxjava:2.2.0"
+    const val java = "io.reactivex.rxjava2:rxjava:2.2.1"
 
     object palette {
       const val core = "io.sweers.rxpalette:rxpalette:${versions.rxpalette}"
