@@ -24,7 +24,6 @@
   <uses-permission android:name="android.permission.INTERNET"/>
 
   <application
-      android:name=".app.CatchUpApplication"
       android:allowBackup="false"
       android:colorMode="wideColorGamut"
       android:icon="@mipmap/ic_launcher"
