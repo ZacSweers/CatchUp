@@ -32,9 +32,8 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.Gravity
 import androidx.annotation.ColorInt
-import io.sweers.barber.Barber
-import io.sweers.barber.Kind
-import io.sweers.barber.StyledAttr
+import androidx.annotation.Px
+import androidx.core.content.res.use
 import io.sweers.catchup.R
 
 /**
@@ -56,12 +55,8 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet)
     private var height: Int = 0
   }
 
-  @JvmField
-  @StyledAttr(R.styleable.BadgedImageView_badgeGravity)
-  var badgeGravity = Gravity.END or Gravity.BOTTOM
-
-  @JvmField
-  @StyledAttr(value = R.styleable.BadgedImageView_badgePadding, kind = Kind.DIMEN_PIXEL_SIZE)
+  var badgeGravity: Int = Gravity.END or Gravity.BOTTOM
+  @Px
   var badgePadding: Int = 0
 
   private val badge: Drawable
@@ -70,7 +65,10 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet)
 
   init {
     badge = GifBadge(context)
-    Barber.style(this, attrs, R.styleable.BadgedImageView)
+    context.obtainStyledAttributes(attrs, R.styleable.BadgedImageView).use {
+      badgeGravity = it.getInt(R.styleable.BadgedImageView_badgeGravity, Gravity.END or Gravity.BOTTOM)
+      badgePadding = it.getDimensionPixelSize(R.styleable.BadgedImageView_badgePadding, 0)
+    }
   }
 
   fun showBadge(show: Boolean) {

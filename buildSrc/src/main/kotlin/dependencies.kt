@@ -54,7 +54,6 @@ object deps {
     const val androidxArch = "2.0.0-rc01"
     const val apollo = "1.0.0-alpha"
     const val autodispose = "1.0.0-RC1"
-    const val barber = "1.3.1"
     const val butterknife = "8.8.1"
     const val chuck = "1.1.0"
     const val conductor = "2.1.5"
@@ -108,7 +107,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-beta04"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-rc01"
     const val ktx = "androidx.core:core-ktx:${versions.androidx}"
 
     object support {
@@ -154,11 +153,6 @@ object deps {
     const val kotlin = "com.uber.autodispose:autodispose-ktx:${versions.autodispose}"
     const val lifecycle = "com.uber.autodispose:autodispose-lifecycle:${versions.autodispose}"
     const val lifecycleKtx = "com.uber.autodispose:autodispose-lifecycle-ktx:${versions.autodispose}"
-  }
-
-  object barber {
-    const val apt = "io.sweers.barber:barber-compiler:${versions.barber}"
-    const val api = "io.sweers.barber:barber-api:${versions.barber}"
   }
 
   object build {

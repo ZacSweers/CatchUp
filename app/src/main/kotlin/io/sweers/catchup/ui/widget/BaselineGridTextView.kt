@@ -22,10 +22,8 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.view.View.MeasureSpec.getMode
+import androidx.core.content.res.use
 import androidx.emoji.widget.EmojiAppCompatTextView
-import io.sweers.barber.Barber
-import io.sweers.barber.Kind
-import io.sweers.barber.StyledAttr
 import io.sweers.catchup.R
 
 /**
@@ -55,22 +53,18 @@ class BaselineGridTextView @JvmOverloads constructor(context: Context,
   private var extraBottomPadding = 0
 
   var lineHeightMultiplierHint = 1f
-    @StyledAttr(R.styleable.BaselineGridTextView_lineHeightMultiplierHint)
     set(value) {
       field = value
       computeLineHeight()
     }
 
   var lineHeightHint = 0f
-    @StyledAttr(value = R.styleable.BaselineGridTextView_lineHeightHint,
-        kind = Kind.DIMEN_PIXEL_SIZE)
     set(value) {
       field = value
       computeLineHeight()
     }
 
   var maxLinesByHeight = false
-    @StyledAttr(R.styleable.BaselineGridTextView_maxLinesByHeight)
     set(value) {
       field = value
       requestLayout()
@@ -78,7 +72,13 @@ class BaselineGridTextView @JvmOverloads constructor(context: Context,
 
 
   init {
-    Barber.style(this, attrs, R.styleable.BaselineGridTextView, defStyleAttr)
+    context.obtainStyledAttributes(attrs, R.styleable.BaselineGridTextView, defStyleAttr, 0).use {
+      lineHeightMultiplierHint = it.getFloat(
+          R.styleable.BaselineGridTextView_lineHeightMultiplierHint, 1f)
+      lineHeightHint = it.getDimensionPixelSize(R.styleable.BaselineGridTextView_lineHeightHint,
+          1).toFloat()
+      maxLinesByHeight = it.getBoolean(R.styleable.BaselineGridTextView_maxLinesByHeight, false)
+    }
     computeLineHeight()
   }
 

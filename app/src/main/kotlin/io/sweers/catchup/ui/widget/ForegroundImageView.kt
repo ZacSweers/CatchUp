@@ -24,8 +24,7 @@ import android.util.AttributeSet
 import android.view.ViewOutlineProvider
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
-import io.sweers.barber.Barber
-import io.sweers.barber.StyledAttr
+import androidx.core.content.res.use
 import io.sweers.catchup.R
 
 /**
@@ -38,7 +37,9 @@ open class ForegroundImageView(context: Context, attrs: AttributeSet)
 
   init {
     @Suppress("LeakingThis")
-    Barber.style(this, attrs, R.styleable.ForegroundView)
+    context.obtainStyledAttributes(attrs, R.styleable.ForegroundView).use {
+      setForeground(it.getDrawable(R.styleable.ForegroundView_android_foreground))
+    }
     outlineProvider = ViewOutlineProvider.BOUNDS
   }
 
@@ -85,7 +86,6 @@ open class ForegroundImageView(context: Context, attrs: AttributeSet)
    * @param drawable The Drawable to be drawn on top of the ImageView
    */
   @SuppressLint("NewApi")
-  @StyledAttr(R.styleable.ForegroundView_android_foreground)
   override fun setForeground(drawable: Drawable?) {
     if (foreground !== drawable) {
       foreground?.run {
