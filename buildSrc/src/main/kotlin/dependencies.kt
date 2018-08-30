@@ -50,7 +50,7 @@ fun Int.roundUpToNearest(multiple: Int): Int {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val androidx = "1.0.0-rc01"
+    const val androidx = "1.0.0-rc02"
     const val androidxArch = "2.0.0-rc01"
     const val apollo = "1.0.0-alpha"
     const val autodispose = "1.0.0-RC2"
@@ -67,7 +67,7 @@ object deps {
     const val inspector = "0.3.0"
     const val kotlin = "1.2.61"
     const val leakcanary = "1.6.1"
-    const val legacySupport = "28.0.0-rc01"
+    const val legacySupport = "28.0.0-rc02"
     const val moshi = "1.6.0"
     const val okhttp = "3.11.0"
     const val playServices = firebase
@@ -107,7 +107,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-rc01"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-rc02"
     const val ktx = "androidx.core:core-ktx:${versions.androidx}"
 
     object support {
@@ -117,7 +117,7 @@ object deps {
       const val cardView = "androidx.cardview:cardview:${versions.androidx}"
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.2"
       const val customTabs = "androidx.browser:browser:${versions.androidx}"
-      const val design = "com.google.android.material:material:${versions.androidx}"
+      const val design = "com.google.android.material:material:1.0.0-rc01"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:${versions.androidx}"
       const val emoji = "androidx.emoji:emoji:${versions.androidx}"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:${versions.androidx}"
@@ -333,7 +333,7 @@ object deps {
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
     const val lottie = "com.airbnb.android:lottie:2.5.6"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-    const val okio = "com.squareup.okio:okio:2.0.0-RC1"
+    const val okio = "com.squareup.okio:okio:2.0.0"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:2.3.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.12.0"
     const val timber = "com.jakewharton.timber:timber:4.7.1"
