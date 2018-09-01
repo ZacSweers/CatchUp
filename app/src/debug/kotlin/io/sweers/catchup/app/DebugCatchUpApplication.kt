@@ -37,6 +37,7 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import timber.log.Timber
 import timber.log.Timber.Tree
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class DebugCatchUpApplication : CatchUpApplication() {
@@ -65,6 +66,7 @@ class DebugCatchUpApplication : CatchUpApplication() {
         .penaltyLog()
         .build())
     refWatcher = LeakCanary.refWatcher(this)
+        .watchDelay(10, TimeUnit.SECONDS)
         .excludedRefs(AndroidExcludedRefs.createAppDefaults()
             .instanceField("android.view.ViewGroup\$ViewLocationHolder", "mRoot") // https://github.com/square/leakcanary/issues/1081
             .build())
