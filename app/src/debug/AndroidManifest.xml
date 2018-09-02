@@ -16,7 +16,6 @@
 
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="io.sweers.catchup"
     >
 
@@ -27,12 +26,10 @@
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
   <!-- For Flipper -->
-  <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
   <application
-      android:name=".app.DebugCatchUpApplication"
-      tools:replace="android:name">
+      android:name=".app.DebugCatchUpApplication">
 
     <meta-data
         android:name="firebase_performance_logcat_enabled"
