@@ -22,7 +22,6 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import android.util.Log
-import androidx.lifecycle.ReportFragment
 import com.facebook.soloader.SoLoader
 import com.facebook.sonar.android.AndroidSonarClient
 import com.facebook.sonar.android.utils.SonarUtils
