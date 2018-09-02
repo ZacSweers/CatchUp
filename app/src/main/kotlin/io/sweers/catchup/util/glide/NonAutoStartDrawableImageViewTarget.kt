@@ -27,8 +27,6 @@ open class NonAutoStartDrawableImageViewTarget : NonAutoStartImageViewTarget<Dra
 
   constructor(view: ImageView) : super(view)
 
-  constructor(view: ImageView, waitForLayout: Boolean) : super(view, waitForLayout)
-
   override fun setResource(resource: Drawable?) {
     view.setImageDrawable(resource)
   }

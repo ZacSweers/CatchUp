@@ -19,22 +19,18 @@ package io.sweers.catchup.util.glide
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
+import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.target.ImageViewTarget
-import com.bumptech.glide.request.target.ViewTarget
 import com.bumptech.glide.request.transition.Transition
 
 /**
  * Like [ImageViewTarget] but will not automatically start playing its resource.
  */
-abstract class NonAutoStartImageViewTarget<Z> : ViewTarget<ImageView, Z>, Transition.ViewAdapter {
+abstract class NonAutoStartImageViewTarget<Z>(view: ImageView) : CustomViewTarget<ImageView, Z>(
+    view), Transition.ViewAdapter {
 
   private var animatable: Animatable? = null
   private var runningWhenStopped = false
-
-  constructor(view: ImageView) : super(view)
-
-  @Suppress("DEPRECATION")
-  constructor(view: ImageView, waitForLayout: Boolean) : super(view, waitForLayout)
 
   override fun getCurrentDrawable(): Drawable? {
     return view.drawable
@@ -43,20 +39,17 @@ abstract class NonAutoStartImageViewTarget<Z> : ViewTarget<ImageView, Z>, Transi
     view.setImageDrawable(drawable)
   }
 
-  override fun onLoadStarted(placeholder: Drawable?) {
-    super.onLoadStarted(placeholder)
+  override fun onResourceLoading(placeholder: Drawable?) {
     setResourceInternal(null)
     setDrawable(placeholder)
   }
 
   override fun onLoadFailed(errorDrawable: Drawable?) {
-    super.onLoadFailed(errorDrawable)
     setResourceInternal(null)
     setDrawable(errorDrawable)
   }
 
-  override fun onLoadCleared(placeholder: Drawable?) {
-    super.onLoadCleared(placeholder)
+  override fun onResourceCleared(placeholder: Drawable?) {
     setResourceInternal(null)
     setDrawable(placeholder)
   }
