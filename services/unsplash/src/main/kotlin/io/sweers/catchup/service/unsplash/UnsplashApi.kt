@@ -26,11 +26,11 @@ import retrofit2.http.Query
  */
 internal interface UnsplashApi {
 
-  @GET("/photos")
+  @GET("/photos/curated")
   fun getPhotos(
-      @Query("page") page: Int, // Default 1
-      @Query("per_page") pageSize: Int, // Default 10
-      @Query("order_by") orderBy: OrderBy // latest
+      @Query("page") page: Int = 1, // Default 1
+      @Query("per_page") pageSize: Int = 10, // Default 10
+      @Query("order_by") orderBy: OrderBy = OrderBy.LATEST // latest
   ): Single<List<UnsplashPhoto>>
 
   companion object {
@@ -43,6 +43,7 @@ internal interface UnsplashApi {
 
     override fun toString(): String {
       return super.toString().toLowerCase()
-    }}
+    }
+  }
 
 }
