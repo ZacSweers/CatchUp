@@ -78,7 +78,7 @@ class ServiceSettingsActivity : BaseActivity(), HasSupportFragmentInjector {
           .add(R.id.container, ServiceSettingsFrag().apply {
             if (intent.extras?.containsKey(TARGET_PREF_RESOURCE) == true) {
               arguments = bundleOf(
-                  TARGET_PREF_RESOURCE to intent.extras.getInt(TARGET_PREF_RESOURCE))
+                  TARGET_PREF_RESOURCE to intent.extras!!.getInt(TARGET_PREF_RESOURCE))
             }
           })
           .commit()
