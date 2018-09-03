@@ -18,10 +18,15 @@
 
 package io.sweers.catchup.util
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.view.View
+import androidx.core.view.isVisible
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 
 fun View.setLightStatusBar() {
   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -61,8 +66,23 @@ fun View.clearLightNavBar() {
   }
 }
 
-inline fun View.show() {
-  visibility = View.VISIBLE
+inline fun View.show(animate: Boolean = false) {
+  if (animate) {
+    alpha = 0F
+    visibility = View.VISIBLE
+    animate()
+        .setDuration(300)
+        .setInterpolator(FastOutSlowInInterpolator())
+        .withLayer()
+        .alpha(1F)
+        .setListener(object : AnimatorListenerAdapter() {
+          override fun onAnimationEnd(animation: Animator) {
+            animation.removeAllListeners()
+          }
+        })
+  } else {
+    visibility = View.VISIBLE
+  }
 }
 
 inline infix fun View.showIf(condition: Boolean) {
@@ -73,8 +93,23 @@ inline infix fun View.showIf(condition: Boolean) {
   }
 }
 
-inline fun View.hide() {
-  visibility = View.GONE
+inline fun View.hide(animate: Boolean = false) {
+  if (animate) {
+    animate()
+        .setDuration(300)
+        .setInterpolator(LinearOutSlowInInterpolator())
+        .withLayer()
+        .alpha(0F)
+        .setListener(object : AnimatorListenerAdapter() {
+          override fun onAnimationEnd(animation: Animator) {
+            animation.removeAllListeners()
+            visibility = View.GONE
+            alpha = 1F
+          }
+        })
+  } else {
+    visibility = View.GONE
+  }
 }
 
 inline infix fun View.hideIf(condition: Boolean) {
@@ -82,6 +117,14 @@ inline infix fun View.hideIf(condition: Boolean) {
     hide()
   } else {
     show()
+  }
+}
+
+inline fun View.toggleVisibility(animate: Boolean = false) {
+  if (isVisible) {
+    hide(animate)
+  } else {
+    show(animate)
   }
 }
 
