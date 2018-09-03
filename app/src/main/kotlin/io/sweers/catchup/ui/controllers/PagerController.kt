@@ -390,6 +390,7 @@ class PagerController : BaseController {
         serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>): Array<ServiceHandler> {
       val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
       return (serviceMetas.values
+          .filter { it.enabled }
           .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }
           .sortedBy { currentOrder.indexOf(it.id) }
           .map { it.toServiceHandler() })
