@@ -42,6 +42,8 @@ class StorageBackedService(
 
   private var currentSessionId: Long = -1
 
+  override fun rootService() = delegate
+
   override fun meta() = delegate.meta()
 
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
