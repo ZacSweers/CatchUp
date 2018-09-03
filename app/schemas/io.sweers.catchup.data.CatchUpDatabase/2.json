@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "f6d0e42c89b965f14c1253124276e361",
+    "identityHash": "8998b948a058a7ea1ff10660b5a4cc4b",
     "entities": [
       {
         "tableName": "pages",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `timestamp` INTEGER, `score` TEXT, `tag` TEXT, `author` TEXT, `source` TEXT, `itemClickUrl` TEXT, `value` TEXT, `type` TEXT, `url` TEXT, `animatable` INTEGER, `bestSize` TEXT, `text` TEXT, `textPrefix` TEXT, `icon` INTEGER, `clickUrl` TEXT, `iconTintColor` INTEGER, `formatTextAsCount` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `timestamp` INTEGER, `score` TEXT, `tag` TEXT, `author` TEXT, `source` TEXT, `itemClickUrl` TEXT, `value` TEXT, `type` TEXT, `url` TEXT, `animatable` INTEGER, `sourceUrl` TEXT, `bestSize` TEXT, `imageId` TEXT, `text` TEXT, `textPrefix` TEXT, `icon` INTEGER, `clickUrl` TEXT, `iconTintColor` INTEGER, `formatTextAsCount` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -137,8 +137,20 @@
             "notNull": false
           },
           {
+            "fieldPath": "imageInfo.sourceUrl",
+            "columnName": "sourceUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "imageInfo.bestSize",
             "columnName": "bestSize",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "imageInfo.imageId",
+            "columnName": "imageId",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -217,7 +229,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"f6d0e42c89b965f14c1253124276e361\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8998b948a058a7ea1ff10660b5a4cc4b\")"
     ]
   }
 }

@@ -28,6 +28,8 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnClickListener
+import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import androidx.annotation.ArrayRes
 import androidx.annotation.ColorInt
@@ -46,13 +48,11 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.jakewharton.rxbinding2.view.clicks
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.ObservableColorMatrix
@@ -231,13 +231,10 @@ internal class ImageAdapter(private val context: Context,
     override fun itemView(): View = itemView
 
     override fun bind(item: CatchUpItem,
-        linkHandler: LinkHandler,
-        itemClickHandler: ((String) -> Any)?,
-        markClickHandler: ((String) -> Any)?) {
+        itemClickHandler: OnClickListener?,
+        markClickHandler: OnClickListener?,
+        longClickHandler: OnLongClickListener?) {
       backingImageItem?.let { imageItem ->
-        item.itemClickUrl?.let {
-          itemClickHandler?.invoke(it)
-        }
         val (x, y) = imageItem.imageInfo.bestSize ?: Pair(image.measuredWidth, image.measuredHeight)
         GlideApp.with(itemView.context)
             .load(imageItem.imageInfo.url)
@@ -245,7 +242,8 @@ internal class ImageAdapter(private val context: Context,
                 .placeholder(loadingPlaceholders[adapterPosition % loadingPlaceholders.size])
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .centerCrop()
-                .override(x, y))
+                .override(x, y)
+            )
             .transition(DrawableTransitionOptions.withCrossFade())
             .listener(object : RequestListener<Drawable> {
               override fun onResourceReady(resource: Drawable,
@@ -253,6 +251,8 @@ internal class ImageAdapter(private val context: Context,
                   target: Target<Drawable>,
                   dataSource: DataSource,
                   isFirstResource: Boolean): Boolean {
+                itemView().setOnClickListener(itemClickHandler)
+                itemView().setOnLongClickListener(longClickHandler)
                 if (!imageItem.hasFadedIn) {
                   image.setHasTransientState(true)
                   val cm = ObservableColorMatrix()
@@ -293,7 +293,5 @@ internal class ImageAdapter(private val context: Context,
         image.showBadge(imageItem.imageInfo.animatable)
       }
     }
-
-    override fun itemClicks() = itemView().clicks()
   }
 }

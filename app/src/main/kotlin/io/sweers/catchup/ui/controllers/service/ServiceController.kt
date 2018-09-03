@@ -31,8 +31,10 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DiffUtil.DiffResult
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
@@ -40,8 +42,6 @@ import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
-import butterknife.BindView
-import butterknife.OnClick
 import com.apollographql.apollo.exception.ApolloException
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
@@ -49,7 +49,6 @@ import com.uber.autodispose.autoDisposable
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.analytics.trace
@@ -60,16 +59,16 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
+import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.FinalServices
 import io.sweers.catchup.ui.activity.TextViewPool
 import io.sweers.catchup.ui.activity.VisualViewPool
-import io.sweers.catchup.ui.base.ButterKnifeController
+import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
-import io.sweers.catchup.ui.controllers.SmmryController
 import io.sweers.catchup.ui.controllers.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
 import io.sweers.catchup.util.e
@@ -78,6 +77,8 @@ import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotterknife.bindView
+import kotterknife.onClick
 import retrofit2.HttpException
 import java.io.IOException
 import java.security.InvalidParameterException
@@ -117,7 +118,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   }
 }
 
-class ServiceController : ButterKnifeController,
+class ServiceController : BaseController,
     SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
 
   companion object {
@@ -126,18 +127,12 @@ class ServiceController : ButterKnifeController,
         ServiceController(bundleOf(ARG_SERVICE_KEY to serviceKey))
   }
 
-  @BindView(R.id.error_container)
-  lateinit var errorView: View
-  @BindView(R.id.error_message)
-  lateinit var errorTextView: TextView
-  @BindView(R.id.error_image)
-  lateinit var errorImage: ImageView
-  @BindView(R.id.list)
-  lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
-  @BindView(R.id.progress)
-  lateinit var progress: ProgressBar
-  @BindView(R.id.refresh)
-  lateinit var swipeRefreshLayout: SwipeRefreshLayout
+  private val errorView by bindView<View>(R.id.error_container)
+  private val errorTextView by bindView<TextView>(R.id.error_message)
+  private val errorImage by bindView<ImageView>(R.id.error_image)
+  private val recyclerView by bindView<RecyclerView>(R.id.list)
+  private val progress by bindView<ProgressBar>(R.id.progress)
+  private val swipeRefreshLayout by bindView<SwipeRefreshLayout>(R.id.refresh)
 
   private lateinit var layoutManager: LinearLayoutManager
   private lateinit var adapter: DisplayableItemAdapter<out DisplayableItem, ViewHolder>
@@ -148,7 +143,7 @@ class ServiceController : ButterKnifeController,
   private var moreDataAvailable = true
   private var dataLoading = false
   private var pendingRVState: Parcelable? = null
-  private val defaultItemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
+  private val defaultItemAnimator = DefaultItemAnimator()
 
   @field:TextViewPool
   @Inject
@@ -178,9 +173,6 @@ class ServiceController : ButterKnifeController,
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
       inflater.inflate(R.layout.controller_basic_news, container, false)
 
-  override fun bind(view: View) = ServiceController_ViewBinding(this,
-      view)
-
   override fun onContextAvailable(context: Context) {
     ConductorInjection.inject(this)
     nextPage = service.meta().firstPageKey
@@ -188,16 +180,19 @@ class ServiceController : ButterKnifeController,
   }
 
   private fun createLayoutManager(context: Context,
-      adapter: DisplayableItemAdapter<*, *>): androidx.recyclerview.widget.LinearLayoutManager {
+      adapter: DisplayableItemAdapter<*, *>): LinearLayoutManager {
     return if (service.meta().isVisual) {
-      androidx.recyclerview.widget.GridLayoutManager(context, 2).apply {
-        spanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
-          override fun getSpanSize(position: Int) = adapter.getItemColumnSpan(position)
+      val spanConfig = (service.rootService() as VisualService).spanConfig()
+      GridLayoutManager(context, spanConfig.spanCount).apply {
+        val resolver = spanConfig.spanSizeResolver ?: { position: Int ->
+          adapter.getItemColumnSpan(position)
+        }
+        spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+          override fun getSpanSize(position: Int) = resolver(position)
         }
       }
     } else {
-      androidx.recyclerview.widget.LinearLayoutManager(activity,
-          androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
+      LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
     }
   }
 
@@ -216,24 +211,30 @@ class ServiceController : ButterKnifeController,
     } else {
       return TextAdapter { item, holder ->
         service.bindItemView(item, holder)
-        if (BuildConfig.DEBUG) {
-          item.summarizationInfo?.let {
-            // We're not supporting this for now since it's not ready yet
-            holder.itemLongClicks()
-                .autoDisposable(this)
-                .subscribe(SmmryController.showFor<Any>(controller = this,
-                    service = service,
-                    title = item.title,
-                    id = item.id.toString(),
-                    info = it))
-          }
-        }
+//        if (BuildConfig.DEBUG) {
+//          item.summarizationInfo?.let {
+//            // We're not supporting this for now since it's not ready yet
+//            holder.itemLongClicks()
+//                .autoDisposable(this)
+//                .subscribe(SmmryController.showFor<Any>(controller = this,
+//                    service = service,
+//                    title = item.title,
+//                    id = item.id.toString(),
+//                    info = it))
+//          }
+//        }
       }
     }
   }
 
   override fun onViewBound(view: View) {
     super.onViewBound(view)
+    onClick<View>(R.id.retry_button) {
+      onRetry()
+    }
+    onClick<ImageView>(R.id.error_image) {
+      onErrorClick(it)
+    }
     @ColorInt val accentColor = ContextCompat.getColor(view.context, service.meta().themeColor)
     @ColorInt val dayAccentColor = ContextCompat.getColor(dayOnlyContext!!,
         service.meta().themeColor)
@@ -265,15 +266,13 @@ class ServiceController : ButterKnifeController,
     }
   }
 
-  @OnClick(R.id.retry_button)
-  internal fun onRetry() {
+  private fun onRetry() {
     errorView.hide()
     progress.show()
     onRefresh()
   }
 
-  @OnClick(R.id.error_image)
-  internal fun onErrorClick(imageView: ImageView) {
+  private fun onErrorClick(imageView: ImageView) {
     (imageView.drawable as AnimatedVectorDrawableCompat).start()
   }
 

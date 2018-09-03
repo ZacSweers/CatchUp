@@ -18,43 +18,37 @@ package io.sweers.catchup.service.api
 
 import android.content.Context
 import android.content.res.Configuration
+import android.view.View.OnClickListener
+import android.view.View.OnLongClickListener
 import androidx.core.content.ContextCompat
-import com.uber.autodispose.autoDisposable
 
 interface TextService : Service {
   override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
     val context = holder.itemView().context
     val accentColor = ContextCompat.getColor(context, meta().themeColor)
     holder.tint(accentColor)
+    val markClickUrl = item.mark?.clickUrl
+    val itemClickUrl = item.itemClickUrl ?: markClickUrl
+    val finalMarkClickUrl = markClickUrl?.let { if (itemClickUrl == markClickUrl) null else it }
     holder.bind(
         item = item,
-        linkHandler = linkHandler(),
-        itemClickHandler = item.itemClickUrl?.let {
-          { url: String ->
-            holder.itemClicks()
-                .map { createUrlMeta(url, context) }
-                .flatMapCompletable(linkHandler())
-                .autoDisposable(holder)
-                .subscribe()
+        itemClickHandler = itemClickUrl?.let { url ->
+          OnClickListener {
+            linkHandler().openUrl(createUrlMeta(url, context))
           }
         },
-        markClickHandler = item.mark?.clickUrl?.let {
-          { url: String ->
-            holder.itemCommentClicks()
-                .map { createUrlMeta(url, context) }
-                .flatMapCompletable(linkHandler())
-                .autoDisposable(holder)
-                .subscribe()
+        markClickHandler = finalMarkClickUrl?.let { url ->
+          OnClickListener {
+            linkHandler().openUrl(createUrlMeta(url, context))
+          }
+        },
+        longClickHandler = item.summarizationInfo?.let { info ->
+          OnLongClickListener {
+            // TODO
+            false
           }
         }
     )
-    item.summarizationInfo?.let {
-      holder.itemLongClicks()
-          .autoDisposable(holder)
-          .subscribe {
-            // TODO Handle summarizations
-          }
-    }
   }
 
   private fun createUrlMeta(url: String, context: Context) = UrlMeta(

@@ -63,4 +63,5 @@
   <string name="proceed">Proceed</string>
   <string name="save">Save</string>
   <string name="service_icon">Service icon</string>
+  <string name="transition_image" translatable="false">image</string>
 </resources>

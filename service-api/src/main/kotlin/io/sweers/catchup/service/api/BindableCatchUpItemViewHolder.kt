@@ -17,9 +17,10 @@
 package io.sweers.catchup.service.api
 
 import android.view.View
+import android.view.View.OnClickListener
+import android.view.View.OnLongClickListener
 import androidx.annotation.ColorInt
 import com.uber.autodispose.ScopeProvider
-import io.reactivex.Observable
 
 interface BindableCatchUpItemViewHolder : ScopeProvider {
   fun itemView(): View
@@ -28,19 +29,7 @@ interface BindableCatchUpItemViewHolder : ScopeProvider {
   }
 
   fun bind(item: CatchUpItem,
-      linkHandler: LinkHandler,
-      itemClickHandler: ((String) -> Any)? = null,
-      markClickHandler: ((String) -> Any)? = null)
-
-  fun itemClicks(): Observable<Unit> {
-    TODO("itemClicks not implemented!")
-  }
-
-  fun itemLongClicks(): Observable<Unit> {
-    TODO("itemLongClicks not implemented!")
-  }
-
-  fun itemCommentClicks(): Observable<Unit> {
-    TODO("itemCommentClicks not implemented!")
-  }
+      itemClickHandler: OnClickListener? = null,
+      markClickHandler: OnClickListener? = null,
+      longClickHandler: OnLongClickListener? = null)
 }

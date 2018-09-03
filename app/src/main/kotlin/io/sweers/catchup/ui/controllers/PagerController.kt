@@ -42,7 +42,6 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
@@ -62,7 +61,7 @@ import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
-import io.sweers.catchup.ui.base.ButterKnifeController
+import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.ui.controllers.service.ServiceController
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
@@ -70,6 +69,7 @@ import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.rx.PredicateConsumer
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNavBarColor
+import kotterknife.bindView
 import javax.inject.Inject
 
 fun ServiceMeta.toServiceHandler() = ServiceHandler(
@@ -83,7 +83,7 @@ data class ServiceHandler(@StringRes val name: Int,
     @ColorRes val accent: Int,
     val instantiator: () -> Controller)
 
-class PagerController : ButterKnifeController {
+class PagerController : BaseController {
 
   companion object {
 
@@ -98,16 +98,11 @@ class PagerController : ButterKnifeController {
   @Inject
   lateinit var changelogHelper: ChangelogHelper
 
-  @BindView(R.id.pager_controller_root)
-  lateinit var rootLayout: CoordinatorLayout
-  @BindView(R.id.tab_layout)
-  lateinit var tabLayout: TabLayout
-  @BindView(R.id.view_pager)
-  lateinit var viewPager: ViewPager
-  @BindView(R.id.toolbar)
-  lateinit var toolbar: Toolbar
-  @BindView(R.id.appbarlayout)
-  lateinit var appBarLayout: AppBarLayout
+  private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_controller_root)
+  private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
+  private val viewPager by bindView<ViewPager>(R.id.view_pager)
+  private val toolbar by bindView<Toolbar>(R.id.toolbar)
+  private val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
 
   // Not injectable because I don't know how to get a @BindsInstance into dagger's AndroidInjector
   // and this needs a controller to be instantiated
@@ -167,11 +162,7 @@ class PagerController : ButterKnifeController {
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
       inflater.inflate(R.layout.controller_pager, container, false)
 
-  override fun bind(view: View) = PagerController_ViewBinding(this, view)
-
   override fun onViewBound(view: View) {
-    super.onViewBound(view)
-
     @ColorInt val colorPrimaryDark = view.context.resolveAttributeColor(R.attr.colorPrimaryDark)
     val isInNightMode = view.context.isInNightMode()
     if (!isInNightMode) {

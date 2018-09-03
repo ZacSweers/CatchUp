@@ -71,11 +71,13 @@ internal class ImgurService @Inject constructor(
               score = "⬆" to it.resolveScore(),
               timestamp = it.datetime,
               author = it.accountUrl,
-              itemClickUrl = it.resolveClickLink(),
+              itemClickUrl = resolvedLink,
               imageInfo = ImageInfo(
                   resolvedLink,
                   resolvedLink.endsWith(".gif"),
-                  null
+                  it.resolveClickLink(),
+                  null,
+                  it.id
               )
           )
         }

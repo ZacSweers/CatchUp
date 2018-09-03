@@ -54,7 +54,6 @@ object deps {
     const val androidxArch = "2.0.0-rc01"
     const val apollo = "1.0.0-alpha"
     const val autodispose = "1.0.0-RC2"
-    const val butterknife = "8.8.1"
     const val chuck = "1.1.0"
     const val conductor = "2.1.5"
     const val crumb = "0.0.1"
@@ -107,7 +106,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.2.0-rc02"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.3.0-alpha08"
     const val ktx = "androidx.core:core-ktx:${versions.androidx}"
 
     object support {
@@ -193,11 +192,6 @@ object deps {
     }
 
     const val javapoet = "com.squareup:javapoet:1.11.1"
-  }
-
-  object butterKnife {
-    const val apt = "com.jakewharton:butterknife-compiler:${versions.butterknife}"
-    const val runtime = "com.jakewharton:butterknife:${versions.butterknife}"
   }
 
   object chuck {

@@ -35,7 +35,6 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.doOnLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
-import butterknife.BindView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.jakewharton.madge.MadgeFrameLayout
 import com.jakewharton.scalpel.ScalpelFrameLayout
@@ -60,6 +59,8 @@ import io.sweers.catchup.ui.base.ActivityEvent
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
+import kotterknife.ViewDelegateBindable
+import kotterknife.bindView
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
@@ -88,8 +89,7 @@ internal class DebugViewContainer @Inject constructor(
             activity.findViewById(android.R.id.content), false)
     activity.setContentView(contentView)
 
-    val viewHolder = DebugViewViewHolder()
-    val unbinder = `DebugViewViewHolder_ViewBinding`(viewHolder, contentView)
+    val viewHolder = DebugViewViewHolder(contentView)
 
     val drawerContext = ContextThemeWrapper(activity, R.style.DebugDrawer)
     val debugView = DebugView(drawerContext, lazyOkHttpClient, lumberYard)
@@ -157,12 +157,10 @@ internal class DebugViewContainer @Inject constructor(
         .firstElement()
         // Why is the below all so awkward?
         .doOnDispose {
-          unbinder.unbind()
           disposables.clear()
         }
         .autoDisposable(activity)
         .subscribe {
-          unbinder.unbind()
           disposables.clear()
         }
     return viewHolder.content
@@ -211,17 +209,12 @@ internal class DebugViewContainer @Inject constructor(
   }
 }
 
-internal class DebugViewViewHolder {
-  @BindView(R.id.debug_drawer_layout)
-  lateinit var drawerLayout: DrawerLayout
-  @BindView(R.id.debug_drawer)
-  lateinit var debugDrawer: ViewGroup
-  @BindView(R.id.telescope_container)
-  lateinit var telescopeLayout: TelescopeLayout
-  @BindView(R.id.madge_container)
-  lateinit var madgeFrameLayout: MadgeFrameLayout
-  @BindView(R.id.debug_content)
-  lateinit var content: ScalpelFrameLayout
+internal class DebugViewViewHolder(source: View) : ViewDelegateBindable(source) {
+  val drawerLayout by bindView<DrawerLayout>(R.id.debug_drawer_layout)
+  val debugDrawer by bindView<ViewGroup>(R.id.debug_drawer)
+  val telescopeLayout by bindView<TelescopeLayout>(R.id.telescope_container)
+  val madgeFrameLayout by bindView<MadgeFrameLayout>(R.id.madge_container)
+  val content by bindView<ScalpelFrameLayout>(R.id.debug_content)
 }
 
 class DrawerTapTarget(

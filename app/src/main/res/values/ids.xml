@@ -16,7 +16,7 @@
   -->
 
 <resources>
-  <dimen name="touch_raise">6dp</dimen>
-  <dimen name="avatar">40dp</dimen>
-  <dimen name="media_image_height_when_empty">240dp</dimen>
+  <item name="background" type="id"/>
+  <item name="image" type="id"/>
+  <item name="glide_target" type="id"/>
 </resources>

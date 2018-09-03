@@ -29,7 +29,6 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import butterknife.BindView
 import dagger.Binds
 import dagger.Module
 import dagger.android.AndroidInjector
@@ -50,6 +49,7 @@ import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
+import kotterknife.bindView
 import javax.inject.Inject
 
 private const val TARGET_PREF_RESOURCE = "catchup.servicesettings.resource"
@@ -58,14 +58,12 @@ class ServiceSettingsActivity : BaseActivity(), HasSupportFragmentInjector {
 
   @Inject
   internal lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
-  @BindView(R.id.toolbar)
-  internal lateinit var toolbar: Toolbar
+  private val toolbar by bindView<Toolbar>(R.id.toolbar)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val viewGroup = viewContainer.forActivity(this)
     layoutInflater.inflate(R.layout.activity_settings, viewGroup)
-    ServiceSettingsActivity_ViewBinding(this)
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

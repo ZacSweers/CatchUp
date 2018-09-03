@@ -32,10 +32,6 @@ import androidx.palette.graphics.Palette.Swatch
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.recyclerview.widget.RxViewHolder
-import butterknife.BindDimen
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.rx2.Rx2Apollo
@@ -50,7 +46,6 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import com.uber.autodispose.autoDisposable
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
@@ -75,7 +70,7 @@ import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.StickyHeaders
 import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
 import io.sweers.catchup.ui.about.LicensesModule.ForLicenses
-import io.sweers.catchup.ui.base.ButterKnifeController
+import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.dp2px
@@ -85,6 +80,7 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotterknife.bindView
 import okio.buffer
 import okio.source
 import javax.inject.Inject
@@ -93,7 +89,7 @@ import javax.inject.Qualifier
 /**
  * A controller that displays oss licenses.
  */
-class LicensesController : ButterKnifeController(), Scrollable {
+class LicensesController : BaseController(), Scrollable {
 
   @Inject
   lateinit var apolloClient: ApolloClient
@@ -105,13 +101,11 @@ class LicensesController : ButterKnifeController(), Scrollable {
   @Inject
   internal lateinit var linkManager: LinkManager
 
-  @BindDimen(R.dimen.avatar)
-  @JvmField
-  var dimenSize: Int = 0
-  @BindView(R.id.progress)
-  lateinit var progressBar: ProgressBar
-  @BindView(R.id.list)
-  lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
+  private val dimenSize by lazy {
+    resources!!.getDimensionPixelSize(R.dimen.avatar)
+  }
+  private val progressBar by bindView<ProgressBar>(R.id.progress)
+  private val recyclerView by bindView<RecyclerView>(R.id.list)
 
   private val adapter = Adapter()
   private lateinit var layoutManager: StickyHeadersLinearLayoutManager<Adapter>
@@ -123,8 +117,6 @@ class LicensesController : ButterKnifeController(), Scrollable {
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
       inflater.inflate(R.layout.controller_licenses, container, false)
-
-  override fun bind(view: View) = ButterKnife.bind(this, view)
 
   override fun onViewBound(view: View) {
     super.onViewBound(view)
@@ -358,25 +350,22 @@ class LicensesController : ButterKnifeController(), Scrollable {
           source(null)
           tag(null)
           hideMark()
-          itemClicks()
-              .flatMapCompletable {
-                // Search up to the first sticky header position
-                // Maybe someday we should just return the groups rather than flattening
-                // but this was neat to write in kotlin
-                val accentColor = (holder.adapterPosition downTo 0)
-                    .find { isStickyHeader(it) }
-                    ?.let {
-                      (recyclerView.findViewHolderForAdapterPosition(it)
-                          as HeaderHolder)
-                          .title.textColors.defaultColor
-                    } ?: 0
-                val context = itemView.context
-                return@flatMapCompletable linkManager.openUrl(
-                    UrlMeta(item.clickUrl, accentColor,
-                        context))
-              }
-              .autoDisposable(holder)
-              .subscribe()
+          holder.container.setOnClickListener {
+            // Search up to the first sticky header position
+            // Maybe someday we should just return the groups rather than flattening
+            // but this was neat to write in kotlin
+            val accentColor = (holder.adapterPosition downTo 0)
+                .find { isStickyHeader(it) }
+                ?.let {
+                  (recyclerView.findViewHolderForAdapterPosition(it)
+                      as HeaderHolder)
+                      .title.textColors.defaultColor
+                } ?: 0
+            val context = itemView.context
+            linkManager.openUrl(
+                UrlMeta(item.clickUrl, accentColor,
+                    context))
+          }
         }
       }
     }
@@ -438,16 +427,8 @@ private data class OssGitHubEntry(val owner: String, val name: String) {
 }
 
 private class HeaderHolder(view: View) : RxViewHolder(view) {
-  @BindView(R.id.icon)
-  lateinit var icon: ImageView
-  @BindView(R.id.title)
-  lateinit var title: TextView
-  private var unbinder: Unbinder? = null
-
-  init {
-    unbinder?.unbind()
-    unbinder = ButterKnife.bind(this, itemView)
-  }
+  val icon by bindView<ImageView>(R.id.icon)
+  val title by bindView<TextView>(R.id.title)
 }
 
 private sealed class OssBaseItem {

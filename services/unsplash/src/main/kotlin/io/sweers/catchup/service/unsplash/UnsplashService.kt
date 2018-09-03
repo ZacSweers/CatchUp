@@ -34,7 +34,7 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
-import io.sweers.catchup.service.unsplash.UnsplashApi.OrderBy.POPULAR
+import io.sweers.catchup.service.api.VisualService.SpanConfig
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
@@ -62,7 +62,7 @@ internal class UnsplashService @Inject constructor(
 
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
     val page = request.pageId.toInt()
-    return api.getPhotos(page, 50, POPULAR)
+    return api.getPhotos(page, 50)
         .flattenAsObservable { it }
         .map {
           CatchUpItem(
@@ -75,11 +75,13 @@ internal class UnsplashService @Inject constructor(
               author = it.user.name,
               source = null,
               tag = null,
-              itemClickUrl = it.links.html,
+              itemClickUrl = it.urls.full,
               imageInfo = ImageInfo(
-                  it.urls.small,
-                  false,
-                  null
+                  url = it.urls.full,
+                  animatable = false,
+                  sourceUrl = it.links.html,
+                  bestSize = null,
+                  imageId = it.id
               )
           )
         }
@@ -89,6 +91,17 @@ internal class UnsplashService @Inject constructor(
   }
 
   override fun linkHandler() = linkHandler
+
+  override fun spanConfig() = SpanConfig(3) {
+    /* emulating https://material-design.storage.googleapis.com/publish/material_v_4/material_ext_publish/0B6Okdz75tqQsck9lUkgxNVZza1U/style_imagery_integration_scale1.png */
+    when (it % 6) {
+      5 -> 3
+      3 -> 2
+      else -> 1
+    }
+  }
+
+  override fun marginDecoration() = true
 }
 
 @Meta

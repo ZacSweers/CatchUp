@@ -17,7 +17,6 @@
 package io.sweers.catchup.ui.activity
 
 import android.animation.AnimatorInflater
-import android.animation.StateListAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
@@ -34,10 +33,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
@@ -64,12 +62,13 @@ import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.ui.base.BaseActivity
-import io.sweers.catchup.ui.base.ButterKnifeController
+import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.util.ColorUtils
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
+import kotterknife.bindView
 import java.util.Collections
 import javax.inject.Inject
 
@@ -77,8 +76,7 @@ class OrderServicesActivity : BaseActivity() {
 
   @Inject
   internal lateinit var syllabus: Syllabus
-  @BindView(R.id.controller_container)
-  internal lateinit var container: ViewGroup
+  private val container by bindView<ViewGroup>(R.id.controller_container)
 
   private lateinit var router: Router
 
@@ -88,7 +86,6 @@ class OrderServicesActivity : BaseActivity() {
     layoutInflater.inflate(R.layout.activity_generic_container, viewGroup)
     syllabus.bind(this)
 
-    ButterKnife.bind(this).doOnDestroy { unbind() }
     router = Conductor.attachRouter(this, container, savedInstanceState)
     if (!router.hasRootController()) {
       router.setRoot(RouterTransaction.with(OrderServicesController()))
@@ -109,7 +106,7 @@ class OrderServicesActivity : BaseActivity() {
   }
 }
 
-class OrderServicesController : ButterKnifeController() {
+class OrderServicesController : BaseController() {
 
   @Inject
   lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
@@ -119,12 +116,9 @@ class OrderServicesController : ButterKnifeController() {
   internal lateinit var syllabus: Syllabus
   @Inject
   internal lateinit var fontHelper: FontHelper
-  @BindView(R.id.save)
-  lateinit var save: FloatingActionButton
-  @BindView(R.id.toolbar)
-  lateinit var toolbar: Toolbar
-  @BindView(R.id.list)
-  lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
+  private val save by bindView<FloatingActionButton>(R.id.save)
+  private val toolbar by bindView<Toolbar>(R.id.toolbar)
+  private val recyclerView by bindView<RecyclerView>(R.id.list)
 
   private var _pendingChanges: List<ServiceMeta>? = null
   private var pendingChanges: List<ServiceMeta>?
@@ -146,8 +140,6 @@ class OrderServicesController : ButterKnifeController() {
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
       inflater.inflate(R.layout.controller_order_services, container, false)
 
-  override fun bind(view: View) = ButterKnife.bind(this, view)
-
   override fun onViewBound(view: View) {
     super.onViewBound(view)
     with(activity as AppCompatActivity) {
@@ -161,7 +153,7 @@ class OrderServicesController : ButterKnifeController() {
       }
     }
     toolbar.title = toolbar.context.getString(R.string.pref_reorder_services)
-    recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(view.context)
+    recyclerView.layoutManager = LinearLayoutManager(view.context)
     val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
 
     val currentItemsSorted = serviceMetas.values.sortedBy { currentOrder.indexOf(it.id) }
@@ -276,22 +268,12 @@ private class Adapter(
 }
 
 private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-  @BindView(R.id.container)
-  lateinit var container: View
-  @BindView(R.id.title)
-  lateinit var title: TextView
-  @BindView(R.id.icon)
-  lateinit var icon: ImageView
-
-  private val raise: Float
-  private val elevationAnimator: StateListAnimator
-
-  init {
-    ButterKnife.bind(this, itemView)
-    raise = itemView.resources.getDimensionPixelSize(R.dimen.touch_raise).toFloat()
-    elevationAnimator = AnimatorInflater.loadStateListAnimator(itemView.context, R.animator.raise)
-  }
+  private val container by bindView<View>(R.id.container)
+  private val title by bindView<TextView>(R.id.title)
+  private val icon by bindView<ImageView>(R.id.icon)
+  private val raise = itemView.resources.getDimensionPixelSize(R.dimen.touch_raise).toFloat()
+  private val elevationAnimator = AnimatorInflater.loadStateListAnimator(itemView.context,
+      R.animator.raise)
 
   fun bind(meta: ServiceMeta) {
     title.setText(meta.name)
@@ -313,7 +295,7 @@ private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 private class MoveCallback(
     private val callback: (Int, Int) -> Unit) : ItemTouchHelper.SimpleCallback(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
-  override fun onMove(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: ViewHolder,
+  override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder,
       target: ViewHolder): Boolean {
     callback(viewHolder.adapterPosition, target.adapterPosition)
     return true
@@ -336,7 +318,7 @@ private class MoveCallback(
     }
   }
 
-  override fun clearView(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: ViewHolder) {
+  override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder) {
     super.clearView(recyclerView, viewHolder)
     (viewHolder as Holder).updateSelection(false)
   }

@@ -15,8 +15,22 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <dimen name="touch_raise">6dp</dimen>
-  <dimen name="avatar">40dp</dimen>
-  <dimen name="media_image_height_when_empty">240dp</dimen>
-</resources>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+  <transitionSet>
+    <targets>
+      <target android:targetId="@id/image"/>
+    </targets>
+    <changeBounds>
+      <arcMotion android:maximumAngle="50"/>
+    </changeBounds>
+    <changeTransform/>
+    <changeClipBounds/>
+    <changeImageTransform/>
+  </transitionSet>
+  <recolor>
+    <targets>
+      <target android:targetId="@android:id/statusBarBackground"/>
+      <target android:targetId="@android:id/navigationBarBackground"/>
+    </targets>
+  </recolor>
+</transitionSet>

@@ -21,8 +21,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
@@ -43,6 +41,7 @@ import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.ui.controllers.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
+import kotterknife.bindView
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Qualifier
@@ -56,8 +55,7 @@ class MainActivity : BaseActivity() {
   @Inject
   internal lateinit var syllabus: Syllabus
 
-  @BindView(R.id.controller_container)
-  internal lateinit var container: ViewGroup
+  private val container by bindView<ViewGroup>(R.id.controller_container)
 
   private lateinit var router: Router
 
@@ -75,14 +73,11 @@ class MainActivity : BaseActivity() {
     val viewGroup = viewContainer.forActivity(this)
     layoutInflater.inflate(R.layout.activity_main, viewGroup)
 
-    ButterKnife.bind(this).doOnDestroy { unbind() }
-
     router = Conductor.attachRouter(this, container, savedInstanceState)
     if (!router.hasRootController()) {
       router.setRoot(RouterTransaction.with(PagerController()))
     }
   }
-
 
   override fun onBackPressed() {
     if (!router.handleBack()) {

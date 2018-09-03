@@ -21,6 +21,8 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
 import android.view.View
+import android.view.View.OnClickListener
+import android.view.View.OnLongClickListener
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.appcompat.content.res.AppCompatResources
@@ -32,58 +34,37 @@ import androidx.core.text.PrecomputedTextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RxViewHolder
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.Unbinder
-import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.view.longClicks
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Mark
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.showIf
+import kotterknife.bindView
 import org.threeten.bp.Instant
 
 class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
     itemView), BindableCatchUpItemViewHolder {
 
-  @BindView(R.id.container)
-  internal lateinit var container: ConstraintLayout
-  @BindView(R.id.tags_container)
-  internal lateinit var tagsContainer: View
-  @BindView(R.id.title)
-  internal lateinit var title: AppCompatTextView
-  @BindView(R.id.score)
-  internal lateinit var score: TextView
-  @BindView(R.id.score_divider)
-  internal lateinit var scoreDivider: TextView
-  @BindView(R.id.timestamp)
-  internal lateinit var timestamp: TextView
-  @BindView(R.id.author)
-  internal lateinit var author: TextView
-  @BindView(R.id.author_divider)
-  internal lateinit var authorDivider: TextView
-  @BindView(R.id.source)
-  internal lateinit var source: TextView
-  @BindView(R.id.mark)
-  internal lateinit var mark: TextView
-  @BindView(R.id.tag)
-  internal lateinit var tag: TextView
-  @BindView(R.id.tag_divider)
-  internal lateinit var tagDivider: View
+  internal val container by bindView<ConstraintLayout>(R.id.container)
+  internal val tagsContainer by bindView<View>(R.id.tags_container)
+  internal val title by bindView<AppCompatTextView>(R.id.title)
+  internal val score by bindView<TextView>(R.id.score)
+  internal val scoreDivider by bindView<TextView>(R.id.score_divider)
+  internal val timestamp by bindView<TextView>(R.id.timestamp)
+  internal val author by bindView<TextView>(R.id.author)
+  internal val authorDivider by bindView<TextView>(R.id.author_divider)
+  internal val source by bindView<TextView>(R.id.source)
+  internal val mark by bindView<TextView>(R.id.mark)
+  internal val tag by bindView<TextView>(R.id.tag)
+  internal val tagDivider by bindView<View>(R.id.tag_divider)
 
   private val markBackground: Drawable
-  private var unbinder: Unbinder? = null
-
   private val constraintSet: ConstraintSet
 
   init {
-    unbinder?.unbind()
-    unbinder = ButterKnife.bind(this, itemView)
     markBackground = mark.background
     constraintSet = ConstraintSet()
   }
@@ -105,9 +86,9 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
   }
 
   override fun bind(item: CatchUpItem,
-      linkHandler: LinkHandler,
-      itemClickHandler: ((String) -> Any)?,
-      markClickHandler: ((String) -> Any)?) {
+      itemClickHandler: OnClickListener?,
+      markClickHandler: OnClickListener?,
+      longClickHandler: OnLongClickListener?) {
     title(item.title.trim())
     score(item.score)
     timestamp(item.timestamp)
@@ -115,20 +96,14 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
     source(item.source?.trim())
     tag(item.tag?.trim())
 
-    val markClickUrl = item.mark?.clickUrl
-    val itemClickUrl = item.itemClickUrl ?: markClickUrl
-    itemClickUrl?.let {
-      if (itemClickHandler != null) {
-        itemClickHandler(it)
-      }
-    }
+    container.setOnClickListener(itemClickHandler)
+    container.setOnLongClickListener(longClickHandler)
 
     item.mark?.let { sourceMark ->
       mark(sourceMark)
-      if (markClickUrl != null && markClickHandler != null) {
+      if (markClickHandler != null) {
         mark.isClickable = true
         mark.isFocusable = true
-        markClickHandler(markClickUrl)
       } else {
         mark.background = null
         mark.isClickable = false
@@ -136,12 +111,6 @@ class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
       }
     } ?: run { hideMark() }
   }
-
-  override fun itemClicks() = container.clicks()
-
-  override fun itemLongClicks() = container.longClicks()
-
-  override fun itemCommentClicks() = mark.clicks()
 
   fun title(titleText: CharSequence?) {
     title.setTextFuture(

@@ -17,8 +17,8 @@
 package io.sweers.catchup.service.api
 
 import android.content.res.Configuration
+import android.view.View.OnClickListener
 import androidx.core.content.ContextCompat
-import com.uber.autodispose.autoDisposable
 
 interface VisualService : Service {
   override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
@@ -27,25 +27,36 @@ interface VisualService : Service {
     holder.tint(accentColor)
     holder.bind(
         item = item,
-        linkHandler = linkHandler(),
-        itemClickHandler = item.itemClickUrl?.let {
-          { url: String ->
-            holder.itemClicks()
-                .map {
-                  UrlMeta(
-                      url = url,
-                      // Use "day" accents as those are usually the "real" accent colors
-                      accentColor = ContextCompat.getColor(
-                          context.createConfigurationContext(
-                              Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }),
-                          meta().themeColor),
-                      context = context)
-                }
-                .flatMapCompletable(linkHandler())
-                .autoDisposable(holder)
-                .subscribe()
+        itemClickHandler = item.itemClickUrl?.let { url ->
+          OnClickListener {
+            val urlMeta = UrlMeta(
+                url = url,
+                // Use "day" accents as those are usually the "real" accent colors
+                accentColor = ContextCompat.getColor(
+                    context.createConfigurationContext(
+                        Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }),
+                    meta().themeColor),
+                context = context,
+                imageViewerData = ImageViewerData(
+                    id = item.imageInfo!!.imageId!!,
+                    imageUrl = item.imageInfo.url,
+                    sourceUrl = item.imageInfo.sourceUrl,
+                    image = holder.itemView()
+                )
+            )
+            linkHandler().openUrl(urlMeta)
           }
         }
     )
+  }
+
+  fun marginDecoration(): Boolean = false
+
+  fun spanConfig(): SpanConfig = SpanConfig.DEFAULT
+
+  data class SpanConfig(val spanCount: Int, val spanSizeResolver: ((Int) -> Int)? = null) {
+    companion object {
+      val DEFAULT = SpanConfig(2, null)
+    }
   }
 }

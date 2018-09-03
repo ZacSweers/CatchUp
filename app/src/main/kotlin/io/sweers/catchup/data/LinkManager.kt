@@ -16,16 +16,20 @@
 
 package io.sweers.catchup.data
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
 import androidx.collection.ArrayMap
+import androidx.core.util.toAndroidPair
 import com.f2prateek.rx.preferences2.Preference
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
@@ -35,16 +39,21 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.service.api.ImageViewerData
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.UrlMeta
+import io.sweers.catchup.ui.activity.ImageViewerActivity
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.registerReceiver
 import io.sweers.catchup.util.rx.doOnEmpty
 import javax.inject.Inject
 
+
 @PerActivity
-class LinkManager @Inject constructor(private val customTab: CustomTabActivityHelper)
+class LinkManager @Inject constructor(
+    private val customTab: CustomTabActivityHelper,
+    private val activity: Activity)
   : LinkHandler {
 
   private val globalSmartLinkingPref: Preference<Boolean> = P.SmartlinkingGlobal.rx()
@@ -79,13 +88,27 @@ class LinkManager @Inject constructor(private val customTab: CustomTabActivityHe
 
   @Suppress("MemberVisibilityCanPrivate")
   @CheckResult
-  fun openUrl(meta: UrlMeta): Completable {
-    if (meta.uri == null) {
+  override fun openUrlCompletable(meta: UrlMeta): Completable {
+    meta.imageViewerData?.let { imageData ->
+      val intent = Intent(activity, ImageViewerActivity::class.java)
+      intent.putExtra(ImageViewerActivity.INTENT_ID, imageData.id)
+      intent.putExtra(ImageViewerActivity.INTENT_URL, imageData.imageUrl)
+      intent.putExtra(ImageViewerActivity.INTENT_SOURCE_URL, imageData.sourceUrl)
+      val options = getActivityOptions(imageData)
+      activity.startActivityForResult(intent, 101, options.toBundle())
+      return Completable.complete()
+    }
+    if (meta.isSupportedInMediaViewer()) {
+      val intent = Intent(activity, ImageViewerActivity::class.java)
+      intent.putExtra(ImageViewerActivity.INTENT_URL, meta.uri.toString())
+      activity.startActivityForResult(intent, 102)
+      return Completable.complete()
+    }
+    val uri = meta.uri ?: run {
       Toast.makeText(meta.context, R.string.error_no_url, Toast.LENGTH_SHORT)
           .show()
       return Completable.complete()
     }
-    val uri = meta.uri!!
     val intent = Intent(Intent.ACTION_VIEW, meta.uri)
     if (!globalSmartLinkingPref.get()) {
       openCustomTab(meta.context, uri, meta.accentColor)
@@ -100,6 +123,25 @@ class LinkManager @Inject constructor(private val customTab: CustomTabActivityHe
     } else {
       openCustomTab(meta.context, uri, meta.accentColor)
       Completable.complete()
+    }
+  }
+
+  private fun getActivityOptions(imageData: ImageViewerData): ActivityOptions {
+    val imagePair = (imageData.image to activity.getString(
+        R.string.transition_image)).toAndroidPair()
+    val decorView = activity.window.decorView
+    val statusBackground: View = decorView.findViewById(android.R.id.statusBarBackground)
+    val navBackground: View? = decorView.findViewById(android.R.id.navigationBarBackground)
+    val statusPair = Pair(statusBackground,
+        statusBackground.transitionName).toAndroidPair()
+
+    return if (navBackground == null) {
+      ActivityOptions.makeSceneTransitionAnimation(activity,
+          imagePair, statusPair)
+    } else {
+      val navPair = Pair(navBackground, navBackground.transitionName).toAndroidPair()
+      ActivityOptions.makeSceneTransitionAnimation(activity,
+          imagePair, statusPair, navPair)
     }
   }
 
@@ -136,8 +178,5 @@ class LinkManager @Inject constructor(private val customTab: CustomTabActivityHe
             .build(),
         uri)
   }
-
-  @Throws(Exception::class)
-  override fun apply(meta: UrlMeta) = openUrl(meta)
 
 }

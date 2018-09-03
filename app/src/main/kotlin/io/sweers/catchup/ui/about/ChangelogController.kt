@@ -22,13 +22,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.ProgressBar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.rx2.Rx2Apollo
 import com.google.android.material.snackbar.Snackbar
-import com.uber.autodispose.autoDisposable
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.Single
@@ -42,25 +41,28 @@ import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
-import io.sweers.catchup.ui.base.ButterKnifeController
+import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotterknife.bindView
 import org.threeten.bp.Instant
 import java.io.IOException
 import javax.inject.Inject
 
-class ChangelogController : ButterKnifeController(), Scrollable {
+class ChangelogController : BaseController(), Scrollable {
 
-  @Inject lateinit var apolloClient: ApolloClient
-  @Inject internal lateinit var linkManager: LinkManager
+  @Inject
+  lateinit var apolloClient: ApolloClient
+  @Inject
+  internal lateinit var linkManager: LinkManager
 
-  @BindView(R.id.progress) lateinit var progressBar: ProgressBar
-  @BindView(R.id.list) lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
+  private val progressBar by bindView<ProgressBar>(R.id.progress)
+  private val recyclerView by bindView<RecyclerView>(R.id.list)
 
-  private lateinit var layoutManager: androidx.recyclerview.widget.LinearLayoutManager
+  private lateinit var layoutManager: LinearLayoutManager
   private val adapter = ChangelogAdapter()
 
   override fun onContextAvailable(context: Context) {
@@ -71,12 +73,10 @@ class ChangelogController : ButterKnifeController(), Scrollable {
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
       inflater.inflate(R.layout.controller_changelog, container, false)
 
-  override fun bind(view: View) = ButterKnife.bind(this, view)
-
   override fun onViewBound(view: View) {
     super.onViewBound(view)
     recyclerView.adapter = adapter
-    layoutManager = androidx.recyclerview.widget.LinearLayoutManager(view.context)
+    layoutManager = LinearLayoutManager(view.context)
     recyclerView.layoutManager = layoutManager
     recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
       addDuration = 300
@@ -165,13 +165,9 @@ class ChangelogController : ButterKnifeController(), Scrollable {
         source(item.sha)
         author(null)
         hideMark()
-        itemClicks()
-            .flatMapCompletable {
-              return@flatMapCompletable linkManager.openUrl(
-                  UrlMeta(item.url, 0, itemView.context))
-            }
-            .autoDisposable(holder)
-            .subscribe()
+        holder.container.setOnClickListener {
+          linkManager.openUrl(UrlMeta(item.url, 0, itemView.context))
+        }
       }
     }
   }

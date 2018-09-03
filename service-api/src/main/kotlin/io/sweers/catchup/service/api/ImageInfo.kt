@@ -20,7 +20,9 @@ package io.sweers.catchup.service.api
 data class ImageInfo(
     var url: String,
     var animatable: Boolean,
-    var bestSize: Pair<Int, Int>?
+    var sourceUrl: String,
+    var bestSize: Pair<Int, Int>?,
+    var imageId: String? = null
 ) {
-  constructor(): this("", false, null)
+  constructor() : this("", false, "", null, null)
 }

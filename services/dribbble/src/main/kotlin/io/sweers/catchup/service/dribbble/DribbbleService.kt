@@ -69,11 +69,13 @@ internal class DribbbleService @Inject constructor(
               author = "/u/" + it.user.name,
               source = null,
               tag = null,
-              itemClickUrl = it.htmlUrl,
+              itemClickUrl = it.images.best(),
               imageInfo = ImageInfo(
                   it.images.best(),
                   it.animated,
-                  it.images.bestSize()
+                  it.htmlUrl,
+                  it.images.bestSize(),
+                  it.id.toString()
               ),
               mark = createCommentMark(count = it.commentsCount.toInt())
           )

@@ -29,7 +29,6 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
 import androidx.preference.children
-import butterknife.BindView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.perf.FirebasePerformance
 import com.uber.autodispose.autoDisposable
@@ -57,6 +56,7 @@ import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNavBarColor
 import io.sweers.catchup.util.updateNightMode
+import kotterknife.bindView
 import okhttp3.Cache
 import java.io.File
 import javax.inject.Inject
@@ -73,8 +73,7 @@ class SettingsActivity : BaseActivity(), HasSupportFragmentInjector {
 
   @Inject
   internal lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
-  @BindView(R.id.toolbar)
-  lateinit var toolbar: Toolbar
+  private val toolbar by bindView<Toolbar>(R.id.toolbar)
 
   /**
    * Backpress hijacks activity result codes, so store ours here in case
@@ -85,7 +84,6 @@ class SettingsActivity : BaseActivity(), HasSupportFragmentInjector {
     super.onCreate(savedInstanceState)
     val viewGroup = viewContainer.forActivity(this)
     layoutInflater.inflate(R.layout.activity_settings, viewGroup)
-    SettingsActivity_ViewBinding(this)
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

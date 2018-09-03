@@ -27,12 +27,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import butterknife.BindView
-import butterknife.ButterKnife
 import io.reactivex.functions.Consumer
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard.Entry
 import io.sweers.catchup.ui.BindableAdapter
+import kotterknife.ViewDelegateBindable
+import kotterknife.bindView
 import java.util.ArrayList
 
 internal class LogAdapter(context: Context) : BindableAdapter<Entry>(context), Consumer<Entry> {
@@ -66,14 +66,10 @@ internal class LogAdapter(context: Context) : BindableAdapter<Entry>(context), C
     viewHolder.setEntry(item)
   }
 
-  internal class LogItemViewHolder(private val rootView: View) {
-    @BindView(R.id.debug_log_level) lateinit var levelView: TextView
-    @BindView(R.id.debug_log_tag) lateinit var tagView: TextView
-    @BindView(R.id.debug_log_message) lateinit var messageView: TextView
-
-    init {
-      ButterKnife.bind(this, rootView)
-    }
+  internal class LogItemViewHolder(private val rootView: View) : ViewDelegateBindable(rootView) {
+    private val levelView by bindView<TextView>(R.id.debug_log_level)
+    private val tagView by bindView<TextView>(R.id.debug_log_tag)
+    private val messageView by bindView<TextView>(R.id.debug_log_message)
 
     fun setEntry(entry: Entry) {
       rootView.setBackgroundResource(backgroundForLevel(entry.level))

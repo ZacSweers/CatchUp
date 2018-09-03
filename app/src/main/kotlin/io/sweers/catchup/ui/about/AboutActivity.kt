@@ -36,8 +36,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.text.layoutDirection
 import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
@@ -63,7 +61,7 @@ import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.BaseActivity
-import io.sweers.catchup.ui.base.ButterKnifeController
+import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.TouchableUrlSpan
 import io.sweers.catchup.util.UiUtil
@@ -72,6 +70,7 @@ import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.setLightStatusBar
+import kotterknife.bindView
 import java.util.Locale
 import javax.inject.Inject
 
@@ -81,8 +80,8 @@ class AboutActivity : BaseActivity() {
   internal lateinit var customTab: CustomTabActivityHelper
   @Inject
   internal lateinit var linkManager: LinkManager
-  @BindView(R.id.controller_container)
-  internal lateinit var container: ViewGroup
+
+  private val container by bindView<ViewGroup>(R.id.controller_container)
 
   private lateinit var router: Router
 
@@ -99,7 +98,6 @@ class AboutActivity : BaseActivity() {
     val viewGroup = viewContainer.forActivity(this)
     layoutInflater.inflate(R.layout.activity_generic_container, viewGroup)
 
-    ButterKnife.bind(this).doOnDestroy { unbind() }
     router = Conductor.attachRouter(this, container, savedInstanceState)
     if (!router.hasRootController()) {
       router.setRoot(RouterTransaction.with(AboutController()))
@@ -122,7 +120,7 @@ class AboutActivity : BaseActivity() {
   }
 }
 
-class AboutController : ButterKnifeController() {
+class AboutController : BaseController() {
 
   companion object {
     private const val PAGE_TAG = "AboutController.pageTag"
@@ -137,24 +135,15 @@ class AboutController : ButterKnifeController() {
   @Inject
   internal lateinit var bypass: Bypass
 
-  @BindView(R.id.about_controller_root)
-  lateinit var rootLayout: CoordinatorLayout
-  @BindView(R.id.appbarlayout)
-  lateinit var appBarLayout: AppBarLayout
-  @BindView(R.id.banner_container)
-  lateinit var bannerContainer: View
-  @BindView(R.id.banner_icon)
-  lateinit var bannerIcon: ImageView
-  @BindView(R.id.banner_text)
-  lateinit var aboutText: TextView
-  @BindView(R.id.banner_title)
-  lateinit var title: TextView
-  @BindView(R.id.tab_layout)
-  lateinit var tabLayout: TabLayout
-  @BindView(R.id.toolbar)
-  lateinit var toolbar: Toolbar
-  @BindView(R.id.view_pager)
-  lateinit var viewPager: ViewPager
+  private val rootLayout by bindView<CoordinatorLayout>(R.id.about_controller_root)
+  private val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
+  private val bannerContainer by bindView<View>(R.id.banner_container)
+  private val bannerIcon by bindView<ImageView>(R.id.banner_icon)
+  private val aboutText by bindView<TextView>(R.id.banner_text)
+  private val title by bindView<TextView>(R.id.banner_title)
+  private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
+  private val toolbar by bindView<Toolbar>(R.id.toolbar)
+  private val viewPager by bindView<ViewPager>(R.id.view_pager)
 
   private var pagerAdapter: RouterPagerAdapter
   private val compositeClickSpan = { url: String ->
@@ -164,7 +153,6 @@ class AboutController : ButterKnifeController() {
             linkManager.openUrl(
                 UrlMeta(url, aboutText.highlightColor,
                     activity!!))
-                .subscribe()
           }
         },
         StyleSpan(Typeface.BOLD)
@@ -201,8 +189,6 @@ class AboutController : ButterKnifeController() {
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
       inflater.inflate(R.layout.controller_about, container, false)
-
-  override fun bind(view: View) = ButterKnife.bind(this, view)
 
   override fun onSaveViewState(view: View, outState: Bundle) {
     // Save the appbarlayout state to restore it on the other side
@@ -246,7 +232,6 @@ class AboutController : ButterKnifeController() {
       Toast.makeText(activity, R.string.icon_attribution, Toast.LENGTH_SHORT).show()
       linkManager.openUrl(
           UrlMeta("https://cookicons.co", aboutText.highlightColor, activity!!))
-          .subscribe()
       true
     }
 

@@ -71,11 +71,13 @@ internal class UplabsService @Inject constructor(
               author = it.makerName,
               source = it.label,
               tag = it.category,
-              itemClickUrl = it.url,
+              itemClickUrl = if (it.animated) it.animatedTeaserUrl else it.teaserUrl,
               imageInfo = ImageInfo(
-                  if (it.animated) it.animatedTeaserUrl else it.teaserUrl,
-                  it.animated,
-                  null
+                  url = if (it.animated) it.animatedTeaserUrl else it.teaserUrl,
+                  animatable = it.animated,
+                  sourceUrl = it.url,
+                  bestSize = null,
+                  imageId = it.id.toString()
               )
           )
         }

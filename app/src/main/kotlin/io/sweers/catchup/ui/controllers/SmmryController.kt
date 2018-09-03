@@ -40,7 +40,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import butterknife.BindView
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.SimpleColorFilter
@@ -83,7 +82,7 @@ import io.sweers.catchup.service.api.SummarizationType
 import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
-import io.sweers.catchup.ui.base.ButterKnifeController
+import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.ui.controllers.SmmryController.Module.ForSmmry
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout
 import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback
@@ -91,6 +90,7 @@ import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
+import kotterknife.bindView
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -102,7 +102,7 @@ import javax.inject.Qualifier
 /**
  * Overlay controller for displaying Smmry API results.
  */
-class SmmryController : ButterKnifeController {
+class SmmryController : BaseController {
 
   companion object {
 
@@ -136,20 +136,14 @@ class SmmryController : ButterKnifeController {
   @Inject
   lateinit var smmryDao: SmmryDao
 
-  @BindView(R.id.loading_view)
-  lateinit var loadingView: View
-  @BindView(R.id.smmry_loading)
-  lateinit var lottieView: LottieAnimationView
-  @BindView(R.id.content_container)
-  lateinit var content: NestedScrollView
-  @BindView(R.id.tags)
-  lateinit var tags: TextView
-  @BindView(R.id.title)
-  lateinit var title: TextView
-  @BindView(R.id.summary)
-  lateinit var summary: TextView
-  @BindView(R.id.drag_dismiss_layout)
-  lateinit var dragDismissFrameLayout: ElasticDragDismissFrameLayout
+  private val loadingView by bindView<View>(R.id.loading_view)
+  private val lottieView by bindView<LottieAnimationView>(R.id.smmry_loading)
+  private val content by bindView<NestedScrollView>(R.id.content_container)
+  private val tags by bindView<TextView>(R.id.tags)
+  private val title by bindView<TextView>(R.id.title)
+  private val summary by bindView<TextView>(R.id.summary)
+  private val dragDismissFrameLayout by bindView<ElasticDragDismissFrameLayout>(
+      R.id.drag_dismiss_layout)
 
   private lateinit var id: String
   private lateinit var info: SummarizationInfo
@@ -336,8 +330,6 @@ class SmmryController : ButterKnifeController {
           .alpha(1f)
     }
   }
-
-  override fun bind(view: View) = SmmryController_ViewBinding(this, view)
 
   @PerController
   @Subcomponent(modules = [Module::class])

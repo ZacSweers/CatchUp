@@ -427,8 +427,6 @@ dependencies {
   implementation(deps.android.firebase.perf)
 
   // Square/JW
-  implementation(deps.butterKnife.runtime)
-  kapt(deps.butterKnife.apt)
   implementation(deps.okhttp.core)
   implementation(deps.misc.okio)
   implementation(deps.retrofit.core)

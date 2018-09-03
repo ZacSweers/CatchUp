@@ -124,7 +124,6 @@ class ChangelogHelper @Inject constructor(
                             override fun onClick(url: String) {
                               linkManager.openUrl(
                                   UrlMeta(url, highlightColor, context.resolveActivity()))
-                                  .subscribe()
                             }
                           },
                           StyleSpan(Typeface.BOLD)

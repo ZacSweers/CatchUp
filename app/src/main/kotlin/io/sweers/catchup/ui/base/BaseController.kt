@@ -22,15 +22,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import butterknife.Unbinder
+import com.bluelinelabs.conductor.Controller
+import kotterknife.ViewBindable
 
-abstract class ButterKnifeController : AutoDisposeController {
+abstract class BaseController : AutoDisposeController, ViewBindable {
 
   companion object {
     private val DAY_MODE_CONF = Configuration().apply {
       uiMode = Configuration.UI_MODE_NIGHT_NO
     }
   }
+
+  final override val viewFinder: (Int) -> View?
+    get() = {
+      view!!.findViewById(it)
+    }
 
   protected var dayOnlyContext: Context? = null
 
@@ -41,19 +47,19 @@ abstract class ButterKnifeController : AutoDisposeController {
   override fun onContextAvailable(context: Context) {
     super.onContextAvailable(context)
     dayOnlyContext = context.createConfigurationContext(DAY_MODE_CONF)
+    addLifecycleListener(object : LifecycleListener() {
+      override fun postCreateView(controller: Controller, view: View) {
+        onViewBound(view)
+      }
+    })
   }
 
   protected abstract fun inflateView(inflater: LayoutInflater,
       container: ViewGroup): View
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
-    val view = inflateView(LayoutInflater.from(container.context), container)
-    bind(view).doOnDestroyView { unbind() }
-    onViewBound(view)
-    return view
+    return inflateView(LayoutInflater.from(container.context), container)
   }
-
-  protected abstract fun bind(view: View): Unbinder
 
   protected open fun onViewBound(view: View) {}
 
