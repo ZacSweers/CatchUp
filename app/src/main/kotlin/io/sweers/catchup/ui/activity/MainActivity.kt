@@ -27,7 +27,6 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.uber.autodispose.autoDisposable
 import dagger.Binds
 import dagger.Provides
-import dagger.multibindings.Multibinds
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.ServiceDao
@@ -36,7 +35,7 @@ import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
+import io.sweers.catchup.serviceregistry.CatchUpServiceRegistry
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.controllers.PagerController
 import io.sweers.catchup.ui.controllers.service.StorageBackedService
@@ -85,7 +84,7 @@ class MainActivity : BaseActivity() {
     }
   }
 
-  @dagger.Module(includes = [ResolvedCatchUpServiceRegistry::class])
+  @dagger.Module(includes = [CatchUpServiceRegistry::class])
   abstract class ServiceIntegrationModule {
     @dagger.Module
     companion object {
@@ -121,13 +120,6 @@ class MainActivity : BaseActivity() {
             }
       }
     }
-
-    @Multibinds
-    @PerActivity
-    abstract fun services(): Map<String, Service>
-
-    @Multibinds
-    abstract fun serviceMetas(): Map<String, ServiceMeta>
 
     @Binds
     @PerActivity

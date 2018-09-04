@@ -16,12 +16,25 @@
 
 package io.sweers.catchup.serviceregistry
 
+import dagger.Module
+import dagger.multibindings.Multibinds
+import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceRegistry
 
+@Module(includes = [CatchUpServiceMetaRegistry::class, ResolvedCatchUpServiceRegistry::class])
 @ServiceRegistry
-interface CatchUpServiceRegistry
+abstract class CatchUpServiceRegistry {
+  @Multibinds
+  abstract fun services(): Map<String, Service>
+}
 
+
+@Module(includes = [ResolvedCatchUpServiceMetaRegistry::class])
 @Meta
 @ServiceRegistry
-interface CatchUpServiceMetaRegistry
+abstract class CatchUpServiceMetaRegistry {
+  @Multibinds
+  abstract fun serviceMetas(): Map<String, ServiceMeta>
+}

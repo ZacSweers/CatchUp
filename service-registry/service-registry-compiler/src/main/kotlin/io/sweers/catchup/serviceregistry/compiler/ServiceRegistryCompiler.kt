@@ -33,10 +33,8 @@ import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.serviceregistry.annotations.ServiceRegistry
 import me.eugeniomarletti.kotlin.metadata.KotlinClassMetadata
-import me.eugeniomarletti.kotlin.metadata.classKind
 import me.eugeniomarletti.kotlin.metadata.kaptGeneratedOption
 import me.eugeniomarletti.kotlin.metadata.kotlinMetadata
-import me.eugeniomarletti.kotlin.metadata.shadow.metadata.ProtoBuf.Class.Kind
 import java.io.File
 import java.io.IOException
 import javax.lang.model.element.AnnotationMirror
@@ -123,20 +121,6 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
       return
     }
 
-    val classData = kmetadata.data
-    val (_, classProto) = classData
-
-    // Must be an object class.
-    if (classProto.classKind != Kind.INTERFACE) {
-      context.processingEnv
-          .messager
-          .printMessage(ERROR,
-              "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: must be a " +
-                  "Kotlin interface class",
-              type)
-      return
-    }
-
     val generatedDir = context.processingEnv.options[kaptGeneratedOption]?.let(::File)
         ?: throw IllegalStateException("Could not resolve kotlin generated directory!")
 
@@ -167,7 +151,6 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
           objectName)
           .addType(TypeSpec.objectBuilder(objectName)
               .addAnnotation(moduleAnnotation)
-              .addSuperinterface(type.asClassName())
               .build())
           .build()
           .writeTo(generatedDir)

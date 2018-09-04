@@ -59,7 +59,7 @@ import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
+import io.sweers.catchup.serviceregistry.CatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.BaseController
@@ -343,7 +343,7 @@ interface OrderServicesComponent : AndroidInjector<OrderServicesController> {
   abstract class Builder : AndroidInjector.Builder<OrderServicesController>()
 }
 
-@Module(includes = [ResolvedCatchUpServiceMetaRegistry::class])
+@Module(includes = [CatchUpServiceMetaRegistry::class])
 abstract class OrderServicesModule {
 
   @Multibinds
