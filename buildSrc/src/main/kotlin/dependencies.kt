@@ -116,7 +116,7 @@ object deps {
       const val cardView = "androidx.cardview:cardview:${versions.androidx}"
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.2"
       const val customTabs = "androidx.browser:browser:${versions.androidx}"
-      const val design = "com.google.android.material:material:1.0.0-rc01"
+      const val design = "com.google.android.material:material:${versions.androidx}"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:${versions.androidx}"
       const val emoji = "androidx.emoji:emoji:${versions.androidx}"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:${versions.androidx}"
@@ -177,7 +177,7 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.3.1"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.4.1"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.2"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
@@ -312,7 +312,7 @@ object deps {
     const val bugsnag = "com.bugsnag:bugsnag-android:4.6.1"
 
     object debug {
-      const val flipper = "com.facebook.flipper:flipper:0.6.17"
+      const val flipper = "com.facebook.flipper:flipper:0.7.1"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"
       const val scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
@@ -324,8 +324,8 @@ object deps {
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
     const val jsoup = "org.jsoup:jsoup:1.11.3"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
-    const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.3.0"
-    const val lottie = "com.airbnb.android:lottie:2.5.6"
+    const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.4.0"
+    const val lottie = "com.airbnb.android:lottie:2.6.1"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
     const val okio = "com.squareup.okio:okio:2.0.0"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:2.3.0"
@@ -369,7 +369,7 @@ object deps {
       const val design = "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
     }
 
-    const val java = "io.reactivex.rxjava2:rxjava:2.2.1"
+    const val java = "io.reactivex.rxjava2:rxjava:2.2.2"
 
     object palette {
       const val core = "io.sweers.rxpalette:rxpalette:${versions.rxpalette}"
