@@ -20,9 +20,8 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
 import androidx.annotation.ColorInt
-import com.uber.autodispose.ScopeProvider
 
-interface BindableCatchUpItemViewHolder : ScopeProvider {
+interface BindableCatchUpItemViewHolder {
   fun itemView(): View
   fun tint(@ColorInt color: Int) {
     // NOOP

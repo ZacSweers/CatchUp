@@ -37,7 +37,6 @@ import androidx.core.animation.doOnEnd
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import androidx.recyclerview.widget.RxViewHolder
 import com.bumptech.glide.ListPreloader.PreloadModelProvider
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
@@ -223,7 +222,7 @@ internal class ImageAdapter(private val context: Context,
 
   internal class ImageHolder(itemView: View,
       private val loadingPlaceholders: Array<ColorDrawable>)
-    : RxViewHolder(itemView), BindableCatchUpItemViewHolder {
+    : ViewHolder(itemView), BindableCatchUpItemViewHolder {
 
     internal var backingImageItem: ImageItem? = null
     internal val image: BadgedFourThreeImageView = itemView as BadgedFourThreeImageView

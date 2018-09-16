@@ -31,7 +31,6 @@ import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import androidx.recyclerview.widget.RxViewHolder
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.rx2.Rx2Apollo
@@ -426,7 +425,7 @@ private data class OssGitHubEntry(val owner: String, val name: String) {
   }
 }
 
-private class HeaderHolder(view: View) : RxViewHolder(view) {
+private class HeaderHolder(view: View) : ViewHolder(view) {
   val icon by bindView<ImageView>(R.id.icon)
   val title by bindView<TextView>(R.id.title)
 }

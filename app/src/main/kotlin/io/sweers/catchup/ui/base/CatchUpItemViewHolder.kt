@@ -33,7 +33,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.text.PrecomputedTextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
-import androidx.recyclerview.widget.RxViewHolder
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
@@ -45,8 +45,7 @@ import io.sweers.catchup.util.showIf
 import kotterknife.bindView
 import org.threeten.bp.Instant
 
-class CatchUpItemViewHolder(itemView: View) : RxViewHolder(
-    itemView), BindableCatchUpItemViewHolder {
+class CatchUpItemViewHolder(itemView: View) : ViewHolder(itemView), BindableCatchUpItemViewHolder {
 
   internal val container by bindView<ConstraintLayout>(R.id.container)
   internal val tagsContainer by bindView<View>(R.id.tags_container)

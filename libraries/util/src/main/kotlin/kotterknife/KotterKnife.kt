@@ -31,21 +31,32 @@ import kotlin.reflect.KProperty
  *   - Basically lets you do like ButterKnife.bind(target, source)
  * - onClick helpers
  * - Allow for Any return type to account for interfaces, matching ButterKnife's support
+ * - LazyBinding updated to match more modern Lazy implementation
  */
 
+/**
+ * Implementers of this can provide a view given a [viewFinder].
+ */
 interface ViewBindable {
-  val viewFinder: (Int) -> View?
+  /**
+   * @returns a view finder that can locate a view with a given resource ID parameter.
+   */
+  val viewFinder: (Int) -> Any?
 }
 
+/**
+ * Implementation of a [ViewBindable] for objects that delegate to a source [View], similar to a
+ * [ViewHolder].
+ */
 abstract class ViewDelegateBindable(source: View) : ViewBindable {
-  final override val viewFinder: (Int) -> View? = { source.findViewById(it) }
+  final override val viewFinder: (Int) -> Any? = { source.findViewById(it) }
 }
 
 fun <V : Any> ViewBindable.bindView(id: Int)
     : ReadOnlyProperty<ViewBindable, V> = required(id, viewFinder)
 
 fun <V : Any> ViewBindable.onClick(id: Int, body: (V) -> Unit) {
-  viewFinder(id)?.setOnClickListener {
+  (viewFinder(id) as? View)?.setOnClickListener {
     @Suppress("UNCHECKED_CAST")
     body(it as V)
   } ?: viewNotFound(id)
@@ -162,16 +173,18 @@ private fun viewNotFound(id: Int, desc: KProperty<*>? = null): Nothing {
 
 @Suppress("UNCHECKED_CAST")
 private fun <T, V : Any> required(id: Int,
-    finder: (Int) -> View?) = Lazy<T, V> { desc -> finder(id) as V? ?: viewNotFound(id, desc) }
+    finder: (Int) -> Any?) = LazyBinding<T, V> { desc ->
+  finder(id) as V? ?: viewNotFound(id, desc)
+}
 
 @Suppress("UNCHECKED_CAST")
-private fun <T, V : Any> optional(id: Int, finder: (Int) -> View?) = Lazy<T, V?> {
+private fun <T, V : Any> optional(id: Int, finder: (Int) -> Any?) = LazyBinding<T, V?> {
   finder(id) as V?
 }
 
 @Suppress("UNCHECKED_CAST")
 private fun <T, V : Any> required(ids: IntArray,
-    finder: (Int) -> View?) = Lazy<T, List<V>> { desc ->
+    finder: (Int) -> Any?) = LazyBinding<T, List<V>> { desc ->
   ids.map {
     finder(it) as V? ?: viewNotFound(it, desc)
   }
@@ -179,19 +192,27 @@ private fun <T, V : Any> required(ids: IntArray,
 
 @Suppress("UNCHECKED_CAST")
 private fun <T, V : Any> optional(ids: IntArray,
-    finder: (Int) -> View?) = Lazy<T, List<V>> { _ -> ids.map { finder(it) as V? }.filterNotNull() }
+    finder: (Int) -> Any?) = LazyBinding<T, List<V>> { _ ->
+  ids.map {
+    finder(it) as V?
+  }.filterNotNull()
+}
+
+private object EMPTY
 
 // Like Kotlin's lazy delegate but the initializer gets the target and metadata passed to it
-private class Lazy<T, V>(private val initializer: ((KProperty<*>) -> V)) : ReadOnlyProperty<T, V> {
-  private object EMPTY
-
+private class LazyBinding<T, V>(initializer: ((KProperty<*>) -> V)) : ReadOnlyProperty<T, V> {
+  private var initializer: ((KProperty<*>) -> V)? = initializer
   private var value: Any? = EMPTY
 
   override fun getValue(thisRef: T, property: KProperty<*>): V {
-    if (value == EMPTY) {
-      value = initializer(property)
+    if (value === EMPTY) {
+      value = initializer!!(property)
+      initializer = null
     }
     @Suppress("UNCHECKED_CAST")
     return value as V
   }
+
+  override fun toString(): String = if (value !== EMPTY) value.toString() else "LazyBinding value not initialized yet."
 }
