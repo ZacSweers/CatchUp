@@ -74,10 +74,10 @@ class CatchUpItemViewHolder(itemView: View) : ViewHolder(itemView), BindableCatc
     score.setTextColor(color)
     tag.setTextColor(color)
     scoreDivider.setTextColor(color)
-    tintComments(color)
+    tintMark(color)
   }
 
-  private fun tintComments(@ColorInt color: Int) {
+  private fun tintMark(@ColorInt color: Int) {
     if (mark.background == null) {
       mark.background = markBackground.mutate()
     }
@@ -103,6 +103,7 @@ class CatchUpItemViewHolder(itemView: View) : ViewHolder(itemView), BindableCatc
       if (markClickHandler != null) {
         mark.isClickable = true
         mark.isFocusable = true
+        mark.setOnClickListener(markClickHandler)
       } else {
         mark.background = null
         mark.isClickable = false
@@ -239,7 +240,7 @@ class CatchUpItemViewHolder(itemView: View) : ViewHolder(itemView), BindableCatc
           null,
           null)
 
-      tintComments(sourceMark.iconTintColor ?: score.currentTextColor)
+      tintMark(sourceMark.iconTintColor ?: score.currentTextColor)
     }
 
   }
