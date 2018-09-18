@@ -41,7 +41,7 @@ interface ViewBindable {
   /**
    * @returns a view finder that can locate a view with a given resource ID parameter.
    */
-  val viewFinder: (Int) -> Any?
+  val viewFinder: (resId: Int) -> Any?
 }
 
 /**
@@ -49,7 +49,7 @@ interface ViewBindable {
  * [ViewHolder].
  */
 abstract class ViewDelegateBindable(source: View) : ViewBindable {
-  final override val viewFinder: (Int) -> Any? = { source.findViewById(it) }
+  final override val viewFinder: (resId: Int) -> Any? = { source.findViewById(it) }
 }
 
 fun <V : Any> ViewBindable.bindView(id: Int)
