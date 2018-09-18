@@ -18,6 +18,7 @@ package io.sweers.catchup.app
 
 import android.app.Activity
 import android.app.Application
+import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
@@ -31,11 +32,14 @@ import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
 import com.squareup.leakcanary.AndroidExcludedRefs
 import com.squareup.leakcanary.LeakCanary
+import com.squareup.leakcanary.RefWatcher
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
+import io.sweers.catchup.util.sdk
 import timber.log.Timber
 import timber.log.Timber.Tree
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -56,20 +60,45 @@ class DebugCatchUpApplication : CatchUpApplication() {
   }
 
   override fun initVariant() {
+    val penaltyListenerExecutor = if (Build.VERSION.SDK_INT >= 28) {
+      Executors.newSingleThreadExecutor()
+    } else null
     StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
         .detectAll()
         .penaltyLog()
+        .apply {
+          sdk(28) {
+            penaltyListener(penaltyListenerExecutor!!, StrictMode.OnThreadViolationListener {
+              Timber.w(it)
+            })
+          }
+        }
         .build())
     StrictMode.setVmPolicy(VmPolicy.Builder()
-        .detectAll()  // Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
+        .detectAll()
         .penaltyLog()
+        .apply {
+          sdk(28) {
+            penaltyListener(penaltyListenerExecutor!!, StrictMode.OnVmViolationListener {
+              // Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
+              Timber.w(it)
+            })
+          }
+        }
         .build())
-    refWatcher = LeakCanary.refWatcher(this)
-        .watchDelay(10, TimeUnit.SECONDS)
-        .excludedRefs(AndroidExcludedRefs.createAppDefaults()
-            .instanceField("android.view.ViewGroup\$ViewLocationHolder", "mRoot") // https://github.com/square/leakcanary/issues/1081
-            .build())
-        .buildAndInstall()
+    refWatcher = if (Build.VERSION.SDK_INT != 28) {
+      LeakCanary.refWatcher(this)
+          .watchDelay(10, TimeUnit.SECONDS)
+          .excludedRefs(AndroidExcludedRefs.createAppDefaults()
+              .instanceField("android.view.ViewGroup\$ViewLocationHolder",
+                  "mRoot") // https://github.com/square/leakcanary/issues/1081
+              .build())
+          .buildAndInstall()
+    } else {
+      // Disabled on API 28 because there's a pretty vicious memory leak that constantly triggers
+      // https://github.com/square/leakcanary/issues/1081
+      RefWatcher.DISABLED
+    }
     registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
       override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
