@@ -35,7 +35,7 @@ abstract class BaseController : AutoDisposeController, ViewBindable {
 
   final override val viewFinder: (resId: Int) -> View?
     get() = { resId ->
-      view!!.findViewById(resId)
+      view?.findViewById(resId) ?: throw IllegalStateException("view is null!")
     }
 
   protected var dayOnlyContext: Context? = null
