@@ -38,6 +38,6 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-  implementation(deps.android.support.annotations)
+  implementation(deps.android.androidx.annotations)
   implementation(deps.kotlin.stdlib.jdk7)
 }

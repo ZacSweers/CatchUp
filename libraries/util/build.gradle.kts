@@ -43,14 +43,14 @@ android {
 }
 
 dependencies {
-  api(deps.android.support.annotations)
+  api(deps.android.androidx.annotations)
 
-  implementation(deps.android.support.appCompat)
-  implementation(deps.android.support.compat)
-  implementation(deps.android.support.design)
+  implementation(deps.android.androidx.appCompat)
+  implementation(deps.android.androidx.core)
+  implementation(deps.android.androidx.design)
   implementation(deps.rx.android)
 
-  api(deps.android.ktx)
+  api(deps.android.androidx.coreKtx)
   api(deps.dagger.runtime)
   api(deps.kotlin.stdlib.jdk7)
   api(deps.misc.lazythreeten)

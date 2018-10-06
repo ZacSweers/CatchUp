@@ -30,7 +30,7 @@ dependencies {
   compile(deps.retrofit.core)
   compile(deps.okhttp.core)
   compile(deps.misc.jsoup)
-  compile(deps.android.support.annotations)
+  compile(deps.android.androidx.annotations)
   compile(deps.kotlin.stdlib.core)
   compile(deps.rx.java)
 }

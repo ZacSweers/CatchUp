@@ -50,8 +50,7 @@ fun Int.roundUpToNearest(multiple: Int): Int {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val androidx = "1.0.0-rc02"
-    const val androidxArch = "2.0.0-rc01"
+    const val androidx = "1.0.0"
     const val apollo = "1.0.0-alpha"
     const val autodispose = "1.0.0-RC2"
     const val chuck = "1.1.0"
@@ -64,35 +63,59 @@ object deps {
     const val glide = "4.8.0"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
-    const val kotlin = "1.2.70"
+    const val kotlin = "1.2.71"
     const val leakcanary = "1.6.1"
-    const val legacySupport = "28.0.0-rc02"
-    const val moshi = "1.6.0"
+    const val legacySupport = "28.0.0"
+    const val moshi = "1.7.0"
     const val okhttp = "3.11.0"
     const val playServices = firebase
     const val retrofit = "2.4.0"
-    const val rxbinding = "2.1.1"
+    const val rxbinding = "2.2.0"
     const val rxpalette = "0.3.0"
     const val stetho = "1.5.0"
     const val tikxml = "0.8.13"
   }
 
   object android {
-    object arch {
+    object androidx {
+      const val annotations = "androidx.annotation:annotation:1.0.0"
+      const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
+      const val appCompat = "androidx.appcompat:appcompat:1.0.0"
+
+      private const val coreVersion = "1.0.0"
+      const val core = "androidx.core:core:$coreVersion"
+      const val coreKtx = "androidx.core:core-ktx:$coreVersion"
+
+      const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.2"
+      const val customTabs = "androidx.browser:browser:1.0.0"
+      const val design = "com.google.android.material:material:1.0.0"
+      const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.0.0"
+      const val emoji = "androidx.emoji:emoji:1.0.0"
+      const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
+      const val viewPager = "androidx.viewpager:viewpager:1.0.0"
+      const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+      const val palette = "androidx.palette:palette:1.0.0"
+      const val paletteKtx = "androidx.palette:palette-ktx:1.0.0"
+      const val preference = "androidx.preference:preference:1.0.0"
+      const val preferenceKtx = "androidx.preference:preference-ktx:1.0.0"
+      const val recyclerView = "androidx.recyclerview:recyclerview:1.0.0"
+
       object lifecycle {
-        const val apt = "androidx.lifecycle:lifecycle-compiler:${versions.androidxArch}"
-        const val extensions = "androidx.lifecycle:lifecycle-extensions:${versions.androidxArch}"
+        private const val version = "2.0.0"
+        const val apt = "androidx.lifecycle:lifecycle-compiler:$version"
+        const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
       }
 
       object room {
-        const val apt = "androidx.room:room-compiler:${versions.androidxArch}"
-        const val runtime = "androidx.room:room-runtime:${versions.androidxArch}"
-        const val rxJava2 = "androidx.room:room-rxjava2:${versions.androidxArch}"
+        private const val version = "2.0.0-rc01"
+        const val apt = "androidx.room:room-compiler:$version"
+        const val runtime = "androidx.room:room-runtime:$version"
+        const val rxJava2 = "androidx.room:room-rxjava2:$version"
       }
     }
 
     object build {
-      const val buildToolsVersion = "28.0.2"
+      const val buildToolsVersion = "28.0.3"
       const val compileSdkVersion = 28
       const val minSdkVersion = 21
       const val targetSdkVersion = 28
@@ -106,30 +129,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:${versions.firebase}"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.3.0-alpha11"
-    const val ktx = "androidx.core:core-ktx:${versions.androidx}"
-
-    object support {
-      const val annotations = "androidx.annotation:annotation:${versions.androidx}"
-      const val legacyAnnotations = "com.android.support:support-annotations:${versions.legacySupport}"
-      const val appCompat = "androidx.appcompat:appcompat:${versions.androidx}"
-      const val cardView = "androidx.cardview:cardview:${versions.androidx}"
-      const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.2"
-      const val customTabs = "androidx.browser:browser:${versions.androidx}"
-      const val design = "com.google.android.material:material:${versions.androidx}"
-      const val drawerLayout = "androidx.drawerlayout:drawerlayout:${versions.androidx}"
-      const val emoji = "androidx.emoji:emoji:${versions.androidx}"
-      const val emojiAppcompat = "androidx.emoji:emoji-appcompat:${versions.androidx}"
-      const val viewPager = "androidx.viewpager:viewpager:${versions.androidx}"
-      const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${versions.androidx}"
-      const val palette = "androidx.palette:palette:${versions.androidx}"
-      const val paletteKtx = "androidx.palette:palette-ktx:${versions.androidx}"
-      const val percent = "androidx.percentlayout:percentlayout:${versions.androidx}"
-      const val preference = "androidx.preference:preference:${versions.androidx}"
-      const val preferenceKtx = "androidx.preference:preference-ktx:${versions.androidx}"
-      const val recyclerView = "androidx.recyclerview:recyclerview:${versions.androidx}"
-      const val compat = "androidx.core:core:${versions.androidx}"
-    }
+    const val gradlePlugin = "com.android.tools.build:gradle:3.3.0-alpha13"
   }
 
   object apollo {
@@ -148,7 +148,9 @@ object deps {
   object autoDispose {
     const val core = "com.uber.autodispose:autodispose:${versions.autodispose}"
     const val android = "com.uber.autodispose:autodispose-android:${versions.autodispose}"
-    const val androidKotlin = "com.uber.autodispose:autodispose-android-ktx:${versions.autodispose}"
+    const val androidKtx = "com.uber.autodispose:autodispose-android-ktx:${versions.autodispose}"
+    const val androidArch = "com.uber.autodispose:autodispose-android-archcomponents:${versions.autodispose}"
+    const val androidArchKtx = "com.uber.autodispose:autodispose-android-archcomponents-ktx:${versions.autodispose}"
     const val kotlin = "com.uber.autodispose:autodispose-ktx:${versions.autodispose}"
     const val lifecycle = "com.uber.autodispose:autodispose-lifecycle:${versions.autodispose}"
     const val lifecycleKtx = "com.uber.autodispose:autodispose-lifecycle-ktx:${versions.autodispose}"
@@ -321,6 +323,7 @@ object deps {
 
     const val flick = "me.saket:flick:1.3.0"
     const val gestureViews = "com.alexvasilkov:gesture-views:2.2.0"
+    const val inboxRecyclerView = "me.saket:inboxrecyclerview:1.0.0-beta2.3-SNAPSHOT"
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
     const val jsoup = "org.jsoup:jsoup:1.11.3"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"

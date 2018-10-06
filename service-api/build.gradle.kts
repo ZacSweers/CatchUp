@@ -67,11 +67,11 @@ kapt {
 }
 
 dependencies {
-  kapt(deps.android.arch.room.apt)
+  kapt(deps.android.androidx.room.apt)
 
   api(project(":service-registry:service-registry-annotations"))
-  api(deps.android.arch.room.runtime)
-  api(deps.android.support.annotations)
+  api(deps.android.androidx.room.runtime)
+  api(deps.android.androidx.annotations)
   api(deps.autoDispose.kotlin)
   api(deps.dagger.runtime)
   api(deps.misc.lazythreeten)

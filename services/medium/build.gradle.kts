@@ -95,7 +95,7 @@ dependencies {
   implementation(deps.inspector.core)
 
   api(project(":service-api"))
-  api(deps.android.support.annotations)
+  api(deps.android.androidx.annotations)
   api(deps.dagger.runtime)
   api(deps.misc.lazythreeten)
   api(deps.rx.java)

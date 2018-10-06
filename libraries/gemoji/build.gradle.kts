@@ -72,10 +72,10 @@ kapt {
 dependencies {
   implementation(project(":libraries:util"))
 
-  kapt(deps.android.arch.room.apt)
+  kapt(deps.android.androidx.room.apt)
   kapt(deps.dagger.apt.compiler)
 
-  api(deps.android.arch.room.runtime)
+  api(deps.android.androidx.room.runtime)
   api(deps.dagger.runtime)
   api(deps.kotlin.stdlib.jdk7)
   api(deps.moshi.core)
