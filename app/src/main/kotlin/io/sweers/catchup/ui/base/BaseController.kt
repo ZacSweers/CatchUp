@@ -24,6 +24,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.Controller
 import kotterknife.ViewBindable
+import kotterknife.KotterKnife
 
 abstract class BaseController : AutoDisposeController, ViewBindable {
 
@@ -65,6 +66,7 @@ abstract class BaseController : AutoDisposeController, ViewBindable {
 
   override fun onDestroyView(view: View) {
     dayOnlyContext = null
+    KotterKnife.reset(this)
     super.onDestroyView(view)
   }
 }
