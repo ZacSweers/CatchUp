@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/imageviewer_root"
     android:layout_width="match_parent"
@@ -42,14 +43,25 @@
 
   </me.saket.flick.FlickDismissLayout>
 
-  <androidx.appcompat.widget.AppCompatImageButton
-      android:id="@+id/image_source"
-      android:layout_width="48dp"
-      android:layout_height="48dp"
-      android:layout_gravity="bottom|end"
-      android:layout_margin="16dp"
-      android:background="?selectableItemBackgroundBorderless"
-      android:padding="16dp"
-      android:src="@drawable/ic_web_black_24dp"
-      />
-</FrameLayout>
+  <com.google.android.material.bottomappbar.BottomAppBar
+      android:id="@+id/bottomappbar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom"
+      app:backgroundTint="#00000000"
+      style="@style/Widget.MaterialComponents.BottomAppBar"
+      >
+
+    <ImageButton
+        android:id="@+id/image_source"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="16dp"
+        android:src="@drawable/ic_web_black_24dp"
+        tools:ignore="ContentDescription"
+        />
+  </com.google.android.material.bottomappbar.BottomAppBar>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

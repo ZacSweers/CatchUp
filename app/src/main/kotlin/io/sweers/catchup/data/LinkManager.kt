@@ -100,7 +100,9 @@ class LinkManager @Inject constructor(
     }
     if (meta.isSupportedInMediaViewer()) {
       val intent = Intent(activity, ImageViewerActivity::class.java)
-      intent.putExtra(ImageViewerActivity.INTENT_URL, meta.uri.toString())
+      val url = meta.uri.toString()
+      intent.putExtra(ImageViewerActivity.INTENT_URL, url)
+      intent.putExtra(ImageViewerActivity.INTENT_SOURCE_URL, url)
       activity.startActivityForResult(intent, 102)
       return Completable.complete()
     }
