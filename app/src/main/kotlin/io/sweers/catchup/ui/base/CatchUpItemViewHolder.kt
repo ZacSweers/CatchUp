@@ -84,6 +84,10 @@ class CatchUpItemViewHolder(itemView: View) : ViewHolder(itemView), BindableCatc
     DrawableCompat.setTintList(mark.compoundDrawables[1], ColorStateList.valueOf(color))
   }
 
+  fun setLongClickHandler(longClickHandler: OnLongClickListener?) {
+    container.setOnLongClickListener(longClickHandler)
+  }
+
   override fun bind(item: CatchUpItem,
       itemClickHandler: OnClickListener?,
       markClickHandler: OnClickListener?,
@@ -96,7 +100,7 @@ class CatchUpItemViewHolder(itemView: View) : ViewHolder(itemView), BindableCatc
     tag(item.tag?.trim())
 
     container.setOnClickListener(itemClickHandler)
-    container.setOnLongClickListener(longClickHandler)
+    setLongClickHandler(longClickHandler)
 
     item.mark?.let { sourceMark ->
       mark(sourceMark)
