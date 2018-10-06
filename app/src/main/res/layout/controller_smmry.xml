@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drag_dismiss_layout"
     android:layout_width="match_parent"
@@ -25,7 +25,6 @@
     android:elevation="16dp"
     android:focusable="true"
     android:paddingBottom="16dp"
-    app:dragDismissDistance="112dp"
     >
 
   <LinearLayout
@@ -34,6 +33,7 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center"
       android:orientation="vertical"
+      android:visibility="gone"
       >
 
     <com.airbnb.lottie.LottieAnimationView
@@ -66,7 +66,6 @@
       android:layout_height="match_parent"
       android:clipToPadding="false"
       android:padding="16dp"
-      android:visibility="gone"
       >
 
     <LinearLayout
@@ -109,4 +108,4 @@
 
     </LinearLayout>
   </androidx.core.widget.NestedScrollView>
-</io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout>
+</FrameLayout>

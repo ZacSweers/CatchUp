@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
@@ -43,12 +44,14 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.apollographql.apollo.exception.ApolloException
+import com.bluelinelabs.conductor.RouterTransaction
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.uber.autodispose.autoDisposable
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.analytics.trace
@@ -69,6 +72,7 @@ import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
+import io.sweers.catchup.ui.controllers.SmmryController
 import io.sweers.catchup.ui.controllers.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
 import io.sweers.catchup.util.e
@@ -79,6 +83,11 @@ import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotterknife.bindView
 import kotterknife.onClick
+import me.saket.inboxrecyclerview.InboxRecyclerView
+import me.saket.inboxrecyclerview.dimming.TintPainter
+import me.saket.inboxrecyclerview.page.ExpandablePageLayout
+import me.saket.inboxrecyclerview.page.InterceptResult
+import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 import retrofit2.HttpException
 import java.io.IOException
 import java.security.InvalidParameterException
@@ -130,7 +139,8 @@ class ServiceController : BaseController,
   private val errorView by bindView<View>(R.id.error_container)
   private val errorTextView by bindView<TextView>(R.id.error_message)
   private val errorImage by bindView<ImageView>(R.id.error_image)
-  private val recyclerView by bindView<RecyclerView>(R.id.list)
+  private val recyclerView by bindView<InboxRecyclerView>(R.id.list)
+  private val smmryPage by bindView<ExpandablePageLayout>(R.id.smmrypage)
   private val progress by bindView<ProgressBar>(R.id.progress)
   private val swipeRefreshLayout by bindView<SwipeRefreshLayout>(R.id.refresh)
 
@@ -196,6 +206,15 @@ class ServiceController : BaseController,
     }
   }
 
+  override fun handleBack(): Boolean {
+    return if (smmryPage.isExpandedOrExpanding) {
+      recyclerView.collapse()
+      true
+    } else {
+      super.handleBack()
+    }
+  }
+
   private fun createAdapter(
       context: Context): DisplayableItemAdapter<out DisplayableItem, ViewHolder> {
     if (service.meta().isVisual) {
@@ -211,18 +230,41 @@ class ServiceController : BaseController,
     } else {
       return TextAdapter { item, holder ->
         service.bindItemView(item, holder)
-//        if (BuildConfig.DEBUG) {
-//          item.summarizationInfo?.let {
-//            // We're not supporting this for now since it's not ready yet
-//            holder.itemLongClicks()
-//                .autoDisposable(this)
-//                .subscribe(SmmryController.showFor<Any>(controller = this,
-//                    service = service,
-//                    title = item.title,
-//                    id = item.id.toString(),
-//                    info = it))
-//          }
-//        }
+        if (BuildConfig.DEBUG) {
+          item.summarizationInfo?.let { info ->
+            // We're not supporting this for now since it's not ready yet
+            holder.setLongClickHandler(OnLongClickListener {
+              recyclerView.expandItem(item.id)
+              val smmryController = SmmryController(item.id.toString(),
+                  ContextCompat.getColor(activity!!, service.meta().themeColor),
+                  item.title,
+                  info)
+              val localRouter = getChildRouter(smmryPage)
+              smmryPage.pullToCollapseInterceptor = { _, _, upwardPull ->
+                val directionInt = if (upwardPull) +1 else -1
+                val canScrollFurther = smmryController.canScrollVertically(directionInt)
+                if (canScrollFurther) InterceptResult.INTERCEPTED else InterceptResult.IGNORED
+              }
+              smmryPage.addStateChangeCallbacks(object : PageStateChangeCallbacks {
+                override fun onPageAboutToCollapse(collapseAnimDuration: Long) {
+                }
+
+                override fun onPageAboutToExpand(expandAnimDuration: Long) {
+                }
+
+                override fun onPageCollapsed() {
+                  localRouter.popController(smmryController)
+                  smmryPage.removeStateChangeCallbacks(this)
+                }
+
+                override fun onPageExpanded() {
+                }
+              })
+              localRouter.pushController(RouterTransaction.with(smmryController))
+              true
+            })
+          }
+        }
       }
     }
   }
@@ -256,6 +298,11 @@ class ServiceController : BaseController,
       recyclerView.setRecycledViewPool(visualViewPool)
     } else {
       recyclerView.setRecycledViewPool(textViewPool)
+      recyclerView.setExpandablePage(smmryPage)
+      recyclerView.tintPainter = TintPainter.uncoveredArea(
+          color = ContextCompat.getColor(view.context, R.color.colorPrimary),
+          opacity = 0.65F
+      )
     }
     recyclerView.adapter = adapter
     if (!service.meta().isVisual) {

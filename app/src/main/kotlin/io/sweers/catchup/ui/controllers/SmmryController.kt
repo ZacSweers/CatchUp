@@ -16,8 +16,6 @@
 
 package io.sweers.catchup.ui.controllers
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.ColorFilter
@@ -27,12 +25,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.Keep
-import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.room.Dao
 import androidx.room.Entity
@@ -45,9 +40,6 @@ import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.SimpleColorFilter
 import com.airbnb.lottie.model.KeyPath
 import com.airbnb.lottie.value.LottieValueCallback
-import com.bluelinelabs.conductor.Controller
-import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.squareup.moshi.Moshi
 import com.uber.autodispose.autoDisposable
 import dagger.Lazy
@@ -59,7 +51,6 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
@@ -76,7 +67,6 @@ import io.sweers.catchup.data.smmry.model.SummarizationError
 import io.sweers.catchup.data.smmry.model.UnknownErrorCode
 import io.sweers.catchup.injection.ConductorInjection
 import io.sweers.catchup.injection.scopes.PerController
-import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.SummarizationType
 import io.sweers.catchup.service.api.SummarizationType.NONE
@@ -84,8 +74,6 @@ import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.ui.controllers.SmmryController.Module.ForSmmry
-import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout
-import io.sweers.catchup.ui.widget.ElasticDragDismissFrameLayout.ElasticDragDismissCallback
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
@@ -105,27 +93,12 @@ import javax.inject.Qualifier
 class SmmryController : BaseController {
 
   companion object {
-
     private const val ID_TITLE = "smmrycontroller.title"
     private const val ID_ID = "smmrycontroller.id"
     private const val ID_VALUE = "smmrycontroller.value"
     private const val ID_TYPE = "smmrycontroller.type"
     private const val ID_ACCENT = "smmrycontroller.accent"
     private const val ID_LOADED = "smmrycontroller.loaded"
-
-    fun <T> showFor(controller: Controller,
-        service: Service,
-        title: String,
-        id: String,
-        info: SummarizationInfo) = Consumer<T> { _ ->
-      controller.router
-          .pushController(RouterTransaction.with(SmmryController(id,
-              ContextCompat.getColor(controller.activity!!, service.meta().themeColor),
-              title,
-              info))
-              .pushChangeHandler(VerticalChangeHandler(false))
-              .popChangeHandler(VerticalChangeHandler()))
-    }
   }
 
   @Inject
@@ -137,13 +110,13 @@ class SmmryController : BaseController {
   lateinit var smmryDao: SmmryDao
 
   private val loadingView by bindView<View>(R.id.loading_view)
-  private val lottieView by bindView<LottieAnimationView>(R.id.smmry_loading)
+  private val lottieView by bindView<LottieAnimationView>(R.id.smmry_loading) {
+    it.useHardwareAcceleration(true)
+  }
   private val content by bindView<NestedScrollView>(R.id.content_container)
   private val tags by bindView<TextView>(R.id.tags)
   private val title by bindView<TextView>(R.id.title)
   private val summary by bindView<TextView>(R.id.summary)
-  private val dragDismissFrameLayout by bindView<ElasticDragDismissFrameLayout>(
-      R.id.drag_dismiss_layout)
 
   private lateinit var id: String
   private lateinit var info: SummarizationInfo
@@ -151,13 +124,6 @@ class SmmryController : BaseController {
   private var accentColor: Int = 0
   private lateinit var inputTitle: String
   private var alreadyLoaded = false
-
-  private val dragDismissListener = object : ElasticDragDismissCallback() {
-    override fun onDragDismissed() {
-      router.popController(this@SmmryController)
-      dragDismissFrameLayout.removeListener(this)
-    }
-  }
 
   constructor(args: Bundle) : super(args)
 
@@ -201,19 +167,23 @@ class SmmryController : BaseController {
   override fun onViewBound(view: View) {
     super.onViewBound(view)
     content.isNestedScrollingEnabled = true
+    title.text = inputTitle
     if (!alreadyLoaded) {
+      loadingView.show()
       lottieView.addValueCallback<ColorFilter>(KeyPath("**"),
           LottieProperty.COLOR_FILTER,
           LottieValueCallback<ColorFilter>(SimpleColorFilter(accentColor)))
     } else {
       loadingView.hide()
-      content.show()
     }
+  }
+
+  fun canScrollVertically(directionInt: Int): Boolean {
+    return content.canScrollVertically(directionInt)
   }
 
   override fun onAttach(view: View) {
     super.onAttach(view)
-    dragDismissFrameLayout.addListener(dragDismissListener)
     Maybe.concatArray(tryRequestFromStorage(), getRequestSingle().toMaybe())
         .firstOrError()
         .subscribeOn(Schedulers.io())
@@ -221,6 +191,7 @@ class SmmryController : BaseController {
         .autoDisposable(this)
         .subscribe({ smmryResponse ->
           alreadyLoaded = true
+          loadingView.hide(true)
           when (smmryResponse) {
             is Success -> {
               showSummary(smmryResponse)
@@ -232,20 +203,19 @@ class SmmryController : BaseController {
                 is ApiRejection -> "Smmry API error - ${smmryResponse.message}"
                 is SummarizationError -> "Smmry summarization error - ${smmryResponse.message}"
                 UnknownErrorCode -> "Unknown error :("
-                else -> TODO("Placeholder because I've already checked for this")
+                else -> TODO("Give me sealed whens!")
               }
-              Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
-              router.popController(this@SmmryController)
+              summary.text = message
             }
           }
         }, { error ->
-          Toast.makeText(activity, R.string.unknown_issue, Toast.LENGTH_SHORT).show()
+          loadingView.hide(true)
+          summary.setText(R.string.unknown_issue)
           if (error is IOException) {
             w(error) { "Unknown error in smmry load" }
           } else {
             e(error) { "Unknown error in smmry load" }
           }
-          router.popController(this@SmmryController)
         })
   }
 
@@ -285,11 +255,6 @@ class SmmryController : BaseController {
     }
   }
 
-  override fun onDetach(view: View) {
-    dragDismissFrameLayout.removeListener(dragDismissListener)
-    super.onDetach(view)
-  }
-
   private fun showSummary(smmry: Success) {
     if (smmry.keywords != null) {
       tags.setTextColor(accentColor)
@@ -305,29 +270,10 @@ class SmmryController : BaseController {
     } else {
       tags.hide()
     }
-    var smmryTitle = smmry.title
-    if (TextUtils.isEmpty(smmryTitle)) {
-      smmryTitle = inputTitle
-    }
-    title.text = smmryTitle
-    summary.text = smmry.content
+    summary.text = smmry.title.takeIf { it.isNotEmpty() }?.let { "$it\n\n" }.orEmpty() + smmry.content
         .replace("[BREAK]", "\n\n")
-    if (loadingView.isVisible) {
-      loadingView.animate()
-          .alpha(0f)
-          .setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-              loadingView.hide()
-              loadingView.animate()
-                  .setListener(null)
-            }
-          })
-    }
     if (content.isGone) {
-      content.alpha = 0f
-      content.show()
-      content.animate()
-          .alpha(1f)
+      content.show(true)
     }
   }
 
