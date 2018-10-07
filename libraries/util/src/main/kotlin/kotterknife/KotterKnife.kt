@@ -261,8 +261,7 @@ private object LazyRegistry {
   private val lazyMap = WeakHashMap<Any, MutableCollection<LazyBinding<*, *>>>()
 
   fun register(target: Any, lazy: LazyBinding<*, *>) {
-//    lazyMap.getOrPut(target, ::WeakHashSet).add(lazy)
-    lazyMap.getOrPut(target, ::HashSet).add(lazy)
+    lazyMap.getOrPut(target, ::WeakHashSet).add(lazy)
   }
 
   fun reset(target: Any) {
