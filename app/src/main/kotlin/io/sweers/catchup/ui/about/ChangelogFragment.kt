@@ -30,8 +30,6 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.rx2.Rx2Apollo
 import com.google.android.material.snackbar.Snackbar
 import com.uber.autodispose.autoDisposable
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -39,7 +37,6 @@ import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
-import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
@@ -180,11 +177,3 @@ private data class ChangeLogItem(
     val url: String,
     val description: String
 )
-
-@PerFragment
-@Subcomponent
-interface ChangelogComponent : AndroidInjector<ChangelogFragment> {
-
-  @Subcomponent.Builder
-  abstract class Builder : AndroidInjector.Builder<ChangelogFragment>()
-}

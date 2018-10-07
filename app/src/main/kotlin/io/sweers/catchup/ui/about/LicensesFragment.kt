@@ -516,14 +516,6 @@ private data class OssItem(
   }
 }
 
-@PerFragment
-@Subcomponent(modules = [LicensesModule::class])
-interface LicensesComponent : AndroidInjector<LicensesFragment> {
-
-  @Subcomponent.Builder
-  abstract class Builder : AndroidInjector.Builder<LicensesFragment>()
-}
-
 @dagger.Module
 internal object LicensesModule {
 

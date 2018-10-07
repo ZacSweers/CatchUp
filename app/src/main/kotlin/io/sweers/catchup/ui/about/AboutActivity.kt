@@ -45,15 +45,12 @@ import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.uber.autodispose.autoDisposable
 import dagger.Binds
 import dagger.Module
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
-import dagger.android.support.FragmentKey
-import dagger.multibindings.IntoMap
+import dagger.android.ContributesAndroidInjector
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.InjectingBaseActivity
@@ -368,35 +365,20 @@ class AboutFragment : InjectingBaseFragment() {
   }
 }
 
-@PerController
-@Subcomponent
-interface AboutComponent : AndroidInjector<AboutFragment> {
-
-  @Subcomponent.Builder
-  abstract class Builder : AndroidInjector.Builder<AboutFragment>()
-}
-
-@Module(
-    subcomponents = [AboutComponent::class, LicensesComponent::class, ChangelogComponent::class])
+@Module
 abstract class AboutFragmentBindingModule {
 
-  @Binds
-  @IntoMap
-  @FragmentKey(AboutFragment::class)
-  internal abstract fun bindAboutFragmentInjectorFactory(
-      builder: AboutComponent.Builder): AndroidInjector.Factory<out Fragment>
+  @PerFragment
+  @ContributesAndroidInjector
+  internal abstract fun aboutFragment(): AboutFragment
 
-  @Binds
-  @IntoMap
-  @FragmentKey(LicensesFragment::class)
-  internal abstract fun bindLicensesControllerInjectorFactory(
-      builder: LicensesComponent.Builder): AndroidInjector.Factory<out Fragment>
+  @PerFragment
+  @ContributesAndroidInjector(modules = [LicensesModule::class])
+  internal abstract fun licensesFragment(): LicensesFragment
 
-  @Binds
-  @IntoMap
-  @FragmentKey(ChangelogFragment::class)
-  internal abstract fun bindChangelogControllerInjectorFactory(
-      builder: ChangelogComponent.Builder): AndroidInjector.Factory<out Fragment>
+  @PerFragment
+  @ContributesAndroidInjector
+  internal abstract fun changelogFragment(): ChangelogFragment
 }
 
 private enum class ScrollDirection {
