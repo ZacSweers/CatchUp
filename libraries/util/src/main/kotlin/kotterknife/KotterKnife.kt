@@ -57,6 +57,13 @@ fun <V : Any> ViewBindable.bindView(id: Int,
     onBound: ((V) -> Unit)? = null)
     : ReadOnlyProperty<ViewBindable, V> = required(id, viewFinder, onBound)
 
+fun <V : Any> Fragment.onClick(id: Int, body: (V) -> Unit) {
+  (viewFinder(id))?.setOnClickListener {
+    @Suppress("UNCHECKED_CAST")
+    body(it as V)
+  } ?: viewNotFound(id)
+}
+
 fun <V : Any> ViewBindable.onClick(id: Int, body: (V) -> Unit) {
   (viewFinder(id) as? View)?.setOnClickListener {
     @Suppress("UNCHECKED_CAST")
