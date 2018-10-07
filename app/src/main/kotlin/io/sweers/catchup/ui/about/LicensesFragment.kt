@@ -16,10 +16,11 @@
 
 package io.sweers.catchup.ui.about
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +46,7 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import com.uber.autodispose.autoDisposable
 import dagger.Provides
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
@@ -62,15 +64,14 @@ import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsUser
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery.AsRepository
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
-import io.sweers.catchup.injection.ConductorInjection
-import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.StickyHeaders
 import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
 import io.sweers.catchup.ui.about.LicensesModule.ForLicenses
-import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
+import io.sweers.catchup.ui.base.InjectableBaseFragment
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.dp2px
 import io.sweers.catchup.util.findSwatch
@@ -88,7 +89,7 @@ import javax.inject.Qualifier
 /**
  * A controller that displays oss licenses.
  */
-class LicensesController : BaseController(), Scrollable {
+class LicensesFragment : InjectableBaseFragment(), Scrollable {
 
   @Inject
   lateinit var apolloClient: ApolloClient
@@ -101,55 +102,59 @@ class LicensesController : BaseController(), Scrollable {
   internal lateinit var linkManager: LinkManager
 
   private val dimenSize by lazy {
-    resources!!.getDimensionPixelSize(R.dimen.avatar)
+    resources.getDimensionPixelSize(R.dimen.avatar)
   }
   private val progressBar by bindView<ProgressBar>(R.id.progress)
   private val recyclerView by bindView<RecyclerView>(R.id.list)
 
-  private val adapter = Adapter()
+  private lateinit var adapter: Adapter
   private lateinit var layoutManager: StickyHeadersLinearLayoutManager<Adapter>
 
-  override fun onContextAvailable(context: Context) {
-    ConductorInjection.inject(this)
-    super.onContextAvailable(context)
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
+      savedInstanceState: Bundle?): View {
+    return inflater.inflate(R.layout.controller_licenses, container, false)
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
-      inflater.inflate(R.layout.controller_licenses, container, false)
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    outState.putParcelable("changelogState", layoutManager.onSaveInstanceState())
+  }
 
-  override fun onViewBound(view: View) {
-    super.onViewBound(view)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    adapter = Adapter()
     recyclerView.adapter = adapter
     layoutManager = StickyHeadersLinearLayoutManager(view.context)
     recyclerView.layoutManager = layoutManager
-    recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
-      addDuration = 300
-      removeDuration = 300
+    var pendingRvState: Parcelable? = null
+    if (savedInstanceState == null) {
+      recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
+        addDuration = 300
+        removeDuration = 300
+      }
+    } else {
+      pendingRvState = savedInstanceState.getParcelable("changelogState")
     }
-  }
-
-  override fun onAttach(view: View) {
-    super.onAttach(view)
-    if (adapter.itemCount == 0) {
-      // Weird hack to avoid adding more unnecessarily. I'm not sure how to leave transient state
-      // during onPause in Conductor
-      requestItems()
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .doFinally {
-            progressBar.hide()
+    // Weird hack to avoid adding more unnecessarily. I'm not sure how to leave transient state
+    // during onPause in Conductor
+    requestItems()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .doFinally {
+          progressBar.hide()
+        }
+        .autoDisposable(this)
+        .subscribe { data, error ->
+          if (data != null) {
+            adapter.setItems(data)
+            pendingRvState?.let(layoutManager::onRestoreInstanceState)
+          } else {
+            // TODO Show a better error
+            w(error) { "Could not load open source licenses." }
+            Snackbar.make(recyclerView, R.string.licenses_error,
+                Snackbar.LENGTH_SHORT).show()
           }
-          .subscribe { data, error ->
-            if (data != null) {
-              adapter.setItems(data)
-            } else {
-              // TODO Show a better error
-              w(error) { "Could not load open source licenses." }
-              Snackbar.make(recyclerView, R.string.licenses_error,
-                  Snackbar.LENGTH_SHORT).show()
-            }
-          }
-    }
+        }
   }
 
   /**
@@ -161,7 +166,7 @@ class LicensesController : BaseController(), Scrollable {
           // Start with a fetch of our github entries from assets
           moshi.adapter<List<OssGitHubEntry>>(
               Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java))
-              .fromJson(resources!!.assets.open("licenses_github.json").source().buffer())
+              .fromJson(resources.assets.open("licenses_github.json").source().buffer())
         }
         .flattenAsObservable { it }
         .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
@@ -228,7 +233,7 @@ class LicensesController : BaseController(), Scrollable {
                 .fromCallable {
                   moshi.adapter<List<OssItem>>(
                       Types.newParameterizedType(List::class.java, OssItem::class.java))
-                      .fromJson(resources!!.assets.open("licenses_mixins.json").source().buffer())
+                      .fromJson(resources.assets.open("licenses_mixins.json").source().buffer())
                 }
                 .flattenAsObservable { it }
         )
@@ -354,7 +359,7 @@ class LicensesController : BaseController(), Scrollable {
             // Maybe someday we should just return the groups rather than flattening
             // but this was neat to write in kotlin
             val accentColor = (holder.adapterPosition downTo 0)
-                .find { isStickyHeader(it) }
+                .find(::isStickyHeader)
                 ?.let {
                   (recyclerView.findViewHolderForAdapterPosition(it)
                       as HeaderHolder)
@@ -511,12 +516,12 @@ private data class OssItem(
   }
 }
 
-@PerController
+@PerFragment
 @Subcomponent(modules = [LicensesModule::class])
-interface LicensesComponent : AndroidInjector<LicensesController> {
+interface LicensesComponent : AndroidInjector<LicensesFragment> {
 
   @Subcomponent.Builder
-  abstract class Builder : AndroidInjector.Builder<LicensesController>()
+  abstract class Builder : AndroidInjector.Builder<LicensesFragment>()
 }
 
 @dagger.Module
@@ -527,7 +532,7 @@ internal object LicensesModule {
 
   @Provides
   @JvmStatic
-  @PerController
+  @PerFragment
   @ForLicenses
   internal fun provideAboutMoshi(moshi: Moshi): Moshi {
     return moshi.newBuilder()

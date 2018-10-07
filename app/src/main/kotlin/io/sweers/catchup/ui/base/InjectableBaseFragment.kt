@@ -16,14 +16,13 @@
 
 package io.sweers.catchup.ui.base
 
-import android.os.Bundle
+import android.content.Context
 import dagger.android.support.AndroidSupportInjection
 
 abstract class InjectableBaseFragment : BaseFragment() {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
+  override fun onAttach(context: Context) {
     AndroidSupportInjection.inject(this)
-    super.onCreate(savedInstanceState)
+    super.onAttach(context)
   }
-
 }

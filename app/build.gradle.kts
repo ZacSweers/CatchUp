@@ -28,6 +28,7 @@ plugins {
   id("com.apollographql.android")
   id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
+  id("kotlin-android-extensions")
 }
 
 apply {
@@ -376,6 +377,10 @@ tasks.create("updateVersion", UpdateVersion::class.java) {
   description = "Updates the current version. Supports CLI option --updateType={type} where type is (major|minor|patch)"
 }
 
+androidExtensions {
+  isExperimental = true
+}
+
 dependencies {
   kapt(project(":libraries:tooling:spi-visualizer"))
   compileOnly(project(":libraries:tooling:spi-visualizer"))
@@ -396,6 +401,8 @@ dependencies {
   implementation(deps.android.androidx.design)
   implementation(deps.android.androidx.emoji)
   implementation(deps.android.androidx.emojiAppcompat)
+  implementation(deps.android.androidx.fragment)
+  implementation(deps.android.androidx.fragmentKtx)
   debugImplementation(deps.android.androidx.drawerLayout)
   implementation(deps.android.androidx.palette)
   implementation(deps.android.androidx.paletteKtx)

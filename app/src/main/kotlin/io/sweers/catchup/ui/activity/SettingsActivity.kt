@@ -23,7 +23,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -34,11 +33,8 @@ import com.google.firebase.perf.FirebasePerformance
 import com.uber.autodispose.autoDisposable
 import dagger.Binds
 import dagger.Module
-import dagger.android.AndroidInjector
 import dagger.android.ContributesAndroidInjector
-import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.AndroidSupportInjection
-import dagger.android.support.HasSupportFragmentInjector
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -50,6 +46,7 @@ import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.ui.base.BaseActivity
+import io.sweers.catchup.ui.base.InjectingBaseActivity
 import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.format
@@ -61,7 +58,7 @@ import okhttp3.Cache
 import java.io.File
 import javax.inject.Inject
 
-class SettingsActivity : BaseActivity(), HasSupportFragmentInjector {
+class SettingsActivity : InjectingBaseActivity() {
 
   companion object {
     const val SETTINGS_RESULT_DATA = 100
@@ -71,8 +68,6 @@ class SettingsActivity : BaseActivity(), HasSupportFragmentInjector {
     const val ARG_FROM_RECREATE = "fromRecreate"
   }
 
-  @Inject
-  internal lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
   private val toolbar by bindView<Toolbar>(R.id.toolbar)
 
   /**
@@ -120,8 +115,6 @@ class SettingsActivity : BaseActivity(), HasSupportFragmentInjector {
     }
     super.onBackPressed()
   }
-
-  override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
 
   @Module
   abstract class SettingsActivityModule {

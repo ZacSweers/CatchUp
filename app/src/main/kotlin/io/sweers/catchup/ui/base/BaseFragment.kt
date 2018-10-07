@@ -55,10 +55,6 @@ abstract class BaseFragment : Fragment(), ScopeProvider {
     return inflateView(inflater, container, savedInstanceState)
   }
 
-  protected open fun onViewBound(view: View) {
-
-  }
-
   override fun onDestroyView() {
     dayOnlyContext = null
     KotterKnife.reset(this)

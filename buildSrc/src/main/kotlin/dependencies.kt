@@ -92,6 +92,11 @@ object deps {
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.0.0"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
+
+      const val fragmentVersion = "1.0.0"
+      const val fragment = "androidx.fragment:fragment:$fragmentVersion"
+      const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
+
       const val viewPager = "androidx.viewpager:viewpager:1.0.0"
       const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
       const val palette = "androidx.palette:palette:1.0.0"

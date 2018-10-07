@@ -16,7 +16,8 @@
 
 package io.sweers.catchup.ui.about
 
-import android.content.Context
+import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.rx2.Rx2Apollo
 import com.google.android.material.snackbar.Snackbar
+import com.uber.autodispose.autoDisposable
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import io.reactivex.Single
@@ -37,12 +39,11 @@ import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
-import io.sweers.catchup.injection.ConductorInjection
-import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
-import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
+import io.sweers.catchup.ui.base.InjectableBaseFragment
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.w
@@ -52,7 +53,7 @@ import org.threeten.bp.Instant
 import java.io.IOException
 import javax.inject.Inject
 
-class ChangelogController : BaseController(), Scrollable {
+class ChangelogFragment : InjectableBaseFragment(), Scrollable {
 
   @Inject
   lateinit var apolloClient: ApolloClient
@@ -63,55 +64,53 @@ class ChangelogController : BaseController(), Scrollable {
   private val recyclerView by bindView<RecyclerView>(R.id.list)
 
   private lateinit var layoutManager: LinearLayoutManager
-  private val adapter = ChangelogAdapter()
+  private lateinit var adapter: ChangelogAdapter
 
-  override fun onContextAvailable(context: Context) {
-    ConductorInjection.inject(this)
-    super.onContextAvailable(context)
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
+      savedInstanceState: Bundle?): View {
+    return inflater.inflate(R.layout.controller_changelog, container, false)
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
-      inflater.inflate(R.layout.controller_changelog, container, false)
-
-  override fun onViewBound(view: View) {
-    super.onViewBound(view)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    adapter = ChangelogAdapter()
     recyclerView.adapter = adapter
     layoutManager = LinearLayoutManager(view.context)
     recyclerView.layoutManager = layoutManager
-    recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
-      addDuration = 300
-      removeDuration = 300
+    var pendingRvState: Parcelable? = null
+    if (savedInstanceState == null) {
+      recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
+        addDuration = 300
+        removeDuration = 300
+      }
+    } else {
+      pendingRvState = savedInstanceState.getParcelable("changeloglm")
     }
-  }
 
-  override fun onAttach(view: View) {
-    super.onAttach(view)
-    if (adapter.itemCount == 0) {
-      // Weird hack to avoid adding more unnecessarily. I'm not sure how to leave transient state
-      // during onPause in Conductor
-      requestItems()
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .doFinally {
-            progressBar.hide()
-          }
-          .subscribe { data, error ->
-            if (data != null) {
-              adapter.setItems(data)
+    requestItems()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .doFinally {
+          progressBar.hide()
+        }
+        .autoDisposable(this)
+        .subscribe { data, error ->
+          if (data != null) {
+            adapter.setItems(data)
+            pendingRvState?.let(layoutManager::onRestoreInstanceState)
+          } else {
+            // TODO Show a better error
+            if (error is IOException) {
+              w(error) { "Could not load changelog." }
             } else {
-              // TODO Show a better error
-              if (error is IOException) {
-                w(error) { "Could not load changelog." }
-              } else {
-                e(error) { "Could not load changelog." }
-              }
-              Snackbar.make(recyclerView,
-                  R.string.changelog_error,
-                  Snackbar.LENGTH_SHORT)
-                  .show()
+              e(error) { "Could not load changelog." }
             }
+            Snackbar.make(recyclerView,
+                R.string.changelog_error,
+                Snackbar.LENGTH_SHORT)
+                .show()
           }
-    }
+        }
   }
 
   private fun requestItems(): Single<List<ChangeLogItem>> {
@@ -182,10 +181,10 @@ private data class ChangeLogItem(
     val description: String
 )
 
-@PerController
+@PerFragment
 @Subcomponent
-interface ChangelogComponent : AndroidInjector<ChangelogController> {
+interface ChangelogComponent : AndroidInjector<ChangelogFragment> {
 
   @Subcomponent.Builder
-  abstract class Builder : AndroidInjector.Builder<ChangelogController>()
+  abstract class Builder : AndroidInjector.Builder<ChangelogFragment>()
 }
