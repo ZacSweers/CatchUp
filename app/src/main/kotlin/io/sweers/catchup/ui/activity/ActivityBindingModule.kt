@@ -29,35 +29,23 @@ import io.sweers.catchup.ui.activity.SettingsActivity.SettingsFrag.SettingsFragm
 abstract class ActivityBindingModule {
 
   @PerActivity
-  @ContributesAndroidInjector(modules = arrayOf(
-      UiModule::class,
-      MainActivity.ServiceIntegrationModule::class,
-      ControllerBindingModule::class
-  ))
+  @ContributesAndroidInjector(
+      modules = [UiModule::class, MainActivity.ServiceIntegrationModule::class, ControllerBindingModule::class])
   internal abstract fun mainActivity(): MainActivity
 
   @PerActivity
-  @ContributesAndroidInjector(modules = arrayOf(
-      UiModule::class,
-      SettingsActivity.SettingsActivityModule::class,
-      SettingsFragmentBindingModule::class
-  ))
+  @ContributesAndroidInjector(
+      modules = [UiModule::class, SettingsActivity.SettingsActivityModule::class, SettingsFragmentBindingModule::class])
   internal abstract fun settingsActivity(): SettingsActivity
 
   @PerActivity
-  @ContributesAndroidInjector(modules = arrayOf(
-      UiModule::class,
-      ServiceSettingsActivity.ServiceSettingsActivityModule::class,
-      ServiceSettingsModule::class
-  ))
+  @ContributesAndroidInjector(
+      modules = [UiModule::class, ServiceSettingsActivity.ServiceSettingsActivityModule::class, ServiceSettingsModule::class])
   internal abstract fun serviceSettingsActivity(): ServiceSettingsActivity
 
   @PerActivity
-  @ContributesAndroidInjector(modules = arrayOf(
-      UiModule::class,
-      AboutActivity.Module::class,
-      AboutControllerBindingModule::class
-  ))
+  @ContributesAndroidInjector(
+      modules = [UiModule::class, AboutActivity.Module::class, AboutControllerBindingModule::class])
   internal abstract fun aboutActivity(): AboutActivity
 
   @PerActivity
@@ -72,8 +60,14 @@ abstract class ActivityBindingModule {
 }
 
 // TODO Why can't I do this?
-//interface BaseActivityModule<in T : Activity> {
+//interface BaseActivityModule<T : Activity> {
 //  @Binds
 //  @PerActivity
 //  fun provideActivity(activity: T): Activity
+//}
+//
+//interface BaseFragmentModule<T : Fragment> {
+//  @Binds
+//  @PerFragment
+//  fun provideFragment(activity: T): Fragment
 //}
