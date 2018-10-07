@@ -18,10 +18,10 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/about_controller_root"
+    android:id="@+id/pager_fragment_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     >
 
   <com.google.android.material.appbar.AppBarLayout
@@ -32,42 +32,31 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
+        android:theme="@style/Catchup.Toolbar"
+        app:layout_scrollFlags="scroll|enterAlways"
+        style="@style/TextAppearance.Widget.Catchup.Toolbar.Title"
+        />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?colorPrimary"
+        android:minHeight="?actionBarSize"
+        app:tabMode="scrollable"
+        style="@style/CatchUp.TabLayout"
         />
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <!-- Transparent background because scrollbars don't show up without it -->
-  <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/list"
+  <androidx.viewpager.widget.ViewPager
+      android:id="@+id/view_pager"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="@android:color/transparent"
-      android:fadeScrollbars="true"
       android:overScrollMode="never"
-      android:scrollbars="vertical"
-      android:splitMotionEvents="false"
       app:layout_behavior="@string/appbar_scrolling_view_behavior"
-      tools:listitem="@layout/list_item_general"
-      />
-
-  <com.google.android.material.floatingactionbutton.FloatingActionButton
-      android:id="@+id/save"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="bottom|end"
-      android:tint="@android:color/white"
-      android:layout_margin="16dp"
-      android:visibility="invisible"
-      android:contentDescription="@string/save"
-      app:backgroundTint="@color/colorAccent"
-      app:borderWidth="0dp"
-      app:fabSize="normal"
-      app:layout_anchor="@id/list"
-      app:layout_anchorGravity="bottom|end"
-      app:rippleColor="#33FFFFFF"
-      app:srcCompat="@drawable/ic_save_black_24dp"
       />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

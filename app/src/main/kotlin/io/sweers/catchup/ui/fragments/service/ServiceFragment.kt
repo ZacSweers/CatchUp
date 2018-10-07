@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers.service
+package io.sweers.catchup.ui.fragments.service
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -68,9 +68,9 @@ import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
 import io.sweers.catchup.ui.base.InjectingBaseFragment
-import io.sweers.catchup.ui.controllers.SmmryFragment
-import io.sweers.catchup.ui.controllers.service.LoadResult.DiffResultData
-import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
+import io.sweers.catchup.ui.fragments.SmmryFragment
+import io.sweers.catchup.ui.fragments.service.LoadResult.DiffResultData
+import io.sweers.catchup.ui.fragments.service.LoadResult.NewData
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.kotlin.applyOn
@@ -164,13 +164,13 @@ class ServiceFragment : InjectingBaseFragment(),
   lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
   private lateinit var service: Service
 
-  override fun toString() = "ServiceController: ${arguments?.get(ARG_SERVICE_KEY)}"
+  override fun toString() = "ServiceFragment: ${arguments?.get(ARG_SERVICE_KEY)}"
 
   override fun isDataLoading(): Boolean = dataLoading
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View {
-    return inflater.inflate(R.layout.controller_basic_news, container, false)
+    return inflater.inflate(R.layout.fragment_service, container, false)
   }
 
   override fun onAttach(context: Context) {

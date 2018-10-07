@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers
+package io.sweers.catchup.ui.fragments
 
 import android.annotation.SuppressLint
 import android.graphics.ColorFilter
@@ -70,7 +70,7 @@ import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.ui.base.InjectableBaseFragment
-import io.sweers.catchup.ui.controllers.SmmryFragment.Module.ForSmmry
+import io.sweers.catchup.ui.fragments.SmmryFragment.Module.ForSmmry
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
@@ -85,17 +85,17 @@ import javax.inject.Inject
 import javax.inject.Qualifier
 
 /**
- * Overlay controller for displaying Smmry API results.
+ * Overlay fragment for displaying Smmry API results.
  */
 class SmmryFragment : InjectableBaseFragment() {
 
   companion object {
-    private const val ID_TITLE = "smmrycontroller.title"
-    private const val ID_ID = "smmrycontroller.id"
-    private const val ID_VALUE = "smmrycontroller.value"
-    private const val ID_TYPE = "smmrycontroller.type"
-    private const val ID_ACCENT = "smmrycontroller.accent"
-    private const val ID_LOADED = "smmrycontroller.loaded"
+    private const val ID_TITLE = "smmryfragment.title"
+    private const val ID_ID = "smmryfragment.id"
+    private const val ID_VALUE = "smmryfragment.value"
+    private const val ID_TYPE = "smmryfragment.type"
+    private const val ID_ACCENT = "smmryfragment.accent"
+    private const val ID_LOADED = "smmryfragment.loaded"
 
     fun newInstance(id: String, @ColorInt accentColor: Int, inputTitle: String,
         info: SummarizationInfo): SmmryFragment {
@@ -162,7 +162,7 @@ class SmmryFragment : InjectableBaseFragment() {
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View {
-    return inflater.inflate(R.layout.controller_smmry, container, false)
+    return inflater.inflate(R.layout.fragment_smmry, container, false)
   }
 
   @SuppressLint("RestrictedApi") // False positive

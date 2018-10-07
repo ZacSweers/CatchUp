@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers.service
+package io.sweers.catchup.ui.fragments.service
 
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DisplayableItem

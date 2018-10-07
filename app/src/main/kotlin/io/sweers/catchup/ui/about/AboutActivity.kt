@@ -105,7 +105,7 @@ class AboutActivity : InjectingBaseActivity() {
 
     if (savedInstanceState == null) {
       supportFragmentManager.transaction {
-        add(R.id.controller_container, AboutFragment())
+        add(R.id.fragment_container, AboutFragment())
       }
     }
   }
@@ -132,7 +132,7 @@ class AboutFragment : InjectingBaseFragment() {
   @Inject
   internal lateinit var bypass: Bypass
 
-  private val rootLayout by bindView<CoordinatorLayout>(R.id.about_controller_root)
+  private val rootLayout by bindView<CoordinatorLayout>(R.id.about_fragment_root)
   private val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
   private val bannerContainer by bindView<View>(R.id.banner_container)
   private val bannerIcon by bindView<ImageView>(R.id.banner_icon)
@@ -148,7 +148,7 @@ class AboutFragment : InjectingBaseFragment() {
   override fun inflateView(inflater: LayoutInflater,
       container: ViewGroup?,
       savedInstanceState: Bundle?): View =
-      inflater.inflate(R.layout.controller_about, container, false)
+      inflater.inflate(R.layout.fragment_about, container, false)
 
   override fun onSaveInstanceState(outState: Bundle) {
     (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior?.let { behavior ->

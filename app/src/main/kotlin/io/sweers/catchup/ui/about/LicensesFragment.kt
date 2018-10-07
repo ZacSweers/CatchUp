@@ -48,8 +48,6 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.uber.autodispose.autoDisposable
 import dagger.Provides
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
@@ -87,7 +85,7 @@ import javax.inject.Inject
 import javax.inject.Qualifier
 
 /**
- * A controller that displays oss licenses.
+ * A fragment that displays oss licenses.
  */
 class LicensesFragment : InjectableBaseFragment(), Scrollable {
 
@@ -112,7 +110,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View {
-    return inflater.inflate(R.layout.controller_licenses, container, false)
+    return inflater.inflate(R.layout.fragment_licenses, container, false)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {

@@ -24,8 +24,8 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.SummarizationType
-import io.sweers.catchup.ui.controllers.SmmryDao
-import io.sweers.catchup.ui.controllers.SmmryStorageEntry
+import io.sweers.catchup.ui.fragments.SmmryDao
+import io.sweers.catchup.ui.fragments.SmmryStorageEntry
 import org.threeten.bp.Instant
 
 @Database(

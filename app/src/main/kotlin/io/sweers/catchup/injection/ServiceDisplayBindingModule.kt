@@ -19,20 +19,20 @@ package io.sweers.catchup.injection
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import io.sweers.catchup.injection.scopes.PerFragment
-import io.sweers.catchup.ui.controllers.PagerFragment
-import io.sweers.catchup.ui.controllers.SmmryFragment
-import io.sweers.catchup.ui.controllers.service.ServiceFragment
+import io.sweers.catchup.ui.fragments.PagerFragment
+import io.sweers.catchup.ui.fragments.SmmryFragment
+import io.sweers.catchup.ui.fragments.service.ServiceFragment
 
 @Module
 abstract class ServiceDisplayBindingModule {
 
   @PerFragment
   @ContributesAndroidInjector
-  internal abstract fun serviceController(): ServiceFragment
+  internal abstract fun serviceFragment(): ServiceFragment
 
   @PerFragment
   @ContributesAndroidInjector(modules = [SmmryFragment.Module::class])
-  internal abstract fun smmryController(): SmmryFragment
+  internal abstract fun smmryFragment(): SmmryFragment
 
   @PerFragment
   @ContributesAndroidInjector(modules = [PagerFragment.Module::class])

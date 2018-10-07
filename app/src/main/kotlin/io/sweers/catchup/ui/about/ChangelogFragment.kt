@@ -65,7 +65,7 @@ class ChangelogFragment : InjectableBaseFragment(), Scrollable {
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View {
-    return inflater.inflate(R.layout.controller_changelog, container, false)
+    return inflater.inflate(R.layout.fragment_changelog, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

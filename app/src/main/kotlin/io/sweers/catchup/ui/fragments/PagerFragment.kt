@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers
+package io.sweers.catchup.ui.fragments
 
 import android.animation.Animator
 import android.animation.ArgbEvaluator
@@ -55,7 +55,7 @@ import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
 import io.sweers.catchup.ui.base.InjectingBaseFragment
-import io.sweers.catchup.ui.controllers.service.ServiceFragment
+import io.sweers.catchup.ui.fragments.service.ServiceFragment
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
@@ -90,7 +90,7 @@ class PagerFragment : InjectingBaseFragment() {
   @Inject
   lateinit var changelogHelper: ChangelogHelper
 
-  private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_controller_root)
+  private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_fragment_root)
   private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
   private val viewPager by bindView<ViewPager>(R.id.view_pager)
   private val toolbar by bindView<Toolbar>(R.id.toolbar)
@@ -117,7 +117,7 @@ class PagerFragment : InjectingBaseFragment() {
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View {
-    return inflater.inflate(R.layout.controller_pager, container, false)
+    return inflater.inflate(R.layout.fragment_pager, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

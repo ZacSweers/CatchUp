@@ -35,8 +35,8 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
 import io.sweers.catchup.ui.base.InjectingBaseActivity
-import io.sweers.catchup.ui.controllers.PagerFragment
-import io.sweers.catchup.ui.controllers.service.StorageBackedService
+import io.sweers.catchup.ui.fragments.PagerFragment
+import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
 import javax.inject.Provider
@@ -67,7 +67,7 @@ class MainActivity : InjectingBaseActivity() {
 
     if (savedInstanceState == null) {
       supportFragmentManager.transaction {
-        add(R.id.controller_container, PagerFragment())
+        add(R.id.fragment_container, PagerFragment())
       }
     }
   }

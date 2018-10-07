@@ -80,7 +80,7 @@ class OrderServicesActivity : InjectingBaseActivity() {
 
     if (savedInstanceState == null) {
       supportFragmentManager.transaction {
-        add(R.id.controller_container, OrderServicesFragment())
+        add(R.id.fragment_container, OrderServicesFragment())
       }
     }
   }
@@ -124,7 +124,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
 
   override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View {
-    return inflater.inflate(R.layout.controller_order_services, container, false)
+    return inflater.inflate(R.layout.fragment_order_services, container, false)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {

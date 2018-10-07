@@ -96,11 +96,11 @@ class ChangelogHelper @Inject constructor(
   private fun showChangelog(changelog: String,
       context: Context,
       @ColorInt highlightColor: Int): Boolean {
-    // TODO Make this a custom controller instead, which should make the animation less jarring
+    // TODO Make this a custom fragment instead, which should make the animation less jarring
     BottomSheetDialog(context)
         .apply {
           val contentView = layoutInflater
-              .inflate(R.layout.controller_whatsnew, null, false)
+              .inflate(R.layout.fragment_whatsnew, null, false)
           setContentView(contentView)
           val title = contentView.findViewById<TextView>(R.id.build_name)!!.apply {
             typeface = fontHelper.getFont()
