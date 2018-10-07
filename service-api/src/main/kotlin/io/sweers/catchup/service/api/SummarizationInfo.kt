@@ -55,15 +55,15 @@ data class SummarizationInfo(
 
       HttpUrl.parse(url)?.let {
         it.host().let {
-          if (it.contains("imgur")
-              || it.contains("streamable")
-              || it.contains("gfycat")
-              || it.contains("i.reddit")
-              || it.contains("v.reddit")
-              || it.contains("twitter.com")
-              || it.contains("t.co")
-              || it.contains("youtube")
-              || it.contains("youtu.be"))
+          if ("imgur" in it
+              || "streamable" in it
+              || "gfycat" in it
+              || "i.reddit" in it
+              || "v.reddit" in it
+              || "twitter.com" in it
+              || "t.co" in it
+              || "youtube" in it
+              || "youtu.be" in it)
             return false
         }
       }
