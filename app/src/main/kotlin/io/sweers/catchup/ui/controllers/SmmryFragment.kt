@@ -17,7 +17,6 @@
 package io.sweers.catchup.ui.controllers
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.ColorFilter
 import android.os.Bundle
 import android.text.TextUtils
@@ -27,6 +26,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.Keep
+import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.widget.NestedScrollView
 import androidx.room.Dao
@@ -44,8 +44,6 @@ import com.squareup.moshi.Moshi
 import com.uber.autodispose.autoDisposable
 import dagger.Lazy
 import dagger.Provides
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -65,15 +63,14 @@ import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
 import io.sweers.catchup.data.smmry.model.Success
 import io.sweers.catchup.data.smmry.model.SummarizationError
 import io.sweers.catchup.data.smmry.model.UnknownErrorCode
-import io.sweers.catchup.injection.ConductorInjection
-import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.SummarizationType
 import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
-import io.sweers.catchup.ui.base.BaseController
-import io.sweers.catchup.ui.controllers.SmmryController.Module.ForSmmry
+import io.sweers.catchup.ui.base.InjectableBaseFragment
+import io.sweers.catchup.ui.controllers.SmmryFragment.Module.ForSmmry
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
@@ -90,7 +87,7 @@ import javax.inject.Qualifier
 /**
  * Overlay controller for displaying Smmry API results.
  */
-class SmmryController : BaseController {
+class SmmryFragment : InjectableBaseFragment() {
 
   companion object {
     private const val ID_TITLE = "smmrycontroller.title"
@@ -99,6 +96,19 @@ class SmmryController : BaseController {
     private const val ID_TYPE = "smmrycontroller.type"
     private const val ID_ACCENT = "smmrycontroller.accent"
     private const val ID_LOADED = "smmrycontroller.loaded"
+
+    fun newInstance(id: String, @ColorInt accentColor: Int, inputTitle: String,
+        info: SummarizationInfo): SmmryFragment {
+      return SmmryFragment().apply {
+        arguments = bundleOf(
+            ID_ID to id,
+            ID_ACCENT to accentColor,
+            ID_TITLE to inputTitle,
+            ID_VALUE to info.value,
+            ID_TYPE to info.type.name
+        )
+      }
+    }
   }
 
   @Inject
@@ -125,47 +135,39 @@ class SmmryController : BaseController {
   private lateinit var inputTitle: String
   private var alreadyLoaded = false
 
-  constructor(args: Bundle) : super(args)
-
-  constructor(id: String, @ColorInt accentColor: Int, inputTitle: String, info: SummarizationInfo) {
-    this.id = id
-    this.accentColor = accentColor
-    this.inputTitle = inputTitle
-    this.info = info
-  }
-
-  override fun onContextAvailable(context: Context) {
-    ConductorInjection.inject(this)
-    super.onContextAvailable(context)
-  }
-
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    outState.putString(ID_TITLE, inputTitle)
-    outState.putString(ID_ID, id)
-    outState.putString(ID_VALUE, info.value)
-    outState.putString(ID_TYPE, info.type.name)
-    outState.putInt(ID_ACCENT, accentColor)
-    outState.putBoolean(ID_LOADED, alreadyLoaded)
+    outState.run {
+      putString(ID_TITLE, inputTitle)
+      putString(ID_ID, id)
+      putString(ID_VALUE, info.value)
+      putString(ID_TYPE, info.type.name)
+      putInt(ID_ACCENT, accentColor)
+      putBoolean(ID_LOADED, alreadyLoaded)
+    }
   }
 
-  override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-    super.onRestoreInstanceState(savedInstanceState)
-    inputTitle = savedInstanceState.getString(ID_TITLE)!!
-    id = savedInstanceState.getString(ID_ID)!!
-    val value = savedInstanceState.getString(ID_VALUE)!!
-    val type = SummarizationType.valueOf(savedInstanceState.getString(ID_TYPE)!!)
-    info = SummarizationInfo(value, type)
-    accentColor = savedInstanceState.getInt(ID_ACCENT)
-    alreadyLoaded = savedInstanceState.getBoolean(ID_LOADED, false)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    (savedInstanceState ?: arguments)?.run {
+      inputTitle = getString(ID_TITLE)!!
+      id = getString(ID_ID)!!
+      val value = getString(ID_VALUE)!!
+      val type = SummarizationType.valueOf(getString(ID_TYPE)!!)
+      info = SummarizationInfo(value, type)
+      accentColor = getInt(ID_ACCENT)
+      alreadyLoaded = getBoolean(ID_LOADED, false)
+    }
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
-      inflater.inflate(R.layout.controller_smmry, container, false)
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
+      savedInstanceState: Bundle?): View {
+    return inflater.inflate(R.layout.controller_smmry, container, false)
+  }
 
   @SuppressLint("RestrictedApi") // False positive
-  override fun onViewBound(view: View) {
-    super.onViewBound(view)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
     content.isNestedScrollingEnabled = true
     title.text = inputTitle
     if (!alreadyLoaded) {
@@ -176,14 +178,6 @@ class SmmryController : BaseController {
     } else {
       loadingView.hide()
     }
-  }
-
-  fun canScrollVertically(directionInt: Int): Boolean {
-    return content.canScrollVertically(directionInt)
-  }
-
-  override fun onAttach(view: View) {
-    super.onAttach(view)
     Maybe.concatArray(tryRequestFromStorage(), getRequestSingle().toMaybe())
         .firstOrError()
         .subscribeOn(Schedulers.io())
@@ -217,6 +211,10 @@ class SmmryController : BaseController {
             e(error) { "Unknown error in smmry load" }
           }
         })
+  }
+
+  fun canScrollVertically(directionInt: Int): Boolean {
+    return content.canScrollVertically(directionInt)
   }
 
   private fun tryRequestFromStorage(): Maybe<SmmryResponse> {
@@ -255,6 +253,7 @@ class SmmryController : BaseController {
     }
   }
 
+  @SuppressLint("SetTextI18n")
   private fun showSummary(smmry: Success) {
     if (smmry.keywords != null) {
       tags.setTextColor(accentColor)
@@ -277,14 +276,6 @@ class SmmryController : BaseController {
     }
   }
 
-  @PerController
-  @Subcomponent(modules = [Module::class])
-  interface Component : AndroidInjector<SmmryController> {
-
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<SmmryController>()
-  }
-
   @dagger.Module
   object Module {
 
@@ -294,7 +285,7 @@ class SmmryController : BaseController {
     @Provides
     @JvmStatic
     @ForSmmry
-    @PerController
+    @PerFragment
     internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
           .add(SmmryResponseFactory.getInstance())
@@ -303,7 +294,7 @@ class SmmryController : BaseController {
 
     @Provides
     @JvmStatic
-    @PerController
+    @PerFragment
     internal fun provideSmmryService(client: Lazy<OkHttpClient>,
         @ForSmmry moshi: Moshi,
         rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SmmryService {
@@ -321,7 +312,7 @@ class SmmryController : BaseController {
 
     @Provides
     @JvmStatic
-    @PerController
+    @PerFragment
     internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase) = catchUpDatabase.smmryDao()
   }
 }

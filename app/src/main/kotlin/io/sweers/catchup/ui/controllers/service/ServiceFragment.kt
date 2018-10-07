@@ -32,6 +32,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.transaction
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DiffUtil.DiffResult
@@ -44,19 +45,14 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.apollographql.apollo.exception.ApolloException
-import com.bluelinelabs.conductor.RouterTransaction
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.uber.autodispose.autoDisposable
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.analytics.trace
-import io.sweers.catchup.injection.ConductorInjection
-import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
@@ -68,11 +64,11 @@ import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.FinalServices
 import io.sweers.catchup.ui.activity.TextViewPool
 import io.sweers.catchup.ui.activity.VisualViewPool
-import io.sweers.catchup.ui.base.BaseController
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
-import io.sweers.catchup.ui.controllers.SmmryController
+import io.sweers.catchup.ui.base.InjectingBaseFragment
+import io.sweers.catchup.ui.controllers.SmmryFragment
 import io.sweers.catchup.ui.controllers.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.controllers.service.LoadResult.NewData
 import io.sweers.catchup.util.e
@@ -127,13 +123,15 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   }
 }
 
-class ServiceController : BaseController,
+class ServiceFragment : InjectingBaseFragment(),
     SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
 
   companion object {
     const val ARG_SERVICE_KEY = "serviceKey"
     fun newInstance(serviceKey: String) =
-        ServiceController(bundleOf(ARG_SERVICE_KEY to serviceKey))
+        ServiceFragment().apply {
+          arguments = bundleOf(ARG_SERVICE_KEY to serviceKey)
+        }
   }
 
   private val errorView by bindView<View>(R.id.error_container)
@@ -164,29 +162,23 @@ class ServiceController : BaseController,
   @field:FinalServices
   @Inject
   lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
-  private val service: Service by lazy {
-    args[ARG_SERVICE_KEY].let {
-      services[it]?.get() ?: throw IllegalArgumentException("No service provided for $it!")
-    }
-  }
+  private lateinit var service: Service
 
-  @Suppress("unused")
-  constructor() : super()
-
-  @Suppress("unused")
-  constructor(args: Bundle) : super(args)
-
-  override fun toString() = "ServiceController: ${args[ARG_SERVICE_KEY]}"
+  override fun toString() = "ServiceController: ${arguments?.get(ARG_SERVICE_KEY)}"
 
   override fun isDataLoading(): Boolean = dataLoading
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
-      inflater.inflate(R.layout.controller_basic_news, container, false)
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
+      savedInstanceState: Bundle?): View {
+    return inflater.inflate(R.layout.controller_basic_news, container, false)
+  }
 
-  override fun onContextAvailable(context: Context) {
-    ConductorInjection.inject(this)
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    service = arguments!![ARG_SERVICE_KEY].let {
+      services[it]?.get() ?: throw IllegalArgumentException("No service provided for $it!")
+    }
     nextPage = service.meta().firstPageKey
-    super.onContextAvailable(context)
   }
 
   private fun createLayoutManager(context: Context,
@@ -206,12 +198,12 @@ class ServiceController : BaseController,
     }
   }
 
-  override fun handleBack(): Boolean {
+  override fun onBackPressed(): Boolean {
     return if (smmryPage.isExpandedOrExpanding) {
       recyclerView.collapse()
       true
     } else {
-      super.handleBack()
+      super.onBackPressed()
     }
   }
 
@@ -235,14 +227,15 @@ class ServiceController : BaseController,
             // We're not supporting this for now since it's not ready yet
             holder.setLongClickHandler(OnLongClickListener {
               recyclerView.expandItem(item.id)
-              val smmryController = SmmryController(item.id.toString(),
-                  ContextCompat.getColor(activity!!, service.meta().themeColor),
-                  item.title,
-                  info)
-              val localRouter = getChildRouter(smmryPage)
+              val smmryFragment = SmmryFragment.newInstance(id = item.id.toString(),
+                  accentColor = ContextCompat.getColor(activity!!, service.meta().themeColor),
+                  inputTitle = item.title,
+                  info = info
+              )
+              val fm = childFragmentManager
               smmryPage.pullToCollapseInterceptor = { _, _, upwardPull ->
                 val directionInt = if (upwardPull) +1 else -1
-                val canScrollFurther = smmryController.canScrollVertically(directionInt)
+                val canScrollFurther = smmryFragment.canScrollVertically(directionInt)
                 if (canScrollFurther) InterceptResult.INTERCEPTED else InterceptResult.IGNORED
               }
               smmryPage.addStateChangeCallbacks(object : PageStateChangeCallbacks {
@@ -253,14 +246,18 @@ class ServiceController : BaseController,
                 }
 
                 override fun onPageCollapsed() {
-                  localRouter.popController(smmryController)
+                  fm.transaction {
+                    remove(smmryFragment)
+                  }
                   smmryPage.removeStateChangeCallbacks(this)
                 }
 
                 override fun onPageExpanded() {
                 }
               })
-              localRouter.pushController(RouterTransaction.with(smmryController))
+              fm.transaction(now = true, allowStateLoss = true) {
+                add(smmryPage.id, smmryFragment)
+              }
               true
             })
           }
@@ -269,8 +266,18 @@ class ServiceController : BaseController,
     }
   }
 
-  override fun onViewBound(view: View) {
-    super.onViewBound(view)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    savedInstanceState?.run {
+      pageToRestoreTo = getString("currentPage", null)
+      pendingRVState = getParcelable("layoutManagerState")
+      isRestoring = pendingRVState != null
+      if (isRestoring) {
+        errorView.hide()
+        recyclerView.show()
+        recyclerView.itemAnimator = defaultItemAnimator
+      }
+    }
     onClick<View>(R.id.retry_button) {
       onRetry()
     }
@@ -282,14 +289,14 @@ class ServiceController : BaseController,
         service.meta().themeColor)
     swipeRefreshLayout.run {
       setColorSchemeColors(dayAccentColor)
-      setOnRefreshListener(this@ServiceController)
+      setOnRefreshListener(this@ServiceFragment)
     }
     progress.indeterminateTintList = ColorStateList.valueOf(accentColor)
     adapter = createAdapter(view.context)
     layoutManager = createLayoutManager(view.context, adapter)
     recyclerView.layoutManager = layoutManager
     recyclerView.addOnScrollListener(
-        object : InfiniteScrollListener(layoutManager, this@ServiceController) {
+        object : InfiniteScrollListener(layoutManager, this@ServiceFragment) {
           override fun onLoadMore() {
             loadData()
           }
@@ -311,6 +318,8 @@ class ServiceController : BaseController,
         removeDuration = 300
       }
     }
+    swipeRefreshLayout.isEnabled = false
+    loadData()
   }
 
   private fun onRetry() {
@@ -323,37 +332,14 @@ class ServiceController : BaseController,
     (imageView.drawable as AnimatedVectorDrawableCompat).start()
   }
 
-  override fun onAttach(view: View) {
-    super.onAttach(view)
-    if (adapter.itemCount == 0) {
-      // What's the right way to do this in Conductor? This will always be called after onResume
-      swipeRefreshLayout.isEnabled = false
-      loadData()
-    }
-  }
-
-  override fun onSaveViewState(view: View, outState: Bundle) {
+  override fun onSaveInstanceState(outState: Bundle) {
     outState.run {
       if (currentPage != service.meta().firstPageKey) {
         putString("currentPage", currentPage)
       }
       putParcelable("layoutManagerState", recyclerView.layoutManager?.onSaveInstanceState())
     }
-    super.onSaveViewState(view, outState)
-  }
-
-  override fun onRestoreViewState(view: View, savedViewState: Bundle) {
-    super.onRestoreViewState(view, savedViewState)
-    with(savedViewState) {
-      pageToRestoreTo = getString("currentPage", null)
-      pendingRVState = getParcelable("layoutManagerState")
-      isRestoring = pendingRVState != null
-      if (isRestoring) {
-        errorView.hide()
-        recyclerView.show()
-        recyclerView.itemAnimator = defaultItemAnimator
-      }
-    }
+    super.onSaveInstanceState(outState)
   }
 
   private fun loadData(fromRefresh: Boolean = false) {
@@ -612,14 +598,6 @@ class ServiceController : BaseController,
       showLoadingMore = false
       notifyItemRemoved(loadingPos)
     }
-  }
-
-  @Subcomponent
-  @PerController
-  interface Component : AndroidInjector<ServiceController> {
-
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<ServiceController>()
   }
 }
 

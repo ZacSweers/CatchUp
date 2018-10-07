@@ -19,11 +19,8 @@ package io.sweers.catchup.ui.activity
 import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.ViewGroup
+import androidx.fragment.app.transaction
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
-import com.bluelinelabs.conductor.Conductor
-import com.bluelinelabs.conductor.Router
-import com.bluelinelabs.conductor.RouterTransaction
 import com.uber.autodispose.autoDisposable
 import dagger.Binds
 import dagger.Provides
@@ -37,16 +34,15 @@ import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
-import io.sweers.catchup.ui.base.BaseActivity
-import io.sweers.catchup.ui.controllers.PagerController
+import io.sweers.catchup.ui.base.InjectingBaseActivity
+import io.sweers.catchup.ui.controllers.PagerFragment
 import io.sweers.catchup.ui.controllers.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
-import kotterknife.bindView
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Qualifier
 
-class MainActivity : BaseActivity() {
+class MainActivity : InjectingBaseActivity() {
 
   @Inject
   internal lateinit var customTab: CustomTabActivityHelper
@@ -54,10 +50,6 @@ class MainActivity : BaseActivity() {
   internal lateinit var linkManager: LinkManager
   @Inject
   internal lateinit var syllabus: Syllabus
-
-  private val container by bindView<ViewGroup>(R.id.controller_container)
-
-  private lateinit var router: Router
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -73,15 +65,10 @@ class MainActivity : BaseActivity() {
     val viewGroup = viewContainer.forActivity(this)
     layoutInflater.inflate(R.layout.activity_main, viewGroup)
 
-    router = Conductor.attachRouter(this, container, savedInstanceState)
-    if (!router.hasRootController()) {
-      router.setRoot(RouterTransaction.with(PagerController()))
-    }
-  }
-
-  override fun onBackPressed() {
-    if (!router.handleBack()) {
-      super.onBackPressed()
+    if (savedInstanceState == null) {
+      supportFragmentManager.transaction {
+        add(R.id.controller_container, PagerFragment())
+      }
     }
   }
 
