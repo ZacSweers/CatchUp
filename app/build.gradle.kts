@@ -517,11 +517,6 @@ dependencies {
   // Inspector exposed for dagger
   implementation(deps.inspector.core)
 
-  // Conductor
-  implementation(deps.conductor.core)
-  implementation(deps.conductor.autoDispose)
-  implementation(deps.conductor.support)
-
   implementation(deps.misc.jsr305)
 
   // Test

@@ -22,14 +22,11 @@ import androidx.annotation.CallSuper
 import androidx.annotation.CheckResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
-import com.bluelinelabs.conductor.Controller
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
 import com.uber.autodispose.lifecycle.KotlinLifecycleScopeProvider
 import dagger.android.AndroidInjection
-import dagger.android.DispatchingAndroidInjector
 import io.reactivex.Observable
-import io.sweers.catchup.injection.HasControllerInjector
 import io.sweers.catchup.ui.ViewContainer
 import io.sweers.catchup.ui.base.ActivityEvent.CREATE
 import io.sweers.catchup.ui.base.ActivityEvent.DESTROY
@@ -41,7 +38,7 @@ import io.sweers.catchup.util.updateNavBarColor
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity(),
-    KotlinLifecycleScopeProvider<ActivityEvent>, HasControllerInjector {
+    KotlinLifecycleScopeProvider<ActivityEvent> {
 
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
 
@@ -105,8 +102,6 @@ abstract class BaseActivity : AppCompatActivity(),
 
   @Inject
   protected lateinit var viewContainer: ViewContainer
-  @Inject
-  lateinit var controllerInjector: DispatchingAndroidInjector<Controller>
 
   @CheckResult
   override fun lifecycle(): Observable<ActivityEvent> {
@@ -168,10 +163,6 @@ abstract class BaseActivity : AppCompatActivity(),
   override fun onDestroy() {
     lifecycleRelay.accept(ActivityEvent.DESTROY)
     super.onDestroy()
-  }
-
-  override fun controllerInjector(): DispatchingAndroidInjector<Controller> {
-    return controllerInjector
   }
 
   override fun onBackPressed() {

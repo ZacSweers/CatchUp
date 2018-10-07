@@ -29,7 +29,7 @@ import com.uber.autodispose.android.lifecycle.scope
 import io.reactivex.CompletableSource
 import kotterknife.KotterKnife
 
-abstract class BaseFragment : Fragment(), ScopeProvider, BackpressHandler {
+abstract class BaseFragment : RefWatchingFragment(), ScopeProvider, BackpressHandler {
 
   companion object {
     private val DAY_MODE_CONF = Configuration().apply {

@@ -23,7 +23,6 @@ import dagger.android.support.AndroidSupportInjectionModule
 import io.sweers.catchup.data.DataModule
 import io.sweers.catchup.data.VariantDataModule
 import io.sweers.catchup.flipper.FlipperModule
-import io.sweers.catchup.injection.ConductorInjectionModule
 import io.sweers.catchup.ui.activity.ActivityBindingModule
 import javax.inject.Singleton
 
@@ -32,7 +31,6 @@ import javax.inject.Singleton
   ActivityBindingModule::class,
   AndroidSupportInjectionModule::class,
   ApplicationModule::class,
-  ConductorInjectionModule::class,
   DataModule::class,
   VariantDataModule::class,
   FlipperModule::class

@@ -135,8 +135,6 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
     } else {
       pendingRvState = savedInstanceState.getParcelable("changelogState")
     }
-    // Weird hack to avoid adding more unnecessarily. I'm not sure how to leave transient state
-    // during onPause in Conductor
     requestItems()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
