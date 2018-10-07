@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,38 +32,32 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.view.doOnLayout
+import androidx.fragment.app.transaction
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.bluelinelabs.conductor.Conductor
-import com.bluelinelabs.conductor.Controller
-import com.bluelinelabs.conductor.Router
-import com.bluelinelabs.conductor.RouterTransaction
 import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
 import dagger.Binds
 import dagger.Module
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
-import dagger.multibindings.IntoMap
+import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
-import io.sweers.catchup.injection.ConductorInjection
-import io.sweers.catchup.injection.ControllerKey
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
-import io.sweers.catchup.ui.base.BaseActivity
-import io.sweers.catchup.ui.base.BaseController
+import io.sweers.catchup.ui.base.InjectableBaseFragment
+import io.sweers.catchup.ui.base.InjectingBaseActivity
 import io.sweers.catchup.util.ColorUtils
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
@@ -72,13 +67,10 @@ import kotterknife.bindView
 import java.util.Collections
 import javax.inject.Inject
 
-class OrderServicesActivity : BaseActivity() {
+class OrderServicesActivity : InjectingBaseActivity() {
 
   @Inject
   internal lateinit var syllabus: Syllabus
-  private val container by bindView<ViewGroup>(R.id.controller_container)
-
-  private lateinit var router: Router
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -86,15 +78,10 @@ class OrderServicesActivity : BaseActivity() {
     layoutInflater.inflate(R.layout.activity_generic_container, viewGroup)
     syllabus.bind(this)
 
-    router = Conductor.attachRouter(this, container, savedInstanceState)
-    if (!router.hasRootController()) {
-      router.setRoot(RouterTransaction.with(OrderServicesController()))
-    }
-  }
-
-  override fun onBackPressed() {
-    if (!router.handleBack()) {
-      super.onBackPressed()
+    if (savedInstanceState == null) {
+      supportFragmentManager.transaction {
+        add(R.id.controller_container, OrderServicesFragment())
+      }
     }
   }
 
@@ -106,7 +93,7 @@ class OrderServicesActivity : BaseActivity() {
   }
 }
 
-class OrderServicesController : BaseController() {
+class OrderServicesFragment : InjectableBaseFragment() {
 
   @Inject
   lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
@@ -120,28 +107,34 @@ class OrderServicesController : BaseController() {
   private val toolbar by bindView<Toolbar>(R.id.toolbar)
   private val recyclerView by bindView<RecyclerView>(R.id.list)
 
-  private var _pendingChanges: List<ServiceMeta>? = null
-  private var pendingChanges: List<ServiceMeta>?
+  private lateinit var storedOrder: List<String>
+  private var pendingChanges: List<ServiceMeta>? = null
     set(value) {
-      _pendingChanges = value
-      if (value == null) {
+      var toStore = value
+      if (value?.map(ServiceMeta::id)?.sortedBy(storedOrder::indexOf) == storedOrder) {
+        toStore = null
+      }
+      field = toStore
+      if (toStore == null) {
         save.hide()
       } else {
         save.show()
       }
     }
-    get() = _pendingChanges
 
-  override fun onContextAvailable(context: Context) {
-    ConductorInjection.inject(this)
-    super.onContextAvailable(context)
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
+      savedInstanceState: Bundle?): View {
+    return inflater.inflate(R.layout.controller_order_services, container, false)
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
-      inflater.inflate(R.layout.controller_order_services, container, false)
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    outState.putStringArrayList("pendingChanges",
+        pendingChanges?.mapTo(ArrayList(), ServiceMeta::id))
+  }
 
-  override fun onViewBound(view: View) {
-    super.onViewBound(view)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
     with(activity as AppCompatActivity) {
       if (!isInNightMode()) {
         toolbar.setLightStatusBar()
@@ -153,10 +146,14 @@ class OrderServicesController : BaseController() {
       }
     }
     toolbar.title = toolbar.context.getString(R.string.pref_reorder_services)
-    recyclerView.layoutManager = LinearLayoutManager(view.context)
-    val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
+    val lm = LinearLayoutManager(view.context)
+    recyclerView.layoutManager = lm
+    storedOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
+    val instanceChanges = savedInstanceState?.getStringArrayList("pendingChanges")
+    pendingChanges = instanceChanges?.map { serviceMetas[it] as ServiceMeta }
+    val displayOrder = instanceChanges ?: storedOrder
 
-    val currentItemsSorted = serviceMetas.values.sortedBy { currentOrder.indexOf(it.id) }
+    val currentItemsSorted = serviceMetas.values.sortedBy { displayOrder.indexOf(it.id) }
     val adapter = Adapter(
         // Use a day context since this is like the tablayout UI
         recyclerView.context.asDayContext(),
@@ -168,14 +165,16 @@ class OrderServicesController : BaseController() {
       }
     }
     recyclerView.adapter = adapter
+    savedInstanceState?.getParcelable<Parcelable>("orderServicesState")?.let(
+        lm::onRestoreInstanceState)
     val callback = MoveCallback { start, end -> adapter.move(start, end) }
     ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
 
     save.setOnClickListener {
-      pendingChanges?.let {
-        sharedPrefs.edit()
-            .putString(P.ServicesOrder.KEY, it.joinToString(",") { it.id })
-            .apply()
+      pendingChanges?.let { changes ->
+        sharedPrefs.edit {
+          putString(P.ServicesOrder.KEY, changes.joinToString(",", transform = ServiceMeta::id))
+        }
       }
       activity?.finish()
     }
@@ -200,11 +199,11 @@ class OrderServicesController : BaseController() {
                   .id("Save")
                   .apply { fontHelper.getFont()?.let(::textTypeface) }
             },
-            postDisplay = { save.hide() }
+            postDisplay = save::hide
         ))
   }
 
-  override fun handleBack(): Boolean {
+  override fun onBackPressed(): Boolean {
     if (pendingChanges != null) {
       AlertDialog.Builder(save.context)
           .setTitle(R.string.pending_changes_title)
@@ -221,7 +220,7 @@ class OrderServicesController : BaseController() {
           .show()
       return true
     }
-    return super.handleBack()
+    return false
   }
 }
 
@@ -324,23 +323,14 @@ private class MoveCallback(
   }
 }
 
-@Module(subcomponents = [OrderServicesComponent::class])
+@Module
 abstract class OrderServicesBindingModule {
 
-  @Binds
-  @IntoMap
-  @ControllerKey(OrderServicesController::class)
-  internal abstract fun bindAboutControllerInjectorFactory(
-      builder: OrderServicesComponent.Builder): AndroidInjector.Factory<out Controller>
-
-}
-
-@PerController
-@Subcomponent(modules = [OrderServicesModule::class])
-interface OrderServicesComponent : AndroidInjector<OrderServicesController> {
-
-  @Subcomponent.Builder
-  abstract class Builder : AndroidInjector.Builder<OrderServicesController>()
+  @PerFragment
+  @ContributesAndroidInjector(
+      modules = [OrderServicesModule::class]
+  )
+  internal abstract fun orderServicesFragment(): OrderServicesFragment
 }
 
 @Module(includes = [ResolvedCatchUpServiceMetaRegistry::class])

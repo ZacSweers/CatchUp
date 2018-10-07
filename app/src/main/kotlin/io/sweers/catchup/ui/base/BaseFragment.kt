@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -28,7 +29,7 @@ import com.uber.autodispose.android.lifecycle.scope
 import io.reactivex.CompletableSource
 import kotterknife.KotterKnife
 
-abstract class BaseFragment : Fragment(), ScopeProvider {
+abstract class BaseFragment : Fragment(), ScopeProvider, BackpressHandler {
 
   companion object {
     private val DAY_MODE_CONF = Configuration().apply {
@@ -64,4 +65,24 @@ abstract class BaseFragment : Fragment(), ScopeProvider {
   override fun requestScope(): CompletableSource {
     return lifecycleProvider.requestScope()
   }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    if (item.itemId == android.R.id.home) {
+      return onBackPressed()
+    }
+    return super.onOptionsItemSelected(item)
+  }
+
+  override fun onBackPressed(): Boolean {
+    childFragmentManager.fragments.filterIsInstance<BackpressHandler>().forEach {
+      if (it.onBackPressed()) {
+        return true
+      }
+    }
+    return false
+  }
+}
+
+interface BackpressHandler {
+  fun onBackPressed(): Boolean
 }

@@ -28,7 +28,6 @@ plugins {
   id("com.apollographql.android")
   id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
-  id("kotlin-android-extensions")
 }
 
 apply {
@@ -65,8 +64,8 @@ android {
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
   }
   compileOptions {
-    setSourceCompatibility(JavaVersion.VERSION_1_8)
-    setTargetCompatibility(JavaVersion.VERSION_1_8)
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
   }
   signingConfigs {
     create("release") {
@@ -375,10 +374,6 @@ open class UpdateVersion : DefaultTask() {
 tasks.create("updateVersion", UpdateVersion::class.java) {
   group = "build"
   description = "Updates the current version. Supports CLI option --updateType={type} where type is (major|minor|patch)"
-}
-
-androidExtensions {
-  isExperimental = true
 }
 
 dependencies {

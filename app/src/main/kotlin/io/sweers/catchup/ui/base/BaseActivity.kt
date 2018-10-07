@@ -173,4 +173,13 @@ abstract class BaseActivity : AppCompatActivity(),
   override fun controllerInjector(): DispatchingAndroidInjector<Controller> {
     return controllerInjector
   }
+
+  override fun onBackPressed() {
+    supportFragmentManager.fragments.filterIsInstance<BackpressHandler>().forEach {
+      if (it.onBackPressed()) {
+        return
+      }
+    }
+    super.onBackPressed()
+  }
 }
