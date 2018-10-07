@@ -31,6 +31,7 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.util.kotlin.switchIf
+import io.sweers.catchup.util.w
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
 import retrofit2.HttpException
@@ -108,7 +109,9 @@ class StorageBackedService(
       val useLatest = currentSessionId == -1L
       if (BuildConfig.DEBUG && useLatest && page != meta().firstPageKey) {
         // This shouldn't happen. If we have no session, we should be fetching the first page
-        throw IllegalStateException("Fetching first local but not first page! Received $page")
+        w(IllegalStateException("Fetching first local ($page) but not first page! Received $page")) {
+          "invalid store state"
+        }
       }
       fetchPageFromLocal(page, useLatest)
           .switchIf(!useLatest) {
