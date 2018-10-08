@@ -62,7 +62,7 @@ object deps {
     const val glide = "4.8.0"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
-    const val kotlin = "1.2.71"
+    const val kotlin = "1.3.0-rc-146"
     const val leakcanary = "1.6.1"
     const val legacySupport = "28.0.0"
     const val moshi = "1.7.0"
