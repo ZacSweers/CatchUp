@@ -19,7 +19,7 @@ package io.sweers.catchup.ui.base
 import androidx.fragment.app.Fragment
 import io.sweers.catchup.app.CatchUpApplication
 
-class RefWatchingFragment : Fragment() {
+abstract class RefWatchingFragment : Fragment() {
   override fun onDestroy() {
     super.onDestroy()
     CatchUpApplication.refWatcher()
