@@ -17,50 +17,50 @@
   -->
 
 <androidx.drawerlayout.widget.DrawerLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/debug_drawer_layout"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:fitsSystemWindows="true"
-  >
-
-  <com.mattprecious.telescope.TelescopeLayout
-    android:id="@+id/telescope_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/debug_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:telescope_progressColor="@android:color/holo_red_light"
+    android:fitsSystemWindows="true"
     >
 
-    <com.jakewharton.madge.MadgeFrameLayout
-      android:id="@+id/madge_container"
+  <com.mattprecious.telescope.TelescopeLayout
+      android:id="@+id/telescope_container"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      app:telescope_progressColor="@android:color/holo_red_light"
       >
 
-      <com.jakewharton.scalpel.ScalpelFrameLayout
-        android:id="@+id/debug_content"
+    <com.jakewharton.madge.MadgeFrameLayout
+        android:id="@+id/madge_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        >
+
+      <com.jakewharton.scalpel.ScalpelFrameLayout
+          android:id="@+id/debug_content"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          />
     </com.jakewharton.madge.MadgeFrameLayout>
   </com.mattprecious.telescope.TelescopeLayout>
 
   <io.sweers.catchup.ui.debug.NonConsumingScrimInsetsFrameLayout
-    android:layout_width="290dp"
-    android:layout_height="match_parent"
-    android:layout_gravity="end"
-    android:background="#e222"
-    android:fitsSystemWindows="true"
-    app:insetForeground="#4000"
-    >
+      android:layout_width="290dp"
+      android:layout_height="match_parent"
+      android:layout_gravity="end"
+      android:background="#e222"
+      android:fitsSystemWindows="true"
+      app:insetForeground="#4000"
+      >
 
     <ScrollView
-      android:id="@+id/debug_drawer"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:clipToPadding="false"
-      android:fitsSystemWindows="true"
-      />
+        android:id="@+id/debug_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true"
+        />
   </io.sweers.catchup.ui.debug.NonConsumingScrimInsetsFrameLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

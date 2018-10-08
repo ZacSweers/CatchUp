@@ -17,9 +17,9 @@
   -->
 
 <Button
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:orientation="vertical"
-  />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    />

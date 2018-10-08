@@ -434,14 +434,14 @@ class ServiceFragment : InjectingBaseFragment(),
           swipeRefreshLayout.show()
           recyclerView.post {
             @Suppress("UNCHECKED_CAST") // badpokerface.png
-              when (val finalAdapter = adapter) {
-                is TextAdapter -> {
-                  finalAdapter.update((loadResult as LoadResult<CatchUpItem>))
-                }
-                is ImageAdapter -> {
-                  finalAdapter.update((loadResult as LoadResult<ImageItem>))
-                }
+            when (val finalAdapter = adapter) {
+              is TextAdapter -> {
+                finalAdapter.update((loadResult as LoadResult<CatchUpItem>))
               }
+              is ImageAdapter -> {
+                finalAdapter.update((loadResult as LoadResult<ImageItem>))
+              }
+            }
             pendingRVState?.let {
               recyclerView.layoutManager?.onRestoreInstanceState(it)
               pendingRVState = null

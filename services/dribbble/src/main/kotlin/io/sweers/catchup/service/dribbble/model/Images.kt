@@ -27,7 +27,7 @@ internal data class Images(val hidpi: String?,
   }
 
   fun bestSize(preferHidpi: Boolean = false): Pair<Int, Int> {
-    return if (preferHidpi && hidpi != null) TWO_X_IMAGE_SIZE else  NORMAL_IMAGE_SIZE
+    return if (preferHidpi && hidpi != null) TWO_X_IMAGE_SIZE else NORMAL_IMAGE_SIZE
   }
 
   companion object {

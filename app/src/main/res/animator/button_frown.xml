@@ -23,4 +23,4 @@
     android:startOffset="1700"
     android:duration="300"
     android:interpolator="@android:interpolator/fast_out_slow_in"
-    android:valueType="pathType" />
+    android:valueType="pathType"/>

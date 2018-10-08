@@ -16,8 +16,9 @@
   ~ limitations under the License.
   -->
 
-<feed xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:syn="http://purl.org/rss/1.0/modules/syndication/"
-      xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+<feed xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:syn="http://purl.org/rss/1.0/modules/syndication/"
+    xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
 
   <title>Slashdot</title>
   <id>https://slashdot.org/</id>
@@ -37,19 +38,20 @@
   <syn:updateBase>1970-01-01T00:00+00:00</syn:updateBase>
   <logo>http://a.fsdn.com/sd/topics/topicslashdot.gif</logo>
 
-  <atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" href="http://rss.slashdot.org/slashdot/slashdotMainatom" rel="self"
-               type="application/atom+xml"/>
+  <atom10:link xmlns:atom10="http://www.w3.org/2005/Atom"
+      href="http://rss.slashdot.org/slashdot/slashdotMainatom" rel="self"
+      type="application/atom+xml"/>
   <feedburner:info xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0"
-                   uri="slashdot/slashdotmainatom"/>
+      uri="slashdot/slashdotmainatom"/>
   <atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" href="http://pubsubhubbub.appspot.com/"
-               rel="hub"/>
+      rel="hub"/>
   <entry>
     <id>
       https://news.slashdot.org/story/16/05/18/2247243/pfizer-blocks-the-use-of-its-drugs-in-executions?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed
     </id>
     <title>Pfizer Blocks The Use Of Its Drugs In Executions</title>
     <link
-      href="https://news.slashdot.org/story/16/05/18/2247243/pfizer-blocks-the-use-of-its-drugs-in-executions?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://news.slashdot.org/story/16/05/18/2247243/pfizer-blocks-the-use-of-its-drugs-in-executions?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">HughPickens.com writes: Erik Eckholm reports in the NYT that the
       pharmaceutical giant Pfizer has announced that it has imposed sweeping controls on the
       distribution of its products to ensure that none are used in lethal injections, a step that
@@ -85,7 +87,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://news.slashdot.org/story/16/05/18/2247243/pfizer-blocks-the-use-of-its-drugs-in-executions?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-19T03:30:00+00:00</updated>
     <author>
       <name>BeauHD</name>
@@ -103,7 +106,7 @@
     </id>
     <title>Nintendo May Start Selling 'Computer Software'</title>
     <link
-      href="https://games.slashdot.org/story/16/05/19/0016223/nintendo-may-start-selling-computer-software?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://games.slashdot.org/story/16/05/19/0016223/nintendo-may-start-selling-computer-software?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">An anonymous reader quotes a report from Ars Technica: Nintendo's most
       recent fiscal-year disclosure made headlines for announcing a release window for the new
       "Nintendo NX" console and yet another Zelda game delay, but it also included news of serious
@@ -136,7 +139,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://games.slashdot.org/story/16/05/19/0016223/nintendo-may-start-selling-computer-software?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-19T01:30:00+00:00</updated>
     <author>
       <name>BeauHD</name>
@@ -154,7 +158,7 @@
     </id>
     <title>Updated Skimer Malware Infects ATMs Worldwide</title>
     <link
-      href="https://news.slashdot.org/story/16/05/18/2310241/updated-skimer-malware-infects-atms-worldwide?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://news.slashdot.org/story/16/05/18/2310241/updated-skimer-malware-infects-atms-worldwide?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">An anonymous reader writes: Researchers at Kaspersky have discovered an
       improved version of Backdoor.Win32.Skimer infecting ATM machines worldwide. The new Skimer
       allows criminal access to card data, including PIN numbers, as well as to the actual cash
@@ -185,7 +189,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://news.slashdot.org/story/16/05/18/2310241/updated-skimer-malware-infects-atms-worldwide?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-19T00:50:00+00:00</updated>
     <author>
       <name>BeauHD</name>
@@ -203,7 +208,7 @@
     </id>
     <title>Google's Tensor Processing Unit Could Advance Moore's Law 7 Years Into The Future</title>
     <link
-      href="https://hardware.slashdot.org/story/16/05/18/2226201/googles-tensor-processing-unit-could-advance-moores-law-7-years-into-the-future?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://hardware.slashdot.org/story/16/05/18/2226201/googles-tensor-processing-unit-could-advance-moores-law-7-years-into-the-future?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">An anonymous reader writes from a report via PCWorld: Google says its
       Tensor Processing Unit (TPU) advances machine learning capability by a factor of three
       generations. "TPUs deliver an order of magnitude higher performance per watt than all
@@ -237,7 +242,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://hardware.slashdot.org/story/16/05/18/2226201/googles-tensor-processing-unit-could-advance-moores-law-7-years-into-the-future?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-19T00:10:00+00:00</updated>
     <author>
       <name>BeauHD</name>
@@ -255,7 +261,7 @@
     </id>
     <title>Google Turns Firebase Into Its Unified Platform For Mobile Developers</title>
     <link
-      href="https://news.slashdot.org/story/16/05/18/2146216/google-turns-firebase-into-its-unified-platform-for-mobile-developers?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://news.slashdot.org/story/16/05/18/2146216/google-turns-firebase-into-its-unified-platform-for-mobile-developers?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">An anonymous reader writes: Google has announced a plethora of new features
       to Firebase, its cloud services provider that mobile developers can use to power their apps.
       TechCrunch reports: "In its previous incarnation, Firebase was somewhat similar to Facebook's
@@ -295,7 +301,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://news.slashdot.org/story/16/05/18/2146216/google-turns-firebase-into-its-unified-platform-for-mobile-developers?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T23:30:00+00:00</updated>
     <author>
       <name>BeauHD</name>
@@ -313,7 +320,7 @@
     </id>
     <title>Scientists Find A 'Weak Spot' In HIV That May Pave The Way To A Vaccine</title>
     <link
-      href="https://science.slashdot.org/story/16/05/18/2116238/scientists-find-a-weak-spot-in-hiv-that-may-pave-the-way-to-a-vaccine?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://science.slashdot.org/story/16/05/18/2116238/scientists-find-a-weak-spot-in-hiv-that-may-pave-the-way-to-a-vaccine?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">iONiUM quotes a report from Futurism: Research conducted by a team from the
       National Institutes of Health reported a new vulnerable site on HIV for vaccines to target. It
       is based on an antibody from the blood of an HIV-infected patient that binds with the virus
@@ -341,7 +348,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://science.slashdot.org/story/16/05/18/2116238/scientists-find-a-weak-spot-in-hiv-that-may-pave-the-way-to-a-vaccine?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T22:50:00+00:00</updated>
     <author>
       <name>BeauHD</name>
@@ -359,7 +367,7 @@
     </id>
     <title>Google Announces New Virtual Reality Platform 'Daydream'</title>
     <link
-      href="https://games.slashdot.org/story/16/05/18/2057216/google-announces-new-virtual-reality-platform-daydream?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://games.slashdot.org/story/16/05/18/2057216/google-announces-new-virtual-reality-platform-daydream?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">ErnieKey writes: At Google I/O today, the company announced what they are
       calling "Google Daydream." This is their upcoming virtual-reality platform that takes Google
       Cardboard several steps further. Daydream is a platform that will provide guidance for both
@@ -387,7 +395,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://games.slashdot.org/story/16/05/18/2057216/google-announces-new-virtual-reality-platform-daydream?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T22:10:00+00:00</updated>
     <author>
       <name>BeauHD</name>
@@ -405,7 +414,7 @@
     </id>
     <title>Europa's Ocean Chemistry Could Be Earth-Like</title>
     <link
-      href="https://science.slashdot.org/story/16/05/18/2039213/europas-ocean-chemistry-could-be-earth-like?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://science.slashdot.org/story/16/05/18/2039213/europas-ocean-chemistry-could-be-earth-like?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">An anonymous reader writes: Alien life in the universe could be close to
       home, swimming around Europa's ocean. The idea has been floating around scientific minds for
       more than a decade: beneath the icy surface of the Jovian moon could slosh a deep, wide ocean
@@ -437,7 +446,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://science.slashdot.org/story/16/05/18/2039213/europas-ocean-chemistry-could-be-earth-like?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T21:30:00+00:00</updated>
     <author>
       <name>manishs</name>
@@ -455,7 +465,7 @@
     </id>
     <title>Spy Chief: Foreign Hackers May Be Targeting Presidential Candidates</title>
     <link
-      href="https://politics.slashdot.org/story/16/05/18/2034244/spy-chief-foreign-hackers-may-be-targeting-presidential-candidates?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://politics.slashdot.org/story/16/05/18/2034244/spy-chief-foreign-hackers-may-be-targeting-presidential-candidates?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">An anonymous reader writes from a report via NBC News: Director of National
       Intelligence James Clapper warned Wednesday that foreign hackers may be targeting the
       campaigns of U.S. presidential candidates. The FBI and Homeland Security are working with the
@@ -492,7 +502,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://politics.slashdot.org/story/16/05/18/2034244/spy-chief-foreign-hackers-may-be-targeting-presidential-candidates?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T20:50:00+00:00</updated>
     <author>
       <name>BeauHD</name>
@@ -510,7 +521,7 @@
     </id>
     <title>Snapchat Faces An Outcry Against 'Whitewashing' Filters</title>
     <link
-      href="https://yro.slashdot.org/story/16/05/18/204248/snapchat-faces-an-outcry-against-whitewashing-filters?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://yro.slashdot.org/story/16/05/18/204248/snapchat-faces-an-outcry-against-whitewashing-filters?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">Last month Snapchat was thrown under the bus for a feature that many found
       downright racist. The photo-sharing app had added a face-altering filter that made users look
       like Bob Marley. Less than a month to it, Snapchat is getting blasted over another
@@ -537,7 +548,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://yro.slashdot.org/story/16/05/18/204248/snapchat-faces-an-outcry-against-whitewashing-filters?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T20:07:00+00:00</updated>
     <author>
       <name>manishs</name>
@@ -555,7 +567,7 @@
     </id>
     <title>iOS 9.3.2 Bricking Some 9.7-inch iPad Pro Devices With 'Error 56' Message</title>
     <link
-      href="https://apple.slashdot.org/story/16/05/18/1946223/ios-932-bricking-some-97-inch-ipad-pro-devices-with-error-56-message?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://apple.slashdot.org/story/16/05/18/1946223/ios-932-bricking-some-97-inch-ipad-pro-devices-with-error-56-message?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">An anonymous reader writes: iOS 9.3.2 is causing problems for some 9.7-inch
       iPad Pro owners, with multiple users reporting issues shortly after installing the update over
       the air. Affected users are seeing an "Error 56" message that instructs them to plug their
@@ -580,7 +592,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://apple.slashdot.org/story/16/05/18/1946223/ios-932-bricking-some-97-inch-ipad-pro-devices-with-error-56-message?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T19:47:00+00:00</updated>
     <author>
       <name>manishs</name>
@@ -598,7 +611,7 @@
     </id>
     <title>Google Announces Allo, Duo, Stable Android N Preview, Instant Apps</title>
     <link
-      href="https://tech.slashdot.org/story/16/05/18/1849256/google-announces-allo-duo-stable-android-n-preview-instant-apps?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://tech.slashdot.org/story/16/05/18/1849256/google-announces-allo-duo-stable-android-n-preview-instant-apps?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">Also at the conference, Google announced Allo, a new smart messaging app,
       and Duo, a high-definition video chat app for Android and iOS devices. TechCrunch reports: Why
       the decision to launch two separate apps? A couple of reasons, it seems. The first is to keep
@@ -632,7 +645,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://tech.slashdot.org/story/16/05/18/1849256/google-announces-allo-duo-stable-android-n-preview-instant-apps?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T18:52:00+00:00</updated>
     <author>
       <name>manishs</name>
@@ -650,7 +664,7 @@
     </id>
     <title>Google Assistant and Google Home: Amazon Echo, But From Google</title>
     <link
-      href="https://tech.slashdot.org/story/16/05/18/183211/google-assistant-and-google-home-amazon-echo-but-from-google?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://tech.slashdot.org/story/16/05/18/183211/google-assistant-and-google-home-amazon-echo-but-from-google?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">At its developer conference I/O, Google on Wednesday unveiled Google Home,
       a small round gadget with microphones and speakers that listens and responds to your questions
       and commands. As you may have guessed, Google Home will compete with Amazon Echo. The company
@@ -679,7 +693,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://tech.slashdot.org/story/16/05/18/183211/google-assistant-and-google-home-amazon-echo-but-from-google?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T18:05:00+00:00</updated>
     <author>
       <name>manishs</name>
@@ -697,7 +712,7 @@
     </id>
     <title>Transparent Displays Are Here, But They're Pretty Useless</title>
     <link
-      href="https://hardware.slashdot.org/story/16/05/18/1722217/transparent-displays-are-here-but-theyre-pretty-useless?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://hardware.slashdot.org/story/16/05/18/1722217/transparent-displays-are-here-but-theyre-pretty-useless?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">An anonymous reader writes: Samsung has debuted the first commercial
       installation of its 55-inch 'mirror' displays at a salon in South Korea with a transparent
       OLED screen overlaid over a mirrored surface to allow interaction. The Samsung product rivals
@@ -725,7 +740,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://hardware.slashdot.org/story/16/05/18/1722217/transparent-displays-are-here-but-theyre-pretty-useless?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T17:23:00+00:00</updated>
     <author>
       <name>manishs</name>
@@ -745,7 +761,7 @@
       Efficiency
     </title>
     <link
-      href="https://hardware.slashdot.org/story/16/05/18/1637250/australia-engineers-set-new-solar-energy-world-record-with-345-sunlight-to-energy-efficiency?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
+        href="https://hardware.slashdot.org/story/16/05/18/1637250/australia-engineers-set-new-solar-energy-world-record-with-345-sunlight-to-energy-efficiency?utm_source=atom1.0mainlinkanon&amp;utm_medium=feed"/>
     <summary type="html">An anonymous reader writes: Australian engineers have edged closer to the
       theoretical limits of sunlight-to-electricity conversion by photovoltaic cells with a device
       that sets a new world efficiency record. A new solar cell configuration developed by engineers
@@ -772,7 +788,8 @@
 
       &lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a
       href="https://hardware.slashdot.org/story/16/05/18/1637250/australia-engineers-set-new-solar-energy-world-record-with-345-sunlight-to-energy-efficiency?utm_source=atom1.0moreanon&amp;amp;utm_medium=feed"&gt;Read
-      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;</summary>
+      more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;
+    </summary>
     <updated>2016-05-18T16:43:00+00:00</updated>
     <author>
       <name>manishs</name>

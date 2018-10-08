@@ -23,4 +23,4 @@
     android:valueType="pathType"
     android:startOffset="1000"
     android:duration="1000"
-    android:interpolator="@android:interpolator/linear" />
+    android:interpolator="@android:interpolator/linear"/>

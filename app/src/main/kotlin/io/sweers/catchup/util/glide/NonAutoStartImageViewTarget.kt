@@ -35,6 +35,7 @@ abstract class NonAutoStartImageViewTarget<Z>(view: ImageView) : CustomViewTarge
   override fun getCurrentDrawable(): Drawable? {
     return view.drawable
   }
+
   override fun setDrawable(drawable: Drawable?) {
     view.setImageDrawable(drawable)
   }

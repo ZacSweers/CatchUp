@@ -68,7 +68,7 @@
 
     <activity
         android:name=".ui.activity.LauncherActivity"
-        android:theme="@style/CatchUp.Launcher" />
+        android:theme="@style/CatchUp.Launcher"/>
 
     <!-- This activity alias lets us change the main entry point without breaking launcher
          shortcuts. DO NOT change its android:name attribute. -->
@@ -77,14 +77,14 @@
         android:label="@string/app_name"
         android:targetActivity=".ui.activity.LauncherActivity">
       <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity-alias>
 
     <activity
         android:name=".ui.activity.ImageViewerActivity"
-        android:theme="@style/CatchUp.TransparentFullscreen" />
+        android:theme="@style/CatchUp.TransparentFullscreen"/>
 
     <meta-data
         android:name="preloaded_fonts"

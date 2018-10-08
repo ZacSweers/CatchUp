@@ -20,7 +20,8 @@ if (project.plugins.hasPlugin("kotlin")
     || project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")
     || project.plugins.hasPlugin("kotlin-android")
     || project.plugins.hasPlugin("kotlin-kapt")) {
-  if (project.plugins.hasPlugin("com.android.application") || project.plugins.hasPlugin("com.android.library")) {
+  if (project.plugins.hasPlugin("com.android.application")
+      || project.plugins.hasPlugin("com.android.library")) {
     project.android.sourceSets {
       main.java.srcDirs += 'src/main/kotlin'
       debug.java.srcDirs += 'src/debug/kotlin'

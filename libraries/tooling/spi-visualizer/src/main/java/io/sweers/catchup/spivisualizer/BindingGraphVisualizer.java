@@ -69,41 +69,37 @@ import static java.util.stream.Collectors.groupingBy;
 public final class BindingGraphVisualizer implements BindingGraphPlugin {
   private Filer filer;
 
-  @Override
-  public void initFiler(Filer filer) {
+  @Override public void initFiler(Filer filer) {
     this.filer = filer;
   }
 
   /** Graphviz color names to use for binding nodes within each component. */
-  private static final ImmutableList<String> COMPONENT_COLORS =
-      ImmutableList.of(
-          "/set312/1",
-          "/set312/2",
-          "/set312/3",
-          "/set312/4",
-          "/set312/5",
-          "/set312/6",
-          "/set312/7",
-          "/set312/8",
-          "/set312/9",
-          "/set312/10",
-          "/set312/11",
-          "/set312/12");
+  private static final ImmutableList<String> COMPONENT_COLORS = ImmutableList.of("/set312/1",
+      "/set312/2",
+      "/set312/3",
+      "/set312/4",
+      "/set312/5",
+      "/set312/6",
+      "/set312/7",
+      "/set312/8",
+      "/set312/9",
+      "/set312/10",
+      "/set312/11",
+      "/set312/12");
 
   @Override
   public void visitGraph(BindingGraph bindingGraph, DiagnosticReporter diagnosticReporter) {
-    TypeElement componentElement =
-        bindingGraph.rootComponentNode().componentPath().currentComponent();
+    TypeElement componentElement = bindingGraph.rootComponentNode()
+        .componentPath()
+        .currentComponent();
     DotGraph graph = new NodesGraph(bindingGraph).graph();
     ClassName componentName = ClassName.get(componentElement);
     try {
-      FileObject file =
-          filer
-              .createResource(
-                  StandardLocation.CLASS_OUTPUT,
-                  componentName.packageName(),
-                  Joiner.on('_').join(componentName.simpleNames()) + ".dot",
-                  componentElement);
+      FileObject file = filer.createResource(StandardLocation.CLASS_OUTPUT,
+          componentName.packageName(),
+          Joiner.on('_')
+              .join(componentName.simpleNames()) + ".dot",
+          componentElement);
       try (PrintWriter writer = new PrintWriter(file.openWriter())) {
         graph.write(0, writer);
       }
@@ -116,8 +112,7 @@ public final class BindingGraphVisualizer implements BindingGraphPlugin {
 
     abstract void write(int level, PrintWriter writer);
 
-    @CanIgnoreReturnValue
-    PrintWriter indent(int level, PrintWriter writer) {
+    @CanIgnoreReturnValue PrintWriter indent(int level, PrintWriter writer) {
       writer.print(Strings.repeat(" ", level * 2));
       return writer;
     }
@@ -131,14 +126,12 @@ public final class BindingGraphVisualizer implements BindingGraphPlugin {
       this.header = header;
     }
 
-    @CanIgnoreReturnValue
-    DotGraph add(Indented element) {
+    @CanIgnoreReturnValue DotGraph add(Indented element) {
       elements.add(element);
       return this;
     }
 
-    @Override
-    void write(int level, PrintWriter writer) {
+    @Override void write(int level, PrintWriter writer) {
       indent(level, writer);
       writer.println(header + " {");
       for (Indented element : elements) {
@@ -157,31 +150,26 @@ public final class BindingGraphVisualizer implements BindingGraphPlugin {
       this.base = base;
     }
 
-    @SuppressWarnings("unchecked")
-    @CanIgnoreReturnValue
-    S addAttribute(String name, Object value) {
+    @SuppressWarnings("unchecked") @CanIgnoreReturnValue S addAttribute(String name, Object value) {
       attributes.put(name, value);
       return (S) this;
     }
 
-    @CanIgnoreReturnValue
-    S addAttributeFormat(String name, String format, Object... args) {
+    @CanIgnoreReturnValue S addAttributeFormat(String name, String format, Object... args) {
       return addAttribute(name, String.format(format, args));
     }
 
-    @Override
-    void write(int level, PrintWriter writer) {
+    @Override void write(int level, PrintWriter writer) {
       indent(level, writer);
       writer.print(base);
       if (!attributes.isEmpty()) {
-        writer.print(
-            attributes
-                .entrySet()
-                .stream()
-                .map(
-                    entry ->
-                        String.format("%s=%s", entry.getKey(), quote(entry.getValue().toString())))
-                .collect(Collectors.joining(", ", " [", "]")));
+        writer.print(attributes.entrySet()
+            .stream()
+            .map(entry -> String.format("%s=%s",
+                entry.getKey(),
+                quote(entry.getValue()
+                    .toString())))
+            .collect(Collectors.joining(", ", " [", "]")));
       }
       writer.println();
     }
@@ -205,12 +193,9 @@ public final class BindingGraphVisualizer implements BindingGraphPlugin {
 
   static class NodesGraph {
     private final DotGraph graph =
-        new DotGraph("digraph")
-            .add(
-                new DotStatement<>("graph")
-                    .addAttribute("rankdir", "LR")
-                    .addAttribute("labeljust", "l")
-                    .addAttribute("compound", true));
+        new DotGraph("digraph").add(new DotStatement<>("graph").addAttribute("rankdir", "LR")
+            .addAttribute("labeljust", "l")
+            .addAttribute("compound", true));
 
     private final BindingGraph bindingGraph;
     private final Map<Node, UUID> nodeIds = new HashMap<>();
@@ -222,23 +207,19 @@ public final class BindingGraphVisualizer implements BindingGraphPlugin {
     DotGraph graph() {
       if (nodeIds.isEmpty()) {
         Iterator<String> colors = Iterators.cycle(COMPONENT_COLORS);
-        bindingGraph
-            .nodes()
+        bindingGraph.nodes()
             .stream()
             .collect(groupingBy(Node::componentPath))
-            .forEach(
-                (component, networkNodes) -> {
-                  DotGraph subgraph = subgraph(component);
-                  subgraph.add(
-                      new DotStatement<>("node")
-                          .addAttribute("style", "filled")
-                          .addAttribute("shape", "box")
-                          .addAttribute("fillcolor", colors.next()));
-                  subgraph.add(new DotStatement<>("graph").addAttribute("label", component));
-                  for (Node node : networkNodes) {
-                    subgraph.add(dotNode(node));
-                  }
-                });
+            .forEach((component, networkNodes) -> {
+              DotGraph subgraph = subgraph(component);
+              subgraph.add(new DotStatement<>("node").addAttribute("style", "filled")
+                  .addAttribute("shape", "box")
+                  .addAttribute("fillcolor", colors.next()));
+              subgraph.add(new DotStatement<>("graph").addAttribute("label", component));
+              for (Node node : networkNodes) {
+                subgraph.add(dotNode(node));
+              }
+            });
         for (Edge edge : bindingGraph.edges()) {
           dotEdge(edge).ifPresent(graph::add);
         }
@@ -265,12 +246,21 @@ public final class BindingGraphVisualizer implements BindingGraphPlugin {
         }
       } else if (edge instanceof ChildFactoryMethodEdge) {
         dotEdge.addAttribute("style", "dashed");
-        dotEdge.addAttribute("lhead", clusterName(incidentNodes.target().componentPath()));
-        dotEdge.addAttribute("ltail", clusterName(incidentNodes.source().componentPath()));
+        dotEdge.addAttribute(
+            "lhead",
+            clusterName(incidentNodes.target()
+                .componentPath()));
+        dotEdge.addAttribute(
+            "ltail",
+            clusterName(incidentNodes.source()
+                .componentPath()));
         dotEdge.addAttribute("taillabel", ((ChildFactoryMethodEdge) edge).factoryMethod());
       } else if (edge instanceof SubcomponentBuilderBindingEdge) {
         dotEdge.addAttribute("style", "dashed");
-        dotEdge.addAttribute("lhead", clusterName(incidentNodes.target().componentPath()));
+        dotEdge.addAttribute(
+            "lhead",
+            clusterName(incidentNodes.target()
+                .componentPath()));
         dotEdge.addAttribute("taillabel", "subcomponent");
       }
       return Optional.of(dotEdge);
@@ -280,7 +270,8 @@ public final class BindingGraphVisualizer implements BindingGraphPlugin {
       DotNode dotNode = new DotNode(nodeId(node));
       if (node instanceof BindingNode) {
         dagger.model.Binding binding = ((BindingNode) node).binding();
-        if (binding.kind().equals(BindingKind.MEMBERS_INJECTION)) {
+        if (binding.kind()
+            .equals(BindingKind.MEMBERS_INJECTION)) {
           dotNode.addAttributeFormat("label", "inject(%s)", binding.key());
         } else if (binding.isProduction()) {
           dotNode.addAttributeFormat("label", "@Produces %s", binding.key());
@@ -288,11 +279,13 @@ public final class BindingGraphVisualizer implements BindingGraphPlugin {
           dotNode.addAttribute("label", binding.key());
         }
         dotNode.addAttribute("tooltip", "");
-        if (bindingGraph.entryPointBindingNodes().contains(node)) {
+        if (bindingGraph.entryPointBindingNodes()
+            .contains(node)) {
           dotNode.addAttribute("penwidth", 3);
         }
       } else {
-        dotNode.addAttribute("style", "invis").addAttribute("shape", "point");
+        dotNode.addAttribute("style", "invis")
+            .addAttribute("shape", "point");
       }
       return dotNode;
     }

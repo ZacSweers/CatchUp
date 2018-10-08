@@ -94,7 +94,9 @@ class Document : MarkdownElement() {
   fun strikethrough(init: StrikeThrough.() -> Unit) = initTag(StrikeThrough(), init)
   fun code(init: Code.() -> Unit) = initTag(Code(), init)
   fun link(url: String, text: String) = children.add(LinkElement(url, text))
-  fun codeBlock(text: String, language: String = "") = children.add(CodeBlockElement(text, language))
+  fun codeBlock(text: String, language: String = "") = children.add(
+      CodeBlockElement(text, language))
+
   fun h1(init: H1.() -> Unit) = initTag(H1(), init)
   fun h2(init: H2.() -> Unit) = initTag(H2(), init)
   fun h3(init: H3.() -> Unit) = initTag(H3(), init)

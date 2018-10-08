@@ -109,7 +109,8 @@ class StorageBackedService(
       val useLatest = currentSessionId == -1L
       if (BuildConfig.DEBUG && useLatest && page != meta().firstPageKey) {
         // This shouldn't happen. If we have no session, we should be fetching the first page
-        w(IllegalStateException("Fetching first local ($page) but not first page! Received $page")) {
+        w(IllegalStateException(
+            "Fetching first local ($page) but not first page! Received $page")) {
           "invalid store state"
         }
       }

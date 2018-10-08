@@ -64,7 +64,8 @@ class ArrayMapJsonAdapter<K, V>(moshi: Moshi,
   }
 
   companion object {
-    @JvmField val FACTORY = Factory { type, annotations, moshi ->
+    @JvmField
+    val FACTORY = Factory { type, annotations, moshi ->
       if (annotations.isEmpty()) {
         val rawType = Types.getRawType(type)
         if (rawType == Map::class.java) {

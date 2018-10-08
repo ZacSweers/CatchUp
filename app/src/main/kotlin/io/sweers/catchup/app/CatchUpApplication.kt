@@ -47,15 +47,20 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
       }
     }
 
-    @JvmStatic lateinit var refWatcher: RefWatcher
+    @JvmStatic
+    lateinit var refWatcher: RefWatcher
 
     fun refWatcher() = refWatcher
   }
 
-  @Inject internal lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
-  @Inject internal lateinit var sharedPreferences: SharedPreferences
-  @Inject internal lateinit var lumberYard: LumberYard
-  @Inject internal lateinit var rxPreferences: RxSharedPreferences
+  @Inject
+  internal lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
+  @Inject
+  internal lateinit var sharedPreferences: SharedPreferences
+  @Inject
+  internal lateinit var lumberYard: LumberYard
+  @Inject
+  internal lateinit var rxPreferences: RxSharedPreferences
 
   open fun onPreInject() {
 

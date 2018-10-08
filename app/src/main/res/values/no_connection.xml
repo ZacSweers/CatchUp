@@ -16,8 +16,8 @@
   -->
 
 <resources>
-    <string name="connection_line_mask_hidden">M26,159 L26,159 L32,159 L32,159 Z</string>
-    <string name="connection_line_mask_shown">M26,67 L26,159 L32,159 L32,67 Z</string>
-    <string name="phone_button">M24,206.5 C24,206.5 27.6392462,206.449997 28,206.449997 C28.3607538,206.449997 32,206.5 32,206.5</string>
-    <string name="phone_button_frown">M23.6061137,207.020699 C23.6061137,207.020699 26.2397148,206 28.494994,206 C30.7502732,206 32.753258,207.020699 32.753258,207.020699</string>
+  <string name="connection_line_mask_hidden">M26,159 L26,159 L32,159 L32,159 Z</string>
+  <string name="connection_line_mask_shown">M26,67 L26,159 L32,159 L32,67 Z</string>
+  <string name="phone_button">M24,206.5 C24,206.5 27.6392462,206.449997 28,206.449997 C28.3607538,206.449997 32,206.5 32,206.5</string>
+  <string name="phone_button_frown">M23.6061137,207.020699 C23.6061137,207.020699 26.2397148,206 28.494994,206 C30.7502732,206 32.753258,207.020699 32.753258,207.020699</string>
 </resources>

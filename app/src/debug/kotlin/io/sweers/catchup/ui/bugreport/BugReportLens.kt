@@ -139,7 +139,8 @@ internal class BugReportLens @Inject constructor(private val activity: Activity,
 
   private fun uploadIssue(report: Report, body: StringBuilder, logs: File?) {
     val channelId = "bugreports"
-    val notificationManager = activity.getSystemService<NotificationManager>() ?: throw IllegalStateException("No notificationmanager?")
+    val notificationManager = activity.getSystemService<NotificationManager>()
+        ?: throw IllegalStateException("No notificationmanager?")
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
       val channels = notificationManager.notificationChannels
       if (channels.none { it.id == channelId }) {

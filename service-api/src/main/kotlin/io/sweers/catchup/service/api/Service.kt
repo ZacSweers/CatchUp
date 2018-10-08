@@ -23,5 +23,5 @@ interface Service {
   fun fetchPage(request: DataRequest): Maybe<DataResult>
   fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder)
   fun linkHandler(): LinkHandler
-  fun rootService() : Service = this
+  fun rootService(): Service = this
 }

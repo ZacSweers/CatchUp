@@ -132,7 +132,8 @@ internal class ImageAdapter(private val context: Context,
                 }
 
                 // get the image and check if it's an animated GIF
-                val gif: GifDrawable = when (val drawable = image.drawable ?: return@setOnTouchListener false) {
+                val gif: GifDrawable = when (val drawable = image.drawable
+                    ?: return@setOnTouchListener false) {
                   is GifDrawable -> drawable
                   is TransitionDrawable -> (0 until drawable.numberOfLayers).asSequence()
                       .map(drawable::getDrawable)

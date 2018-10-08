@@ -2,23 +2,23 @@ language: android
 
 env:
   matrix:
-    - MODULE=placeholder ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
-    - MODULE=placeholder ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
+  - MODULE=placeholder ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
+  - MODULE=placeholder ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
   global:
-    - ADB_INSTALL_TIMEOUT=8
+  - ADB_INSTALL_TIMEOUT=8
 
 android:
   components:
-    - tools                             # Tools
-    - platform-tools                    # Platform tools
-    - build-tools-23.0.2                # Build tools version
-    - android-23                        # Target SDK version
-    - extra-android-support             # Support repo
-    - extra-android-m2repository        # Support repo... 2?
-    - sys-img-armeabi-v7a-android-14    # Emulator
+  - tools                             # Tools
+  - platform-tools                    # Platform tools
+  - build-tools-23.0.2                # Build tools version
+  - android-23                        # Target SDK version
+  - extra-android-support             # Support repo
+  - extra-android-m2repository        # Support repo... 2?
+  - sys-img-armeabi-v7a-android-14    # Emulator
 
 jdk:
-  - oraclejdk8
+- oraclejdk8
 
 ### Emulator
 #before_script:
@@ -38,7 +38,7 @@ script:
 
 branches:
   except:
-    - gh-pages
+  - gh-pages
 
 notifications:
   email: false
@@ -47,4 +47,4 @@ sudo: false
 
 cache:
   directories:
-    - $HOME/.gradle
+  - $HOME/.gradle

@@ -23,7 +23,8 @@ import io.sweers.catchup.service.api.ImageInfo
 data class ImageItem(
     private val delegate: CatchUpItem
 ) : DisplayableItem {
-  @Transient var hasFadedIn: Boolean = false
+  @Transient
+  var hasFadedIn: Boolean = false
   val imageInfo: ImageInfo = delegate.imageInfo!!
 
   override fun stableId() = delegate.stableId()

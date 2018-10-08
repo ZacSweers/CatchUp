@@ -26,7 +26,7 @@
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
   <!-- For Flipper -->
-  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
   <application
       android:name=".app.DebugCatchUpApplication">

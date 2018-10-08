@@ -16,21 +16,21 @@
   -->
 
 <resources>
-    <declare-styleable name="BadgedImageView">
-        <attr name="badgeGravity">
-            <!-- Push object to the top of its container, not changing its size. -->
-            <flag name="top" value="0x30" />
-            <!-- Push object to the bottom of its container, not changing its size. -->
-            <flag name="bottom" value="0x50" />
-            <!-- Push object to the left of its container, not changing its size. -->
-            <flag name="left" value="0x03" />
-            <!-- Push object to the right of its container, not changing its size. -->
-            <flag name="right" value="0x05" />
-            <!-- Push object to the beginning of its container, not changing its size. -->
-            <flag name="start" value="0x00800003" />
-            <!-- Push object to the end of its container, not changing its size. -->
-            <flag name="end" value="0x00800005" />
-        </attr>
-        <attr name="badgePadding" format="dimension|reference"/>
-    </declare-styleable>
+  <declare-styleable name="BadgedImageView">
+    <attr name="badgeGravity">
+      <!-- Push object to the top of its container, not changing its size. -->
+      <flag name="top" value="0x30"/>
+      <!-- Push object to the bottom of its container, not changing its size. -->
+      <flag name="bottom" value="0x50"/>
+      <!-- Push object to the left of its container, not changing its size. -->
+      <flag name="left" value="0x03"/>
+      <!-- Push object to the right of its container, not changing its size. -->
+      <flag name="right" value="0x05"/>
+      <!-- Push object to the beginning of its container, not changing its size. -->
+      <flag name="start" value="0x00800003"/>
+      <!-- Push object to the end of its container, not changing its size. -->
+      <flag name="end" value="0x00800005"/>
+    </attr>
+    <attr name="badgePadding" format="dimension|reference"/>
+  </declare-styleable>
 </resources>

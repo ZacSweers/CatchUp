@@ -16,5 +16,6 @@
   -->
 
 <resources>
+
   <style name="DebugDrawer" parent="Theme.AppCompat"/>
 </resources>

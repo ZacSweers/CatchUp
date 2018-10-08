@@ -55,7 +55,8 @@ internal class NetworkDelayAdapter(context: Context) : BindableAdapter<Long>(con
     private val VALUES = longArrayOf(250, 500, 1000, 2000, 3000, 5000)
 
     fun getPositionForValue(value: Long): Int {
-      return VALUES.indices.firstOrNull { VALUES[it] == value } ?: 3 // Default to 2000 if something changes.
+      return VALUES.indices.firstOrNull { VALUES[it] == value }
+          ?: 3 // Default to 2000 if something changes.
     }
   }
 }

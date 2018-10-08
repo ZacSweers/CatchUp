@@ -48,7 +48,8 @@ fun Int.roundUpToNearest(multiple: Int): Int {
 }
 
 object build {
-  val standardFreeKotlinCompilerArgs = listOf("-Xjsr305=strict", "-progressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions")
+  val standardFreeKotlinCompilerArgs = listOf("-Xjsr305=strict", "-progressive",
+      "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions")
 }
 
 object deps {

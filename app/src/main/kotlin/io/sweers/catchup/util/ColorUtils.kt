@@ -27,6 +27,7 @@ import androidx.annotation.IntRange
 import androidx.core.graphics.ColorUtils.colorToHSL
 import androidx.palette.graphics.Palette
 import io.sweers.catchup.util.ColorUtils.Lightness
+import io.sweers.catchup.util.ColorUtils.isDark
 import kotlin.annotation.AnnotationRetention.SOURCE
 
 /**
@@ -38,8 +39,7 @@ import kotlin.annotation.AnnotationRetention.SOURCE
 @Lightness
 fun Palette.isDark(): Int {
   val mostPopulous = getMostPopulousSwatch() ?: return ColorUtils.LIGHTNESS_UNKNOWN
-  return if (ColorUtils.isDark(
-      mostPopulous.hsl)) ColorUtils.IS_DARK else ColorUtils.IS_LIGHT
+  return if (isDark(mostPopulous.hsl)) ColorUtils.IS_DARK else ColorUtils.IS_LIGHT
 }
 
 fun Palette.getMostPopulousSwatch(): Palette.Swatch? {

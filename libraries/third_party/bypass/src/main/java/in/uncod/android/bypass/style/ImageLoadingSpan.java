@@ -24,8 +24,7 @@ import android.text.style.CharacterStyle;
  * downloaded. See {@link in.uncod.android.bypass.Bypass.LoadImageCallback}
  */
 public class ImageLoadingSpan extends CharacterStyle {
-    @Override
-    public void updateDrawState(TextPaint textPaint) {
-        // no-op
-    }
+  @Override public void updateDrawState(TextPaint textPaint) {
+    // no-op
+  }
 }

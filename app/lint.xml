@@ -16,7 +16,7 @@
   -->
 
 <lint>
-    <issue id="NewApi">
-        <ignore path="build"/>
-    </issue>
+  <issue id="NewApi">
+    <ignore path="build"/>
+  </issue>
 </lint>

@@ -17,47 +17,47 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <Preference
-    android:defaultValue="2000"
-    android:key="debug_network_delay"
-    />
+      android:defaultValue="2000"
+      android:key="debug_network_delay"
+      />
   <Preference
-    android:defaultValue="3"
-    android:key="debug_network_failure_percent"
-    />
+      android:defaultValue="3"
+      android:key="debug_network_failure_percent"
+      />
   <Preference
-    android:defaultValue="40"
-    android:key="debug_network_variance_percent"
-    />
+      android:defaultValue="40"
+      android:key="debug_network_variance_percent"
+      />
   <Preference
-    android:defaultValue="true"
-    android:key="debug_capture_intents"
-    />
+      android:defaultValue="true"
+      android:key="debug_capture_intents"
+      />
   <Preference
-    android:defaultValue="1"
-    android:key="debug_animation_speed"
-    />
+      android:defaultValue="1"
+      android:key="debug_animation_speed"
+      />
   <Preference
-    android:defaultValue="false"
-    android:key="debug_pixel_grid_enabled"
-    />
+      android:defaultValue="false"
+      android:key="debug_pixel_grid_enabled"
+      />
   <Preference
-    android:defaultValue="false"
-    android:key="debug_pixel_ratio_enabled"
-    />
+      android:defaultValue="false"
+      android:key="debug_pixel_ratio_enabled"
+      />
   <Preference
-    android:defaultValue="false"
-    android:key="debug_seen_debug_drawer"
-    />
+      android:defaultValue="false"
+      android:key="debug_seen_debug_drawer"
+      />
   <Preference
-    android:defaultValue="false"
-    android:key="debug_scalpel_enabled"
-    />
+      android:defaultValue="false"
+      android:key="debug_scalpel_enabled"
+      />
   <Preference
-    android:defaultValue="false"
-    android:key="debug_scalpel_wireframe_drawer"
-    />
+      android:defaultValue="false"
+      android:key="debug_scalpel_wireframe_drawer"
+      />
   <Preference
-    android:defaultValue="false"
-    android:key="debug_mock_mode_enabled"
-    />
+      android:defaultValue="false"
+      android:key="debug_mock_mode_enabled"
+      />
 </PreferenceScreen>

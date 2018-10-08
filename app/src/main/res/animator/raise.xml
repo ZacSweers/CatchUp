@@ -17,17 +17,17 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
   <item
-    android:state_enabled="true"
-    android:state_pressed="true">
+      android:state_enabled="true"
+      android:state_pressed="true">
     <objectAnimator
-      android:duration="@android:integer/config_shortAnimTime"
-      android:propertyName="translationZ"
-      android:valueTo="@dimen/touch_raise" />
+        android:duration="@android:integer/config_shortAnimTime"
+        android:propertyName="translationZ"
+        android:valueTo="@dimen/touch_raise"/>
   </item>
   <item>
     <objectAnimator
-      android:duration="@android:integer/config_shortAnimTime"
-      android:propertyName="translationZ"
-      android:valueTo="0dp" />
+        android:duration="@android:integer/config_shortAnimTime"
+        android:propertyName="translationZ"
+        android:valueTo="0dp"/>
   </item>
 </selector>

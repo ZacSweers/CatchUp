@@ -23,7 +23,7 @@ class EmojiMarkdownConverterTest {
 
   val replaced = "replaced"
   val emoji = ":emoji:"
-  val converter = object: EmojiMarkdownConverter {
+  val converter = object : EmojiMarkdownConverter {
     override fun convert(alias: String) = if (alias == ":emoji:") replaced else null
   }
 

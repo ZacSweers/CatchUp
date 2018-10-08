@@ -27,41 +27,39 @@ import androidx.annotation.ColorInt;
  */
 public class FancyQuoteSpan implements LeadingMarginSpan {
 
-    private final int lineColor;
-    private final int lineWidth;
-    private final int gapWidth;
+  private final int lineColor;
+  private final int lineWidth;
+  private final int gapWidth;
 
-    public FancyQuoteSpan(int quoteLineWidth,
-                          int quoteLineIndent,
-                          @ColorInt int quoteLineColor) {
-        super();
-        lineWidth = quoteLineWidth;
-        gapWidth = quoteLineIndent;
-        lineColor = quoteLineColor;
-    }
+  public FancyQuoteSpan(int quoteLineWidth, int quoteLineIndent, @ColorInt int quoteLineColor) {
+    super();
+    lineWidth = quoteLineWidth;
+    gapWidth = quoteLineIndent;
+    lineColor = quoteLineColor;
+  }
 
-    public int getLeadingMargin(boolean first) {
-        return lineWidth + gapWidth;
-    }
+  public int getLeadingMargin(boolean first) {
+    return lineWidth + gapWidth;
+  }
 
-    public void drawLeadingMargin(Canvas c,
-                                  Paint p,
-                                  int x,
-                                  int dir,
-                                  int top,
-                                  int baseline,
-                                  int bottom,
-                                  CharSequence text,
-                                  int start,
-                                  int end,
-                                  boolean first,
-                                  Layout layout) {
-        Paint.Style prevStyle = p.getStyle();
-        int prevColor = p.getColor();
-        p.setStyle(Paint.Style.FILL);
-        p.setColor(lineColor);
-        c.drawRect(x, top, x + dir * lineWidth, bottom, p);
-        p.setStyle(prevStyle);
-        p.setColor(prevColor);
-    }
+  public void drawLeadingMargin(Canvas c,
+      Paint p,
+      int x,
+      int dir,
+      int top,
+      int baseline,
+      int bottom,
+      CharSequence text,
+      int start,
+      int end,
+      boolean first,
+      Layout layout) {
+    Paint.Style prevStyle = p.getStyle();
+    int prevColor = p.getColor();
+    p.setStyle(Paint.Style.FILL);
+    p.setColor(lineColor);
+    c.drawRect(x, top, x + dir * lineWidth, bottom, p);
+    p.setStyle(prevStyle);
+    p.setColor(prevColor);
+  }
 }

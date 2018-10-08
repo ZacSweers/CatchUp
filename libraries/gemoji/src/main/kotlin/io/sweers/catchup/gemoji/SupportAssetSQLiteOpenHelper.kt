@@ -16,6 +16,7 @@
 
 // Need package to access FrameworkSQLiteDatabase
 @file:Suppress("PackageDirectoryMismatch")
+
 package androidx.sqlite.db.framework
 
 import android.content.Context
@@ -35,7 +36,7 @@ import io.sweers.catchup.gemoji.AssetSQLiteOpenHelper
  * ```
  */
 internal class SupportAssetSQLiteOpenHelper(context: Context, name: String, version: Int,
-    callback: SupportSQLiteOpenHelper.Callback): SupportSQLiteOpenHelper {
+    callback: SupportSQLiteOpenHelper.Callback) : SupportSQLiteOpenHelper {
 
   private val wrapper = SQLiteOpenHelperWrapper(context, name, version, callback)
 
@@ -65,7 +66,7 @@ internal class SupportAssetSQLiteOpenHelper(context: Context, name: String, vers
  * [FrameworkSQLiteDatabase].
  */
 private class SQLiteOpenHelperWrapper(context: Context, name: String, version: Int,
-    private val callback: SupportSQLiteOpenHelper.Callback):
+    private val callback: SupportSQLiteOpenHelper.Callback) :
     AssetSQLiteOpenHelper(context, name, version) {
 
   private var wrappedDb: FrameworkSQLiteDatabase? = null
@@ -96,12 +97,14 @@ private class SQLiteOpenHelperWrapper(context: Context, name: String, version: I
     callback.onOpen(wrap(sqLiteDatabase))
   }
 
-  @Synchronized override fun close() {
+  @Synchronized
+  override fun close() {
     super.close()
     wrappedDb = null
   }
 
-  @Synchronized private fun wrap(sqLiteDatabase: SQLiteDatabase): FrameworkSQLiteDatabase {
+  @Synchronized
+  private fun wrap(sqLiteDatabase: SQLiteDatabase): FrameworkSQLiteDatabase {
     if (wrappedDb == null) {
       wrappedDb = FrameworkSQLiteDatabase(sqLiteDatabase)
     }

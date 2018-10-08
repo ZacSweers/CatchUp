@@ -16,27 +16,27 @@
   -->
 
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-     android:ordering="together"
-  >
+    android:ordering="together"
+    >
 
   <objectAnimator
-    android:duration="@android:integer/config_shortAnimTime"
-    android:interpolator="@android:interpolator/linear_out_slow_in"
-    android:propertyName="scaleX"
-    android:repeatMode="reverse"
-    android:startOffset="500"
-    android:valueFrom="0"
-    android:valueTo="1"
-    />
+      android:duration="@android:integer/config_shortAnimTime"
+      android:interpolator="@android:interpolator/linear_out_slow_in"
+      android:propertyName="scaleX"
+      android:repeatMode="reverse"
+      android:startOffset="500"
+      android:valueFrom="0"
+      android:valueTo="1"
+      />
 
   <objectAnimator
-    android:duration="@android:integer/config_shortAnimTime"
-    android:interpolator="@android:interpolator/linear_out_slow_in"
-    android:propertyName="scaleY"
-    android:repeatMode="reverse"
-    android:startOffset="500"
-    android:valueFrom="0"
-    android:valueTo="1"
-    />
+      android:duration="@android:integer/config_shortAnimTime"
+      android:interpolator="@android:interpolator/linear_out_slow_in"
+      android:propertyName="scaleY"
+      android:repeatMode="reverse"
+      android:startOffset="500"
+      android:valueFrom="0"
+      android:valueTo="1"
+      />
 
 </set>

@@ -15,12 +15,12 @@
   -->
 
 <manifest
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  package="io.sweers.catchup"
-  >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.sweers.catchup"
+    >
 
   <application
-    android:name=".app.ReleaseCatchUpApplication"
-    />
+      android:name=".app.ReleaseCatchUpApplication"
+      />
 
 </manifest>

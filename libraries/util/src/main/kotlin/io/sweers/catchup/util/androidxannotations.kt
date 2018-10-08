@@ -18,6 +18,7 @@ package android.support.annotation
 
 // TODO Jetifier bug. Remove these when not necessary anymore
 annotation class VisibleForTesting // Here because GlideGenerator looks for it during APT
+
 annotation class NonNull
 annotation class Nullable
 annotation class UiThread

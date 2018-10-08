@@ -27,29 +27,26 @@ import android.text.style.URLSpan;
  */
 public class TouchableUrlSpan extends URLSpan {
 
-    private static int[] STATE_PRESSED = new int[]{android.R.attr.state_pressed};
-    private boolean isPressed;
-    private int normalTextColor;
-    private int pressedTextColor;
-    private int pressedBackgroundColor;
+  private static int[] STATE_PRESSED = new int[] { android.R.attr.state_pressed };
+  private boolean isPressed;
+  private int normalTextColor;
+  private int pressedTextColor;
+  private int pressedBackgroundColor;
 
-    public TouchableUrlSpan(String url,
-                            ColorStateList textColor,
-                            int pressedBackgroundColor) {
-        super(url);
-        this.normalTextColor = textColor.getDefaultColor();
-        this.pressedTextColor = textColor.getColorForState(STATE_PRESSED, normalTextColor);
-        this.pressedBackgroundColor = pressedBackgroundColor;
-    }
+  public TouchableUrlSpan(String url, ColorStateList textColor, int pressedBackgroundColor) {
+    super(url);
+    this.normalTextColor = textColor.getDefaultColor();
+    this.pressedTextColor = textColor.getColorForState(STATE_PRESSED, normalTextColor);
+    this.pressedBackgroundColor = pressedBackgroundColor;
+  }
 
-    public void setPressed(boolean isPressed) {
-        this.isPressed = isPressed;
-    }
+  public void setPressed(boolean isPressed) {
+    this.isPressed = isPressed;
+  }
 
-    @Override
-    public void updateDrawState(TextPaint drawState) {
-        drawState.setColor(isPressed ? pressedTextColor : normalTextColor);
-        drawState.bgColor = isPressed ? pressedBackgroundColor : 0;
-        drawState.setUnderlineText(!isPressed);
-    }
+  @Override public void updateDrawState(TextPaint drawState) {
+    drawState.setColor(isPressed ? pressedTextColor : normalTextColor);
+    drawState.bgColor = isPressed ? pressedBackgroundColor : 0;
+    drawState.setUnderlineText(!isPressed);
+  }
 }

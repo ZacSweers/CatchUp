@@ -50,7 +50,8 @@ internal abstract class AssetSQLiteOpenHelper(private val context: Context,
       field = value
     }
 
-  @Synchronized override fun getWritableDatabase(): SQLiteDatabase {
+  @Synchronized
+  override fun getWritableDatabase(): SQLiteDatabase {
     database?.let {
       if (it.isOpen && !it.isReadOnly) {
         return@getWritableDatabase it
@@ -81,7 +82,8 @@ internal abstract class AssetSQLiteOpenHelper(private val context: Context,
     }
   }
 
-  @Synchronized override fun getReadableDatabase(): SQLiteDatabase {
+  @Synchronized
+  override fun getReadableDatabase(): SQLiteDatabase {
     database?.let {
       if (it.isOpen) {
         return@getReadableDatabase it
@@ -98,7 +100,8 @@ internal abstract class AssetSQLiteOpenHelper(private val context: Context,
     }
   }
 
-  @Synchronized override fun close() {
+  @Synchronized
+  override fun close() {
     database = null
   }
 

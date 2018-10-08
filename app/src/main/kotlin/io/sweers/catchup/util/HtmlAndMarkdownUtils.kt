@@ -133,7 +133,8 @@ private fun CharSequence.linkifyPlainLinks(
     alternateUrlSpan
         ?.invoke(urlSpan.url)
         ?.forEach { setSpan(ssb, urlSpan, plainLinks, it) }
-        ?: setSpan(ssb, urlSpan, plainLinks, TouchableUrlSpan(urlSpan.url, linkTextColor, linkHighlightColor))
+        ?: setSpan(ssb, urlSpan, plainLinks,
+            TouchableUrlSpan(urlSpan.url, linkTextColor, linkHighlightColor))
   }
 
   return ssb
