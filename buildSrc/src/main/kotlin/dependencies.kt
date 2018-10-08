@@ -47,6 +47,10 @@ fun Int.roundUpToNearest(multiple: Int): Int {
   return if (this >= 0) (this + multiple - 1) / multiple * multiple else this / multiple * multiple
 }
 
+object build {
+  val standardFreeKotlinCompilerArgs = listOf("-Xjsr305=strict", "-progressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions")
+}
+
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
