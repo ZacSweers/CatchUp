@@ -29,7 +29,7 @@ apply {
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     jvmTarget = "1.8"
-    freeCompilerArgs = listOf("-Xjsr305=strict", "-Xprogressive")
+    freeCompilerArgs = listOf("-Xjsr305=strict", "-progressive")
   }
 }
 

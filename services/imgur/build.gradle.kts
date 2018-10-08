@@ -59,7 +59,7 @@ android {
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {
-    freeCompilerArgs = listOf("-Xjsr305=strict", "-Xprogressive")
+    freeCompilerArgs = listOf("-Xjsr305=strict", "-progressive")
   }
 }
 
