@@ -232,7 +232,6 @@ class ServiceFragment : InjectingBaseFragment(),
                   inputTitle = item.title,
                   info = info
               )
-              val fm = childFragmentManager
               smmryPage.pullToCollapseInterceptor = { _, _, upwardPull ->
                 val directionInt = if (upwardPull) +1 else -1
                 val canScrollFurther = smmryFragment.canScrollVertically(directionInt)
@@ -246,7 +245,7 @@ class ServiceFragment : InjectingBaseFragment(),
                 }
 
                 override fun onPageCollapsed() {
-                  fm.transaction {
+                  childFragmentManager.transaction(now = true, allowStateLoss = true) {
                     remove(smmryFragment)
                   }
                   smmryPage.removeStateChangeCallbacks(this)
@@ -255,7 +254,7 @@ class ServiceFragment : InjectingBaseFragment(),
                 override fun onPageExpanded() {
                 }
               })
-              fm.transaction(now = true, allowStateLoss = true) {
+              childFragmentManager.transaction(now = true, allowStateLoss = true) {
                 add(smmryPage.id, smmryFragment)
               }
               true
