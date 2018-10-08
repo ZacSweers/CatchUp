@@ -31,8 +31,8 @@ android {
     targetSdkVersion(deps.android.build.targetSdkVersion)
   }
   compileOptions {
-    setSourceCompatibility(JavaVersion.VERSION_1_8)
-    setTargetCompatibility(JavaVersion.VERSION_1_8)
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
   }
   sourceSets {
     findByName("main")?.java?.srcDirs("src/main/kotlin")
