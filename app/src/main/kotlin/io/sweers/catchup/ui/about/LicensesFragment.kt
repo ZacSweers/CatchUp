@@ -310,8 +310,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-      val item = items[position]
-      when (item) {
+      when (val item = items[position]) {
         is OssItemHeader -> (holder as HeaderHolder).run {
           GlideApp.with(itemView)
               .load(item.avatarUrl)

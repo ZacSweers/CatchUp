@@ -78,7 +78,7 @@ internal class CatchUpConverters {
     return if (listString.isNullOrBlank()) {
       emptyList()
     } else {
-      listString?.let { it.split(",").asSequence().toList().map { it.toLong() } }
+      listString.split(",").asSequence().toList().map { it.toLong() }
     }
   }
 
