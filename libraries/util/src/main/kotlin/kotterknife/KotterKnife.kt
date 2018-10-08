@@ -28,7 +28,7 @@ import kotlin.reflect.KProperty
 
 /*
  * The age-old kotterknife impl with some adjustments
- * - ViewBindable interface for custom things that can look up views, like viewholder classes or controllers
+ * - ViewBindable interface for custom things that can look up views, like viewholder classes
  *   - Basically lets you do like ButterKnife.bind(target, source)
  * - onClick helpers
  * - Allow for Any return type to account for interfaces, matching ButterKnife's support
@@ -56,6 +56,13 @@ abstract class ViewDelegateBindable(source: View) : ViewBindable {
 fun <V : Any> ViewBindable.bindView(id: Int,
     onBound: ((V) -> Unit)? = null)
     : ReadOnlyProperty<ViewBindable, V> = required(id, viewFinder, onBound)
+
+fun <V : Any> Fragment.onClick(id: Int, body: (V) -> Unit) {
+  (viewFinder(id))?.setOnClickListener {
+    @Suppress("UNCHECKED_CAST")
+    body(it as V)
+  } ?: viewNotFound(id)
+}
 
 fun <V : Any> ViewBindable.onClick(id: Int, body: (V) -> Unit) {
   (viewFinder(id) as? View)?.setOnClickListener {

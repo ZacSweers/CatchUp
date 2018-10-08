@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers
+package io.sweers.catchup.ui.fragments
 
 import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
@@ -38,31 +37,25 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import androidx.viewpager.widget.ViewPager
-import com.bluelinelabs.conductor.Controller
-import com.bluelinelabs.conductor.Router
-import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.uber.autodispose.autoDisposable
 import dagger.Provides
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
-import io.sweers.catchup.injection.ConductorInjection
-import io.sweers.catchup.injection.scopes.PerController
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
-import io.sweers.catchup.ui.base.BaseController
-import io.sweers.catchup.ui.controllers.service.ServiceController
+import io.sweers.catchup.ui.base.InjectingBaseFragment
+import io.sweers.catchup.ui.fragments.service.ServiceFragment
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
@@ -70,25 +63,24 @@ import io.sweers.catchup.util.rx.PredicateConsumer
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNavBarColor
 import kotterknife.bindView
+import java.util.WeakHashMap
 import javax.inject.Inject
 
 fun ServiceMeta.toServiceHandler() = ServiceHandler(
     name,
     icon,
     themeColor
-) { ServiceController.newInstance(id) }
+) { ServiceFragment.newInstance(id) }
 
 data class ServiceHandler(@StringRes val name: Int,
     @DrawableRes val icon: Int,
     @ColorRes val accent: Int,
-    val instantiator: () -> Controller)
+    val instantiator: () -> Fragment)
 
-class PagerController : BaseController {
+class PagerFragment : InjectingBaseFragment() {
 
   companion object {
-
     private const val SETTINGS_ACTIVITY_REQUEST = 100
-    private const val PAGE_TAG = "PagerController.pageTag"
   }
 
   @Inject
@@ -98,15 +90,11 @@ class PagerController : BaseController {
   @Inject
   lateinit var changelogHelper: ChangelogHelper
 
-  private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_controller_root)
+  private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_fragment_root)
   private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
   private val viewPager by bindView<ViewPager>(R.id.view_pager)
   private val toolbar by bindView<Toolbar>(R.id.toolbar)
   private val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
-
-  // Not injectable because I don't know how to get a @BindsInstance into dagger's AndroidInjector
-  // and this needs a controller to be instantiated
-  private lateinit var pagerAdapter: RouterPagerAdapter
 
   private val argbEvaluator = ArgbEvaluator()
   private var statusBarColorAnimator: ValueAnimator? = null
@@ -114,21 +102,33 @@ class PagerController : BaseController {
   private var tabLayoutIsPinned = false
   private var canAnimateColor = true
   private var lastPosition = 0
+  private lateinit var pagerAdapter: FragmentStatePagerAdapter
 
-  constructor() : super()
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior?.let { behavior ->
+      outState.run {
+        putParcelable("collapsingToolbarState",
+            behavior.onSaveInstanceState(rootLayout, appBarLayout))
+        putParcelable("servicesPager", viewPager.onSaveInstanceState())
+      }
+    }
+  }
 
-  @Suppress("unused")
-  constructor(args: Bundle) : super(args)
+  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
+      savedInstanceState: Bundle?): View {
+    return inflater.inflate(R.layout.fragment_pager, container, false)
+  }
 
-  override fun onContextAvailable(context: Context) {
-    ConductorInjection.inject(this)
-    super.onContextAvailable(context)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
 
-    pagerAdapter = object : RouterPagerAdapter(this) {
-      override fun configureRouter(router: Router, position: Int) {
-        if (!router.hasRootController()) {
-          router.setRoot(RouterTransaction.with(serviceHandlers[position].instantiator())
-              .tag("$PAGE_TAG.${serviceHandlers[position].name}"))
+    pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager) {
+      private val cache = WeakHashMap<Int, Fragment>()
+
+      override fun getItem(position: Int): Fragment {
+        return cache.getOrPut(position) {
+          serviceHandlers[position].instantiator()
         }
       }
 
@@ -136,33 +136,7 @@ class PagerController : BaseController {
 
       override fun getPageTitle(position: Int) = ""
     }
-  }
 
-  override fun onSaveViewState(view: View, outState: Bundle) {
-    // Save the appbarlayout state to restore it on the other side
-    (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior?.let { behavior ->
-      outState.run {
-        putParcelable("collapsingToolbarState",
-            behavior.onSaveInstanceState(rootLayout, appBarLayout))
-      }
-    }
-    super.onSaveViewState(view, outState)
-  }
-
-  override fun onRestoreViewState(view: View, savedViewState: Bundle) {
-    super.onRestoreViewState(view, savedViewState)
-    with(savedViewState) {
-      getParcelable<Parcelable>("collapsingToolbarState")?.let {
-        (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior
-            ?.onRestoreInstanceState(rootLayout, appBarLayout, it)
-      }
-    }
-  }
-
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup): View =
-      inflater.inflate(R.layout.controller_pager, container, false)
-
-  override fun onViewBound(view: View) {
     @ColorInt val colorPrimaryDark = view.context.resolveAttributeColor(R.attr.colorPrimaryDark)
     val isInNightMode = view.context.isInNightMode()
     if (!isInNightMode) {
@@ -172,19 +146,17 @@ class PagerController : BaseController {
     RxAppBarLayout.offsetChanges(appBarLayout)
         .distinctUntilChanged()
         .doOnNext(object : PredicateConsumer<Int>() {
-          @Throws(Exception::class)
           override fun test(verticalOffset: Int) = verticalOffset == -toolbar.height
 
-          @Throws(Exception::class)
           override fun acceptActual(value: Int) {
             statusBarColorAnimator?.cancel()
             tabLayoutIsPinned = true
-            val newStatusColor = this@PagerController.getAndSaveColor(
+            val newStatusColor = this@PagerFragment.getAndSaveColor(
                 tabLayout.selectedTabPosition)
             statusBarColorAnimator = ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor)
                 .apply {
                   addUpdateListener { animation ->
-                    this@PagerController.activity!!
+                    this@PagerFragment.activity!!
                         .window.statusBarColor = animation.animatedValue as Int
                   }
                   duration = 200
@@ -201,11 +173,11 @@ class PagerController : BaseController {
             tabLayoutIsPinned = false
             if (wasPinned) {
               statusBarColorAnimator?.cancel()
-              statusBarColorAnimator = ValueAnimator.ofArgb(this@PagerController.activity!!
+              statusBarColorAnimator = ValueAnimator.ofArgb(this@PagerFragment.activity!!
                   .window
                   .statusBarColor, colorPrimaryDark).apply {
                 addUpdateListener { animation ->
-                  this@PagerController.activity!!
+                  this@PagerFragment.activity!!
                       .window.statusBarColor = animation.animatedValue as Int
                 }
                 duration = 200
@@ -236,7 +208,7 @@ class PagerController : BaseController {
     }
 
     // Initial title
-    toolbar.title = resources!!.getString(serviceHandlers[0].name)
+    toolbar.title = resources.getString(serviceHandlers[0].name)
 
     // Set the initial color
     @ColorInt val initialColor = getAndSaveColor(0)
@@ -249,7 +221,7 @@ class PagerController : BaseController {
 
     // Set icons
     serviceHandlers.forEachIndexed { index, serviceHandler ->
-      tabLayout.getTabAt(index)?.icon = VectorDrawableCompat.create(resources!!,
+      tabLayout.getTabAt(index)?.icon = VectorDrawableCompat.create(resources,
           serviceHandler.icon,
           null)
     }
@@ -329,8 +301,7 @@ class PagerController : BaseController {
       override fun onTabUnselected(tab: TabLayout.Tab) {}
 
       override fun onTabReselected(tab: TabLayout.Tab) {
-        val controllerTag = "$PAGE_TAG.${serviceHandlers[tab.position].name}"
-        pagerAdapter.getRouter(tab.position)?.getControllerWithTag(controllerTag)?.let {
+        pagerAdapter.getItem(tab.position)?.let {
           if (it is Scrollable) {
             it.onRequestScrollToTop()
             appBarLayout.setExpanded(true, true)
@@ -338,6 +309,14 @@ class PagerController : BaseController {
         }
       }
     })
+
+    savedInstanceState?.run {
+      getParcelable<Parcelable>("collapsingToolbarState")?.let {
+        (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior
+            ?.onRestoreInstanceState(rootLayout, appBarLayout, it)
+      }
+      getParcelable<Parcelable>("servicesPager")?.let(viewPager::onRestoreInstanceState)
+    }
   }
 
   @ColorInt
@@ -358,9 +337,6 @@ class PagerController : BaseController {
         data.extras?.let { extras ->
           if (extras.getBoolean(SettingsActivity.NIGHT_MODE_UPDATED, false)
               || extras.getBoolean(SettingsActivity.SERVICE_ORDER_UPDATED, false)) {
-            for (i in 0 until tabLayout.tabCount) {
-              pagerAdapter.getRouter(i)?.setBackstack(emptyList(), null)
-            }
             activity?.recreate()
           }
           if (extras.getBoolean(SettingsActivity.NAV_COLOR_UPDATED, false)) {
@@ -371,14 +347,6 @@ class PagerController : BaseController {
         }
       }
     }
-  }
-
-  @PerController
-  @Subcomponent(modules = [Module::class])
-  interface Component : AndroidInjector<PagerController> {
-
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<PagerController>()
   }
 
   @dagger.Module

@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.injection
+package io.sweers.catchup.ui.base
 
-import com.bluelinelabs.conductor.Controller
-import dagger.MapKey
-import kotlin.reflect.KClass
+import androidx.fragment.app.Fragment
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
+import javax.inject.Inject
 
-/** [MapKey] annotation to key bindings by a type of a [Controller].  */
-@MapKey
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER)
-annotation class ControllerKey(val value: KClass<out Controller>)
+abstract class InjectingBaseActivity : InjectableBaseActivity(), HasSupportFragmentInjector {
+
+  @Inject
+  protected lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
+
+  final override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
+
+}

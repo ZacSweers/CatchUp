@@ -21,7 +21,6 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import io.sweers.catchup.data.DataModule
-import io.sweers.catchup.injection.ConductorInjectionModule
 import io.sweers.catchup.ui.activity.ActivityBindingModule
 import javax.inject.Singleton
 
@@ -30,7 +29,6 @@ import javax.inject.Singleton
   ActivityBindingModule::class,
   AndroidInjectionModule::class,
   ApplicationModule::class,
-  ConductorInjectionModule::class,
   DataModule::class
 ])
 interface ApplicationComponent {

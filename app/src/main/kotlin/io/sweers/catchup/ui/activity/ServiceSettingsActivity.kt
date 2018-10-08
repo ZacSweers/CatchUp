@@ -24,18 +24,15 @@ import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.transaction
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import dagger.Binds
 import dagger.Module
-import dagger.android.AndroidInjector
 import dagger.android.ContributesAndroidInjector
-import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.AndroidSupportInjection
-import dagger.android.support.HasSupportFragmentInjector
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.P
 import io.sweers.catchup.R
@@ -45,7 +42,7 @@ import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
-import io.sweers.catchup.ui.base.BaseActivity
+import io.sweers.catchup.ui.base.InjectingBaseActivity
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
@@ -54,10 +51,8 @@ import javax.inject.Inject
 
 private const val TARGET_PREF_RESOURCE = "catchup.servicesettings.resource"
 
-class ServiceSettingsActivity : BaseActivity(), HasSupportFragmentInjector {
+class ServiceSettingsActivity : InjectingBaseActivity() {
 
-  @Inject
-  internal lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
   private val toolbar by bindView<Toolbar>(R.id.toolbar)
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,18 +67,16 @@ class ServiceSettingsActivity : BaseActivity(), HasSupportFragmentInjector {
     }
 
     if (savedInstanceState == null) {
-      supportFragmentManager.beginTransaction()
-          .add(R.id.container, ServiceSettingsFrag().apply {
-            if (intent.extras?.containsKey(TARGET_PREF_RESOURCE) == true) {
-              arguments = bundleOf(
-                  TARGET_PREF_RESOURCE to intent.extras!!.getInt(TARGET_PREF_RESOURCE))
-            }
-          })
-          .commit()
+      supportFragmentManager.transaction {
+        add(R.id.container, ServiceSettingsFrag().apply {
+          if (intent.extras?.containsKey(TARGET_PREF_RESOURCE) == true) {
+            arguments = bundleOf(
+                TARGET_PREF_RESOURCE to intent.extras!!.getInt(TARGET_PREF_RESOURCE))
+          }
+        })
+      }
     }
   }
-
-  override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
 
   @Module
   abstract class ServiceSettingsActivityModule {

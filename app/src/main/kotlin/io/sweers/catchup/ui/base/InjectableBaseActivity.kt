@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2016 The Dagger Authors.
+ * Copyright (c) 2018 Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.injection
+package io.sweers.catchup.ui.base
 
-import com.bluelinelabs.conductor.Controller
-import dagger.android.DispatchingAndroidInjector
+import android.os.Bundle
+import dagger.android.AndroidInjection
 
-/** Provides a [DispatchingAndroidInjector] of [Controller]s.  */
-interface HasControllerInjector {
+abstract class InjectableBaseActivity : BaseActivity() {
 
-  /** Returns a [DispatchingAndroidInjector] of [Controller]s.  */
-  fun controllerInjector(): DispatchingAndroidInjector<Controller>
+  override fun onCreate(savedInstanceState: Bundle?) {
+    AndroidInjection.inject(this)
+    super.onCreate(savedInstanceState)
+  }
+
 }

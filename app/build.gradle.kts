@@ -64,8 +64,8 @@ android {
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
   }
   compileOptions {
-    setSourceCompatibility(JavaVersion.VERSION_1_8)
-    setTargetCompatibility(JavaVersion.VERSION_1_8)
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
   }
   signingConfigs {
     create("release") {
@@ -396,6 +396,8 @@ dependencies {
   implementation(deps.android.androidx.design)
   implementation(deps.android.androidx.emoji)
   implementation(deps.android.androidx.emojiAppcompat)
+  implementation(deps.android.androidx.fragment)
+  implementation(deps.android.androidx.fragmentKtx)
   debugImplementation(deps.android.androidx.drawerLayout)
   implementation(deps.android.androidx.palette)
   implementation(deps.android.androidx.paletteKtx)
@@ -514,11 +516,6 @@ dependencies {
 
   // Inspector exposed for dagger
   implementation(deps.inspector.core)
-
-  // Conductor
-  implementation(deps.conductor.core)
-  implementation(deps.conductor.autoDispose)
-  implementation(deps.conductor.support)
 
   implementation(deps.misc.jsr305)
 

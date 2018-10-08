@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers.service
+package io.sweers.catchup.ui.base
 
-import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.DisplayableItem
-import io.sweers.catchup.service.api.ImageInfo
+import androidx.fragment.app.Fragment
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
+import javax.inject.Inject
 
-data class ImageItem(
-    private val delegate: CatchUpItem
-) : DisplayableItem {
-  @Transient var hasFadedIn: Boolean = false
-  val imageInfo: ImageInfo = delegate.imageInfo!!
+abstract class InjectingBaseFragment : InjectableBaseFragment(), HasSupportFragmentInjector {
 
-  override fun stableId() = delegate.stableId()
+  @Inject
+  protected lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
 
-  override fun realItem() = delegate
+  final override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
+
 }

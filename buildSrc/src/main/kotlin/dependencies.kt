@@ -54,7 +54,6 @@ object deps {
     const val apollo = "1.0.0-alpha"
     const val autodispose = "1.0.0-RC2"
     const val chuck = "1.1.0"
-    const val conductor = "2.1.5"
     const val crumb = "0.0.1"
     const val dagger = "2.16"
     const val errorProne = "2.3.1"
@@ -92,6 +91,11 @@ object deps {
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.0.0"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
+
+      private const val fragmentVersion = "1.0.0"
+      const val fragment = "androidx.fragment:fragment:$fragmentVersion"
+      const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
+
       const val viewPager = "androidx.viewpager:viewpager:1.0.0"
       const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
       const val palette = "androidx.palette:palette:1.0.0"
@@ -199,12 +203,6 @@ object deps {
   object chuck {
     const val debug = "com.readystatesoftware.chuck:library:${versions.chuck}"
     const val release = "com.readystatesoftware.chuck:library-no-op:${versions.chuck}"
-  }
-
-  object conductor {
-    const val core = "com.bluelinelabs:conductor:${versions.conductor}"
-    const val autoDispose = "com.bluelinelabs:conductor-autodispose:${versions.conductor}"
-    const val support = "com.bluelinelabs:conductor-support:${versions.conductor}"
   }
 
   object crumb {

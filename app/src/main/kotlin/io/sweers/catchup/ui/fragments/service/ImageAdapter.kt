@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.controllers.service
+package io.sweers.catchup.ui.fragments.service
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint

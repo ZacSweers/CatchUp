@@ -22,7 +22,7 @@ import dagger.Module
 import dagger.Provides
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
-import io.sweers.catchup.injection.scopes.PerController
+import io.sweers.catchup.injection.scopes.PerFragment
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -41,7 +41,7 @@ abstract class SmmryModule {
     @Provides
     @JvmStatic
     @InternalApi
-    @PerController
+    @PerFragment
     internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
           .add(SmmryResponseFactory.getInstance())
@@ -50,7 +50,7 @@ abstract class SmmryModule {
 
     @Provides
     @JvmStatic
-    @PerController
+    @PerFragment
     internal fun provideSmmryService(client: Lazy<OkHttpClient>,
         @InternalApi moshi: Moshi,
         rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SmmryService {

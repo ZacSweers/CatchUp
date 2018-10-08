@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.injection.scopes
+package io.sweers.catchup.ui.fragments.service
 
-import javax.inject.Scope
+import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.DisplayableItem
+import io.sweers.catchup.service.api.ImageInfo
 
-@Scope
-annotation internal class PerController
+data class ImageItem(
+    private val delegate: CatchUpItem
+) : DisplayableItem {
+  @Transient var hasFadedIn: Boolean = false
+  val imageInfo: ImageInfo = delegate.imageInfo!!
+
+  override fun stableId() = delegate.stableId()
+
+  override fun realItem() = delegate
+}
