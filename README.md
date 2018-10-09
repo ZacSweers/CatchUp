@@ -75,7 +75,7 @@ work of others. Particularly:
 
 ## Download
 
-CatchUp is in open alpha.
+CatchUp is in open alpha, but master tends to be rather far ahead of what's on the Play Store.
 
 <a href='https://play.google.com/store/apps/details?id=io.sweers.catchup'>
     <img alt='Get it on Google Play' 
