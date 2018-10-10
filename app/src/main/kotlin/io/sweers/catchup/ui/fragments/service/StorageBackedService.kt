@@ -167,35 +167,33 @@ class StorageBackedService(
   private fun fetchPageFromNetwork(pageId: String, isRefresh: Boolean): Maybe<DataResult> {
     return delegate.fetchPage(DataRequest(true, false, pageId))
         .trace("Network data load - ${delegate.meta().id}")
-        .doOnSuccess { result ->
-          Completable.fromAction {
-            val calculatedExpiration = Instant.now()
-                .plus(2, ChronoUnit.HOURS) // TODO preference this
-            if (currentSessionId == -1L || isRefresh) {
-              currentSessionId = calculatedExpiration.toEpochMilli()
-            }
-            dao.putPage(ServicePage(
-                id = "${meta().id}$pageId",
-                type = meta().id,
-                page = pageId,
-                items = result.data.map { it.stableId() },
-                expiration = calculatedExpiration,
-                sessionId = if (pageId == meta().firstPageKey && isRefresh) {
-                  calculatedExpiration.toEpochMilli()
-                } else {
-                  currentSessionId
-                },
-                nextPageToken = result.nextPageToken
-            ))
-          }.subscribeOn(Schedulers.io())
-              .trace("Network data store - ${delegate.meta().id}")
-              .subscribe()
-        }
-        .doOnSuccess { result ->
-          Completable
-              .fromAction { dao.putItems(*result.data.toTypedArray()) }
+        .flatMap { result ->
+          val calculatedExpiration = Instant.now()
+              .plus(2, ChronoUnit.HOURS) // TODO preference this
+          if (currentSessionId == -1L || isRefresh) {
+            currentSessionId = calculatedExpiration.toEpochMilli()
+          }
+          val putPage = dao.putPage(
+              ServicePage(
+                  id = "${meta().id}$pageId",
+                  type = meta().id,
+                  page = pageId,
+                  items = result.data.map { it.stableId() },
+                  expiration = calculatedExpiration,
+                  sessionId = if (pageId == meta().firstPageKey && isRefresh) {
+                    calculatedExpiration.toEpochMilli()
+                  } else {
+                    currentSessionId
+                  },
+                  nextPageToken = result.nextPageToken
+              ))
+
+          val putItems = dao.putItems(*result.data.toTypedArray())
+
+          return@flatMap Completable.mergeArray(putPage, putItems)
               .subscribeOn(Schedulers.io())
-              .subscribe()
+              .trace("Network data store - ${delegate.meta().id}")
+              .andThen(Maybe.just(result))
         }
         .onErrorResumeNext { throwable: Throwable ->
           // At least *try* to gracefully handle it

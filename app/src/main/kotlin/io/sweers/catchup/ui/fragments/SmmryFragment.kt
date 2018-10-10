@@ -243,11 +243,9 @@ class SmmryFragment : InjectableBaseFragment() {
     }
     return summarizer.doOnSuccess {
       if (it != UnknownErrorCode) {
-        Completable
-            .fromAction {
-              smmryDao.putItem(SmmryStorageEntry(id,
-                  moshi.adapter(SmmryResponse::class.java).toJson(it)))
-            }
+        smmryDao.putItem(SmmryStorageEntry(
+            url = id,
+            json = moshi.adapter(SmmryResponse::class.java).toJson(it)))
             .blockingAwait()
       }
     }
@@ -333,7 +331,7 @@ interface SmmryDao {
   fun getItem(url: String): Maybe<SmmryStorageEntry>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItem(item: SmmryStorageEntry)
+  fun putItem(item: SmmryStorageEntry): Completable
 
   @Query("DELETE FROM $TABLE")
   fun nukeItems()

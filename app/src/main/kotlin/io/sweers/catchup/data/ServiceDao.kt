@@ -23,6 +23,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
 import org.threeten.bp.Instant
@@ -49,13 +50,13 @@ interface ServiceDao {
   fun getItemByIds(ids: Array<Long>): Maybe<List<CatchUpItem>>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putPage(page: ServicePage)
+  fun putPage(page: ServicePage): Completable
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun putItem(item: CatchUpItem)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItems(vararg item: CatchUpItem)
+  fun putItems(vararg item: CatchUpItem): Completable
 
   @Query("DELETE FROM pages")
   fun nukePages()
