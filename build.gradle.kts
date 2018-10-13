@@ -81,8 +81,6 @@ allprojects {
               useVersion(versions.legacySupport)
             }
           }
-          "com.google.android.gms" -> useVersion(versions.playServices)
-          "com.google.firebase" -> useVersion(versions.firebase)
           "org.jetbrains.kotlin" -> useVersion(versions.kotlin)
           "com.google.dagger" -> useVersion(versions.dagger)
         }
