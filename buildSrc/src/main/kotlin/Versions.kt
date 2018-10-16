@@ -11,19 +11,21 @@ object Versions {
 
     const val adapter_rxjava2: String = "2.4.0" // up-to-date
 
+    const val androidx_annotation_annotation: String = "1.0.0" // up-to-date
+
     const val androidx_core_core: String = "1.0.0" // up-to-date
 
     const val annotations: String = "4.8.0" // up-to-date
 
-    const val apollo_android_support: String = "1.0.0-alpha" // available: milestone=1.0.0-alpha2
+    const val apollo_android_support: String = "1.0.0-alpha" // available milestone: "1.0.0-alpha2" 
 
-    const val apollo_gradle_plugin: String = "1.0.0-alpha" // available: milestone=1.0.0-alpha2
+    const val apollo_gradle_plugin: String = "1.0.0-alpha" // available milestone: "1.0.0-alpha2" 
 
-    const val apollo_http_cache: String = "1.0.0-alpha" // available: milestone=1.0.0-alpha2
+    const val apollo_http_cache: String = "1.0.0-alpha" // available milestone: "1.0.0-alpha2" 
 
-    const val apollo_runtime: String = "1.0.0-alpha" // available: milestone=1.0.0-alpha2
+    const val apollo_runtime: String = "1.0.0-alpha" // available milestone: "1.0.0-alpha2" 
 
-    const val apollo_rx2_support: String = "1.0.0-alpha" // available: milestone=1.0.0-alpha2
+    const val apollo_rx2_support: String = "1.0.0-alpha" // available milestone: "1.0.0-alpha2" 
 
     const val appcompat: String = "1.0.0" // up-to-date
 
@@ -31,38 +33,41 @@ object Versions {
 
     const val auto_service: String = "1.0-rc4" // up-to-date
 
-    const val autodispose: String = "1.0.0-RC2" // available: milestone=1.0.0
+    const val autodispose: String = "1.0.0-RC2" // available milestone: "1.0.0" 
 
-    const val autodispose_android: String = "1.0.0-RC2" // available: milestone=1.0.0
+    const val autodispose_android: String = "1.0.0-RC2" // available milestone: "1.0.0" 
 
-    const val autodispose_android_archcomponents: String = "1.0.0-RC2" // available: milestone=1.0.0
+    const val autodispose_android_archcomponents: String =
+            "1.0.0-RC2" // available milestone: "1.0.0" 
 
     const val autodispose_android_archcomponents_ktx: String =
-            "1.0.0-RC2" // available: milestone=1.0.0
+            "1.0.0-RC2" // available milestone: "1.0.0" 
 
-    const val autodispose_android_ktx: String = "1.0.0-RC2" // available: milestone=1.0.0
+    const val autodispose_android_ktx: String = "1.0.0-RC2" // available milestone: "1.0.0" 
 
-    const val autodispose_ktx: String = "1.0.0-RC2" // available: milestone=1.0.0
+    const val autodispose_ktx: String = "1.0.0-RC2" // available milestone: "1.0.0" 
 
-    const val autodispose_lifecycle: String = "1.0.0-RC2" // available: milestone=1.0.0
+    const val autodispose_lifecycle: String = "1.0.0-RC2" // available milestone: "1.0.0" 
 
-    const val autodispose_lifecycle_ktx: String = "1.0.0-RC2" // available: milestone=1.0.0
+    const val autodispose_lifecycle_ktx: String = "1.0.0-RC2" // available milestone: "1.0.0" 
 
     const val browser: String = "1.0.0" // up-to-date
 
-    const val bugsnag_android: String = "4.6.1" // available: milestone=4.8.2
+    const val bugsnag_android: String = "4.6.1" // available milestone: "4.8.2" 
 
-    const val bugsnag_android_gradle_plugin: String = "3.4.1" // available: milestone=3.4.2
+    const val bugsnag_android_gradle_plugin: String = "3.4.1" // available milestone: "3.4.2" 
+
+    const val com_android_tools_build_gradle: String = "3.3.0-alpha13" // up-to-date
 
     const val com_github_bumptech_glide_compiler: String = "4.8.0" // up-to-date
 
     const val com_gradle_build_scan_gradle_plugin: String = "1.16" // up-to-date
 
-    const val com_tickaroo_tikxml_annotation: String = "1.0.0" // up-to-date
+    const val com_tickaroo_tikxml_annotation: String = "0.8.13" // up-to-date
 
     const val com_tickaroo_tikxml_core: String = "0.8.13" // up-to-date
 
-    const val constraintlayout: String = "1.1.2" // available: milestone=2.0.0-alpha2
+    const val constraintlayout: String = "1.1.2" // available milestone: "2.0.0-alpha2" 
 
     const val converter_htmlescape: String = "0.8.13" // up-to-date
 
@@ -94,7 +99,7 @@ object Versions {
 
     const val emoji_appcompat: String = "1.0.0" // up-to-date
 
-    const val error_prone_annotations: String = "2.3.1" // available: milestone=2.3.2
+    const val error_prone_annotations: String = "2.3.1" // available milestone: "2.3.2" 
 
     const val firebase_config: String = "16.0.1" // up-to-date
 
@@ -106,21 +111,19 @@ object Versions {
 
     const val firebase_plugins: String = "1.1.5" // up-to-date
 
-    const val flick: String = "1.3.0" // available: milestone=1.4.0
+    const val flick: String = "1.3.0" // available milestone: "1.4.0" 
 
-    const val flipper: String = "0.7.1" // available: milestone=0.8.1
+    const val flipper: String = "0.7.1" // available milestone: "0.9.0" 
 
     const val fragment: String = "1.0.0" // up-to-date
 
     const val fragment_ktx: String = "1.0.0" // up-to-date
 
-    const val gesture_views: String = "2.2.0" // available: milestone=2.5.2
+    const val gesture_views: String = "2.2.0" // available milestone: "2.5.2" 
 
     const val glide: String = "4.8.0" // up-to-date
 
-    const val gradle: String = "3.3.0-alpha13" // up-to-date
-
-    const val inboxrecyclerview: String = "1.0.0-SNAPSHOT" // available: milestone=1.0.0-beta3
+    const val inboxrecyclerview: String = "1.0.0-SNAPSHOT" // available milestone: "1.0.0-beta3" 
 
     const val inspector: String = "0.3.0" // up-to-date
 
@@ -141,7 +144,7 @@ object Versions {
     const val javax_annotation: String = "10.0-b28" // up-to-date
 
     const val jmfayard_github_io_gradle_kotlin_dsl_libs_gradle_plugin: String =
-            "0.2.3" // up-to-date
+            "0.2.4" // exceed the version found: 0.2.3
 
     const val jsoup: String = "1.11.3" // up-to-date
 
@@ -185,7 +188,7 @@ object Versions {
 
     const val logging_interceptor: String = "3.11.0" // up-to-date
 
-    const val lottie: String = "2.6.1" // available: milestone=2.8.0
+    const val lottie: String = "2.6.1" // available milestone: "2.8.0" 
 
     const val madge: String = "1.1.4" // up-to-date
 
@@ -201,13 +204,13 @@ object Versions {
 
     const val okhttp3_integration: String = "4.8.0" // up-to-date
 
-    const val okio: String = "2.0.0" // available: milestone=2.1.0
+    const val okio: String = "2.0.0" // available milestone: "2.1.0" 
 
     const val palette: String = "1.0.0" // up-to-date
 
     const val palette_ktx: String = "1.0.0" // up-to-date
 
-    const val play_publisher: String = "1.2.2" // available: milestone=2.0.0-beta1
+    const val play_publisher: String = "1.2.2" // available milestone: "2.0.0-beta1" 
 
     const val preference: String = "1.0.0" // up-to-date
 
@@ -216,6 +219,13 @@ object Versions {
     const val process_phoenix: String = "2.0.0" // up-to-date
 
     const val processor: String = "0.8.13" // up-to-date
+
+    const val psync: String = "2.0.0-20171017.111936-4" 
+            /* Could not find any version that matches io.sweers.psync:psync:+.
+            Versions rejected by component selection rules: 2.0.0-SNAPSHOT
+            Searched in the following locations:
+              - file:/Users/jmfayard/.gradle/caches/4.10.2/embedded-kotlin-repo-1.2.61-2/repo/io/sweers/psync/psync/ 
+            .... */
 
     const val recyclerview_animators: String = "2.3.0" // up-to-date
 
@@ -245,7 +255,7 @@ object Versions {
 
     const val rxjava: String = "2.2.2" // up-to-date
 
-    const val rxrelay: String = "2.0.0" // available: milestone=2.1.0
+    const val rxrelay: String = "2.0.0" // available milestone: "2.1.0" 
 
     const val scalpel: String = "1.1.2" // up-to-date
 
@@ -271,12 +281,17 @@ object Versions {
 
     const val viewpager: String = "1.0.0" // up-to-date
 
+    /**
+     *
+     *   To update Gradle, edit the wrapper file at path:
+     *      ./gradle/wrapper/gradle-wrapper.properties
+     */
     object Gradle {
         const val runningVersion: String = "4.10.2"
 
         const val currentVersion: String = "4.10.2"
 
-        const val nightlyVersion: String = "5.1-20181014000007+0000"
+        const val nightlyVersion: String = "5.1-20181015235836+0000"
 
         const val releaseCandidate: String = ""
     }

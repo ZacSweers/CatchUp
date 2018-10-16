@@ -17,6 +17,11 @@ object Libs {
             "com.squareup.retrofit2:adapter-rxjava2:" + Versions.adapter_rxjava2
 
     /**
+     * [annotation website](http://developer.android.com/tools/extras/support-library.html) */
+    const val androidx_annotation_annotation: String =
+            "androidx.annotation:annotation:" + Versions.androidx_annotation_annotation
+
+    /**
      * [core website](http://developer.android.com/tools/extras/support-library.html) */
     const val androidx_core_core: String = "androidx.core:core:" + Versions.androidx_core_core
 
@@ -112,6 +117,11 @@ object Libs {
             "com.bugsnag:bugsnag-android-gradle-plugin:" + Versions.bugsnag_android_gradle_plugin
 
     /**
+     * [gradle website](https://developer.android.com/studio) */
+    const val com_android_tools_build_gradle: String =
+            "com.android.tools.build:gradle:" + Versions.com_android_tools_build_gradle
+
+    /**
      * [compiler website](https://github.com/bumptech/glide) */
     const val com_github_bumptech_glide_compiler: String =
             "com.github.bumptech.glide:compiler:" + Versions.com_github_bumptech_glide_compiler
@@ -120,9 +130,9 @@ object Libs {
             "com.gradle.build-scan:com.gradle.build-scan.gradle.plugin:" + Versions.com_gradle_build_scan_gradle_plugin
 
     /**
-     * [annotation website](http://developer.android.com/tools/extras/support-library.html) */
+     * [annotation website](https://github.com/Tickaroo/tikxml) */
     const val com_tickaroo_tikxml_annotation: String =
-            "androidx.annotation:annotation:" + Versions.com_tickaroo_tikxml_annotation
+            "com.tickaroo.tikxml:annotation:" + Versions.com_tickaroo_tikxml_annotation
 
     /**
      * [core website](https://github.com/Tickaroo/tikxml) */
@@ -240,10 +250,6 @@ object Libs {
     /**
      * [glide website](https://github.com/bumptech/glide) */
     const val glide: String = "com.github.bumptech.glide:glide:" + Versions.glide
-
-    /**
-     * [gradle website](https://developer.android.com/studio) */
-    const val gradle: String = "com.android.tools.build:gradle:" + Versions.gradle
 
     /**
      * [inboxrecyclerview website](https://github.com/saket/InboxRecyclerView) */
@@ -461,6 +467,8 @@ object Libs {
     /**
      * [processor website](https://github.com/Tickaroo/tikxml) */
     const val processor: String = "com.tickaroo.tikxml:processor:" + Versions.processor
+
+    const val psync: String = "io.sweers.psync:psync:" + Versions.psync
 
     const val recyclerview_animators: String =
             "jp.wasabeef:recyclerview-animators:" + Versions.recyclerview_animators

@@ -45,7 +45,7 @@ buildscript {
 
 plugins {
   id("com.gradle.build-scan") version "1.16"
-  id("jmfayard.github.io.gradle-kotlin-dsl-libs") version "0.2.3"
+  id("jmfayard.github.io.gradle-kotlin-dsl-libs") version "0.2.4"
 // included by gradle-kotlin-dsl-libs
 //  id("com.github.ben-manes.versions") version "0.20.0"
 }
