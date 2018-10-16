@@ -52,6 +52,7 @@ object build {
       "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions")
 }
 
+// TODO maybe: replace with [Libs] and [Versions]
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
