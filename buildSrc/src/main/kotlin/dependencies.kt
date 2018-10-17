@@ -60,7 +60,7 @@ object deps {
     const val autodispose = "1.0.0"
     const val chuck = "1.1.0"
     const val crumb = "0.0.1"
-    const val dagger = "2.16"
+    const val dagger = "2.16" // https://issuetracker.google.com/issues/115738511
     const val errorProne = "2.3.2"
     const val espresso = "3.1.0-alpha1"
     const val glide = "4.8.0"
