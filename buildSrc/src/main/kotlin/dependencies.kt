@@ -186,7 +186,7 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.4.1"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.4.2"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.2"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
@@ -312,7 +312,7 @@ object deps {
   }
 
   object misc {
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.6.1"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.8.2"
 
     object debug {
       const val flipper = "com.facebook.flipper:flipper:0.7.1"
