@@ -187,7 +187,7 @@ object deps {
 
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.4.2"
-      const val playPublisher = "com.github.triplet.gradle:play-publisher:1.2.2"
+      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.0.0-beta1"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
     }

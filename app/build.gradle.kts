@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import de.triplet.gradle.play.PlayAccountConfig
-import org.gradle.api.internal.plugins.DefaultConvention
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -185,10 +183,9 @@ kapt {
 }
 
 play {
-  setTrack("alpha")
-  uploadImages = true
+  track = "alpha"
   serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
-  pk12File = rootProject.file("signing/play-account.p12")
+  serviceAccountCredentials = rootProject.file("signing/play-account.p12")
 }
 
 bugsnag {
@@ -230,7 +227,7 @@ open class CutChangelogTask : DefaultTask() {
   fun run() {
     val changelog = project.rootProject.file("CHANGELOG.md")
 
-    val whatsNewPath = "${project.projectDir}/src/main/play/en-US/whatsnew"
+    val whatsNewPath = "${project.projectDir}/src/main/play/release-notes/en-US/default.txt"
     val newChangelog = getChangelog(changelog, "").let {
       if (it.length > 500) {
         logger.log(LogLevel.WARN,
