@@ -31,6 +31,7 @@ import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
 import com.squareup.leakcanary.AndroidExcludedRefs
+import com.squareup.leakcanary.DisplayLeakService
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import io.reactivex.Completable
@@ -88,11 +89,9 @@ class DebugCatchUpApplication : CatchUpApplication() {
         .build())
     refWatcher = if (Build.VERSION.SDK_INT != 28) {
       LeakCanary.refWatcher(this)
+          .listenerServiceClass(DisplayLeakService::class.java)
           .watchDelay(10, TimeUnit.SECONDS)
-          .excludedRefs(AndroidExcludedRefs.createAppDefaults()
-              .instanceField("android.view.ViewGroup\$ViewLocationHolder",
-                  "mRoot") // https://github.com/square/leakcanary/issues/1081
-              .build())
+          .excludedRefs(AndroidExcludedRefs.createAppDefaults().build())
           .buildAndInstall()
     } else {
       // Disabled on API 28 because there's a pretty vicious memory leak that constantly triggers
