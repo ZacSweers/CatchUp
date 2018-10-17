@@ -331,7 +331,7 @@ object deps {
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.4.0"
     const val lottie = "com.airbnb.android:lottie:2.8.0"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-    const val okio = "com.squareup.okio:okio:2.0.0"
+    const val okio = "com.squareup.okio:okio:2.1.0"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:2.3.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.12.0"
     const val timber = "com.jakewharton.timber:timber:4.7.1"
