@@ -130,7 +130,7 @@ object deps {
 
     object firebase {
       const val core = "com.google.firebase:firebase-core:16.0.4"
-      const val config = "com.google.firebase:firebase-config:16.0.1"
+      const val config = "com.google.firebase:firebase-config:16.1.0"
       const val database = "com.google.firebase:firebase-database:16.0.3"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:1.1.5"
       const val perf = "com.google.firebase:firebase-perf:16.1.2"
