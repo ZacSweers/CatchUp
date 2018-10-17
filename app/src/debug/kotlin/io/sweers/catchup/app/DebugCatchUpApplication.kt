@@ -24,9 +24,9 @@ import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import android.util.Log
 import com.facebook.soloader.SoLoader
-import com.facebook.sonar.android.AndroidSonarClient
-import com.facebook.sonar.android.utils.SonarUtils
-import com.facebook.sonar.core.SonarPlugin
+import com.facebook.flipper.android.AndroidFlipperClient
+import com.facebook.flipper.android.utils.FlipperUtils
+import com.facebook.flipper.core.FlipperPlugin
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
@@ -46,7 +46,7 @@ import javax.inject.Inject
 class DebugCatchUpApplication : CatchUpApplication() {
 
   @Inject
-  lateinit var flipperPlugins: Set<@JvmSuppressWildcards SonarPlugin>
+  lateinit var flipperPlugins: Set<@JvmSuppressWildcards FlipperPlugin>
 
   override fun onPreInject() {
     SoLoader.init(this, false)
@@ -124,10 +124,10 @@ class DebugCatchUpApplication : CatchUpApplication() {
     Timber.plant(lumberYard.tree())
     Timber.plant(StethoTree())
 
-    if (SonarUtils.shouldEnableSonar(this)) {
+    if (FlipperUtils.shouldEnableFlipper(this)) {
       Completable
           .fromAction {
-            AndroidSonarClient.getInstance(this).apply {
+            AndroidFlipperClient.getInstance(this).apply {
               flipperPlugins.forEach(::addPlugin)
               start()
             }

@@ -17,12 +17,12 @@
 package io.sweers.catchup.flipper
 
 import android.content.Context
-import com.facebook.sonar.core.SonarPlugin
-import com.facebook.sonar.plugins.inspector.DescriptorMapping
-import com.facebook.sonar.plugins.inspector.InspectorSonarPlugin
-import com.facebook.sonar.plugins.network.NetworkSonarPlugin
-import com.facebook.sonar.plugins.network.SonarOkhttpInterceptor
-import com.facebook.sonar.plugins.sharedpreferences.SharedPreferencesSonarPlugin
+import com.facebook.flipper.core.FlipperPlugin
+import com.facebook.flipper.plugins.inspector.DescriptorMapping
+import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
+import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
+import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -39,12 +39,12 @@ abstract class FlipperModule {
 
   @Multibinds
   @Singleton
-  abstract fun provideFlipperPlugins(): Set<SonarPlugin>
+  abstract fun provideFlipperPlugins(): Set<FlipperPlugin>
 
   @Binds
   @IntoSet
   @Singleton
-  abstract fun provideNetworkSonarPluginIntoSet(plugin: NetworkSonarPlugin): SonarPlugin
+  abstract fun provideNetworkFlipperPluginIntoSet(plugin: NetworkFlipperPlugin): FlipperPlugin
 
   @Module
   companion object {
@@ -54,23 +54,23 @@ abstract class FlipperModule {
     @Provides
     @Singleton
     fun provideSharedPreferencesPlugin(@ApplicationContext context: Context,
-        @SharedPreferencesName preferencesName: String): SonarPlugin {
-      return SharedPreferencesSonarPlugin(context, preferencesName)
+        @SharedPreferencesName preferencesName: String): FlipperPlugin {
+      return SharedPreferencesFlipperPlugin(context, preferencesName)
     }
 
     @IntoSet
     @JvmStatic
     @Provides
     @Singleton
-    fun provideViewInspectorPlugin(@ApplicationContext context: Context): SonarPlugin {
-      return InspectorSonarPlugin(context, DescriptorMapping.withDefaults())
+    fun provideViewInspectorPlugin(@ApplicationContext context: Context): FlipperPlugin {
+      return InspectorFlipperPlugin(context, DescriptorMapping.withDefaults())
     }
 
     @JvmStatic
     @Provides
     @Singleton
-    fun provideOkHttpInspectorPlugin(): NetworkSonarPlugin {
-      return NetworkSonarPlugin()
+    fun provideOkHttpInspectorPlugin(): NetworkFlipperPlugin {
+      return NetworkFlipperPlugin()
     }
 
     @IntoSet
@@ -78,8 +78,8 @@ abstract class FlipperModule {
     @NetworkInterceptor
     @Provides
     @Singleton
-    fun provideOkHttpInspectorPluginInterceptor(plugin: NetworkSonarPlugin): Interceptor {
-      return SonarOkhttpInterceptor(plugin)
+    fun provideOkHttpInspectorPluginInterceptor(plugin: NetworkFlipperPlugin): Interceptor {
+      return FlipperOkhttpInterceptor(plugin)
     }
 
   }
