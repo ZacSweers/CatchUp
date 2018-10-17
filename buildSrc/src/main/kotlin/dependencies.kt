@@ -61,7 +61,7 @@ object deps {
     const val chuck = "1.1.0"
     const val crumb = "0.0.1"
     const val dagger = "2.16"
-    const val errorProne = "2.3.1"
+    const val errorProne = "2.3.2"
     const val espresso = "3.1.0-alpha1"
     const val glide = "4.8.0"
     const val hyperion = "0.9.24"
