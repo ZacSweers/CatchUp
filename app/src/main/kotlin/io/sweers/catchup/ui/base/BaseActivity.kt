@@ -112,7 +112,7 @@ abstract class BaseActivity : AppCompatActivity(),
     return ActivityEvent.LIFECYCLE
   }
 
-  final override fun peekLifecycle(): ActivityEvent {
+  final override fun peekLifecycle(): ActivityEvent? {
     return lifecycleRelay.value
   }
 

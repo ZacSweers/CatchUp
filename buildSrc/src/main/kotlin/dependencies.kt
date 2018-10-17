@@ -381,7 +381,7 @@ object deps {
     }
 
     const val preferences = "com.f2prateek.rx.preferences2:rx-preferences:2.0.0"
-    const val relay = "com.jakewharton.rxrelay2:rxrelay:2.0.0"
+    const val relay = "com.jakewharton.rxrelay2:rxrelay:2.1.0"
   }
 
   object stetho {
