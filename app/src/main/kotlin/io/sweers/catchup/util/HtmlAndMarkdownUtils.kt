@@ -34,9 +34,13 @@ import androidx.annotation.ColorInt
  * Utility methods for working with HTML and markdown.
  */
 
-typealias Markdown = String
+inline class Markdown(val rawValue: String) {
+  override fun toString(): String {
+    return rawValue
+  }
+}
 
-fun String.markdown(): Markdown = this
+fun String.markdown(): Markdown = Markdown(this)
 
 /**
  * Parse Markdown and plain-text links.
@@ -54,7 +58,7 @@ fun Markdown.parseMarkdownAndPlainLinks(
     with: Bypass,
     loadImageCallback: Bypass.LoadImageCallback? = null,
     alternateSpans: ((String) -> Set<Any>)? = null): CharSequence {
-  return with.markdownToSpannable(this, on, loadImageCallback)
+  return with.markdownToSpannable(rawValue, on, loadImageCallback)
       .linkifyPlainLinks(on.linkTextColors, on.highlightColor, alternateSpans)
 }
 
@@ -67,7 +71,7 @@ fun Markdown.parseMarkdownAndSetText(
     markdown: Bypass,
     loadImageCallback: Bypass.LoadImageCallback? = null,
     alternateUrlSpan: ((String) -> Set<Any>)? = null) {
-  if (TextUtils.isEmpty(this)) {
+  if (TextUtils.isEmpty(rawValue)) {
     return
   }
   textView.setTextWithNiceLinks(
