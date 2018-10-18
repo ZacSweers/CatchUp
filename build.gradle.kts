@@ -22,16 +22,14 @@ import org.gradle.internal.scan.config.BuildScanConfig
 buildscript {
   repositories {
     google()
+    mavenCentral()
     jcenter()
-    maven { url = uri(deps.build.repositories.plugins) }
     maven { url = uri(deps.build.repositories.kotlineap) }
+    maven { url = uri(deps.build.repositories.plugins) }
     maven { url = uri(deps.build.repositories.snapshots) }
   }
 
   dependencies {
-    // Seemingly random other classpath dependencies are because of a gradle bug when sharing
-    // buildscript deps. Oddly, not only do all of these need to be here to match :app, but they
-    // need to also be in the same order.
     classpath(deps.android.gradlePlugin)
     classpath(deps.kotlin.gradlePlugin)
     classpath(deps.kotlin.noArgGradlePlugin)
@@ -61,11 +59,11 @@ allprojects {
 
   repositories {
     google()
+    mavenCentral()
     jcenter()
+    maven { url = uri(deps.build.repositories.kotlineap) }
     maven { url = uri(deps.build.repositories.jitpack) }
     maven { url = uri(deps.build.repositories.snapshots) }
-    maven { url = uri("https://oss.jfrog.org/libs-snapshot") }
-    maven { url = uri(deps.build.repositories.kotlineap) }
   }
 
   configurations.all {
