@@ -34,11 +34,7 @@ import androidx.annotation.ColorInt
  * Utility methods for working with HTML and markdown.
  */
 
-inline class Markdown(val rawValue: String) {
-  override fun toString(): String {
-    return rawValue
-  }
-}
+inline class Markdown(val rawValue: String)
 
 fun String.markdown(): Markdown = Markdown(this)
 
