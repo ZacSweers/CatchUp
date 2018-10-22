@@ -48,20 +48,20 @@ import com.google.android.material.tabs.TabLayout
 import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.uber.autodispose.autoDisposable
 import dagger.Provides
-import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
+import io.sweers.catchup.preferences.PreferenceConstants
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
 import io.sweers.catchup.ui.base.InjectingBaseFragment
 import io.sweers.catchup.ui.fragments.service.ServiceFragment
+import io.sweers.catchup.util.NavBarColorizer
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.rx.PredicateConsumer
 import io.sweers.catchup.util.setLightStatusBar
-import io.sweers.catchup.util.updateNavBarColor
 import kotterknife.bindView
 import java.util.WeakHashMap
 import javax.inject.Inject
@@ -89,6 +89,8 @@ class PagerFragment : InjectingBaseFragment() {
   lateinit var serviceHandlers: Array<ServiceHandler>
   @Inject
   lateinit var changelogHelper: ChangelogHelper
+  @Inject
+  protected lateinit var navColorizer: NavBarColorizer
 
   private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_fragment_root)
   private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
@@ -242,7 +244,7 @@ class PagerFragment : InjectingBaseFragment() {
           if (tabLayoutIsPinned) {
             activity?.window?.statusBarColor = color
           }
-          activity?.updateNavBarColor(color,
+          navColorizer.refresh(color,
               context = view.context)
         }
       }
@@ -289,7 +291,7 @@ class PagerFragment : InjectingBaseFragment() {
                   if (tabLayoutIsPinned) {
                     activity?.window?.statusBarColor = color
                   }
-                  activity?.updateNavBarColor(color,
+                  navColorizer.refresh(color,
                       context = view.context)
                 }
                 start()
@@ -340,7 +342,7 @@ class PagerFragment : InjectingBaseFragment() {
             activity?.recreate()
           }
           if (extras.getBoolean(SettingsActivity.NAV_COLOR_UPDATED, false)) {
-            activity?.updateNavBarColor(color = (tabLayout.background as ColorDrawable).color,
+            navColorizer.refresh(color = (tabLayout.background as ColorDrawable).color,
                 context = view!!.context,
                 recreate = true)
           }
@@ -356,7 +358,8 @@ class PagerFragment : InjectingBaseFragment() {
     @Provides
     fun provideServiceHandlers(sharedPrefs: SharedPreferences,
         serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>): Array<ServiceHandler> {
-      val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
+      val currentOrder = sharedPrefs.getString(PreferenceConstants.SERVICES_ORDER, null)?.split(",")
+          ?: emptyList()
       return (serviceMetas.values
           .filter(ServiceMeta::enabled)
           .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }

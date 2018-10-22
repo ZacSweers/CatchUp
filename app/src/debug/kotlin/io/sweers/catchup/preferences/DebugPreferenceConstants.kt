@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package android.support.annotation
+package io.sweers.catchup.preferences
 
-// TODO Jetifier bug. Remove these when not necessary anymore
-annotation class VisibleForTesting // Here because GlideGenerator looks for it during APT
-
-annotation class NonNull
-annotation class Nullable
-annotation class UiThread
-annotation class CheckResult
-
+object DebugPreferenceConstants {
+  const val MOCK_MODE_ENABLED = "debug_mock_mode_enabled"
+}

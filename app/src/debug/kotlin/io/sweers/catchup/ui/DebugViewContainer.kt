@@ -35,6 +35,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.doOnLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
+import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.getkeepsafe.taptargetview.TapTarget
 import com.jakewharton.madge.MadgeFrameLayout
 import com.jakewharton.scalpel.ScalpelFrameLayout
@@ -48,7 +49,6 @@ import io.reactivex.android.MainThreadDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.edu.Syllabus
@@ -72,16 +72,18 @@ import javax.inject.Inject
  */
 @PerActivity
 internal class DebugViewContainer @Inject constructor(
+    private val rxSharedPreferences: RxSharedPreferences,
     private val bugReportLens: BugReportLens,
     private val lumberYard: LumberYard,
     private val lazyOkHttpClient: Lazy<OkHttpClient>,
     private val syllabus: Syllabus,
     private val fontHelper: FontHelper) : ViewContainer {
-  private val seenDebugDrawer = P.DebugSeenDebugDrawer.rx()
-  private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
-  private val pixelRatioEnabled = P.DebugPixelRatioEnabled.rx()
-  private val scalpelEnabled = P.DebugScalpelEnabled.rx()
-  private val scalpelWireframeEnabled = P.DebugScalpelWireframeDrawer.rx()
+  private val seenDebugDrawer = rxSharedPreferences.getBoolean("debug_seen_debug_drawer", false)
+  private val pixelGridEnabled = rxSharedPreferences.getBoolean("debug_pixel_grid_enabled", false)
+  private val pixelRatioEnabled = rxSharedPreferences.getBoolean("debug_pixel_ratio_enabled", false)
+  private val scalpelEnabled = rxSharedPreferences.getBoolean("debug_scalpel_enabled", false)
+  private val scalpelWireframeEnabled = rxSharedPreferences.getBoolean(
+      "debug_scalpel_wireframe_drawer", false)
 
   override fun forActivity(activity: BaseActivity): ViewGroup {
     val contentView = LayoutInflater.from(activity)
@@ -92,7 +94,14 @@ internal class DebugViewContainer @Inject constructor(
     val viewHolder = DebugViewViewHolder(contentView)
 
     val drawerContext = ContextThemeWrapper(activity, R.style.DebugDrawer)
-    val debugView = DebugView(drawerContext, lazyOkHttpClient, lumberYard)
+    val debugView = DebugView(context = drawerContext,
+        client = lazyOkHttpClient,
+        lumberYard = lumberYard,
+        sharedPreferences = rxSharedPreferences,
+        pixelGridEnabled = pixelGridEnabled,
+        pixelRatioEnabled = pixelRatioEnabled,
+        scalpelEnabled = scalpelEnabled,
+        scalpelWireframeEnabled = scalpelWireframeEnabled)
     viewHolder.debugDrawer.addView(debugView)
 
     // Set up the contextual actions to watch views coming in and out of the content area.

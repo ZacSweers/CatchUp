@@ -30,13 +30,12 @@ import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
 import androidx.collection.ArrayMap
 import androidx.core.util.toAndroidPair
-import com.f2prateek.rx.preferences2.Preference
+import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.ImageViewerData
@@ -52,11 +51,12 @@ import javax.inject.Inject
 
 @PerActivity
 class LinkManager @Inject constructor(
+    rxPreferences: RxSharedPreferences,
     private val customTab: CustomTabActivityHelper,
     private val activity: Activity)
   : LinkHandler {
 
-  private val globalSmartLinkingPref: Preference<Boolean> = P.SmartlinkingGlobal.rx()
+  private val globalSmartLinkingPref = rxPreferences.getBoolean("smartlinking_global", true)
 
   // Naive cache that tracks if we've already resolved for activities that can handle a given host
   // TODO Eventually replace this with something that's mindful of per-service prefs

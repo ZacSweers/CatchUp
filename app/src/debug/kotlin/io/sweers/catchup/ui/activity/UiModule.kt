@@ -16,12 +16,16 @@
 
 package io.sweers.catchup.ui.activity
 
+import com.f2prateek.rx.preferences2.Preference
+import com.f2prateek.rx.preferences2.RxSharedPreferences
 import dagger.Module
 import dagger.Provides
 import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.preferences.PreferenceConstants
 import io.sweers.catchup.ui.DebugViewContainer
 import io.sweers.catchup.ui.ViewContainer
 import io.sweers.catchup.ui.bugreport.BugReportModule
+import io.sweers.catchup.util.ThemeNavBar
 
 @Module(includes = [BugReportModule::class])
 object UiModule {
@@ -31,4 +35,12 @@ object UiModule {
   @PerActivity
   internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer =
       viewContainer
+
+  @Provides
+  @JvmStatic
+  @PerActivity
+  @ThemeNavBar
+  internal fun provideNavBarThemePref(
+      rxSharedPreferences: RxSharedPreferences): Preference<Boolean> = rxSharedPreferences.getBoolean(
+      PreferenceConstants.THEME_NAV_BAR)
 }

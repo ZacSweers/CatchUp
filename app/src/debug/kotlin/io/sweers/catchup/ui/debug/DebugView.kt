@@ -32,6 +32,8 @@ import android.widget.Spinner
 import android.widget.SpinnerAdapter
 import android.widget.Switch
 import android.widget.TextView
+import com.f2prateek.rx.preferences2.Preference
+import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxAdapterView
@@ -42,9 +44,11 @@ import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.preferences.DebugPreferenceConstants
+import io.sweers.catchup.preferences.DebugPreferenceConstants.MOCK_MODE_ENABLED
+import io.sweers.catchup.preferences.invoke
 import io.sweers.catchup.ui.logs.LogsDialog
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.isN
@@ -60,6 +64,7 @@ import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.mock.NetworkBehavior
 import java.util.Locale
 import java.util.concurrent.TimeUnit.MILLISECONDS
+import kotlin.LazyThreadSafetyMode.NONE
 
 @SuppressLint("SetTextI18n")
 class DebugView @JvmOverloads constructor(context: Context,
@@ -95,29 +100,46 @@ class DebugView @JvmOverloads constructor(context: Context,
   private val okHttpCacheHitCountView by bindView<TextView>(R.id.debug_okhttp_cache_hit_count)
   private lateinit var client: Lazy<OkHttpClient>
   private lateinit var lumberYard: LumberYard
-  private var isMockMode = P.DebugMockModeEnabled.get()
-  private var networkDelay = P.DebugNetworkDelay.rx()
-  private var networkFailurePercent = P.DebugNetworkFailurePercent.rx()
-  private var networkVariancePercent = P.DebugNetworkVariancePercent.rx()
-  private var behavior: NetworkBehavior = NetworkBehavior.create().apply {
-    setDelay(networkDelay.get().toLong(), MILLISECONDS)
-    setFailurePercent(networkFailurePercent.get())
-    setVariancePercent(networkVariancePercent.get())
+  private lateinit var sharedPreferences: RxSharedPreferences
+  private val isMockMode by lazy(NONE) {
+    sharedPreferences.getBoolean(MOCK_MODE_ENABLED, false)
   }
-  private val animationSpeed = P.DebugAnimationSpeed.rx()
-  private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
-  private val pixelRatioEnabled = P.DebugPixelRatioEnabled.rx()
-  private val scalpelEnabled = P.DebugScalpelEnabled.rx()
-  private val scalpelWireframeEnabled = P.DebugScalpelWireframeDrawer.rx()
+  private val networkDelay by lazy(NONE) {
+    sharedPreferences.getLong("debug_network_delay", 3)
+  }
+  private val networkFailurePercent by lazy(NONE) {
+    sharedPreferences.getInteger("debug_network_failure_percent", 3)
+  }
+  private val networkVariancePercent by lazy(NONE) {
+    sharedPreferences.getInteger("debug_network_variance_percent", 40)
+  }
+  private var behavior: NetworkBehavior = NetworkBehavior.create()
+  private val animationSpeed by lazy(NONE) {
+    sharedPreferences.getInteger("debug_animation_speed", 1)
+  }
+  private lateinit var pixelGridEnabled: Preference<Boolean>
+  private lateinit var pixelRatioEnabled: Preference<Boolean>
+  private lateinit var scalpelEnabled: Preference<Boolean>
+  private lateinit var scalpelWireframeEnabled: Preference<Boolean>
 
   constructor(context: Context,
       client: Lazy<OkHttpClient>,
-      lumberYard: LumberYard) : this(context) {
+      lumberYard: LumberYard,
+      sharedPreferences: RxSharedPreferences,
+      pixelGridEnabled: Preference<Boolean>,
+      pixelRatioEnabled: Preference<Boolean>,
+      scalpelEnabled: Preference<Boolean>,
+      scalpelWireframeEnabled: Preference<Boolean>) : this(context) {
     // TODO check out jw's assisted injection. Dagger-android doesn't make view injection easy
     // because it doesn't support it, and via subcomponents we can't get ahold of an instance of the
     // internal ActivityComponent
     this.client = client
     this.lumberYard = lumberYard
+    this.sharedPreferences = sharedPreferences
+    this.pixelGridEnabled = pixelGridEnabled
+    this.pixelRatioEnabled = pixelRatioEnabled
+    this.scalpelEnabled = scalpelEnabled
+    this.scalpelWireframeEnabled = scalpelWireframeEnabled
     realInit()
   }
 
@@ -127,6 +149,12 @@ class DebugView @JvmOverloads constructor(context: Context,
     // Inflate all of the controls and inject them.
     LayoutInflater.from(context)
         .inflate(R.layout.debug_view_content, this)
+
+    behavior.apply {
+      setDelay(networkDelay(), MILLISECONDS)
+      setFailurePercent(networkFailurePercent())
+      setVariancePercent(networkVariancePercent())
+    }
 
     onSubviewClick<View>(R.id.debug_logs_show) {
       LogsDialog(ContextThemeWrapper(context, R.style.CatchUp), lumberYard).show()
@@ -163,7 +191,7 @@ class DebugView @JvmOverloads constructor(context: Context,
         .subscribe { selected ->
           d { "Setting network delay to ${selected}ms" }
           behavior.setDelay(selected, MILLISECONDS)
-          networkDelay.set(selected.toInt())
+          networkDelay.set(selected)
         }
 
     val varianceAdapter = NetworkVarianceAdapter(context)
@@ -194,7 +222,7 @@ class DebugView @JvmOverloads constructor(context: Context,
           networkFailurePercent.set(selected)
         }
 
-    if (!isMockMode) {
+    if (!isMockMode()) {
       // Disable network controls if we are not in mock mode.
       applyOn(networkDelayView, networkVarianceView, networkErrorView) {
         isEnabled = false
@@ -203,10 +231,12 @@ class DebugView @JvmOverloads constructor(context: Context,
   }
 
   private fun setupMockBehaviorSection() {
-    enableMockModeView.isChecked = P.DebugMockModeEnabled.get()
+    val mockModeEnabled = sharedPreferences.getBoolean(DebugPreferenceConstants.MOCK_MODE_ENABLED,
+        false)
+    enableMockModeView.isChecked = mockModeEnabled()
     RxView.clicks(enableMockModeView)
         .subscribe {
-          P.DebugMockModeEnabled.put(enableMockModeView.isChecked).commit()
+          mockModeEnabled.set(enableMockModeView.isChecked)
           ProcessPhoenix.triggerRebirth(context)
         }
   }

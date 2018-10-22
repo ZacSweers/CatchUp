@@ -17,11 +17,13 @@
 package io.sweers.catchup.data
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.readystatesoftware.chuck.ChuckInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
+import io.sweers.catchup.preferences.DebugPreferenceConstants.MOCK_MODE_ENABLED
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Interceptor
@@ -65,6 +67,10 @@ object VariantDataModule {
   @IntoSet
   @JvmStatic
   @Singleton
-  internal fun provideMockDataInterceptor(@ApplicationContext context: Context): Interceptor =
-      MockDataInterceptor(context)
+  internal fun provideMockDataInterceptor(sharedPreferences: SharedPreferences,
+      @ApplicationContext context: Context): Interceptor {
+    return MockDataInterceptor(context) {
+      sharedPreferences.getBoolean(MOCK_MODE_ENABLED, false)
+    }
+  }
 }

@@ -34,10 +34,10 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.android.support.AndroidSupportInjection
 import dagger.multibindings.Multibinds
-import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerFragment
+import io.sweers.catchup.preferences.PreferenceConstants
 import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
 import io.sweers.catchup.service.api.ServiceMeta
@@ -112,7 +112,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     private fun setUpGeneralSettings() {
       preferenceScreen = preferenceManager.createPreferenceScreen(activity)
 
-      val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",")
+      val currentOrder = sharedPrefs.getString(PreferenceConstants.SERVICES_ORDER, null)?.split(",")
           ?: emptyList()
       serviceMetas
           .values

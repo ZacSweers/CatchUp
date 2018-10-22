@@ -20,7 +20,6 @@ import java.util.Date
 
 plugins {
   id("com.android.application")
-  id("io.sweers.psync")
   kotlin("android")
   kotlin("kapt")
   id("com.apollographql.android")
@@ -193,12 +192,6 @@ bugsnag {
   apiKey = properties["catchup_bugsnag_key"].toString()
   autoProguardConfig = false
   ndk = true
-}
-
-psync {
-  includesPattern = "**/xml/prefs_*.xml"
-  generateRx = true
-  packageName = "io.sweers.catchup"
 }
 
 if (gradle.startParameter.isOffline) {

@@ -46,13 +46,13 @@ import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.Multibinds
-import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerFragment
+import io.sweers.catchup.preferences.PreferenceConstants
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
@@ -148,7 +148,8 @@ class OrderServicesFragment : InjectableBaseFragment() {
     toolbar.title = toolbar.context.getString(R.string.pref_reorder_services)
     val lm = LinearLayoutManager(view.context)
     recyclerView.layoutManager = lm
-    storedOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
+    storedOrder = sharedPrefs.getString(PreferenceConstants.SERVICES_ORDER, null)?.split(
+        ",") ?: emptyList()
     val instanceChanges = savedInstanceState?.getStringArrayList("pendingChanges")
     pendingChanges = instanceChanges?.map { serviceMetas[it] as ServiceMeta }
     val displayOrder = instanceChanges ?: storedOrder
@@ -173,7 +174,8 @@ class OrderServicesFragment : InjectableBaseFragment() {
     save.setOnClickListener {
       pendingChanges?.let { changes ->
         sharedPrefs.edit {
-          putString(P.ServicesOrder.KEY, changes.joinToString(",", transform = ServiceMeta::id))
+          putString(PreferenceConstants.SERVICES_ORDER,
+              changes.joinToString(",", transform = ServiceMeta::id))
         }
       }
       activity?.finish()
@@ -181,7 +183,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
 
     val primaryColor = ContextCompat.getColor(save.context, R.color.colorPrimary)
     val textColor = save.context.resolveAttributeColor(android.R.attr.textColorPrimary)
-    syllabus.showIfNeverSeen(P.ServicesOrderSeen.KEY,
+    syllabus.showIfNeverSeen(PreferenceConstants.SERVICES_ORDER_SEEN,
         TargetRequest(
             target = {
               FabShowTapTarget(delegateTarget = { TapTarget.forView(save, "", "") },

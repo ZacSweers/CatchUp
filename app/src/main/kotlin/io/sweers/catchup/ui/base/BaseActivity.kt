@@ -34,7 +34,6 @@ import io.sweers.catchup.ui.base.ActivityEvent.PAUSE
 import io.sweers.catchup.ui.base.ActivityEvent.RESUME
 import io.sweers.catchup.ui.base.ActivityEvent.START
 import io.sweers.catchup.ui.base.ActivityEvent.STOP
-import io.sweers.catchup.util.updateNavBarColor
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity(),
@@ -140,11 +139,6 @@ abstract class BaseActivity : AppCompatActivity(),
       NavUtils.navigateUpFromSameTask(this)
     }
     return super.onOptionsItemSelected(item)
-  }
-
-  override fun onAttachedToWindow() {
-    super.onAttachedToWindow()
-    updateNavBarColor()
   }
 
   @CallSuper

@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package io.sweers.catchup.ui.base
+package io.sweers.catchup.preferences
 
-import android.os.Bundle
-import dagger.android.AndroidInjection
-import io.sweers.catchup.util.NavBarColorizer
-import javax.inject.Inject
+object PreferenceConstants {
 
-abstract class InjectableBaseActivity : BaseActivity() {
+  const val DAY_NIGHT_AUTO = "daynight_auto"
+  const val DAY_NIGHT_NIGHT_ONLY = "daynight_night"
+  const val REPORTS_ENABLED = "reports"
+  const val SERVICES_ORDER = "services_order"
+  const val SERVICES_ORDER_SEEN = "services_order_seen"
+  const val THEME_NAV_BAR = "theme_navigation_bar"
+  const val SMART_LINKING_GLOBAL_ENABLED = "smartlinking_global"
 
-  @Inject
-  protected lateinit var navColorizer: NavBarColorizer
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidInjection.inject(this)
-    super.onCreate(savedInstanceState)
-  }
-
-  override fun onAttachedToWindow() {
-    super.onAttachedToWindow()
-    navColorizer.refresh()
-  }
 }

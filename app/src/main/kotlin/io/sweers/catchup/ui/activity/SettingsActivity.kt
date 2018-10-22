@@ -23,12 +23,14 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.edit
 import androidx.fragment.app.transaction
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
 import androidx.preference.children
+import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.perf.FirebasePerformance
 import com.uber.autodispose.autoDisposable
@@ -39,20 +41,24 @@ import dagger.android.support.AndroidSupportInjection
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerFragment
+import io.sweers.catchup.preferences.PreferenceConstants.DAY_NIGHT_AUTO
+import io.sweers.catchup.preferences.PreferenceConstants.DAY_NIGHT_NIGHT_ONLY
+import io.sweers.catchup.preferences.PreferenceConstants.REPORTS_ENABLED
+import io.sweers.catchup.preferences.PreferenceConstants.SMART_LINKING_GLOBAL_ENABLED
+import io.sweers.catchup.preferences.PreferenceConstants.THEME_NAV_BAR
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.InjectingBaseActivity
+import io.sweers.catchup.util.NavBarColorizer
 import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.setLightStatusBar
-import io.sweers.catchup.util.updateNavBarColor
 import io.sweers.catchup.util.updateNightMode
 import kotterknife.bindView
 import okhttp3.Cache
@@ -134,6 +140,10 @@ class SettingsActivity : InjectingBaseActivity() {
     lateinit var lumberYard: LumberYard
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+    @Inject
+    lateinit var rxSharedPreferences: RxSharedPreferences
+    @Inject
+    protected lateinit var navColorizer: NavBarColorizer
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
       AndroidSupportInjection.inject(this)
@@ -146,67 +156,86 @@ class SettingsActivity : InjectingBaseActivity() {
       }
 
       (findPreference(
-          P.SmartlinkingGlobal.KEY) as CheckBoxPreference).isChecked = P.SmartlinkingGlobal.get()
-      (findPreference(P.DaynightAuto.KEY) as CheckBoxPreference).isChecked = P.DaynightAuto.get()
-      (findPreference(P.DaynightNight.KEY) as CheckBoxPreference).isChecked = P.DaynightNight.get()
-      (findPreference(P.Reports.KEY) as CheckBoxPreference).isChecked = P.Reports.get()
+          SMART_LINKING_GLOBAL_ENABLED) as CheckBoxPreference).isChecked = sharedPreferences.getBoolean(
+          SMART_LINKING_GLOBAL_ENABLED, true)
+      (findPreference(
+          DAY_NIGHT_AUTO) as CheckBoxPreference).isChecked = sharedPreferences.getBoolean(
+          DAY_NIGHT_AUTO, true)
+      (findPreference(
+          DAY_NIGHT_NIGHT_ONLY) as CheckBoxPreference).isChecked = sharedPreferences.getBoolean(
+          DAY_NIGHT_NIGHT_ONLY, false)
+      (findPreference(
+          REPORTS_ENABLED) as CheckBoxPreference).isChecked = sharedPreferences.getBoolean(
+          REPORTS_ENABLED, true)
 
-      val themeNavBarPref = findPreference(P.ThemeNavigationBar.KEY) as CheckBoxPreference
-      themeNavBarPref.isChecked = P.ThemeNavigationBar.get()
+      val themeNavBarPref = findPreference(THEME_NAV_BAR) as CheckBoxPreference
+      themeNavBarPref.isChecked = sharedPreferences.getBoolean(THEME_NAV_BAR, false)
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
       when (preference.key) {
-        P.SmartlinkingGlobal.KEY -> {
-          P.SmartlinkingGlobal.put((preference as CheckBoxPreference).isChecked).apply()
-          return true
-        }
-        P.DaynightAuto.KEY -> {
-          val isChecked = (preference as CheckBoxPreference).isChecked
-          P.DaynightAuto.put(isChecked)
-              .apply {
-                if (isChecked) {
-                  // If we're enabling auto, clear out the prev daynight night-only mode
-                  putBoolean(P.DaynightNight.KEY, false)
-                  (findPreference(P.DaynightNight.KEY) as CheckBoxPreference).isChecked = false
-                }
-              }
-              .apply()
-          activity?.updateNightMode()
-          return true
-        }
-        P.DaynightNight.KEY -> {
-          P.DaynightNight.put((preference as CheckBoxPreference).isChecked).apply()
-          activity?.updateNightMode()
-          return true
-        }
-        P.ThemeNavigationBar.KEY -> {
-          P.ThemeNavigationBar.put((preference as CheckBoxPreference).isChecked).apply()
-          (activity as SettingsActivity).run {
-            resultData.putBoolean(NAV_COLOR_UPDATED, true)
-            updateNavBarColor(recreate = true)
+        SMART_LINKING_GLOBAL_ENABLED -> {
+          sharedPreferences.edit {
+            putBoolean(SMART_LINKING_GLOBAL_ENABLED, (preference as CheckBoxPreference).isChecked)
           }
           return true
         }
-        P.ReorderServicesSection.KEY -> {
+        DAY_NIGHT_AUTO -> {
+          val isChecked = (preference as CheckBoxPreference).isChecked
+          sharedPreferences.edit {
+            putBoolean(DAY_NIGHT_AUTO, preference.isChecked).apply {
+              if (isChecked) {
+                // If we're enabling auto, clear out the prev daynight night-only mode
+                putBoolean(DAY_NIGHT_NIGHT_ONLY, false)
+                (findPreference(DAY_NIGHT_NIGHT_ONLY) as CheckBoxPreference).isChecked = false
+              }
+            }
+          }
+          activity?.updateNightMode(auto = isChecked)
+          return true
+        }
+        DAY_NIGHT_NIGHT_ONLY -> {
+          val isChecked = (preference as CheckBoxPreference).isChecked
+          sharedPreferences.edit {
+            putBoolean(DAY_NIGHT_NIGHT_ONLY, isChecked)
+          }
+          activity?.updateNightMode(enabled = isChecked)
+          return true
+        }
+        THEME_NAV_BAR -> {
+          val isChecked = (preference as CheckBoxPreference).isChecked
+          sharedPreferences.edit {
+            putBoolean(THEME_NAV_BAR, isChecked)
+          }
+          (activity as SettingsActivity).run {
+            resultData.putBoolean(NAV_COLOR_UPDATED, true)
+            this@SettingsFrag.navColorizer.refresh(recreate = true)
+          }
+          return true
+        }
+        "reorder_services_section" -> {
           (activity as SettingsActivity).resultData.putBoolean(SERVICE_ORDER_UPDATED, true)
           startActivity(Intent(activity, OrderServicesActivity::class.java))
           return true
         }
-        P.Reports.KEY -> {
+        REPORTS_ENABLED -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
           FirebasePerformance.getInstance().isPerformanceCollectionEnabled = isChecked
-          P.Reports.put(isChecked).apply()
+          sharedPreferences.edit {
+            putBoolean(REPORTS_ENABLED, isChecked)
+          }
           Snackbar.make(view!!, R.string.settings_reset, Snackbar.LENGTH_SHORT)
               .setAction(R.string.undo) {
                 // TODO Maybe this should actually be a restart button
-                P.Reports.put(!isChecked).apply()
+                sharedPreferences.edit {
+                  putBoolean(REPORTS_ENABLED, !isChecked)
+                }
                 preference.isChecked = !isChecked
               }
               .show()
           return true
         }
-        P.ClearCache.KEY -> {
+        "clear_cache" -> {
           Single.fromCallable {
             // TODO would be nice to measure the size impact of this file ¯\_(ツ)_/¯
             sharedPreferences.edit().clear().apply()
@@ -240,11 +269,11 @@ class SettingsActivity : InjectingBaseActivity() {
               }
           return true
         }
-        P.About.KEY -> {
+        "about" -> {
           startActivity(Intent(activity, AboutActivity::class.java))
           return true
         }
-        P.Services.KEY -> {
+        "services" -> {
           (activity as SettingsActivity).resultData.putBoolean(SERVICE_ORDER_UPDATED, true)
           startActivity(Intent(activity, ServiceSettingsActivity::class.java))
           return true

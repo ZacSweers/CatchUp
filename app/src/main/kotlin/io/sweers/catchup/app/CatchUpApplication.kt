@@ -31,8 +31,9 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.sweers.catchup.P
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.preferences.PreferenceConstants
+import io.sweers.catchup.preferences.PreferenceConstants.DAY_NIGHT_AUTO
 import io.sweers.catchup.util.d
 import javax.inject.Inject
 
@@ -80,11 +81,10 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
     LazyThreeTen.init(this)
     onPreInject()
     inject()
-    P.init(this, false)
-    P.setSharedPreferences(sharedPreferences, rxPreferences)
     initVariant()
 
-    P.DaynightAuto.rx()
+    val dayNightPreference = rxPreferences.getBoolean(DAY_NIGHT_AUTO, true)
+    dayNightPreference
         .asObservable()
         .subscribe { autoEnabled ->
           d { "Updating daynight" }
@@ -93,7 +93,7 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
           var nightMode = AppCompatDelegate.MODE_NIGHT_NO
           if (autoEnabled) {
             nightMode = AppCompatDelegate.MODE_NIGHT_AUTO
-          } else if (P.DaynightNight.get()) {
+          } else if (dayNightPreference.get()) {
             nightMode = AppCompatDelegate.MODE_NIGHT_YES
           }
           AppCompatDelegate.setDefaultNightMode(nightMode)
@@ -106,7 +106,7 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
   @Inject
   protected fun initPerformanceMonitoring(sharedPreferences: SharedPreferences) {
     FirebasePerformance.getInstance().isPerformanceCollectionEnabled =
-        sharedPreferences.getBoolean(P.Reports.KEY, false)
+        sharedPreferences.getBoolean(PreferenceConstants.REPORTS_ENABLED, false)
   }
 
   override fun activityInjector(): DispatchingAndroidInjector<Activity> =
