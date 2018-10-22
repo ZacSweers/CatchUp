@@ -84,6 +84,7 @@ import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
+import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import retrofit2.HttpException
 import java.io.IOException
 import java.security.InvalidParameterException
@@ -237,21 +238,12 @@ class ServiceFragment : InjectingBaseFragment(),
                 val canScrollFurther = smmryFragment.canScrollVertically(directionInt)
                 if (canScrollFurther) InterceptResult.INTERCEPTED else InterceptResult.IGNORED
               }
-              smmryPage.addStateChangeCallbacks(object : PageStateChangeCallbacks {
-                override fun onPageAboutToCollapse(collapseAnimDuration: Long) {
-                }
-
-                override fun onPageAboutToExpand(expandAnimDuration: Long) {
-                }
-
+              smmryPage.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
                 override fun onPageCollapsed() {
                   childFragmentManager.transaction(now = true, allowStateLoss = true) {
                     remove(smmryFragment)
                   }
                   smmryPage.removeStateChangeCallbacks(this)
-                }
-
-                override fun onPageExpanded() {
                 }
               })
               childFragmentManager.transaction(now = true, allowStateLoss = true) {
