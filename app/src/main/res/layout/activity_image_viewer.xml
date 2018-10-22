@@ -60,7 +60,7 @@
         android:layout_margin="16dp"
         android:background="?selectableItemBackgroundBorderless"
         android:padding="16dp"
-        android:src="@drawable/ic_web_black_24dp"
+        android:src="@drawable/ic_open_in_browser_black_24dp"
         tools:ignore="ContentDescription"
         />
   </com.google.android.material.bottomappbar.BottomAppBar>
