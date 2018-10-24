@@ -66,6 +66,7 @@ kapt {
   mapDiagnosticLocations = true
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
+    arg("dagger.formatGeneratedSource", "disabled")
   }
 }
 
