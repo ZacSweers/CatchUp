@@ -67,6 +67,7 @@ kapt {
   mapDiagnosticLocations = true
   arguments {
     arg("moshi.generated", "javax.annotation.Generated")
+    arg("dagger.formatGeneratedSource", "disabled")
   }
 }
 

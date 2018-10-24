@@ -65,6 +65,9 @@ kapt {
   correctErrorTypes = true
   useBuildCache = true
   mapDiagnosticLocations = true
+  arguments {
+    arg("dagger.formatGeneratedSource", "disabled")
+  }
 }
 
 dependencies {
