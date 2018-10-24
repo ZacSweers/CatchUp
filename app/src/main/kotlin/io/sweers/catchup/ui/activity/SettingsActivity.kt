@@ -30,7 +30,6 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
 import androidx.preference.children
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.perf.FirebasePerformance
 import com.uber.autodispose.autoDisposable
@@ -140,8 +139,6 @@ class SettingsActivity : InjectingBaseActivity() {
     lateinit var lumberYard: LumberYard
     @Inject
     lateinit var sharedPreferences: SharedPreferences
-    @Inject
-    lateinit var rxSharedPreferences: RxSharedPreferences
     @Inject
     protected lateinit var navColorizer: NavBarColorizer
 
