@@ -20,6 +20,7 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
+import dagger.android.support.AndroidSupportInjectionModule
 import io.sweers.catchup.data.DataModule
 import io.sweers.catchup.ui.activity.ActivityBindingModule
 import javax.inject.Singleton
@@ -27,6 +28,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [
   ActivityBindingModule::class,
+  AndroidSupportInjectionModule::class,
   AndroidInjectionModule::class,
   ApplicationModule::class,
   DataModule::class
