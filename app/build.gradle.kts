@@ -24,7 +24,7 @@ plugins {
   kotlin("android")
   kotlin("kapt")
   id("com.apollographql.android")
-  id("com.bugsnag.android.gradle")
+//  id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
 }
 
@@ -189,11 +189,11 @@ play {
   serviceAccountCredentials = rootProject.file("signing/play-account.p12")
 }
 
-bugsnag {
-  apiKey = properties["catchup_bugsnag_key"].toString()
-  autoProguardConfig = false
-  ndk = true
-}
+//bugsnag {
+//  apiKey = properties["catchup_bugsnag_key"].toString()
+//  autoProguardConfig = false
+//  ndk = true
+//}
 
 psync {
   includesPattern = "**/xml/prefs_*.xml"
