@@ -32,7 +32,7 @@ include(
     ":services:hackernews",
     ":services:imgur",
     ":services:medium",
-    ":services:newsapi",
+//    ":services:newsapi",
     ":services:producthunt",
     ":services:reddit",
     ":services:slashdot",
