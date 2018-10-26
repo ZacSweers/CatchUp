@@ -84,6 +84,9 @@ android {
     exclude("META-INF/services/javax.annotation.processing.Processor")
     exclude("kotlin/**")
     exclude("**/*.kotlin_metadata")
+    exclude("**/*.dot")
+    exclude("**/*.properties")
+    exclude("*.properties")
     exclude("META-INF/*.kotlin_module")
     exclude("META-INF/*.version")
     exclude("META-INF/com.uber.crumb/**")
@@ -106,7 +109,7 @@ android {
       postprocessing.apply {
         proguardFiles("proguard-rules.pro")
         isOptimizeCode = true
-        isObfuscate = true
+        isObfuscate = false
       }
     }
   }
