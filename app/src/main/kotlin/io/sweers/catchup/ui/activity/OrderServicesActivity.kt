@@ -35,6 +35,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.transaction
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.Callback
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -139,13 +141,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
       if (!isInNightMode()) {
         toolbar.setLightStatusBar()
       }
-      setSupportActionBar(toolbar)
-      supportActionBar?.run {
-        setDisplayHomeAsUpEnabled(true)
-        setDisplayShowTitleEnabled(false)
-      }
     }
-    toolbar.title = toolbar.context.getString(R.string.pref_reorder_services)
     val lm = LinearLayoutManager(view.context)
     recyclerView.layoutManager = lm
     storedOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
@@ -167,6 +163,18 @@ class OrderServicesFragment : InjectableBaseFragment() {
     recyclerView.adapter = adapter
     savedInstanceState?.getParcelable<Parcelable>("orderServicesState")?.let(
         lm::onRestoreInstanceState)
+    toolbar.apply {
+      setNavigationIcon(R.drawable.ic_arrow_back_black_24dp)
+      setNavigationOnClickListener {
+        onBackPressed()
+      }
+      title = context.getString(R.string.pref_reorder_services)
+      inflateMenu(R.menu.order_services)
+      menu.findItem(R.id.shuffle).setOnMenuItemClickListener {
+        adapter.shuffle()
+        true
+      }
+    }
     val callback = MoveCallback { start, end -> adapter.move(start, end) }
     ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
 
@@ -209,7 +217,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
           .setTitle(R.string.pending_changes_title)
           .setMessage(R.string.pending_changes_message)
           .setNeutralButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
-          .setPositiveButton(R.string.proceed) { dialog, _ ->
+          .setPositiveButton(R.string.dontsave) { dialog, _ ->
             dialog.dismiss()
             activity?.finish()
           }
@@ -220,6 +228,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
           .show()
       return true
     }
+    activity?.finish()
     return false
   }
 }
@@ -233,6 +242,25 @@ private class Adapter(
 
   init {
     setHasStableIds(true)
+  }
+
+  fun shuffle() {
+    val current = items.toList()
+    items.shuffle()
+    DiffUtil.calculateDiff(object : Callback() {
+      override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return current[oldItemPosition].id == items[newItemPosition].id
+      }
+
+      override fun getOldListSize() = current.size
+
+      override fun getNewListSize() = items.size
+
+      override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return current[oldItemPosition] == items[newItemPosition]
+      }
+    }).dispatchUpdatesTo(this)
+    changeListener(items)
   }
 
   override fun getItemId(position: Int): Long {

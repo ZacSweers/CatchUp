@@ -60,8 +60,9 @@
   <string name="pref_order_services_description">Drag and drop to reorder services.\nThis save button will show when you have pending changes, click to save when you\'re done.</string>
   <string name="pending_changes_title">Save changes?</string>
   <string name="pending_changes_message">You have unsaved changes. Do you want to proceed without saving?</string>
-  <string name="proceed">Proceed</string>
+  <string name="dontsave">Don\'t save</string>
   <string name="save">Save</string>
   <string name="service_icon">Service icon</string>
   <string name="transition_image" translatable="false">image</string>
+  <string name="shuffle">Shuffle</string>
 </resources>
