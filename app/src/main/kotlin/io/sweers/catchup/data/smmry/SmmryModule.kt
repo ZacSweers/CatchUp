@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.data.smmry
 
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
@@ -25,7 +26,6 @@ import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
 import io.sweers.catchup.injection.scopes.PerFragment
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Qualifier
 
@@ -52,14 +52,13 @@ abstract class SmmryModule {
     @JvmStatic
     @PerFragment
     internal fun provideSmmryService(client: Lazy<OkHttpClient>,
-        @InternalApi moshi: Moshi,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SmmryService {
+        @InternalApi moshi: Moshi): SmmryService {
       return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
           .callFactory { request ->
             client.get()
                 .newCall(request)
           }
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addCallAdapterFactory(CoroutineCallAdapterFactory())
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .validateEagerly(BuildConfig.DEBUG)
           .build()
