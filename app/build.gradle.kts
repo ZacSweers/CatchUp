@@ -217,7 +217,6 @@ apollo {
 }
 
 tasks.withType<KotlinCompile> {
-  usePreciseJavaTracking = true
   kotlinOptions {
     freeCompilerArgs = build.standardFreeKotlinCompilerArgs
   }
