@@ -217,11 +217,9 @@ class SmmryFragment : InjectableBaseFragment() {
       UnknownErrorCode
     }
     if (response != UnknownErrorCode) {
-      withContext(Dispatchers.IO) {
-        smmryDao.putItem(SmmryStorageEntry(
-            url = id,
-            json = moshi.adapter(SmmryResponse::class.java).toJson(response)))
-      }
+      smmryDao.putItem(SmmryStorageEntry(
+          url = id,
+          json = moshi.adapter(SmmryResponse::class.java).toJson(response)))
     }
     return response
   }
@@ -260,6 +258,7 @@ data class SmmryStorageEntry(
 )
 
 private suspend fun SmmryDao.getItem(url: String) = withContext(Dispatchers.IO) { getItemBlocking(url) }
+private suspend fun SmmryDao.putItem(item: SmmryStorageEntry) = withContext(Dispatchers.IO) { putItemBlocking(item) }
 
 @Dao
 interface SmmryDao {
@@ -268,7 +267,7 @@ interface SmmryDao {
   fun getItemBlocking(url: String): SmmryStorageEntry?
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItem(item: SmmryStorageEntry)
+  fun putItemBlocking(item: SmmryStorageEntry)
 
   @Query("DELETE FROM $TABLE")
   fun nukeItems()
