@@ -22,6 +22,7 @@ import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import io.sweers.catchup.BuildConfig
+import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
 import io.sweers.catchup.injection.scopes.PerFragment
 import okhttp3.OkHttpClient
@@ -30,39 +31,40 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Qualifier
 
 @Module
-abstract class SmmryModule {
+object SmmryModule {
 
   @Qualifier
-  private annotation class InternalApi
+  annotation class ForSmmry
 
-  @Module
-  companion object {
-
-    @Provides
-    @JvmStatic
-    @InternalApi
-    @PerFragment
-    internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
-      return moshi.newBuilder()
-          .add(SmmryResponseFactory.getInstance())
-          .build()
-    }
-
-    @Provides
-    @JvmStatic
-    @PerFragment
-    internal fun provideSmmryService(client: Lazy<OkHttpClient>,
-        @InternalApi moshi: Moshi): SmmryService {
-      return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
-          .callFactory { request ->
-            client.get()
-                .newCall(request)
-          }
-          .addCallAdapterFactory(CoroutineCallAdapterFactory())
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(BuildConfig.DEBUG)
-          .build()
-          .create(SmmryService::class.java)
-    }
+  @Provides
+  @JvmStatic
+  @ForSmmry
+  @PerFragment
+  internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
+    return moshi.newBuilder()
+        .add(SmmryResponseFactory.getInstance())
+        .build()
   }
+
+  @Provides
+  @JvmStatic
+  @PerFragment
+  internal fun provideSmmryService(client: Lazy<OkHttpClient>,
+      @ForSmmry moshi: Moshi): SmmryService {
+    return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
+        .callFactory { request ->
+          client.get()
+              .newCall(request)
+        }
+        .addCallAdapterFactory(CoroutineCallAdapterFactory())
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(BuildConfig.DEBUG)
+        .build()
+        .create(SmmryService::class.java)
+  }
+
+  @Provides
+  @JvmStatic
+  @PerFragment
+  internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase) = catchUpDatabase.smmryDao()
 }

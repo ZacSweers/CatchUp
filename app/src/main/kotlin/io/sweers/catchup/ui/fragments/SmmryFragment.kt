@@ -52,7 +52,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
-import io.sweers.catchup.data.CatchUpDatabase
+import io.sweers.catchup.data.smmry.SmmryModule.ForSmmry
 import io.sweers.catchup.data.smmry.SmmryService
 import io.sweers.catchup.data.smmry.model.ApiRejection
 import io.sweers.catchup.data.smmry.model.IncorrectVariables
@@ -76,13 +76,7 @@ import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
 import kotterknife.bindView
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
-import java.io.IOException
 import javax.inject.Inject
-import javax.inject.Qualifier
 
 /**
  * Overlay fragment for displaying Smmry API results.
@@ -272,46 +266,6 @@ class SmmryFragment : InjectableBaseFragment() {
     if (content.isGone) {
       content.show(true)
     }
-  }
-
-  @dagger.Module
-  object Module {
-
-    @Qualifier
-    annotation class ForSmmry
-
-    @Provides
-    @JvmStatic
-    @ForSmmry
-    @PerFragment
-    internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
-      return moshi.newBuilder()
-          .add(SmmryResponseFactory.getInstance())
-          .build()
-    }
-
-    @Provides
-    @JvmStatic
-    @PerFragment
-    internal fun provideSmmryService(client: Lazy<OkHttpClient>,
-        @ForSmmry moshi: Moshi,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SmmryService {
-      return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
-          .callFactory { request ->
-            client.get()
-                .newCall(request)
-          }
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(BuildConfig.DEBUG)
-          .build()
-          .create(SmmryService::class.java)
-    }
-
-    @Provides
-    @JvmStatic
-    @PerFragment
-    internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase) = catchUpDatabase.smmryDao()
   }
 }
 
