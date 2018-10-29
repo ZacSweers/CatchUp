@@ -190,11 +190,9 @@ class SmmryFragment : InjectableBaseFragment() {
     return content.canScrollVertically(directionInt)
   }
 
-  private suspend fun tryRequestFromStorage() = withContext(Dispatchers.IO) {
-    smmryDao.getItem(id)?.let {
-      moshi.adapter(SmmryResponse::class.java).fromJson(it.json) ?: throw JsonDataException(
-          "Could not parse entry")
-    }
+  private suspend fun tryRequestFromStorage() = smmryDao.getItem(id)?.let {
+    moshi.adapter(SmmryResponse::class.java).fromJson(it.json) ?: throw JsonDataException(
+        "Could not parse entry")
   }
 
   private suspend fun fetchFromNetwork(): SmmryResponse {
@@ -262,11 +260,13 @@ data class SmmryStorageEntry(
     val json: String
 )
 
+private suspend fun SmmryDao.getItem(url: String) = withContext(Dispatchers.IO) { getItemBlocking(url) }
+
 @Dao
 interface SmmryDao {
 
   @Query("SELECT * FROM $TABLE WHERE url = :url")
-  fun getItem(url: String): SmmryStorageEntry?
+  fun getItemBlocking(url: String): SmmryStorageEntry?
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun putItem(item: SmmryStorageEntry)
