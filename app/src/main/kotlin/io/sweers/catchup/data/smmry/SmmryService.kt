@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.data.smmry
 
-import io.reactivex.Single
 import io.sweers.catchup.data.smmry.model.SmmryResponse
+import kotlinx.coroutines.Deferred
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
@@ -27,17 +27,17 @@ interface SmmryService {
 
   @POST(".")
   fun summarizeUrl(
-      @QueryMap params: Map<String, @JvmSuppressWildcards Any>): Single<SmmryResponse>
+      @QueryMap params: Map<String, @JvmSuppressWildcards Any>): Deferred<SmmryResponse>
 
   @POST(".")
   @FormUrlEncoded
   fun summarizeText(
       @QueryMap params: Map<String, @JvmSuppressWildcards Any>,
-      @Field("sm_api_input") text: String): Single<SmmryResponse>
+      @Field("sm_api_input") text: String): Deferred<SmmryResponse>
 
   companion object {
 
-    private val HOST = "api.smmry.com/"
-    val ENDPOINT = "https://" + HOST
+    private const val HOST = "api.smmry.com/"
+    const val ENDPOINT = "https://$HOST"
   }
 }
