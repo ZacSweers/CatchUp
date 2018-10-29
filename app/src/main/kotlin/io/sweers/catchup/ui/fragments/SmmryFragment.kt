@@ -175,7 +175,7 @@ class SmmryFragment : InjectableBaseFragment() {
             is ApiRejection -> "Smmry API error - ${response.message}"
             is SummarizationError -> "Smmry summarization error - ${response.message}"
             UnknownErrorCode -> getString(R.string.unknown_issue)
-            else -> TODO("Give me sealed whens!")
+            else -> throw UnsupportedOperationException("Success is already covered above")
           }
           summary.text = message
         }
