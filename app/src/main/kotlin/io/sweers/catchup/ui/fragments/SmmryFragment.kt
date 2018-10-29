@@ -282,10 +282,10 @@ data class SmmryStorageEntry(
 interface SmmryDao {
 
   @Query("SELECT * FROM $TABLE WHERE url = :url")
-  fun getItem(url: String): Maybe<SmmryStorageEntry>
+  fun getItem(url: String): SmmryStorageEntry?
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItem(item: SmmryStorageEntry): Completable
+  fun putItem(item: SmmryStorageEntry)
 
   @Query("DELETE FROM $TABLE")
   fun nukeItems()
