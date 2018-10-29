@@ -19,7 +19,6 @@ package io.sweers.catchup.ui.fragments
 import android.annotation.SuppressLint
 import android.graphics.ColorFilter
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +41,6 @@ import com.airbnb.lottie.model.KeyPath
 import com.airbnb.lottie.value.LottieValueCallback
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
-import io.reactivex.Observable
 import io.sweers.catchup.R
 import io.sweers.catchup.data.smmry.SmmryModule.ForSmmry
 import io.sweers.catchup.data.smmry.SmmryService
@@ -228,14 +226,10 @@ class SmmryFragment : InjectableBaseFragment() {
   private fun showSummary(smmry: Success) {
     if (smmry.keywords != null) {
       tags.setTextColor(accentColor)
-      tags.text = TextUtils.join("  —  ",
-          Observable.fromIterable(smmry.keywords)
-              .map { s ->
-                s.trim { it <= ' ' }
-                    .toUpperCase()
-              }
-              .toList()
-              .blockingGet())
+      tags.text = smmry.keywords.joinToString("  —  ") { s ->
+        s.trim { it <= ' ' }
+            .toUpperCase()
+      }
       tags.show()
     } else {
       tags.hide()
@@ -257,8 +251,12 @@ data class SmmryStorageEntry(
     val json: String
 )
 
-private suspend fun SmmryDao.getItem(url: String) = withContext(Dispatchers.IO) { getItemBlocking(url) }
-private suspend fun SmmryDao.putItem(item: SmmryStorageEntry) = withContext(Dispatchers.IO) { putItemBlocking(item) }
+private suspend fun SmmryDao.getItem(url: String) = withContext(Dispatchers.IO) {
+  getItemBlocking(url)
+}
+
+private suspend fun SmmryDao.putItem(item: SmmryStorageEntry) = withContext(
+    Dispatchers.IO) { putItemBlocking(item) }
 
 @Dao
 interface SmmryDao {
