@@ -200,6 +200,7 @@ object deps {
       const val google = "https://maven.google.com"
       const val jitpack = "https://jitpack.io"
       const val kotlineap = "https://dl.bintray.com/kotlin/kotlin-eap"
+      const val kotlinx = "https://kotlin.bintray.com/kotlinx"
       const val plugins = "https://plugins.gradle.org/m2/"
       const val snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
@@ -298,6 +299,7 @@ object deps {
   }
 
   object kotlin {
+    const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0-RC1"
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     const val metadata = "me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.4.0"
     const val noArgGradlePlugin = "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
@@ -366,6 +368,7 @@ object deps {
 
     const val moshi = "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
     const val rxJava2 = "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
+    const val coroutines = "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
   }
 
   object rx {
