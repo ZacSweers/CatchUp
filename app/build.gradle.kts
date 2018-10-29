@@ -426,6 +426,7 @@ dependencies {
   implementation(deps.android.androidx.coreKtx)
   implementation(deps.kotlin.stdlib.jdk7)
   implementation(deps.kotlin.coroutines)
+  implementation(deps.kotlin.coroutinesAndroid)
 
   // Moshi
   kapt(deps.moshi.compiler)
