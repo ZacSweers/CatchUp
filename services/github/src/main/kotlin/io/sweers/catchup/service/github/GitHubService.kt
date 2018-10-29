@@ -28,8 +28,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
-import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojis
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
@@ -76,7 +76,7 @@ internal class GitHubService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Maybe<DataResult> {
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
     return fetchByScraping()
         .onErrorResumeNext { t: Throwable ->
           e(t) { "GitHub trending scraping failed." }
@@ -86,7 +86,7 @@ internal class GitHubService @Inject constructor(
 
   override fun linkHandler() = linkHandler
 
-  private fun fetchByScraping(): Maybe<DataResult> {
+  private fun fetchByScraping(): Single<DataResult> {
     return gitHubApi
         .get()
         .getTrending(language = All, since = DAILY)
@@ -105,7 +105,7 @@ internal class GitHubService @Inject constructor(
                   Mark(text = it.toString(),
                       textPrefix = "+",
                       icon = R.drawable.ic_star_black_24dp,
-                      iconTintColor = languageColor?.let { Color.parseColor(it) }
+                      iconTintColor = languageColor?.let(Color::parseColor)
                   )
                 }
             )
@@ -113,10 +113,9 @@ internal class GitHubService @Inject constructor(
         }
         .toList()
         .map { DataResult(it, null) }
-        .toMaybe()
   }
 
-  private fun fetchByQuery(request: DataRequest): Maybe<DataResult> {
+  private fun fetchByQuery(request: DataRequest): Single<DataResult> {
     val query = SearchQuery(
         createdSince = TrendingTimespan.WEEK.createdSince(),
         minStars = 50)
@@ -151,7 +150,7 @@ internal class GitHubService @Inject constructor(
                   CatchUpItem(
                       id = id().hashCode().toLong(),
                       title = "${name()}$description",
-                      score = "★" to stargazers().totalCount().toInt(),
+                      score = "★" to stargazers().totalCount(),
                       timestamp = createdAt(),
                       author = owner().login(),
                       tag = languages()?.nodes()?.firstOrNull()?.name(),
@@ -169,7 +168,6 @@ internal class GitHubService @Inject constructor(
                 }
               }
         }
-        .toMaybe()
   }
 }
 

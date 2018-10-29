@@ -25,7 +25,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
-import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
@@ -62,7 +61,7 @@ internal class HackerNewsService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Maybe<DataResult> {
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
     val itemsPerPage = 25 // TODO Pref this
     return Single
@@ -128,14 +127,13 @@ internal class HackerNewsService @Inject constructor(
         }
         .toList()
         .map { DataResult(it, if (it.isEmpty()) null else (page + 1).toString()) }
-        .toMaybe()
         .onErrorResumeNext { t: Throwable ->
           if (BuildConfig.DEBUG && t is IllegalArgumentException) {
             // Firebase didn't init
-            Maybe.error(ServiceException(
+            Single.error(ServiceException(
                 "Firebase wasn't able to initialize, likely due to missing credentials."))
           } else {
-            Maybe.error(t)
+            Single.error(t)
           }
         }
   }
