@@ -102,7 +102,6 @@ class PagerFragment : InjectingBaseFragment() {
   private var tabLayoutIsPinned = false
   private var canAnimateColor = true
   private var lastPosition = 0
-  private lateinit var pagerAdapter: FragmentStatePagerAdapter
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
@@ -123,7 +122,7 @@ class PagerFragment : InjectingBaseFragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager) {
+    val pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager) {
       private val cache = WeakHashMap<Int, Fragment>()
 
       override fun getItem(position: Int): Fragment {
@@ -301,7 +300,7 @@ class PagerFragment : InjectingBaseFragment() {
       override fun onTabUnselected(tab: TabLayout.Tab) {}
 
       override fun onTabReselected(tab: TabLayout.Tab) {
-        pagerAdapter.getItem(tab.position)?.let {
+        pagerAdapter.getItem(tab.position).let {
           if (it is Scrollable) {
             it.onRequestScrollToTop()
             appBarLayout.setExpanded(true, true)
