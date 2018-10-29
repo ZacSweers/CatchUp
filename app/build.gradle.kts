@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -222,6 +223,12 @@ tasks.withType<KotlinCompile> {
   }
 }
 
+kotlin {
+  experimental {
+    coroutines = Coroutines.ENABLE
+  }
+}
+
 open class CutChangelogTask : DefaultTask() {
 
   @get:Input
@@ -418,6 +425,8 @@ dependencies {
   // Kotlin
   implementation(deps.android.androidx.coreKtx)
   implementation(deps.kotlin.stdlib.jdk7)
+  implementation(deps.kotlin.coroutines)
+  implementation(deps.kotlin.coroutinesAndroid)
 
   // Moshi
   kapt(deps.moshi.compiler)
@@ -435,6 +444,7 @@ dependencies {
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
   implementation(deps.retrofit.rxJava2)
+  implementation(deps.retrofit.coroutines)
   implementation(deps.rx.android)
   implementation(deps.rx.java)
   implementation(deps.rx.binding.core)

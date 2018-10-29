@@ -19,7 +19,6 @@ package io.sweers.catchup.ui.fragments
 import android.annotation.SuppressLint
 import android.graphics.ColorFilter
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,49 +39,32 @@ import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.SimpleColorFilter
 import com.airbnb.lottie.model.KeyPath
 import com.airbnb.lottie.value.LottieValueCallback
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
-import com.uber.autodispose.autoDisposable
-import dagger.Lazy
-import dagger.Provides
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
-import io.sweers.catchup.data.CatchUpDatabase
+import io.sweers.catchup.data.smmry.SmmryModule.ForSmmry
 import io.sweers.catchup.data.smmry.SmmryService
 import io.sweers.catchup.data.smmry.model.ApiRejection
 import io.sweers.catchup.data.smmry.model.IncorrectVariables
 import io.sweers.catchup.data.smmry.model.InternalError
 import io.sweers.catchup.data.smmry.model.SmmryRequestBuilder
 import io.sweers.catchup.data.smmry.model.SmmryResponse
-import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
 import io.sweers.catchup.data.smmry.model.Success
 import io.sweers.catchup.data.smmry.model.SummarizationError
 import io.sweers.catchup.data.smmry.model.UnknownErrorCode
-import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.SummarizationType
 import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.ui.base.InjectableBaseFragment
-import io.sweers.catchup.ui.fragments.SmmryFragment.Module.ForSmmry
-import io.sweers.catchup.util.e
+import io.sweers.catchup.util.coroutines.liveCoroutineScope
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
-import io.sweers.catchup.util.w
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotterknife.bindView
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
-import java.io.IOException
 import javax.inject.Inject
-import javax.inject.Qualifier
 
 /**
  * Overlay fragment for displaying Smmry API results.
@@ -178,91 +160,76 @@ class SmmryFragment : InjectableBaseFragment() {
     } else {
       loadingView.hide()
     }
-    Maybe.concatArray(tryRequestFromStorage(), getRequestSingle().toMaybe())
-        .firstOrError()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .autoDisposable(this)
-        .subscribe({ smmryResponse ->
-          alreadyLoaded = true
-          loadingView.hide(true)
-          when (smmryResponse) {
-            is Success -> {
-              showSummary(smmryResponse)
-            }
-            else -> {
-              val message = when (smmryResponse) {
-                is InternalError -> "Smmry internal error - ${smmryResponse.message}"
-                is IncorrectVariables -> "Smmry invalid input - ${smmryResponse.message}"
-                is ApiRejection -> "Smmry API error - ${smmryResponse.message}"
-                is SummarizationError -> "Smmry summarization error - ${smmryResponse.message}"
-                UnknownErrorCode -> "Unknown error :("
-                else -> TODO("Give me sealed whens!")
-              }
-              summary.text = message
-            }
+    viewLifecycleOwner.liveCoroutineScope {
+      val response = tryRequestFromStorage() ?: fetchFromNetwork()
+      alreadyLoaded = true
+      loadingView.hide(animate = true)
+      when (response) {
+        is Success -> {
+          showSummary(response)
+        }
+        else -> {
+          val message = when (response) {
+            is InternalError -> "Smmry internal error - ${response.message}"
+            is IncorrectVariables -> "Smmry invalid input - ${response.message}"
+            is ApiRejection -> "Smmry API error - ${response.message}"
+            is SummarizationError -> "Smmry summarization error - ${response.message}"
+            UnknownErrorCode -> getString(R.string.unknown_issue)
+            else -> TODO("Give me sealed whens!")
           }
-        }, { error ->
-          loadingView.hide(true)
-          summary.setText(R.string.unknown_issue)
-          if (error is IOException) {
-            w(error) { "Unknown error in smmry load" }
-          } else {
-            e(error) { "Unknown error in smmry load" }
-          }
-        })
+          summary.text = message
+        }
+      }
+    }
   }
 
   fun canScrollVertically(directionInt: Int): Boolean {
     return content.canScrollVertically(directionInt)
   }
 
-  private fun tryRequestFromStorage(): Maybe<SmmryResponse> {
-    return smmryDao.getItem(id)
-        .map { moshi.adapter(SmmryResponse::class.java).fromJson(it.json)!! }
-        .onErrorComplete { exception ->
-          e(exception) { "Error loading smmry cache." }
-          true
-        }
+  private suspend fun tryRequestFromStorage() = smmryDao.getItem(id)?.let {
+    moshi.adapter(SmmryResponse::class.java).fromJson(it.json) ?: throw JsonDataException(
+        "Could not parse entry")
   }
 
-  private fun getRequestSingle(): Single<SmmryResponse> {
-    val summarizer: Single<SmmryResponse> = when (info.type) {
-      TEXT -> smmryService.summarizeText(SmmryRequestBuilder.forText()
-          .withBreak(true)
-          .keywordCount(5)
-          .sentenceCount(5)
-          .build(),
-          info.value)
-      URL -> smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(info.value)
-          .withBreak(true)
-          .keywordCount(5)
-          .sentenceCount(5)
-          .build())
-      NONE -> Single.just(Success.just(inputTitle, info.value))
-    }
-    return summarizer.doOnSuccess {
-      if (it != UnknownErrorCode) {
-        smmryDao.putItem(SmmryStorageEntry(
-            url = id,
-            json = moshi.adapter(SmmryResponse::class.java).toJson(it)))
-            .blockingAwait()
+  private suspend fun fetchFromNetwork(): SmmryResponse {
+    val response: SmmryResponse = try {
+      when (info.type) {
+        TEXT -> smmryService.summarizeText(SmmryRequestBuilder.forText()
+            .withBreak(true)
+            .keywordCount(5)
+            .sentenceCount(5)
+            .build(),
+            info.value)
+            .await()
+        URL -> smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(info.value)
+            .withBreak(true)
+            .keywordCount(5)
+            .sentenceCount(5)
+            .build())
+            .await()
+        NONE -> Success.just(inputTitle, info.value)
       }
+    } catch (error: Exception) {
+      // We should indicate when something's network related
+      UnknownErrorCode
     }
+    if (response != UnknownErrorCode) {
+      smmryDao.putItem(SmmryStorageEntry(
+          url = id,
+          json = moshi.adapter(SmmryResponse::class.java).toJson(response)))
+    }
+    return response
   }
 
   @SuppressLint("SetTextI18n")
   private fun showSummary(smmry: Success) {
     if (smmry.keywords != null) {
       tags.setTextColor(accentColor)
-      tags.text = TextUtils.join("  —  ",
-          Observable.fromIterable(smmry.keywords)
-              .map { s ->
-                s.trim { it <= ' ' }
-                    .toUpperCase()
-              }
-              .toList()
-              .blockingGet())
+      tags.text = smmry.keywords.joinToString("  —  ") { s ->
+        s.trim { it <= ' ' }
+            .toUpperCase()
+      }
       tags.show()
     } else {
       tags.hide()
@@ -272,46 +239,6 @@ class SmmryFragment : InjectableBaseFragment() {
     if (content.isGone) {
       content.show(true)
     }
-  }
-
-  @dagger.Module
-  object Module {
-
-    @Qualifier
-    annotation class ForSmmry
-
-    @Provides
-    @JvmStatic
-    @ForSmmry
-    @PerFragment
-    internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
-      return moshi.newBuilder()
-          .add(SmmryResponseFactory.getInstance())
-          .build()
-    }
-
-    @Provides
-    @JvmStatic
-    @PerFragment
-    internal fun provideSmmryService(client: Lazy<OkHttpClient>,
-        @ForSmmry moshi: Moshi,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): SmmryService {
-      return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
-          .callFactory { request ->
-            client.get()
-                .newCall(request)
-          }
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(BuildConfig.DEBUG)
-          .build()
-          .create(SmmryService::class.java)
-    }
-
-    @Provides
-    @JvmStatic
-    @PerFragment
-    internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase) = catchUpDatabase.smmryDao()
   }
 }
 
@@ -324,14 +251,21 @@ data class SmmryStorageEntry(
     val json: String
 )
 
+private suspend fun SmmryDao.getItem(url: String) = withContext(Dispatchers.IO) {
+  getItemBlocking(url)
+}
+
+private suspend fun SmmryDao.putItem(item: SmmryStorageEntry) = withContext(
+    Dispatchers.IO) { putItemBlocking(item) }
+
 @Dao
 interface SmmryDao {
 
   @Query("SELECT * FROM $TABLE WHERE url = :url")
-  fun getItem(url: String): Maybe<SmmryStorageEntry>
+  fun getItemBlocking(url: String): SmmryStorageEntry?
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItem(item: SmmryStorageEntry): Completable
+  fun putItemBlocking(item: SmmryStorageEntry)
 
   @Query("DELETE FROM $TABLE")
   fun nukeItems()
