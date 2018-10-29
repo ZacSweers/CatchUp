@@ -83,7 +83,6 @@ import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.InterceptResult
-import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import retrofit2.HttpException
 import java.io.IOException
@@ -214,7 +213,7 @@ class ServiceFragment : InjectingBaseFragment(),
       val adapter = ImageAdapter(context) { item, holder ->
         service.bindItemView(item.realItem(), holder)
       }
-      val preloader = RecyclerViewPreloader<ImageItem>(GlideApp.with(context),
+      val preloader = RecyclerViewPreloader(GlideApp.with(context),
           adapter,
           ViewPreloadSizeProvider<ImageItem>(),
           ImageAdapter.PRELOAD_AHEAD_ITEMS)
