@@ -40,17 +40,9 @@ import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.SimpleColorFilter
 import com.airbnb.lottie.model.KeyPath
 import com.airbnb.lottie.value.LottieValueCallback
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
-import com.uber.autodispose.autoDisposable
-import dagger.Lazy
-import dagger.Provides
-import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.smmry.SmmryModule.ForSmmry
 import io.sweers.catchup.data.smmry.SmmryService
@@ -59,22 +51,21 @@ import io.sweers.catchup.data.smmry.model.IncorrectVariables
 import io.sweers.catchup.data.smmry.model.InternalError
 import io.sweers.catchup.data.smmry.model.SmmryRequestBuilder
 import io.sweers.catchup.data.smmry.model.SmmryResponse
-import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
 import io.sweers.catchup.data.smmry.model.Success
 import io.sweers.catchup.data.smmry.model.SummarizationError
 import io.sweers.catchup.data.smmry.model.UnknownErrorCode
-import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.SummarizationType
 import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.ui.base.InjectableBaseFragment
-import io.sweers.catchup.ui.fragments.SmmryFragment.Module.ForSmmry
-import io.sweers.catchup.util.e
+import io.sweers.catchup.util.coroutines.lifecycleCoroutineScope
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
-import io.sweers.catchup.util.w
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotterknife.bindView
 import javax.inject.Inject
 
@@ -172,77 +163,70 @@ class SmmryFragment : InjectableBaseFragment() {
     } else {
       loadingView.hide()
     }
-    Maybe.concatArray(tryRequestFromStorage(), getRequestSingle().toMaybe())
-        .firstOrError()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .autoDisposable(this)
-        .subscribe({ smmryResponse ->
-          alreadyLoaded = true
-          loadingView.hide(true)
-          when (smmryResponse) {
-            is Success -> {
-              showSummary(smmryResponse)
-            }
-            else -> {
-              val message = when (smmryResponse) {
-                is InternalError -> "Smmry internal error - ${smmryResponse.message}"
-                is IncorrectVariables -> "Smmry invalid input - ${smmryResponse.message}"
-                is ApiRejection -> "Smmry API error - ${smmryResponse.message}"
-                is SummarizationError -> "Smmry summarization error - ${smmryResponse.message}"
-                UnknownErrorCode -> "Unknown error :("
-                else -> TODO("Give me sealed whens!")
-              }
-              summary.text = message
-            }
+    lifecycleCoroutineScope().launch {
+      val response = tryRequestFromStorage() ?: fetchFromNetwork()
+      alreadyLoaded = true
+      loadingView.hide(animate = true)
+      when (response) {
+        is Success -> {
+          showSummary(response)
+        }
+        else -> {
+          val message = when (response) {
+            is InternalError -> "Smmry internal error - ${response.message}"
+            is IncorrectVariables -> "Smmry invalid input - ${response.message}"
+            is ApiRejection -> "Smmry API error - ${response.message}"
+            is SummarizationError -> "Smmry summarization error - ${response.message}"
+            UnknownErrorCode -> getString(R.string.unknown_issue)
+            else -> TODO("Give me sealed whens!")
           }
-        }, { error ->
-          loadingView.hide(true)
-          summary.setText(R.string.unknown_issue)
-          if (error is IOException) {
-            w(error) { "Unknown error in smmry load" }
-          } else {
-            e(error) { "Unknown error in smmry load" }
-          }
-        })
+          summary.text = message
+        }
+      }
+    }
   }
 
   fun canScrollVertically(directionInt: Int): Boolean {
     return content.canScrollVertically(directionInt)
   }
 
-  private fun tryRequestFromStorage(): Maybe<SmmryResponse> {
-    return smmryDao.getItem(id)
-        .map { moshi.adapter(SmmryResponse::class.java).fromJson(it.json)!! }
-        .onErrorComplete { exception ->
-          e(exception) { "Error loading smmry cache." }
-          true
-        }
+  private suspend fun tryRequestFromStorage() = withContext(Dispatchers.IO) {
+    smmryDao.getItem(id)?.let {
+      moshi.adapter(SmmryResponse::class.java).fromJson(it.json) ?: throw JsonDataException(
+          "Could not parse entry")
+    }
   }
 
-  private fun getRequestSingle(): Single<SmmryResponse> {
-    val summarizer: Single<SmmryResponse> = when (info.type) {
-      TEXT -> smmryService.summarizeText(SmmryRequestBuilder.forText()
-          .withBreak(true)
-          .keywordCount(5)
-          .sentenceCount(5)
-          .build(),
-          info.value)
-      URL -> smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(info.value)
-          .withBreak(true)
-          .keywordCount(5)
-          .sentenceCount(5)
-          .build())
-      NONE -> Single.just(Success.just(inputTitle, info.value))
+  private suspend fun fetchFromNetwork(): SmmryResponse {
+    val response: SmmryResponse = try {
+      when (info.type) {
+        TEXT -> smmryService.summarizeText(SmmryRequestBuilder.forText()
+            .withBreak(true)
+            .keywordCount(5)
+            .sentenceCount(5)
+            .build(),
+            info.value)
+            .await()
+        URL -> smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(info.value)
+            .withBreak(true)
+            .keywordCount(5)
+            .sentenceCount(5)
+            .build())
+            .await()
+        NONE -> Success.just(inputTitle, info.value)
+      }
+    } catch (error: Exception) {
+      // We should indicate when something's network related
+      UnknownErrorCode
     }
-    return summarizer.doOnSuccess {
-      if (it != UnknownErrorCode) {
+    if (response != UnknownErrorCode) {
+      withContext(Dispatchers.IO) {
         smmryDao.putItem(SmmryStorageEntry(
             url = id,
-            json = moshi.adapter(SmmryResponse::class.java).toJson(it)))
-            .blockingAwait()
+            json = moshi.adapter(SmmryResponse::class.java).toJson(response)))
       }
     }
+    return response
   }
 
   @SuppressLint("SetTextI18n")
