@@ -60,11 +60,10 @@ import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.ui.base.InjectableBaseFragment
-import io.sweers.catchup.util.coroutines.lifecycleCoroutineScope
+import io.sweers.catchup.util.coroutines.liveCoroutineScope
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotterknife.bindView
 import javax.inject.Inject
@@ -163,7 +162,7 @@ class SmmryFragment : InjectableBaseFragment() {
     } else {
       loadingView.hide()
     }
-    lifecycleCoroutineScope().launch {
+    viewLifecycleOwner.liveCoroutineScope {
       val response = tryRequestFromStorage() ?: fetchFromNetwork()
       alreadyLoaded = true
       loadingView.hide(animate = true)
