@@ -70,7 +70,7 @@ object deps {
     const val glide = "4.8.0"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
-    const val kotlin = "1.3.0-rc-190"
+    const val kotlin = "1.3.0"
     const val leakcanary = "1.6.2"
     const val legacySupport = "28.0.0"
     const val moshi = "1.7.0"
@@ -299,7 +299,7 @@ object deps {
   }
 
   object kotlin {
-    const val coroutinesVersion = "1.0.0-RC1"
+    private const val coroutinesVersion = "1.0.0"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
