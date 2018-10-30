@@ -102,9 +102,7 @@ class MainActivity : InjectingBaseActivity() {
                   serviceMetas[it.key]!!.enabledPreferenceKey, true)
             }
             .mapValues { (_, value) ->
-              Provider<Service> {
-                StorageBackedService(serviceDao, value.get())
-              }
+              Provider { StorageBackedService(serviceDao, value.get()) }
             }
       }
     }

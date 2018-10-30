@@ -23,7 +23,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
-import io.reactivex.Maybe
+import io.reactivex.Single
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -60,7 +60,7 @@ internal class UnsplashService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Maybe<DataResult> {
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
     return api.getPhotos(page, 50)
         .flattenAsObservable { it }
@@ -87,7 +87,6 @@ internal class UnsplashService @Inject constructor(
         }
         .toList()
         .map { DataResult(it, (page + 1).toString()) }
-        .toMaybe()
   }
 
   override fun linkHandler() = linkHandler

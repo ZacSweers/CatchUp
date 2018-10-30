@@ -20,6 +20,7 @@ import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import io.reactivex.Completable
 import io.reactivex.Maybe
+import io.reactivex.Single
 import io.sweers.catchup.util.d
 import java.util.concurrent.atomic.AtomicLong
 
@@ -63,6 +64,25 @@ fun Completable.trace(tag: String): Completable {
         timer.set(System.currentTimeMillis())
       }
       .doOnComplete {
+        trace.incrementMetric("Success")
+      }
+      .doOnError {
+        trace.incrementMetric("Error")
+      }
+      .doFinally {
+        trace.stop()
+        d { "Stopped trace. $tag - took: ${System.currentTimeMillis() - timer.get()}ms" }
+      }
+}
+
+fun <T> Single<T>.trace(tag: String): Single<T> {
+  val trace = FirebasePerformance.getInstance().newTrace(tag)
+  val timer = AtomicLong()
+  return doOnSubscribe {
+        trace.start()
+        timer.set(System.currentTimeMillis())
+      }
+      .doOnSuccess {
         trace.incrementMetric("Success")
       }
       .doOnError {

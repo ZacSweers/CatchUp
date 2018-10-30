@@ -19,6 +19,7 @@ package io.sweers.catchup.ui.fragments.service
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.sweers.catchup.BuildConfig
@@ -47,7 +48,7 @@ class StorageBackedService(
 
   override fun meta() = delegate.meta()
 
-  override fun fetchPage(request: DataRequest): Maybe<DataResult> {
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
     if (request.multiPage) {
       // Backfill pages
 
@@ -58,6 +59,8 @@ class StorageBackedService(
             .reduce { prev, result ->
               DataResult(prev.data + result.data, result.nextPageToken, wasFresh = false)
             }
+            .filter { it.data.isNotEmpty() }
+            .toSingle() // Guaranteed to have at least one if multifetching
       }
 
       // Strategy is a bit interesting here. We start with a synthesized initial "result"
@@ -71,7 +74,7 @@ class StorageBackedService(
       val stateHandler = BehaviorSubject.createDefault(
           DataResult(emptyList(), meta().firstPageKey)).toSerialized()
       return stateHandler
-          .flatMapMaybe { getPage(it.nextPageToken!!, allowNetworkFallback = false) }
+          .flatMapSingle { getPage(it.nextPageToken!!, allowNetworkFallback = false) }
           .doAfterNext { result ->
             val nextPage = result.nextPageToken
             if (nextPage != null) {
@@ -88,7 +91,8 @@ class StorageBackedService(
                 nextPageToken = result.nextPageToken,
                 wasFresh = false)
           }
-          .switchIfEmpty(Maybe.defer {
+          .filter { it.data.isNotEmpty() }
+          .switchIfEmpty(Single.defer {
             // Ultimately fall back to just trying to request the first page
             getPage(page = meta().firstPageKey,
                 isRefresh = false,
@@ -101,8 +105,8 @@ class StorageBackedService(
 
   private fun getPage(page: String,
       isRefresh: Boolean = false,
-      allowNetworkFallback: Boolean = true): Maybe<DataResult> {
-    return if (!isRefresh) {
+      allowNetworkFallback: Boolean = true): Single<DataResult> {
+    if (!isRefresh) {
       // Try from local first
       // If no prev session ID, grab the latest page
       // If we do have a prev session ID, we want those pages
@@ -114,22 +118,27 @@ class StorageBackedService(
           "invalid store state"
         }
       }
-      fetchPageFromLocal(page, useLatest)
+      return fetchPageFromLocal(page, useLatest)
+          .filter { it.data.isNotEmpty() }
           .switchIf(!useLatest) {
             switchIfEmpty(Maybe.defer {
               // If we were trying to a current session but failed, fall back to first local page
               fetchPageFromLocal(page, true)
             })
           }
-          .switchIf(allowNetworkFallback) {
-            switchIfEmpty(
-                Maybe.defer {
-                  // Nothing local, fall to network
-                  fetchPageFromNetwork(page, isRefresh)
-                })
+          .filter { it.data.isNotEmpty() }
+          .let {
+            if (allowNetworkFallback) {
+              it.switchIfEmpty(Single.defer {
+                // Nothing local, fall to network
+                fetchPageFromNetwork(page, isRefresh)
+              })
+            } else {
+              it.toSingle()
+            }
           }
     } else {
-      fetchPageFromNetwork(page, true)
+      return fetchPageFromNetwork(page, true)
     }
   }
 
@@ -164,7 +173,7 @@ class StorageBackedService(
         .trace("Local data load - ${delegate.meta().id}")
   }
 
-  private fun fetchPageFromNetwork(pageId: String, isRefresh: Boolean): Maybe<DataResult> {
+  private fun fetchPageFromNetwork(pageId: String, isRefresh: Boolean): Single<DataResult> {
     return delegate.fetchPage(DataRequest(true, false, pageId))
         .trace("Network data load - ${delegate.meta().id}")
         .flatMap { result ->
@@ -193,16 +202,17 @@ class StorageBackedService(
           return@flatMap Completable.mergeArray(putPage, putItems)
               .subscribeOn(Schedulers.io())
               .trace("Network data store - ${delegate.meta().id}")
-              .andThen(Maybe.just(result))
+              .andThen(Single.just(result))
         }
         .onErrorResumeNext { throwable: Throwable ->
           // At least *try* to gracefully handle it
           if (throwable is HttpException) {
-            Maybe.error(throwable)
+            Single.error(throwable)
           } else if (pageId == meta().firstPageKey && !isRefresh && throwable is IOException) {
             fetchPageFromLocal(pageId, true)
+                .switchIfEmpty(Single.error(throwable))
           } else {
-            Maybe.error(throwable)
+            Single.error(throwable)
           }
         }
   }

@@ -23,8 +23,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
-import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -37,7 +37,6 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.medium.model.MediumPost
-import io.sweers.catchup.service.medium.model.Post
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
@@ -64,10 +63,10 @@ internal class MediumService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Maybe<DataResult> {
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
     return api.top()
         .concatMapEager { references ->
-          Observable.fromIterable<Post>(references.post.values)
+          Observable.fromIterable(references.post.values)
               .map { post ->
                 MediumPost(
                     post = post,
@@ -99,7 +98,6 @@ internal class MediumService @Inject constructor(
         }
         .toList()
         .map { DataResult(it, null) }
-        .toMaybe()
   }
 
   override fun linkHandler() = linkHandler

@@ -16,11 +16,11 @@
 
 package io.sweers.catchup.service.api
 
-import io.reactivex.Maybe
+import io.reactivex.Single
 
 interface Service {
   fun meta(): ServiceMeta
-  fun fetchPage(request: DataRequest): Maybe<DataResult>
+  fun fetchPage(request: DataRequest): Single<DataResult>
   fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder)
   fun linkHandler(): LinkHandler
   fun rootService(): Service = this

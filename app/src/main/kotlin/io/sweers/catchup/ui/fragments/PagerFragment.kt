@@ -24,6 +24,7 @@ import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
+import androidx.core.util.set
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -63,7 +65,6 @@ import io.sweers.catchup.util.rx.PredicateConsumer
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNavBarColor
 import kotterknife.bindView
-import java.util.WeakHashMap
 import javax.inject.Inject
 
 fun ServiceMeta.toServiceHandler() = ServiceHandler(
@@ -102,7 +103,6 @@ class PagerFragment : InjectingBaseFragment() {
   private var tabLayoutIsPinned = false
   private var canAnimateColor = true
   private var lastPosition = 0
-  private lateinit var pagerAdapter: FragmentStatePagerAdapter
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
@@ -123,18 +123,27 @@ class PagerFragment : InjectingBaseFragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager) {
-      private val cache = WeakHashMap<Int, Fragment>()
+    val pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager) {
+      private val registeredFragments = SparseArray<Fragment>()
 
-      override fun getItem(position: Int): Fragment {
-        return cache.getOrPut(position) {
-          serviceHandlers[position].instantiator()
+      override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        return (super.instantiateItem(container, position) as Fragment).also {
+          registeredFragments[position] = it
         }
+      }
+
+      override fun getItem(position: Int) = serviceHandlers[position].instantiator()
+
+      override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        registeredFragments.remove(position)
+        super.destroyItem(container, position, `object`)
       }
 
       override fun getCount() = serviceHandlers.size
 
       override fun getPageTitle(position: Int) = ""
+
+      fun getRegisteredFragment(position: Int) = registeredFragments[position]
     }
 
     @ColorInt val colorPrimaryDark = view.context.resolveAttributeColor(R.attr.colorPrimaryDark)
@@ -301,7 +310,7 @@ class PagerFragment : InjectingBaseFragment() {
       override fun onTabUnselected(tab: TabLayout.Tab) {}
 
       override fun onTabReselected(tab: TabLayout.Tab) {
-        pagerAdapter.getItem(tab.position)?.let {
+        pagerAdapter.getRegisteredFragment(tab.position).let {
           if (it is Scrollable) {
             it.onRequestScrollToTop()
             appBarLayout.setExpanded(true, true)

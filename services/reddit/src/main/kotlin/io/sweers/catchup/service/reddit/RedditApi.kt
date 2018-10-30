@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.reddit
 
-import io.reactivex.Maybe
 import io.reactivex.Single
 import io.sweers.catchup.service.reddit.model.RedditResponse
 import retrofit2.http.GET
@@ -31,7 +30,7 @@ internal interface RedditApi {
 
   @GET("/")
   fun frontPage(@Query("limit") limit: Int,
-      @Query("after") after: String?): Maybe<RedditResponse>
+      @Query("after") after: String?): Single<RedditResponse>
 
   @GET("/r/{subreddit}")
   fun subreddit(@Path("subreddit") subreddit: String,
