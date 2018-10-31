@@ -52,7 +52,8 @@ object build {
       "-progressive",
       "-XXLanguage:+NewInference",
       "-XXLanguage:+SamConversionForKotlinFunctions",
-      "-XXLanguage:+InlineClasses"
+      "-XXLanguage:+InlineClasses",
+      "-Xuse-experimental=kotlin.Experimental"
   )
 }
 
