@@ -76,22 +76,26 @@ android {
     }
   }
   packagingOptions {
-    exclude("META-INF/LICENSE")
-    exclude("META-INF/NOTICE")
-    exclude("LICENSE.txt")
-    exclude("META-INF/rxjava.properties")
-    exclude("META-INF/NOTICE.txt")
-    exclude("META-INF/LICENSE.txt")
-    exclude("META-INF/services/javax.annotation.processing.Processor")
-    exclude("kotlin/**")
-    exclude("**/*.kotlin_metadata")
     exclude("**/*.dot")
+    exclude("**/*.kotlin_metadata")
     exclude("**/*.properties")
     exclude("*.properties")
+    exclude("kotlin/**")
+    exclude("LICENSE.txt")
+    exclude("LICENSE_OFL")
+    exclude("LICENSE_UNICODE")
     exclude("META-INF/*.kotlin_module")
     exclude("META-INF/*.version")
-    exclude("META-INF/com.uber.crumb/**")
     exclude("META-INF/androidx.*")
+    exclude("META-INF/CHANGES")
+    exclude("META-INF/com.uber.crumb/**")
+    exclude("META-INF/LICENSE")
+    exclude("META-INF/LICENSE.txt")
+    exclude("META-INF/NOTICE")
+    exclude("META-INF/NOTICE.txt")
+    exclude("META-INF/README.md")
+    exclude("META-INF/rxjava.properties")
+    exclude("META-INF/services/javax.annotation.processing.Processor")
   }
   buildTypes {
     getByName("debug") {
