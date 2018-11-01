@@ -102,13 +102,14 @@
 }
 
 # Tikxml
--keepnames class **$$TypeAdapter
+# The name of @Xml types is used to look up the generated adapter.
 -keepnames @com.tickaroo.tikxml.annotation.Xml class *
+-keep class **$$TypeAdapter
 
-# MoshKt
-# Retain generated classes that end in the suffix
--keepnames class **JsonAdapter
-
-# Prevent obfuscation of types which use @MoshiSerializable since the simple name
-# is used to reflectively look up the generated adapter.
--keepnames @com.squareup.moshi.JsonClass class *
+# Retain generated TypeAdapter if annotated type is retained.
+# NOTE this doesn't work right now. Would like to get it working rather than keep the blanket typeadapter keep above, but oh well
+#-if @com.tickaroo.tikxml.annotation.Xml class *
+#-keep class <1>$$TypeAdapter {
+#    <init>(...);
+#    <fields>;
+#}
