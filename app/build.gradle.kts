@@ -110,7 +110,9 @@ android {
       postprocessing.apply {
         proguardFiles("proguard-rules.pro")
         isOptimizeCode = true
-        isObfuscate = false
+        isObfuscate = true
+        isRemoveUnusedCode = true
+        isRemoveUnusedResources = true
       }
     }
   }
