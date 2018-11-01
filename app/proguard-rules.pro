@@ -72,6 +72,7 @@
 
 # OkHttp
 -dontwarn okhttp3.**
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 # Retrofit
 # Platform calls Class.forName on types which do not exist on Android to determine platform.
