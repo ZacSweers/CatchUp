@@ -30,6 +30,12 @@ buildscript {
     maven { url = uri(deps.build.repositories.snapshots) }
   }
 
+  configurations.all {
+    resolutionStrategy {
+      force("net.sf.proguard:proguard-base:6.1.0beta1")
+    }
+  }
+
   dependencies {
     classpath("com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta02") // https://issuetracker.google.com/issues/115738511
     classpath(deps.android.gradlePlugin)
