@@ -36,9 +36,7 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.github.type.CustomType
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.network.AuthInterceptor
-import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
-import org.threeten.bp.Instant
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -118,12 +116,10 @@ internal object GithubApolloModule {
         .httpCache(httpCache)
         .callFactory { client.get().newCall(it) }
         .normalizedCache(cacheFactory, resolver)
-        .addCustomTypeAdapter<Instant>(io.sweers.catchup.service.github.type.CustomType.DATETIME,
-            instantAdapter)
-        .addCustomTypeAdapter<HttpUrl>(io.sweers.catchup.service.github.type.CustomType.URI,
-            httpUrlAdapter)
-        .addCustomTypeAdapter<Instant>(CustomType.DATETIME, instantAdapter)
-        .addCustomTypeAdapter<HttpUrl>(CustomType.URI, httpUrlAdapter)
+        .addCustomTypeAdapter(CustomType.DATETIME, instantAdapter)
+        .addCustomTypeAdapter(CustomType.URI, httpUrlAdapter)
+        .addCustomTypeAdapter(CustomType.DATETIME, instantAdapter)
+        .addCustomTypeAdapter(CustomType.URI, httpUrlAdapter)
         .build()
   }
 }

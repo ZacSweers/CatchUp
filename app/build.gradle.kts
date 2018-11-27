@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -105,7 +104,7 @@ android {
       buildConfigField("String", "IMGUR_CLIENT_ACCESS_TOKEN",
           "\"${project.properties["catchup_imgur_access_token"].toString()}\"")
       buildConfigField("boolean", "CRASH_ON_TIMBER_ERROR",
-          project.properties["catchup.crashOnTimberError"].toString())
+          "Boolean.parseBoolean(\"${project.properties["catchup.crashOnTimberError"]}\")")
     }
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
@@ -226,12 +225,6 @@ apollo {
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs = build.standardFreeKotlinCompilerArgs
-  }
-}
-
-kotlin {
-  experimental {
-    coroutines = Coroutines.ENABLE
   }
 }
 

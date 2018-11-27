@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+package io.sweers.catchup.util.kotlin
 
-plugins {
-  kotlin("jvm")
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+
+suspend fun <T, R> Collection<T>.concatMapEager(
+    body: suspend (T) -> R): List<R> = coroutineScope {
+  map { async { body(it) } }.map { it.await() }
 }
 
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = build.standardFreeKotlinCompilerArgs
-  }
-}
-
-dependencies {
-  compile(deps.kotlin.coroutines)
-  compile(deps.kotlin.stdlib.core)
+suspend fun <T, R> Sequence<T>.concatMapEager(
+    body: suspend (T) -> R): List<R> = coroutineScope {
+  map { async { body(it) } }.toList().map { it.await() }
 }
