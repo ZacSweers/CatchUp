@@ -16,12 +16,12 @@
 
 package io.sweers.catchup.service.medium
 
-import android.util.Log
 import io.sweers.inspector.Inspector
 import io.sweers.inspector.ValidationException
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
+import timber.log.Timber
 import java.io.IOException
 import java.lang.reflect.Type
 import javax.inject.Inject
@@ -50,13 +50,13 @@ private class InspectorResponseConverter internal constructor(
     private val delegateConverter: Converter<ResponseBody, *>) : Converter<ResponseBody, Any> {
 
   @Throws(IOException::class)
-  override fun convert(value: ResponseBody): Any {
-    val convert = delegateConverter.convert(value)
+  override fun convert(value: ResponseBody): Any? {
+    val convert = delegateConverter.convert(value) ?: return null
     try {
       inspector.validator<Any>(type).validate(convert)
     } catch (validationException: ValidationException) {
       // This response didn't pass validation, throw the exception.
-      Log.e("MediumService", "Validation exception: $type", validationException)
+      Timber.tag("MediumService").e(validationException, "Validation exception: $type")
       throw IOException(validationException)
     }
 
