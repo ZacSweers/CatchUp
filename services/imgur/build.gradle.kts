@@ -83,7 +83,7 @@ dependencies {
   implementation(deps.moshi.core)
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
-  implementation(deps.retrofit.coroutines)
+  implementation(deps.retrofit.rxJava2)
   implementation(deps.okhttp.core)
   implementation(deps.misc.moshiLazyAdapters)
 

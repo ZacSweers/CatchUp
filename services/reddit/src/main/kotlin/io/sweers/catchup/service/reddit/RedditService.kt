@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.reddit
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -24,6 +23,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import io.reactivex.Single
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -40,13 +40,11 @@ import io.sweers.catchup.service.reddit.model.RedditObjectFactory
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
-import io.sweers.catchup.util.kotlin.concatMapEager
 import io.sweers.catchup.util.nullIfBlank
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -64,13 +62,13 @@ internal class RedditService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override suspend fun fetchPage(request: DataRequest) = withContext(Dispatchers.Default) {
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
     // We special case the front page
-    api.frontPage(25, request.pageId.nullIfBlank()).await()
-        .let { redditListingRedditResponse ->
+    return api.frontPage(25, request.pageId.nullIfBlank())
+        .map { redditListingRedditResponse ->
           @Suppress("UNCHECKED_CAST")
           val data = (redditListingRedditResponse.data.children as List<RedditLink>)
-              .concatMapEager {
+              .map {
                 CatchUpItem(
                     id = it.id.hashCode().toLong(),
                     title = it.title,
@@ -167,11 +165,11 @@ abstract class RedditModule {
     @Provides
     @JvmStatic
     internal fun provideRedditApi(@InternalApi client: Lazy<OkHttpClient>,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
         @InternalApi moshi: Moshi): RedditApi {
-      val retrofit = Retrofit.Builder()
-          .baseUrl(RedditApi.ENDPOINT)
+      val retrofit = Retrofit.Builder().baseUrl(RedditApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
-          .addCallAdapterFactory(CoroutineCallAdapterFactory())
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .validateEagerly(BuildConfig.DEBUG)
           .build()

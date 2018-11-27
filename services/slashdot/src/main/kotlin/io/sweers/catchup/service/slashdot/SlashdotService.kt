@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.slashdot
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.tickaroo.tikxml.TikXml
 import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 import dagger.Binds
@@ -25,6 +24,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import io.reactivex.Single
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -39,12 +39,10 @@ import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
-import io.sweers.catchup.util.kotlin.concatMapEager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -61,10 +59,11 @@ internal class SlashdotService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override suspend fun fetchPage(request: DataRequest) = withContext(Dispatchers.Default) {
-    service.main().await()
-        .let(Feed::itemList)
-        .concatMapEager { (title, id, _, summary, updated, section, comments, author, department) ->
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
+    return service.main()
+        .map(Feed::itemList)
+        .flattenAsObservable { it }
+        .map { (title, id, _, summary, updated, section, comments, author, department) ->
           CatchUpItem(
               id = id.hashCode().toLong(),
               title = title,
@@ -81,7 +80,8 @@ internal class SlashdotService @Inject constructor(
               )
           )
         }
-        .let { DataResult(it, null) }
+        .toList()
+        .map { DataResult(it, null) }
   }
 
   override fun linkHandler() = linkHandler
@@ -152,11 +152,11 @@ abstract class SlashdotModule {
     @Provides
     @JvmStatic
     internal fun provideSlashdotApi(@InternalApi client: Lazy<OkHttpClient>,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
         tikXml: TikXml): SlashdotApi {
-      val retrofit = Retrofit.Builder()
-          .baseUrl(SlashdotApi.ENDPOINT)
+      val retrofit = Retrofit.Builder().baseUrl(SlashdotApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
-          .addCallAdapterFactory(CoroutineCallAdapterFactory())
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(TikXmlConverterFactory.create(tikXml))
           .validateEagerly(BuildConfig.DEBUG)
           .build()

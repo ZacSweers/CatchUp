@@ -18,7 +18,6 @@ package io.sweers.catchup.service.hackernews
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import dagger.Binds
@@ -26,6 +25,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.SingleEmitter
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -42,15 +44,9 @@ import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.d
-import io.sweers.catchup.util.kotlin.concatMapEager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
 import okhttp3.HttpUrl
 import javax.inject.Inject
 import javax.inject.Qualifier
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 @Qualifier
 private annotation class InternalApi
@@ -65,72 +61,81 @@ internal class HackerNewsService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  // Copied from https://github.com/apollographql/apollo-android/issues/606#issuecomment-354562134
-  private suspend fun listen(
-      refResolver: () -> DatabaseReference) = suspendCancellableCoroutine<DataSnapshot> { cont ->
-    val ref = refResolver()
-    val listener = object : ValueEventListener {
-      override fun onDataChange(dataSnapshot: DataSnapshot) {
-        cont.resume(dataSnapshot)
-        ref.removeEventListener(this)
-      }
-
-      override fun onCancelled(firebaseError: DatabaseError) {
-        d { "${firebaseError.code}" }
-        cont.resumeWithException(firebaseError.toException())
-      }
-    }
-
-    cont.invokeOnCancellation { ref.removeEventListener(listener) }
-    ref.addValueEventListener(listener)
-  }
-
-  override suspend fun fetchPage(request: DataRequest) = withContext(Dispatchers.Default) {
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
     val itemsPerPage = 25 // TODO Pref this
-    try {
-      listen { database.get().getReference("v0/topstories") }
-          .children
-          .asSequence()
-          .drop((page + 1) * itemsPerPage - itemsPerPage)
-          .take(itemsPerPage)
-          .map { d -> d.value as Long }
-          .concatMapEager { id ->
-            listen { database.get().getReference("v0/item/$id") }
-          }
-          .asSequence()
-          .filter { it.hasChild("title") }  // Some HN items are just empty junk
-          .map(HackerNewsStory::create)
-          .concatMapEager { story ->
-            val url = story.url
-            with(story) {
-              CatchUpItem(
-                  id = id,
-                  title = title,
-                  score = "+" to score,
-                  timestamp = realTime(),
-                  author = by,
-                  source = url?.let { HttpUrl.parse(it)!!.host() },
-                  tag = realType()?.tag(nullIfStory = true),
-                  itemClickUrl = url,
-                  summarizationInfo = SummarizationInfo.from(url),
-                  mark = kids?.size?.let {
-                    createCommentMark(count = it,
-                        clickUrl = "https://news.ycombinator.com/item?id=$id")
-                  }
-              )
+    return Single
+        .create { emitter: SingleEmitter<DataSnapshot> ->
+          val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+              emitter.onSuccess(dataSnapshot)
+            }
+
+            override fun onCancelled(firebaseError: DatabaseError) {
+              d { "${firebaseError.code}" }
+              emitter.onError(firebaseError.toException())
             }
           }
-          .let { DataResult(it, if (it.isEmpty()) null else (page + 1).toString()) }
-    } catch (t: Throwable) {
-      if (BuildConfig.DEBUG && t is IllegalArgumentException) {
-        // Firebase didn't init
-        throw ServiceException(
-            "Firebase wasn't able to initialize, likely due to missing credentials.")
-      } else {
-        throw t
-      }
-    }
+
+          val ref = database.get().getReference("v0/topstories")
+          emitter.setCancellable { ref.removeEventListener(listener) }
+          ref.addValueEventListener(listener)
+        }
+        .flattenAsObservable { it.children }
+        .skip(((page + 1) * itemsPerPage - itemsPerPage).toLong())
+        .take(itemsPerPage.toLong())
+        .map { d -> d.value as Long }
+        .concatMapEager { id ->
+          Observable.create<DataSnapshot> { emitter ->
+            val ref = database.get().getReference("v0/item/$id")
+            val listener = object : ValueEventListener {
+              override fun onDataChange(dataSnapshot: DataSnapshot) {
+                emitter.onNext(dataSnapshot)
+                emitter.onComplete()
+              }
+
+              override fun onCancelled(firebaseError: DatabaseError) {
+                d { "${firebaseError.code}" }
+                emitter.onError(firebaseError.toException())
+              }
+            }
+            emitter.setCancellable { ref.removeEventListener(listener) }
+            ref.addValueEventListener(listener)
+          }
+        }
+        .filter { it.hasChild("title") }  // Some HN items are just empty junk
+        .map { HackerNewsStory.create(it) }
+        .map {
+          val url = it.url
+          with(it) {
+            CatchUpItem(
+                id = id,
+                title = title,
+                score = "+" to score,
+                timestamp = realTime(),
+                author = by,
+                source = url?.let { HttpUrl.parse(it)!!.host() },
+                tag = realType()?.tag(nullIfStory = true),
+                itemClickUrl = url,
+                summarizationInfo = SummarizationInfo.from(url),
+                mark = kids?.size?.let {
+                  createCommentMark(count = it,
+                      clickUrl = "https://news.ycombinator.com/item?id=$id")
+                }
+            )
+          }
+        }
+        .toList()
+        .map { DataResult(it, if (it.isEmpty()) null else (page + 1).toString()) }
+        .onErrorResumeNext { t: Throwable ->
+          if (BuildConfig.DEBUG && t is IllegalArgumentException) {
+            // Firebase didn't init
+            Single.error(ServiceException(
+                "Firebase wasn't able to initialize, likely due to missing credentials."))
+          } else {
+            Single.error(t)
+          }
+        }
   }
 
   override fun linkHandler() = linkHandler

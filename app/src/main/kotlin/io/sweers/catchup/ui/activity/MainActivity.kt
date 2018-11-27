@@ -36,6 +36,7 @@ import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
 import io.sweers.catchup.ui.base.InjectingBaseActivity
 import io.sweers.catchup.ui.fragments.PagerFragment
+import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
 import javax.inject.Provider
@@ -100,9 +101,9 @@ class MainActivity : InjectingBaseActivity() {
               serviceMetas[it.key]!!.enabled && sharedPreferences.getBoolean(
                   serviceMetas[it.key]!!.enabledPreferenceKey, true)
             }
-//            .mapValues { (_, value) ->
-//              Provider { StorageBackedService(serviceDao, value.get()) }
-//            }
+            .mapValues { (_, value) ->
+              Provider { StorageBackedService(serviceDao, value.get()) }
+            }
       }
     }
 

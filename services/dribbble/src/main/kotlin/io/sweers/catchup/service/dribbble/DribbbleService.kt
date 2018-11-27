@@ -16,13 +16,13 @@
 
 package io.sweers.catchup.service.dribbble
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import io.reactivex.Single
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -37,11 +37,9 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
-import io.sweers.catchup.util.kotlin.concatMapEager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -58,10 +56,11 @@ internal class DribbbleService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override suspend fun fetchPage(request: DataRequest) = withContext(Dispatchers.Default) {
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
-    api.getPopular(page, 50).await()
-        .concatMapEager {
+    return api.getPopular(page, 50)
+        .flattenAsObservable { it }
+        .map {
           CatchUpItem(
               id = it.id,
               title = "",
@@ -81,7 +80,8 @@ internal class DribbbleService @Inject constructor(
               mark = createCommentMark(count = it.commentsCount.toInt())
           )
         }
-        .let { DataResult(it, (page + 1).toString()) }
+        .toList()
+        .map { DataResult(it, (page + 1).toString()) }
   }
 
   override fun linkHandler() = linkHandler
@@ -130,11 +130,11 @@ abstract class DribbbleModule {
 
     @Provides
     @JvmStatic
-    internal fun provideDribbbleService(client: Lazy<OkHttpClient>): DribbbleApi {
-      return Retrofit.Builder()
-          .baseUrl(DribbbleApi.ENDPOINT)
+    internal fun provideDribbbleService(client: Lazy<OkHttpClient>,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DribbbleApi {
+      return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
-          .addCallAdapterFactory(CoroutineCallAdapterFactory())
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(DecodingConverter.newFactory(DribbbleParser::parse))
           .validateEagerly(BuildConfig.DEBUG)
           .build()

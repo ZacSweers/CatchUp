@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.service.uplabs
 
+import io.reactivex.Single
 import io.sweers.catchup.service.uplabs.model.UplabsImage
-import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -30,7 +30,7 @@ internal interface UplabsApi {
   fun getPopular(
       @Query("days_ago") daysAgo: Int, // Default 0
       @Query("page") page: Int // Default 1
-  ): Deferred<List<UplabsImage>>
+  ): Single<List<UplabsImage>>
 
   companion object {
     const val HOST = "www.uplabs.com"

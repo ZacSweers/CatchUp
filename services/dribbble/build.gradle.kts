@@ -75,12 +75,11 @@ dependencies {
   kapt(deps.crumb.compiler)
   kapt(deps.dagger.apt.compiler)
 
-  implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
   implementation(deps.misc.jsoup)
   implementation(deps.retrofit.core)
-  implementation(deps.retrofit.coroutines)
+  implementation(deps.retrofit.rxJava2)
   implementation(deps.okhttp.core)
 
   api(project(":service-api"))

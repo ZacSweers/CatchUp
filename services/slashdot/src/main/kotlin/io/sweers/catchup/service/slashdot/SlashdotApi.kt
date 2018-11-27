@@ -16,13 +16,13 @@
 
 package io.sweers.catchup.service.slashdot
 
-import kotlinx.coroutines.Deferred
+import io.reactivex.Single
 import retrofit2.http.GET
 
 internal interface SlashdotApi {
 
   @GET("/Slashdot/slashdotMainatom")
-  fun main(): Deferred<Feed>
+  fun main(): Single<Feed>
 
   companion object {
     const val HOST = "rss.slashdot.org"

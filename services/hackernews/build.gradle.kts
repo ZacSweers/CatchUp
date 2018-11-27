@@ -77,7 +77,6 @@ kapt {
 
 dependencies {
   api(project(":service-api"))
-  implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:util"))
 
   kapt(project(":service-registry:service-registry-compiler"))

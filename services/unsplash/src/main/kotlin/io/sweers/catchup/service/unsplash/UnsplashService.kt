@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.unsplash
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -24,6 +23,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import io.reactivex.Single
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -38,13 +38,11 @@ import io.sweers.catchup.service.api.VisualService.SpanConfig
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
-import io.sweers.catchup.util.kotlin.concatMapEager
 import io.sweers.catchup.util.network.AuthInterceptor
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -62,10 +60,11 @@ internal class UnsplashService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override suspend fun fetchPage(request: DataRequest) = withContext(Dispatchers.Default) {
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
-    api.getPhotos(page, 50).await()
-        .concatMapEager {
+    return api.getPhotos(page, 50)
+        .flattenAsObservable { it }
+        .map {
           CatchUpItem(
               id = it.id.hashCode().toLong(),
               title = "",
@@ -86,7 +85,8 @@ internal class UnsplashService @Inject constructor(
               )
           )
         }
-        .let { DataResult(it, (page + 1).toString()) }
+        .toList()
+        .map { DataResult(it, (page + 1).toString()) }
   }
 
   override fun linkHandler() = linkHandler
@@ -171,11 +171,11 @@ abstract class UnsplashModule {
     @Provides
     @JvmStatic
     internal fun provideUnsplashService(@InternalApi client: Lazy<OkHttpClient>,
-        @InternalApi moshi: Moshi): UnsplashApi {
-      return Retrofit.Builder()
-          .baseUrl(UnsplashApi.ENDPOINT)
+        @InternalApi moshi: Moshi,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): UnsplashApi {
+      return Retrofit.Builder().baseUrl(UnsplashApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
-          .addCallAdapterFactory(CoroutineCallAdapterFactory())
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .validateEagerly(BuildConfig.DEBUG)
           .build()

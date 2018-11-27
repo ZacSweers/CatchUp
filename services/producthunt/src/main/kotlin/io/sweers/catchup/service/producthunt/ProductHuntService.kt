@@ -16,7 +16,6 @@
 
 package io.sweers.catchup.service.producthunt
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -24,6 +23,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import io.reactivex.Single
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -37,13 +37,11 @@ import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
-import io.sweers.catchup.util.kotlin.concatMapEager
 import io.sweers.catchup.util.network.AuthInterceptor
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -61,10 +59,11 @@ internal class ProductHuntService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override suspend fun fetchPage(request: DataRequest) = withContext(Dispatchers.Default) {
+  override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
-    api.getPosts(page).await()
-        .concatMapEager {
+    return api.getPosts(page)
+        .flattenAsObservable { it }
+        .map {
           with(it) {
             CatchUpItem(
                 id = id,
@@ -81,7 +80,8 @@ internal class ProductHuntService @Inject constructor(
             )
           }
         }
-        .let { DataResult(it, (page + 1).toString()) }
+        .toList()
+        .map { DataResult(it, (page + 1).toString()) }
   }
 
   override fun linkHandler() = linkHandler
@@ -154,10 +154,11 @@ abstract class ProductHuntModule {
     @JvmStatic
     internal fun provideProductHuntService(
         @InternalApi client: Lazy<OkHttpClient>,
-        @InternalApi moshi: Moshi): ProductHuntApi {
+        @InternalApi moshi: Moshi,
+        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): ProductHuntApi {
       return Retrofit.Builder().baseUrl(ProductHuntApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
-          .addCallAdapterFactory(CoroutineCallAdapterFactory())
+          .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .validateEagerly(BuildConfig.DEBUG)
           .build()

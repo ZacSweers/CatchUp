@@ -76,11 +76,10 @@ dependencies {
   kapt(deps.dagger.apt.compiler)
   kapt(deps.moshi.compiler)
 
-  implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:util"))
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
-  implementation(deps.retrofit.coroutines)
+  implementation(deps.retrofit.rxJava2)
   implementation(deps.okhttp.core)
 
   api(project(":service-api"))

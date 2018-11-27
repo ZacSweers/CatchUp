@@ -17,15 +17,15 @@
 package io.sweers.catchup.service.medium
 
 import com.serjltt.moshi.adapters.Wrapped
+import io.reactivex.Observable
 import io.sweers.catchup.service.medium.model.References
-import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 
 internal interface MediumApi {
 
   @GET("/topic/popular")
   @Wrapped(path = ["payload", "references"])
-  fun top(): Deferred<References>
+  fun top(): Observable<References>
 
   companion object {
 

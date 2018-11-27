@@ -70,7 +70,6 @@ dependencies {
   kapt(deps.android.androidx.room.apt)
 
   api(project(":service-registry:service-registry-annotations"))
-  api(deps.kotlin.coroutines)
   api(deps.android.androidx.room.runtime)
   api(deps.android.androidx.annotations)
   api(deps.autoDispose.kotlin)
