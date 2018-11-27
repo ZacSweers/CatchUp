@@ -28,8 +28,26 @@ import java.util.concurrent.atomic.AtomicLong
  * Utilities for tracing.
  */
 
-private inline fun Trace.incrementMetric(name: String) {
+inline fun Trace.incrementMetric(name: String) {
   incrementMetric(name, 1L)
+}
+
+inline fun <T> trace(tag: String, body: () -> T): T {
+  val trace = FirebasePerformance.getInstance().newTrace(tag)
+  val timer = AtomicLong()
+  trace.start()
+  timer.set(System.currentTimeMillis())
+  try {
+    return body().also {
+      trace.incrementMetric("Success")
+    }
+  } catch (e: Throwable) {
+    trace.incrementMetric("Error")
+    throw e
+  } finally {
+    trace.stop()
+    d { "Stopped trace. $tag - took: ${System.currentTimeMillis() - timer.get()}ms" }
+  }
 }
 
 fun <T> Maybe<T>.trace(tag: String): Maybe<T> {
