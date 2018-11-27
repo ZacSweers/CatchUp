@@ -56,3 +56,15 @@ inline fun <T> T.switchIf(condition: Boolean, block: T.() -> T): T = switch {
 inline fun <T> applyOn(vararg args: T, crossinline block: T.() -> Unit) {
   args.asSequence().forEach { block(it) }
 }
+
+inline fun <T, R : T> Collection<R>.castUp() = this as Collection<T>
+
+inline fun <R, T : R> Collection<R>.castDown() = this as Collection<T>
+
+inline fun <T, R : T> List<R>.castUp() = this as List<T>
+
+inline fun <R, T : R> List<R>.castDown() = this as List<T>
+
+inline fun <T, R : T> Set<R>.castUp() = this as Set<T>
+
+inline fun <R, T : R> Set<R>.castDown() = this as Set<T>
