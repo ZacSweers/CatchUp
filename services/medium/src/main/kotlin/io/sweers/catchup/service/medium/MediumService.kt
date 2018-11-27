@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.service.medium
 
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -23,8 +24,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
-import io.reactivex.Observable
-import io.reactivex.Single
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -40,11 +39,13 @@ import io.sweers.catchup.service.medium.model.MediumPost
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
+import io.sweers.catchup.util.kotlin.concatMapEager
 import io.sweers.inspector.Inspector
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
@@ -63,41 +64,36 @@ internal class MediumService @Inject constructor(
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
-    return api.top()
-        .concatMapEager { references ->
-          Observable.fromIterable(references.post.values)
-              .map { post ->
-                MediumPost(
+  override suspend fun fetchPage(request: DataRequest) = withContext(Dispatchers.Default) {
+    api.top().await()
+        .let { references ->
+          references.post.values
+              .concatMapEager { post ->
+                val mediumPost = MediumPost(
                     post = post,
                     user = references.user[post.creatorId]
                         ?: throw IllegalStateException("Missing user on post!"),
                     collection = references.collection?.get(post.homeCollectionId))
+                val url = mediumPost.constructUrl()
+                CatchUpItem(
+                    id = post.id.hashCode().toLong(),
+                    title = post.title,
+                    score =
+                    "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+                        to post.virtuals.recommends,
+                    timestamp = post.createdAt,
+                    author = mediumPost.user.name,
+                    tag = mediumPost.collection?.name,
+                    itemClickUrl = url,
+                    summarizationInfo = SummarizationInfo.from(url),
+                    mark = createCommentMark(
+                        count = post.virtuals.responsesCreatedCount,
+                        clickUrl = mediumPost.constructCommentsUrl()
+                    )
+                )
               }
         }
-        .map {
-          with(it) {
-            val url = constructUrl()
-            CatchUpItem(
-                id = post.id.hashCode().toLong(),
-                title = post.title,
-                score =
-                "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
-                    to post.virtuals.recommends,
-                timestamp = post.createdAt,
-                author = user.name,
-                tag = collection?.name,
-                itemClickUrl = url,
-                summarizationInfo = SummarizationInfo.from(url),
-                mark = createCommentMark(
-                    count = post.virtuals.responsesCreatedCount,
-                    clickUrl = constructCommentsUrl()
-                )
-            )
-          }
-        }
-        .toList()
-        .map { DataResult(it, null) }
+        .let { DataResult(it, null) }
   }
 
   override fun linkHandler() = linkHandler
@@ -183,11 +179,11 @@ abstract class MediumModule {
     @JvmStatic
     internal fun provideMediumService(@InternalApi client: Lazy<OkHttpClient>,
         @InternalApi moshi: Moshi,
-        inspectorConverterFactory: InspectorConverterFactory,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): MediumApi {
-      val retrofit = Retrofit.Builder().baseUrl(MediumApi.ENDPOINT)
+        inspectorConverterFactory: InspectorConverterFactory): MediumApi {
+      val retrofit = Retrofit.Builder()
+          .baseUrl(MediumApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addCallAdapterFactory(CoroutineCallAdapterFactory())
           .addConverterFactory(inspectorConverterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .validateEagerly(BuildConfig.DEBUG)

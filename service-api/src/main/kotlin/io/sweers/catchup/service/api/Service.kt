@@ -16,11 +16,9 @@
 
 package io.sweers.catchup.service.api
 
-import io.reactivex.Single
-
 interface Service {
   fun meta(): ServiceMeta
-  fun fetchPage(request: DataRequest): Single<DataResult>
+  suspend fun fetchPage(request: DataRequest): DataResult
   fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder)
   fun linkHandler(): LinkHandler
   fun rootService(): Service = this

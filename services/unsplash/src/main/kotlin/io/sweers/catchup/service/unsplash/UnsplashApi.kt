@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.service.unsplash
 
-import io.reactivex.Single
 import io.sweers.catchup.service.unsplash.model.UnsplashPhoto
+import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -31,7 +31,7 @@ internal interface UnsplashApi {
       @Query("page") page: Int = 1, // Default 1
       @Query("per_page") pageSize: Int = 10, // Default 10
       @Query("order_by") orderBy: OrderBy = OrderBy.LATEST // latest
-  ): Single<List<UnsplashPhoto>>
+  ): Deferred<List<UnsplashPhoto>>
 
   companion object {
     const val HOST = "api.unsplash.com"

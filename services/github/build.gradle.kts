@@ -84,10 +84,11 @@ dependencies {
   kapt(deps.dagger.apt.compiler)
 
   implementation(project(":libraries:gemoji"))
+  implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
   implementation(deps.misc.jsoup)
-  implementation(deps.retrofit.rxJava2)
+  implementation(deps.retrofit.coroutines)
   implementation(deps.okhttp.core)
 
   // Apollo

@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.service.github
 
-import io.reactivex.Single
 import io.sweers.catchup.service.github.model.TrendingItem
+import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -31,7 +31,7 @@ internal interface GitHubApi {
   @GET("/trending/{$LANGUAGE}")
   fun getTrending(
       @Path(LANGUAGE) language: Language,
-      @Query("since") since: Since): Single<List<TrendingItem>>
+      @Query("since") since: Since): Deferred<List<TrendingItem>>
 
   enum class Since {
     DAILY, WEEKLY, MONTHLY;

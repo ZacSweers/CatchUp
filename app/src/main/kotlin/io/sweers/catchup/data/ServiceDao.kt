@@ -23,40 +23,68 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.threeten.bp.Instant
+
+suspend fun ServiceDao.getFirstServicePage(type: String, expiration: Instant) = withContext(Dispatchers.IO) {
+  getFirstServicePageBlocking(type, expiration)
+}
+suspend fun ServiceDao.getFirstServicePage(type: String) = withContext(Dispatchers.IO) {
+  getFirstServicePageBlocking(type)
+}
+suspend fun ServiceDao.getFirstServicePage(type: String, page: String) = withContext(Dispatchers.IO) {
+  getFirstServicePageBlocking(type, page)
+}
+suspend fun ServiceDao.getServicePage(type: String, page: String, sessionId: Long) = withContext(Dispatchers.IO) {
+  getServicePageBlocking(type, page, sessionId)
+}
+suspend fun ServiceDao.getItemById(id: Long) = withContext(Dispatchers.IO) {
+  getItemByIdBlocking(id)
+}
+suspend fun ServiceDao.getItemByIds(ids: Array<Long>) = withContext(Dispatchers.IO) {
+  getItemByIdsBlocking(ids)
+}
+suspend fun ServiceDao.putPage(page: ServicePage) = withContext(Dispatchers.IO) {
+  putPageBlocking(page)
+}
+suspend fun ServiceDao.putItem(item: CatchUpItem) = withContext(Dispatchers.IO) {
+  putItemBlocking(item)
+}
+suspend fun ServiceDao.putItems(vararg items: CatchUpItem) = withContext(Dispatchers.IO) {
+  putItemsBlocking(items = *items)
+}
 
 @Dao
 interface ServiceDao {
 
   @Query("SELECT * FROM pages WHERE type = :type AND page = 0 AND expiration > :expiration")
-  fun getFirstServicePage(type: String, expiration: Instant): Maybe<ServicePage>
+  fun getFirstServicePageBlocking(type: String, expiration: Instant): ServicePage?
 
   @Query("SELECT * FROM pages WHERE type = :type AND page = 0 ORDER BY expiration DESC")
-  fun getFirstServicePage(type: String): Maybe<ServicePage>
+  fun getFirstServicePageBlocking(type: String): ServicePage?
 
   @Query("SELECT * FROM pages WHERE type = :type AND page = :page ORDER BY expiration DESC")
-  fun getFirstServicePage(type: String, page: String): Maybe<ServicePage>
+  fun getFirstServicePageBlocking(type: String, page: String): ServicePage?
 
   @Query("SELECT * FROM pages WHERE type = :type AND page = :page AND sessionId = :sessionId")
-  fun getServicePage(type: String, page: String, sessionId: Long): Maybe<ServicePage>
+  fun getServicePageBlocking(type: String, page: String, sessionId: Long): ServicePage?
 
   @Query("SELECT * FROM items WHERE id = :id")
-  fun getItemById(id: Long): Maybe<CatchUpItem>
+  fun getItemByIdBlocking(id: Long): CatchUpItem?
 
   @Query("SELECT * FROM items WHERE id IN(:ids)")
-  fun getItemByIds(ids: Array<Long>): Maybe<List<CatchUpItem>>
+  fun getItemByIdsBlocking(ids: Array<Long>): List<CatchUpItem>?
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putPage(page: ServicePage): Completable
+  fun putPageBlocking(page: ServicePage)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItem(item: CatchUpItem)
+  fun putItemBlocking(item: CatchUpItem)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItems(vararg item: CatchUpItem): Completable
+  fun putItemsBlocking(vararg items: CatchUpItem)
 
   @Query("DELETE FROM pages")
   fun nukePages()

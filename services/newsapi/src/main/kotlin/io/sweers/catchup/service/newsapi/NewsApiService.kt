@@ -53,7 +53,6 @@ import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
 import retrofit2.HttpException
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -189,11 +188,10 @@ abstract class NewsApiModule {
     @JvmStatic
     internal fun provideNewsApiService(
         @InternalApi client: Lazy<OkHttpClient>,
-        @InternalApi moshi: Moshi,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): NewsApiApi {
+        @InternalApi moshi: Moshi): NewsApiApi {
       return Retrofit.Builder().baseUrl(NewsApiApi.ENDPOINT)
           .callFactory(client.get()::newCall)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addCallAdapterFactory(CoroutineCallAdapterFactory())
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .validateEagerly(BuildConfig.DEBUG)
           .build()

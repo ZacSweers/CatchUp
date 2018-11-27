@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnLongClickListener
@@ -33,6 +34,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.transaction
+import androidx.lifecycle.Lifecycle.State
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DiffUtil.DiffResult
@@ -47,12 +49,9 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.apollographql.apollo.exception.ApolloException
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
-import com.uber.autodispose.autoDisposable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
-import io.sweers.catchup.analytics.trace
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
@@ -71,12 +70,15 @@ import io.sweers.catchup.ui.base.InjectingBaseFragment
 import io.sweers.catchup.ui.fragments.SmmryFragment
 import io.sweers.catchup.ui.fragments.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.fragments.service.LoadResult.NewData
+import io.sweers.catchup.util.coroutines.liveCoroutineScope
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotterknife.bindView
 import kotterknife.onClick
 import me.saket.inboxrecyclerview.InboxRecyclerView
@@ -332,7 +334,7 @@ class ServiceFragment : InjectingBaseFragment(),
     super.onSaveInstanceState(outState)
   }
 
-  private fun loadData(fromRefresh: Boolean = false) {
+  private fun loadData(fromRefresh: Boolean = false) = viewLifecycleOwner.liveCoroutineScope {
     if (!recyclerView.isVisible) {
       progress.show()
     }
@@ -344,7 +346,7 @@ class ServiceFragment : InjectingBaseFragment(),
       moreDataAvailable = false
     }
     if (!moreDataAvailable) {
-      return
+      return@liveCoroutineScope
     }
     val pageToRequest = pageToRestoreTo ?: nextPage!!
     dataLoading = true
@@ -356,147 +358,159 @@ class ServiceFragment : InjectingBaseFragment(),
     if (multiPage) {
       recyclerView.itemAnimator = defaultItemAnimator
     }
-    service.fetchPage(
-        DataRequest(
-            fromRefresh = fromRefresh && !isRestoring,
-            multiPage = multiPage,
-            pageId = pageToRequest)
-            .also {
-              isRestoring = false
-              pageToRestoreTo = null
-            })
-        .map { result ->
-          result.data.also {
-            nextPage = result.nextPageToken
-            currentPage = pageToRequest
-            if (result.wasFresh) {
-              // If it was fresh data but we thought we were restoring (i.e. stale cache or
-              // something), don't restore to to some now-random position
-              pendingRVState = null
-            }
-          }
+    val request = DataRequest(
+        fromRefresh = fromRefresh && !isRestoring,
+        multiPage = multiPage,
+        pageId = pageToRequest)
+        .also {
+          isRestoring = false
+          pageToRestoreTo = null
         }
-        .flattenAsObservable { it }
-        .let {
-          // If these are images, wrap in our visual item
-          if (service.meta().isVisual) {
-            it.map { catchupItem ->
-              // If any already exist, we don't need to re-fade them in
-              ImageItem(catchupItem)
-                  .apply {
-                    adapter.getItems()
-                        .find { it.realItem().id == catchupItem.id }
-                        ?.let {
-                          hasFadedIn = (it as ImageItem).hasFadedIn
-                        }
-                  }
-            }
-          } else it
-        }
-        .cast(DisplayableItem::class.java)
-        .toList()
-        .toMaybe()
-        .map { newData ->
-          if (fromRefresh) {
-            DiffResultData(newData,
-                DiffUtil.calculateDiff(
-                    ItemUpdateCallback(adapter.getItems(),
-                        newData)))
-          } else {
-            NewData(newData)
-          }
-        }
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnEvent { _, _ ->
-          swipeRefreshLayout.isEnabled = true
-          swipeRefreshLayout.isRefreshing = false
-        }
-        .trace("Data load - ${service.meta().id}")
-        .doFinally {
-          dataLoading = false
-          recyclerView.post {
-            adapter.dataFinishedLoading()
-          }
-        }
-        .doOnComplete { moreDataAvailable = false }
-        .autoDisposable(this)
-        .subscribe({ loadResult ->
-          applyOn(progress, errorView) { hide() }
-          swipeRefreshLayout.show()
-          recyclerView.post {
-            @Suppress("UNCHECKED_CAST") // badpokerface.png
-            when (val finalAdapter = adapter) {
-              is TextAdapter -> {
-                finalAdapter.update((loadResult as LoadResult<CatchUpItem>))
+    Log.d("COROUTINES", "Requesting for ${service.meta().id}: $request")
+    try {
+      val fetchedPage = withContext(Dispatchers.IO) {
+        service.fetchPage(
+            DataRequest(
+                fromRefresh = fromRefresh && !isRestoring,
+                multiPage = multiPage,
+                pageId = pageToRequest)
+                .also {
+                  isRestoring = false
+                  pageToRestoreTo = null
+                })
+      }
+      Log.d("COROUTINES", "Fetched page $pageToRequest ${service.meta().id}")
+      val result = fetchedPage.run {
+            data.also { items ->
+              nextPage = nextPageToken
+              currentPage = pageToRequest
+              if (fetchedPage.wasFresh) {
+                // If it was fresh data but we thought we were restoring (i.e. stale cache or
+                // something), don't restore to to some now-random position
+                pendingRVState = null
               }
-              is ImageAdapter -> {
-                finalAdapter.update((loadResult as LoadResult<ImageItem>))
+              if (items.isEmpty()) {
+                moreDataAvailable = false
               }
             }
-            pendingRVState?.let {
-              recyclerView.layoutManager?.onRestoreInstanceState(it)
-              pendingRVState = null
-            }
           }
-        }, { error: Throwable ->
-          val activity = activity
-          if (activity != null) {
-            when (error) {
-              is IOException -> {
-                progress.hide()
-                errorTextView.text = activity.getString(R.string.connection_issue)
-                swipeRefreshLayout.hide()
-                errorView.show()
-                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
-                    ?.let {
-                      errorImage.setImageDrawable(it)
-                      it.start()
+          .let { items ->
+            // If these are images, wrap in our visual item
+            if (service.meta().isVisual) {
+              items.map { catchupItem ->
+                // If any already exist, we don't need to re-fade them in
+                ImageItem(catchupItem)
+                    .apply {
+                      adapter.getItems()
+                          .find { it.realItem().id == catchupItem.id }
+                          ?.let {
+                            hasFadedIn = (it as ImageItem).hasFadedIn
+                          }
                     }
-                w(error) { "IOException" }
               }
-              is ServiceException -> {
-                progress.hide()
-                errorTextView.text = error.message
-                swipeRefreshLayout.hide()
-                errorView.show()
-                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
-                    ?.let {
-                      errorImage.setImageDrawable(it)
-                      it.start()
-                    }
-                e(error) { "ServiceException: ${error.message}" }
-              }
-              is HttpException, is ApolloException -> {
-                // TODO Show some sort of API error response.
-                progress.hide()
-                errorTextView.text = activity.getString(R.string.api_issue)
-                swipeRefreshLayout.hide()
-                errorView.show()
-                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
-                    ?.let {
-                      errorImage.setImageDrawable(it)
-                      it.start()
-                    }
-                e(error) { "HttpException" }
-              }
-              else -> {
-                // TODO Show some sort of generic response error
-                progress.hide()
-                swipeRefreshLayout.hide()
-                errorTextView.text = activity.getString(R.string.unknown_issue)
-                errorView.show()
-                AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
-                    ?.let {
-                      errorImage.setImageDrawable(it)
-                      it.start()
-                    }
-                e(error) { "Unknown issue." }
-              }
-            }
-          } else {
-            pageToRestoreTo = pageToRequest
+            } else items
           }
-        })
+          .let { newData ->
+            if (fromRefresh) {
+              DiffResultData(newData,
+                  DiffUtil.calculateDiff(
+                      ItemUpdateCallback(adapter.getItems(),
+                          newData)))
+            } else {
+              NewData(newData)
+            }
+          }
+
+      applyOn(progress, errorView) { hide() }
+      swipeRefreshLayout.show()
+      recyclerView.post {
+        @Suppress("UNCHECKED_CAST") // badpokerface.png
+        when (val finalAdapter = adapter) {
+          is TextAdapter -> {
+            finalAdapter.update((result as LoadResult<CatchUpItem>))
+          }
+          is ImageAdapter -> {
+            finalAdapter.update((result as LoadResult<ImageItem>))
+          }
+        }
+        pendingRVState?.let {
+          recyclerView.layoutManager?.onRestoreInstanceState(it)
+          pendingRVState = null
+        }
+      }
+      reset()
+    } catch (error: Throwable) {
+      val activity = activity
+      if (activity != null) {
+        when (error) {
+          is IOException -> {
+            progress.hide()
+            errorTextView.text = activity.getString(R.string.connection_issue)
+            swipeRefreshLayout.hide()
+            errorView.show()
+            AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                ?.let {
+                  errorImage.setImageDrawable(it)
+                  it.start()
+                }
+            w(error) { "IOException" }
+          }
+          is ServiceException -> {
+            progress.hide()
+            errorTextView.text = error.message
+            swipeRefreshLayout.hide()
+            errorView.show()
+            AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                ?.let {
+                  errorImage.setImageDrawable(it)
+                  it.start()
+                }
+            e(error) { "ServiceException: ${error.message}" }
+          }
+          is HttpException, is ApolloException -> {
+            // TODO Show some sort of API error response.
+            progress.hide()
+            errorTextView.text = activity.getString(R.string.api_issue)
+            swipeRefreshLayout.hide()
+            errorView.show()
+            AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                ?.let {
+                  errorImage.setImageDrawable(it)
+                  it.start()
+                }
+            e(error) { "HttpException" }
+          }
+          else -> {
+            // TODO Show some sort of generic response error
+            progress.hide()
+            swipeRefreshLayout.hide()
+            errorTextView.text = activity.getString(R.string.unknown_issue)
+            errorView.show()
+            AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
+                ?.let {
+                  errorImage.setImageDrawable(it)
+                  it.start()
+                }
+            e(error) { "Unknown issue." }
+          }
+        }
+      } else {
+        pageToRestoreTo = pageToRequest
+      }
+      if (viewLifecycleOwner.lifecycle.currentState.isAtLeast(State.RESUMED)) {
+        reset()
+      }
+    }
+//        .trace("Data load - ${service.meta().id}")
+  }
+
+  private fun reset() {
+    swipeRefreshLayout.isEnabled = true
+    swipeRefreshLayout.isRefreshing = false
+    dataLoading = false
+    recyclerView.post {
+      adapter.dataFinishedLoading()
+    }
   }
 
   override fun onRefresh() {

@@ -17,10 +17,10 @@
 package io.sweers.catchup.service.designernews
 
 import com.serjltt.moshi.adapters.Wrapped
-import io.reactivex.Single
 import io.sweers.catchup.service.designernews.model.Story
 import io.sweers.catchup.service.designernews.model.User
 import io.sweers.catchup.util.collect.CommaJoinerList
+import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -34,11 +34,11 @@ internal interface DesignerNewsApi {
 
   @GET("stories")
   @Wrapped(path = ["stories"])
-  fun getTopStories(@Query("page") page: Int): Single<List<Story>>
+  fun getTopStories(@Query("page") page: Int): Deferred<List<Story>>
 
   @GET("users/{ids}")
   @Wrapped(path = ["users"])
-  fun getUsers(@Path("ids") ids: CommaJoinerList<String>): Single<List<User>>
+  fun getUsers(@Path("ids") ids: CommaJoinerList<String>): Deferred<List<User>>
 
   companion object {
 

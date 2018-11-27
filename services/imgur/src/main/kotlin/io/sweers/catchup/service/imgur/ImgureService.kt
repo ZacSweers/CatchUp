@@ -41,7 +41,6 @@ import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import retrofit2.Retrofit.Builder
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -154,11 +153,10 @@ abstract class ImgurModule {
     @Provides
     @JvmStatic
     internal fun provideImgurService(@InternalApi client: Lazy<OkHttpClient>,
-        @InternalApi moshi: Moshi,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): ImgurApi {
+        @InternalApi moshi: Moshi): ImgurApi {
       return Builder().baseUrl(ImgurApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
+          .addCallAdapterFactory(CoroutineCallAdapterFactory())
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           .validateEagerly(BuildConfig.DEBUG)
           .build()

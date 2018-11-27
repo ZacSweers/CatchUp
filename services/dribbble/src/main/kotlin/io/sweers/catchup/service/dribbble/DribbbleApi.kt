@@ -16,8 +16,8 @@
 
 package io.sweers.catchup.service.dribbble
 
-import io.reactivex.Single
 import io.sweers.catchup.service.dribbble.model.Shot
+import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -29,7 +29,7 @@ internal interface DribbbleApi {
   @GET("/shots")
   fun getPopular(
       @Query("page") page: Int,
-      @Query("per_page") pageSize: Int): Single<List<Shot>>
+      @Query("per_page") pageSize: Int): Deferred<List<Shot>>
 
   // list=...
   // sort=...
