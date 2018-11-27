@@ -34,6 +34,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.util.d
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @SuppressLint("Registered")
@@ -76,6 +79,10 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
     if (LeakCanary.isInAnalyzerProcess(this)) {
       // This process is dedicated to LeakCanary for heap analysis.
       return
+    }
+    GlobalScope.launch {
+      // This makes a call to disk, so initialize it off the main thread first... ironically
+      Dispatchers.Main
     }
     LazyThreeTen.init(this)
     onPreInject()
