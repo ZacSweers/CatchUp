@@ -85,26 +85,26 @@ object deps {
 
   object android {
     object androidx {
-      const val annotations = "androidx.annotation:annotation:1.0.0"
+      const val annotations = "androidx.annotation:annotation:1.0.1"
       const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
-      const val appCompat = "androidx.appcompat:appcompat:1.0.2"
+      const val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha01"
 
-      const val core = "androidx.core:core:1.1.0-alpha01"
+      const val core = "androidx.core:core:1.1.0-alpha02"
       const val coreKtx = "androidx.core:core-ktx:1.0.1"
 
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.2"
       const val customTabs = "androidx.browser:browser:1.0.0"
-      const val design = "com.google.android.material:material:1.1.0-alpha01"
+      const val design = "com.google.android.material:material:1.1.0-alpha02"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.0.0"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
 
-      private const val fragmentVersion = "1.1.0-alpha01"
+      private const val fragmentVersion = "1.1.0-alpha02"
       const val fragment = "androidx.fragment:fragment:$fragmentVersion"
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
       const val viewPager = "androidx.viewpager:viewpager:1.0.0"
-      const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+      const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha01"
       const val palette = "androidx.palette:palette:1.0.0"
       const val paletteKtx = "androidx.palette:palette-ktx:1.0.0"
       const val preference = "androidx.preference:preference:1.1.0-alpha01"
@@ -118,7 +118,7 @@ object deps {
       }
 
       object room {
-        private const val version = "2.1.0-alpha02"
+        private const val version = "2.1.0-alpha03"
         const val apt = "androidx.room:room-compiler:$version"
         const val runtime = "androidx.room:room-runtime:$version"
         const val rxJava2 = "androidx.room:room-rxjava2:$version"
@@ -133,11 +133,11 @@ object deps {
     }
 
     object firebase {
-      const val core = "com.google.firebase:firebase-core:16.0.5"
-      const val config = "com.google.firebase:firebase-config:16.1.0"
+      const val core = "com.google.firebase:firebase-core:16.0.6"
+      const val config = "com.google.firebase:firebase-config:16.1.2"
       const val database = "com.google.firebase:firebase-database:16.0.5"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:1.1.5"
-      const val perf = "com.google.firebase:firebase-perf:16.2.0"
+      const val perf = "com.google.firebase:firebase-perf:16.2.2"
     }
 
     const val gradlePlugin = "com.android.tools.build:gradle:3.3.0-rc01"
@@ -190,7 +190,7 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.5.0"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.6.0"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:2.0.0-rc2"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
@@ -320,10 +320,11 @@ object deps {
   }
 
   object misc {
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.8.2"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.9.3"
 
     object debug {
-      const val flipper = "com.facebook.flipper:flipper:0.9.0"
+      const val flipper = "com.facebook.flipper:flipper:0.12.0"
+      const val guava = "com.google.guava:guava:27.0.1-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"
       const val scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
