@@ -140,7 +140,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:16.2.2"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.3.0-rc01"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.3.0-rc02"
   }
 
   object apollo {
@@ -305,7 +305,7 @@ object deps {
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     const val metadata = "me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.4.0"
     const val noArgGradlePlugin = "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
-    const val poet = "com.squareup:kotlinpoet:1.0.0-RC2"
+    const val poet = "com.squareup:kotlinpoet:1.0.0"
 
     object stdlib {
       const val core = "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
