@@ -61,7 +61,7 @@ object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
     const val androidx = "1.0.0"
-    const val apollo = "1.0.0-alpha"
+    const val apollo = "1.0.1-SNAPSHOT"
     const val autodispose = "1.0.0"
     const val chuck = "1.1.0"
     const val crumb = "0.0.1"
@@ -324,6 +324,7 @@ object deps {
 
     object debug {
       const val flipper = "com.facebook.flipper:flipper:0.12.0"
+      const val soLoader = "com.facebook.soloader:soloader:0.5.1"
       const val guava = "com.google.guava:guava:27.0.1-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"

@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import deps
 import deps.versions
-import org.gradle.initialization.StartParameterBuildOptions.BuildScanOption
-import org.gradle.internal.scan.config.BuildScanConfig
 
 buildscript {
   repositories {
@@ -101,9 +98,3 @@ allprojects {
   }
 }
 
-tasks {
-  register("wrapper", Wrapper::class) {
-    gradleVersion = "4.10.2"
-    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
-  }
-}

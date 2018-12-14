@@ -213,13 +213,15 @@ psync {
 if (gradle.startParameter.isOffline) {
   afterEvaluate {
     // Because this stalls in offline mode
-    tasks.findByName("installApolloCodegen")?.deleteAllActions()
+    tasks.findByName("installApolloCodegen")?.actions = listOf()
   }
 }
 
 apollo {
-  customTypeMapping["DateTime"] = "org.threeten.bp.Instant"
-  customTypeMapping["URI"] = "okhttp3.HttpUrl"
+  customTypeMapping.set(mapOf(
+          "DateTime" to "org.threeten.bp.Instant",
+          "URI" to "okhttp3.HttpUrl"
+  ))
 }
 
 tasks.withType<KotlinCompile> {
@@ -500,6 +502,7 @@ dependencies {
 
   // Flipper
   debugImplementation(deps.misc.debug.flipper)
+  debugImplementation(deps.misc.debug.soLoader)
   debugImplementation(deps.misc.debug.guava) // To force a newer version that doesn't conflict ListenableFuture
 
   // Hyperion
