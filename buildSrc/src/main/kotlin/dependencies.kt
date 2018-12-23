@@ -62,7 +62,7 @@ object deps {
     const val androidTestSupport = "1.1.0-rc01"
     const val androidx = "1.0.0"
     const val apollo = "1.0.0-alpha"
-    const val autodispose = "1.0.0"
+    const val autodispose = "1.1.0"
     const val chuck = "1.1.0"
     const val crumb = "0.0.1"
     const val dagger = "2.18"
@@ -71,7 +71,7 @@ object deps {
     const val glide = "4.8.0"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
-    const val kotlin = "1.3.10"
+    const val kotlin = "1.3.20-eap-52"
     const val leakcanary = "1.6.2"
     const val legacySupport = "28.0.0"
     const val moshi = "1.8.0"
@@ -89,8 +89,8 @@ object deps {
       const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
       const val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha01"
 
-      const val core = "androidx.core:core:1.1.0-alpha02"
-      const val coreKtx = "androidx.core:core-ktx:1.0.1"
+      const val core = "androidx.core:core:1.1.0-alpha03"
+      const val coreKtx = "androidx.core:core-ktx:1.1.0-alpha03"
 
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.2"
       const val customTabs = "androidx.browser:browser:1.0.0"
@@ -99,7 +99,7 @@ object deps {
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
 
-      private const val fragmentVersion = "1.1.0-alpha02"
+      private const val fragmentVersion = "1.1.0-alpha03"
       const val fragment = "androidx.fragment:fragment:$fragmentVersion"
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
@@ -107,12 +107,14 @@ object deps {
       const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha01"
       const val palette = "androidx.palette:palette:1.0.0"
       const val paletteKtx = "androidx.palette:palette-ktx:1.0.0"
-      const val preference = "androidx.preference:preference:1.1.0-alpha01"
-      const val preferenceKtx = "androidx.preference:preference-ktx:1.0.0"
+
+      const val preferenceVersion = "1.1.0-alpha02"
+      const val preference = "androidx.preference:preference:$preferenceVersion"
+      const val preferenceKtx = "androidx.preference:preference-ktx:$preferenceVersion"
       const val recyclerView = "androidx.recyclerview:recyclerview:1.0.0"
 
       object lifecycle {
-        private const val version = "2.0.0"
+        private const val version = "2.1.0-alpha01"
         const val apt = "androidx.lifecycle:lifecycle-compiler:$version"
         const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
       }
@@ -137,7 +139,7 @@ object deps {
       const val config = "com.google.firebase:firebase-config:16.1.2"
       const val database = "com.google.firebase:firebase-database:16.0.5"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:1.1.5"
-      const val perf = "com.google.firebase:firebase-perf:16.2.2"
+      const val perf = "com.google.firebase:firebase-perf:16.2.3"
     }
 
     const val gradlePlugin = "com.android.tools.build:gradle:3.3.0-rc03"
@@ -191,7 +193,7 @@ object deps {
 
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:3.6.0"
-      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.0.0-rc2"
+      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.0.0"
       const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.17.0"
     }
@@ -299,7 +301,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.0.1"
+    private const val coroutinesVersion = "1.1.0"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
@@ -323,7 +325,7 @@ object deps {
     const val bugsnag = "com.bugsnag:bugsnag-android:4.9.3"
 
     object debug {
-      const val flipper = "com.facebook.flipper:flipper:0.12.0"
+      const val flipper = "com.facebook.flipper:flipper:0.13.0"
       const val guava = "com.google.guava:guava:27.0.1-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"

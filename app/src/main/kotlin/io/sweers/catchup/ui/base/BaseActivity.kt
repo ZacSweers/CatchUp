@@ -16,6 +16,7 @@
 
 package io.sweers.catchup.ui.base
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.annotation.CallSuper
@@ -24,7 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
-import com.uber.autodispose.lifecycle.KotlinLifecycleScopeProvider
+import com.uber.autodispose.lifecycle.LifecycleScopeProvider
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.sweers.catchup.ui.ViewContainer
@@ -37,8 +38,7 @@ import io.sweers.catchup.ui.base.ActivityEvent.STOP
 import io.sweers.catchup.util.updateNavBarColor
 import javax.inject.Inject
 
-abstract class BaseActivity : AppCompatActivity(),
-    KotlinLifecycleScopeProvider<ActivityEvent> {
+abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<ActivityEvent> {
 
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
 
@@ -96,6 +96,7 @@ abstract class BaseActivity : AppCompatActivity(),
     }
   }
 
+  @SuppressLint("AutoDispose")
   protected inline fun <T> T.doOnDestroy(crossinline action: T.() -> Unit): T = apply {
     lifecycle().doOnDestroy(this) { action() }.subscribe()
   }
