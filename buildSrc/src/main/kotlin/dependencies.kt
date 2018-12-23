@@ -140,7 +140,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:16.2.2"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.3.0-rc02"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.3.0-rc03"
   }
 
   object apollo {
