@@ -1,5 +1,5 @@
 <p>
-  <img src="https://github.com/hzsweers/CatchUp/blob/master/app/src/main/play/listings/en-US/feature-graphic/feature.png?raw=true"/>
+  <img src="https://github.com/ZacSweers/CatchUp/blob/master/app/src/main/play/listings/en-US/feature-graphic/feature.png?raw=true"/>
 </p>
 
 CatchUp
@@ -91,7 +91,7 @@ CatchUp tends to keep up with Android Studio canaries, so you may have to use a 
 Check the Android Gradle Plugin `deps.android.gradlePlugin` dependency in `gradle/dependencies.kt`.
 
 If you want to build with working services, some require API keys. See the 
-[wiki](https://github.com/hzsweers/CatchUp/wiki/Authentication-information) for more details on 
+[wiki](https://github.com/ZacSweers/CatchUp/wiki/Authentication-information) for more details on 
 which services require keys.
 
 Bug fixes are always welcome. Tests are too if you're into that kinda thing, but I'm not actively

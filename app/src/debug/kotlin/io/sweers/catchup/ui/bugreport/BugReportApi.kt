@@ -52,7 +52,7 @@ internal interface GitHubIssueApi {
         "Accept: application/vnd.github.v3+json"
       ]
   )
-  @POST("repos/hzsweers/catchup/issues")
+  @POST("repos/zacsweers/catchup/issues")
   @Wrapped(path = ["html_url"])
   fun createIssue(@Body issue: GitHubIssue): Single<String>
 }

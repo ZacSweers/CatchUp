@@ -26,7 +26,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.threeten.bp.Instant
 import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.DateTimeParseException
 import java.util.regex.Pattern
 
 /**
@@ -65,7 +64,7 @@ internal object DribbbleParser {
       DATE_FORMAT.parse(descriptionBlock.select("em.timestamp")
           .first()
           .text(), Instant.FROM)
-    } catch (e2: DateTimeParseException) {
+    } catch (e2: Exception) {
       Instant.now()
     }
 
