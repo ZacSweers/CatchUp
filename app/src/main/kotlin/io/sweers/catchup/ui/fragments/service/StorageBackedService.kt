@@ -23,7 +23,6 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.analytics.trace
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.data.ServicePage
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder

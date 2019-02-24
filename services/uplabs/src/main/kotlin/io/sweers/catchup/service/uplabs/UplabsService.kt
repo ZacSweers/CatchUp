@@ -147,7 +147,7 @@ abstract class UplabsModule {
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(BuildConfig.DEBUG)
+          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
           .build()
           .create(UplabsApi::class.java)
     }

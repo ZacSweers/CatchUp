@@ -190,7 +190,7 @@ abstract class MediumModule {
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(inspectorConverterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(BuildConfig.DEBUG)
+          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
           .build()
       return retrofit.create(MediumApi::class.java)
     }

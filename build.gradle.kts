@@ -34,7 +34,7 @@ buildscript {
   }
 
   dependencies {
-    classpath("com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta03")
+//    classpath("com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta03")
     classpath(deps.android.gradlePlugin)
     classpath(deps.kotlin.gradlePlugin)
     classpath(deps.kotlin.noArgGradlePlugin)

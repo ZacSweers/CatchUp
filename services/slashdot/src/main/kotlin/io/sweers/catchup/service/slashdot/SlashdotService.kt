@@ -158,7 +158,7 @@ abstract class SlashdotModule {
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(TikXmlConverterFactory.create(tikXml))
-          .validateEagerly(BuildConfig.DEBUG)
+          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
           .build()
       return retrofit.create(SlashdotApi::class.java)
     }

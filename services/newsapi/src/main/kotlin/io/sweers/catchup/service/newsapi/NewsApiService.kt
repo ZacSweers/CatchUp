@@ -195,7 +195,7 @@ abstract class NewsApiModule {
           .callFactory(client.get()::newCall)
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(BuildConfig.DEBUG)
+          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
           .build()
           .create(NewsApiApi::class.java)
     }

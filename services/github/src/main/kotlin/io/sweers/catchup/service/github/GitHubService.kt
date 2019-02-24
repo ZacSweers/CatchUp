@@ -218,7 +218,7 @@ abstract class GitHubModule {
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))
-          .validateEagerly(BuildConfig.DEBUG)
+          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
           .build()
           .create(GitHubApi::class.java)
     }

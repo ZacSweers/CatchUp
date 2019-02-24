@@ -52,7 +52,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
-import io.sweers.catchup.analytics.trace
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem

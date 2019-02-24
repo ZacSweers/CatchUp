@@ -57,7 +57,8 @@ android {
   }
   libraryVariants.all {
     generateBuildConfigProvider?.configure {
-      enabled = false
+      // Can't enable until we have somewhere else for the token
+//      enabled = false
     }
   }
 }

@@ -128,7 +128,7 @@ internal class HackerNewsService @Inject constructor(
         .toList()
         .map { DataResult(it, if (it.isEmpty()) null else (page + 1).toString()) }
         .onErrorResumeNext { t: Throwable ->
-          if (BuildConfig.DEBUG && t is IllegalArgumentException) {
+          if (t is IllegalArgumentException) {
             // Firebase didn't init
             Single.error(ServiceException(
                 "Firebase wasn't able to initialize, likely due to missing credentials."))
