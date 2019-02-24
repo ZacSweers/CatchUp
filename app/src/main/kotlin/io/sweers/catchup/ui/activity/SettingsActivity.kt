@@ -23,7 +23,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.transaction
+import androidx.fragment.app.commitNow
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -88,7 +88,7 @@ class SettingsActivity : InjectingBaseActivity() {
     }
 
     if (savedInstanceState == null) {
-      supportFragmentManager.transaction {
+      supportFragmentManager.commitNow {
         add(R.id.container, SettingsFrag())
       }
     } else if (savedInstanceState.getBoolean(ARG_FROM_RECREATE, false)) {

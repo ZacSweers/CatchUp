@@ -36,6 +36,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.text.layoutDirection
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.commitNow
 import androidx.fragment.app.transaction
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
@@ -104,7 +105,7 @@ class AboutActivity : InjectingBaseActivity() {
     layoutInflater.inflate(R.layout.activity_generic_container, viewGroup)
 
     if (savedInstanceState == null) {
-      supportFragmentManager.transaction {
+      supportFragmentManager.commitNow {
         add(R.id.fragment_container, AboutFragment())
       }
     }

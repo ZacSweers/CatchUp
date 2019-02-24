@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicLong
  * Utilities for tracing.
  */
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun Trace.incrementMetric(name: String) {
   incrementMetric(name, 1L)
 }

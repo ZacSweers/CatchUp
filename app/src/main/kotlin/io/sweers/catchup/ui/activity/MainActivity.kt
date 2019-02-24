@@ -19,7 +19,7 @@ package io.sweers.catchup.ui.activity
 import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.transaction
+import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.uber.autodispose.autoDisposable
 import dagger.Binds
@@ -66,7 +66,7 @@ class MainActivity : InjectingBaseActivity() {
     layoutInflater.inflate(R.layout.activity_main, viewGroup)
 
     if (savedInstanceState == null) {
-      supportFragmentManager.transaction {
+      supportFragmentManager.commitNow {
         add(R.id.fragment_container, PagerFragment())
       }
     }
@@ -98,8 +98,8 @@ class MainActivity : InjectingBaseActivity() {
           services: Map<String, @JvmSuppressWildcards Provider<Service>>): Map<String, Provider<Service>> {
         return services
             .filter {
-              serviceMetas[it.key]!!.enabled && sharedPreferences.getBoolean(
-                  serviceMetas[it.key]!!.enabledPreferenceKey, true)
+              serviceMetas.getValue(it.key).enabled && sharedPreferences.getBoolean(
+                  serviceMetas.getValue(it.key).enabledPreferenceKey, true)
             }
             .mapValues { (_, value) ->
               Provider { StorageBackedService(serviceDao, value.get()) }

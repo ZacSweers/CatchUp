@@ -17,12 +17,13 @@
 package io.sweers.catchup.util.coroutines
 
 import android.os.Looper
-import androidx.lifecycle.GenericLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -52,13 +53,14 @@ fun LifecycleOwner.liveCoroutineScope(
 private class LifecycleScoper(
     whenAtLeast: Lifecycle.State,
     private val begin: suspend CoroutineScope.() -> Unit
-) : GenericLifecycleObserver {
+) : LifecycleEventObserver {
 
   private val upEvent = eventUpTo(whenAtLeast)
   private val downEvent = eventDownFrom(whenAtLeast)
 
   private var scope: CoroutineScope? = null
 
+  @UseExperimental(ExperimentalCoroutinesApi::class)
   override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
     if (event == upEvent) {
       val scope = newScope()

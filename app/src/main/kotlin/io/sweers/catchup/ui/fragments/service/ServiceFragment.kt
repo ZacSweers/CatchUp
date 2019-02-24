@@ -32,7 +32,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.transaction
+import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DiffUtil.DiffResult
@@ -239,13 +239,13 @@ class ServiceFragment : InjectingBaseFragment(),
               }
               smmryPage.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
                 override fun onPageCollapsed() {
-                  childFragmentManager.transaction(now = true, allowStateLoss = true) {
+                  childFragmentManager.commitNow(allowStateLoss = true) {
                     remove(smmryFragment)
                   }
                   smmryPage.removeStateChangeCallbacks(this)
                 }
               })
-              childFragmentManager.transaction(now = true, allowStateLoss = true) {
+              childFragmentManager.commitNow(allowStateLoss = true) {
                 add(smmryPage.id, smmryFragment)
               }
               true

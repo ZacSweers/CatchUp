@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import deps
 import deps.versions
-import org.gradle.initialization.StartParameterBuildOptions.BuildScanOption
-import org.gradle.internal.scan.config.BuildScanConfig
 
 buildscript {
   repositories {
@@ -32,7 +29,7 @@ buildscript {
 
   configurations.all {
     resolutionStrategy {
-      force("net.sf.proguard:proguard-base:6.1.0beta1")
+      force("net.sf.proguard:proguard-base:6.1.0beta2")
     }
   }
 
@@ -50,7 +47,7 @@ buildscript {
 }
 
 plugins {
-  id("com.gradle.build-scan") version "1.16"
+  id("com.gradle.build-scan") version "2.1"
   id("com.github.ben-manes.versions") version "0.20.0"
 }
 
@@ -101,9 +98,7 @@ allprojects {
   }
 }
 
-tasks {
-  register("wrapper", Wrapper::class) {
-    gradleVersion = "4.10.2"
-    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
-  }
-}
+//wrapper {
+//  gradleVersion = "5.2.1"
+//  distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+//}

@@ -102,9 +102,7 @@ class SmmryFragment : InjectableBaseFragment() {
   lateinit var smmryDao: SmmryDao
 
   private val loadingView by bindView<View>(R.id.loading_view)
-  private val lottieView by bindView<LottieAnimationView>(R.id.smmry_loading) {
-    it.useHardwareAcceleration(true)
-  }
+  private val lottieView by bindView<LottieAnimationView>(R.id.smmry_loading)
   private val content by bindView<NestedScrollView>(R.id.content_container)
   private val tags by bindView<TextView>(R.id.tags)
   private val title by bindView<TextView>(R.id.title)

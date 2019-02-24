@@ -74,14 +74,18 @@ kapt {
 }
 
 apollo {
-  customTypeMapping["DateTime"] = "org.threeten.bp.Instant"
-  customTypeMapping["URI"] = "okhttp3.HttpUrl"
+  customTypeMapping.set(mapOf(
+      "DateTime" to "org.threeten.bp.Instant",
+      "URI" to "okhttp3.HttpUrl"
+  ))
 }
 
 dependencies {
   kapt(project(":service-registry:service-registry-compiler"))
   kapt(deps.crumb.compiler)
   kapt(deps.dagger.apt.compiler)
+
+  compileOnly(deps.misc.javaxInject)
 
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:retrofitconverters"))

@@ -17,8 +17,8 @@
 package io.sweers.catchup.util.coroutines
 
 import androidx.annotation.MainThread
-import androidx.lifecycle.GenericLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +35,7 @@ import kotlin.coroutines.CoroutineContext
 fun LifecycleOwner.lifecycleCoroutineScope(): CoroutineScope = LifecycleOwnerScope().also(
     lifecycle::addObserver)
 
-private class LifecycleOwnerScope : CoroutineScope, GenericLifecycleObserver {
+private class LifecycleOwnerScope : CoroutineScope, LifecycleEventObserver {
   override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
 
   override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {

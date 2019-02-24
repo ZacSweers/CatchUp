@@ -34,7 +34,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.doOnLayout
-import androidx.fragment.app.transaction
+import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DiffUtil.Callback
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -81,7 +81,7 @@ class OrderServicesActivity : InjectingBaseActivity() {
     syllabus.bind(this)
 
     if (savedInstanceState == null) {
-      supportFragmentManager.transaction {
+      supportFragmentManager.commitNow {
         add(R.id.fragment_container, OrderServicesFragment())
       }
     }

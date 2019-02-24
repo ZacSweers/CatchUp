@@ -24,7 +24,7 @@ import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.transaction
+import androidx.fragment.app.commitNow
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -67,7 +67,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     }
 
     if (savedInstanceState == null) {
-      supportFragmentManager.transaction {
+      supportFragmentManager.commitNow {
         add(R.id.container, ServiceSettingsFrag().apply {
           if (intent.extras?.containsKey(TARGET_PREF_RESOURCE) == true) {
             arguments = bundleOf(
