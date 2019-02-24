@@ -239,9 +239,9 @@ class AboutFragment : InjectingBaseFragment() {
       newline(2)
       text(aboutText.resources.getString(R.string.about_by))
       space()
-      link("https://twitter.com/pandanomic", "Zac Sweers")
+      link("https://twitter.com/ZacSweers", "Zac Sweers")
       text(" - ")
-      link("https://github.com/hzsweers/CatchUp",
+      link("https://github.com/ZacSweers/CatchUp",
           aboutText.resources.getString(R.string.about_source_code))
     }.parseMarkdownAndPlainLinks(
         on = aboutText,
