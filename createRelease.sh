@@ -146,7 +146,7 @@ execIfNotDry openssl aes-256-cbc -d -in signing/play-account.aes -out signing/pl
 log "Keys decrypted"
 
 echo "Publishing"
-execIfNotDry execGradle clean publishApkRelease --no-daemon -PincludeChangelog -PenableFirebasePerf
+execIfNotDry execGradle clean publishApkRelease --no-daemon -PincludeChangelog
 
 echo "Finishing up"
 execIfNotDry git push

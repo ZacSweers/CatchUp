@@ -170,12 +170,10 @@ class StorageBackedService(
               .toMaybe()
               .map { DataResult(it, servicePage.nextPageToken, wasFresh = false) }
         }
-        .trace("Local data load - ${delegate.meta().id}")
   }
 
   private fun fetchPageFromNetwork(pageId: String, isRefresh: Boolean): Single<DataResult> {
     return delegate.fetchPage(DataRequest(true, false, pageId))
-        .trace("Network data load - ${delegate.meta().id}")
         .flatMap { result ->
           val calculatedExpiration = Instant.now()
               .plus(2, ChronoUnit.HOURS) // TODO preference this
@@ -201,7 +199,6 @@ class StorageBackedService(
 
           return@flatMap Completable.mergeArray(putPage, putItems)
               .subscribeOn(Schedulers.io())
-              .trace("Network data store - ${delegate.meta().id}")
               .andThen(Single.just(result))
         }
         .onErrorResumeNext { throwable: Throwable ->

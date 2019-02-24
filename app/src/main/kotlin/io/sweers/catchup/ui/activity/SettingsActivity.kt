@@ -30,7 +30,6 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
 import androidx.preference.children
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.perf.FirebasePerformance
 import com.uber.autodispose.autoDisposable
 import dagger.Binds
 import dagger.Module
@@ -195,7 +194,6 @@ class SettingsActivity : InjectingBaseActivity() {
         }
         P.Reports.KEY -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
-          FirebasePerformance.getInstance().isPerformanceCollectionEnabled = isChecked
           P.Reports.put(isChecked).apply()
           Snackbar.make(view!!, R.string.settings_reset, Snackbar.LENGTH_SHORT)
               .setAction(R.string.undo) {

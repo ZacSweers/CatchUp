@@ -411,7 +411,6 @@ class ServiceFragment : InjectingBaseFragment(),
           swipeRefreshLayout.isEnabled = true
           swipeRefreshLayout.isRefreshing = false
         }
-        .trace("Data load - ${service.meta().id}")
         .doFinally {
           dataLoading = false
           recyclerView.post {

@@ -24,7 +24,6 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.gabrielittner.threetenbp.LazyThreeTen
-import com.google.firebase.perf.FirebasePerformance
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import dagger.android.DispatchingAndroidInjector
@@ -105,15 +104,6 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
           }
           AppCompatDelegate.setDefaultNightMode(nightMode)
         }
-  }
-
-  /**
-   * I give you - the only use case of method injection I've ever found.
-   */
-  @Inject
-  protected fun initPerformanceMonitoring(sharedPreferences: SharedPreferences) {
-    FirebasePerformance.getInstance().isPerformanceCollectionEnabled =
-        sharedPreferences.getBoolean(P.Reports.KEY, false)
   }
 
   override fun activityInjector(): DispatchingAndroidInjector<Activity> =

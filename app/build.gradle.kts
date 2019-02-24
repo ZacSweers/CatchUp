@@ -30,9 +30,6 @@ plugins {
 
 apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
-  if (hasProperty("enableFirebasePerf")) {
-    plugin("com.google.firebase.firebase-perf")
-  }
 }
 
 // TODO Can stop doing this when BuildConfig becomes a class rather than a java file
@@ -435,9 +432,7 @@ dependencies {
 
   // Firebase
   implementation(deps.android.firebase.core)
-  implementation(deps.android.firebase.config)
   implementation(deps.android.firebase.database)
-  implementation(deps.android.firebase.perf)
 
   // Square/JW
   implementation(deps.okhttp.core)
