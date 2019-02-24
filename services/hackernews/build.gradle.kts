@@ -89,6 +89,8 @@ dependencies {
   kapt(deps.dagger.apt.compiler)
 
   implementation(deps.android.firebase.database)
+  // Firebase uses gms basement, which in turn depends on legacy v4
+  implementation(deps.android.androidx.activity)
 
   api(deps.android.androidx.annotations)
   api(deps.dagger.runtime)

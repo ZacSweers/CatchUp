@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import deps
-import deps.versions
-
 plugins {
   id("com.android.library")
   kotlin("android")
@@ -51,6 +48,7 @@ dependencies {
   api(deps.android.androidx.annotations)
 
   implementation(deps.android.androidx.appCompat)
+  implementation(deps.android.androidx.activity)
   implementation(deps.android.androidx.core)
   implementation(deps.android.androidx.design)
   implementation(deps.rx.android)

@@ -61,7 +61,6 @@ buildScan {
 subprojects { parent!!.path.takeIf { it != rootProject.path }?.let { evaluationDependsOn(it) } }
 
 allprojects {
-
   repositories {
     google()
     mavenCentral()
@@ -73,23 +72,30 @@ allprojects {
   }
 
   configurations.all {
-    resolutionStrategy.eachDependency {
-      when {
-        requested.name.startsWith("kotlin-stdlib") -> {
-          useTarget(
-              "${requested.group}:${requested.name.replace("jre", "jdk")}:${requested.version}")
-        }
-        else -> when (requested.group) {
-          "com.android.support" -> {
-            if ("multidex" !in requested.name) {
-              useVersion(versions.legacySupport)
-            }
+    resolutionStrategy {
+      // Temporary because fragment points to an unreleased 1.0.0 release
+      force(deps.android.androidx.activity)
+      eachDependency {
+        when {
+          requested.name.startsWith("kotlin-stdlib") -> {
+            useTarget(
+                "${requested.group}:${requested.name.replace("jre", "jdk")}:${requested.version}")
           }
-          "org.jetbrains.kotlin" -> useVersion(versions.kotlin)
-          "com.google.dagger" -> useVersion(versions.dagger)
-          "com.google.errorprone" -> {
-            if (requested.name in setOf("javac", "error_prone_annotations")) {
-              useVersion(versions.errorProne)
+          else -> when (requested.group) {
+            "androidx.activity" -> {
+              useVersion(deps.android.androidx.activityVersion)
+            }
+            "com.android.support" -> {
+              if ("multidex" !in requested.name) {
+                useVersion(versions.legacySupport)
+              }
+            }
+            "org.jetbrains.kotlin" -> useVersion(versions.kotlin)
+            "com.google.dagger" -> useVersion(versions.dagger)
+            "com.google.errorprone" -> {
+              if (requested.name in setOf("javac", "error_prone_annotations")) {
+                useVersion(versions.errorProne)
+              }
             }
           }
         }
