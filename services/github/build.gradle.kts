@@ -56,6 +56,11 @@ android {
     htmlReport = !deps.build.ci
     xmlReport = !deps.build.ci
   }
+  libraryVariants.all {
+    generateBuildConfigProvider?.configure {
+      enabled = false
+    }
+  }
 }
 
 tasks.withType<KotlinCompile> {

@@ -29,6 +29,11 @@ android {
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
   }
+  libraryVariants.all {
+    generateBuildConfigProvider?.configure {
+      enabled = false
+    }
+  }
 }
 
 tasks.withType<KotlinCompile> {
