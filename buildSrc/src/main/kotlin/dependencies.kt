@@ -87,8 +87,6 @@ object deps {
     object androidx {
       const val annotations = "androidx.annotation:annotation:1.1.0-alpha01"
       const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
-      const val activityVersion = "1.0.0-alpha04"
-      const val activity = "androidx.activity:activity:$activityVersion"
       const val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha02"
 
       const val core = "androidx.core:core:1.1.0-alpha04"
@@ -110,7 +108,7 @@ object deps {
       const val palette = "androidx.palette:palette:1.0.0"
       const val paletteKtx = "androidx.palette:palette-ktx:1.0.0"
 
-      private const val preferenceVersion = "1.1.0-alpha03"
+      const val preferenceVersion = "1.1.0-alpha03"
       const val preference = "androidx.preference:preference:$preferenceVersion"
       const val preferenceKtx = "androidx.preference:preference-ktx:$preferenceVersion"
       const val recyclerView = "androidx.recyclerview:recyclerview:1.0.0"

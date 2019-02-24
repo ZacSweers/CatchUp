@@ -402,7 +402,6 @@ dependencies {
   implementation(deps.android.androidx.design)
   implementation(deps.android.androidx.emoji)
   implementation(deps.android.androidx.emojiAppcompat)
-  implementation(deps.android.androidx.activity)
   implementation(deps.android.androidx.fragment)
   implementation(deps.android.androidx.fragmentKtx)
   debugImplementation(deps.android.androidx.drawerLayout)
