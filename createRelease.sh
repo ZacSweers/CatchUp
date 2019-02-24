@@ -25,7 +25,7 @@ VERBOSE=false
 
 # Echoes extra logging info
 function log {
-  if [ "$VERBOSE" = true ]
+  if [[ "$VERBOSE" = true ]]
     then
       echo "--${1}"
   fi
@@ -35,7 +35,7 @@ function log {
 function checkEnv {
   echo "Checking"
   env_value=$(printf '%s\n' "${!1}")
-  if [ -z ${env_value} ]; then
+  if [[ -z ${env_value} ]]; then
     echo "$1 is undefined, exiting..."
     exit 1
   else
@@ -47,7 +47,7 @@ function checkEnv {
 function execGradle {
   gradlew_return_code=0
   ./gradlew $@ --quiet || gradlew_return_code=$?
-  if [ ${gradlew_return_code} -ne 0 ]
+  if [[ ${gradlew_return_code} -ne 0 ]]
     then
       echo "Gradle error'd with code ${gradlew_return_code}, exiting."
       exit 1;
@@ -62,7 +62,7 @@ usage() {
 
 # Executes a command if DRY_RUN is not true
 function execIfNotDry {
-  if [ "$DRY_RUN" = true  ]
+  if [[ "$DRY_RUN" = true  ]]
     then
       echo "$*"
       return 0
@@ -113,25 +113,25 @@ if [[ ! -z ${VERSION_UPDATE_TYPE} ]]
 fi
 
 #### Changelog cuts
-if [ "$UPDATE_CHANGELOG" = true ]
+if [[ "$UPDATE_CHANGELOG" = true ]]
   then
     echo "Cutting changelog via gradle..."
     execIfNotDry execGradle cutChangelog -PincludeChangelog
     VERSION_NAME=`git describe --abbrev=0 --tags`
     # If we didn't update a version here, use the described tag
-    if [ -z ${VERSION_UPDATE_TYPE} ]
+    if [[ -z ${VERSION_UPDATE_TYPE} ]]
       then
         VERSION_NAME=`git describe --tags`
     fi
     echo "Committing new tags for changelog update with version ${VERSION_NAME}"
     # Not using execIfNotDry because args get screwed up and my bash is not good
-    if [ "$DRY_RUN" = false  ]
+    if [[ "$DRY_RUN" = false  ]]
       then
         log "Committing changelog"
         git commit -m "Prepare for release ${VERSION_NAME}." -- CHANGELOG.md app/src/main/play/en-US/whatsnew
     fi
     # Only cut a tag if we didn't update a version above
-    if [ -z ${VERSION_UPDATE_TYPE} ]
+    if [[ -z ${VERSION_UPDATE_TYPE} ]]
       then
         log "Cutting tag during changelog"
         execIfNotDry git tag -a ${VERSION_NAME} -m "Version ${VERSION_NAME}."
