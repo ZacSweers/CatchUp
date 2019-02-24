@@ -34,7 +34,7 @@ buildscript {
   }
 
   dependencies {
-    classpath("com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta02") // https://issuetracker.google.com/issues/115738511
+    classpath("com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta03")
     classpath(deps.android.gradlePlugin)
     classpath(deps.kotlin.gradlePlugin)
     classpath(deps.kotlin.noArgGradlePlugin)
@@ -52,7 +52,7 @@ plugins {
 }
 
 buildScan {
-  setTermsOfServiceAgree("yes")
+  termsOfServiceAgree = "yes"
   setTermsOfServiceUrl("https://gradle.com/terms-of-service")
 }
 
@@ -97,8 +97,3 @@ allprojects {
     }
   }
 }
-
-//wrapper {
-//  gradleVersion = "5.2.1"
-//  distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
-//}
