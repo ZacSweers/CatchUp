@@ -121,7 +121,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
           .forEach { meta ->
             meta.run {
               // Create a category
-              val metaColor = ContextCompat.getColor(activity!!.asDayContext(), meta.themeColor)
+//              val metaColor = ContextCompat.getColor(activity!!.asDayContext(), meta.themeColor)
               val category = PreferenceCategory(activity).apply {
                 title = resources.getString(meta.name)
 //                titleColor = metaColor

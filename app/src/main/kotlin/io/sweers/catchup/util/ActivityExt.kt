@@ -27,11 +27,11 @@ import io.sweers.catchup.P
 inline fun Activity.updateNightMode() {
   val isCurrentlyInNightMode = isInNightMode()
   val nightMode = when {
-    P.DaynightAuto.get() -> AppCompatDelegate.MODE_NIGHT_AUTO
+    P.DaynightAuto.get() -> AppCompatDelegate.MODE_NIGHT_AUTO_TIME
     P.DaynightNight.get() -> AppCompatDelegate.MODE_NIGHT_YES
     else -> AppCompatDelegate.MODE_NIGHT_NO
   }
-  if (nightMode == AppCompatDelegate.MODE_NIGHT_AUTO
+  if (nightMode == AppCompatDelegate.MODE_NIGHT_AUTO_TIME
       || (isCurrentlyInNightMode && nightMode != AppCompatDelegate.MODE_NIGHT_YES)
       || !isCurrentlyInNightMode && nightMode == AppCompatDelegate.MODE_NIGHT_YES) {
     AppCompatDelegate.setDefaultNightMode(nightMode)

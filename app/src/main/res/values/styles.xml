@@ -20,7 +20,7 @@
   </style>
 
   <!-- Base application theme. -->
-  <style name="Base" parent="Theme.AppCompat.DayNight.NoActionBar">
+  <style name="Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
@@ -56,13 +56,13 @@
     <item name="fontFamily">@font/nunito</item>
   </style>
 
-  <style name="Catchup.Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
+  <style name="Catchup.Toolbar" parent="ThemeOverlay.MaterialComponents.ActionBar">
     <!-- Force icons and title text to be all the same color -->
     <item name="colorControlNormal">?android:attr/textColorPrimary</item>
     <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
   </style>
 
-  <style name="Widget.Catchup.Toolbar" parent="Widget.AppCompat.Toolbar">
+  <style name="Widget.Catchup.Toolbar" parent="Widget.MaterialComponents.Toolbar">
     <item name="titleTextAppearance">@style/TextAppearance.Widget.Catchup.Toolbar.Title</item>
   </style>
 
@@ -72,12 +72,12 @@
   </style>
 
   <style name="CatchUp.TabLayout" parent="Widget.Design.TabLayout">
-    <item name="android:theme">@style/Theme.AppCompat</item>
+    <item name="android:theme">@style/Theme.MaterialComponents</item>
     <item name="tabIndicatorColor">#FFFFFF</item>
   </style>
 
-  <style name="CatchUp.TabLayout.Inverted" parent="Widget.Design.TabLayout">
-    <item name="android:theme">@style/Theme.AppCompat.Light</item>
+  <style name="CatchUp.TabLayout.Inverted" parent="Widget.MaterialComponents.TabLayout">
+    <item name="android:theme">@style/Theme.MaterialComponents.Light</item>
     <item name="tabIndicatorColor">?android:textColorPrimary</item>
   </style>
 
