@@ -25,6 +25,9 @@ buildscript {
     maven { url = uri(deps.build.repositories.kotlinx) }
     maven { url = uri(deps.build.repositories.plugins) }
     maven { url = uri(deps.build.repositories.snapshots) }
+    maven {
+      url = uri("http://storage.googleapis.com/r8-releases/raw/master")
+    }
   }
 
   configurations.all {
@@ -34,20 +37,19 @@ buildscript {
   }
 
   dependencies {
-//    classpath("com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta03")
+    classpath("com.android.tools:r8:86133db9ec0b631f12bf6a8eebc0f81c8aef5d1e")  // Must be before the Gradle Plugin for Android.
     classpath(deps.android.gradlePlugin)
     classpath(deps.kotlin.gradlePlugin)
     classpath(deps.kotlin.noArgGradlePlugin)
     classpath(deps.android.firebase.gradlePlugin)
     classpath(deps.build.gradlePlugins.bugsnag)
-    classpath(deps.build.gradlePlugins.psync)
     classpath(deps.apollo.gradlePlugin)
     classpath(deps.build.gradlePlugins.playPublisher)
   }
 }
 
 plugins {
-  id("com.gradle.build-scan") version "2.2.1"
+  id("com.gradle.build-scan") version "2.3"
   id("com.github.ben-manes.versions") version "0.21.0"
 }
 

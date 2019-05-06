@@ -71,7 +71,7 @@ object deps {
     const val glide = "4.9.0"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
-    const val kotlin = "1.3.30"
+    const val kotlin = "1.3.31"
     const val leakcanary = "1.6.3"
     const val legacySupport = "28.0.0"
     const val moshi = "1.8.0"
@@ -94,12 +94,12 @@ object deps {
 
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.2"
       const val customTabs = "androidx.browser:browser:1.0.0"
-      const val design = "com.google.android.material:material:1.1.0-alpha05"
+      const val design = "com.google.android.material:material:1.1.0-alpha06"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.0.0"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
 
-      private const val fragmentVersion = "1.1.0-alpha06"
+      private const val fragmentVersion = "1.1.0-alpha07"
       const val fragment = "androidx.fragment:fragment:$fragmentVersion"
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
@@ -120,7 +120,7 @@ object deps {
       }
 
       object room {
-        private const val version = "2.1.0-alpha06"
+        private const val version = "2.1.0-alpha07"
         const val apt = "androidx.room:room-compiler:$version"
         const val runtime = "androidx.room:room-runtime:$version"
         const val rxJava2 = "androidx.room:room-rxjava2:$version"
@@ -142,7 +142,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:16.2.3"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.5.0-alpha11"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.5.0-alpha13"
   }
 
   object apollo {
@@ -192,9 +192,8 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.1.2"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.2.0"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:2.2.0"
-      const val psync = "io.sweers.psync:psync:2.0.0-20171017.111936-4"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.21.0"
     }
 
@@ -301,7 +300,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.2.0"
+    private const val coroutinesVersion = "1.2.1"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
@@ -325,7 +324,7 @@ object deps {
     const val bugsnag = "com.bugsnag:bugsnag-android:4.13.0"
 
     object debug {
-      const val flipper = "com.facebook.flipper:flipper:0.19.0"
+      const val flipper = "com.facebook.flipper:flipper:0.20.0"
       const val soLoader = "com.facebook.soloader:soloader:0.6.0"
       const val guava = "com.google.guava:guava:27.1-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
@@ -341,7 +340,7 @@ object deps {
     const val jsoup = "org.jsoup:jsoup:1.11.3"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.5.0"
-    const val lottie = "com.airbnb.android:lottie:3.0.0"
+    const val lottie = "com.airbnb.android:lottie:3.0.1"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
     const val okio = "com.squareup.okio:okio:2.2.2"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:3.0.0"

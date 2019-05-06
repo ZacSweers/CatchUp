@@ -98,7 +98,7 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
           // when resumed since this was updated
           var nightMode = AppCompatDelegate.MODE_NIGHT_NO
           if (autoEnabled) {
-            nightMode = AppCompatDelegate.MODE_NIGHT_AUTO_TIME
+            nightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
           } else if (P.DaynightNight.get()) {
             nightMode = AppCompatDelegate.MODE_NIGHT_YES
           }

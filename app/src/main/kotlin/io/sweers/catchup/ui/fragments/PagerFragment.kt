@@ -123,7 +123,7 @@ class PagerFragment : InjectingBaseFragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    val pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager) {
+    val pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager, FragmentStatePagerAdapter.RESUME_ONLY_CURRENT_FRAGMENT) {
       private val registeredFragments = SparseArray<Fragment>()
 
       override fun instantiateItem(container: ViewGroup, position: Int): Any {

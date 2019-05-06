@@ -164,7 +164,7 @@ class AboutFragment : InjectingBaseFragment() {
   @SuppressLint("SetTextI18n")
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager) {
+    pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager, FragmentStatePagerAdapter.RESUME_ONLY_CURRENT_FRAGMENT) {
       private val screens = mutableMapOf<Int, Fragment>()
 
       override fun getItem(position: Int): Fragment {
