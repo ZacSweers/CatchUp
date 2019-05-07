@@ -92,7 +92,7 @@ object deps {
       const val core = "androidx.core:core:1.1.0-alpha05"
       const val coreKtx = "androidx.core:core-ktx:1.1.0-alpha05"
 
-      const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.2"
+      const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
       const val customTabs = "androidx.browser:browser:1.0.0"
       const val design = "com.google.android.material:material:1.1.0-alpha06"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.0.0"
