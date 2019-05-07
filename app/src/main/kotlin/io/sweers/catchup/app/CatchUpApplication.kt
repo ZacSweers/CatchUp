@@ -24,8 +24,6 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.gabrielittner.threetenbp.LazyThreeTen
-import com.squareup.leakcanary.LeakCanary
-import com.squareup.leakcanary.RefWatcher
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import io.reactivex.android.plugins.RxAndroidPlugins
@@ -50,7 +48,7 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
     }
 
     @JvmStatic
-    lateinit var refWatcher: RefWatcher
+    internal lateinit var refWatcher: CatchUpRefWatcher
 
     fun refWatcher() = refWatcher
   }
@@ -75,10 +73,6 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
 
   override fun onCreate() {
     super.onCreate()
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-      // This process is dedicated to LeakCanary for heap analysis.
-      return
-    }
     GlobalScope.launch {
       // This makes a call to disk, so initialize it off the main thread first... ironically
       Dispatchers.Main
@@ -119,6 +113,15 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
       TRIM_MEMORY_UI_HIDDEN,
       TRIM_MEMORY_COMPLETE,
       TRIM_MEMORY_RUNNING_CRITICAL -> d { "OnTrimMemory" }
+    }
+  }
+}
+
+interface CatchUpRefWatcher {
+  fun watch(watchedReference: Any)
+
+  object None : CatchUpRefWatcher {
+    override fun watch(watchedReference: Any) {
     }
   }
 }

@@ -23,21 +23,20 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import android.util.Log
-import com.facebook.soloader.SoLoader
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperPlugin
+import com.facebook.soloader.SoLoader
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import com.readystatesoftware.chuck.internal.ui.MainActivity
-import com.squareup.leakcanary.AndroidExcludedRefs
-import com.squareup.leakcanary.DisplayLeakService
-import com.squareup.leakcanary.LeakCanary
-import com.squareup.leakcanary.RefWatcher
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.util.sdk
+import leakcanary.AndroidExcludedRefs
+import leakcanary.LeakCanary
+import leakcanary.LeakSentry
 import timber.log.Timber
 import timber.log.Timber.Tree
 import java.util.concurrent.Executors
@@ -87,16 +86,23 @@ class DebugCatchUpApplication : CatchUpApplication() {
           }
         }
         .build())
-    refWatcher = if (Build.VERSION.SDK_INT != 28) {
-      LeakCanary.refWatcher(this)
-          .listenerServiceClass(DisplayLeakService::class.java)
-          .watchDelay(10, TimeUnit.SECONDS)
-          .excludedRefs(AndroidExcludedRefs.createAppDefaults().build())
-          .buildAndInstall()
+    LeakSentry.config.copy(
+        watchDurationMillis = TimeUnit.SECONDS.toMillis(10)
+    )
+    LeakCanary.config = if (Build.VERSION.SDK_INT != 28) {
+      refWatcher = object : CatchUpRefWatcher {
+        override fun watch(watchedReference: Any) {
+          LeakSentry.refWatcher.watch(watchedReference)
+        }
+      }
+      LeakCanary.config.copy(
+          excludedRefs = AndroidExcludedRefs.createAppDefaults().build()
+      )
     } else {
       // Disabled on API 28 because there's a pretty vicious memory leak that constantly triggers
       // https://github.com/square/leakcanary/issues/1081
-      RefWatcher.DISABLED
+      refWatcher = CatchUpRefWatcher.None
+      LeakCanary.config.copy()
     }
     registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
       override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}

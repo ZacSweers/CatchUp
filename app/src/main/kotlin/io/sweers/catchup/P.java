@@ -24,11 +24,6 @@ import androidx.annotation.CheckResult;
 import androidx.annotation.Nullable;
 import com.f2prateek.rx.preferences2.Preference;
 import com.f2prateek.rx.preferences2.RxSharedPreferences;
-import java.lang.AssertionError;
-import java.lang.Boolean;
-import java.lang.IllegalStateException;
-import java.lang.Integer;
-import java.lang.String;
 
 /**
  * Copied from generated P as a transition holdover

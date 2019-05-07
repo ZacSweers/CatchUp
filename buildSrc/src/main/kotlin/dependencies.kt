@@ -72,7 +72,7 @@ object deps {
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
     const val kotlin = "1.3.31"
-    const val leakcanary = "1.6.3"
+    const val leakcanary = "2.0-alpha-1"
     const val legacySupport = "28.0.0"
     const val moshi = "1.8.0"
     const val okhttp = "3.14.1"
@@ -108,7 +108,7 @@ object deps {
       const val palette = "androidx.palette:palette:1.0.0"
       const val paletteKtx = "androidx.palette:palette-ktx:1.0.0"
 
-      const val preferenceVersion = "1.1.0-alpha04"
+      private const val preferenceVersion = "1.1.0-alpha04"
       const val preference = "androidx.preference:preference:$preferenceVersion"
       const val preferenceKtx = "androidx.preference:preference-ktx:$preferenceVersion"
       const val recyclerView = "androidx.recyclerview:recyclerview:1.0.0"
@@ -142,7 +142,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:16.2.3"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.5.0-alpha13"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.5.0-beta01"
   }
 
   object apollo {
@@ -315,12 +315,9 @@ object deps {
     }
   }
 
-  object leakCanary {
-    const val debug = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
-    const val release = "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
-  }
-
   object misc {
+    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
+    const val leakSentry = "com.squareup.leakcanary:leaksentry:${versions.leakcanary}"
     const val bugsnag = "com.bugsnag:bugsnag-android:4.13.0"
 
     object debug {

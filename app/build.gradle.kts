@@ -532,8 +532,8 @@ dependencies {
   testImplementation(deps.test.truth)
 
   // LeakCanary
-  debugImplementation(deps.leakCanary.debug)
-  releaseImplementation(deps.leakCanary.release)
+  debugImplementation(deps.misc.leakCanary)
+  releaseImplementation(deps.misc.leakSentry)
 
   // Chuck
   debugImplementation(deps.chuck.debug)

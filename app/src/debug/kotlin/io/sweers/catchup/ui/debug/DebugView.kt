@@ -36,7 +36,6 @@ import com.jakewharton.processphoenix.ProcessPhoenix
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxAdapterView
 import com.readystatesoftware.chuck.internal.ui.MainActivity
-import com.squareup.leakcanary.internal.DisplayLeakActivity
 import dagger.Lazy
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -132,7 +131,8 @@ class DebugView @JvmOverloads constructor(context: Context,
       LogsDialog(ContextThemeWrapper(context, R.style.CatchUp), lumberYard).show()
     }
     onSubviewClick<View>(R.id.debug_leaks_show) {
-      startDebugActivity(Intent(context, DisplayLeakActivity::class.java))
+      // https://github.com/square/leakcanary/pull/1341
+//      startDebugActivity(Intent(context, LeakActivity::class.java))
     }
     onSubviewClick<View>(R.id.debug_network_logs) {
       startDebugActivity(Intent(context, MainActivity::class.java))

@@ -15,7 +15,7 @@ class ReleaseCatchUpApplication : CatchUpApplication() {
   }
 
   override fun initVariant() {
-    CatchUpApplication.refWatcher = RefWatcher.DISABLED
+    CatchUpApplication.refWatcher = CatchUpRefWatcher.None
     Bugsnag.init(this, BuildConfig.BUGSNAG_KEY)
 
     BugsnagTree().also {

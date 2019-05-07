@@ -526,7 +526,7 @@ class ServiceFragment : InjectingBaseFragment(),
       return data[position].stableId()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
       val layoutInflater = LayoutInflater.from(parent.context)
       when (viewType) {
         TYPE_ITEM -> return CatchUpItemViewHolder(
@@ -541,7 +541,7 @@ class ServiceFragment : InjectingBaseFragment(),
       throw InvalidParameterException("Unrecognized view type - $viewType")
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
       when (getItemViewType(position)) {
         TYPE_ITEM -> try {
           bindDelegate(data[position], holder as CatchUpItemViewHolder)
@@ -587,7 +587,7 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 }
 
-class LoadingMoreHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class LoadingMoreHolder(itemView: View) : ViewHolder(itemView) {
   val progress: ProgressBar = itemView as ProgressBar
 }
 
