@@ -105,7 +105,8 @@ internal class GitHubService @Inject constructor(
                   Mark(text = it.toString(),
                       textPrefix = "+",
                       icon = R.drawable.ic_star_black_24dp,
-                      iconTintColor = languageColor?.let(Color::parseColor)
+                      iconTintColor = languageColor?.trimStart() // Thanks for the leading space, GitHub
+                          ?.let(Color::parseColor)
                   )
                 }
             )
