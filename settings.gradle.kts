@@ -37,5 +37,6 @@ include(
     ":services:reddit",
     ":services:slashdot",
     ":services:unsplash",
-    ":services:uplabs"
+    ":services:uplabs",
+    ":benchmark"
 )

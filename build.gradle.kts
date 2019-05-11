@@ -45,6 +45,8 @@ buildscript {
     classpath(deps.build.gradlePlugins.bugsnag)
     classpath(deps.apollo.gradlePlugin)
     classpath(deps.build.gradlePlugins.playPublisher)
+    classpath("androidx.benchmark:benchmark-gradle-plugin:1.0.0-alpha01")
+    classpath("org.jetbrains.kotlin:kotlin-serialization:1.3.31")
   }
 }
 
