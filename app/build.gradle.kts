@@ -473,6 +473,8 @@ dependencies {
   implementation(deps.misc.recyclerViewAnimators)
   implementation(deps.rx.preferences)
   implementation(deps.rx.relay)
+  implementation(deps.rx.dogTag)
+  implementation(deps.rx.dogTagAutoDispose)
   implementation(deps.misc.moshiLazyAdapters)
   implementation(deps.autoDispose.androidKtx)
   implementation(deps.autoDispose.androidArch)

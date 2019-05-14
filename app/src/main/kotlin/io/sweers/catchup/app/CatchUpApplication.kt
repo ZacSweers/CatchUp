@@ -24,6 +24,8 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.gabrielittner.threetenbp.LazyThreeTen
+import com.uber.rxdogtag.RxDogTag
+import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import io.reactivex.android.plugins.RxAndroidPlugins
@@ -45,6 +47,9 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
       RxAndroidPlugins.setInitMainThreadSchedulerHandler {
         AndroidSchedulers.from(Looper.getMainLooper(), true)
       }
+      RxDogTag.builder()
+          .configureWith(AutoDisposeConfigurer::configure)
+          .install()
     }
 
     @JvmStatic
