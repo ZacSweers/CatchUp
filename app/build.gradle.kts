@@ -213,7 +213,6 @@ apollo {
       "DateTime" to "org.threeten.bp.Instant",
       "URI" to "okhttp3.HttpUrl"
   ))
-  setGenerateKotlinModels(true)
 }
 
 tasks.withType<KotlinCompile> {

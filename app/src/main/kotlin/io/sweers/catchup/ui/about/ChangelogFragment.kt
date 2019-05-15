@@ -34,6 +34,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
+import io.sweers.catchup.R.layout
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
 import io.sweers.catchup.service.api.UrlMeta
@@ -111,16 +112,16 @@ class ChangelogFragment : InjectableBaseFragment(), Scrollable {
 
   private fun requestItems(): Single<List<ChangeLogItem>> {
     return Rx2Apollo.from(apolloClient.query(RepoReleasesQuery()))
-        .flatMapIterable { it.data()!!.repository!!.releases.nodes }
+        .flatMapIterable { it.data()!!.repository()!!.releases().nodes() }
         .map {
           with(it) {
             ChangeLogItem(
-                name = name!!,
-                timestamp = publishedAt!!,
-                tag = tag!!.name,
-                sha = tag.target.abbreviatedOid,
-                url = url.toString(),
-                description = description!!
+                name = name()!!,
+                timestamp = publishedAt()!!,
+                tag = tag()!!.name(),
+                sha = tag()!!.target().abbreviatedOid(),
+                url = url().toString(),
+                description = description()!!
             )
           }
         }
@@ -148,7 +149,7 @@ class ChangelogFragment : InjectableBaseFragment(), Scrollable {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatchUpItemViewHolder {
       return CatchUpItemViewHolder(LayoutInflater.from(parent.context)
-          .inflate(R.layout.list_item_general, parent, false))
+          .inflate(layout.list_item_general, parent, false))
     }
 
     override fun onBindViewHolder(holder: CatchUpItemViewHolder, position: Int) {

@@ -54,6 +54,7 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
+import io.sweers.catchup.R.layout
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsOrganization
@@ -165,14 +166,14 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
         }
         .flattenAsObservable { it }
         .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
-        .flatMapSingle { query ->
+        .flatMapSingle {
           // Fetch repos, send down a map of the ids to owner ids
-          Rx2Apollo.from(apolloClient.query(query)
+          Rx2Apollo.from(apolloClient.query(it)
               .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
               .firstOrError()
-              .map { response ->
-                with(response.data()!!.repository!!) {
-                  id to owner.id
+              .map {
+                with(it.data()!!.repository()!!) {
+                  id() to owner().id()
                 }
               }
               .subscribeOn(Schedulers.io())
@@ -183,24 +184,23 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
             put(first, second)
           }
         }
-        .flatMap { idsToOwners ->
+        .flatMap {
           Single.zip(
               // Fetch the repositories by their IDs, map down to its
-              Rx2Apollo.from(apolloClient.query(RepositoriesByIdsQuery(idsToOwners.keys.toList()))
+              Rx2Apollo.from(apolloClient.query(RepositoriesByIdsQuery(it.keys.toList()))
                   .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
                   .firstOrError()
-                  .map { response -> response.data()!!.nodes.mapNotNull { it?.inlineFragment as AsRepository? } },
+                  .map { it.data()!!.nodes()!!.map { it as AsRepository } },
               // Fetch the users by their IDs
-              Rx2Apollo.from(apolloClient.query(ProjectOwnersByIdsQuery(idsToOwners.values.distinct()))
+              Rx2Apollo.from(apolloClient.query(ProjectOwnersByIdsQuery(it.values.distinct()))
                   .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
-                  .flatMapIterable { it.data()!!.nodes }
-                  .map { it.inlineFragment }
+                  .flatMapIterable { it.data()!!.nodes() }
                   // Reduce into a map of the owner ID -> display name
                   .reduce(mutableMapOf()) { map, node ->
                     map.apply {
                       val (id, name) = when (node) {
-                        is AsOrganization -> with(node) { id to (name ?: login) }
-                        is AsUser -> with(node) { id to (name ?: login) }
+                        is AsOrganization -> with(node) { id() to (name() ?: login()) }
+                        is AsUser -> with(node) { id() to (name() ?: login()) }
                         else -> throw IllegalStateException("Unrecognized node type: $node")
                       }
                       map[id] = name
@@ -209,19 +209,19 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
               // Map the repos and their corresponding user display name into a list of their pairs
               BiFunction { nodes: List<AsRepository>, userIdToNameMap: Map<String, String> ->
                 nodes.map {
-                  it to userIdToNameMap.getValue(it.owner.id)
+                  it to userIdToNameMap[it.owner().id()]!!
                 }
               })
         }
         .flattenAsObservable { it }
         .map { (repo, ownerName) ->
           OssItem(
-              avatarUrl = repo.owner.avatarUrl.toString(),
+              avatarUrl = repo.owner().avatarUrl().toString(),
               author = ownerName,
-              name = repo.name,
-              clickUrl = repo.url.toString(),
-              license = repo.licenseInfo?.name,
-              description = repo.description
+              name = repo.name(),
+              clickUrl = repo.url().toString(),
+              license = repo.licenseInfo()?.name(),
+              description = repo.description()
           )
         }
         .startWith(
@@ -240,7 +240,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
         .map {
           val collector = mutableListOf<OssBaseItem>()
           with(it[0]) {
-            collector.add(OssItemHeader(
+            collector.add(io.sweers.catchup.ui.about.OssItemHeader(
                 name = author,
                 avatarUrl = avatarUrl
             ))
@@ -374,10 +374,10 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
       return if (viewType == 0) {
         HeaderHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.about_header_item, parent, false))
+            .inflate(layout.about_header_item, parent, false))
       } else {
         CatchUpItemViewHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_item_general, parent, false))
+            .inflate(layout.list_item_general, parent, false))
       }
     }
 
