@@ -23,10 +23,11 @@ plugins {
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs = build.standardFreeKotlinCompilerArgs
+    jvmTarget = "1.8"
   }
 }
 
 dependencies {
-  compile(deps.kotlin.coroutines)
-  compile(deps.kotlin.stdlib.core)
+  api(deps.kotlin.coroutines)
+  api(deps.kotlin.stdlib.core)
 }

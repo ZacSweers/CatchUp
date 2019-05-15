@@ -39,6 +39,7 @@ android {
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs = build.standardFreeKotlinCompilerArgs
+    jvmTarget = "1.8"
   }
 }
 

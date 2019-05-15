@@ -23,14 +23,15 @@ plugins {
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs = build.standardFreeKotlinCompilerArgs
+    jvmTarget = "1.8"
   }
 }
 
 dependencies {
-  compile(deps.retrofit.core)
-  compile(deps.okhttp.core)
-  compile(deps.misc.jsoup)
-  compile(deps.android.androidx.annotations)
-  compile(deps.kotlin.stdlib.core)
-  compile(deps.rx.java)
+  implementation(deps.retrofit.core)
+  implementation(deps.okhttp.core)
+  implementation(deps.misc.jsoup)
+  implementation(deps.android.androidx.annotations)
+  implementation(deps.kotlin.stdlib.core)
+  implementation(deps.rx.java)
 }

@@ -61,8 +61,8 @@ object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
     const val androidx = "1.0.0"
-    const val apollo = "1.0.0-alpha5"
-    const val autodispose = "1.2.0"
+    const val apollo = "1.0.0"
+    const val autodispose = "1.3.0"
     const val chuck = "1.1.0"
     const val crumb = "0.0.1"
     const val dagger = "2.18"
@@ -161,12 +161,8 @@ object deps {
   object autoDispose {
     const val core = "com.uber.autodispose:autodispose:${versions.autodispose}"
     const val android = "com.uber.autodispose:autodispose-android:${versions.autodispose}"
-    const val androidKtx = "com.uber.autodispose:autodispose-android-ktx:${versions.autodispose}"
     const val androidArch = "com.uber.autodispose:autodispose-android-archcomponents:${versions.autodispose}"
-    const val androidArchKtx = "com.uber.autodispose:autodispose-android-archcomponents-ktx:${versions.autodispose}"
-    const val kotlin = "com.uber.autodispose:autodispose-ktx:${versions.autodispose}"
     const val lifecycle = "com.uber.autodispose:autodispose-lifecycle:${versions.autodispose}"
-    const val lifecycleKtx = "com.uber.autodispose:autodispose-lifecycle-ktx:${versions.autodispose}"
   }
 
   object build {

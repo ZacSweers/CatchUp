@@ -218,6 +218,7 @@ apollo {
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs = build.standardFreeKotlinCompilerArgs
+    jvmTarget = "1.8"
   }
 }
 
@@ -462,9 +463,7 @@ dependencies {
   // Misc
   implementation(deps.autoDispose.core)
   implementation(deps.autoDispose.android)
-  implementation(deps.autoDispose.kotlin)
   implementation(deps.autoDispose.lifecycle)
-  implementation(deps.autoDispose.lifecycleKtx)
   compileOnly(deps.errorProne.compileOnly.annotations)
   implementation(deps.misc.flick)
   implementation(deps.misc.gestureViews)
@@ -476,9 +475,7 @@ dependencies {
   implementation(deps.rx.dogTag)
   implementation(deps.rx.dogTagAutoDispose)
   implementation(deps.misc.moshiLazyAdapters)
-  implementation(deps.autoDispose.androidKtx)
   implementation(deps.autoDispose.androidArch)
-  implementation(deps.autoDispose.androidArchKtx)
 
   // Apollo
   implementation(deps.apollo.androidSupport)

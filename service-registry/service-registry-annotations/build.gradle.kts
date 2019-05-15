@@ -19,5 +19,5 @@ plugins {
 }
 
 dependencies {
-  compile(deps.crumb.annotations)
+  api(deps.crumb.annotations)
 }
