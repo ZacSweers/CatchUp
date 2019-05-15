@@ -124,10 +124,10 @@ internal class GitHubService @Inject constructor(
 
     val searchQuery = apolloClient.get().query(GitHubSearchQuery(query,
         50,
-        LanguageOrder.builder()
-            .direction(OrderDirection.DESC)
-            .field(LanguageOrderField.SIZE)
-            .build(),
+        LanguageOrder(
+            direction = OrderDirection.DESC,
+            field = LanguageOrderField.SIZE
+        ),
         Input.fromNullable(request.pageId.nullIfBlank())))
         .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
 
@@ -140,30 +140,30 @@ internal class GitHubService @Inject constructor(
         }
         .map { it.data()!! }
         .flatMap { data ->
-          Observable.fromIterable(data.search().nodes().orEmpty())
+          Observable.fromIterable(data.search.nodes.orEmpty())
               .cast(AsRepository::class.java)
               .map {
                 with(it) {
-                  val description = description()
+                  val markdownDescription = description
                       ?.let { " — ${replaceMarkdownEmojis(it, emojiMarkdownConverter.get())}" }
                       .orEmpty()
 
                   CatchUpItem(
-                      id = id().hashCode().toLong(),
-                      title = "${name()}$description",
-                      score = "★" to stargazers().totalCount(),
-                      timestamp = createdAt(),
-                      author = owner().login(),
-                      tag = languages()?.nodes()?.firstOrNull()?.name(),
-                      source = licenseInfo()?.name(),
-                      itemClickUrl = url().toString()
+                      id = id.hashCode().toLong(),
+                      title = "$name$markdownDescription",
+                      score = "★" to stargazers.totalCount,
+                      timestamp = createdAt,
+                      author = owner.login,
+                      tag = languages?.nodes?.firstOrNull()?.name,
+                      source = licenseInfo?.name,
+                      itemClickUrl = url.toString()
                   )
                 }
               }
               .toList()
               .map {
-                if (data.search().pageInfo().hasNextPage()) {
-                  DataResult(it, data.search().pageInfo().endCursor())
+                if (data.search.pageInfo.hasNextPage) {
+                  DataResult(it, data.search.pageInfo.endCursor)
                 } else {
                   DataResult(it, null)
                 }
