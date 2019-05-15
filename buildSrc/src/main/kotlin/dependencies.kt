@@ -75,7 +75,7 @@ object deps {
     const val leakcanary = "2.0-alpha-1"
     const val legacySupport = "28.0.0"
     const val moshi = "1.8.0"
-    const val okhttp = "3.14.1"
+    const val okhttp = "4.0.0-SNAPSHOT"
     const val retrofit = "2.5.0"
     const val rxbinding = "2.2.0"
     const val rxpalette = "0.3.0"

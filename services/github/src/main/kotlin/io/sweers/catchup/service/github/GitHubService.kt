@@ -33,6 +33,7 @@ import io.reactivex.Single
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojis
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
+import io.sweers.catchup.libraries.retrofitconverters.callFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult

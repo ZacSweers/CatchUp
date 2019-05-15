@@ -75,6 +75,7 @@ dependencies {
   kapt(deps.android.androidx.room.apt)
 
   api(project(":service-registry:service-registry-annotations"))
+  api(project(":libraries:retrofitconverters"))
   api(deps.android.androidx.room.runtime)
   api(deps.android.androidx.annotations)
   api(deps.android.androidx.coreKtx)

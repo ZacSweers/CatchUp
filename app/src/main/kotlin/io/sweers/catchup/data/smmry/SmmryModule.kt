@@ -25,6 +25,7 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
 import io.sweers.catchup.injection.scopes.PerFragment
+import io.sweers.catchup.libraries.retrofitconverters.callFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
