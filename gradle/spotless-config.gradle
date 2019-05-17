@@ -23,8 +23,11 @@ String[] copiedJavaFiles = [
     "AutoSubscriptionHelper",
     "ExceptionHelper",
     "HalfSerializer",
+    "copyright",
 ].collect { "**/*${it}.java" } as String[]
 String[] copiedKotlinFiles = [
+    "dependencies",
+    "copyright",
     "WeakHashSet",
     "KotterKnife"
 ].collect { "**/*${it}.kt" } as String[]
