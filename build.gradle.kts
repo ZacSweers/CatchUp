@@ -45,6 +45,7 @@ buildscript {
     classpath(deps.build.gradlePlugins.bugsnag)
     classpath(deps.apollo.gradlePlugin)
     classpath(deps.build.gradlePlugins.playPublisher)
+    classpath(deps.build.gradlePlugins.spotless)
   }
 }
 
@@ -97,5 +98,9 @@ allprojects {
         }
       }
     }
+  }
+
+  apply {
+    from(rootProject.file("gradle/spotless-config.gradle"))
   }
 }
