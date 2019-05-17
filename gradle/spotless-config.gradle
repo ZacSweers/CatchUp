@@ -34,6 +34,7 @@ String[] copiedKotlinFiles = [
 spotless {
   format 'misc', {
     target '**/*.md', '**/.gitignore'
+    targetExclude "**/.gradle/**"
     indentWithTabs()
     trimTrailingWhitespace()
     endWithNewline()
