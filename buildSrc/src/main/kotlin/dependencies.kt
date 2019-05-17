@@ -55,6 +55,7 @@ object build {
       "-XXLanguage:+InlineClasses",
       "-Xuse-experimental=kotlin.Experimental"
   )
+  fun isCi(): Boolean = System.getenv("CI")?.toBoolean() == true
 }
 
 object deps {
