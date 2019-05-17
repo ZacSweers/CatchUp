@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Uber Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui;
 
 import android.content.Context;
@@ -31,10 +30,9 @@ import java.util.List;
 
 /**
  * Adds sticky headers capabilities to your {@link RecyclerView.Adapter}. It must implement {@link
- * StickyHeaders} to
- * indicate which items are headers.
+ * StickyHeaders} to indicate which items are headers.
  *
- * Adapted from https://github.com/Doist/RecyclerViewExtensions
+ * <p>Adapted from https://github.com/Doist/RecyclerViewExtensions
  */
 public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & StickyHeaders>
     extends LinearLayoutManager {
@@ -63,30 +61,25 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     super(context, orientation, reverseLayout);
   }
 
-  /**
-   * Offsets the vertical location of the sticky header relative to the its default position.
-   */
+  /** Offsets the vertical location of the sticky header relative to the its default position. */
   public void setStickyHeaderTranslationY(float translationY) {
     mTranslationY = translationY;
     requestLayout();
   }
 
-  /**
-   * Offsets the horizontal location of the sticky header relative to the its default position.
-   */
+  /** Offsets the horizontal location of the sticky header relative to the its default position. */
   public void setStickyHeaderTranslationX(float translationX) {
     mTranslationX = translationX;
     requestLayout();
   }
 
-  /**
-   * Returns true if {@code view} is the current sticky header.
-   */
+  /** Returns true if {@code view} is the current sticky header. */
   public boolean isStickyHeader(View view) {
     return view == mStickyHeader;
   }
 
-  @Override public void onAttachedToWindow(RecyclerView view) {
+  @Override
+  public void onAttachedToWindow(RecyclerView view) {
     super.onAttachedToWindow(view);
     setAdapter(view.getAdapter());
   }
@@ -97,7 +90,8 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     setAdapter(newAdapter);
   }
 
-  @SuppressWarnings("unchecked") private void setAdapter(RecyclerView.Adapter adapter) {
+  @SuppressWarnings("unchecked")
+  private void setAdapter(RecyclerView.Adapter adapter) {
     if (mAdapter != null) {
       mAdapter.unregisterAdapterDataObserver(mHeaderPositionsObserver);
     }
@@ -112,7 +106,8 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     }
   }
 
-  @Override public Parcelable onSaveInstanceState() {
+  @Override
+  public Parcelable onSaveInstanceState() {
     SavedState ss = new SavedState();
     ss.superState = super.onSaveInstanceState();
     ss.pendingScrollPosition = mPendingScrollPosition;
@@ -120,7 +115,8 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     return ss;
   }
 
-  @Override public void onRestoreInstanceState(Parcelable state) {
+  @Override
+  public void onRestoreInstanceState(Parcelable state) {
     if (state instanceof SavedState) {
       SavedState ss = (SavedState) state;
       mPendingScrollPosition = ss.pendingScrollPosition;
@@ -144,9 +140,9 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     return scrolled;
   }
 
-  @Override public int scrollHorizontallyBy(int dx,
-      RecyclerView.Recycler recycler,
-      RecyclerView.State state) {
+  @Override
+  public int scrollHorizontallyBy(
+      int dx, RecyclerView.Recycler recycler, RecyclerView.State state) {
     detachStickyHeader();
     int scrolled = super.scrollHorizontallyBy(dx, recycler, state);
     attachStickyHeader();
@@ -158,7 +154,8 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     return scrolled;
   }
 
-  @Override public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+  @Override
+  public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
     detachStickyHeader();
     super.onLayoutChildren(recycler, state);
     attachStickyHeader();
@@ -168,11 +165,13 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     }
   }
 
-  @Override public void scrollToPosition(int position) {
+  @Override
+  public void scrollToPosition(int position) {
     scrollToPositionWithOffset(position, INVALID_OFFSET);
   }
 
-  @Override public void scrollToPositionWithOffset(int position, int offset) {
+  @Override
+  public void scrollToPositionWithOffset(int position, int offset) {
     scrollToPositionWithOffset(position, offset, true);
   }
 
@@ -199,7 +198,8 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
       return;
     }
 
-    // Current sticky header is the same as at the position. Adjust the scroll offset and reset pending scroll.
+    // Current sticky header is the same as at the position. Adjust the scroll offset and reset
+    // pending scroll.
     if (mStickyHeader != null && headerIndex == findHeaderIndex(mStickyHeaderPosition)) {
       int adjustedOffset = (offset != INVALID_OFFSET ? offset : 0) + mStickyHeader.getHeight();
       super.scrollToPositionWithOffset(position, adjustedOffset);
@@ -211,59 +211,65 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     super.scrollToPositionWithOffset(position, offset);
   }
 
-  @Override public int computeVerticalScrollExtent(RecyclerView.State state) {
+  @Override
+  public int computeVerticalScrollExtent(RecyclerView.State state) {
     detachStickyHeader();
     int extent = super.computeVerticalScrollExtent(state);
     attachStickyHeader();
     return extent;
   }
 
-  @Override public int computeVerticalScrollOffset(RecyclerView.State state) {
+  @Override
+  public int computeVerticalScrollOffset(RecyclerView.State state) {
     detachStickyHeader();
     int offset = super.computeVerticalScrollOffset(state);
     attachStickyHeader();
     return offset;
   }
 
-  @Override public int computeVerticalScrollRange(RecyclerView.State state) {
+  @Override
+  public int computeVerticalScrollRange(RecyclerView.State state) {
     detachStickyHeader();
     int range = super.computeVerticalScrollRange(state);
     attachStickyHeader();
     return range;
   }
 
-  @Override public int computeHorizontalScrollExtent(RecyclerView.State state) {
+  @Override
+  public int computeHorizontalScrollExtent(RecyclerView.State state) {
     detachStickyHeader();
     int extent = super.computeHorizontalScrollExtent(state);
     attachStickyHeader();
     return extent;
   }
 
-  @Override public int computeHorizontalScrollOffset(RecyclerView.State state) {
+  @Override
+  public int computeHorizontalScrollOffset(RecyclerView.State state) {
     detachStickyHeader();
     int offset = super.computeHorizontalScrollOffset(state);
     attachStickyHeader();
     return offset;
   }
 
-  @Override public int computeHorizontalScrollRange(RecyclerView.State state) {
+  @Override
+  public int computeHorizontalScrollRange(RecyclerView.State state) {
     detachStickyHeader();
     int range = super.computeHorizontalScrollRange(state);
     attachStickyHeader();
     return range;
   }
 
-  @Override public PointF computeScrollVectorForPosition(int targetPosition) {
+  @Override
+  public PointF computeScrollVectorForPosition(int targetPosition) {
     detachStickyHeader();
     PointF vector = super.computeScrollVectorForPosition(targetPosition);
     attachStickyHeader();
     return vector;
   }
 
-  @Override public View onFocusSearchFailed(View focused,
-      int focusDirection,
-      RecyclerView.Recycler recycler,
-      RecyclerView.State state) {
+  @Override
+  public View onFocusSearchFailed(
+      View focused, int focusDirection, RecyclerView.Recycler recycler, RecyclerView.State state) {
     detachStickyHeader();
     View view = super.onFocusSearchFailed(focused, focusDirection, recycler, state);
     attachStickyHeader();
@@ -318,13 +324,14 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
             && (headerPos != anchorPos || isViewOnBoundary(anchorView))
             && nextHeaderPos != headerPos + 1) {
           // Ensure existing sticky header, if any, is of correct type.
-          if (mStickyHeader != null && getItemViewType(mStickyHeader) != mAdapter.getItemViewType(
-              headerPos)) {
+          if (mStickyHeader != null
+              && getItemViewType(mStickyHeader) != mAdapter.getItemViewType(headerPos)) {
             // A sticky header was shown before but is not of the correct type. Scrap it.
             scrapStickyHeader(recycler);
           }
 
-          // Ensure sticky header is created, if absent, or bound, if being laid out or the position changed.
+          // Ensure sticky header is created, if absent, or bound, if being laid out or the position
+          // changed.
           if (mStickyHeader == null) {
             createStickyHeader(recycler, headerPos);
           }
@@ -332,7 +339,8 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
             bindStickyHeader(recycler, headerPos);
           }
 
-          // Draw the sticky header using translation values which depend on orientation, direction and
+          // Draw the sticky header using translation values which depend on orientation, direction
+          // and
           // position of the next header view.
           View nextHeaderView = null;
           if (nextHeaderPos != -1) {
@@ -356,8 +364,7 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
 
   /**
    * Creates {@link RecyclerView.ViewHolder} for {@code position}, including measure / layout, and
-   * assigns it to
-   * {@link #mStickyHeader}.
+   * assigns it to {@link #mStickyHeader}.
    */
   private void createStickyHeader(@NonNull RecyclerView.Recycler recycler, int position) {
     View stickyHeader = recycler.getViewForPosition(position);
@@ -367,7 +374,8 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
       ((StickyHeaders.ViewSetup) mAdapter).setupStickyHeaderView(stickyHeader);
     }
 
-    // Add sticky header as a child view, to be detached / reattached whenever LinearLayoutManager#fill() is called,
+    // Add sticky header as a child view, to be detached / reattached whenever
+    // LinearLayoutManager#fill() is called,
     // which happens on layout and scroll (see overrides).
     addView(stickyHeader);
     measureAndLayout(stickyHeader);
@@ -379,9 +387,7 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     mStickyHeaderPosition = position;
   }
 
-  /**
-   * Binds the {@link #mStickyHeader} for the given {@code position}.
-   */
+  /** Binds the {@link #mStickyHeader} for the given {@code position}. */
   private void bindStickyHeader(@NonNull RecyclerView.Recycler recycler, int position) {
     // Bind the sticky header.
     recycler.bindViewToPosition(mStickyHeader, position);
@@ -391,41 +397,36 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     // If we have a pending scroll wait until the end of layout and scroll again.
     if (mPendingScrollPosition != RecyclerView.NO_POSITION) {
       final ViewTreeObserver vto = mStickyHeader.getViewTreeObserver();
-      vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override public void onGlobalLayout() {
-          vto.removeOnGlobalLayoutListener(this);
+      vto.addOnGlobalLayoutListener(
+          new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+              vto.removeOnGlobalLayoutListener(this);
 
-          if (mPendingScrollPosition != RecyclerView.NO_POSITION) {
-            scrollToPositionWithOffset(mPendingScrollPosition, mPendingScrollOffset);
-            setPendingScroll(RecyclerView.NO_POSITION, INVALID_OFFSET);
-          }
-        }
-      });
+              if (mPendingScrollPosition != RecyclerView.NO_POSITION) {
+                scrollToPositionWithOffset(mPendingScrollPosition, mPendingScrollOffset);
+                setPendingScroll(RecyclerView.NO_POSITION, INVALID_OFFSET);
+              }
+            }
+          });
     }
   }
 
-  /**
-   * Measures and lays out {@code stickyHeader}.
-   */
+  /** Measures and lays out {@code stickyHeader}. */
   private void measureAndLayout(View stickyHeader) {
     measureChildWithMargins(stickyHeader, 0, 0);
     if (getOrientation() == VERTICAL) {
-      stickyHeader.layout(getPaddingLeft(),
-          0,
-          getWidth() - getPaddingRight(),
-          stickyHeader.getMeasuredHeight());
+      stickyHeader.layout(
+          getPaddingLeft(), 0, getWidth() - getPaddingRight(), stickyHeader.getMeasuredHeight());
     } else {
-      stickyHeader.layout(0,
-          getPaddingTop(),
-          stickyHeader.getMeasuredWidth(),
-          getHeight() - getPaddingBottom());
+      stickyHeader.layout(
+          0, getPaddingTop(), stickyHeader.getMeasuredWidth(), getHeight() - getPaddingBottom());
     }
   }
 
   /**
    * Returns {@link #mStickyHeader} to the {@link RecyclerView}'s {@link
-   * RecyclerView.RecycledViewPool}, assigning it
-   * to {@code null}.
+   * RecyclerView.RecycledViewPool}, assigning it to {@code null}.
    *
    * @param recycler If passed, the sticky header will be returned to the recycled view pool.
    */
@@ -476,9 +477,7 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     }
   }
 
-  /**
-   * Returns true when the {@code view} is at the edge of the parent {@link RecyclerView}.
-   */
+  /** Returns true when the {@code view} is at the edge of the parent {@link RecyclerView}. */
   private boolean isViewOnBoundary(View view) {
     if (getOrientation() == VERTICAL) {
       if (getReverseLayout()) {
@@ -497,8 +496,7 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
 
   /**
    * Returns the position in the Y axis to position the header appropriately, depending on
-   * orientation, direction and
-   * {@link android.R.attr#clipToPadding}.
+   * orientation, direction and {@link android.R.attr#clipToPadding}.
    */
   private float getY(View headerView, View nextHeaderView) {
     if (getOrientation() == VERTICAL) {
@@ -521,8 +519,7 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
 
   /**
    * Returns the position in the X axis to position the header appropriately, depending on
-   * orientation, direction and
-   * {@link android.R.attr#clipToPadding}.
+   * orientation, direction and {@link android.R.attr#clipToPadding}.
    */
   private float getX(View headerView, View nextHeaderView) {
     if (getOrientation() != VERTICAL) {
@@ -543,9 +540,7 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     }
   }
 
-  /**
-   * Finds the header index of {@code position} in {@code mHeaderPositions}.
-   */
+  /** Finds the header index of {@code position} in {@code mHeaderPositions}. */
   private int findHeaderIndex(int position) {
     int low = 0;
     int high = mHeaderPositions.size() - 1;
@@ -609,11 +604,12 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
   /**
    * Handles header positions while adapter changes occur.
    *
-   * This is used in detriment of {@link RecyclerView.LayoutManager}'s callbacks to control when
+   * <p>This is used in detriment of {@link RecyclerView.LayoutManager}'s callbacks to control when
    * they're received.
    */
   private class HeaderPositionsAdapterDataObserver extends RecyclerView.AdapterDataObserver {
-    @Override public void onChanged() {
+    @Override
+    public void onChanged() {
       // There's no hint at what changed, so go through the adapter.
       mHeaderPositions.clear();
       int itemCount = mAdapter.getItemCount();
@@ -623,13 +619,15 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
         }
       }
 
-      // Remove sticky header immediately if the entry it represents has been removed. A layout will follow.
+      // Remove sticky header immediately if the entry it represents has been removed. A layout will
+      // follow.
       if (mStickyHeader != null && !mHeaderPositions.contains(mStickyHeaderPosition)) {
         scrapStickyHeader(null);
       }
     }
 
-    @Override public void onItemRangeInserted(int positionStart, int itemCount) {
+    @Override
+    public void onItemRangeInserted(int positionStart, int itemCount) {
       // Shift headers below down.
       int headerCount = mHeaderPositions.size();
       if (headerCount > 0) {
@@ -651,7 +649,8 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
       }
     }
 
-    @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
+    @Override
+    public void onItemRangeRemoved(int positionStart, int itemCount) {
       int headerCount = mHeaderPositions.size();
       if (headerCount > 0) {
         // Remove headers.
@@ -663,20 +662,23 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
           }
         }
 
-        // Remove sticky header immediately if the entry it represents has been removed. A layout will follow.
+        // Remove sticky header immediately if the entry it represents has been removed. A layout
+        // will follow.
         if (mStickyHeader != null && !mHeaderPositions.contains(mStickyHeaderPosition)) {
           scrapStickyHeader(null);
         }
 
         // Shift headers below up.
-        for (int i = findHeaderIndexOrNext(positionStart + itemCount); i != -1 && i < headerCount;
+        for (int i = findHeaderIndexOrNext(positionStart + itemCount);
+            i != -1 && i < headerCount;
             i++) {
           mHeaderPositions.set(i, mHeaderPositions.get(i) - itemCount);
         }
       }
     }
 
-    @Override public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+    @Override
+    public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
       // Shift moved headers by toPosition - fromPosition.
       // Shift headers in-between by -itemCount (reverse if upwards).
       int headerCount = mHeaderPositions.size();
@@ -727,8 +729,7 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
     private int pendingScrollPosition;
     private int pendingScrollOffset;
 
-    public SavedState() {
-    }
+    public SavedState() {}
 
     public SavedState(Parcel in) {
       superState = in.readParcelable(SavedState.class.getClassLoader());
@@ -736,11 +737,13 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
       pendingScrollOffset = in.readInt();
     }
 
-    @Override public int describeContents() {
+    @Override
+    public int describeContents() {
       return 0;
     }
 
-    @Override public void writeToParcel(@NonNull Parcel dest, int flags) {
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
       dest.writeParcelable(superState, flags);
       dest.writeInt(pendingScrollPosition);
       dest.writeInt(pendingScrollOffset);
@@ -748,11 +751,13 @@ public class StickyHeadersLinearLayoutManager<T extends RecyclerView.Adapter & S
 
     public static final Parcelable.Creator<SavedState> CREATOR =
         new Parcelable.Creator<SavedState>() {
-          @Override public SavedState createFromParcel(Parcel in) {
+          @Override
+          public SavedState createFromParcel(Parcel in) {
             return new SavedState(in);
           }
 
-          @Override public SavedState[] newArray(int size) {
+          @Override
+          public SavedState[] newArray(int size) {
             return new SavedState[size];
           }
         };

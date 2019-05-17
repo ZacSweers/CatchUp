@@ -37,7 +37,7 @@ buildscript {
   }
 
   dependencies {
-    classpath("com.android.tools:r8:86133db9ec0b631f12bf6a8eebc0f81c8aef5d1e")  // Must be before the Gradle Plugin for Android.
+    classpath("com.android.tools:r8:86133db9ec0b631f12bf6a8eebc0f81c8aef5d1e") // Must be before the Gradle Plugin for Android.
     classpath(deps.android.gradlePlugin)
     classpath(deps.kotlin.gradlePlugin)
     classpath(deps.kotlin.noArgGradlePlugin)

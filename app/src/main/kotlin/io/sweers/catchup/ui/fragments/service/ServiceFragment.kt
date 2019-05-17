@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.fragments.service
 
 import android.content.Context
@@ -90,8 +89,9 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
-    val columnCount: Int = 1)
-  : Adapter<VH>(), DataLoadingCallbacks {
+  val columnCount: Int = 1
+) :
+  Adapter<VH>(), DataLoadingCallbacks {
 
   companion object Blah {
     const val TYPE_ITEM = 0
@@ -167,8 +167,11 @@ class ServiceFragment : InjectingBaseFragment(),
 
   override fun isDataLoading(): Boolean = dataLoading
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View {
+  override fun inflateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View {
     return inflater.inflate(R.layout.fragment_service, container, false)
   }
 
@@ -180,8 +183,10 @@ class ServiceFragment : InjectingBaseFragment(),
     nextPage = service.meta().firstPageKey
   }
 
-  private fun createLayoutManager(context: Context,
-      adapter: DisplayableItemAdapter<*, *>): LinearLayoutManager {
+  private fun createLayoutManager(
+    context: Context,
+    adapter: DisplayableItemAdapter<*, *>
+  ): LinearLayoutManager {
     return if (service.meta().isVisual) {
       val spanConfig = (service.rootService() as VisualService).spanConfig()
       GridLayoutManager(context, spanConfig.spanCount).apply {
@@ -207,7 +212,8 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   private fun createAdapter(
-      context: Context): DisplayableItemAdapter<out DisplayableItem, ViewHolder> {
+    context: Context
+  ): DisplayableItemAdapter<out DisplayableItem, ViewHolder> {
     if (service.meta().isVisual) {
       val adapter = ImageAdapter(context) { item, holder ->
         service.bindItemView(item.realItem(), holder)
@@ -510,8 +516,9 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   private class TextAdapter(
-      private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder) -> Unit)
-    : DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
+    private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder) -> Unit
+  ) :
+    DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
 
     private var showLoadingMore = false
 
@@ -593,15 +600,17 @@ class LoadingMoreHolder(itemView: View) : ViewHolder(itemView) {
 
 @Suppress("unused")
 internal sealed class LoadResult<T : DisplayableItem> {
-  data class DiffResultData<T : DisplayableItem>(val data: List<T>,
-      val diffResult: DiffResult) : LoadResult<T>()
+  data class DiffResultData<T : DisplayableItem>(
+    val data: List<T>,
+    val diffResult: DiffResult
+  ) : LoadResult<T>()
 
   data class NewData<T : DisplayableItem>(val newData: List<T>) : LoadResult<T>()
 }
 
 internal class ItemUpdateCallback<T : DisplayableItem>(
-    private val oldItems: List<T>,
-    private val newItems: List<T>
+  private val oldItems: List<T>,
+  private val newItems: List<T>
 ) : DiffUtil.Callback() {
   override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
       oldItems[oldItemPosition].stableId() == newItems[newItemPosition].stableId()

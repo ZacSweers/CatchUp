@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.libraries.retrofitconverters
 
 import okhttp3.RequestBody
@@ -25,8 +24,8 @@ import java.lang.reflect.Type
  * A [Converter] that only encodes requests with a given [convertBody].
  */
 class EncodingConverter<T> private constructor(
-    private val convertBody: (T) -> RequestBody) : Converter<T, RequestBody> {
-
+  private val convertBody: (T) -> RequestBody
+) : Converter<T, RequestBody> {
 
   override fun convert(value: T): RequestBody {
     return convertBody(value)
@@ -37,13 +36,15 @@ class EncodingConverter<T> private constructor(
     fun <T> newFactory(encoder: (T) -> RequestBody): Converter.Factory {
       return object : Converter.Factory() {
         private val converter by lazy { EncodingConverter(encoder) }
-        override fun requestBodyConverter(type: Type, parameterAnnotations: Array<out Annotation>,
-            methodAnnotations: Array<out Annotation>,
-            retrofit: Retrofit): Converter<*, RequestBody>? {
+        override fun requestBodyConverter(
+          type: Type,
+          parameterAnnotations: Array<out Annotation>,
+          methodAnnotations: Array<out Annotation>,
+          retrofit: Retrofit
+        ): Converter<*, RequestBody>? {
           return converter
         }
       }
     }
   }
-
 }

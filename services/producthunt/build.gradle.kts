@@ -35,7 +35,7 @@ android {
     targetSdkVersion(deps.android.build.targetSdkVersion)
     vectorDrawables.useSupportLibrary = true
     buildConfigField("String", "PRODUCT_HUNT_DEVELOPER_TOKEN",
-        "\"${project.properties["catchup_product_hunt_developer_token"].toString()}\"")
+        "\"${project.properties["catchup_product_hunt_developer_token"]}\"")
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8

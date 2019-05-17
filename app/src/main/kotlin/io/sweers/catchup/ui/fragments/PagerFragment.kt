@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.fragments
 
 import android.animation.Animator
@@ -73,10 +72,12 @@ fun ServiceMeta.toServiceHandler() = ServiceHandler(
     themeColor
 ) { ServiceFragment.newInstance(id) }
 
-data class ServiceHandler(@StringRes val name: Int,
-    @DrawableRes val icon: Int,
-    @ColorRes val accent: Int,
-    val instantiator: () -> Fragment)
+data class ServiceHandler(
+  @StringRes val name: Int,
+  @DrawableRes val icon: Int,
+  @ColorRes val accent: Int,
+  val instantiator: () -> Fragment
+)
 
 class PagerFragment : InjectingBaseFragment() {
 
@@ -115,8 +116,11 @@ class PagerFragment : InjectingBaseFragment() {
     }
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View {
+  override fun inflateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View {
     return inflater.inflate(R.layout.fragment_pager, container, false)
   }
 
@@ -281,7 +285,7 @@ class PagerFragment : InjectingBaseFragment() {
           tabLayoutColorAnimator?.cancel()
           ValueAnimator.ofFloat(0f, 1f)
               .run {
-                interpolator = FastOutSlowInInterpolator()  // TODO Use singleton
+                interpolator = FastOutSlowInInterpolator() // TODO Use singleton
                 duration = 400
                 doOnStart {
                   tabLayoutColorAnimator = it
@@ -344,8 +348,8 @@ class PagerFragment : InjectingBaseFragment() {
     if (requestCode == SETTINGS_ACTIVITY_REQUEST) {
       if (resultCode == SettingsActivity.SETTINGS_RESULT_DATA && data != null) {
         data.extras?.let { extras ->
-          if (extras.getBoolean(SettingsActivity.NIGHT_MODE_UPDATED, false)
-              || extras.getBoolean(SettingsActivity.SERVICE_ORDER_UPDATED, false)) {
+          if (extras.getBoolean(SettingsActivity.NIGHT_MODE_UPDATED, false) ||
+              extras.getBoolean(SettingsActivity.SERVICE_ORDER_UPDATED, false)) {
             activity?.recreate()
           }
           if (extras.getBoolean(SettingsActivity.NAV_COLOR_UPDATED, false)) {
@@ -363,8 +367,10 @@ class PagerFragment : InjectingBaseFragment() {
 
     @JvmStatic
     @Provides
-    fun provideServiceHandlers(sharedPrefs: SharedPreferences,
-        serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>): Array<ServiceHandler> {
+    fun provideServiceHandlers(
+      sharedPrefs: SharedPreferences,
+      serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
+    ): Array<ServiceHandler> {
       val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
       return (serviceMetas.values
           .filter(ServiceMeta::enabled)

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.service.reddit.model
 
 import com.squareup.moshi.JsonAdapter
@@ -27,7 +26,10 @@ import java.lang.reflect.Type
 internal class RedditObjectFactory : JsonAdapter.Factory {
 
   override fun create(
-      type: Type, annotations: Set<Annotation>, moshi: Moshi): JsonAdapter<RedditObject>? {
+    type: Type,
+    annotations: Set<Annotation>,
+    moshi: Moshi
+  ): JsonAdapter<RedditObject>? {
     if (!Types.getRawType(type).isAssignableFrom(RedditObject::class.java)) {
       // Not one of our oddball polymorphic types, ignore it.
       return null

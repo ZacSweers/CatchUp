@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.serviceregistry.compiler
 
 import com.google.auto.common.MoreElements
@@ -59,25 +58,25 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
   override fun supportedConsumerAnnotations() = setOf(ServiceRegistry::class.java)
 
   override fun isProducerApplicable(
-      context: CrumbContext,
-      type: TypeElement,
-      annotations: Collection<AnnotationMirror>
+    context: CrumbContext,
+    type: TypeElement,
+    annotations: Collection<AnnotationMirror>
   ): Boolean {
     return isAnnotationPresent(type, ServiceModule::class.java)
   }
 
   override fun isConsumerApplicable(
-      context: CrumbContext,
-      type: TypeElement,
-      annotations: Collection<AnnotationMirror>
+    context: CrumbContext,
+    type: TypeElement,
+    annotations: Collection<AnnotationMirror>
   ): Boolean {
     return isAnnotationPresent(type, ServiceRegistry::class.java)
   }
 
   override fun produce(
-      context: CrumbContext,
-      type: TypeElement,
-      annotations: Collection<AnnotationMirror>
+    context: CrumbContext,
+    type: TypeElement,
+    annotations: Collection<AnnotationMirror>
   ): ProducerMetadata {
     // Must be a class
     if (type.kind !== ElementKind.CLASS) {
@@ -105,10 +104,10 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
   }
 
   override fun consume(
-      context: CrumbContext,
-      type: TypeElement,
-      annotations: Collection<AnnotationMirror>,
-      metadata: Set<ConsumerMetadata>
+    context: CrumbContext,
+    type: TypeElement,
+    annotations: Collection<AnnotationMirror>,
+    metadata: Set<ConsumerMetadata>
   ) {
     // Pull out the kotlin data
     val kmetadata = type.kotlinMetadata

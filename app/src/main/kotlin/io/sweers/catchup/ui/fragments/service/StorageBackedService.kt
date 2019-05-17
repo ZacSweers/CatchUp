@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.fragments.service
 
 import io.reactivex.Completable
@@ -38,8 +37,9 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class StorageBackedService(
-    private val dao: ServiceDao,
-    private val delegate: Service) : Service {
+  private val dao: ServiceDao,
+  private val delegate: Service
+) : Service {
 
   private var currentSessionId: Long = -1
 
@@ -102,9 +102,11 @@ class StorageBackedService(
     }
   }
 
-  private fun getPage(page: String,
-      isRefresh: Boolean = false,
-      allowNetworkFallback: Boolean = true): Single<DataResult> {
+  private fun getPage(
+    page: String,
+    isRefresh: Boolean = false,
+    allowNetworkFallback: Boolean = true
+  ): Single<DataResult> {
     if (!isRefresh) {
       // Try from local first
       // If no prev session ID, grab the latest page
@@ -141,8 +143,10 @@ class StorageBackedService(
     }
   }
 
-  private fun fetchPageFromLocal(pageId: String,
-      useLatest: Boolean): Maybe<DataResult> {
+  private fun fetchPageFromLocal(
+    pageId: String,
+    useLatest: Boolean
+  ): Maybe<DataResult> {
     val now = Instant.now()
     val pageFetcher = with(dao) {
       if (pageId == meta().firstPageKey && useLatest) {

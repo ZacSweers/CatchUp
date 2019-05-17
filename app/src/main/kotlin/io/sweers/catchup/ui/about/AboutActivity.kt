@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.about
 
 import `in`.uncod.android.bypass.Bypass
@@ -37,7 +36,6 @@ import androidx.core.text.layoutDirection
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.commitNow
-import androidx.fragment.app.transaction
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -117,7 +115,6 @@ class AboutActivity : InjectingBaseActivity() {
     @Binds
     @PerActivity
     abstract fun provideActivity(activity: AboutActivity): Activity
-
   }
 }
 
@@ -146,9 +143,11 @@ class AboutFragment : InjectingBaseFragment() {
   private lateinit var compositeClickSpan: (String) -> Set<Any>
   private lateinit var pagerAdapter: FragmentStatePagerAdapter
 
-  override fun inflateView(inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?): View =
+  override fun inflateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View =
       inflater.inflate(R.layout.fragment_about, container, false)
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -209,8 +208,7 @@ class AboutFragment : InjectingBaseFragment() {
       }
     }
 
-    with(activity as AppCompatActivity)
-    {
+    with(activity as AppCompatActivity) {
       if (!isInNightMode()) {
         toolbar.setLightStatusBar()
       }

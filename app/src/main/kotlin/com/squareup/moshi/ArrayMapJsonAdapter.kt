@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2015 Square, Inc.
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,9 +22,11 @@ import java.lang.reflect.Type
 /**
  * Converts maps with string keys to JSON objects.
  */
-class ArrayMapJsonAdapter<K, V>(moshi: Moshi,
-    keyType: Type,
-    valueType: Type) : JsonAdapter<Map<K, V>>() {
+class ArrayMapJsonAdapter<K, V>(
+  moshi: Moshi,
+  keyType: Type,
+  valueType: Type
+) : JsonAdapter<Map<K, V>>() {
 
   private val keyAdapter: JsonAdapter<K> = moshi.adapter<K>(keyType)
   private val valueAdapter: JsonAdapter<V> = moshi.adapter<V>(valueType)
@@ -51,8 +53,8 @@ class ArrayMapJsonAdapter<K, V>(moshi: Moshi,
       val value = valueAdapter.fromJson(reader)
       val replaced = result.put(name, value)
       if (replaced != null) {
-        throw JsonDataException("Map key '" + name + "' has multiple values at path "
-            + reader.path)
+        throw JsonDataException("Map key '" + name + "' has multiple values at path " +
+            reader.path)
       }
     }
     reader.endObject()

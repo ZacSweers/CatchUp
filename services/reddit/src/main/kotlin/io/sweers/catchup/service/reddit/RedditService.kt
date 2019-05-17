@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.service.reddit
 
 import com.squareup.moshi.Moshi
@@ -55,10 +54,11 @@ private annotation class InternalApi
 private const val SERVICE_KEY = "reddit"
 
 internal class RedditService @Inject constructor(
-    @InternalApi private val serviceMeta: ServiceMeta,
-    private val api: RedditApi,
-    private val linkHandler: LinkHandler)
-  : TextService {
+  @InternalApi private val serviceMeta: ServiceMeta,
+  private val api: RedditApi,
+  private val linkHandler: LinkHandler
+) :
+  TextService {
 
   override fun meta() = serviceMeta
 
@@ -145,7 +145,8 @@ abstract class RedditModule {
     @Provides
     @JvmStatic
     internal fun provideRedditOkHttpClient(
-        client: OkHttpClient): OkHttpClient {
+      client: OkHttpClient
+    ): OkHttpClient {
       return client.newBuilder()
           .addNetworkInterceptor { chain ->
             var request = chain.request()
@@ -164,9 +165,11 @@ abstract class RedditModule {
 
     @Provides
     @JvmStatic
-    internal fun provideRedditApi(@InternalApi client: Lazy<OkHttpClient>,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
-        @InternalApi moshi: Moshi): RedditApi {
+    internal fun provideRedditApi(
+      @InternalApi client: Lazy<OkHttpClient>,
+      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      @InternalApi moshi: Moshi
+    ): RedditApi {
       val retrofit = Retrofit.Builder().baseUrl(RedditApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)

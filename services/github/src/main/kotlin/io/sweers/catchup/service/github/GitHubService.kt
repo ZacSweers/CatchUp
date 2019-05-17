@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.service.github
 
 import android.graphics.Color
@@ -67,12 +66,13 @@ private annotation class InternalApi
 private const val SERVICE_KEY = "github"
 
 internal class GitHubService @Inject constructor(
-    @InternalApi private val serviceMeta: ServiceMeta,
-    private val apolloClient: Lazy<ApolloClient>,
-    private val emojiMarkdownConverter: Lazy<EmojiMarkdownConverter>,
-    private val gitHubApi: Lazy<GitHubApi>,
-    private val linkHandler: LinkHandler)
-  : TextService {
+  @InternalApi private val serviceMeta: ServiceMeta,
+  private val apolloClient: Lazy<ApolloClient>,
+  private val emojiMarkdownConverter: Lazy<EmojiMarkdownConverter>,
+  private val gitHubApi: Lazy<GitHubApi>,
+  private val linkHandler: LinkHandler
+) :
+  TextService {
 
   override fun meta() = serviceMeta
 
@@ -213,8 +213,10 @@ abstract class GitHubModule {
   companion object {
     @Provides
     @JvmStatic
-    internal fun provideGitHubService(client: Lazy<OkHttpClient>,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): GitHubApi {
+    internal fun provideGitHubService(
+      client: Lazy<OkHttpClient>,
+      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
+    ): GitHubApi {
       return Retrofit.Builder().baseUrl(GitHubApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
@@ -224,5 +226,4 @@ abstract class GitHubModule {
           .create(GitHubApi::class.java)
     }
   }
-
 }

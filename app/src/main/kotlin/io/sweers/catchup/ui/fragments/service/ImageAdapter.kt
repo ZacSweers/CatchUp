@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.fragments.service
 
 import android.animation.ObjectAnimator
@@ -59,9 +58,11 @@ import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.glide.CatchUpTarget
 import io.sweers.catchup.util.isInNightMode
 
-internal class ImageAdapter(private val context: Context,
-    private val bindDelegate: (ImageItem, ImageHolder) -> Unit)
-  : DisplayableItemAdapter<ImageItem, ViewHolder>(columnCount = 2),
+internal class ImageAdapter(
+  private val context: Context,
+  private val bindDelegate: (ImageItem, ImageHolder) -> Unit
+) :
+  DisplayableItemAdapter<ImageItem, ViewHolder>(columnCount = 2),
     DataLoadingSubject.DataLoadingCallbacks,
     PreloadModelProvider<ImageItem> {
 
@@ -125,9 +126,9 @@ internal class ImageAdapter(private val context: Context,
               image.setOnTouchListener { _, event ->
                 // check if it's an event we care about, else bail fast
                 val action = event.action
-                if (!(action == MotionEvent.ACTION_DOWN
-                        || action == MotionEvent.ACTION_UP
-                        || action == MotionEvent.ACTION_CANCEL)) {
+                if (!(action == MotionEvent.ACTION_DOWN ||
+                        action == MotionEvent.ACTION_UP ||
+                        action == MotionEvent.ACTION_CANCEL)) {
                   return@setOnTouchListener false
                 }
 
@@ -220,19 +221,23 @@ internal class ImageAdapter(private val context: Context,
     notifyItemRemoved(loadingPos)
   }
 
-  internal class ImageHolder(itemView: View,
-      private val loadingPlaceholders: Array<ColorDrawable>)
-    : ViewHolder(itemView), BindableCatchUpItemViewHolder {
+  internal class ImageHolder(
+    itemView: View,
+    private val loadingPlaceholders: Array<ColorDrawable>
+  ) :
+    ViewHolder(itemView), BindableCatchUpItemViewHolder {
 
     internal var backingImageItem: ImageItem? = null
     internal val image: BadgedFourThreeImageView = itemView as BadgedFourThreeImageView
 
     override fun itemView(): View = itemView
 
-    override fun bind(item: CatchUpItem,
-        itemClickHandler: OnClickListener?,
-        markClickHandler: OnClickListener?,
-        longClickHandler: OnLongClickListener?) {
+    override fun bind(
+      item: CatchUpItem,
+      itemClickHandler: OnClickListener?,
+      markClickHandler: OnClickListener?,
+      longClickHandler: OnLongClickListener?
+    ) {
       backingImageItem?.let { imageItem ->
         val (x, y) = imageItem.imageInfo.bestSize ?: Pair(image.measuredWidth, image.measuredHeight)
         GlideApp.with(itemView.context)
@@ -245,11 +250,13 @@ internal class ImageAdapter(private val context: Context,
             )
             .transition(DrawableTransitionOptions.withCrossFade())
             .listener(object : RequestListener<Drawable> {
-              override fun onResourceReady(resource: Drawable,
-                  model: Any,
-                  target: Target<Drawable>,
-                  dataSource: DataSource,
-                  isFirstResource: Boolean): Boolean {
+              override fun onResourceReady(
+                resource: Drawable,
+                model: Any,
+                target: Target<Drawable>,
+                dataSource: DataSource,
+                isFirstResource: Boolean
+              ): Boolean {
                 itemView().setOnClickListener(itemClickHandler)
                 itemView().setOnLongClickListener(longClickHandler)
                 if (!imageItem.hasFadedIn) {
@@ -280,10 +287,12 @@ internal class ImageAdapter(private val context: Context,
                 return false
               }
 
-              override fun onLoadFailed(e: GlideException?,
-                  model: Any,
-                  target: Target<Drawable>,
-                  isFirstResource: Boolean) = false
+              override fun onLoadFailed(
+                e: GlideException?,
+                model: Any,
+                target: Target<Drawable>,
+                isFirstResource: Boolean
+              ) = false
             })
             .into(CatchUpTarget(image, false))
             .clearOnDetach()

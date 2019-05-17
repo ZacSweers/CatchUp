@@ -1,11 +1,11 @@
 /*
- * Copyright 2015 Google Inc.
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui
 
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,8 +25,9 @@ import io.sweers.catchup.ui.base.DataLoadingSubject
  * Adapted from [here](https://gist.github.com/ssinss/e06f12ef66c51252563e)
  */
 abstract class InfiniteScrollListener(
-    private val layoutManager: LinearLayoutManager,
-    private val dataLoading: DataLoadingSubject) : RecyclerView.OnScrollListener() {
+  private val layoutManager: LinearLayoutManager,
+  private val dataLoading: DataLoadingSubject
+) : RecyclerView.OnScrollListener() {
 
   override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
     // bail out if scrolling upward or already loading data

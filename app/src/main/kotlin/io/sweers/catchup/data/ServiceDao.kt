@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.data
 
 import androidx.annotation.Keep
@@ -63,20 +62,19 @@ interface ServiceDao {
 
   @Query("DELETE FROM items")
   fun nukeItems()
-
 }
 
 @Keep
 @Entity(tableName = "pages")
 data class ServicePage(
-    /**
-     * Combination of the sessionId and type
-     */
-    @PrimaryKey val id: String,
-    val type: String,
-    val expiration: Instant,
-    val page: String,
-    val sessionId: Long = -1,
-    val items: List<Long>,
-    val nextPageToken: String?
+  /**
+   * Combination of the sessionId and type
+   */
+  @PrimaryKey val id: String,
+  val type: String,
+  val expiration: Instant,
+  val page: String,
+  val sessionId: Long = -1,
+  val items: List<Long>,
+  val nextPageToken: String?
 )

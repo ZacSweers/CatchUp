@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.service.dribbble
 
 import dagger.Binds
@@ -49,10 +48,11 @@ private annotation class InternalApi
 private const val SERVICE_KEY = "dribbble"
 
 internal class DribbbleService @Inject constructor(
-    @InternalApi private val serviceMeta: ServiceMeta,
-    private val api: DribbbleApi,
-    private val linkHandler: LinkHandler)
-  : VisualService {
+  @InternalApi private val serviceMeta: ServiceMeta,
+  private val api: DribbbleApi,
+  private val linkHandler: LinkHandler
+) :
+  VisualService {
 
   override fun meta() = serviceMeta
 
@@ -130,8 +130,10 @@ abstract class DribbbleModule {
 
     @Provides
     @JvmStatic
-    internal fun provideDribbbleService(client: Lazy<OkHttpClient>,
-        rxJavaCallAdapterFactory: RxJava2CallAdapterFactory): DribbbleApi {
+    internal fun provideDribbbleService(
+      client: Lazy<OkHttpClient>,
+      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
+    ): DribbbleApi {
       return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)
           .callFactory { client.get().newCall(it) }
           .addCallAdapterFactory(rxJavaCallAdapterFactory)

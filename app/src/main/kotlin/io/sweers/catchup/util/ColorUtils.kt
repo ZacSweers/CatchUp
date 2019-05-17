@@ -1,11 +1,11 @@
 /*
- * Copyright 2015 Google Inc.
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 @file:Suppress("MemberVisibilityCanPrivate")
 
 package io.sweers.catchup.util
@@ -73,8 +72,9 @@ object ColorUtils {
   @CheckResult
   @ColorInt
   fun modifyAlpha(
-      @ColorInt color: Int,
-      @IntRange(from = 0, to = 255) alpha: Int): Int {
+    @ColorInt color: Int,
+    @IntRange(from = 0, to = 255) alpha: Int
+  ): Int {
     return color and 0x00ffffff or (alpha shl 24)
   }
 
@@ -84,8 +84,9 @@ object ColorUtils {
   @CheckResult
   @ColorInt
   fun modifyAlpha(
-      @ColorInt color: Int,
-      @FloatRange(from = 0.0, to = 1.0) alpha: Float): Int {
+    @ColorInt color: Int,
+    @FloatRange(from = 0.0, to = 1.0) alpha: Float
+  ): Int {
     return modifyAlpha(color, (255f * alpha).toInt())
   }
 
@@ -94,9 +95,10 @@ object ColorUtils {
    * with a large image!! If palette fails then check the color of the specified pixel
    */
   fun isDark(
-      bitmap: Bitmap,
-      backupPixelX: Int = bitmap.width / 2,
-      backupPixelY: Int = bitmap.height / 2): Boolean {
+    bitmap: Bitmap,
+    backupPixelX: Int = bitmap.width / 2,
+    backupPixelY: Int = bitmap.height / 2
+  ): Boolean {
     // first try palette with a small color quant size
     val palette = Palette.from(bitmap).maximumColorCount(3).generate()
     return if (palette.swatches.size > 0) {
@@ -118,7 +120,8 @@ object ColorUtils {
    * Convert to HSL & check that the lightness value
    */
   fun isDark(
-      @ColorInt color: Int): Boolean {
+    @ColorInt color: Int
+  ): Boolean {
     val hsl = FloatArray(3)
     colorToHSL(color, hsl)
     return isDark(hsl)

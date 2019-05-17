@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.base
 
 import android.annotation.SuppressLint
@@ -42,8 +41,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
 
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
 
-  protected inline fun <T, R> Observable<T>.doOnCreate(r: R,
-      crossinline action: R.() -> Unit): Observable<T> = apply {
+  protected inline fun <T, R> Observable<T>.doOnCreate(
+    r: R,
+    crossinline action: R.() -> Unit
+  ): Observable<T> = apply {
     doOnNext {
       if (it == CREATE) {
         r.action()
@@ -51,8 +52,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     }
   }
 
-  protected inline fun <T, R> Observable<T>.doOnStart(r: R,
-      crossinline action: R.() -> Unit): Observable<T> = apply {
+  protected inline fun <T, R> Observable<T>.doOnStart(
+    r: R,
+    crossinline action: R.() -> Unit
+  ): Observable<T> = apply {
     doOnNext {
       if (it == START) {
         r.action()
@@ -60,8 +63,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     }
   }
 
-  protected inline fun <T, R> Observable<T>.doOnResume(r: R,
-      crossinline action: R.() -> Unit): Observable<T> = apply {
+  protected inline fun <T, R> Observable<T>.doOnResume(
+    r: R,
+    crossinline action: R.() -> Unit
+  ): Observable<T> = apply {
     doOnNext {
       if (it == RESUME) {
         r.action()
@@ -69,8 +74,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     }
   }
 
-  protected inline fun <T, R> Observable<T>.doOnPause(r: R,
-      crossinline action: R.() -> Unit): Observable<T> = apply {
+  protected inline fun <T, R> Observable<T>.doOnPause(
+    r: R,
+    crossinline action: R.() -> Unit
+  ): Observable<T> = apply {
     doOnNext {
       if (it == PAUSE) {
         r.action()
@@ -78,8 +85,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     }
   }
 
-  protected inline fun <T, R> Observable<T>.doOnStop(r: R,
-      crossinline action: R.() -> Unit): Observable<T> = apply {
+  protected inline fun <T, R> Observable<T>.doOnStop(
+    r: R,
+    crossinline action: R.() -> Unit
+  ): Observable<T> = apply {
     doOnNext {
       if (it == STOP) {
         r.action()
@@ -87,8 +96,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     }
   }
 
-  protected inline fun <T, R> Observable<T>.doOnDestroy(r: R,
-      crossinline action: R.() -> Unit): Observable<T> = apply {
+  protected inline fun <T, R> Observable<T>.doOnDestroy(
+    r: R,
+    crossinline action: R.() -> Unit
+  ): Observable<T> = apply {
     doOnNext {
       if (it == DESTROY) {
         r.action()

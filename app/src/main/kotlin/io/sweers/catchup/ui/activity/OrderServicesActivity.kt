@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.activity
 
 import android.animation.AnimatorInflater
@@ -124,8 +123,11 @@ class OrderServicesFragment : InjectableBaseFragment() {
       }
     }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View {
+  override fun inflateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View {
     return inflater.inflate(R.layout.fragment_order_services, container, false)
   }
 
@@ -234,9 +236,10 @@ class OrderServicesFragment : InjectableBaseFragment() {
 }
 
 private class Adapter(
-    private val context: Context,
-    inputItems: List<ServiceMeta>,
-    private val changeListener: (List<ServiceMeta>) -> Unit) : RecyclerView.Adapter<Holder>() {
+  private val context: Context,
+  inputItems: List<ServiceMeta>,
+  private val changeListener: (List<ServiceMeta>) -> Unit
+) : RecyclerView.Adapter<Holder>() {
 
   private val items = inputItems.toMutableList()
 
@@ -320,10 +323,14 @@ private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
 
 private class MoveCallback(
-    private val callback: (Int, Int) -> Unit) : ItemTouchHelper.SimpleCallback(
+  private val callback: (Int, Int) -> Unit
+) : ItemTouchHelper.SimpleCallback(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
-  override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder,
-      target: ViewHolder): Boolean {
+  override fun onMove(
+    recyclerView: RecyclerView,
+    viewHolder: ViewHolder,
+    target: ViewHolder
+  ): Boolean {
     callback(viewHolder.adapterPosition, target.adapterPosition)
     return true
   }
@@ -369,10 +376,10 @@ abstract class OrderServicesModule {
 }
 
 private class FabShowTapTarget(
-    private val delegateTarget: () -> TapTarget,
-    private val fab: FloatingActionButton,
-    title: CharSequence,
-    description: CharSequence?
+  private val delegateTarget: () -> TapTarget,
+  private val fab: FloatingActionButton,
+  title: CharSequence,
+  description: CharSequence?
 ) : TapTarget(title, description) {
 
   override fun bounds(): Rect {

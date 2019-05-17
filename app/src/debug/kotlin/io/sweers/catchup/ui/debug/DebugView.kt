@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.debug
 
 import android.animation.ValueAnimator
@@ -61,8 +60,10 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 @SuppressLint("SetTextI18n")
-class DebugView @JvmOverloads constructor(context: Context,
-    attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
+class DebugView @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null
+) : FrameLayout(context, attrs) {
   internal val icon by bindView<View>(R.id.debug_icon)
   private val contextualTitleView by bindView<View>(R.id.debug_contextual_title)
   private val contextualListView by bindView<LinearLayout>(R.id.debug_contextual_list)
@@ -109,9 +110,11 @@ class DebugView @JvmOverloads constructor(context: Context,
   private val scalpelEnabled = P.DebugScalpelEnabled.rx()
   private val scalpelWireframeEnabled = P.DebugScalpelWireframeDrawer.rx()
 
-  constructor(context: Context,
-      client: Lazy<OkHttpClient>,
-      lumberYard: LumberYard) : this(context) {
+  constructor(
+    context: Context,
+    client: Lazy<OkHttpClient>,
+    lumberYard: LumberYard
+  ) : this(context) {
     // TODO check out jw's assisted injection. Dagger-android doesn't make view injection easy
     // because it doesn't support it, and via subcomponents we can't get ahold of an instance of the
     // internal ActivityComponent
