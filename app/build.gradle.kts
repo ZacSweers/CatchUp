@@ -38,12 +38,14 @@ android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
   buildToolsVersion(deps.android.build.buildToolsVersion)
 
+  val versionCodePH = 99999
+  val versionNamePH = "versionplaceholder"
   defaultConfig {
     applicationId = "io.sweers.catchup"
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
-    versionCode = deps.build.gitCommitCount(project, isRelease)
-    versionName = deps.build.gitTag(project)
+    versionCode = versionCodePH
+    versionName = versionNamePH
     multiDexEnabled = false
 
     the<BasePluginConvention>().archivesBaseName = "catchup"
@@ -56,6 +58,28 @@ android {
     buildConfigField("String", "SMMRY_API_KEY",
         "\"${properties["catchup_smmry_api_key"]}\"")
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
+  }
+  val commitCountLazy by lazy { deps.build.gitCommitCount(project, isRelease).toString() }
+  val commitCountCallable = callableOf { commitCountLazy }
+  val versionNameLazy by lazy { deps.build.gitTag(project) }
+  val versionNameCallable = callableOf { versionNameLazy }
+  applicationVariants.all {
+    outputs.all {
+      processManifestProvider.configure {
+        inputs.property("commit_count", commitCountCallable)
+        inputs.property("version_name", versionNameCallable)
+        doLast {
+          // Have to walk the tree here because APK splits results in more nested dirs
+          this@configure.manifestOutputDirectory.get().asFile.walkTopDown()
+              .filter { it.name == "AndroidManifest.xml" }
+              .forEach { manifest ->
+                val content = manifest.readText()
+                manifest.writeText(content.replace("$versionCodePH", commitCountCallable.call())
+                    .replace(versionNamePH, versionNameCallable.call()))
+              }
+        }
+      }
+    }
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
