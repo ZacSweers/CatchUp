@@ -262,6 +262,7 @@ class DebugView @JvmOverloads constructor(
     }
   }
 
+  @SuppressLint("InlinedApi") // False positive
   private fun startDebugActivity(intent: Intent) {
     if (isN()) {
       // In case they're for some reason already in multiwindow

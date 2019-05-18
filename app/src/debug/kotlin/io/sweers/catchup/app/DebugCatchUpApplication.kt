@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.app
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.os.Build
@@ -58,6 +59,7 @@ class DebugCatchUpApplication : CatchUpApplication() {
         .inject(this)
   }
 
+  @SuppressLint("InlinedApi") // False positive
   override fun initVariant() {
     val penaltyListenerExecutor = if (Build.VERSION.SDK_INT >= 28) {
       Executors.newSingleThreadExecutor()
