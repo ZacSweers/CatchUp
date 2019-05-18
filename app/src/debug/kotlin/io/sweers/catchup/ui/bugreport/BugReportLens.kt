@@ -128,8 +128,8 @@ internal class BugReportLens @Inject constructor(
           .append("dpi (")
           .append(densityBucket)
           .append(")\n")
-      append("Release: ").append(Build.VERSION.RELEASE).append('\n')
-      append("API: ").append(Build.VERSION.SDK_INT).append('\n')
+      append("Release: ").append(VERSION.RELEASE).append('\n')
+      append("API: ").append(VERSION.SDK_INT).append('\n')
       append("```")
     }
 

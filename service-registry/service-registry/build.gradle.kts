@@ -36,8 +36,8 @@ android {
     targetSdkVersion(deps.android.build.targetSdkVersion)
   }
   compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = VERSION_1_8
+    targetCompatibility = VERSION_1_8
   }
   lintOptions {
     setLintConfig(file("lint.xml"))

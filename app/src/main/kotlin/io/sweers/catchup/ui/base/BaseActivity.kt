@@ -132,19 +132,19 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
-    lifecycleRelay.accept(ActivityEvent.CREATE)
+    lifecycleRelay.accept(CREATE)
   }
 
   @CallSuper
   override fun onStart() {
     super.onStart()
-    lifecycleRelay.accept(ActivityEvent.START)
+    lifecycleRelay.accept(START)
   }
 
   @CallSuper
   override fun onResume() {
     super.onResume()
-    lifecycleRelay.accept(ActivityEvent.RESUME)
+    lifecycleRelay.accept(RESUME)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -161,19 +161,19 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
 
   @CallSuper
   override fun onPause() {
-    lifecycleRelay.accept(ActivityEvent.PAUSE)
+    lifecycleRelay.accept(PAUSE)
     super.onPause()
   }
 
   @CallSuper
   override fun onStop() {
-    lifecycleRelay.accept(ActivityEvent.STOP)
+    lifecycleRelay.accept(STOP)
     super.onStop()
   }
 
   @CallSuper
   override fun onDestroy() {
-    lifecycleRelay.accept(ActivityEvent.DESTROY)
+    lifecycleRelay.accept(DESTROY)
     super.onDestroy()
   }
 

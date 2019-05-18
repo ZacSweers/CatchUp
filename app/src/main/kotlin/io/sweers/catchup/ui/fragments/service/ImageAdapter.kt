@@ -112,12 +112,12 @@ internal class ImageAdapter(
   }
 
   @TargetApi(Build.VERSION_CODES.M)
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val layoutInflater = LayoutInflater.from(parent.context)
     return when (viewType) {
       TYPE_ITEM -> {
         ImageHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.image_item, parent, false), loadingPlaceholders)
+            .inflate(layout.image_item, parent, false), loadingPlaceholders)
             .apply {
               image.setBadgeColor(
                   INITIAL_GIF_BADGE_COLOR)
@@ -157,7 +157,7 @@ internal class ImageAdapter(
     }
   }
 
-  override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+  override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     when (getItemViewType(position)) {
       TYPE_ITEM -> {
         val imageItem = data[position]
@@ -178,7 +178,7 @@ internal class ImageAdapter(
   }
 
   @SuppressLint("NewApi")
-  override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+  override fun onViewRecycled(holder: ViewHolder) {
     if (holder is ImageHolder) {
       // reset the badge & ripple which are dynamically determined
       GlideApp.with(holder.itemView).clear(holder.image)

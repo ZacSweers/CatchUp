@@ -112,7 +112,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
-    return inflater.inflate(R.layout.fragment_licenses, container, false)
+    return inflater.inflate(layout.fragment_licenses, container, false)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -242,7 +242,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
         .map {
           val collector = mutableListOf<OssBaseItem>()
           with(it[0]) {
-            collector.add(io.sweers.catchup.ui.about.OssItemHeader(
+            collector.add(OssItemHeader(
                 name = author,
                 avatarUrl = avatarUrl
             ))

@@ -17,7 +17,6 @@ package io.sweers.catchup.app
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Application
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -105,7 +104,7 @@ class DebugCatchUpApplication : CatchUpApplication() {
       refWatcher = CatchUpRefWatcher.None
       LeakCanary.config.copy()
     }
-    registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+    registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
       override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
       override fun onActivityStarted(activity: Activity) {}

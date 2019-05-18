@@ -48,7 +48,7 @@ internal interface ImgurUploadApi {
 internal interface GitHubIssueApi {
   @Headers(
       value = [
-        "Authorization: token ${io.sweers.catchup.BuildConfig.GITHUB_DEVELOPER_TOKEN}",
+        "Authorization: token ${BuildConfig.GITHUB_DEVELOPER_TOKEN}",
         "Accept: application/vnd.github.v3+json"
       ]
   )

@@ -83,7 +83,7 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
       context.processingEnv
           .messager
           .printMessage(
-              Diagnostic.Kind.ERROR,
+              ERROR,
               "@${ServiceModule::class.java.simpleName} is only applicable on classes!",
               type)
       return mapOf()
@@ -94,7 +94,7 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
       context.processingEnv
           .messager
           .printMessage(
-              Diagnostic.Kind.ERROR,
+              ERROR,
               "Must be a dagger module!",
               type)
       return mapOf()
@@ -174,7 +174,7 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
       context.processingEnv
           .messager
           .printMessage(
-              Diagnostic.Kind.ERROR,
+              ERROR,
               "Failed to write generated registry! ${e.message}",
               type)
     }
