@@ -41,7 +41,6 @@ import java.io.IOException
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
-import javax.tools.Diagnostic
 import javax.tools.Diagnostic.Kind.ERROR
 
 @AutoService(CrumbProducerExtension::class, CrumbConsumerExtension::class)
