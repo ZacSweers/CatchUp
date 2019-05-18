@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.service.api
 
 import androidx.annotation.Keep
@@ -25,21 +24,20 @@ import org.threeten.bp.Instant
 @Keep
 @Entity(tableName = "items")
 data class CatchUpItem(
-    @PrimaryKey val id: Long,
-    val title: String,
-    val timestamp: Instant?,
-    val score: Pair<String, Int>? = null,
-    val tag: String? = null,
-    val author: String? = null,
-    val source: String? = null,
-    val itemClickUrl: String? = null,
-    @Embedded val summarizationInfo: SummarizationInfo? = null,
-    @Embedded val imageInfo: ImageInfo? = null,
-    @Embedded val mark: Mark? = null
+  @PrimaryKey val id: Long,
+  val title: String,
+  val timestamp: Instant?,
+  val score: Pair<String, Int>? = null,
+  val tag: String? = null,
+  val author: String? = null,
+  val source: String? = null,
+  val itemClickUrl: String? = null,
+  @Embedded val summarizationInfo: SummarizationInfo? = null,
+  @Embedded val imageInfo: ImageInfo? = null,
+  @Embedded val mark: Mark? = null
 ) : DisplayableItem {
 
   override fun stableId() = id
 
   override fun realItem() = this
 }
-

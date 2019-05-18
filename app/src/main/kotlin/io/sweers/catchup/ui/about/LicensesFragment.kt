@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.about
 
 import android.graphics.Color
@@ -108,9 +107,12 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
   private lateinit var adapter: Adapter
   private lateinit var layoutManager: StickyHeadersLinearLayoutManager<Adapter>
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View {
-    return inflater.inflate(R.layout.fragment_licenses, container, false)
+  override fun inflateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View {
+    return inflater.inflate(layout.fragment_licenses, container, false)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -240,7 +242,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
         .map {
           val collector = mutableListOf<OssBaseItem>()
           with(it[0]) {
-            collector.add(io.sweers.catchup.ui.about.OssItemHeader(
+            collector.add(OssItemHeader(
                 name = author,
                 avatarUrl = avatarUrl
             ))
@@ -320,8 +322,10 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
                   .override(dimenSize, dimenSize))
               .transition(DrawableTransitionOptions.withCrossFade())
               .into(object : DrawableImageViewTarget(icon), Palette.PaletteAsyncListener {
-                override fun onResourceReady(resource: Drawable,
-                    transition: Transition<in Drawable>?) {
+                override fun onResourceReady(
+                  resource: Drawable,
+                  transition: Transition<in Drawable>?
+                ) {
                   super.onResourceReady(resource, transition)
                   if (resource is BitmapDrawable) {
                     Palette.from(resource.bitmap)
@@ -435,20 +439,20 @@ private sealed class OssBaseItem {
 }
 
 private data class OssItemHeader(
-    val avatarUrl: String,
-    val name: String
+  val avatarUrl: String,
+  val name: String
 ) : OssBaseItem() {
   override fun itemType() = 0
 }
 
 private data class OssItem(
-    val avatarUrl: String,
-    val author: String,
-    val name: String,
-    val license: String?,
-    val clickUrl: String,
-    val description: String?,
-    val authorUrl: String? = null
+  val avatarUrl: String,
+  val author: String,
+  val name: String,
+  val license: String?,
+  val clickUrl: String,
+  val description: String?,
+  val authorUrl: String? = null
 ) : OssBaseItem() {
 
   override fun itemType() = 1

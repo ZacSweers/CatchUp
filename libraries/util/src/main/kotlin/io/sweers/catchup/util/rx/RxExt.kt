@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.util.rx
 
 import android.view.View
@@ -35,8 +34,8 @@ import io.reactivex.android.MainThreadDisposable.verifyMainThread
 import java.util.concurrent.TimeUnit
 
 @Suppress("UNCHECKED_CAST")
-abstract class OmniTransformer<Upstream, Downstream>
-  : ObservableTransformer<Upstream, Downstream>,
+abstract class OmniTransformer<Upstream, Downstream> :
+  ObservableTransformer<Upstream, Downstream>,
     SingleTransformer<Upstream, Downstream>,
     MaybeTransformer<Upstream, Downstream>,
     CompletableTransformer {
@@ -75,25 +74,35 @@ fun <T> delayedMessageTransformer(view: View, message: String): OmniTransformer<
       onTerminate = { snackbar?.dismiss()?.also { snackbar = null } })
 }
 
-fun <T : Any> Observable<T>.timeoutAction(onTimeout: (() -> Unit)? = null,
-    onTerminate: (() -> Unit)? = null): Observable<T> =
+fun <T : Any> Observable<T>.timeoutAction(
+  onTimeout: (() -> Unit)? = null,
+  onTerminate: (() -> Unit)? = null
+): Observable<T> =
     compose(timeoutActionTransformer(onTimeout, onTerminate))
 
-fun <T : Any> Single<T>.timeoutAction(onTimeout: (() -> Unit)? = null,
-    onTerminate: (() -> Unit)? = null): Single<T> =
+fun <T : Any> Single<T>.timeoutAction(
+  onTimeout: (() -> Unit)? = null,
+  onTerminate: (() -> Unit)? = null
+): Single<T> =
     compose(timeoutActionTransformer(onTimeout, onTerminate))
 
-fun <T : Any> Maybe<T>.timeoutAction(onTimeout: (() -> Unit)? = null,
-    onTerminate: (() -> Unit)? = null): Maybe<T> =
+fun <T : Any> Maybe<T>.timeoutAction(
+  onTimeout: (() -> Unit)? = null,
+  onTerminate: (() -> Unit)? = null
+): Maybe<T> =
     compose(timeoutActionTransformer(onTimeout, onTerminate))
 
-fun Completable.timeoutAction(onTimeout: (() -> Unit)? = null,
-    onTerminate: (() -> Unit)? = null): Completable =
+fun Completable.timeoutAction(
+  onTimeout: (() -> Unit)? = null,
+  onTerminate: (() -> Unit)? = null
+): Completable =
     compose(timeoutActionTransformer<Any>(onTimeout, onTerminate))
 
-fun <T> timeoutActionTransformer(onTimeout: (() -> Unit)? = null,
-    onTerminate: (() -> Unit)? = null,
-    delay: Long = 300): OmniTransformer<T, T> =
+fun <T> timeoutActionTransformer(
+  onTimeout: (() -> Unit)? = null,
+  onTerminate: (() -> Unit)? = null,
+  delay: Long = 300
+): OmniTransformer<T, T> =
     object : OmniTransformer<T, T>() {
 
       private val timer = Observable.timer(delay, TimeUnit.MILLISECONDS)
@@ -122,8 +131,10 @@ fun <T> timeoutActionTransformer(onTimeout: (() -> Unit)? = null,
 /**
  * Utility for working with enums when you want to run actions only on specific values
  */
-inline fun <T : Enum<T>> Observable<T>.doOn(target: T,
-    crossinline action: () -> Unit): Observable<T> = apply {
+inline fun <T : Enum<T>> Observable<T>.doOn(
+  target: T,
+  crossinline action: () -> Unit
+): Observable<T> = apply {
   doOnNext { if (it == target) action() }
 }
 

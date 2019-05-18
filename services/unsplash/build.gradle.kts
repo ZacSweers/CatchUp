@@ -35,7 +35,7 @@ android {
     targetSdkVersion(deps.android.build.targetSdkVersion)
     vectorDrawables.useSupportLibrary = true
     buildConfigField("String", "UNSPLASH_API_KEY",
-        "\"${project.properties["catchup_unsplash_api_key"].toString()}\"")
+        "\"${project.properties["catchup_unsplash_api_key"]}\"")
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8

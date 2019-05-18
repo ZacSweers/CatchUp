@@ -1,11 +1,11 @@
 /*
- * Copyright 2015 Google Inc.
+ * Copyright (C) 2019. Uber Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package in.uncod.android.bypass.style;
 
 import android.graphics.Canvas;
@@ -22,9 +21,7 @@ import android.text.Layout;
 import android.text.style.LeadingMarginSpan;
 import androidx.annotation.ColorInt;
 
-/**
- * A quote span with a nicer presentation
- */
+/** A quote span with a nicer presentation */
 public class FancyQuoteSpan implements LeadingMarginSpan {
 
   private final int lineColor;
@@ -42,7 +39,8 @@ public class FancyQuoteSpan implements LeadingMarginSpan {
     return lineWidth + gapWidth;
   }
 
-  public void drawLeadingMargin(Canvas c,
+  public void drawLeadingMargin(
+      Canvas c,
       Paint p,
       int x,
       int dir,

@@ -55,6 +55,7 @@ object build {
       "-XXLanguage:+InlineClasses",
       "-Xuse-experimental=kotlin.Experimental"
   )
+  fun isCi(): Boolean = System.getenv("CI")?.toBoolean() == true
 }
 
 object deps {
@@ -79,6 +80,7 @@ object deps {
     const val retrofit = "2.5.0"
     const val rxbinding = "2.2.0"
     const val rxpalette = "0.3.0"
+    const val spotless = "3.21.1"
     const val stetho = "1.5.1"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
@@ -190,6 +192,7 @@ object deps {
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.2.0"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:2.2.0"
+      const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${deps.versions.spotless}"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.21.0"
     }
 

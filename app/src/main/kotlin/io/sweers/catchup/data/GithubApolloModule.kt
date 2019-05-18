@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.data
 
 import android.content.Context
@@ -65,8 +64,9 @@ internal object GithubApolloModule {
   @JvmStatic
   @Singleton
   internal fun provideGitHubOkHttpClient(
-      client: OkHttpClient,
-      httpCache: HttpCache): OkHttpClient = client.newBuilder()
+    client: OkHttpClient,
+    httpCache: HttpCache
+  ): OkHttpClient = client.newBuilder()
       .addInterceptor(httpCache.interceptor())
       .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
       .build()
@@ -83,8 +83,10 @@ internal object GithubApolloModule {
       }
     }
 
-    override fun fromFieldRecordSet(field: ResponseField,
-        objectSource: Map<String, Any>): CacheKey =// Most objects use id
+    override fun fromFieldRecordSet(
+      field: ResponseField,
+      objectSource: Map<String, Any>
+    ): CacheKey = // Most objects use id
         objectSource["id"].let {
           return when (val value = it) {
             is String -> formatter(value)
@@ -92,8 +94,10 @@ internal object GithubApolloModule {
           }
         }
 
-    override fun fromFieldArguments(field: ResponseField,
-        variables: Operation.Variables): CacheKey = CacheKey.NO_KEY
+    override fun fromFieldArguments(
+      field: ResponseField,
+      variables: Operation.Variables
+    ): CacheKey = CacheKey.NO_KEY
   }
 
   @Provides
@@ -105,10 +109,12 @@ internal object GithubApolloModule {
   @Provides
   @JvmStatic
   @Singleton
-  internal fun provideApolloClient(@InternalApi client: Lazy<OkHttpClient>,
-      cacheFactory: NormalizedCacheFactory<*>,
-      resolver: CacheKeyResolver,
-      httpCache: HttpCache): ApolloClient {
+  internal fun provideApolloClient(
+    @InternalApi client: Lazy<OkHttpClient>,
+    cacheFactory: NormalizedCacheFactory<*>,
+    resolver: CacheKeyResolver,
+    httpCache: HttpCache
+  ): ApolloClient {
     val instantAdapter = ISO8601InstantApolloAdapter()
     val httpUrlAdapter = HttpUrlApolloAdapter()
     return ApolloClient.builder()

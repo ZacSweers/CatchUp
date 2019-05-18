@@ -62,12 +62,16 @@ android {
     targetCompatibility = JavaVersion.VERSION_1_8
   }
   signingConfigs {
-    create("release") {
-      keyAlias = "catchupkey"
-      storeFile = rootProject.file("signing/app-release.jks")
-      storePassword = properties["catchup_signing_store_password"].toString()
-      keyPassword = properties["catchup_signing_key_password"].toString()
-      isV2SigningEnabled = true
+    if (rootProject.file("signing/app-release.jks").exists()) {
+      create("release") {
+        keyAlias = "catchupkey"
+        storeFile = rootProject.file("signing/app-release.jks")
+        storePassword = properties["catchup_signing_store_password"].toString()
+        keyPassword = properties["catchup_signing_key_password"].toString()
+        isV2SigningEnabled = true
+      }
+    } else {
+      create("release").initWith(findByName("debug"))
     }
   }
   packagingOptions {
@@ -98,13 +102,13 @@ android {
       versionNameSuffix = "-dev"
       ext["enableBugsnag"] = false
       buildConfigField("String", "IMGUR_CLIENT_ACCESS_TOKEN",
-          "\"${project.properties["catchup_imgur_access_token"].toString()}\"")
+          "\"${project.properties["catchup_imgur_access_token"]}\"")
       buildConfigField("boolean", "CRASH_ON_TIMBER_ERROR",
           "Boolean.parseBoolean(\"${project.properties["catchup.crashOnTimberError"]}\")")
     }
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
-          "\"${properties["catchup_bugsnag_key"].toString()}\"")
+          "\"${properties["catchup_bugsnag_key"]}\"")
       signingConfig = signingConfigs.getByName(if ("useDebugSigning" in properties) "debug" else "release")
       postprocessing.apply {
         proguardFiles("proguard-rules.pro")
@@ -195,11 +199,11 @@ play {
   serviceAccountCredentials = rootProject.file("signing/play-account.p12")
 }
 
-//bugsnag {
+// bugsnag {
 //  apiKey = properties["catchup_bugsnag_key"].toString()
 //  autoProguardConfig = false
 //  ndk = true
-//}
+// }
 
 if (gradle.startParameter.isOffline) {
   afterEvaluate {
@@ -250,7 +254,7 @@ open class CutChangelogTask : DefaultTask() {
         builder.append(warning).toString()
       } else it
     }
-    if (!newChangelog.isEmpty()) {
+    if (newChangelog.isNotEmpty()) {
       project.file(whatsNewPath).writer().use {
         it.write(newChangelog)
       }
@@ -273,7 +277,7 @@ open class CutChangelogTask : DefaultTask() {
         val line = iterator.next()
         if (line.startsWith("#")) {
           break
-        } else if (!line.isEmpty()) {
+        } else if (line.isNotEmpty()) {
           log.append(line).append("\n")
         }
       }
@@ -312,7 +316,7 @@ fun getChangelog(): String {
         } else {
           headerCount++
         }
-      } else if (!line.isEmpty()) {
+      } else if (line.isNotEmpty()) {
         seenChanges = true
         log.append(line).append("\n")
       }

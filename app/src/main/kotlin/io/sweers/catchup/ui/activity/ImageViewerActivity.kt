@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.activity
 
 import android.animation.Animator
@@ -155,14 +154,23 @@ class ImageViewerActivity : AppCompatActivity() {
           } else {
             dontAnimate()
             listener(object : RequestListener<Drawable> {
-              override fun onLoadFailed(e: GlideException?, model: Any, target: Target<Drawable>,
-                  isFirstResource: Boolean): Boolean {
+              override fun onLoadFailed(
+                e: GlideException?,
+                model: Any,
+                target: Target<Drawable>,
+                isFirstResource: Boolean
+              ): Boolean {
                 startPostponedEnterTransition()
                 return false
               }
 
-              override fun onResourceReady(resource: Drawable, model: Any, target: Target<Drawable>,
-                  dataSource: DataSource, isFirstResource: Boolean): Boolean {
+              override fun onResourceReady(
+                resource: Drawable,
+                model: Any,
+                target: Target<Drawable>,
+                dataSource: DataSource,
+                isFirstResource: Boolean
+              ): Boolean {
                 startPostponedEnterTransition()
                 return false
               }
@@ -220,7 +228,7 @@ class ImageViewerActivity : AppCompatActivity() {
 //                  view = imageView
 //                })
 //              })
-////              .addTarget(originalTransition.targetIds.first())
+// //              .addTarget(originalTransition.targetIds.first())
 //              .setDuration(originalTransition.duration)
 //              .setInterpolator(originalTransition.interpolator)
 //        }
@@ -269,8 +277,10 @@ class ImageViewerActivity : AppCompatActivity() {
     }
   }
 
-  private fun updateBackgroundDimmingAlpha(@FloatRange(from = 0.0,
-      to = 1.0) transparencyFactor: Float) {
+  private fun updateBackgroundDimmingAlpha(
+    @FloatRange(from = 0.0,
+to = 1.0) transparencyFactor: Float
+  ) {
     // Increase dimming exponentially so that the background is
     // fully transparent while the image has been moved by half.
     val dimming = 1f - Math.min(1f, transparencyFactor * 2)
@@ -282,12 +292,16 @@ class ImageViewerActivity : AppCompatActivity() {
 
 /** Adds a solid padding around an image. */
 private class GlidePaddingTransformation(
-    private val paddingPx: Float,
-    @ColorInt private val paddingColor: Int
+  private val paddingPx: Float,
+  @ColorInt private val paddingColor: Int
 ) : BitmapTransformation() {
 
-  override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int,
-      outHeight: Int): Bitmap {
+  override fun transform(
+    pool: BitmapPool,
+    toTransform: Bitmap,
+    outWidth: Int,
+    outHeight: Int
+  ): Bitmap {
     if (paddingPx == 0F) {
       return toTransform
     }
@@ -328,8 +342,11 @@ class Rotate : Transition() {
     transitionValues.values[PROPNAME_ROTATION] = transitionValues.view.rotation
   }
 
-  override fun createAnimator(sceneRoot: ViewGroup, startValues: TransitionValues?,
-      endValues: TransitionValues?): Animator? {
+  override fun createAnimator(
+    sceneRoot: ViewGroup,
+    startValues: TransitionValues?,
+    endValues: TransitionValues?
+  ): Animator? {
     if (startValues == null || endValues == null) {
       return null
     }

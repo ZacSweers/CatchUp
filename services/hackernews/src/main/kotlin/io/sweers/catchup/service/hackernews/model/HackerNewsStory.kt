@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.service.hackernews.model
 
 import androidx.annotation.Keep
@@ -33,20 +32,23 @@ annotation class NoArg
 @Keep
 @NoArg
 internal data class HackerNewsStory(
-    val by: String,
-    val dead: Boolean,
-    val deleted: Boolean,
-    val descendants: Int,
-    val id: Long,
-    val kids: List<Long>?,
-    val parent: HackerNewsStory?,
-    val parts: List<String>?,
-    val score: Int,
-    /* private, but Firebase is too dumb to read private fields */ val time: Long?,
-    val title: String,
-    val text: String?,
-    /* private, but Firebase is too dumb to read private fields */ val type: String?,
-    val url: String?) : HasStableId {
+  val by: String,
+  val dead: Boolean,
+  val deleted: Boolean,
+  val descendants: Int,
+  val id: Long,
+  val kids: List<Long>?,
+  val parent: HackerNewsStory?,
+  val parts: List<String>?,
+  val score: Int,
+    /* private, but Firebase is too dumb to read private fields */
+  val time: Long?,
+  val title: String,
+  val text: String?,
+    /* private, but Firebase is too dumb to read private fields */
+  val type: String?,
+  val url: String?
+) : HasStableId {
 
   @Exclude
   override fun stableId() = id

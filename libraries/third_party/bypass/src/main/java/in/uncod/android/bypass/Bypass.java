@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Uber Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package in.uncod.android.bypass;
 
 import android.content.Context;
@@ -67,28 +66,32 @@ public class Bypass {
   public Bypass(Context context, Options options) {
     mOptions = options;
 
-    DisplayMetrics dm = context.getResources()
-        .getDisplayMetrics();
+    DisplayMetrics dm = context.getResources().getDisplayMetrics();
 
-    mListItemIndent = (int) TypedValue.applyDimension(mOptions.mListItemIndentUnit,
-        mOptions.mListItemIndentSize,
-        dm);
+    mListItemIndent =
+        (int)
+            TypedValue.applyDimension(
+                mOptions.mListItemIndentUnit, mOptions.mListItemIndentSize, dm);
 
-    mBlockQuoteIndent = (int) TypedValue.applyDimension(mOptions.mBlockQuoteIndentUnit,
-        mOptions.mBlockQuoteIndentSize,
-        dm);
+    mBlockQuoteIndent =
+        (int)
+            TypedValue.applyDimension(
+                mOptions.mBlockQuoteIndentUnit, mOptions.mBlockQuoteIndentSize, dm);
 
-    mBlockQuoteLineWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-        mOptions.mBlockQuoteLineWidth,
-        dm);
+    mBlockQuoteLineWidth =
+        (int)
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, mOptions.mBlockQuoteLineWidth, dm);
 
-    mBlockQuoteLineIndent = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-        mOptions.mBlockQuoteLineIndent,
-        dm);
+    mBlockQuoteLineIndent =
+        (int)
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, mOptions.mBlockQuoteLineIndent, dm);
 
-    mCodeBlockIndent = (int) TypedValue.applyDimension(mOptions.mCodeBlockIndentUnit,
-        mOptions.mCodeBlockIndentSize,
-        dm);
+    mCodeBlockIndent =
+        (int)
+            TypedValue.applyDimension(
+                mOptions.mCodeBlockIndentUnit, mOptions.mCodeBlockIndentSize, dm);
 
     mHruleSize = (int) TypedValue.applyDimension(mOptions.mHruleUnit, mOptions.mHruleSize, dm);
 
@@ -113,9 +116,8 @@ public class Bypass {
     builder.setSpan(new AbsoluteSizeSpan(height, true), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
   }
 
-  public CharSequence markdownToSpannable(String markdown,
-      TextView textView,
-      @Nullable LoadImageCallback loadImageCallback) {
+  public CharSequence markdownToSpannable(
+      String markdown, TextView textView, @Nullable LoadImageCallback loadImageCallback) {
     Document document = processMarkdown(markdown);
 
     int size = document.getElementCount();
@@ -133,7 +135,8 @@ public class Bypass {
   // The 'numberOfSiblings' parameters refers to the number of siblings within the parent, including
   // the 'element' parameter, as in "How many siblings are you?" rather than "How many siblings do
   // you have?".
-  private CharSequence recurseElement(Element element,
+  private CharSequence recurseElement(
+      Element element,
       int indexWithinParent,
       int numberOfSiblings,
       TextView textView,
@@ -172,16 +175,13 @@ public class Bypass {
     String text = element.getText();
     if (element.size() == 0
         && element.getParent() != null
-        && element.getParent()
-        .getType() != Type.BLOCK_CODE) {
+        && element.getParent().getType() != Type.BLOCK_CODE) {
       text = text.replace('\n', ' ');
     }
 
     switch (type) {
       case LIST:
-        if (element.getParent() != null
-            && element.getParent()
-            .getType() == Type.LIST_ITEM) {
+        if (element.getParent() != null && element.getParent().getType() == Type.LIST_ITEM) {
           builder.append("\n");
         }
         break;
@@ -245,14 +245,10 @@ public class Bypass {
       } else if (element.isBlockElement() && type != Type.BLOCK_QUOTE) {
         if (type == Type.LIST) {
           // If this is a nested list, don't include newlines
-          if (element.getParent() == null
-              || element.getParent()
-              .getType() != Type.LIST_ITEM) {
+          if (element.getParent() == null || element.getParent().getType() != Type.LIST_ITEM) {
             builder.append("\n");
           }
-        } else if (element.getParent() != null
-            && element.getParent()
-            .getType() == Type.LIST_ITEM) {
+        } else if (element.getParent() != null && element.getParent().getType() == Type.LIST_ITEM) {
           // List items should never double-space their entries
           builder.append("\n");
         } else {
@@ -290,8 +286,7 @@ public class Bypass {
       case LINK:
       case AUTOLINK:
         String link = element.getAttribute("link");
-        if (!TextUtils.isEmpty(link) && Patterns.EMAIL_ADDRESS.matcher(link)
-            .matches()) {
+        if (!TextUtils.isEmpty(link) && Patterns.EMAIL_ADDRESS.matcher(link).matches()) {
           link = "mailto:" + link;
         }
         setSpan(
@@ -302,12 +297,11 @@ public class Bypass {
         // We add two leading margin spans so that when the order is reversed,
         // the QuoteSpan will always be in the same spot.
         setBlockSpan(builder, new LeadingMarginSpan.Standard(mBlockQuoteIndent));
-        //setBlockSpan(builder, new QuoteSpan(mOptions.mBlockQuoteLineColor));
+        // setBlockSpan(builder, new QuoteSpan(mOptions.mBlockQuoteLineColor));
         setBlockSpan(
             builder,
-            new FancyQuoteSpan(mBlockQuoteLineWidth,
-                mBlockQuoteLineIndent,
-                mOptions.mBlockQuoteLineColor));
+            new FancyQuoteSpan(
+                mBlockQuoteLineWidth, mBlockQuoteLineIndent, mOptions.mBlockQuoteLineColor));
         setBlockSpan(builder, new ForegroundColorSpan(mOptions.mBlockQuoteTextColor));
         setBlockSpan(builder, new LeadingMarginSpan.Standard(mBlockQuoteIndent));
         setBlockSpan(builder, new StyleSpan(Typeface.ITALIC));
@@ -329,9 +323,8 @@ public class Bypass {
           // make the (eventually loaded) image span clickable to open in browser
           setSpanWithPrependedNewline(
               builder,
-              new TouchableUrlSpan(url,
-                  textView.getLinkTextColors(),
-                  textView.getHighlightColor()));
+              new TouchableUrlSpan(
+                  url, textView.getLinkTextColors(), textView.getHighlightColor()));
           loadImageCallback.loadImage(url, loadingSpan);
         }
         break;
@@ -350,9 +343,7 @@ public class Bypass {
     void loadImage(String src, ImageLoadingSpan loadingSpan);
   }
 
-  /**
-   * Configurable options for how Bypass renders certain elements.
-   */
+  /** Configurable options for how Bypass renders certain elements. */
   public static final class Options {
     private float[] mHeaderSizes;
 
@@ -377,14 +368,15 @@ public class Bypass {
     private float mHruleSize;
 
     public Options() {
-      mHeaderSizes = new float[] {
-          1.5f, // h1
-          1.4f, // h2
-          1.3f, // h3
-          1.2f, // h4
-          1.1f, // h5
-          1.0f, // h6
-      };
+      mHeaderSizes =
+          new float[] {
+            1.5f, // h1
+            1.4f, // h2
+            1.3f, // h3
+            1.2f, // h4
+            1.1f, // h5
+            1.0f, // h6
+          };
 
       mUnorderedListItem = "\u2022";
       mListItemIndentUnit = TypedValue.COMPLEX_UNIT_DIP;

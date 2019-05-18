@@ -1,11 +1,11 @@
 /*
- * Copyright 2015 Google Inc.
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.util.glide
 
 import android.annotation.SuppressLint
@@ -27,17 +26,20 @@ import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.ColorUtils
 import io.sweers.catchup.util.UiUtil
 
-
 /**
  * A Glide {@see ViewTarget} for [BadgedFourThreeImageView]s. It applies a badge for animated
  * images, can prevent GIFs from auto-playing & applies a palette generated ripple.
  */
-class CatchUpTarget(view: BadgedFourThreeImageView,
-    private val autoplayGifs: Boolean) : NonAutoStartDrawableImageViewTarget(view),
+class CatchUpTarget(
+  view: BadgedFourThreeImageView,
+  private val autoplayGifs: Boolean
+) : NonAutoStartDrawableImageViewTarget(view),
     Palette.PaletteAsyncListener {
 
-  override fun onResourceReady(resource: Drawable,
-      transition: Transition<in Drawable>?) {
+  override fun onResourceReady(
+    resource: Drawable,
+    transition: Transition<in Drawable>?
+  ) {
     super.onResourceReady(resource, transition)
     if (autoplayGifs && resource is GifDrawable) {
       resource.start()
@@ -75,5 +77,4 @@ class CatchUpTarget(view: BadgedFourThreeImageView,
           UiUtil.createRipple(it, 0.25f, 0.5f, 0x40808080, true)
     }
   }
-
 }

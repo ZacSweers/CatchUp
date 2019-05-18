@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import deps
-import deps.versions
-
 plugins {
   id("com.android.library")
   kotlin("android")

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.util.coroutines
 
 import android.os.Looper
@@ -37,8 +36,8 @@ import kotlinx.coroutines.launch
  * Adapted from https://gist.github.com/adamp/c6d213af7d931b0f00e9ca396d57dacd
  */
 fun LifecycleOwner.liveCoroutineScope(
-    whenAtLeast: Lifecycle.State = Lifecycle.State.STARTED,
-    begin: suspend CoroutineScope.() -> Unit
+  whenAtLeast: Lifecycle.State = Lifecycle.State.STARTED,
+  begin: suspend CoroutineScope.() -> Unit
 ) {
   val scoper = LifecycleScoper(whenAtLeast, begin)
   if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -51,8 +50,8 @@ fun LifecycleOwner.liveCoroutineScope(
 }
 
 private class LifecycleScoper(
-    whenAtLeast: Lifecycle.State,
-    private val begin: suspend CoroutineScope.() -> Unit
+  whenAtLeast: Lifecycle.State,
+  private val begin: suspend CoroutineScope.() -> Unit
 ) : LifecycleEventObserver {
 
   private val upEvent = eventUpTo(whenAtLeast)

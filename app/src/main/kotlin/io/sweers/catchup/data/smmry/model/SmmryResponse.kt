@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.data.smmry.model
 
 import com.squareup.moshi.Json
@@ -47,26 +46,27 @@ object UnknownErrorCode : SmmryResponse()
 @JsonClass(generateAdapter = true)
 data class Success(
 
-    /**
-     * Contains the amount of characters returned
-     */
-    @Json(name = "sm_api_character_count") val characterCount: String,
+  /**
+   * Contains the amount of characters returned
+   */
+  @Json(name = "sm_api_character_count") val characterCount: String,
 
-    /**
-     * Contains the title when available
-     */
-    @Json(name = "sm_api_title")
-    @UnEscape val title: String,
+  /**
+   * Contains the title when available
+   */
+  @Json(name = "sm_api_title")
+  @UnEscape val title: String,
 
-    /**
-     * Contains the summary
-     */
-    @Json(name = "sm_api_content") val content: String,
+  /**
+   * Contains the summary
+   */
+  @Json(name = "sm_api_content") val content: String,
 
-    /**
-     * Contains top ranked keywords in descending order
-     */
-    @Json(name = "sm_api_keyword_array") val keywords: List<String>? = null) : SmmryResponse() {
+  /**
+   * Contains top ranked keywords in descending order
+   */
+  @Json(name = "sm_api_keyword_array") val keywords: List<String>? = null
+) : SmmryResponse() {
 
   companion object {
 
@@ -162,4 +162,3 @@ class SmmryResponseFactory : JsonAdapter.Factory {
         instance?.get() ?: SmmryResponseFactory().also { instance = WeakReference(it) }
   }
 }
-

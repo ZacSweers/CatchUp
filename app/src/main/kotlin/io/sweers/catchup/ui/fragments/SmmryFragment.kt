@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.ui.fragments
 
 import android.annotation.SuppressLint
@@ -79,8 +78,12 @@ class SmmryFragment : InjectableBaseFragment() {
     private const val ID_ACCENT = "smmryfragment.accent"
     private const val ID_LOADED = "smmryfragment.loaded"
 
-    fun newInstance(id: String, @ColorInt accentColor: Int, inputTitle: String,
-        info: SummarizationInfo): SmmryFragment {
+    fun newInstance(
+      id: String,
+      @ColorInt accentColor: Int,
+      inputTitle: String,
+      info: SummarizationInfo
+    ): SmmryFragment {
       return SmmryFragment().apply {
         arguments = bundleOf(
             ID_ID to id,
@@ -140,8 +143,11 @@ class SmmryFragment : InjectableBaseFragment() {
     }
   }
 
-  override fun inflateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View {
+  override fun inflateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View {
     return inflater.inflate(R.layout.fragment_smmry, container, false)
   }
 
@@ -245,8 +251,8 @@ private const val TABLE = "smmryEntries"
 @Keep
 @Entity(tableName = TABLE)
 data class SmmryStorageEntry(
-    @PrimaryKey val url: String,
-    val json: String
+  @PrimaryKey val url: String,
+  val json: String
 )
 
 private suspend fun SmmryDao.getItem(url: String) = withContext(Dispatchers.IO) {

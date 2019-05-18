@@ -57,5 +57,3 @@ if (project.plugins.hasPlugin("kotlin")
     }
   }
 }
-
-

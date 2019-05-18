@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.changes
 
 import `in`.uncod.android.bypass.Bypass
@@ -51,11 +50,12 @@ import io.sweers.catchup.util.show
 import javax.inject.Inject
 
 class ChangelogHelper @Inject constructor(
-    private val linkManager: LinkManager,
-    private val bypass: Lazy<Bypass>,
-    private val fontHelper: FontHelper,
-    private val syllabus: Syllabus,
-    private val sharedPreferences: SharedPreferences) {
+  private val linkManager: LinkManager,
+  private val bypass: Lazy<Bypass>,
+  private val fontHelper: FontHelper,
+  private val syllabus: Syllabus,
+  private val sharedPreferences: SharedPreferences
+) {
 
   fun bindWith(toolbar: Toolbar, @ColorInt hintColor: Int, linkColor: () -> Int) {
     val changelog = toolbar.resources.getString(R.string.changelog_text)
@@ -95,9 +95,11 @@ class ChangelogHelper @Inject constructor(
   }
 
   @SuppressLint("InflateParams")
-  private fun showChangelog(changelog: String,
-      context: Context,
-      @ColorInt highlightColor: Int): Boolean {
+  private fun showChangelog(
+    changelog: String,
+    context: Context,
+    @ColorInt highlightColor: Int
+  ): Boolean {
     // TODO Make this a custom fragment instead, which should make the animation less jarring
     BottomSheetDialog(context)
         .apply {
@@ -164,5 +166,4 @@ class ChangelogHelper @Inject constructor(
         .show()
     return true
   }
-
 }
