@@ -18,6 +18,7 @@
 
 import org.gradle.api.Project
 import java.io.File
+import java.util.concurrent.Callable
 
 fun String?.letIfEmpty(fallback: String): String {
   return if (this == null || isEmpty()) {
@@ -45,6 +46,10 @@ fun String?.execute(workingDir: File, fallback: String): String {
  */
 fun Int.roundUpToNearest(multiple: Int): Int {
   return if (this >= 0) (this + multiple - 1) / multiple * multiple else this / multiple * multiple
+}
+
+fun <T> callableOf(body: () -> T): Callable<T> {
+  return Callable { body() }
 }
 
 object build {
