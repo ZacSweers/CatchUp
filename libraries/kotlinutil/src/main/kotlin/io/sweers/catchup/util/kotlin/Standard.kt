@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("NOTHING_TO_INLINE")
+
 package io.sweers.catchup.util.kotlin
 
 inline fun <T, R> T.letIf(condition: Boolean, block: (T) -> R): R? = let {
@@ -58,12 +60,15 @@ inline fun <T> applyOn(vararg args: T, crossinline block: T.() -> Unit) {
 
 inline fun <T, R : T> Collection<R>.castUp() = this as Collection<T>
 
+@Suppress("UNCHECKED_CAST")
 inline fun <R, T : R> Collection<R>.castDown() = this as Collection<T>
 
 inline fun <T, R : T> List<R>.castUp() = this as List<T>
 
+@Suppress("UNCHECKED_CAST")
 inline fun <R, T : R> List<R>.castDown() = this as List<T>
 
 inline fun <T, R : T> Set<R>.castUp() = this as Set<T>
 
+@Suppress("UNCHECKED_CAST")
 inline fun <R, T : R> Set<R>.castDown() = this as Set<T>
