@@ -30,10 +30,10 @@ import kotlin.reflect.typeOf
 inline fun <reified T> Moshi.adapter(): JsonAdapter<T> = adapter(typeOf<T>())
 
 inline fun <reified T> Moshi.adapter(ktype: KType): JsonAdapter<T> {
-  val type = ktype.asType()
-  val adapter = adapter<T>(type.type)
+  val (type, isMarkedNullable) = ktype.asType()
+  val adapter = adapter<T>(type)
   // It would be nice if we could check if the adapter was already nullsafe!
-  return if (type.isMarkedNullable) {
+  return if (isMarkedNullable) {
     adapter.nullSafe()
   } else {
     adapter.nonNull()
@@ -75,4 +75,7 @@ fun KTypeProjection.asType(): Type {
   }
 }
 
-class TypeWithNullability(val type: Type, val isMarkedNullable: Boolean)
+class TypeWithNullability(val type: Type, val isMarkedNullable: Boolean) {
+  operator fun component1(): Type = type
+  operator fun component2(): Boolean = isMarkedNullable
+}
