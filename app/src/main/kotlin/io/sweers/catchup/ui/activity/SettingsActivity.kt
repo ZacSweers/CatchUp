@@ -144,13 +144,13 @@ class SettingsActivity : InjectingBaseActivity() {
       }
 
       (findPreference(
-          P.SmartlinkingGlobal.KEY) as CheckBoxPreference).isChecked = P.SmartlinkingGlobal.get()
-      (findPreference(P.DaynightAuto.KEY) as CheckBoxPreference).isChecked = P.DaynightAuto.get()
-      (findPreference(P.DaynightNight.KEY) as CheckBoxPreference).isChecked = P.DaynightNight.get()
-      (findPreference(P.Reports.KEY) as CheckBoxPreference).isChecked = P.Reports.get()
+          P.SmartlinkingGlobal.KEY) as? CheckBoxPreference)?.isChecked = P.SmartlinkingGlobal.get()
+      (findPreference(P.DaynightAuto.KEY) as? CheckBoxPreference)?.isChecked = P.DaynightAuto.get()
+      (findPreference(P.DaynightNight.KEY) as? CheckBoxPreference)?.isChecked = P.DaynightNight.get()
+      (findPreference(P.Reports.KEY) as? CheckBoxPreference)?.isChecked = P.Reports.get()
 
-      val themeNavBarPref = findPreference(P.ThemeNavigationBar.KEY) as CheckBoxPreference
-      themeNavBarPref.isChecked = P.ThemeNavigationBar.get()
+      val themeNavBarPref = findPreference(P.ThemeNavigationBar.KEY) as? CheckBoxPreference
+      themeNavBarPref?.isChecked = P.ThemeNavigationBar.get()
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
@@ -166,7 +166,7 @@ class SettingsActivity : InjectingBaseActivity() {
                 if (isChecked) {
                   // If we're enabling auto, clear out the prev daynight night-only mode
                   putBoolean(P.DaynightNight.KEY, false)
-                  (findPreference(P.DaynightNight.KEY) as CheckBoxPreference).isChecked = false
+                  (findPreference(P.DaynightNight.KEY) as? CheckBoxPreference)?.isChecked = false
                 }
               }
               .apply()
