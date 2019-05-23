@@ -20,4 +20,5 @@ plugins {
 
 dependencies {
   api(deps.crumb.annotations)
+  api(deps.kotlin.stdlib.core)
 }
