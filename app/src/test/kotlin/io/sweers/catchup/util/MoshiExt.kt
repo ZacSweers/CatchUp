@@ -62,7 +62,7 @@ fun KType.asType(): TypeWithNullability {
   return TypeWithNullability(finalType, isMarkedNullable)
 }
 
-val STAR: Type = Types.subtypeOf(Any::class.java)
+private val STAR: Type = Types.subtypeOf(Any::class.java)
 
 fun KTypeProjection.asType(): Type {
   val (paramVariance, paramType) = this

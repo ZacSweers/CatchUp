@@ -79,8 +79,8 @@ class MoshiExtTest {
 
   @Test
   fun basicInnerBuiltinNullable() {
-    // We can't actually access inner nullability via typeOf(). This test passes because by default Moshi's built-ins are nullSafe by default
-    // What we might actually want is to be able to proactively call nonNull() on non-nullable inner types.
+    // We can't actually access inner nullability via typeOf(). This test passes because by default Moshi's collection built-ins have nullSafe elements by default
+    // What we might actually want is to be able to proactively call nonNull() on non-nullable inner types. Maybe have JsonAdapter expose a "hasNullHandling()" method?
     val expected = moshi.adapter<List<Int?>>(Types.newParameterizedType(List::class.java, Int::class.javaObjectType)).nonNull()
     val actual = moshi.adapter<List<Int?>>()
 
