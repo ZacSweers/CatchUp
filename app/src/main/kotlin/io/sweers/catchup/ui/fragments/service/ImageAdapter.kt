@@ -268,7 +268,7 @@ internal class ImageAdapter(
                       0f,
                       1f)
                       .apply {
-                        addUpdateListener { _ ->
+                        addUpdateListener {
                           // just animating the color matrix does not invalidate the
                           // drawable so need this update listener.  Also have to create a
                           // new CMCF as the matrix is immutable :(
