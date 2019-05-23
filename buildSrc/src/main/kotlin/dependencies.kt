@@ -311,6 +311,7 @@ object deps {
     const val metadata = "me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.4.0"
     const val noArgGradlePlugin = "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
     const val poet = "com.squareup:kotlinpoet:1.2.0"
+    const val reflect = "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
 
     object stdlib {
       const val core = "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
