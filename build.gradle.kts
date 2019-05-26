@@ -25,9 +25,6 @@ buildscript {
     maven { url = uri(deps.build.repositories.kotlinx) }
     maven { url = uri(deps.build.repositories.plugins) }
     maven { url = uri(deps.build.repositories.snapshots) }
-    maven {
-      url = uri("http://storage.googleapis.com/r8-releases/raw/master")
-    }
   }
 
   configurations.all {
@@ -37,7 +34,6 @@ buildscript {
   }
 
   dependencies {
-    classpath("com.android.tools:r8:86133db9ec0b631f12bf6a8eebc0f81c8aef5d1e") // Must be before the Gradle Plugin for Android.
     classpath(deps.android.gradlePlugin)
     classpath(deps.kotlin.gradlePlugin)
     classpath(deps.kotlin.noArgGradlePlugin)
