@@ -44,6 +44,7 @@ import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.d
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -114,7 +115,7 @@ internal class HackerNewsService @Inject constructor(
                 score = "+" to score,
                 timestamp = realTime(),
                 author = by,
-                source = url?.let { HttpUrl.parse(it)!!.host() },
+                source = url?.let { it.toHttpUrlOrNull()!!.host },
                 tag = realType()?.tag(nullIfStory = true),
                 itemClickUrl = url,
                 summarizationInfo = SummarizationInfo.from(url),

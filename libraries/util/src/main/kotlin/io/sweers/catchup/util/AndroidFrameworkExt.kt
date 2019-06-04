@@ -95,7 +95,7 @@ private fun Context.maybeStartActivity(
  * Queries on-device packages for a handler for the supplied [Intent].
  */
 private fun Context.hasHandler(intent: Intent) =
-    !packageManager.queryIntentActivities(intent, 0).isEmpty()
+    packageManager.queryIntentActivities(intent, 0).isNotEmpty()
 
 private val typedValue = TypedValue()
 
@@ -141,9 +141,9 @@ inline fun Resources.dp2px(dipValue: Float) =
     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
 
 @TargetApi(VERSION_CODES.M)
-inline fun <reified T> Context.getSystemService(): T {
+inline fun <reified T : Any> Context.getSystemService(): T {
   if (isM()) {
-    return getSystemService<T>()!!
+    return getSystemService()!!
   } else {
     return when (T::class) {
       android.view.WindowManager::class -> Context.WINDOW_SERVICE

@@ -38,7 +38,7 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
   override fun intercept(chain: Interceptor.Chain): Response {
     val request = chain.request()
     val url = request.url()
-    val host = url.host()
+    val host = url.host
     val path = url.encodedPath()
     val serviceData = SUPPORTED_ENDPOINTS[host]
     return if (P.DebugMockModeEnabled.get() && serviceData != null && serviceData.supports(path)) {
