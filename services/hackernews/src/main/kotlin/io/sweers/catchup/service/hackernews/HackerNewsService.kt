@@ -43,7 +43,6 @@ import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.d
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import javax.inject.Inject
 import javax.inject.Qualifier
