@@ -147,7 +147,7 @@ android {
     javaMaxHeapSize = "2g"
   }
   lintOptions {
-    setLintConfig(file("lint.xml"))
+    setLintConfig(file("app/lint.xml"))
     isAbortOnError = true
     check("InlinedApi")
     check("Interoperability")
@@ -160,6 +160,7 @@ android {
     textOutput("stdout")
     htmlReport = !deps.build.ci
     xmlReport = !deps.build.ci
+    isCheckDependencies = true
   }
   // Should be fixed now, disable if need be
   // https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/59
@@ -407,7 +408,6 @@ tasks.create("updateVersion", UpdateVersion::class.java) {
 
 dependencies {
   kapt(project(":libraries:tooling:spi-visualizer"))
-  compileOnly(project(":libraries:tooling:spi-visualizer"))
 
   implementation(project(":libraries:third_party:bypass"))
   implementation(project(":service-api"))

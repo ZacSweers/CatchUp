@@ -40,18 +40,8 @@ android {
     targetCompatibility = VERSION_1_8
   }
   lintOptions {
-    setLintConfig(file("lint.xml"))
-    isAbortOnError = true
-    check("InlinedApi")
-    check("NewApi")
-    fatal("NewApi")
-    fatal("InlinedApi")
-    enable("UnusedResources")
-    isCheckReleaseBuilds = true
-    textReport = deps.build.ci
-    textOutput("stdout")
-    htmlReport = !deps.build.ci
-    xmlReport = !deps.build.ci
+    isCheckReleaseBuilds = false
+    isAbortOnError = false
   }
 }
 
