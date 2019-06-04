@@ -50,6 +50,7 @@ import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.truncateAt
 import kotterknife.bindView
 import kotterknife.onSubviewClick
+import leakcanary.LeakCanary
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
@@ -135,7 +136,7 @@ class DebugView @JvmOverloads constructor(
     }
     onSubviewClick<View>(R.id.debug_leaks_show) {
       // https://github.com/square/leakcanary/pull/1341
-//      startDebugActivity(Intent(context, LeakActivity::class.java))
+      startDebugActivity(LeakCanary.leakDisplayActivityIntent)
     }
     onSubviewClick<View>(R.id.debug_network_logs) {
       startDebugActivity(Intent(context, MainActivity::class.java))
