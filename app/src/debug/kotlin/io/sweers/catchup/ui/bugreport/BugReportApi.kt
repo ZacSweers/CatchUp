@@ -24,6 +24,7 @@ import dagger.Provides
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.libraries.retrofitconverters.callFactory
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

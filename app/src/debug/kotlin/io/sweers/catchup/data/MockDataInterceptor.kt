@@ -24,7 +24,7 @@ import okhttp3.Interceptor
 import okhttp3.MediaType
 import okhttp3.Protocol
 import okhttp3.Response
-import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.buffer
 import okio.source
 
@@ -37,17 +37,15 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
 
   override fun intercept(chain: Interceptor.Chain): Response {
     val request = chain.request()
-    val url = request.url()
-    val host = url.host()
-    val path = url.encodedPath()
+    val url = request.url
+    val host = url.host
+    val path = url.encodedPath
     val serviceData = SUPPORTED_ENDPOINTS[host]
     return if (P.DebugMockModeEnabled.get() && serviceData != null && serviceData.supports(path)) {
       Response.Builder().request(request)
-          .body(ResponseBody.create(
-              MediaType.parse("application/json"),
-              context.assets
-                  .open(formatUrl(serviceData, url)).source().buffer()
-                  .readUtf8()))
+          .body(context.assets
+              .open(formatUrl(serviceData, url)).source().buffer()
+              .readUtf8().toResponseBody(MediaType.parse("application/json")))
           .code(200)
           .protocol(Protocol.HTTP_1_1)
           .build()
@@ -83,7 +81,7 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
     )
 
     private fun formatUrl(service: ServiceData, url: HttpUrl): String {
-      var lastSegment = url.pathSegments()[url.pathSize() - 1]
+      var lastSegment = url.pathSegments[url.pathSize - 1]
       if ("" == lastSegment) {
         lastSegment = "nopath"
       }

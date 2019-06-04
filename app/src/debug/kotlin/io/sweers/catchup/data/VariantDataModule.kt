@@ -25,8 +25,18 @@ import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
+import okhttp3.logging.HttpLoggingInterceptor.Logger
 import timber.log.Timber
 import javax.inject.Singleton
+
+private inline fun httpLoggingInterceptor(level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE, crossinline logger: (String) -> Unit): HttpLoggingInterceptor {
+  return HttpLoggingInterceptor(object : Logger {
+    override fun log(message: String) {
+      logger(message)
+    }
+  }).also { it.level = level }
+}
 
 @Module
 object VariantDataModule {
@@ -36,13 +46,9 @@ object VariantDataModule {
   @IntoSet
   @JvmStatic
   @Singleton
-  internal fun provideLoggingInterceptor(): Interceptor {
-    val loggingInterceptor = HttpLoggingInterceptor { message ->
-      Timber.tag("OkHttp")
-          .v(message)
-    }
-    loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
-    return loggingInterceptor
+  internal fun provideLoggingInterceptor(): Interceptor = httpLoggingInterceptor(BASIC) { message ->
+    Timber.tag("OkHttp")
+        .v(message)
   }
 
   @Provides

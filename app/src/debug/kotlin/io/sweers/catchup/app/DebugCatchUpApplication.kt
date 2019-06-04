@@ -95,9 +95,10 @@ class DebugCatchUpApplication : CatchUpApplication() {
           LeakSentry.refWatcher.watch(watchedReference)
         }
       }
-      LeakCanary.config.copy(
-          excludedRefs = AndroidExcludedRefs.createAppDefaults().build()
-      )
+      LeakCanary.config.copy(exclusionsFactory = { hprofParser ->
+        val defaultFactory = AndroidExcludedRefs.exclusionsFactory(AndroidExcludedRefs.appDefaults)
+        defaultFactory(hprofParser)
+      })
     } else {
       // Disabled on API 28 because there's a pretty vicious memory leak that constantly triggers
       // https://github.com/square/leakcanary/issues/1081

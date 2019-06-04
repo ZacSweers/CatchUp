@@ -23,6 +23,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Single
+import io.sweers.catchup.libraries.retrofitconverters.callFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -150,11 +151,11 @@ abstract class RedditModule {
       return client.newBuilder()
           .addNetworkInterceptor { chain ->
             var request = chain.request()
-            val url = request.url()
+            val url = request.url
             request = request.newBuilder()
                 .header("User-Agent", "CatchUp app by /u/pandanomic")
                 .url(url.newBuilder()
-                    .encodedPath(url.encodedPath() + ".json")
+                    .encodedPath("${url.encodedPath}.json")
                     .addQueryParameter("raw_json", "1") // So tokens aren't escaped
                     .build())
                 .build()

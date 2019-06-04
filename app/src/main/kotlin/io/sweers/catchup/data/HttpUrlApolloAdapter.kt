@@ -19,6 +19,7 @@ import com.apollographql.apollo.response.CustomTypeAdapter
 import com.apollographql.apollo.response.CustomTypeValue
 import com.apollographql.apollo.response.CustomTypeValue.GraphQLString
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 /**
  * An Apollo adapter for converting between URI types to HttpUrl.
@@ -30,7 +31,7 @@ class HttpUrlApolloAdapter : CustomTypeAdapter<HttpUrl> {
 
   override fun decode(value: CustomTypeValue<*>): HttpUrl {
     if (value is GraphQLString) {
-      return HttpUrl.parse(value.value)!!
+      return value.value.toHttpUrlOrNull()!!
     } else throw IllegalArgumentException("Value wasn't a string!")
   }
 }

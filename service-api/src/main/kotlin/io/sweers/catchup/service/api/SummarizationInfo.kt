@@ -17,7 +17,7 @@ package io.sweers.catchup.service.api
 
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 data class SummarizationInfo(
   val value: String,
@@ -52,8 +52,8 @@ data class SummarizationInfo(
         return false
       }
 
-      HttpUrl.parse(url)?.let {
-        it.host().let {
+      url.toHttpUrlOrNull()?.let {
+        it.host.let {
           if ("imgur" in it ||
               "streamable" in it ||
               "gfycat" in it ||

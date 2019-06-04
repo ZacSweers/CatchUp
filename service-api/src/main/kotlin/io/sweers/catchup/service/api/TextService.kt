@@ -41,7 +41,7 @@ interface TextService : Service {
             linkHandler().openUrl(createUrlMeta(url, context))
           }
         },
-        longClickHandler = item.summarizationInfo?.let { info ->
+        longClickHandler = item.summarizationInfo?.let {
           OnLongClickListener {
             // TODO
             false

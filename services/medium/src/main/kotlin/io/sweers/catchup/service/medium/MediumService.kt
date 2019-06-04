@@ -24,6 +24,7 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.sweers.catchup.libraries.retrofitconverters.callFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -150,13 +151,13 @@ abstract class MediumModule {
           .addInterceptor { chain ->
             chain.proceed(chain.request().newBuilder()
                 // Tack format=json to the end
-                .url(chain.request().url()
+                .url(chain.request().url
                     .newBuilder()
                     .addQueryParameter("format", "json")
                     .build())
                 .build())
                 .apply {
-                  body()?.source()?.let {
+                  body?.source()?.let {
                     // Medium prefixes with a while loop to prevent javascript eval attacks, so
                     // skip to the first open curly brace
                     it.skip(it.indexOf('{'.toByte()))

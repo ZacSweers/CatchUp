@@ -298,7 +298,7 @@ class DebugView @JvmOverloads constructor(
     Maybe
         .create<Cache> { e ->
           // Shares the cache with apiClient, so no need to check both.
-          client.get().cache()?.let {
+          client.get().cache?.let {
             e.onSuccess(it)
           } ?: e.onComplete()
         }
