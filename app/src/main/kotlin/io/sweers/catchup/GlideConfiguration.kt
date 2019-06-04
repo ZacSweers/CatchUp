@@ -21,12 +21,12 @@ import android.app.ActivityManager
 import android.content.Context
 import androidx.annotation.Keep
 import androidx.core.app.ActivityManagerCompat
+import androidx.core.content.getSystemService
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
-import io.sweers.catchup.util.getSystemService
 
 /**
  * Configure Glide to set desired image quality.
@@ -37,12 +37,11 @@ class GlideConfiguration : AppGlideModule() {
 
   override fun applyOptions(context: Context, builder: GlideBuilder) {
     // Prefer higher quality images unless we're on a low RAM device
-    val activityManager = context.getSystemService<ActivityManager>()
+    val isLowRamDevice = context.getSystemService<ActivityManager>()?.let {
+      ActivityManagerCompat.isLowRamDevice(it)
+    } ?: true
     builder.setDefaultRequestOptions(RequestOptions()
-        .format(if (ActivityManagerCompat.isLowRamDevice(activityManager))
-          DecodeFormat.PREFER_RGB_565
-        else
-          DecodeFormat.PREFER_ARGB_8888)
+        .format(if (isLowRamDevice) DecodeFormat.PREFER_RGB_565 else DecodeFormat.PREFER_ARGB_8888)
         .disallowHardwareConfig() // So Palette can work
     )
   }
