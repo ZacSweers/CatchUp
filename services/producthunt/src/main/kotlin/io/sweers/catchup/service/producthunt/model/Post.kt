@@ -18,7 +18,6 @@ package io.sweers.catchup.service.producthunt.model
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.sweers.catchup.util.e
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.threeten.bp.Instant
 
@@ -55,7 +54,7 @@ internal data class Post(
     get() {
       val discussion = discussionUrl
       if (discussion != null) {
-        return discussion.toHttpUrlOrNull()!!.pathSegments()[0]
+        return discussion.toHttpUrlOrNull()!!.pathSegments[0]
       }
       return null
     }

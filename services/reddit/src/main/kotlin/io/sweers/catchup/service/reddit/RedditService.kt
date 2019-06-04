@@ -151,11 +151,11 @@ abstract class RedditModule {
       return client.newBuilder()
           .addNetworkInterceptor { chain ->
             var request = chain.request()
-            val url = request.url()
+            val url = request.url
             request = request.newBuilder()
                 .header("User-Agent", "CatchUp app by /u/pandanomic")
                 .url(url.newBuilder()
-                    .encodedPath(url.encodedPath() + ".json")
+                    .encodedPath("${url.encodedPath}.json")
                     .addQueryParameter("raw_json", "1") // So tokens aren't escaped
                     .build())
                 .build()
