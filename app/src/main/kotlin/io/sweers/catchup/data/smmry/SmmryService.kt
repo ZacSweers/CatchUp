@@ -16,7 +16,6 @@
 package io.sweers.catchup.data.smmry
 
 import io.sweers.catchup.data.smmry.model.SmmryResponse
-import kotlinx.coroutines.Deferred
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
@@ -25,16 +24,16 @@ import retrofit2.http.QueryMap
 interface SmmryService {
 
   @POST(".")
-  fun summarizeUrl(
+  suspend fun summarizeUrl(
     @QueryMap params: Map<String, @JvmSuppressWildcards Any>
-  ): Deferred<SmmryResponse>
+  ): SmmryResponse
 
   @POST(".")
   @FormUrlEncoded
-  fun summarizeText(
+  suspend fun summarizeText(
     @QueryMap params: Map<String, @JvmSuppressWildcards Any>,
     @Field("sm_api_input") text: String
-  ): Deferred<SmmryResponse>
+  ): SmmryResponse
 
   companion object {
 

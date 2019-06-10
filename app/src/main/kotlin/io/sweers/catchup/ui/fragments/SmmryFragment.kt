@@ -205,13 +205,11 @@ class SmmryFragment : InjectableBaseFragment() {
             .sentenceCount(5)
             .build(),
             info.value)
-            .await()
         URL -> smmryService.summarizeUrl(SmmryRequestBuilder.forUrl(info.value)
             .withBreak(true)
             .keywordCount(5)
             .sentenceCount(5)
             .build())
-            .await()
         NONE -> Success.just(inputTitle, info.value)
       }
     } catch (error: Exception) {

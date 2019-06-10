@@ -462,7 +462,6 @@ dependencies {
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
   implementation(deps.retrofit.rxJava2)
-  implementation(deps.retrofit.coroutines)
   implementation(deps.rx.android)
   implementation(deps.rx.java)
   implementation(deps.rx.binding.core)

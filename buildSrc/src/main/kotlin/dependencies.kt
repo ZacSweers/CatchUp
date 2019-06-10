@@ -82,7 +82,7 @@ object deps {
     const val legacySupport = "28.0.0"
     const val moshi = "1.8.0"
     const val okhttp = "4.0.0-alpha02"
-    const val retrofit = "2.5.0"
+    const val retrofit = "2.6.0"
     const val rxbinding = "2.2.0"
     const val rxpalette = "0.3.0"
     const val spotless = "3.23.0"
@@ -375,7 +375,6 @@ object deps {
 
     const val moshi = "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
     const val rxJava2 = "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
-    const val coroutines = "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
   }
 
   object rx {

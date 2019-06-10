@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.data.smmry
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
@@ -58,7 +57,6 @@ object SmmryModule {
           client.get()
               .newCall(request)
         }
-        .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .validateEagerly(BuildConfig.DEBUG)
         .build()
