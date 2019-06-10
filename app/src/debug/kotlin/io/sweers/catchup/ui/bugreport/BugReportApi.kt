@@ -24,7 +24,7 @@ import dagger.Provides
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.libraries.retrofitconverters.callFactory
+import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -77,7 +77,7 @@ internal object BugReportModule {
   ): ImgurUploadApi {
     return Retrofit.Builder()
         .baseUrl("https://api.imgur.com/3/")
-        .callFactory { client.get().newCall(it) }
+        .delegatingCallFactory(client)
         .addCallAdapterFactory(rxJavaCallAdapterFactory)
         .addConverterFactory(MoshiConverterFactory.create(moshi.newBuilder()
             .add(Wrapped.ADAPTER_FACTORY)
@@ -97,7 +97,7 @@ internal object BugReportModule {
   ): GitHubIssueApi {
     return Retrofit.Builder()
         .baseUrl("https://api.github.com/")
-        .callFactory { client.get().newCall(it) }
+        .delegatingCallFactory(client)
         .addCallAdapterFactory(rxJavaCallAdapterFactory)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .validateEagerly(BuildConfig.DEBUG)

@@ -28,6 +28,7 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
+  api(deps.dagger.runtime)
   implementation(deps.retrofit.core)
   implementation(deps.okhttp.core)
   implementation(deps.misc.jsoup)

@@ -23,7 +23,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Single
-import io.sweers.catchup.libraries.retrofitconverters.callFactory
+import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -172,7 +172,7 @@ abstract class RedditModule {
       @InternalApi moshi: Moshi
     ): RedditApi {
       val retrofit = Retrofit.Builder().baseUrl(RedditApi.ENDPOINT)
-          .callFactory { client.get().newCall(it) }
+          .delegatingCallFactory(client)
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
           // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs

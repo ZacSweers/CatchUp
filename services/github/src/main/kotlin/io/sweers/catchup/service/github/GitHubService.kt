@@ -32,7 +32,7 @@ import io.reactivex.Single
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojis
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
-import io.sweers.catchup.libraries.retrofitconverters.callFactory
+import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -219,7 +219,7 @@ abstract class GitHubModule {
       rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
     ): GitHubApi {
       return Retrofit.Builder().baseUrl(GitHubApi.ENDPOINT)
-          .callFactory { client.get().newCall(it) }
+          .delegatingCallFactory(client)
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))
           // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs

@@ -23,7 +23,7 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
 import io.sweers.catchup.injection.scopes.PerFragment
-import io.sweers.catchup.libraries.retrofitconverters.callFactory
+import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -53,10 +53,7 @@ object SmmryModule {
     @ForSmmry moshi: Moshi
   ): SmmryService {
     return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
-        .callFactory { request ->
-          client.get()
-              .newCall(request)
-        }
+        .delegatingCallFactory(client)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .validateEagerly(BuildConfig.DEBUG)
         .build()

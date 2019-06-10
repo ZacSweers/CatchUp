@@ -23,7 +23,7 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import io.reactivex.Single
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
-import io.sweers.catchup.libraries.retrofitconverters.callFactory
+import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -136,7 +136,7 @@ abstract class DribbbleModule {
       rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
     ): DribbbleApi {
       return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)
-          .callFactory { client.get().newCall(it) }
+          .delegatingCallFactory(client)
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(DecodingConverter.newFactory(DribbbleParser::parse))
           // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
