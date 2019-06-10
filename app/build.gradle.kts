@@ -208,7 +208,6 @@ android {
 
 kapt {
   correctErrorTypes = true
-  useBuildCache = true
   mapDiagnosticLocations = true
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
