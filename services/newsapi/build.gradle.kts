@@ -56,7 +56,6 @@ tasks.withType<KotlinCompile> {
 
 kapt {
   correctErrorTypes = true
-  useBuildCache = true
   mapDiagnosticLocations = true
   arguments {
     arg("moshi.generated", "javax.annotation.Generated")
