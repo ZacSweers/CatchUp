@@ -29,6 +29,6 @@ internal inline fun Retrofit.Builder.callFactory(
 
 inline fun Retrofit.Builder.delegatingCallFactory(
   delegate: dagger.Lazy<OkHttpClient>
-) = callFactory {
+): Retrofit.Builder = callFactory {
   delegate.get().newCall(it)
 }
