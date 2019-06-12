@@ -31,9 +31,6 @@ apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
 
-// TODO Can stop doing this when BuildConfig becomes a class rather than a java file
-val isRelease = gradle.startParameter.taskNames.any { it.endsWith("Release") }
-
 android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
   buildToolsVersion(deps.android.build.buildToolsVersion)
@@ -59,7 +56,7 @@ android {
         "\"${properties["catchup_smmry_api_key"]}\"")
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
   }
-  val commitCountLazy by lazy { deps.build.gitCommitCount(project, isRelease).toString() }
+  val commitCountLazy by lazy { deps.build.gitCommitCount(project).toString() }
   val commitCountCallable = callableOf { commitCountLazy }
   val versionNameLazy by lazy { deps.build.gitTag(project) }
   val versionNameCallable = callableOf { versionNameLazy }
