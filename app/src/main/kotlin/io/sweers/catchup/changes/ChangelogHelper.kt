@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.changes
 
-import `in`.uncod.android.bypass.Bypass
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
@@ -47,11 +46,12 @@ import io.sweers.catchup.util.markdown
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.resolveActivity
 import io.sweers.catchup.util.show
+import ru.noties.markwon.Markwon
 import javax.inject.Inject
 
 class ChangelogHelper @Inject constructor(
   private val linkManager: LinkManager,
-  private val bypass: Lazy<Bypass>,
+  private val markwon: Lazy<Markwon>,
   private val fontHelper: FontHelper,
   private val syllabus: Syllabus,
   private val sharedPreferences: SharedPreferences
@@ -119,7 +119,7 @@ class ChangelogHelper @Inject constructor(
                 .markdown()
                 .parseMarkdownAndPlainLinks(
                     on = changesTextView,
-                    with = bypass.get(),
+                    with = markwon.get(),
                     alternateSpans = { url: String ->
                       setOf(
                           object : TouchableUrlSpan(url,

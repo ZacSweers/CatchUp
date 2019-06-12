@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.ui.about
 
-import `in`.uncod.android.bypass.Bypass
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Typeface
@@ -63,6 +62,7 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.setLightStatusBar
 import kotterknife.bindView
+import ru.noties.markwon.Markwon
 import java.util.Locale
 import javax.inject.Inject
 
@@ -128,7 +128,7 @@ class AboutFragment : InjectingBaseFragment() {
   @Inject
   internal lateinit var linkManager: LinkManager
   @Inject
-  internal lateinit var bypass: Bypass
+  internal lateinit var markwon: Markwon
 
   private val rootLayout by bindView<CoordinatorLayout>(R.id.about_fragment_root)
   private val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
@@ -243,7 +243,7 @@ class AboutFragment : InjectingBaseFragment() {
           aboutText.resources.getString(R.string.about_source_code))
     }.parseMarkdownAndPlainLinks(
         on = aboutText,
-        with = bypass,
+        with = markwon,
         alternateSpans = compositeClickSpan)
 
     setUpPager()

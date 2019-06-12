@@ -128,15 +128,6 @@
 -dontwarn afu.org.checkerframework.**
 -dontwarn com.google.errorprone.annotations.**
 
-# Bypass
--keep class in.uncod.android.bypass.Document { <init>(...); }
--keep class in.uncod.android.bypass.Element {
-    <init>(...);
-    void setChildren(...);
-    void setParent(...);
-    void addAttribute(...);
-}
-
 # Tikxml
 # The name of @Xml types is used to look up the generated adapter.
 -keepnames @com.tickaroo.tikxml.annotation.Xml class *
