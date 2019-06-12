@@ -408,7 +408,13 @@ tasks.create("updateVersion", UpdateVersion::class.java) {
 dependencies {
   kapt(project(":libraries:tooling:spi-visualizer"))
 
-  implementation(project(":libraries:third_party:bypass"))
+  implementation(deps.markwon.core)
+  implementation(deps.markwon.gif)
+//  implementation(deps.markwon.imageOkHttp)
+  implementation(deps.markwon.strikethrough)
+//  implementation(deps.markwon.syntaxHighlight)
+  implementation(deps.markwon.tables)
+  implementation(deps.markwon.tasks)
   implementation(project(":service-api"))
   implementation(project(":service-registry:service-registry"))
   implementation(project(":libraries:gemoji"))

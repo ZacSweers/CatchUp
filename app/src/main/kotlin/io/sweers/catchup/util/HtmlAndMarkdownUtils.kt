@@ -15,8 +15,6 @@
  */
 package io.sweers.catchup.util
 
-import `in`.uncod.android.bypass.Bypass
-import `in`.uncod.android.bypass.style.TouchableUrlSpan
 import android.content.res.ColorStateList
 import android.os.Build
 import android.text.Html
@@ -28,6 +26,7 @@ import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import ru.noties.markwon.Markwon
 
 /*
  * Utility methods for working with HTML and markdown.
@@ -40,7 +39,7 @@ fun String.markdown(): Markdown = Markdown(this)
 /**
  * Parse Markdown and plain-text links.
  *
- * [Bypass] does not handle plain text links (i.e. not md syntax) and requires a
+ * [Markwon] does not handle plain text links (i.e. not md syntax) and requires a
  * `String` input (i.e. squashes any spans). [Linkify] handles plain links but also
  * removes any existing spans. So we can't just run our input through both.
  *
@@ -50,12 +49,12 @@ fun String.markdown(): Markdown = Markdown(this)
  */
 fun Markdown.parseMarkdownAndPlainLinks(
   on: TextView,
-  with: Bypass,
-  loadImageCallback: Bypass.LoadImageCallback? = null,
+  with: Markwon,
   alternateSpans: ((String) -> Set<Any>)? = null
 ): CharSequence {
-  return with.markdownToSpannable(rawValue, on, loadImageCallback)
-      .linkifyPlainLinks(on.linkTextColors, on.highlightColor, alternateSpans)
+  val markdown = with.toMarkdown(rawValue)
+  with.setParsedMarkdown(on, markdown)
+  return markdown.linkifyPlainLinks(on.linkTextColors, on.highlightColor, alternateSpans)
 }
 
 /**
@@ -64,15 +63,14 @@ fun Markdown.parseMarkdownAndPlainLinks(
  */
 fun Markdown.parseMarkdownAndSetText(
   textView: TextView,
-  markdown: Bypass,
-  loadImageCallback: Bypass.LoadImageCallback? = null,
+  markwon: Markwon,
   alternateUrlSpan: ((String) -> Set<Any>)? = null
 ) {
   if (TextUtils.isEmpty(rawValue)) {
     return
   }
   textView.setTextWithNiceLinks(
-      parseMarkdownAndPlainLinks(textView, markdown, loadImageCallback, alternateUrlSpan))
+      parseMarkdownAndPlainLinks(textView, markwon, alternateUrlSpan))
 }
 
 /**
@@ -137,7 +135,11 @@ private fun CharSequence.linkifyPlainLinks(
         ?.invoke(urlSpan.url)
         ?.forEach { setSpan(ssb, urlSpan, plainLinks, it) }
         ?: setSpan(ssb, urlSpan, plainLinks,
-            TouchableUrlSpan(urlSpan.url, linkTextColor, linkHighlightColor))
+            object : TouchableUrlSpan(urlSpan.url, linkTextColor, linkHighlightColor) {
+              override fun onClick(url: String) {
+                // TODO wat
+              }
+            })
   }
 
   return ssb

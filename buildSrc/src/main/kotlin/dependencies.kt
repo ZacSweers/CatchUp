@@ -80,6 +80,7 @@ object deps {
     const val kotlin = "1.3.40-eap-105"
     const val leakcanary = "2.0-alpha-2"
     const val legacySupport = "28.0.0"
+    const val markwon = "3.0.0"
     const val moshi = "1.8.0"
     const val okhttp = "4.0.0-alpha02"
     const val retrofit = "2.6.0"
@@ -318,6 +319,16 @@ object deps {
       const val jdk7 = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
       const val jdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
     }
+  }
+
+  object markwon {
+    const val core = "ru.noties.markwon:core:${versions.markwon}"
+    const val gif = "ru.noties.markwon:image-gif:${versions.markwon}"
+    const val imageOkHttp = "ru.noties.markwon:image-okhttp:${versions.markwon}"
+    const val strikethrough = "ru.noties.markwon:ext-strikethrough:${versions.markwon}"
+    const val syntaxHighlight = "ru.noties.markwon:syntax-highlight:${versions.markwon}"
+    const val tables = "ru.noties.markwon:ext-tables:${versions.markwon}"
+    const val tasks = "ru.noties.markwon:ext-tasklist:${versions.markwon}"
   }
 
   object misc {

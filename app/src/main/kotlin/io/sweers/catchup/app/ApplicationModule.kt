@@ -15,14 +15,21 @@
  */
 package io.sweers.catchup.app
 
-import `in`.uncod.android.bypass.Bypass
-import `in`.uncod.android.bypass.Bypass.Options
 import android.app.Application
 import android.content.Context
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import ru.noties.markwon.Markwon
+import ru.noties.markwon.core.CorePlugin
+import ru.noties.markwon.ext.strikethrough.StrikethroughPlugin
+import ru.noties.markwon.ext.tables.TablePlugin
+import ru.noties.markwon.ext.tasklist.TaskListPlugin
+import ru.noties.markwon.image.ImagesPlugin
+import ru.noties.markwon.image.gif.GifPlugin
+import ru.noties.markwon.movement.MovementMethodPlugin
 import javax.inject.Singleton
 
 @Module
@@ -39,6 +46,18 @@ abstract class ApplicationModule {
     @Provides
     @JvmStatic
     @Singleton
-    internal fun bypass(@ApplicationContext context: Context) = Bypass(context, Options())
+    internal fun markwon(@ApplicationContext context: Context): Markwon = Markwon.builder(context)
+        .usePlugins(listOf(
+            CorePlugin.create(),
+            MovementMethodPlugin.create(LinkTouchMovementMethod()),
+            ImagesPlugin.create(context),
+            StrikethroughPlugin.create(),
+            GifPlugin.create(),
+            TablePlugin.create(context),
+            TaskListPlugin.create(context) // TODO should use themed one from activity?
+//            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
+            // OkHttpImagesPlugin - https://github.com/noties/Markwon/pull/129
+        ))
+        .build()
   }
 }
