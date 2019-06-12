@@ -562,6 +562,6 @@ dependencies {
   releaseImplementation(deps.misc.leakSentry)
 
   // Chuck
-  debugImplementation(deps.chuck.debug)
-  releaseImplementation(deps.chuck.release)
+//  debugImplementation(deps.chuck.debug)
+//  releaseImplementation(deps.chuck.release)
 }

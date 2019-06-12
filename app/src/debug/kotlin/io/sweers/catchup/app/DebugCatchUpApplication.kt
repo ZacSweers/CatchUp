@@ -28,7 +28,6 @@ import com.facebook.flipper.core.FlipperPlugin
 import com.facebook.soloader.SoLoader
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
-import com.readystatesoftware.chuck.internal.ui.MainActivity
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
@@ -119,10 +118,10 @@ class DebugCatchUpApplication : CatchUpApplication() {
       override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
 
       override fun onActivityDestroyed(activity: Activity) {
-        if (activity is MainActivity) {
-          // Ignore Chuck
-          return
-        }
+//        if (activity is MainActivity) {
+//          // Ignore Chuck
+//          return
+//        }
         refWatcher.watch(activity)
       }
     })

@@ -34,7 +34,6 @@ import android.widget.TextView
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxAdapterView
-import com.readystatesoftware.chuck.internal.ui.MainActivity
 import dagger.Lazy
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -138,9 +137,9 @@ class DebugView @JvmOverloads constructor(
       // https://github.com/square/leakcanary/pull/1341
       startDebugActivity(LeakCanary.leakDisplayActivityIntent)
     }
-    onSubviewClick<View>(R.id.debug_network_logs) {
-      startDebugActivity(Intent(context, MainActivity::class.java))
-    }
+//    onSubviewClick<View>(R.id.debug_network_logs) {
+//      startDebugActivity(Intent(context, MainActivity::class.java))
+//    }
 
     setupNetworkSection()
     setupMockBehaviorSection()
