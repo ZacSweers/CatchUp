@@ -28,10 +28,11 @@ import com.facebook.flipper.core.FlipperPlugin
 import com.facebook.soloader.SoLoader
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
-import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.util.sdk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import leakcanary.AndroidExcludedRefs
 import leakcanary.LeakCanary
 import leakcanary.LeakSentry
@@ -129,18 +130,6 @@ class DebugCatchUpApplication : CatchUpApplication() {
     Timber.plant(lumberYard.tree())
     Timber.plant(StethoTree())
 
-    if (FlipperUtils.shouldEnableFlipper(this)) {
-      Completable
-          .fromAction {
-            AndroidFlipperClient.getInstance(this).apply {
-              flipperPlugins.forEach(::addPlugin)
-              start()
-            }
-          }
-          .subscribeOn(Schedulers.io())
-          .subscribe()
-    }
-
     if (BuildConfig.CRASH_ON_TIMBER_ERROR) {
       Timber.plant(object : Tree() {
         override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
@@ -150,11 +139,15 @@ class DebugCatchUpApplication : CatchUpApplication() {
         }
       })
     }
-    Completable
-        .fromAction {
-          Stetho.initializeWithDefaults(this)
+
+    GlobalScope.launch(Dispatchers.IO) {
+      if (FlipperUtils.shouldEnableFlipper(this@DebugCatchUpApplication)) {
+        AndroidFlipperClient.getInstance(this@DebugCatchUpApplication).apply {
+          flipperPlugins.forEach(::addPlugin)
+          start()
         }
-        .subscribeOn(Schedulers.io())
-        .subscribe()
+      }
+      Stetho.initializeWithDefaults(this@DebugCatchUpApplication)
+    }
   }
 }
