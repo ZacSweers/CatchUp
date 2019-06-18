@@ -15,12 +15,6 @@
  */
 package io.sweers.catchup.service.api
 
-import io.reactivex.Completable
-
 interface LinkHandler {
-  fun openUrl(meta: UrlMeta) {
-    openUrlCompletable(meta).subscribe()
-  }
-
-  fun openUrlCompletable(meta: UrlMeta): Completable
+  suspend fun openUrl(meta: UrlMeta)
 }
