@@ -57,7 +57,6 @@ object build {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val androidx = "1.0.0"
     const val apollo = "1.0.0"
     const val autodispose = "1.3.0"
     const val chuck = "1.1.0"
@@ -71,35 +70,35 @@ object deps {
     const val kotlin = "1.3.40-eap-105"
     const val leakcanary = "2.0-alpha-2"
     const val legacySupport = "28.0.0"
-    const val markwon = "3.0.0"
+    const val markwon = "3.0.1"
     const val moshi = "1.8.0"
-    const val okhttp = "4.0.0-alpha02"
+    const val okhttp = "4.0.0-RC1"
     const val retrofit = "2.6.0"
     const val rxbinding = "2.2.0"
     const val rxpalette = "0.3.0"
-    const val spotless = "3.23.0"
+    const val spotless = "3.23.1"
     const val stetho = "1.5.1"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
 
   object android {
     object androidx {
-      const val annotations = "androidx.annotation:annotation:1.1.0-rc01"
+      const val annotations = "androidx.annotation:annotation:1.1.0"
       const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
-      const val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha05"
+      const val appCompat = "androidx.appcompat:appcompat:1.1.0-beta01"
 
-      private const val coreVersion = "1.2.0-alpha01"
+      private const val coreVersion = "1.2.0-alpha02"
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
       const val customTabs = "androidx.browser:browser:1.0.0"
-      const val design = "com.google.android.material:material:1.1.0-alpha06"
-      const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0-alpha01"
+      const val design = "com.google.android.material:material:1.1.0-alpha07"
+      const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0-alpha02"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
 
-      private const val fragmentVersion = "1.1.0-alpha09"
+      private const val fragmentVersion = "1.1.0-beta01"
       const val fragment = "androidx.fragment:fragment:$fragmentVersion"
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
@@ -120,7 +119,7 @@ object deps {
       }
 
       object room {
-        private const val version = "2.1.0-rc01"
+        private const val version = "2.1.0"
         const val apt = "androidx.room:room-compiler:$version"
         const val runtime = "androidx.room:room-runtime:$version"
         const val rxJava2 = "androidx.room:room-rxjava2:$version"
@@ -135,11 +134,11 @@ object deps {
     }
 
     object firebase {
-      const val core = "com.google.firebase:firebase-core:16.0.9"
-      const val config = "com.google.firebase:firebase-config:16.3.0"
-      const val database = "com.google.firebase:firebase-database:17.0.0"
+      const val core = "com.google.firebase:firebase-core:17.0.0"
+      const val config = "com.google.firebase:firebase-config:18.0.0"
+      const val database = "com.google.firebase:firebase-database:18.0.0"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
-      const val perf = "com.google.firebase:firebase-perf:16.2.3"
+      const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
 
     const val gradlePlugin = "com.android.tools.build:gradle:3.6.0-alpha03"
@@ -186,7 +185,7 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.3.1"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.4.0"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:2.2.1"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${deps.versions.spotless}"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.21.0"
@@ -295,7 +294,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.2.1"
+    private const val coroutinesVersion = "1.3.0-M1"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
@@ -323,12 +322,12 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakSentry = "com.squareup.leakcanary:leaksentry:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.14.2"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.15.0"
 
     object debug {
       const val flipper = "com.facebook.flipper:flipper:0.21.1"
       const val soLoader = "com.facebook.soloader:soloader:0.6.0"
-      const val guava = "com.google.guava:guava:27.1-android"
+      const val guava = "com.google.guava:guava:28.0-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"
       const val scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"

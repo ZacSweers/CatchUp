@@ -43,7 +43,7 @@ import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
@@ -173,7 +173,7 @@ internal class BugReportLens @Inject constructor(
           .postImage(MultipartBody.Part.createFormData(
               "image",
               finalScreenshot.name,
-              finalScreenshot.toRequestBody(MediaType.parse("image/*"))
+              finalScreenshot.toRequestBody("image/*".toMediaTypeOrNull())
           ))
           .map { "\n\n![Screenshot]($it)" }
     } else Single.just("\n\nNo screenshot provided")

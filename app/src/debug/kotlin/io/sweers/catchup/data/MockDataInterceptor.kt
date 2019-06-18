@@ -21,7 +21,7 @@ import io.sweers.catchup.data.model.ServiceData
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -45,7 +45,7 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
       Response.Builder().request(request)
           .body(context.assets
               .open(formatUrl(serviceData, url)).source().buffer()
-              .readUtf8().toResponseBody(MediaType.parse("application/json")))
+              .readUtf8().toResponseBody("application/json".toMediaTypeOrNull()))
           .code(200)
           .protocol(Protocol.HTTP_1_1)
           .build()
