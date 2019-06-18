@@ -118,6 +118,7 @@ object deps {
         private const val version = "2.2.0-alpha01"
         const val apt = "androidx.lifecycle:lifecycle-compiler:$version"
         const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
+        const val ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
       }
 
       object room {
