@@ -20,6 +20,7 @@ package io.sweers.catchup.util
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatDelegate
 import io.sweers.catchup.P
 
@@ -38,8 +39,8 @@ inline fun Activity.updateNightMode() {
   }
 }
 
-fun Context.resolveActivity(): Activity {
-  if (this is Activity) {
+fun Context.resolveActivity(): ComponentActivity {
+  if (this is ComponentActivity) {
     return this
   }
   if (this is ContextWrapper) {

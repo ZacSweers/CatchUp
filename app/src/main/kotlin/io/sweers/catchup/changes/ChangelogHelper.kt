@@ -27,6 +27,7 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnLayout
+import androidx.lifecycle.lifecycleScope
 import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.Lazy
@@ -46,8 +47,6 @@ import io.sweers.catchup.util.markdown
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.resolveActivity
 import io.sweers.catchup.util.show
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.noties.markwon.Markwon
 import javax.inject.Inject
@@ -129,9 +128,10 @@ class ChangelogHelper @Inject constructor(
                               ColorStateList.valueOf(highlightColor),
                               ColorUtils.modifyAlpha(highlightColor, 0.1f)) {
                             override fun onClick(url: String) {
-                              GlobalScope.launch(Dispatchers.Main) {
+                              val resolvedActivity = context.resolveActivity()
+                              resolvedActivity.lifecycleScope.launch {
                                 linkManager.openUrl(
-                                    UrlMeta(url, highlightColor, context.resolveActivity()))
+                                    UrlMeta(url, highlightColor, resolvedActivity))
                               }
                             }
                           },

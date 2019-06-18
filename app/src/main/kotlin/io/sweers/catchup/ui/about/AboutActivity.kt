@@ -35,6 +35,7 @@ import androidx.core.text.layoutDirection
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.commitNow
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -61,8 +62,6 @@ import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.setLightStatusBar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotterknife.bindView
 import ru.noties.markwon.Markwon
@@ -191,7 +190,7 @@ class AboutFragment : InjectingBaseFragment() {
       setOf(
           object : TouchableUrlSpan(url, aboutText.linkTextColors, 0) {
             override fun onClick(url: String) {
-              GlobalScope.launch(Dispatchers.Main) {
+              viewLifecycleOwner.lifecycleScope.launch {
                 linkManager.openUrl(
                     UrlMeta(url, aboutText.highlightColor,
                         activity!!))
@@ -229,7 +228,7 @@ class AboutFragment : InjectingBaseFragment() {
     }
     bannerIcon.setOnLongClickListener {
       Toast.makeText(activity, R.string.icon_attribution, Toast.LENGTH_SHORT).show()
-      GlobalScope.launch(Dispatchers.Main) {
+      viewLifecycleOwner.lifecycleScope.launch {
         linkManager.openUrl(
             UrlMeta("https://cookicons.co", aboutText.highlightColor, activity!!))
       }

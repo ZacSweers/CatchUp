@@ -27,6 +27,7 @@ import androidx.annotation.Keep
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.lifecycleScope
 import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.Insert
@@ -57,10 +58,10 @@ import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.ui.base.InjectableBaseFragment
-import io.sweers.catchup.util.coroutines.liveCoroutineScope
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotterknife.bindView
 import javax.inject.Inject
@@ -164,7 +165,7 @@ class SmmryFragment : InjectableBaseFragment() {
     } else {
       loadingView.hide()
     }
-    viewLifecycleOwner.liveCoroutineScope {
+    viewLifecycleOwner.lifecycleScope.launch {
       val response = tryRequestFromStorage() ?: fetchFromNetwork()
       alreadyLoaded = true
       loadingView.hide(animate = true)

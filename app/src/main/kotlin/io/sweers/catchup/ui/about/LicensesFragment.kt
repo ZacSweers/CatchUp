@@ -27,6 +27,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
 import androidx.recyclerview.widget.RecyclerView
@@ -77,8 +78,6 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotterknife.bindView
 import okio.buffer
@@ -368,7 +367,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
                       .title.textColors.defaultColor
                 } ?: 0
             val context = itemView.context
-            GlobalScope.launch(Dispatchers.Main) {
+            viewLifecycleOwner.lifecycleScope.launch {
               linkManager.openUrl(
                   UrlMeta(item.clickUrl, accentColor,
                       context))
