@@ -46,6 +46,9 @@ import io.sweers.catchup.util.markdown
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.resolveActivity
 import io.sweers.catchup.util.show
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ru.noties.markwon.Markwon
 import javax.inject.Inject
 
@@ -126,8 +129,10 @@ class ChangelogHelper @Inject constructor(
                               ColorStateList.valueOf(highlightColor),
                               ColorUtils.modifyAlpha(highlightColor, 0.1f)) {
                             override fun onClick(url: String) {
-                              linkManager.openUrl(
-                                  UrlMeta(url, highlightColor, context.resolveActivity()))
+                              GlobalScope.launch(Dispatchers.Main) {
+                                linkManager.openUrl(
+                                    UrlMeta(url, highlightColor, context.resolveActivity()))
+                              }
                             }
                           },
                           StyleSpan(Typeface.BOLD)

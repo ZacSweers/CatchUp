@@ -77,6 +77,9 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotterknife.bindView
 import okio.buffer
 import okio.source
@@ -365,9 +368,11 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
                       .title.textColors.defaultColor
                 } ?: 0
             val context = itemView.context
-            linkManager.openUrl(
-                UrlMeta(item.clickUrl, accentColor,
-                    context))
+            GlobalScope.launch(Dispatchers.Main) {
+              linkManager.openUrl(
+                  UrlMeta(item.clickUrl, accentColor,
+                      context))
+            }
           }
         }
       }

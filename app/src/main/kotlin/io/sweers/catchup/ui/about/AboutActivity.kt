@@ -61,6 +61,9 @@ import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.setLightStatusBar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotterknife.bindView
 import ru.noties.markwon.Markwon
 import java.util.Locale
@@ -188,9 +191,11 @@ class AboutFragment : InjectingBaseFragment() {
       setOf(
           object : TouchableUrlSpan(url, aboutText.linkTextColors, 0) {
             override fun onClick(url: String) {
-              linkManager.openUrl(
-                  UrlMeta(url, aboutText.highlightColor,
-                      activity!!))
+              GlobalScope.launch(Dispatchers.Main) {
+                linkManager.openUrl(
+                    UrlMeta(url, aboutText.highlightColor,
+                        activity!!))
+              }
             }
           },
           StyleSpan(Typeface.BOLD)
@@ -224,8 +229,10 @@ class AboutFragment : InjectingBaseFragment() {
     }
     bannerIcon.setOnLongClickListener {
       Toast.makeText(activity, R.string.icon_attribution, Toast.LENGTH_SHORT).show()
-      linkManager.openUrl(
-          UrlMeta("https://cookicons.co", aboutText.highlightColor, activity!!))
+      GlobalScope.launch(Dispatchers.Main) {
+        linkManager.openUrl(
+            UrlMeta("https://cookicons.co", aboutText.highlightColor, activity!!))
+      }
       true
     }
 
