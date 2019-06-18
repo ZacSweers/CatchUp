@@ -63,6 +63,10 @@ kapt {
 dependencies {
   kapt(deps.android.androidx.room.apt)
 
+  implementation(deps.kotlin.coroutines)
+  implementation(deps.kotlin.coroutinesAndroid)
+  implementation(deps.kotlin.coroutinesRx)
+
   api(project(":service-registry:service-registry-annotations"))
   api(project(":libraries:retrofitconverters"))
   api(deps.android.androidx.room.runtime)
