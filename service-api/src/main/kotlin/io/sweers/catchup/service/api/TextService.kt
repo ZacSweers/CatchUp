@@ -20,6 +20,9 @@ import android.content.res.Configuration
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 interface TextService : Service {
   override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
@@ -33,12 +36,16 @@ interface TextService : Service {
         item = item,
         itemClickHandler = itemClickUrl?.let { url ->
           OnClickListener {
-            linkHandler().openUrl(createUrlMeta(url, context))
+            GlobalScope.launch(Dispatchers.Main) {
+              linkHandler().openUrl(createUrlMeta(url, context))
+            }
           }
         },
         markClickHandler = finalMarkClickUrl?.let { url ->
           OnClickListener {
-            linkHandler().openUrl(createUrlMeta(url, context))
+            GlobalScope.launch(Dispatchers.Main) {
+              linkHandler().openUrl(createUrlMeta(url, context))
+            }
           }
         },
         longClickHandler = item.summarizationInfo?.let {

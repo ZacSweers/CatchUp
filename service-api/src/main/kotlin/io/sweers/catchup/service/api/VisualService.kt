@@ -18,6 +18,9 @@ package io.sweers.catchup.service.api
 import android.content.res.Configuration
 import android.view.View.OnClickListener
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 interface VisualService : Service {
   override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
@@ -43,7 +46,9 @@ interface VisualService : Service {
                     image = holder.itemView()
                 )
             )
-            linkHandler().openUrl(urlMeta)
+            GlobalScope.launch(Dispatchers.Main) {
+              linkHandler().openUrl(urlMeta)
+            }
           }
         }
     )
