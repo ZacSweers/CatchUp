@@ -21,7 +21,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.view.View
 import android.widget.Toast
@@ -31,10 +30,7 @@ import androidx.collection.ArrayMap
 import androidx.core.util.toAndroidPair
 import com.f2prateek.rx.preferences2.Preference
 import com.uber.autodispose.autoDisposable
-import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.scopes.PerActivity
@@ -44,16 +40,18 @@ import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.ImageViewerActivity
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
+import io.sweers.catchup.util.kotlin.any
 import io.sweers.catchup.util.registerReceiver
-import io.sweers.catchup.util.rx.doOnEmpty
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 @PerActivity
 class LinkManager @Inject constructor(
-  private val customTab: CustomTabActivityHelper,
-  private val activity: Activity
-) :
-  LinkHandler {
+    private val customTab: CustomTabActivityHelper,
+    private val activity: Activity
+) : LinkHandler {
 
   private val globalSmartLinkingPref: Preference<Boolean> = P.SmartlinkingGlobal.rx()
 
@@ -87,7 +85,7 @@ class LinkManager @Inject constructor(
 
   @Suppress("MemberVisibilityCanPrivate")
   @CheckResult
-  override fun openUrlCompletable(meta: UrlMeta): Completable {
+  override suspend fun openUrl(meta: UrlMeta) {
     meta.imageViewerData?.let { imageData ->
       val intent = Intent(activity, ImageViewerActivity::class.java)
       intent.putExtra(ImageViewerActivity.INTENT_ID, imageData.id)
@@ -95,7 +93,7 @@ class LinkManager @Inject constructor(
       intent.putExtra(ImageViewerActivity.INTENT_SOURCE_URL, imageData.sourceUrl)
       val options = getActivityOptions(imageData)
       activity.startActivityForResult(intent, 101, options.toBundle())
-      return Completable.complete()
+      return
     }
     if (meta.isSupportedInMediaViewer()) {
       val intent = Intent(activity, ImageViewerActivity::class.java)
@@ -103,27 +101,25 @@ class LinkManager @Inject constructor(
       intent.putExtra(ImageViewerActivity.INTENT_URL, url)
       intent.putExtra(ImageViewerActivity.INTENT_SOURCE_URL, url)
       activity.startActivityForResult(intent, 102)
-      return Completable.complete()
+      return
     }
     val uri = meta.uri ?: run {
       Toast.makeText(meta.context, R.string.error_no_url, Toast.LENGTH_SHORT)
           .show()
-      return Completable.complete()
+      return
     }
     val intent = Intent(Intent.ACTION_VIEW, meta.uri)
     if (!globalSmartLinkingPref.get()) {
       openCustomTab(meta.context, uri, meta.accentColor)
-      return Completable.complete()
+      return
     }
 
-    return if (!dumbCache.containsKey(uri.host)) {
+    if (!dumbCache.containsKey(uri.host)) {
       queryAndOpen(meta.context, uri, intent, meta.accentColor)
     } else if (dumbCache[uri.host] == true) {
       meta.context.startActivity(intent)
-      Completable.complete()
     } else {
       openCustomTab(meta.context, uri, meta.accentColor)
-      Completable.complete()
     }
   }
 
@@ -146,30 +142,28 @@ class LinkManager @Inject constructor(
     }
   }
 
-  private fun queryAndOpen(
-    context: Context,
-    uri: Uri,
-    intent: Intent,
-    @ColorInt accentColor: Int
-  ): Completable {
+  private suspend fun queryAndOpen(
+      context: Context,
+      uri: Uri,
+      intent: Intent,
+      @ColorInt accentColor: Int
+  ) {
     val manager = context.packageManager
-    return Observable
-        .defer<ResolveInfo> {
-          Observable.fromIterable<ResolveInfo>(manager.queryIntentActivities(intent,
-              PackageManager.MATCH_DEFAULT_ONLY))
-        }
-        .filter { resolveInfo -> isSpecificUriMatch(resolveInfo.match) }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnEmpty {
-          dumbCache[uri.host] = false
-          openCustomTab(context, uri, accentColor)
-        }
-        .doOnNext {
-          dumbCache[uri.host] = true
-          context.startActivity(intent)
-        }
-        .ignoreElements()
+    val matchedUri = flow {
+      manager.queryIntentActivities(intent,
+          PackageManager.MATCH_DEFAULT_ONLY).forEach {
+        emit(it)
+      }
+    }.flowOn(Dispatchers.IO)
+        .any { resolveInfo -> isSpecificUriMatch(resolveInfo.match) }
+
+    if (matchedUri) {
+      dumbCache[uri.host] = true
+      context.startActivity(intent)
+    } else {
+      dumbCache[uri.host] = false
+      openCustomTab(context, uri, accentColor)
+    }
   }
 
   private fun openCustomTab(context: Context, uri: Uri, @ColorInt accentColor: Int) {
