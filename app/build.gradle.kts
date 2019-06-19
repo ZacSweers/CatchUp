@@ -33,7 +33,6 @@ apply {
 
 android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
-  buildToolsVersion(deps.android.build.buildToolsVersion)
 
   val versionCodePH = 99999
   val versionNamePH = "versionplaceholder"
