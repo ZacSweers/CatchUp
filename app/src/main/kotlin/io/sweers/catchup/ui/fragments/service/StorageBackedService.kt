@@ -28,11 +28,11 @@ import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
-import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.util.kotlin.switchIf
 import io.sweers.catchup.util.w
-import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
 import retrofit2.HttpException
@@ -221,9 +221,9 @@ class StorageBackedService(
 
   override fun bindItemView(item: CatchUpItem,
       holder: BindableCatchUpItemViewHolder,
-      clicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>,
-      markClicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>,
-      longClicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>
+      clicksChannel: Channel<UrlMeta>,
+      markClicksChannel: Channel<UrlMeta>,
+      longClicksChannel: Channel<UrlMeta>
   ) {
     delegate.bindItemView(item, holder, clicksChannel, markClicksChannel, longClicksChannel)
   }

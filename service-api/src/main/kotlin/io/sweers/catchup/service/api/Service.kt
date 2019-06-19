@@ -16,7 +16,7 @@
 package io.sweers.catchup.service.api
 
 import io.reactivex.Single
-import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.SendChannel
 
 interface Service {
   fun meta(): ServiceMeta
@@ -24,9 +24,9 @@ interface Service {
   fun bindItemView(
       item: CatchUpItem,
       holder: BindableCatchUpItemViewHolder,
-      clicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>,
-      markClicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>,
-      longClicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>
+      clicksChannel: SendChannel<UrlMeta>,
+      markClicksChannel: SendChannel<UrlMeta>,
+      longClicksChannel: SendChannel<UrlMeta>
   )
   fun rootService(): Service = this
 }

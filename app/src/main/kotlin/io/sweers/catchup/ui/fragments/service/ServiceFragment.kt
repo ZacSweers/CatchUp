@@ -56,9 +56,9 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
-import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
@@ -80,6 +80,7 @@ import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -107,6 +108,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   }
 
   protected val data = mutableListOf<T>()
+  private val clicksChannel = BroadcastChannel<UrlMeta>(Channel.BUFFERED)
 
   internal fun update(loadResult: LoadResult<T>) {
     when (loadResult) {
@@ -121,6 +123,10 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
       }
     }
   }
+
+  fun clicksFlow() = clicksChannel.asFlow()
+
+  protected fun clicksChannel(): SendChannel<UrlMeta> = clicksChannel
 
   fun getItems(): List<DisplayableItem> = data
 
@@ -172,10 +178,6 @@ class ServiceFragment : InjectingBaseFragment(),
   @Inject
   lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
   private lateinit var service: Service
-
-  private val clicksChannel = BroadcastChannel<suspend (LinkHandler) -> Unit>(Channel.BUFFERED)
-  private val markClicksChannel = BroadcastChannel<suspend (LinkHandler) -> Unit>(Channel.BUFFERED)
-  private val longClicksChannel = BroadcastChannel<suspend (LinkHandler) -> Unit>(Channel.BUFFERED)
 
   override fun toString() = "ServiceFragment: ${arguments?.get(ARG_SERVICE_KEY)}"
 
@@ -229,12 +231,12 @@ class ServiceFragment : InjectingBaseFragment(),
       context: Context
   ): DisplayableItemAdapter<out DisplayableItem, ViewHolder> {
     if (service.meta().isVisual) {
-      val adapter = ImageAdapter(context) { item, holder ->
+      val adapter = ImageAdapter(context) { item, holder, clicksChannel ->
         service.bindItemView(item.realItem(),
             holder,
             clicksChannel,
-            markClicksChannel,
-            longClicksChannel
+            clicksChannel,
+            clicksChannel
         )
       }
       val preloader = RecyclerViewPreloader(GlideApp.with(context),
@@ -244,11 +246,11 @@ class ServiceFragment : InjectingBaseFragment(),
       recyclerView.addOnScrollListener(preloader)
       return adapter
     } else {
-      return TextAdapter { item, holder ->
+      return TextAdapter { item, holder, clicksChannel ->
         service.bindItemView(item, holder,
             clicksChannel,
-            markClicksChannel,
-            longClicksChannel
+            clicksChannel,
+            clicksChannel
         )
         if (BuildConfig.DEBUG) {
           item.summarizationInfo?.let { info ->
@@ -297,14 +299,8 @@ class ServiceFragment : InjectingBaseFragment(),
       }
     }
     viewLifecycleOwner.lifecycleScope.launch {
-      clicksChannel.asFlow().collect {
-        it(linkManager)
-      }
-      markClicksChannel.asFlow().collect {
-        it(linkManager)
-      }
-      longClicksChannel.asFlow().collect {
-        it(linkManager)
+      adapter.clicksFlow().collect {
+        linkManager.openUrl(it)
       }
     }
     onClick<View>(R.id.retry_button) {
@@ -550,7 +546,7 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   private class TextAdapter(
-      private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder) -> Unit
+      private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder, clicksChannel: SendChannel<UrlMeta>) -> Unit
   ) :
       DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
 

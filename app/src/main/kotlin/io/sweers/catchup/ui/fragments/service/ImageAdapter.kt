@@ -51,16 +51,18 @@ import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.ObservableColorMatrix
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.glide.CatchUpTarget
 import io.sweers.catchup.util.isInNightMode
+import kotlinx.coroutines.channels.SendChannel
 
 internal class ImageAdapter(
   private val context: Context,
-  private val bindDelegate: (ImageItem, ImageHolder) -> Unit
+  private val bindDelegate: (ImageItem, ImageHolder, clicksChannel: SendChannel<UrlMeta>) -> Unit
 ) :
   DisplayableItemAdapter<ImageItem, ViewHolder>(columnCount = 2),
     DataLoadingSubject.DataLoadingCallbacks,
