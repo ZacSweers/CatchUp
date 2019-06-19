@@ -1,12 +1,10 @@
-import org.gradle.api.JavaVersion.VERSION_1_8
-
 plugins {
-  id("java-library")
+  `java-library`
 }
 
 java {
-  sourceCompatibility = VERSION_1_8
-  targetCompatibility = VERSION_1_8
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 dependencies {

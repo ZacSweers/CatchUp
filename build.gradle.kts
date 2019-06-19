@@ -52,7 +52,7 @@ plugins {
 
 buildScan {
   termsOfServiceAgree = "yes"
-  setTermsOfServiceUrl("https://gradle.com/terms-of-service")
+  termsOfServiceUrl = "https://gradle.com/terms-of-service"
 }
 
 // Due to https://github.com/gradle/gradle/issues/4823
