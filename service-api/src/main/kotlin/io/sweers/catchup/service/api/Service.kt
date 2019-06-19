@@ -16,11 +16,17 @@
 package io.sweers.catchup.service.api
 
 import io.reactivex.Single
+import kotlinx.coroutines.channels.BroadcastChannel
 
 interface Service {
   fun meta(): ServiceMeta
   fun fetchPage(request: DataRequest): Single<DataResult>
-  fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder)
-  fun linkHandler(): LinkHandler
+  fun bindItemView(
+      item: CatchUpItem,
+      holder: BindableCatchUpItemViewHolder,
+      clicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>,
+      markClicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>,
+      longClicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>
+  )
   fun rootService(): Service = this
 }

@@ -28,7 +28,6 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.ImageInfo
-import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
@@ -54,8 +53,7 @@ private const val SERVICE_KEY = "unsplash"
 
 internal class UnsplashService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
-  private val api: UnsplashApi,
-  private val linkHandler: LinkHandler
+  private val api: UnsplashApi
 ) :
   VisualService {
 
@@ -89,8 +87,6 @@ internal class UnsplashService @Inject constructor(
         .toList()
         .map { DataResult(it, (page + 1).toString()) }
   }
-
-  override fun linkHandler() = linkHandler
 
   override fun spanConfig() = SpanConfig(3) {
     /* emulating https://material-design.storage.googleapis.com/publish/material_v_4/material_ext_publish/0B6Okdz75tqQsck9lUkgxNVZza1U/style_imagery_integration_scale1.png */

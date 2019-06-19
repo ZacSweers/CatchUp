@@ -28,7 +28,6 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.ImageInfo
-import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
@@ -50,8 +49,7 @@ private const val SERVICE_KEY = "dribbble"
 
 internal class DribbbleService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
-  private val api: DribbbleApi,
-  private val linkHandler: LinkHandler
+  private val api: DribbbleApi
 ) :
   VisualService {
 
@@ -84,8 +82,6 @@ internal class DribbbleService @Inject constructor(
         .toList()
         .map { DataResult(it, (page + 1).toString()) }
   }
-
-  override fun linkHandler() = linkHandler
 }
 
 @Meta

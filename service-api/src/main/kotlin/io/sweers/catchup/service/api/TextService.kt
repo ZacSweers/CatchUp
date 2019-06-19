@@ -20,12 +20,15 @@ import android.content.res.Configuration
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.BroadcastChannel
 
 interface TextService : Service {
-  override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
+  override fun bindItemView(
+      item: CatchUpItem,
+      holder: BindableCatchUpItemViewHolder,
+      clicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>,
+      markClicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>,
+      longClicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>) {
     val context = holder.itemView().context
     val accentColor = ContextCompat.getColor(context, meta().themeColor)
     holder.tint(accentColor)
@@ -36,15 +39,15 @@ interface TextService : Service {
         item = item,
         itemClickHandler = itemClickUrl?.let { url ->
           OnClickListener {
-            GlobalScope.launch(Dispatchers.Main) {
-              linkHandler().openUrl(createUrlMeta(url, context))
+            clicksChannel.offer {
+              it.openUrl(createUrlMeta(url, context))
             }
           }
         },
         markClickHandler = finalMarkClickUrl?.let { url ->
           OnClickListener {
-            GlobalScope.launch(Dispatchers.Main) {
-              linkHandler().openUrl(createUrlMeta(url, context))
+            markClicksChannel.offer {
+              it.openUrl(createUrlMeta(url, context))
             }
           }
         },

@@ -18,12 +18,15 @@ package io.sweers.catchup.service.api
 import android.content.res.Configuration
 import android.view.View.OnClickListener
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.BroadcastChannel
 
 interface VisualService : Service {
-  override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
+  override fun bindItemView(
+      item: CatchUpItem,
+      holder: BindableCatchUpItemViewHolder,
+      clicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>,
+      markClicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>,
+      longClicksChannel: BroadcastChannel<suspend (LinkHandler) -> Unit>) {
     val context = holder.itemView().context
     val accentColor = ContextCompat.getColor(context, meta().themeColor)
     holder.tint(accentColor)
@@ -46,8 +49,8 @@ interface VisualService : Service {
                     image = holder.itemView()
                 )
             )
-            GlobalScope.launch(Dispatchers.Main) {
-              linkHandler().openUrl(urlMeta)
+            clicksChannel.offer {
+              it.openUrl(urlMeta)
             }
           }
         }

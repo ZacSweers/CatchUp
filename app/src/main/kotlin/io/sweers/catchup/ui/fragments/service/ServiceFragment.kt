@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.commitNow
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DiffUtil.DiffResult
@@ -51,9 +52,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
+import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
+import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
 import io.sweers.catchup.service.api.VisualService
@@ -75,6 +78,11 @@ import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotterknife.bindView
 import kotterknife.onClick
 import me.saket.inboxrecyclerview.InboxRecyclerView
@@ -89,9 +97,9 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
-  val columnCount: Int = 1
+    val columnCount: Int = 1
 ) :
-  Adapter<VH>(), DataLoadingCallbacks {
+    Adapter<VH>(), DataLoadingCallbacks {
 
   companion object Blah {
     const val TYPE_ITEM = 0
@@ -152,6 +160,8 @@ class ServiceFragment : InjectingBaseFragment(),
   private var pendingRVState: Parcelable? = null
   private val defaultItemAnimator = DefaultItemAnimator()
 
+  @Inject
+  internal lateinit var linkManager: LinkManager
   @field:TextViewPool
   @Inject
   lateinit var textViewPool: RecycledViewPool
@@ -163,14 +173,18 @@ class ServiceFragment : InjectingBaseFragment(),
   lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
   private lateinit var service: Service
 
+  private val clicksChannel = BroadcastChannel<suspend (LinkHandler) -> Unit>(Channel.BUFFERED)
+  private val markClicksChannel = BroadcastChannel<suspend (LinkHandler) -> Unit>(Channel.BUFFERED)
+  private val longClicksChannel = BroadcastChannel<suspend (LinkHandler) -> Unit>(Channel.BUFFERED)
+
   override fun toString() = "ServiceFragment: ${arguments?.get(ARG_SERVICE_KEY)}"
 
   override fun isDataLoading(): Boolean = dataLoading
 
   override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?
   ): View {
     return inflater.inflate(R.layout.fragment_service, container, false)
   }
@@ -184,8 +198,8 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   private fun createLayoutManager(
-    context: Context,
-    adapter: DisplayableItemAdapter<*, *>
+      context: Context,
+      adapter: DisplayableItemAdapter<*, *>
   ): LinearLayoutManager {
     return if (service.meta().isVisual) {
       val spanConfig = (service.rootService() as VisualService).spanConfig()
@@ -212,11 +226,16 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   private fun createAdapter(
-    context: Context
+      context: Context
   ): DisplayableItemAdapter<out DisplayableItem, ViewHolder> {
     if (service.meta().isVisual) {
       val adapter = ImageAdapter(context) { item, holder ->
-        service.bindItemView(item.realItem(), holder)
+        service.bindItemView(item.realItem(),
+            holder,
+            clicksChannel,
+            markClicksChannel,
+            longClicksChannel
+        )
       }
       val preloader = RecyclerViewPreloader(GlideApp.with(context),
           adapter,
@@ -226,7 +245,11 @@ class ServiceFragment : InjectingBaseFragment(),
       return adapter
     } else {
       return TextAdapter { item, holder ->
-        service.bindItemView(item, holder)
+        service.bindItemView(item, holder,
+            clicksChannel,
+            markClicksChannel,
+            longClicksChannel
+        )
         if (BuildConfig.DEBUG) {
           item.summarizationInfo?.let { info ->
             // We're not supporting this for now since it's not ready yet
@@ -271,6 +294,17 @@ class ServiceFragment : InjectingBaseFragment(),
         errorView.hide()
         recyclerView.show()
         recyclerView.itemAnimator = defaultItemAnimator
+      }
+    }
+    viewLifecycleOwner.lifecycleScope.launch {
+      clicksChannel.asFlow().collect {
+        it(linkManager)
+      }
+      markClicksChannel.asFlow().collect {
+        it(linkManager)
+      }
+      longClicksChannel.asFlow().collect {
+        it(linkManager)
       }
     }
     onClick<View>(R.id.retry_button) {
@@ -516,9 +550,9 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   private class TextAdapter(
-    private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder) -> Unit
+      private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder) -> Unit
   ) :
-    DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
+      DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
 
     private var showLoadingMore = false
 
@@ -601,16 +635,16 @@ class LoadingMoreHolder(itemView: View) : ViewHolder(itemView) {
 @Suppress("unused")
 internal sealed class LoadResult<T : DisplayableItem> {
   data class DiffResultData<T : DisplayableItem>(
-    val data: List<T>,
-    val diffResult: DiffResult
+      val data: List<T>,
+      val diffResult: DiffResult
   ) : LoadResult<T>()
 
   data class NewData<T : DisplayableItem>(val newData: List<T>) : LoadResult<T>()
 }
 
 internal class ItemUpdateCallback<T : DisplayableItem>(
-  private val oldItems: List<T>,
-  private val newItems: List<T>
+    private val oldItems: List<T>,
+    private val newItems: List<T>
 ) : DiffUtil.Callback() {
   override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
       oldItems[oldItemPosition].stableId() == newItems[newItemPosition].stableId()

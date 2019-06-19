@@ -30,7 +30,6 @@ import io.reactivex.SingleEmitter
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
-import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
@@ -54,8 +53,7 @@ private const val SERVICE_KEY = "hn"
 
 internal class HackerNewsService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
-  private val database: dagger.Lazy<FirebaseDatabase>,
-  private val linkHandler: LinkHandler
+  private val database: dagger.Lazy<FirebaseDatabase>
 ) :
   TextService {
 
@@ -137,8 +135,6 @@ internal class HackerNewsService @Inject constructor(
           }
         }
   }
-
-  override fun linkHandler() = linkHandler
 }
 
 @Meta
