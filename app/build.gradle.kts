@@ -407,7 +407,7 @@ dependencies {
 
   implementation(deps.markwon.core)
   implementation(deps.markwon.gif)
-//  implementation(deps.markwon.imageOkHttp)
+  implementation(deps.markwon.imageOkHttp)
   implementation(deps.markwon.strikethrough)
 //  implementation(deps.markwon.syntaxHighlight)
   implementation(deps.markwon.tables)
