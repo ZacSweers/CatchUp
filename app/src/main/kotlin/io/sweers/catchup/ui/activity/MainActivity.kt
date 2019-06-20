@@ -109,7 +109,6 @@ class MainActivity : InjectingBaseActivity() {
     }
 
     @Multibinds
-    @PerActivity
     abstract fun services(): Map<String, Service>
 
     @Multibinds
