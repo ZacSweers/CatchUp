@@ -70,7 +70,7 @@ object deps {
     const val kotlin = "1.3.40-eap-105"
     const val leakcanary = "2.0-alpha-2"
     const val legacySupport = "28.0.0"
-    const val markwon = "3.0.1"
+    const val markwon = "3.0.2"
     const val moshi = "1.8.0"
     const val okhttp = "4.0.0-RC1"
     const val retrofit = "2.6.0"
