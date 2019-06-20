@@ -51,8 +51,8 @@ abstract class ApplicationModule {
     @JvmStatic
     @Singleton
     internal fun markwon(
-        @ApplicationContext context: Context, // TODO should use themed one from activity?
-        okhttpClient: dagger.Lazy<OkHttpClient>
+      @ApplicationContext context: Context, // TODO should use themed one from activity?
+      okhttpClient: dagger.Lazy<OkHttpClient>
     ): Markwon {
       return Markwon.builder(context)
           .usePlugins(listOf(
