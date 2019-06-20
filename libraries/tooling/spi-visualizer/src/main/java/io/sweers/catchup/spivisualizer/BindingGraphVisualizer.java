@@ -15,6 +15,10 @@
  */
 package io.sweers.catchup.spivisualizer;
 
+import static java.util.UUID.randomUUID;
+import static java.util.regex.Matcher.quoteReplacement;
+import static java.util.stream.Collectors.groupingBy;
+
 import com.google.auto.service.AutoService;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -51,10 +55,6 @@ import javax.annotation.processing.Filer;
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
-
-import static java.util.UUID.randomUUID;
-import static java.util.regex.Matcher.quoteReplacement;
-import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Experimental visualizer used as a proof-of-concept for {@link BindingGraphPlugin}.
