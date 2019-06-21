@@ -219,11 +219,12 @@ class StorageBackedService(
         }
   }
 
-  override fun bindItemView(item: CatchUpItem,
-      holder: BindableCatchUpItemViewHolder,
-      clicksChannel: SendChannel<UrlMeta>,
-      markClicksChannel: SendChannel<UrlMeta>,
-      longClicksChannel: SendChannel<UrlMeta>
+  override fun bindItemView(
+    item: CatchUpItem,
+    holder: BindableCatchUpItemViewHolder,
+    clicksChannel: SendChannel<UrlMeta>,
+    markClicksChannel: SendChannel<UrlMeta>,
+    longClicksChannel: SendChannel<UrlMeta>
   ) {
     delegate.bindItemView(item, holder, clicksChannel, markClicksChannel, longClicksChannel)
   }

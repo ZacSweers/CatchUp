@@ -98,7 +98,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
-    val columnCount: Int = 1
+  val columnCount: Int = 1
 ) :
     Adapter<VH>(), DataLoadingCallbacks {
 
@@ -184,9 +184,9 @@ class ServiceFragment : InjectingBaseFragment(),
   override fun isDataLoading(): Boolean = dataLoading
 
   override fun inflateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
   ): View {
     return inflater.inflate(R.layout.fragment_service, container, false)
   }
@@ -200,8 +200,8 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   private fun createLayoutManager(
-      context: Context,
-      adapter: DisplayableItemAdapter<*, *>
+    context: Context,
+    adapter: DisplayableItemAdapter<*, *>
   ): LinearLayoutManager {
     return if (service.meta().isVisual) {
       val spanConfig = (service.rootService() as VisualService).spanConfig()
@@ -228,7 +228,7 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   private fun createAdapter(
-      context: Context
+    context: Context
   ): DisplayableItemAdapter<out DisplayableItem, ViewHolder> {
     if (service.meta().isVisual) {
       val adapter = ImageAdapter(context) { item, holder, clicksChannel ->
@@ -546,7 +546,7 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   private class TextAdapter(
-      private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder, clicksChannel: SendChannel<UrlMeta>) -> Unit
+    private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder, clicksChannel: SendChannel<UrlMeta>) -> Unit
   ) :
       DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
 
@@ -631,16 +631,16 @@ class LoadingMoreHolder(itemView: View) : ViewHolder(itemView) {
 @Suppress("unused")
 internal sealed class LoadResult<T : DisplayableItem> {
   data class DiffResultData<T : DisplayableItem>(
-      val data: List<T>,
-      val diffResult: DiffResult
+    val data: List<T>,
+    val diffResult: DiffResult
   ) : LoadResult<T>()
 
   data class NewData<T : DisplayableItem>(val newData: List<T>) : LoadResult<T>()
 }
 
 internal class ItemUpdateCallback<T : DisplayableItem>(
-    private val oldItems: List<T>,
-    private val newItems: List<T>
+  private val oldItems: List<T>,
+  private val newItems: List<T>
 ) : DiffUtil.Callback() {
   override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
       oldItems[oldItemPosition].stableId() == newItems[newItemPosition].stableId()

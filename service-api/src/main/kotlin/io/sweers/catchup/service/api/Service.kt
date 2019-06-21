@@ -22,11 +22,11 @@ interface Service {
   fun meta(): ServiceMeta
   fun fetchPage(request: DataRequest): Single<DataResult>
   fun bindItemView(
-      item: CatchUpItem,
-      holder: BindableCatchUpItemViewHolder,
-      clicksChannel: SendChannel<UrlMeta>,
-      markClicksChannel: SendChannel<UrlMeta>,
-      longClicksChannel: SendChannel<UrlMeta>
+    item: CatchUpItem,
+    holder: BindableCatchUpItemViewHolder,
+    clicksChannel: SendChannel<UrlMeta>,
+    markClicksChannel: SendChannel<UrlMeta>,
+    longClicksChannel: SendChannel<UrlMeta>
   )
   fun rootService(): Service = this
 }

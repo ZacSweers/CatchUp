@@ -49,8 +49,8 @@ import javax.inject.Inject
 
 @PerActivity
 class LinkManager @Inject constructor(
-    private val customTab: CustomTabActivityHelper,
-    private val activity: Activity
+  private val customTab: CustomTabActivityHelper,
+  private val activity: Activity
 ) : LinkHandler {
 
   private val globalSmartLinkingPref: Preference<Boolean> = P.SmartlinkingGlobal.rx()
@@ -143,10 +143,10 @@ class LinkManager @Inject constructor(
   }
 
   private suspend fun queryAndOpen(
-      context: Context,
-      uri: Uri,
-      intent: Intent,
-      @ColorInt accentColor: Int
+    context: Context,
+    uri: Uri,
+    intent: Intent,
+    @ColorInt accentColor: Int
   ) {
     val manager = context.packageManager
     val matchedUri = flow {
