@@ -170,7 +170,7 @@ internal class ImageAdapter(
         }
         // TODO This is kind of ugly but not sure what else to do. Holder can't be an inner class to avoid mem leaks
         imageHolder.backingImageItem = imageItem
-        bindDelegate(imageItem, holder)
+        bindDelegate(imageItem, holder, clicksChannel())
             .also {
               holder.backingImageItem = null
             }

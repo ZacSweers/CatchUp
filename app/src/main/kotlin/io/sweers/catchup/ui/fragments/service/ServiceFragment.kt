@@ -581,7 +581,7 @@ class ServiceFragment : InjectingBaseFragment(),
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
       when (getItemViewType(position)) {
         TYPE_ITEM -> try {
-          bindDelegate(data[position], holder as CatchUpItemViewHolder)
+          bindDelegate(data[position], holder as CatchUpItemViewHolder, clicksChannel())
         } catch (error: Exception) {
           e(error) { "Bind delegate failure!" }
         }
