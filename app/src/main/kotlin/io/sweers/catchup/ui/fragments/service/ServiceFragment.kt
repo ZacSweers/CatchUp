@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.commitNow
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DiffUtil.DiffResult
@@ -51,11 +52,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
+import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
+import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
@@ -75,6 +78,12 @@ import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotterknife.bindView
 import kotterknife.onClick
 import me.saket.inboxrecyclerview.InboxRecyclerView
@@ -91,7 +100,7 @@ import javax.inject.Provider
 abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   val columnCount: Int = 1
 ) :
-  Adapter<VH>(), DataLoadingCallbacks {
+    Adapter<VH>(), DataLoadingCallbacks {
 
   companion object Blah {
     const val TYPE_ITEM = 0
@@ -99,6 +108,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   }
 
   protected val data = mutableListOf<T>()
+  private val clicksChannel = BroadcastChannel<UrlMeta>(Channel.BUFFERED)
 
   internal fun update(loadResult: LoadResult<T>) {
     when (loadResult) {
@@ -113,6 +123,10 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
       }
     }
   }
+
+  fun clicksFlow() = clicksChannel.asFlow()
+
+  protected fun clicksChannel(): SendChannel<UrlMeta> = clicksChannel
 
   fun getItems(): List<DisplayableItem> = data
 
@@ -152,6 +166,8 @@ class ServiceFragment : InjectingBaseFragment(),
   private var pendingRVState: Parcelable? = null
   private val defaultItemAnimator = DefaultItemAnimator()
 
+  @Inject
+  internal lateinit var linkManager: LinkManager
   @field:TextViewPool
   @Inject
   lateinit var textViewPool: RecycledViewPool
@@ -215,8 +231,13 @@ class ServiceFragment : InjectingBaseFragment(),
     context: Context
   ): DisplayableItemAdapter<out DisplayableItem, ViewHolder> {
     if (service.meta().isVisual) {
-      val adapter = ImageAdapter(context) { item, holder ->
-        service.bindItemView(item.realItem(), holder)
+      val adapter = ImageAdapter(context) { item, holder, clicksChannel ->
+        service.bindItemView(item.realItem(),
+            holder,
+            clicksChannel,
+            clicksChannel,
+            clicksChannel
+        )
       }
       val preloader = RecyclerViewPreloader(GlideApp.with(context),
           adapter,
@@ -225,8 +246,12 @@ class ServiceFragment : InjectingBaseFragment(),
       recyclerView.addOnScrollListener(preloader)
       return adapter
     } else {
-      return TextAdapter { item, holder ->
-        service.bindItemView(item, holder)
+      return TextAdapter { item, holder, clicksChannel ->
+        service.bindItemView(item, holder,
+            clicksChannel,
+            clicksChannel,
+            clicksChannel
+        )
         if (BuildConfig.DEBUG) {
           item.summarizationInfo?.let { info ->
             // We're not supporting this for now since it's not ready yet
@@ -271,6 +296,11 @@ class ServiceFragment : InjectingBaseFragment(),
         errorView.hide()
         recyclerView.show()
         recyclerView.itemAnimator = defaultItemAnimator
+      }
+    }
+    viewLifecycleOwner.lifecycleScope.launch {
+      adapter.clicksFlow().collect {
+        linkManager.openUrl(it)
       }
     }
     onClick<View>(R.id.retry_button) {
@@ -516,9 +546,9 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   private class TextAdapter(
-    private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder) -> Unit
+    private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder, clicksChannel: SendChannel<UrlMeta>) -> Unit
   ) :
-    DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
+      DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
 
     private var showLoadingMore = false
 
@@ -551,7 +581,7 @@ class ServiceFragment : InjectingBaseFragment(),
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
       when (getItemViewType(position)) {
         TYPE_ITEM -> try {
-          bindDelegate(data[position], holder as CatchUpItemViewHolder)
+          bindDelegate(data[position], holder as CatchUpItemViewHolder, clicksChannel())
         } catch (error: Exception) {
           e(error) { "Bind delegate failure!" }
         }

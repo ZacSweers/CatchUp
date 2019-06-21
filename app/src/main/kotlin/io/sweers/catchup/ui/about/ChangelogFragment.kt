@@ -22,6 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.ProgressBar
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
@@ -44,6 +45,7 @@ import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotlinx.coroutines.launch
 import kotterknife.bindView
 import org.threeten.bp.Instant
 import java.io.IOException
@@ -164,7 +166,9 @@ class ChangelogFragment : InjectableBaseFragment(), Scrollable {
         author(null)
         hideMark()
         holder.container.setOnClickListener {
-          linkManager.openUrl(UrlMeta(item.url, 0, itemView.context))
+          viewLifecycleOwner.lifecycleScope.launch {
+            linkManager.openUrl(UrlMeta(item.url, 0, itemView.context))
+          }
         }
       }
     }

@@ -28,7 +28,6 @@ import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
-import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
@@ -53,8 +52,7 @@ private const val SERVICE_KEY = "dn"
 
 internal class DesignerNewsService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
-  private val api: DesignerNewsApi,
-  private val linkHandler: LinkHandler
+  private val api: DesignerNewsApi
 ) :
   TextService {
 
@@ -87,8 +85,6 @@ internal class DesignerNewsService @Inject constructor(
         .toList()
         .map { DataResult(it, (page + 1).toString()) }
   }
-
-  override fun linkHandler() = linkHandler
 }
 
 @Meta

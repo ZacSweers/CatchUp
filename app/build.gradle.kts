@@ -449,6 +449,8 @@ dependencies {
   implementation(deps.kotlin.stdlib.jdk7)
   implementation(deps.kotlin.coroutines)
   implementation(deps.kotlin.coroutinesAndroid)
+  implementation(deps.kotlin.coroutinesRx)
+  implementation(deps.android.androidx.lifecycle.ktx)
 
   // Moshi
   kapt(deps.moshi.compiler)

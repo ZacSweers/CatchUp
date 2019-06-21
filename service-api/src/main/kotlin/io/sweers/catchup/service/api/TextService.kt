@@ -20,9 +20,16 @@ import android.content.res.Configuration
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.channels.SendChannel
 
 interface TextService : Service {
-  override fun bindItemView(item: CatchUpItem, holder: BindableCatchUpItemViewHolder) {
+  override fun bindItemView(
+    item: CatchUpItem,
+    holder: BindableCatchUpItemViewHolder,
+    clicksChannel: SendChannel<UrlMeta>,
+    markClicksChannel: SendChannel<UrlMeta>,
+    longClicksChannel: SendChannel<UrlMeta>
+  ) {
     val context = holder.itemView().context
     val accentColor = ContextCompat.getColor(context, meta().themeColor)
     holder.tint(accentColor)
@@ -33,12 +40,12 @@ interface TextService : Service {
         item = item,
         itemClickHandler = itemClickUrl?.let { url ->
           OnClickListener {
-            linkHandler().openUrl(createUrlMeta(url, context))
+            clicksChannel.offer(createUrlMeta(url, context))
           }
         },
         markClickHandler = finalMarkClickUrl?.let { url ->
           OnClickListener {
-            linkHandler().openUrl(createUrlMeta(url, context))
+            markClicksChannel.offer(createUrlMeta(url, context))
           }
         },
         longClickHandler = item.summarizationInfo?.let {

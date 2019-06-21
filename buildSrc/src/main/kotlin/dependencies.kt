@@ -49,7 +49,9 @@ object build {
       "-XXLanguage:+NewInference",
       "-XXLanguage:+SamConversionForKotlinFunctions",
       "-XXLanguage:+InlineClasses",
-      "-Xuse-experimental=kotlin.Experimental"
+      "-Xuse-experimental=kotlin.Experimental",
+      "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
+      "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
   )
   fun isCi(): Boolean = System.getenv("CI")?.toBoolean() == true
 }
@@ -116,6 +118,7 @@ object deps {
         private const val version = "2.2.0-alpha01"
         const val apt = "androidx.lifecycle:lifecycle-compiler:$version"
         const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
+        const val ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
       }
 
       object room {
@@ -296,6 +299,7 @@ object deps {
     private const val coroutinesVersion = "1.3.0-M1"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+    const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     const val metadata = "me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.4.0"
     const val noArgGradlePlugin = "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
