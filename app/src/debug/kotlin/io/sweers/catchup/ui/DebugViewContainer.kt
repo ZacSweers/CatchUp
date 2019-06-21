@@ -190,9 +190,12 @@ internal class DebugViewContainer @Inject constructor(
     @Suppress("DEPRECATION")
     fun riseAndShine(activity: Activity) {
       if (Build.VERSION.SDK_INT >= 27) {
-        activity.run {
-          setShowWhenLocked(true)
-          setTurnScreenOn(true)
+        // Don't run on Q+ because the gesture nav makes this a crappy experience
+        if (Build.VERSION.SDK_INT < 29) {
+          activity.run {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+          }
         }
       } else {
         activity.window
