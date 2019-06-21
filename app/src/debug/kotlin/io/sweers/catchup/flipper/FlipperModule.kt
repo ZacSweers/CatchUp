@@ -37,7 +37,6 @@ import javax.inject.Singleton
 abstract class FlipperModule {
 
   @Multibinds
-  @Singleton
   abstract fun provideFlipperPlugins(): Set<FlipperPlugin>
 
   @Binds
