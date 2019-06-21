@@ -63,7 +63,6 @@ kapt {
 dependencies {
   kapt(deps.android.androidx.room.apt)
 
-  implementation(deps.kotlin.coroutines)
   implementation(deps.kotlin.coroutinesAndroid)
   implementation(deps.kotlin.coroutinesRx)
 
@@ -73,6 +72,7 @@ dependencies {
   api(deps.android.androidx.annotations)
   api(deps.android.androidx.coreKtx)
   api(deps.dagger.runtime)
+  api(deps.kotlin.coroutines)
   api(deps.misc.lazythreeten)
   api(deps.rx.java)
 
