@@ -32,7 +32,7 @@ private val VIEW_KEY = "ViewCoroutineScope".hashCode()
  * This scope is bound to [Dispatchers.Main]
  */
 fun View.viewScope(allowOnUnAttach: Boolean = true): CoroutineScope {
-  if (!isAttachedToWindow && !allowOnUnAttach) {
+  if (!allowOnUnAttach && !isAttachedToWindow) {
     error("View is not attached!")
   }
   getTag(VIEW_KEY)?.let {
