@@ -56,7 +56,7 @@
       app:layout_constraintStart_toEndOf="@+id/icon"
       app:layout_constraintTop_toTopOf="parent"
       tools:text="Android"
-      style="@style/TextAppearance.AppCompat.Small"
+      style="@style/TextAppearance.MaterialComponents.Body1"
       />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

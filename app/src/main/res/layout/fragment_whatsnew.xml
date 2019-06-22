@@ -51,7 +51,7 @@
       app:layout_constraintTop_toBottomOf="@+id/icon"
       tools:text="0.1.0-88-g8fa4a5f"
       tools:visibility="visible"
-      style="@style/TextAppearance.AppCompat.Title"
+      style="@style/TextAppearance.MaterialComponents.Headline1"
       />
 
   <ScrollView
@@ -78,7 +78,7 @@
         app:fontFamily="@font/nunito"
         tools:text="Text on text on text!"
         tools:visibility="visible"
-        style="@style/TextAppearance.AppCompat.Small"
+        style="@style/TextAppearance.MaterialComponents.Body1"
         />
 
   </ScrollView>

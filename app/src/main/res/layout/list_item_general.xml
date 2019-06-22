@@ -34,8 +34,7 @@
       android:id="@+id/tags_container"
       android:layout_width="0dp"
       android:layout_height="0dp"
-      app:constraint_referenced_ids="score,
-            tag,timestamp"
+      app:constraint_referenced_ids="score,tag,timestamp"
       />
 
   <androidx.constraintlayout.widget.Guideline
@@ -67,7 +66,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:fontFamily="@font/nunito"
-      android:textColor="?colorAccent"
+      android:textColor="?colorSecondary"
       android:textStyle="bold"
       app:fontFamily="@font/nunito"
       app:layout_constraintEnd_toStartOf="@+id/score_divider"
@@ -76,7 +75,7 @@
       app:layout_constraintStart_toStartOf="@+id/guideline"
       app:layout_constraintTop_toTopOf="@+id/timestamp"
       tools:text="+ 128"
-      style="@style/TextAppearance.AppCompat.Caption"
+      style="@style/TextAppearance.MaterialComponents.Caption"
       />
 
   <androidx.appcompat.widget.AppCompatTextView
@@ -91,7 +90,7 @@
       app:layout_constraintEnd_toStartOf="@+id/tag"
       app:layout_constraintStart_toEndOf="@+id/score"
       app:layout_constraintTop_toTopOf="@+id/timestamp"
-      style="@style/TextAppearance.AppCompat.Caption"
+      style="@style/TextAppearance.MaterialComponents.Caption"
       />
 
   <androidx.appcompat.widget.AppCompatTextView
@@ -100,7 +99,7 @@
       android:layout_height="wrap_content"
       android:layout_marginEnd="4dp"
       android:fontFamily="@font/nunito"
-      android:textColor="?colorAccent"
+      android:textColor="?colorSecondary"
       android:textStyle="bold"
       android:visibility="gone"
       app:fontFamily="@font/nunito"
@@ -110,7 +109,7 @@
       app:layout_constraintTop_toTopOf="@+id/timestamp"
       tools:text="tag"
       tools:visibility="visible"
-      style="@style/TextAppearance.AppCompat.Caption"
+      style="@style/TextAppearance.MaterialComponents.Caption"
       />
 
   <androidx.appcompat.widget.AppCompatTextView
@@ -125,7 +124,7 @@
       app:layout_constraintEnd_toStartOf="@+id/timestamp"
       app:layout_constraintStart_toEndOf="@+id/tag"
       app:layout_constraintTop_toTopOf="@+id/timestamp"
-      style="@style/TextAppearance.AppCompat.Caption"
+      style="@style/TextAppearance.MaterialComponents.Caption"
       />
 
   <androidx.appcompat.widget.AppCompatTextView
@@ -141,7 +140,7 @@
       app:layout_constraintVertical_bias="0"
       app:layout_constraintVertical_chainStyle="packed"
       tools:text="12 hours ago"
-      style="@style/TextAppearance.AppCompat.Caption"
+      style="@style/TextAppearance.MaterialComponents.Caption"
       />
 
   <io.sweers.catchup.ui.widget.BaselineGridTextView
@@ -160,7 +159,7 @@
       app:layout_constraintTop_toBottomOf="@+id/timestamp"
       app:layout_goneMarginTop="0dp"
       tools:text="Show HN: Into.js Hints"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.MaterialComponents.Subtitle1"
       />
 
   <androidx.appcompat.widget.AppCompatTextView
@@ -177,7 +176,7 @@
       app:layout_constraintStart_toStartOf="@+id/guideline"
       app:layout_constraintTop_toBottomOf="@+id/title"
       tools:text="pandanomic"
-      style="@style/TextAppearance.AppCompat.Caption"
+      style="@style/TextAppearance.MaterialComponents.Caption"
       />
 
   <androidx.appcompat.widget.AppCompatTextView
@@ -193,7 +192,7 @@
       app:layout_constraintEnd_toStartOf="@+id/source"
       app:layout_constraintStart_toEndOf="@+id/author"
       app:layout_constraintTop_toTopOf="@+id/source"
-      style="@style/TextAppearance.AppCompat.Caption"
+      style="@style/TextAppearance.MaterialComponents.Caption"
       />
 
   <androidx.appcompat.widget.AppCompatTextView
@@ -208,7 +207,7 @@
       app:layout_constraintStart_toEndOf="@+id/author_divider"
       app:layout_constraintTop_toBottomOf="@+id/title"
       tools:text="medium.com"
-      style="@style/TextAppearance.AppCompat.Caption"
+      style="@style/TextAppearance.MaterialComponents.Caption"
       />
 
   <io.sweers.catchup.ui.widget.BaselineGridTextView
@@ -218,7 +217,7 @@
       android:layout_gravity="center"
       android:background="?selectableItemBackgroundBorderless"
       android:clickable="true"
-      android:drawableTint="?colorAccent"
+      android:drawableTint="?colorSecondary"
       android:drawableTop="@drawable/ic_comment_black_24dp"
       android:focusable="true"
       android:gravity="center"

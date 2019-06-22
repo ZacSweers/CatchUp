@@ -61,7 +61,7 @@
       android:layout_margin="16dp"
       android:visibility="invisible"
       android:contentDescription="@string/save"
-      app:backgroundTint="@color/colorAccent"
+      app:backgroundTint="@color/secondaryColor"
       app:borderWidth="0dp"
       app:fabSize="normal"
       app:layout_anchor="@id/list"

@@ -57,7 +57,7 @@
       app:layout_constraintStart_toEndOf="@+id/icon"
       app:layout_constraintTop_toTopOf="parent"
       tools:text="Reddit"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.MaterialComponents.Headline3"
       />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

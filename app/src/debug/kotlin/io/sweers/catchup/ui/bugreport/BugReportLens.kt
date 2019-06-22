@@ -158,7 +158,7 @@ internal class BugReportLens @Inject constructor(
     val notificationBuilder = NotificationCompat.Builder(activity, channelId)
         .apply {
           setSmallIcon(android.R.drawable.stat_sys_upload)
-          color = ContextCompat.getColor(activity, R.color.colorAccent)
+          color = ContextCompat.getColor(activity, R.color.secondaryColor)
           setContentTitle("Uploading bug report")
           setAutoCancel(true)
           setProgress(0, 0, true)
@@ -203,7 +203,7 @@ internal class BugReportLens @Inject constructor(
           NotificationCompat.Builder(activity, channelId)
               .apply {
                 setSmallIcon(R.drawable.ic_error_black_24dp)
-                color = ContextCompat.getColor(activity, R.color.colorAccent)
+                color = ContextCompat.getColor(activity, R.color.secondaryColor)
                 setContentTitle("Upload canceled")
                 setContentInfo("Probably because the activity was killed ¯\\_(ツ)_/¯")
                 setAutoCancel(true)
@@ -216,7 +216,7 @@ internal class BugReportLens @Inject constructor(
             NotificationCompat.Builder(activity, channelId)
                 .apply {
                   setSmallIcon(R.drawable.ic_check_black_24dp)
-                  color = ContextCompat.getColor(activity, R.color.colorAccent)
+                  color = ContextCompat.getColor(activity, R.color.secondaryColor)
                   setContentTitle("Bug report successfully uploaded")
                   setContentText(it)
                   val uri = it.toUri()
@@ -241,7 +241,7 @@ internal class BugReportLens @Inject constructor(
             NotificationCompat.Builder(activity, channelId)
                 .apply {
                   setSmallIcon(R.drawable.ic_error_black_24dp)
-                  color = ContextCompat.getColor(activity, R.color.colorAccent)
+                  color = ContextCompat.getColor(activity, R.color.secondaryColor)
                   setContentTitle("Upload failed")
                   setContentInfo(
                       "Bug report upload failed. Please try again. If problem persists, take consolation in knowing you got farther than I did.")

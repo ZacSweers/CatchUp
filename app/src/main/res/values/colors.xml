@@ -21,12 +21,21 @@
   <color name="colorPrimaryAlt">#343434</color>
   <color name="colorPrimaryDarkAlt">#282828</color>
 
-  <color name="colorAccent">#ffFC4D29</color>
+  <color name="primaryColor">#f9f9f9</color>
+  <color name="primaryLightColor">#ffffff</color>
+  <color name="primaryDarkColor">#c6c6c6</color>
+  <color name="secondaryColor">#fc4d29</color>
+  <color name="secondaryLightColor">#ff8156</color>
+  <color name="secondaryDarkColor">#c10200</color>
+  <color name="primaryTextColor">#000000</color>
+  <color name="secondaryTextColor">#000000</color>
+
   <color name="headerBackground">#eeeeee</color>
 
   <color name="tab_text_default">#b3ffffff</color>
   <color name="tab_text_selected">#ffffffff</color>
   <color name="no_color">#00000000</color>
+  <color name="errorColor">#FF0000</color>
 
   <array name="loading_placeholders_dark">
     <item>#ff191919</item>

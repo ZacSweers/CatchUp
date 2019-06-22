@@ -82,7 +82,7 @@
           android:fontFamily="@font/nunito"
           android:gravity="center_horizontal"
           app:fontFamily="@font/nunito"
-          style="@style/TextAppearance.AppCompat.Title"
+          style="@style/TextAppearance.MaterialComponents.Headline6"
           />
 
       <io.sweers.catchup.ui.widget.BaselineGridTextView
@@ -93,7 +93,7 @@
           android:fontFamily="@font/nunito"
           android:gravity="center_horizontal"
           app:fontFamily="@font/nunito"
-          style="@style/TextAppearance.AppCompat.Caption"
+          style="@style/TextAppearance.MaterialComponents.Caption"
           />
 
       <io.sweers.catchup.ui.widget.BaselineGridTextView
@@ -101,7 +101,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:fontFamily="@font/nunito"
-          android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+          android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
           android:textIsSelectable="true"
           app:fontFamily="@font/nunito"
           />
