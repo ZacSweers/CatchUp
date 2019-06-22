@@ -22,6 +22,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.CheckResult
@@ -41,6 +42,7 @@ import io.sweers.catchup.ui.activity.ImageViewerActivity
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.kotlin.any
+import io.sweers.catchup.util.kotlin.applyIf
 import io.sweers.catchup.util.registerReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
@@ -169,8 +171,11 @@ class LinkManager @Inject constructor(
   private fun openCustomTab(context: Context, uri: Uri, @ColorInt accentColor: Int) {
     customTab.openCustomTab(context,
         customTab.customTabIntent
-            .setStartAnimations(context, R.anim.slide_up, R.anim.inset)
-            .setExitAnimations(context, R.anim.outset, R.anim.slide_down)
+            .applyIf(Build.VERSION.SDK_INT < 29) {
+              // I like the Q animations, so don't override these there 😬
+              setStartAnimations(context, R.anim.slide_up, R.anim.inset)
+              setExitAnimations(context, R.anim.outset, R.anim.slide_down)
+            }
             .setToolbarColor(accentColor)
             .build(),
         uri)
