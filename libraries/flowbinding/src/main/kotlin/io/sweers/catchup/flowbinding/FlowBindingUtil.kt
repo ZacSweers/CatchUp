@@ -20,4 +20,9 @@ import kotlinx.coroutines.channels.SendChannel
 
 private val <E> SendChannel<E>.canSend get(): Boolean = !isClosedForSend
 
-fun <E> SendChannel<E>.safeOffer(value: E): Boolean = canSend && offer(value)
+fun <E> SendChannel<E>.safeOffer(value: E) = !isClosedForSend && try {
+  offer(value)
+} catch (t: Throwable) {
+  // Ignore all
+  false
+}
