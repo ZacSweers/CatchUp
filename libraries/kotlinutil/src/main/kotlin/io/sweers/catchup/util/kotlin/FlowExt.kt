@@ -16,9 +16,11 @@
 package io.sweers.catchup.util.kotlin
 
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import java.util.concurrent.atomic.AtomicInteger
 
 internal object NULL
 private class LocalAbortFlowException : CancellationException(
@@ -32,7 +34,7 @@ private class LocalAbortFlowException : CancellationException(
  * A terminal operator that returns the first element emitted by the flow matching the given [predicate] and then cancels flow's collection.
  * Returns null if the flow has not contained elements matching the [predicate].
  */
-@ExperimentalCoroutinesApi
+@FlowPreview
 suspend fun <T> Flow<T>.firstOrNull(predicate: suspend (T) -> Boolean): T? {
   var result: Any? = NULL
   try {
@@ -59,7 +61,71 @@ suspend fun <T> Flow<T>.firstOrNull(predicate: suspend (T) -> Boolean): T? {
  * given [predicate]. If there's a match, it then cancels flow's collection. Returns `false` if no
  * elements matched the [predicate].
  */
-@ExperimentalCoroutinesApi
+@FlowPreview
 suspend fun <T> Flow<T>.any(predicate: suspend (T) -> Boolean): Boolean {
   return firstOrNull(predicate) != null
+}
+
+fun <T> Flow<T>.mergeWith(other: Flow<T>): Flow<T> = flow {
+  other.collect {
+    emit(it)
+  }
+  collect {
+    emit(it)
+  }
+}
+
+fun <T> Flow<T>.windowed(
+  size: Int,
+  step: Int = 1,
+  partialWindows: Boolean = false,
+  reuseBuffer: Boolean = false
+): Flow<List<T>> = flow {
+  require(size > 0 && step > 0) {
+    if (size != step) {
+      "Both size $size and step $step must be greater than zero."
+    } else {
+      "size $size must be greater than zero."
+    }
+  }
+  val gap = step - size
+  if (gap >= 0) {
+    var buffer = ArrayList<T>(size)
+    val skip = AtomicInteger(0)
+    // TODO if you just use an int here the kotlin compiler blows up
+//    var skip = 0
+    collect { e ->
+      if (skip.get() > 0) {
+//        skip -= 1
+        skip.decrementAndGet()
+        return@collect
+      }
+      buffer.add(e)
+      if (buffer.size == size) {
+        emit(buffer)
+        if (reuseBuffer) buffer.clear() else buffer = ArrayList(size)
+        skip.set(gap)
+//        skip = gap
+      }
+    }
+    if (buffer.isNotEmpty()) {
+      if (partialWindows || buffer.size == size) emit(buffer)
+    }
+  } else {
+    val buffer = RingBuffer<T>(size)
+    collect { e ->
+      buffer.add(e)
+      if (buffer.isFull()) {
+        emit(if (reuseBuffer) buffer else ArrayList(buffer))
+        buffer.removeFirst(step)
+      }
+    }
+    if (partialWindows) {
+      while (buffer.size > step) {
+        emit(if (reuseBuffer) buffer else ArrayList(buffer))
+        buffer.removeFirst(step)
+      }
+      if (buffer.isNotEmpty()) emit(buffer)
+    }
+  }
 }

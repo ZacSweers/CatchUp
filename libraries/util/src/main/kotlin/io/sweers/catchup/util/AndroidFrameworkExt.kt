@@ -17,10 +17,8 @@
 
 package io.sweers.catchup.util
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.util.TypedValue
@@ -30,7 +28,6 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.UiThread
 import androidx.core.content.ContextCompat
-import io.reactivex.Observable
 import java.io.File
 import java.io.IOException
 
@@ -136,17 +133,3 @@ inline fun Context.dp2px(dipValue: Float) = resources.dp2px(dipValue)
 
 inline fun Resources.dp2px(dipValue: Float) =
     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
-
-fun Context.registerReceiver(intentFilter: IntentFilter): Observable<Intent> {
-  return Observable.create { emitter ->
-    val receiver = object : BroadcastReceiver() {
-      override fun onReceive(context: Context, intent: Intent) {
-        emitter.onNext(intent)
-      }
-    }
-
-    registerReceiver(receiver, intentFilter)
-
-    emitter.setCancellable { unregisterReceiver(receiver) }
-  }
-}

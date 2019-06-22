@@ -29,11 +29,12 @@ import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
 import androidx.collection.ArrayMap
 import androidx.core.util.toAndroidPair
+import androidx.lifecycle.lifecycleScope
 import com.f2prateek.rx.preferences2.Preference
-import com.uber.autodispose.autoDisposable
-import io.reactivex.Observable
+import io.reactivex.BackpressureStrategy.ERROR
 import io.sweers.catchup.P
 import io.sweers.catchup.R
+import io.sweers.catchup.flowbinding.intentReceivers
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.ImageViewerData
 import io.sweers.catchup.service.api.LinkHandler
@@ -43,10 +44,13 @@ import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.kotlin.any
 import io.sweers.catchup.util.kotlin.applyIf
-import io.sweers.catchup.util.registerReceiver
+import io.sweers.catchup.util.kotlin.mergeWith
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 
 @PerActivity
@@ -66,9 +70,11 @@ class LinkManager @Inject constructor(
     val filter = IntentFilter()
     filter.addAction(Intent.ACTION_INSTALL_PACKAGE)
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED)
-    Observable.merge(activity.registerReceiver(filter), globalSmartLinkingPref.asObservable())
-        .autoDisposable(activity)
-        .subscribe { dumbCache.clear() }
+    activity.lifecycleScope.launch {
+      activity.intentReceivers(filter)
+          .mergeWith(globalSmartLinkingPref.asObservable().toFlowable(ERROR).asFlow())
+          .collect { dumbCache.clear() }
+    }
   }
 
   /**

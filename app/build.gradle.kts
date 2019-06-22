@@ -129,7 +129,8 @@ android {
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
           "\"${properties["catchup_bugsnag_key"]}\"")
-      signingConfig = signingConfigs.getByName(if ("useDebugSigning" in properties) "debug" else "release")
+      signingConfig = signingConfigs.getByName(
+          if ("useDebugSigning" in properties) "debug" else "release")
       postprocessing.apply {
         proguardFiles("proguard-rules.pro")
         isOptimizeCode = true
@@ -416,6 +417,7 @@ dependencies {
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:util"))
+  implementation(project(":libraries:flowbinding"))
 
   // Support libs
   implementation(deps.android.androidx.annotations)
@@ -468,9 +470,6 @@ dependencies {
   implementation(deps.retrofit.rxJava2)
   implementation(deps.rx.android)
   implementation(deps.rx.java)
-  implementation(deps.rx.binding.core)
-  implementation(deps.rx.binding.v4)
-  implementation(deps.rx.binding.design)
   implementation(deps.misc.lazythreeten)
   implementation(deps.misc.tapTargetView)
   implementation(deps.misc.timber)
@@ -521,7 +520,8 @@ dependencies {
   // Flipper
   debugImplementation(deps.misc.debug.flipper)
   debugImplementation(deps.misc.debug.soLoader)
-  debugImplementation(deps.misc.debug.guava) // To force a newer version that doesn't conflict ListenableFuture
+  debugImplementation(
+      deps.misc.debug.guava) // To force a newer version that doesn't conflict ListenableFuture
 
   // Hyperion
 //  releaseImplementation(deps.hyperion.core.release)

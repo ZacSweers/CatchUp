@@ -64,6 +64,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotterknife.bindView
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -159,7 +160,7 @@ class SmmryFragment : InjectableBaseFragment() {
     title.text = inputTitle
     if (!alreadyLoaded) {
       loadingView.show()
-      lottieView.addValueCallback<ColorFilter>(KeyPath("**"),
+      lottieView.addValueCallback(KeyPath("**"),
           LottieProperty.COLOR_FILTER,
           LottieValueCallback<ColorFilter>(SimpleColorFilter(accentColor)))
     } else {
@@ -230,8 +231,7 @@ class SmmryFragment : InjectableBaseFragment() {
     if (smmry.keywords != null) {
       tags.setTextColor(accentColor)
       tags.text = smmry.keywords.joinToString("  —  ") { s ->
-        s.trim { it <= ' ' }
-            .toUpperCase()
+        s.trim { it <= ' ' }.toUpperCase(Locale.getDefault())
       }
       tags.show()
     } else {

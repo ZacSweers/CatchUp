@@ -17,6 +17,7 @@
 include(
     ":app",
     ":libraries:gemoji",
+    ":libraries:flowbinding",
     ":libraries:kotlinutil",
     ":libraries:retrofitconverters",
     ":libraries:tooling:spi-visualizer",
