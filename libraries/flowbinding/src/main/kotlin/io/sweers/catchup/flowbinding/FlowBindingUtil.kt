@@ -17,8 +17,6 @@ package io.sweers.catchup.flowbinding
 
 import kotlinx.coroutines.channels.SendChannel
 
-private val <E> SendChannel<E>.canSend get(): Boolean = !isClosedForSend
-
 fun <E> SendChannel<E>.safeOffer(value: E) = !isClosedForSend && try {
   offer(value)
 } catch (t: Throwable) {
