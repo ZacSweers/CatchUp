@@ -75,10 +75,12 @@ fun <T> Flow<T>.mergeWith(other: Flow<T>): Flow<T> = flow {
   }
 }
 
-fun <T> Flow<T>.windowed(size: Int,
-    step: Int = 1,
-    partialWindows: Boolean = false,
-    reuseBuffer: Boolean = false): Flow<List<T>> = flow {
+fun <T> Flow<T>.windowed(
+  size: Int,
+  step: Int = 1,
+  partialWindows: Boolean = false,
+  reuseBuffer: Boolean = false
+): Flow<List<T>> = flow {
   require(size > 0 && step > 0) {
     if (size != step) {
       "Both size $size and step $step must be greater than zero."

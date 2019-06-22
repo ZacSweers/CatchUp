@@ -65,8 +65,8 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 @SuppressLint("SetTextI18n")
 class DebugView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null
+  context: Context,
+  attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
   internal val icon by bindView<View>(R.id.debug_icon)
   private val contextualTitleView by bindView<View>(R.id.debug_contextual_title)
@@ -115,9 +115,9 @@ class DebugView @JvmOverloads constructor(
   private val scalpelWireframeEnabled = P.DebugScalpelWireframeDrawer.rx()
 
   constructor(
-      context: Context,
-      client: Lazy<OkHttpClient>,
-      lumberYard: LumberYard
+    context: Context,
+    client: Lazy<OkHttpClient>,
+    lumberYard: LumberYard
   ) : this(context) {
     // TODO check out jw's assisted injection. Dagger-android doesn't make view injection easy
     // because it doesn't support it, and via subcomponents we can't get ahold of an instance of the

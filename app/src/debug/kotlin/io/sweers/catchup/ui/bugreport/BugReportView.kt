@@ -80,10 +80,10 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
         logsView.isChecked)
 
   data class Report(
-      val username: String,
-      val title: String,
-      val description: String,
-      val includeScreenshot: Boolean,
-      val includeLogs: Boolean
+    val username: String,
+    val title: String,
+    val description: String,
+    val includeScreenshot: Boolean,
+    val includeLogs: Boolean
   )
 }

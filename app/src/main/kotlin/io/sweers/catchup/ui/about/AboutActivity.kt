@@ -149,9 +149,9 @@ class AboutFragment : InjectingBaseFragment() {
   private lateinit var pagerAdapter: FragmentStatePagerAdapter
 
   override fun inflateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
   ): View =
       inflater.inflate(R.layout.fragment_about, container, false)
 

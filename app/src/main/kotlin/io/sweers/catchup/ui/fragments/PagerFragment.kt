@@ -76,10 +76,10 @@ fun ServiceMeta.toServiceHandler() = ServiceHandler(
 ) { ServiceFragment.newInstance(id) }
 
 data class ServiceHandler(
-    @StringRes val name: Int,
-    @DrawableRes val icon: Int,
-    @ColorRes val accent: Int,
-    val instantiator: () -> Fragment
+  @StringRes val name: Int,
+  @DrawableRes val icon: Int,
+  @ColorRes val accent: Int,
+  val instantiator: () -> Fragment
 )
 
 class PagerFragment : InjectingBaseFragment() {
@@ -120,9 +120,9 @@ class PagerFragment : InjectingBaseFragment() {
   }
 
   override fun inflateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
   ): View {
     return inflater.inflate(R.layout.fragment_pager, container, false)
   }
@@ -363,8 +363,8 @@ class PagerFragment : InjectingBaseFragment() {
     @JvmStatic
     @Provides
     fun provideServiceHandlers(
-        sharedPrefs: SharedPreferences,
-        serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
+      sharedPrefs: SharedPreferences,
+      serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
     ): Array<ServiceHandler> {
       val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
       return (serviceMetas.values
