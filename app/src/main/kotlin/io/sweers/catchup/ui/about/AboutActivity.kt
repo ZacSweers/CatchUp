@@ -40,7 +40,6 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
-import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
 import com.uber.autodispose.autoDisposable
 import dagger.Binds
 import dagger.Module
@@ -48,6 +47,7 @@ import dagger.android.ContributesAndroidInjector
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.flowbinding.offsetChanges
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
@@ -60,20 +60,23 @@ import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.buildMarkdown
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.isInNightMode
+import io.sweers.catchup.util.kotlin.windowed
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.setLightStatusBar
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotterknife.bindView
 import ru.noties.markwon.Markwon
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.math.abs
 
 class AboutActivity : InjectingBaseActivity() {
 
   @Inject
   internal lateinit var customTab: CustomTabActivityHelper
-  @Inject
-  internal lateinit var linkManager: LinkManager
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -146,9 +149,9 @@ class AboutFragment : InjectingBaseFragment() {
   private lateinit var pagerAdapter: FragmentStatePagerAdapter
 
   override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?
   ): View =
       inflater.inflate(R.layout.fragment_about, container, false)
 
@@ -165,7 +168,8 @@ class AboutFragment : InjectingBaseFragment() {
   @SuppressLint("SetTextI18n")
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager,
+        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
       private val screens = mutableMapOf<Int, Fragment>()
 
       override fun getItem(position: Int): Fragment {
@@ -315,9 +319,10 @@ class AboutFragment : InjectingBaseFragment() {
     @Px val predictedFinalY = titleY - (translatableHeight * parallaxMultiplier)
     @Px val yDelta = desiredTitleY - predictedFinalY
 
-    /*
+    viewLifecycleOwner.lifecycleScope.launch {
+      /*
      * Here we want to get the appbar offset changes paired with the direction it's moving and
-     * using RxBinding's great `offsetChanges` API to make an rx Observable of this. The first
+     * using `offsetChanges` API to make an rx Observable of this. The first
      * part buffers two while skipping one at a time and emits "scroll direction" enums. Second
      * part is just a simple map to pair the offset with the resolved scroll direction comparing
      * to the previous offset. This gives us a nice stream of (offset, direction) emissions.
@@ -327,46 +332,47 @@ class AboutFragment : InjectingBaseFragment() {
      * same value as before, potentially causing measure/layout/draw thrashing if your logic
      * reacting to the offset changes *is* manipulating those child views (vicious cycle).
      */
-    RxAppBarLayout.offsetChanges(appBarLayout)
-        .buffer(2, 1) // Buffer in pairs to compare the previous, skip none
-        .filter { it[1] != it[0] }
-        .map {
-          // Map to a direction
-          it[1] to ScrollDirection.resolve(it[1], it[0])
-        }
-        .subscribe { (offset, _) ->
-          // Note: Direction is unused for now but left because this was neat
-          val percentage = Math.abs(offset).toFloat() / translatableHeight
+      appBarLayout.offsetChanges()
+          .windowed(2, 1) // Buffer in pairs to compare the previous, skip none
+          .filter { it[1] != it[0] }
+          .map {
+            // Map to a direction
+            it[1] to ScrollDirection.resolve(it[1], it[0])
+          }
+          .collect { (offset, _) ->
+            // Note: Direction is unused for now but left because this was neat
+            val percentage = abs(offset).toFloat() / translatableHeight
 
-          // Force versions outside boundaries to be safe
-          if (percentage > FADE_PERCENT) {
-            bannerIcon.alpha = 0F
-            aboutText.alpha = 0F
+            // Force versions outside boundaries to be safe
+            if (percentage > FADE_PERCENT) {
+              bannerIcon.alpha = 0F
+              aboutText.alpha = 0F
+            }
+            if (percentage < TITLE_TRANSLATION_PERCENT) {
+              title.translationX = 0F
+              title.translationY = 0F
+            }
+            if (percentage < FADE_PERCENT) {
+              // We want to accelerate fading to be the first [FADE_PERCENT]% of the translation,
+              // so adjust accordingly below and use the new calculated percentage for our
+              // interpolation
+              val adjustedPercentage = 1 - (percentage * (1.0F / FADE_PERCENT))
+              val interpolation = interpolator.getInterpolation(adjustedPercentage)
+              bannerIcon.alpha = interpolation
+              aboutText.alpha = interpolation
+            }
+            if (percentage > TITLE_TRANSLATION_PERCENT) {
+              // Start translating about halfway through (to give a staggered effect next to the alpha
+              // so they have time to fade out sufficiently). From here we just set translation offsets
+              // to adjust the position naturally to give the appearance of settling in to the right
+              // place.
+              val adjustedPercentage = (1 - percentage) * (1.0F / TITLE_TRANSLATION_PERCENT)
+              val interpolation = interpolator.getInterpolation(adjustedPercentage)
+              title.translationX = -(xDelta - (interpolation * xDelta))
+              title.translationY = yDelta - (interpolation * yDelta)
+            }
           }
-          if (percentage < TITLE_TRANSLATION_PERCENT) {
-            title.translationX = 0F
-            title.translationY = 0F
-          }
-          if (percentage < FADE_PERCENT) {
-            // We want to accelerate fading to be the first [FADE_PERCENT]% of the translation,
-            // so adjust accordingly below and use the new calculated percentage for our
-            // interpolation
-            val adjustedPercentage = 1 - (percentage * (1.0F / FADE_PERCENT))
-            val interpolation = interpolator.getInterpolation(adjustedPercentage)
-            bannerIcon.alpha = interpolation
-            aboutText.alpha = interpolation
-          }
-          if (percentage > TITLE_TRANSLATION_PERCENT) {
-            // Start translating about halfway through (to give a staggered effect next to the alpha
-            // so they have time to fade out sufficiently). From here we just set translation offsets
-            // to adjust the position naturally to give the appearance of settling in to the right
-            // place.
-            val adjustedPercentage = (1 - percentage) * (1.0F / TITLE_TRANSLATION_PERCENT)
-            val interpolation = interpolator.getInterpolation(adjustedPercentage)
-            title.translationX = -(xDelta - (interpolation * xDelta))
-            title.translationY = yDelta - (interpolation * yDelta)
-          }
-        }
+    }
   }
 }
 

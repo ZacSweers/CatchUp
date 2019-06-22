@@ -28,12 +28,9 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Spinner
-import android.widget.SpinnerAdapter
 import android.widget.Switch
 import android.widget.TextView
 import com.jakewharton.processphoenix.ProcessPhoenix
-import com.jakewharton.rxbinding2.view.RxView
-import com.jakewharton.rxbinding2.widget.RxAdapterView
 import dagger.Lazy
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -42,11 +39,18 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.flowbinding.clicks
+import io.sweers.catchup.flowbinding.itemSelections
+import io.sweers.catchup.flowbinding.viewScope
 import io.sweers.catchup.ui.logs.LogsDialog
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.isN
 import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.truncateAt
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotterknife.bindView
 import kotterknife.onSubviewClick
 import leakcanary.LeakCanary
@@ -61,8 +65,8 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 @SuppressLint("SetTextI18n")
 class DebugView @JvmOverloads constructor(
-  context: Context,
-  attrs: AttributeSet? = null
+    context: Context,
+    attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
   internal val icon by bindView<View>(R.id.debug_icon)
   private val contextualTitleView by bindView<View>(R.id.debug_contextual_title)
@@ -111,9 +115,9 @@ class DebugView @JvmOverloads constructor(
   private val scalpelWireframeEnabled = P.DebugScalpelWireframeDrawer.rx()
 
   constructor(
-    context: Context,
-    client: Lazy<OkHttpClient>,
-    lumberYard: LumberYard
+      context: Context,
+      client: Lazy<OkHttpClient>,
+      lumberYard: LumberYard
   ) : this(context) {
     // TODO check out jw's assisted injection. Dagger-android doesn't make view injection easy
     // because it doesn't support it, and via subcomponents we can't get ahold of an instance of the
@@ -160,42 +164,48 @@ class DebugView @JvmOverloads constructor(
     networkDelayView.setSelection(NetworkDelayAdapter.getPositionForValue(behavior.delay(
         MILLISECONDS)))
 
-    RxAdapterView.itemSelections<SpinnerAdapter>(networkDelayView)
-        .map { delayAdapter.getItem(it) }
-        .filter { item -> item != behavior.delay(MILLISECONDS) }
-        .subscribe { selected ->
-          d { "Setting network delay to ${selected}ms" }
-          behavior.setDelay(selected, MILLISECONDS)
-          networkDelay.set(selected.toInt())
-        }
+    viewScope().launch {
+      networkDelayView.itemSelections()
+          .map { delayAdapter.getItem(it) }
+          .filter { item -> item != behavior.delay(MILLISECONDS) }
+          .collect { selected ->
+            d { "Setting network delay to ${selected}ms" }
+            behavior.setDelay(selected, MILLISECONDS)
+            networkDelay.set(selected.toInt())
+          }
+    }
 
     val varianceAdapter = NetworkVarianceAdapter(context)
     networkVarianceView.adapter = varianceAdapter
     networkVarianceView.setSelection(
         NetworkVarianceAdapter.getPositionForValue(behavior.variancePercent()))
 
-    RxAdapterView.itemSelections<SpinnerAdapter>(networkVarianceView)
-        .map { varianceAdapter.getItem(it) }
-        .filter { item -> item != behavior.variancePercent() }
-        .subscribe { selected ->
-          d { "Setting network variance to $selected%" }
-          behavior.setVariancePercent(selected)
-          networkVariancePercent.set(selected)
-        }
+    viewScope().launch {
+      networkVarianceView.itemSelections()
+          .map { varianceAdapter.getItem(it) }
+          .filter { item -> item != behavior.variancePercent() }
+          .collect { selected ->
+            d { "Setting network variance to $selected%" }
+            behavior.setVariancePercent(selected)
+            networkVariancePercent.set(selected)
+          }
+    }
 
     val errorAdapter = NetworkErrorAdapter(context)
     networkErrorView.adapter = errorAdapter
     networkErrorView.setSelection(
         NetworkErrorAdapter.getPositionForValue(behavior.failurePercent()))
 
-    RxAdapterView.itemSelections<SpinnerAdapter>(networkErrorView)
-        .map { errorAdapter.getItem(it) }
-        .filter { item -> item != behavior.failurePercent() }
-        .subscribe { selected ->
-          d { "Setting network error to $selected%" }
-          behavior.setFailurePercent(selected)
-          networkFailurePercent.set(selected)
-        }
+    viewScope().launch {
+      networkErrorView.itemSelections()
+          .map { errorAdapter.getItem(it) }
+          .filter { item -> item != behavior.failurePercent() }
+          .collect { selected ->
+            d { "Setting network error to $selected%" }
+            behavior.setFailurePercent(selected)
+            networkFailurePercent.set(selected)
+          }
+    }
 
     if (!isMockMode) {
       // Disable network controls if we are not in mock mode.
@@ -207,11 +217,13 @@ class DebugView @JvmOverloads constructor(
 
   private fun setupMockBehaviorSection() {
     enableMockModeView.isChecked = P.DebugMockModeEnabled.get()
-    RxView.clicks(enableMockModeView)
-        .subscribe {
-          P.DebugMockModeEnabled.put(enableMockModeView.isChecked).commit()
-          ProcessPhoenix.triggerRebirth(context)
-        }
+    viewScope().launch {
+      enableMockModeView.clicks()
+          .collect {
+            P.DebugMockModeEnabled.put(enableMockModeView.isChecked).commit()
+            ProcessPhoenix.triggerRebirth(context)
+          }
+    }
   }
 
   private fun setupUserInterfaceSection() {
@@ -221,14 +233,16 @@ class DebugView @JvmOverloads constructor(
     uiAnimationSpeedView.setSelection(
         AnimationSpeedAdapter.getPositionForValue(animationSpeedValue))
 
-    RxAdapterView.itemSelections<SpinnerAdapter>(uiAnimationSpeedView)
-        .map { speedAdapter.getItem(it) }
-        .filter { item -> item != animationSpeed.get() }
-        .subscribe { selected ->
-          d { "Setting animation speed to ${selected}x" }
-          animationSpeed.set(selected)
-          applyAnimationSpeed(selected)
-        }
+    viewScope().launch {
+      uiAnimationSpeedView.itemSelections()
+          .map { speedAdapter.getItem(it) }
+          .filter { item -> item != animationSpeed.get() }
+          .collect { selected ->
+            d { "Setting animation speed to ${selected}x" }
+            animationSpeed.set(selected)
+            applyAnimationSpeed(selected)
+          }
+    }
     // Ensure the animation speed value is always applied across app restarts.
     post { applyAnimationSpeed(animationSpeedValue) }
 

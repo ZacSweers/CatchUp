@@ -50,9 +50,11 @@ object build {
       "-XXLanguage:+SamConversionForKotlinFunctions",
       "-XXLanguage:+InlineClasses",
       "-Xuse-experimental=kotlin.Experimental",
+      "-Xuse-experimental=kotlin.experimental.ExperimentalTypeInference",
       "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
       "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
   )
+
   fun isCi(): Boolean = System.getenv("CI")?.toBoolean() == true
 }
 
@@ -76,7 +78,6 @@ object deps {
     const val moshi = "1.8.0"
     const val okhttp = "4.0.0-RC1"
     const val retrofit = "2.6.0"
-    const val rxbinding = "2.2.0"
     const val rxpalette = "0.3.0"
     const val spotless = "3.23.1"
     const val stetho = "1.5.1"
@@ -381,12 +382,6 @@ object deps {
 
   object rx {
     const val android = "io.reactivex.rxjava2:rxandroid:2.1.1"
-
-    object binding {
-      const val core = "com.jakewharton.rxbinding2:rxbinding-kotlin:${versions.rxbinding}"
-      const val v4 = "com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:${versions.rxbinding}"
-      const val design = "com.jakewharton.rxbinding2:rxbinding-design-kotlin:${versions.rxbinding}"
-    }
 
     const val dogTag = "com.uber.rxdogtag:rxdogtag:0.2.0"
     const val dogTagAutoDispose = "com.uber.rxdogtag:rxdogtag-autodispose:0.2.0"

@@ -42,16 +42,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
+import androidx.lifecycle.lifecycleScope
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
-import com.jakewharton.rxbinding2.support.design.widget.RxAppBarLayout
-import com.uber.autodispose.autoDisposable
 import dagger.Provides
 import io.sweers.catchup.P
 import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
+import io.sweers.catchup.flowbinding.offsetChanges
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
@@ -60,11 +60,14 @@ import io.sweers.catchup.ui.fragments.service.ServiceFragment
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
-import io.sweers.catchup.util.rx.PredicateConsumer
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNavBarColor
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import kotterknife.bindView
 import javax.inject.Inject
+import kotlin.math.abs
 
 fun ServiceMeta.toServiceHandler() = ServiceHandler(
     name,
@@ -73,10 +76,10 @@ fun ServiceMeta.toServiceHandler() = ServiceHandler(
 ) { ServiceFragment.newInstance(id) }
 
 data class ServiceHandler(
-  @StringRes val name: Int,
-  @DrawableRes val icon: Int,
-  @ColorRes val accent: Int,
-  val instantiator: () -> Fragment
+    @StringRes val name: Int,
+    @DrawableRes val icon: Int,
+    @ColorRes val accent: Int,
+    val instantiator: () -> Fragment
 )
 
 class PagerFragment : InjectingBaseFragment() {
@@ -117,9 +120,9 @@ class PagerFragment : InjectingBaseFragment() {
   }
 
   override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?
   ): View {
     return inflater.inflate(R.layout.fragment_pager, container, false)
   }
@@ -127,7 +130,8 @@ class PagerFragment : InjectingBaseFragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    val pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    val pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager,
+        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
       private val registeredFragments = SparseArray<Fragment>()
 
       override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -156,58 +160,49 @@ class PagerFragment : InjectingBaseFragment() {
       // Start with a light status bar in normal mode
       appBarLayout.setLightStatusBar()
     }
-    RxAppBarLayout.offsetChanges(appBarLayout)
-        .distinctUntilChanged()
-        .doOnNext(object : PredicateConsumer<Int>() {
-          override fun test(verticalOffset: Int) = verticalOffset == -toolbar.height
-
-          override fun acceptActual(value: Int) {
-            statusBarColorAnimator?.cancel()
-            tabLayoutIsPinned = true
-            val newStatusColor = this@PagerFragment.getAndSaveColor(
-                tabLayout.selectedTabPosition)
-            statusBarColorAnimator = ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor)
-                .apply {
+    viewLifecycleOwner.lifecycleScope.launch {
+      appBarLayout.offsetChanges()
+          .distinctUntilChanged()
+          .collect { offset ->
+            if (offset == -toolbar.height) {
+              statusBarColorAnimator?.cancel()
+              tabLayoutIsPinned = true
+              val newStatusColor = this@PagerFragment.getAndSaveColor(
+                  tabLayout.selectedTabPosition)
+              statusBarColorAnimator = ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor)
+                  .apply {
+                    addUpdateListener { animation ->
+                      this@PagerFragment.activity!!
+                          .window.statusBarColor = animation.animatedValue as Int
+                    }
+                    duration = 200
+                    interpolator = LinearOutSlowInInterpolator()
+                    start()
+                  }
+              appBarLayout.clearLightStatusBar()
+            } else {
+              val wasPinned = tabLayoutIsPinned
+              tabLayoutIsPinned = false
+              if (wasPinned) {
+                statusBarColorAnimator?.cancel()
+                statusBarColorAnimator = ValueAnimator.ofArgb(this@PagerFragment.activity!!
+                    .window
+                    .statusBarColor, colorPrimaryDark).apply {
                   addUpdateListener { animation ->
                     this@PagerFragment.activity!!
                         .window.statusBarColor = animation.animatedValue as Int
                   }
                   duration = 200
-                  interpolator = LinearOutSlowInInterpolator()
+                  interpolator = DecelerateInterpolator()
+                  if (!isInNightMode) {
+                    appBarLayout.setLightStatusBar()
+                  }
                   start()
                 }
-            appBarLayout.clearLightStatusBar()
-          }
-        })
-        .doOnNext(object : PredicateConsumer<Int>() {
-          @Throws(Exception::class)
-          override fun acceptActual(value: Int) {
-            val wasPinned = tabLayoutIsPinned
-            tabLayoutIsPinned = false
-            if (wasPinned) {
-              statusBarColorAnimator?.cancel()
-              statusBarColorAnimator = ValueAnimator.ofArgb(this@PagerFragment.activity!!
-                  .window
-                  .statusBarColor, colorPrimaryDark).apply {
-                addUpdateListener { animation ->
-                  this@PagerFragment.activity!!
-                      .window.statusBarColor = animation.animatedValue as Int
-                }
-                duration = 200
-                interpolator = DecelerateInterpolator()
-                if (!isInNightMode) {
-                  appBarLayout.setLightStatusBar()
-                }
-                start()
               }
             }
           }
-
-          @Throws(Exception::class)
-          override fun test(verticalOffset: Int) = verticalOffset != -toolbar.height
-        })
-        .autoDisposable(this)
-        .subscribe()
+    }
     toolbar.inflateMenu(R.menu.main)
     toolbar.setOnMenuItemClickListener { item ->
       when (item.itemId) {
@@ -277,7 +272,7 @@ class PagerFragment : InjectingBaseFragment() {
         // If we're switching between more than one page, we just want to manually set the color
         // once rather than let the usual page scroll logic cycle through all the colors in a weird
         // flashy way.
-        if (Math.abs(lastPosition - position) > 1) {
+        if (abs(lastPosition - position) > 1) {
           canAnimateColor = false
           // Start with the current tablayout color to feel more natural if we're in between
           @ColorInt val startColor = (tabLayout.background as ColorDrawable).color
@@ -368,8 +363,8 @@ class PagerFragment : InjectingBaseFragment() {
     @JvmStatic
     @Provides
     fun provideServiceHandlers(
-      sharedPrefs: SharedPreferences,
-      serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
+        sharedPrefs: SharedPreferences,
+        serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
     ): Array<ServiceHandler> {
       val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
       return (serviceMetas.values

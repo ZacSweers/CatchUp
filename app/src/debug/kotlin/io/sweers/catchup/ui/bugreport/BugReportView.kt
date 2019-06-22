@@ -17,11 +17,16 @@ package io.sweers.catchup.ui.bugreport
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View.OnFocusChangeListener
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
-import com.jakewharton.rxbinding2.widget.RxTextView
 import io.sweers.catchup.R
+import io.sweers.catchup.flowbinding.afterTextChangeEvents
+import io.sweers.catchup.flowbinding.viewScope
+import io.sweers.catchup.util.kotlin.mergeWith
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotterknife.bindView
 
 class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
@@ -39,23 +44,25 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
 
   override fun onFinishInflate() {
     super.onFinishInflate()
-    usernameView.setOnFocusChangeListener { _, hasFocus ->
+    usernameView.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
       if (!hasFocus) {
         usernameView.error = if (usernameView.text.isNullOrBlank()) "Cannot be empty." else null
       }
     }
-    titleView.setOnFocusChangeListener { _, hasFocus ->
+    titleView.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
       if (!hasFocus) {
         titleView.error = if (titleView.text.isNullOrBlank()) "Cannot be empty." else null
       }
     }
-    RxTextView.afterTextChangeEvents(titleView)
-        .mergeWith(RxTextView.afterTextChangeEvents(usernameView))
-        .subscribe {
-          val titleIsBlank = titleView.text.isNullOrBlank()
-          val userNameIsBlank = usernameView.text.isNullOrBlank()
-          listener?.onStateChanged(!titleIsBlank && !userNameIsBlank)
-        }
+    viewScope().launch {
+      titleView.afterTextChangeEvents()
+          .mergeWith(usernameView.afterTextChangeEvents())
+          .collect {
+            val titleIsBlank = titleView.text.isNullOrBlank()
+            val userNameIsBlank = usernameView.text.isNullOrBlank()
+            listener?.onStateChanged(!titleIsBlank && !userNameIsBlank)
+          }
+    }
 
     screenshotView.isChecked = true
     logsView.isChecked = true
@@ -73,10 +80,10 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
         logsView.isChecked)
 
   data class Report(
-    val username: String,
-    val title: String,
-    val description: String,
-    val includeScreenshot: Boolean,
-    val includeLogs: Boolean
+      val username: String,
+      val title: String,
+      val description: String,
+      val includeScreenshot: Boolean,
+      val includeLogs: Boolean
   )
 }
