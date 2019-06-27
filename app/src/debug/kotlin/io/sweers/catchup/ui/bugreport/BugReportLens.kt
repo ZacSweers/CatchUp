@@ -43,6 +43,7 @@ import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
+import io.sweers.catchup.util.buildMarkdown
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -98,40 +99,41 @@ internal class BugReportLens @Inject constructor(
     val dm = activity.resources.displayMetrics
     val densityBucket = getDensityString(dm)
 
+    val markdown = buildMarkdown {
+      text("Reported by @${report.username}")
+      newline(2)
+      if (!report.description.isBlank()) {
+        h4("Description")
+        newline()
+        codeBlock(report.description)
+        newline(2)
+      }
+      h4("App")
+      codeBlock(buildString {
+        append("Version: ").append(BuildConfig.VERSION_NAME).append('\n')
+        append("Version code: ").append(BuildConfig.VERSION_CODE).append('\n')
+      })
+      newline()
+      h4("Device details")
+      codeBlock(buildString {
+        append("Make: ").append(Build.MANUFACTURER).append('\n')
+        append("Model: ").append(Build.MODEL).append('\n')
+        append("Resolution: ")
+            .append(dm.heightPixels)
+            .append("x")
+            .append(dm.widthPixels)
+            .append('\n')
+        append("Density: ")
+            .append(dm.densityDpi)
+            .append("dpi (")
+            .append(densityBucket)
+            .append(")\n")
+        append("Release: ").append(VERSION.RELEASE).append('\n')
+        append("API: ").append(VERSION.SDK_INT).append('\n')
+      })
+    }
     val body = StringBuilder()
-    body.append("Reported by @${report.username}\n\n")
-    if (!report.description.isBlank()) {
-      body.append("#### Description\n")
-          .append("```\n")
-          .append(report.description)
-          .append("\n```\n\n")
-    }
-
-    body.run {
-      append("#### App\n")
-      append("```\n")
-      append("Version: ").append(BuildConfig.VERSION_NAME).append('\n')
-      append("Version code: ").append(BuildConfig.VERSION_CODE).append('\n')
-      append("```\n\n")
-
-      append("#### Device details\n")
-      append("```\n")
-      append("Make: ").append(Build.MANUFACTURER).append('\n')
-      append("Model: ").append(Build.MODEL).append('\n')
-      append("Resolution: ")
-          .append(dm.heightPixels)
-          .append("x")
-          .append(dm.widthPixels)
-          .append('\n')
-      append("Density: ")
-          .append(dm.densityDpi)
-          .append("dpi (")
-          .append(densityBucket)
-          .append(")\n")
-      append("Release: ").append(VERSION.RELEASE).append('\n')
-      append("API: ").append(VERSION.SDK_INT).append('\n')
-      append("```")
-    }
+    body.append(markdown)
 
     uploadIssue(report, body, logs)
   }
@@ -175,20 +177,22 @@ internal class BugReportLens @Inject constructor(
               finalScreenshot.name,
               finalScreenshot.asRequestBody("image/*".toMediaTypeOrNull())
           ))
-          .map { "\n\n![Screenshot]($it)" }
+          .map { "\n\n!${buildMarkdown { link(it, "Screenshot") }}" }
     } else Single.just("\n\nNo screenshot provided")
 
     screenshotStringStream
         .map { screenshotText ->
           body.append(screenshotText)
-          body.append("\n\n#### Logs\n")
-          if (report.includeLogs && logs != null) {
-            body.append("```\n")
-                .append(logs.readText())
-                .append("\n```")
-          } else {
-            body.append("No logs provided")
+          val screenshotMarkdown = buildMarkdown {
+            newline(2)
+            h4("Logs")
+            if (report.includeLogs && logs != null) {
+              codeBlock(logs.readText())
+            } else {
+              text("No logs provided")
+            }
           }
+          body.append(screenshotMarkdown)
           body.toString()
         }
         .flatMap { bodyText ->
