@@ -76,7 +76,7 @@ object deps {
     const val legacySupport = "28.0.0"
     const val markwon = "3.0.2"
     const val moshi = "1.8.0"
-    const val okhttp = "4.0.0-RC1"
+    const val okhttp = "4.0.0"
     const val retrofit = "2.6.0"
     const val rxpalette = "0.3.0"
     const val spotless = "3.23.1"
@@ -144,7 +144,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.6.0-alpha03"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.6.0-alpha04"
   }
 
   object apollo {
