@@ -73,6 +73,7 @@ import io.sweers.catchup.ui.base.InjectableBaseFragment
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.dp2px
 import io.sweers.catchup.util.findSwatch
+import io.sweers.catchup.util.generateAsync
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
@@ -323,22 +324,21 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
                   .circleCrop()
                   .override(dimenSize, dimenSize))
               .transition(DrawableTransitionOptions.withCrossFade())
-              .into(object : DrawableImageViewTarget(icon), Palette.PaletteAsyncListener {
+              .into(object : DrawableImageViewTarget(icon) {
                 override fun onResourceReady(
                   resource: Drawable,
                   transition: Transition<in Drawable>?
                 ) {
                   super.onResourceReady(resource, transition)
                   if (resource is BitmapDrawable) {
-                    Palette.from(resource.bitmap)
-                        .clearFilters()
-                        .generate(this)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                      val palette = Palette.from(resource.bitmap)
+                          .clearFilters()
+                          .generateAsync()
+                      holder.title.setTextColor(
+                          palette?.findSwatch(headerColorThresholdFun)?.rgb ?: defaultHeaderTextColor)
+                    }
                   }
-                }
-
-                override fun onGenerated(palette: Palette?) {
-                  holder.title.setTextColor(
-                      palette?.findSwatch(headerColorThresholdFun)?.rgb ?: defaultHeaderTextColor)
                 }
               })
           title.text = item.name
