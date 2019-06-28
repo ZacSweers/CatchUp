@@ -332,11 +332,11 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
                   super.onResourceReady(resource, transition)
                   if (resource is BitmapDrawable) {
                     viewLifecycleOwner.lifecycleScope.launch {
-                      val palette = Palette.from(resource.bitmap)
+                      val color = Palette.from(resource.bitmap)
                           .clearFilters()
-                          .generateAsync()
-                      holder.title.setTextColor(
-                          palette?.findSwatch(headerColorThresholdFun)?.rgb ?: defaultHeaderTextColor)
+                          .generateAsync()?.findSwatch(headerColorThresholdFun)?.rgb
+                          ?: defaultHeaderTextColor
+                      holder.title.setTextColor(color)
                     }
                   }
                 }
