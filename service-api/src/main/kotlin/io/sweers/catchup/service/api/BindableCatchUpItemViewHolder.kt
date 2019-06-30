@@ -20,16 +20,16 @@ import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
 import androidx.annotation.ColorInt
 
-interface BindableCatchUpItemViewHolder {
+interface BindableCatchUpItemViewHolder : TemporaryScopeHolder {
   fun itemView(): View
   fun tint(@ColorInt color: Int) {
     // NOOP
   }
 
   fun bind(
-    item: CatchUpItem,
-    itemClickHandler: OnClickListener? = null,
-    markClickHandler: OnClickListener? = null,
-    longClickHandler: OnLongClickListener? = null
+      item: CatchUpItem,
+      itemClickHandler: OnClickListener? = null,
+      markClickHandler: OnClickListener? = null,
+      longClickHandler: OnLongClickListener? = null
   )
 }
