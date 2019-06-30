@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.api
+package io.sweers.catchup.ui.widget
 
-import android.view.View
-import android.view.View.OnClickListener
-import android.view.View.OnLongClickListener
-import androidx.annotation.ColorInt
+import androidx.annotation.CallSuper
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import io.sweers.catchup.service.api.TemporaryScopeHolder
 
-interface BindableCatchUpItemViewHolder : TemporaryScopeHolder {
-  fun itemView(): View
-  fun tint(@ColorInt color: Int) {
-    // NOOP
+/** A base [Adapter] that handles common patterns, such as clearing scopes. */
+abstract class BaseCatchupAdapter<VH : ViewHolder> : Adapter<VH>() {
+  @CallSuper
+  override fun onViewRecycled(holder: VH) {
+    super.onViewRecycled(holder)
+    if (holder is TemporaryScopeHolder) {
+      holder.cancel()
+    }
   }
-
-  fun bind(
-    item: CatchUpItem,
-    itemClickHandler: OnClickListener? = null,
-    markClickHandler: OnClickListener? = null,
-    longClickHandler: OnLongClickListener? = null
-  )
 }

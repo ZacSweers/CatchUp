@@ -20,6 +20,8 @@ package io.sweers.catchup.util
 import androidx.annotation.FloatRange
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /*
  * Extension functions for the Palette library.
@@ -49,6 +51,10 @@ inline fun Palette.findSwatch(predicate: (Swatch) -> Boolean): Swatch? {
       darkMutedSwatch
   )
       .firstOrNull(predicate)
+}
+
+suspend fun Palette.Builder.generateAsync(): Palette? = withContext(Dispatchers.Default) {
+  generate()
 }
 
 val Swatch.hue: Float

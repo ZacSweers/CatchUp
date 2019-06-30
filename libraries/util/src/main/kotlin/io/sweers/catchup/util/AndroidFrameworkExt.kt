@@ -17,6 +17,7 @@
 
 package io.sweers.catchup.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -30,6 +31,7 @@ import androidx.annotation.UiThread
 import androidx.core.content.ContextCompat
 import java.io.File
 import java.io.IOException
+import java.util.Locale
 
 /*
  * Android framework extension functions for things like Context, Activity, Resources, etc
@@ -133,3 +135,11 @@ inline fun Context.dp2px(dipValue: Float) = resources.dp2px(dipValue)
 
 inline fun Resources.dp2px(dipValue: Float) =
     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
+
+@get:SuppressLint("NewApi")
+val Resources.primaryLocale: Locale
+  get() {
+    return sdk(24) {
+      configuration.locales[0]
+    } ?: configuration.locale
+  }

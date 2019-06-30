@@ -39,7 +39,6 @@ import androidx.recyclerview.widget.DiffUtil.DiffResult
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -72,6 +71,7 @@ import io.sweers.catchup.ui.base.InjectingBaseFragment
 import io.sweers.catchup.ui.fragments.SmmryFragment
 import io.sweers.catchup.ui.fragments.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.fragments.service.LoadResult.NewData
+import io.sweers.catchup.ui.widget.BaseCatchupAdapter
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.kotlin.applyOn
@@ -99,8 +99,7 @@ import javax.inject.Provider
 
 abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   val columnCount: Int = 1
-) :
-    Adapter<VH>(), DataLoadingCallbacks {
+) : BaseCatchupAdapter<VH>(), DataLoadingCallbacks {
 
   companion object Blah {
     const val TYPE_ITEM = 0

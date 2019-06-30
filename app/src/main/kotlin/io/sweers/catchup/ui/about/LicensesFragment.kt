@@ -63,7 +63,9 @@ import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery.AsRepository
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
 import io.sweers.catchup.injection.scopes.PerFragment
+import io.sweers.catchup.service.api.TemporaryScopeHolder
 import io.sweers.catchup.service.api.UrlMeta
+import io.sweers.catchup.service.api.temporaryScope
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.StickyHeaders
 import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
@@ -73,6 +75,7 @@ import io.sweers.catchup.ui.base.InjectableBaseFragment
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.dp2px
 import io.sweers.catchup.util.findSwatch
+import io.sweers.catchup.util.generateAsync
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.luminosity
@@ -323,22 +326,21 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
                   .circleCrop()
                   .override(dimenSize, dimenSize))
               .transition(DrawableTransitionOptions.withCrossFade())
-              .into(object : DrawableImageViewTarget(icon), Palette.PaletteAsyncListener {
+              .into(object : DrawableImageViewTarget(icon) {
                 override fun onResourceReady(
                   resource: Drawable,
                   transition: Transition<in Drawable>?
                 ) {
                   super.onResourceReady(resource, transition)
                   if (resource is BitmapDrawable) {
-                    Palette.from(resource.bitmap)
-                        .clearFilters()
-                        .generate(this)
+                    newScope().launch {
+                      val color = Palette.from(resource.bitmap)
+                          .clearFilters()
+                          .generateAsync()?.findSwatch(headerColorThresholdFun)?.rgb
+                          ?: defaultHeaderTextColor
+                      holder.title.setTextColor(color)
+                    }
                   }
-                }
-
-                override fun onGenerated(palette: Palette?) {
-                  holder.title.setTextColor(
-                      palette?.findSwatch(headerColorThresholdFun)?.rgb ?: defaultHeaderTextColor)
                 }
               })
           title.text = item.name
@@ -433,7 +435,7 @@ private data class OssGitHubEntry(val owner: String, val name: String) {
   }
 }
 
-private class HeaderHolder(view: View) : ViewHolder(view) {
+private class HeaderHolder(view: View) : ViewHolder(view), TemporaryScopeHolder by temporaryScope() {
   val icon by bindView<ImageView>(R.id.icon)
   val title by bindView<TextView>(R.id.title)
 }

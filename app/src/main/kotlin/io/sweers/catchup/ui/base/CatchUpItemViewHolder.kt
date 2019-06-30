@@ -37,14 +37,19 @@ import io.sweers.catchup.R
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.Mark
+import io.sweers.catchup.service.api.TemporaryScopeHolder
+import io.sweers.catchup.service.api.temporaryScope
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.kotlin.format
+import io.sweers.catchup.util.primaryLocale
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.showIf
 import kotterknife.bindView
 import org.threeten.bp.Instant
 
-class CatchUpItemViewHolder(itemView: View) : ViewHolder(itemView), BindableCatchUpItemViewHolder {
+class CatchUpItemViewHolder(
+  itemView: View
+) : ViewHolder(itemView), BindableCatchUpItemViewHolder, TemporaryScopeHolder by temporaryScope() {
 
   internal val container by bindView<ConstraintLayout>(R.id.container)
   internal val tagsContainer by bindView<View>(R.id.tags_container)
@@ -125,15 +130,13 @@ class CatchUpItemViewHolder(itemView: View) : ViewHolder(itemView), BindableCatc
 
   fun score(scoreValue: Pair<String, Int>?) {
     score.text = scoreValue?.let {
-      String.format("%s %s",
-          scoreValue.first,
-          scoreValue.second.toLong().format())
+      "${scoreValue.first} ${scoreValue.second.toLong().format()}"
     }
     updateDividerVisibility()
   }
 
   fun tag(text: String?) {
-    tag.text = text?.capitalize()
+    tag.text = text?.capitalize(tag.resources.primaryLocale)
     updateDividerVisibility()
   }
 

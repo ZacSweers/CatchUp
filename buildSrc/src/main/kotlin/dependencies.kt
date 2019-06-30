@@ -50,6 +50,7 @@ object build {
       "-XXLanguage:+SamConversionForKotlinFunctions",
       "-XXLanguage:+InlineClasses",
       "-Xuse-experimental=kotlin.Experimental",
+      "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
       "-Xuse-experimental=kotlin.experimental.ExperimentalTypeInference",
       "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
       "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
@@ -78,7 +79,6 @@ object deps {
     const val moshi = "1.8.0"
     const val okhttp = "4.0.0"
     const val retrofit = "2.6.0"
-    const val rxpalette = "0.3.0"
     const val spotless = "3.23.1"
     const val stetho = "1.5.1"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
@@ -386,11 +386,6 @@ object deps {
     const val dogTag = "com.uber.rxdogtag:rxdogtag:0.2.0"
     const val dogTagAutoDispose = "com.uber.rxdogtag:rxdogtag-autodispose:0.2.0"
     const val java = "io.reactivex.rxjava2:rxjava:2.2.9"
-
-    object palette {
-      const val core = "io.sweers.rxpalette:rxpalette:${versions.rxpalette}"
-      const val kotlin = "io.sweers.rxpalette:rxpalette-kotlin:${versions.rxpalette}"
-    }
 
     const val preferences = "com.f2prateek.rx.preferences2:rx-preferences:2.0.0"
     const val relay = "com.jakewharton.rxrelay2:rxrelay:2.1.0"

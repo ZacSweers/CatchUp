@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.util.glide
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -25,6 +24,9 @@ import com.bumptech.glide.request.transition.Transition
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.ColorUtils
 import io.sweers.catchup.util.UiUtil
+import io.sweers.catchup.util.generateAsync
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * A Glide {@see ViewTarget} for [BadgedFourThreeImageView]s. It applies a badge for animated
@@ -32,9 +34,9 @@ import io.sweers.catchup.util.UiUtil
  */
 class CatchUpTarget(
   view: BadgedFourThreeImageView,
-  private val autoplayGifs: Boolean
-) : NonAutoStartDrawableImageViewTarget(view),
-    Palette.PaletteAsyncListener {
+  private val autoplayGifs: Boolean,
+  private val scope: CoroutineScope
+) : NonAutoStartDrawableImageViewTarget(view) {
 
   override fun onResourceReady(
     resource: Drawable,
@@ -47,15 +49,19 @@ class CatchUpTarget(
 
     val badgedImageView = getView() as BadgedFourThreeImageView
     if (resource is BitmapDrawable) {
-      Palette.from(resource.bitmap)
-          .clearFilters()
-          .generate(this)
+      scope.launch {
+        Palette.from(resource.bitmap)
+            .clearFilters()
+            .generateAsync()?.let(::applyPalette)
+      }
     } else if (resource is GifDrawable) {
       val image = resource.firstFrame
       if (image == null || image.isRecycled) {
         return
       }
-      Palette.from(image).clearFilters().generate(this)
+      scope.launch {
+        Palette.from(image).clearFilters().generateAsync()?.let(::applyPalette)
+      }
 
       // look at the corner to determine the gif badge color
       val cornerSize = (56 * getView().context.resources
@@ -70,11 +76,8 @@ class CatchUpTarget(
     }
   }
 
-  @SuppressLint("NewApi")
-  override fun onGenerated(palette: Palette?) {
-    palette?.let {
-      (getView() as BadgedFourThreeImageView).foreground =
-          UiUtil.createRipple(it, 0.25f, 0.5f, 0x40808080, true)
-    }
+  private fun applyPalette(palette: Palette) {
+    (getView() as BadgedFourThreeImageView).foreground =
+        UiUtil.createRipple(palette, 0.25f, 0.5f, 0x40808080, true)
   }
 }
