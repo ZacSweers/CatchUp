@@ -50,6 +50,7 @@ object build {
       "-XXLanguage:+SamConversionForKotlinFunctions",
       "-XXLanguage:+InlineClasses",
       "-Xuse-experimental=kotlin.Experimental",
+      "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
       "-Xuse-experimental=kotlin.experimental.ExperimentalTypeInference",
       "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
       "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
