@@ -51,7 +51,9 @@ import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.TemporaryScopeHolder
 import io.sweers.catchup.service.api.UrlMeta
+import io.sweers.catchup.service.api.temporaryScope
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.ObservableColorMatrix
@@ -181,6 +183,7 @@ internal class ImageAdapter(
 
   @SuppressLint("NewApi")
   override fun onViewRecycled(holder: ViewHolder) {
+    super.onViewRecycled(holder)
     if (holder is ImageHolder) {
       // reset the badge & ripple which are dynamically determined
       GlideApp.with(holder.itemView).clear(holder.image)
@@ -227,7 +230,7 @@ internal class ImageAdapter(
     itemView: View,
     private val loadingPlaceholders: Array<ColorDrawable>
   ) :
-    ViewHolder(itemView), BindableCatchUpItemViewHolder {
+    ViewHolder(itemView), BindableCatchUpItemViewHolder, TemporaryScopeHolder by temporaryScope() {
 
     internal var backingImageItem: ImageItem? = null
     internal val image: BadgedFourThreeImageView = itemView as BadgedFourThreeImageView
@@ -240,6 +243,7 @@ internal class ImageAdapter(
       markClickHandler: OnClickListener?,
       longClickHandler: OnLongClickListener?
     ) {
+      val scope = newScope()
       backingImageItem?.let { imageItem ->
         val (x, y) = imageItem.imageInfo.bestSize ?: Pair(image.measuredWidth, image.measuredHeight)
         GlideApp.with(itemView.context)
@@ -296,7 +300,7 @@ internal class ImageAdapter(
                 isFirstResource: Boolean
               ) = false
             })
-            .into(CatchUpTarget(image, false))
+            .into(CatchUpTarget(image, false, scope))
             .clearOnDetach()
         // need both placeholder & background to prevent seeing through image as it fades in
         image.background = loadingPlaceholders[adapterPosition % loadingPlaceholders.size]
