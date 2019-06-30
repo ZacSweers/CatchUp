@@ -69,8 +69,8 @@ fun Context.maybeStartActivity(intent: Intent): Boolean = maybeStartActivity(int
 fun Context.maybeStartChooser(intent: Intent): Boolean = maybeStartActivity(intent, true)
 
 private fun Context.maybeStartActivity(
-    inputIntent: Intent,
-    chooser: Boolean
+  inputIntent: Intent,
+  chooser: Boolean
 ): Boolean {
   var intent = inputIntent
   return if (hasHandler(intent)) {

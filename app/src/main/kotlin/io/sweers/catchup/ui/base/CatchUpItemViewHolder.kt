@@ -44,12 +44,11 @@ import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.primaryLocale
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.showIf
-import kotlinx.coroutines.CoroutineScope
 import kotterknife.bindView
 import org.threeten.bp.Instant
 
 class CatchUpItemViewHolder(
-    itemView: View
+  itemView: View
 ) : ViewHolder(itemView), BindableCatchUpItemViewHolder, TemporaryScopeHolder by temporaryScope() {
 
   internal val container by bindView<ConstraintLayout>(R.id.container)

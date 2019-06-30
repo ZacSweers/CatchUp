@@ -33,14 +33,14 @@ import kotlinx.coroutines.launch
  * images, can prevent GIFs from auto-playing & applies a palette generated ripple.
  */
 class CatchUpTarget(
-    view: BadgedFourThreeImageView,
-    private val autoplayGifs: Boolean,
-    private val scope: CoroutineScope
+  view: BadgedFourThreeImageView,
+  private val autoplayGifs: Boolean,
+  private val scope: CoroutineScope
 ) : NonAutoStartDrawableImageViewTarget(view) {
 
   override fun onResourceReady(
-      resource: Drawable,
-      transition: Transition<in Drawable>?
+    resource: Drawable,
+    transition: Transition<in Drawable>?
   ) {
     super.onResourceReady(resource, transition)
     if (autoplayGifs && resource is GifDrawable) {
