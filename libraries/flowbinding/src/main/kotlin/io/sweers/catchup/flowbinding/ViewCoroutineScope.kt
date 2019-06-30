@@ -40,7 +40,7 @@ fun View.viewScope(allowOnUnAttach: Boolean = true): CoroutineScope {
     }
   }
 
-  val scope = ViewCoroutineScope(SupervisorJob() + Dispatchers.Main)
+  val scope = ViewCoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
   val listener = object : View.OnAttachStateChangeListener {
     override fun onViewDetachedFromWindow(v: View) {
       scope.coroutineContext.cancel()
