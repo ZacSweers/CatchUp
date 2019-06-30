@@ -30,6 +30,7 @@ import androidx.annotation.UiThread
 import androidx.core.content.ContextCompat
 import java.io.File
 import java.io.IOException
+import java.util.Locale
 
 /*
  * Android framework extension functions for things like Context, Activity, Resources, etc
@@ -68,8 +69,8 @@ fun Context.maybeStartActivity(intent: Intent): Boolean = maybeStartActivity(int
 fun Context.maybeStartChooser(intent: Intent): Boolean = maybeStartActivity(intent, true)
 
 private fun Context.maybeStartActivity(
-  inputIntent: Intent,
-  chooser: Boolean
+    inputIntent: Intent,
+    chooser: Boolean
 ): Boolean {
   var intent = inputIntent
   return if (hasHandler(intent)) {
@@ -133,3 +134,10 @@ inline fun Context.dp2px(dipValue: Float) = resources.dp2px(dipValue)
 
 inline fun Resources.dp2px(dipValue: Float) =
     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
+
+val Resources.primaryLocale: Locale
+  get() {
+    return sdk(24) {
+      configuration.locales[0]
+    } ?: configuration.locale
+  }
