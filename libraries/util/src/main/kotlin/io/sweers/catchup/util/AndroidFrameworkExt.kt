@@ -17,6 +17,7 @@
 
 package io.sweers.catchup.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -135,6 +136,7 @@ inline fun Context.dp2px(dipValue: Float) = resources.dp2px(dipValue)
 inline fun Resources.dp2px(dipValue: Float) =
     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
 
+@get:SuppressLint("NewApi")
 val Resources.primaryLocale: Locale
   get() {
     return sdk(24) {
