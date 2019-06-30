@@ -56,22 +56,22 @@ android {
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
   }
   val commitCountLazy by lazy { deps.build.gitCommitCount(project).toString() }
-  val commitCountCallable = callableOf { commitCountLazy }
   val versionNameLazy by lazy { deps.build.gitTag(project) }
-  val versionNameCallable = callableOf { versionNameLazy }
   applicationVariants.all {
     outputs.all {
       processManifestProvider.configure {
-        inputs.property("commit_count", commitCountCallable)
-        inputs.property("version_name", versionNameCallable)
+        inputs.property("commit_count") { commitCountLazy }
+        inputs.property("version_name") { versionNameLazy }
         doLast {
           // Have to walk the tree here because APK splits results in more nested dirs
           this@configure.manifestOutputDirectory.get().asFile.walkTopDown()
               .filter { it.name == "AndroidManifest.xml" }
               .forEach { manifest ->
                 val content = manifest.readText()
-                manifest.writeText(content.replace("$versionCodePH", commitCountCallable.call())
-                    .replace(versionNamePH, versionNameCallable.call()))
+                manifest.writeText(
+                    content.replace("$versionCodePH", commitCountLazy)
+                    .replace(versionNamePH, versionNameLazy)
+                )
               }
         }
       }

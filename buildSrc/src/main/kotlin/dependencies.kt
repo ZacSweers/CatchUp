@@ -18,7 +18,6 @@
 
 import org.gradle.api.Project
 import java.io.File
-import java.util.concurrent.Callable
 
 fun String?.letIfEmpty(fallback: String): String {
   return if (this == null || isEmpty()) {
@@ -37,10 +36,6 @@ fun String?.execute(workingDir: File, fallback: String): String {
       fallback
     }
   }
-}
-
-fun <T> callableOf(body: () -> T): Callable<T> {
-  return Callable { body() }
 }
 
 object build {

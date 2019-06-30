@@ -57,7 +57,7 @@ buildScan {
 
 // Due to https://github.com/gradle/gradle/issues/4823
 // Breaks configure on demand
-subprojects { parent!!.path.takeIf { it != rootProject.path }?.let { evaluationDependsOn(it) } }
+//subprojects { parent!!.path.takeIf { it != rootProject.path }?.let { evaluationDependsOn(it) } }
 
 allprojects {
 
