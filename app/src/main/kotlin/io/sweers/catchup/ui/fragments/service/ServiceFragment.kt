@@ -27,6 +27,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.CallSuper
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -72,6 +73,7 @@ import io.sweers.catchup.ui.base.InjectingBaseFragment
 import io.sweers.catchup.ui.fragments.SmmryFragment
 import io.sweers.catchup.ui.fragments.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.fragments.service.LoadResult.NewData
+import io.sweers.catchup.ui.widget.BaseCatchupAdapter
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.kotlin.applyOn
@@ -99,8 +101,7 @@ import javax.inject.Provider
 
 abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   val columnCount: Int = 1
-) :
-    Adapter<VH>(), DataLoadingCallbacks {
+) : BaseCatchupAdapter<VH>(), DataLoadingCallbacks {
 
   companion object Blah {
     const val TYPE_ITEM = 0
