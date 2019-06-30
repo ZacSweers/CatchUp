@@ -63,7 +63,9 @@ import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery.AsRepository
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
 import io.sweers.catchup.injection.scopes.PerFragment
+import io.sweers.catchup.service.api.TemporaryScopeHolder
 import io.sweers.catchup.service.api.UrlMeta
+import io.sweers.catchup.service.api.temporaryScope
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.StickyHeaders
 import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
@@ -331,7 +333,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
                 ) {
                   super.onResourceReady(resource, transition)
                   if (resource is BitmapDrawable) {
-                    viewLifecycleOwner.lifecycleScope.launch {
+                    newScope().launch {
                       val color = Palette.from(resource.bitmap)
                           .clearFilters()
                           .generateAsync()?.findSwatch(headerColorThresholdFun)?.rgb
@@ -433,7 +435,7 @@ private data class OssGitHubEntry(val owner: String, val name: String) {
   }
 }
 
-private class HeaderHolder(view: View) : ViewHolder(view) {
+private class HeaderHolder(view: View) : ViewHolder(view), TemporaryScopeHolder by temporaryScope() {
   val icon by bindView<ImageView>(R.id.icon)
   val title by bindView<TextView>(R.id.title)
 }

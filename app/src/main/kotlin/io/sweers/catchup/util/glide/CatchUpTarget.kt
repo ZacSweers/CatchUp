@@ -21,11 +21,11 @@ import android.graphics.drawable.Drawable
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.transition.Transition
-import io.sweers.catchup.flowbinding.viewScope
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.ColorUtils
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.generateAsync
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
@@ -33,13 +33,14 @@ import kotlinx.coroutines.launch
  * images, can prevent GIFs from auto-playing & applies a palette generated ripple.
  */
 class CatchUpTarget(
-  view: BadgedFourThreeImageView,
-  private val autoplayGifs: Boolean
+    view: BadgedFourThreeImageView,
+    private val autoplayGifs: Boolean,
+    private val scope: CoroutineScope
 ) : NonAutoStartDrawableImageViewTarget(view) {
 
   override fun onResourceReady(
-    resource: Drawable,
-    transition: Transition<in Drawable>?
+      resource: Drawable,
+      transition: Transition<in Drawable>?
   ) {
     super.onResourceReady(resource, transition)
     if (autoplayGifs && resource is GifDrawable) {
@@ -48,7 +49,7 @@ class CatchUpTarget(
 
     val badgedImageView = getView() as BadgedFourThreeImageView
     if (resource is BitmapDrawable) {
-      view.viewScope().launch {
+      scope.launch {
         Palette.from(resource.bitmap)
             .clearFilters()
             .generateAsync()?.let(::applyPalette)
@@ -58,7 +59,7 @@ class CatchUpTarget(
       if (image == null || image.isRecycled) {
         return
       }
-      view.viewScope().launch {
+      scope.launch {
         Palette.from(image).clearFilters().generateAsync()?.let(::applyPalette)
       }
 
