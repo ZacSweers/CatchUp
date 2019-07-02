@@ -41,14 +41,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.uber.autodispose.autoDisposable
-import dagger.Provides
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
@@ -63,7 +59,6 @@ import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsUser
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery.AsRepository
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
-import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.TemporaryScopeHolder
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.service.api.temporaryScope
@@ -86,7 +81,6 @@ import kotterknife.bindView
 import okio.buffer
 import okio.source
 import javax.inject.Inject
-import javax.inject.Qualifier
 
 /**
  * A fragment that displays oss licenses.
