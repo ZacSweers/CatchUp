@@ -20,20 +20,16 @@ import android.content.Context
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import io.noties.markwon.Markwon
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
+import io.noties.markwon.ext.tables.TablePlugin
+import io.noties.markwon.ext.tasklist.TaskListPlugin
+import io.noties.markwon.image.ImagesPlugin
+import io.noties.markwon.image.glide.GlideImagesPlugin
+import io.noties.markwon.linkify.LinkifyPlugin
+import io.noties.markwon.movement.MovementMethodPlugin
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
-import okhttp3.Call
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import ru.noties.markwon.Markwon
-import ru.noties.markwon.core.CorePlugin
-import ru.noties.markwon.ext.strikethrough.StrikethroughPlugin
-import ru.noties.markwon.ext.tables.TablePlugin
-import ru.noties.markwon.ext.tasklist.TaskListPlugin
-import ru.noties.markwon.image.ImagesPlugin
-import ru.noties.markwon.image.gif.GifPlugin
-import ru.noties.markwon.image.okhttp.OkHttpImagesPlugin
-import ru.noties.markwon.movement.MovementMethodPlugin
 import javax.inject.Singleton
 
 @Module
@@ -51,23 +47,17 @@ abstract class ApplicationModule {
     @JvmStatic
     @Singleton
     internal fun markwon(
-      @ApplicationContext context: Context, // TODO should use themed one from activity?
-      okhttpClient: dagger.Lazy<OkHttpClient>
+      @ApplicationContext context: Context // TODO should use themed one from activity?
     ): Markwon {
       return Markwon.builder(context)
           .usePlugins(listOf(
-              CorePlugin.create(),
               MovementMethodPlugin.create(LinkTouchMovementMethod()),
-              ImagesPlugin.create(context),
+              ImagesPlugin.create(),
               StrikethroughPlugin.create(),
-              GifPlugin.create(),
+              GlideImagesPlugin.create(context),
               TablePlugin.create(context),
-              TaskListPlugin.create(context),
-              OkHttpImagesPlugin.create(object : Call.Factory {
-                override fun newCall(request: Request): Call {
-                  return okhttpClient.get().newCall(request)
-                }
-              })
+              LinkifyPlugin.create(),
+              TaskListPlugin.create(context)
         //            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
           ))
           .build()
