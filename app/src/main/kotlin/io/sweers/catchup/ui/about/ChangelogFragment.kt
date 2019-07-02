@@ -116,16 +116,16 @@ class ChangelogFragment : InjectableBaseFragment(), Scrollable {
 
   private fun requestItems(): Single<List<ChangeLogItem>> {
     return Rx2Apollo.from(apolloClient.query(RepoReleasesQuery()))
-        .flatMapIterable { it.data()!!.repository()!!.releases().nodes() }
+        .flatMapIterable { it.data()!!.repository!!.releases.nodes }
         .map {
           with(it) {
             ChangeLogItem(
-                name = name()!!,
-                timestamp = publishedAt()!!,
-                tag = tag()!!.name(),
-                sha = tag()!!.target().abbreviatedOid(),
-                url = url().toString(),
-                description = description()!!
+                name = name!!,
+                timestamp = publishedAt!!,
+                tag = tag!!.name,
+                sha = tag.target.abbreviatedOid,
+                url = url.toString(),
+                description = description!!
             )
           }
         }

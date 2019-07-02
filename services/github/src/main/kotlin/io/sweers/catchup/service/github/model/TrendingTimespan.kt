@@ -32,7 +32,7 @@ internal enum class TrendingTimespan constructor(
   private val duration: Long = duration.toLong()
 
   /**
-   * Returns a [LocalDate] to use with [SearchQuery.Builder.createdSince].
+   * Returns a [LocalDate] to use with [SearchQuery.createdSince].
    */
   fun createdSince(): LocalDate {
     return LocalDate.now()

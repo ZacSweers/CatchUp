@@ -179,8 +179,8 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
               .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
               .firstOrError()
               .map {
-                with(it.data()!!.repository()!!) {
-                  id() to owner().id()
+                with(it.data()!!.repository!!) {
+                  id to owner.id
                 }
               }
               .subscribeOn(Schedulers.io())
@@ -197,17 +197,17 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
               Rx2Apollo.from(apolloClient.query(RepositoriesByIdsQuery(it.keys.toList()))
                   .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
                   .firstOrError()
-                  .map { it.data()!!.nodes()!!.map { it as AsRepository } },
+                  .map { it.data()!!.nodes.filterIsInstance<AsRepository>() },
               // Fetch the users by their IDs
               Rx2Apollo.from(apolloClient.query(ProjectOwnersByIdsQuery(it.values.distinct()))
                   .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
-                  .flatMapIterable { it.data()!!.nodes() }
+                  .flatMapIterable { it.data()!!.nodes.mapNotNull { it?.inlineFragment } }
                   // Reduce into a map of the owner ID -> display name
                   .reduce(mutableMapOf()) { map, node ->
                     map.apply {
                       val (id, name) = when (node) {
-                        is AsOrganization -> with(node) { id() to (name() ?: login()) }
-                        is AsUser -> with(node) { id() to (name() ?: login()) }
+                        is AsOrganization -> with(node) { id to (name ?: login) }
+                        is AsUser -> with(node) { id to (name ?: login) }
                         else -> throw IllegalStateException("Unrecognized node type: $node")
                       }
                       map[id] = name
@@ -216,19 +216,19 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
               // Map the repos and their corresponding user display name into a list of their pairs
               BiFunction { nodes: List<AsRepository>, userIdToNameMap: Map<String, String> ->
                 nodes.map {
-                  it to userIdToNameMap[it.owner().id()]!!
+                  it to userIdToNameMap.getValue(it.owner.id)
                 }
               })
         }
         .flattenAsObservable { it }
         .map { (repo, ownerName) ->
           OssItem(
-              avatarUrl = repo.owner().avatarUrl().toString(),
+              avatarUrl = repo.owner.avatarUrl.toString(),
               author = ownerName,
-              name = repo.name(),
-              clickUrl = repo.url().toString(),
-              license = repo.licenseInfo()?.name(),
-              description = repo.description()
+              name = repo.name,
+              clickUrl = repo.url.toString(),
+              license = repo.licenseInfo?.name,
+              description = repo.description
           )
         }
         .startWith(
