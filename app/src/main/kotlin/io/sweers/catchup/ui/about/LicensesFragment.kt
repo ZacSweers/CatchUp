@@ -42,6 +42,7 @@ import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
@@ -69,7 +70,6 @@ import io.sweers.catchup.service.api.temporaryScope
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.StickyHeaders
 import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
-import io.sweers.catchup.ui.about.LicensesModule.ForLicenses
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.InjectableBaseFragment
 import io.sweers.catchup.util.UiUtil
@@ -97,7 +97,6 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
   lateinit var apolloClient: ApolloClient
 
   @Inject
-  @field:ForLicenses
   lateinit var moshi: Moshi
 
   @Inject
@@ -404,54 +403,27 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
   }
 }
 
-private data class OssGitHubEntry(val owner: String, val name: String) {
-  companion object {
-    fun adapter(): JsonAdapter<OssGitHubEntry> {
-      return object : JsonAdapter<OssGitHubEntry>() {
-        override fun toJson(writer: JsonWriter, value: OssGitHubEntry?) {
-          TODO("not implemented")
-        }
-
-        override fun fromJson(reader: JsonReader): OssGitHubEntry {
-          reader.beginObject()
-          // Ugly - these would preferably be lateinit
-          var owner: String? = null
-          var name: String? = null
-          while (reader.hasNext()) {
-            when (reader.nextName()) {
-              "owner" -> {
-                owner = reader.nextString()
-              }
-              "name" -> {
-                name = reader.nextString()
-              }
-            }
-          }
-          reader.endObject()
-          return OssGitHubEntry(owner!!, name!!)
-        }
-      }
-    }
-  }
-}
+@JsonClass(generateAdapter = true)
+internal data class OssGitHubEntry(val owner: String, val name: String)
 
 private class HeaderHolder(view: View) : ViewHolder(view), TemporaryScopeHolder by temporaryScope() {
   val icon by bindView<ImageView>(R.id.icon)
   val title by bindView<TextView>(R.id.title)
 }
 
-private sealed class OssBaseItem {
+internal sealed class OssBaseItem {
   abstract fun itemType(): Int
 }
 
-private data class OssItemHeader(
+internal data class OssItemHeader(
   val avatarUrl: String,
   val name: String
 ) : OssBaseItem() {
   override fun itemType() = 0
 }
 
-private data class OssItem(
+@JsonClass(generateAdapter = true)
+internal data class OssItem(
   val avatarUrl: String,
   val author: String,
   val name: String,
@@ -460,83 +432,5 @@ private data class OssItem(
   val description: String?,
   val authorUrl: String? = null
 ) : OssBaseItem() {
-
   override fun itemType() = 1
-
-  companion object {
-    fun adapter(): JsonAdapter<OssItem> {
-      return object : JsonAdapter<OssItem>() {
-        override fun toJson(writer: JsonWriter, value: OssItem?) {
-          TODO("not implemented")
-        }
-
-        override fun fromJson(reader: JsonReader): OssItem {
-          reader.beginObject()
-          // Ugly - these would preferably be lateinit
-          var author: String? = null
-          var authorUrl: String? = null
-          var name: String? = null
-          var avatarUrl: String? = null
-          var clickUrl: String? = null
-
-          // Actual nullable props
-          var license: String? = null
-          var description: String? = null
-          while (reader.hasNext()) {
-            when (reader.nextName()) {
-              "author" -> {
-                author = reader.nextString()
-              }
-              "authorUrl" -> {
-                authorUrl = reader.nextString()
-              }
-              "name" -> {
-                name = reader.nextString()
-              }
-              "avatarUrl" -> {
-                avatarUrl = reader.nextString()
-              }
-              "license" -> {
-                license = reader.nextString()
-              }
-              "clickUrl" -> {
-                clickUrl = reader.nextString()
-              }
-              "description" -> {
-                description = reader.nextString()
-              }
-            }
-          }
-          reader.endObject()
-          return OssItem(author = author!!,
-              name = name!!,
-              avatarUrl = avatarUrl!!,
-              authorUrl = authorUrl,
-              license = license,
-              clickUrl = clickUrl!!,
-              description = description)
-        }
-      }
-    }
-  }
-}
-
-@dagger.Module
-internal object LicensesModule {
-
-  @Qualifier
-  annotation class ForLicenses
-
-  @Provides
-  @JvmStatic
-  @PerFragment
-  @ForLicenses
-  internal fun provideAboutMoshi(moshi: Moshi): Moshi {
-    return moshi.newBuilder()
-        .add(OssItem::class.java,
-            OssItem.adapter())
-        .add(OssGitHubEntry::class.java,
-            OssGitHubEntry.adapter())
-        .build()
-  }
 }

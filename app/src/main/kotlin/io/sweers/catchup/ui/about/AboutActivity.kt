@@ -384,7 +384,7 @@ abstract class AboutFragmentBindingModule {
   internal abstract fun aboutFragment(): AboutFragment
 
   @PerFragment
-  @ContributesAndroidInjector(modules = [LicensesModule::class])
+  @ContributesAndroidInjector
   internal abstract fun licensesFragment(): LicensesFragment
 
   @PerFragment
