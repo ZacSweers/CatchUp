@@ -414,7 +414,7 @@ dependencies {
   implementation(deps.markwon.image)
   implementation(deps.markwon.imageGlide)
   implementation(deps.markwon.linkify)
-  implementation(deps.markwon.syntaxHighlight)
+//  implementation(deps.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
   implementation(project(":service-api"))
   implementation(project(":service-registry:service-registry"))
   implementation(project(":libraries:gemoji"))
