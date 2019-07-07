@@ -18,7 +18,11 @@ package io.sweers.catchup.util.kotlin
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -54,6 +58,64 @@ suspend fun <T> Flow<T>.firstOrNull(predicate: suspend (T) -> Boolean): T? {
     @Suppress("UNCHECKED_CAST")
     result as T
   }
+}
+
+@FlowPreview
+suspend fun <V, K> Flow<V>.groupBy(selector: (V) -> K): Flow<Pair<K, List<V>>> = flow {
+  val map = mutableMapOf<K, MutableList<V>>()
+  collect {
+    map.getOrPut(selector(it), ::mutableListOf).add(it)
+  }
+  map.entries.forEach { (key, value) ->
+    emit(key to value)
+  }
+}
+
+@FlowPreview
+suspend fun <T, K : Comparable<K>> Flow<T>.sortBy(selector: (T) -> K): Flow<T> = flow {
+  val list = mutableListOf<T>()
+  collect {
+    list.add(it)
+  }
+  list.sortBy(selector)
+  list.forEach { emit(it) }
+}
+
+@FlowPreview
+suspend fun <T> Flow<T>.startWith(other: () -> Flow<T>): Flow<T> = flow {
+  emitAll(other())
+  collect {
+    emit(it)
+  }
+}
+
+@JvmName("startWithValueResolver")
+@FlowPreview
+suspend fun <T> Flow<T>.startWith(valueResolver: () -> T): Flow<T> = flow {
+  emit(valueResolver())
+  collect {
+    emit(it)
+  }
+}
+
+@FlowPreview
+suspend fun <T> Flow<T>.startWith(value: T): Flow<T> = flow {
+  emit(value)
+  collect {
+    emit(it)
+  }
+}
+
+@FlowPreview
+suspend fun <T> Flow<List<T>>.flatten(): Flow<T> = flatMapConcat { it.asFlow() }
+
+@FlowPreview
+suspend fun <T> Flow<T>.distinct(): Flow<T> = distinctBy { it }
+
+@FlowPreview
+suspend fun <T, K> Flow<T>.distinctBy(selector: suspend (T) -> K): Flow<T> {
+  val set = mutableSetOf<K>()
+  return filter { set.add(selector(it)) }
 }
 
 /**
