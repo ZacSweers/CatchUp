@@ -48,7 +48,7 @@ import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.resolveActivity
 import io.sweers.catchup.util.show
 import kotlinx.coroutines.launch
-import ru.noties.markwon.Markwon
+import io.noties.markwon.Markwon
 import javax.inject.Inject
 
 class ChangelogHelper @Inject constructor(

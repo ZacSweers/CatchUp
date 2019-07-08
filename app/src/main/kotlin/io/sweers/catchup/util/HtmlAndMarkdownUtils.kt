@@ -26,7 +26,7 @@ import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import ru.noties.markwon.Markwon
+import io.noties.markwon.Markwon
 
 /*
  * Utility methods for working with HTML and markdown.

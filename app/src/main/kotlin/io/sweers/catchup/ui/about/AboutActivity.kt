@@ -68,7 +68,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotterknife.bindView
-import ru.noties.markwon.Markwon
+import io.noties.markwon.Markwon
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.abs
