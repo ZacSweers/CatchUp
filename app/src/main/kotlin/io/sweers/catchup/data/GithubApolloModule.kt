@@ -47,6 +47,9 @@ internal object GithubApolloModule {
   @Qualifier
   private annotation class InternalApi
 
+  /**
+   * TODO this hits disk on startup -_-
+   */
   @Provides
   @JvmStatic
   @Singleton

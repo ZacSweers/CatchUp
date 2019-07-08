@@ -32,26 +32,22 @@ import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.apollographql.apollo.ApolloCall
+import com.apollographql.apollo.ApolloCall.StatusEvent
+import com.apollographql.apollo.ApolloCall.StatusEvent.COMPLETED
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
-import com.apollographql.apollo.rx2.Rx2Apollo
+import com.apollographql.apollo.exception.ApolloException
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import com.uber.autodispose.autoDisposable
-import dagger.Provides
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
@@ -60,16 +56,14 @@ import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsOrganization
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsUser
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
-import io.sweers.catchup.data.github.RepositoriesByIdsQuery.AsRepository
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
-import io.sweers.catchup.injection.scopes.PerFragment
+import io.sweers.catchup.flowbinding.safeOffer
 import io.sweers.catchup.service.api.TemporaryScopeHolder
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.service.api.temporaryScope
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.StickyHeaders
 import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
-import io.sweers.catchup.ui.about.LicensesModule.ForLicenses
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.InjectableBaseFragment
 import io.sweers.catchup.util.UiUtil
@@ -78,15 +72,35 @@ import io.sweers.catchup.util.findSwatch
 import io.sweers.catchup.util.generateAsync
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
+import io.sweers.catchup.util.kotlin.distinct
+import io.sweers.catchup.util.kotlin.flatten
+import io.sweers.catchup.util.kotlin.groupBy
+import io.sweers.catchup.util.kotlin.sortBy
+import io.sweers.catchup.util.kotlin.startWith
 import io.sweers.catchup.util.luminosity
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.fold
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import kotterknife.bindView
 import okio.buffer
 import okio.source
 import javax.inject.Inject
-import javax.inject.Qualifier
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * A fragment that displays oss licenses.
@@ -97,7 +111,6 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
   lateinit var apolloClient: ApolloClient
 
   @Inject
-  @field:ForLicenses
   lateinit var moshi: Moshi
 
   @Inject
@@ -140,111 +153,101 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
     } else {
       pendingRvState = savedInstanceState.getParcelable("changelogState")
     }
-    requestItems()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doFinally {
-          progressBar.hide()
-        }
-        .autoDisposable(this)
-        .subscribe { data, error ->
-          if (data != null) {
-            adapter.setItems(data)
-            pendingRvState?.let(layoutManager::onRestoreInstanceState)
-          } else {
-            // TODO Show a better error
-            w(error) { "Could not load open source licenses." }
-            Snackbar.make(recyclerView, R.string.licenses_error,
-                Snackbar.LENGTH_SHORT).show()
-          }
-        }
+
+    viewLifecycleOwner.lifecycleScope.launch {
+      try {
+        val data = requestItems()
+        adapter.setItems(data)
+        pendingRvState?.let(layoutManager::onRestoreInstanceState)
+      } catch (error: Exception) {
+        // TODO Show a better error
+        w(error) { "Could not load open source licenses." }
+        Snackbar.make(recyclerView, R.string.licenses_error, Snackbar.LENGTH_SHORT).show()
+      } finally {
+        progressBar.hide()
+      }
+    }
   }
 
   /**
    * I give you: the most over-engineered OSS licenses section ever.
    */
-  private fun requestItems(): Single<List<OssBaseItem>> {
-    return Single
-        .fromCallable {
-          // Start with a fetch of our github entries from assets
-          moshi.adapter<List<OssGitHubEntry>>(
-              Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java))
-              .fromJson(resources.assets.open("licenses_github.json").source().buffer())
-        }
-        .flattenAsObservable { it }
+  private suspend fun requestItems(): List<OssBaseItem> {
+    // Start with a fetch of our github entries from assets
+    val githubEntries = withContext(Dispatchers.Default) {
+      moshi.adapter<List<OssGitHubEntry>>(
+          Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java))
+          .fromJson(resources.assets.open("licenses_github.json").source().buffer())!!
+    }
+    // Fetch repos, send down a map of the ids to owner ids
+    val idsToOwnerIds = githubEntries.asFlow()
         .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
-        .flatMapSingle {
-          // Fetch repos, send down a map of the ids to owner ids
-          Rx2Apollo.from(apolloClient.query(it)
-              .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
-              .firstOrError()
+        .flatMapMerge {
+          apolloClient.query(it).httpCachePolicy(HttpCachePolicy.CACHE_FIRST).toFlow()
               .map {
-                with(it.data()!!.repository()!!) {
-                  id() to owner().id()
+                with(it.data()!!.repository!!) {
+                  id to owner.id
                 }
               }
-              .subscribeOn(Schedulers.io())
+              .flowOn(Dispatchers.IO)
         }
         .distinct()
-        .reduce(mutableMapOf()) { map: MutableMap<String, String>, (first, second) ->
+        .fold(mutableMapOf()) { map: MutableMap<String, String>, (first, second) ->
           map.apply {
             put(first, second)
           }
         }
-        .flatMap {
-          Single.zip(
-              // Fetch the repositories by their IDs, map down to its
-              Rx2Apollo.from(apolloClient.query(RepositoriesByIdsQuery(it.keys.toList()))
-                  .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
-                  .firstOrError()
-                  .map { it.data()!!.nodes()!!.map { it as AsRepository } },
-              // Fetch the users by their IDs
-              Rx2Apollo.from(apolloClient.query(ProjectOwnersByIdsQuery(it.values.distinct()))
-                  .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
-                  .flatMapIterable { it.data()!!.nodes() }
-                  // Reduce into a map of the owner ID -> display name
-                  .reduce(mutableMapOf()) { map, node ->
-                    map.apply {
-                      val (id, name) = when (node) {
-                        is AsOrganization -> with(node) { id() to (name() ?: login()) }
-                        is AsUser -> with(node) { id() to (name() ?: login()) }
-                        else -> throw IllegalStateException("Unrecognized node type: $node")
-                      }
-                      map[id] = name
-                    }
-                  },
-              // Map the repos and their corresponding user display name into a list of their pairs
-              BiFunction { nodes: List<AsRepository>, userIdToNameMap: Map<String, String> ->
-                nodes.map {
-                  it to userIdToNameMap[it.owner().id()]!!
-                }
-              })
+
+    // Fetch the users by their IDs
+    val userIdToNameMap = withContext(Dispatchers.IO) {
+      apolloClient.query(ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct()))
+          .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
+          .toFlow()
+          .map { it.data()!!.nodes.mapNotNull { it?.inlineFragment } }
+          .flatten()
+          // Reduce into a map of the owner ID -> display name
+          .fold(mutableMapOf<String, String>()) { map, node ->
+            map.apply {
+              val (id, name) = when (node) {
+                is AsOrganization -> with(node) { id to (name ?: login) }
+                is AsUser -> with(node) { id to (name ?: login) }
+                else -> throw IllegalStateException("Unrecognized node type: $node")
+              }
+              map[id] = name
+            }
+          }
+    }
+    // Fetch the repositories by their IDs, map down to its
+    return apolloClient.query(RepositoriesByIdsQuery(idsToOwnerIds.keys.toList()))
+        .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
+        .toFlow()
+        .map {
+          it.data()!!.nodes.asSequence().mapNotNull { it?.inlineFragment }.filterIsInstance<RepositoriesByIdsQuery.AsRepository>().toList() // Iterable?
         }
-        .flattenAsObservable { it }
+        .flatten()
+        .map { it to userIdToNameMap.getValue(it.owner.id) }
         .map { (repo, ownerName) ->
           OssItem(
-              avatarUrl = repo.owner().avatarUrl().toString(),
+              avatarUrl = repo.owner.avatarUrl.toString(),
               author = ownerName,
-              name = repo.name(),
-              clickUrl = repo.url().toString(),
-              license = repo.licenseInfo()?.name(),
-              description = repo.description()
+              name = repo.name,
+              clickUrl = repo.url.toString(),
+              license = repo.licenseInfo?.name,
+              description = repo.description
           )
         }
-        .startWith(
-            Single
-                .fromCallable {
-                  moshi.adapter<List<OssItem>>(
-                      Types.newParameterizedType(List::class.java, OssItem::class.java))
-                      .fromJson(resources.assets.open("licenses_mixins.json").source().buffer())
-                }
-                .flattenAsObservable { it }
-        )
+        .startWith {
+          moshi.adapter<List<OssItem>>(
+              Types.newParameterizedType(List::class.java, OssItem::class.java))
+              .fromJson(resources.assets.open("licenses_mixins.json").source().buffer())!!
+              .asFlow()
+        }
+        .flowOn(Dispatchers.IO)
         .groupBy { it.author }
-        .sorted { o1, o2 -> o1.key!!.compareTo(o2.key!!) }
-        .concatMapEager { it.sorted { o1, o2 -> o1.name.compareTo(o2.name) } }
+        .sortBy { it.first }
+        .flatMapConcat { it.second.asFlow().sortBy { it.name } }
         .toList()
-        .map {
+        .let {
           val collector = mutableListOf<OssBaseItem>()
           with(it[0]) {
             collector.add(OssItemHeader(
@@ -404,54 +407,28 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
   }
 }
 
-private data class OssGitHubEntry(val owner: String, val name: String) {
-  companion object {
-    fun adapter(): JsonAdapter<OssGitHubEntry> {
-      return object : JsonAdapter<OssGitHubEntry>() {
-        override fun toJson(writer: JsonWriter, value: OssGitHubEntry?) {
-          TODO("not implemented")
-        }
+@JsonClass(generateAdapter = true)
+internal data class OssGitHubEntry(val owner: String, val name: String)
 
-        override fun fromJson(reader: JsonReader): OssGitHubEntry {
-          reader.beginObject()
-          // Ugly - these would preferably be lateinit
-          var owner: String? = null
-          var name: String? = null
-          while (reader.hasNext()) {
-            when (reader.nextName()) {
-              "owner" -> {
-                owner = reader.nextString()
-              }
-              "name" -> {
-                name = reader.nextString()
-              }
-            }
-          }
-          reader.endObject()
-          return OssGitHubEntry(owner!!, name!!)
-        }
-      }
-    }
-  }
-}
-
-private class HeaderHolder(view: View) : ViewHolder(view), TemporaryScopeHolder by temporaryScope() {
+private class HeaderHolder(view: View) : ViewHolder(
+    view), TemporaryScopeHolder by temporaryScope() {
   val icon by bindView<ImageView>(R.id.icon)
   val title by bindView<TextView>(R.id.title)
 }
 
-private sealed class OssBaseItem {
+internal sealed class OssBaseItem {
   abstract fun itemType(): Int
 }
 
-private data class OssItemHeader(
+internal data class OssItemHeader(
   val avatarUrl: String,
   val name: String
 ) : OssBaseItem() {
   override fun itemType() = 0
 }
 
-private data class OssItem(
+@JsonClass(generateAdapter = true)
+internal data class OssItem(
   val avatarUrl: String,
   val author: String,
   val name: String,
@@ -460,83 +437,57 @@ private data class OssItem(
   val description: String?,
   val authorUrl: String? = null
 ) : OssBaseItem() {
-
   override fun itemType() = 1
+}
 
-  companion object {
-    fun adapter(): JsonAdapter<OssItem> {
-      return object : JsonAdapter<OssItem>() {
-        override fun toJson(writer: JsonWriter, value: OssItem?) {
-          TODO("not implemented")
-        }
+/**
+ * Converts an [ApolloCall] to a suspending coroutine.
+ */
+suspend fun <T> ApolloCall<T>.suspending(): Response<T>? {
+  return suspendCancellableCoroutine { continuation ->
+    continuation.invokeOnCancellation {
+      cancel()
+    }
+    enqueue(object : ApolloCall.Callback<T>() {
+      override fun onResponse(response: Response<T>) {
+        continuation.resume(response)
+      }
 
-        override fun fromJson(reader: JsonReader): OssItem {
-          reader.beginObject()
-          // Ugly - these would preferably be lateinit
-          var author: String? = null
-          var authorUrl: String? = null
-          var name: String? = null
-          var avatarUrl: String? = null
-          var clickUrl: String? = null
+      override fun onFailure(e: ApolloException) {
+        continuation.resumeWithException(e)
+      }
 
-          // Actual nullable props
-          var license: String? = null
-          var description: String? = null
-          while (reader.hasNext()) {
-            when (reader.nextName()) {
-              "author" -> {
-                author = reader.nextString()
-              }
-              "authorUrl" -> {
-                authorUrl = reader.nextString()
-              }
-              "name" -> {
-                name = reader.nextString()
-              }
-              "avatarUrl" -> {
-                avatarUrl = reader.nextString()
-              }
-              "license" -> {
-                license = reader.nextString()
-              }
-              "clickUrl" -> {
-                clickUrl = reader.nextString()
-              }
-              "description" -> {
-                description = reader.nextString()
-              }
-            }
-          }
-          reader.endObject()
-          return OssItem(author = author!!,
-              name = name!!,
-              avatarUrl = avatarUrl!!,
-              authorUrl = authorUrl,
-              license = license,
-              clickUrl = clickUrl!!,
-              description = description)
+      override fun onStatusEvent(event: StatusEvent) {
+        if (event == COMPLETED && continuation.isActive) {
+          continuation.resume(null)
         }
       }
+    })
+  }
+}
+
+/**
+ * Converts an [ApolloCall] to a [Flow].
+ */
+suspend fun <T> ApolloCall<T>.toFlow(): Flow<Response<T>> = callbackFlow<Response<T>> {
+  enqueue(object : ApolloCall.Callback<T>() {
+    override fun onResponse(response: Response<T>) {
+      safeOffer(response)
+    }
+
+    override fun onFailure(e: ApolloException) {
+      throw e
+    }
+
+    override fun onStatusEvent(event: StatusEvent) {
+      if (event == COMPLETED && !isClosedForSend) {
+        close()
+      }
+    }
+  })
+  awaitClose {
+    if (!isCanceled) {
+      cancel()
     }
   }
-}
-
-@dagger.Module
-internal object LicensesModule {
-
-  @Qualifier
-  annotation class ForLicenses
-
-  @Provides
-  @JvmStatic
-  @PerFragment
-  @ForLicenses
-  internal fun provideAboutMoshi(moshi: Moshi): Moshi {
-    return moshi.newBuilder()
-        .add(OssItem::class.java,
-            OssItem.adapter())
-        .add(OssGitHubEntry::class.java,
-            OssGitHubEntry.adapter())
-        .build()
-  }
-}
+}.conflate()
