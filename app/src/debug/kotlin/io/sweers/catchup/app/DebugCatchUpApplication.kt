@@ -33,7 +33,7 @@ import io.sweers.catchup.util.sdk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import leakcanary.AndroidExcludedRefs
+import leakcanary.AndroidKnownReference
 import leakcanary.LeakCanary
 import leakcanary.LeakSentry
 import timber.log.Timber
@@ -95,10 +95,7 @@ class DebugCatchUpApplication : CatchUpApplication() {
           LeakSentry.refWatcher.watch(watchedReference)
         }
       }
-      LeakCanary.config.copy(exclusionsFactory = { hprofParser ->
-        val defaultFactory = AndroidExcludedRefs.exclusionsFactory(AndroidExcludedRefs.appDefaults)
-        defaultFactory(hprofParser)
-      })
+      LeakCanary.config.copy(knownReferences = AndroidKnownReference.appDefaults)
     } else {
       // Disabled on API 28 because there's a pretty vicious memory leak that constantly triggers
       // https://github.com/square/leakcanary/issues/1081
