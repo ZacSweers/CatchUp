@@ -27,7 +27,7 @@ import java.util.Locale
  */
 internal interface GitHubApi {
 
-  @GET("/trending/{$LANGUAGE}")
+  @GET("/trending{$LANGUAGE}")
   fun getTrending(
     @Path(LANGUAGE) language: Language,
     @Query("since") since: Since
@@ -37,20 +37,20 @@ internal interface GitHubApi {
     DAILY, WEEKLY, MONTHLY;
 
     override fun toString(): String {
-      return super.toString().toLowerCase()
+      return super.toString().toLowerCase(Locale.US)
     }
   }
 
   sealed class Language {
     object All : Language() {
       override fun toString(): String {
-        return "all"
+        return ""
       }
     }
 
     data class Custom(val name: String) : Language() {
       override fun toString(): String {
-        return name.toLowerCase(Locale.US)
+        return "/${name.toLowerCase(Locale.US)}"
       }
     }
   }

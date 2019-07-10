@@ -92,7 +92,7 @@ internal class GitHubService @Inject constructor(
           with(it) {
             CatchUpItem(
                 id = "$author/$repoName".hashCode().toLong(),
-                title = "$repoName — $description",
+                title = replaceMarkdownEmojis("$repoName — :+1: $description", emojiMarkdownConverter.get()),
                 author = author,
                 timestamp = null,
                 score = "★" to stars,
@@ -100,7 +100,6 @@ internal class GitHubService @Inject constructor(
                 itemClickUrl = url,
                 mark = starsToday?.toString()?.let {
                   Mark(text = it,
-                      textPrefix = "+",
                       icon = R.drawable.ic_star_black_24dp,
                       iconTintColor = languageColor?.trimStart() // Thanks for the leading space, GitHub
                           ?.let(Color::parseColor)

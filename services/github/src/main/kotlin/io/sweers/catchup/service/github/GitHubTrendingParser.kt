@@ -30,14 +30,18 @@ internal object GitHubTrendingParser {
   private fun String.removeCommas() = replace(",", "")
 
   internal fun parse(body: ResponseBody): List<TrendingItem> {
-    return Jsoup.parse(body.string(), ENDPOINT)
-        .select(".repo-list li")
+    val fullBody = body.string()
+    return Jsoup.parse(fullBody, ENDPOINT)
+        .getElementsByClass("Box-row")
         .mapNotNull(::parseTrendingItem)
+        .ifEmpty {
+          error("List was empty! Usually this is a sign that parsing failed.")
+        }
   }
 
   private fun parseTrendingItem(element: Element): TrendingItem? {
     // /creativetimofficial/material-dashboard
-    val authorAndName = element.select("h3 > a")
+    val authorAndName = element.select("h1 > a")
         .attr("href")
         .toString()
         .removePrefix("/")
@@ -54,7 +58,7 @@ internal object GitHubTrendingParser {
         .firstOrNull()
         ?.attr("style")
         ?.removePrefix("background-color:")
-        ?.removeSuffix(";")
+        ?.trim()
 
     // "3,441" stars, forks
     val counts = element.select(".muted-link.d-inline-block.mr-3")
