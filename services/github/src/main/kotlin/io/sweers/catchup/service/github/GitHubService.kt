@@ -92,7 +92,7 @@ internal class GitHubService @Inject constructor(
           with(it) {
             CatchUpItem(
                 id = "$author/$repoName".hashCode().toLong(),
-                title = replaceMarkdownEmojis("$repoName — :+1: $description", emojiMarkdownConverter.get()),
+                title = replaceMarkdownEmojis("$repoName — $description", emojiMarkdownConverter.get()),
                 author = author,
                 timestamp = null,
                 score = "★" to stars,
