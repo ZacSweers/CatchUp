@@ -84,6 +84,8 @@ internal class GitHubService @Inject constructor(
   }
 
   private fun fetchByScraping(): Single<DataResult> {
+    // TODO temporary to repro the current bug
+    emojiMarkdownConverter.get()
     return gitHubApi
         .get()
         .getTrending(language = All, since = DAILY)
