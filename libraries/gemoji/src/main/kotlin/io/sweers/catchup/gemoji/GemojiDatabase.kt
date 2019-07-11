@@ -18,7 +18,7 @@ package io.sweers.catchup.gemoji
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
-@Database(entities = [(Gemoji::class)], version = 1)
+@Database(entities = [(Gemoji::class)], version = 2)
 internal abstract class GemojiDatabase : RoomDatabase() {
   abstract fun gemojiDao(): GemojiDao
 }

@@ -17,7 +17,6 @@ package io.sweers.catchup.gemoji
 
 import android.content.Context
 import androidx.room.Room
-import androidx.sqlite.db.framework.SupportAssetSQLiteOpenHelper
 import dagger.Module
 import dagger.Provides
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
@@ -32,9 +31,7 @@ object GemojiModule {
   internal fun provideGemojiDatabase(@ApplicationContext context: Context): GemojiDatabase {
     return Room.databaseBuilder(context, GemojiDatabase::class.java, "gemoji.db")
         .fallbackToDestructiveMigration()
-        .openHelperFactory {
-          SupportAssetSQLiteOpenHelper(it.context, it.name!!, it.callback.version, it.callback)
-        }
+        .createFromAsset("databases/gemoji.db")
         .build()
   }
 

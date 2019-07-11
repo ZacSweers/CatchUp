@@ -28,7 +28,7 @@ if os.path.exists(dbPath):
 
 connection = sqlite3.connect(dbPath)
 cursor = connection.cursor()
-cursor.execute('CREATE TABLE gemoji (alias text, emoji text)')
+cursor.execute('CREATE TABLE `gemoji` (`alias` TEXT NOT NULL, `emoji` TEXT, PRIMARY KEY(`alias`))')
 
 file = open(jsonPath, 'r', -1, "utf8")
 gemojis = json.load(file)

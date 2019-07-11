@@ -118,7 +118,7 @@ object deps {
       }
 
       object room {
-        private const val version = "2.1.0"
+        private const val version = "2.2.0-alpha01"
         const val apt = "androidx.room:room-compiler:$version"
         const val runtime = "androidx.room:room-runtime:$version"
         const val rxJava2 = "androidx.room:room-rxjava2:$version"
