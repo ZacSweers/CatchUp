@@ -447,6 +447,7 @@ dependencies {
   kapt(deps.android.androidx.lifecycle.apt)
   implementation(deps.android.androidx.room.runtime)
   implementation(deps.android.androidx.room.rxJava2)
+  implementation(deps.android.androidx.room.ktx)
   kapt(deps.android.androidx.room.apt)
 
   // Kotlin

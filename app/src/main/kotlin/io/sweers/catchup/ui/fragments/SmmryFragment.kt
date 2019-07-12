@@ -60,9 +60,8 @@ import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.ui.base.InjectableBaseFragment
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotterknife.bindView
 import java.util.Locale
 import javax.inject.Inject
@@ -168,6 +167,10 @@ class SmmryFragment : InjectableBaseFragment() {
     }
     viewLifecycleOwner.lifecycleScope.launch {
       val response = tryRequestFromStorage() ?: fetchFromNetwork()
+      if (!isActive) {
+        // TODO why is this necessary? One of the above suspends are not cooperating with isActive()
+        return@launch
+      }
       alreadyLoaded = true
       loadingView.hide(animate = true)
       when (response) {
@@ -254,21 +257,14 @@ data class SmmryStorageEntry(
   val json: String
 )
 
-private suspend fun SmmryDao.getItem(url: String) = withContext(Dispatchers.IO) {
-  getItemBlocking(url)
-}
-
-private suspend fun SmmryDao.putItem(item: SmmryStorageEntry) = withContext(
-    Dispatchers.IO) { putItemBlocking(item) }
-
 @Dao
 interface SmmryDao {
 
   @Query("SELECT * FROM $TABLE WHERE url = :url")
-  fun getItemBlocking(url: String): SmmryStorageEntry?
+  suspend fun getItem(url: String): SmmryStorageEntry?
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItemBlocking(item: SmmryStorageEntry)
+  suspend fun putItem(item: SmmryStorageEntry)
 
   @Query("DELETE FROM $TABLE")
   fun nukeItems()
