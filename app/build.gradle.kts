@@ -210,7 +210,6 @@ kapt {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
     arg("moshi.generated", "javax.annotation.Generated")
-    arg("dagger.formatGeneratedSource", "disabled")
     arg("dagger.gradle.incremental")
   }
 }

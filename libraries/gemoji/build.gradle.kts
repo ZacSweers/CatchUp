@@ -61,7 +61,6 @@ kapt {
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
-    arg("dagger.formatGeneratedSource", "disabled")
     arg("dagger.gradle.incremental")
   }
 }

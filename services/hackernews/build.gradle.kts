@@ -65,7 +65,6 @@ kapt {
   correctErrorTypes = true
   mapDiagnosticLocations = true
   arguments {
-    arg("dagger.formatGeneratedSource", "disabled")
     arg("dagger.gradle.incremental")
   }
 }
