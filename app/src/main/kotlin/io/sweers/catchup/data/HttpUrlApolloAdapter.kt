@@ -24,7 +24,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 /**
  * An Apollo adapter for converting between URI types to HttpUrl.
  */
-class HttpUrlApolloAdapter : CustomTypeAdapter<HttpUrl> {
+object HttpUrlApolloAdapter : CustomTypeAdapter<HttpUrl> {
   override fun encode(value: HttpUrl): CustomTypeValue<*> {
     return GraphQLString.fromRawValue(value.toString())
   }

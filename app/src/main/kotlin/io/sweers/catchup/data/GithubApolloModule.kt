@@ -118,17 +118,15 @@ internal object GithubApolloModule {
     resolver: CacheKeyResolver,
     httpCache: HttpCache
   ): ApolloClient {
-    val instantAdapter = ISO8601InstantApolloAdapter()
-    val httpUrlAdapter = HttpUrlApolloAdapter()
     return ApolloClient.builder()
         .serverUrl(SERVER_URL)
         .httpCache(httpCache)
         .callFactory { client.get().newCall(it) }
         .normalizedCache(cacheFactory, resolver)
-        .addCustomTypeAdapter(CustomType.DATETIME, instantAdapter)
-        .addCustomTypeAdapter(CustomType.URI, httpUrlAdapter)
-        .addCustomTypeAdapter(CustomType.DATETIME, instantAdapter)
-        .addCustomTypeAdapter(CustomType.URI, httpUrlAdapter)
+        .addCustomTypeAdapter(CustomType.DATETIME, ISO8601InstantApolloAdapter)
+        .addCustomTypeAdapter(CustomType.URI, HttpUrlApolloAdapter)
+        .addCustomTypeAdapter(io.sweers.catchup.service.github.type.CustomType.DATETIME, ISO8601InstantApolloAdapter)
+        .addCustomTypeAdapter(io.sweers.catchup.service.github.type.CustomType.URI, HttpUrlApolloAdapter)
         .build()
   }
 }

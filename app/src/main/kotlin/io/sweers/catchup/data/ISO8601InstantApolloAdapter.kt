@@ -24,7 +24,7 @@ import org.threeten.bp.Instant
 /**
  * A CustomTypeAdapter for apollo that can convert ISO style date strings to Instant.
  */
-class ISO8601InstantApolloAdapter : CustomTypeAdapter<Instant> {
+object ISO8601InstantApolloAdapter : CustomTypeAdapter<Instant> {
   override fun decode(value: CustomTypeValue<*>): Instant {
     if (value is GraphQLString) {
       return value.value.parsePossiblyOffsetInstant()
