@@ -26,18 +26,14 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.Switch
 import android.widget.TextView
 import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.Lazy
-import io.reactivex.Maybe
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.P
 import io.sweers.catchup.R
+import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.flowbinding.clicks
 import io.sweers.catchup.flowbinding.itemSelections
@@ -46,15 +42,18 @@ import io.sweers.catchup.ui.logs.LogsDialog
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.isN
 import io.sweers.catchup.util.kotlin.applyOn
+import io.sweers.catchup.util.kotlin.getValue
+import io.sweers.catchup.util.kotlin.setValue
 import io.sweers.catchup.util.truncateAt
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotterknife.bindView
 import kotterknife.onSubviewClick
 import leakcanary.LeakCanary
-import okhttp3.Cache
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
@@ -69,8 +68,6 @@ class DebugView @JvmOverloads constructor(
   attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
   internal val icon by bindView<View>(R.id.debug_icon)
-  private val contextualTitleView by bindView<View>(R.id.debug_contextual_title)
-  private val contextualListView by bindView<LinearLayout>(R.id.debug_contextual_list)
   private val networkDelayView by bindView<Spinner>(R.id.debug_network_delay)
   private val networkVarianceView by bindView<Spinner>(R.id.debug_network_variance)
   private val networkErrorView by bindView<Spinner>(R.id.debug_network_error)
@@ -99,20 +96,17 @@ class DebugView @JvmOverloads constructor(
   private val okHttpCacheHitCountView by bindView<TextView>(R.id.debug_okhttp_cache_hit_count)
   private lateinit var client: Lazy<OkHttpClient>
   private lateinit var lumberYard: LumberYard
-  private var isMockMode = P.DebugMockModeEnabled.get()
-  private var networkDelay = P.DebugNetworkDelay.rx()
-  private var networkFailurePercent = P.DebugNetworkFailurePercent.rx()
-  private var networkVariancePercent = P.DebugNetworkVariancePercent.rx()
+  private var isMockMode by DebugPreferences::mockModeEnabled
   private var behavior: NetworkBehavior = NetworkBehavior.create().apply {
-    setDelay(networkDelay.get().toLong(), MILLISECONDS)
-    setFailurePercent(networkFailurePercent.get())
-    setVariancePercent(networkVariancePercent.get())
+    setDelay(DebugPreferences.networkDelay, MILLISECONDS)
+    setFailurePercent(DebugPreferences.networkFailurePercent)
+    setVariancePercent(DebugPreferences.networkVariancePercent)
   }
-  private val animationSpeed = P.DebugAnimationSpeed.rx()
-  private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
-  private val pixelRatioEnabled = P.DebugPixelRatioEnabled.rx()
-  private val scalpelEnabled = P.DebugScalpelEnabled.rx()
-  private val scalpelWireframeEnabled = P.DebugScalpelWireframeDrawer.rx()
+  private var animationSpeed by DebugPreferences::animationSpeed
+  private var pixelGridEnabled by DebugPreferences::pixelGridEnabled
+  private var pixelRatioEnabled by DebugPreferences::pixelRatioEnabled
+  private var scalpelEnabled by DebugPreferences::scalpelEnabled
+  private var scalpelWireframeEnabled by DebugPreferences::scalpelWireframeDrawer
 
   constructor(
     context: Context,
@@ -150,11 +144,11 @@ class DebugView @JvmOverloads constructor(
     setupUserInterfaceSection()
     setupBuildSection()
     setupDeviceSection()
-    refreshOkHttpCacheStats(setup = true)
+    viewScope().launch { refreshOkHttpCacheStats(setup = true) }
   }
 
   fun onDrawerOpened() {
-    refreshOkHttpCacheStats(false)
+    viewScope().launch { refreshOkHttpCacheStats(setup = false) }
   }
 
   private fun setupNetworkSection() {
@@ -171,7 +165,7 @@ class DebugView @JvmOverloads constructor(
           .collect { selected ->
             d { "Setting network delay to ${selected}ms" }
             behavior.setDelay(selected, MILLISECONDS)
-            networkDelay.set(selected.toInt())
+            DebugPreferences.networkDelay = selected
           }
     }
 
@@ -187,7 +181,7 @@ class DebugView @JvmOverloads constructor(
           .collect { selected ->
             d { "Setting network variance to $selected%" }
             behavior.setVariancePercent(selected)
-            networkVariancePercent.set(selected)
+            DebugPreferences.networkVariancePercent = selected
           }
     }
 
@@ -203,7 +197,7 @@ class DebugView @JvmOverloads constructor(
           .collect { selected ->
             d { "Setting network error to $selected%" }
             behavior.setFailurePercent(selected)
-            networkFailurePercent.set(selected)
+            DebugPreferences.networkFailurePercent = selected
           }
     }
 
@@ -216,11 +210,11 @@ class DebugView @JvmOverloads constructor(
   }
 
   private fun setupMockBehaviorSection() {
-    enableMockModeView.isChecked = P.DebugMockModeEnabled.get()
+    enableMockModeView.isChecked = DebugPreferences.mockModeEnabled
     viewScope().launch {
       enableMockModeView.clicks()
           .collect {
-            P.DebugMockModeEnabled.put(enableMockModeView.isChecked).commit()
+            DebugPreferences.mockModeEnabled = enableMockModeView.isChecked
             ProcessPhoenix.triggerRebirth(context)
           }
     }
@@ -229,50 +223,50 @@ class DebugView @JvmOverloads constructor(
   private fun setupUserInterfaceSection() {
     val speedAdapter = AnimationSpeedAdapter(context)
     uiAnimationSpeedView.adapter = speedAdapter
-    val animationSpeedValue = animationSpeed.get()
+    val animationSpeedValue = animationSpeed
     uiAnimationSpeedView.setSelection(
         AnimationSpeedAdapter.getPositionForValue(animationSpeedValue))
 
     viewScope().launch {
       uiAnimationSpeedView.itemSelections()
           .map { speedAdapter.getItem(it) }
-          .filter { item -> item != animationSpeed.get() }
+          .filter { item -> item != animationSpeed }
           .collect { selected ->
             d { "Setting animation speed to ${selected}x" }
-            animationSpeed.set(selected)
+            animationSpeed = selected
             applyAnimationSpeed(selected)
           }
     }
     // Ensure the animation speed value is always applied across app restarts.
     post { applyAnimationSpeed(animationSpeedValue) }
 
-    val gridEnabled = pixelGridEnabled.get()
+    val gridEnabled = pixelGridEnabled
     uiPixelGridView.isChecked = gridEnabled
     uiPixelRatioView.isEnabled = gridEnabled
     uiPixelGridView.setOnCheckedChangeListener { _, isChecked ->
       d { "Setting pixel grid overlay enabled to $isChecked" }
-      pixelGridEnabled.set(isChecked)
+      pixelGridEnabled = isChecked
       uiPixelRatioView.isEnabled = isChecked
     }
 
-    uiPixelRatioView.isChecked = pixelRatioEnabled.get()
+    uiPixelRatioView.isChecked = pixelRatioEnabled
     uiPixelRatioView.setOnCheckedChangeListener { _, isChecked ->
       d { "Setting pixel scale overlay enabled to $isChecked" }
-      pixelRatioEnabled.set(isChecked)
+      pixelRatioEnabled = isChecked
     }
 
-    uiScalpelView.isChecked = scalpelEnabled.get()
-    uiScalpelWireframeView.isEnabled = scalpelEnabled.get()
+    uiScalpelView.isChecked = scalpelEnabled
+    uiScalpelWireframeView.isEnabled = scalpelEnabled
     uiScalpelView.setOnCheckedChangeListener { _, isChecked ->
       d { "Setting scalpel interaction enabled to $isChecked" }
-      scalpelEnabled.set(isChecked)
+      scalpelEnabled = isChecked
       uiScalpelWireframeView.isEnabled = isChecked
     }
 
-    uiScalpelWireframeView.isChecked = scalpelWireframeEnabled.get()
+    uiScalpelWireframeView.isChecked = scalpelWireframeEnabled
     uiScalpelWireframeView.setOnCheckedChangeListener { _, isChecked ->
       d { "Setting scalpel wireframe enabled to $isChecked" }
-      scalpelWireframeEnabled.set(isChecked)
+      scalpelWireframeEnabled = isChecked
     }
   }
 
@@ -308,29 +302,20 @@ class DebugView @JvmOverloads constructor(
     deviceApiView.text = Build.VERSION.SDK_INT.toString()
   }
 
-  private fun refreshOkHttpCacheStats(setup: Boolean = false) {
-    Maybe
-        .create<Cache> { e ->
-          // Shares the cache with apiClient, so no need to check both.
-          client.get().cache?.let {
-            e.onSuccess(it)
-          } ?: e.onComplete()
-        }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { cache ->
-          if (setup) {
-            okHttpCacheMaxSizeView.text = getSizeString(cache.maxSize())
-          }
-          val writeTotal = cache.writeSuccessCount() + cache.writeAbortCount()
-          val percentage = (1f * cache.writeAbortCount() / writeTotal * 100).toInt()
-          okHttpCacheWriteErrorView.text = "${cache.writeAbortCount()} / $writeTotal ($percentage%)"
-          okHttpCacheRequestCountView.text = cache.requestCount().toString()
-          okHttpCacheNetworkCountView.text = cache.networkCount().toString()
-          okHttpCacheHitCountView.text = cache.hitCount().toString()
-        }
+  private suspend fun refreshOkHttpCacheStats(setup: Boolean = false) {
+    val cache = withContext(Dispatchers.IO) { client.get().cache } ?: return
+    if (setup) {
+      okHttpCacheMaxSizeView.text = getSizeString(cache.maxSize())
+    }
+    val writeTotal = cache.writeSuccessCount() + cache.writeAbortCount()
+    val percentage = (1f * cache.writeAbortCount() / writeTotal * 100).toInt()
+    okHttpCacheWriteErrorView.text = "${cache.writeAbortCount()} / $writeTotal ($percentage%)"
+    okHttpCacheRequestCountView.text = cache.requestCount().toString()
+    okHttpCacheNetworkCountView.text = cache.networkCount().toString()
+    okHttpCacheHitCountView.text = cache.hitCount().toString()
   }
 
+  @SuppressLint("DiscouragedPrivateApi")
   private fun applyAnimationSpeed(multiplier: Int) {
     try {
       val method = ValueAnimator::class.java.getDeclaredMethod("setDurationScale",

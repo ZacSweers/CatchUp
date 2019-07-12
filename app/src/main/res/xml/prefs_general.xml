@@ -22,13 +22,13 @@
 
     <CheckBoxPreference
         android:defaultValue="true"
-        android:key="smartlinking_global"
+        android:key="smartlinkingGlobal"
         android:summary="@string/pref_smart_linking_summary"
         android:title="@string/pref_smart_linking_title"
         />
 
     <Preference
-        android:key="reorder_services_section"
+        android:key="reorderServicesSection"
         android:title="@string/pref_reorder_services"
         />
 
@@ -39,7 +39,7 @@
         />
 
     <Preference
-        android:key="clear_cache"
+        android:key="clearCache"
         android:summary="@string/pref_clear_cache_summary"
         android:title="@string/pref_clear_cache"
         />
@@ -54,16 +54,16 @@
         android:defaultValue="true"
         android:disableDependentsState="true"
         android:icon="@drawable/ic_brightness_4_black_24dp"
-        android:key="daynight_auto"
+        android:key="daynightAuto"
         android:summary="@string/pref_auto_set_theme_summary"
         android:title="@string/pref_auto_set_theme"
         />
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:dependency="daynight_auto"
+        android:dependency="daynightAuto"
         android:icon="@drawable/ic_brightness_3_black_24dp"
-        android:key="daynight_night"
+        android:key="dayNightForceNight"
         android:summaryOff="@string/pref_dark_theme_disabled"
         android:summaryOn="@string/pref_dark_theme_enabled"
         android:title="@string/pref_use_dark_theme"
@@ -71,7 +71,7 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="theme_navigation_bar"
+        android:key="themeNavigationBar"
         android:title="@string/pref_theme_navbar"
         />
 

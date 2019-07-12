@@ -31,7 +31,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.DiffUtil
@@ -40,6 +39,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.chibatching.kotpref.bulk
 import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
@@ -47,7 +47,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.Multibinds
-import io.sweers.catchup.P
+import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
@@ -146,7 +146,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
     }
     val lm = LinearLayoutManager(view.context)
     recyclerView.layoutManager = lm
-    storedOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
+    storedOrder = CatchUpPreferences.servicesOrder?.split(",") ?: emptyList()
     val instanceChanges = savedInstanceState?.getStringArrayList("pendingChanges")
     pendingChanges = instanceChanges?.map { serviceMetas[it] as ServiceMeta }
     val displayOrder = instanceChanges ?: storedOrder
@@ -182,8 +182,8 @@ class OrderServicesFragment : InjectableBaseFragment() {
 
     save.setOnClickListener {
       pendingChanges?.let { changes ->
-        sharedPrefs.edit {
-          putString(P.ServicesOrder.KEY, changes.joinToString(",", transform = ServiceMeta::id))
+        CatchUpPreferences.bulk {
+          servicesOrder = changes.joinToString(",", transform = ServiceMeta::id)
         }
       }
       activity?.finish()
@@ -191,7 +191,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
 
     val primaryColor = ContextCompat.getColor(save.context, R.color.colorPrimary)
     val textColor = save.context.resolveAttributeColor(android.R.attr.textColorPrimary)
-    syllabus.showIfNeverSeen(P.ServicesOrderSeen.KEY,
+    syllabus.showIfNeverSeen(CatchUpPreferences::servicesOrderSeen.name,
         TargetRequest(
             target = {
               FabShowTapTarget(delegateTarget = { TapTarget.forView(save, "", "") },

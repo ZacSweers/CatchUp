@@ -37,7 +37,7 @@ import dagger.android.support.AndroidSupportInjection
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.P
+import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.LumberYard
@@ -143,67 +143,65 @@ class SettingsActivity : InjectingBaseActivity() {
         it.isIconSpaceReserved = false
       }
 
-      (findPreference(
-          P.SmartlinkingGlobal.KEY) as? CheckBoxPreference)?.isChecked = P.SmartlinkingGlobal.get()
-      (findPreference(P.DaynightAuto.KEY) as? CheckBoxPreference)?.isChecked = P.DaynightAuto.get()
-      (findPreference(P.DaynightNight.KEY) as? CheckBoxPreference)?.isChecked = P.DaynightNight.get()
-      (findPreference(P.Reports.KEY) as? CheckBoxPreference)?.isChecked = P.Reports.get()
+      (findPreference(CatchUpPreferences::smartlinkingGlobal.name) as? CheckBoxPreference)?.isChecked = CatchUpPreferences.smartlinkingGlobal
+      (findPreference(CatchUpPreferences::daynightAuto.name) as? CheckBoxPreference)?.isChecked = CatchUpPreferences.daynightAuto
+      (findPreference(CatchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)?.isChecked = CatchUpPreferences.dayNightForceNight
+      (findPreference(CatchUpPreferences::reports.name) as? CheckBoxPreference)?.isChecked = CatchUpPreferences.reports
 
-      val themeNavBarPref = findPreference(P.ThemeNavigationBar.KEY) as? CheckBoxPreference
-      themeNavBarPref?.isChecked = P.ThemeNavigationBar.get()
+      val themeNavBarPref = findPreference(CatchUpPreferences::themeNavigationBar.name) as? CheckBoxPreference
+      themeNavBarPref?.isChecked = CatchUpPreferences.themeNavigationBar
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
       when (preference.key) {
-        P.SmartlinkingGlobal.KEY -> {
-          P.SmartlinkingGlobal.put((preference as CheckBoxPreference).isChecked).apply()
+        CatchUpPreferences::smartlinkingGlobal.name -> {
+          CatchUpPreferences.smartlinkingGlobal = (preference as CheckBoxPreference).isChecked
           return true
         }
-        P.DaynightAuto.KEY -> {
+        CatchUpPreferences::daynightAuto.name -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
-          P.DaynightAuto.put(isChecked)
+          CatchUpPreferences.daynightAuto = isChecked
               .apply {
                 if (isChecked) {
                   // If we're enabling auto, clear out the prev daynight night-only mode
-                  putBoolean(P.DaynightNight.KEY, false)
-                  (findPreference(P.DaynightNight.KEY) as? CheckBoxPreference)?.isChecked = false
+                  CatchUpPreferences.dayNightForceNight = false
+                  (findPreference(CatchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)?.isChecked = false
                 }
               }
-              .apply()
           activity?.updateNightMode()
           return true
         }
-        P.DaynightNight.KEY -> {
-          P.DaynightNight.put((preference as CheckBoxPreference).isChecked).apply()
+        CatchUpPreferences::dayNightForceNight.name -> {
+          CatchUpPreferences.dayNightForceNight = (preference as CheckBoxPreference).isChecked
           activity?.updateNightMode()
           return true
         }
-        P.ThemeNavigationBar.KEY -> {
-          P.ThemeNavigationBar.put((preference as CheckBoxPreference).isChecked).apply()
+        CatchUpPreferences::themeNavigationBar.name -> {
+          CatchUpPreferences.themeNavigationBar = (preference as CheckBoxPreference).isChecked
           (activity as SettingsActivity).run {
             resultData.putBoolean(NAV_COLOR_UPDATED, true)
             updateNavBarColor(recreate = true)
           }
           return true
         }
-        P.ReorderServicesSection.KEY -> {
+        CatchUpPreferences::reorderServicesSection.name -> {
           (activity as SettingsActivity).resultData.putBoolean(SERVICE_ORDER_UPDATED, true)
           startActivity(Intent(activity, OrderServicesActivity::class.java))
           return true
         }
-        P.Reports.KEY -> {
+        CatchUpPreferences::reports.name -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
-          P.Reports.put(isChecked).apply()
+          CatchUpPreferences.reports = isChecked
           Snackbar.make(view!!, R.string.settings_reset, Snackbar.LENGTH_SHORT)
               .setAction(R.string.undo) {
                 // TODO Maybe this should actually be a restart button
-                P.Reports.put(!isChecked).apply()
+                CatchUpPreferences.reports = !isChecked
                 preference.isChecked = !isChecked
               }
               .show()
           return true
         }
-        P.ClearCache.KEY -> {
+        CatchUpPreferences::clearCache.name -> {
           Single.fromCallable {
             // TODO would be nice to measure the size impact of this file ¯\_(ツ)_/¯
             sharedPreferences.edit().clear().apply()
@@ -237,11 +235,11 @@ class SettingsActivity : InjectingBaseActivity() {
               }
           return true
         }
-        P.About.KEY -> {
+        CatchUpPreferences::about.name -> {
           startActivity(Intent(activity, AboutActivity::class.java))
           return true
         }
-        P.Services.KEY -> {
+        CatchUpPreferences::services.name -> {
           (activity as SettingsActivity).resultData.putBoolean(SERVICE_ORDER_UPDATED, true)
           startActivity(Intent(activity, ServiceSettingsActivity::class.java))
           return true

@@ -30,10 +30,9 @@ import androidx.annotation.ColorInt
 import androidx.collection.ArrayMap
 import androidx.core.util.toAndroidPair
 import androidx.lifecycle.lifecycleScope
-import com.f2prateek.rx.preferences2.Preference
-import io.reactivex.BackpressureStrategy.ERROR
-import io.sweers.catchup.P
+import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
+import io.sweers.catchup.flowFor
 import io.sweers.catchup.flowbinding.intentReceivers
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.ImageViewerData
@@ -50,7 +49,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 
 @PerActivity
@@ -58,8 +56,6 @@ class LinkManager @Inject constructor(
   private val customTab: CustomTabActivityHelper,
   private val activity: Activity
 ) : LinkHandler {
-
-  private val globalSmartLinkingPref: Preference<Boolean> = P.SmartlinkingGlobal.rx()
 
   // Naive cache that tracks if we've already resolved for activities that can handle a given host
   // TODO Eventually replace this with something that's mindful of per-service prefs
@@ -72,7 +68,7 @@ class LinkManager @Inject constructor(
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED)
     activity.lifecycleScope.launch {
       activity.intentReceivers(filter)
-          .mergeWith(globalSmartLinkingPref.asObservable().toFlowable(ERROR).asFlow())
+          .mergeWith(CatchUpPreferences.flowFor { ::smartlinkingGlobal })
           .collect { dumbCache.clear() }
     }
   }
@@ -117,7 +113,7 @@ class LinkManager @Inject constructor(
       return
     }
     val intent = Intent(Intent.ACTION_VIEW, meta.uri)
-    if (!globalSmartLinkingPref.get()) {
+    if (!CatchUpPreferences.smartlinkingGlobal) {
       openCustomTab(meta.context, uri, meta.accentColor)
       return
     }

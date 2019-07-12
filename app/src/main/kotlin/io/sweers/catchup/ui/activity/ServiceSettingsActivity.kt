@@ -20,7 +20,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.commitNow
 import androidx.preference.Preference
@@ -32,7 +34,7 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.android.support.AndroidSupportInjection
 import dagger.multibindings.Multibinds
-import io.sweers.catchup.P
+import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerFragment
@@ -41,6 +43,7 @@ import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfigurati
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.base.InjectingBaseActivity
+import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
 import kotterknife.bindView
@@ -109,7 +112,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     private fun setUpGeneralSettings() {
       preferenceScreen = preferenceManager.createPreferenceScreen(activity)
 
-      val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",")
+      val currentOrder = CatchUpPreferences.servicesOrder?.split(",")
           ?: emptyList()
       serviceMetas
           .values
@@ -118,10 +121,13 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
           .forEach { meta ->
             meta.run {
               // Create a category
-//              val metaColor = ContextCompat.getColor(activity!!.asDayContext(), meta.themeColor)
+              val metaColor = ContextCompat.getColor(activity!!.asDayContext(), meta.themeColor)
               val category = PreferenceCategory(activity).apply {
                 title = resources.getString(meta.name)
 //                titleColor = metaColor
+                icon = AppCompatResources.getDrawable(context, meta.icon)!!.apply {
+                  setTint(metaColor)
+                }
               }
               preferenceScreen.addPreference(category)
 

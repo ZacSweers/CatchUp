@@ -22,13 +22,13 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatDelegate
-import io.sweers.catchup.P
+import io.sweers.catchup.CatchUpPreferences
 
 inline fun Activity.updateNightMode() {
   val isCurrentlyInNightMode = isInNightMode()
   val nightMode = when {
-    P.DaynightAuto.get() -> AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
-    P.DaynightNight.get() -> AppCompatDelegate.MODE_NIGHT_YES
+    CatchUpPreferences.daynightAuto -> AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+    CatchUpPreferences.dayNightForceNight -> AppCompatDelegate.MODE_NIGHT_YES
     else -> AppCompatDelegate.MODE_NIGHT_NO
   }
   if (nightMode == AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY ||

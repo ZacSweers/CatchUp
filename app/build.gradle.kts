@@ -509,6 +509,8 @@ dependencies {
   implementation(deps.rx.dogTagAutoDispose)
   implementation(deps.misc.moshiLazyAdapters)
   implementation(deps.autoDispose.androidArch)
+  implementation(deps.misc.kotpref)
+  implementation(deps.misc.kotprefEnum)
 
   // Apollo
   implementation(deps.apollo.androidSupport)

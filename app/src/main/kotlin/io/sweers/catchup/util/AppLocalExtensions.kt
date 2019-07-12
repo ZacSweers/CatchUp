@@ -21,7 +21,7 @@ import android.graphics.Color
 import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
-import io.sweers.catchup.P
+import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 
 fun Activity.updateNavBarColor(
@@ -31,7 +31,7 @@ fun Activity.updateNavBarColor(
 ) {
   // Update the nav bar with whatever prefs we had
   @Suppress("CascadeIf") // Because I think if-else makes more sense readability-wise
-  if (color != null && P.ThemeNavigationBar.get()) {
+  if (color != null && CatchUpPreferences.themeNavigationBar) {
     window.navigationBarColor = color
     window.navigationBarDividerColor = Color.TRANSPARENT
     window.decorView.clearLightNavBar() // TODO why do I need to do this every time?

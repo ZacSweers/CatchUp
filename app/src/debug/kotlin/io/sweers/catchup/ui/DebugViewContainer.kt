@@ -45,25 +45,32 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.android.MainThreadDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.P
 import io.sweers.catchup.R
+import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
+import io.sweers.catchup.flowFor
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.base.ActivityEvent
 import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotterknife.ViewDelegateBindable
 import kotterknife.bindView
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 /**
  * An [ViewContainer] for debug builds which wraps a sliding drawer on the right that holds
@@ -77,11 +84,10 @@ internal class DebugViewContainer @Inject constructor(
   private val syllabus: Syllabus,
   private val fontHelper: FontHelper
 ) : ViewContainer {
-  private val seenDebugDrawer = P.DebugSeenDebugDrawer.rx()
-  private val pixelGridEnabled = P.DebugPixelGridEnabled.rx()
-  private val pixelRatioEnabled = P.DebugPixelRatioEnabled.rx()
-  private val scalpelEnabled = P.DebugScalpelEnabled.rx()
-  private val scalpelWireframeEnabled = P.DebugScalpelWireframeDrawer.rx()
+  private val pixelGridEnabled = DebugPreferences.flowFor { ::pixelGridEnabled }
+  private val pixelRatioEnabled = DebugPreferences.flowFor { ::pixelRatioEnabled }
+  private val scalpelEnabled = DebugPreferences.flowFor { ::scalpelEnabled }
+  private val scalpelWireframeEnabled = DebugPreferences.flowFor { ::scalpelWireframeDrawer }
 
   override fun forActivity(activity: BaseActivity): ViewGroup {
     val contentView = LayoutInflater.from(activity)
@@ -121,7 +127,7 @@ internal class DebugViewContainer @Inject constructor(
         }
 
     // If you have not seen the debug drawer before, show it with a message
-    syllabus.showIfNeverSeen(seenDebugDrawer.key(), TargetRequest(
+    syllabus.showIfNeverSeen(DebugPreferences::seenDebugDrawer.name, TargetRequest(
         target = {
           DrawerTapTarget(
               delegateTarget = TapTarget.forView(debugView.icon,
@@ -147,9 +153,11 @@ internal class DebugViewContainer @Inject constructor(
         }
     ))
 
-    val disposables = CompositeDisposable()
-    setupMadge(viewHolder, disposables)
-    setupScalpel(viewHolder, disposables)
+    val scope = object : CoroutineScope {
+      override val coroutineContext: CoroutineContext = SupervisorJob() + Dispatchers.Main.immediate
+    }
+    setupMadge(viewHolder, scope)
+    setupScalpel(viewHolder, scope)
 
     riseAndShine(activity)
     activity.lifecycle()
@@ -157,27 +165,31 @@ internal class DebugViewContainer @Inject constructor(
         .firstElement()
         // Why is the below all so awkward?
         .doOnDispose {
-          disposables.clear()
+          scope.cancel()
         }
         .autoDisposable(activity)
         .subscribe {
-          disposables.clear()
+          scope.cancel()
         }
     return viewHolder.content
   }
 
-  private fun setupMadge(viewHolder: DebugViewViewHolder, subscriptions: CompositeDisposable) {
-    subscriptions.add(pixelGridEnabled.asObservable()
-        .subscribe { enabled -> viewHolder.madgeFrameLayout.isOverlayEnabled = enabled })
-    subscriptions.add(pixelRatioEnabled.asObservable()
-        .subscribe { enabled -> viewHolder.madgeFrameLayout.isOverlayRatioEnabled = enabled })
+  private fun setupMadge(viewHolder: DebugViewViewHolder, scope: CoroutineScope) = scope.launch {
+    pixelGridEnabled.onEach { enabled ->
+      viewHolder.madgeFrameLayout.isOverlayEnabled = enabled
+    }
+    pixelRatioEnabled.onEach { enabled ->
+      viewHolder.madgeFrameLayout.isOverlayRatioEnabled = enabled
+    }
   }
 
-  private fun setupScalpel(viewHolder: DebugViewViewHolder, subscriptions: CompositeDisposable) {
-    subscriptions.add(scalpelEnabled.asObservable()
-        .subscribe { enabled -> viewHolder.content.isLayerInteractionEnabled = enabled })
-    subscriptions.add(scalpelWireframeEnabled.asObservable()
-        .subscribe { enabled -> viewHolder.content.setDrawViews(!enabled) })
+  private fun setupScalpel(viewHolder: DebugViewViewHolder, scope: CoroutineScope) = scope.launch {
+    scalpelEnabled.onEach { enabled ->
+      viewHolder.content.isLayerInteractionEnabled = enabled
+    }
+    scalpelWireframeEnabled.onEach { enabled ->
+      viewHolder.content.setDrawViews(!enabled)
+    }
   }
 
   companion object {

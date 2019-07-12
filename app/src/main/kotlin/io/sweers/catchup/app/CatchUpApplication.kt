@@ -21,6 +21,7 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
+import com.chibatching.kotpref.Kotpref
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.gabrielittner.threetenbp.LazyThreeTen
 import com.uber.rxdogtag.RxDogTag
@@ -29,11 +30,13 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.sweers.catchup.P
+import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.flowFor
 import io.sweers.catchup.util.d
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -83,23 +86,21 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
     LazyThreeTen.init(this)
     onPreInject()
     inject()
-    P.init(this, false)
-    P.setSharedPreferences(sharedPreferences, rxPreferences)
+    Kotpref.init(this)
     initVariant()
 
-    P.DaynightAuto.rx()
-        .asObservable()
-        .subscribe { autoEnabled ->
-          d { "Updating daynight" }
-          // Someday would like to add activity lifecycle callbacks to automatically call recreate
-          // when resumed since this was updated
-          var nightMode = AppCompatDelegate.MODE_NIGHT_NO
-          if (autoEnabled) {
-            nightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
-          } else if (P.DaynightNight.get()) {
-            nightMode = AppCompatDelegate.MODE_NIGHT_YES
-          }
-          AppCompatDelegate.setDefaultNightMode(nightMode)
+    CatchUpPreferences.flowFor { ::daynightAuto }
+        .onEach { autoEnabled ->
+            d { "Updating daynight" }
+            // Someday would like to add activity lifecycle callbacks to automatically call recreate
+            // when resumed since this was updated
+            var nightMode = AppCompatDelegate.MODE_NIGHT_NO
+            if (autoEnabled) {
+              nightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+            } else if (CatchUpPreferences.dayNight) {
+              nightMode = AppCompatDelegate.MODE_NIGHT_YES
+            }
+            AppCompatDelegate.setDefaultNightMode(nightMode)
         }
   }
 

@@ -48,7 +48,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 import dagger.Provides
-import io.sweers.catchup.P
+import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.flowbinding.offsetChanges
@@ -366,7 +366,7 @@ class PagerFragment : InjectingBaseFragment() {
       sharedPrefs: SharedPreferences,
       serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
     ): Array<ServiceHandler> {
-      val currentOrder = sharedPrefs.getString(P.ServicesOrder.KEY, null)?.split(",") ?: emptyList()
+      val currentOrder = CatchUpPreferences.servicesOrder?.split(",") ?: emptyList()
       return (serviceMetas.values
           .filter(ServiceMeta::enabled)
           .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }

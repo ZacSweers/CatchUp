@@ -16,7 +16,6 @@
 package io.sweers.catchup.data
 
 import android.content.Context
-import io.sweers.catchup.P
 import io.sweers.catchup.data.model.ServiceData
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import okhttp3.HttpUrl
@@ -41,7 +40,7 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
     val host = url.host
     val path = url.encodedPath
     val serviceData = SUPPORTED_ENDPOINTS[host]
-    return if (P.DebugMockModeEnabled.get() && serviceData != null && serviceData.supports(path)) {
+    return if (DebugPreferences.mockModeEnabled && serviceData != null && serviceData.supports(path)) {
       Response.Builder().request(request)
           .body(context.assets
               .open(formatUrl(serviceData, url)).source().buffer()

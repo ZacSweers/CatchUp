@@ -17,10 +17,10 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <Preference
-      android:key="services_order"
+      android:key="servicesOrder"
       />
   <Preference
       android:defaultValue="false"
-      android:key="services_order_seen"
+      android:key="servicesOrderSeen"
       />
 </PreferenceScreen>

@@ -18,46 +18,46 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <Preference
       android:defaultValue="2000"
-      android:key="debug_network_delay"
+      android:key="debugNetworkDelay"
       />
   <Preference
       android:defaultValue="3"
-      android:key="debug_network_failure_percent"
+      android:key="debugNetworkFailurePercent"
       />
   <Preference
       android:defaultValue="40"
-      android:key="debug_network_variance_percent"
+      android:key="debugNetworkVariancePercent"
       />
   <Preference
       android:defaultValue="true"
-      android:key="debug_capture_intents"
+      android:key="debugCaptureIntents"
       />
   <Preference
       android:defaultValue="1"
-      android:key="debug_animation_speed"
+      android:key="debugAnimationSpeed"
       />
   <Preference
       android:defaultValue="false"
-      android:key="debug_pixel_grid_enabled"
+      android:key="debugPixelGridEnabled"
       />
   <Preference
       android:defaultValue="false"
-      android:key="debug_pixel_ratio_enabled"
+      android:key="debugPixelRatioEnabled"
       />
   <Preference
       android:defaultValue="false"
-      android:key="debug_seen_debug_drawer"
+      android:key="debugSeenDebugDrawer"
       />
   <Preference
       android:defaultValue="false"
-      android:key="debug_scalpel_enabled"
+      android:key="debugScalpelEnabled"
       />
   <Preference
       android:defaultValue="false"
-      android:key="debug_scalpel_wireframe_drawer"
+      android:key="debugScalpelWireframeDrawer"
       />
   <Preference
       android:defaultValue="false"
-      android:key="debug_mock_mode_enabled"
+      android:key="debugMockModeEnabled"
       />
 </PreferenceScreen>

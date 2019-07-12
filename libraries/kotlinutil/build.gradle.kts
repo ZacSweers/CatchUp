@@ -30,4 +30,7 @@ tasks.withType<KotlinCompile> {
 dependencies {
   api(deps.kotlin.coroutines)
   api(deps.kotlin.stdlib.core)
+
+  testImplementation(deps.test.junit)
+  testImplementation(deps.test.truth)
 }
