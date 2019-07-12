@@ -101,8 +101,7 @@ internal class GitHubService @Inject constructor(
                 mark = starsToday?.toString()?.let {
                   Mark(text = it,
                       icon = R.drawable.ic_star_black_24dp,
-                      iconTintColor = languageColor?.trimStart() // Thanks for the leading space, GitHub
-                          ?.let(Color::parseColor)
+                      iconTintColor = languageColor?.let(Color::parseColor)
                   )
                 }
             )

@@ -58,7 +58,16 @@ internal object GitHubTrendingParser {
         .firstOrNull()
         ?.attr("style")
         ?.removePrefix("background-color:")
-        ?.trim()
+        ?.trimStart() // Thanks for the leading space, GitHub
+        ?.let {
+          val colorSubstring = it.removePrefix("#")
+          if (colorSubstring.length == 3) {
+            // Three digit hex, convert to 6 digits for Color.parseColor()
+            "#${colorSubstring.replace(".".toRegex(), "$0$0")}"
+          } else {
+            it
+          }
+        }
 
     // "3,441" stars, forks
     val counts = element.select(".muted-link.d-inline-block.mr-3")
