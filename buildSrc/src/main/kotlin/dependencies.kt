@@ -72,7 +72,7 @@ object deps {
     const val legacySupport = "28.0.0"
     const val markwon = "4.0.1"
     const val moshi = "1.8.0"
-    const val okhttp = "4.0.0"
+    const val okhttp = "4.0.1"
     const val retrofit = "2.6.0"
     const val spotless = "3.23.1"
     const val stetho = "1.5.1"
@@ -91,7 +91,7 @@ object deps {
 
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
       const val customTabs = "androidx.browser:browser:1.0.0"
-      const val design = "com.google.android.material:material:1.1.0-alpha07"
+      const val design = "com.google.android.material:material:1.1.0-alpha08"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0-alpha02"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
@@ -132,7 +132,7 @@ object deps {
     }
 
     object firebase {
-      const val core = "com.google.firebase:firebase-core:17.0.0"
+      const val core = "com.google.firebase:firebase-core:17.0.1"
       const val config = "com.google.firebase:firebase-config:18.0.0"
       const val database = "com.google.firebase:firebase-database:18.0.0"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
@@ -323,7 +323,7 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakSentry = "com.squareup.leakcanary:leaksentry:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.16.0"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.16.1"
 
     object debug {
       const val flipper = "com.facebook.flipper:flipper:0.23.0"
