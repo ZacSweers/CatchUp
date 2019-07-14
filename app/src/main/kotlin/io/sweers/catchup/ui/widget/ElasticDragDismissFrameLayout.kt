@@ -27,6 +27,9 @@ import io.sweers.catchup.R
 import io.sweers.catchup.util.ColorUtils
 import io.sweers.catchup.util.isNavBarOnBottom
 import java.util.ArrayList
+import kotlin.math.abs
+import kotlin.math.log10
+import kotlin.math.min
 
 /**
  * A [FrameLayout] which responds to nested scrolls to create drag-dismissable layouts.
@@ -128,7 +131,7 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(
   }
 
   override fun onStopNestedScroll(child: View) {
-    if (Math.abs(totalDrag) >= dragDismissDistance) {
+    if (abs(totalDrag) >= dragDismissDistance) {
       dispatchDismissCallback()
     } else { // settle back to natural position
       animate().translationY(0f)
@@ -182,8 +185,7 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(
     }
     // how far have we dragged relative to the distance to perform a dismiss
     // (0–1 where 1 = dismiss distance). Decreasing logarithmically as we approach the limit
-    var dragFraction = Math.log10(
-        (1 + Math.abs(totalDrag) / dragDismissDistance).toDouble()).toFloat()
+    var dragFraction = log10((1 + abs(totalDrag) / dragDismissDistance).toDouble()).toFloat()
 
     // calculate the desired translation given the drag fraction
     var dragTo = dragFraction * dragDismissDistance * dragElacticity
@@ -215,7 +217,7 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(
     }
     dispatchDragCallback(dragFraction,
         dragTo,
-        Math.min(1f, Math.abs(totalDrag) / dragDismissDistance),
+        min(1f, abs(totalDrag) / dragDismissDistance),
         totalDrag)
   }
 

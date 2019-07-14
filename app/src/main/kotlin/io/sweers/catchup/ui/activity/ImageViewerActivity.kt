@@ -60,6 +60,8 @@ import me.saket.flick.FlickDismissLayout
 import me.saket.flick.FlickGestureListener
 import me.saket.flick.InterceptResult
 import java.security.MessageDigest
+import kotlin.math.abs
+import kotlin.math.min
 
 class ImageViewerActivity : AppCompatActivity() {
 
@@ -242,7 +244,7 @@ class ImageViewerActivity : AppCompatActivity() {
       }
 
       override fun onMove(@FloatRange(from = -1.0, to = 1.0) moveRatio: Float) {
-        updateBackgroundDimmingAlpha(Math.abs(moveRatio))
+        updateBackgroundDimmingAlpha(abs(moveRatio))
       }
     }
 
@@ -283,7 +285,7 @@ to = 1.0) transparencyFactor: Float
   ) {
     // Increase dimming exponentially so that the background is
     // fully transparent while the image has been moved by half.
-    val dimming = 1f - Math.min(1f, transparencyFactor * 2)
+    val dimming = 1f - min(1f, transparencyFactor * 2)
     val finalAlpha = (dimming * 255).toInt()
     activityBackgroundDrawable.alpha = finalAlpha
     sourceButton.imageAlpha = finalAlpha

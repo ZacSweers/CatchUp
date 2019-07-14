@@ -23,6 +23,9 @@ import androidx.annotation.FontRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.use
 import io.sweers.catchup.R
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /**
  * An extension to [AppCompatTextView] which aligns text to a 4dp baseline grid.
@@ -131,14 +134,13 @@ class BaselineGridTextView @JvmOverloads constructor(
    */
   private fun computeLineHeight() {
     val fm = paint.fontMetrics
-    val fontHeight = Math.abs(fm.ascent - fm.descent) + fm.leading
+    val fontHeight = abs(fm.ascent - fm.descent) + fm.leading
     val desiredLineHeight = if (lineHeightHint > 0)
       lineHeightHint
     else
       lineHeightMultiplierHint * fontHeight
 
-    val baselineAlignedLineHeight = (FOUR_DIP * Math.ceil(
-        (desiredLineHeight / FOUR_DIP).toDouble()).toFloat() + 0.5f).toInt()
+    val baselineAlignedLineHeight = (FOUR_DIP * ceil((desiredLineHeight / FOUR_DIP).toDouble()).toFloat() + 0.5f).toInt()
     setLineSpacing(baselineAlignedLineHeight - fontHeight, 1f)
   }
 
@@ -149,7 +151,7 @@ class BaselineGridTextView @JvmOverloads constructor(
     val baseline = baseline.toFloat()
     val gridAlign = baseline % FOUR_DIP
     if (gridAlign != 0f) {
-      extraTopPadding = (FOUR_DIP - Math.ceil(gridAlign.toDouble())).toInt()
+      extraTopPadding = (FOUR_DIP - ceil(gridAlign.toDouble())).toInt()
     }
     return extraTopPadding
   }
@@ -160,7 +162,7 @@ class BaselineGridTextView @JvmOverloads constructor(
   private fun ensureHeightGridAligned(height: Int): Int {
     val gridOverhang = height % FOUR_DIP
     if (gridOverhang != 0f) {
-      extraBottomPadding = (FOUR_DIP - Math.ceil(gridOverhang.toDouble())).toInt()
+      extraBottomPadding = (FOUR_DIP - ceil(gridOverhang.toDouble())).toInt()
     }
     return extraBottomPadding
   }
@@ -173,7 +175,7 @@ class BaselineGridTextView @JvmOverloads constructor(
     if (!maxLinesByHeight || heightMode != MeasureSpec.EXACTLY) return
 
     val textHeight = height - compoundPaddingTop - compoundPaddingBottom
-    val completeLines = Math.floor((textHeight / lineHeight).toDouble()).toInt()
+    val completeLines = floor((textHeight / lineHeight).toDouble()).toInt()
     maxLines = completeLines
   }
 }

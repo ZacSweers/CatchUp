@@ -46,7 +46,7 @@ fun Long.shorten(): String {
     return "-" + (-this).shorten()
   }
   if (this < 1000) {
-    return java.lang.Long.toString(this) // deal with easy case
+    return this.toString() // deal with easy case
   }
 
   val e = SUFFIXES.floorEntry(this)
