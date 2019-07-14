@@ -41,6 +41,7 @@ import timber.log.Timber.Tree
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.LazyThreadSafetyMode.NONE
 
 class DebugCatchUpApplication : CatchUpApplication() {
 
@@ -60,15 +61,15 @@ class DebugCatchUpApplication : CatchUpApplication() {
 
   @SuppressLint("InlinedApi") // False positive
   override fun initVariant() {
-    val penaltyListenerExecutor = if (Build.VERSION.SDK_INT >= 28) {
+    val penaltyListenerExecutor by lazy(NONE) {
       Executors.newSingleThreadExecutor()
-    } else null
+    }
     StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
         .detectAll()
         .penaltyLog()
         .apply {
           sdk(28) {
-            penaltyListener(penaltyListenerExecutor!!, StrictMode.OnThreadViolationListener {
+            penaltyListener(penaltyListenerExecutor, StrictMode.OnThreadViolationListener {
               Timber.w(it)
             })
           }
@@ -79,7 +80,7 @@ class DebugCatchUpApplication : CatchUpApplication() {
         .penaltyLog()
         .apply {
           sdk(28) {
-            penaltyListener(penaltyListenerExecutor!!, StrictMode.OnVmViolationListener {
+            penaltyListener(penaltyListenerExecutor, StrictMode.OnVmViolationListener {
               // Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
               Timber.w(it)
             })
