@@ -136,6 +136,7 @@ inline fun Context.dp2px(dipValue: Float) = resources.dp2px(dipValue)
 inline fun Resources.dp2px(dipValue: Float) =
     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
 
+@Suppress("DEPRECATION")
 @get:SuppressLint("NewApi")
 val Resources.primaryLocale: Locale
   get() {
