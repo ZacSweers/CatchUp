@@ -38,7 +38,6 @@ private class LocalAbortFlowException : CancellationException(
  * A terminal operator that returns the first element emitted by the flow matching the given [predicate] and then cancels flow's collection.
  * Returns null if the flow has not contained elements matching the [predicate].
  */
-@FlowPreview
 suspend fun <T> Flow<T>.firstOrNull(predicate: suspend (T) -> Boolean): T? {
   var result: Any? = NULL
   try {
@@ -60,7 +59,6 @@ suspend fun <T> Flow<T>.firstOrNull(predicate: suspend (T) -> Boolean): T? {
   }
 }
 
-@FlowPreview
 suspend fun <V, K> Flow<V>.groupBy(selector: (V) -> K): Flow<Pair<K, List<V>>> = flow {
   val map = mutableMapOf<K, MutableList<V>>()
   collect {
@@ -71,7 +69,6 @@ suspend fun <V, K> Flow<V>.groupBy(selector: (V) -> K): Flow<Pair<K, List<V>>> =
   }
 }
 
-@FlowPreview
 suspend fun <T, K : Comparable<K>> Flow<T>.sortBy(selector: (T) -> K): Flow<T> = flow {
   val list = mutableListOf<T>()
   collect {
@@ -81,7 +78,6 @@ suspend fun <T, K : Comparable<K>> Flow<T>.sortBy(selector: (T) -> K): Flow<T> =
   list.forEach { emit(it) }
 }
 
-@FlowPreview
 suspend fun <T> Flow<T>.startWith(other: () -> Flow<T>): Flow<T> = flow {
   emitAll(other())
   collect {
@@ -90,7 +86,6 @@ suspend fun <T> Flow<T>.startWith(other: () -> Flow<T>): Flow<T> = flow {
 }
 
 @JvmName("startWithValueResolver")
-@FlowPreview
 suspend fun <T> Flow<T>.startWith(valueResolver: () -> T): Flow<T> = flow {
   emit(valueResolver())
   collect {
@@ -98,7 +93,6 @@ suspend fun <T> Flow<T>.startWith(valueResolver: () -> T): Flow<T> = flow {
   }
 }
 
-@FlowPreview
 suspend fun <T> Flow<T>.startWith(value: T): Flow<T> = flow {
   emit(value)
   collect {
@@ -107,12 +101,10 @@ suspend fun <T> Flow<T>.startWith(value: T): Flow<T> = flow {
 }
 
 @FlowPreview
-suspend fun <T> Flow<List<T>>.flatten(): Flow<T> = flatMapConcat { it.asFlow() }
+fun <T> Flow<List<T>>.flatten(): Flow<T> = flatMapConcat { it.asFlow() }
 
-@FlowPreview
 suspend fun <T> Flow<T>.distinct(): Flow<T> = distinctBy { it }
 
-@FlowPreview
 suspend fun <T, K> Flow<T>.distinctBy(selector: suspend (T) -> K): Flow<T> {
   val set = mutableSetOf<K>()
   return filter { set.add(selector(it)) }
@@ -123,7 +115,6 @@ suspend fun <T, K> Flow<T>.distinctBy(selector: suspend (T) -> K): Flow<T> {
  * given [predicate]. If there's a match, it then cancels flow's collection. Returns `false` if no
  * elements matched the [predicate].
  */
-@FlowPreview
 suspend fun <T> Flow<T>.any(predicate: suspend (T) -> Boolean): Boolean {
   return firstOrNull(predicate) != null
 }
