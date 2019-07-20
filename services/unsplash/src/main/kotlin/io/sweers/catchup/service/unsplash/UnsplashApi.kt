@@ -19,6 +19,7 @@ import io.reactivex.Single
 import io.sweers.catchup.service.unsplash.model.UnsplashPhoto
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.Locale
 
 /**
  * Unsplash API - https://unsplash.com/documentation
@@ -41,7 +42,7 @@ internal interface UnsplashApi {
     LATEST, OLDEST, POPULAR;
 
     override fun toString(): String {
-      return super.toString().toLowerCase()
+      return super.toString().toLowerCase(Locale.US)
     }
   }
 }
