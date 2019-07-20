@@ -61,7 +61,7 @@ kapt {
   mapDiagnosticLocations = true
   arguments {
     arg("moshi.generated", "javax.annotation.Generated")
-    arg("dagger.gradle.incremental")
+    arg("dagger.gradle.incremental", "enabled")
   }
 }
 
