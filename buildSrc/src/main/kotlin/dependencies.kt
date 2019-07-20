@@ -67,11 +67,11 @@ object deps {
     const val glide = "4.9.0"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
-    const val kotlin = "1.3.41"
+    const val kotlin = "1.3.50-eap-5"
     const val kotpref = "2.8.0"
     const val leakcanary = "2.0-alpha-3"
     const val legacySupport = "28.0.0"
-    const val markwon = "4.0.1"
+    const val markwon = "4.0.2"
     const val moshi = "1.8.0"
     const val okhttp = "4.0.1"
     const val retrofit = "2.6.0"
@@ -141,7 +141,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.6.0-alpha04"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.6.0-alpha05"
   }
 
   object apollo {
@@ -154,7 +154,7 @@ object deps {
 
   object auto {
     const val common = "com.google.auto:auto-common:0.10"
-    const val service = "com.google.auto.service:auto-service:1.0-rc5"
+    const val service = "com.google.auto.service:auto-service:1.0-rc6"
   }
 
   object autoDispose {
@@ -185,8 +185,8 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.4.1"
-      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.2.1"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.5.2"
+      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.3.0"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${deps.versions.spotless}"
       const val versions = "com.github.ben-manes:gradle-versions-plugin:0.21.0"
     }
@@ -294,7 +294,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.3.0-M2"
+    private const val coroutinesVersion = "1.3.0-RC"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
@@ -325,10 +325,10 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakSentry = "com.squareup.leakcanary:leaksentry:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.16.1"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.17.0"
 
     object debug {
-      const val flipper = "com.facebook.flipper:flipper:0.23.0"
+      const val flipper = "com.facebook.flipper:flipper:0.23.1"
       const val soLoader = "com.facebook.soloader:soloader:0.6.1"
       const val guava = "com.google.guava:guava:28.0-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
