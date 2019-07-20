@@ -63,7 +63,7 @@ kapt {
   correctErrorTypes = true
   mapDiagnosticLocations = true
   arguments {
-    arg("dagger.gradle.incremental", "enabled")
+    arg("dagger.gradle.incremental")
   }
 }
 
