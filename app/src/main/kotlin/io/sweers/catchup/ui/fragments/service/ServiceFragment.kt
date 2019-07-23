@@ -21,7 +21,6 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
@@ -78,6 +77,7 @@ import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
@@ -89,6 +89,7 @@ import kotterknife.onClick
 import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
+import me.saket.inboxrecyclerview.page.IGNORE_ALL_PULL_TO_COLLAPSE_INTERCEPTOR
 import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import retrofit2.HttpException
@@ -123,6 +124,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
     }
   }
 
+  @FlowPreview
   fun clicksFlow() = clicksChannel.asFlow()
 
   protected fun clicksChannel(): SendChannel<UrlMeta> = clicksChannel
@@ -254,7 +256,7 @@ class ServiceFragment : InjectingBaseFragment(),
         if (BuildConfig.DEBUG) {
           item.summarizationInfo?.let { info ->
             // We're not supporting this for now since it's not ready yet
-            holder.setLongClickHandler(OnLongClickListener {
+            holder.setLongClickHandler {
               recyclerView.expandItem(item.id)
               val smmryFragment = SmmryFragment.newInstance(id = item.id.toString(),
                   accentColor = ContextCompat.getColor(activity!!, service.meta().themeColor),
@@ -268,17 +270,18 @@ class ServiceFragment : InjectingBaseFragment(),
               }
               smmryPage.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
                 override fun onPageCollapsed() {
+                  smmryPage.pullToCollapseInterceptor = IGNORE_ALL_PULL_TO_COLLAPSE_INTERCEPTOR
+                  smmryPage.removeStateChangeCallbacks(this)
                   childFragmentManager.commitNow(allowStateLoss = true) {
                     remove(smmryFragment)
                   }
-                  smmryPage.removeStateChangeCallbacks(this)
                 }
               })
               childFragmentManager.commitNow(allowStateLoss = true) {
                 add(smmryPage.id, smmryFragment)
               }
               true
-            })
+            }
           }
         }
       }
