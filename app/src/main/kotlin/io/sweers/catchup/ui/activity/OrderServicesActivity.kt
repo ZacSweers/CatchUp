@@ -85,7 +85,7 @@ class OrderServicesActivity : InjectingBaseActivity() {
   }
 
   @dagger.Module
-  abstract inner class Module : ActivityModule<OrderServicesActivity>()
+  abstract inner class Module : ActivityModule<OrderServicesActivity>
 }
 
 class OrderServicesFragment : InjectableBaseFragment() {

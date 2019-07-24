@@ -22,15 +22,15 @@ import dagger.Module
 import io.sweers.catchup.injection.scopes.PerActivity
 
 /**
- * TODO Why can't we make this an interface? And not annotate it with Module?
+ * TODO Why can't we not annotate this as Module
  */
 @Module
-abstract class ActivityModule<T : ComponentActivity> {
+interface ActivityModule<T : ComponentActivity> {
   @Binds
   @PerActivity
-  abstract fun provideComponentActivity(componentActivity: T): ComponentActivity
+  fun provideComponentActivity(componentActivity: T): ComponentActivity
 
   @Binds
   @PerActivity
-  abstract fun provideActivity(componentActivity: T): Activity
+  fun provideActivity(componentActivity: T): Activity
 }

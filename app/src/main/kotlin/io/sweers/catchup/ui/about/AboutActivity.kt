@@ -113,7 +113,7 @@ class AboutActivity : InjectingBaseActivity() {
   }
 
   @dagger.Module
-  abstract class Module : ActivityModule<AboutActivity>()
+  abstract class Module : ActivityModule<AboutActivity>
 }
 
 class AboutFragment : InjectingBaseFragment() {

@@ -77,7 +77,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
   }
 
   @Module
-  abstract class ServiceSettingsActivityModule : ActivityModule<ServiceSettingsActivity>()
+  abstract class ServiceSettingsActivityModule : ActivityModule<ServiceSettingsActivity>
 
   class ServiceSettingsFrag : PreferenceFragmentCompat() {
 

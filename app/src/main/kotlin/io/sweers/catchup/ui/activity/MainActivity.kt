@@ -72,7 +72,7 @@ class MainActivity : InjectingBaseActivity() {
   }
 
   @dagger.Module(includes = [ResolvedCatchUpServiceRegistry::class])
-  abstract class ServiceIntegrationModule : ActivityModule<MainActivity>() {
+  abstract class ServiceIntegrationModule : ActivityModule<MainActivity> {
     @dagger.Module
     companion object {
       @TextViewPool

@@ -114,7 +114,7 @@ class SettingsActivity : InjectingBaseActivity() {
   }
 
   @Module
-  abstract class SettingsActivityModule : ActivityModule<SettingsActivity>()
+  abstract class SettingsActivityModule : ActivityModule<SettingsActivity>
 
   class SettingsFrag : PreferenceFragmentCompat() {
 
