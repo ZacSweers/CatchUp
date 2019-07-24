@@ -38,11 +38,8 @@ interface ApplicationComponent {
 
   fun inject(application: DebugCatchUpApplication)
 
-  @Component.Builder
+  @Component.Factory
   interface Builder {
-    fun build(): ApplicationComponent
-
-    @BindsInstance
-    fun application(application: Application): Builder
+    fun create(@BindsInstance application: Application): ApplicationComponent
   }
 }

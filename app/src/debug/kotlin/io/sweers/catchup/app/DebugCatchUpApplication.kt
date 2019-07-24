@@ -53,9 +53,8 @@ class DebugCatchUpApplication : CatchUpApplication() {
   }
 
   override fun inject() {
-    DaggerApplicationComponent.builder()
-        .application(this)
-        .build()
+    DaggerApplicationComponent.factory()
+        .create(this)
         .inject(this)
   }
 
