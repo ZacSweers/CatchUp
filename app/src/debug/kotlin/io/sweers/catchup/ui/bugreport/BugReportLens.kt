@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.ui.bugreport
 
-import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -25,16 +24,16 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.util.DisplayMetrics
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import com.mattprecious.telescope.Lens
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Single
-import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
@@ -44,6 +43,9 @@ import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
 import io.sweers.catchup.util.buildMarkdown
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -56,7 +58,7 @@ import javax.inject.Inject
  */
 @PerActivity
 internal class BugReportLens @Inject constructor(
-  private val activity: Activity,
+  private val activity: ComponentActivity,
   private val lumberYard: LumberYard,
   private val imgurUploadApi: ImgurUploadApi,
   private val gitHubIssueApi: GitHubIssueApi
@@ -74,22 +76,15 @@ internal class BugReportLens @Inject constructor(
 
   override fun onBugReportSubmit(report: Report) {
     if (report.includeLogs) {
-      lumberYard.save()
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(object : SingleObserver<File> {
-            override fun onSubscribe(d: Disposable) {
-            }
-
-            override fun onSuccess(logs: File) {
-              submitReport(report, logs)
-            }
-
-            override fun onError(e: Throwable) {
-              Toast.makeText(activity, "Couldn't attach the logs.", Toast.LENGTH_SHORT).show()
-              submitReport(report, null)
-            }
-          })
+      activity.lifecycleScope.launch {
+        try {
+          val logs = withContext(Dispatchers.IO) { lumberYard.save() }
+          submitReport(report, logs)
+        } catch (e: Exception) {
+          Toast.makeText(activity, "Couldn't attach the logs.", Toast.LENGTH_SHORT).show()
+          submitReport(report, null)
+        }
+      }
     } else {
       submitReport(report, null)
     }

@@ -22,19 +22,19 @@ import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
-import io.reactivex.SingleObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.service.api.temporaryScope
 import io.sweers.catchup.util.maybeStartChooser
-import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDialog(context) {
   private val adapter: LogAdapter = LogAdapter(context)
 
-  private var disposables: CompositeDisposable? = null
+  private var scope = temporaryScope()
 
   init {
     val listView = ListView(context)
@@ -54,37 +54,30 @@ class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDi
 
     adapter.setLogs(lumberYard.bufferedLogs())
 
-    disposables = CompositeDisposable().apply {
-      add(lumberYard.logs()
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(adapter))
+    scope.newScope().launch {
+      lumberYard.logs()
+          .onEach { adapter.addEntry(it) }
     }
   }
 
   override fun onStop() {
     super.onStop()
-    disposables?.dispose()
+    scope.cancel()
   }
 
   private fun share() {
-    lumberYard.save()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(object : SingleObserver<File> {
-          override fun onSubscribe(d: Disposable) {
-          }
-
-          override fun onSuccess(file: File) {
-            val sendIntent = Intent(Intent.ACTION_SEND)
-            sendIntent.type = "text/plain"
-            sendIntent.putExtra(Intent.EXTRA_STREAM, file.toUri())
-            context.maybeStartChooser(sendIntent)
-          }
-
-          override fun onError(e: Throwable) {
-            Toast.makeText(context, "Couldn't save the logs for sharing.", Toast.LENGTH_SHORT)
-                .show()
-          }
-        })
+    // Dialog's dismissed by this point, so we need a new scope here. We're kicking to the system, so just finish on global scope
+    GlobalScope.launch {
+      try {
+        val file = withContext(Dispatchers.IO) { lumberYard.save() }
+        val sendIntent = Intent(Intent.ACTION_SEND)
+        sendIntent.type = "text/plain"
+        sendIntent.putExtra(Intent.EXTRA_STREAM, file.toUri())
+        context.maybeStartChooser(sendIntent)
+      } catch (e: Exception) {
+        Toast.makeText(context, "Couldn't save the logs for sharing.", Toast.LENGTH_SHORT)
+            .show()
+      }
+    }
   }
 }

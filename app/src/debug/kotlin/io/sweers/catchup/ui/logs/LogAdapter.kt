@@ -26,7 +26,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import io.reactivex.functions.Consumer
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard.Entry
 import io.sweers.catchup.ui.BindableAdapter
@@ -34,15 +33,14 @@ import kotterknife.ViewDelegateBindable
 import kotterknife.bindView
 import java.util.ArrayList
 
-internal class LogAdapter(context: Context) : BindableAdapter<Entry>(context), Consumer<Entry> {
+internal class LogAdapter(context: Context) : BindableAdapter<Entry>(context) {
   private var logs = mutableListOf<Entry>()
 
   fun setLogs(logs: List<Entry>) {
     this.logs = ArrayList(logs)
   }
 
-  @Throws(Exception::class)
-  override fun accept(entry: Entry) {
+  fun addEntry(entry: Entry) {
     logs.add(entry)
     notifyDataSetChanged()
   }
