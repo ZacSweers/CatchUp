@@ -16,13 +16,9 @@
 package io.sweers.catchup.util.kotlin
 
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -77,31 +73,6 @@ suspend fun <T, K : Comparable<K>> Flow<T>.sortBy(selector: (T) -> K): Flow<T> =
   list.sortBy(selector)
   list.forEach { emit(it) }
 }
-
-suspend fun <T> Flow<T>.startWith(other: () -> Flow<T>): Flow<T> = flow {
-  emitAll(other())
-  collect {
-    emit(it)
-  }
-}
-
-@JvmName("startWithValueResolver")
-suspend fun <T> Flow<T>.startWith(valueResolver: () -> T): Flow<T> = flow {
-  emit(valueResolver())
-  collect {
-    emit(it)
-  }
-}
-
-suspend fun <T> Flow<T>.startWith(value: T): Flow<T> = flow {
-  emit(value)
-  collect {
-    emit(it)
-  }
-}
-
-@FlowPreview
-fun <T> Flow<List<T>>.flatten(): Flow<T> = flatMapConcat { it.asFlow() }
 
 suspend fun <T> Flow<T>.distinct(): Flow<T> = distinctBy { it }
 

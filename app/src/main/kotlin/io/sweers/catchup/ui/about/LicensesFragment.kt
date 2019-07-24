@@ -73,10 +73,8 @@ import io.sweers.catchup.util.generateAsync
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.distinct
-import io.sweers.catchup.util.kotlin.flatten
 import io.sweers.catchup.util.kotlin.groupBy
 import io.sweers.catchup.util.kotlin.sortBy
-import io.sweers.catchup.util.kotlin.startWith
 import io.sweers.catchup.util.luminosity
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
@@ -88,9 +86,11 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flattenConcat
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -203,8 +203,8 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
       apolloClient.query(ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct()))
           .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
           .toFlow()
-          .map { it.data()!!.nodes.mapNotNull { it?.inlineFragment } }
-          .flatten()
+          .map { it.data()!!.nodes.mapNotNull { it?.inlineFragment }.asFlow() }
+          .flattenConcat()
           // Reduce into a map of the owner ID -> display name
           .fold(mutableMapOf<String, String>()) { map, node ->
             map.apply {
@@ -222,9 +222,12 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
         .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
         .toFlow()
         .map {
-          it.data()!!.nodes.asSequence().mapNotNull { it?.inlineFragment }.filterIsInstance<RepositoriesByIdsQuery.AsRepository>().toList() // Iterable?
+          it.data()!!.nodes.asSequence()
+              .mapNotNull { it?.inlineFragment }
+              .filterIsInstance<RepositoriesByIdsQuery.AsRepository>()
+              .asFlow()
         }
-        .flatten()
+        .flattenConcat()
         .map { it to userIdToNameMap.getValue(it.owner.id) }
         .map { (repo, ownerName) ->
           OssItem(
@@ -236,7 +239,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
               description = repo.description
           )
         }
-        .startWith {
+        .onStart {
           moshi.adapter<List<OssItem>>(
               Types.newParameterizedType(List::class.java, OssItem::class.java))
               .fromJson(resources.assets.open("licenses_mixins.json").source().buffer())!!
