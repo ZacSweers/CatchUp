@@ -21,6 +21,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import androidx.core.content.res.use
 import androidx.core.view.ViewCompat
 import io.sweers.catchup.R
 
@@ -52,12 +53,8 @@ class NonConsumingScrimInsetsFrameLayout : FrameLayout {
 
   private fun init(context: Context, attrs: AttributeSet?, defStyle: Int) {
     context.obtainStyledAttributes(attrs, R.styleable.NonConsumingScrimInsetsView, defStyle,
-        0)?.run {
-      insetForeground = try {
-        getDrawable(R.styleable.NonConsumingScrimInsetsView_insetForeground)
-      } finally {
-        recycle()
-      }
+        0).use {
+      insetForeground = it.getDrawable(R.styleable.NonConsumingScrimInsetsView_insetForeground)
     }
     setWillNotDraw(true)
   }

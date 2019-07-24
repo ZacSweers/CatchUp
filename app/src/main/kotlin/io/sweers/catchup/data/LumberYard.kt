@@ -66,7 +66,7 @@ class LumberYard @Inject constructor(private val app: Application) {
    * Save the current logs to disk.
    */
   fun save(): Single<File> {
-    return Single.create<File> { subscriber ->
+    return Single.create { subscriber ->
       val folder = app.getExternalFilesDir(null)
       if (folder == null) {
         subscriber.onError(IOException("External storage is not mounted."))
@@ -111,7 +111,7 @@ class LumberYard @Inject constructor(private val app: Application) {
   fun cleanUp(): Long {
     return app.getExternalFilesDir(null)?.let { folder ->
       val initialSize = folder.length()
-      folder.listFiles()
+      (folder.listFiles() ?: return -1L)
           .asSequence()
           .filter { it.name.endsWith(".log") }
           .forEach { it.delete() }

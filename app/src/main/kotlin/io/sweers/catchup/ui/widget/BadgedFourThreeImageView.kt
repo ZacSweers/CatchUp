@@ -23,6 +23,7 @@ import android.graphics.ColorFilter
 import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.Typeface
@@ -34,6 +35,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.core.content.res.use
 import io.sweers.catchup.R
+import io.sweers.catchup.util.sdk
 
 /**
  * A view group that draws a badge drawable on top of it's contents.
@@ -76,7 +78,12 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
   }
 
   fun setBadgeColor(@ColorInt color: Int) {
-    badge.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+    sdk(29) {
+      badge.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
+    } ?: run {
+      @Suppress("DEPRECATION")
+      badge.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+    }
   }
 
   override fun draw(canvas: Canvas) {
@@ -95,6 +102,7 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
   }
 
   // Here so the IDE stops complaining about not overriding this when using setOnTouchListener >_>
+  @Suppress("RedundantOverride")
   override fun performClick(): Boolean {
     return super.performClick()
   }

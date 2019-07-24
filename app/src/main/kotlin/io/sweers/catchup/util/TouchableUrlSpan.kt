@@ -44,7 +44,7 @@ abstract class TouchableUrlSpan(
     drawState.isUnderlineText = false
   }
 
-  override fun onClick(widget: View?) {
+  final override fun onClick(widget: View) {
     onClick(url)
   }
 
