@@ -16,8 +16,7 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-  <style name="None">
-  </style>
+  <style name="None" />
 
   <!-- Base application theme. -->
   <style name="Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -26,10 +25,12 @@
     <item name="colorAccent">@color/colorAccent</item>
     <item name="toolbarStyle">@style/Widget.Catchup.Toolbar</item>
     <item name="android:textViewStyle">@style/CatchUp.TextView</item>
+
+    <!-- Let's be real, no one wants this by default -->
+    <item name="android:splitMotionEvents">false</item>
   </style>
 
-  <style name="CatchUp" parent="Base">
-  </style>
+  <style name="CatchUp" parent="Base" />
 
   <style name="CatchUp.TransparentFullscreen">
     <item name="android:windowIsTranslucent">true</item>
