@@ -16,7 +16,6 @@
 package io.sweers.catchup.ui.activity
 
 import android.animation.AnimatorInflater
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Rect
@@ -43,7 +42,6 @@ import com.chibatching.kotpref.bulk
 import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.Multibinds
@@ -52,7 +50,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
-import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
@@ -87,11 +85,7 @@ class OrderServicesActivity : InjectingBaseActivity() {
   }
 
   @dagger.Module
-  abstract inner class Module {
-    @Binds
-    @PerActivity
-    abstract fun provideActivity(activity: OrderServicesActivity): Activity
-  }
+  abstract inner class Module : ActivityModule<OrderServicesActivity>()
 }
 
 class OrderServicesFragment : InjectableBaseFragment() {

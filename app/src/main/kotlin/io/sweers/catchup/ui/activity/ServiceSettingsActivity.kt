@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.ui.activity
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -29,14 +28,13 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.android.support.AndroidSupportInjection
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
-import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
@@ -79,11 +77,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
   }
 
   @Module
-  abstract class ServiceSettingsActivityModule {
-    @Binds
-    @PerActivity
-    abstract fun provideActivity(activity: ServiceSettingsActivity): Activity
-  }
+  abstract class ServiceSettingsActivityModule : ActivityModule<ServiceSettingsActivity>()
 
   class ServiceSettingsFrag : PreferenceFragmentCompat() {
 

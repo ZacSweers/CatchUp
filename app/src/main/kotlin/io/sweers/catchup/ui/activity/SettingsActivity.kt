@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.ui.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -30,7 +29,6 @@ import androidx.preference.PreferenceGroup
 import androidx.preference.children
 import com.google.android.material.snackbar.Snackbar
 import com.uber.autodispose.autoDisposable
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.android.support.AndroidSupportInjection
@@ -41,7 +39,7 @@ import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.LumberYard
-import io.sweers.catchup.injection.scopes.PerActivity
+import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.ui.base.BaseActivity
@@ -116,11 +114,7 @@ class SettingsActivity : InjectingBaseActivity() {
   }
 
   @Module
-  abstract class SettingsActivityModule {
-    @Binds
-    @PerActivity
-    abstract fun provideActivity(activity: SettingsActivity): Activity
-  }
+  abstract class SettingsActivityModule : ActivityModule<SettingsActivity>()
 
   class SettingsFrag : PreferenceFragmentCompat() {
 

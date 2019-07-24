@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.ui.activity
 
-import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.commitNow
@@ -28,6 +27,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.edu.Syllabus
+import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
@@ -72,7 +72,7 @@ class MainActivity : InjectingBaseActivity() {
   }
 
   @dagger.Module(includes = [ResolvedCatchUpServiceRegistry::class])
-  abstract class ServiceIntegrationModule {
+  abstract class ServiceIntegrationModule : ActivityModule<MainActivity>() {
     @dagger.Module
     companion object {
       @TextViewPool
@@ -113,10 +113,6 @@ class MainActivity : InjectingBaseActivity() {
 
     @Multibinds
     abstract fun serviceMetas(): Map<String, ServiceMeta>
-
-    @Binds
-    @PerActivity
-    abstract fun provideActivity(activity: MainActivity): Activity
 
     @Binds
     @PerActivity

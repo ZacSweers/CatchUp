@@ -16,7 +16,6 @@
 package io.sweers.catchup.ui.about
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Parcelable
@@ -41,14 +40,12 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.uber.autodispose.autoDisposable
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.flowbinding.offsetChanges
-import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
@@ -69,6 +66,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotterknife.bindView
 import io.noties.markwon.Markwon
+import io.sweers.catchup.injection.ActivityModule
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.abs
@@ -115,12 +113,7 @@ class AboutActivity : InjectingBaseActivity() {
   }
 
   @dagger.Module
-  abstract class Module {
-
-    @Binds
-    @PerActivity
-    abstract fun provideActivity(activity: AboutActivity): Activity
-  }
+  abstract class Module : ActivityModule<AboutActivity>()
 }
 
 class AboutFragment : InjectingBaseFragment() {

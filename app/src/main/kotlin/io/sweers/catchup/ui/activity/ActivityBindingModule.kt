@@ -57,16 +57,3 @@ abstract class ActivityBindingModule {
   )
   internal abstract fun orderServicesActivity(): OrderServicesActivity
 }
-
-// TODO Why can't I do this?
-// interface BaseActivityModule<T : Activity> {
-//  @Binds
-//  @PerActivity
-//  fun provideActivity(activity: T): Activity
-// }
-//
-// interface BaseFragmentModule<T : Fragment> {
-//  @Binds
-//  @PerFragment
-//  fun provideFragment(activity: T): Fragment
-// }
