@@ -27,7 +27,7 @@ import com.gabrielittner.threetenbp.LazyThreeTen
 import com.uber.rxdogtag.RxDogTag
 import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
+import dagger.android.HasAndroidInjector
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.CatchUpPreferences
@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @SuppressLint("Registered")
-abstract class CatchUpApplication : Application(), HasActivityInjector {
+abstract class CatchUpApplication : Application(), HasAndroidInjector {
 
   companion object {
 
@@ -61,7 +61,7 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
   }
 
   @Inject
-  internal lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
+  internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
   @Inject
   internal lateinit var sharedPreferences: SharedPreferences
   @Inject
@@ -104,8 +104,8 @@ abstract class CatchUpApplication : Application(), HasActivityInjector {
         }
   }
 
-  override fun activityInjector(): DispatchingAndroidInjector<Activity> =
-      dispatchingActivityInjector
+  override fun androidInjector(): DispatchingAndroidInjector<Any> =
+      androidInjector
 
   override fun onTrimMemory(level: Int) {
     super.onTrimMemory(level)

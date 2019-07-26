@@ -71,6 +71,7 @@ dependencies {
   api(deps.android.androidx.room.runtime)
   api(deps.android.androidx.annotations)
   api(deps.android.androidx.coreKtx)
+  api(deps.android.androidx.fragment)
   api(deps.dagger.runtime)
   api(deps.kotlin.coroutines)
   api(deps.misc.lazythreeten)

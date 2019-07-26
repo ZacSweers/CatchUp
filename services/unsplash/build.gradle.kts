@@ -62,9 +62,6 @@ tasks.withType<KotlinCompile> {
 kapt {
   correctErrorTypes = true
   mapDiagnosticLocations = true
-  arguments {
-    arg("dagger.gradle.incremental")
-  }
 }
 
 dependencies {

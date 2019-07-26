@@ -15,16 +15,15 @@
  */
 package io.sweers.catchup.ui.base
 
-import androidx.fragment.app.Fragment
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
-abstract class InjectingBaseFragment : InjectableBaseFragment(), HasSupportFragmentInjector {
+abstract class InjectingBaseFragment : InjectableBaseFragment(), HasAndroidInjector {
 
   @Inject
-  protected lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
+  protected lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
-  final override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
+  final override fun androidInjector(): AndroidInjector<Any> = androidInjector
 }
