@@ -67,7 +67,7 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
   init {
     badge = GifBadge(context)
     context.obtainStyledAttributes(attrs, R.styleable.BadgedImageView).use {
-      badgeGravity = it.getInt(R.styleable.BadgedImageView_badgeGravity,
+      badgeGravity = it.getInt(R.styleable.BadgedImageView_catchupBadgeGravity,
           Gravity.END or Gravity.BOTTOM)
       badgePadding = it.getDimensionPixelSize(R.styleable.BadgedImageView_badgePadding, 0)
     }

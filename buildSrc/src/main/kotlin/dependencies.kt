@@ -75,7 +75,7 @@ object deps {
     const val moshi = "1.8.0"
     const val okhttp = "4.0.1"
     const val retrofit = "2.6.0"
-    const val spotless = "3.23.1"
+    const val spotless = "3.24.0"
     const val stetho = "1.5.1"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
@@ -92,7 +92,7 @@ object deps {
 
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
       const val customTabs = "androidx.browser:browser:1.0.0"
-      const val design = "com.google.android.material:material:1.1.0-alpha08"
+      const val design = "com.google.android.material:material:1.1.0-alpha09"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0-alpha02"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
@@ -136,7 +136,7 @@ object deps {
     object firebase {
       const val core = "com.google.firebase:firebase-core:17.0.1"
       const val config = "com.google.firebase:firebase-config:18.0.0"
-      const val database = "com.google.firebase:firebase-database:18.0.0"
+      const val database = "com.google.firebase:firebase-database:18.0.1"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
@@ -294,7 +294,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.3.0-RC"
+    private const val coroutinesVersion = "1.3.0-RC-1.3.50-eap-5"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
@@ -325,10 +325,10 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakSentry = "com.squareup.leakcanary:leaksentry:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.17.0"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.17.1"
 
     object debug {
-      const val flipper = "com.facebook.flipper:flipper:0.23.1"
+      const val flipper = "com.facebook.flipper:flipper:0.23.3"
       const val soLoader = "com.facebook.soloader:soloader:0.6.1"
       const val guava = "com.google.guava:guava:28.0-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
@@ -348,7 +348,7 @@ object deps {
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.7.0"
     const val lottie = "com.airbnb.android:lottie:3.0.7"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-    const val okio = "com.squareup.okio:okio:2.2.2"
+    const val okio = "com.squareup.okio:okio:2.3.0"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:3.0.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.12.0"
     const val timber = "com.jakewharton.timber:timber:4.7.1"
