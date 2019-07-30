@@ -62,6 +62,12 @@ tasks.withType<KotlinCompile> {
 kapt {
   correctErrorTypes = true
   mapDiagnosticLocations = true
+
+  // Compiling with JDK 11+, but kapt doesn't forward source/target versions.
+  javacOptions {
+    option("-source", "8")
+    option("-target", "8")
+  }
 }
 
 dependencies {
