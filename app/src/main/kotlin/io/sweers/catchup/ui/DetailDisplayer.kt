@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.ui.base
+package io.sweers.catchup.ui
 
-import androidx.fragment.app.Fragment
-import io.sweers.catchup.app.CatchUpApplication
+import androidx.fragment.app.FragmentManager
+import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 
-abstract class RefWatchingFragment : Fragment() {
-  override fun onDestroy() {
-    super.onDestroy()
-    CatchUpApplication.refWatcher()
-        .watch(this)
-  }
+interface DetailDisplayer {
+  val isExpandedOrExpanding: Boolean
+  fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit)
 }

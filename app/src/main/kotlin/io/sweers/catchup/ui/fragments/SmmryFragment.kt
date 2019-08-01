@@ -52,6 +52,7 @@ import io.sweers.catchup.data.smmry.model.SmmryResponse
 import io.sweers.catchup.data.smmry.model.Success
 import io.sweers.catchup.data.smmry.model.SummarizationError
 import io.sweers.catchup.data.smmry.model.UnknownErrorCode
+import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.SummarizationType
 import io.sweers.catchup.service.api.SummarizationType.NONE
@@ -69,7 +70,7 @@ import javax.inject.Inject
 /**
  * Overlay fragment for displaying Smmry API results.
  */
-class SmmryFragment : InjectableBaseFragment() {
+class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
 
   companion object {
     private const val ID_TITLE = "smmryfragment.title"
@@ -192,7 +193,7 @@ class SmmryFragment : InjectableBaseFragment() {
     }
   }
 
-  fun canScrollVertically(directionInt: Int): Boolean {
+  override fun canScrollVertically(directionInt: Int): Boolean {
     return content.canScrollVertically(directionInt)
   }
 

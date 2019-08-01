@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2019 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -93,9 +93,9 @@ object DebugApplicationModule {
   @IntoSet
   @Provides
   fun leakCanaryInit(
-      application: Application,
-      objectWatcher: CatchUpObjectWatcher,
-      leakCanaryConfig: LeakCanary.Config
+    application: Application,
+    objectWatcher: CatchUpObjectWatcher,
+    leakCanaryConfig: LeakCanary.Config
   ): () -> Unit = {
     AppWatcher.config.copy(
         watchDurationMillis = TimeUnit.SECONDS.toMillis(10)
@@ -179,9 +179,9 @@ object DebugApplicationModule {
   @IntoSet
   @Provides
   fun flipperInit(
-      @FlipperEnabled enabled: Boolean,
-      application: Application,
-      flipperPlugins: Set<@JvmSuppressWildcards FlipperPlugin>
+    @FlipperEnabled enabled: Boolean,
+    application: Application,
+    flipperPlugins: Set<@JvmSuppressWildcards FlipperPlugin>
   ): () -> Unit = {
     if (enabled) {
       AndroidFlipperClient.getInstance(application).apply {
