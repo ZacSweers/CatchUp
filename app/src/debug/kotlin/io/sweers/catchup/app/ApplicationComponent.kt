@@ -32,11 +32,12 @@ import javax.inject.Singleton
   ApplicationModule::class,
   DataModule::class,
   VariantDataModule::class,
-  FlipperModule::class
+  FlipperModule::class,
+  DebugApplicationModule::class
 ])
 interface ApplicationComponent {
 
-  fun inject(application: DebugCatchUpApplication)
+  fun inject(application: CatchUpApplication)
 
   @Component.Factory
   interface Builder {

@@ -20,6 +20,7 @@ import android.content.Context
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.multibindings.Multibinds
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
@@ -30,10 +31,39 @@ import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import timber.log.Timber
+import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlin.annotation.AnnotationRetention.BINARY
 
 @Module
 abstract class ApplicationModule {
+
+  @Qualifier
+  @Retention(BINARY)
+  annotation class Initializers
+
+  @Qualifier
+  @Retention(BINARY)
+  annotation class AsyncInitializers
+
+  /**
+   * Provides initializers for app startup.
+   */
+  @Initializers
+  @Multibinds
+  abstract fun initializers(): Set<() -> Unit>
+
+  /**
+   * Provides initializers for app startup that can be initialized async.
+   */
+  @AsyncInitializers
+  @Multibinds
+  abstract fun asyncInitializers(): Set<() -> Unit>
+
+  @Initializers
+  @Multibinds
+  abstract fun timberTrees(): Set<Timber.Tree>
 
   @Binds
   @ApplicationContext

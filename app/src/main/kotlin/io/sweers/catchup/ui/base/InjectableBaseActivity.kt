@@ -16,12 +16,27 @@
 package io.sweers.catchup.ui.base
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks
 import dagger.android.AndroidInjection
+import io.sweers.catchup.app.CatchUpObjectWatcher
+import javax.inject.Inject
 
 abstract class InjectableBaseActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
+  }
+
+  @Inject
+  internal fun watchForLeaks(objectWatcher: CatchUpObjectWatcher) {
+    val callbacks = object : FragmentLifecycleCallbacks() {
+      override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+        objectWatcher.watch(f)
+      }
+    }
+    supportFragmentManager.registerFragmentLifecycleCallbacks(callbacks, true)
   }
 }

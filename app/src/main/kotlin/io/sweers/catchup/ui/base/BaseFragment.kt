@@ -22,12 +22,13 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.uber.autodispose.ScopeProvider
 import com.uber.autodispose.android.lifecycle.scope
 import io.reactivex.CompletableSource
 import kotterknife.KotterKnife
 
-abstract class BaseFragment : RefWatchingFragment(), ScopeProvider, BackpressHandler {
+abstract class BaseFragment : Fragment(), ScopeProvider, BackpressHandler {
 
   companion object {
     private val DAY_MODE_CONF = Configuration().apply {

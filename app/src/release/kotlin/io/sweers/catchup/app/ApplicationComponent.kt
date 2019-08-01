@@ -30,11 +30,12 @@ import javax.inject.Singleton
   AndroidSupportInjectionModule::class,
   AndroidInjectionModule::class,
   ApplicationModule::class,
-  DataModule::class
+  DataModule::class,
+  ReleaseApplicationModule::class
 ])
 interface ApplicationComponent {
 
-  fun inject(application: ReleaseCatchUpApplication)
+  fun inject(application: CatchUpApplication)
 
   @Component.Factory
   interface Builder {

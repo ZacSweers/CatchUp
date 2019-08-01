@@ -15,30 +15,11 @@
  */
 package io.sweers.catchup.app
 
-import com.bugsnag.android.Bugsnag
-import io.sweers.catchup.BuildConfig
-import timber.log.Timber
-
 class ReleaseCatchUpApplication : CatchUpApplication() {
 
   override fun inject() {
     DaggerApplicationComponent.factory()
         .create(this)
         .inject(this)
-  }
-
-  override fun initVariant() {
-    CatchUpApplication.refWatcher = CatchUpRefWatcher.None
-    Bugsnag.init(this, BuildConfig.BUGSNAG_KEY)
-
-    BugsnagTree().also {
-      Bugsnag.getClient()
-          .beforeNotify { error ->
-            it.update(error)
-            true
-          }
-
-      Timber.plant(it)
-    }
   }
 }

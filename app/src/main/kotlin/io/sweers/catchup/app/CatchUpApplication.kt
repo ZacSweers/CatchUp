@@ -30,14 +30,18 @@ import dagger.android.HasAndroidInjector
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.CatchUpPreferences
-import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
+import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.flowFor
 import io.sweers.catchup.util.d
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
+
+private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
 
 @SuppressLint("Registered")
 abstract class CatchUpApplication : Application(), HasAndroidInjector {
@@ -52,19 +56,12 @@ abstract class CatchUpApplication : Application(), HasAndroidInjector {
           .configureWith(AutoDisposeConfigurer::configure)
           .install()
     }
-
-    @JvmStatic
-    internal lateinit var objectWatcher: CatchUpObjectWatcher
-
-    fun refWatcher() = objectWatcher
   }
 
   @Inject
   internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
   @Inject
   internal lateinit var sharedPreferences: SharedPreferences
-  @Inject
-  internal lateinit var lumberYard: LumberYard
   @Inject
   internal lateinit var rxPreferences: RxSharedPreferences
 
@@ -73,8 +70,23 @@ abstract class CatchUpApplication : Application(), HasAndroidInjector {
 
   abstract fun inject()
 
-  // Override this in variants
-  protected open fun initVariant() = Unit
+  @Inject
+  internal fun plantTimberTrees(trees: Set<@JvmSuppressWildcards Timber.Tree>) {
+    Timber.plant(*trees.toTypedArray())
+  }
+
+  @Inject
+  internal fun asyncInits(@AsyncInitializers asyncInitializers: Set<@JvmSuppressWildcards InitializerFunction>) {
+    GlobalScope.launch(Dispatchers.IO) {
+      // TODO - run these in parallel?
+      asyncInitializers.forEach { it() }
+    }
+  }
+
+  @Inject
+  internal fun inits(@Initializers initializers: Set<@JvmSuppressWildcards InitializerFunction>) {
+    initializers.forEach { it() }
+  }
 
   override fun onCreate() {
     super.onCreate()
@@ -86,7 +98,6 @@ abstract class CatchUpApplication : Application(), HasAndroidInjector {
     onPreInject()
     inject()
     Kotpref.init(this)
-    initVariant()
 
     CatchUpPreferences.flowFor { ::daynightAuto }
         .onEach { autoEnabled ->
