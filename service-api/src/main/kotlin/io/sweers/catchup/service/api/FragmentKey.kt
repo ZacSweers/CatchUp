@@ -15,22 +15,12 @@
  */
 package io.sweers.catchup.service.api
 
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import dagger.MapKey
+import kotlin.annotation.AnnotationRetention.BINARY
+import kotlin.reflect.KClass
 
-data class ServiceMeta(
-  val id: String,
-  @StringRes val name: Int,
-  @ColorRes val themeColor: Int,
-  @DrawableRes val icon: Int,
-  val isVisual: Boolean = false,
-  val firstPageKey: String,
-  val pagesAreNumeric: Boolean = false,
-  val serviceConfiguration: ServiceConfiguration? = null,
-  val enabled: Boolean = true,
-  val deeplinkFragment: Class<out Fragment>? = null
-) {
-  val enabledPreferenceKey = "service_config_${id}_enabled"
-}
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(value = BINARY)
+@MapKey
+annotation class FragmentKey(val value: KClass<out Fragment>)

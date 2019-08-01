@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.service.hackernews
 
+import androidx.fragment.app.Fragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -30,6 +31,7 @@ import io.reactivex.SingleEmitter
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
+import io.sweers.catchup.service.api.FragmentKey
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
@@ -117,9 +119,12 @@ internal class HackerNewsService @Inject constructor(
                 itemClickUrl = url,
                 summarizationInfo = SummarizationInfo.from(url),
                 mark = kids?.size?.let {
-                  createCommentMark(count = it,
-                      clickUrl = "https://news.ycombinator.com/item?id=$id")
-                }
+                  createCommentMark(
+                      count = it,
+                      clickUrl = "https://news.ycombinator.com/item?id=$id"
+                  )
+                },
+                detailKey = id.toString()
             )
           }
         }
@@ -160,7 +165,8 @@ abstract class HackerNewsMetaModule {
         R.color.hnAccent,
         R.drawable.logo_hn,
         pagesAreNumeric = true,
-        firstPageKey = "0"
+        firstPageKey = "0",
+        deeplinkFragment = HackerNewsCommentsFragment::class.java
     )
   }
 }
@@ -173,6 +179,11 @@ abstract class HackerNewsModule {
   @ServiceKey(SERVICE_KEY)
   @Binds
   internal abstract fun hackerNewsService(hackerNewsService: HackerNewsService): Service
+
+  @Binds
+  @IntoMap
+  @FragmentKey(HackerNewsCommentsFragment::class)
+  abstract fun bindHnFragment(mainFragment: HackerNewsCommentsFragment): Fragment
 
   @Module
   companion object {

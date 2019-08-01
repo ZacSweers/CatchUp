@@ -18,9 +18,18 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_container"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.activity.MainActivity"
-    />
+    >
+
+  <FrameLayout
+      android:id="@+id/fragment_container"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      tools:context=".ui.activity.MainActivity"
+      />
+
+  <!-- We have a nested level here because we'll potentially add new detail pages on top of the existing container here -->
+</FrameLayout>

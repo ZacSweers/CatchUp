@@ -17,6 +17,9 @@ package io.sweers.catchup.ui.activity
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.FrameLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.uber.autodispose.autoDisposable
@@ -33,10 +36,14 @@ import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
+import io.sweers.catchup.ui.DetailDisplayer
 import io.sweers.catchup.ui.base.InjectingBaseActivity
 import io.sweers.catchup.ui.fragments.PagerFragment
 import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
+import kotterknife.bindView
+import me.saket.inboxrecyclerview.page.ExpandablePageLayout
+import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Qualifier
@@ -49,6 +56,8 @@ class MainActivity : InjectingBaseActivity() {
   internal lateinit var linkManager: LinkManager
   @Inject
   internal lateinit var syllabus: Syllabus
+
+  internal val rootView by bindView<FrameLayout>(R.id.root)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -114,9 +123,16 @@ class MainActivity : InjectingBaseActivity() {
     @Multibinds
     abstract fun serviceMetas(): Map<String, ServiceMeta>
 
+    @Multibinds
+    abstract fun fragmentCreators(): Map<Class<out Fragment>, @JvmSuppressWildcards Fragment>
+
     @Binds
     @PerActivity
     abstract fun provideLinkHandler(linkManager: LinkManager): LinkHandler
+
+    @Binds
+    @PerActivity
+    abstract fun provideDetailDisplayer(mainActivityDetailDisplayer: MainActivityDetailDisplayer): DetailDisplayer
   }
 }
 
@@ -128,3 +144,38 @@ annotation class VisualViewPool
 
 @Qualifier
 annotation class FinalServices
+
+/**
+ * A displayer that repeatedly shows new detail views in a new ExpandablePageLayout.
+ */
+@PerActivity
+class MainActivityDetailDisplayer @Inject constructor(
+  private val mainActivity: MainActivity
+) : DetailDisplayer {
+
+  private var currentPage: ExpandablePageLayout? = null
+  private var collapser: (() -> Unit)? = null
+
+  override val isExpandedOrExpanding = currentPage?.isExpandedOrExpanding == true
+
+  override fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit) {
+    collapser?.invoke()
+    collapser = null
+    currentPage = null
+    val newPage = ExpandablePageLayout(mainActivity.rootView.context, null).apply {
+      id = R.id.detailPage
+      addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
+        override fun onPageCollapsed() {
+          mainActivity.rootView.removeView(this@apply)
+          currentPage?.removeStateChangeCallbacks(this)
+        }
+      })
+    }
+    mainActivity.rootView.addView(newPage, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
+    // Using post because it's not safe to check isLaidOut in doOnNextLayout -_-
+    newPage.post {
+      currentPage = newPage
+      collapser = body(newPage, mainActivity.supportFragmentManager)
+    }
+  }
+}
