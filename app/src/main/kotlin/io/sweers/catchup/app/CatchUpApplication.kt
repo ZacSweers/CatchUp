@@ -16,7 +16,6 @@
 package io.sweers.catchup.app
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Application
 import android.content.SharedPreferences
 import android.os.Looper
@@ -55,9 +54,9 @@ abstract class CatchUpApplication : Application(), HasAndroidInjector {
     }
 
     @JvmStatic
-    internal lateinit var refWatcher: CatchUpRefWatcher
+    internal lateinit var objectWatcher: CatchUpObjectWatcher
 
-    fun refWatcher() = refWatcher
+    fun refWatcher() = objectWatcher
   }
 
   @Inject
@@ -121,10 +120,10 @@ abstract class CatchUpApplication : Application(), HasAndroidInjector {
   }
 }
 
-interface CatchUpRefWatcher {
+interface CatchUpObjectWatcher {
   fun watch(watchedReference: Any)
 
-  object None : CatchUpRefWatcher {
+  object None : CatchUpObjectWatcher {
     override fun watch(watchedReference: Any) {
     }
   }

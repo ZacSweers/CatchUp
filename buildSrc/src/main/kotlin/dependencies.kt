@@ -69,7 +69,7 @@ object deps {
     const val inspector = "0.3.0"
     const val kotlin = "1.3.50-eap-5"
     const val kotpref = "2.8.0"
-    const val leakcanary = "2.0-alpha-3"
+    const val leakcanary = "2.0-beta-1"
     const val legacySupport = "28.0.0"
     const val markwon = "4.0.2"
     const val moshi = "1.8.0"
@@ -324,7 +324,7 @@ object deps {
 
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
-    const val leakSentry = "com.squareup.leakcanary:leaksentry:${versions.leakcanary}"
+    const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
     const val bugsnag = "com.bugsnag:bugsnag-android:4.17.1"
 
     object debug {

@@ -132,8 +132,7 @@ class DebugView @JvmOverloads constructor(
       LogsDialog(ContextThemeWrapper(context, R.style.CatchUp), lumberYard).show()
     }
     onSubviewClick<View>(R.id.debug_leaks_show) {
-      // https://github.com/square/leakcanary/pull/1341
-      startDebugActivity(LeakCanary.leakDisplayActivityIntent)
+      startDebugActivity(LeakCanary.newLeakDisplayActivityIntent())
     }
 //    onSubviewClick<View>(R.id.debug_network_logs) {
 //      startDebugActivity(Intent(context, MainActivity::class.java))

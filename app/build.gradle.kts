@@ -574,7 +574,7 @@ dependencies {
 
   // LeakCanary
   debugImplementation(deps.misc.leakCanary)
-  releaseImplementation(deps.misc.leakSentry)
+  releaseImplementation(deps.misc.leakCanaryObjectWatcherAndroid)
 
   // Chuck
 //  debugImplementation(deps.chuck.debug)

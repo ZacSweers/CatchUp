@@ -33,9 +33,9 @@ import io.sweers.catchup.util.sdk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import leakcanary.AndroidKnownReference
+import leakcanary.AppWatcher
 import leakcanary.LeakCanary
-import leakcanary.LeakSentry
+import shark.AndroidReferenceMatchers
 import timber.log.Timber
 import timber.log.Timber.Tree
 import java.util.concurrent.Executors
@@ -86,20 +86,20 @@ class DebugCatchUpApplication : CatchUpApplication() {
           }
         }
         .build())
-    LeakSentry.config.copy(
+    AppWatcher.config.copy(
         watchDurationMillis = TimeUnit.SECONDS.toMillis(10)
     )
     LeakCanary.config = if (Build.VERSION.SDK_INT != 28) {
-      refWatcher = object : CatchUpRefWatcher {
+      objectWatcher = object : CatchUpObjectWatcher {
         override fun watch(watchedReference: Any) {
-          LeakSentry.refWatcher.watch(watchedReference)
+          AppWatcher.objectWatcher.watch(watchedReference)
         }
       }
-      LeakCanary.config.copy(knownReferences = AndroidKnownReference.appDefaults)
+      LeakCanary.config.copy(referenceMatchers = AndroidReferenceMatchers.appDefaults)
     } else {
       // Disabled on API 28 because there's a pretty vicious memory leak that constantly triggers
       // https://github.com/square/leakcanary/issues/1081
-      refWatcher = CatchUpRefWatcher.None
+      objectWatcher = CatchUpObjectWatcher.None
       LeakCanary.config.copy()
     }
     registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
@@ -120,7 +120,7 @@ class DebugCatchUpApplication : CatchUpApplication() {
 //          // Ignore Chuck
 //          return
 //        }
-        refWatcher.watch(activity)
+        objectWatcher.watch(activity)
       }
     })
     Timber.plant(Timber.DebugTree())
