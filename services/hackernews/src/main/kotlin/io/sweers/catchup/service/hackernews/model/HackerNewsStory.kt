@@ -75,3 +75,51 @@ internal data class HackerNewsStory(
     }
   }
 }
+
+// DataSnapshot { key = 20516882, value = {parent=20516063, by=frou_dh, id=20516882, text=stuff, time=1563986039, type=comment} }
+@Keep
+@NoArg
+internal data class HackerNewsComment(
+  val by: String,
+//  val dead: Boolean,
+  val deleted: Boolean,
+//  val descendants: Int,
+  val id: Long,
+  val kids: List<Long>?,
+  val parent: Long?,
+//  val parts: List<String>?,
+//  val score: Int,
+    /* private, but Firebase is too dumb to read private fields */
+  val time: Long?,
+//  val title: String?,
+  val text: String,
+    /* private, but Firebase is too dumb to read private fields */
+  val type: String?
+//  val url: String?
+) : HasStableId {
+
+  @Exclude
+  override fun stableId() = id
+
+  /*
+   * Excluded "real" fields. Would like to expose these as the main fields, but firebase matches property names to them anyway
+   *
+   * They also have to be functions because if you try to read them as fields, they always return null! ¯\_(ツ)_/¯
+   */
+
+  @Exclude
+  fun realTime(): Instant = time?.let {
+    Instant.ofEpochMilli(
+        TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS))
+  } ?: Instant.now()
+
+  @Exclude
+  fun realType() = type?.let { HNType.valueOf(it.toUpperCase(Locale.US)) }
+
+  companion object {
+
+    fun create(dataSnapshot: DataSnapshot): HackerNewsComment {
+      return dataSnapshot.getValue(HackerNewsComment::class.java)!!
+    }
+  }
+}
