@@ -82,6 +82,8 @@ dependencies {
 
   implementation(deps.android.firebase.database)
 
+  api(deps.android.androidx.design)
+  api(deps.android.androidx.fragmentKtx)
   api(deps.android.androidx.annotations)
   api(deps.dagger.runtime)
   api(deps.misc.lazythreeten)

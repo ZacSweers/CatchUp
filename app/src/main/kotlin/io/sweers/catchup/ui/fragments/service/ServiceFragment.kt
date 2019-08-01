@@ -30,6 +30,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -54,10 +55,12 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
+import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.service.api.VisualService
+import io.sweers.catchup.ui.DetailDisplayer
 import io.sweers.catchup.ui.InfiniteScrollListener
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.FinalServices
@@ -67,7 +70,6 @@ import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
 import io.sweers.catchup.ui.base.InjectingBaseFragment
-import io.sweers.catchup.ui.fragments.SmmryFragment
 import io.sweers.catchup.ui.fragments.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.fragments.service.LoadResult.NewData
 import io.sweers.catchup.ui.widget.BaseCatchupAdapter
@@ -88,7 +90,6 @@ import kotterknife.bindView
 import kotterknife.onClick
 import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.dimming.TintPainter
-import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.IGNORE_ALL_PULL_TO_COLLAPSE_INTERCEPTOR
 import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
@@ -152,7 +153,6 @@ class ServiceFragment : InjectingBaseFragment(),
   private val errorTextView by bindView<TextView>(R.id.error_message)
   private val errorImage by bindView<ImageView>(R.id.error_image)
   private val recyclerView by bindView<InboxRecyclerView>(R.id.list)
-  private val smmryPage by bindView<ExpandablePageLayout>(R.id.smmrypage)
   private val progress by bindView<ProgressBar>(R.id.progress)
   private val swipeRefreshLayout by bindView<SwipeRefreshLayout>(R.id.refresh)
 
@@ -179,6 +179,10 @@ class ServiceFragment : InjectingBaseFragment(),
   @Inject
   lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
   private lateinit var service: Service
+  @Inject
+  lateinit var fragmentCreators: Map<Class<out Fragment>, @JvmSuppressWildcards Provider<Fragment>>
+  @Inject
+  lateinit var detailDisplayer: DetailDisplayer
 
   override fun toString() = "ServiceFragment: ${arguments?.get(ARG_SERVICE_KEY)}"
 
@@ -220,7 +224,7 @@ class ServiceFragment : InjectingBaseFragment(),
   }
 
   override fun onBackPressed(): Boolean {
-    return if (smmryPage.isExpandedOrExpanding) {
+    return if (detailDisplayer.isExpandedOrExpanding) {
       recyclerView.collapse()
       true
     } else {
@@ -254,31 +258,40 @@ class ServiceFragment : InjectingBaseFragment(),
             clicksChannel
         )
         if (BuildConfig.DEBUG) {
-          item.summarizationInfo?.let { info ->
-            // We're not supporting this for now since it's not ready yet
+          item.detailKey?.let { key ->
+            val args = bundleOf("detailKey" to key)
+            val targetProvider = fragmentCreators[service.meta().deeplinkFragment] ?: error("No deeplink for $key")
             holder.setLongClickHandler {
-              recyclerView.expandItem(item.id)
-              val smmryFragment = SmmryFragment.newInstance(id = item.id.toString(),
-                  accentColor = ContextCompat.getColor(activity!!, service.meta().themeColor),
-                  inputTitle = item.title,
-                  info = info
-              )
-              smmryPage.pullToCollapseInterceptor = { _, _, upwardPull ->
-                val directionInt = if (upwardPull) +1 else -1
-                val canScrollFurther = smmryFragment.canScrollVertically(directionInt)
-                if (canScrollFurther) InterceptResult.INTERCEPTED else InterceptResult.IGNORED
-              }
-              smmryPage.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
-                override fun onPageCollapsed() {
-                  smmryPage.pullToCollapseInterceptor = IGNORE_ALL_PULL_TO_COLLAPSE_INTERCEPTOR
-                  smmryPage.removeStateChangeCallbacks(this)
-                  childFragmentManager.commitNow(allowStateLoss = true) {
-                    remove(smmryFragment)
+              detailDisplayer.showDetail { page, fragmentManager ->
+                recyclerView.setExpandablePage(page)
+                recyclerView.tintPainter = TintPainter.uncoveredArea(
+                    color = ContextCompat.getColor(holder.itemView.context, R.color.colorPrimary),
+                    opacity = 0.65F
+                )
+                recyclerView.expandItem(item.id)
+                val targetFragment = targetProvider.get().apply {
+                  arguments = args
+                }
+                if (targetFragment is ScrollableContent) {
+                  page.pullToCollapseInterceptor = { _, _, upwardPull ->
+                    val directionInt = if (upwardPull) +1 else -1
+                    val canScrollFurther = targetFragment.canScrollVertically(directionInt)
+                    if (canScrollFurther) InterceptResult.INTERCEPTED else InterceptResult.IGNORED
                   }
                 }
-              })
-              childFragmentManager.commitNow(allowStateLoss = true) {
-                add(smmryPage.id, smmryFragment)
+                page.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
+                  override fun onPageCollapsed() {
+                    page.pullToCollapseInterceptor = IGNORE_ALL_PULL_TO_COLLAPSE_INTERCEPTOR
+                    page.removeStateChangeCallbacks(this)
+                    fragmentManager.commitNow(allowStateLoss = true) {
+                      remove(targetFragment)
+                    }
+                  }
+                })
+                fragmentManager.commitNow(allowStateLoss = true) {
+                  add(page.id, targetFragment)
+                }
+                recyclerView::collapse
               }
               true
             }
@@ -332,11 +345,6 @@ class ServiceFragment : InjectingBaseFragment(),
       recyclerView.setRecycledViewPool(visualViewPool)
     } else {
       recyclerView.setRecycledViewPool(textViewPool)
-      recyclerView.setExpandablePage(smmryPage)
-      recyclerView.tintPainter = TintPainter.uncoveredArea(
-          color = ContextCompat.getColor(view.context, R.color.colorPrimary),
-          opacity = 0.65F
-      )
     }
     recyclerView.adapter = adapter
     if (!service.meta().isVisual) {
