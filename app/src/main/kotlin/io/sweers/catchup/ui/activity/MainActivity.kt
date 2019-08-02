@@ -172,6 +172,9 @@ class MainActivityDetailDisplayer @Inject constructor(
   override fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit) {
     collapser?.invoke()
     collapser = null
+
+    // TODO this is ugly, do better
+    detailPage.pushParentToolbarOnExpand((mainActivity.supportFragmentManager.findFragmentById(R.id.fragment_container) as PagerFragment).toolbar)
     detailPage.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
       override fun onPageCollapsed() {
         detailPage.removeStateChangeCallbacks(this)
