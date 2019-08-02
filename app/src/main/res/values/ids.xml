@@ -19,5 +19,4 @@
   <item name="background" type="id"/>
   <item name="image" type="id"/>
   <item name="glide_target" type="id"/>
-  <item name="detailPage" type="id"/>
 </resources>
