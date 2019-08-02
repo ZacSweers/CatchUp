@@ -131,8 +131,17 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
   @CallSuper
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidInjection.inject(this)
+    setFragmentFactory()
     super.onCreate(savedInstanceState)
     lifecycleRelay.accept(CREATE)
+  }
+
+  /**
+   * Exists as a hook to allow subclasses to inject a FragmentFactory before
+   * super.onCreate() is called.
+   */
+  open fun setFragmentFactory() {
+
   }
 
   @CallSuper
