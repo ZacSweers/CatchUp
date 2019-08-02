@@ -141,7 +141,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
    * super.onCreate() is called.
    */
   open fun setFragmentFactory() {
-
   }
 
   @CallSuper
