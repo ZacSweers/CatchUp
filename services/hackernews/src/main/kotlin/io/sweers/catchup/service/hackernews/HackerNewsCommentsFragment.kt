@@ -17,7 +17,6 @@ package io.sweers.catchup.service.hackernews
 
 import android.os.Bundle
 import android.text.Html
-import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -152,7 +151,11 @@ class HackerNewsCommentsFragment @Inject constructor(
     }
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
-      holder.textView.text = comments[position].text.let { Html.fromHtml(it) } ?: SpannableString("wtf this is null")
+      holder.textView.text = try {
+        comments[position].text.let { Html.fromHtml(it) }
+      } catch (e: NullPointerException) {
+        "This kills the html: ${comments[position].text}"
+      }
     }
   }
 
