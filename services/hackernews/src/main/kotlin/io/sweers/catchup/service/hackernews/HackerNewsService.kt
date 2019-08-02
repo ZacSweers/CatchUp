@@ -18,6 +18,7 @@ package io.sweers.catchup.service.hackernews
 import androidx.fragment.app.Fragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import dagger.Binds
@@ -190,7 +191,14 @@ abstract class HackerNewsModule {
 
     @Provides
     @JvmStatic
-    internal fun provideDataBase() =
-        FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/")
+    internal fun provideDataBase(): FirebaseDatabase =
+        FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/").apply {
+          try {
+            setPersistenceEnabled(true)
+          } catch (e: DatabaseException) {
+            // Ignore, firebase doesn't give us a way to check if it's already been initialized
+            // because its API is *the worst*.
+          }
+        }
   }
 }
