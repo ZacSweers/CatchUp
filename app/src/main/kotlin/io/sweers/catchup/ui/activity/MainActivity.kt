@@ -17,8 +17,8 @@ package io.sweers.catchup.ui.activity
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
@@ -56,8 +56,14 @@ class MainActivity : InjectingBaseActivity() {
   internal lateinit var linkManager: LinkManager
   @Inject
   internal lateinit var syllabus: Syllabus
+  @Inject
+  internal lateinit var fragmentFactory: FragmentFactory
 
-  internal val rootView by bindView<FrameLayout>(R.id.root)
+  internal val detailPage by bindView<ExpandablePageLayout>(R.id.detailPage)
+
+  override fun setFragmentFactory() {
+    supportFragmentManager.fragmentFactory = fragmentFactory
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -133,6 +139,10 @@ class MainActivity : InjectingBaseActivity() {
     @Binds
     @PerActivity
     abstract fun provideDetailDisplayer(mainActivityDetailDisplayer: MainActivityDetailDisplayer): DetailDisplayer
+
+    @Binds
+    @PerActivity
+    abstract fun provideFragmentFactory(fragmentFactory: MainActivityFragmentFactory): FragmentFactory
   }
 }
 
@@ -153,29 +163,21 @@ class MainActivityDetailDisplayer @Inject constructor(
   private val mainActivity: MainActivity
 ) : DetailDisplayer {
 
-  private var currentPage: ExpandablePageLayout? = null
   private var collapser: (() -> Unit)? = null
 
-  override val isExpandedOrExpanding = currentPage?.isExpandedOrExpanding == true
+  private inline val detailPage get() = mainActivity.detailPage
+
+  override val isExpandedOrExpanding get() = detailPage.isExpandedOrExpanding
 
   override fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit) {
     collapser?.invoke()
     collapser = null
-    currentPage = null
-    val newPage = ExpandablePageLayout(mainActivity.rootView.context, null).apply {
-      id = R.id.detailPage
-      addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
-        override fun onPageCollapsed() {
-          mainActivity.rootView.removeView(this@apply)
-          currentPage?.removeStateChangeCallbacks(this)
-        }
-      })
-    }
-    mainActivity.rootView.addView(newPage, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
-    // Using post because it's not safe to check isLaidOut in doOnNextLayout -_-
-    newPage.post {
-      currentPage = newPage
-      collapser = body(newPage, mainActivity.supportFragmentManager)
-    }
+    detailPage.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
+      override fun onPageCollapsed() {
+        detailPage.removeStateChangeCallbacks(this)
+        collapser = null
+      }
+    })
+    collapser = body(detailPage, mainActivity.supportFragmentManager)
   }
 }
