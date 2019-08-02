@@ -31,5 +31,9 @@
       tools:context=".ui.activity.MainActivity"
       />
 
-  <!-- We have a nested level here because we'll potentially add new detail pages on top of the existing container here -->
+  <me.saket.inboxrecyclerview.page.ExpandablePageLayout
+      android:id="@+id/detailPage"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
 </FrameLayout>
