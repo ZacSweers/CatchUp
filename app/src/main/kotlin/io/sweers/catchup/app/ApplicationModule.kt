@@ -17,9 +17,12 @@ package io.sweers.catchup.app
 
 import android.app.Application
 import android.content.Context
+import com.chibatching.kotpref.Kotpref
+import com.gabrielittner.threetenbp.LazyThreeTen
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
@@ -29,14 +32,16 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.image.glide.GlideImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
+import io.sweers.catchup.data.InstanceBasedOkHttpLibraryGlideModule
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 
-@Module
+@Module(subcomponents = [InstanceBasedOkHttpLibraryGlideModule.Component::class])
 abstract class ApplicationModule {
 
   @Qualifier
@@ -92,5 +97,31 @@ abstract class ApplicationModule {
           ))
           .build()
         }
+
+    @AsyncInitializers
+    @JvmStatic
+    @IntoSet
+    @Provides
+    fun threeTenInit(application: Application): () -> Unit = {
+      LazyThreeTen.init(application)
+      LazyThreeTen.cacheZones()
+    }
+
+    @AsyncInitializers
+    @JvmStatic
+    @IntoSet
+    @Provides
+    fun mainDispatcherInit(): () -> Unit = {
+      // This makes a call to disk, so initialize it off the main thread first... ironically
+      Dispatchers.Main
+    }
+
+    @Initializers
+    @JvmStatic
+    @IntoSet
+    @Provides
+    fun kotprefInit(application: Application): () -> Unit = {
+      Kotpref.init(application)
+    }
   }
 }

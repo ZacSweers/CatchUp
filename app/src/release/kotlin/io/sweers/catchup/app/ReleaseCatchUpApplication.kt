@@ -15,11 +15,10 @@
  */
 package io.sweers.catchup.app
 
-class ReleaseCatchUpApplication : CatchUpApplication() {
-
-  override fun inject() {
-    DaggerApplicationComponent.factory()
-        .create(this)
-        .inject(this)
-  }
+fun CatchUpApplication.inject(): ApplicationComponent {
+  return DaggerApplicationComponent.factory()
+      .create(this)
+      .apply {
+        inject(this@inject)
+      }
 }

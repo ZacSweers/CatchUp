@@ -15,14 +15,11 @@
  */
 package io.sweers.catchup.app
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.SharedPreferences
 import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
-import com.chibatching.kotpref.Kotpref
 import com.f2prateek.rx.preferences2.RxSharedPreferences
-import com.gabrielittner.threetenbp.LazyThreeTen
 import com.uber.rxdogtag.RxDogTag
 import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
 import dagger.android.DispatchingAndroidInjector
@@ -43,8 +40,7 @@ import javax.inject.Inject
 
 private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
 
-@SuppressLint("Registered")
-abstract class CatchUpApplication : Application(), HasAndroidInjector {
+class CatchUpApplication : Application(), HasAndroidInjector {
 
   companion object {
 
@@ -56,6 +52,8 @@ abstract class CatchUpApplication : Application(), HasAndroidInjector {
           .configureWith(AutoDisposeConfigurer::configure)
           .install()
     }
+
+    internal lateinit var appComponent: ApplicationComponent
   }
 
   @Inject
@@ -64,11 +62,6 @@ abstract class CatchUpApplication : Application(), HasAndroidInjector {
   internal lateinit var sharedPreferences: SharedPreferences
   @Inject
   internal lateinit var rxPreferences: RxSharedPreferences
-
-  open fun onPreInject() {
-  }
-
-  abstract fun inject()
 
   @Inject
   internal fun plantTimberTrees(trees: Set<@JvmSuppressWildcards Timber.Tree>) {
@@ -90,14 +83,7 @@ abstract class CatchUpApplication : Application(), HasAndroidInjector {
 
   override fun onCreate() {
     super.onCreate()
-    GlobalScope.launch {
-      // This makes a call to disk, so initialize it off the main thread first... ironically
-      Dispatchers.Main
-    }
-    LazyThreeTen.init(this)
-    onPreInject()
-    inject()
-    Kotpref.init(this)
+    appComponent = inject()
 
     CatchUpPreferences.flowFor { ::daynightAuto }
         .onEach { autoEnabled ->

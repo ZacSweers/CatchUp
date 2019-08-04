@@ -28,13 +28,4 @@
   <!-- For Flipper -->
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
-  <application
-      android:name=".app.DebugCatchUpApplication">
-
-    <meta-data
-        android:name="firebase_performance_logcat_enabled"
-        android:value="true"/>
-
-  </application>
-
 </manifest>

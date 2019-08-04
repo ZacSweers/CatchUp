@@ -23,7 +23,9 @@ import androidx.annotation.Keep
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import com.bumptech.glide.GlideBuilder
+import com.bumptech.glide.annotation.Excludes
 import com.bumptech.glide.annotation.GlideModule
+import com.bumptech.glide.integration.okhttp3.OkHttpLibraryGlideModule
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
@@ -31,6 +33,7 @@ import com.bumptech.glide.request.RequestOptions
 /**
  * Configure Glide to set desired image quality.
  */
+@Excludes(OkHttpLibraryGlideModule::class) // Using a custom InstanceBasedOkHttpLibraryGlideModule
 @Keep
 @GlideModule
 class GlideConfiguration : AppGlideModule() {

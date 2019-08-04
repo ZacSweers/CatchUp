@@ -27,6 +27,7 @@ import android.util.Log
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperPlugin
+import com.facebook.soloader.SoLoader
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.timber.StethoTree
 import dagger.Module
@@ -184,6 +185,7 @@ object DebugApplicationModule {
       flipperPlugins: Set<@JvmSuppressWildcards FlipperPlugin>
   ): () -> Unit = {
     if (enabled) {
+      SoLoader.init(application, SoLoader.SOLOADER_ALLOW_ASYNC_INIT)
       AndroidFlipperClient.getInstance(application).apply {
         flipperPlugins.forEach(::addPlugin)
         start()

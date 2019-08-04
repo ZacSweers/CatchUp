@@ -15,17 +15,10 @@
  */
 package io.sweers.catchup.app
 
-import com.facebook.soloader.SoLoader
-
-class DebugCatchUpApplication : CatchUpApplication() {
-
-  override fun onPreInject() {
-    SoLoader.init(this, false)
-  }
-
-  override fun inject() {
-    DaggerApplicationComponent.factory()
-        .create(this)
-        .inject(this)
-  }
+fun CatchUpApplication.inject(): ApplicationComponent {
+  return DaggerApplicationComponent.factory()
+      .create(this)
+      .apply {
+        inject(this@inject)
+      }
 }
