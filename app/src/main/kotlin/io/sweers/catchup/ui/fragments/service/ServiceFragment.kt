@@ -90,7 +90,7 @@ import kotterknife.bindView
 import kotterknife.onClick
 import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.dimming.TintPainter
-import me.saket.inboxrecyclerview.page.IGNORE_ALL_PULL_TO_COLLAPSE_INTERCEPTOR
+import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import retrofit2.HttpException
@@ -263,7 +263,7 @@ class ServiceFragment : InjectingBaseFragment(),
             val targetProvider = fragmentCreators[service.meta().deeplinkFragment] ?: error("No deeplink for $key")
             holder.setLongClickHandler {
               detailDisplayer.showDetail { page, fragmentManager ->
-                recyclerView.setExpandablePage(page)
+                recyclerView.expandablePage = page
                 recyclerView.tintPainter = TintPainter.uncoveredArea(
                     color = ContextCompat.getColor(holder.itemView.context, R.color.colorPrimary),
                     opacity = 0.65F
@@ -280,8 +280,8 @@ class ServiceFragment : InjectingBaseFragment(),
                   }
                 }
                 page.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
-                  override fun onPageCollapsed() {
-                    page.pullToCollapseInterceptor = IGNORE_ALL_PULL_TO_COLLAPSE_INTERCEPTOR
+                  override fun onPageCollapsed(page: ExpandablePageLayout) {
+                    page.pullToCollapseInterceptor = null
                     page.removeStateChangeCallbacks(this)
                     fragmentManager.commitNow(allowStateLoss = true) {
                       remove(targetFragment)
