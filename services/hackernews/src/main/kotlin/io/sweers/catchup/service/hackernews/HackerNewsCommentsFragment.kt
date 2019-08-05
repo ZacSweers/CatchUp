@@ -98,7 +98,9 @@ class HackerNewsCommentsFragment @Inject constructor(
   }
 
   private suspend fun loadStory(id: String) = suspendCancellableCoroutine<HackerNewsStory> { cont ->
-    val ref = database.getReference("v0/item/$id")
+    val ref = database.getReference("v0/item/$id").apply {
+      keepSynced(true)
+    }
     val listener = object : ValueEventListener {
       override fun onDataChange(dataSnapshot: DataSnapshot) {
         try {
@@ -119,7 +121,9 @@ class HackerNewsCommentsFragment @Inject constructor(
   }
 
   private suspend fun loadItem(id: String) = suspendCancellableCoroutine<HackerNewsComment> { cont ->
-    val ref = database.getReference("v0/item/$id")
+    val ref = database.getReference("v0/item/$id").apply {
+      keepSynced(true)
+    }
     val listener = object : ValueEventListener {
       override fun onDataChange(dataSnapshot: DataSnapshot) {
         try {
