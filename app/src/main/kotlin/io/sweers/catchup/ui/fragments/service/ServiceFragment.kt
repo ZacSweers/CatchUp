@@ -90,7 +90,7 @@ import kotterknife.bindView
 import kotterknife.onClick
 import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.dimming.TintPainter
-import me.saket.inboxrecyclerview.page.IGNORE_ALL_PULL_TO_COLLAPSE_INTERCEPTOR
+import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import retrofit2.HttpException
@@ -165,6 +165,7 @@ class ServiceFragment : InjectingBaseFragment(),
   private var moreDataAvailable = true
   private var dataLoading = false
   private var pendingRVState: Parcelable? = null
+  private var detailDisplayed: Boolean = false
   private val defaultItemAnimator = DefaultItemAnimator()
 
   @Inject
@@ -263,7 +264,8 @@ class ServiceFragment : InjectingBaseFragment(),
             val targetProvider = fragmentCreators[service.meta().deeplinkFragment] ?: error("No deeplink for $key")
             holder.setLongClickHandler {
               detailDisplayer.showDetail { page, fragmentManager ->
-                recyclerView.setExpandablePage(page)
+                detailDisplayed = true
+                recyclerView.expandablePage = page
                 recyclerView.tintPainter = TintPainter.uncoveredArea(
                     color = ContextCompat.getColor(holder.itemView.context, R.color.colorPrimary),
                     opacity = 0.65F
@@ -280,9 +282,11 @@ class ServiceFragment : InjectingBaseFragment(),
                   }
                 }
                 page.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
-                  override fun onPageCollapsed() {
-                    page.pullToCollapseInterceptor = IGNORE_ALL_PULL_TO_COLLAPSE_INTERCEPTOR
+                  override fun onPageCollapsed(page: ExpandablePageLayout) {
+                    detailDisplayed = false
+                    page.pullToCollapseInterceptor = null
                     page.removeStateChangeCallbacks(this)
+                    recyclerView.expandablePage = null
                     fragmentManager.commitNow(allowStateLoss = true) {
                       remove(targetFragment)
                     }
@@ -311,6 +315,13 @@ class ServiceFragment : InjectingBaseFragment(),
         errorView.hide()
         recyclerView.show()
         recyclerView.itemAnimator = defaultItemAnimator
+      }
+      detailDisplayed = getBoolean("detailDisplayed")
+
+      if (detailDisplayed) {
+        // This is necessary to support state restoration in IRV, which expects the page to be
+        // bound after rotation before restoration.
+        detailDisplayer.bindOnly(recyclerView)
       }
     }
     viewLifecycleOwner.lifecycleScope.launch {
@@ -369,6 +380,7 @@ class ServiceFragment : InjectingBaseFragment(),
 
   override fun onSaveInstanceState(outState: Bundle) {
     outState.run {
+      putBoolean("detailDisplayed", detailDisplayed)
       if (currentPage != service.meta().firstPageKey) {
         putString("currentPage", currentPage)
       }

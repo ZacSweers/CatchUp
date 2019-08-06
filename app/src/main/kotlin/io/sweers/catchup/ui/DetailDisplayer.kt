@@ -16,9 +16,20 @@
 package io.sweers.catchup.ui
 
 import androidx.fragment.app.FragmentManager
+import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 
 interface DetailDisplayer {
   val isExpandedOrExpanding: Boolean
+
+  /**
+   * Shows a detail activity given an available page and fragmentmanager.
+   */
   fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit)
+
+  /**
+   * Binds (via [InboxRecyclerView.expandablePage] an irv to the available page only, does nothing
+   * with fragmentmanagers. Used mostly for state restoration.
+   */
+  fun bindOnly(irv: InboxRecyclerView)
 }

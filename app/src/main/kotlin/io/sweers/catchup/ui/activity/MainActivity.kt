@@ -42,6 +42,7 @@ import io.sweers.catchup.ui.fragments.PagerFragment
 import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import kotterknife.bindView
+import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import javax.inject.Inject
@@ -176,11 +177,15 @@ class MainActivityDetailDisplayer @Inject constructor(
     // TODO this is ugly, do better
     detailPage.pushParentToolbarOnExpand((mainActivity.supportFragmentManager.findFragmentById(R.id.fragment_container) as PagerFragment).toolbar)
     detailPage.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
-      override fun onPageCollapsed() {
-        detailPage.removeStateChangeCallbacks(this)
+      override fun onPageCollapsed(page: ExpandablePageLayout) {
+        page.removeStateChangeCallbacks(this)
         collapser = null
       }
     })
     collapser = body(detailPage, mainActivity.supportFragmentManager)
+  }
+
+  override fun bindOnly(irv: InboxRecyclerView) {
+    irv.expandablePage = detailPage
   }
 }
