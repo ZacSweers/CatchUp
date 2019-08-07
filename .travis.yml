@@ -1,9 +1,15 @@
 language: android
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
+env:
+  global:
+    - GRADLE_OPTS="-Xmx768m -Xms256m -Xss1m" # To limit memory use on CI and avoid OOMs
+  - NODE_VERSION="12.7.0"
 before_install:
+  - nvm install $NODE_VERSION
+  - npm install -g apollo-codegen@0.19.1
   # Install SDK license so Android Gradle plugin can install deps.
   - mkdir "$ANDROID_HOME/licenses" || true
   - echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > "$ANDROID_HOME/licenses/android-sdk-license"
@@ -16,9 +22,6 @@ install: ./gradlew build --stacktrace
 script:
   - ./gradlew check --stacktrace
 
-env:
-  global:
-    - GRADLE_OPTS="-Xmx768m -Xms256m -Xss1m" # To limit memory use on CI and avoid OOMs
 
 branches:
   only:
