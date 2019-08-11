@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.android.library")
@@ -40,6 +41,13 @@ android {
     generateBuildConfigProvider?.configure {
       enabled = false
     }
+  }
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = build.standardFreeKotlinCompilerArgs
+    jvmTarget = "1.8"
   }
 }
 
