@@ -16,10 +16,15 @@
 package io.sweers.catchup.service.hackernews
 
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -41,12 +46,16 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
+import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
+import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelKey
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.d
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import javax.inject.Inject
 import javax.inject.Qualifier
+
+typealias AssistedFactory = ViewModelAssistedFactory<out ViewModel>
 
 @Qualifier
 private annotation class InternalApi
@@ -174,7 +183,13 @@ abstract class HackerNewsMetaModule {
 }
 
 @ServiceModule
-@Module(includes = [HackerNewsMetaModule::class])
+@Module(
+    includes = [
+      HackerNewsMetaModule::class,
+      FragmentViewModelFactoryModule::class,
+      ViewModelModule::class
+    ]
+)
 abstract class HackerNewsModule {
 
   @IntoMap
@@ -185,14 +200,60 @@ abstract class HackerNewsModule {
   @Binds
   @IntoMap
   @FragmentKey(HackerNewsCommentsFragment::class)
-  abstract fun bindHnFragment(mainFragment: HackerNewsCommentsFragment): Fragment
+  internal abstract fun bindHnFragment(mainFragment: HackerNewsCommentsFragment): Fragment
 
   @Module
   companion object {
-
     @Provides
     @JvmStatic
     internal fun provideDataBase(): FirebaseDatabase =
         FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/")
+  }
+}
+
+@AssistedModule
+@Module(includes = [AssistedInject_ViewModelModule::class])
+internal abstract class ViewModelModule {
+  @Binds
+  @IntoMap
+  @ViewModelKey(HackerNewsCommentsViewModel::class)
+  abstract fun mainViewModel(viewModel: HackerNewsCommentsViewModel.Factory): AssistedFactory
+}
+
+// TODO generify this somewhere once something other than HN does it
+@Module
+internal object FragmentViewModelFactoryModule {
+  @Provides
+  @JvmStatic
+  fun viewModelFactory(
+    viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, AssistedFactory>
+  ): ViewModelProviderFactoryInstantiator {
+    return object : ViewModelProviderFactoryInstantiator {
+      override fun create(fragment: Fragment): ViewModelProvider.Factory {
+        return object : AbstractSavedStateViewModelFactory(fragment, null) {
+          override fun <T : ViewModel> create(
+            key: String,
+            modelClass: Class<T>,
+            handle: SavedStateHandle
+          ): T {
+            // TODO this is ugly extract these constants
+            handle.set("detailKey", fragment.arguments!!.getString("detailKey")!!)
+            handle.set("detailTitle", fragment.arguments!!.getString("detailTitle"))
+            @Suppress("UNCHECKED_CAST")
+            return viewModels.getValue(modelClass).create(handle) as T
+          }
+        }
+      }
+    }
+  }
+
+  // This exists to avoid the static fragment dependency for dagger. We don't place fragments
+  // directly on the DI graph, but rather route them all through a fragment factory that only
+  // produces new instances. Instead we defer initialization to the fragment consuming the
+  // ViewModelProvider.Factory to pass itself in a deferred fashion.
+  //
+  // I initially named this ViewModelProviderFactoryFactory, and repent for my sins.
+  interface ViewModelProviderFactoryInstantiator {
+    fun create(fragment: Fragment): ViewModelProvider.Factory
   }
 }
