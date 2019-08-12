@@ -24,31 +24,22 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import io.sweers.catchup.service.api.ScrollableContent
+import io.sweers.catchup.service.hackernews.FragmentViewModelFactoryModule.ViewModelProviderFactoryInstantiator
+import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Failure
+import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Loading
+import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Success
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
-import io.sweers.catchup.service.hackernews.model.HackerNewsStory
-import io.sweers.catchup.util.d
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
+import io.sweers.catchup.util.hide
+import io.sweers.catchup.util.show
+import kotterknife.bindView
 import javax.inject.Inject
-import kotlin.LazyThreadSafetyMode.NONE
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
-class HackerNewsCommentsFragment @Inject constructor(
-  private val database: FirebaseDatabase
+internal class HackerNewsCommentsFragment @Inject constructor(
+  viewModelFactoryInstantiator: ViewModelProviderFactoryInstantiator
 ) : Fragment(), ScrollableContent {
 
   companion object {
@@ -56,10 +47,10 @@ class HackerNewsCommentsFragment @Inject constructor(
     const val ARG_DETAIL_TITLE = "detailTitle"
   }
 
-  private val list by lazy(NONE) { view!!.findViewById<RecyclerView>(R.id.list) }
-  private val progress by lazy(NONE) { view!!.findViewById<ProgressBar>(R.id.progress) }
-  private val toolbar by lazy(NONE) { view!!.findViewById<Toolbar>(R.id.toolbar) }
-  private val storyId by lazy(NONE) { arguments!!.getString(ARG_DETAIL_KEY)!! }
+  private val list by bindView<RecyclerView>(R.id.list)
+  private val progress by bindView<ProgressBar>(R.id.progress)
+  private val toolbar by bindView<Toolbar>(R.id.toolbar)
+  private val viewModel: HackerNewsCommentsViewModel by viewModels { viewModelFactoryInstantiator.create(this) }
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -73,74 +64,31 @@ class HackerNewsCommentsFragment @Inject constructor(
     super.onViewCreated(view, savedInstanceState)
     toolbar.title = arguments?.getString(ARG_DETAIL_TITLE) ?: "Untitled"
 
-    viewLifecycleOwner.lifecycleScope.launch {
-      val (story, comments) = withContext(Dispatchers.IO) { loadComments() }
+    viewModel.state().observe(viewLifecycleOwner) { state ->
+      when (state) {
+        is Loading -> {
+          progress.show(true)
+          list.hide(true)
+        }
+        is Failure -> {
+          toolbar.title = "Failed to load :(. ${state.error.message}"
+        }
+        is Success -> {
+          val (story, comments) = state.data
 
-      toolbar.title = story.title
-      val adapter = CommentsAdapter(comments)
-      list.adapter = adapter
-      list.layoutManager = LinearLayoutManager(view.context)
-      progress.visibility = View.GONE
-      list.visibility = View.VISIBLE
+          toolbar.title = story.title
+          val adapter = CommentsAdapter(comments)
+          list.adapter = adapter
+          list.layoutManager = LinearLayoutManager(view.context)
+          progress.hide(true)
+          list.show(true)
+        }
+      }
     }
   }
 
   override fun canScrollVertically(directionInt: Int): Boolean {
     return list.canScrollVertically(directionInt)
-  }
-
-  private suspend fun loadComments(): Pair<HackerNewsStory, List<HackerNewsComment>> {
-    val story = loadStory(storyId)
-
-    return story to story.kids!!.asFlow()
-        .map { loadItem(it.toString()) }
-        .toList()
-  }
-
-  private suspend fun loadStory(id: String) = suspendCancellableCoroutine<HackerNewsStory> { cont ->
-    val ref = database.getReference("v0/item/$id").apply {
-      keepSynced(true)
-    }
-    val listener = object : ValueEventListener {
-      override fun onDataChange(dataSnapshot: DataSnapshot) {
-        try {
-          ref.removeEventListener(this)
-          cont.resume(HackerNewsStory.create(dataSnapshot))
-        } catch (e: Exception) {
-          cont.resumeWithException(e)
-        }
-      }
-
-      override fun onCancelled(firebaseError: DatabaseError) {
-        d { "${firebaseError.code}" }
-        cont.resumeWithException(firebaseError.toException())
-      }
-    }
-    cont.invokeOnCancellation { ref.removeEventListener(listener) }
-    ref.addValueEventListener(listener)
-  }
-
-  private suspend fun loadItem(id: String) = suspendCancellableCoroutine<HackerNewsComment> { cont ->
-    val ref = database.getReference("v0/item/$id").apply {
-      keepSynced(true)
-    }
-    val listener = object : ValueEventListener {
-      override fun onDataChange(dataSnapshot: DataSnapshot) {
-        try {
-          ref.removeEventListener(this)
-          cont.resume(HackerNewsComment.create(dataSnapshot))
-        } catch (e: Exception) {
-          cont.resumeWithException(e)
-        }
-      }
-
-      override fun onCancelled(firebaseError: DatabaseError) {
-        d { "${firebaseError.code}" }
-        cont.resumeWithException(firebaseError.toException())
-      }
-    }
-    cont.invokeOnCancellation { ref.removeEventListener(listener) }
-    ref.addValueEventListener(listener)
   }
 
   private class CommentsAdapter(

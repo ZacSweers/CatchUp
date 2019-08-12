@@ -79,7 +79,13 @@ dependencies {
   kapt(project(":service-registry:service-registry-compiler"))
   kapt(deps.crumb.compiler)
   kapt(deps.dagger.apt.compiler)
+  kapt(deps.assistedInject.processor)
+  compileOnly(deps.assistedInject.annotations)
 
+  implementation(deps.android.androidx.viewModel.core)
+  implementation(deps.android.androidx.viewModel.ktx)
+  implementation(deps.android.androidx.viewModel.savedState)
+  implementation(deps.android.androidx.liveData.ktx)
   implementation(deps.android.firebase.database)
 
   api(deps.android.androidx.design)
