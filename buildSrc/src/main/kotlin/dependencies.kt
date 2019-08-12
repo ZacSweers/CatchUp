@@ -101,6 +101,13 @@ object deps {
       const val fragment = "androidx.fragment:fragment:$fragmentVersion"
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
+      object viewModel {
+        private const val version = "2.2.0-alpha03"
+        const val core = "androidx.lifecycle:lifecycle-viewmodel:$version"
+        const val ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
+        const val savedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha03"
+      }
+
       const val viewPager = "androidx.viewpager:viewpager:1.0.0"
       const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02"
       const val palette = "androidx.palette:palette:1.0.0"
@@ -116,6 +123,11 @@ object deps {
         const val apt = "androidx.lifecycle:lifecycle-compiler:$version"
         const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
         const val ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
+      }
+
+      object liveData {
+        private const val version = "2.2.0-alpha01"
+        const val ktx = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
       }
 
       object room {
@@ -151,6 +163,12 @@ object deps {
     const val httpcache = "com.apollographql.apollo:apollo-http-cache:${versions.apollo}"
     const val runtime = "com.apollographql.apollo:apollo-runtime:${versions.apollo}"
     const val rx2Support = "com.apollographql.apollo:apollo-rx2-support:${versions.apollo}"
+  }
+
+  object assistedInject {
+    private const val version = "0.5.0"
+    const val annotations = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
+    const val processor = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
   }
 
   object auto {

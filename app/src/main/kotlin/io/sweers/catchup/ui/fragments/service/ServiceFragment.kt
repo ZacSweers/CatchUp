@@ -260,7 +260,10 @@ class ServiceFragment : InjectingBaseFragment(),
         )
         if (BuildConfig.DEBUG) {
           item.detailKey?.let { key ->
-            val args = bundleOf("detailKey" to key)
+            val args = bundleOf(
+                "detailKey" to key,
+                "detailTitle" to item.title
+            )
             val targetProvider = fragmentCreators[service.meta().deeplinkFragment] ?: error("No deeplink for $key")
             holder.setLongClickHandler {
               detailDisplayer.showDetail { page, fragmentManager ->
