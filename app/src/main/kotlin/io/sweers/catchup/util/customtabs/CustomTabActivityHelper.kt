@@ -88,8 +88,9 @@ class CustomTabActivityHelper @Inject constructor() {
         client = null
         connectionCallback?.onCustomTabsDisconnected()
       }
+    }.also {
+      CustomTabsClient.bindCustomTabsService(activity, packageName, it)
     }
-    CustomTabsClient.bindCustomTabsService(activity, packageName, connection)
   }
 
   /**

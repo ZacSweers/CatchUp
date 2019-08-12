@@ -71,7 +71,7 @@ object deps {
     const val kotpref = "2.8.0"
     const val leakcanary = "2.0-beta-2"
     const val legacySupport = "28.0.0"
-    const val markwon = "4.0.2"
+    const val markwon = "4.1.0"
     const val moshi = "1.8.0"
     const val okhttp = "4.0.1"
     const val retrofit = "2.6.1"
@@ -86,18 +86,18 @@ object deps {
       const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
       const val appCompat = "androidx.appcompat:appcompat:1.1.0-rc01"
 
-      private const val coreVersion = "1.2.0-alpha02"
+      private const val coreVersion = "1.2.0-alpha03"
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
-      const val customTabs = "androidx.browser:browser:1.0.0"
+      const val customTabs = "androidx.browser:browser:1.2.0-alpha07"
       const val design = "com.google.android.material:material:1.1.0-alpha09"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0-alpha02"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
 
-      private const val fragmentVersion = "1.2.0-alpha01"
+      private const val fragmentVersion = "1.2.0-alpha02"
       const val fragment = "androidx.fragment:fragment:$fragmentVersion"
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
@@ -112,14 +112,14 @@ object deps {
       const val recyclerView = "androidx.recyclerview:recyclerview:1.0.0"
 
       object lifecycle {
-        private const val version = "2.2.0-alpha02"
+        private const val version = "2.2.0-alpha03"
         const val apt = "androidx.lifecycle:lifecycle-compiler:$version"
         const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
         const val ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
       }
 
       object room {
-        private const val version = "2.2.0-alpha01"
+        private const val version = "2.2.0-alpha02"
         const val apt = "androidx.room:room-compiler:$version"
         const val ktx = "androidx.room:room-ktx:$version"
         const val runtime = "androidx.room:room-runtime:$version"
@@ -189,7 +189,6 @@ object deps {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.5.2"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:2.3.0"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${deps.versions.spotless}"
-      const val versions = "com.github.ben-manes:gradle-versions-plugin:0.21.0"
     }
 
     object repositories {
@@ -295,7 +294,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.3.0-RC-1.3.50-eap-5"
+    private const val coroutinesVersion = "1.3.0-RC2"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
@@ -326,10 +325,10 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.17.1"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.18.0-beta01"
 
     object debug {
-      const val flipper = "com.facebook.flipper:flipper:0.23.3"
+      const val flipper = "com.facebook.flipper:flipper:0.23.4"
       const val soLoader = "com.facebook.soloader:soloader:0.6.1"
       const val guava = "com.google.guava:guava:28.0-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
@@ -387,7 +386,7 @@ object deps {
 
     const val dogTag = "com.uber.rxdogtag:rxdogtag:0.2.0"
     const val dogTagAutoDispose = "com.uber.rxdogtag:rxdogtag-autodispose:0.2.0"
-    const val java = "io.reactivex.rxjava2:rxjava:2.2.10"
+    const val java = "io.reactivex.rxjava2:rxjava:2.2.11"
 
     const val preferences = "com.f2prateek.rx.preferences2:rx-preferences:2.0.0"
     const val relay = "com.jakewharton.rxrelay2:rxrelay:2.1.0"
