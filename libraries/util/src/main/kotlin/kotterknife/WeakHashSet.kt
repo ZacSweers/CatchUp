@@ -180,7 +180,8 @@ class WeakHashSet<T> : MutableSet<T> {
     while (true) {
       wv = this.queue.poll() as? WeakElement<out T>
       if (wv == null) break
-      delegate.remove(wv)
+      @Suppress("USELESS_CAST") // I don't know why this cast is necessary now but it is
+      delegate.remove(wv as WeakElement<out T>)
     }
   }
 
