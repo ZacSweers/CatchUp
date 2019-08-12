@@ -25,6 +25,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.sweers.catchup.service.api.ScrollableContent
@@ -35,6 +36,8 @@ import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Su
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotterknife.bindView
 import javax.inject.Inject
 
@@ -64,24 +67,26 @@ internal class HackerNewsCommentsFragment @Inject constructor(
     super.onViewCreated(view, savedInstanceState)
     toolbar.title = arguments?.getString(ARG_DETAIL_TITLE) ?: "Untitled"
 
-    viewModel.state().observe(viewLifecycleOwner) { state ->
-      when (state) {
-        is Loading -> {
-          progress.show(true)
-          list.hide(true)
-        }
-        is Failure -> {
-          toolbar.title = "Failed to load :(. ${state.error.message}"
-        }
-        is Success -> {
-          val (story, comments) = state.data
+    viewLifecycleOwner.lifecycleScope.launch {
+      viewModel.state().onEach { state ->
+        when (state) {
+          is Loading -> {
+            progress.show(true)
+            list.hide(true)
+          }
+          is Failure -> {
+            toolbar.title = "Failed to load :(. ${state.error.message}"
+          }
+          is Success -> {
+            val (story, comments) = state.data
 
-          toolbar.title = story.title
-          val adapter = CommentsAdapter(comments)
-          list.adapter = adapter
-          list.layoutManager = LinearLayoutManager(view.context)
-          progress.hide(true)
-          list.show(true)
+            toolbar.title = story.title
+            val adapter = CommentsAdapter(comments)
+            list.adapter = adapter
+            list.layoutManager = LinearLayoutManager(view.context)
+            progress.hide(true)
+            list.show(true)
+          }
         }
       }
     }

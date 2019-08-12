@@ -16,6 +16,7 @@
 package io.sweers.catchup.service.hackernews
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -30,7 +31,10 @@ import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
 import io.sweers.catchup.util.d
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -63,8 +67,17 @@ internal class HackerNewsCommentsViewModel @AssistedInject constructor(
 
   private val storyId = savedState.get<String>(HackerNewsCommentsFragment.ARG_DETAIL_KEY)!!
 
-  fun state(): LiveData<State> {
-    return stateMachine
+  fun state(): Flow<State> {
+    return stateMachine.asFlow().filterNotNull()
+  }
+
+  private fun <T> LiveData<T>.asFlow() = callbackFlow<T?> {
+    offer(value)
+    val observer = Observer<T> { t -> offer(t) }
+    observeForever(observer)
+    invokeOnClose {
+      removeObserver(observer)
+    }
   }
 
   private suspend fun loadComments(): Pair<HackerNewsStory, List<HackerNewsComment>> {
