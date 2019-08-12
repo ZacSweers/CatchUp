@@ -36,7 +36,7 @@ import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Su
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotterknife.bindView
 import javax.inject.Inject
@@ -68,7 +68,7 @@ internal class HackerNewsCommentsFragment @Inject constructor(
     toolbar.title = arguments?.getString(ARG_DETAIL_TITLE) ?: "Untitled"
 
     viewLifecycleOwner.lifecycleScope.launch {
-      viewModel.state().onEach { state ->
+      viewModel.viewState.collect { state ->
         when (state) {
           is Loading -> {
             progress.show(true)

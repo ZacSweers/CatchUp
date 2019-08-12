@@ -85,7 +85,6 @@ dependencies {
   implementation(deps.android.androidx.viewModel.core)
   implementation(deps.android.androidx.viewModel.ktx)
   implementation(deps.android.androidx.viewModel.savedState)
-  implementation(deps.android.androidx.liveData.ktx)
   implementation(deps.android.firebase.database)
 
   api(deps.android.androidx.design)

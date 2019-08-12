@@ -15,28 +15,27 @@
  */
 package io.sweers.catchup.service.hackernews
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Success
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
 import io.sweers.catchup.util.d
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
@@ -53,32 +52,20 @@ internal class HackerNewsCommentsViewModel @AssistedInject constructor(
     class Failure(val error: Throwable) : State()
   }
 
-  private val stateMachine = liveData {
-    emit(State.Loading)
-    try {
-      val result = withContext(Dispatchers.IO) {
-        State.Success(loadComments())
-      }
-      emit(result)
-    } catch (exception: Exception) {
-      emit(State.Failure(exception))
-    }
-  }
-
   private val storyId = savedState.get<String>(HackerNewsCommentsFragment.ARG_DETAIL_KEY)!!
 
-  fun state(): Flow<State> {
-    return stateMachine.asFlow().filterNotNull()
-  }
-
-  private fun <T> LiveData<T>.asFlow() = callbackFlow<T?> {
-    offer(value)
-    val observer = Observer<T> { t -> offer(t) }
-    observeForever(observer)
-    invokeOnClose {
-      removeObserver(observer)
+  val viewState: Flow<State> = ConflatedBroadcastChannel<State>(State.Loading).apply {
+    viewModelScope.launch {
+      try {
+        val result = withContext(Dispatchers.IO) {
+          Success(loadComments())
+        }
+        offer(result)
+      } catch (exception: Exception) {
+        offer(State.Failure(exception))
+      }
     }
-  }
+  }.asFlow()
 
   private suspend fun loadComments(): Pair<HackerNewsStory, List<HackerNewsComment>> {
     val story = loadStory(storyId)
