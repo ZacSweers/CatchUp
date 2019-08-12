@@ -86,7 +86,7 @@ object deps {
       const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
       const val appCompat = "androidx.appcompat:appcompat:1.1.0-rc01"
 
-      private const val coreVersion = "1.2.0-alpha03"
+      private const val coreVersion = "1.2.0-alpha02"
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
