@@ -109,7 +109,9 @@ internal object DribbbleParser {
     val matchId = PATTERN_PLAYER_ID.matcher(avatarUrl)
     var id: Long = -1L
     if (matchId.find() && matchId.groupCount() == 1) {
-      id = matchId.group(1).toLong()
+      matchId.group(1)?.toLong()?.let {
+        id = it
+      }
     }
     val slashUsername = userBlock.attr("href")
     val username = if (slashUsername.isEmpty()) null else slashUsername.substring(1)

@@ -42,7 +42,7 @@ fun Context.clearCache() = cleanDir(applicationContext.cacheDir)
 private fun cleanDir(dir: File): Long {
   var bytesDeleted: Long = 0
   dir.listFiles()
-      .forEach {
+      ?.forEach {
         val length = it.length()
         try {
           if (it.delete()) {
