@@ -64,7 +64,7 @@ class LinkManager @Inject constructor(
   fun connect(activity: MainActivity) {
     // Invalidate the cache when a new install/update happens or prefs changed
     val filter = IntentFilter()
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+    if (Build.VERSION.SDK_INT < 29) {
       @Suppress("DEPRECATION")
       filter.addAction(Intent.ACTION_INSTALL_PACKAGE)
     }
