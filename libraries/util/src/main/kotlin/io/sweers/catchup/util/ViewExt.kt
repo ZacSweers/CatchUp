@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.view.View
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
@@ -66,6 +67,9 @@ fun View.clearLightNavBar() {
 }
 
 inline fun View.show(animate: Boolean = false) {
+  if (isVisible) {
+    return
+  }
   if (animate) {
     alpha = 0F
     visibility = View.VISIBLE
@@ -93,7 +97,10 @@ inline infix fun View.showIf(condition: Boolean) {
 }
 
 inline fun View.hide(animate: Boolean = false) {
-  if (animate) {
+  if (!isVisible) {
+    return
+  }
+  if (animate && !isInvisible) {
     animate()
         .setDuration(300)
         .setInterpolator(LinearOutSlowInInterpolator())
