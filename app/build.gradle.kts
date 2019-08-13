@@ -58,6 +58,11 @@ android {
         "\"${properties["catchup_github_developer_token"]}\"")
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
   }
+  viewBinding {
+    isEnabled = true
+  }
+  val commitCountLazy by lazy { deps.build.gitCommitCount(project).toString() }
+  val versionNameLazy by lazy { deps.build.gitTag(project) }
   applicationVariants.all {
     outputs.all {
       processManifestProvider.configure {
