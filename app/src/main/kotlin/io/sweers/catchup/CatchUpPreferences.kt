@@ -15,17 +15,43 @@
  */
 package io.sweers.catchup
 
+import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.Keep
+import com.chibatching.kotpref.ContextProvider
 import com.chibatching.kotpref.KotprefModel
+import com.chibatching.kotpref.PreferencesOpener
 import io.sweers.catchup.flowbinding.safeOffer
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.reflect.KProperty0
 
 @Keep
-object CatchUpPreferences : KotprefModel() {
+@Singleton
+class CatchUpPreferences @Inject constructor(
+  application: Application,
+  sharedPreferences: SharedPreferences
+) : KotprefModel(
+    contextProvider = object : ContextProvider {
+      override fun getApplicationContext(): Context = application
+    },
+    opener = object : PreferencesOpener {
+      override fun openPreferences(context: Context, name: String, mode: Int): SharedPreferences {
+        return sharedPreferences
+      }
+    }
+) {
+
+  companion object {
+    const val ITEM_KEY_ABOUT = "about"
+    const val ITEM_KEY_CLEAR_CACHE = "clear_cache"
+    const val SECTION_KEY_ORDER_SERVICES = "reorder_services_section"
+    const val SECTION_KEY_SERVICES = "services"
+  }
 
   var daynightAuto by booleanPref(default = true)
   var dayNight by booleanPref(default = false)
@@ -34,11 +60,6 @@ object CatchUpPreferences : KotprefModel() {
   var servicesOrderSeen by booleanPref(default = false)
   var smartlinkingGlobal by booleanPref(default = true)
   var themeNavigationBar by booleanPref(default = false)
-
-  const val about = "about"
-  const val clearCache = "clear_cache"
-  const val reorderServicesSection = "reorder_services_section"
-  var services = "services"
   var servicesOrder by nullableStringPref(default = null)
 }
 

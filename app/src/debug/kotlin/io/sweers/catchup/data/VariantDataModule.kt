@@ -69,6 +69,9 @@ object VariantDataModule {
   @IntoSet
   @JvmStatic
   @Singleton
-  internal fun provideMockDataInterceptor(@ApplicationContext context: Context): Interceptor =
-      MockDataInterceptor(context)
+  internal fun provideMockDataInterceptor(
+    @ApplicationContext context: Context,
+    debugPreferences: DebugPreferences
+  ): Interceptor =
+      MockDataInterceptor(context, debugPreferences)
 }

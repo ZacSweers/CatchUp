@@ -17,7 +17,6 @@ package io.sweers.catchup.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
@@ -85,7 +84,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
 
     @Inject
-    lateinit var sharedPrefs: SharedPreferences
+    lateinit var catchUpPreferences: CatchUpPreferences
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
       AndroidSupportInjection.inject(this)
@@ -106,7 +105,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     private fun setUpGeneralSettings() {
       preferenceScreen = preferenceManager.createPreferenceScreen(activity)
 
-      val currentOrder = CatchUpPreferences.servicesOrder?.split(",")
+      val currentOrder = catchUpPreferences.servicesOrder?.split(",")
           ?: emptyList()
       serviceMetas
           .values

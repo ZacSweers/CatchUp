@@ -17,7 +17,6 @@ package io.sweers.catchup.app
 
 import android.app.Application
 import android.content.Context
-import com.chibatching.kotpref.Kotpref
 import com.gabrielittner.threetenbp.LazyThreeTen
 import dagger.Binds
 import dagger.Module
@@ -114,14 +113,6 @@ abstract class ApplicationModule {
     fun mainDispatcherInit(): () -> Unit = {
       // This makes a call to disk, so initialize it off the main thread first... ironically
       Dispatchers.Main
-    }
-
-    @Initializers
-    @JvmStatic
-    @IntoSet
-    @Provides
-    fun kotprefInit(application: Application): () -> Unit = {
-      Kotpref.init(application)
     }
   }
 }

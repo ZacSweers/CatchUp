@@ -27,11 +27,12 @@ import io.sweers.catchup.R
 fun Activity.updateNavBarColor(
   @ColorInt color: Int? = null,
   context: Context = this,
-  recreate: Boolean = false
+  recreate: Boolean = false,
+  catchUpPreferences: CatchUpPreferences
 ) {
   // Update the nav bar with whatever prefs we had
   @Suppress("CascadeIf") // Because I think if-else makes more sense readability-wise
-  if (color != null && CatchUpPreferences.themeNavigationBar) {
+  if (color != null && catchUpPreferences.themeNavigationBar) {
     window.navigationBarColor = color
     window.navigationBarDividerColor = Color.TRANSPARENT
     window.decorView.clearLightNavBar() // TODO why do I need to do this every time?

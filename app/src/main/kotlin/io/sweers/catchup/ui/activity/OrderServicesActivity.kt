@@ -17,7 +17,6 @@ package io.sweers.catchup.ui.activity
 
 import android.animation.AnimatorInflater
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Parcelable
@@ -93,7 +92,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
   @Inject
   lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
   @Inject
-  lateinit var sharedPrefs: SharedPreferences
+  lateinit var catchUpPreferences: CatchUpPreferences
   @Inject
   internal lateinit var syllabus: Syllabus
   @Inject
@@ -140,7 +139,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
     }
     val lm = LinearLayoutManager(view.context)
     recyclerView.layoutManager = lm
-    storedOrder = CatchUpPreferences.servicesOrder?.split(",") ?: emptyList()
+    storedOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
     val instanceChanges = savedInstanceState?.getStringArrayList("pendingChanges")
     pendingChanges = instanceChanges?.map { serviceMetas[it] as ServiceMeta }
     val displayOrder = instanceChanges ?: storedOrder
@@ -176,7 +175,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
 
     save.setOnClickListener {
       pendingChanges?.let { changes ->
-        CatchUpPreferences.bulk {
+        catchUpPreferences.bulk {
           servicesOrder = changes.joinToString(",", transform = ServiceMeta::id)
         }
       }
@@ -185,7 +184,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
 
     val primaryColor = ContextCompat.getColor(save.context, R.color.colorPrimary)
     val textColor = save.context.resolveAttributeColor(android.R.attr.textColorPrimary)
-    syllabus.showIfNeverSeen(CatchUpPreferences::servicesOrderSeen.name,
+    syllabus.showIfNeverSeen(catchUpPreferences::servicesOrderSeen.name,
         TargetRequest(
             target = {
               FabShowTapTarget(delegateTarget = { TapTarget.forView(save, "", "") },

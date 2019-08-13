@@ -24,11 +24,11 @@ import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatDelegate
 import io.sweers.catchup.CatchUpPreferences
 
-inline fun Activity.updateNightMode() {
+inline fun Activity.updateNightMode(catchUpPreferences: CatchUpPreferences) {
   val isCurrentlyInNightMode = isInNightMode()
   val nightMode = when {
-    CatchUpPreferences.daynightAuto -> AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
-    CatchUpPreferences.dayNightForceNight -> AppCompatDelegate.MODE_NIGHT_YES
+    catchUpPreferences.daynightAuto -> AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+    catchUpPreferences.dayNightForceNight -> AppCompatDelegate.MODE_NIGHT_YES
     else -> AppCompatDelegate.MODE_NIGHT_NO
   }
   if (nightMode == AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY ||

@@ -27,6 +27,7 @@ import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
 import com.uber.autodispose.lifecycle.LifecycleScopeProvider
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
+import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.ui.ViewContainer
 import io.sweers.catchup.ui.base.ActivityEvent.CREATE
 import io.sweers.catchup.ui.base.ActivityEvent.DESTROY
@@ -114,6 +115,8 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
 
   @Inject
   protected lateinit var viewContainer: ViewContainer
+  @Inject
+  protected lateinit var catchUpPreferences: CatchUpPreferences
 
   @CheckResult
   override fun lifecycle(): Observable<ActivityEvent> {
@@ -156,7 +159,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
-    updateNavBarColor()
+    updateNavBarColor(catchUpPreferences = catchUpPreferences)
   }
 
   @CallSuper
