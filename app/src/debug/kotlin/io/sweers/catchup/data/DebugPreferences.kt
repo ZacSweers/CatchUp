@@ -26,8 +26,8 @@ import javax.inject.Singleton
 
 @Singleton
 class DebugPreferences @Inject constructor(
-    application: Application,
-    sharedPreferences: SharedPreferences
+  application: Application,
+  sharedPreferences: SharedPreferences
 ) : KotprefModel(
     contextProvider = object : ContextProvider {
       override fun getApplicationContext(): Context = application

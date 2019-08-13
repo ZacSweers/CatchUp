@@ -17,7 +17,6 @@ package io.sweers.catchup.ui.activity
 
 import android.animation.AnimatorInflater
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Parcelable

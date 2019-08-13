@@ -33,8 +33,8 @@ import okio.source
  * Note: This is pretty unmaintained right now.
  */
 class MockDataInterceptor(
-    @ApplicationContext private val context: Context,
-    private val debugPreferences: DebugPreferences
+  @ApplicationContext private val context: Context,
+  private val debugPreferences: DebugPreferences
 ) : Interceptor {
 
   override fun intercept(chain: Interceptor.Chain): Response {

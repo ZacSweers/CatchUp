@@ -17,7 +17,6 @@ package io.sweers.catchup.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar

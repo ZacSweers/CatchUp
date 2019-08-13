@@ -70,8 +70,8 @@ object VariantDataModule {
   @JvmStatic
   @Singleton
   internal fun provideMockDataInterceptor(
-      @ApplicationContext context: Context,
-      debugPreferences: DebugPreferences
+    @ApplicationContext context: Context,
+    debugPreferences: DebugPreferences
   ): Interceptor =
       MockDataInterceptor(context, debugPreferences)
 }
