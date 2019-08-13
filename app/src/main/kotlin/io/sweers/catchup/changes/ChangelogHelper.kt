@@ -22,7 +22,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.style.StyleSpan
-import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
@@ -32,10 +31,12 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.Lazy
 import io.noties.markwon.Markwon
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.databinding.FragmentWhatsnewBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.service.api.UrlMeta
@@ -106,14 +107,13 @@ class ChangelogHelper @Inject constructor(
     // TODO Make this a custom fragment instead, which should make the animation less jarring
     BottomSheetDialog(context)
         .apply {
-          val contentView = layoutInflater
-              .inflate(R.layout.fragment_whatsnew, null, false)
-          setContentView(contentView)
-          val title = contentView.findViewById<TextView>(R.id.build_name)!!.apply {
+          val content = FragmentWhatsnewBinding.inflate(layoutInflater)
+          setContentView(content.root)
+          val title = content.buildName.apply {
             typeface = fontHelper.getFont()
             text = versionInfo.name
           }
-          val changes = contentView.findViewById<TextView>(R.id.changes)!!.also { changesTextView ->
+          val changes = content.changes.also { changesTextView ->
             changesTextView.typeface = fontHelper.getFont()
             changesTextView.movementMethod = LinkTouchMovementMethod.getInstance()
             changesTextView.highlightColor = highlightColor
@@ -141,9 +141,9 @@ class ChangelogHelper @Inject constructor(
                     })
           }
 
-          contentView.doOnLayout {
+          content.root.doOnLayout {
             val duration = 400L
-            val height = contentView.bottom
+            val height = content.root.bottom
             title.translationY = (height - title.y) * 0.25f
             title.alpha = 0f
             title.show()
