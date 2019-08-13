@@ -16,7 +16,6 @@
 package io.sweers.catchup.app
 
 import android.app.Application
-import android.content.SharedPreferences
 import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
 import com.f2prateek.rx.preferences2.RxSharedPreferences
@@ -59,7 +58,7 @@ class CatchUpApplication : Application(), HasAndroidInjector {
   @Inject
   internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
   @Inject
-  internal lateinit var sharedPreferences: SharedPreferences
+  internal lateinit var catchUpPreferences: CatchUpPreferences
   @Inject
   internal lateinit var rxPreferences: RxSharedPreferences
 
@@ -85,7 +84,7 @@ class CatchUpApplication : Application(), HasAndroidInjector {
     super.onCreate()
     appComponent = inject()
 
-    CatchUpPreferences.flowFor { ::daynightAuto }
+    catchUpPreferences.flowFor { ::daynightAuto }
         .onEach { autoEnabled ->
             d { "Updating daynight" }
             // Someday would like to add activity lifecycle callbacks to automatically call recreate
@@ -93,7 +92,7 @@ class CatchUpApplication : Application(), HasAndroidInjector {
             var nightMode = AppCompatDelegate.MODE_NIGHT_NO
             if (autoEnabled) {
               nightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
-            } else if (CatchUpPreferences.dayNight) {
+            } else if (catchUpPreferences.dayNight) {
               nightMode = AppCompatDelegate.MODE_NIGHT_YES
             }
             AppCompatDelegate.setDefaultNightMode(nightMode)
