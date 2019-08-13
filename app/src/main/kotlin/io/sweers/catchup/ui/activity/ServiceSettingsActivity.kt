@@ -85,7 +85,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
 
     @Inject
-    lateinit var sharedPrefs: SharedPreferences
+    lateinit var catchUpPreferences: CatchUpPreferences
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
       AndroidSupportInjection.inject(this)
@@ -106,7 +106,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     private fun setUpGeneralSettings() {
       preferenceScreen = preferenceManager.createPreferenceScreen(activity)
 
-      val currentOrder = CatchUpPreferences.servicesOrder?.split(",")
+      val currentOrder = catchUpPreferences.servicesOrder?.split(",")
           ?: emptyList()
       serviceMetas
           .values

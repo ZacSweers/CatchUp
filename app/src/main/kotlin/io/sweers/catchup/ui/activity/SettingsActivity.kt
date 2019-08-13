@@ -126,6 +126,8 @@ class SettingsActivity : InjectingBaseActivity() {
     lateinit var lumberYard: LumberYard
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+    @Inject
+    lateinit var catchUpPreferences: CatchUpPreferences
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
       AndroidSupportInjection.inject(this)
@@ -137,65 +139,65 @@ class SettingsActivity : InjectingBaseActivity() {
         it.isIconSpaceReserved = false
       }
 
-      (findPreference(CatchUpPreferences::smartlinkingGlobal.name) as? CheckBoxPreference)?.isChecked = CatchUpPreferences.smartlinkingGlobal
-      (findPreference(CatchUpPreferences::daynightAuto.name) as? CheckBoxPreference)?.isChecked = CatchUpPreferences.daynightAuto
-      (findPreference(CatchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)?.isChecked = CatchUpPreferences.dayNightForceNight
-      (findPreference(CatchUpPreferences::reports.name) as? CheckBoxPreference)?.isChecked = CatchUpPreferences.reports
+      (findPreference(catchUpPreferences::smartlinkingGlobal.name) as? CheckBoxPreference)?.isChecked = catchUpPreferences.smartlinkingGlobal
+      (findPreference(catchUpPreferences::daynightAuto.name) as? CheckBoxPreference)?.isChecked = catchUpPreferences.daynightAuto
+      (findPreference(catchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)?.isChecked = catchUpPreferences.dayNightForceNight
+      (findPreference(catchUpPreferences::reports.name) as? CheckBoxPreference)?.isChecked = catchUpPreferences.reports
 
-      val themeNavBarPref = findPreference(CatchUpPreferences::themeNavigationBar.name) as? CheckBoxPreference
-      themeNavBarPref?.isChecked = CatchUpPreferences.themeNavigationBar
+      val themeNavBarPref = findPreference(catchUpPreferences::themeNavigationBar.name) as? CheckBoxPreference
+      themeNavBarPref?.isChecked = catchUpPreferences.themeNavigationBar
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
       when (preference.key) {
-        CatchUpPreferences::smartlinkingGlobal.name -> {
-          CatchUpPreferences.smartlinkingGlobal = (preference as CheckBoxPreference).isChecked
+        catchUpPreferences::smartlinkingGlobal.name -> {
+          catchUpPreferences.smartlinkingGlobal = (preference as CheckBoxPreference).isChecked
           return true
         }
-        CatchUpPreferences::daynightAuto.name -> {
+        catchUpPreferences::daynightAuto.name -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
-          CatchUpPreferences.daynightAuto = isChecked
+          catchUpPreferences.daynightAuto = isChecked
               .apply {
                 if (isChecked) {
                   // If we're enabling auto, clear out the prev daynight night-only mode
-                  CatchUpPreferences.dayNightForceNight = false
-                  (findPreference(CatchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)?.isChecked = false
+                  catchUpPreferences.dayNightForceNight = false
+                  (findPreference(catchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)?.isChecked = false
                 }
               }
-          activity?.updateNightMode()
+          activity?.updateNightMode(catchUpPreferences)
           return true
         }
-        CatchUpPreferences::dayNightForceNight.name -> {
-          CatchUpPreferences.dayNightForceNight = (preference as CheckBoxPreference).isChecked
-          activity?.updateNightMode()
+        catchUpPreferences::dayNightForceNight.name -> {
+          catchUpPreferences.dayNightForceNight = (preference as CheckBoxPreference).isChecked
+          activity?.updateNightMode(catchUpPreferences)
           return true
         }
-        CatchUpPreferences::themeNavigationBar.name -> {
-          CatchUpPreferences.themeNavigationBar = (preference as CheckBoxPreference).isChecked
+        catchUpPreferences::themeNavigationBar.name -> {
+          catchUpPreferences.themeNavigationBar = (preference as CheckBoxPreference).isChecked
           (activity as SettingsActivity).run {
             resultData.putBoolean(NAV_COLOR_UPDATED, true)
-            updateNavBarColor(recreate = true)
+            updateNavBarColor(recreate = true, catchUpPreferences = catchUpPreferences)
           }
           return true
         }
-        CatchUpPreferences::reorderServicesSection.name -> {
+        CatchUpPreferences.SECTION_KEY_ORDER_SERVICES -> {
           (activity as SettingsActivity).resultData.putBoolean(SERVICE_ORDER_UPDATED, true)
           startActivity(Intent(activity, OrderServicesActivity::class.java))
           return true
         }
-        CatchUpPreferences::reports.name -> {
+        catchUpPreferences::reports.name -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
-          CatchUpPreferences.reports = isChecked
+          catchUpPreferences.reports = isChecked
           Snackbar.make(view!!, R.string.settings_reset, Snackbar.LENGTH_SHORT)
               .setAction(R.string.undo) {
                 // TODO Maybe this should actually be a restart button
-                CatchUpPreferences.reports = !isChecked
+                catchUpPreferences.reports = !isChecked
                 preference.isChecked = !isChecked
               }
               .show()
           return true
         }
-        CatchUpPreferences::clearCache.name -> {
+        CatchUpPreferences.ITEM_KEY_CLEAR_CACHE -> {
           Single.fromCallable {
             // TODO would be nice to measure the size impact of this file ¯\_(ツ)_/¯
             sharedPreferences.edit().clear().apply()
@@ -229,11 +231,11 @@ class SettingsActivity : InjectingBaseActivity() {
               }
           return true
         }
-        CatchUpPreferences::about.name -> {
+        CatchUpPreferences.ITEM_KEY_ABOUT -> {
           startActivity(Intent(activity, AboutActivity::class.java))
           return true
         }
-        CatchUpPreferences::services.name -> {
+        CatchUpPreferences.SECTION_KEY_SERVICES -> {
           (activity as SettingsActivity).resultData.putBoolean(SERVICE_ORDER_UPDATED, true)
           startActivity(Intent(activity, ServiceSettingsActivity::class.java))
           return true

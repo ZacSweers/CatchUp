@@ -54,7 +54,8 @@ import javax.inject.Inject
 @PerActivity
 class LinkManager @Inject constructor(
   private val customTab: CustomTabActivityHelper,
-  private val activity: Activity
+  private val activity: Activity,
+  private val catchUpPreferences: CatchUpPreferences
 ) : LinkHandler {
 
   // Naive cache that tracks if we've already resolved for activities that can handle a given host
@@ -71,7 +72,7 @@ class LinkManager @Inject constructor(
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED)
     activity.lifecycleScope.launch {
       activity.intentReceivers(filter)
-          .mergeWith(CatchUpPreferences.flowFor { ::smartlinkingGlobal })
+          .mergeWith(catchUpPreferences.flowFor { ::smartlinkingGlobal })
           .collect { dumbCache.clear() }
     }
   }
@@ -116,7 +117,7 @@ class LinkManager @Inject constructor(
       return
     }
     val intent = Intent(Intent.ACTION_VIEW, meta.uri)
-    if (!CatchUpPreferences.smartlinkingGlobal) {
+    if (!catchUpPreferences.smartlinkingGlobal) {
       openCustomTab(meta.context, uri, meta.accentColor)
       return
     }

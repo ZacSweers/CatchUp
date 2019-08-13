@@ -94,6 +94,8 @@ class PagerFragment : InjectingBaseFragment() {
   lateinit var serviceHandlers: Array<ServiceHandler>
   @Inject
   lateinit var changelogHelper: ChangelogHelper
+  @Inject
+  lateinit var catchUpPreferences: CatchUpPreferences
 
   private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_fragment_root)
   private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
@@ -251,7 +253,8 @@ class PagerFragment : InjectingBaseFragment() {
             activity?.window?.statusBarColor = color
           }
           activity?.updateNavBarColor(color,
-              context = view.context)
+              context = view.context,
+              catchUpPreferences = catchUpPreferences)
         }
       }
 
@@ -298,7 +301,8 @@ class PagerFragment : InjectingBaseFragment() {
                     activity?.window?.statusBarColor = color
                   }
                   activity?.updateNavBarColor(color,
-                      context = view.context)
+                      context = view.context,
+                      catchUpPreferences = catchUpPreferences)
                 }
                 start()
               }
@@ -350,7 +354,8 @@ class PagerFragment : InjectingBaseFragment() {
           if (extras.getBoolean(SettingsActivity.NAV_COLOR_UPDATED, false)) {
             activity?.updateNavBarColor(color = (tabLayout.background as ColorDrawable).color,
                 context = view!!.context,
-                recreate = true)
+                recreate = true,
+                catchUpPreferences = catchUpPreferences)
           }
         }
       }
@@ -364,9 +369,10 @@ class PagerFragment : InjectingBaseFragment() {
     @Provides
     fun provideServiceHandlers(
       sharedPrefs: SharedPreferences,
-      serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
+      serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>,
+      catchUpPreferences: CatchUpPreferences
     ): Array<ServiceHandler> {
-      val currentOrder = CatchUpPreferences.servicesOrder?.split(",") ?: emptyList()
+      val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
       return (serviceMetas.values
           .filter(ServiceMeta::enabled)
           .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }

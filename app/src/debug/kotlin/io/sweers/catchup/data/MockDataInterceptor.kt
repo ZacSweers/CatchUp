@@ -32,7 +32,10 @@ import okio.source
  *
  * Note: This is pretty unmaintained right now.
  */
-class MockDataInterceptor(@ApplicationContext private val context: Context) : Interceptor {
+class MockDataInterceptor(
+    @ApplicationContext private val context: Context,
+    private val debugPreferences: DebugPreferences
+) : Interceptor {
 
   override fun intercept(chain: Interceptor.Chain): Response {
     val request = chain.request()
@@ -40,7 +43,7 @@ class MockDataInterceptor(@ApplicationContext private val context: Context) : In
     val host = url.host
     val path = url.encodedPath
     val serviceData = SUPPORTED_ENDPOINTS[host]
-    return if (DebugPreferences.mockModeEnabled && serviceData != null && serviceData.supports(path)) {
+    return if (debugPreferences.mockModeEnabled && serviceData != null && serviceData.supports(path)) {
       Response.Builder().request(request)
           .body(context.assets
               .open(formatUrl(serviceData, url)).source().buffer()

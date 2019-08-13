@@ -82,12 +82,13 @@ internal class DebugViewContainer @Inject constructor(
   private val lumberYard: LumberYard,
   private val lazyOkHttpClient: Lazy<OkHttpClient>,
   private val syllabus: Syllabus,
-  private val fontHelper: FontHelper
+  private val fontHelper: FontHelper,
+  private val debugPreferences: DebugPreferences
 ) : ViewContainer {
-  private val pixelGridEnabled = DebugPreferences.flowFor { ::pixelGridEnabled }
-  private val pixelRatioEnabled = DebugPreferences.flowFor { ::pixelRatioEnabled }
-  private val scalpelEnabled = DebugPreferences.flowFor { ::scalpelEnabled }
-  private val scalpelWireframeEnabled = DebugPreferences.flowFor { ::scalpelWireframeDrawer }
+  private val pixelGridEnabled = debugPreferences.flowFor { ::pixelGridEnabled }
+  private val pixelRatioEnabled = debugPreferences.flowFor { ::pixelRatioEnabled }
+  private val scalpelEnabled = debugPreferences.flowFor { ::scalpelEnabled }
+  private val scalpelWireframeEnabled = debugPreferences.flowFor { ::scalpelWireframeDrawer }
 
   override fun forActivity(activity: BaseActivity): ViewGroup {
     val contentView = LayoutInflater.from(activity)
@@ -98,7 +99,7 @@ internal class DebugViewContainer @Inject constructor(
     val viewHolder = DebugViewViewHolder(contentView)
 
     val drawerContext = ContextThemeWrapper(activity, R.style.DebugDrawer)
-    val debugView = DebugView(drawerContext, lazyOkHttpClient, lumberYard)
+    val debugView = DebugView(drawerContext, null, lazyOkHttpClient, lumberYard, debugPreferences)
     viewHolder.debugDrawer.addView(debugView)
 
     // Set up the contextual actions to watch views coming in and out of the content area.
@@ -127,7 +128,7 @@ internal class DebugViewContainer @Inject constructor(
         }
 
     // If you have not seen the debug drawer before, show it with a message
-    syllabus.showIfNeverSeen(DebugPreferences::seenDebugDrawer.name, TargetRequest(
+    syllabus.showIfNeverSeen(debugPreferences::seenDebugDrawer.name, TargetRequest(
         target = {
           DrawerTapTarget(
               delegateTarget = TapTarget.forView(debugView.icon,

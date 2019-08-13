@@ -62,10 +62,16 @@ import retrofit2.mock.NetworkBehavior
 import java.util.Locale
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
+// TODO check out jw's assisted injection. Dagger-android doesn't make view injection easy
+//  because it doesn't support it, and via subcomponents we can't get ahold of an instance of the
+//  internal ActivityComponent
 @SuppressLint("SetTextI18n")
-class DebugView @JvmOverloads constructor(
+class DebugView(
   context: Context,
-  attrs: AttributeSet? = null
+  attrs: AttributeSet? = null,
+  private val client: Lazy<OkHttpClient>,
+  private val lumberYard: LumberYard,
+  private val debugPreferences: DebugPreferences
 ) : FrameLayout(context, attrs) {
   internal val icon by bindView<View>(R.id.debug_icon)
   private val networkDelayView by bindView<Spinner>(R.id.debug_network_delay)
@@ -94,36 +100,19 @@ class DebugView @JvmOverloads constructor(
   private val okHttpCacheNetworkCountView by bindView<TextView>(
       R.id.debug_okhttp_cache_network_count)
   private val okHttpCacheHitCountView by bindView<TextView>(R.id.debug_okhttp_cache_hit_count)
-  private lateinit var client: Lazy<OkHttpClient>
-  private lateinit var lumberYard: LumberYard
-  private var isMockMode by DebugPreferences::mockModeEnabled
+  private var isMockMode by debugPreferences::mockModeEnabled
   private var behavior: NetworkBehavior = NetworkBehavior.create().apply {
-    setDelay(DebugPreferences.networkDelay, MILLISECONDS)
-    setFailurePercent(DebugPreferences.networkFailurePercent)
-    setVariancePercent(DebugPreferences.networkVariancePercent)
+    setDelay(debugPreferences.networkDelay, MILLISECONDS)
+    setFailurePercent(debugPreferences.networkFailurePercent)
+    setVariancePercent(debugPreferences.networkVariancePercent)
   }
-  private var animationSpeed by DebugPreferences::animationSpeed
-  private var pixelGridEnabled by DebugPreferences::pixelGridEnabled
-  private var pixelRatioEnabled by DebugPreferences::pixelRatioEnabled
-  private var scalpelEnabled by DebugPreferences::scalpelEnabled
-  private var scalpelWireframeEnabled by DebugPreferences::scalpelWireframeDrawer
+  private var animationSpeed by debugPreferences::animationSpeed
+  private var pixelGridEnabled by debugPreferences::pixelGridEnabled
+  private var pixelRatioEnabled by debugPreferences::pixelRatioEnabled
+  private var scalpelEnabled by debugPreferences::scalpelEnabled
+  private var scalpelWireframeEnabled by debugPreferences::scalpelWireframeDrawer
 
-  constructor(
-    context: Context,
-    client: Lazy<OkHttpClient>,
-    lumberYard: LumberYard
-  ) : this(context) {
-    // TODO check out jw's assisted injection. Dagger-android doesn't make view injection easy
-    // because it doesn't support it, and via subcomponents we can't get ahold of an instance of the
-    // internal ActivityComponent
-    this.client = client
-    this.lumberYard = lumberYard
-    realInit()
-  }
-
-  // A little scary but it's not safe to just use init {} here because it sometimes gets called in
-  // the super constructor call before our actual constructor finishes.
-  private fun realInit() {
+  init {
     // Inflate all of the controls and inject them.
     LayoutInflater.from(context)
         .inflate(R.layout.debug_view_content, this)
@@ -164,7 +153,7 @@ class DebugView @JvmOverloads constructor(
           .collect { selected ->
             d { "Setting network delay to ${selected}ms" }
             behavior.setDelay(selected, MILLISECONDS)
-            DebugPreferences.networkDelay = selected
+            debugPreferences.networkDelay = selected
           }
     }
 
@@ -180,7 +169,7 @@ class DebugView @JvmOverloads constructor(
           .collect { selected ->
             d { "Setting network variance to $selected%" }
             behavior.setVariancePercent(selected)
-            DebugPreferences.networkVariancePercent = selected
+            debugPreferences.networkVariancePercent = selected
           }
     }
 
@@ -196,7 +185,7 @@ class DebugView @JvmOverloads constructor(
           .collect { selected ->
             d { "Setting network error to $selected%" }
             behavior.setFailurePercent(selected)
-            DebugPreferences.networkFailurePercent = selected
+            debugPreferences.networkFailurePercent = selected
           }
     }
 
@@ -209,11 +198,11 @@ class DebugView @JvmOverloads constructor(
   }
 
   private fun setupMockBehaviorSection() {
-    enableMockModeView.isChecked = DebugPreferences.mockModeEnabled
+    enableMockModeView.isChecked = debugPreferences.mockModeEnabled
     viewScope().launch {
       enableMockModeView.clicks()
           .collect {
-            DebugPreferences.mockModeEnabled = enableMockModeView.isChecked
+            debugPreferences.mockModeEnabled = enableMockModeView.isChecked
             ProcessPhoenix.triggerRebirth(context)
           }
     }
