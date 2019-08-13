@@ -53,6 +53,7 @@ import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.base.ui.ViewContainer
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.databinding.DebugActivityFrameBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
@@ -94,12 +95,8 @@ internal class DebugViewContainer @Inject constructor(
   private val scalpelWireframeEnabled = debugPreferences.flowFor { ::scalpelWireframeDrawer }
 
   override fun forActivity(activity: BaseActivity): ViewGroup {
-    val contentView = LayoutInflater.from(activity)
-        .inflate(R.layout.debug_activity_frame,
-            activity.findViewById(android.R.id.content), false)
-    activity.setContentView(contentView)
-
-    val viewHolder = DebugViewViewHolder(contentView)
+    val viewHolder = DebugActivityFrameBinding.inflate(LayoutInflater.from(activity), activity.findViewById(android.R.id.content), false)
+    activity.setContentView(viewHolder.root)
 
     val drawerContext = ContextThemeWrapper(activity, R.style.DebugDrawer)
     val debugView = DebugView(drawerContext, null, lazyOkHttpClient, lumberYard, debugPreferences, versionInfo)
@@ -175,24 +172,24 @@ internal class DebugViewContainer @Inject constructor(
         .subscribe {
           scope.cancel()
         }
-    return viewHolder.content
+    return viewHolder.debugContent
   }
 
-  private fun setupMadge(viewHolder: DebugViewViewHolder, scope: CoroutineScope) = scope.launch {
+  private fun setupMadge(viewHolder: DebugActivityFrameBinding, scope: CoroutineScope) = scope.launch {
     pixelGridEnabled.collect { enabled ->
-      viewHolder.madgeFrameLayout.isOverlayEnabled = enabled
+      viewHolder.madgeContainer.isOverlayEnabled = enabled
     }
     pixelRatioEnabled.collect { enabled ->
-      viewHolder.madgeFrameLayout.isOverlayRatioEnabled = enabled
+      viewHolder.madgeContainer.isOverlayRatioEnabled = enabled
     }
   }
 
-  private fun setupScalpel(viewHolder: DebugViewViewHolder, scope: CoroutineScope) = scope.launch {
+  private fun setupScalpel(viewHolder: DebugActivityFrameBinding, scope: CoroutineScope) = scope.launch {
     scalpelEnabled.collect { enabled ->
-      viewHolder.content.isLayerInteractionEnabled = enabled
+      viewHolder.debugContent.isLayerInteractionEnabled = enabled
     }
     scalpelWireframeEnabled.collect { enabled ->
-      viewHolder.content.setDrawViews(!enabled)
+      viewHolder.debugContent.setDrawViews(!enabled)
     }
   }
 
@@ -226,14 +223,6 @@ internal class DebugViewContainer @Inject constructor(
       }
     }
   }
-}
-
-internal class DebugViewViewHolder(source: View) : ViewDelegateBindable(source) {
-  val drawerLayout by bindView<DrawerLayout>(R.id.debug_drawer_layout)
-  val debugDrawer by bindView<ViewGroup>(R.id.debug_drawer)
-  val telescopeLayout by bindView<TelescopeLayout>(R.id.telescope_container)
-  val madgeFrameLayout by bindView<MadgeFrameLayout>(R.id.madge_container)
-  val content by bindView<ScalpelFrameLayout>(R.id.debug_content)
 }
 
 class DrawerTapTarget(
