@@ -48,8 +48,8 @@ class CatchUpPreferences @Inject constructor(
 
   companion object {
     const val ITEM_KEY_ABOUT = "about"
-    const val ITEM_KEY_CLEAR_CACHE = "clear_cache"
-    const val SECTION_KEY_ORDER_SERVICES = "reorder_services_section"
+    const val ITEM_KEY_CLEAR_CACHE = "clearCache"
+    const val SECTION_KEY_ORDER_SERVICES = "reorderServicesSection"
     const val SECTION_KEY_SERVICES = "services"
   }
 
