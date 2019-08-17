@@ -86,14 +86,14 @@ object deps {
       const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
       const val appCompat = "androidx.appcompat:appcompat:1.1.0-rc01"
 
-      private const val coreVersion = "1.2.0-alpha02"
+      private const val coreVersion = "1.2.0-alpha03"
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
       const val customTabs = "androidx.browser:browser:1.2.0-alpha07"
       const val design = "com.google.android.material:material:1.1.0-alpha09"
-      const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0-alpha02"
+      const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0-alpha03"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
 
@@ -109,7 +109,7 @@ object deps {
       private const val preferenceVersion = "1.1.0-rc01"
       const val preference = "androidx.preference:preference:$preferenceVersion"
       const val preferenceKtx = "androidx.preference:preference-ktx:$preferenceVersion"
-      const val recyclerView = "androidx.recyclerview:recyclerview:1.0.0"
+      const val recyclerView = "androidx.recyclerview:recyclerview:1.1.0-beta03"
 
       object lifecycle {
         private const val version = "2.2.0-alpha03"
