@@ -37,7 +37,7 @@ internal class GemojiEmojiMarkdownConverter(
 /**
  * Returns a [String] that replaces occurrences of markdown emojis with android render-able emojis.
  */
-fun replaceMarkdownEmojis(markdown: String, converter: EmojiMarkdownConverter): String {
+fun EmojiMarkdownConverter.replaceMarkdownEmojisIn(markdown: String): String {
   val sb = StringBuilder(markdown.length)
   var potentialAliasStart = -1
 
@@ -48,7 +48,7 @@ fun replaceMarkdownEmojis(markdown: String, converter: EmojiMarkdownConverter): 
         index
       } else {
         val potentialAlias = markdown.substring(potentialAliasStart, index + 1)
-        val potentialEmoji = converter.convert(potentialAlias)
+        val potentialEmoji = convert(potentialAlias)
         // If we find an emoji append it and reset alias start, if we don't find an emoji
         // append between the potential start and this index *and* consider this index the new
         // potential start.

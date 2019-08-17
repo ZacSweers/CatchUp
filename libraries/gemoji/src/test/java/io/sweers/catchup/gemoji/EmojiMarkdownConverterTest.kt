@@ -28,7 +28,7 @@ class EmojiMarkdownConverterTest {
 
   @Test
   fun testEmpty() {
-    val converted = replaceMarkdownEmojis("", converter)
+    val converted = converter.replaceMarkdownEmojisIn("")
     assertThat(converted).isEmpty()
   }
 
@@ -92,5 +92,5 @@ class EmojiMarkdownConverterTest {
     assertThat(converted).isEqualTo("$replaced:notEmoji:$replaced:")
   }
 
-  private fun convert(markdown: String) = replaceMarkdownEmojis(markdown, converter)
+  private fun convert(markdown: String) = converter.replaceMarkdownEmojisIn(markdown)
 }
