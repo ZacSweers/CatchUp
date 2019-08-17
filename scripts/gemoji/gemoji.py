@@ -43,3 +43,7 @@ for gemoji in gemojis:
 
 connection.commit()
 connection.close()
+
+print("Longest alias")
+longestAlias = max([alias for alias in [max(gemoji['aliases'], key=len) for gemoji in gemojis]], key=len)
+print(longestAlias)
