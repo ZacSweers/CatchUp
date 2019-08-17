@@ -38,38 +38,37 @@ internal class GemojiEmojiMarkdownConverter(
  * Returns a [String] that replaces occurrences of markdown emojis with android render-able emojis.
  */
 fun EmojiMarkdownConverter.replaceMarkdownEmojisIn(markdown: String): String {
-  val sb = StringBuilder(markdown.length)
   var potentialAliasStart = -1
 
-  markdown.forEachIndexed { index, char ->
-    if (char == ':') {
-      potentialAliasStart = if (potentialAliasStart == -1) {
-        // If we have no potential start, any : is a potential start
-        index
-      } else {
-        val potentialAlias = markdown.substring(potentialAliasStart, index + 1)
-        val potentialEmoji = convert(potentialAlias)
-        // If we find an emoji append it and reset alias start, if we don't find an emoji
-        // append between the potential start and this index *and* consider this index the new
-        // potential start.
-        if (potentialEmoji != null) {
-          sb.append(potentialEmoji)
-          -1
-        } else {
-          sb.append(markdown, potentialAliasStart, index)
+  return buildString(markdown.length) {
+    markdown.forEachIndexed { index, char ->
+      if (char == ':') {
+        potentialAliasStart = if (potentialAliasStart == -1) {
+          // If we have no potential start, any : is a potential start
           index
+        } else {
+          val potentialAlias = markdown.substring(potentialAliasStart, index + 1)
+          val potentialEmoji = convert(potentialAlias)
+          // If we find an emoji append it and reset alias start, if we don't find an emoji
+          // append between the potential start and this index *and* consider this index the new
+          // potential start.
+          if (potentialEmoji != null) {
+            append(potentialEmoji)
+            -1
+          } else {
+            append(markdown, potentialAliasStart, index)
+            index
+          }
         }
+        // While not looking for an alias end append all non possible alias chars to the string
+      } else if (potentialAliasStart == -1) {
+        append(char)
       }
-      // While not looking for an alias end append all non possible alias chars to the string
-    } else if (potentialAliasStart == -1) {
-      sb.append(char)
+    }
+
+    // Finished iterating markdown while looking for an end, append anything remaining
+    if (potentialAliasStart != -1) {
+      append(markdown, potentialAliasStart, markdown.length)
     }
   }
-
-  // Finished iterating markdown while looking for an end, append anything remaining
-  if (potentialAliasStart != -1) {
-    sb.append(markdown, potentialAliasStart, markdown.length)
-  }
-
-  return sb.toString()
 }
