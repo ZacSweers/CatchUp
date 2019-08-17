@@ -20,10 +20,13 @@ import org.junit.Test
 
 class EmojiMarkdownConverterTest {
 
-  val replaced = "replaced"
-  val emoji = ":emoji:"
-  val converter = object : EmojiMarkdownConverter {
-    override fun convert(alias: String) = if (alias == ":emoji:") replaced else null
+  companion object {
+    const val replaced = "replaced"
+    const val emoji = ":emoji:"
+  }
+
+  private val converter = object : EmojiMarkdownConverter {
+    override fun convert(alias: String) = if (alias == "emoji") replaced else null
   }
 
   @Test

@@ -26,11 +26,19 @@ internal class GemojiEmojiMarkdownConverter(
   private val gemojiDao: GemojiDao
 ) : EmojiMarkdownConverter {
   override fun convert(alias: String): String? {
-    return if (alias.startsWith(':') && alias.endsWith(":")) {
-      gemojiDao.getEmoji(alias.substring(1, alias.lastIndex))
-    } else {
-      null
-    }
+    return gemojiDao.getEmoji(alias)
+  }
+}
+
+fun Sequence<Char>.asString(): String {
+  return buildString {
+    this@asString.forEach { append(it) }
+  }
+}
+
+fun Sequence<Char>.asString(capacity: Int): String {
+  return buildString(capacity) {
+    this@asString.forEach { append(it) }
   }
 }
 
@@ -38,37 +46,72 @@ internal class GemojiEmojiMarkdownConverter(
  * Returns a [String] that replaces occurrences of markdown emojis with android render-able emojis.
  */
 fun EmojiMarkdownConverter.replaceMarkdownEmojisIn(markdown: String): String {
-  var potentialAliasStart = -1
+  return replaceMarkdownEmojisIn(markdown.asSequence()).asString(markdown.length)
+}
 
-  return buildString(markdown.length) {
-    markdown.forEachIndexed { index, char ->
-      if (char == ':') {
-        potentialAliasStart = if (potentialAliasStart == -1) {
-          // If we have no potential start, any : is a potential start
-          index
-        } else {
-          val potentialAlias = markdown.substring(potentialAliasStart, index + 1)
-          val potentialEmoji = convert(potentialAlias)
-          // If we find an emoji append it and reset alias start, if we don't find an emoji
-          // append between the potential start and this index *and* consider this index the new
-          // potential start.
-          if (potentialEmoji != null) {
-            append(potentialEmoji)
-            -1
-          } else {
-            append(markdown, potentialAliasStart, index)
-            index
-          }
+/**
+ * This is the longest possible alias length, so we can use its length for our aliasBuilder var
+ * below to reuse it and never have to resize it.
+ */
+private const val MAX_ALIAS_LENGTH = "south_georgia_south_sandwich_islands".length
+
+/**
+ * Returns a [Sequence<Char>][Sequence] that replaces occurrences of markdown emojis with android
+ * render-able emojis.
+ */
+fun EmojiMarkdownConverter.replaceMarkdownEmojisIn(markdown: Sequence<Char>): Sequence<Char> {
+  val aliasBuilder = StringBuilder(MAX_ALIAS_LENGTH)
+  var startAlias = false
+  return sequence {
+    markdown.forEach { char ->
+      if (startAlias || aliasBuilder.isNotEmpty()) {
+        if (startAlias && char == ':') {
+          // Double ::, so emit a colon and keep startAlias set
+          yield(':')
+          return@forEach
         }
-        // While not looking for an alias end append all non possible alias chars to the string
-      } else if (potentialAliasStart == -1) {
-        append(char)
+        startAlias = false
+        when (char) {
+          ' ' -> {
+            // Aliases can't have spaces, so bomb out and restart
+            yield(':')
+            yieldAll(aliasBuilder.asSequence())
+            yield(' ')
+            aliasBuilder.setLength(0)
+          }
+          ':' -> {
+            val potentialAlias = aliasBuilder.toString()
+            val potentialEmoji = convert(potentialAlias)
+            // If we find an emoji append it and reset alias start, if we don't find an emoji
+            // append between the potential start and this index *and* consider this index the new
+            // potential start.
+            if (potentialEmoji != null) {
+              yieldAll(potentialEmoji.asSequence())
+            } else {
+              yield(':')
+              yieldAll(potentialAlias.asSequence())
+              // Start a new alias from this colon as we didn't have a match with the existing close
+              startAlias = true
+            }
+            aliasBuilder.setLength(0)
+          }
+          else -> aliasBuilder.append(char)
+        }
+      } else {
+        if (char == ':') {
+          startAlias = true
+        } else {
+          yield(char)
+        }
       }
     }
 
-    // Finished iterating markdown while looking for an end, append anything remaining
-    if (potentialAliasStart != -1) {
-      append(markdown, potentialAliasStart, markdown.length)
+    // If we started an alias but ran out of characters, flush it
+    if (startAlias) {
+      yield(':')
+    } else if (aliasBuilder.isNotEmpty()) {
+      yield(':')
+      yieldAll(aliasBuilder.asSequence())
     }
   }
 }
