@@ -20,15 +20,18 @@ import org.junit.Test
 
 class EmojiMarkdownConverterTest {
 
-  val replaced = "replaced"
-  val emoji = ":emoji:"
-  val converter = object : EmojiMarkdownConverter {
-    override fun convert(alias: String) = if (alias == ":emoji:") replaced else null
+  companion object {
+    const val replaced = "replaced"
+    const val emoji = ":emoji:"
+  }
+
+  private val converter = object : EmojiMarkdownConverter {
+    override fun convert(alias: String) = if (alias == "emoji") replaced else null
   }
 
   @Test
   fun testEmpty() {
-    val converted = replaceMarkdownEmojis("", converter)
+    val converted = converter.replaceMarkdownEmojisIn("")
     assertThat(converted).isEmpty()
   }
 
@@ -92,5 +95,5 @@ class EmojiMarkdownConverterTest {
     assertThat(converted).isEqualTo("$replaced:notEmoji:$replaced:")
   }
 
-  private fun convert(markdown: String) = replaceMarkdownEmojis(markdown, converter)
+  private fun convert(markdown: String) = converter.replaceMarkdownEmojisIn(markdown)
 }

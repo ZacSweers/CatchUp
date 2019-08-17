@@ -37,6 +37,8 @@ import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
+import io.sweers.catchup.gemoji.EmojiMarkdownConverter
+import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
@@ -57,6 +59,8 @@ class ChangelogFragment : InjectableBaseFragment(), Scrollable {
   lateinit var apolloClient: ApolloClient
   @Inject
   internal lateinit var linkManager: LinkManager
+  @Inject
+  internal lateinit var markdownConverter: EmojiMarkdownConverter
 
   private val progressBar by bindView<ProgressBar>(R.id.progress)
   private val recyclerView by bindView<RecyclerView>(R.id.list)
@@ -128,6 +132,12 @@ class ChangelogFragment : InjectableBaseFragment(), Scrollable {
                 description = description!!
             )
           }
+        }
+        .map {
+          it.copy(
+              name = markdownConverter.replaceMarkdownEmojisIn(it.name),
+              description = markdownConverter.replaceMarkdownEmojisIn(it.description)
+          )
         }
         .toList()
   }

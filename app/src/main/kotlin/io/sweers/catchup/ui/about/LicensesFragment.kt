@@ -58,6 +58,8 @@ import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsUser
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
 import io.sweers.catchup.flowbinding.safeOffer
+import io.sweers.catchup.gemoji.EmojiMarkdownConverter
+import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.service.api.TemporaryScopeHolder
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.service.api.temporaryScope
@@ -115,6 +117,9 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
 
   @Inject
   internal lateinit var linkManager: LinkManager
+
+  @Inject
+  internal lateinit var markdownConverter: EmojiMarkdownConverter
 
   private val dimenSize by lazy {
     resources.getDimensionPixelSize(R.dimen.avatar)
@@ -249,6 +254,17 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
         .groupBy { it.author }
         .sortBy { it.first }
         .flatMapConcat { it.second.asFlow().sortBy { it.name } }
+        .map {
+          // TODO use CopyDynamic when 0.3.0 is out
+          it.copy(
+              author = markdownConverter.replaceMarkdownEmojisIn(it.author),
+              name = markdownConverter.replaceMarkdownEmojisIn(it.name),
+              description = it.description?.let {
+                markdownConverter.replaceMarkdownEmojisIn(it)
+              } ?: it.description
+          )
+        }
+        .flowOn(Dispatchers.IO)
         .toList()
         .let {
           val collector = mutableListOf<OssBaseItem>()

@@ -30,7 +30,7 @@ import dagger.multibindings.IntoMap
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
-import io.sweers.catchup.gemoji.replaceMarkdownEmojis
+import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
@@ -140,7 +140,7 @@ internal class GitHubService @Inject constructor(
               .map {
                 with(it) {
                   val description = description
-                      ?.let { " — ${replaceMarkdownEmojis(it, emojiMarkdownConverter.get())}" }
+                      ?.let { " — ${emojiMarkdownConverter.get().replaceMarkdownEmojisIn(it)}" }
                       .orEmpty()
 
                   CatchUpItem(
