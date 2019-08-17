@@ -32,7 +32,9 @@ import io.noties.markwon.Markwon
  * Utility methods for working with HTML and markdown.
  */
 
-inline class Markdown(val rawValue: String)
+inline class Markdown(val rawValue: String) {
+  override fun toString(): String = rawValue
+}
 
 fun String.markdown(): Markdown = Markdown(this)
 
