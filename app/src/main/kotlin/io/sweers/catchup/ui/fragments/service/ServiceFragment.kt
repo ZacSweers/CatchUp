@@ -90,7 +90,6 @@ import kotterknife.bindView
 import kotterknife.onClick
 import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.dimming.TintPainter
-import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import retrofit2.HttpException
@@ -285,7 +284,7 @@ class ServiceFragment : InjectingBaseFragment(),
                   }
                 }
                 page.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
-                  override fun onPageCollapsed(page: ExpandablePageLayout) {
+                  override fun onPageCollapsed() {
                     detailDisplayed = false
                     page.pullToCollapseInterceptor = null
                     page.removeStateChangeCallbacks(this)
