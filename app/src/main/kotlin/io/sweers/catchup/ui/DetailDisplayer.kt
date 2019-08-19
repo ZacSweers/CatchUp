@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.ui
 
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
@@ -28,8 +29,24 @@ interface DetailDisplayer {
   fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit)
 
   /**
-   * Binds (via [InboxRecyclerView.expandablePage] an irv to the available page only, does nothing
+   * Binds (via [InboxRecyclerView.expandablePage] an irv to the available page/fragment only,
+   * does nothing with [FragmentManager]. Used mostly for state restoration.
+   *
+   * If [useExistingFragment], it should be resolved from a [FragmentManager] and call through to
+   * [bind] with the result.
+   */
+  fun bind(irv: InboxRecyclerView, useExistingFragment: Boolean = false)
+
+  /**
+   * Binds (via [InboxRecyclerView.expandablePage] an irv to the available page/fragment only,
+   * does nothing with [FragmentManager]. Used mostly for state restoration. [bind] can call this,
+   * but this should not call [bind].
+   */
+  fun bind(irv: InboxRecyclerView, targetFragment: Fragment?)
+
+  /**
+   * Unbinds (via [InboxRecyclerView.expandablePage] from an irv to the available page only, does nothing
    * with fragmentmanagers. Used mostly for state restoration.
    */
-  fun bindOnly(irv: InboxRecyclerView)
+  fun unbind(irv: InboxRecyclerView)
 }
