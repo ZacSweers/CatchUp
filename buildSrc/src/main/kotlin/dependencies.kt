@@ -73,7 +73,7 @@ object deps {
     const val legacySupport = "28.0.0"
     const val markwon = "4.1.0"
     const val moshi = "1.8.0"
-    const val okhttp = "4.0.1"
+    const val okhttp = "4.1.0"
     const val retrofit = "2.6.1"
     const val spotless = "3.24.0"
     const val stetho = "1.5.1"
