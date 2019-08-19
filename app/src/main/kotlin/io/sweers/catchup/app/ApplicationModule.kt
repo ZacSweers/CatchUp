@@ -33,6 +33,7 @@ import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
 import io.sweers.catchup.data.InstanceBasedOkHttpLibraryGlideModule
 import io.sweers.catchup.util.LinkTouchMovementMethod
+import io.sweers.catchup.util.PrecomputedTextSetterCompat
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
@@ -84,6 +85,7 @@ abstract class ApplicationModule {
       @ApplicationContext context: Context // TODO should use themed one from activity?
     ): Markwon {
       return Markwon.builder(context)
+          .textSetter(PrecomputedTextSetterCompat.create())
           .usePlugins(listOf(
               MovementMethodPlugin.create(LinkTouchMovementMethod()),
               ImagesPlugin.create(),
