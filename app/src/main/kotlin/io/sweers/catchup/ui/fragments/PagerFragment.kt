@@ -100,8 +100,8 @@ class PagerFragment : InjectingBaseFragment() {
   private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_fragment_root)
   private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
   private val viewPager by bindView<ViewPager>(R.id.view_pager)
-  internal val toolbar by bindView<Toolbar>(R.id.toolbar)
-  private val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
+  private val toolbar by bindView<Toolbar>(R.id.toolbar)
+  val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
 
   private val argbEvaluator = ArgbEvaluator()
   private var statusBarColorAnimator: ValueAnimator? = null

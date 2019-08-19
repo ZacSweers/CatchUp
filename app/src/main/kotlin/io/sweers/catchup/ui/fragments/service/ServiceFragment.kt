@@ -55,7 +55,6 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
-import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
 import io.sweers.catchup.service.api.UrlMeta
@@ -89,8 +88,6 @@ import kotlinx.coroutines.launch
 import kotterknife.bindView
 import kotterknife.onClick
 import me.saket.inboxrecyclerview.InboxRecyclerView
-import me.saket.inboxrecyclerview.dimming.TintPainter
-import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import retrofit2.HttpException
 import java.io.IOException
@@ -267,28 +264,15 @@ class ServiceFragment : InjectingBaseFragment(),
             holder.setLongClickHandler {
               detailDisplayer.showDetail { page, fragmentManager ->
                 detailDisplayed = true
-                recyclerView.expandablePage = page
-                recyclerView.tintPainter = TintPainter.uncoveredArea(
-                    color = ContextCompat.getColor(holder.itemView.context, R.color.colorPrimary),
-                    opacity = 0.65F
-                )
-                recyclerView.expandItem(item.id)
                 val targetFragment = targetProvider.get().apply {
                   arguments = args
                 }
-                if (targetFragment is ScrollableContent) {
-                  page.pullToCollapseInterceptor = { _, _, upwardPull ->
-                    val directionInt = if (upwardPull) +1 else -1
-                    val canScrollFurther = targetFragment.canScrollVertically(directionInt)
-                    if (canScrollFurther) InterceptResult.INTERCEPTED else InterceptResult.IGNORED
-                  }
-                }
+                detailDisplayer.bind(recyclerView, targetFragment)
                 page.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
                   override fun onPageCollapsed() {
                     detailDisplayed = false
-                    page.pullToCollapseInterceptor = null
                     page.removeStateChangeCallbacks(this)
-                    recyclerView.expandablePage = null
+                    detailDisplayer.unbind(recyclerView)
                     fragmentManager.commitNow(allowStateLoss = true) {
                       remove(targetFragment)
                     }
@@ -297,6 +281,7 @@ class ServiceFragment : InjectingBaseFragment(),
                 fragmentManager.commitNow(allowStateLoss = true) {
                   add(page.id, targetFragment)
                 }
+                recyclerView.expandItem(item.id)
                 recyclerView::collapse
               }
               true
@@ -323,7 +308,7 @@ class ServiceFragment : InjectingBaseFragment(),
       if (detailDisplayed) {
         // This is necessary to support state restoration in IRV, which expects the page to be
         // bound after rotation before restoration.
-        detailDisplayer.bindOnly(recyclerView)
+        detailDisplayer.bind(recyclerView, useExistingFragment = true)
       }
     }
     viewLifecycleOwner.lifecycleScope.launch {

@@ -17,6 +17,7 @@ package io.sweers.catchup.ui.activity
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
@@ -33,6 +34,7 @@ import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.LinkHandler
+import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
@@ -43,7 +45,9 @@ import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import kotterknife.bindView
 import me.saket.inboxrecyclerview.InboxRecyclerView
+import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
+import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import javax.inject.Inject
 import javax.inject.Provider
@@ -61,6 +65,7 @@ class MainActivity : InjectingBaseActivity() {
   internal lateinit var fragmentFactory: FragmentFactory
 
   internal val detailPage by bindView<ExpandablePageLayout>(R.id.detailPage)
+  internal var pagerFragment: PagerFragment? = null
 
   override fun setFragmentFactory() {
     supportFragmentManager.fragmentFactory = fragmentFactory
@@ -82,8 +87,10 @@ class MainActivity : InjectingBaseActivity() {
 
     if (savedInstanceState == null) {
       supportFragmentManager.commitNow {
-        add(R.id.fragment_container, PagerFragment())
+        add(R.id.fragment_container, PagerFragment().also { pagerFragment = it })
       }
+    } else {
+      pagerFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as PagerFragment
     }
   }
 
@@ -173,9 +180,6 @@ class MainActivityDetailDisplayer @Inject constructor(
   override fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit) {
     collapser?.invoke()
     collapser = null
-
-    // TODO this is ugly, do better
-    detailPage.pushParentToolbarOnExpand((mainActivity.supportFragmentManager.findFragmentById(R.id.fragment_container) as PagerFragment).toolbar)
     detailPage.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
       override fun onPageCollapsed() {
         detailPage.removeStateChangeCallbacks(this)
@@ -185,7 +189,36 @@ class MainActivityDetailDisplayer @Inject constructor(
     collapser = body(detailPage, mainActivity.supportFragmentManager)
   }
 
-  override fun bindOnly(irv: InboxRecyclerView) {
+  override fun bind(irv: InboxRecyclerView, useExistingFragment: Boolean) {
+    val targetFragment = if (useExistingFragment) {
+      mainActivity.supportFragmentManager.findFragmentById(detailPage.id)
+    } else {
+      null
+    }
+    bind(irv, targetFragment)
+  }
+
+  override fun bind(irv: InboxRecyclerView, targetFragment: Fragment?) {
+    // TODO this is ugly, do better
+    mainActivity.pagerFragment?.appBarLayout?.let {
+      detailPage.pushParentToolbarOnExpand(it)
+    }
     irv.expandablePage = detailPage
+    irv.tintPainter = TintPainter.uncoveredArea(
+        color = ContextCompat.getColor(irv.context, R.color.colorPrimary),
+        opacity = 0.65F
+    )
+    if (targetFragment is ScrollableContent) {
+      detailPage.pullToCollapseInterceptor = { _, _, upwardPull ->
+        val directionInt = if (upwardPull) +1 else -1
+        val canScrollFurther = targetFragment.canScrollVertically(directionInt)
+        if (canScrollFurther) InterceptResult.INTERCEPTED else InterceptResult.IGNORED
+      }
+    }
+  }
+
+  override fun unbind(irv: InboxRecyclerView) {
+    detailPage.pullToCollapseInterceptor = null
+    irv.expandablePage = null
   }
 }
