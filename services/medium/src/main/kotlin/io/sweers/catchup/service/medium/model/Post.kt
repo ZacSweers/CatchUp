@@ -26,5 +26,6 @@ internal data class Post(
   val id: String,
   val title: String,
   val uniqueSlug: String,
-  val virtuals: Virtuals
+  val virtuals: Virtuals,
+  val isSubscriptionLocked: Boolean = false
 )

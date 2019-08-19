@@ -86,6 +86,7 @@ internal class MediumService @Inject constructor(
                 timestamp = post.createdAt,
                 author = user.name,
                 tag = collection?.name,
+                source = "\u2605".takeIf { post.isSubscriptionLocked }, // TODO use "★" directly?
                 itemClickUrl = url,
                 summarizationInfo = SummarizationInfo.from(url),
                 mark = createCommentMark(
