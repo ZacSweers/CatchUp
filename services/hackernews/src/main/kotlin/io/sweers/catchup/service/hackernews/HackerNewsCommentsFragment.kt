@@ -109,7 +109,10 @@ internal class HackerNewsCommentsFragment @Inject constructor(
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
       holder.textView.text = try {
-        comments[position].text.let { Html.fromHtml(it) }
+        comments[position].text.let {
+          @Suppress("DEPRECATION") // I don't know what I'm supposed to replace this with?
+          Html.fromHtml(it)
+        }
       } catch (e: NullPointerException) {
         "This kills the html: ${comments[position].text}"
       }
