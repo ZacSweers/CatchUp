@@ -75,7 +75,7 @@ object deps {
     const val moshi = "1.8.0"
     const val okhttp = "4.1.0"
     const val retrofit = "2.6.1"
-    const val spotless = "3.24.0"
+    const val spotless = "3.24.2"
     const val stetho = "1.5.1"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
