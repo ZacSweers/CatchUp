@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2019 Zac Sweers
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.sweers.catchup.util
 
 import android.os.Build
@@ -32,13 +31,15 @@ import kotlin.coroutines.CoroutineContext
  * Please do not use with `markwon-recycler` as it will lead to bad item rendering (due to async nature)
  */
 class PrecomputedTextSetterCompat internal constructor(
-    private val context: CoroutineContext) : Markwon.TextSetter {
+  private val context: CoroutineContext
+) : Markwon.TextSetter {
 
   override fun setText(
-      textView: TextView,
-      markdown: Spanned,
-      bufferType: TextView.BufferType,
-      onComplete: Runnable) {
+    textView: TextView,
+    markdown: Spanned,
+    bufferType: TextView.BufferType,
+    onComplete: Runnable
+  ) {
     textView.viewScope().launch {
       try {
         val precomputedTextCompat = withContext(context) {
@@ -92,10 +93,11 @@ class PrecomputedTextSetterCompat internal constructor(
     }
 
     private fun applyText(
-        textView: TextView,
-        text: Spanned,
-        bufferType: TextView.BufferType,
-        onComplete: Runnable) {
+      textView: TextView,
+      text: Spanned,
+      bufferType: TextView.BufferType,
+      onComplete: Runnable
+    ) {
       textView.setText(text, bufferType)
       onComplete.run()
     }
