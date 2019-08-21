@@ -140,3 +140,10 @@
 #    <init>(...);
 #    <fields>;
 #}
+
+# TODO should be able to remove in AGP 3.7 & Coroutines 1.3.0 stable
+# Ensure the custom, fast service loader implementation is removed.
+-assumevalues class kotlinx.coroutines.internal.MainDispatcherLoader {
+  boolean FAST_SERVICE_LOADER_ENABLED return false;
+}
+-checkdiscard class kotlinx.coroutines.internal.FastServiceLoader
