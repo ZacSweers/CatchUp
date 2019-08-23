@@ -32,7 +32,7 @@ import io.sweers.catchup.flowFor
 import io.sweers.catchup.util.d
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -84,8 +84,9 @@ class CatchUpApplication : Application(), HasAndroidInjector {
     super.onCreate()
     appComponent = inject()
 
-    catchUpPreferences.flowFor { ::daynightAuto }
-        .onEach { autoEnabled ->
+    GlobalScope.launch {
+      catchUpPreferences.flowFor { ::daynightAuto }
+          .collect { autoEnabled ->
             d { "Updating daynight" }
             // Someday would like to add activity lifecycle callbacks to automatically call recreate
             // when resumed since this was updated
@@ -96,7 +97,8 @@ class CatchUpApplication : Application(), HasAndroidInjector {
               nightMode = AppCompatDelegate.MODE_NIGHT_YES
             }
             AppCompatDelegate.setDefaultNightMode(nightMode)
-        }
+          }
+    }
   }
 
   override fun androidInjector(): DispatchingAndroidInjector<Any> =

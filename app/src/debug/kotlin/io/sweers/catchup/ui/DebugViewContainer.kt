@@ -62,7 +62,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotterknife.ViewDelegateBindable
 import kotterknife.bindView
@@ -176,19 +176,19 @@ internal class DebugViewContainer @Inject constructor(
   }
 
   private fun setupMadge(viewHolder: DebugViewViewHolder, scope: CoroutineScope) = scope.launch {
-    pixelGridEnabled.onEach { enabled ->
+    pixelGridEnabled.collect { enabled ->
       viewHolder.madgeFrameLayout.isOverlayEnabled = enabled
     }
-    pixelRatioEnabled.onEach { enabled ->
+    pixelRatioEnabled.collect { enabled ->
       viewHolder.madgeFrameLayout.isOverlayRatioEnabled = enabled
     }
   }
 
   private fun setupScalpel(viewHolder: DebugViewViewHolder, scope: CoroutineScope) = scope.launch {
-    scalpelEnabled.onEach { enabled ->
+    scalpelEnabled.collect { enabled ->
       viewHolder.content.isLayerInteractionEnabled = enabled
     }
-    scalpelWireframeEnabled.onEach { enabled ->
+    scalpelWireframeEnabled.collect { enabled ->
       viewHolder.content.setDrawViews(!enabled)
     }
   }

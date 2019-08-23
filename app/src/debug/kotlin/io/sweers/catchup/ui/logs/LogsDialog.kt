@@ -27,7 +27,7 @@ import io.sweers.catchup.service.api.temporaryScope
 import io.sweers.catchup.util.maybeStartChooser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -56,7 +56,7 @@ class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDi
 
     scope.newScope().launch {
       lumberYard.logs()
-          .onEach { adapter.addEntry(it) }
+          .collect { adapter.addEntry(it) }
     }
   }
 
