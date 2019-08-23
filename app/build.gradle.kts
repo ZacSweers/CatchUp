@@ -231,13 +231,6 @@ play {
 //  ndk = true
 // }
 
-if (gradle.startParameter.isOffline) {
-  afterEvaluate {
-    // Because this stalls in offline mode
-    tasks.findByName("installApolloCodegen")?.actions = listOf()
-  }
-}
-
 apollo {
   customTypeMapping.set(mapOf(
       "DateTime" to "org.threeten.bp.Instant",
