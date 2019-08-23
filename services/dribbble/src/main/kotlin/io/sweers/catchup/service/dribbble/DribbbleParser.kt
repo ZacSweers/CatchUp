@@ -67,13 +67,14 @@ internal object DribbbleParser {
       Instant.now()
     }
 
+    val isAnimated = imgUrl.endsWith(".gif")
     return Shot(
         id = element.id().replace("screenshot-", "").toLong(),
         htmlUrl = "$ENDPOINT${element.select("a.dribbble-link").first().attr("href")}",
         title = descriptionBlock.select("strong").first().text(),
         description = description,
-        images = Images(null, imgUrl),
-        animated = element.select("div.gif-indicator").first() != null,
+        images = Images(null, if (isAnimated) imgUrl.replace("_1x", "") else imgUrl),
+        animated = isAnimated,
         createdAt = createdAt,
         likesCount = element.select("li.fav")
             .first()
