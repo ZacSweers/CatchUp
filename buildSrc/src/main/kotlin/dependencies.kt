@@ -69,7 +69,7 @@ object deps {
     const val inspector = "0.3.0"
     const val kotlin = "1.3.50"
     const val kotpref = "2.9.1"
-    const val leakcanary = "2.0-beta-2"
+    const val leakcanary = "2.0-beta-3"
     const val legacySupport = "28.0.0"
     const val markwon = "4.1.0"
     const val moshi = "1.8.0"
@@ -131,7 +131,7 @@ object deps {
       }
 
       object room {
-        private const val version = "2.2.0-alpha02"
+        private const val version = "2.2.0-beta01"
         const val apt = "androidx.room:room-compiler:$version"
         const val ktx = "androidx.room:room-ktx:$version"
         const val runtime = "androidx.room:room-runtime:$version"
@@ -147,9 +147,9 @@ object deps {
     }
 
     object firebase {
-      const val core = "com.google.firebase:firebase-core:17.0.1"
+      const val core = "com.google.firebase:firebase-core:17.1.0"
       const val config = "com.google.firebase:firebase-config:18.0.0"
-      const val database = "com.google.firebase:firebase-database:18.0.1"
+      const val database = "com.google.firebase:firebase-database:19.0.0"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
@@ -343,11 +343,11 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.18.0-beta01"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.18.0"
 
     object debug {
       const val flipper = "com.facebook.flipper:flipper:0.23.4"
-      const val soLoader = "com.facebook.soloader:soloader:0.6.1"
+      const val soLoader = "com.facebook.soloader:soloader:0.7.0"
       const val guava = "com.google.guava:guava:28.0-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"
