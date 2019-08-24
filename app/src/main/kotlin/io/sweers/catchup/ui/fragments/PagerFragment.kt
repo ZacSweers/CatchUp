@@ -55,7 +55,7 @@ import io.sweers.catchup.flowbinding.offsetChanges
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
-import io.sweers.catchup.ui.base.InjectingBaseFragment
+import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.ui.fragments.service.ServiceFragment
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode

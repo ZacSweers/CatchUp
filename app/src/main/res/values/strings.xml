@@ -38,7 +38,6 @@
   <string name="clear_cache_success">Cleaned %sB</string>
   <string name="connection_issue">Connection Problem</string>
   <string name="api_issue">API Problem</string>
-  <string name="unknown_issue">Unknown issue</string>
   <string name="about_description">An app for catching up on things.</string>
   <string name="about_version">Version %1s</string>
   <string name="about_by">By</string>

@@ -37,6 +37,7 @@ import dagger.multibindings.IntoSet
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
+import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.util.sdk
 import leakcanary.AppWatcher

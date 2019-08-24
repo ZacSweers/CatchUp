@@ -20,7 +20,6 @@ import dagger.android.ContributesAndroidInjector
 import io.sweers.catchup.data.smmry.SmmryModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.fragments.PagerFragment
-import io.sweers.catchup.ui.fragments.SmmryFragment
 import io.sweers.catchup.ui.fragments.service.ServiceFragment
 
 @Module

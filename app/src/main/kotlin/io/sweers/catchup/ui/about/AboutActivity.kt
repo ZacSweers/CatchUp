@@ -49,8 +49,8 @@ import io.sweers.catchup.flowbinding.offsetChanges
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
-import io.sweers.catchup.ui.base.InjectingBaseActivity
-import io.sweers.catchup.ui.base.InjectingBaseFragment
+import io.sweers.catchup.base.ui.InjectingBaseActivity
+import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.TouchableUrlSpan
 import io.sweers.catchup.util.UiUtil

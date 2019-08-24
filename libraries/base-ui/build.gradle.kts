@@ -69,6 +69,8 @@ dependencies {
   kapt(deps.dagger.android.apt.processor)
   compileOnly(deps.misc.javaxInject)
   api(project(":libraries:util"))
+  api(deps.dagger.android.runtime)
+  api(deps.dagger.android.support)
   api(deps.kotlin.coroutines)
   api(deps.kotlin.stdlib.jdk7)
   api(deps.autoDispose.core)

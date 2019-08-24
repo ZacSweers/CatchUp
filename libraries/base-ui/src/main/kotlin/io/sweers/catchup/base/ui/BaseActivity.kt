@@ -32,7 +32,6 @@ import io.sweers.catchup.base.ui.ActivityEvent.PAUSE
 import io.sweers.catchup.base.ui.ActivityEvent.RESUME
 import io.sweers.catchup.base.ui.ActivityEvent.START
 import io.sweers.catchup.base.ui.ActivityEvent.STOP
-import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<ActivityEvent> {
 
@@ -109,11 +108,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     lifecycle().doOnDestroy(this) { action() }.subscribe()
   }
 
-  @Inject
-  protected lateinit var viewContainer: ViewContainer
-  @Inject
-  protected lateinit var uiPreferences: UiPreferences
-
   @CheckResult
   override fun lifecycle(): Observable<ActivityEvent> {
     return lifecycleRelay
@@ -150,11 +144,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
       NavUtils.navigateUpFromSameTask(this)
     }
     return super.onOptionsItemSelected(item)
-  }
-
-  override fun onAttachedToWindow() {
-    super.onAttachedToWindow()
-    updateNavBarColor(uiPreferences = uiPreferences)
   }
 
   @CallSuper

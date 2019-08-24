@@ -42,7 +42,7 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
-import io.sweers.catchup.ui.base.InjectingBaseActivity
+import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.format

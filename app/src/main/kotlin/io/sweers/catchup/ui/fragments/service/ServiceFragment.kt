@@ -68,7 +68,7 @@ import io.sweers.catchup.ui.activity.VisualViewPool
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
-import io.sweers.catchup.ui.base.InjectingBaseFragment
+import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.ui.fragments.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.fragments.service.LoadResult.NewData
 import io.sweers.catchup.ui.widget.BaseCatchupAdapter
@@ -526,7 +526,7 @@ class ServiceFragment : InjectingBaseFragment(),
                 // TODO Show some sort of generic response error
                 progress.hide()
                 swipeRefreshLayout.hide()
-                errorTextView.text = activity.getString(R.string.unknown_issue)
+                errorTextView.text = activity.getString(io.sweers.catchup.base.ui.R.string.unknown_issue)
                 errorView.show()
                 AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
                     ?.let {
