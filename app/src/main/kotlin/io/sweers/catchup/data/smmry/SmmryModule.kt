@@ -63,5 +63,5 @@ object SmmryModule {
   @Provides
   @JvmStatic
   @PerFragment
-  internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase) = catchUpDatabase.smmryDao()
+  internal fun provideSmmryDao(catchUpDatabase: CatchUpDatabase) = catchUpDatabase.smmryDao()
 }
