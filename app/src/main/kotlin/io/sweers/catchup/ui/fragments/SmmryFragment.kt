@@ -248,25 +248,3 @@ class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
     }
   }
 }
-
-private const val TABLE = "smmryEntries"
-
-@Keep
-@Entity(tableName = TABLE)
-data class SmmryStorageEntry(
-  @PrimaryKey val url: String,
-  val json: String
-)
-
-@Dao
-interface SmmryDao {
-
-  @Query("SELECT * FROM $TABLE WHERE url = :url")
-  suspend fun getItem(url: String): SmmryStorageEntry?
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun putItem(item: SmmryStorageEntry)
-
-  @Query("DELETE FROM $TABLE")
-  fun nukeItems()
-}

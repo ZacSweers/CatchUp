@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2019. Zac Sweers
+ * Copyright (c) 2019 Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,7 @@
  */
 @file:Suppress("MemberVisibilityCanPrivate")
 
-package io.sweers.catchup.util
+package io.sweers.catchup.base.ui
 
 import android.graphics.Bitmap
 import androidx.annotation.CheckResult
@@ -23,10 +23,10 @@ import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
 import androidx.annotation.IntRange
+import androidx.annotation.Size
 import androidx.core.graphics.ColorUtils.colorToHSL
 import androidx.palette.graphics.Palette
-import io.sweers.catchup.util.ColorUtils.Lightness
-import io.sweers.catchup.util.ColorUtils.isDark
+import io.sweers.catchup.base.ui.ColorUtils.Lightness
 import kotlin.annotation.AnnotationRetention.SOURCE
 
 /**
@@ -38,7 +38,7 @@ import kotlin.annotation.AnnotationRetention.SOURCE
 @Lightness
 fun Palette.isDark(): Int {
   val mostPopulous = getMostPopulousSwatch() ?: return ColorUtils.LIGHTNESS_UNKNOWN
-  return if (isDark(mostPopulous.hsl)) ColorUtils.IS_DARK else ColorUtils.IS_LIGHT
+  return if (ColorUtils.isDark(mostPopulous.hsl)) ColorUtils.IS_DARK else ColorUtils.IS_LIGHT
 }
 
 fun Palette.getMostPopulousSwatch(): Palette.Swatch? {
@@ -59,7 +59,9 @@ fun Palette.getMostPopulousSwatch(): Palette.Swatch? {
 object ColorUtils {
 
   @Retention(SOURCE)
-  @IntDef(IS_LIGHT, IS_DARK, LIGHTNESS_UNKNOWN)
+  @IntDef(IS_LIGHT,
+      IS_DARK,
+      LIGHTNESS_UNKNOWN)
   annotation class Lightness
 
   const val IS_LIGHT = 0
@@ -112,7 +114,7 @@ object ColorUtils {
   /**
    * Check that the lightness value (0–1)
    */
-  fun isDark(hsl: FloatArray): Boolean { // @Size(3)
+  fun isDark(@Size(3) hsl: FloatArray): Boolean {
     return hsl[2] < 0.5f
   }
 

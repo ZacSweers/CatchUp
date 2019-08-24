@@ -38,7 +38,7 @@ import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.FontHelper
-import io.sweers.catchup.util.ColorUtils
+import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.TouchableUrlSpan
 import io.sweers.catchup.util.UiUtil

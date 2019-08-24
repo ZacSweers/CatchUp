@@ -42,13 +42,12 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
-import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.base.InjectingBaseActivity
 import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.setLightStatusBar
-import io.sweers.catchup.util.updateNavBarColor
+import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.util.updateNightMode
 import kotterknife.bindView
 import okhttp3.Cache

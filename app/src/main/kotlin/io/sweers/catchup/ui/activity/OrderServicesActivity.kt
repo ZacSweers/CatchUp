@@ -56,7 +56,7 @@ import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.ui.base.InjectableBaseFragment
 import io.sweers.catchup.ui.base.InjectingBaseActivity
-import io.sweers.catchup.util.ColorUtils
+import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
@@ -195,7 +195,8 @@ class OrderServicesFragment : InjectableBaseFragment() {
                   .outerCircleColorInt(primaryColor)
                   .outerCircleAlpha(0.96f)
                   .titleTextColorInt(textColor)
-                  .descriptionTextColorInt(ColorUtils.modifyAlpha(textColor, 0.2f))
+                  .descriptionTextColorInt(
+                      ColorUtils.modifyAlpha(textColor, 0.2f))
                   .targetCircleColorInt(textColor)
                   .transparentTarget(true)
                   .drawShadow(true)

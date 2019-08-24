@@ -17,6 +17,7 @@ package io.sweers.catchup.ui.base
 
 import android.content.Context
 import dagger.android.support.AndroidSupportInjection
+import io.sweers.catchup.base.ui.BaseFragment
 
 abstract class InjectableBaseFragment : BaseFragment() {
 

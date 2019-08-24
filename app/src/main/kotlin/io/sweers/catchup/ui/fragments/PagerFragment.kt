@@ -61,7 +61,7 @@ import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
-import io.sweers.catchup.util.updateNavBarColor
+import io.sweers.catchup.base.ui.updateNavBarColor
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -254,7 +254,7 @@ class PagerFragment : InjectingBaseFragment() {
           }
           activity?.updateNavBarColor(color,
               context = view.context,
-              catchUpPreferences = catchUpPreferences)
+              uiPreferences = catchUpPreferences)
         }
       }
 

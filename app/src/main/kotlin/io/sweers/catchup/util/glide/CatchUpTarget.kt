@@ -22,7 +22,7 @@ import androidx.palette.graphics.Palette
 import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.transition.Transition
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
-import io.sweers.catchup.util.ColorUtils
+import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.generateAsync
 import kotlinx.coroutines.CoroutineScope

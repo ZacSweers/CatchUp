@@ -24,8 +24,8 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
 import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
+import io.sweers.catchup.base.ui.BaseActivity
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.ui.base.BaseActivity
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 

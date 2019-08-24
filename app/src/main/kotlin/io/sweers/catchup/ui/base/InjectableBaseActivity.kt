@@ -21,13 +21,22 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks
 import dagger.android.AndroidInjection
 import io.sweers.catchup.app.CatchUpObjectWatcher
+import io.sweers.catchup.base.ui.BaseActivity
 import javax.inject.Inject
 
 abstract class InjectableBaseActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidInjection.inject(this)
+    setFragmentFactory()
     super.onCreate(savedInstanceState)
+  }
+
+  /**
+   * Exists as a hook to allow subclasses to inject a FragmentFactory before
+   * super.onCreate() is called.
+   */
+  open fun setFragmentFactory() {
   }
 
   @Inject
