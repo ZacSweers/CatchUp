@@ -85,7 +85,6 @@ abstract class ApplicationModule {
   @Module
   companion object {
 
-
     /**
      * This Context is only available for things that don't care what type of Context they need.
      *
