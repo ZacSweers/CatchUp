@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2018 The Android Open Source Project
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,12 +44,15 @@ internal object MaterialAttributes {
    * @throws IllegalArgumentException if the attribute is not present in the current theme.
    */
   fun resolveOrThrow(
-      context: Context, @AttrRes attributeResId: Int, errorMessageComponent: String?): Int {
+    context: Context,
+    @AttrRes attributeResId: Int,
+    errorMessageComponent: String?
+  ): Int {
     val typedValue = resolve(context, attributeResId)
     if (typedValue == null) {
-      val errorMessage = ("%1\$s requires a value for the %2\$s attribute to be set in your app theme. "
-          + "You can either set the attribute in your theme or "
-          + "update your theme to inherit from Theme.MaterialComponents (or a descendant).")
+      val errorMessage = ("%1\$s requires a value for the %2\$s attribute to be set in your app theme. " +
+          "You can either set the attribute in your theme or " +
+          "update your theme to inherit from Theme.MaterialComponents (or a descendant).")
       throw IllegalArgumentException(
           String.format(
               errorMessage,
@@ -76,7 +79,10 @@ internal object MaterialAttributes {
    * @throws IllegalArgumentException if the attribute is not present in the current theme.
    */
   fun resolveBooleanOrThrow(
-      context: Context, @AttrRes attributeResId: Int, errorMessageComponent: String): Boolean {
+    context: Context,
+    @AttrRes attributeResId: Int,
+    errorMessageComponent: String
+  ): Boolean {
     return resolveOrThrow(context, attributeResId, errorMessageComponent) != 0
   }
 
@@ -85,7 +91,10 @@ internal object MaterialAttributes {
    * the attribute is not a boolean or not present in the current theme.
    */
   fun resolveBoolean(
-      context: Context, @AttrRes attributeResId: Int, defaultValue: Boolean): Boolean {
+    context: Context,
+    @AttrRes attributeResId: Int,
+    defaultValue: Boolean
+  ): Boolean {
     val typedValue = resolve(context, attributeResId)
     return if (typedValue != null && typedValue.type == TypedValue.TYPE_INT_BOOLEAN)
       typedValue.data != 0
@@ -100,7 +109,10 @@ internal object MaterialAttributes {
    */
   @Px
   fun resolveDimension(
-      context: Context, @AttrRes attributeResId: Int, @DimenRes defaultDimenResId: Int): Int {
+    context: Context,
+    @AttrRes attributeResId: Int,
+    @DimenRes defaultDimenResId: Int
+  ): Int {
     val dimensionValue = resolve(context, attributeResId)
     return if (dimensionValue == null || dimensionValue.type != TypedValue.TYPE_DIMENSION) {
       context.resources.getDimension(defaultDimenResId).toInt()

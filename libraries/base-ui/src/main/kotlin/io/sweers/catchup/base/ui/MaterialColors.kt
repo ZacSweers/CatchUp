@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2018 The Android Open Source Project
+ * Copyright (C) 2019. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -56,7 +56,10 @@ internal object MaterialColors {
    */
   @ColorInt
   fun getColor(
-      context: Context, @AttrRes colorAttributeResId: Int, errorMessageComponent: String): Int {
+    context: Context,
+    @AttrRes colorAttributeResId: Int,
+    errorMessageComponent: String
+  ): Int {
     return MaterialAttributes.resolveOrThrow(context, colorAttributeResId, errorMessageComponent)
   }
 
@@ -66,7 +69,10 @@ internal object MaterialColors {
    */
   @ColorInt
   fun getColor(
-      view: View, @AttrRes colorAttributeResId: Int, @ColorInt defaultValue: Int): Int {
+    view: View,
+    @AttrRes colorAttributeResId: Int,
+    @ColorInt defaultValue: Int
+  ): Int {
     return getColor(view.context, colorAttributeResId, defaultValue)
   }
 
@@ -76,7 +82,10 @@ internal object MaterialColors {
    */
   @ColorInt
   fun getColor(
-      context: Context, @AttrRes colorAttributeResId: Int, @ColorInt defaultValue: Int): Int {
+    context: Context,
+    @AttrRes colorAttributeResId: Int,
+    @ColorInt defaultValue: Int
+  ): Int {
     val typedValue = MaterialAttributes.resolve(context, colorAttributeResId)
     return typedValue?.data ?: defaultValue
   }
@@ -88,10 +97,11 @@ internal object MaterialColors {
   @ColorInt
   @JvmOverloads
   fun layer(
-      view: View,
-      @AttrRes backgroundColorAttributeResId: Int,
-      @AttrRes overlayColorAttributeResId: Int,
-      @FloatRange(from = 0.0, to = 1.0) overlayAlpha: Float = 1f): Int {
+    view: View,
+    @AttrRes backgroundColorAttributeResId: Int,
+    @AttrRes overlayColorAttributeResId: Int,
+    @FloatRange(from = 0.0, to = 1.0) overlayAlpha: Float = 1f
+  ): Int {
     val backgroundColor = getColor(view, backgroundColorAttributeResId)
     val overlayColor = getColor(view, overlayColorAttributeResId)
     return layer(backgroundColor, overlayColor, overlayAlpha)
@@ -102,9 +112,10 @@ internal object MaterialColors {
    */
   @ColorInt
   fun layer(
-      @ColorInt backgroundColor: Int,
-      @ColorInt overlayColor: Int,
-      @FloatRange(from = 0.0, to = 1.0) overlayAlpha: Float): Int {
+    @ColorInt backgroundColor: Int,
+    @ColorInt overlayColor: Int,
+    @FloatRange(from = 0.0, to = 1.0) overlayAlpha: Float
+  ): Int {
     val computedAlpha = Math.round(Color.alpha(overlayColor) * overlayAlpha)
     val computedOverlayColor = ColorUtils.setAlphaComponent(overlayColor, computedAlpha)
     return layer(backgroundColor, computedOverlayColor)
@@ -195,11 +206,12 @@ internal object MaterialColors {
    * Color for state {enabled, checked, selected} --> returns GREEN # correct
    */
   fun layer(
-      backgroundColor: ColorStateList,
-      @ColorInt defaultBackgroundColor: Int,
-      overlayColor: ColorStateList,
-      @ColorInt defaultOverlayColor: Int,
-      states: Array<IntArray>): ColorStateList {
+    backgroundColor: ColorStateList,
+    @ColorInt defaultBackgroundColor: Int,
+    overlayColor: ColorStateList,
+    @ColorInt defaultOverlayColor: Int,
+    states: Array<IntArray>
+  ): ColorStateList {
     val uniqueColors = ArrayList<Int>()
     val uniqueStateSet = ArrayList<IntArray>()
 
@@ -233,8 +245,11 @@ internal object MaterialColors {
    * specified `state` or if the existing color set and state set already cover it.
    */
   private fun shouldAddColorForState(
-      colorSet: List<Int>, @ColorInt color: Int, stateSet: List<IntArray>,
-      state: IntArray?): Boolean {
+    colorSet: List<Int>,
+    @ColorInt color: Int,
+    stateSet: List<IntArray>,
+    state: IntArray?
+  ): Boolean {
     HashSet(colorSet)
     if (!colorSet.contains(color)) {
       return true
