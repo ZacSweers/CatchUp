@@ -23,6 +23,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
+import android.os.strictmode.DiskReadViolation
+import android.os.strictmode.UntaggedSocketViolation
 import android.util.Log
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
@@ -159,6 +161,18 @@ object DebugApplicationModule {
         .apply {
           sdk(28) {
             penaltyListener(penaltyListenerExecutor.get(), StrictMode.OnVmViolationListener {
+              when (it) {
+                is UntaggedSocketViolation -> {
+                  // Firebase and OkHttp don't tag sockets
+                  return@OnVmViolationListener
+                }
+                is DiskReadViolation -> {
+                  if (it.stackTrace.any { it.methodName == "onCreatePreferences" }) {
+                    // PreferenceFragment hits preferences directly
+                    return@OnVmViolationListener
+                  }
+                }
+              }
               // Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
               Timber.w(it)
             })
