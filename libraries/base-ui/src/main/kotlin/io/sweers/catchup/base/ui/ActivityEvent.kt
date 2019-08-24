@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.ui
+package io.sweers.catchup.base.ui
 
-import android.view.ViewGroup
-import io.sweers.catchup.ui.base.BaseActivity
+import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
+import com.uber.autodispose.lifecycle.LifecycleEndedException
 
 /**
- * An indirection which allows controlling the root container used for each activity.
+ * Activity lifecycle events.
  */
-interface ViewContainer {
-
-  /**
-   * The root [ViewGroup] into which the activity should place its contents.
-   */
-  fun forActivity(activity: BaseActivity): ViewGroup
+enum class ActivityEvent {
+  CREATE, START, RESUME, PAUSE, STOP, DESTROY;
 
   companion object {
-    /**
-     * An [ViewContainer] which returns the normal activity content view.
-     */
-    val DEFAULT = object : ViewContainer {
-      override fun forActivity(activity: BaseActivity): ViewGroup {
-        return activity.findViewById(android.R.id.content)
+    val LIFECYCLE = CorrespondingEventsFunction { lastEvent: ActivityEvent ->
+      return@CorrespondingEventsFunction when (lastEvent) {
+        CREATE -> DESTROY
+        START -> STOP
+        RESUME -> PAUSE
+        PAUSE -> STOP
+        STOP -> DESTROY
+        DESTROY -> throw LifecycleEndedException(
+            "Cannot bind to Activity lifecycle after it's been destroyed.")
       }
     }
   }

@@ -23,23 +23,19 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.SummarizationType
-import io.sweers.catchup.ui.fragments.SmmryDao
-import io.sweers.catchup.ui.fragments.SmmryStorageEntry
 import org.threeten.bp.Instant
 
 @Database(
     entities = [
       ServicePage::class,
-      CatchUpItem::class,
-      SmmryStorageEntry::class
+      CatchUpItem::class
     ],
-    version = 3
+    version = 4
 )
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {
 
   abstract fun serviceDao(): ServiceDao
-  abstract fun smmryDao(): SmmryDao
 
   companion object {
 

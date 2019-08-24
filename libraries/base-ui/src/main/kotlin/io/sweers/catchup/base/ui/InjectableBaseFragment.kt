@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.ui.base
+package io.sweers.catchup.base.ui
 
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import javax.inject.Inject
+import android.content.Context
+import dagger.android.support.AndroidSupportInjection
 
-abstract class InjectingBaseFragment : InjectableBaseFragment(), HasAndroidInjector {
+abstract class InjectableBaseFragment : BaseFragment() {
 
-  @Inject
-  protected lateinit var androidInjector: DispatchingAndroidInjector<Any>
-
-  final override fun androidInjector(): AndroidInjector<Any> = androidInjector
+  override fun onAttach(context: Context) {
+    AndroidSupportInjection.inject(this)
+    super.onAttach(context)
+  }
 }

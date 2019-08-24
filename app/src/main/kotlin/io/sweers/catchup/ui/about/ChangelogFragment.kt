@@ -42,7 +42,7 @@ import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
-import io.sweers.catchup.ui.base.InjectableBaseFragment
+import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.w

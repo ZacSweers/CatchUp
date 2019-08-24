@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.ui.base
+package io.sweers.catchup.base.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -25,18 +25,13 @@ import androidx.core.app.NavUtils
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
 import com.uber.autodispose.lifecycle.LifecycleScopeProvider
-import dagger.android.AndroidInjection
 import io.reactivex.Observable
-import io.sweers.catchup.CatchUpPreferences
-import io.sweers.catchup.ui.ViewContainer
-import io.sweers.catchup.ui.base.ActivityEvent.CREATE
-import io.sweers.catchup.ui.base.ActivityEvent.DESTROY
-import io.sweers.catchup.ui.base.ActivityEvent.PAUSE
-import io.sweers.catchup.ui.base.ActivityEvent.RESUME
-import io.sweers.catchup.ui.base.ActivityEvent.START
-import io.sweers.catchup.ui.base.ActivityEvent.STOP
-import io.sweers.catchup.util.updateNavBarColor
-import javax.inject.Inject
+import io.sweers.catchup.base.ui.ActivityEvent.CREATE
+import io.sweers.catchup.base.ui.ActivityEvent.DESTROY
+import io.sweers.catchup.base.ui.ActivityEvent.PAUSE
+import io.sweers.catchup.base.ui.ActivityEvent.RESUME
+import io.sweers.catchup.base.ui.ActivityEvent.START
+import io.sweers.catchup.base.ui.ActivityEvent.STOP
 
 abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<ActivityEvent> {
 
@@ -113,11 +108,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     lifecycle().doOnDestroy(this) { action() }.subscribe()
   }
 
-  @Inject
-  protected lateinit var viewContainer: ViewContainer
-  @Inject
-  protected lateinit var catchUpPreferences: CatchUpPreferences
-
   @CheckResult
   override fun lifecycle(): Observable<ActivityEvent> {
     return lifecycleRelay
@@ -133,17 +123,8 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
 
   @CallSuper
   override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidInjection.inject(this)
-    setFragmentFactory()
     super.onCreate(savedInstanceState)
     lifecycleRelay.accept(CREATE)
-  }
-
-  /**
-   * Exists as a hook to allow subclasses to inject a FragmentFactory before
-   * super.onCreate() is called.
-   */
-  open fun setFragmentFactory() {
   }
 
   @CallSuper
@@ -163,11 +144,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
       NavUtils.navigateUpFromSameTask(this)
     }
     return super.onOptionsItemSelected(item)
-  }
-
-  override fun onAttachedToWindow() {
-    super.onAttachedToWindow()
-    updateNavBarColor(catchUpPreferences = catchUpPreferences)
   }
 
   @CallSuper

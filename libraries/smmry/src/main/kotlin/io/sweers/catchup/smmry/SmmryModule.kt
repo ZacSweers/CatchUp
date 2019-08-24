@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.data.smmry
+package io.sweers.catchup.smmry
 
+import android.content.Context
+import androidx.room.Room
 import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.data.CatchUpDatabase
-import io.sweers.catchup.data.smmry.model.SmmryResponseFactory
-import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
+import io.sweers.catchup.smmry.model.SmmryDao
+import io.sweers.catchup.smmry.model.SmmryDatabase
+import io.sweers.catchup.smmry.model.SmmryResponseFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -38,7 +39,6 @@ object SmmryModule {
   @Provides
   @JvmStatic
   @ForSmmry
-  @PerFragment
   internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
     return moshi.newBuilder()
         .add(SmmryResponseFactory.getInstance())
@@ -47,7 +47,6 @@ object SmmryModule {
 
   @Provides
   @JvmStatic
-  @PerFragment
   internal fun provideSmmryService(
     client: Lazy<OkHttpClient>,
     @ForSmmry moshi: Moshi
@@ -55,13 +54,22 @@ object SmmryModule {
     return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
         .delegatingCallFactory(client)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .validateEagerly(BuildConfig.DEBUG)
+//        .validateEagerly(BuildConfig.DEBUG) // TODO can't do this in libraries
         .build()
         .create(SmmryService::class.java)
   }
 
   @Provides
   @JvmStatic
-  @PerFragment
-  internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase) = catchUpDatabase.smmryDao()
+  internal fun provideDatabase(context: Context): SmmryDatabase {
+    return Room.databaseBuilder(context.applicationContext,
+        SmmryDatabase::class.java,
+        "smmry.db")
+        .fallbackToDestructiveMigration()
+        .build()
+  }
+
+  @Provides
+  @JvmStatic
+  internal fun provideSmmryDao(database: SmmryDatabase): SmmryDao = database.dao()
 }

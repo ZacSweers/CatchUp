@@ -50,18 +50,18 @@ import com.google.android.material.tabs.TabLayout
 import dagger.Provides
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.InjectingBaseFragment
+import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.flowbinding.offsetChanges
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
-import io.sweers.catchup.ui.base.InjectingBaseFragment
 import io.sweers.catchup.ui.fragments.service.ServiceFragment
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
-import io.sweers.catchup.util.updateNavBarColor
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -254,7 +254,7 @@ class PagerFragment : InjectingBaseFragment() {
           }
           activity?.updateNavBarColor(color,
               context = view.context,
-              catchUpPreferences = catchUpPreferences)
+              uiPreferences = catchUpPreferences)
         }
       }
 
@@ -302,7 +302,7 @@ class PagerFragment : InjectingBaseFragment() {
                   }
                   activity?.updateNavBarColor(color,
                       context = view.context,
-                      catchUpPreferences = catchUpPreferences)
+                      uiPreferences = catchUpPreferences)
                 }
                 start()
               }
@@ -355,7 +355,7 @@ class PagerFragment : InjectingBaseFragment() {
             activity?.updateNavBarColor(color = (tabLayout.background as ColorDrawable).color,
                 context = view!!.context,
                 recreate = true,
-                catchUpPreferences = catchUpPreferences)
+                uiPreferences = catchUpPreferences)
           }
         }
       }

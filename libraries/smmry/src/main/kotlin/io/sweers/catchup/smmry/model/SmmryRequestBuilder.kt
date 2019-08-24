@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.data.smmry.model
+package io.sweers.catchup.smmry.model
 
-import io.sweers.catchup.BuildConfig
+import io.sweers.catchup.smmry.BuildConfig
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.util.LinkedHashMap
@@ -63,18 +63,18 @@ class SmmryRequestBuilder private constructor() {
 
   fun build(): Map<String, Any> {
     val map = LinkedHashMap<String, Any>(6)
-    map.put("SM_API_KEY", BuildConfig.SMMRY_API_KEY)
+    map["SM_API_KEY"] = BuildConfig.SMMRY_API_KEY
     if (sentenceCount != -1L) {
-      map.put("SM_LENGTH", sentenceCount)
+      map["SM_LENGTH"] = sentenceCount
     }
     if (keywordCount != -1L) {
-      map.put("SM_KEYWORD_COUNT", keywordCount)
+      map["SM_KEYWORD_COUNT"] = keywordCount
     }
     if (avoidQuoteWasSet) {
-      map.put("SM_QUOTE_AVOID", avoidQuote)
+      map["SM_QUOTE_AVOID"] = avoidQuote
     }
     if (withBreakWasSet) {
-      map.put("SM_WITH_BREAK", withBreak)
+      map["SM_WITH_BREAK"] = withBreak
     }
 
     // This has to be last!

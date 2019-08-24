@@ -22,6 +22,7 @@ import androidx.annotation.Keep
 import com.chibatching.kotpref.ContextProvider
 import com.chibatching.kotpref.KotprefModel
 import com.chibatching.kotpref.PreferencesOpener
+import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.flowbinding.safeOffer
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +45,7 @@ class CatchUpPreferences @Inject constructor(
         return sharedPreferences
       }
     }
-) {
+), UiPreferences {
 
   companion object {
     const val ITEM_KEY_ABOUT = "about"
@@ -59,7 +60,7 @@ class CatchUpPreferences @Inject constructor(
   var reports by booleanPref(default = true)
   var servicesOrderSeen by booleanPref(default = false)
   var smartlinkingGlobal by booleanPref(default = true)
-  var themeNavigationBar by booleanPref(default = false)
+  override var themeNavigationBar by booleanPref(default = false)
   var servicesOrder by nullableStringPref(default = null)
 }
 

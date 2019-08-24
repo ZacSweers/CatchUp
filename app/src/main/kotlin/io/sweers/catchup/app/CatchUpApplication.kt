@@ -117,12 +117,3 @@ class CatchUpApplication : Application(), HasAndroidInjector {
     }
   }
 }
-
-interface CatchUpObjectWatcher {
-  fun watch(watchedReference: Any)
-
-  object None : CatchUpObjectWatcher {
-    override fun watch(watchedReference: Any) {
-    }
-  }
-}

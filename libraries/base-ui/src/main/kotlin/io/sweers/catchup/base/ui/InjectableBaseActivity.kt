@@ -13,21 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.ui.base
+package io.sweers.catchup.base.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks
 import dagger.android.AndroidInjection
-import io.sweers.catchup.app.CatchUpObjectWatcher
 import javax.inject.Inject
 
 abstract class InjectableBaseActivity : BaseActivity() {
 
+  @Inject
+  protected lateinit var viewContainer: ViewContainer
+  @Inject
+  protected lateinit var uiPreferences: UiPreferences
+
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidInjection.inject(this)
+    setFragmentFactory()
     super.onCreate(savedInstanceState)
+  }
+
+  /**
+   * Exists as a hook to allow subclasses to inject a FragmentFactory before
+   * super.onCreate() is called.
+   */
+  open fun setFragmentFactory() {
   }
 
   @Inject
@@ -38,5 +50,10 @@ abstract class InjectableBaseActivity : BaseActivity() {
       }
     }
     supportFragmentManager.registerFragmentLifecycleCallbacks(callbacks, true)
+  }
+
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    updateNavBarColor(uiPreferences = uiPreferences)
   }
 }

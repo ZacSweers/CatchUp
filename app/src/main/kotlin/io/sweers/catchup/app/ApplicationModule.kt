@@ -17,6 +17,7 @@ package io.sweers.catchup.app
 
 import android.app.Application
 import android.content.Context
+import android.content.ContextWrapper
 import com.gabrielittner.threetenbp.LazyThreeTen
 import dagger.Binds
 import dagger.Module
@@ -31,6 +32,8 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.image.glide.GlideImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
+import io.sweers.catchup.CatchUpPreferences
+import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.data.InstanceBasedOkHttpLibraryGlideModule
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.PrecomputedTextSetterCompat
@@ -75,8 +78,22 @@ abstract class ApplicationModule {
   @Singleton
   abstract fun provideApplicationContext(application: Application): Context
 
+  @Binds
+  @Singleton
+  abstract fun provideUiPreferences(catchupPreferences: CatchUpPreferences): UiPreferences
+
   @Module
   companion object {
+
+    /**
+     * This Context is only available for things that don't care what type of Context they need.
+     *
+     * Wrapped so no one can try to cast it as an Application.
+     */
+    @Provides
+    @JvmStatic
+    @Singleton
+    internal fun provideGeneralUseContext(@ApplicationContext appContext: Context): Context = ContextWrapper(appContext)
 
     @Provides
     @JvmStatic

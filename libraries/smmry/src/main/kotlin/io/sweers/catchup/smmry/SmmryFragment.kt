@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.ui.fragments
+package io.sweers.catchup.smmry
 
 import android.annotation.SuppressLint
 import android.graphics.ColorFilter
@@ -23,17 +23,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import androidx.annotation.Keep
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.SimpleColorFilter
@@ -41,24 +34,24 @@ import com.airbnb.lottie.model.KeyPath
 import com.airbnb.lottie.value.LottieValueCallback
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
-import io.sweers.catchup.R
-import io.sweers.catchup.data.smmry.SmmryModule.ForSmmry
-import io.sweers.catchup.data.smmry.SmmryService
-import io.sweers.catchup.data.smmry.model.ApiRejection
-import io.sweers.catchup.data.smmry.model.IncorrectVariables
-import io.sweers.catchup.data.smmry.model.InternalError
-import io.sweers.catchup.data.smmry.model.SmmryRequestBuilder
-import io.sweers.catchup.data.smmry.model.SmmryResponse
-import io.sweers.catchup.data.smmry.model.Success
-import io.sweers.catchup.data.smmry.model.SummarizationError
-import io.sweers.catchup.data.smmry.model.UnknownErrorCode
+import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.SummarizationType
 import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
-import io.sweers.catchup.ui.base.InjectableBaseFragment
+import io.sweers.catchup.smmry.SmmryModule.ForSmmry
+import io.sweers.catchup.smmry.model.ApiRejection
+import io.sweers.catchup.smmry.model.IncorrectVariables
+import io.sweers.catchup.smmry.model.InternalError
+import io.sweers.catchup.smmry.model.SmmryDao
+import io.sweers.catchup.smmry.model.SmmryRequestBuilder
+import io.sweers.catchup.smmry.model.SmmryResponse
+import io.sweers.catchup.smmry.model.SmmryStorageEntry
+import io.sweers.catchup.smmry.model.Success
+import io.sweers.catchup.smmry.model.SummarizationError
+import io.sweers.catchup.smmry.model.UnknownErrorCode
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
 import kotlinx.coroutines.isActive
@@ -184,7 +177,7 @@ class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
             is IncorrectVariables -> "Smmry invalid input - ${response.message}"
             is ApiRejection -> "Smmry API error - ${response.message}"
             is SummarizationError -> "Smmry summarization error - ${response.message}"
-            UnknownErrorCode -> getString(R.string.unknown_issue)
+            UnknownErrorCode -> getString(io.sweers.catchup.base.ui.R.string.unknown_issue)
             else -> throw UnsupportedOperationException("Success is already covered above")
           }
           summary.text = message
@@ -247,26 +240,4 @@ class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
       content.show(true)
     }
   }
-}
-
-private const val TABLE = "smmryEntries"
-
-@Keep
-@Entity(tableName = TABLE)
-data class SmmryStorageEntry(
-  @PrimaryKey val url: String,
-  val json: String
-)
-
-@Dao
-interface SmmryDao {
-
-  @Query("SELECT * FROM $TABLE WHERE url = :url")
-  suspend fun getItem(url: String): SmmryStorageEntry?
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun putItem(item: SmmryStorageEntry)
-
-  @Query("DELETE FROM $TABLE")
-  fun nukeItems()
 }

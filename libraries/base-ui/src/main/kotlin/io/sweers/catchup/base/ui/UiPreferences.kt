@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.ui.base
+package io.sweers.catchup.base.ui
 
-import android.content.Context
-import dagger.android.support.AndroidSupportInjection
-
-abstract class InjectableBaseFragment : BaseFragment() {
-
-  override fun onAttach(context: Context) {
-    AndroidSupportInjection.inject(this)
-    super.onAttach(context)
-  }
+interface UiPreferences {
+  var themeNavigationBar: Boolean
 }

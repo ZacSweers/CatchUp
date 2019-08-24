@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.ui.base
+package io.sweers.catchup.base.ui
 
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
-abstract class InjectingBaseActivity : InjectableBaseActivity(), HasAndroidInjector {
+abstract class InjectingBaseFragment : InjectableBaseFragment(), HasAndroidInjector {
 
   @Inject
   protected lateinit var androidInjector: DispatchingAndroidInjector<Any>

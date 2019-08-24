@@ -24,7 +24,7 @@ import android.widget.FrameLayout
 import androidx.core.content.res.use
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import io.sweers.catchup.R
-import io.sweers.catchup.util.ColorUtils
+import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.util.isNavBarOnBottom
 import java.util.ArrayList
 import kotlin.math.abs

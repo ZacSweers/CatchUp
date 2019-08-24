@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.data.smmry
+package io.sweers.catchup.smmry
 
-import io.sweers.catchup.data.smmry.model.SmmryResponse
+import io.sweers.catchup.smmry.model.SmmryResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST

@@ -47,6 +47,9 @@ import io.reactivex.android.MainThreadDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.ActivityEvent
+import io.sweers.catchup.base.ui.BaseActivity
+import io.sweers.catchup.base.ui.ViewContainer
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.edu.Syllabus
@@ -54,8 +57,6 @@ import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.flowFor
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.ui.base.ActivityEvent
-import io.sweers.catchup.ui.base.BaseActivity
 import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
 import kotlinx.coroutines.CoroutineScope
