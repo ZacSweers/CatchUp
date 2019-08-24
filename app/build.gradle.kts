@@ -416,6 +416,7 @@ dependencies {
   implementation(project(":libraries:base-ui"))
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:kotlinutil"))
+  implementation(project(":libraries:smmry"))
   implementation(project(":libraries:util"))
   implementation(project(":libraries:flowbinding"))
 

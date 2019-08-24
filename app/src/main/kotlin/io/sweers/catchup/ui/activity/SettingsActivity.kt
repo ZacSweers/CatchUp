@@ -37,17 +37,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.BaseActivity
+import io.sweers.catchup.base.ui.InjectingBaseActivity
+import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
-import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.setLightStatusBar
-import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.util.updateNightMode
 import kotterknife.bindView
 import okhttp3.Cache
@@ -175,7 +176,7 @@ class SettingsActivity : InjectingBaseActivity() {
           catchUpPreferences.themeNavigationBar = (preference as CheckBoxPreference).isChecked
           (activity as SettingsActivity).run {
             resultData.putBoolean(NAV_COLOR_UPDATED, true)
-            updateNavBarColor(recreate = true, catchUpPreferences = catchUpPreferences)
+            updateNavBarColor(recreate = true, uiPreferences = catchUpPreferences)
           }
           return true
         }
@@ -212,9 +213,10 @@ class SettingsActivity : InjectingBaseActivity() {
               nukeItems()
               nukePages()
             }
-            with(database.smmryDao()) {
-              nukeItems()
-            }
+            // TODO figure out a way to bubble up clearable items from ad-hoc things like smmry
+//            with(database.smmryDao()) {
+//              nukeItems()
+//            }
             val deletedFromDb = initialDbSize - dbFile.length()
             val clearedLogs = lumberYard.cleanUp()
             return@fromCallable cacheCleaned + deletedFromDb + networkCacheCleaned + clearedLogs
