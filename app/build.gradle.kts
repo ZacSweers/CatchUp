@@ -51,8 +51,6 @@ android {
     resValue("integer", "git_timestamp", "${deps.build.gitTimestamp(project)}")
     buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
         "\"${properties["catchup_github_developer_token"]}\"")
-    buildConfigField("String", "SMMRY_API_KEY",
-        "\"${properties["catchup_smmry_api_key"]}\"")
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
   }
   val commitCountLazy by lazy { deps.build.gitCommitCount(project).toString() }
@@ -415,6 +413,7 @@ dependencies {
 //  implementation(deps.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
   implementation(project(":service-api"))
   implementation(project(":service-registry:service-registry"))
+  implementation(project(":libraries:base-ui"))
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:util"))
@@ -432,8 +431,6 @@ dependencies {
   implementation(deps.android.androidx.fragment)
   implementation(deps.android.androidx.fragmentKtx)
   debugImplementation(deps.android.androidx.drawerLayout)
-  implementation(deps.android.androidx.palette)
-  implementation(deps.android.androidx.paletteKtx)
   implementation(deps.android.androidx.preference)
   implementation(deps.android.androidx.preferenceKtx)
   implementation(deps.android.androidx.viewPager)

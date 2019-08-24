@@ -73,23 +73,18 @@ dependencies {
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.android.runtime)
   implementation(deps.dagger.android.support)
-
-  // Retrofit
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
+  implementation(project(":libraries:base-ui"))
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
-
-  // Moshi
+  implementation(deps.misc.lottie)
   kapt(deps.moshi.compiler)
   implementation(deps.moshi.core)
-
-  // Room
   implementation(deps.android.androidx.room.runtime)
   implementation(deps.android.androidx.room.ktx)
   kapt(deps.android.androidx.room.apt)
   implementation(deps.android.androidx.lifecycle.ktx)
-
   implementation(deps.kotlin.coroutines)
   implementation(deps.kotlin.stdlib.jdk7)
 
