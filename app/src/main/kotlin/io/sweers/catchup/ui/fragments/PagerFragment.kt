@@ -39,14 +39,17 @@ import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
 import androidx.core.util.set
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.adapter.FragmentViewHolder
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.Provides
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
@@ -99,7 +102,7 @@ class PagerFragment : InjectingBaseFragment() {
 
   private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_fragment_root)
   private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
-  private val viewPager by bindView<ViewPager>(R.id.view_pager)
+  private val viewPager by bindView<ViewPager2>(R.id.view_pager)
   private val toolbar by bindView<Toolbar>(R.id.toolbar)
   val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
 
@@ -116,7 +119,6 @@ class PagerFragment : InjectingBaseFragment() {
       outState.run {
         putParcelable("collapsingToolbarState",
             behavior.onSaveInstanceState(rootLayout, appBarLayout))
-        putParcelable("servicesPager", viewPager.onSaveInstanceState())
       }
     }
   }
@@ -132,26 +134,21 @@ class PagerFragment : InjectingBaseFragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    val pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager,
-        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    val pagerAdapter = object : FragmentStateAdapter(childFragmentManager, lifecycle) {
       private val registeredFragments = SparseArray<Fragment>()
 
-      override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        return (super.instantiateItem(container, position) as Fragment).also {
+      override fun getItemCount(): Int = serviceHandlers.size
+
+      override fun createFragment(position: Int): Fragment {
+        return serviceHandlers[position].instantiator().also {
           registeredFragments[position] = it
         }
       }
 
-      override fun getItem(position: Int) = serviceHandlers[position].instantiator()
-
-      override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        registeredFragments.remove(position)
-        super.destroyItem(container, position, `object`)
+      override fun onViewDetachedFromWindow(holder: FragmentViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        registeredFragments.remove(holder.adapterPosition)
       }
-
-      override fun getCount() = serviceHandlers.size
-
-      override fun getPageTitle(position: Int) = ""
 
       fun getRegisteredFragment(position: Int) = registeredFragments[position]
     }
@@ -224,7 +221,9 @@ class PagerFragment : InjectingBaseFragment() {
     @ColorInt val initialColor = getAndSaveColor(0)
     tabLayout.setBackgroundColor(initialColor)
     viewPager.adapter = pagerAdapter
-    tabLayout.setupWithViewPager(viewPager, false)
+    TabLayoutMediator(tabLayout, viewPager) { tab, _ ->
+      viewPager.setCurrentItem(tab.position, true)
+    }.attach()
     changelogHelper.bindWith(toolbar, initialColor) {
       getAndSaveColor(tabLayout.selectedTabPosition)
     }
@@ -238,10 +237,10 @@ class PagerFragment : InjectingBaseFragment() {
 
     // Animate color changes
     // adapted from http://kubaspatny.github.io/2014/09/18/viewpager-background-transition/
-    viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+    viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
       override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
         if (canAnimateColor) {
-          val color: Int = if (position < pagerAdapter.count - 1 && position < serviceHandlers.size - 1) {
+          val color: Int = if (position < pagerAdapter.itemCount - 1 && position < serviceHandlers.size - 1) {
             argbEvaluator.evaluate(positionOffset,
                 getAndSaveColor(position),
                 getAndSaveColor(position + 1)) as Int
@@ -327,7 +326,6 @@ class PagerFragment : InjectingBaseFragment() {
         (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior
             ?.onRestoreInstanceState(rootLayout, appBarLayout, it)
       }
-      getParcelable<Parcelable>("servicesPager")?.let(viewPager::onRestoreInstanceState)
     }
   }
 
