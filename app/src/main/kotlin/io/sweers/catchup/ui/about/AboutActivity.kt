@@ -360,8 +360,8 @@ class AboutFragment : InjectingBaseFragment() {
 }
 
 private class AboutPagerAdapter(
-    childFragmentManager: FragmentManager,
-    lifecycle: Lifecycle
+  childFragmentManager: FragmentManager,
+  lifecycle: Lifecycle
 ) : FragmentStateAdapter(childFragmentManager, lifecycle) {
   private val screens = SparseArray<Fragment>()
 
