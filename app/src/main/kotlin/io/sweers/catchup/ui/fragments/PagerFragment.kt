@@ -43,7 +43,6 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.adapter.FragmentViewHolder
 import androidx.viewpager2.widget.ViewPager2
@@ -263,7 +262,7 @@ class PagerFragment : InjectingBaseFragment() {
       override fun onPageSelected(position: Int) {}
 
       override fun onPageScrollStateChanged(state: Int) {
-        if (state == ViewPager.SCROLL_STATE_IDLE) {
+        if (state == ViewPager2.SCROLL_STATE_IDLE) {
           canAnimateColor = true
         }
       }

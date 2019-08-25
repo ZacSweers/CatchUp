@@ -434,7 +434,6 @@ dependencies {
   debugImplementation(deps.android.androidx.drawerLayout)
   implementation(deps.android.androidx.preference)
   implementation(deps.android.androidx.preferenceKtx)
-  implementation(deps.android.androidx.viewPager)
   implementation(deps.android.androidx.viewPager2)
   implementation(deps.android.androidx.swipeRefresh)
   implementation(deps.android.androidx.legacyAnnotations)
