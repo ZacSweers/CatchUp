@@ -38,6 +38,7 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.flowbinding.clicks
 import io.sweers.catchup.flowbinding.itemSelections
 import io.sweers.catchup.flowbinding.viewScope
+import io.sweers.catchup.ui.activity.LauncherActivity
 import io.sweers.catchup.ui.logs.LogsDialog
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.isN
@@ -203,7 +204,7 @@ class DebugView(
       enableMockModeView.clicks()
           .collect {
             debugPreferences.mockModeEnabled = enableMockModeView.isChecked
-            ProcessPhoenix.triggerRebirth(context)
+            ProcessPhoenix.triggerRebirth(context, Intent(context, LauncherActivity::class.java))
           }
     }
   }
