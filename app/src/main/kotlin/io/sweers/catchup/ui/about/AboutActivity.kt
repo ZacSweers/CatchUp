@@ -157,7 +157,6 @@ class AboutFragment : InjectingBaseFragment() {
       outState.putParcelable("collapsingToolbarState",
           behavior.onSaveInstanceState(rootLayout, appBarLayout))
     }
-//    outState.putParcelable("aboutPager", viewPager.onSaveInstanceState())
     outState.putParcelable("aboutAdapter", pagerAdapter.saveState())
     super.onSaveInstanceState(outState)
   }
@@ -187,7 +186,6 @@ class AboutFragment : InjectingBaseFragment() {
         (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior
             ?.onRestoreInstanceState(rootLayout, appBarLayout, it)
       }
-//      state.getParcelable<Parcelable>("aboutPager")?.let(viewPager::onRestoreInstanceState)
       state.getParcelable<Parcelable>("aboutAdapter")?.let {
         pagerAdapter.restoreState(it)
       }
