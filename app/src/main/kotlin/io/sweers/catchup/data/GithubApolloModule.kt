@@ -35,10 +35,11 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.github.type.CustomType
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.network.AuthInterceptor
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import javax.inject.Qualifier
 import javax.inject.Singleton
-import kotlin.LazyThreadSafetyMode.NONE
 
 @Module
 internal object GithubApolloModule {
@@ -120,12 +121,22 @@ internal object GithubApolloModule {
     httpCache: Lazy<HttpCache>
   ): ApolloClient {
     // Lazily involve httpcache so we don't hit disk when instantiating this
-    // Clever way to use class delegation on a lazy var
-    // No thread safety because dagger's already guarantees it
-    val kotlinLazyCache by lazy(NONE) { httpCache.get() }
+    val lazyHttpCache = object : HttpCache {
+      override fun clear() = httpCache.get().clear()
+
+      override fun removeQuietly(cacheKey: String) = httpCache.get().removeQuietly(cacheKey)
+
+      override fun remove(cacheKey: String) = httpCache.get().remove(cacheKey)
+
+      override fun interceptor(): Interceptor = httpCache.get().interceptor()
+
+      override fun read(cacheKey: String): Response = httpCache.get().read(cacheKey)
+
+      override fun read(cacheKey: String, expireAfterRead: Boolean): Response = httpCache.get().read(cacheKey, expireAfterRead)
+    }
     return ApolloClient.builder()
         .serverUrl(SERVER_URL)
-        .httpCache(object : HttpCache by kotlinLazyCache {})
+        .httpCache(lazyHttpCache)
         .callFactory { client.get().newCall(it) }
         .normalizedCache(cacheFactory, resolver)
         .addCustomTypeAdapter(CustomType.DATETIME, ISO8601InstantApolloAdapter)
