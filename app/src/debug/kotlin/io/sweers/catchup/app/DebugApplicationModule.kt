@@ -146,12 +146,13 @@ object DebugApplicationModule {
   fun strictModeInit(@StrictModeExecutor penaltyListenerExecutor: dagger.Lazy<ExecutorService>): () -> Unit = {
     StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
         .detectAll()
-        .penaltyLog()
         .apply {
           sdk(28) {
             penaltyListener(penaltyListenerExecutor.get(), StrictMode.OnThreadViolationListener {
               Timber.w(it)
-            })
+            }) ?: run {
+              penaltyLog()
+            }
           }
         }
         .build())
@@ -176,6 +177,8 @@ object DebugApplicationModule {
               // Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
               Timber.w(it)
             })
+          } ?: run {
+            penaltyLog()
           }
         }
         .build())
