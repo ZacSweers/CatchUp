@@ -27,8 +27,10 @@ import io.sweers.catchup.flowbinding.safeOffer
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.LazyThreadSafetyMode.NONE
 import kotlin.reflect.KProperty0
 
 @Keep
@@ -65,21 +67,41 @@ class CatchUpPreferences @Inject constructor(
 }
 
 fun <T, Model : KotprefModel> Model.flowFor(propertyResolver: Model.() -> KProperty0<T>): Flow<T> {
-  val property = propertyResolver()
-  return callbackFlow<T> {
-    val prefsListener = object : SharedPreferences.OnSharedPreferenceChangeListener {
-      private val key: String = property.name
+  val lazilyResolved by lazy(NONE) { propertyResolver() }
+  return preferences.flowFor(
+      keyResolver = {
+        // With kotlin-reflect, we could get the key declared on the delegate
+//        (lazilyResolved.getDelegate() as PreferenceKey).key ?: lazilyResolved.name
+        lazilyResolved.name
+      },
+      valueResolver = {
+        lazilyResolved.get()
+      }
+  )
+}
 
-      override fun onSharedPreferenceChanged(prefs: SharedPreferences, propertyName: String) {
-        if (propertyName == key) {
-          safeOffer(property.get())
-        }
+fun <T> SharedPreferences.flowFor(keyResolver: () -> String, valueResolver: () -> T): Flow<T> {
+  return flowFor(keyResolver)
+      .map { valueResolver() }
+}
+
+fun SharedPreferences.flowFor(targetKey: String): Flow<Unit> {
+  return flowFor { targetKey }
+}
+
+fun SharedPreferences.flowFor(keyResolver: () -> String): Flow<Unit> {
+  return callbackFlow<Unit> {
+    val targetKey = keyResolver()
+    val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+      // TODO this is called twice when updating, say, a switch bound to this. Need to find a way
+      //  to handle reentrant cases
+      if (key == targetKey) {
+        safeOffer(Unit)
       }
     }
-    safeOffer(property.get())
-    preferences.registerOnSharedPreferenceChangeListener(prefsListener)
+    registerOnSharedPreferenceChangeListener(prefsListener)
     awaitClose {
-      preferences.unregisterOnSharedPreferenceChangeListener(prefsListener)
+      unregisterOnSharedPreferenceChangeListener(prefsListener)
     }
   }
 }
