@@ -53,7 +53,6 @@ import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.changes.ChangelogHelper
-import io.sweers.catchup.flowbinding.offsetChanges
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
@@ -66,6 +65,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotterknife.bindView
+import ru.ldralighieri.corbind.material.offsetChanges
 import javax.inject.Inject
 import kotlin.math.abs
 

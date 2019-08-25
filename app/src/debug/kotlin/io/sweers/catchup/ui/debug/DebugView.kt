@@ -35,8 +35,6 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
-import io.sweers.catchup.flowbinding.clicks
-import io.sweers.catchup.flowbinding.itemSelections
 import io.sweers.catchup.flowbinding.viewScope
 import io.sweers.catchup.ui.activity.LauncherActivity
 import io.sweers.catchup.ui.logs.LogsDialog
@@ -60,6 +58,8 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.mock.NetworkBehavior
+import ru.ldralighieri.corbind.view.clicks
+import ru.ldralighieri.corbind.widget.itemSelections
 import java.util.Locale
 import java.util.concurrent.TimeUnit.MILLISECONDS
 

@@ -22,7 +22,6 @@ import android.content.IntentFilter
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.conflate
 
 fun Context.intentReceivers(intentFilter: IntentFilter): Flow<Intent> = callbackFlow<Intent> {
   val receiver = object : BroadcastReceiver() {
@@ -35,4 +34,4 @@ fun Context.intentReceivers(intentFilter: IntentFilter): Flow<Intent> = callback
   awaitClose {
     unregisterReceiver(receiver)
   }
-}.conflate()
+}

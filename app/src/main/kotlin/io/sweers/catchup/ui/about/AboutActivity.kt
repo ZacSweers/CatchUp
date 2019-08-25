@@ -45,7 +45,6 @@ import dagger.android.ContributesAndroidInjector
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.flowbinding.offsetChanges
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
@@ -67,6 +66,7 @@ import kotlinx.coroutines.launch
 import kotterknife.bindView
 import io.noties.markwon.Markwon
 import io.sweers.catchup.injection.ActivityModule
+import ru.ldralighieri.corbind.material.offsetChanges
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.abs

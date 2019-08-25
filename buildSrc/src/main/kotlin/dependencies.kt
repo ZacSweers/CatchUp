@@ -226,6 +226,15 @@ object deps {
     const val release = "com.readystatesoftware.chuck:library-no-op:${versions.chuck}"
   }
 
+  object corbind {
+    private const val VERSION = "1.0.0"
+    const val core = "ru.ldralighieri.corbind:corbind:$VERSION"
+    object androidx {
+      const val core = "ru.ldralighieri.corbind:corbind-core:$VERSION"
+    }
+    const val material = "ru.ldralighieri.corbind:corbind-material:$VERSION"
+  }
+
   object crumb {
     const val annotations = "com.uber.crumb:crumb-annotations:${versions.crumb}"
     const val compiler = "com.uber.crumb:crumb-compiler:${versions.crumb}"
