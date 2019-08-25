@@ -140,10 +140,11 @@ class AboutFragment : InjectingBaseFragment() {
   private val title by bindView<TextView>(R.id.banner_title)
   private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
   private val toolbar by bindView<Toolbar>(R.id.toolbar)
-  private val viewPager by bindView<ViewPager2>(R.id.view_pager)
+  private val viewPager by bindView<ViewPager2>(R.id.view_pager) {
+    it.offscreenPageLimit = 1
+  }
 
   private lateinit var compositeClickSpan: (String) -> Set<Any>
-  private lateinit var pagerAdapter: AboutPagerAdapter
 
   override fun inflateView(
     inflater: LayoutInflater,
@@ -157,14 +158,34 @@ class AboutFragment : InjectingBaseFragment() {
       outState.putParcelable("collapsingToolbarState",
           behavior.onSaveInstanceState(rootLayout, appBarLayout))
     }
-    outState.putParcelable("aboutAdapter", pagerAdapter.saveState())
+    outState.putParcelable("aboutAdapter", (viewPager.adapter as FragmentStateAdapter).saveState())
     super.onSaveInstanceState(outState)
   }
 
   @SuppressLint("SetTextI18n")
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    pagerAdapter = AboutPagerAdapter(childFragmentManager, lifecycle)
+    val pagerAdapter = object : FragmentStateAdapter(childFragmentManager, lifecycle) {
+      private val screens = SparseArray<Fragment>()
+
+      override fun getItemCount(): Int = 2
+
+      override fun createFragment(position: Int): Fragment {
+        return screens.get(position) ?: run {
+          when (position) {
+            0 -> LicensesFragment()
+            1 -> ChangelogFragment()
+            else -> TODO("Not implemented")
+          }.also {
+            screens.put(position, it)
+          }
+        }
+      }
+
+      fun getFragment(position: Int): Fragment? {
+        return screens.get(position)
+      }
+    }
 
     compositeClickSpan = { url: String ->
       setOf(
@@ -231,18 +252,7 @@ class AboutFragment : InjectingBaseFragment() {
         with = markwon,
         alternateSpans = compositeClickSpan)
 
-    setUpPager()
-
-    // Wait till things are measured
-    val callSetUpHeader = { setUpHeader() }
-    if (!appBarLayout.isLaidOut) {
-      appBarLayout.post { callSetUpHeader() }
-    } else {
-      callSetUpHeader()
-    }
-  }
-
-  private fun setUpPager() {
+    // Set up pager
     viewPager.adapter = pagerAdapter
     TabLayoutMediator(tabLayout, viewPager) { tab, position ->
       viewPager.setCurrentItem(tab.position, true)
@@ -265,6 +275,14 @@ class AboutFragment : InjectingBaseFragment() {
         }
       }
     })
+
+    // Wait till things are measured
+    val callSetUpHeader = { setUpHeader() }
+    if (!appBarLayout.isLaidOut) {
+      appBarLayout.post { callSetUpHeader() }
+    } else {
+      callSetUpHeader()
+    }
   }
 
   @SuppressLint("CheckResult")
@@ -354,31 +372,6 @@ class AboutFragment : InjectingBaseFragment() {
             }
           }
     }
-  }
-}
-
-private class AboutPagerAdapter(
-  childFragmentManager: FragmentManager,
-  lifecycle: Lifecycle
-) : FragmentStateAdapter(childFragmentManager, lifecycle) {
-  private val screens = SparseArray<Fragment>()
-
-  override fun getItemCount(): Int = 2
-
-  override fun createFragment(position: Int): Fragment {
-    return screens.get(position) ?: run {
-      when (position) {
-        0 -> LicensesFragment()
-        1 -> ChangelogFragment()
-        else -> TODO("Not implemented")
-      }.also {
-        screens.put(position, it)
-      }
-    }
-  }
-
-  fun getFragment(position: Int): Fragment? {
-    return screens.get(position)
   }
 }
 

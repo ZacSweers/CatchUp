@@ -102,7 +102,9 @@ class PagerFragment : InjectingBaseFragment() {
 
   private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_fragment_root)
   private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
-  private val viewPager by bindView<ViewPager2>(R.id.view_pager)
+  private val viewPager by bindView<ViewPager2>(R.id.view_pager) {
+    it.offscreenPageLimit = 1
+  }
   private val toolbar by bindView<Toolbar>(R.id.toolbar)
   val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
 
@@ -145,6 +147,7 @@ class PagerFragment : InjectingBaseFragment() {
         }
       }
 
+      // TODO not sure this is right, may need to listen to Fragment's onDestroy(View?) directly
       override fun onViewDetachedFromWindow(holder: FragmentViewHolder) {
         super.onViewDetachedFromWindow(holder)
         registeredFragments.remove(holder.adapterPosition)
