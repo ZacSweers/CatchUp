@@ -108,6 +108,7 @@ object deps {
         const val savedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha03"
       }
 
+      const val viewPager2 = "androidx.viewpager2:viewpager2:1.0.0-beta03"
       const val viewPager = "androidx.viewpager:viewpager:1.0.0"
       const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02"
       const val palette = "androidx.palette:palette:1.0.0"

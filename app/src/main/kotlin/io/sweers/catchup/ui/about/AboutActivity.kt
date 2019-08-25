@@ -20,6 +20,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.style.StyleSpan
+import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,24 +33,29 @@ import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.text.layoutDirection
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.uber.autodispose.autoDisposable
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import io.noties.markwon.Markwon
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.InjectingBaseActivity
+import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
-import io.sweers.catchup.base.ui.InjectingBaseActivity
-import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.TouchableUrlSpan
 import io.sweers.catchup.util.UiUtil
@@ -64,8 +70,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotterknife.bindView
-import io.noties.markwon.Markwon
-import io.sweers.catchup.injection.ActivityModule
 import ru.ldralighieri.corbind.material.offsetChanges
 import java.util.Locale
 import javax.inject.Inject
@@ -136,10 +140,10 @@ class AboutFragment : InjectingBaseFragment() {
   private val title by bindView<TextView>(R.id.banner_title)
   private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
   private val toolbar by bindView<Toolbar>(R.id.toolbar)
-  private val viewPager by bindView<ViewPager>(R.id.view_pager)
+  private val viewPager by bindView<ViewPager2>(R.id.view_pager)
 
   private lateinit var compositeClickSpan: (String) -> Set<Any>
-  private lateinit var pagerAdapter: FragmentStatePagerAdapter
+  private lateinit var pagerAdapter: AboutPagerAdapter
 
   override fun inflateView(
     inflater: LayoutInflater,
@@ -153,7 +157,7 @@ class AboutFragment : InjectingBaseFragment() {
       outState.putParcelable("collapsingToolbarState",
           behavior.onSaveInstanceState(rootLayout, appBarLayout))
     }
-    outState.putParcelable("aboutPager", viewPager.onSaveInstanceState())
+//    outState.putParcelable("aboutPager", viewPager.onSaveInstanceState())
     outState.putParcelable("aboutAdapter", pagerAdapter.saveState())
     super.onSaveInstanceState(outState)
   }
@@ -161,27 +165,7 @@ class AboutFragment : InjectingBaseFragment() {
   @SuppressLint("SetTextI18n")
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    pagerAdapter = object : FragmentStatePagerAdapter(childFragmentManager,
-        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-      private val screens = mutableMapOf<Int, Fragment>()
-
-      override fun getItem(position: Int): Fragment {
-        return screens.getOrPut(position) {
-          when (position) {
-            0 -> LicensesFragment()
-            1 -> ChangelogFragment()
-            else -> TODO("Not implemented")
-          }
-        }
-      }
-
-      override fun getCount() = 2
-
-      override fun getPageTitle(position: Int): String = when (position) {
-        0 -> resources.getString(R.string.licenses)
-        else -> resources.getString(R.string.changelog)
-      }
-    }
+    pagerAdapter = AboutPagerAdapter(childFragmentManager, lifecycle)
 
     compositeClickSpan = { url: String ->
       setOf(
@@ -203,9 +187,9 @@ class AboutFragment : InjectingBaseFragment() {
         (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior
             ?.onRestoreInstanceState(rootLayout, appBarLayout, it)
       }
-      state.getParcelable<Parcelable>("aboutPager")?.let(viewPager::onRestoreInstanceState)
+//      state.getParcelable<Parcelable>("aboutPager")?.let(viewPager::onRestoreInstanceState)
       state.getParcelable<Parcelable>("aboutAdapter")?.let {
-        pagerAdapter.restoreState(it, state.classLoader)
+        pagerAdapter.restoreState(it)
       }
     }
 
@@ -262,7 +246,13 @@ class AboutFragment : InjectingBaseFragment() {
 
   private fun setUpPager() {
     viewPager.adapter = pagerAdapter
-    tabLayout.setupWithViewPager(viewPager, false)
+    TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+      viewPager.setCurrentItem(tab.position, true)
+      tab.text = when (position) {
+        0 -> resources.getString(R.string.licenses)
+        else -> resources.getString(R.string.changelog)
+      }
+    }.attach()
 
     tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
       override fun onTabSelected(tab: TabLayout.Tab) {}
@@ -270,7 +260,7 @@ class AboutFragment : InjectingBaseFragment() {
       override fun onTabUnselected(tab: TabLayout.Tab) {}
 
       override fun onTabReselected(tab: TabLayout.Tab) {
-        pagerAdapter.getItem(tab.position).let {
+        pagerAdapter.getFragment(tab.position).let {
           if (it is Scrollable) {
             it.onRequestScrollToTop()
           }
@@ -366,6 +356,31 @@ class AboutFragment : InjectingBaseFragment() {
             }
           }
     }
+  }
+}
+
+private class AboutPagerAdapter(
+    childFragmentManager: FragmentManager,
+    lifecycle: Lifecycle
+) : FragmentStateAdapter(childFragmentManager, lifecycle) {
+  private val screens = SparseArray<Fragment>()
+
+  override fun getItemCount(): Int = 2
+
+  override fun createFragment(position: Int): Fragment {
+    return screens.get(position) ?: run {
+      when (position) {
+        0 -> LicensesFragment()
+        1 -> ChangelogFragment()
+        else -> TODO("Not implemented")
+      }.also {
+        screens.put(position, it)
+      }
+    }
+  }
+
+  fun getFragment(position: Int): Fragment? {
+    return screens.get(position)
   }
 }
 
