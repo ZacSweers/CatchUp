@@ -80,6 +80,9 @@
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
+
+        <!-- For ProcessPhoenix, but unsure how to override activity intent filters for just debug -->
+        <category android:name="android.intent.category.DEFAULT" />
       </intent-filter>
     </activity-alias>
 
