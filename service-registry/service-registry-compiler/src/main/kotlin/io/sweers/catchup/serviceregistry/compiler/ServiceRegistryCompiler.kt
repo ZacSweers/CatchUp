@@ -25,6 +25,8 @@ import com.squareup.kotlinpoet.asClassName
 import com.uber.crumb.compiler.api.ConsumerMetadata
 import com.uber.crumb.compiler.api.CrumbConsumerExtension
 import com.uber.crumb.compiler.api.CrumbContext
+import com.uber.crumb.compiler.api.CrumbExtension.IncrementalExtensionType
+import com.uber.crumb.compiler.api.CrumbExtension.IncrementalExtensionType.ISOLATING
 import com.uber.crumb.compiler.api.CrumbProducerExtension
 import com.uber.crumb.compiler.api.ProducerMetadata
 import dagger.Module
@@ -38,6 +40,8 @@ import me.eugeniomarletti.kotlin.metadata.kotlinMetadata
 import me.eugeniomarletti.kotlin.metadata.shadow.metadata.ProtoBuf.Class.Kind
 import java.io.File
 import java.io.IOException
+import java.util.Locale
+import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
@@ -50,7 +54,7 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
     const val METADATA_KEY = "ServiceRegistryCompiler"
   }
 
-  override fun key() = METADATA_KEY
+  override val key = METADATA_KEY
 
   override fun supportedProducerAnnotations() = setOf(ServiceModule::class.java)
 
@@ -72,6 +76,11 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
     return isAnnotationPresent(type, ServiceRegistry::class.java)
   }
 
+  override fun producerIncrementalType(
+      processingEnvironment: ProcessingEnvironment): IncrementalExtensionType {
+    return ISOLATING
+  }
+
   override fun produce(
     context: CrumbContext,
     type: TypeElement,
@@ -85,7 +94,7 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
               ERROR,
               "@${ServiceModule::class.java.simpleName} is only applicable on classes!",
               type)
-      return mapOf()
+      return emptyMap<String, String>() to emptySet()
     }
 
     // Check has Dagger Module annotation
@@ -96,10 +105,15 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
               ERROR,
               "Must be a dagger module!",
               type)
-      return mapOf()
+      return emptyMap<String, String>() to emptySet()
     }
 
-    return mapOf(METADATA_KEY to type.qualifiedName.toString())
+    return mapOf(METADATA_KEY to type.qualifiedName.toString()) to setOf(type)
+  }
+
+  override fun consumerIncrementalType(
+      processingEnvironment: ProcessingEnvironment): IncrementalExtensionType {
+    return ISOLATING
   }
 
   override fun consume(
@@ -121,8 +135,7 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
       return
     }
 
-    val classData = kmetadata.data
-    val (_, classProto) = classData
+    val (_, classProto) = kmetadata.data
 
     // Must be an object class.
     if (classProto.classKind != Kind.INTERFACE) {
@@ -158,14 +171,16 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
             *modules)
         .build()
 
-    val objectName = "Resolved${type.simpleName.toString().capitalize()}"
+    val objectName = "Resolved${type.simpleName.toString().capitalize(Locale.US)}"
     try {
       // Generate the file
+      @Suppress("UnstableApiUsage")
       FileSpec.builder(MoreElements.getPackage(type).qualifiedName.toString(),
           objectName)
           .addType(TypeSpec.objectBuilder(objectName)
               .addAnnotation(moduleAnnotation)
               .addSuperinterface(type.asClassName())
+              .addOriginatingElement(type)
               .build())
           .build()
           .writeTo(generatedDir)

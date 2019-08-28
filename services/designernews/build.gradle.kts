@@ -73,6 +73,7 @@ kapt {
 dependencies {
   kapt(project(":service-registry:service-registry-compiler"))
   kapt(deps.crumb.compiler)
+  kapt(deps.crumb.core)
   kapt(deps.dagger.apt.compiler)
   kapt(deps.moshi.compiler)
 
