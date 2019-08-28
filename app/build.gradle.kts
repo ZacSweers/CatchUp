@@ -493,7 +493,6 @@ dependencies {
   implementation(deps.autoDispose.core)
   implementation(deps.autoDispose.android)
   implementation(deps.autoDispose.lifecycle)
-  compileOnly(deps.errorProne.compileOnly.annotations)
   implementation(deps.misc.flick)
   implementation(deps.misc.gestureViews)
   implementation(deps.misc.inboxRecyclerView)
@@ -555,11 +554,9 @@ dependencies {
 
   // Test
   testImplementation(deps.rx.relay)
-  androidTestCompileOnly(deps.errorProne.compileOnly.annotations)
   androidTestImplementation(deps.rx.java)
   androidTestImplementation(deps.misc.jsr305)
   testImplementation(deps.misc.jsr305)
-  testCompileOnly(deps.errorProne.compileOnly.annotations)
   testImplementation(deps.test.junit)
   testImplementation(deps.test.truth)
 

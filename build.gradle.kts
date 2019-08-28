@@ -86,11 +86,6 @@ allprojects {
           }
           "org.jetbrains.kotlin" -> useVersion(versions.kotlin)
           "com.google.dagger" -> useVersion(versions.dagger)
-          "com.google.errorprone" -> {
-            if (requested.name in setOf("javac", "error_prone_annotations")) {
-              useVersion(versions.errorProne)
-            }
-          }
         }
       }
     }

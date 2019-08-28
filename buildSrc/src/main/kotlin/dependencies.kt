@@ -62,7 +62,6 @@ object deps {
     const val chuck = "1.1.0"
     const val crumb = "0.0.1"
     const val dagger = "2.24"
-    const val errorProne = "2.3.2"
     const val espresso = "3.1.0-alpha1"
     const val glide = "4.9.0"
     const val hyperion = "0.9.24"
@@ -257,12 +256,6 @@ object deps {
 
     const val runtime = "com.google.dagger:dagger:${versions.dagger}"
     const val spi = "com.google.dagger:dagger-spi:${versions.dagger}"
-  }
-
-  object errorProne {
-    object compileOnly {
-      const val annotations = "com.google.errorprone:error_prone_annotations:${versions.errorProne}"
-    }
   }
 
   object glide {
