@@ -29,7 +29,7 @@ buildscript {
 
   configurations.all {
     resolutionStrategy {
-      force("net.sf.proguard:proguard-base:6.1.0beta2")
+      force("net.sf.proguard:proguard-base:6.1.0")
     }
   }
 
