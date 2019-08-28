@@ -146,7 +146,7 @@ object deps {
     }
 
     object firebase {
-      const val core = "com.google.firebase:firebase-core:17.1.0"
+      const val core = "com.google.firebase:firebase-core:17.2.0"
       const val config = "com.google.firebase:firebase-config:18.0.0"
       const val database = "com.google.firebase:firebase-database:19.0.0"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
@@ -345,7 +345,7 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.18.0"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.19.0"
 
     object debug {
       const val flipper = "com.facebook.flipper:flipper:0.23.4"
@@ -406,7 +406,7 @@ object deps {
 
     const val dogTag = "com.uber.rxdogtag:rxdogtag:0.2.0"
     const val dogTagAutoDispose = "com.uber.rxdogtag:rxdogtag-autodispose:0.2.0"
-    const val java = "io.reactivex.rxjava2:rxjava:2.2.11"
+    const val java = "io.reactivex.rxjava2:rxjava:2.2.12"
 
     const val preferences = "com.f2prateek.rx.preferences2:rx-preferences:2.0.0"
     const val relay = "com.jakewharton.rxrelay2:rxrelay:2.1.1"
