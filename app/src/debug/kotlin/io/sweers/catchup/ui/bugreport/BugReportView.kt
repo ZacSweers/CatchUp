@@ -17,17 +17,20 @@ package io.sweers.catchup.ui.bugreport
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View.OnFocusChangeListener
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import io.sweers.catchup.R
-import io.sweers.catchup.flowbinding.afterTextChangeEvents
 import io.sweers.catchup.flowbinding.viewScope
-import io.sweers.catchup.util.kotlin.mergeWith
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotterknife.bindView
+import ru.ldralighieri.corbind.view.focusChanges
+import ru.ldralighieri.corbind.widget.afterTextChangeEvents
 
 class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
   private val usernameView by bindView<EditText>(R.id.username)
@@ -44,24 +47,30 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
 
   override fun onFinishInflate() {
     super.onFinishInflate()
-    usernameView.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
-      if (!hasFocus) {
-        usernameView.error = if (usernameView.text.isNullOrBlank()) "Cannot be empty." else null
-      }
-    }
-    titleView.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
-      if (!hasFocus) {
-        titleView.error = if (titleView.text.isNullOrBlank()) "Cannot be empty." else null
-      }
-    }
     viewScope().launch {
-      titleView.afterTextChangeEvents()
-          .mergeWith(usernameView.afterTextChangeEvents())
-          .collect {
-            val titleIsBlank = titleView.text.isNullOrBlank()
-            val userNameIsBlank = usernameView.text.isNullOrBlank()
-            listener?.onStateChanged(!titleIsBlank && !userNameIsBlank)
+      usernameView.focusChanges()
+          .drop(1)
+          .collect { hasFocus ->
+            if (!hasFocus) {
+              usernameView.error = if (usernameView.text.isNullOrBlank()) "Cannot be empty." else null
+            }
           }
+      titleView.focusChanges()
+          .drop(1)
+          .collect { hasFocus ->
+            if (!hasFocus) {
+              titleView.error = if (titleView.text.isNullOrBlank()) "Cannot be empty." else null
+            }
+          }
+      combine(
+          titleView.afterTextChangeEvents()
+              .map { !it.editable.isNullOrBlank() },
+          usernameView.afterTextChangeEvents()
+              .map { !it.editable.isNullOrBlank() },
+          transform = { title, username -> title && username }
+      )
+          .onEach { listener?.onStateChanged(it) }
+          .collect()
     }
 
     screenshotView.isChecked = true

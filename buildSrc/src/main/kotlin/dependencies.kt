@@ -227,7 +227,7 @@ object deps {
   }
 
   object corbind {
-    private const val VERSION = "1.0.0"
+    private const val VERSION = "1.0.1"
     const val core = "ru.ldralighieri.corbind:corbind:$VERSION"
     object androidx {
       const val core = "ru.ldralighieri.corbind:corbind-core:$VERSION"
