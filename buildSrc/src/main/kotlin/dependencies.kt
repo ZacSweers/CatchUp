@@ -70,7 +70,7 @@ object deps {
     const val kotpref = "2.9.1"
     const val leakcanary = "2.0-beta-3"
     const val legacySupport = "28.0.0"
-    const val markwon = "4.1.0"
+    const val markwon = "4.1.1"
     const val moshi = "1.8.0"
     const val okhttp = "4.1.0"
     const val retrofit = "2.6.1"
@@ -226,7 +226,7 @@ object deps {
   }
 
   object corbind {
-    private const val VERSION = "1.0.1"
+    private const val VERSION = "1.1.0"
     const val core = "ru.ldralighieri.corbind:corbind:$VERSION"
     object androidx {
       const val core = "ru.ldralighieri.corbind:corbind-core:$VERSION"
@@ -350,7 +350,7 @@ object deps {
     object debug {
       const val flipper = "com.facebook.flipper:flipper:0.23.4"
       const val soLoader = "com.facebook.soloader:soloader:0.7.0"
-      const val guava = "com.google.guava:guava:28.0-android"
+      const val guava = "com.google.guava:guava:28.1-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"
       const val scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
