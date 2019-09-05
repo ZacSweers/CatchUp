@@ -57,7 +57,7 @@ object build {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val apollo = "1.1.1"
+    const val apollo = "1.1.3"
     const val autodispose = "1.3.0"
     const val chuck = "1.1.0"
     const val crumb = "0.0.1"
@@ -72,7 +72,7 @@ object deps {
     const val legacySupport = "28.0.0"
     const val markwon = "4.1.1"
     const val moshi = "1.8.0"
-    const val okhttp = "4.1.0"
+    const val okhttp = "4.1.1"
     const val retrofit = "2.6.1"
     const val spotless = "3.24.2"
     const val stetho = "1.5.1"
@@ -83,42 +83,42 @@ object deps {
     object androidx {
       const val annotations = "androidx.annotation:annotation:1.1.0"
       const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
-      const val appCompat = "androidx.appcompat:appcompat:1.1.0-rc01"
+      const val appCompat = "androidx.appcompat:appcompat:1.1.0"
 
-      private const val coreVersion = "1.2.0-alpha03"
+      private const val coreVersion = "1.2.0-alpha04"
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
       const val customTabs = "androidx.browser:browser:1.2.0-alpha07"
-      const val design = "com.google.android.material:material:1.1.0-alpha09"
+      const val design = "com.google.android.material:material:1.1.0-alpha10"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0-alpha03"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
 
-      private const val fragmentVersion = "1.2.0-alpha02"
+      private const val fragmentVersion = "1.2.0-alpha03"
       const val fragment = "androidx.fragment:fragment:$fragmentVersion"
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
       object viewModel {
-        private const val version = "2.2.0-alpha03"
+        private const val version = "2.2.0-alpha04"
         const val core = "androidx.lifecycle:lifecycle-viewmodel:$version"
         const val ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         const val savedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha03"
       }
 
-      const val viewPager2 = "androidx.viewpager2:viewpager2:1.0.0-beta03"
+      const val viewPager2 = "androidx.viewpager2:viewpager2:1.0.0-beta04"
       const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02"
       const val palette = "androidx.palette:palette:1.0.0"
       const val paletteKtx = "androidx.palette:palette-ktx:1.0.0"
 
-      private const val preferenceVersion = "1.1.0-rc01"
+      private const val preferenceVersion = "1.1.0"
       const val preference = "androidx.preference:preference:$preferenceVersion"
       const val preferenceKtx = "androidx.preference:preference-ktx:$preferenceVersion"
       const val recyclerView = "androidx.recyclerview:recyclerview:1.1.0-beta03"
 
       object lifecycle {
-        private const val version = "2.2.0-alpha03"
+        private const val version = "2.2.0-alpha04"
         const val apt = "androidx.lifecycle:lifecycle-compiler:$version"
         const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
         const val ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
@@ -130,7 +130,7 @@ object deps {
       }
 
       object room {
-        private const val version = "2.2.0-beta01"
+        private const val version = "2.2.0-rc01"
         const val apt = "androidx.room:room-compiler:$version"
         const val ktx = "androidx.room:room-ktx:$version"
         const val runtime = "androidx.room:room-runtime:$version"
@@ -153,7 +153,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:3.6.0-alpha09"
+    const val gradlePlugin = "com.android.tools.build:gradle:3.6.0-alpha10"
   }
 
   object apollo {
@@ -314,7 +314,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.3.0"
+    private const val coroutinesVersion = "1.3.1"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
@@ -345,10 +345,10 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:4.19.0"
+    const val bugsnag = "com.bugsnag:bugsnag-android:4.19.1"
 
     object debug {
-      const val flipper = "com.facebook.flipper:flipper:0.23.4"
+      const val flipper = "com.facebook.flipper:flipper:0.23.5"
       const val soLoader = "com.facebook.soloader:soloader:0.7.0"
       const val guava = "com.google.guava:guava:28.1-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
@@ -370,7 +370,7 @@ object deps {
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
     const val okio = "com.squareup.okio:okio:2.3.0"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:3.0.0"
-    const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.12.0"
+    const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.0"
     const val timber = "com.jakewharton.timber:timber:4.7.1"
     const val unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"
   }
