@@ -139,10 +139,9 @@ object deps {
     }
 
     object build {
-      // Upgrade to 29 when https://issuetracker.google.com/issues/139041608 is resolved
-      const val compileSdkVersion = 28
+      const val compileSdkVersion = 29
       const val minSdkVersion = 21
-      const val targetSdkVersion = 28
+      const val targetSdkVersion = 29
     }
 
     object firebase {
