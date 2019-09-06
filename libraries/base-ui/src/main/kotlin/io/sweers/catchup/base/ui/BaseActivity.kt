@@ -16,6 +16,7 @@
 package io.sweers.catchup.base.ui
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.annotation.CallSuper
@@ -170,6 +171,12 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
         return
       }
     }
-    super.onBackPressed()
+    if (Build.VERSION.SDK_INT == 29 && isTaskRoot) {
+      // https://twitter.com/Piwai/status/1169274622614704129
+      // https://issuetracker.google.com/issues/139738913
+      finishAfterTransition()
+    } else {
+      super.onBackPressed()
+    }
   }
 }
