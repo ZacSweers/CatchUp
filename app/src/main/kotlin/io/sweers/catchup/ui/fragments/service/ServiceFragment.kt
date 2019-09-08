@@ -51,6 +51,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -68,7 +69,6 @@ import io.sweers.catchup.ui.activity.VisualViewPool
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.base.DataLoadingSubject.DataLoadingCallbacks
-import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.ui.fragments.service.LoadResult.DiffResultData
 import io.sweers.catchup.ui.fragments.service.LoadResult.NewData
 import io.sweers.catchup.ui.widget.BaseCatchupAdapter
@@ -311,11 +311,6 @@ class ServiceFragment : InjectingBaseFragment(),
         detailDisplayer.bind(recyclerView, useExistingFragment = true)
       }
     }
-    viewLifecycleOwner.lifecycleScope.launch {
-      adapter.clicksFlow().collect {
-        linkManager.openUrl(it)
-      }
-    }
     onClick<View>(R.id.retry_button) {
       onRetry()
     }
@@ -331,6 +326,11 @@ class ServiceFragment : InjectingBaseFragment(),
     }
     progress.indeterminateTintList = ColorStateList.valueOf(accentColor)
     adapter = createAdapter(view.context)
+    viewLifecycleOwner.lifecycleScope.launch {
+      adapter.clicksFlow().collect {
+        linkManager.openUrl(it)
+      }
+    }
     layoutManager = createLayoutManager(view.context, adapter)
     recyclerView.layoutManager = layoutManager
     recyclerView.addOnScrollListener(
