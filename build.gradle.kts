@@ -27,12 +27,6 @@ buildscript {
     maven { url = uri(deps.build.repositories.snapshots) }
   }
 
-  configurations.all {
-    resolutionStrategy {
-      force("net.sf.proguard:proguard-base:6.1.0")
-    }
-  }
-
   dependencies {
     classpath(deps.android.gradlePlugin)
     classpath(deps.kotlin.gradlePlugin)
