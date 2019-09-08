@@ -142,7 +142,7 @@ android {
     javaMaxHeapSize = "2g"
   }
   lintOptions {
-    setLintConfig(file("app/lint.xml"))
+    setLintConfig(file("lint.xml"))
     isAbortOnError = true
     check("InlinedApi")
     check("Interoperability")
