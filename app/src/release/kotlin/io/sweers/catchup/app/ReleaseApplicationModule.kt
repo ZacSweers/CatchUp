@@ -22,6 +22,7 @@ import dagger.Provides
 import dagger.multibindings.IntoSet
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.app.ApplicationModule.Initializers
+import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import timber.log.Timber
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
