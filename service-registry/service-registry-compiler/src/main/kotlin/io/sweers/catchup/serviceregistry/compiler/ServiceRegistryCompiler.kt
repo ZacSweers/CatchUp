@@ -150,9 +150,6 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
       return
     }
 
-    val generatedDir = context.processingEnv.options[kaptGeneratedOption]?.let(::File)
-        ?: throw IllegalStateException("Could not resolve kotlin generated directory!")
-
     val isConsumingMeta = type.isMeta
 
     // List of module TypeElements by type
@@ -185,7 +182,7 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
               .addOriginatingElement(type)
               .build())
           .build()
-          .writeTo(generatedDir)
+          .writeTo(context.processingEnv.filer)
     } catch (e: IOException) {
       context.processingEnv
           .messager
