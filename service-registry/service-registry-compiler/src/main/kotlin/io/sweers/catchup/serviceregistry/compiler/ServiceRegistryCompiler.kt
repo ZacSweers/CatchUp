@@ -33,12 +33,9 @@ import dagger.Module
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.serviceregistry.annotations.ServiceRegistry
-import me.eugeniomarletti.kotlin.metadata.KotlinClassMetadata
-import me.eugeniomarletti.kotlin.metadata.classKind
-import me.eugeniomarletti.kotlin.metadata.kaptGeneratedOption
-import me.eugeniomarletti.kotlin.metadata.kotlinMetadata
-import me.eugeniomarletti.kotlin.metadata.shadow.metadata.ProtoBuf.Class.Kind
-import java.io.File
+import kotlinx.metadata.Flag
+import kotlinx.metadata.jvm.KotlinClassHeader
+import kotlinx.metadata.jvm.KotlinClassMetadata
 import java.io.IOException
 import java.util.Locale
 import javax.annotation.processing.ProcessingEnvironment
@@ -125,9 +122,28 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
     metadata: Set<ConsumerMetadata>
   ) {
     // Pull out the kotlin data
-    val kmetadata = type.kotlinMetadata
+    val kmetadata = type.getAnnotation(Metadata::class.java)?.let {
+      KotlinClassMetadata.read(KotlinClassHeader(
+          kind = it.kind,
+          metadataVersion = it.metadataVersion,
+          bytecodeVersion = it.bytecodeVersion,
+          data1 = it.data1,
+          data2 = it.data2,
+          extraString = it.extraString,
+          packageName = it.packageName,
+          extraInt = it.extraInt
+      ))
+    } ?: run {
+      context.processingEnv
+          .messager
+          .printMessage(ERROR,
+              "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: " +
+                  "must be a Kotlin class.]",
+              type)
+      return
+    }
 
-    if (kmetadata !is KotlinClassMetadata) {
+    if (kmetadata !is KotlinClassMetadata.Class) {
       context.processingEnv
           .messager
           .printMessage(ERROR,
@@ -137,10 +153,10 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
       return
     }
 
-    val (_, classProto) = kmetadata.data
+    val classData = kmetadata.toKmClass()
 
     // Must be an object class.
-    if (classProto.classKind != Kind.INTERFACE) {
+    if (!Flag.Class.IS_INTERFACE(classData.flags)) {
       context.processingEnv
           .messager
           .printMessage(ERROR,

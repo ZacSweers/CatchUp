@@ -319,7 +319,7 @@ object deps {
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
-    const val metadata = "me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.4.0"
+    const val metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0"
     const val noArgGradlePlugin = "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
     const val poet = "com.squareup:kotlinpoet:1.3.0"
 
