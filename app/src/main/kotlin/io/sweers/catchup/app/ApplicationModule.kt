@@ -69,7 +69,6 @@ abstract class ApplicationModule {
   @Multibinds
   abstract fun asyncInitializers(): Set<() -> Unit>
 
-  @Initializers
   @Multibinds
   abstract fun timberTrees(): Set<Timber.Tree>
 
