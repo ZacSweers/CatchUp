@@ -77,7 +77,8 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
   }
 
   override fun producerIncrementalType(
-      processingEnvironment: ProcessingEnvironment): IncrementalExtensionType {
+    processingEnvironment: ProcessingEnvironment
+  ): IncrementalExtensionType {
     return ISOLATING
   }
 
@@ -112,7 +113,8 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
   }
 
   override fun consumerIncrementalType(
-      processingEnvironment: ProcessingEnvironment): IncrementalExtensionType {
+    processingEnvironment: ProcessingEnvironment
+  ): IncrementalExtensionType {
     return ISOLATING
   }
 
