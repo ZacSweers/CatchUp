@@ -44,6 +44,7 @@ object build {
       "-XXLanguage:+NewInference",
       "-XXLanguage:+SamConversionForKotlinFunctions",
       "-XXLanguage:+InlineClasses",
+      "-Xjvm-default=enable",
       "-Xuse-experimental=kotlin.Experimental",
       "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
       "-Xuse-experimental=kotlin.experimental.ExperimentalTypeInference",
@@ -60,7 +61,7 @@ object deps {
     const val apollo = "1.1.3"
     const val autodispose = "1.3.0"
     const val chuck = "1.1.0"
-    const val crumb = "0.0.1"
+    const val crumb = "0.1.0"
     const val dagger = "2.24"
     const val espresso = "3.1.0-alpha1"
     const val glide = "4.9.0"
