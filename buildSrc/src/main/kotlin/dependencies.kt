@@ -236,7 +236,6 @@ object deps {
 
   object crumb {
     const val annotations = "com.uber.crumb:crumb-annotations:${versions.crumb}"
-    const val core = "com.uber.crumb:crumb-core:${versions.crumb}"
     const val compiler = "com.uber.crumb:crumb-compiler:${versions.crumb}"
     const val compilerApi = "com.uber.crumb:crumb-compiler-api:${versions.crumb}"
   }
