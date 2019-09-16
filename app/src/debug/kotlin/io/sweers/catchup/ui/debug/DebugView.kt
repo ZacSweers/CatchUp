@@ -33,6 +33,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.Lazy
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.flowbinding.viewScope
@@ -72,7 +73,8 @@ class DebugView(
   attrs: AttributeSet? = null,
   private val client: Lazy<OkHttpClient>,
   private val lumberYard: LumberYard,
-  private val debugPreferences: DebugPreferences
+  private val debugPreferences: DebugPreferences,
+  private val versionInfo: VersionInfo
 ) : FrameLayout(context, attrs) {
   internal val icon by bindView<View>(R.id.debug_icon)
   private val networkDelayView by bindView<Spinner>(R.id.debug_network_delay)
@@ -270,8 +272,8 @@ class DebugView(
   }
 
   private fun setupBuildSection() {
-    buildNameView.text = BuildConfig.VERSION_NAME
-    buildCodeView.text = BuildConfig.VERSION_CODE.toString()
+    buildNameView.text = versionInfo.name
+    buildCodeView.text = versionInfo.code.toString()
     buildShaView.text = buildNameView.resources.getString(R.string.git_sha)
 
     val buildTime = Instant.ofEpochSecond(

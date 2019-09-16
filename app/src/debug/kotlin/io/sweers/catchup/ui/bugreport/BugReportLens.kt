@@ -38,6 +38,7 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BaseActivity
+import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
@@ -61,7 +62,8 @@ internal class BugReportLens @Inject constructor(
   private val activity: ComponentActivity,
   private val lumberYard: LumberYard,
   private val imgurUploadApi: ImgurUploadApi,
-  private val gitHubIssueApi: GitHubIssueApi
+  private val gitHubIssueApi: GitHubIssueApi,
+  private val versionInfo: VersionInfo
 ) : Lens(), ReportListener {
 
   private var screenshot: File? = null
@@ -105,8 +107,8 @@ internal class BugReportLens @Inject constructor(
       }
       h4("App")
       codeBlock(buildString {
-        append("Version: ").append(BuildConfig.VERSION_NAME).append('\n')
-        append("Version code: ").append(BuildConfig.VERSION_CODE).append('\n')
+        append("Version: ").append(versionInfo.name).append('\n')
+        append("Version code: ").append(versionInfo.code).append('\n')
       })
       newline()
       h4("Device details")

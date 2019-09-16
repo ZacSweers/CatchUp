@@ -45,10 +45,11 @@ import com.uber.autodispose.autoDisposable
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import io.noties.markwon.Markwon
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.base.ui.InjectingBaseFragment
+import io.sweers.catchup.base.ui.VersionInfo
+import io.sweers.catchup.base.ui.versionInfo
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
@@ -129,6 +130,8 @@ class AboutFragment : InjectingBaseFragment() {
   internal lateinit var linkManager: LinkManager
   @Inject
   internal lateinit var markwon: Markwon
+  @Inject
+  internal lateinit var versionInfo: VersionInfo
 
   private val rootLayout by bindView<CoordinatorLayout>(R.id.about_fragment_root)
   private val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
@@ -237,7 +240,7 @@ class AboutFragment : InjectingBaseFragment() {
     aboutText.text = buildMarkdown {
       text(aboutText.resources.getString(R.string.about_description))
       newline(3)
-      text(aboutText.resources.getString(R.string.about_version, BuildConfig.VERSION_NAME))
+      text(aboutText.resources.getString(R.string.about_version, versionInfo.name))
       newline(2)
       text(aboutText.resources.getString(R.string.about_by))
       space()
