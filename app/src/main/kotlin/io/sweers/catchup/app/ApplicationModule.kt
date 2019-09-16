@@ -161,7 +161,6 @@ abstract class ApplicationModule {
       CoilLogger.setEnabled(BuildConfig.DEBUG)
     }
 
-
     @Qualifier
     @Retention(BINARY)
     private annotation class CoilOkHttpStack
@@ -177,8 +176,8 @@ abstract class ApplicationModule {
     @JvmStatic
     @Provides
     fun coilHttpClient(
-        okHttpClient: OkHttpClient,
-        @CoilOkHttpStack cache: Cache
+      okHttpClient: OkHttpClient,
+      @CoilOkHttpStack cache: Cache
     ): OkHttpClient {
       return okHttpClient.newBuilder()
           .cache(cache)
@@ -189,8 +188,9 @@ abstract class ApplicationModule {
     @JvmStatic
     @Provides
     fun imageLoader(
-        @ApplicationContext context: Context,
-        @CoilOkHttpStack okHttpClient: dagger.Lazy<OkHttpClient>): ImageLoader {
+      @ApplicationContext context: Context,
+      @CoilOkHttpStack okHttpClient: dagger.Lazy<OkHttpClient>
+    ): ImageLoader {
       return ImageLoader(context) {
         // Coil will do lazy delegation on its own under the hood, but we
         // don't need that here because we've already made it lazy. Wish this

@@ -62,9 +62,7 @@ internal class ImageAdapter(
   private val bindDelegate: (ImageItem, ImageHolder, clicksChannel: SendChannel<UrlMeta>) -> Unit
 ) :
   DisplayableItemAdapter<ImageItem, ViewHolder>(columnCount = 2),
-    DataLoadingSubject.DataLoadingCallbacks
-//    PreloadModelProvider<ImageItem>
-{
+    DataLoadingSubject.DataLoadingCallbacks {
 
   companion object {
     const val PRELOAD_AHEAD_ITEMS = 6

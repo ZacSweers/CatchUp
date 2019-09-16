@@ -33,7 +33,6 @@ import androidx.palette.graphics.Palette.Swatch
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.api.load
-import coil.drawable.CrossfadeDrawable
 import coil.transform.CircleCropTransformation
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.ApolloCall.StatusEvent

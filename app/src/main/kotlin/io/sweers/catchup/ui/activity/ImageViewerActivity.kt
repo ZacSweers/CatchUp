@@ -241,10 +241,11 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun animateDimmingEnterExit(
-      start: Int,
-      end: Int,
-      duration: Long,
-      onEnd: ((animator: Animator) -> Unit)? = null) {
+    start: Int,
+    end: Int,
+    duration: Long,
+    onEnd: ((animator: Animator) -> Unit)? = null
+  ) {
     ObjectAnimator.ofInt(start, end).apply {
       setDuration(duration)
       interpolator = FastOutSlowInInterpolator()
@@ -273,8 +274,8 @@ class ImageViewerActivity : AppCompatActivity() {
 
 /** Adds a solid padding around an image. */
 private class CoilPaddingTransformation(
-    private val paddingPx: Float,
-    @ColorInt private val paddingColor: Int
+  private val paddingPx: Float,
+  @ColorInt private val paddingColor: Int
 ) : Transformation {
   override fun key(): String = "padding_$paddingPx"
 
