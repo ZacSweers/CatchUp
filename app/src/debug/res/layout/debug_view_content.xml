@@ -321,20 +321,6 @@
   <TextView
       style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
       android:layout_gravity="start|center_vertical"
-      android:text="SHA"
-      tools:ignore="HardcodedText"
-      />
-
-  <TextView
-      android:id="@+id/debug_build_sha"
-      style="@style/Widget.CatchUp.DebugDrawer.RowValue"
-      android:layout_width="0dp"
-      android:layout_gravity="start|center_vertical|fill_horizontal"
-      />
-
-  <TextView
-      style="@style/Widget.CatchUp.DebugDrawer.RowTitle"
-      android:layout_gravity="start|center_vertical"
       android:text="Date"
       tools:ignore="HardcodedText"
       />
