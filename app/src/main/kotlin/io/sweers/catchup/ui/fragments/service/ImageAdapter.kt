@@ -23,7 +23,6 @@ import android.graphics.Bitmap
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.TransitionDrawable
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -40,7 +39,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.api.load
 import coil.drawable.MovieDrawable
-import com.bumptech.glide.load.resource.gif.GifDrawable
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
@@ -132,20 +130,21 @@ internal class ImageAdapter(
                 }
 
                 // get the image and check if it's an animated GIF
-                val gif: GifDrawable = when (val drawable = image.drawable
-                    ?: return@setOnTouchListener false) {
-                  is GifDrawable -> drawable
-                  is TransitionDrawable -> (0 until drawable.numberOfLayers).asSequence()
-                      .map(drawable::getDrawable)
-                      .filterIsInstance<GifDrawable>()
-                      .firstOrNull()
-                  else -> null
-                } ?: return@setOnTouchListener false
-                // GIF found, start/stop it on press/lift
-                when (action) {
-                  MotionEvent.ACTION_DOWN -> gif.start()
-                  MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> gif.stop()
-                }
+                // TODO rework this with MovieDrawable from Coil
+//                val gif: GifDrawable = when (val drawable = image.drawable
+//                    ?: return@setOnTouchListener false) {
+//                  is GifDrawable -> drawable
+//                  is TransitionDrawable -> (0 until drawable.numberOfLayers).asSequence()
+//                      .map(drawable::getDrawable)
+//                      .filterIsInstance<GifDrawable>()
+//                      .firstOrNull()
+//                  else -> null
+//                } ?: return@setOnTouchListener false
+//                // GIF found, start/stop it on press/lift
+//                when (action) {
+//                  MotionEvent.ACTION_DOWN -> gif.start()
+//                  MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> gif.stop()
+//                }
                 false
               }
             }

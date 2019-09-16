@@ -52,7 +52,7 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Room (Arch components)
 - AutoValue + extensions
 - Firebase
-- Glide
+- Coil
 - Apollo GraphQL
 - Standard Square buffet of Okio/OkHttp 3/Retrofit 2/Moshi
 - ThreetenABP

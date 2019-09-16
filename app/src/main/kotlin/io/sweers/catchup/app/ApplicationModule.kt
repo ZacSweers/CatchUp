@@ -37,7 +37,6 @@ import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.ext.tasklist.TaskListPlugin
 import io.noties.markwon.image.ImagesPlugin
-import io.noties.markwon.image.glide.GlideImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
 import io.sweers.catchup.BuildConfig
@@ -117,6 +116,7 @@ abstract class ApplicationModule {
     @JvmStatic
     @Singleton
     internal fun markwon(
+//      imageLoader: ImageLoader, // TODO try to make this lazy
       @ApplicationContext context: Context // TODO should use themed one from activity?
     ): Markwon {
       return Markwon.builder(context)
@@ -125,7 +125,7 @@ abstract class ApplicationModule {
               MovementMethodPlugin.create(LinkTouchMovementMethod()),
               ImagesPlugin.create(),
               StrikethroughPlugin.create(),
-              GlideImagesPlugin.create(context),
+//              CoilImagesPlugin.create(context, imageLoader),
               TablePlugin.create(context),
               LinkifyPlugin.create(),
               TaskListPlugin.create(context)
