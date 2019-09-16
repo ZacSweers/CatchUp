@@ -37,18 +37,10 @@ import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.core.view.postDelayed
+import androidx.core.animation.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import com.bumptech.glide.Priority.IMMEDIATE
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
-import io.sweers.catchup.GlideApp
+import coil.api.load
+import coil.transform.Transformation
 import io.sweers.catchup.R
 import io.sweers.catchup.ui.immersive.SystemUiHelper
 import io.sweers.catchup.ui.widget.ZoomableGestureImageView
@@ -59,7 +51,6 @@ import me.saket.flick.FlickCallbacks
 import me.saket.flick.FlickDismissLayout
 import me.saket.flick.FlickGestureListener
 import me.saket.flick.InterceptResult
-import java.security.MessageDigest
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -130,58 +121,41 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   override fun onBackPressed() {
+    animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, 300)
     setResultAndFinish()
   }
 
   override fun onNavigateUp(): Boolean {
-    setResultAndFinish()
+    onBackPressed()
     return true
   }
 
   private fun loadImage() {
-    // Adding a 1px transparent border improves anti-aliasing
-    // when the image rotates while being dragged.
-    val paddingTransformation = GlidePaddingTransformation(
-        paddingPx = 1F,
-        paddingColor = Color.TRANSPARENT)
+    imageView.load(url) {
+      // Adding a 1px transparent border improves anti-aliasing
+      // when the image rotates while being dragged.
+      transformations(CoilPaddingTransformation(
+          paddingPx = 1F,
+          paddingColor = Color.TRANSPARENT
+      ))
+      if (id == null) {
+        crossfade(true)
+      } else {
+        crossfade(false)
+        listener(
+            onError = { _, _ ->
+              startPostponedEnterTransition()
+            },
+            onSuccess = { _, _ ->
+              startPostponedEnterTransition()
+            }
+        )
+      }
+    }
 
-    GlideApp.with(imageView.context)
-        .load(url)
-        .diskCacheStrategy(DiskCacheStrategy.DATA)
-        .transform(paddingTransformation)
-        .priority(IMMEDIATE)
-        .apply {
-          if (id == null) {
-            transition(DrawableTransitionOptions.withCrossFade())
-          } else {
-            dontAnimate()
-            listener(object : RequestListener<Drawable> {
-              override fun onLoadFailed(
-                e: GlideException?,
-                model: Any,
-                target: Target<Drawable>,
-                isFirstResource: Boolean
-              ): Boolean {
-                startPostponedEnterTransition()
-                return false
-              }
-
-              override fun onResourceReady(
-                resource: Drawable,
-                model: Any,
-                target: Target<Drawable>,
-                dataSource: DataSource,
-                isFirstResource: Boolean
-              ): Boolean {
-                startPostponedEnterTransition()
-                return false
-              }
-            })
-          }
-        }
-        .into(imageView)
-
-    animateDimmingOnEntry()
+    activityBackgroundDrawable = rootLayout.background
+    rootLayout.background = activityBackgroundDrawable
+    animateDimmingEnterExit(0, 255, 300)
     if (id != null) {
       postponeEnterTransition()
     }
@@ -235,10 +209,11 @@ class ImageViewerActivity : AppCompatActivity() {
 //              .setInterpolator(originalTransition.interpolator)
 //        }
         if (id == null) {
-          imageView.postDelayed(flickAnimationDuration) {
-            setResultAndFinish()
+          animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, flickAnimationDuration) {
+            finish()
           }
         } else {
+          animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, flickAnimationDuration)
           setResultAndFinish()
         }
       }
@@ -265,23 +240,28 @@ class ImageViewerActivity : AppCompatActivity() {
     return gestureListener
   }
 
-  private fun animateDimmingOnEntry() {
-    activityBackgroundDrawable = rootLayout.background.mutate()
-    rootLayout.background = activityBackgroundDrawable
-
-    ObjectAnimator.ofFloat(1F, 0f).apply {
-      duration = 200
+  private fun animateDimmingEnterExit(
+    start: Int,
+    end: Int,
+    duration: Long,
+    onEnd: ((animator: Animator) -> Unit)? = null
+  ) {
+    ObjectAnimator.ofInt(start, end).apply {
+      setDuration(duration)
       interpolator = FastOutSlowInInterpolator()
       addUpdateListener { animation ->
-        updateBackgroundDimmingAlpha(animation.animatedValue as Float)
+        activityBackgroundDrawable.alpha = animation.animatedValue as Int
+        sourceButton.imageAlpha = animation.animatedValue as Int
+      }
+      onEnd?.let {
+        addListener(onEnd = it)
       }
       start()
     }
   }
 
   private fun updateBackgroundDimmingAlpha(
-    @FloatRange(from = 0.0,
-to = 1.0) transparencyFactor: Float
+    @FloatRange(from = 0.0, to = 1.0) transparencyFactor: Float
   ) {
     // Increase dimming exponentially so that the background is
     // fully transparent while the image has been moved by half.
@@ -293,23 +273,19 @@ to = 1.0) transparencyFactor: Float
 }
 
 /** Adds a solid padding around an image. */
-private class GlidePaddingTransformation(
+private class CoilPaddingTransformation(
   private val paddingPx: Float,
   @ColorInt private val paddingColor: Int
-) : BitmapTransformation() {
+) : Transformation {
+  override fun key(): String = "padding_$paddingPx"
 
-  override fun transform(
-    pool: BitmapPool,
-    toTransform: Bitmap,
-    outWidth: Int,
-    outHeight: Int
-  ): Bitmap {
+  override suspend fun transform(pool: coil.bitmappool.BitmapPool, input: Bitmap): Bitmap {
     if (paddingPx == 0F) {
-      return toTransform
+      return input
     }
 
-    val targetWidth = toTransform.width + paddingPx * 2F
-    val targetHeight = toTransform.height + paddingPx * 2F
+    val targetWidth = input.width + paddingPx * 2F
+    val targetHeight = input.height + paddingPx * 2F
 
     val bitmapWithPadding = pool.get(targetWidth.toInt(), targetHeight.toInt(),
         Bitmap.Config.ARGB_8888)
@@ -318,13 +294,9 @@ private class GlidePaddingTransformation(
     val paint = Paint()
     paint.color = paddingColor
     canvas.drawRect(0F, 0F, targetWidth, targetHeight, paint)
-    canvas.drawBitmap(toTransform, paddingPx, paddingPx, null)
+    canvas.drawBitmap(input, paddingPx, paddingPx, null)
 
     return bitmapWithPadding
-  }
-
-  override fun updateDiskCacheKey(messageDigest: MessageDigest) {
-    messageDigest.update("padding_$paddingPx".toByteArray())
   }
 }
 

@@ -44,12 +44,9 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.apollographql.apollo.exception.ApolloException
-import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
-import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
@@ -241,11 +238,12 @@ class ServiceFragment : InjectingBaseFragment(),
             clicksChannel
         )
       }
-      val preloader = RecyclerViewPreloader(GlideApp.with(context),
-          adapter,
-          ViewPreloadSizeProvider<ImageItem>(),
-          ImageAdapter.PRELOAD_AHEAD_ITEMS)
-      recyclerView.addOnScrollListener(preloader)
+      // TODO adapt this for Coil
+//      val preloader = RecyclerViewPreloader(GlideApp.with(context),
+//          adapter,
+//          ViewPreloadSizeProvider<ImageItem>(),
+//          ImageAdapter.PRELOAD_AHEAD_ITEMS)
+//      recyclerView.addOnScrollListener(preloader)
       return adapter
     } else {
       return TextAdapter { item, holder, clicksChannel ->

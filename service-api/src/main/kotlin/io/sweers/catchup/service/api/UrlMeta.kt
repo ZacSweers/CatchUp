@@ -43,9 +43,8 @@ data class UrlMeta(
   }
 
   companion object {
-    // webp - https://github.com/zjupure/GlideWebpDecoder
     // videos? idk if I want to write a video player :|
-    private val MEDIA_EXTENSIONS = setOf("gif", "jpg", "jpeg", "png", "raw")
+    private val MEDIA_EXTENSIONS = setOf("gif", "jpg", "jpeg", "png", "raw", "webp")
   }
 }
 

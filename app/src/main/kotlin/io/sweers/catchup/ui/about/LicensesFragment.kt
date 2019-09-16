@@ -15,9 +15,9 @@
  */
 package io.sweers.catchup.ui.about
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -32,6 +32,8 @@ import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.ApolloCall.StatusEvent
 import com.apollographql.apollo.ApolloCall.StatusEvent.COMPLETED
@@ -39,18 +41,13 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.exception.ApolloException
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.DrawableImageViewTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import io.sweers.catchup.GlideApp
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
+import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsOrganization
@@ -67,7 +64,6 @@ import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.StickyHeaders
 import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
-import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.dp2px
 import io.sweers.catchup.util.findSwatch
@@ -341,30 +337,29 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
       when (val item = items[position]) {
         is OssItemHeader -> (holder as HeaderHolder).run {
-          GlideApp.with(itemView)
-              .load(item.avatarUrl)
-              .apply(RequestOptions()
-                  .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                  .circleCrop()
-                  .override(dimenSize, dimenSize))
-              .transition(DrawableTransitionOptions.withCrossFade())
-              .into(object : DrawableImageViewTarget(icon) {
-                override fun onResourceReady(
-                  resource: Drawable,
-                  transition: Transition<in Drawable>?
-                ) {
-                  super.onResourceReady(resource, transition)
-                  if (resource is BitmapDrawable) {
+          icon.load(item.avatarUrl) {
+            transformations(CircleCropTransformation())
+            size(dimenSize, dimenSize)
+            listener(
+                onSuccess = { _, _ ->
+                  val bitmap: Bitmap? = when (val data = icon.drawable) {
+                    is BitmapDrawable -> data.bitmap
+                    else -> null
+                  }
+                  bitmap?.let {
                     newScope().launch {
-                      val color = Palette.from(resource.bitmap)
+                      val color = Palette.from(it)
                           .clearFilters()
-                          .generateAsync()?.findSwatch(headerColorThresholdFun)?.rgb
+                          .generateAsync()
+                          ?.findSwatch(headerColorThresholdFun)
+                          ?.rgb
                           ?: defaultHeaderTextColor
                       holder.title.setTextColor(color)
                     }
                   }
                 }
-              })
+            )
+          }
           title.text = item.name
         }
         is OssItem -> (holder as CatchUpItemViewHolder).apply {

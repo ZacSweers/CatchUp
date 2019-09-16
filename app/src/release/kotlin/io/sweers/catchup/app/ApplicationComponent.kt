@@ -21,7 +21,6 @@ import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.support.AndroidSupportInjectionModule
 import io.sweers.catchup.data.DataModule
-import io.sweers.catchup.data.InstanceBasedOkHttpLibraryGlideModule
 import io.sweers.catchup.ui.activity.ActivityBindingModule
 import javax.inject.Singleton
 
@@ -35,8 +34,6 @@ import javax.inject.Singleton
   ReleaseApplicationModule::class
 ])
 interface ApplicationComponent {
-
-  fun okhttpGlideComponentBuilder(): InstanceBasedOkHttpLibraryGlideModule.Component.Builder
 
   fun inject(application: CatchUpApplication)
 

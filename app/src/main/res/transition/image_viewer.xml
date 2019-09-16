@@ -15,7 +15,9 @@
   ~ limitations under the License.
   -->
 
-<transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+<transitionSet
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="300">
   <transitionSet>
     <targets>
       <target android:targetId="@id/image"/>

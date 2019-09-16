@@ -25,6 +25,9 @@
     android:focusable="true"
     android:elevation="2dp"
     android:stateListAnimator="@animator/raise"
+    android:scaleType="centerCrop"
+    android:clipToPadding="false"
+    android:clipChildren="false"
     app:catchupBadgeGravity="end|bottom"
     app:badgePadding="16dp"
     />

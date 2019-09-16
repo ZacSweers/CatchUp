@@ -68,7 +68,6 @@ object deps {
     const val crumb = "0.1.0"
     const val dagger = "2.24"
     const val espresso = "3.1.0-alpha1"
-    const val glide = "4.9.0"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
     const val kotlin = "1.3.50"
@@ -236,6 +235,13 @@ object deps {
     const val release = "com.readystatesoftware.chuck:library-no-op:${versions.chuck}"
   }
 
+  object coil {
+    private const val VERSION = "0.7.0"
+    const val base = "io.coil-kt:coil-base:$VERSION"
+    const val default = "io.coil-kt:coil:$VERSION"
+    const val gif = "io.coil-kt:coil-gif:$VERSION"
+  }
+
   object corbind {
     private const val VERSION = "1.1.2"
     const val core = "ru.ldralighieri.corbind:corbind:$VERSION"
@@ -267,17 +273,6 @@ object deps {
 
     const val runtime = "com.google.dagger:dagger:${versions.dagger}"
     const val spi = "com.google.dagger:dagger-spi:${versions.dagger}"
-  }
-
-  object glide {
-    object apt {
-      const val compiler = "com.github.bumptech.glide:compiler:${versions.glide}"
-    }
-
-    const val annotations = "com.github.bumptech.glide:annotations:${versions.glide}"
-    const val core = "com.github.bumptech.glide:glide:${versions.glide}"
-    const val okhttp = "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
-    const val recyclerView = "com.github.bumptech.glide:recyclerview-integration:${versions.glide}"
   }
 
   object hyperion {
@@ -348,7 +343,6 @@ object deps {
     const val extTasklist = "io.noties.markwon:ext-tasklist:${versions.markwon}"
     const val html = "io.noties.markwon:html:${versions.markwon}"
     const val image = "io.noties.markwon:image:${versions.markwon}"
-    const val imageGlide = "io.noties.markwon:image-glide:${versions.markwon}"
     const val linkify = "io.noties.markwon:linkify:${versions.markwon}"
     const val syntaxHighlight = "io.noties.markwon:syntax-highlight:${versions.markwon}"
   }

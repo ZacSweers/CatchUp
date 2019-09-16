@@ -407,7 +407,6 @@ dependencies {
   implementation(deps.markwon.extTasklist)
   implementation(deps.markwon.html)
   implementation(deps.markwon.image)
-  implementation(deps.markwon.imageGlide)
   implementation(deps.markwon.linkify)
 //  implementation(deps.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
   implementation(project(":service-api"))
@@ -481,12 +480,10 @@ dependencies {
 
   releaseImplementation(deps.misc.bugsnag)
 
-  // Glide
-  kapt(deps.glide.apt.compiler)
-  implementation(deps.glide.annotations)
-  implementation(deps.glide.core)
-  implementation(deps.glide.okhttp)
-  implementation(deps.glide.recyclerView)
+  // Coil
+  implementation(deps.coil.base)
+  implementation(deps.coil.default)
+  implementation(deps.coil.gif)
 
   // Misc
   implementation(deps.autoDispose.core)
