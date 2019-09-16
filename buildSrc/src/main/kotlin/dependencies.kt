@@ -236,6 +236,13 @@ object deps {
     const val release = "com.readystatesoftware.chuck:library-no-op:${versions.chuck}"
   }
 
+  object coil {
+    private const val VERSION = "0.7.0"
+    const val base = "io.coil-kt:coil-base:$VERSION"
+    const val default = "io.coil-kt:coil:$VERSION"
+    const val gif = "io.coil-kt:coil-gif:$VERSION"
+  }
+
   object corbind {
     private const val VERSION = "1.1.2"
     const val core = "ru.ldralighieri.corbind:corbind:$VERSION"
@@ -267,17 +274,6 @@ object deps {
 
     const val runtime = "com.google.dagger:dagger:${versions.dagger}"
     const val spi = "com.google.dagger:dagger-spi:${versions.dagger}"
-  }
-
-  object glide {
-    object apt {
-      const val compiler = "com.github.bumptech.glide:compiler:${versions.glide}"
-    }
-
-    const val annotations = "com.github.bumptech.glide:annotations:${versions.glide}"
-    const val core = "com.github.bumptech.glide:glide:${versions.glide}"
-    const val okhttp = "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
-    const val recyclerView = "com.github.bumptech.glide:recyclerview-integration:${versions.glide}"
   }
 
   object hyperion {

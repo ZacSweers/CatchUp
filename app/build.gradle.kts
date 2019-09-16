@@ -481,12 +481,10 @@ dependencies {
 
   releaseImplementation(deps.misc.bugsnag)
 
-  // Glide
-  kapt(deps.glide.apt.compiler)
-  implementation(deps.glide.annotations)
-  implementation(deps.glide.core)
-  implementation(deps.glide.okhttp)
-  implementation(deps.glide.recyclerView)
+  // Coil
+  implementation(deps.coil.base)
+  implementation(deps.coil.default)
+  implementation(deps.coil.gif)
 
   // Misc
   implementation(deps.autoDispose.core)
