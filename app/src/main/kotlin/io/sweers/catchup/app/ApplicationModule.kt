@@ -165,6 +165,21 @@ abstract class ApplicationModule {
     @Retention(BINARY)
     private annotation class CoilOkHttpStack
 
+    @Qualifier
+    @Retention(BINARY)
+    annotation class IsLowRamDevice
+
+    @IsLowRamDevice
+    @Singleton
+    @JvmStatic
+    @Provides
+    fun isLowRam(@ApplicationContext context: Context): Boolean {
+      // Prefer higher quality images unless we're on a low RAM device
+      return context.getSystemService<ActivityManager>()?.let {
+        ActivityManagerCompat.isLowRamDevice(it)
+      } ?: true
+    }
+
     @CoilOkHttpStack
     @Singleton
     @JvmStatic
@@ -189,6 +204,7 @@ abstract class ApplicationModule {
     @Provides
     fun imageLoader(
       @ApplicationContext context: Context,
+      @IsLowRamDevice isLowRamDevice: Boolean,
       @CoilOkHttpStack okHttpClient: dagger.Lazy<OkHttpClient>
     ): ImageLoader {
       return ImageLoader(context) {
@@ -203,12 +219,6 @@ abstract class ApplicationModule {
 
         // Hardware bitmaps don't work with the saturation effect
         allowHardware(false)
-
-        // TODO move this to qualified dependency
-        // Prefer higher quality images unless we're on a low RAM device
-        val isLowRamDevice = context.getSystemService<ActivityManager>()?.let {
-          ActivityManagerCompat.isLowRamDevice(it)
-        } ?: true
         allowRgb565(isLowRamDevice)
         crossfade(true)
         crossfade(300)
