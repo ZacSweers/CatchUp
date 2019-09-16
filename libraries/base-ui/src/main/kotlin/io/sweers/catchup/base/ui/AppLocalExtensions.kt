@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.base.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
@@ -67,3 +68,19 @@ fun Activity.updateNavBarColor(
     }
   }
 }
+
+// BuildConfig.VERSION_NAME/CODE is not reliable here because we replace this dynamically in the
+// application manifest.
+@Suppress("DEPRECATION")
+@get:SuppressLint("NewApi") // False positive
+val Context.versionInfo: VersionInfo
+  get() {
+    return with(packageManager.getPackageInfo(packageName, 0)) {
+      VersionInfo(
+          code = sdk(28) { longVersionCode } ?: versionCode.toLong(),
+          name = versionName
+      )
+    }
+  }
+
+data class VersionInfo(val code: Long, val name: String)
