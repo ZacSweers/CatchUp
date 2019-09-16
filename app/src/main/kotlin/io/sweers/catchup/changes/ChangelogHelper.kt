@@ -31,14 +31,15 @@ import androidx.lifecycle.lifecycleScope
 import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.Lazy
-import io.sweers.catchup.BuildConfig
+import io.noties.markwon.Markwon
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.ColorUtils
+import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.FontHelper
-import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.TouchableUrlSpan
 import io.sweers.catchup.util.UiUtil
@@ -48,7 +49,6 @@ import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.resolveActivity
 import io.sweers.catchup.util.show
 import kotlinx.coroutines.launch
-import io.noties.markwon.Markwon
 import javax.inject.Inject
 
 class ChangelogHelper @Inject constructor(
@@ -56,16 +56,17 @@ class ChangelogHelper @Inject constructor(
   private val markwon: Lazy<Markwon>,
   private val fontHelper: FontHelper,
   private val syllabus: Syllabus,
-  private val sharedPreferences: SharedPreferences
+  private val sharedPreferences: SharedPreferences,
+  private val versionInfo: VersionInfo
 ) {
 
   fun bindWith(toolbar: Toolbar, @ColorInt hintColor: Int, linkColor: () -> Int) {
     val changelog = toolbar.resources.getString(R.string.changelog_text)
     val lastVersion = sharedPreferences.getString("last_version", null)
     // Check if version name changed and if there's a changelog
-    if (lastVersion != BuildConfig.VERSION_NAME) {
+    if (lastVersion != versionInfo.name) {
       // Write the new version in
-      sharedPreferences.edit().putString("last_version", BuildConfig.VERSION_NAME).apply()
+      sharedPreferences.edit().putString("last_version", versionInfo.name).apply()
       if (lastVersion == null) {
         // This was the first load it seems, so ignore it
         return
@@ -110,7 +111,7 @@ class ChangelogHelper @Inject constructor(
           setContentView(contentView)
           val title = contentView.findViewById<TextView>(R.id.build_name)!!.apply {
             typeface = fontHelper.getFont()
-            text = BuildConfig.VERSION_NAME
+            text = versionInfo.name
           }
           val changes = contentView.findViewById<TextView>(R.id.changes)!!.also { changesTextView ->
             changesTextView.typeface = fontHelper.getFont()

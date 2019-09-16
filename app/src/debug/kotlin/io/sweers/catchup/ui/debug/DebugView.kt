@@ -31,8 +31,8 @@ import android.widget.Switch
 import android.widget.TextView
 import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.Lazy
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.flowbinding.viewScope
@@ -54,13 +54,9 @@ import kotterknife.bindView
 import kotterknife.onSubviewClick
 import leakcanary.LeakCanary
 import okhttp3.OkHttpClient
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
-import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.mock.NetworkBehavior
 import ru.ldralighieri.corbind.view.clicks
 import ru.ldralighieri.corbind.widget.itemSelections
-import java.util.Locale
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 // TODO check out jw's assisted injection. Dagger-android doesn't make view injection easy
@@ -72,7 +68,8 @@ class DebugView(
   attrs: AttributeSet? = null,
   private val client: Lazy<OkHttpClient>,
   private val lumberYard: LumberYard,
-  private val debugPreferences: DebugPreferences
+  private val debugPreferences: DebugPreferences,
+  private val versionInfo: VersionInfo
 ) : FrameLayout(context, attrs) {
   internal val icon by bindView<View>(R.id.debug_icon)
   private val networkDelayView by bindView<Spinner>(R.id.debug_network_delay)
@@ -86,7 +83,6 @@ class DebugView(
   private val uiScalpelWireframeView by bindView<Switch>(R.id.debug_ui_scalpel_wireframe)
   private val buildNameView by bindView<TextView>(R.id.debug_build_name)
   private val buildCodeView by bindView<TextView>(R.id.debug_build_code)
-  private val buildShaView by bindView<TextView>(R.id.debug_build_sha)
   private val buildDateView by bindView<TextView>(R.id.debug_build_date)
   private val deviceMakeView by bindView<TextView>(R.id.debug_device_make)
   private val deviceModelView by bindView<TextView>(R.id.debug_device_model)
@@ -270,13 +266,9 @@ class DebugView(
   }
 
   private fun setupBuildSection() {
-    buildNameView.text = BuildConfig.VERSION_NAME
-    buildCodeView.text = BuildConfig.VERSION_CODE.toString()
-    buildShaView.text = buildNameView.resources.getString(R.string.git_sha)
-
-    val buildTime = Instant.ofEpochSecond(
-        buildNameView.resources.getInteger(R.integer.git_timestamp).toLong())
-    buildDateView.text = DATE_DISPLAY_FORMAT.format(buildTime)
+    buildNameView.text = versionInfo.name
+    buildCodeView.text = versionInfo.code.toString()
+    buildDateView.text = versionInfo.timestamp
   }
 
   private fun setupDeviceSection() {
@@ -316,9 +308,6 @@ class DebugView(
   }
 
   companion object {
-    private val DATE_DISPLAY_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a", Locale.US)
-        .withZone(ZoneId.systemDefault())
-
     private fun getDensityString(displayMetrics: DisplayMetrics): String {
       return when (val dpi = displayMetrics.densityDpi) {
         DisplayMetrics.DENSITY_LOW -> "ldpi"

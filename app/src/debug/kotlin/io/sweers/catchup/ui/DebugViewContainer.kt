@@ -49,6 +49,7 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ActivityEvent
 import io.sweers.catchup.base.ui.BaseActivity
+import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.base.ui.ViewContainer
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
@@ -84,7 +85,8 @@ internal class DebugViewContainer @Inject constructor(
   private val lazyOkHttpClient: Lazy<OkHttpClient>,
   private val syllabus: Syllabus,
   private val fontHelper: FontHelper,
-  private val debugPreferences: DebugPreferences
+  private val debugPreferences: DebugPreferences,
+  private val versionInfo: VersionInfo
 ) : ViewContainer {
   private val pixelGridEnabled = debugPreferences.flowFor { ::pixelGridEnabled }
   private val pixelRatioEnabled = debugPreferences.flowFor { ::pixelRatioEnabled }
@@ -100,7 +102,7 @@ internal class DebugViewContainer @Inject constructor(
     val viewHolder = DebugViewViewHolder(contentView)
 
     val drawerContext = ContextThemeWrapper(activity, R.style.DebugDrawer)
-    val debugView = DebugView(drawerContext, null, lazyOkHttpClient, lumberYard, debugPreferences)
+    val debugView = DebugView(drawerContext, null, lazyOkHttpClient, lumberYard, debugPreferences, versionInfo)
     viewHolder.debugDrawer.addView(debugView)
 
     // Set up the contextual actions to watch views coming in and out of the content area.

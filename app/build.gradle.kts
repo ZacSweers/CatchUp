@@ -32,7 +32,8 @@ apply {
 }
 
 val commitCountLazy by lazy(LazyThreadSafetyMode.NONE) { deps.build.gitCommitCount(project).toString() }
-val versionNameLazy by lazy(LazyThreadSafetyMode.NONE) { deps.build.gitTag(project) }
+val versionNameLazy by lazy(LazyThreadSafetyMode.NONE) { deps.build.gitSha(project) }
+val timestampLazy by lazy(LazyThreadSafetyMode.NONE) { deps.build.gitTimestamp(project) }
 android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
 
@@ -47,8 +48,6 @@ android {
     the<BasePluginConvention>().archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
 
-    resValue("string", "git_sha", "\"${deps.build.gitSha(project)}\"")
-    resValue("integer", "git_timestamp", "${deps.build.gitTimestamp(project)}")
     buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
         "\"${properties["catchup_github_developer_token"]}\"")
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
@@ -58,6 +57,7 @@ android {
       processManifestProvider.configure {
         inputs.property("commit_count") { commitCountLazy }
         inputs.property("version_name") { versionNameLazy }
+        inputs.property("build_timestamp") { timestampLazy }
         doLast {
           // Have to walk the tree here because APK splits results in more nested dirs
           this@configure.manifestOutputDirectory.get().asFile.walkTopDown()
@@ -65,8 +65,9 @@ android {
               .forEach { manifest ->
                 val content = manifest.readText()
                 manifest.writeText(
-                    content.replace("${deps.build.versionCodePH}", commitCountLazy)
-                        .replace(deps.build.versionNamePH, versionNameLazy)
+                    content.replaceFirst("${deps.build.versionCodePH}", commitCountLazy)
+                        .replaceFirst(deps.build.versionNamePH, versionNameLazy)
+                        .replaceFirst("buildTimestampPlaceholder", timestampLazy)
                 )
               }
         }

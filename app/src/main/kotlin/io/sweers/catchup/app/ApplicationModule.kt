@@ -34,6 +34,8 @@ import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.UiPreferences
+import io.sweers.catchup.base.ui.VersionInfo
+import io.sweers.catchup.base.ui.versionInfo
 import io.sweers.catchup.data.InstanceBasedOkHttpLibraryGlideModule
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.PrecomputedTextSetterCompat
@@ -93,6 +95,11 @@ abstract class ApplicationModule {
     @JvmStatic
     @Singleton
     internal fun provideGeneralUseContext(@ApplicationContext appContext: Context): Context = ContextWrapper(appContext)
+
+    @Provides
+    @JvmStatic
+    @Singleton
+    internal fun versionInfo(@ApplicationContext appContext: Context): VersionInfo = appContext.versionInfo
 
     @Provides
     @JvmStatic

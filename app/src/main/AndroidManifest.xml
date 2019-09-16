@@ -95,6 +95,8 @@
         android:name="fontProviderRequests"
         android:value="Noto Color Emoji Compat"/>
 
+    <meta-data android:name="buildTimestamp" android:value="buildTimestampPlaceholder" />
+
     <!-- Unclear what these are being used for but CatchUp gets booted because of them. -->
     <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
     <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
