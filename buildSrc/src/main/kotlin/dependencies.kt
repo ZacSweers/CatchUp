@@ -90,6 +90,7 @@ object deps {
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
+      // Wait until 2.0.0-beta3 to update
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
       const val customTabs = "androidx.browser:browser:1.2.0-alpha07"
       const val design = "com.google.android.material:material:1.1.0-alpha10"
