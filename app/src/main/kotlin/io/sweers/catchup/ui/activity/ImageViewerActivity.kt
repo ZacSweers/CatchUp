@@ -37,7 +37,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.core.view.postDelayed
+import androidx.core.animation.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import coil.api.load
 import coil.transform.Transformation
@@ -121,11 +121,12 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   override fun onBackPressed() {
+    animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, 300)
     setResultAndFinish()
   }
 
   override fun onNavigateUp(): Boolean {
-    setResultAndFinish()
+    onBackPressed()
     return true
   }
 
@@ -152,7 +153,9 @@ class ImageViewerActivity : AppCompatActivity() {
       }
     }
 
-    animateDimmingOnEntry()
+    activityBackgroundDrawable = rootLayout.background
+    rootLayout.background = activityBackgroundDrawable
+    animateDimmingEnterExit(0, 255, 300)
     if (id != null) {
       postponeEnterTransition()
     }
@@ -206,10 +209,11 @@ class ImageViewerActivity : AppCompatActivity() {
 //              .setInterpolator(originalTransition.interpolator)
 //        }
         if (id == null) {
-          imageView.postDelayed(flickAnimationDuration) {
-            setResultAndFinish()
+          animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, flickAnimationDuration) {
+            finish()
           }
         } else {
+          animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, flickAnimationDuration)
           setResultAndFinish()
         }
       }
@@ -236,23 +240,27 @@ class ImageViewerActivity : AppCompatActivity() {
     return gestureListener
   }
 
-  private fun animateDimmingOnEntry() {
-    activityBackgroundDrawable = rootLayout.background.mutate()
-    rootLayout.background = activityBackgroundDrawable
-
-    ObjectAnimator.ofFloat(1F, 0f).apply {
-      duration = 200
+  private fun animateDimmingEnterExit(
+      start: Int,
+      end: Int,
+      duration: Long,
+      onEnd: ((animator: Animator) -> Unit)? = null) {
+    ObjectAnimator.ofInt(start, end).apply {
+      setDuration(duration)
       interpolator = FastOutSlowInInterpolator()
       addUpdateListener { animation ->
-        updateBackgroundDimmingAlpha(animation.animatedValue as Float)
+        activityBackgroundDrawable.alpha = animation.animatedValue as Int
+        sourceButton.imageAlpha = animation.animatedValue as Int
+      }
+      onEnd?.let {
+        addListener(onEnd = it)
       }
       start()
     }
   }
 
   private fun updateBackgroundDimmingAlpha(
-    @FloatRange(from = 0.0,
-to = 1.0) transparencyFactor: Float
+    @FloatRange(from = 0.0, to = 1.0) transparencyFactor: Float
   ) {
     // Increase dimming exponentially so that the background is
     // fully transparent while the image has been moved by half.
@@ -264,23 +272,19 @@ to = 1.0) transparencyFactor: Float
 }
 
 /** Adds a solid padding around an image. */
-private class GlidePaddingTransformation(
-  private val paddingPx: Float,
-  @ColorInt private val paddingColor: Int
-) : BitmapTransformation() {
+private class CoilPaddingTransformation(
+    private val paddingPx: Float,
+    @ColorInt private val paddingColor: Int
+) : Transformation {
+  override fun key(): String = "padding_$paddingPx"
 
-  override fun transform(
-    pool: BitmapPool,
-    toTransform: Bitmap,
-    outWidth: Int,
-    outHeight: Int
-  ): Bitmap {
+  override suspend fun transform(pool: coil.bitmappool.BitmapPool, input: Bitmap): Bitmap {
     if (paddingPx == 0F) {
-      return toTransform
+      return input
     }
 
-    val targetWidth = toTransform.width + paddingPx * 2F
-    val targetHeight = toTransform.height + paddingPx * 2F
+    val targetWidth = input.width + paddingPx * 2F
+    val targetHeight = input.height + paddingPx * 2F
 
     val bitmapWithPadding = pool.get(targetWidth.toInt(), targetHeight.toInt(),
         Bitmap.Config.ARGB_8888)
@@ -289,13 +293,9 @@ private class GlidePaddingTransformation(
     val paint = Paint()
     paint.color = paddingColor
     canvas.drawRect(0F, 0F, targetWidth, targetHeight, paint)
-    canvas.drawBitmap(toTransform, paddingPx, paddingPx, null)
+    canvas.drawBitmap(input, paddingPx, paddingPx, null)
 
     return bitmapWithPadding
-  }
-
-  override fun updateDiskCacheKey(messageDigest: MessageDigest) {
-    messageDigest.update("padding_$paddingPx".toByteArray())
   }
 }
 
