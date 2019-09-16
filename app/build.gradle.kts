@@ -47,6 +47,7 @@ android {
     the<BasePluginConvention>().archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
 
+    // TODO Move these to manifest metadata + placeholders?
     resValue("string", "git_sha", "\"${deps.build.gitSha(project)}\"")
     resValue("integer", "git_timestamp", "${deps.build.gitTimestamp(project)}")
     buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
