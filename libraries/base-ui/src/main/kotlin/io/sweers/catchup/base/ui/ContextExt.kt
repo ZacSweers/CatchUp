@@ -89,7 +89,7 @@ val Context.versionInfo: VersionInfo
   }
 
 data class VersionInfo(
-    val code: Long,
-    val name: String,
-    val timestamp: String
+  val code: Long,
+  val name: String,
+  val timestamp: String
 )
