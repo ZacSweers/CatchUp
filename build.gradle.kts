@@ -40,8 +40,8 @@ buildscript {
 }
 
 plugins {
-  id("com.gradle.build-scan") version "2.4.1"
-  id("com.github.ben-manes.versions") version "0.24.0"
+  id("com.gradle.build-scan") version "2.4.2"
+  id("com.github.ben-manes.versions") version "0.25.0"
 }
 
 buildScan {
