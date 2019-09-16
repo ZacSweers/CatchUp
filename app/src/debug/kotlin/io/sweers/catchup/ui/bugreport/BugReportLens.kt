@@ -109,6 +109,7 @@ internal class BugReportLens @Inject constructor(
       codeBlock(buildString {
         append("Version: ").append(versionInfo.name).append('\n')
         append("Version code: ").append(versionInfo.code).append('\n')
+        append("Version timestamp: ").append(versionInfo.timestamp).append('\n')
       })
       newline()
       h4("Device details")
