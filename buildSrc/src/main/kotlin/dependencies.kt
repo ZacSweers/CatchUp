@@ -206,7 +206,7 @@ object deps {
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.5.2"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:2.4.1"
-      const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${deps.versions.spotless}"
+      const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${versions.spotless}"
     }
 
     object repositories {
