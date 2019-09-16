@@ -39,16 +39,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.view.postDelayed
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import com.bumptech.glide.Priority.IMMEDIATE
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
-import io.sweers.catchup.GlideApp
+import coil.api.load
+import coil.transform.Transformation
 import io.sweers.catchup.R
 import io.sweers.catchup.ui.immersive.SystemUiHelper
 import io.sweers.catchup.ui.widget.ZoomableGestureImageView
@@ -59,7 +51,6 @@ import me.saket.flick.FlickCallbacks
 import me.saket.flick.FlickDismissLayout
 import me.saket.flick.FlickGestureListener
 import me.saket.flick.InterceptResult
-import java.security.MessageDigest
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -139,47 +130,27 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun loadImage() {
-    // Adding a 1px transparent border improves anti-aliasing
-    // when the image rotates while being dragged.
-    val paddingTransformation = GlidePaddingTransformation(
-        paddingPx = 1F,
-        paddingColor = Color.TRANSPARENT)
-
-    GlideApp.with(imageView.context)
-        .load(url)
-        .diskCacheStrategy(DiskCacheStrategy.DATA)
-        .transform(paddingTransformation)
-        .priority(IMMEDIATE)
-        .apply {
-          if (id == null) {
-            transition(DrawableTransitionOptions.withCrossFade())
-          } else {
-            dontAnimate()
-            listener(object : RequestListener<Drawable> {
-              override fun onLoadFailed(
-                e: GlideException?,
-                model: Any,
-                target: Target<Drawable>,
-                isFirstResource: Boolean
-              ): Boolean {
-                startPostponedEnterTransition()
-                return false
-              }
-
-              override fun onResourceReady(
-                resource: Drawable,
-                model: Any,
-                target: Target<Drawable>,
-                dataSource: DataSource,
-                isFirstResource: Boolean
-              ): Boolean {
-                startPostponedEnterTransition()
-                return false
-              }
-            })
-          }
-        }
-        .into(imageView)
+    imageView.load(url) {
+      // Adding a 1px transparent border improves anti-aliasing
+      // when the image rotates while being dragged.
+      transformations(CoilPaddingTransformation(
+          paddingPx = 1F,
+          paddingColor = Color.TRANSPARENT
+      ))
+      if (id == null) {
+        crossfade(true)
+      } else {
+        crossfade(false)
+        listener(
+            onError = { _, _ ->
+              startPostponedEnterTransition()
+            },
+            onSuccess = { _, _ ->
+              startPostponedEnterTransition()
+            }
+        )
+      }
+    }
 
     animateDimmingOnEntry()
     if (id != null) {
