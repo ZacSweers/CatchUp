@@ -73,7 +73,7 @@ object deps {
     const val legacySupport = "28.0.0"
     const val markwon = "4.1.1"
     const val moshi = "1.8.0"
-    const val okhttp = "4.1.1"
+    const val okhttp = "4.2.0"
     const val retrofit = "2.6.1"
     const val spotless = "3.24.2"
     const val stetho = "1.5.1"
@@ -105,7 +105,7 @@ object deps {
         private const val version = "2.2.0-alpha04"
         const val core = "androidx.lifecycle:lifecycle-viewmodel:$version"
         const val ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
-        const val savedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha03"
+        const val savedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha04"
       }
 
       const val viewPager2 = "androidx.viewpager2:viewpager2:1.0.0-beta04"
@@ -148,7 +148,7 @@ object deps {
     object firebase {
       const val core = "com.google.firebase:firebase-core:17.2.0"
       const val config = "com.google.firebase:firebase-config:18.0.0"
-      const val database = "com.google.firebase:firebase-database:19.0.0"
+      const val database = "com.google.firebase:firebase-database:19.1.0"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
@@ -204,7 +204,7 @@ object deps {
 
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.5.2"
-      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.3.0"
+      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.4.1"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${deps.versions.spotless}"
     }
 
@@ -226,7 +226,7 @@ object deps {
   }
 
   object corbind {
-    private const val VERSION = "1.1.0"
+    private const val VERSION = "1.1.2"
     const val core = "ru.ldralighieri.corbind:corbind:$VERSION"
     object androidx {
       const val core = "ru.ldralighieri.corbind:corbind-core:$VERSION"
@@ -348,7 +348,7 @@ object deps {
     const val bugsnag = "com.bugsnag:bugsnag-android:4.19.1"
 
     object debug {
-      const val flipper = "com.facebook.flipper:flipper:0.23.5"
+      const val flipper = "com.facebook.flipper:flipper:0.23.5" // Update when https://github.com/facebook/flipper/issues/546 is fixed
       const val soLoader = "com.facebook.soloader:soloader:0.7.0"
       const val guava = "com.google.guava:guava:28.1-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
