@@ -18,6 +18,7 @@ package io.sweers.catchup.base.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import androidx.annotation.ColorInt
@@ -75,12 +76,20 @@ fun Activity.updateNavBarColor(
 @get:SuppressLint("NewApi") // False positive
 val Context.versionInfo: VersionInfo
   get() {
+    val metadataBundle = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+        .metaData
+    val timestamp = metadataBundle.getString("buildTimestamp") ?: "Missing timestamp!"
     return with(packageManager.getPackageInfo(packageName, 0)) {
       VersionInfo(
           code = sdk(28) { longVersionCode } ?: versionCode.toLong(),
-          name = versionName
+          name = versionName,
+          timestamp = timestamp
       )
     }
   }
 
-data class VersionInfo(val code: Long, val name: String)
+data class VersionInfo(
+    val code: Long,
+    val name: String,
+    val timestamp: String
+)

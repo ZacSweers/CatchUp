@@ -18,6 +18,10 @@
 
 import org.gradle.api.Project
 import java.io.File
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 fun String?.letIfEmpty(fallback: String): String {
   return if (this == null || isEmpty()) {
@@ -201,8 +205,12 @@ object deps {
       return 100 + ("git rev-list --count HEAD".execute(project.rootDir, "0").toInt())
     }
 
-    fun gitTimestamp(project: Project): Int {
-      return "git log -n 1 --format=%at".execute(project.rootDir, "0").toInt()
+    private val DATE_DISPLAY_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a", Locale.US)
+        .withZone(ZoneId.systemDefault())
+
+    fun gitTimestamp(project: Project): String {
+      val timestamp = "git log -n 1 --format=%at".execute(project.rootDir, "0").trim().toLong()
+      return DATE_DISPLAY_FORMAT.format(Instant.ofEpochSecond(timestamp))
     }
 
     object gradlePlugins {
