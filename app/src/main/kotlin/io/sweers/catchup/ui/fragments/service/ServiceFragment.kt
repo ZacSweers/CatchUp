@@ -241,11 +241,12 @@ class ServiceFragment : InjectingBaseFragment(),
             clicksChannel
         )
       }
-      val preloader = RecyclerViewPreloader(GlideApp.with(context),
-          adapter,
-          ViewPreloadSizeProvider<ImageItem>(),
-          ImageAdapter.PRELOAD_AHEAD_ITEMS)
-      recyclerView.addOnScrollListener(preloader)
+      // TODO adapt this for Coil
+//      val preloader = RecyclerViewPreloader(GlideApp.with(context),
+//          adapter,
+//          ViewPreloadSizeProvider<ImageItem>(),
+//          ImageAdapter.PRELOAD_AHEAD_ITEMS)
+//      recyclerView.addOnScrollListener(preloader)
       return adapter
     } else {
       return TextAdapter { item, holder, clicksChannel ->
