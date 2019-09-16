@@ -15,9 +15,17 @@
  */
 package io.sweers.catchup.app
 
+import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import androidx.core.app.ActivityManagerCompat
+import androidx.core.content.getSystemService
+import coil.Coil
+import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.util.CoilLogger
+import coil.util.CoilUtils.createDefaultCache
 import com.gabrielittner.threetenbp.LazyThreeTen
 import dagger.Binds
 import dagger.Module
@@ -32,21 +40,25 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.image.glide.GlideImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.base.ui.versionInfo
-import io.sweers.catchup.data.InstanceBasedOkHttpLibraryGlideModule
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.PrecomputedTextSetterCompat
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import okhttp3.Cache
+import okhttp3.Call
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import timber.log.Timber
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 
-@Module(subcomponents = [InstanceBasedOkHttpLibraryGlideModule.Component::class])
+@Module
 abstract class ApplicationModule {
 
   @Qualifier
@@ -138,6 +150,79 @@ abstract class ApplicationModule {
     fun mainDispatcherInit(): () -> Unit = {
       // This makes a call to disk, so initialize it off the main thread first... ironically
       Dispatchers.Main
+    }
+
+    @Initializers
+    @JvmStatic
+    @IntoSet
+    @Provides
+    fun coilInit(imageLoader: ImageLoader): () -> Unit = {
+      Coil.setDefaultImageLoader(imageLoader)
+      CoilLogger.setEnabled(BuildConfig.DEBUG)
+    }
+
+
+    @Qualifier
+    @Retention(BINARY)
+    private annotation class CoilOkHttpStack
+
+    @CoilOkHttpStack
+    @Singleton
+    @JvmStatic
+    @Provides
+    fun coilCache(@ApplicationContext context: Context): Cache = createDefaultCache(context)
+
+    @CoilOkHttpStack
+    @Singleton
+    @JvmStatic
+    @Provides
+    fun coilHttpClient(
+        okHttpClient: OkHttpClient,
+        @CoilOkHttpStack cache: Cache
+    ): OkHttpClient {
+      return okHttpClient.newBuilder()
+          .cache(cache)
+          .build()
+    }
+
+    @Singleton
+    @JvmStatic
+    @Provides
+    fun imageLoader(
+        @ApplicationContext context: Context,
+        @CoilOkHttpStack okHttpClient: dagger.Lazy<OkHttpClient>): ImageLoader {
+      return ImageLoader(context) {
+        // Coil will do lazy delegation on its own under the hood, but we
+        // don't need that here because we've already made it lazy. Wish this
+        // wasn't the default.
+        callFactory(object : Call.Factory {
+          override fun newCall(request: Request): Call {
+            return okHttpClient.get().newCall(request)
+          }
+        })
+
+        // Hardware bitmaps don't work with the saturation effect
+        allowHardware(false)
+
+        // TODO move this to qualified dependency
+        // Prefer higher quality images unless we're on a low RAM device
+        val isLowRamDevice = context.getSystemService<ActivityManager>()?.let {
+          ActivityManagerCompat.isLowRamDevice(it)
+        } ?: true
+        allowRgb565(isLowRamDevice)
+        crossfade(true)
+        crossfade(300)
+
+        componentRegistry {
+          // TODO re-enable native decoder once https://github.com/coil-kt/coil/issues/101 is fixed
+//          if (Build.VERSION.SDK_INT >= 28) {
+//            add(ImageDecoderDecoder())
+//          } else {
+//            add(GifDecoder())
+//          }
+          add(GifDecoder())
+        }
+      }
     }
   }
 }
