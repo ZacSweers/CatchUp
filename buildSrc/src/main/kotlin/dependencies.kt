@@ -184,7 +184,9 @@ object deps {
   }
 
   object build {
-    val ci = "true" == System.getenv("CI")
+    val ci get() = System.getenv("CI")?.toBoolean() == true
+    const val versionCodePH = 99999
+    const val versionNamePH = "versionplaceholder"
 
     fun gitSha(project: Project): String {
       // query git for the SHA, Tag and commit count. Use these to automate versioning.

@@ -31,17 +31,17 @@ apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
 
+val commitCountLazy by lazy(LazyThreadSafetyMode.NONE) { deps.build.gitCommitCount(project).toString() }
+val versionNameLazy by lazy(LazyThreadSafetyMode.NONE) { deps.build.gitTag(project) }
 android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
 
-  val versionCodePH = 99999
-  val versionNamePH = "versionplaceholder"
   defaultConfig {
     applicationId = "io.sweers.catchup"
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
-    versionCode = versionCodePH
-    versionName = versionNamePH
+    versionCode = deps.build.versionCodePH
+    versionName = deps.build.versionNamePH
     multiDexEnabled = false
 
     the<BasePluginConvention>().archivesBaseName = "catchup"
@@ -53,8 +53,6 @@ android {
         "\"${properties["catchup_github_developer_token"]}\"")
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
   }
-  val commitCountLazy by lazy { deps.build.gitCommitCount(project).toString() }
-  val versionNameLazy by lazy { deps.build.gitTag(project) }
   applicationVariants.all {
     outputs.all {
       processManifestProvider.configure {
@@ -67,8 +65,8 @@ android {
               .forEach { manifest ->
                 val content = manifest.readText()
                 manifest.writeText(
-                    content.replace("$versionCodePH", commitCountLazy)
-                    .replace(versionNamePH, versionNameLazy)
+                    content.replace("${deps.build.versionCodePH}", commitCountLazy)
+                        .replace(deps.build.versionNamePH, versionNameLazy)
                 )
               }
         }
