@@ -188,7 +188,14 @@ object DebugApplicationModule {
   @FlipperEnabled
   @JvmStatic
   @Provides
-  fun provideFlipperEnabled(application: Application): Boolean = FlipperUtils.shouldEnableFlipper(application)
+  fun provideFlipperEnabled(application: Application): Boolean {
+    return if (Build.VERSION.SDK_INT == 28) {
+      // Flipper native crashes on this
+      false
+    } else {
+      FlipperUtils.shouldEnableFlipper(application)
+    }
+  }
 
   @AsyncInitializers
   @JvmStatic
