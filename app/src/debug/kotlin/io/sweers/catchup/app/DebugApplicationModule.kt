@@ -31,6 +31,7 @@ import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperPlugin
 import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin
+import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
@@ -197,6 +198,13 @@ object DebugApplicationModule {
   @JvmStatic
   @Provides
   fun provideFlipperEnabled(application: Application): Boolean = FlipperUtils.shouldEnableFlipper(application)
+
+  @IntoSet
+  @Provides
+  @JvmStatic
+  fun provideFlipperDatabasesPlugin(@ApplicationContext context: Context): FlipperPlugin {
+    return DatabasesFlipperPlugin(context)
+  }
 
   @IntoSet
   @Provides
