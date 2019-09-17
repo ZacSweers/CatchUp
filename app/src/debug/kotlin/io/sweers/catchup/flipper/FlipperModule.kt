@@ -96,6 +96,5 @@ abstract class FlipperModule {
     @Provides
     @JvmStatic
     fun provideFlipperCrashReporterPlugin(): CrashReporterPlugin = CrashReporterPlugin.getInstance()
-
   }
 }

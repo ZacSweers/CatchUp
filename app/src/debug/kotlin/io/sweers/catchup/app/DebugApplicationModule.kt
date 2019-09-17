@@ -19,7 +19,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.app.Application.ActivityLifecycleCallbacks
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -31,10 +30,6 @@ import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperPlugin
 import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin
-import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
-import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
-import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
-import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.soloader.SoLoader
 import dagger.Module
 import dagger.Provides
@@ -43,13 +38,9 @@ import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import io.sweers.catchup.data.LumberYard
-import io.sweers.catchup.injection.SharedPreferencesName
-import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
-import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import io.sweers.catchup.util.sdk
 import leakcanary.AppWatcher
 import leakcanary.LeakCanary
-import okhttp3.Interceptor
 import shark.AndroidReferenceMatchers
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
