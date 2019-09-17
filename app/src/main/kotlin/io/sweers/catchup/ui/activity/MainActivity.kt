@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.ui.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.core.content.ContextCompat
@@ -73,6 +75,7 @@ class MainActivity : InjectingBaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    testBadIntent(this)
     syllabus.bind(this)
     lifecycle()
         .doOnStart(linkManager) { connect(this@MainActivity) }
@@ -222,3 +225,84 @@ class MainActivityDetailDisplayer @Inject constructor(
     irv.expandablePage = null
   }
 }
+
+fun testBadIntent(activity: Activity) {
+  val intent = Intent(Intent.ACTION_SEND)
+  intent.type = "text/plain"
+  intent.putExtra(Intent.EXTRA_TEXT, crashContent)
+  activity.startActivity(
+      Intent.createChooser(intent, "Share with…")
+  )
+}
+
+val crashContent = """
+  ApplicationLeak(className=io.sweers.catchup.ui.fragments.service.ServiceFragment, leakTrace=
+  ┬
+  ├─ android.view.inputmethod.InputMethodManager
+  │    Leaking: NO (InputMethodManager↓ is not leaking and a class is never leaking)
+  │    GC Root: System class
+  │    ↓ static InputMethodManager.sInstance
+  ├─ android.view.inputmethod.InputMethodManager
+  │    Leaking: NO (DecorView↓ is not leaking and InputMethodManager is a singleton)
+  │    ↓ InputMethodManager.mNextServedView
+  ├─ com.android.internal.policy.DecorView
+  │    Leaking: NO (LinearLayout↓ is not leaking and View attached)
+  │    mContext instance of com.android.internal.policy.DecorContext, wrapping activity io.sweers.catchup.ui.activity.MainActivity with mDestroyed = false
+  │    Parent android.view.ViewRootImpl not a android.view.View
+  │    View#mParent is set
+  │    View#mAttachInfo is not null (view attached)
+  │    View.mWindowAttachCount = 1
+  │    ↓ DecorView.mContentRoot
+  ├─ android.widget.LinearLayout
+  │    Leaking: NO (MainActivity↓ is not leaking and View attached)
+  │    mContext instance of io.sweers.catchup.ui.activity.MainActivity with mDestroyed = false
+  │    View.parent com.android.internal.policy.DecorView attached as well
+  │    View#mParent is set
+  │    View#mAttachInfo is not null (view attached)
+  │    View.mWindowAttachCount = 1
+  │    ↓ LinearLayout.mContext
+  ├─ io.sweers.catchup.ui.activity.MainActivity
+  │    Leaking: NO (Activity#mDestroyed is false)
+  │    ↓ MainActivity.mActivityTransitionState
+  │                   ~~~~~~~~~~~~~~~~~~~~~~~~
+  ├─ android.app.ActivityTransitionState
+  │    Leaking: UNKNOWN
+  │    ↓ ActivityTransitionState.mExitingToView
+  │                              ~~~~~~~~~~~~~~
+  ├─ java.util.ArrayList
+  │    Leaking: UNKNOWN
+  │    ↓ ArrayList.elementData
+  │                ~~~~~~~~~~~
+  ├─ java.lang.Object[]
+  │    Leaking: UNKNOWN
+  │    ↓ array Object[].[1]
+  │                     ~~~
+  ├─ io.sweers.catchup.ui.widget.BadgedFourThreeImageView
+  │    Leaking: YES (View detached and has parent)
+  │    mContext instance of io.sweers.catchup.ui.activity.MainActivity with mDestroyed = false
+  │    View#mParent is set
+  │    View#mAttachInfo is null (view detached)
+  │    View.mWindowAttachCount = 16
+  │    ↓ BadgedFourThreeImageView.mParent
+  ├─ me.saket.inboxrecyclerview.InboxRecyclerView
+  │    Leaking: YES (BadgedFourThreeImageView↑ is leaking and View detached and has parent)
+  │    mContext instance of io.sweers.catchup.ui.activity.MainActivity with mDestroyed = false
+  │    View#mParent is set
+  │    View#mAttachInfo is null (view detached)
+  │    View.mWindowAttachCount = 1
+  │    ↓ InboxRecyclerView.mParent
+  ├─ androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+  │    Leaking: YES (InboxRecyclerView↑ is leaking and View detached and has parent)
+  │    mContext instance of io.sweers.catchup.ui.activity.MainActivity with mDestroyed = false
+  │    View#mParent is set
+  │    View#mAttachInfo is null (view detached)
+  │    View.mWindowAttachCount = 1
+  │    ↓ SwipeRefreshLayout.mListener
+  ╰→ io.sweers.catchup.ui.fragments.service.ServiceFragment
+  ​     Leaking: YES (SwipeRefreshLayout↑ is leaking and Fragment#mFragmentManager is null and ObjectWatcher was watching this)
+  ​     key = e2d6bd34-aa06-409d-a760-97137f9c285d
+  ​     watchDurationMillis = 302438
+  ​     retainedDurationMillis = 297437
+  ​     key = 3844c1b4-4249-4c80-acdc-f6cbd5ccc9be
+  , retainedHeapByteSize=3433)
+""".trimIndent()
