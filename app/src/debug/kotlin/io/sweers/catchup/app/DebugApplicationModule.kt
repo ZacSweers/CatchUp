@@ -29,6 +29,8 @@ import android.util.Log
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperPlugin
+import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.soloader.SoLoader
 import dagger.Module
 import dagger.Provides
@@ -39,9 +41,11 @@ import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import io.sweers.catchup.util.sdk
 import leakcanary.AppWatcher
 import leakcanary.LeakCanary
+import okhttp3.Interceptor
 import shark.AndroidReferenceMatchers
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
@@ -190,6 +194,25 @@ object DebugApplicationModule {
   @JvmStatic
   @Provides
   fun provideFlipperEnabled(application: Application): Boolean = FlipperUtils.shouldEnableFlipper(application)
+
+  @Provides
+  @JvmStatic
+  fun provideFlipperNetworkPlugin(): NetworkFlipperPlugin = NetworkFlipperPlugin()
+
+  @IntoSet
+  @Provides
+  @JvmStatic
+  fun bindFlipperNetworkPlugin(networkPlugin: NetworkFlipperPlugin): FlipperPlugin = networkPlugin
+
+  // TODO This should go at the end of the list. We can try to differentiate these by wrapping them
+  //  in a "ReadOnlyInterceptor" type that we sort at the interceptor injection site
+  @NetworkInterceptor
+  @IntoSet
+  @Provides
+  @JvmStatic
+  fun provideFlipperOkHttpInterceptor(networkPlugin: NetworkFlipperPlugin): Interceptor {
+    return FlipperOkhttpInterceptor(networkPlugin)
+  }
 
   @AsyncInitializers
   @JvmStatic
