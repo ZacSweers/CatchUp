@@ -26,10 +26,10 @@ import java.util.Locale
  */
 internal interface UnsplashApi {
 
-  @GET("/photos/curated")
+  @GET("/photos")
   fun getPhotos(
     @Query("page") page: Int = 1, // Default 1
-    @Query("per_page") pageSize: Int = 10, // Default 10
+    @Query("per_page") pageSize: Int = 25, // Default 10
     @Query("order_by") orderBy: OrderBy = OrderBy.LATEST // latest
   ): Single<List<UnsplashPhoto>>
 
