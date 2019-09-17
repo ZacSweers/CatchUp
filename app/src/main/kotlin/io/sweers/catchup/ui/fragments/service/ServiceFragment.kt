@@ -96,7 +96,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   val columnCount: Int = 1
 ) : BaseCatchupAdapter<VH>(), DataLoadingCallbacks {
 
-  companion object Blah {
+  companion object {
     const val TYPE_ITEM = 0
     const val TYPE_LOADING_MORE = -1
   }
