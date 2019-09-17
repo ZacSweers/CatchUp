@@ -29,14 +29,11 @@ import android.util.Log
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperPlugin
+import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin
 import com.facebook.soloader.SoLoader
-import com.facebook.stetho.Stetho
-import com.facebook.stetho.timber.StethoTree
 import dagger.Module
 import dagger.Provides
-import dagger.multibindings.ElementsIntoSet
 import dagger.multibindings.IntoSet
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
@@ -211,14 +208,6 @@ object DebugApplicationModule {
     }
   }
 
-  @AsyncInitializers
-  @JvmStatic
-  @IntoSet
-  @Provides
-  fun stethoInit(application: Application): () -> Unit = {
-    Stetho.initializeWithDefaults(application)
-  }
-
   @JvmStatic
   @IntoSet
   @Provides
@@ -232,21 +221,18 @@ object DebugApplicationModule {
   @JvmStatic
   @IntoSet
   @Provides
-  fun provideStethoTree(): Timber.Tree = StethoTree()
-
-  @JvmStatic
-  @ElementsIntoSet
-  @Provides
-  fun provideCrashOnErrorTree(): Set<Timber.Tree> {
-    // Using ElementsIntoSet because we may provide nothing!
-    return if (BuildConfig.CRASH_ON_TIMBER_ERROR) {
-      setOf(object : Timber.Tree() {
-        override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-          if (priority == Log.ERROR) {
-            throw RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
-          }
+  fun provideCrashOnErrorTree(flipperCrashReporter: CrashReporterPlugin): Timber.Tree {
+    return object : Timber.Tree() {
+      override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        if (priority == Log.ERROR) {
+          val exception = RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
+          // Show this in the Flipper heads up notification
+          flipperCrashReporter.sendExceptionMessage(
+              Thread.currentThread(),
+              exception
+          )
         }
-      })
-    } else emptySet()
+      }
+    }
   }
 }

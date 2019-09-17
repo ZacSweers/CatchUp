@@ -120,8 +120,6 @@ android {
       ext["enableBugsnag"] = false
       buildConfigField("String", "IMGUR_CLIENT_ACCESS_TOKEN",
           "\"${project.properties["catchup_imgur_access_token"]}\"")
-      buildConfigField("boolean", "CRASH_ON_TIMBER_ERROR",
-          "Boolean.parseBoolean(\"${project.properties["catchup.crashOnTimberError"]}\")")
     }
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
@@ -508,11 +506,6 @@ dependencies {
   implementation(deps.apollo.httpcache)
   implementation(deps.apollo.runtime)
   implementation(deps.apollo.rx2Support)
-
-  // Stetho
-  debugImplementation(deps.stetho.debug.core)
-  debugImplementation(deps.stetho.debug.okhttp)
-  debugImplementation(deps.stetho.debug.timber)
 
   // Flipper
   debugImplementation(deps.misc.debug.flipper)

@@ -79,7 +79,6 @@ object deps {
     const val okhttp = "4.2.0"
     const val retrofit = "2.6.1"
     const val spotless = "3.24.2"
-    const val stetho = "1.5.1"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
 
@@ -415,14 +414,6 @@ object deps {
 
     const val preferences = "com.f2prateek.rx.preferences2:rx-preferences:2.0.0"
     const val relay = "com.jakewharton.rxrelay2:rxrelay:2.1.1"
-  }
-
-  object stetho {
-    object debug {
-      const val core = "com.facebook.stetho:stetho:${versions.stetho}"
-      const val okhttp = "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
-      const val timber = "com.facebook.stetho:stetho-timber:${versions.stetho}"
-    }
   }
 
   object tikxml {
