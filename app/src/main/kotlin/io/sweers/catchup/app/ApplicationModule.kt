@@ -220,7 +220,6 @@ abstract class ApplicationModule {
         // Hardware bitmaps don't work with the saturation effect
         allowHardware(false)
         allowRgb565(isLowRamDevice)
-        crossfade(true)
         crossfade(300)
 
         componentRegistry {

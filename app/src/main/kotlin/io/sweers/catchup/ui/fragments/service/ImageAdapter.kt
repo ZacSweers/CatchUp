@@ -253,7 +253,7 @@ internal class ImageAdapter(
             }
             image.colorFilter = ColorMatrixColorFilter(startMatrix)
           } else {
-            crossfade(false)
+            crossfade(0)
           }
           listener(
               onSuccess = { _, _ ->

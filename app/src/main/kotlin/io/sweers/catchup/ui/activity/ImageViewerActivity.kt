@@ -138,10 +138,8 @@ class ImageViewerActivity : AppCompatActivity() {
           paddingPx = 1F,
           paddingColor = Color.TRANSPARENT
       ))
-      if (id == null) {
-        crossfade(true)
-      } else {
-        crossfade(false)
+      if (id != null) {
+        crossfade(0)
         listener(
             onError = { _, _ ->
               startPostponedEnterTransition()
