@@ -210,8 +210,8 @@ object DebugApplicationModule {
   @Provides
   @JvmStatic
   fun provideFlipperPreferencesPlugin(
-      @ApplicationContext context: Context,
-      @SharedPreferencesName name: String
+    @ApplicationContext context: Context,
+    @SharedPreferencesName name: String
   ): FlipperPlugin {
     return SharedPreferencesFlipperPlugin(context, name)
   }
