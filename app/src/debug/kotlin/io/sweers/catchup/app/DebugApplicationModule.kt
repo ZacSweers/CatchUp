@@ -199,47 +199,6 @@ object DebugApplicationModule {
   @Provides
   fun provideFlipperEnabled(application: Application): Boolean = FlipperUtils.shouldEnableFlipper(application)
 
-  @IntoSet
-  @Provides
-  @JvmStatic
-  fun provideFlipperDatabasesPlugin(@ApplicationContext context: Context): FlipperPlugin {
-    return DatabasesFlipperPlugin(context)
-  }
-
-  @IntoSet
-  @Provides
-  @JvmStatic
-  fun provideFlipperPreferencesPlugin(
-    @ApplicationContext context: Context,
-    @SharedPreferencesName name: String
-  ): FlipperPlugin {
-    return SharedPreferencesFlipperPlugin(context, name)
-  }
-
-  @Provides
-  @JvmStatic
-  fun provideFlipperCrashReporterPlugin(): CrashReporterPlugin = CrashReporterPlugin.getInstance()
-
-  @Provides
-  @JvmStatic
-  fun provideFlipperNetworkPlugin(): NetworkFlipperPlugin = NetworkFlipperPlugin()
-
-  // TODO This should use @Binds but I'm too lazy to refactor this into an abstract module class
-  @IntoSet
-  @Provides
-  @JvmStatic
-  fun bindFlipperNetworkPlugin(networkPlugin: NetworkFlipperPlugin): FlipperPlugin = networkPlugin
-
-  // TODO This should go at the end of the list. We can try to differentiate these by wrapping them
-  //  in a "ReadOnlyInterceptor" type that we sort at the interceptor injection site
-  @NetworkInterceptor
-  @IntoSet
-  @Provides
-  @JvmStatic
-  fun provideFlipperOkHttpInterceptor(networkPlugin: NetworkFlipperPlugin): Interceptor {
-    return FlipperOkhttpInterceptor(networkPlugin)
-  }
-
   @AsyncInitializers
   @JvmStatic
   @IntoSet

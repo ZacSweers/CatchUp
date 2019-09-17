@@ -17,6 +17,8 @@ package io.sweers.catchup.flipper
 
 import android.content.Context
 import com.facebook.flipper.core.FlipperPlugin
+import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin
+import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
@@ -73,6 +75,8 @@ abstract class FlipperModule {
       return NetworkFlipperPlugin()
     }
 
+    // TODO This should go at the end of the list. We can try to differentiate these by wrapping them
+    //  in a "ReadOnlyInterceptor" type that we sort at the interceptor injection site
     @IntoSet
     @JvmStatic
     @NetworkInterceptor
@@ -81,5 +85,17 @@ abstract class FlipperModule {
     fun provideOkHttpInspectorPluginInterceptor(plugin: NetworkFlipperPlugin): Interceptor {
       return FlipperOkhttpInterceptor(plugin)
     }
+
+    @IntoSet
+    @Provides
+    @JvmStatic
+    fun provideFlipperDatabasesPlugin(@ApplicationContext context: Context): FlipperPlugin {
+      return DatabasesFlipperPlugin(context)
+    }
+
+    @Provides
+    @JvmStatic
+    fun provideFlipperCrashReporterPlugin(): CrashReporterPlugin = CrashReporterPlugin.getInstance()
+
   }
 }
