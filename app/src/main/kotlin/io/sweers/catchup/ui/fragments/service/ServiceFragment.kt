@@ -205,11 +205,15 @@ class ServiceFragment : InjectingBaseFragment(),
     return if (service.meta().isVisual) {
       val spanConfig = (service.rootService() as VisualService).spanConfig()
       GridLayoutManager(context, spanConfig.spanCount).apply {
-        val resolver = spanConfig.spanSizeResolver ?: { position: Int ->
-          adapter.getItemColumnSpan(position)
+        val resolver = spanConfig.spanSizeResolver ?: { 1 }
+        val loadingAwareResolver = { position: Int ->
+          when (adapter.getItemViewType(position)) {
+            DisplayableItemAdapter.TYPE_LOADING_MORE -> adapter.columnCount
+            else -> resolver(position)
+          }
         }
         spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-          override fun getSpanSize(position: Int) = resolver(position)
+          override fun getSpanSize(position: Int) = loadingAwareResolver(position)
         }
       }
     } else {
@@ -230,7 +234,8 @@ class ServiceFragment : InjectingBaseFragment(),
     context: Context
   ): DisplayableItemAdapter<out DisplayableItem, ViewHolder> {
     if (service.meta().isVisual) {
-      val adapter = ImageAdapter(context) { item, holder, clicksChannel ->
+      val spanConfig = (service.rootService() as VisualService).spanConfig()
+      val adapter = ImageAdapter(context, spanConfig.spanCount) { item, holder, clicksChannel ->
         service.bindItemView(item.realItem(),
             holder,
             clicksChannel,
@@ -407,11 +412,11 @@ class ServiceFragment : InjectingBaseFragment(),
               isRestoring = false
               pageToRestoreTo = null
             })
-        .map { result ->
-          result.data.also {
-            nextPage = result.nextPageToken
+        .map { (data, nextPageToken, wasFresh) ->
+          data.also {
+            nextPage = nextPageToken
             currentPage = pageToRequest
-            if (result.wasFresh) {
+            if (wasFresh) {
               // If it was fresh data but we thought we were restoring (i.e. stale cache or
               // something), don't restore to to some now-random position
               pendingRVState = null

@@ -57,9 +57,10 @@ import kotlinx.coroutines.launch
 
 internal class ImageAdapter(
   context: Context,
+  spanCount: Int,
   private val bindDelegate: (ImageItem, ImageHolder, clicksChannel: SendChannel<UrlMeta>) -> Unit
 ) :
-  DisplayableItemAdapter<ImageItem, ViewHolder>(columnCount = 2),
+  DisplayableItemAdapter<ImageItem, ViewHolder>(columnCount = spanCount),
     DataLoadingSubject.DataLoadingCallbacks {
 
   companion object {
