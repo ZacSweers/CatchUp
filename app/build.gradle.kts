@@ -509,11 +509,6 @@ dependencies {
   implementation(deps.apollo.runtime)
   implementation(deps.apollo.rx2Support)
 
-  // Stetho
-  debugImplementation(deps.stetho.debug.core)
-  debugImplementation(deps.stetho.debug.okhttp)
-  debugImplementation(deps.stetho.debug.timber)
-
   // Flipper
   debugImplementation(deps.misc.debug.flipper)
   debugImplementation(deps.misc.debug.soLoader)

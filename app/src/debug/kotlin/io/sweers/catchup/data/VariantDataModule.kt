@@ -16,7 +16,6 @@
 package io.sweers.catchup.data
 
 import android.content.Context
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
@@ -49,13 +48,6 @@ object VariantDataModule {
     Timber.tag("OkHttp")
         .v(message)
   }
-
-  @Provides
-  @NetworkInterceptor
-  @IntoSet
-  @JvmStatic
-  @Singleton
-  internal fun provideStethoInterceptor(): Interceptor = StethoInterceptor()
 
 //  @Provides
 //  @NetworkInterceptor

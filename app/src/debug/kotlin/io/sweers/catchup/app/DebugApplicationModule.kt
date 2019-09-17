@@ -30,8 +30,6 @@ import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperPlugin
 import com.facebook.soloader.SoLoader
-import com.facebook.stetho.Stetho
-import com.facebook.stetho.timber.StethoTree
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.ElementsIntoSet
@@ -211,14 +209,6 @@ object DebugApplicationModule {
     }
   }
 
-  @AsyncInitializers
-  @JvmStatic
-  @IntoSet
-  @Provides
-  fun stethoInit(application: Application): () -> Unit = {
-    Stetho.initializeWithDefaults(application)
-  }
-
   @JvmStatic
   @IntoSet
   @Provides
@@ -228,11 +218,6 @@ object DebugApplicationModule {
   @IntoSet
   @Provides
   fun provideLumberYardTree(lumberYard: LumberYard): Timber.Tree = lumberYard.tree()
-
-  @JvmStatic
-  @IntoSet
-  @Provides
-  fun provideStethoTree(): Timber.Tree = StethoTree()
 
   @JvmStatic
   @ElementsIntoSet

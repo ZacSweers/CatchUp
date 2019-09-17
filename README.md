@@ -45,7 +45,7 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Kotlin
 - RxJava 2/AutoDispose
 - Debugging tooling as a first class citizen in the debug build
-- Leak Canary, Chuck, Scalpel, debug drawer, Stetho, bug reporting, the works
+- Leak Canary, Chuck, Scalpel, debug drawer, Flipper, bug reporting, the works
 - AndroidX/Jetpack
 - Dagger 2
 - One of the more interesting parts of CatchUp is that its service architecture is a Dagger-powered plugin system
