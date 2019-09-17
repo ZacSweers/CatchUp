@@ -121,7 +121,7 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   override fun onBackPressed() {
-    animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, 300)
+    animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, 200)
     setResultAndFinish()
   }
 
@@ -155,7 +155,7 @@ class ImageViewerActivity : AppCompatActivity() {
 
     activityBackgroundDrawable = rootLayout.background
     rootLayout.background = activityBackgroundDrawable
-    animateDimmingEnterExit(0, 255, 300)
+    animateDimmingEnterExit(0, 255, 200)
     if (id != null) {
       postponeEnterTransition()
     }
