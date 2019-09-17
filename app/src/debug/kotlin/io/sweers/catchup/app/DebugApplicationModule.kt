@@ -29,6 +29,7 @@ import android.util.Log
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperPlugin
+import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.soloader.SoLoader
@@ -197,8 +198,13 @@ object DebugApplicationModule {
 
   @Provides
   @JvmStatic
+  fun provideFlipperCrashReporterPlugin(): CrashReporterPlugin = CrashReporterPlugin.getInstance()
+
+  @Provides
+  @JvmStatic
   fun provideFlipperNetworkPlugin(): NetworkFlipperPlugin = NetworkFlipperPlugin()
 
+  // TODO This should use @Binds but I'm too lazy to refactor this into an abstract module class
   @IntoSet
   @Provides
   @JvmStatic
@@ -243,18 +249,20 @@ object DebugApplicationModule {
   fun provideLumberYardTree(lumberYard: LumberYard): Timber.Tree = lumberYard.tree()
 
   @JvmStatic
-  @ElementsIntoSet
+  @IntoSet
   @Provides
-  fun provideCrashOnErrorTree(): Set<Timber.Tree> {
-    // Using ElementsIntoSet because we may provide nothing!
-    return if (BuildConfig.CRASH_ON_TIMBER_ERROR) {
-      setOf(object : Timber.Tree() {
-        override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-          if (priority == Log.ERROR) {
-            throw RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
-          }
+  fun provideCrashOnErrorTree(flipperCrashReporter: CrashReporterPlugin): Timber.Tree {
+    return object : Timber.Tree() {
+      override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        if (priority == Log.ERROR) {
+          val exception = RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
+          // Show this in the Flipper heads up notification
+          flipperCrashReporter.sendExceptionMessage(
+              Thread.currentThread(),
+              exception
+          )
         }
-      })
-    } else emptySet()
+      }
+    }
   }
 }

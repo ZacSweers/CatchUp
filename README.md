@@ -97,11 +97,6 @@ Bug fixes are always welcome. Tests are too if you're into that kinda thing, but
 trying to make this project a shining icon of TDD. For new features or otherwise significant work,
 please discuss in an issue first.
 
-Note that by default, I have a Timber tree that crashes the app in the event of an error in debug
-(fix me now!). This may be problematic if you don't have services authenticated (especially Firebase
-and its ever shifting requirements), so you can disable this behavior via setting the `catchup.crashOnTimberError`
-property in the root `gradle.properties` file to `false`.
-
 For apollo-android's code generation: if you want to use a local installation of the `apollo-codegen`
 node module you'll need to make sure `0.19.` is installed and linked (`npm install -g apollo-codegen@0.19.1`). Otherwise,
 the gradle plugin should gracefully fallback to downloading it on demand.
