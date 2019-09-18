@@ -43,6 +43,7 @@ import io.sweers.catchup.util.isN
 import io.sweers.catchup.util.kotlin.applyOn
 import io.sweers.catchup.util.kotlin.getValue
 import io.sweers.catchup.util.kotlin.setValue
+import io.sweers.catchup.util.restartApp
 import io.sweers.catchup.util.truncateAt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -200,7 +201,7 @@ class DebugView(
       enableMockModeView.clicks()
           .collect {
             debugPreferences.mockModeEnabled = enableMockModeView.isChecked
-            ProcessPhoenix.triggerRebirth(context, Intent(context, LauncherActivity::class.java))
+            context.restartApp()
           }
     }
   }
