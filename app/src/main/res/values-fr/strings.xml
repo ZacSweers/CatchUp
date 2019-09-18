@@ -35,7 +35,7 @@
   <string name="title_activity_settings">Paramètres</string>
   <string name="title_activity_about">À propos</string>
   <string name="summarizing">Synthèse en cours…</string>
-  <string name="clear_cache_success">%sB vidé</string>
+  <string name="clear_cache_success">%s vidé</string>
   <string name="connection_issue">Erreur de connexion</string>
   <string name="api_issue">Erreur de l\'API</string>
   <string name="unknown_issue">Erreur inconnue</string>
