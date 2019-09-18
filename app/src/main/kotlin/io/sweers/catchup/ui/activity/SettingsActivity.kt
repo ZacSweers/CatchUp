@@ -188,11 +188,9 @@ class SettingsActivity : InjectingBaseActivity() {
         catchUpPreferences::reports.name -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
           catchUpPreferences.reports = isChecked
-          Snackbar.make(view!!, R.string.settings_reset, Snackbar.LENGTH_SHORT)
-              .setAction(R.string.undo) {
-                // TODO Maybe this should actually be a restart button
-                catchUpPreferences.reports = !isChecked
-                preference.isChecked = !isChecked
+          Snackbar.make(requireView(), R.string.settings_reset, Snackbar.LENGTH_LONG)
+              .setAction(R.string.restart) {
+                it.context.restartApp()
               }
               .show()
           return true
