@@ -15,11 +15,11 @@
  */
 package io.sweers.catchup.ui.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.commitNow
 import androidx.preference.CheckBoxPreference
@@ -28,6 +28,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
 import androidx.preference.children
 import com.google.android.material.snackbar.Snackbar
+import com.jakewharton.byteunits.BinaryByteUnit
 import com.uber.autodispose.autoDisposable
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -35,6 +36,7 @@ import dagger.android.support.AndroidSupportInjection
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BaseActivity
@@ -47,7 +49,7 @@ import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.isInNightMode
-import io.sweers.catchup.util.kotlin.format
+import io.sweers.catchup.util.restartApp
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNightMode
 import kotterknife.bindView
@@ -148,6 +150,7 @@ class SettingsActivity : InjectingBaseActivity() {
       themeNavBarPref?.isChecked = catchUpPreferences.themeNavigationBar
     }
 
+    @SuppressLint("SdCardPath") // False positive
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
       when (preference.key) {
         catchUpPreferences::smartlinkingGlobal.name -> {
@@ -197,36 +200,50 @@ class SettingsActivity : InjectingBaseActivity() {
         }
         CatchUpPreferences.ITEM_KEY_CLEAR_CACHE -> {
           Single.fromCallable {
-            // TODO would be nice to measure the size impact of this file ¯\_(ツ)_/¯
-            sharedPreferences.edit().clear().apply()
-            val cacheCleaned = activity!!.applicationContext.clearCache()
-            val networkCacheCleaned = with(cache.get()) {
+            val appContext = activity!!.applicationContext
+            var cleanedSize = 0L
+            val prefsRoot = File("/data/data/${BuildConfig.APPLICATION_ID}/shared_prefs")
+            if (prefsRoot.isDirectory) {
+              for (prefFile in prefsRoot.listFiles()!!) {
+                val fileSize = prefFile.length()
+                if (prefFile.delete()) {
+                  cleanedSize += fileSize
+                }
+              }
+            }
+            for (file in appContext.filesDir.walkBottomUp()) {
+              val fileSize = file.length()
+              if (file.delete()) {
+                cleanedSize += fileSize
+              }
+            }
+            cleanedSize += appContext.clearCache()
+            cleanedSize += with(cache.get()) {
               val initialSize = size()
               evictAll()
               return@with initialSize - size()
             }
-            val dbFile = File(database.openHelper.readableDatabase.path)
-            val initialDbSize = dbFile.length()
-            with(database.serviceDao()) {
-              nukeItems()
-              nukePages()
+            for (dbName in appContext.databaseList()) {
+              val dbFile = appContext.getDatabasePath(dbName)
+              val initialDbSize = dbFile.length()
+              if (appContext.deleteDatabase(dbName)) {
+                cleanedSize += initialDbSize
+              }
             }
-            // TODO figure out a way to bubble up clearable items from ad-hoc things like smmry
-//            with(database.smmryDao()) {
-//              nukeItems()
-//            }
-            val deletedFromDb = initialDbSize - dbFile.length()
-            val clearedLogs = lumberYard.cleanUp()
-            return@fromCallable cacheCleaned + deletedFromDb + networkCacheCleaned + clearedLogs
+            cleanedSize += lumberYard.cleanUp()
+            return@fromCallable cleanedSize
           }.subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .autoDisposable(activity as BaseActivity)
               .subscribe { cleanedAmount, throwable ->
-                // TODO Use jw's byte units lib, this isn't totally accurate
-                val errorMessage = throwable?.let {
+                val message = throwable?.let {
                   getString(R.string.settings_error_cleaning_cache)
-                } ?: getString(R.string.clear_cache_success, cleanedAmount.format())
-                Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show()
+                } ?: getString(R.string.clear_cache_success, BinaryByteUnit.format(cleanedAmount))
+                Snackbar.make(requireView(), message, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.restart) {
+                      it.context.restartApp()
+                    }
+                    .show()
               }
           return true
         }
