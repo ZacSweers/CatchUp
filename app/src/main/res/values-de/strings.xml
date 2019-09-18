@@ -33,7 +33,7 @@
   <string name="title_activity_settings">Einstellungen</string>
   <string name="title_activity_about">Über</string>
   <string name="summarizing">Zusammenfassen…</string>
-  <string name="clear_cache_success">Leerte %sB</string>
+  <string name="clear_cache_success">Leerte %s</string>
   <string name="connection_issue">Verbindungsproblem</string>
   <string name="api_issue">API Problem</string>
   <string name="unknown_issue">Unbekannter Fehler</string>

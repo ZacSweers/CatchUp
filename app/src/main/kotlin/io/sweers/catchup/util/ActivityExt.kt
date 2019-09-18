@@ -20,9 +20,12 @@ package io.sweers.catchup.util
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.jakewharton.processphoenix.ProcessPhoenix
 import io.sweers.catchup.CatchUpPreferences
+import io.sweers.catchup.ui.activity.LauncherActivity
 
 inline fun Activity.updateNightMode(catchUpPreferences: CatchUpPreferences) {
   val isCurrentlyInNightMode = isInNightMode()
@@ -47,4 +50,9 @@ fun Context.resolveActivity(): ComponentActivity {
     return baseContext.resolveActivity()
   }
   throw UnsupportedOperationException("Given context was not an activity! Is a $this")
+}
+
+fun Context.restartApp() {
+  ProcessPhoenix.triggerRebirth(this,
+      Intent(this, LauncherActivity::class.java))
 }

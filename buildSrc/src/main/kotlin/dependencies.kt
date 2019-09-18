@@ -350,6 +350,7 @@ object deps {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
     const val bugsnag = "com.bugsnag:bugsnag-android:4.19.1"
+    const val byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
     object debug {
       const val flipper = "com.facebook.flipper:flipper:0.23.5" // Update when https://github.com/facebook/flipper/issues/546 is fixed

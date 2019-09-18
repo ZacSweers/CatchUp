@@ -56,12 +56,6 @@ interface ServiceDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun putItems(vararg item: CatchUpItem): Completable
-
-  @Query("DELETE FROM pages")
-  fun nukePages()
-
-  @Query("DELETE FROM items")
-  fun nukeItems()
 }
 
 @Keep
