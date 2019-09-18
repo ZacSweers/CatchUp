@@ -29,14 +29,12 @@ import android.widget.FrameLayout
 import android.widget.Spinner
 import android.widget.Switch
 import android.widget.TextView
-import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.Lazy
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.flowbinding.viewScope
-import io.sweers.catchup.ui.activity.LauncherActivity
 import io.sweers.catchup.ui.logs.LogsDialog
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.isN
