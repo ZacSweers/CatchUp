@@ -487,6 +487,7 @@ dependencies {
   implementation(deps.autoDispose.core)
   implementation(deps.autoDispose.android)
   implementation(deps.autoDispose.lifecycle)
+  implementation(deps.misc.byteunits)
   implementation(deps.misc.flick)
   implementation(deps.misc.gestureViews)
   implementation(deps.misc.inboxRecyclerView)
