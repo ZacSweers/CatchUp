@@ -42,9 +42,6 @@ interface SmmryDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun putItem(item: SmmryStorageEntry)
-
-  @Query("DELETE FROM $TABLE")
-  fun nukeItems()
 }
 
 @Database(
