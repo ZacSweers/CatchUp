@@ -362,7 +362,7 @@ object deps {
       const val telescope = "com.mattprecious.telescope:telescope:2.1.0"
     }
 
-    const val flick = "me.saket:flick:1.4.0"
+    const val flick = "me.saket:flick:1.5.0"
     const val gestureViews = "com.alexvasilkov:gesture-views:2.2.0"
     const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta2"
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
