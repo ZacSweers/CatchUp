@@ -16,6 +16,7 @@
 package io.sweers.catchup.ui.activity
 
 import android.animation.Animator
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -29,10 +30,12 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.transition.Transition
+import android.transition.TransitionSet
 import android.transition.TransitionValues
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatActivity
@@ -52,7 +55,9 @@ import me.saket.flick.FlickDismissLayout
 import me.saket.flick.FlickGestureListener
 import me.saket.flick.InterceptResult
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.min
+import kotlin.math.sin
 
 class ImageViewerActivity : AppCompatActivity() {
 
@@ -187,25 +192,14 @@ class ImageViewerActivity : AppCompatActivity() {
     val callbacks = object : FlickCallbacks {
       @SuppressLint("NewApi")
       override fun onFlickDismiss(flickAnimationDuration: Long) {
-//        val rotation = flickDismissLayout.rotation
-//        flickDismissLayout.rotation = 0f
-//        imageView.rotation = rotation
-//        window.sharedElementReturnTransition.let { originalTransition ->
-//          window.sharedElementReturnTransition = TransitionSet().addTransition(originalTransition)
-//              .addTransition(Rotate().apply {
-//                captureStartValues(TransitionValues().apply {
-//                  values["catchup:imagereturn:rotation"] = flickDismissLayout.rotation
-//                  view = imageView
-//                })
-//                captureEndValues(TransitionValues().apply {
-//                  values["catchup:imagereturn:rotation"] = 0
-//                  view = imageView
-//                })
-//              })
-// //              .addTarget(originalTransition.targetIds.first())
-//              .setDuration(originalTransition.duration)
-//              .setInterpolator(originalTransition.interpolator)
-//        }
+        window.sharedElementReturnTransition.let { originalTransition ->
+          window.sharedElementReturnTransition = TransitionSet()
+              .addTransition(originalTransition)
+              .addTransition(FlickDismissRotate(imageView, flickDismissLayout))
+              .addTarget(R.id.image)
+              .setDuration(originalTransition.duration)
+              .setInterpolator(originalTransition.interpolator)
+        }
         if (id == null) {
           animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, flickAnimationDuration) {
             finish()
@@ -224,9 +218,7 @@ class ImageViewerActivity : AppCompatActivity() {
     val gestureListener = FlickGestureListener(
         context = this,
         contentHeightProvider = contentHeightProvider,
-        flickCallbacks = callbacks,
-        // Rotation disabled when using a shared element because we can't rotate back in transitions
-        rotationEnabled = id == null
+        flickCallbacks = callbacks
     )
 
     // Block flick gestures if the image can pan further.
@@ -305,19 +297,51 @@ private class CoilPaddingTransformation(
 }
 
 /**
- * This transition captures the rotation property of targets before and after
- * the scene change and animates any changes.
+ * We can't rely on rotation and scale of the [imageView] alone, and have to calculate scale and
+ * rotation ourselves.
  *
- * Copied from AOSP because it's private there for some reason
+ * - Rotation is because the [imageView]'s rotation is only relative to its parent, but in this case
+ *   [FlickDismissLayout] is its parent and _it_ is the one doing the rotation. So [imageView]'s
+ *   rotation is, for all intents and purposes, zero! To fix this - we manually account for the
+ *   parent's rotation, and then reverse-rotate [imageView] in the return transition back the equal
+ *   and opposite direction. This gives the effect of it "straightening" on the way back to the grid
+ *   view it resides in on the previous activity.
+ * - Scale is because when the [imageView] is rotated, it has a larger bounded box than its actual
+ *   reported dimensions. This means that while it reports itself as having a scale factor of 1,
+ *   the actual transition will use the bounded box size as "1", leaving the final target
+ *   proportionately bigger than the actual target end size. To fix this, we manually calculate the
+ *   bounded box and use it to infer the real target scale, where the width is the percentage of the
+ *   bounded box width (and same for height). This seems a bit weird, but it actually offsets the
+ *   default size it ends with and scales it down to what it actually should be sized at.
+ *
+ * I should email Mrs. Huebner and thank her for teaching me geometry in high school.
  */
-class Rotate : Transition() {
+class FlickDismissRotate(
+  private val imageView: ImageView,
+  private val flickDismissLayout: FlickDismissLayout
+) : Transition() {
 
-  override fun captureStartValues(transitionValues: TransitionValues) {
-    transitionValues.values[PROPNAME_ROTATION] = transitionValues.view.rotation
+  override fun captureStartValues(transitionValues: TransitionValues?) {
+    // Ignored
   }
 
   override fun captureEndValues(transitionValues: TransitionValues) {
-    transitionValues.values[PROPNAME_ROTATION] = transitionValues.view.rotation
+    transitionValues.view = imageView
+    val rotation = flickDismissLayout.rotation
+    transitionValues.values[PROPNAME_ROTATION] = -rotation
+    /*
+     * We want to find the size of the bounded box this takes up, which is bigger with the rotation.
+     * We also subtract two from the width for the padding we add in CoilPaddingTransformation above.
+     * As for calculations - image says it all https://stackoverflow.com/a/6657768/3323598
+     * Have to convert from rotation's degrees to rads for sin/cos
+     */
+    val height = imageView.measuredHeight
+    val width = imageView.measuredWidth - 2
+    val radians = rotation * (Math.PI / 180)
+    val fullBbHeight = (height * abs(cos(radians))) + (width * abs(sin(radians)))
+    val fullBbWidth = (height * abs(sin(radians))) + (width * abs(cos(radians)))
+    transitionValues.values[PROPNAME_SCALE_X] = width / fullBbWidth
+    transitionValues.values[PROPNAME_SCALE_Y] = height / fullBbHeight
   }
 
   override fun createAnimator(
@@ -329,18 +353,25 @@ class Rotate : Transition() {
       return null
     }
     val view = endValues.view
-    val startRotation = startValues.values[PROPNAME_ROTATION] as Float
-    val endRotation = endValues.values[PROPNAME_ROTATION] as Float
-    if (startRotation != endRotation) {
-      view.rotation = startRotation
-      return ObjectAnimator.ofFloat(view, View.ROTATION,
-          startRotation, endRotation)
+    val rotation = view.rotation
+    val delta = endValues.values[PROPNAME_ROTATION] as Float
+    if (rotation != delta) {
+      val finalScaleX = endValues.values[PROPNAME_SCALE_X] as Double
+      val finalScaleY = endValues.values[PROPNAME_SCALE_Y] as Double
+      return AnimatorSet().apply {
+        playTogether(
+            ObjectAnimator.ofFloat(view, View.ROTATION, rotation, delta),
+            ObjectAnimator.ofFloat(view, View.SCALE_X, view.scaleX, finalScaleX.toFloat()),
+            ObjectAnimator.ofFloat(view, View.SCALE_Y, view.scaleY, finalScaleY.toFloat())
+        )
+      }
     }
     return null
   }
 
   companion object {
-
-    private const val PROPNAME_ROTATION = "android:rotate:rotation"
+    private const val PROPNAME_ROTATION = "catchup:rotate:rotation"
+    private const val PROPNAME_SCALE_X = "catchup:scale:x"
+    private const val PROPNAME_SCALE_Y = "catchup:scale:y"
   }
 }
