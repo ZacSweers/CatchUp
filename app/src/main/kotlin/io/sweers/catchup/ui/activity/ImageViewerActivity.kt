@@ -224,9 +224,7 @@ class ImageViewerActivity : AppCompatActivity() {
     val gestureListener = FlickGestureListener(
         context = this,
         contentHeightProvider = contentHeightProvider,
-        flickCallbacks = callbacks,
-        // Rotation disabled when using a shared element because we can't rotate back in transitions
-        rotationEnabled = id == null
+        flickCallbacks = callbacks
     )
 
     // Block flick gestures if the image can pan further.
