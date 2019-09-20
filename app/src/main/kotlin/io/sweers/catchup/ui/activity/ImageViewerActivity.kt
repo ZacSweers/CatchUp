@@ -335,8 +335,8 @@ class FlickDismissRotate(
      * As for calculations - image says it all https://stackoverflow.com/a/6657768/3323598
      * Have to convert from rotation's degrees to rads for sin/cos
      */
-    val height = imageView.measuredHeight
-    val width = imageView.measuredWidth - 2
+    val height = imageView.measuredHeight + 2
+    val width = imageView.measuredWidth + 2
     val radians = rotation * (Math.PI / 180)
     val fullBbHeight = (height * abs(cos(radians))) + (width * abs(sin(radians)))
     val fullBbWidth = (height * abs(sin(radians))) + (width * abs(cos(radians)))
