@@ -23,7 +23,7 @@ import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
-import com.uber.autodispose.autoDisposable
+import com.uber.autodispose.autoDispose
 import dagger.Binds
 import dagger.Provides
 import dagger.multibindings.Multibinds
@@ -79,7 +79,7 @@ class MainActivity : InjectingBaseActivity() {
         .doOnStart(customTab) { bindCustomTabsService(this@MainActivity) }
         .doOnStop(customTab) { unbindCustomTabsService(this@MainActivity) }
         .doOnDestroy(customTab) { connectionCallback = null }
-        .autoDisposable(this)
+        .autoDispose(this)
         .subscribe()
 
     val viewGroup = viewContainer.forActivity(this)

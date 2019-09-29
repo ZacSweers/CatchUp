@@ -39,7 +39,7 @@ import com.jakewharton.madge.MadgeFrameLayout
 import com.jakewharton.scalpel.ScalpelFrameLayout
 import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.android.scope
-import com.uber.autodispose.autoDisposable
+import com.uber.autodispose.autoDispose
 import dagger.Lazy
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -125,7 +125,7 @@ internal class DebugViewContainer @Inject constructor(
         }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .autoDisposable(activity)
+        .autoDispose(activity)
         .subscribe {
           viewHolder.telescopeLayout.setLens(bugReportLens)
         }
@@ -171,7 +171,7 @@ internal class DebugViewContainer @Inject constructor(
         .doOnDispose {
           scope.cancel()
         }
-        .autoDisposable(activity)
+        .autoDispose(activity)
         .subscribe {
           scope.cancel()
         }
@@ -282,7 +282,7 @@ class DrawerTapTarget(
           e.setDisposable(listener)
           drawerLayout.addDrawerListener(listener)
         }
-            .autoDisposable(drawerLayout.scope())
+            .autoDispose(drawerLayout.scope())
             .subscribe {
               delegateTarget.onReady(runnable)
             }

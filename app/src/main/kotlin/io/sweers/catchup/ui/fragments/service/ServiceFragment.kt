@@ -44,7 +44,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.apollographql.apollo.exception.ApolloException
-import com.uber.autodispose.autoDisposable
+import com.uber.autodispose.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
@@ -465,7 +465,7 @@ class ServiceFragment : InjectingBaseFragment(),
           }
         }
         .doOnComplete { moreDataAvailable = false }
-        .autoDisposable(this)
+        .autoDispose(this)
         .subscribe({ loadResult ->
           applyOn(progress, errorView) { hide() }
           swipeRefreshLayout.show()

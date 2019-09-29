@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.rx2.Rx2Apollo
 import com.google.android.material.snackbar.Snackbar
-import com.uber.autodispose.autoDisposable
+import com.uber.autodispose.autoDispose
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -98,7 +98,7 @@ class ChangelogFragment : InjectableBaseFragment(), Scrollable {
         .doFinally {
           progressBar.hide()
         }
-        .autoDisposable(this)
+        .autoDispose(this)
         .subscribe { data, error ->
           if (data != null) {
             adapter.setItems(data)

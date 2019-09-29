@@ -41,7 +41,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.uber.autodispose.autoDisposable
+import com.uber.autodispose.autoDispose
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import io.noties.markwon.Markwon
@@ -102,7 +102,7 @@ class AboutActivity : InjectingBaseActivity() {
         .doOnStart(customTab) { bindCustomTabsService(this@AboutActivity) }
         .doOnStop(customTab) { unbindCustomTabsService(this@AboutActivity) }
         .doOnDestroy(customTab) { connectionCallback = null }
-        .autoDisposable(this)
+        .autoDispose(this)
         .subscribe()
 
     val viewGroup = viewContainer.forActivity(this)

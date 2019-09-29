@@ -22,7 +22,7 @@ import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetSequence.Listener
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
-import com.uber.autodispose.autoDisposable
+import com.uber.autodispose.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.sweers.catchup.base.ui.BaseActivity
 import io.sweers.catchup.injection.scopes.PerActivity
@@ -47,7 +47,7 @@ class Syllabus @Inject constructor(
     queue.buffer(queue.debounce(1, SECONDS))
         .delay { displaying.filter { !it } }
         .observeOn(mainThread())
-        .autoDisposable(activity)
+        .autoDispose(activity)
         .subscribe { requests ->
           show(requests)
         }

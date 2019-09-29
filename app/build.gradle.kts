@@ -510,6 +510,7 @@ dependencies {
 
   // Flipper
   debugImplementation(deps.misc.debug.flipper)
+  debugImplementation(deps.misc.debug.flipperNetwork)
   debugImplementation(deps.misc.debug.soLoader)
   debugImplementation(
       deps.misc.debug.guava) // To force a newer version that doesn't conflict ListenableFuture

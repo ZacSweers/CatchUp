@@ -31,7 +31,7 @@ import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.mattprecious.telescope.Lens
-import com.uber.autodispose.autoDisposable
+import com.uber.autodispose.autoDispose
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -211,7 +211,7 @@ internal class BugReportLens @Inject constructor(
               }
               .let { notificationManager.notify(notificationId, it.build()) }
         }
-        .autoDisposable(activity as BaseActivity)
+        .autoDispose(activity as BaseActivity)
         .subscribe { issueUrl, error ->
           issueUrl?.let {
             NotificationCompat.Builder(activity, channelId)

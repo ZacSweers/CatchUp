@@ -29,7 +29,7 @@ import androidx.preference.PreferenceGroup
 import androidx.preference.children
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.byteunits.BinaryByteUnit
-import com.uber.autodispose.autoDisposable
+import com.uber.autodispose.autoDispose
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.android.support.AndroidSupportInjection
@@ -234,7 +234,7 @@ class SettingsActivity : InjectingBaseActivity() {
             return@fromCallable cleanedSize
           }.subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
-              .autoDisposable(activity as BaseActivity)
+              .autoDispose(activity as BaseActivity)
               .subscribe { cleanedAmount, throwable ->
                 val message = throwable?.let {
                   getString(R.string.settings_error_cleaning_cache)
