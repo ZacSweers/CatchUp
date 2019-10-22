@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+plugins {
+  id("com.gradle.enterprise") version "3.0"
+}
+
 include(
     ":app",
     ":libraries:base-ui",
