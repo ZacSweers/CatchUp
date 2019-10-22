@@ -24,6 +24,7 @@
     android:background="#000000"
     android:orientation="vertical"
     android:transitionGroup="false"
+    android:clipChildren="false"
     >
 
   <me.saket.flick.FlickDismissLayout
@@ -38,7 +39,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:transitionName="@string/transition_image"
-        android:scaleType="center"
+        android:scaleType="centerCrop"
+        android:elevation="16dp"
         tools:ignore="ContentDescription"
         />
 
