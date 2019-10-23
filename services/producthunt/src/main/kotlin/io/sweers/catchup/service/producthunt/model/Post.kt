@@ -19,7 +19,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.sweers.catchup.util.e
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import org.threeten.bp.Instant
+import java.time.Instant
 
 /**
  * Models a post on Product Hunt.

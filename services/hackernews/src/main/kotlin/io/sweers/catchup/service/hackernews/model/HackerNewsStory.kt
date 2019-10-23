@@ -19,7 +19,7 @@ import androidx.annotation.Keep
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.Exclude
 import io.sweers.catchup.service.api.HasStableId
-import org.threeten.bp.Instant
+import java.time.Instant
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.annotation.AnnotationRetention.SOURCE

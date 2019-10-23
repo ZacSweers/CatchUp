@@ -35,6 +35,7 @@ android {
     vectorDrawables.useSupportLibrary = true
   }
   compileOptions {
+    setCoreLibraryDesugaringEnabled(true)
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
@@ -91,6 +92,5 @@ dependencies {
   api(project(":service-api"))
   api(deps.android.androidx.annotations)
   api(deps.dagger.runtime)
-  api(deps.misc.lazythreeten)
   api(deps.rx.java)
 }

@@ -33,8 +33,8 @@ import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.util.kotlin.switchIf
 import io.sweers.catchup.util.w
 import kotlinx.coroutines.channels.SendChannel
-import org.threeten.bp.Instant
-import org.threeten.bp.temporal.ChronoUnit
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import retrofit2.HttpException
 import java.io.IOException
 
