@@ -224,7 +224,6 @@ internal abstract class ViewModelModule {
 @Module
 internal object FragmentViewModelFactoryModule {
   @Provides
-  @JvmStatic
   fun viewModelFactory(
     viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, AssistedFactory>
   ): ViewModelProviderFactoryInstantiator {

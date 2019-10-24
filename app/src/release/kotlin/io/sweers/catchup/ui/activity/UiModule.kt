@@ -25,7 +25,6 @@ import io.sweers.catchup.injection.scopes.PerActivity
 object UiModule {
 
   @Provides
-  @JvmStatic
   @PerActivity
   internal fun provideViewContainer(): ViewContainer {
     return ViewContainer.DEFAULT

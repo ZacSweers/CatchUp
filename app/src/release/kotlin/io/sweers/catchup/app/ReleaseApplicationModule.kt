@@ -30,7 +30,6 @@ import kotlin.annotation.AnnotationRetention.BINARY
 @Module
 object ReleaseApplicationModule {
 
-  @JvmStatic
   @Provides
   fun provideObjectWatcher(): CatchUpObjectWatcher = CatchUpObjectWatcher.None
 
@@ -39,19 +38,16 @@ object ReleaseApplicationModule {
   private annotation class BugsnagKey
 
   @BugsnagKey
-  @JvmStatic
   @Provides
   fun provideBugsnagKey(): String = BuildConfig.BUGSNAG_KEY
 
   @Initializers
-  @JvmStatic
   @IntoSet
   @Provides
   fun bugsnagInit(application: Application, @BugsnagKey key: String): () -> Unit = {
     Bugsnag.init(application, key)
   }
 
-  @JvmStatic
   @IntoSet
   @Provides
   fun provideBugsnagTree(): Timber.Tree = BugsnagTree().also {

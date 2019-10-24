@@ -37,7 +37,6 @@ object SmmryModule {
   annotation class ForSmmry
 
   @Provides
-  @JvmStatic
   @ForSmmry
   internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
     return moshi.newBuilder()
@@ -46,7 +45,6 @@ object SmmryModule {
   }
 
   @Provides
-  @JvmStatic
   internal fun provideSmmryService(
     client: Lazy<OkHttpClient>,
     @ForSmmry moshi: Moshi
@@ -60,7 +58,6 @@ object SmmryModule {
   }
 
   @Provides
-  @JvmStatic
   internal fun provideDatabase(context: Context): SmmryDatabase {
     return Room.databaseBuilder(context.applicationContext,
         SmmryDatabase::class.java,
@@ -70,6 +67,5 @@ object SmmryModule {
   }
 
   @Provides
-  @JvmStatic
   internal fun provideSmmryDao(database: SmmryDatabase): SmmryDao = database.dao()
 }

@@ -53,20 +53,17 @@ internal object GithubApolloModule {
    * TODO this hits disk on startup -_-
    */
   @Provides
-  @JvmStatic
   @Singleton
   internal fun provideHttpCacheStore(@ApplicationContext context: Context): HttpCacheStore =
       DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
 
   @Provides
-  @JvmStatic
   @Singleton
   internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache =
       ApolloHttpCache(httpCacheStore, null)
 
   @Provides
   @InternalApi
-  @JvmStatic
   @Singleton
   internal fun provideGitHubOkHttpClient(
     client: OkHttpClient,
@@ -77,7 +74,6 @@ internal object GithubApolloModule {
       .build()
 
   @Provides
-  @JvmStatic
   @Singleton
   internal fun provideCacheKeyResolver(): CacheKeyResolver = object : CacheKeyResolver() {
     private val formatter = { id: String ->
@@ -106,13 +102,11 @@ internal object GithubApolloModule {
   }
 
   @Provides
-  @JvmStatic
   @Singleton
   internal fun provideNormalizedCacheFactory(): NormalizedCacheFactory<*> =
       LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION)
 
   @Provides
-  @JvmStatic
   @Singleton
   internal fun provideApolloClient(
     @InternalApi client: Lazy<OkHttpClient>,

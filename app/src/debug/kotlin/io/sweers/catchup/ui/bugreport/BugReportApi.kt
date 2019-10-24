@@ -68,7 +68,6 @@ data class GitHubIssue(
 internal object BugReportModule {
 
   @Provides
-  @JvmStatic
   @PerActivity
   internal fun provideImgurService(
     client: Lazy<OkHttpClient>,
@@ -88,7 +87,6 @@ internal object BugReportModule {
   }
 
   @Provides
-  @JvmStatic
   @PerActivity
   internal fun provideGithubIssueService(
     client: Lazy<OkHttpClient>,

@@ -26,7 +26,6 @@ import io.sweers.catchup.ui.bugreport.BugReportModule
 object UiModule {
 
   @Provides
-  @JvmStatic
   @PerActivity
   internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer =
       viewContainer

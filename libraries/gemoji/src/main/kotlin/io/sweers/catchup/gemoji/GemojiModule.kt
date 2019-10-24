@@ -26,7 +26,6 @@ import javax.inject.Singleton
 object GemojiModule {
 
   @Provides
-  @JvmStatic
   @Singleton
   internal fun provideGemojiDatabase(@ApplicationContext context: Context): GemojiDatabase {
     return Room.databaseBuilder(context, GemojiDatabase::class.java, "gemoji.db")
@@ -36,14 +35,12 @@ object GemojiModule {
   }
 
   @Provides
-  @JvmStatic
   @Singleton
   internal fun provideGemojiDao(gemojiDatabase: GemojiDatabase): GemojiDao {
     return gemojiDatabase.gemojiDao()
   }
 
   @Provides
-  @JvmStatic
   @Singleton
   fun provideEmojiMarkdownConverter(gemojiDao: GemojiDao): EmojiMarkdownConverter {
     return GemojiEmojiMarkdownConverter(gemojiDao)
