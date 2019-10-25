@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.app
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.app.Application.ActivityLifecycleCallbacks
@@ -134,7 +133,6 @@ object DebugApplicationModule {
   @Initializers
   @IntoSet
   @Provides
-  @SuppressLint("InlinedApi") // False positive
   fun strictModeInit(@StrictModeExecutor penaltyListenerExecutor: dagger.Lazy<ExecutorService>): () -> Unit = {
     StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
         .detectAll()
