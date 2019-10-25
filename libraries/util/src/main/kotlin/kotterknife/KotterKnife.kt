@@ -73,78 +73,6 @@ fun <V : Any> ViewHolder.bindView(id: Int,
     onBound: ((V) -> Unit)? = null)
     : ReadOnlyProperty<ViewHolder, V> = required(id, viewFinder, onBound)
 
-fun <V : Any> View.bindOptionalView(id: Int,
-    onBound: ((V?) -> Unit)? = null)
-    : ReadOnlyProperty<View, V?> = optional(id, viewFinder, onBound)
-
-fun <V : Any> Activity.bindOptionalView(id: Int,
-    onBound: ((V?) -> Unit)? = null)
-    : ReadOnlyProperty<Activity, V?> = optional(id, viewFinder, onBound)
-
-fun <V : Any> Dialog.bindOptionalView(id: Int,
-    onBound: ((V?) -> Unit)? = null)
-    : ReadOnlyProperty<Dialog, V?> = optional(id, viewFinder, onBound)
-
-fun <V : Any> DialogFragment.bindOptionalView(id: Int,
-    onBound: ((V?) -> Unit)? = null)
-    : ReadOnlyProperty<DialogFragment, V?> = optional(id, viewFinder, onBound)
-
-fun <V : Any> Fragment.bindOptionalView(id: Int,
-    onBound: ((V?) -> Unit)? = null)
-    : ReadOnlyProperty<Fragment, V?> = optional(id, viewFinder, onBound)
-
-fun <V : Any> ViewHolder.bindOptionalView(id: Int,
-    onBound: ((V?) -> Unit)? = null)
-    : ReadOnlyProperty<ViewHolder, V?> = optional(id, viewFinder, onBound)
-
-fun <V : Any> View.bindViews(vararg ids: Int,
-    onBound: ((List<V>) -> Unit)? = null)
-    : ReadOnlyProperty<View, List<V>> = required(ids, viewFinder, onBound)
-
-fun <V : Any> Activity.bindViews(vararg ids: Int,
-    onBound: ((List<V>) -> Unit)? = null)
-    : ReadOnlyProperty<Activity, List<V>> = required(ids, viewFinder, onBound)
-
-fun <V : Any> Dialog.bindViews(vararg ids: Int,
-    onBound: ((List<V>) -> Unit)? = null)
-    : ReadOnlyProperty<Dialog, List<V>> = required(ids, viewFinder, onBound)
-
-fun <V : Any> DialogFragment.bindViews(vararg ids: Int,
-    onBound: ((List<V>) -> Unit)? = null)
-    : ReadOnlyProperty<DialogFragment, List<V>> = required(ids, viewFinder, onBound)
-
-fun <V : Any> Fragment.bindViews(vararg ids: Int,
-    onBound: ((List<V>) -> Unit)? = null)
-    : ReadOnlyProperty<Fragment, List<V>> = required(ids, viewFinder, onBound)
-
-fun <V : Any> ViewHolder.bindViews(vararg ids: Int,
-    onBound: ((List<V>) -> Unit)? = null)
-    : ReadOnlyProperty<ViewHolder, List<V>> = required(ids, viewFinder, onBound)
-
-fun <V : Any> View.bindOptionalViews(vararg ids: Int,
-    onBound: ((List<V?>) -> Unit)? = null)
-    : ReadOnlyProperty<View, List<V>> = optional(ids, viewFinder, onBound)
-
-fun <V : Any> Activity.bindOptionalViews(vararg ids: Int,
-    onBound: ((List<V?>) -> Unit)? = null)
-    : ReadOnlyProperty<Activity, List<V>> = optional(ids, viewFinder, onBound)
-
-fun <V : Any> Dialog.bindOptionalViews(vararg ids: Int,
-    onBound: ((List<V?>) -> Unit)? = null)
-    : ReadOnlyProperty<Dialog, List<V>> = optional(ids, viewFinder, onBound)
-
-fun <V : Any> DialogFragment.bindOptionalViews(vararg ids: Int,
-    onBound: ((List<V?>) -> Unit)? = null)
-    : ReadOnlyProperty<DialogFragment, List<V>> = optional(ids, viewFinder, onBound)
-
-fun <V : Any> Fragment.bindOptionalViews(vararg ids: Int,
-    onBound: ((List<V?>) -> Unit)? = null)
-    : ReadOnlyProperty<Fragment, List<V>> = optional(ids, viewFinder, onBound)
-
-fun <V : Any> ViewHolder.bindOptionalViews(vararg ids: Int,
-    onBound: ((List<V?>) -> Unit)? = null)
-    : ReadOnlyProperty<ViewHolder, List<V>> = optional(ids, viewFinder, onBound)
-
 private val View.viewFinder: (Int) -> View?
   get() = { findViewById(it) }
 private val Activity.viewFinder: (Int) -> View?
@@ -171,31 +99,6 @@ private fun <T, V : Any> required(id: Int,
     finder: (Int) -> Any?,
     onBound: ((V) -> Unit)? = null) = LazyBinding<T, V>(onBound) { desc ->
   finder(id) as V? ?: viewNotFound(id, desc)
-}
-
-@Suppress("UNCHECKED_CAST")
-private fun <T, V : Any> optional(id: Int,
-    finder: (Int) -> Any?,
-    onBound: ((V?) -> Unit)? = null) = LazyBinding<T, V?>(onBound) {
-  finder(id) as V?
-}
-
-@Suppress("UNCHECKED_CAST")
-private fun <T, V : Any> required(ids: IntArray,
-    finder: (Int) -> Any?,
-    onBound: ((List<V>) -> Unit)? = null) = LazyBinding<T, List<V>>(onBound) { desc ->
-  ids.map {
-    finder(it) as V? ?: viewNotFound(it, desc)
-  }
-}
-
-@Suppress("UNCHECKED_CAST")
-private fun <T, V : Any> optional(ids: IntArray,
-    finder: (Int) -> Any?,
-    onBound: ((List<V>) -> Unit)? = null) = LazyBinding<T, List<V>>(onBound) { _ ->
-  ids.map {
-    finder(it) as V?
-  }.filterNotNull()
 }
 
 private object EMPTY
