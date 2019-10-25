@@ -35,37 +35,8 @@ import kotlin.reflect.KProperty
  * - Optional onBound callbacks for inits
  */
 
-/**
- * Implementers of this can provide a view given a [viewFinder].
- */
-interface ViewBindable {
-  /**
-   * @returns a view finder that can locate a view with a given resource ID parameter.
-   */
-  val viewFinder: (resId: Int) -> Any?
-}
-
-/**
- * Implementation of a [ViewBindable] for objects that delegate to a source [View], similar to a
- * [ViewHolder].
- */
-abstract class ViewDelegateBindable(source: View) : ViewBindable {
-  final override val viewFinder: (resId: Int) -> Any? = { source.findViewById(it) }
-}
-
-fun <V : Any> ViewBindable.bindView(id: Int,
-    onBound: ((V) -> Unit)? = null)
-    : ReadOnlyProperty<ViewBindable, V> = required(id, viewFinder, onBound)
-
 fun <V : Any> Fragment.onClick(id: Int, body: (V) -> Unit) {
   (viewFinder(id))?.setOnClickListener {
-    @Suppress("UNCHECKED_CAST")
-    body(it as V)
-  } ?: viewNotFound(id)
-}
-
-fun <V : Any> ViewBindable.onClick(id: Int, body: (V) -> Unit) {
-  (viewFinder(id) as? View)?.setOnClickListener {
     @Suppress("UNCHECKED_CAST")
     body(it as V)
   } ?: viewNotFound(id)
@@ -102,10 +73,6 @@ fun <V : Any> ViewHolder.bindView(id: Int,
     onBound: ((V) -> Unit)? = null)
     : ReadOnlyProperty<ViewHolder, V> = required(id, viewFinder, onBound)
 
-fun <V : Any> ViewBindable.bindOptionalView(id: Int,
-    onBound: ((V?) -> Unit)? = null)
-    : ReadOnlyProperty<ViewBindable, V?> = optional(id, viewFinder, onBound)
-
 fun <V : Any> View.bindOptionalView(id: Int,
     onBound: ((V?) -> Unit)? = null)
     : ReadOnlyProperty<View, V?> = optional(id, viewFinder, onBound)
@@ -130,10 +97,6 @@ fun <V : Any> ViewHolder.bindOptionalView(id: Int,
     onBound: ((V?) -> Unit)? = null)
     : ReadOnlyProperty<ViewHolder, V?> = optional(id, viewFinder, onBound)
 
-fun <V : Any> ViewBindable.bindViews(vararg ids: Int,
-    onBound: ((List<V>) -> Unit)? = null)
-    : ReadOnlyProperty<ViewBindable, List<V>> = required(ids, viewFinder, onBound)
-
 fun <V : Any> View.bindViews(vararg ids: Int,
     onBound: ((List<V>) -> Unit)? = null)
     : ReadOnlyProperty<View, List<V>> = required(ids, viewFinder, onBound)
@@ -157,10 +120,6 @@ fun <V : Any> Fragment.bindViews(vararg ids: Int,
 fun <V : Any> ViewHolder.bindViews(vararg ids: Int,
     onBound: ((List<V>) -> Unit)? = null)
     : ReadOnlyProperty<ViewHolder, List<V>> = required(ids, viewFinder, onBound)
-
-fun <V : Any> ViewBindable.bindOptionalViews(vararg ids: Int,
-    onBound: ((List<V?>) -> Unit)? = null)
-    : ReadOnlyProperty<ViewBindable, List<V>> = optional(ids, viewFinder, onBound)
 
 fun <V : Any> View.bindOptionalViews(vararg ids: Int,
     onBound: ((List<V?>) -> Unit)? = null)
