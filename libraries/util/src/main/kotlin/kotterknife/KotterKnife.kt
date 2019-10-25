@@ -17,11 +17,9 @@
 package kotterknife
 
 import android.app.Activity
-import android.app.Dialog
 import android.view.LayoutInflater
 import android.view.View
 import androidx.annotation.CheckResult
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewbinding.ViewBinding
@@ -59,14 +57,6 @@ fun <T : ViewBinding> Activity.setContentView(
   setContentView(it.root)
 }
 
-fun <V : Any> Dialog.bindView(id: Int,
-    onBound: ((V) -> Unit)? = null)
-    : ReadOnlyProperty<Dialog, V> = required(id, viewFinder, onBound)
-
-fun <V : Any> DialogFragment.bindView(id: Int,
-    onBound: ((V) -> Unit)? = null)
-    : ReadOnlyProperty<DialogFragment, V> = required(id, viewFinder, onBound)
-
 fun <V : Any> Fragment.bindView(id: Int,
     onBound: ((V) -> Unit)? = null)
     : ReadOnlyProperty<Fragment, V> = required(id, viewFinder, onBound)
@@ -77,12 +67,6 @@ fun <V : Any> ViewHolder.bindView(id: Int,
 
 private val View.viewFinder: (Int) -> View?
   get() = { findViewById(it) }
-private val Activity.viewFinder: (Int) -> View?
-  get() = { findViewById(it) }
-private val Dialog.viewFinder: (Int) -> View?
-  get() = { findViewById(it) }
-private val DialogFragment.viewFinder: (Int) -> View?
-  get() = { dialog?.findViewById(it) ?: view?.findViewById(it) }
 private val Fragment.viewFinder: (Int) -> View?
   get() = { view!!.findViewById(it) }
 private val ViewHolder.viewFinder: (Int) -> View?
