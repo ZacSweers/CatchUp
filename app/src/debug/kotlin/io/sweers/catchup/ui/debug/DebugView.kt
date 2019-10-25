@@ -26,14 +26,12 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.Spinner
-import android.widget.Switch
-import android.widget.TextView
 import dagger.Lazy
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.databinding.DebugViewContentBinding
 import io.sweers.catchup.flowbinding.viewScope
 import io.sweers.catchup.ui.logs.LogsDialog
 import io.sweers.catchup.util.d
@@ -49,7 +47,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotterknife.bindView
 import kotterknife.onSubviewClick
 import leakcanary.LeakCanary
 import okhttp3.OkHttpClient
@@ -70,32 +67,33 @@ class DebugView(
   private val debugPreferences: DebugPreferences,
   private val versionInfo: VersionInfo
 ) : FrameLayout(context, attrs) {
-  internal val icon by bindView<View>(R.id.debug_icon)
-  private val networkDelayView by bindView<Spinner>(R.id.debug_network_delay)
-  private val networkVarianceView by bindView<Spinner>(R.id.debug_network_variance)
-  private val networkErrorView by bindView<Spinner>(R.id.debug_network_error)
-  private val enableMockModeView by bindView<Switch>(R.id.debug_enable_mock_mode)
-  private val uiAnimationSpeedView by bindView<Spinner>(R.id.debug_ui_animation_speed)
-  private val uiPixelGridView by bindView<Switch>(R.id.debug_ui_pixel_grid)
-  private val uiPixelRatioView by bindView<Switch>(R.id.debug_ui_pixel_ratio)
-  private val uiScalpelView by bindView<Switch>(R.id.debug_ui_scalpel)
-  private val uiScalpelWireframeView by bindView<Switch>(R.id.debug_ui_scalpel_wireframe)
-  private val buildNameView by bindView<TextView>(R.id.debug_build_name)
-  private val buildCodeView by bindView<TextView>(R.id.debug_build_code)
-  private val buildDateView by bindView<TextView>(R.id.debug_build_date)
-  private val deviceMakeView by bindView<TextView>(R.id.debug_device_make)
-  private val deviceModelView by bindView<TextView>(R.id.debug_device_model)
-  private val deviceResolutionView by bindView<TextView>(R.id.debug_device_resolution)
-  private val deviceDensityView by bindView<TextView>(R.id.debug_device_density)
-  private val deviceReleaseView by bindView<TextView>(R.id.debug_device_release)
-  private val deviceApiView by bindView<TextView>(R.id.debug_device_api)
-  private val okHttpCacheMaxSizeView by bindView<TextView>(R.id.debug_okhttp_cache_max_size)
-  private val okHttpCacheWriteErrorView by bindView<TextView>(R.id.debug_okhttp_cache_write_error)
-  private val okHttpCacheRequestCountView by bindView<TextView>(
-      R.id.debug_okhttp_cache_request_count)
-  private val okHttpCacheNetworkCountView by bindView<TextView>(
-      R.id.debug_okhttp_cache_network_count)
-  private val okHttpCacheHitCountView by bindView<TextView>(R.id.debug_okhttp_cache_hit_count)
+  // Inflate all of the controls and inject them.
+  private val binding = DebugViewContentBinding.inflate(
+      LayoutInflater.from(context), this, true)
+  internal val icon = binding.debugIcon
+  private val networkDelayView = binding.debugNetworkDelay
+  private val networkVarianceView = binding.debugNetworkVariance
+  private val networkErrorView = binding.debugNetworkError
+  private val enableMockModeView = binding.debugEnableMockMode
+  private val uiAnimationSpeedView = binding.debugUiAnimationSpeed
+  private val uiPixelGridView = binding.debugUiPixelGrid
+  private val uiPixelRatioView = binding.debugUiPixelRatio
+  private val uiScalpelView = binding.debugUiScalpel
+  private val uiScalpelWireframeView = binding.debugUiScalpelWireframe
+  private val buildNameView = binding.debugBuildName
+  private val buildCodeView = binding.debugBuildCode
+  private val buildDateView = binding.debugBuildDate
+  private val deviceMakeView = binding.debugDeviceMake
+  private val deviceModelView = binding.debugDeviceModel
+  private val deviceResolutionView = binding.debugDeviceResolution
+  private val deviceDensityView = binding.debugDeviceDensity
+  private val deviceReleaseView = binding.debugDeviceRelease
+  private val deviceApiView = binding.debugDeviceApi
+  private val okHttpCacheMaxSizeView = binding.debugOkhttpCacheMaxSize
+  private val okHttpCacheWriteErrorView = binding.debugOkhttpCacheWriteError
+  private val okHttpCacheRequestCountView = binding.debugOkhttpCacheRequestCount
+  private val okHttpCacheNetworkCountView = binding.debugOkhttpCacheNetworkCount
+  private val okHttpCacheHitCountView = binding.debugOkhttpCacheHitCount
   private var isMockMode by debugPreferences::mockModeEnabled
   private var behavior: NetworkBehavior = NetworkBehavior.create().apply {
     setDelay(debugPreferences.networkDelay, MILLISECONDS)
@@ -109,10 +107,6 @@ class DebugView(
   private var scalpelWireframeEnabled by debugPreferences::scalpelWireframeDrawer
 
   init {
-    // Inflate all of the controls and inject them.
-    LayoutInflater.from(context)
-        .inflate(R.layout.debug_view_content, this)
-
     onSubviewClick<View>(R.id.debug_logs_show) {
       LogsDialog(ContextThemeWrapper(context, R.style.CatchUp), lumberYard).show()
     }

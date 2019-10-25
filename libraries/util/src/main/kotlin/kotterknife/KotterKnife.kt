@@ -49,10 +49,6 @@ fun <V : Any> View.onSubviewClick(id: Int, body: (V) -> Unit) {
   } ?: viewNotFound(id)
 }
 
-fun <V : Any> View.bindView(id: Int,
-    onBound: ((V) -> Unit)? = null)
-    : ReadOnlyProperty<View, V> = required(id, viewFinder, onBound)
-
 fun <V : Any> Activity.bindView(id: Int,
     onBound: ((V) -> Unit)? = null)
     : ReadOnlyProperty<Activity, V> = required(id, viewFinder, onBound)
