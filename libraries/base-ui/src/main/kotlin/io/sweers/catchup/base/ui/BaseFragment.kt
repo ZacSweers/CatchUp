@@ -61,7 +61,6 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), ScopeProvider, Backpr
 
   override fun onDestroyView() {
     dayOnlyContext = null
-    KotterKnife.reset(this)
     super.onDestroyView()
   }
 

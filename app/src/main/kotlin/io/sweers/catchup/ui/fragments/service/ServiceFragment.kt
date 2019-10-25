@@ -310,10 +310,10 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
         detailDisplayer.bind(recyclerView, useExistingFragment = true)
       }
     }
-    onClick<View>(R.id.retry_button) {
+    binding.retryButton.setOnClickListener {
       onRetry()
     }
-    onClick<ImageView>(R.id.error_image) {
+    binding.errorImage.setOnClickListener {
       onErrorClick(it)
     }
     @ColorInt val accentColor = ContextCompat.getColor(view.context, service.meta().themeColor)

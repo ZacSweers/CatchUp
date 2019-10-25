@@ -17,17 +17,21 @@
 
 package io.sweers.catchup.util
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import androidx.annotation.AttrRes
+import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
 import androidx.annotation.UiThread
 import androidx.core.content.ContextCompat
+import androidx.viewbinding.ViewBinding
 import java.io.File
 import java.io.IOException
 import java.util.Locale
@@ -142,3 +146,10 @@ val Resources.primaryLocale: Locale
       configuration.locales[0]
     } ?: configuration.locale
   }
+
+@CheckResult
+fun <T : ViewBinding> Activity.setContentView(
+    inflate: (LayoutInflater) -> T
+): T = inflate(layoutInflater).also {
+  setContentView(it.root)
+}
