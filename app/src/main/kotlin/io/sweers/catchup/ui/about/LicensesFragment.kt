@@ -54,6 +54,7 @@ import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsOrganization
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsUser
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
+import io.sweers.catchup.databinding.AboutHeaderItemBinding
 import io.sweers.catchup.flowbinding.safeOffer
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
@@ -426,8 +427,9 @@ internal data class OssGitHubEntry(val owner: String, val name: String)
 
 private class HeaderHolder(view: View) : ViewHolder(
     view), TemporaryScopeHolder by temporaryScope() {
-  val icon by bindView<ImageView>(R.id.icon)
-  val title by bindView<TextView>(R.id.title)
+  val binding = AboutHeaderItemBinding.bind(view)
+  val icon = binding.icon
+  val title = binding.title
 }
 
 internal sealed class OssBaseItem {

@@ -21,7 +21,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.annotation.CheckResult
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewbinding.ViewBinding
 import java.util.WeakHashMap
 import kotlin.properties.ReadOnlyProperty
@@ -61,16 +60,10 @@ fun <V : Any> Fragment.bindView(id: Int,
     onBound: ((V) -> Unit)? = null)
     : ReadOnlyProperty<Fragment, V> = required(id, viewFinder, onBound)
 
-fun <V : Any> ViewHolder.bindView(id: Int,
-    onBound: ((V) -> Unit)? = null)
-    : ReadOnlyProperty<ViewHolder, V> = required(id, viewFinder, onBound)
-
 private val View.viewFinder: (Int) -> View?
   get() = { findViewById(it) }
 private val Fragment.viewFinder: (Int) -> View?
   get() = { view!!.findViewById(it) }
-private val ViewHolder.viewFinder: (Int) -> View?
-  get() = { itemView.findViewById(it) }
 
 private fun viewNotFound(id: Int, desc: KProperty<*>? = null): Nothing {
   if (desc == null) {

@@ -23,8 +23,6 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -46,6 +44,10 @@ import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.ColorUtils
+import io.sweers.catchup.base.ui.InjectableBaseFragment
+import io.sweers.catchup.base.ui.InjectingBaseActivity
+import io.sweers.catchup.databinding.OrderServicesItemBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
@@ -54,9 +56,6 @@ import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
-import io.sweers.catchup.base.ui.InjectableBaseFragment
-import io.sweers.catchup.base.ui.InjectingBaseActivity
-import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
@@ -292,9 +291,10 @@ private class Adapter(
 }
 
 private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-  private val container by bindView<View>(R.id.container)
-  private val title by bindView<TextView>(R.id.title)
-  private val icon by bindView<ImageView>(R.id.icon)
+  private val binding = OrderServicesItemBinding.bind(itemView)
+  private val container = binding.container
+  private val title = binding.title
+  private val icon = binding.icon
   private val raise = itemView.resources.getDimensionPixelSize(R.dimen.touch_raise).toFloat()
   private val elevationAnimator = AnimatorInflater.loadStateListAnimator(itemView.context,
       R.animator.raise)
