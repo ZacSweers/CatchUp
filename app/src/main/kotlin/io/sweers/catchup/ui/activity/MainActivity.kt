@@ -28,8 +28,10 @@ import dagger.Binds
 import dagger.Provides
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.ServiceDao
+import io.sweers.catchup.databinding.ActivityMainBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerActivity
@@ -39,11 +41,9 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
 import io.sweers.catchup.ui.DetailDisplayer
-import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.ui.fragments.PagerFragment
 import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
-import kotterknife.bindView
 import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
@@ -64,7 +64,7 @@ class MainActivity : InjectingBaseActivity() {
   @Inject
   internal lateinit var fragmentFactory: FragmentFactory
 
-  internal val detailPage by bindView<ExpandablePageLayout>(R.id.detailPage)
+  internal lateinit var detailPage: ExpandablePageLayout
   internal var pagerFragment: PagerFragment? = null
 
   override fun setFragmentFactory() {
@@ -82,8 +82,8 @@ class MainActivity : InjectingBaseActivity() {
         .autoDispose(this)
         .subscribe()
 
-    val viewGroup = viewContainer.forActivity(this)
-    layoutInflater.inflate(R.layout.activity_main, viewGroup)
+    val binding = viewContainer.inflateBinding(ActivityMainBinding::inflate)
+    detailPage = binding.detailPage
 
     if (savedInstanceState == null) {
       supportFragmentManager.commitNow {

@@ -18,11 +18,14 @@ package io.sweers.catchup.base.ui
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.annotation.CheckResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
+import androidx.viewbinding.ViewBinding
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
 import com.uber.autodispose.lifecycle.LifecycleScopeProvider
@@ -108,6 +111,11 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
   protected inline fun <T> T.doOnDestroy(crossinline action: T.() -> Unit): T = apply {
     lifecycle().doOnDestroy(this) { action() }.subscribe()
   }
+
+  @CheckResult
+  protected inline fun <T : ViewBinding> ViewContainer.inflateBinding(
+      inflate: (LayoutInflater, ViewGroup, Boolean) -> T
+  ): T = inflate(layoutInflater, forActivity(this@BaseActivity), true)
 
   @CheckResult
   override fun lifecycle(): Observable<ActivityEvent> {

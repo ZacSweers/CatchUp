@@ -44,6 +44,7 @@ import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.databinding.ActivitySettingsBinding
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
@@ -67,8 +68,6 @@ class SettingsActivity : InjectingBaseActivity() {
     const val ARG_FROM_RECREATE = "fromRecreate"
   }
 
-  private val toolbar by bindView<Toolbar>(R.id.toolbar)
-
   /**
    * Backpress hijacks activity result codes, so store ours here in case
    */
@@ -76,13 +75,12 @@ class SettingsActivity : InjectingBaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val viewGroup = viewContainer.forActivity(this)
-    layoutInflater.inflate(R.layout.activity_settings, viewGroup)
-    setSupportActionBar(toolbar)
+    val binding = viewContainer.inflateBinding(ActivitySettingsBinding::inflate)
+    setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     if (!isInNightMode()) {
-      toolbar.setLightStatusBar()
+      binding.toolbar.setLightStatusBar()
     }
 
     if (savedInstanceState == null) {

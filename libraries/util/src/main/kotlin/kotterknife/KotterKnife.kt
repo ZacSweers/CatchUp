@@ -18,10 +18,13 @@ package kotterknife
 
 import android.app.Activity
 import android.app.Dialog
+import android.view.LayoutInflater
 import android.view.View
+import androidx.annotation.CheckResult
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.viewbinding.ViewBinding
 import java.util.WeakHashMap
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -49,9 +52,12 @@ fun <V : Any> View.onSubviewClick(id: Int, body: (V) -> Unit) {
   } ?: viewNotFound(id)
 }
 
-fun <V : Any> Activity.bindView(id: Int,
-    onBound: ((V) -> Unit)? = null)
-    : ReadOnlyProperty<Activity, V> = required(id, viewFinder, onBound)
+@CheckResult
+fun <T : ViewBinding> Activity.setContentView(
+    inflate: (LayoutInflater) -> T
+): T = inflate(layoutInflater).also {
+  setContentView(it.root)
+}
 
 fun <V : Any> Dialog.bindView(id: Int,
     onBound: ((V) -> Unit)? = null)
