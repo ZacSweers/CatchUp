@@ -60,6 +60,7 @@ object DebugApplicationModule {
    * Disabled on API 28 because there's a pretty vicious memory leak that constantly triggers
    * https://github.com/square/leakcanary/issues/1081
    */
+  @JvmStatic // https://github.com/google/dagger/issues/1648
   @LeakCanaryEnabled
   @Provides
   fun provideLeakCanaryEnabled(): Boolean = Build.VERSION.SDK_INT != 28
@@ -179,6 +180,7 @@ object DebugApplicationModule {
   @Retention(BINARY)
   private annotation class FlipperEnabled
 
+  @JvmStatic // https://github.com/google/dagger/issues/1648
   @FlipperEnabled
   @Provides
   fun provideFlipperEnabled(application: Application): Boolean {
