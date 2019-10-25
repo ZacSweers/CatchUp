@@ -107,10 +107,10 @@ class DebugView(
   private var scalpelWireframeEnabled by debugPreferences::scalpelWireframeDrawer
 
   init {
-    onSubviewClick<View>(R.id.debug_logs_show) {
+    binding.debugLogsShow.setOnClickListener {
       LogsDialog(ContextThemeWrapper(context, R.style.CatchUp), lumberYard).show()
     }
-    onSubviewClick<View>(R.id.debug_leaks_show) {
+    binding.debugLeaksShow.setOnClickListener {
       startDebugActivity(LeakCanary.newLeakDisplayActivityIntent())
     }
 //    onSubviewClick<View>(R.id.debug_network_logs) {

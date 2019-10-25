@@ -42,13 +42,6 @@ fun <V : Any> Fragment.onClick(id: Int, body: (V) -> Unit) {
   } ?: viewNotFound(id)
 }
 
-fun <V : Any> View.onSubviewClick(id: Int, body: (V) -> Unit) {
-  viewFinder(id)?.setOnClickListener {
-    @Suppress("UNCHECKED_CAST")
-    body(it as V)
-  } ?: viewNotFound(id)
-}
-
 @CheckResult
 fun <T : ViewBinding> Activity.setContentView(
     inflate: (LayoutInflater) -> T
@@ -60,8 +53,6 @@ fun <V : Any> Fragment.bindView(id: Int,
     onBound: ((V) -> Unit)? = null)
     : ReadOnlyProperty<Fragment, V> = required(id, viewFinder, onBound)
 
-private val View.viewFinder: (Int) -> View?
-  get() = { findViewById(it) }
 private val Fragment.viewFinder: (Int) -> View?
   get() = { view!!.findViewById(it) }
 
