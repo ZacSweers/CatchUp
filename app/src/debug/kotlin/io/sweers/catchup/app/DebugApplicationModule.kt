@@ -60,12 +60,11 @@ object DebugApplicationModule {
    * Disabled on API 28 because there's a pretty vicious memory leak that constantly triggers
    * https://github.com/square/leakcanary/issues/1081
    */
+  @JvmStatic // https://github.com/google/dagger/issues/1648
   @LeakCanaryEnabled
-  @JvmStatic
   @Provides
   fun provideLeakCanaryEnabled(): Boolean = Build.VERSION.SDK_INT != 28
 
-  @JvmStatic
   @Provides
   fun provideObjectWatcher(@LeakCanaryEnabled leakCanaryEnabled: Boolean): CatchUpObjectWatcher {
     return if (leakCanaryEnabled) {
@@ -79,7 +78,6 @@ object DebugApplicationModule {
     }
   }
 
-  @JvmStatic
   @Provides
   fun provideLeakCanaryConfig(@LeakCanaryEnabled leakCanaryEnabled: Boolean): LeakCanary.Config {
     return if (leakCanaryEnabled) {
@@ -90,7 +88,6 @@ object DebugApplicationModule {
   }
 
   @Initializers
-  @JvmStatic
   @IntoSet
   @Provides
   fun leakCanaryInit(
@@ -131,12 +128,10 @@ object DebugApplicationModule {
   private annotation class StrictModeExecutor
 
   @StrictModeExecutor
-  @JvmStatic
   @Provides
   fun strictModeExecutor(): ExecutorService = Executors.newSingleThreadExecutor()
 
   @Initializers
-  @JvmStatic
   @IntoSet
   @Provides
   @SuppressLint("InlinedApi") // False positive
@@ -185,8 +180,8 @@ object DebugApplicationModule {
   @Retention(BINARY)
   private annotation class FlipperEnabled
 
+  @JvmStatic // https://github.com/google/dagger/issues/1648
   @FlipperEnabled
-  @JvmStatic
   @Provides
   fun provideFlipperEnabled(application: Application): Boolean {
     return if (Build.VERSION.SDK_INT == 28) {
@@ -198,7 +193,6 @@ object DebugApplicationModule {
   }
 
   @AsyncInitializers
-  @JvmStatic
   @IntoSet
   @Provides
   fun flipperInit(
@@ -215,17 +209,14 @@ object DebugApplicationModule {
     }
   }
 
-  @JvmStatic
   @IntoSet
   @Provides
   fun provideDebugTree(): Timber.Tree = Timber.DebugTree()
 
-  @JvmStatic
   @IntoSet
   @Provides
   fun provideLumberYardTree(lumberYard: LumberYard): Timber.Tree = lumberYard.tree()
 
-  @JvmStatic
   @IntoSet
   @Provides
   fun provideCrashOnErrorTree(flipperCrashReporter: CrashReporterPlugin): Timber.Tree {

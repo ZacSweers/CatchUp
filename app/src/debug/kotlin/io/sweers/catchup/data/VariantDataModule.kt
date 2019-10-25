@@ -42,7 +42,6 @@ object VariantDataModule {
   @Provides
   @NetworkInterceptor
   @IntoSet
-  @JvmStatic
   @Singleton
   internal fun provideLoggingInterceptor(): Interceptor = httpLoggingInterceptor(BASIC) { message ->
     Timber.tag("OkHttp")
@@ -52,14 +51,12 @@ object VariantDataModule {
 //  @Provides
 //  @NetworkInterceptor
 //  @IntoSet
-//  @JvmStatic
 //  @Singleton
 //  internal fun provideChuckInterceptor(@ApplicationContext context: Context): Interceptor =
 //      ChuckInterceptor(context)
 
   @Provides
   @IntoSet
-  @JvmStatic
   @Singleton
   internal fun provideMockDataInterceptor(
     @ApplicationContext context: Context,
