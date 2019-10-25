@@ -51,6 +51,7 @@ import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.databinding.ActivityGenericContainerBinding
+import io.sweers.catchup.databinding.FragmentAboutBinding
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
@@ -119,7 +120,7 @@ class AboutActivity : InjectingBaseActivity() {
   abstract class Module : ActivityModule<AboutActivity>
 }
 
-class AboutFragment : InjectingBaseFragment() {
+class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
 
   companion object {
     private const val FADE_PERCENT = 0.75F
@@ -133,26 +134,20 @@ class AboutFragment : InjectingBaseFragment() {
   @Inject
   internal lateinit var versionInfo: VersionInfo
 
-  private val rootLayout by bindView<CoordinatorLayout>(R.id.about_fragment_root)
-  private val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
-  private val bannerContainer by bindView<View>(R.id.banner_container)
-  private val bannerIcon by bindView<ImageView>(R.id.banner_icon)
-  private val aboutText by bindView<TextView>(R.id.banner_text)
-  private val title by bindView<TextView>(R.id.banner_title)
-  private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
-  private val toolbar by bindView<Toolbar>(R.id.toolbar)
-  private val viewPager by bindView<ViewPager2>(R.id.view_pager) {
-    it.offscreenPageLimit = 1
-  }
+  private val rootLayout get() = binding.aboutFragmentRoot
+  private val appBarLayout get() = binding.appbarlayout
+  private val bannerContainer get() = binding.bannerContainer
+  private val bannerIcon get() = binding.bannerIcon
+  private val aboutText get() = binding.bannerText
+  private val title get() = binding.bannerTitle
+  private val tabLayout get() = binding.tabLayout
+  private val toolbar get() = binding.toolbar
+  private val viewPager get() = binding.viewPager
 
   private lateinit var compositeClickSpan: (String) -> Set<Any>
 
-  override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View =
-      inflater.inflate(R.layout.fragment_about, container, false)
+  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAboutBinding =
+      FragmentAboutBinding::inflate
 
   override fun onSaveInstanceState(outState: Bundle) {
     (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior?.let { behavior ->
@@ -166,6 +161,7 @@ class AboutFragment : InjectingBaseFragment() {
   @SuppressLint("SetTextI18n")
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    viewPager.offscreenPageLimit = 1
     val pagerAdapter = object : FragmentStateAdapter(childFragmentManager, lifecycle) {
       private val screens = SparseArray<Fragment>()
 

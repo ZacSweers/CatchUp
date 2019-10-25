@@ -50,6 +50,7 @@ import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.databinding.FragmentServiceBinding
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
@@ -131,7 +132,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   }
 }
 
-class ServiceFragment : InjectingBaseFragment(),
+class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
     SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
 
   companion object {
@@ -142,12 +143,12 @@ class ServiceFragment : InjectingBaseFragment(),
         }
   }
 
-  private val errorView by bindView<View>(R.id.error_container)
-  private val errorTextView by bindView<TextView>(R.id.error_message)
-  private val errorImage by bindView<ImageView>(R.id.error_image)
-  private val recyclerView by bindView<InboxRecyclerView>(R.id.list)
-  private val progress by bindView<ProgressBar>(R.id.progress)
-  private val swipeRefreshLayout by bindView<SwipeRefreshLayout>(R.id.refresh)
+  private val errorView get() = binding.errorContainer
+  private val errorTextView get() = binding.errorMessage
+  private val errorImage get() = binding.errorImage
+  private val recyclerView get() = binding.list
+  private val progress get() = binding.progress
+  private val swipeRefreshLayout get() = binding.refresh
 
   private lateinit var layoutManager: LinearLayoutManager
   private lateinit var adapter: DisplayableItemAdapter<out DisplayableItem, ViewHolder>
@@ -182,13 +183,8 @@ class ServiceFragment : InjectingBaseFragment(),
 
   override fun isDataLoading(): Boolean = dataLoading
 
-  override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    return inflater.inflate(R.layout.fragment_service, container, false)
-  }
+  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentServiceBinding =
+      FragmentServiceBinding::inflate
 
   override fun onAttach(context: Context) {
     super.onAttach(context)

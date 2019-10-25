@@ -55,6 +55,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.changes.ChangelogHelper
+import io.sweers.catchup.databinding.FragmentPagerBinding
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
@@ -84,7 +85,7 @@ data class ServiceHandler(
   val instantiator: () -> Fragment
 )
 
-class PagerFragment : InjectingBaseFragment() {
+class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
 
   companion object {
     private const val SETTINGS_ACTIVITY_REQUEST = 100
@@ -99,13 +100,11 @@ class PagerFragment : InjectingBaseFragment() {
   @Inject
   lateinit var catchUpPreferences: CatchUpPreferences
 
-  private val rootLayout by bindView<CoordinatorLayout>(R.id.pager_fragment_root)
-  private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
-  private val viewPager by bindView<ViewPager2>(R.id.view_pager) {
-    it.offscreenPageLimit = 1
-  }
-  private val toolbar by bindView<Toolbar>(R.id.toolbar)
-  val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
+  private val rootLayout get() = binding.pagerFragmentRoot
+  private val tabLayout get() = binding.tabLayout
+  private val viewPager get() = binding.viewPager
+  private val toolbar get() = binding.toolbar
+  val appBarLayout get() = binding.appbarlayout
 
   private val argbEvaluator = ArgbEvaluator()
   private var statusBarColorAnimator: ValueAnimator? = null
@@ -124,17 +123,12 @@ class PagerFragment : InjectingBaseFragment() {
     }
   }
 
-  override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    return inflater.inflate(R.layout.fragment_pager, container, false)
-  }
+  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentPagerBinding =
+      FragmentPagerBinding::inflate
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-
+    viewPager.offscreenPageLimit = 1
     val pagerAdapter = object : FragmentStateAdapter(childFragmentManager, lifecycle) {
       private val registeredFragments = SparseArray<Fragment>()
 

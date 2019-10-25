@@ -55,6 +55,7 @@ import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsUser
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
 import io.sweers.catchup.databinding.AboutHeaderItemBinding
+import io.sweers.catchup.databinding.FragmentLicensesBinding
 import io.sweers.catchup.flowbinding.safeOffer
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
@@ -98,13 +99,14 @@ import kotterknife.bindView
 import okio.buffer
 import okio.source
 import javax.inject.Inject
+import kotlin.LazyThreadSafetyMode.NONE
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 /**
  * A fragment that displays oss licenses.
  */
-class LicensesFragment : InjectableBaseFragment(), Scrollable {
+class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scrollable {
 
   @Inject
   lateinit var apolloClient: ApolloClient
@@ -118,22 +120,17 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
   @Inject
   internal lateinit var markdownConverter: EmojiMarkdownConverter
 
-  private val dimenSize by lazy {
+  private val dimenSize by lazy(NONE) {
     resources.getDimensionPixelSize(R.dimen.avatar)
   }
-  private val progressBar by bindView<ProgressBar>(R.id.progress)
-  private val recyclerView by bindView<RecyclerView>(R.id.list)
+  private val progressBar get() = binding.progress
+  private val recyclerView get() = binding.list
 
   private lateinit var adapter: Adapter
   private lateinit var layoutManager: StickyHeadersLinearLayoutManager<Adapter>
 
-  override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    return inflater.inflate(layout.fragment_licenses, container, false)
-  }
+  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLicensesBinding =
+      FragmentLicensesBinding::inflate
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)

@@ -42,6 +42,10 @@ import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.smmry.SmmryModule.ForSmmry
+import io.sweers.catchup.smmry.databinding.FragmentSmmryBinding
+import io.sweers.catchup.smmry.model.ApiRejection
+import io.sweers.catchup.smmry.model.IncorrectVariables
+import io.sweers.catchup.smmry.model.InternalError
 import io.sweers.catchup.smmry.model.SmmryDao
 import io.sweers.catchup.smmry.model.SmmryRequestBuilder
 import io.sweers.catchup.smmry.model.SmmryResponse
@@ -57,7 +61,7 @@ import javax.inject.Inject
 /**
  * Overlay fragment for displaying Smmry API results.
  */
-class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
+class SmmryFragment : InjectableBaseFragment<FragmentSmmryBinding>(), ScrollableContent {
 
   companion object {
     private const val ID_TITLE = "smmryfragment.title"
@@ -93,12 +97,12 @@ class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
   @Inject
   lateinit var smmryDao: SmmryDao
 
-  private val loadingView by bindView<View>(R.id.loading_view)
-  private val lottieView by bindView<LottieAnimationView>(R.id.smmry_loading)
-  private val content by bindView<NestedScrollView>(R.id.content_container)
-  private val tags by bindView<TextView>(R.id.tags)
-  private val title by bindView<TextView>(R.id.title)
-  private val summary by bindView<TextView>(R.id.summary)
+  private val loadingView get() = binding.loadingView
+  private val lottieView get() = binding.smmryLoading
+  private val content get() = binding.contentContainer
+  private val tags get() = binding.tags
+  private val title get() = binding.title
+  private val summary get() = binding.summary
 
   private lateinit var id: String
   private lateinit var info: SummarizationInfo
@@ -132,13 +136,8 @@ class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
     }
   }
 
-  override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    return inflater.inflate(R.layout.fragment_smmry, container, false)
-  }
+  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSmmryBinding =
+      FragmentSmmryBinding::inflate
 
   @SuppressLint("RestrictedApi") // False positive
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

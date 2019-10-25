@@ -20,9 +20,7 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -33,12 +31,12 @@ import io.sweers.catchup.service.hackernews.FragmentViewModelFactoryModule.ViewM
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Failure
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Loading
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Success
+import io.sweers.catchup.service.hackernews.databinding.HackerNewsStoryBinding
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotterknife.bindView
 import javax.inject.Inject
 
 internal class HackerNewsCommentsFragment @Inject constructor(
@@ -50,9 +48,10 @@ internal class HackerNewsCommentsFragment @Inject constructor(
     const val ARG_DETAIL_TITLE = "detailTitle"
   }
 
-  private val list by bindView<RecyclerView>(R.id.list)
-  private val progress by bindView<ProgressBar>(R.id.progress)
-  private val toolbar by bindView<Toolbar>(R.id.toolbar)
+  private lateinit var binding: HackerNewsStoryBinding
+  private val list get() = binding.list
+  private val progress get() = binding.progress
+  private val toolbar get() = binding.toolbar
   private val viewModel: HackerNewsCommentsViewModel by viewModels { viewModelFactoryInstantiator.create(this) }
 
   override fun onCreateView(
@@ -60,7 +59,8 @@ internal class HackerNewsCommentsFragment @Inject constructor(
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    return inflater.inflate(R.layout.hacker_news_story, container, false)
+    binding = HackerNewsStoryBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

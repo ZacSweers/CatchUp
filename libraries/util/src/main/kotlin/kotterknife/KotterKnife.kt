@@ -49,10 +49,6 @@ fun <T : ViewBinding> Activity.setContentView(
   setContentView(it.root)
 }
 
-fun <V : Any> Fragment.bindView(id: Int,
-    onBound: ((V) -> Unit)? = null)
-    : ReadOnlyProperty<Fragment, V> = required(id, viewFinder, onBound)
-
 private val Fragment.viewFinder: (Int) -> View?
   get() = { view!!.findViewById(it) }
 
@@ -62,13 +58,6 @@ private fun viewNotFound(id: Int, desc: KProperty<*>? = null): Nothing {
   } else {
     throw IllegalStateException("View ID $id for '${desc.name}' not found.")
   }
-}
-
-@Suppress("UNCHECKED_CAST")
-private fun <T, V : Any> required(id: Int,
-    finder: (Int) -> Any?,
-    onBound: ((V) -> Unit)? = null) = LazyBinding<T, V>(onBound) { desc ->
-  finder(id) as V? ?: viewNotFound(id, desc)
 }
 
 private object EMPTY

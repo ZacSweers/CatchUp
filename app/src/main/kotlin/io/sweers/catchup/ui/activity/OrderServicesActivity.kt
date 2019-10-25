@@ -47,6 +47,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.base.ui.InjectingBaseActivity
+import io.sweers.catchup.databinding.FragmentOrderServicesBinding
 import io.sweers.catchup.databinding.OrderServicesItemBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
@@ -86,7 +87,7 @@ class OrderServicesActivity : InjectingBaseActivity() {
   abstract inner class Module : ActivityModule<OrderServicesActivity>
 }
 
-class OrderServicesFragment : InjectableBaseFragment() {
+class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBinding>() {
 
   @Inject
   lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
@@ -96,9 +97,9 @@ class OrderServicesFragment : InjectableBaseFragment() {
   internal lateinit var syllabus: Syllabus
   @Inject
   internal lateinit var fontHelper: FontHelper
-  private val save by bindView<FloatingActionButton>(R.id.save)
-  private val toolbar by bindView<Toolbar>(R.id.toolbar)
-  private val recyclerView by bindView<RecyclerView>(R.id.list)
+  private val save get() = binding.save
+  private val toolbar get() = binding.toolbar
+  private val recyclerView get() = binding.list
 
   private lateinit var storedOrder: List<String>
   private var pendingChanges: List<ServiceMeta>? = null
@@ -115,13 +116,9 @@ class OrderServicesFragment : InjectableBaseFragment() {
       }
     }
 
-  override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    return inflater.inflate(R.layout.fragment_order_services, container, false)
-  }
+
+  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentOrderServicesBinding =
+      FragmentOrderServicesBinding::inflate
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
