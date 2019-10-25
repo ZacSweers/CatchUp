@@ -31,7 +31,6 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.Lazy
 import io.noties.markwon.Markwon
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.base.ui.VersionInfo

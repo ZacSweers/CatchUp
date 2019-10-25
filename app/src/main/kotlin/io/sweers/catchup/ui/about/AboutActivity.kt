@@ -49,8 +49,8 @@ import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.base.ui.VersionInfo
-import io.sweers.catchup.base.ui.versionInfo
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.databinding.ActivityGenericContainerBinding
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
@@ -70,9 +70,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotterknife.bindView
 import ru.ldralighieri.corbind.material.offsetChanges
-import io.noties.markwon.Markwon
-import io.sweers.catchup.databinding.ActivityGenericContainerBinding
-import io.sweers.catchup.injection.ActivityModule
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.abs

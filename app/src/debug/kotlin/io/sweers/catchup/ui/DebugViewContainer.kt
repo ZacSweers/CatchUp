@@ -35,8 +35,6 @@ import androidx.core.view.doOnLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import com.getkeepsafe.taptargetview.TapTarget
-import com.jakewharton.madge.MadgeFrameLayout
-import com.jakewharton.scalpel.ScalpelFrameLayout
 import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.android.scope
 import com.uber.autodispose.autoDispose
@@ -67,8 +65,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotterknife.ViewDelegateBindable
-import kotterknife.bindView
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
