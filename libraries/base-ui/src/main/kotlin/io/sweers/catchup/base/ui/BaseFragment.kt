@@ -27,7 +27,6 @@ import androidx.viewbinding.ViewBinding
 import com.uber.autodispose.ScopeProvider
 import com.uber.autodispose.android.lifecycle.scope
 import io.reactivex.CompletableSource
-import kotterknife.KotterKnife
 
 abstract class BaseFragment<T : ViewBinding> : Fragment(), ScopeProvider, BackpressHandler {
 

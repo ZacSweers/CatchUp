@@ -21,13 +21,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
-import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
-import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.SimpleColorFilter
 import com.airbnb.lottie.model.KeyPath
@@ -54,7 +51,6 @@ import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotterknife.bindView
 import java.util.Locale
 import javax.inject.Inject
 

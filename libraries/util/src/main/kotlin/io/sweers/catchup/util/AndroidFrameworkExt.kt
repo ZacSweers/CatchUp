@@ -149,7 +149,7 @@ val Resources.primaryLocale: Locale
 
 @CheckResult
 fun <T : ViewBinding> Activity.setContentView(
-    inflate: (LayoutInflater) -> T
+  inflate: (LayoutInflater) -> T
 ): T = inflate(layoutInflater).also {
   setContentView(it.root)
 }

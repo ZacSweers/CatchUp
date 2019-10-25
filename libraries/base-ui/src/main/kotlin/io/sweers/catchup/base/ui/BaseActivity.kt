@@ -114,7 +114,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
 
   @CheckResult
   protected inline fun <T : ViewBinding> ViewContainer.inflateBinding(
-      inflate: (LayoutInflater, ViewGroup, Boolean) -> T
+    inflate: (LayoutInflater, ViewGroup, Boolean) -> T
   ): T = inflate(layoutInflater, forActivity(this@BaseActivity), true)
 
   @CheckResult

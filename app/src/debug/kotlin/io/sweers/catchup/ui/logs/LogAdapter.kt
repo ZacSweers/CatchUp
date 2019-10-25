@@ -65,7 +65,7 @@ internal class LogAdapter(context: Context) : BindableAdapter<Entry>(context) {
     private val root = DebugLogsListItemBinding.bind(rootView)
     private val levelView = root.debugLogLevel
     private val tagView = root.debugLogTag
-    private val messageView  = root.debugLogMessage
+    private val messageView = root.debugLogMessage
 
     fun setEntry(entry: Entry) {
       rootView.setBackgroundResource(backgroundForLevel(entry.level))

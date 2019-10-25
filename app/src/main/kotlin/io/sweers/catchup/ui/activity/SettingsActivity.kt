@@ -20,7 +20,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.commitNow
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
@@ -53,7 +52,6 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.restartApp
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNightMode
-import kotterknife.bindView
 import okhttp3.Cache
 import java.io.File
 import javax.inject.Inject

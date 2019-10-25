@@ -24,7 +24,6 @@ import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.FrameLayout
 import dagger.Lazy
 import io.sweers.catchup.R
@@ -47,7 +46,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotterknife.onSubviewClick
 import leakcanary.LeakCanary
 import okhttp3.OkHttpClient
 import retrofit2.mock.NetworkBehavior

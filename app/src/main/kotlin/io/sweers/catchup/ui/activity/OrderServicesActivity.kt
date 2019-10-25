@@ -25,7 +25,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.commitNow
@@ -61,7 +60,6 @@ import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
-import kotterknife.bindView
 import java.util.Collections
 import javax.inject.Inject
 
@@ -115,7 +113,6 @@ class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBindin
         save.show()
       }
     }
-
 
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentOrderServicesBinding =
       FragmentOrderServicesBinding::inflate

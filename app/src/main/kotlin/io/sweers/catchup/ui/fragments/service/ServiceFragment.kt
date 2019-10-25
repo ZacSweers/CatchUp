@@ -25,7 +25,6 @@ import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -83,9 +82,6 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotterknife.bindView
-import kotterknife.onClick
-import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import retrofit2.HttpException
 import java.io.IOException
