@@ -49,6 +49,11 @@ buildScan {
   termsOfServiceUrl = "https://gradle.com/terms-of-service"
 }
 
+// https://github.com/ZacSweers/CatchUp/issues/197
+canIDropJetifier {
+  verbose = true
+}
+
 allprojects {
 
   repositories {
