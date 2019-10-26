@@ -20,7 +20,9 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -48,10 +50,15 @@ internal class HackerNewsCommentsFragment @Inject constructor(
     const val ARG_DETAIL_TITLE = "detailTitle"
   }
 
-  private lateinit var binding: HackerNewsStoryBinding
-  private val list get() = binding.list
-  private val progress get() = binding.progress
-  private val toolbar get() = binding.toolbar
+  // TODO file a bug for this? Breaks kapt stubs when it's a property
+//  private lateinit var binding: HackerNewsStoryBinding
+//  private val list get() = binding.list
+//  private val progress get() = binding.progress
+//  private val toolbar get() = binding.toolbar
+
+  private lateinit var list: RecyclerView
+  private lateinit var progress: ProgressBar
+  private lateinit var toolbar: Toolbar
   private val viewModel: HackerNewsCommentsViewModel by viewModels { viewModelFactoryInstantiator.create(this) }
 
   override fun onCreateView(
@@ -59,7 +66,10 @@ internal class HackerNewsCommentsFragment @Inject constructor(
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    binding = HackerNewsStoryBinding.inflate(inflater, container, false)
+    val binding = HackerNewsStoryBinding.inflate(inflater, container, false)
+    list = binding.list
+    progress = binding.progress
+    toolbar = binding.toolbar
     return binding.root
   }
 
