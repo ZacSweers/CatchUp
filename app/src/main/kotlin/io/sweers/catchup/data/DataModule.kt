@@ -18,7 +18,6 @@ package io.sweers.catchup.data
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Looper
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.ArrayMapJsonAdapter
 import com.squareup.moshi.Moshi
@@ -122,13 +121,6 @@ abstract class DataModule {
     @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context, @SharedPreferencesName name: String): SharedPreferences {
       return context.getSharedPreferences(name, Context.MODE_PRIVATE)
-    }
-
-    @Provides
-    @JvmStatic
-    @Singleton
-    fun provideRxSharedPreferences(sharedPreferences: SharedPreferences): RxSharedPreferences {
-      return RxSharedPreferences.create(sharedPreferences)
     }
 
     @Provides

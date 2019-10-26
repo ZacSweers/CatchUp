@@ -413,8 +413,6 @@ object deps {
     const val dogTag = "com.uber.rxdogtag:rxdogtag:0.3.0"
     const val dogTagAutoDispose = "com.uber.rxdogtag:rxdogtag-autodispose:0.3.0"
     const val java = "io.reactivex.rxjava2:rxjava:2.2.13"
-
-    const val preferences = "com.f2prateek.rx.preferences2:rx-preferences:2.0.0"
     const val relay = "com.jakewharton.rxrelay2:rxrelay:2.1.1"
   }
 

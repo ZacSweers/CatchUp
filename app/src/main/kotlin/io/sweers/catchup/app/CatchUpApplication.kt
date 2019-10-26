@@ -18,7 +18,6 @@ package io.sweers.catchup.app
 import android.app.Application
 import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.uber.rxdogtag.RxDogTag
 import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
 import dagger.android.DispatchingAndroidInjector
@@ -59,8 +58,6 @@ class CatchUpApplication : Application(), HasAndroidInjector {
   internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
   @Inject
   internal lateinit var catchUpPreferences: CatchUpPreferences
-  @Inject
-  internal lateinit var rxPreferences: RxSharedPreferences
 
   @Inject
   internal fun plantTimberTrees(trees: Set<@JvmSuppressWildcards Timber.Tree>) {

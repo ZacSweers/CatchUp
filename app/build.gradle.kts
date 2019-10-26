@@ -493,7 +493,6 @@ dependencies {
   implementation(deps.misc.inboxRecyclerView)
   implementation(deps.misc.lottie)
   implementation(deps.misc.recyclerViewAnimators)
-  implementation(deps.rx.preferences)
   implementation(deps.rx.relay)
   implementation(deps.rx.dogTag)
   implementation(deps.rx.dogTagAutoDispose)
