@@ -68,7 +68,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             />
 
-        <io.sweers.catchup.ui.widget.BaselineGridTextView
+        <io.sweers.catchup.base.ui.widget.BaselineGridTextView
             android:id="@+id/banner_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

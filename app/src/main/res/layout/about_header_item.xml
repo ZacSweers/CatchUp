@@ -42,7 +42,7 @@
       tools:src="@mipmap/ic_launcher"
       />
 
-  <io.sweers.catchup.ui.widget.BaselineGridTextView
+  <io.sweers.catchup.base.ui.widget.BaselineGridTextView
       android:id="@+id/title"
       android:layout_width="0dp"
       android:layout_height="wrap_content"

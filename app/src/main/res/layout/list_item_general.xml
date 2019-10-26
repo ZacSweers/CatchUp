@@ -144,7 +144,7 @@
       style="@style/TextAppearance.AppCompat.Caption"
       />
 
-  <io.sweers.catchup.ui.widget.BaselineGridTextView
+  <io.sweers.catchup.base.ui.widget.BaselineGridTextView
       android:id="@+id/title"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
@@ -211,7 +211,7 @@
       style="@style/TextAppearance.AppCompat.Caption"
       />
 
-  <io.sweers.catchup.ui.widget.BaselineGridTextView
+  <io.sweers.catchup.base.ui.widget.BaselineGridTextView
       android:id="@+id/mark"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
