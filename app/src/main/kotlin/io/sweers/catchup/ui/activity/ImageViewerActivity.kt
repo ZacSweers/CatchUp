@@ -32,6 +32,8 @@ import android.os.Bundle
 import android.transition.Transition
 import android.transition.TransitionSet
 import android.transition.TransitionValues
+import android.util.TypedValue
+import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -49,7 +51,7 @@ import io.sweers.catchup.ui.immersive.SystemUiHelper
 import io.sweers.catchup.ui.widget.ZoomableGestureImageView
 import io.sweers.catchup.util.toggleVisibility
 import kotterknife.bindView
-import me.saket.flick.ContentSizeProvider
+import me.saket.flick.ContentSizeProvider2
 import me.saket.flick.FlickCallbacks
 import me.saket.flick.FlickDismissLayout
 import me.saket.flick.FlickGestureListener
@@ -173,20 +175,10 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun flickGestureListener(): FlickGestureListener {
-    val contentHeightProvider = object : ContentSizeProvider {
-      override fun heightForDismissAnimation(): Int {
-        return imageView.zoomedImageHeight.toInt()
-      }
-
-      // A positive height value is important so that the user
-      // can dismiss even while the progress indicator is visible.
-      override fun heightForCalculatingDismissThreshold(): Int {
-        return when {
-          imageView.drawable == null -> resources.getDimensionPixelSize(
-              R.dimen.media_image_height_when_empty)
-          else -> imageView.visibleZoomedImageHeight.toInt()
-        }
-      }
+    val contentSizeProvider = ContentSizeProvider2 {
+      // A non-zero height is important so that the user can dismiss even
+      // the image is unavailable and the progress indicator is visible.
+      maxOf(dip(240), imageView.zoomedImageHeight.toInt())
     }
 
     val callbacks = object : FlickCallbacks {
@@ -217,7 +209,7 @@ class ImageViewerActivity : AppCompatActivity() {
 
     val gestureListener = FlickGestureListener(
         context = this,
-        contentHeightProvider = contentHeightProvider,
+        contentSizeProvider = contentSizeProvider,
         flickCallbacks = callbacks
     )
 
@@ -266,6 +258,14 @@ class ImageViewerActivity : AppCompatActivity() {
     activityBackgroundDrawable.alpha = finalAlpha
     sourceButton.imageAlpha = finalAlpha
   }
+}
+
+private fun Context.dip(units: Int): Int {
+  return TypedValue.applyDimension(
+      COMPLEX_UNIT_DIP,
+      units.toFloat(),
+      resources.displayMetrics
+  ).toInt()
 }
 
 /** Adds a solid padding around an image. */
