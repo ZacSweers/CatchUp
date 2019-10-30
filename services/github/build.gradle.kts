@@ -71,13 +71,13 @@ kapt {
   }
 }
 
-apollo {
-  customTypeMapping.set(mapOf(
-      "DateTime" to "org.threeten.bp.Instant",
-      "URI" to "okhttp3.HttpUrl"
-  ))
-  setGenerateKotlinModels(true)
-}
+//apollo {
+//  customTypeMapping.set(mapOf(
+//      "DateTime" to "org.threeten.bp.Instant",
+//      "URI" to "okhttp3.HttpUrl"
+//  ))
+//  setGenerateKotlinModels(true)
+//}
 
 dependencies {
   kapt(project(":service-registry:service-registry-compiler"))
