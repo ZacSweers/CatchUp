@@ -167,7 +167,7 @@ object deps {
   }
 
   object assistedInject {
-    private const val version = "0.5.0"
+    private const val version = "0.5.1"
     const val annotations = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
     const val processor = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
   }
@@ -360,7 +360,7 @@ object deps {
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"
       const val scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
-      const val telescope = "com.mattprecious.telescope:telescope:2.1.0"
+      const val telescope = "com.mattprecious.telescope:telescope:2.2.0"
     }
 
     const val flick = "me.saket:flick:1.6.0"
