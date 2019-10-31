@@ -69,6 +69,7 @@ kapt {
 dependencies {
   kapt(deps.dagger.apt.compiler)
   kapt(deps.dagger.android.apt.processor)
+  kapt(deps.moshi.sealed.compiler)
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.android.runtime)
@@ -80,7 +81,9 @@ dependencies {
   implementation(project(":libraries:util"))
   implementation(deps.misc.lottie)
   kapt(deps.moshi.compiler)
+  implementation(deps.moshi.adapters)
   implementation(deps.moshi.core)
+  implementation(deps.moshi.sealed.annotations)
   implementation(deps.android.androidx.room.runtime)
   implementation(deps.android.androidx.room.ktx)
   kapt(deps.android.androidx.room.apt)
