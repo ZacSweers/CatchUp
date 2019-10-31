@@ -22,58 +22,93 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import dev.zacsweers.moshisealed.annotations.DefaultObject
+import dev.zacsweers.moshisealed.annotations.TypeLabel
 import io.sweers.catchup.util.data.adapters.UnEscape
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.lang.reflect.Type
+import java.util.Locale
 
-sealed class SmmryResponse
+private const val ERROR_KEY = "sm_api_error"
+private const val ERROR_MESSAGE = "sm_api_message"
 
-// 0 - Internal server problem which isn't your fault
-data class InternalError(val message: String) : SmmryResponse()
+sealed class SmmryResponse {
+  @JsonClass(generateAdapter = true)
+  data class Success(
 
-// 1 - Incorrect submission variables
-data class IncorrectVariables(val message: String) : SmmryResponse()
+      /**
+       * Contains the amount of characters returned
+       */
+      @Json(name = "sm_api_character_count") val characterCount: String,
 
-// 2 - Intentional restriction (low credits/disabled API key/banned API key)
-data class ApiRejection(val message: String) : SmmryResponse()
+      /**
+       * Contains the title when available
+       */
+      @Json(name = "sm_api_title")
+      @UnEscape val title: String,
 
-// 3 - Summarization error
-data class SummarizationError(val message: String) : SmmryResponse()
+      /**
+       * Contains the summary
+       */
+      @Json(name = "sm_api_content") val content: String,
 
-object UnknownErrorCode : SmmryResponse()
+      /**
+       * Contains top ranked keywords in descending order
+       */
+      @Json(name = "sm_api_keyword_array") val keywords: List<String>? = null
+  ) : SmmryResponse() {
 
-@JsonClass(generateAdapter = true)
-data class Success(
+    companion object {
 
-  /**
-   * Contains the amount of characters returned
-   */
-  @Json(name = "sm_api_character_count") val characterCount: String,
+      fun just(title: String, text: String): Success =
+          Success(text.length.toString(), title, text, null)
+    }
+  }
 
-  /**
-   * Contains the title when available
-   */
-  @Json(name = "sm_api_title")
-  @UnEscape val title: String,
+  @JsonClass(generateAdapter = true, generator = "sealed:$ERROR_KEY")
+  sealed class Failure(message: String) : SmmryResponse() {
 
-  /**
-   * Contains the summary
-   */
-  @Json(name = "sm_api_content") val content: String,
+    val normalizedMessage: String
 
-  /**
-   * Contains top ranked keywords in descending order
-   */
-  @Json(name = "sm_api_keyword_array") val keywords: List<String>? = null
-) : SmmryResponse() {
+    init {
+      val locale = Locale.getDefault()
+      normalizedMessage = message.toLowerCase(locale).capitalize(locale)
+    }
 
-  companion object {
+    // 0 - Internal server problem which isn't your fault
+    @TypeLabel("0")
+    @JsonClass(generateAdapter = true)
+    data class InternalError(
+        @Json(name = ERROR_MESSAGE) val message: String
+    ) : Failure("Smmry internal error - $message")
 
-    fun just(title: String, text: String): Success =
-        Success(text.length.toString(), title, text, null)
+    // 1 - Incorrect submission variables
+    @TypeLabel("1")
+    @JsonClass(generateAdapter = true)
+    data class IncorrectVariables(
+        @Json(name = ERROR_MESSAGE) val message: String
+    ) : Failure("Smmry invalid input - $message")
+
+    // 2 - Intentional restriction (low credits/disabled API key/banned API key)
+    @TypeLabel("2")
+    @JsonClass(generateAdapter = true)
+    data class ApiRejection(
+        @Json(name = ERROR_MESSAGE) val message: String
+    ) : Failure("Smmry API error - $message")
+
+    // 3 - Summarization error
+    @TypeLabel("3")
+    @JsonClass(generateAdapter = true)
+    data class SummarizationError(
+        @Json(name = ERROR_MESSAGE) val message: String
+    ) : Failure("Smmry summarization error - $message")
+
+    @DefaultObject
+    object UnknownErrorCode : Failure("Unknown error.")
   }
 }
+
 
 class SmmryResponseFactory : JsonAdapter.Factory {
 
@@ -82,6 +117,8 @@ class SmmryResponseFactory : JsonAdapter.Factory {
     if (SmmryResponse::class.java != clazz) {
       return null
     }
+    val successAdapter = moshi.adapter(SmmryResponse.Success::class.java)
+    val failureAdapter = moshi.adapter(SmmryResponse.Failure::class.java)
     return object : JsonAdapter<SmmryResponse>() {
       @Throws(IOException::class)
       override fun fromJson(reader: JsonReader): SmmryResponse? {
@@ -89,67 +126,16 @@ class SmmryResponseFactory : JsonAdapter.Factory {
 
         @Suppress("UNCHECKED_CAST")
         val value = jsonValue as Map<String, Any>
-        value["sm_api_error"]?.let {
-          val code = (it as Double).toInt()
-          val message = (value["sm_api_message"] as String).toLowerCase().capitalize()
-          return when (code) {
-            0 -> InternalError(message)
-            1 -> IncorrectVariables(message)
-            2 -> ApiRejection(message)
-            3 -> SummarizationError(message)
-            else -> UnknownErrorCode
-          }
-        }
-        return moshi.adapter(Success::class.java).fromJsonValue(value)
+        return value[ERROR_KEY]?.let {
+          failureAdapter.fromJsonValue(value)
+        } ?: successAdapter.fromJsonValue(value)
       }
 
       @Throws(IOException::class)
       override fun toJson(writer: JsonWriter, value: SmmryResponse?) {
         when (value) {
-          UnknownErrorCode -> throw UnsupportedOperationException("Cannot serialize unknowns.")
-          is Success -> {
-            moshi.adapter(Success::class.java).toJson(writer, value)
-          }
-          is InternalError -> {
-            with(writer) {
-              beginObject()
-              name("sm_api_error")
-                  .value(0)
-                  .name("sm_api_message")
-                  .value(value.message)
-              endObject()
-            }
-          }
-          is IncorrectVariables -> {
-            with(writer) {
-              beginObject()
-              name("sm_api_error")
-                  .value(1)
-                  .name("sm_api_message")
-                  .value(value.message)
-              endObject()
-            }
-          }
-          is ApiRejection -> {
-            with(writer) {
-              beginObject()
-              name("sm_api_error")
-                  .value(2)
-                  .name("sm_api_message")
-                  .value(value.message)
-              endObject()
-            }
-          }
-          is SummarizationError -> {
-            with(writer) {
-              beginObject()
-              name("sm_api_error")
-                  .value(3)
-                  .name("sm_api_message")
-                  .value(value.message)
-              endObject()
-            }
-          }
+          is SmmryResponse.Success -> successAdapter.toJson(writer, value)
+          is SmmryResponse.Failure -> failureAdapter.toJson(writer, value)
         }
       }
     }
