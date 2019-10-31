@@ -382,8 +382,14 @@ object deps {
   }
 
   object moshi {
+    const val adapters = "com.squareup.moshi:moshi-adapters:${versions.moshi}"
     const val core = "com.squareup.moshi:moshi:${versions.moshi}"
     const val compiler = "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi}"
+    object sealed {
+      private const val VERSION = "0.1.0"
+      const val annotations = "dev.zacsweers.moshisealed:moshi-sealed-annotations:${VERSION}"
+      const val compiler = "dev.zacsweers.moshisealed:moshi-sealed-codegen:${VERSION}"
+    }
   }
 
   object okhttp {
