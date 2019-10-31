@@ -42,16 +42,10 @@ import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.smmry.SmmryModule.ForSmmry
-import io.sweers.catchup.smmry.model.ApiRejection
-import io.sweers.catchup.smmry.model.IncorrectVariables
-import io.sweers.catchup.smmry.model.InternalError
 import io.sweers.catchup.smmry.model.SmmryDao
 import io.sweers.catchup.smmry.model.SmmryRequestBuilder
 import io.sweers.catchup.smmry.model.SmmryResponse
 import io.sweers.catchup.smmry.model.SmmryStorageEntry
-import io.sweers.catchup.smmry.model.Success
-import io.sweers.catchup.smmry.model.SummarizationError
-import io.sweers.catchup.smmry.model.UnknownErrorCode
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
 import kotlinx.coroutines.isActive
@@ -168,20 +162,8 @@ class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
       alreadyLoaded = true
       loadingView.hide(animate = true)
       when (response) {
-        is Success -> {
-          showSummary(response)
-        }
-        else -> {
-          val message = when (response) {
-            is InternalError -> "Smmry internal error - ${response.message}"
-            is IncorrectVariables -> "Smmry invalid input - ${response.message}"
-            is ApiRejection -> "Smmry API error - ${response.message}"
-            is SummarizationError -> "Smmry summarization error - ${response.message}"
-            UnknownErrorCode -> getString(io.sweers.catchup.base.ui.R.string.unknown_issue)
-            else -> throw UnsupportedOperationException("Success is already covered above")
-          }
-          summary.text = message
-        }
+        is SmmryResponse.Success -> showSummary(response)
+        is SmmryResponse.Failure -> summary.text = response.normalizedMessage
       }
     }
   }
@@ -209,13 +191,13 @@ class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
             .keywordCount(5)
             .sentenceCount(5)
             .build())
-        NONE -> Success.just(inputTitle, info.value)
+        NONE -> SmmryResponse.Success.just(inputTitle, info.value)
       }
     } catch (error: Exception) {
       // We should indicate when something's network related
-      UnknownErrorCode
+      SmmryResponse.Failure.UnknownErrorCode
     }
-    if (response != UnknownErrorCode) {
+    if (response != SmmryResponse.Failure.UnknownErrorCode) {
       smmryDao.putItem(SmmryStorageEntry(
           url = id,
           json = moshi.adapter(SmmryResponse::class.java).toJson(response)))
@@ -224,7 +206,7 @@ class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
   }
 
   @SuppressLint("SetTextI18n")
-  private fun showSummary(smmry: Success) {
+  private fun showSummary(smmry: SmmryResponse.Success) {
     if (smmry.keywords != null) {
       tags.setTextColor(accentColor)
       tags.text = smmry.keywords.joinToString("  —  ") { s ->
