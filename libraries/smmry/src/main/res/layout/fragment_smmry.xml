@@ -52,11 +52,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:fontFamily="@font/nunito"
         android:gravity="center_horizontal"
         android:text="@string/summarizing"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        app:fontFamily="@font/nunito"
         />
   </LinearLayout>
 
@@ -79,9 +77,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginBottom="8dp"
-          android:fontFamily="@font/nunito"
           android:gravity="center_horizontal"
-          app:fontFamily="@font/nunito"
           style="@style/TextAppearance.AppCompat.Title"
           />
 
@@ -90,9 +86,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginBottom="16dp"
-          android:fontFamily="@font/nunito"
           android:gravity="center_horizontal"
-          app:fontFamily="@font/nunito"
           style="@style/TextAppearance.AppCompat.Caption"
           />
 
@@ -100,10 +94,8 @@
           android:id="@+id/summary"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:fontFamily="@font/nunito"
           android:textAppearance="@style/TextAppearance.AppCompat.Body1"
           android:textIsSelectable="true"
-          app:fontFamily="@font/nunito"
           />
 
     </LinearLayout>
