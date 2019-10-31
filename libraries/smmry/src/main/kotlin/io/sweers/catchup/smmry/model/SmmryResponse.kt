@@ -37,26 +37,26 @@ sealed class SmmryResponse {
   @JsonClass(generateAdapter = true)
   data class Success(
 
-      /**
-       * Contains the amount of characters returned
-       */
-      @Json(name = "sm_api_character_count") val characterCount: String,
+    /**
+     * Contains the amount of characters returned
+     */
+    @Json(name = "sm_api_character_count") val characterCount: String,
 
-      /**
-       * Contains the title when available
-       */
-      @Json(name = "sm_api_title")
-      @UnEscape val title: String,
+    /**
+     * Contains the title when available
+     */
+    @Json(name = "sm_api_title")
+    @UnEscape val title: String,
 
-      /**
-       * Contains the summary
-       */
-      @Json(name = "sm_api_content") val content: String,
+    /**
+     * Contains the summary
+     */
+    @Json(name = "sm_api_content") val content: String,
 
-      /**
-       * Contains top ranked keywords in descending order
-       */
-      @Json(name = "sm_api_keyword_array") val keywords: List<String>? = null
+    /**
+     * Contains top ranked keywords in descending order
+     */
+    @Json(name = "sm_api_keyword_array") val keywords: List<String>? = null
   ) : SmmryResponse() {
 
     companion object {
@@ -80,35 +80,34 @@ sealed class SmmryResponse {
     @TypeLabel("0")
     @JsonClass(generateAdapter = true)
     data class InternalError(
-        @Json(name = ERROR_MESSAGE) val message: String
+      @Json(name = ERROR_MESSAGE) val message: String
     ) : Failure("Smmry internal error - $message")
 
     // 1 - Incorrect submission variables
     @TypeLabel("1")
     @JsonClass(generateAdapter = true)
     data class IncorrectVariables(
-        @Json(name = ERROR_MESSAGE) val message: String
+      @Json(name = ERROR_MESSAGE) val message: String
     ) : Failure("Smmry invalid input - $message")
 
     // 2 - Intentional restriction (low credits/disabled API key/banned API key)
     @TypeLabel("2")
     @JsonClass(generateAdapter = true)
     data class ApiRejection(
-        @Json(name = ERROR_MESSAGE) val message: String
+      @Json(name = ERROR_MESSAGE) val message: String
     ) : Failure("Smmry API error - $message")
 
     // 3 - Summarization error
     @TypeLabel("3")
     @JsonClass(generateAdapter = true)
     data class SummarizationError(
-        @Json(name = ERROR_MESSAGE) val message: String
+      @Json(name = ERROR_MESSAGE) val message: String
     ) : Failure("Smmry summarization error - $message")
 
     @DefaultObject
     object UnknownErrorCode : Failure("Unknown error.")
   }
 }
-
 
 class SmmryResponseFactory : JsonAdapter.Factory {
 
