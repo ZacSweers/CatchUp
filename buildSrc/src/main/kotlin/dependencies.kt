@@ -62,7 +62,7 @@ object build {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val apollo = "1.2.0"
+    const val apollo = "1.2.1"
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
@@ -148,7 +148,7 @@ object deps {
     }
 
     object firebase {
-      const val core = "com.google.firebase:firebase-core:17.2.0"
+      const val core = "com.google.firebase:firebase-core:17.2.1"
       const val config = "com.google.firebase:firebase-config:18.0.0"
       const val database = "com.google.firebase:firebase-database:19.2.0"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
@@ -212,7 +212,7 @@ object deps {
 
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.7.1"
-      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.4.2"
+      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.5.0"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${versions.spotless}"
     }
 
@@ -318,14 +318,14 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.3.2"
+    private const val coroutinesVersion = "1.3.2-1.3.60-eap-76"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     const val metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0"
     const val noArgGradlePlugin = "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
-    const val poet = "com.squareup:kotlinpoet:1.4.1"
+    const val poet = "com.squareup:kotlinpoet:1.4.3"
 
     object stdlib {
       const val core = "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
@@ -352,7 +352,7 @@ object deps {
     const val byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
     object debug {
-      private const val FLIPPER_VERSION = "0.26.0"
+      private const val FLIPPER_VERSION = "0.27.0"
       const val flipper = "com.facebook.flipper:flipper:$FLIPPER_VERSION"
       const val flipperNetwork = "com.facebook.flipper:flipper-network-plugin:$FLIPPER_VERSION"
       const val soLoader = "com.facebook.soloader:soloader:0.8.0"
