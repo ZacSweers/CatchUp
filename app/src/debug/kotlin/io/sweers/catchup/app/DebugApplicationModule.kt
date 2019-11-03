@@ -38,6 +38,7 @@ import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import io.sweers.catchup.data.LumberYard
+import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.util.sdk
 import leakcanary.AppWatcher
 import leakcanary.LeakCanary
@@ -199,7 +200,7 @@ object DebugApplicationModule {
   fun flipperInit(
     @FlipperEnabled enabled: Boolean,
     application: Application,
-    flipperPlugins: Set<@JvmSuppressWildcards FlipperPlugin>
+    flipperPlugins: DaggerSet<FlipperPlugin>
   ): () -> Unit = {
     if (enabled) {
       SoLoader.init(application, SoLoader.SOLOADER_ALLOW_ASYNC_INIT)

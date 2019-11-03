@@ -57,6 +57,7 @@ import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
+import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
@@ -89,7 +90,7 @@ class OrderServicesActivity : InjectingBaseActivity() {
 class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBinding>() {
 
   @Inject
-  lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
+  lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
   @Inject
   lateinit var catchUpPreferences: CatchUpPreferences
   @Inject

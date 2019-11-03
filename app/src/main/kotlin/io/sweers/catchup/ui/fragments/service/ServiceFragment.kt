@@ -50,6 +50,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.databinding.FragmentServiceBinding
+import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
@@ -168,10 +169,10 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
   lateinit var visualViewPool: RecycledViewPool
   @FinalServices
   @Inject
-  lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
+  lateinit var services: DaggerMap<String, Provider<Service>>
   private lateinit var service: Service
   @Inject
-  lateinit var fragmentCreators: Map<Class<out Fragment>, @JvmSuppressWildcards Provider<Fragment>>
+  lateinit var fragmentCreators: DaggerMap<Class<out Fragment>, Provider<Fragment>>
   @Inject
   lateinit var detailDisplayer: DetailDisplayer
   @Inject

@@ -20,6 +20,7 @@ import android.os.Build
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.appconfig.AppConfigMetadataContributor
 import io.sweers.catchup.base.ui.versionInfo
+import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,7 +28,7 @@ import javax.inject.Singleton
 @Singleton
 class CatchUpAppConfig @Inject constructor(
   @ApplicationContext appContext: Context,
-  metadataContributors: Set<@JvmSuppressWildcards AppConfigMetadataContributor>
+  metadataContributors: DaggerSet<AppConfigMetadataContributor>
 ) : AppConfig {
   private val versionInfo = appContext.versionInfo
   override val isDebug: Boolean = io.sweers.catchup.BuildConfig.DEBUG

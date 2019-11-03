@@ -55,6 +55,7 @@ import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.databinding.FragmentPagerBinding
+import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
@@ -366,7 +367,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
     @Provides
     fun provideServiceHandlers(
       sharedPrefs: SharedPreferences,
-      serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>,
+      serviceMetas: DaggerMap<String, ServiceMeta>,
       catchUpPreferences: CatchUpPreferences
     ): Array<ServiceHandler> {
       val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
