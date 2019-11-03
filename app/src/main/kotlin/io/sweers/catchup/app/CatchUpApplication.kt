@@ -22,6 +22,7 @@ import com.uber.rxdogtag.RxDogTag
 import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.CatchUpPreferences
@@ -52,12 +53,16 @@ class CatchUpApplication : Application(), HasAndroidInjector {
     }
 
     internal lateinit var appComponent: ApplicationComponent
+
+    private const val APP_CONFIG_SERVICE_NAME = "catchup.service.appconfig"
   }
 
   @Inject
   internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
   @Inject
   internal lateinit var catchUpPreferences: CatchUpPreferences
+  @Inject
+  internal lateinit var appConfig: AppConfig
 
   @Inject
   internal fun plantTimberTrees(trees: Set<@JvmSuppressWildcards Timber.Tree>) {
@@ -75,6 +80,20 @@ class CatchUpApplication : Application(), HasAndroidInjector {
   @Inject
   internal fun inits(@Initializers initializers: Set<@JvmSuppressWildcards InitializerFunction>) {
     initializers.forEach { it() }
+  }
+
+  override fun getSystemServiceName(serviceClass: Class<*>): String? {
+    if (serviceClass == AppConfig::class.java) {
+      return APP_CONFIG_SERVICE_NAME
+    }
+    return super.getSystemServiceName(serviceClass)
+  }
+
+  override fun getSystemService(name: String): Any? {
+    if (name == APP_CONFIG_SERVICE_NAME) {
+      return appConfig
+    }
+    return super.getSystemService(name)
   }
 
   override fun onCreate() {
