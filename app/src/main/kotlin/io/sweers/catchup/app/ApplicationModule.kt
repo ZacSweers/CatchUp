@@ -48,11 +48,8 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.UiPreferences
-import io.sweers.catchup.base.ui.VersionInfo
-import io.sweers.catchup.base.ui.versionInfo
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.PrecomputedTextSetterCompat
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
@@ -165,9 +162,9 @@ abstract class ApplicationModule {
     @Initializers
     @IntoSet
     @Provides
-    fun coilInit(imageLoader: ImageLoader): () -> Unit = {
+    fun coilInit(imageLoader: ImageLoader, appConfig: AppConfig): () -> Unit = {
       Coil.setDefaultImageLoader(imageLoader)
-      CoilLogger.setEnabled(BuildConfig.DEBUG)
+      CoilLogger.setEnabled(appConfig.isDebug)
     }
 
     @Qualifier

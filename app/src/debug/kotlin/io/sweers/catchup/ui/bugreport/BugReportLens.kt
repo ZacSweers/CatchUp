@@ -32,12 +32,12 @@ import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.mattprecious.telescope.Lens
 import com.uber.autodispose.autoDispose
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BaseActivity
-import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
@@ -62,7 +62,7 @@ internal class BugReportLens @Inject constructor(
   private val lumberYard: LumberYard,
   private val imgurUploadApi: ImgurUploadApi,
   private val gitHubIssueApi: GitHubIssueApi,
-  private val versionInfo: VersionInfo
+  private val appConfig: AppConfig
 ) : Lens(), ReportListener {
 
   private var screenshot: File? = null
@@ -106,9 +106,9 @@ internal class BugReportLens @Inject constructor(
       }
       h4("App")
       codeBlock(buildString {
-        append("Version: ").append(versionInfo.name).append('\n')
-        append("Version code: ").append(versionInfo.code).append('\n')
-        append("Version timestamp: ").append(versionInfo.timestamp).append('\n')
+        append("Version: ").append(appConfig.versionName).append('\n')
+        append("Version code: ").append(appConfig.versionCode).append('\n')
+        append("Version timestamp: ").append(appConfig.timestamp).append('\n')
       })
       newline()
       h4("Device details")

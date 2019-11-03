@@ -27,6 +27,7 @@ import com.uber.autodispose.autoDispose
 import dagger.Binds
 import dagger.Provides
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.data.LinkManager
@@ -118,7 +119,8 @@ class MainActivity : InjectingBaseActivity() {
         serviceDao: ServiceDao,
         serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>,
         sharedPreferences: SharedPreferences,
-        services: Map<String, @JvmSuppressWildcards Provider<Service>>
+        services: Map<String, @JvmSuppressWildcards Provider<Service>>,
+        appConfig: AppConfig
       ): Map<String, Provider<Service>> {
         return services
             .filter {
@@ -126,7 +128,7 @@ class MainActivity : InjectingBaseActivity() {
                   serviceMetas.getValue(it.key).enabledPreferenceKey, true)
             }
             .mapValues { (_, value) ->
-              Provider { StorageBackedService(serviceDao, value.get()) }
+              Provider { StorageBackedService(serviceDao, value.get(), appConfig) }
             }
       }
     }

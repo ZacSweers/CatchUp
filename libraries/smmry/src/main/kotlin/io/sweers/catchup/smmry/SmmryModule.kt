@@ -21,6 +21,7 @@ import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.smmry.model.SmmryDao
 import io.sweers.catchup.smmry.model.SmmryDatabase
@@ -47,12 +48,13 @@ object SmmryModule {
   @Provides
   internal fun provideSmmryService(
     client: Lazy<OkHttpClient>,
-    @ForSmmry moshi: Moshi
+    @ForSmmry moshi: Moshi,
+    appConfig: AppConfig
   ): SmmryService {
     return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
         .delegatingCallFactory(client)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
-//        .validateEagerly(BuildConfig.DEBUG) // TODO can't do this in libraries
+        .validateEagerly(appConfig.isDebug)
         .build()
         .create(SmmryService::class.java)
   }

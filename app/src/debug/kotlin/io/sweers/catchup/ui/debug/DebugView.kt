@@ -26,8 +26,8 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import dagger.Lazy
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.R
-import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.databinding.DebugViewContentBinding
@@ -63,7 +63,7 @@ class DebugView(
   private val client: Lazy<OkHttpClient>,
   private val lumberYard: LumberYard,
   private val debugPreferences: DebugPreferences,
-  private val versionInfo: VersionInfo
+  private val appConfig: AppConfig
 ) : FrameLayout(context, attrs) {
   // Inflate all of the controls and inject them.
   private val binding = DebugViewContentBinding.inflate(
@@ -257,9 +257,9 @@ class DebugView(
   }
 
   private fun setupBuildSection() {
-    buildNameView.text = versionInfo.name
-    buildCodeView.text = versionInfo.code.toString()
-    buildDateView.text = versionInfo.timestamp
+    buildNameView.text = appConfig.versionName
+    buildCodeView.text = appConfig.versionCode.toString()
+    buildDateView.text = appConfig.timestamp
   }
 
   private fun setupDeviceSection() {

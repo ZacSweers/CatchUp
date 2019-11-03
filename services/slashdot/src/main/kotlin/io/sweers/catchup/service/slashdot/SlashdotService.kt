@@ -23,6 +23,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
@@ -151,13 +152,14 @@ abstract class SlashdotModule {
     internal fun provideSlashdotApi(
       @InternalApi client: Lazy<OkHttpClient>,
       rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
-      tikXml: TikXml
+      tikXml: TikXml,
+      appConfig: AppConfig
     ): SlashdotApi {
       val retrofit = Retrofit.Builder().baseUrl(SlashdotApi.ENDPOINT)
           .delegatingCallFactory(client)
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(TikXmlConverterFactory.create(tikXml))
-          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
+          .validateEagerly(appConfig.isDebug)
           .build()
       return retrofit.create(SlashdotApi::class.java)
     }

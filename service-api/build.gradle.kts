@@ -31,6 +31,7 @@ dependencies {
   implementation(deps.kotlin.coroutinesRx)
 
   api(project(":service-registry:service-registry-annotations"))
+  api(project(":libraries:appconfig"))
   api(project(":libraries:retrofitconverters"))
   api(deps.android.androidx.room.runtime)
   api(deps.android.androidx.annotations)

@@ -44,8 +44,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.apollographql.apollo.exception.ApolloException
 import com.uber.autodispose.autoDispose
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
@@ -174,6 +174,8 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
   lateinit var fragmentCreators: Map<Class<out Fragment>, @JvmSuppressWildcards Provider<Fragment>>
   @Inject
   lateinit var detailDisplayer: DetailDisplayer
+  @Inject
+  lateinit var appConfig: AppConfig
 
   override fun toString() = "ServiceFragment: ${arguments?.get(ARG_SERVICE_KEY)}"
 
@@ -249,7 +251,7 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
             clicksChannel,
             clicksChannel
         )
-        if (BuildConfig.DEBUG) {
+        if (appConfig.isDebug) {
           item.detailKey?.let { key ->
             val args = bundleOf(
                 "detailKey" to key,

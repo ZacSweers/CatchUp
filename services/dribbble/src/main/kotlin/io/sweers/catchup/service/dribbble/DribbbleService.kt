@@ -21,6 +21,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
@@ -130,13 +131,14 @@ abstract class DribbbleModule {
     @JvmStatic
     internal fun provideDribbbleService(
       client: Lazy<OkHttpClient>,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
+      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      appConfig: AppConfig
     ): DribbbleApi {
       return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)
           .delegatingCallFactory(client)
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(DecodingConverter.newFactory(DribbbleParser::parse))
-          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
+          .validateEagerly(appConfig.isDebug)
           .build()
           .create(DribbbleApi::class.java)
     }
