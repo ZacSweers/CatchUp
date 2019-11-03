@@ -19,6 +19,7 @@ package io.sweers.catchup.util
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
@@ -29,6 +30,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import dev.zacsweers.catchup.appconfig.AppConfig
 
+@SuppressLint("InlinedApi") // False positive
 fun View.setLightStatusBar(appConfig: AppConfig) {
   if (appConfig.sdkInt >= Build.VERSION_CODES.M) {
     if ((View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR and systemUiVisibility) != View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) {
@@ -39,6 +41,7 @@ fun View.setLightStatusBar(appConfig: AppConfig) {
   }
 }
 
+@SuppressLint("InlinedApi") // False positive
 fun View.clearLightStatusBar(appConfig: AppConfig) {
   if (appConfig.sdkInt >= Build.VERSION_CODES.M) {
     var flags = systemUiVisibility
@@ -48,6 +51,7 @@ fun View.clearLightStatusBar(appConfig: AppConfig) {
   }
 }
 
+@SuppressLint("InlinedApi") // False positive
 fun View.setLightNavBar(appConfig: AppConfig) {
   if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
     if ((View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR and systemUiVisibility) != View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR) {
@@ -58,6 +62,7 @@ fun View.setLightNavBar(appConfig: AppConfig) {
   }
 }
 
+@SuppressLint("InlinedApi") // False positive
 fun View.clearLightNavBar(appConfig: AppConfig) {
   if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
     var flags = systemUiVisibility
