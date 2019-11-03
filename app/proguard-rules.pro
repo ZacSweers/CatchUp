@@ -139,3 +139,18 @@
   boolean FAST_SERVICE_LOADER_ENABLED return false;
 }
 -checkdiscard class kotlinx.coroutines.internal.FastServiceLoader
+
+# In release builds, isDebug() is always false
+-assumevalues class dev.zacsweers.catchup.appconfig.AppConfig {
+  boolean isDebug(...) return false;
+}
+# AppConfig#sdkInt is always 21+
+-assumevalues public class dev.zacsweers.catchup.appconfig.AppConfig {
+  int getSdkInt(...) return 21..2147483647;
+}
+
+# Check that Dagger binds methods placeholder methods have been discarded.
+-checkdiscard class * {
+  @dagger.Binds *;
+  @dagger.multibindings.Multibinds *;
+}
