@@ -19,7 +19,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.app.Application.ActivityLifecycleCallbacks
-import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
@@ -34,6 +33,7 @@ import com.facebook.soloader.SoLoader
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
@@ -62,7 +62,7 @@ object DebugApplicationModule {
    */
   @LeakCanaryEnabled
   @Provides
-  fun provideLeakCanaryEnabled(): Boolean = Build.VERSION.SDK_INT != 28
+  fun provideLeakCanaryEnabled(appConfig: AppConfig): Boolean = appConfig.sdkInt != 28
 
   @Provides
   fun provideObjectWatcher(@LeakCanaryEnabled leakCanaryEnabled: Boolean): CatchUpObjectWatcher {
@@ -181,8 +181,8 @@ object DebugApplicationModule {
 
   @FlipperEnabled
   @Provides
-  fun provideFlipperEnabled(application: Application): Boolean {
-    return if (Build.VERSION.SDK_INT == 28) {
+  fun provideFlipperEnabled(application: Application, appConfig: AppConfig): Boolean {
+    return if (appConfig.sdkInt == 28) {
       // Flipper native crashes on this
       false
     } else {

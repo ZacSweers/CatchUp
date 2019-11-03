@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks
 import dagger.android.AndroidInjection
+import dev.zacsweers.catchup.appconfig.AppConfig
 import javax.inject.Inject
 
 abstract class InjectableBaseActivity : BaseActivity() {
@@ -28,6 +29,8 @@ abstract class InjectableBaseActivity : BaseActivity() {
   protected lateinit var viewContainer: ViewContainer
   @Inject
   protected lateinit var uiPreferences: UiPreferences
+  @Inject
+  override lateinit var appConfig: AppConfig
 
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidInjection.inject(this)
@@ -54,6 +57,6 @@ abstract class InjectableBaseActivity : BaseActivity() {
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
-    updateNavBarColor(uiPreferences = uiPreferences)
+    updateNavBarColor(uiPreferences = uiPreferences, appConfig = appConfig)
   }
 }

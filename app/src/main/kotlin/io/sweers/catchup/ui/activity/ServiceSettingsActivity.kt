@@ -56,7 +56,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     if (!isInNightMode()) {
-      binding.toolbar.setLightStatusBar()
+      binding.toolbar.setLightStatusBar(appConfig)
     }
 
     if (savedInstanceState == null) {

@@ -248,7 +248,7 @@ class DebugView(
 
   @SuppressLint("InlinedApi") // False positive
   private fun startDebugActivity(intent: Intent) {
-    if (isN()) {
+    if (appConfig.isN()) {
       // In case they're for some reason already in multiwindow
       // annoying that we can't request that an app go to multiwindow if not in it already :/
       intent.flags = Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT
@@ -271,7 +271,7 @@ class DebugView(
     deviceResolutionView.text = "${displayMetrics.heightPixels}x${displayMetrics.widthPixels}"
     deviceDensityView.text = "${displayMetrics.densityDpi}dpi ($densityBucket)"
     deviceReleaseView.text = Build.VERSION.RELEASE
-    deviceApiView.text = Build.VERSION.SDK_INT.toString()
+    deviceApiView.text = appConfig.sdkInt.toString()
   }
 
   private suspend fun refreshOkHttpCacheStats(setup: Boolean = false) {

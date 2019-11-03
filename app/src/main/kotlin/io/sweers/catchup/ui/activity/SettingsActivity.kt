@@ -78,7 +78,7 @@ class SettingsActivity : InjectingBaseActivity() {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     if (!isInNightMode()) {
-      binding.toolbar.setLightStatusBar()
+      binding.toolbar.setLightStatusBar(appConfig)
     }
 
     if (savedInstanceState == null) {
@@ -177,7 +177,7 @@ class SettingsActivity : InjectingBaseActivity() {
           catchUpPreferences.themeNavigationBar = (preference as CheckBoxPreference).isChecked
           (activity as SettingsActivity).run {
             resultData.putBoolean(NAV_COLOR_UPDATED, true)
-            updateNavBarColor(recreate = true, uiPreferences = catchUpPreferences)
+            updateNavBarColor(recreate = true, uiPreferences = catchUpPreferences, appConfig = appConfig)
           }
           return true
         }

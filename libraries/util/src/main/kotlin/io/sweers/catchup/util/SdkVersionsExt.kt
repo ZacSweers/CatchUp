@@ -16,15 +16,17 @@
 package io.sweers.catchup.util
 
 import android.os.Build
+import dev.zacsweers.catchup.appconfig.AppConfig
 
-fun isM(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-fun isN(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-fun isO(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-fun isOMR1(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1
-fun isP(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+fun AppConfig.isM(): Boolean = sdkInt >= Build.VERSION_CODES.M
+fun AppConfig.isN(): Boolean = sdkInt >= Build.VERSION_CODES.N
+fun AppConfig.isO(): Boolean = sdkInt >= Build.VERSION_CODES.O
+fun AppConfig.isOMR1(): Boolean = sdkInt >= Build.VERSION_CODES.O_MR1
+fun AppConfig.isP(): Boolean = sdkInt >= Build.VERSION_CODES.P
 
 // Not totally safe to use yet
 // https://issuetracker.google.com/issues/64550633
+// TODO move to AppConfig extension
 inline fun <T> sdk(level: Int, func: () -> T): T? {
   return if (Build.VERSION.SDK_INT >= level) {
     func()

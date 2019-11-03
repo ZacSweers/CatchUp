@@ -16,7 +16,6 @@
 package io.sweers.catchup.base.ui
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -29,6 +28,7 @@ import androidx.viewbinding.ViewBinding
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
 import com.uber.autodispose.lifecycle.LifecycleScopeProvider
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Observable
 import io.sweers.catchup.base.ui.ActivityEvent.CREATE
 import io.sweers.catchup.base.ui.ActivityEvent.DESTROY
@@ -40,6 +40,7 @@ import io.sweers.catchup.base.ui.ActivityEvent.STOP
 abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<ActivityEvent> {
 
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
+  protected abstract val appConfig: AppConfig
 
   protected inline fun <T, R> Observable<T>.doOnCreate(
     r: R,
@@ -179,7 +180,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
         return
       }
     }
-    if (Build.VERSION.SDK_INT == 29 && isTaskRoot) {
+    if (appConfig.sdkInt == 29 && isTaskRoot) {
       // https://twitter.com/Piwai/status/1169274622614704129
       // https://issuetracker.google.com/issues/139738913
       finishAfterTransition()

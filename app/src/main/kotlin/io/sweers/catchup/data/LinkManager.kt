@@ -22,7 +22,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.CheckResult
@@ -31,6 +30,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.collection.ArrayMap
 import androidx.core.util.toAndroidPair
 import androidx.lifecycle.lifecycleScope
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.flowFor
@@ -57,7 +57,8 @@ import javax.inject.Inject
 class LinkManager @Inject constructor(
   private val customTab: CustomTabActivityHelper,
   private val activity: Activity,
-  private val catchUpPreferences: CatchUpPreferences
+  private val catchUpPreferences: CatchUpPreferences,
+  private val appConfig: AppConfig
 ) : LinkHandler {
 
   // Naive cache that tracks if we've already resolved for activities that can handle a given host
@@ -67,7 +68,7 @@ class LinkManager @Inject constructor(
   fun connect(activity: MainActivity) {
     // Invalidate the cache when a new install/update happens or prefs changed
     val filter = IntentFilter()
-    if (Build.VERSION.SDK_INT < 29) {
+    if (appConfig.sdkInt < 29) {
       @Suppress("DEPRECATION")
       filter.addAction(Intent.ACTION_INSTALL_PACKAGE)
     }
@@ -187,7 +188,7 @@ class LinkManager @Inject constructor(
     }
     customTab.openCustomTab(context,
         customTab.customTabIntent
-            .applyIf(Build.VERSION.SDK_INT < 29) {
+            .applyIf(appConfig.sdkInt < 29) {
               // I like the Q animations, so don't override these there 😬
               setStartAnimations(context, R.anim.slide_up, R.anim.inset)
               setExitAnimations(context, R.anim.outset, R.anim.slide_down)

@@ -23,6 +23,7 @@ interface AppConfig {
   val versionCode: Long
   val versionName: String
   val timestamp: String
+  val sdkInt: Int
   val metadata: Map<Any, Any?>
 }
 

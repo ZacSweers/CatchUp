@@ -15,13 +15,12 @@
  */
 package io.sweers.catchup.ui.bugreport
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.util.DisplayMetrics
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -125,8 +124,8 @@ internal class BugReportLens @Inject constructor(
             .append("dpi (")
             .append(densityBucket)
             .append(")\n")
-        append("Release: ").append(VERSION.RELEASE).append('\n')
-        append("API: ").append(VERSION.SDK_INT).append('\n')
+        append("Release: ").append(Build.VERSION.RELEASE).append('\n')
+        append("API: ").append(appConfig.sdkInt).append('\n')
       })
     }
     val body = StringBuilder()
@@ -135,11 +134,12 @@ internal class BugReportLens @Inject constructor(
     uploadIssue(report, body, logs)
   }
 
+  @SuppressLint("NewApi") // False positive
   private fun uploadIssue(report: Report, body: StringBuilder, logs: File?) {
     val channelId = "bugreports"
     val notificationManager = activity.getSystemService<NotificationManager>()
         ?: throw IllegalStateException("No notificationmanager?")
-    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+    if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
       val channels = notificationManager.notificationChannels
       if (channels.none { it.id == channelId }) {
         NotificationChannel(

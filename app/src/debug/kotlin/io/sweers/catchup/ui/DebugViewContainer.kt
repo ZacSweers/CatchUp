@@ -18,7 +18,6 @@ package io.sweers.catchup.ui
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.Rect
-import android.os.Build
 import android.os.PowerManager
 import android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP
 import android.os.PowerManager.FULL_WAKE_LOCK
@@ -156,7 +155,7 @@ internal class DebugViewContainer @Inject constructor(
     setupMadge(viewHolder, scope)
     setupScalpel(viewHolder, scope)
 
-    riseAndShine(activity)
+    riseAndShine(activity, appConfig)
     activity.lifecycle()
         .filter { event -> event === ActivityEvent.DESTROY }
         .firstElement()
@@ -197,10 +196,10 @@ internal class DebugViewContainer @Inject constructor(
      * save you from hundreds of power button presses and pattern swiping per day!
      */
     @Suppress("DEPRECATION")
-    fun riseAndShine(activity: Activity) {
-      if (Build.VERSION.SDK_INT >= 27) {
+    fun riseAndShine(activity: Activity, appConfig: AppConfig) {
+      if (appConfig.sdkInt >= 27) {
         // Don't run on Q+ because the gesture nav makes this a crappy experience
-        if (Build.VERSION.SDK_INT < 29) {
+        if (appConfig.sdkInt < 29) {
           activity.run {
             setShowWhenLocked(true)
             setTurnScreenOn(true)

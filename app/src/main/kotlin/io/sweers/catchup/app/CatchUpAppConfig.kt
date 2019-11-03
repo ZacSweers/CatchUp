@@ -16,6 +16,7 @@
 package io.sweers.catchup.app
 
 import android.content.Context
+import android.os.Build
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.appconfig.AppConfigMetadataContributor
 import io.sweers.catchup.base.ui.versionInfo
@@ -36,6 +37,7 @@ class CatchUpAppConfig @Inject constructor(
   override val versionCode: Long = versionInfo.code
   override val versionName: String = versionInfo.name
   override val timestamp: String = versionInfo.timestamp
+  override val sdkInt: Int = Build.VERSION.SDK_INT
   override val metadata: Map<Any, Any?> = mutableMapOf<Any, Any?>()
       .apply { metadataContributors.forEach { putAll(it.data()) } }
       .toMap()
