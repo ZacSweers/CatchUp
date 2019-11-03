@@ -25,6 +25,10 @@ import javax.inject.Inject
 
 abstract class InjectableBaseActivity : BaseActivity() {
 
+  companion object {
+    private const val APP_CONFIG_SERVICE_NAME = "catchup.service.appconfig"
+  }
+
   @Inject
   protected lateinit var viewContainer: ViewContainer
   @Inject
@@ -36,6 +40,20 @@ abstract class InjectableBaseActivity : BaseActivity() {
     AndroidInjection.inject(this)
     setFragmentFactory()
     super.onCreate(savedInstanceState)
+  }
+
+  override fun getSystemServiceName(serviceClass: Class<*>): String? {
+    if (serviceClass == AppConfig::class.java) {
+      return APP_CONFIG_SERVICE_NAME
+    }
+    return super.getSystemServiceName(serviceClass)
+  }
+
+  override fun getSystemService(name: String): Any? {
+    if (name == APP_CONFIG_SERVICE_NAME) {
+      return appConfig
+    }
+    return super.getSystemService(name)
   }
 
   /**

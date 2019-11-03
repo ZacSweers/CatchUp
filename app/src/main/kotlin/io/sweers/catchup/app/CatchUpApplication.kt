@@ -54,8 +54,6 @@ class CatchUpApplication : Application(), HasAndroidInjector {
     }
 
     internal lateinit var appComponent: ApplicationComponent
-
-    private const val APP_CONFIG_SERVICE_NAME = "catchup.service.appconfig"
   }
 
   @Inject
@@ -81,20 +79,6 @@ class CatchUpApplication : Application(), HasAndroidInjector {
   @Inject
   internal fun inits(@Initializers initializers: DaggerSet<InitializerFunction>) {
     initializers.forEach { it() }
-  }
-
-  override fun getSystemServiceName(serviceClass: Class<*>): String? {
-    if (serviceClass == AppConfig::class.java) {
-      return APP_CONFIG_SERVICE_NAME
-    }
-    return super.getSystemServiceName(serviceClass)
-  }
-
-  override fun getSystemService(name: String): Any? {
-    if (name == APP_CONFIG_SERVICE_NAME) {
-      return appConfig
-    }
-    return super.getSystemService(name)
   }
 
   override fun onCreate() {
