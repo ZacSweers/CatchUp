@@ -18,3 +18,4 @@ package io.sweers.catchup.injection
 /** Sugar over multibindings that helps with Kotlin wildcards. */
 typealias DaggerSet<T> = @JvmSuppressWildcards Set<T>
 typealias DaggerMap<K, V> = @JvmSuppressWildcards Map<K, V>
+typealias DaggerLazy<T> = @JvmSuppressWildcards dagger.Lazy<T>
