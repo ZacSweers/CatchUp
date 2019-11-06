@@ -154,3 +154,5 @@
   @dagger.Binds *;
   @dagger.multibindings.Multibinds *;
 }
+# Check that qualifier annotations have been discarded.
+-checkdiscard @javax.inject.Qualifier class *
