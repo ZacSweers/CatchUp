@@ -46,25 +46,6 @@ class ZoomableGestureImageView(context: Context, attrs: AttributeSet) : GestureI
       })
   private val imageMovementRect = RectF()
 
-  /**
-   * Height of the image that is currently visible within this View's bounds.
-   */
-  // Subtract the portion that has gone outside display bounds due to zooming in, because they are longer visible.
-  val visibleZoomedImageHeight: Float
-    get() {
-      var zoomedImageHeight = zoomedImageHeight
-      val heightNotVisible = controller.state.y
-      if (heightNotVisible < 0) {
-        zoomedImageHeight += heightNotVisible
-      }
-
-      if (zoomedImageHeight > height) {
-        zoomedImageHeight = height.toFloat()
-      }
-
-      return zoomedImageHeight
-    }
-
   val zoomedImageHeight: Float
     get() {
       val zoom = controller.state.zoom
