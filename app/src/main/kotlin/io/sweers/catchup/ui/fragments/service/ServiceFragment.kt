@@ -163,13 +163,13 @@ class ServiceFragment : InjectingBaseFragment(),
 
   @Inject
   internal lateinit var linkManager: LinkManager
-  @field:TextViewPool
+  @TextViewPool
   @Inject
   lateinit var textViewPool: RecycledViewPool
-  @field:VisualViewPool
+  @VisualViewPool
   @Inject
   lateinit var visualViewPool: RecycledViewPool
-  @field:FinalServices
+  @FinalServices
   @Inject
   lateinit var services: Map<String, @JvmSuppressWildcards Provider<Service>>
   private lateinit var service: Service

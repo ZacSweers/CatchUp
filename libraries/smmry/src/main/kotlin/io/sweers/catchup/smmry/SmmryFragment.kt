@@ -87,7 +87,7 @@ class SmmryFragment : InjectableBaseFragment(), ScrollableContent {
 
   @Inject
   lateinit var smmryService: SmmryService
-  @field:ForSmmry
+  @ForSmmry
   @Inject
   lateinit var moshi: Moshi
   @Inject
