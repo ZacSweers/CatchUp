@@ -38,7 +38,7 @@ android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
 
   if (deps.build.ci) {
-    ndkVersion "20.0.5594570" // This is what github actions has available
+    ndkVersion = "20.0.5594570" // This is what github actions has available
   }
 
   defaultConfig {
