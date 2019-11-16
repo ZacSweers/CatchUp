@@ -10,9 +10,6 @@ function cleanup {
 }
 trap cleanup EXIT
 
-# Keep this for relative paths later
-WORKING_DIR=`pwd`
-
 #### CLI options
 # -t Can be set to (major|minor|patch) for version updates
 VERSION_UPDATE_TYPE=""
@@ -46,7 +43,7 @@ function checkEnv {
 # Helper method to exec gradle and fail the script if Gradle failed
 function execGradle {
   gradlew_return_code=0
-  ./gradlew $@ --quiet || gradlew_return_code=$?
+  ./gradlew "$@" --quiet || gradlew_return_code=$?
   if [[ ${gradlew_return_code} -ne 0 ]]
     then
       echo "Gradle error'd with code ${gradlew_return_code}, exiting."
@@ -105,11 +102,11 @@ log "Dry run? ${DRY_RUN}"
 
 #### Version updates
 # If version type is not empty...
-if [[ ! -z ${VERSION_UPDATE_TYPE} ]]
+if [[ -n ${VERSION_UPDATE_TYPE} ]]
   then
     # Update the version first. Easiest to do this in gradle because my bash-fu is not great
     echo "Updating version '${VERSION_UPDATE_TYPE}' via gradle..."
-    execIfNotDry execGradle :app:updateVersion -updateType=${VERSION_UPDATE_TYPE}
+    execIfNotDry execGradle :app:updateVersion -updateType="${VERSION_UPDATE_TYPE}"
 fi
 
 #### Changelog cuts
@@ -117,11 +114,11 @@ if [[ "$UPDATE_CHANGELOG" = true ]]
   then
     echo "Cutting changelog via gradle..."
     execIfNotDry execGradle cutChangelog -PincludeChangelog
-    VERSION_NAME=`git describe --abbrev=0 --tags`
+    VERSION_NAME=$(git describe --abbrev=0 --tags)
     # If we didn't update a version here, use the described tag
     if [[ -z ${VERSION_UPDATE_TYPE} ]]
       then
-        VERSION_NAME=`git describe --tags`
+        VERSION_NAME=$(git describe --tags)
     fi
     echo "Committing new tags for changelog update with version ${VERSION_NAME}"
     # Not using execIfNotDry because args get screwed up and my bash is not good
@@ -134,15 +131,15 @@ if [[ "$UPDATE_CHANGELOG" = true ]]
     if [[ -z ${VERSION_UPDATE_TYPE} ]]
       then
         log "Cutting tag during changelog"
-        execIfNotDry git tag -a ${VERSION_NAME} -m "Version ${VERSION_NAME}."
+        execIfNotDry git tag -a "${VERSION_NAME}" -m "Version ${VERSION_NAME}."
     fi
 fi
 
 echo "Decrypting keys"
 # Decrypt keys
-execIfNotDry openssl aes-256-cbc -d -in signing/app-release.aes -out signing/app-release.jks -k $CATCHUP_SIGNING_ENCRYPT_KEY
+execIfNotDry openssl aes-256-cbc -d -in signing/app-release.aes -out signing/app-release.jks -k "$CATCHUP_SIGNING_ENCRYPT_KEY"
 # Decrypt play store key
-execIfNotDry openssl aes-256-cbc -d -in signing/play-account.aes -out signing/play-account.p12 -k $CATCHUP_P12_ENCRYPT_KEY
+execIfNotDry openssl aes-256-cbc -d -in signing/play-account.aes -out signing/play-account.p12 -k "$CATCHUP_P12_ENCRYPT_KEY"
 log "Keys decrypted"
 
 echo "Publishing"
