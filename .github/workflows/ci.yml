@@ -30,7 +30,7 @@ jobs:
         # Run spotless first to fail fast on spotless issues
         run: ./gradlew spotlessCheck --stacktrace
       - name: Build project
-        run: ./gradlew assemble --stacktrace
+        run: ./gradlew :app:assembleDebug --stacktrace
       - name: Run tests
         run: ./gradlew test --stacktrace
       - name: Reclaim memory
