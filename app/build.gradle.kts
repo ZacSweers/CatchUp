@@ -38,7 +38,9 @@ android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
 
   if (deps.build.ci) {
-    ndkVersion = "20.0.5594570" // This is what github actions has available
+    // This is what github actions has available
+    // Necessary due to AGP bug https://issuetracker.google.com/issues/143630825
+    ndkVersion = "20.0.5594570"
   }
 
   defaultConfig {
