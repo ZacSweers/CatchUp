@@ -1,0 +1,42 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: JDK ${{ matrix.java_version }}
+    runs-on: macOS-latest
+    strategy:
+      matrix:
+        # TODO Add 12, and 13 after Kotlin 1.3.70
+        java_version: [1.8, 9, 10, 11]
+    steps:
+      # In order to have sha256sum on macOS, we need to install coreutils first
+      # Use this until coreutils or sha256sum are natively included in macOS on actions https://github.com/actions/virtual-environments/issues/90
+      - name: Install coreutils for macOS
+        run: brew install coreutils
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Check Gradle checksum
+        run: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ZacSweers/check-gradle-checksums/master/check-gradle-checksums.sh)"
+      - name: Install JDK ${{ matrix.java_version }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java_version }}
+      - name: Configure Gradle
+        # Initial gradle configuration, install dependencies, etc
+        run: ./gradlew help
+      - name: Spot check
+        # Run spotless first to fail fast on spotless issues
+        run: ./gradlew spotlessCheck --stacktrace
+      - name: Build project
+        run: ./gradlew assemble --stacktrace
+      - name: Run tests
+        run: ./gradlew test --stacktrace
+      - name: Reclaim memory
+        run: ./gradlew --stop && jps|grep -E 'KotlinCompileDaemon|GradleDaemon'| awk '{print $1}'| xargs kill -9
+      - name: Final checks
+        run: ./gradlew check --stacktrace
+#      - name: Upload alpha APK to play store (master only)
+#        run: CATCHUP_SIGNING_ENCRYPT_KEY=${{ secrets.CatchupSigningEncryptKey }} CATCHUP_P12_ENCRYPT_KEY=${{ secrets.CatchupP12EncryptKey }} ./createRelease.sh
+#        if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && matrix.java_version == '1.8'
