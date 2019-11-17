@@ -44,6 +44,10 @@ plugins {
   id("com.github.plnice.canidropjetifier") version "0.5"
 }
 
+apply {
+  from(rootProject.file("gradle/spotless-config.gradle"))
+}
+
 buildScan {
   termsOfServiceAgree = "yes"
   termsOfServiceUrl = "https://gradle.com/terms-of-service"
@@ -84,11 +88,5 @@ allprojects {
         }
       }
     }
-  }
-}
-
-subprojects {
-  apply {
-    from(rootProject.file("gradle/spotless-config.gradle"))
   }
 }

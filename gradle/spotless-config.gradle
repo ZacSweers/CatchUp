@@ -34,16 +34,15 @@ String[] copiedKotlinFiles = [
 spotless {
   format 'misc', {
     target '**/*.md', '**/.gitignore'
+    targetExclude '**/build/generated/**/*.*'
     targetExclude "**/.gradle/**"
     indentWithTabs()
     trimTrailingWhitespace()
     endWithNewline()
   }
   kotlin {
-    target project.fileTree(projectDir) {
-      include "**/*.kt", "**/*.kt"
-      exclude 'build/generated/**/*.*'
-    }
+    target "**/*.kt", "**/*.kt"
+    targetExclude '**/build/generated/**/*.*'
     targetExclude(copiedKotlinFiles)
     ktlint("0.31.0").userData(['indent_size': '2', 'continuation_indent_size' : '2'])
     licenseHeaderFile rootProject.file('spotless/copyright.kt')
@@ -52,15 +51,14 @@ spotless {
   }
   kotlinGradle {
     target '*.gradle.kts'
+    targetExclude '**/build/generated/**/*.*'
     ktlint("0.31.0").userData(['indent_size': '2', 'continuation_indent_size' : '2'])
     trimTrailingWhitespace()
     endWithNewline()
   }
   java {
-    target project.fileTree(projectDir) {
-      include "**/*.java"
-      exclude 'build/generated/**/*.*'
-    }
+    target "**/*.java"
+    targetExclude '**/build/generated/**/*.*'
     targetExclude(copiedJavaFiles)
     googleJavaFormat("1.7")
     licenseHeaderFile rootProject.file('spotless/copyright.java')
@@ -69,7 +67,8 @@ spotless {
     endWithNewline()
   }
   groovyGradle {
-    target '**/*.gradle'
+    target "**/*.gradle"
+    targetExclude '**/build/generated/**/*.*'
     trimTrailingWhitespace()
     endWithNewline()
   }
