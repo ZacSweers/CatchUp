@@ -42,22 +42,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradlebuildcache-
 
-      - name: Configure Gradle
-        # Initial gradle configuration, install dependencies, etc
-        run: ./gradlew help
-
-      - name: Spot check
-        # Run spotless first to fail fast on spotless issues
-        run: ./gradlew spotlessCheck --stacktrace
-
-      - name: Build project
-        run: ./gradlew :app:assembleDebug --stacktrace
-
-      - name: Run tests
-        run: ./gradlew test --stacktrace
-
-      - name: Final checks
-        run: ./gradlew check --stacktrace
+      - name: Build with Gradle
+        run: ./gradlew spotlessCheck :app:assembleDebug test check
 #      - name: Upload alpha APK to play store (master only)
 #        run: CATCHUP_SIGNING_ENCRYPT_KEY=${{ secrets.CatchupSigningEncryptKey }} CATCHUP_P12_ENCRYPT_KEY=${{ secrets.CatchupP12EncryptKey }} ./createRelease.sh
 #        if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && matrix.java_version == '1.8'
