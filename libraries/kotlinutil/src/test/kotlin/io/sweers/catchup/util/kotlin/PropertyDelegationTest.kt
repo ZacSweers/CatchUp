@@ -48,8 +48,8 @@ private class C {
 }
 
 private class D {
-  val readOnlyProp: String by C::readOnlyProp
-  var readWriteProp: String by C::readWriteProp
+//  val readOnlyProp: String by C::readOnlyProp
+//  var readWriteProp: String by C::readWriteProp
 }
 
 private operator fun <T, R> KMutableProperty1<T, R>.setValue(
@@ -59,5 +59,5 @@ private operator fun <T, R> KMutableProperty1<T, R>.setValue(
 ) {
 }
 
-private operator fun <T, R> KProperty1<T, R>.getValue(ref: D, property: KProperty<*>): R {
-}
+//private operator fun <T, R> KProperty1<T, R>.getValue(ref: D, property: KProperty<*>): R {
+//}
