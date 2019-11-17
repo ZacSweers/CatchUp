@@ -19,6 +19,23 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java_version }}
+      - name: Gradle Wrapper Cache
+        id: gradle-wrapper-cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle/wrapper/gradle-wrapper.properties')) }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-wrapper-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle/wrapper/gradle-wrapper.properties')) }}
+      - name: Gradle Dependency Cache
+        id: gradle-dependency-cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches/modules-2
+          key: ${{ runner.os }}-gradle-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle.properties')) }}-${{ hashFiles(format('{0}{1}', github.workspace, '/buildSrc/src/main/kotlin/dependencies.kt')) }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle.properties')) }}-${{ hashFiles(format('{0}{1}', github.workspace, '/buildSrc/src/main/kotlin/dependencies.kt')) }}
+            ${{ runner.os }}-gradle-deps
       - name: Configure Gradle
         # Initial gradle configuration, install dependencies, etc
         run: ./gradlew help
