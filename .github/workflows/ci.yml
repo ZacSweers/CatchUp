@@ -13,41 +13,49 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+
       - name: Check Gradle checksum
         run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/ZacSweers/check-gradle-checksums/master/check-gradle-checksums.sh)"
+
       - name: Install JDK ${{ matrix.java_version }}
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java_version }}
-      - name: Gradle Wrapper Cache
-        id: gradle-wrapper-cache
-        uses: actions/cache@v1
+
+      - name: Generate cache key
+        run: ./checksum.sh checksum.txt
+
+      - name: Copy CI gradle.properties
+        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+
+      - uses: actions/cache@v1
         with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle/wrapper/gradle-wrapper.properties')) }}
+          path: ~/.gradle/caches/jars-3
+          key: ${{ runner.os }}-gradlejars-${{ hashFiles('checksum.txt') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-wrapper-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle/wrapper/gradle-wrapper.properties')) }}
-      - name: Gradle Dependency Cache
-        id: gradle-dependency-cache
-        uses: actions/cache@v1
+            ${{ runner.os }}-gradlejars-
+
+      - uses: actions/cache@v1
         with:
-          path: ~/.gradle/caches/modules-2
-          key: ${{ runner.os }}-gradle-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle.properties')) }}-${{ hashFiles(format('{0}{1}', github.workspace, '/buildSrc/src/main/kotlin/dependencies.kt')) }}
+          path: ~/.gradle/caches/build-cache-1
+          key: ${{ runner.os }}-gradlebuildcache-${{ hashFiles('checksum.txt') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle.properties')) }}-${{ hashFiles(format('{0}{1}', github.workspace, '/buildSrc/src/main/kotlin/dependencies.kt')) }}
-            ${{ runner.os }}-gradle-deps
+            ${{ runner.os }}-gradlebuildcache-
+
       - name: Configure Gradle
         # Initial gradle configuration, install dependencies, etc
         run: ./gradlew help
+
       - name: Spot check
         # Run spotless first to fail fast on spotless issues
         run: ./gradlew spotlessCheck --stacktrace
+
       - name: Build project
         run: ./gradlew :app:assembleDebug --stacktrace
+
       - name: Run tests
         run: ./gradlew test --stacktrace
-      - name: Reclaim memory
-        run: ./gradlew --stop && jps|grep -E 'KotlinCompileDaemon|GradleDaemon'| awk '{print $1}'| xargs kill -9
+
       - name: Final checks
         run: ./gradlew check --stacktrace
 #      - name: Upload alpha APK to play store (master only)
