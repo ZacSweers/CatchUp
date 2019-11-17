@@ -20,7 +20,6 @@ package io.sweers.catchup.util.kotlin
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
-import kotlin.reflect.KProperty1
 
 /**
  * An extension to delegate a read-only property of type [T] to another property.
@@ -36,13 +35,13 @@ inline operator fun <T> KProperty0<T>.getValue(thisRef: Any?, property: KPropert
  */
 inline operator fun <T> KMutableProperty0<T>.setValue(thisRef: Any?, property: KProperty<*>, value: T) = set(value)
 
-interface InstanceProperty<T> {
-  val instance: T
-}
+//interface InstanceProperty<T> {
+//  val instance: T
+//}
 
-inline fun <T, R> instanceProperty(instance: R, property: KProperty1<T, R>) = object : InstanceProperty<R> {
-  override val instance: R = instance
-}
+//inline fun <T, R> instanceProperty(instance: R, property: KProperty1<T, R>) = object : InstanceProperty<R> {
+//  override val instance: R = instance
+//}
 
 // TODO binding to an instant property
 // /**
