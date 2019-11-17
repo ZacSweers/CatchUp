@@ -85,7 +85,9 @@ allprojects {
       }
     }
   }
+}
 
+subprojects {
   apply {
     from(rootProject.file("gradle/spotless-config.gradle"))
   }
