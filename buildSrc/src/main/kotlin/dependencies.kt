@@ -185,7 +185,7 @@ object deps {
   }
 
   object build {
-    val ci get() = System.getenv("CI")?.toBoolean() == true
+    val ci get() = System.getenv("GITHUB_WORKFLOW") != null
     const val versionCodePH = 99999
     const val versionNamePH = "versionplaceholder"
 

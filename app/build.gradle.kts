@@ -37,6 +37,12 @@ val timestampLazy by lazy(LazyThreadSafetyMode.NONE) { deps.build.gitTimestamp(p
 android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
 
+  if (deps.build.ci) {
+    // This is what github actions has available
+    // Necessary due to AGP bug https://issuetracker.google.com/issues/143630825
+    ndkVersion = "20.0.5594570"
+  }
+
   defaultConfig {
     applicationId = "io.sweers.catchup"
     minSdkVersion(deps.android.build.minSdkVersion)

@@ -40,7 +40,8 @@ spotless {
     endWithNewline()
   }
   kotlin {
-    target "**/*.kt", "**/*.kt"
+    target "**/src/**/*.kt", "**/src/**/*.kt"
+    targetExclude '**/spotless/*.kt'
     targetExclude(copiedKotlinFiles)
     ktlint("0.31.0").userData(['indent_size': '2', 'continuation_indent_size' : '2'])
     licenseHeaderFile rootProject.file('spotless/copyright.kt')
@@ -54,7 +55,8 @@ spotless {
     endWithNewline()
   }
   java {
-    target "**/*.java"
+    target "**/src/**/*.java"
+    targetExclude '**/spotless/*.java'
     targetExclude(copiedJavaFiles)
     googleJavaFormat("1.7")
     licenseHeaderFile rootProject.file('spotless/copyright.java')
@@ -63,7 +65,7 @@ spotless {
     endWithNewline()
   }
   groovyGradle {
-    target '**/*.gradle'
+    target "**/*.gradle"
     trimTrailingWhitespace()
     endWithNewline()
   }
