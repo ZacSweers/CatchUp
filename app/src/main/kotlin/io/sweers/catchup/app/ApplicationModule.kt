@@ -19,11 +19,16 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import android.graphics.drawable.Drawable
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import coil.Coil
+import coil.DefaultRequestOptions
 import coil.ImageLoader
 import coil.decode.GifDecoder
+import coil.request.GetRequest
+import coil.request.LoadRequest
+import coil.request.RequestDisposable
 import coil.util.CoilLogger
 import coil.util.CoilUtils.createDefaultCache
 import com.gabrielittner.threetenbp.LazyThreeTen
@@ -37,6 +42,7 @@ import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.ext.tasklist.TaskListPlugin
 import io.noties.markwon.image.ImagesPlugin
+import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
 import io.sweers.catchup.BuildConfig
@@ -67,6 +73,10 @@ abstract class ApplicationModule {
   @Qualifier
   @Retention(BINARY)
   annotation class AsyncInitializers
+
+  @Qualifier
+  @Retention(BINARY)
+  annotation class LazyDelegate
 
   /**
    * Provides initializers for app startup.
@@ -116,7 +126,7 @@ abstract class ApplicationModule {
     @JvmStatic
     @Singleton
     internal fun markwon(
-//      imageLoader: ImageLoader, // TODO try to make this lazy
+      @LazyDelegate imageLoader: ImageLoader,
       @ApplicationContext context: Context // TODO should use themed one from activity?
     ): Markwon {
       return Markwon.builder(context)
@@ -125,7 +135,7 @@ abstract class ApplicationModule {
               MovementMethodPlugin.create(LinkTouchMovementMethod()),
               ImagesPlugin.create(),
               StrikethroughPlugin.create(),
-//              CoilImagesPlugin.create(context, imageLoader),
+              CoilImagesPlugin.create(context, imageLoader),
               TablePlugin.create(context),
               LinkifyPlugin.create(),
               TaskListPlugin.create(context)
@@ -197,6 +207,33 @@ abstract class ApplicationModule {
       return okHttpClient.newBuilder()
           .cache(cache)
           .build()
+    }
+
+    @Singleton
+    @JvmStatic
+    @Provides
+    @LazyDelegate
+    fun lazyImageLoader(imageLoader: dagger.Lazy<ImageLoader>): ImageLoader {
+      return object : ImageLoader {
+        override val defaults: DefaultRequestOptions
+          get() = imageLoader.get().defaults
+
+        override fun clearMemory() {
+          imageLoader.get().clearMemory()
+        }
+
+        override suspend fun get(request: GetRequest): Drawable {
+          return imageLoader.get().get(request)
+        }
+
+        override fun load(request: LoadRequest): RequestDisposable {
+          return imageLoader.get().load(request)
+        }
+
+        override fun shutdown() {
+          imageLoader.get().shutdown()
+        }
+      }
     }
 
     @Singleton
