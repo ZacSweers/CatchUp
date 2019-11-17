@@ -19,7 +19,6 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty1
 
 class PropertyDelegationTest {
   @Test
@@ -59,5 +58,5 @@ private operator fun <T, R> KMutableProperty1<T, R>.setValue(
 ) {
 }
 
-//private operator fun <T, R> KProperty1<T, R>.getValue(ref: D, property: KProperty<*>): R {
-//}
+// private operator fun <T, R> KProperty1<T, R>.getValue(ref: D, property: KProperty<*>): R {
+// }
