@@ -411,6 +411,7 @@ dependencies {
   implementation(deps.markwon.extTasklist)
   implementation(deps.markwon.html)
   implementation(deps.markwon.image)
+  implementation(deps.markwon.imageCoil)
   implementation(deps.markwon.linkify)
 //  implementation(deps.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
   implementation(project(":service-api"))

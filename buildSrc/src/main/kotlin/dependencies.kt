@@ -74,7 +74,7 @@ object deps {
     const val kotpref = "2.9.2"
     const val leakcanary = "2.0-beta-3"
     const val legacySupport = "28.0.0"
-    const val markwon = "4.1.2"
+    const val markwon = "4.2.0"
     const val moshi = "1.9.1"
     const val okhttp = "4.2.2"
     const val retrofit = "2.6.2"
@@ -341,6 +341,7 @@ object deps {
     const val extTasklist = "io.noties.markwon:ext-tasklist:${versions.markwon}"
     const val html = "io.noties.markwon:html:${versions.markwon}"
     const val image = "io.noties.markwon:image:${versions.markwon}"
+    const val imageCoil = "io.noties.markwon:image-coil:${versions.markwon}"
     const val linkify = "io.noties.markwon:linkify:${versions.markwon}"
     const val syntaxHighlight = "io.noties.markwon:syntax-highlight:${versions.markwon}"
   }
