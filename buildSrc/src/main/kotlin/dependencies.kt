@@ -72,7 +72,7 @@ object deps {
     const val inspector = "0.3.0"
     const val kotlin = "1.3.60"
     const val kotpref = "2.9.2"
-    const val leakcanary = "2.0-beta-3"
+    const val leakcanary = "2.0-beta-4"
     const val legacySupport = "28.0.0"
     const val markwon = "4.2.0"
     const val moshi = "1.9.2"
