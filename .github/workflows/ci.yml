@@ -43,7 +43,7 @@ jobs:
             ${{ runner.os }}-gradlebuildcache-
 
       - name: Build with Gradle
-        run: ./gradlew spotlessCheck :app:assembleDebug test check
+        run: ./gradlew spotlessCheck :app:assembleDebug test check --stacktrace
 #      - name: Upload alpha APK to play store (master only)
 #        run: CATCHUP_SIGNING_ENCRYPT_KEY=${{ secrets.CatchupSigningEncryptKey }} CATCHUP_P12_ENCRYPT_KEY=${{ secrets.CatchupP12EncryptKey }} ./createRelease.sh
 #        if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && matrix.java_version == '1.8'
