@@ -310,7 +310,7 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
       onRetry()
     }
     binding.errorImage.setOnClickListener {
-      onErrorClick(it)
+      onErrorClick(binding.errorImage)
     }
     @ColorInt val accentColor = ContextCompat.getColor(view.context, service.meta().themeColor)
     @ColorInt val dayAccentColor = ContextCompat.getColor(dayOnlyContext!!,
