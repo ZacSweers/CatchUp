@@ -61,7 +61,7 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
   @Inject
   internal lateinit var markdownConverter: EmojiMarkdownConverter
 
-  private val progressBar get() = binding::progress
+  private val progressBar by binding::progress
   private val recyclerView get() = binding.list
 
   private lateinit var layoutManager: LinearLayoutManager
