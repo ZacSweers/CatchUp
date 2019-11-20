@@ -85,6 +85,7 @@ dependencies {
   kapt(deps.assistedInject.processor)
   compileOnly(deps.assistedInject.annotations)
 
+  implementation(deps.android.androidx.swipeRefresh)
   implementation(deps.android.androidx.viewModel.core)
   implementation(deps.android.androidx.viewModel.ktx)
   implementation(deps.android.androidx.viewModel.savedState)
