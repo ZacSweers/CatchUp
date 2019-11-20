@@ -40,9 +40,6 @@ import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import io.sweers.catchup.smmry.SmmryModule.ForSmmry
 import io.sweers.catchup.smmry.databinding.FragmentSmmryBinding
-import io.sweers.catchup.smmry.model.ApiRejection
-import io.sweers.catchup.smmry.model.IncorrectVariables
-import io.sweers.catchup.smmry.model.InternalError
 import io.sweers.catchup.smmry.model.SmmryDao
 import io.sweers.catchup.smmry.model.SmmryRequestBuilder
 import io.sweers.catchup.smmry.model.SmmryResponse
