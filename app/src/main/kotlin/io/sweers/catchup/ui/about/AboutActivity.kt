@@ -24,20 +24,15 @@ import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.text.layoutDirection
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -49,8 +44,9 @@ import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.base.ui.VersionInfo
-import io.sweers.catchup.base.ui.versionInfo
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.databinding.ActivityGenericContainerBinding
+import io.sweers.catchup.databinding.FragmentAboutBinding
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
@@ -68,7 +64,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotterknife.bindView
 import ru.ldralighieri.corbind.material.offsetChanges
 import java.util.Locale
 import javax.inject.Inject
@@ -106,7 +101,7 @@ class AboutActivity : InjectingBaseActivity() {
         .subscribe()
 
     val viewGroup = viewContainer.forActivity(this)
-    layoutInflater.inflate(R.layout.activity_generic_container, viewGroup)
+    ActivityGenericContainerBinding.inflate(layoutInflater, viewGroup, true)
 
     if (savedInstanceState == null) {
       supportFragmentManager.commitNow {
@@ -119,7 +114,7 @@ class AboutActivity : InjectingBaseActivity() {
   abstract class Module : ActivityModule<AboutActivity>
 }
 
-class AboutFragment : InjectingBaseFragment() {
+class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
 
   companion object {
     private const val FADE_PERCENT = 0.75F
@@ -133,26 +128,20 @@ class AboutFragment : InjectingBaseFragment() {
   @Inject
   internal lateinit var versionInfo: VersionInfo
 
-  private val rootLayout by bindView<CoordinatorLayout>(R.id.about_fragment_root)
-  private val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
-  private val bannerContainer by bindView<View>(R.id.banner_container)
-  private val bannerIcon by bindView<ImageView>(R.id.banner_icon)
-  private val aboutText by bindView<TextView>(R.id.banner_text)
-  private val title by bindView<TextView>(R.id.banner_title)
-  private val tabLayout by bindView<TabLayout>(R.id.tab_layout)
-  private val toolbar by bindView<Toolbar>(R.id.toolbar)
-  private val viewPager by bindView<ViewPager2>(R.id.view_pager) {
-    it.offscreenPageLimit = 1
-  }
+  private val rootLayout get() = binding.aboutFragmentRoot
+  private val appBarLayout get() = binding.appbarlayout
+  private val bannerContainer get() = binding.bannerContainer
+  private val bannerIcon get() = binding.bannerIcon
+  private val aboutText get() = binding.bannerText
+  private val title get() = binding.bannerTitle
+  private val tabLayout get() = binding.tabLayout
+  private val toolbar get() = binding.toolbar
+  private val viewPager get() = binding.viewPager
 
   private lateinit var compositeClickSpan: (String) -> Set<Any>
 
-  override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View =
-      inflater.inflate(R.layout.fragment_about, container, false)
+  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAboutBinding =
+      FragmentAboutBinding::inflate
 
   override fun onSaveInstanceState(outState: Bundle) {
     (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior?.let { behavior ->
@@ -166,6 +155,7 @@ class AboutFragment : InjectingBaseFragment() {
   @SuppressLint("SetTextI18n")
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    viewPager.offscreenPageLimit = 1
     val pagerAdapter = object : FragmentStateAdapter(childFragmentManager, lifecycle) {
       private val screens = SparseArray<Fragment>()
 

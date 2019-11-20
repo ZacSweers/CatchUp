@@ -47,7 +47,7 @@
         app:lottie_loop="true"
         />
 
-    <io.sweers.catchup.ui.widget.BaselineGridTextView
+    <io.sweers.catchup.base.ui.widget.BaselineGridTextView
         android:id="@+id/loading_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
         android:orientation="vertical"
         >
 
-      <io.sweers.catchup.ui.widget.BaselineGridTextView
+      <io.sweers.catchup.base.ui.widget.BaselineGridTextView
           android:id="@+id/title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
           style="@style/TextAppearance.AppCompat.Title"
           />
 
-      <io.sweers.catchup.ui.widget.BaselineGridTextView
+      <io.sweers.catchup.base.ui.widget.BaselineGridTextView
           android:id="@+id/tags"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
           style="@style/TextAppearance.AppCompat.Caption"
           />
 
-      <io.sweers.catchup.ui.widget.BaselineGridTextView
+      <io.sweers.catchup.base.ui.widget.BaselineGridTextView
           android:id="@+id/summary"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"

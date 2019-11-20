@@ -23,12 +23,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.viewbinding.ViewBinding
 import com.uber.autodispose.ScopeProvider
 import com.uber.autodispose.android.lifecycle.scope
 import io.reactivex.CompletableSource
-import kotterknife.KotterKnife
 
-abstract class BaseFragment : Fragment(), ScopeProvider, BackpressHandler {
+abstract class BaseFragment<T : ViewBinding> : Fragment(), ScopeProvider, BackpressHandler {
 
   companion object {
     private val DAY_MODE_CONF = Configuration().apply {
@@ -38,6 +38,7 @@ abstract class BaseFragment : Fragment(), ScopeProvider, BackpressHandler {
 
   @Suppress("LeakingThis")
   private lateinit var lifecycleProvider: ScopeProvider
+  protected lateinit var binding: T
   protected var dayOnlyContext: Context? = null
 
   override fun onAttach(context: Context) {
@@ -45,11 +46,7 @@ abstract class BaseFragment : Fragment(), ScopeProvider, BackpressHandler {
     dayOnlyContext = context.createConfigurationContext(DAY_MODE_CONF)
   }
 
-  protected abstract fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View
+  protected abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> T
 
   final override fun onCreateView(
     inflater: LayoutInflater,
@@ -57,12 +54,12 @@ abstract class BaseFragment : Fragment(), ScopeProvider, BackpressHandler {
     savedInstanceState: Bundle?
   ): View {
     lifecycleProvider = viewLifecycleOwner.scope()
-    return inflateView(inflater, container, savedInstanceState)
+    binding = bindingInflater(inflater, container, false)
+    return binding.root
   }
 
   override fun onDestroyView() {
     dayOnlyContext = null
-    KotterKnife.reset(this)
     super.onDestroyView()
   }
 

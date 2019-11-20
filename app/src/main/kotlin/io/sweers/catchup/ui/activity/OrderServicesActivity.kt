@@ -23,11 +23,8 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.commitNow
@@ -46,6 +43,11 @@ import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.ColorUtils
+import io.sweers.catchup.base.ui.InjectableBaseFragment
+import io.sweers.catchup.base.ui.InjectingBaseActivity
+import io.sweers.catchup.databinding.FragmentOrderServicesBinding
+import io.sweers.catchup.databinding.OrderServicesItemBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
@@ -54,14 +56,10 @@ import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
-import io.sweers.catchup.base.ui.InjectableBaseFragment
-import io.sweers.catchup.base.ui.InjectingBaseActivity
-import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
-import kotterknife.bindView
 import java.util.Collections
 import javax.inject.Inject
 
@@ -87,7 +85,7 @@ class OrderServicesActivity : InjectingBaseActivity() {
   abstract inner class Module : ActivityModule<OrderServicesActivity>
 }
 
-class OrderServicesFragment : InjectableBaseFragment() {
+class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBinding>() {
 
   @Inject
   lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
@@ -97,9 +95,9 @@ class OrderServicesFragment : InjectableBaseFragment() {
   internal lateinit var syllabus: Syllabus
   @Inject
   internal lateinit var fontHelper: FontHelper
-  private val save by bindView<FloatingActionButton>(R.id.save)
-  private val toolbar by bindView<Toolbar>(R.id.toolbar)
-  private val recyclerView by bindView<RecyclerView>(R.id.list)
+  private val save get() = binding.save
+  private val toolbar get() = binding.toolbar
+  private val recyclerView get() = binding.list
 
   private lateinit var storedOrder: List<String>
   private var pendingChanges: List<ServiceMeta>? = null
@@ -116,13 +114,8 @@ class OrderServicesFragment : InjectableBaseFragment() {
       }
     }
 
-  override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    return inflater.inflate(R.layout.fragment_order_services, container, false)
-  }
+  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentOrderServicesBinding =
+      FragmentOrderServicesBinding::inflate
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
@@ -292,9 +285,10 @@ private class Adapter(
 }
 
 private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-  private val container by bindView<View>(R.id.container)
-  private val title by bindView<TextView>(R.id.title)
-  private val icon by bindView<ImageView>(R.id.icon)
+  private val binding = OrderServicesItemBinding.bind(itemView)
+  private val container = binding.container
+  private val title = binding.title
+  private val icon = binding.icon
   private val raise = itemView.resources.getDimensionPixelSize(R.dimen.touch_raise).toFloat()
   private val elevationAnimator = AnimatorInflater.loadStateListAnimator(itemView.context,
       R.animator.raise)

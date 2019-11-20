@@ -22,11 +22,8 @@ import android.text.format.DateUtils
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
-import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.text.PrecomputedTextCompat
@@ -34,6 +31,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import io.sweers.catchup.R
+import io.sweers.catchup.databinding.ListItemGeneralBinding
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.Mark
@@ -44,25 +42,25 @@ import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.primaryLocale
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.showIf
-import kotterknife.bindView
 import org.threeten.bp.Instant
 
 class CatchUpItemViewHolder(
   itemView: View
 ) : ViewHolder(itemView), BindableCatchUpItemViewHolder, TemporaryScopeHolder by temporaryScope() {
 
-  internal val container by bindView<ConstraintLayout>(R.id.container)
-  internal val tagsContainer by bindView<View>(R.id.tags_container)
-  internal val title by bindView<AppCompatTextView>(R.id.title)
-  internal val score by bindView<TextView>(R.id.score)
-  internal val scoreDivider by bindView<TextView>(R.id.score_divider)
-  internal val timestamp by bindView<TextView>(R.id.timestamp)
-  internal val author by bindView<TextView>(R.id.author)
-  internal val authorDivider by bindView<TextView>(R.id.author_divider)
-  internal val source by bindView<TextView>(R.id.source)
-  internal val mark by bindView<TextView>(R.id.mark)
-  internal val tag by bindView<TextView>(R.id.tag)
-  internal val tagDivider by bindView<View>(R.id.tag_divider)
+  private val binding = ListItemGeneralBinding.bind(itemView)
+  internal val container = binding.container
+  internal val tagsContainer = binding.tagsContainer
+  internal val title = binding.title
+  internal val score = binding.score
+  internal val scoreDivider = binding.scoreDivider
+  internal val timestamp = binding.timestamp
+  internal val author = binding.author
+  internal val authorDivider = binding.authorDivider
+  internal val source = binding.source
+  internal val mark = binding.mark
+  internal val tag = binding.tag
+  internal val tagDivider = binding.tagDivider
 
   private val markBackground: Drawable
   private val constraintSet: ConstraintSet

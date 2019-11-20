@@ -33,12 +33,12 @@ import io.sweers.catchup.service.hackernews.FragmentViewModelFactoryModule.ViewM
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Failure
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Loading
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Success
+import io.sweers.catchup.service.hackernews.databinding.HackerNewsStoryBinding
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotterknife.bindView
 import javax.inject.Inject
 
 internal class HackerNewsCommentsFragment @Inject constructor(
@@ -50,9 +50,15 @@ internal class HackerNewsCommentsFragment @Inject constructor(
     const val ARG_DETAIL_TITLE = "detailTitle"
   }
 
-  private val list by bindView<RecyclerView>(R.id.list)
-  private val progress by bindView<ProgressBar>(R.id.progress)
-  private val toolbar by bindView<Toolbar>(R.id.toolbar)
+  // TODO file a bug for this? Breaks kapt stubs when it's a property
+//  private lateinit var binding: HackerNewsStoryBinding
+//  private val list get() = binding.list
+//  private val progress get() = binding.progress
+//  private val toolbar get() = binding.toolbar
+
+  private lateinit var list: RecyclerView
+  private lateinit var progress: ProgressBar
+  private lateinit var toolbar: Toolbar
   private val viewModel: HackerNewsCommentsViewModel by viewModels { viewModelFactoryInstantiator.create(this) }
 
   override fun onCreateView(
@@ -60,7 +66,11 @@ internal class HackerNewsCommentsFragment @Inject constructor(
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    return inflater.inflate(R.layout.hacker_news_story, container, false)
+    val binding = HackerNewsStoryBinding.inflate(inflater, container, false)
+    list = binding.list
+    progress = binding.progress
+    toolbar = binding.toolbar
+    return binding.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

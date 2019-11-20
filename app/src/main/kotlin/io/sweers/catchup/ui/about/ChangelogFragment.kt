@@ -21,10 +21,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
-import android.widget.ProgressBar
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.rx2.Rx2Apollo
@@ -35,25 +33,26 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
+import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
+import io.sweers.catchup.databinding.FragmentChangelogBinding
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
-import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
+import io.sweers.catchup.util.kotlin.getValue
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.launch
-import kotterknife.bindView
 import org.threeten.bp.Instant
 import java.io.IOException
 import javax.inject.Inject
 
-class ChangelogFragment : InjectableBaseFragment(), Scrollable {
+class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Scrollable {
 
   @Inject
   lateinit var apolloClient: ApolloClient
@@ -62,19 +61,14 @@ class ChangelogFragment : InjectableBaseFragment(), Scrollable {
   @Inject
   internal lateinit var markdownConverter: EmojiMarkdownConverter
 
-  private val progressBar by bindView<ProgressBar>(R.id.progress)
-  private val recyclerView by bindView<RecyclerView>(R.id.list)
+  private val progressBar by binding::progress
+  private val recyclerView get() = binding.list
 
   private lateinit var layoutManager: LinearLayoutManager
   private lateinit var adapter: ChangelogAdapter
 
-  override fun inflateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    return inflater.inflate(layout.fragment_changelog, container, false)
-  }
+  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChangelogBinding =
+      FragmentChangelogBinding::inflate
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)

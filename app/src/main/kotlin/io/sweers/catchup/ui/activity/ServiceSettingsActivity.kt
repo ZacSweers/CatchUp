@@ -19,7 +19,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.commitNow
@@ -33,34 +32,31 @@ import dagger.android.support.AndroidSupportInjection
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.InjectingBaseActivity
+import io.sweers.catchup.databinding.ActivitySettingsBinding
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
-import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
-import kotterknife.bindView
 import javax.inject.Inject
 
 private const val TARGET_PREF_RESOURCE = "catchup.servicesettings.resource"
 
 class ServiceSettingsActivity : InjectingBaseActivity() {
 
-  private val toolbar by bindView<Toolbar>(R.id.toolbar)
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val viewGroup = viewContainer.forActivity(this)
-    layoutInflater.inflate(R.layout.activity_settings, viewGroup)
-    setSupportActionBar(toolbar)
+    val binding = viewContainer.inflateBinding(ActivitySettingsBinding::inflate)
+    setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     if (!isInNightMode()) {
-      toolbar.setLightStatusBar()
+      binding.toolbar.setLightStatusBar()
     }
 
     if (savedInstanceState == null) {

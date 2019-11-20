@@ -17,10 +17,8 @@ package io.sweers.catchup.ui.bugreport
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.LinearLayout
-import io.sweers.catchup.R
+import io.sweers.catchup.databinding.BugreportViewBinding
 import io.sweers.catchup.flowbinding.viewScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -28,16 +26,16 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotterknife.bindView
 import ru.ldralighieri.corbind.view.focusChanges
 import ru.ldralighieri.corbind.widget.afterTextChangeEvents
 
 class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
-  private val usernameView by bindView<EditText>(R.id.username)
-  private val titleView by bindView<EditText>(R.id.title)
-  private val descriptionView by bindView<EditText>(R.id.description)
-  private val screenshotView by bindView<CheckBox>(R.id.screenshot)
-  private val logsView by bindView<CheckBox>(R.id.logs)
+  private lateinit var binding: BugreportViewBinding
+  private val usernameView get() = binding.username
+  private val titleView get() = binding.title
+  private val descriptionView get() = binding.description
+  private val screenshotView get() = binding.screenshot
+  private val logsView get() = binding.logs
 
   interface ReportDetailsListener {
     fun onStateChanged(valid: Boolean)
@@ -47,6 +45,7 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
 
   override fun onFinishInflate() {
     super.onFinishInflate()
+    binding = BugreportViewBinding.bind(this)
     viewScope().launch {
       usernameView.focusChanges()
           .drop(1)

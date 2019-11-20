@@ -41,16 +41,15 @@ import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.animation.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import coil.api.load
 import coil.transform.Transformation
 import io.sweers.catchup.R
+import io.sweers.catchup.databinding.ActivityImageViewerBinding
 import io.sweers.catchup.ui.immersive.SystemUiHelper
-import io.sweers.catchup.ui.widget.ZoomableGestureImageView
+import io.sweers.catchup.util.setContentView
 import io.sweers.catchup.util.toggleVisibility
-import kotterknife.bindView
 import me.saket.flick.ContentSizeProvider2
 import me.saket.flick.FlickCallbacks
 import me.saket.flick.FlickDismissLayout
@@ -86,10 +85,11 @@ class ImageViewerActivity : AppCompatActivity() {
     }
   }
 
-  private val rootLayout by bindView<ViewGroup>(R.id.imageviewer_root)
-  private val imageView by bindView<ZoomableGestureImageView>(R.id.image)
-  private val sourceButton by bindView<AppCompatImageButton>(R.id.image_source)
-  private val flickDismissLayout by bindView<FlickDismissLayout>(R.id.imageviewer_image_container)
+  private lateinit var binding: ActivityImageViewerBinding
+  private val rootLayout get() = binding.imageviewerRoot
+  private val imageView get() = binding.image
+  private val sourceButton get() = binding.imageSource
+  private val flickDismissLayout get() = binding.imageviewerImageContainer
 
   private lateinit var systemUiHelper: SystemUiHelper
   private lateinit var activityBackgroundDrawable: Drawable
@@ -107,7 +107,7 @@ class ImageViewerActivity : AppCompatActivity() {
 
     id = targetImageId(intent)
 
-    setContentView(R.layout.activity_image_viewer)
+    binding = setContentView(ActivityImageViewerBinding::inflate)
 
     sourceUrl(intent)?.let { source ->
       sourceButton.setOnClickListener {

@@ -42,6 +42,9 @@ android {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
+  viewBinding {
+    isEnabled = true
+  }
   sourceSets {
     findByName("main")?.java?.srcDirs("src/main/kotlin")
     findByName("debug")?.java?.srcDirs("src/debug/kotlin")

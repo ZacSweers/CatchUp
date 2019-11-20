@@ -20,7 +20,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
-import io.sweers.catchup.R
+import io.sweers.catchup.databinding.BugreportViewBinding
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
 import io.sweers.catchup.ui.bugreport.BugReportView.ReportDetailsListener
 
@@ -33,15 +33,14 @@ class BugReportDialog(context: Context) :
   private var listener: ReportListener? = null
 
   init {
-
-    val view = LayoutInflater.from(context).inflate(R.layout.bugreport_view, null) as BugReportView
-    view.setBugReportListener(this)
+    val view = BugreportViewBinding.inflate(LayoutInflater.from(context))
+    view.root.setBugReportListener(this)
 
     setTitle("Report a bug")
-    setView(view)
+    setView(view.root)
     setButton(Dialog.BUTTON_NEGATIVE, "Cancel", null as DialogInterface.OnClickListener?)
     setButton(Dialog.BUTTON_POSITIVE, "Submit") { _, _ ->
-      listener?.onBugReportSubmit(view.report)
+      listener?.onBugReportSubmit(view.root.report)
     }
   }
 

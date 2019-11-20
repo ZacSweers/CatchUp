@@ -24,13 +24,11 @@ import android.util.Log.WARN
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.DrawableRes
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard.Entry
+import io.sweers.catchup.databinding.DebugLogsListItemBinding
 import io.sweers.catchup.ui.BindableAdapter
-import kotterknife.ViewDelegateBindable
-import kotterknife.bindView
 import java.util.ArrayList
 
 internal class LogAdapter(context: Context) : BindableAdapter<Entry>(context) {
@@ -63,10 +61,11 @@ internal class LogAdapter(context: Context) : BindableAdapter<Entry>(context) {
     viewHolder.setEntry(item)
   }
 
-  internal class LogItemViewHolder(private val rootView: View) : ViewDelegateBindable(rootView) {
-    private val levelView by bindView<TextView>(R.id.debug_log_level)
-    private val tagView by bindView<TextView>(R.id.debug_log_tag)
-    private val messageView by bindView<TextView>(R.id.debug_log_message)
+  internal class LogItemViewHolder(private val rootView: View) {
+    private val root = DebugLogsListItemBinding.bind(rootView)
+    private val levelView = root.debugLogLevel
+    private val tagView = root.debugLogTag
+    private val messageView = root.debugLogMessage
 
     fun setEntry(entry: Entry) {
       rootView.setBackgroundResource(backgroundForLevel(entry.level))
