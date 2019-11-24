@@ -155,7 +155,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:4.0.0-alpha03"
+    const val gradlePlugin = "com.android.tools.build:gradle:4.0.0-alpha04"
   }
 
   object apollo {
@@ -167,7 +167,7 @@ object deps {
   }
 
   object assistedInject {
-    private const val version = "0.5.1"
+    private const val version = "0.5.2"
     const val annotations = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
     const val processor = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
   }
