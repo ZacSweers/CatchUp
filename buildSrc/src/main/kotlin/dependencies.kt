@@ -155,7 +155,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:4.0.0-alpha03"
+    const val gradlePlugin = "com.android.tools.build:gradle:4.0.0-alpha04"
   }
 
   object apollo {
@@ -167,7 +167,7 @@ object deps {
   }
 
   object assistedInject {
-    private const val version = "0.5.1"
+    private const val version = "0.5.2"
     const val annotations = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
     const val processor = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
   }
@@ -369,6 +369,7 @@ object deps {
     const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta3"
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
     const val jsoup = "org.jsoup:jsoup:1.12.1"
+    const val jsr250 = "javax.annotation:jsr250-api:1.0"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
     const val kotpref = "com.chibatching.kotpref:kotpref:${versions.kotpref}"
     const val kotprefEnum = "com.chibatching.kotpref:enum-support:${versions.kotpref}"

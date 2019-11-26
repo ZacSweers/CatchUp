@@ -89,7 +89,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
   }
 
   @Inject
-  lateinit var resolvedColorCache: IntArray
+  lateinit var resolvedColorCache: ColorCache
   @Inject
   lateinit var serviceHandlers: Array<ServiceHandler>
   @Inject
@@ -374,7 +374,15 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
 
     @JvmStatic
     @Provides
-    fun provideColorCache(serviceHandlers: Array<ServiceHandler>) = IntArray(
-        serviceHandlers.size).apply { fill(R.color.no_color) }
+    fun provideColorCache(serviceHandlers: Array<ServiceHandler>) = ColorCache(IntArray(
+        serviceHandlers.size).apply { fill(R.color.no_color) })
+  }
+}
+
+// TODO This is cover for https://github.com/google/dagger/issues/1593
+class ColorCache(val cache: IntArray) {
+  operator fun get(index: Int) = cache[index]
+  operator fun set(index: Int, value: Int) {
+    cache[index] = value
   }
 }

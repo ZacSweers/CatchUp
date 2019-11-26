@@ -8,8 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # TODO Add 9, 10, 11, 12, and 13 after Kotlin 1.3.70
-        java_version: [1.8]
+        # TODO Add 12 and 13 after Kotlin 1.3.70
+        # Can't use 9 because Kapt doesn't work on it with certain zips -_-
+        # Can't use 10 because it has all sort of bizarre Generated annotation issues -_-
+        java_version: [1.8, 11]
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -43,7 +45,7 @@ jobs:
             ${{ runner.os }}-gradlebuildcache-
 
       - name: Build with Gradle
-        run: ./gradlew spotlessCheck :app:assembleDebug test check
+        run: ./gradlew spotlessCheck :app:assembleDebug test check --stacktrace
 #      - name: Upload alpha APK to play store (master only)
 #        run: CATCHUP_SIGNING_ENCRYPT_KEY=${{ secrets.CatchupSigningEncryptKey }} CATCHUP_P12_ENCRYPT_KEY=${{ secrets.CatchupP12EncryptKey }} ./createRelease.sh
 #        if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && matrix.java_version == '1.8'

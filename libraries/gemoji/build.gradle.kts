@@ -62,12 +62,6 @@ kapt {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
   }
-
-  // Compiling with JDK 11+, but kapt doesn't forward source/target versions.
-  javacOptions {
-    option("-source", "8")
-    option("-target", "8")
-  }
 }
 
 dependencies {
@@ -75,6 +69,7 @@ dependencies {
 
   kapt(deps.android.androidx.room.apt)
   kapt(deps.dagger.apt.compiler)
+  compileOnly(deps.misc.jsr250)
 
   api(deps.android.androidx.room.runtime)
   api(deps.dagger.runtime)

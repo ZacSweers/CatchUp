@@ -61,12 +61,6 @@ kapt {
     arg("room.incremental", "true")
     arg("moshi.generated", "javax.annotation.Generated")
   }
-
-  // Compiling with JDK 11+, but kapt doesn't forward source/target versions.
-  javacOptions {
-    option("-source", "8")
-    option("-target", "8")
-  }
 }
 
 dependencies {
