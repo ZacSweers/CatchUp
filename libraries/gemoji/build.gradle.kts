@@ -69,6 +69,7 @@ dependencies {
 
   kapt(deps.android.androidx.room.apt)
   kapt(deps.dagger.apt.compiler)
+  compileOnly(deps.misc.jsr250)
 
   api(deps.android.androidx.room.runtime)
   api(deps.dagger.runtime)
