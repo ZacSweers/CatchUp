@@ -43,7 +43,8 @@ fun String?.execute(workingDir: File, fallback: String): String {
 }
 
 object build {
-  val standardFreeKotlinCompilerArgs = listOf("-Xjsr305=strict",
+  val standardFreeKotlinCompilerArgs = listOf(
+      "-Xjsr305=strict",
       "-progressive",
       "-XXLanguage:+NewInference",
       "-XXLanguage:+SamConversionForKotlinFunctions",
