@@ -40,7 +40,7 @@ android {
   if (deps.build.ci) {
     // This is what github actions has available
     // Necessary due to AGP bug https://issuetracker.google.com/issues/143630825
-    ndkVersion = "20.0.5594570"
+    ndkVersion = "20.1.5948944"
   }
 
   defaultConfig {
