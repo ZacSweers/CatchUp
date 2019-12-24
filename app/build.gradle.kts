@@ -22,7 +22,7 @@ plugins {
   id("com.android.application")
   kotlin("android")
   kotlin("kapt")
-  id("com.apollographql.android")
+  id("com.apollographql.apollo")
 //  id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
 }
@@ -232,11 +232,16 @@ play {
 // }
 
 apollo {
-  customTypeMapping.set(mapOf(
-      "DateTime" to "org.threeten.bp.Instant",
-      "URI" to "okhttp3.HttpUrl"
-  ))
-  setGenerateKotlinModels(true)
+  service("github") {
+    @Suppress("UnstableApiUsage")
+    customTypeMapping.set(mapOf(
+        "DateTime" to "org.threeten.bp.Instant",
+        "URI" to "okhttp3.HttpUrl"
+    ))
+    generateKotlinModels.set(true)
+    rootPackageName.set("io.sweers.catchup.data.github")
+    schemaFile.set(file("src/main/graphql/io/sweers/catchup/data/github/schema.json"))
+  }
 }
 
 tasks.withType<KotlinCompile> {

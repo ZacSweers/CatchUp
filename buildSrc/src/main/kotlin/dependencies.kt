@@ -161,7 +161,7 @@ object deps {
 
   object apollo {
     const val androidSupport = "com.apollographql.apollo:apollo-android-support:${versions.apollo}"
-    const val gradlePlugin = "com.apollographql.apollo:apollo-gradle-plugin:${versions.apollo}"
+    const val gradlePlugin = "com.apollographql.apollo:apollo-gradle-plugin-incubating:${versions.apollo}"
     const val httpcache = "com.apollographql.apollo:apollo-http-cache:${versions.apollo}"
     const val runtime = "com.apollographql.apollo:apollo-runtime:${versions.apollo}"
     const val rx2Support = "com.apollographql.apollo:apollo-rx2-support:${versions.apollo}"
