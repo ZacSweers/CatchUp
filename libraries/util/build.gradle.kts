@@ -37,8 +37,8 @@ android {
     findByName("release")?.java?.srcDirs("src/release/kotlin")
     findByName("test")?.java?.srcDirs("src/test/kotlin")
   }
-  viewBinding {
-    isEnabled = true
+  buildFeatures {
+    viewBinding = true
   }
   libraryVariants.all {
     generateBuildConfigProvider?.configure {

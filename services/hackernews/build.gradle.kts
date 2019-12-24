@@ -43,8 +43,8 @@ android {
     isCheckReleaseBuilds = false
     isAbortOnError = false
   }
-  viewBinding {
-    isEnabled = true
+  buildFeatures {
+    viewBinding = true
   }
   libraryVariants.all {
     generateBuildConfigProvider?.configure {
