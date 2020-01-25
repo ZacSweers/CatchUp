@@ -48,8 +48,6 @@ import io.sweers.catchup.R.layout
 import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery
-import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsOrganization
-import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery.AsUser
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
 import io.sweers.catchup.databinding.AboutHeaderItemBinding
@@ -199,17 +197,13 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
       apolloClient.query(ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct()))
           .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
           .toFlow()
-          .map { it.data()!!.nodes.mapNotNull { it?.inlineFragment }.asFlow() }
+          .map { it.data()!!.nodes.filterNotNull().asFlow() }
           .flattenConcat()
           // Reduce into a map of the owner ID -> display name
           .fold(mutableMapOf<String, String>()) { map, node ->
             map.apply {
-              val (id, name) = when (node) {
-                is AsOrganization -> with(node) { id to (name ?: login) }
-                is AsUser -> with(node) { id to (name ?: login) }
-                else -> throw IllegalStateException("Unrecognized node type: $node")
-              }
-              map[id] = name
+              node.asOrganization?.run { map[id] = (name ?: login) }
+              node.asUser?.run { map[id] = (name ?: login) }
             }
           }
     }
@@ -219,8 +213,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
         .toFlow()
         .map {
           it.data()!!.nodes.asSequence()
-              .mapNotNull { it?.inlineFragment }
-              .filterIsInstance<RepositoriesByIdsQuery.AsRepository>()
+              .mapNotNull { it?.asRepository }
               .asFlow()
         }
         .flattenConcat()

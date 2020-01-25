@@ -135,8 +135,7 @@ internal class GitHubService @Inject constructor(
         }
         .map { it.data()!! }
         .flatMap { (search) ->
-          Observable.fromIterable(search.nodes?.mapNotNull { it?.inlineFragment }.orEmpty())
-              .cast(AsRepository::class.java)
+          Observable.fromIterable(search.nodes?.mapNotNull { it?.asRepository }.orEmpty())
               .map {
                 with(it) {
                   val description = description
