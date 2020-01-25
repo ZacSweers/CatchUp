@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
+  id("dev.zacsweers.redacted.redacted-gradle-plugin")
 }
 
 android {
@@ -47,6 +48,10 @@ android {
   }
 }
 
+redacted {
+  redactedAnnotation = "io.sweers.catchup.util.network.Redacted"
+}
+
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs = build.standardFreeKotlinCompilerArgs
@@ -72,4 +77,7 @@ dependencies {
   api(deps.rx.java)
 
   implementation(deps.misc.unbescape)
+
+  testImplementation(deps.test.junit)
+  testImplementation(deps.test.truth)
 }

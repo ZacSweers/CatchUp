@@ -18,13 +18,19 @@ package io.sweers.catchup.util.network
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
+import kotlin.annotation.AnnotationRetention.BINARY
+import kotlin.annotation.AnnotationTarget.PROPERTY
+
+@Retention(BINARY)
+@Target(PROPERTY)
+annotation class Redacted
 
 /**
  * A [Interceptor] that adds an auth token to requests.
  */
 data class AuthInterceptor(
   private val method: String,
-  private val accessToken: String
+  @Redacted private val accessToken: String
 ) : Interceptor {
 
   @Throws(IOException::class)
@@ -35,6 +41,4 @@ data class AuthInterceptor(
         .build()
     return chain.proceed(request)
   }
-
-  override fun toString() = "AuthInterceptor(accessToken='██', method='$method')"
 }

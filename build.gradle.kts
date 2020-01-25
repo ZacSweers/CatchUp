@@ -36,6 +36,7 @@ buildscript {
     classpath(deps.apollo.gradlePlugin)
     classpath(deps.build.gradlePlugins.playPublisher)
     classpath(deps.build.gradlePlugins.spotless)
+    classpath(deps.build.gradlePlugins.redacted)
   }
 }
 
