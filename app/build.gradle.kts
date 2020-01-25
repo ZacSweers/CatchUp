@@ -164,6 +164,9 @@ android {
     htmlReport = !deps.build.ci
     xmlReport = !deps.build.ci
     isCheckDependencies = true
+
+    // Pending fix in https://android-review.googlesource.com/c/platform/frameworks/support/+/1217923
+    disable("UnsafeExperimentalUsageError", "UnsafeExperimentalUsageWarning")
   }
   // Should be fixed now, disable if need be
   // https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/59
