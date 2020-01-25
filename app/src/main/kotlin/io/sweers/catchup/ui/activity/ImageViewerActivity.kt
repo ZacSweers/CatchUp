@@ -47,6 +47,8 @@ import coil.api.load
 import coil.bitmappool.BitmapPool
 import coil.size.Size
 import coil.transform.Transformation
+import coil.util.CoilLogger
+import coil.size.Precision
 import io.sweers.catchup.R
 import io.sweers.catchup.databinding.ActivityImageViewerBinding
 import io.sweers.catchup.ui.immersive.SystemUiHelper
@@ -143,7 +145,9 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun loadImage() {
+    CoilLogger.setEnabled(true)
     imageView.load(url) {
+      precision(Precision.EXACT)
       cacheKey?.let(this::aliasKeys)
       // Adding a 1px transparent border improves anti-aliasing
       // when the image rotates while being dragged.
@@ -154,11 +158,10 @@ class ImageViewerActivity : AppCompatActivity() {
       if (id != null) {
         crossfade(0)
         listener(
-            onError = { _, _ ->
-              startPostponedEnterTransition()
-            },
-            onSuccess = { _, _ ->
-              startPostponedEnterTransition()
+            onStart = { _ ->
+              if (imageView.getDrawable() != null) {
+                startPostponedEnterTransition()
+              }
             }
         )
       }
