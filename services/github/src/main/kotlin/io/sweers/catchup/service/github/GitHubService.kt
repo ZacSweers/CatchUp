@@ -44,7 +44,6 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.github.GitHubApi.Language.All
 import io.sweers.catchup.service.github.GitHubApi.Since.DAILY
-import io.sweers.catchup.service.github.GitHubSearchQuery.AsRepository
 import io.sweers.catchup.service.github.model.SearchQuery
 import io.sweers.catchup.service.github.model.TrendingTimespan
 import io.sweers.catchup.service.github.type.LanguageOrder
