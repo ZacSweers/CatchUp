@@ -35,6 +35,7 @@ internal data class UplabsImage(
   val label: String,
   @Json(name = "category_friendly_name") val category: String,
   @Json(name = "teaser_url") val teaserUrl: String,
+  @Json(name = "preview_url") val previewUrl: String,
   val images: List<Image>
 )
 

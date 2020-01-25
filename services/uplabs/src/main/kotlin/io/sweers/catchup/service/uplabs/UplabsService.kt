@@ -73,7 +73,7 @@ internal class UplabsService @Inject constructor(
               itemClickUrl = if (it.animated) it.animatedTeaserUrl else it.teaserUrl,
               imageInfo = ImageInfo(
                   url = if (it.animated) it.animatedTeaserUrl else it.teaserUrl,
-                  detailUrl = if (it.animated) it.url else it.url, // Animated url?
+                  detailUrl = it.previewUrl, // Both animated and not are the preview url
                   animatable = it.animated,
                   sourceUrl = it.url,
                   bestSize = null,
