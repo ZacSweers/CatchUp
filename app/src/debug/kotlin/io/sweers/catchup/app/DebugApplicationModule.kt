@@ -70,7 +70,7 @@ object DebugApplicationModule {
     return if (leakCanaryEnabled) {
       object : CatchUpObjectWatcher {
         override fun watch(watchedReference: Any) {
-          AppWatcher.objectWatcher.watch(watchedReference)
+          AppWatcher.objectWatcher.watch(watchedReference, "Uhhh because reasons")
         }
       }
     } else {
