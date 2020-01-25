@@ -44,6 +44,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import coil.api.load
+import coil.bitmappool.BitmapPool
+import coil.size.Size
 import coil.transform.Transformation
 import io.sweers.catchup.R
 import io.sweers.catchup.databinding.ActivityImageViewerBinding
@@ -275,7 +277,7 @@ private class CoilPaddingTransformation(
 ) : Transformation {
   override fun key(): String = "padding_$paddingPx"
 
-  override suspend fun transform(pool: coil.bitmappool.BitmapPool, input: Bitmap): Bitmap {
+  override suspend fun transform(pool: BitmapPool, input: Bitmap, size: Size): Bitmap {
     if (paddingPx == 0F) {
       return input
     }
