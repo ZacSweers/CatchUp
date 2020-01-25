@@ -67,15 +67,12 @@ class ImageViewerActivity : AppCompatActivity() {
   companion object {
     const val INTENT_ID = "imageviewer.id"
     const val INTENT_URL = "imageviewer.url"
+    const val INTENT_ALIAS = "imageviewer.alias"
     const val INTENT_SOURCE_URL = "imageviewer.sourceUrl"
     const val RETURN_IMAGE_ID = "imageviewer.returnimageid"
 
     fun intent(context: Context, url: String): Intent {
       return Intent(context, ImageViewerActivity::class.java).putExtra("url", url)
-    }
-
-    fun targetImageUrl(intent: Intent): String? {
-      return intent.getStringExtra(INTENT_URL)
     }
 
     fun targetImageId(intent: Intent): String? {
@@ -96,13 +93,19 @@ class ImageViewerActivity : AppCompatActivity() {
   private lateinit var systemUiHelper: SystemUiHelper
   private lateinit var activityBackgroundDrawable: Drawable
   private lateinit var url: String
+  private var cacheKey: String? = null
   private var id: String? = null
+
+  private inline fun parseUrls(intent: Intent, onMissing: () -> Nothing) {
+    url = intent.getStringExtra(INTENT_URL) ?: onMissing()
+    cacheKey = intent.getStringExtra(INTENT_ALIAS)
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     super.onCreate(savedInstanceState)
 
-    url = targetImageUrl(intent) ?: run {
+    parseUrls(intent) {
       finishAfterTransition()
       return
     }
@@ -141,6 +144,7 @@ class ImageViewerActivity : AppCompatActivity() {
 
   private fun loadImage() {
     imageView.load(url) {
+      cacheKey?.let(this::aliasKeys)
       // Adding a 1px transparent border improves anti-aliasing
       // when the image rotates while being dragged.
       transformations(CoilPaddingTransformation(

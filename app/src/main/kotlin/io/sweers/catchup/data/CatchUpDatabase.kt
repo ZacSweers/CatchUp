@@ -30,7 +30,7 @@ import org.threeten.bp.Instant
       ServicePage::class,
       CatchUpItem::class
     ],
-    version = 4
+    version = 5
 )
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {

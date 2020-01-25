@@ -77,6 +77,7 @@ internal class UnsplashService @Inject constructor(
               itemClickUrl = it.urls.full,
               imageInfo = ImageInfo(
                   url = it.urls.small,
+                  detailUrl = it.urls.raw,
                   animatable = false,
                   sourceUrl = it.links.html,
                   bestSize = null,
