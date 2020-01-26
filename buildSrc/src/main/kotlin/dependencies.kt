@@ -71,7 +71,7 @@ object deps {
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
-    const val kotlin = "1.3.61"
+    const val kotlin = "1.3.70-eap-42"
     const val kotpref = "2.10.0"
     const val leakcanary = "2.1"
     const val legacySupport = "28.0.0"
@@ -320,7 +320,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.3.3"
+    private const val coroutinesVersion = "1.3.3-1.3.70-eap-42"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
