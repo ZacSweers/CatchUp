@@ -43,12 +43,14 @@ import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import coil.Coil
 import coil.api.load
 import coil.bitmappool.BitmapPool
+import coil.size.Precision
 import coil.size.Size
+import coil.target.ImageViewTarget
 import coil.transform.Transformation
 import coil.util.CoilLogger
-import coil.size.Precision
 import io.sweers.catchup.R
 import io.sweers.catchup.databinding.ActivityImageViewerBinding
 import io.sweers.catchup.ui.immersive.SystemUiHelper
@@ -146,7 +148,15 @@ class ImageViewerActivity : AppCompatActivity() {
 
   private fun loadImage() {
     CoilLogger.setEnabled(true)
-    imageView.load(url) {
+    Coil.loader().load(imageView.context, url) {
+      target(object : ImageViewTarget(imageView) {
+        override fun onStart(placeholder: Drawable?) {
+          super.onStart(placeholder)
+          if (placeholder != null && id != null) {
+            startPostponedEnterTransition()
+          }
+        }
+      })
       precision(Precision.EXACT)
       cacheKey?.let(this::aliasKeys)
       // Adding a 1px transparent border improves anti-aliasing
@@ -157,13 +167,6 @@ class ImageViewerActivity : AppCompatActivity() {
       ))
       if (id != null) {
         crossfade(0)
-        listener(
-            onStart = { _ ->
-              if (imageView.getDrawable() != null) {
-                startPostponedEnterTransition()
-              }
-            }
-        )
       }
     }
 
