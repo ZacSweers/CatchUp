@@ -7,7 +7,7 @@ CatchUp
 
 An app for catching up on things.
 
-https://medium.com/@sweers/catching-up-on-catchup-introduction-7581c099f4bc
+https://www.zacsweers.dev/catching-up-on-catchup-introduction/
 
 ## Motivations
 
