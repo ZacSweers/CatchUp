@@ -75,7 +75,7 @@ object deps {
     const val kotpref = "2.10.0"
     const val leakcanary = "2.1"
     const val legacySupport = "28.0.0"
-    const val markwon = "4.2.0"
+    const val markwon = "4.2.1"
     const val moshi = "1.9.2"
     const val okhttp = "4.3.1"
     const val retrofit = "2.7.1"
@@ -87,9 +87,9 @@ object deps {
     object androidx {
       const val annotations = "androidx.annotation:annotation:1.1.0"
       const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
-      const val appCompat = "androidx.appcompat:appcompat:1.2.0-alpha01"
+      const val appCompat = "androidx.appcompat:appcompat:1.2.0-alpha02"
 
-      private const val coreVersion = "1.2.0-rc01"
+      private const val coreVersion = "1.3.0-alpha01"
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
@@ -151,7 +151,7 @@ object deps {
     object firebase {
       const val core = "com.google.firebase:firebase-core:17.2.2"
       const val config = "com.google.firebase:firebase-config:18.0.0"
-      const val database = "com.google.firebase:firebase-database:19.2.0"
+      const val database = "com.google.firebase:firebase-database:19.2.1"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
@@ -214,7 +214,7 @@ object deps {
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.7.3"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:2.6.2"
-      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.1.0"
+      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.2.0"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${versions.spotless}"
     }
 
@@ -236,7 +236,7 @@ object deps {
   }
 
   object coil {
-    private const val VERSION = "0.9.2"
+    private const val VERSION = "0.9.3"
     const val base = "io.coil-kt:coil-base:$VERSION"
     const val default = "io.coil-kt:coil:$VERSION"
     const val gif = "io.coil-kt:coil-gif:$VERSION"
@@ -358,7 +358,7 @@ object deps {
       private const val FLIPPER_VERSION = "0.30.2"
       const val flipper = "com.facebook.flipper:flipper:$FLIPPER_VERSION"
       const val flipperNetwork = "com.facebook.flipper:flipper-network-plugin:$FLIPPER_VERSION"
-      const val soLoader = "com.facebook.soloader:soloader:0.8.0"
+      const val soLoader = "com.facebook.soloader:soloader:0.8.1"
       const val guava = "com.google.guava:guava:28.2-android"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.0.0"
@@ -378,7 +378,7 @@ object deps {
     const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.8.0"
     const val lottie = "com.airbnb.android:lottie:3.3.1"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-    const val okio = "com.squareup.okio:okio:2.4.1"
+    const val okio = "com.squareup.okio:okio:2.4.3"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:3.0.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.0"
     const val timber = "com.jakewharton.timber:timber:4.7.1"
@@ -422,7 +422,7 @@ object deps {
 
     const val dogTag = "com.uber.rxdogtag:rxdogtag:0.3.0"
     const val dogTagAutoDispose = "com.uber.rxdogtag:rxdogtag-autodispose:0.3.0"
-    const val java = "io.reactivex.rxjava2:rxjava:2.2.16"
+    const val java = "io.reactivex.rxjava2:rxjava:2.2.17"
     const val relay = "com.jakewharton.rxrelay2:rxrelay:2.1.1"
   }
 
@@ -446,7 +446,7 @@ object deps {
       const val rules = "androidx.test:rules:${versions.androidTestSupport}"
     }
 
-    const val junit = "junit:junit:4.12"
+    const val junit = "junit:junit:4.13"
     const val robolectric = "org.robolectric:robolectric:4.0-alpha-1"
     const val truth = "com.google.truth:truth:1.0.1"
   }
