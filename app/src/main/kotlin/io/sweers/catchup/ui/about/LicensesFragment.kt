@@ -177,7 +177,9 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     val idsToOwnerIds = githubEntries.asFlow()
         .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
         .flatMapMerge {
-          apolloClient.query(it).httpCachePolicy(HttpCachePolicy.CACHE_FIRST).toFlow()
+          apolloClient.query(it)
+              .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
+              .toFlow()
               .map {
                 with(it.data()!!.repository!!) {
                   id to owner.id
