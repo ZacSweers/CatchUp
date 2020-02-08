@@ -27,6 +27,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.collection.ArrayMap
 import androidx.core.util.toAndroidPair
 import androidx.lifecycle.lifecycleScope
@@ -41,6 +42,7 @@ import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.ImageViewerActivity
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
+import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.any
 import io.sweers.catchup.util.kotlin.applyIf
 import io.sweers.catchup.util.kotlin.mergeWith
@@ -175,6 +177,13 @@ class LinkManager @Inject constructor(
   }
 
   private fun openCustomTab(context: Context, uri: Uri, @ColorInt accentColor: Int) {
+    // TODO this actually doesn't seem to make a difference as the scheme behavior seems to be
+    //  controlled via chrome://flags and ignore whatever apps or system define.
+    val colorScheme = if (context.isInNightMode()) {
+      CustomTabsIntent.COLOR_SCHEME_DARK
+    } else {
+      CustomTabsIntent.COLOR_SCHEME_LIGHT
+    }
     customTab.openCustomTab(context,
         customTab.customTabIntent
             .applyIf(Build.VERSION.SDK_INT < 29) {
@@ -182,6 +191,7 @@ class LinkManager @Inject constructor(
               setStartAnimations(context, R.anim.slide_up, R.anim.inset)
               setExitAnimations(context, R.anim.outset, R.anim.slide_down)
             }
+            .setColorScheme(colorScheme)
             .setToolbarColor(accentColor)
             .build(),
         uri)
