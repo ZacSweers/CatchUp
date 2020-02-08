@@ -44,7 +44,6 @@ import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
-import io.sweers.catchup.util.kotlin.getValue
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.launch
@@ -61,7 +60,7 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
   @Inject
   internal lateinit var markdownConverter: EmojiMarkdownConverter
 
-  private val progressBar by binding::progress
+  private val progressBar get() = binding.progress
   private val recyclerView get() = binding.list
 
   private lateinit var layoutManager: LinearLayoutManager
