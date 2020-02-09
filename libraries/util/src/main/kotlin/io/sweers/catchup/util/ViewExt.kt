@@ -89,10 +89,14 @@ inline fun View.show(animate: Boolean = false) {
 }
 
 inline infix fun View.showIf(condition: Boolean) {
+  showIf(condition, true)
+}
+
+inline fun View.showIf(condition: Boolean, animate: Boolean = true) {
   if (condition) {
-    show()
+    show(animate)
   } else {
-    hide()
+    hide(animate)
   }
 }
 

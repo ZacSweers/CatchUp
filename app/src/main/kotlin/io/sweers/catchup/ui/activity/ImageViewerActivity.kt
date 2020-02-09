@@ -57,6 +57,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.databinding.ActivityImageViewerBinding
 import io.sweers.catchup.ui.immersive.SystemUiHelper
 import io.sweers.catchup.util.setContentView
+import io.sweers.catchup.util.showIf
 import io.sweers.catchup.util.toggleVisibility
 import me.saket.flick.ContentSizeProvider2
 import me.saket.flick.FlickCallbacks
@@ -238,6 +239,7 @@ class ImageViewerActivity : AppCompatActivity() {
 
       override fun onMove(@FloatRange(from = -1.0, to = 1.0) moveRatio: Float) {
         updateBackgroundDimmingAlpha(abs(moveRatio))
+        sourceButton.showIf(moveRatio == 0f, animate = true)
       }
     }
 
@@ -290,7 +292,6 @@ class ImageViewerActivity : AppCompatActivity() {
     val dimming = 1f - min(1f, transparencyFactor * 2)
     val finalAlpha = (dimming * 255).toInt()
     activityBackgroundDrawable.alpha = finalAlpha
-    sourceButton.imageAlpha = finalAlpha
   }
 }
 
