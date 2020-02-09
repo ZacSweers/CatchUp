@@ -42,15 +42,17 @@ import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.addListener
+import androidx.core.transition.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import coil.Coil
 import coil.api.load
 import coil.bitmappool.BitmapPool
+import coil.request.CachePolicy
 import coil.size.Precision
+import coil.size.Scale
 import coil.size.Size
-import coil.target.ImageViewTarget
+import coil.size.ViewSizeResolver
 import coil.transform.Transformation
-import coil.util.CoilLogger
 import io.sweers.catchup.R
 import io.sweers.catchup.databinding.ActivityImageViewerBinding
 import io.sweers.catchup.ui.immersive.SystemUiHelper
@@ -147,35 +149,52 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun loadImage() {
-    CoilLogger.setEnabled(true)
-    Coil.loader().load(imageView.context, url) {
-      target(object : ImageViewTarget(imageView) {
-        override fun onStart(placeholder: Drawable?) {
-          super.onStart(placeholder)
-          if (placeholder != null && id != null) {
-            startPostponedEnterTransition()
+    var isTransitionEnded = false
+    var pendingImage: Drawable? = null
+
+    val transition: Transition? = window.sharedElementEnterTransition
+    if (transition != null) {
+      transition.addListener(
+          onEnd = {
+            isTransitionEnded = true
+            pendingImage?.let(imageView::setImageDrawable)
           }
-        }
-      })
+      )
+    } else {
+      isTransitionEnded = true
+    }
+
+    Coil.load(this, url) {
+      cacheKey?.let(this::key)
       precision(Precision.EXACT)
-      cacheKey?.let(this::aliasKeys)
+      size(ViewSizeResolver(imageView))
+      scale(Scale.FILL)
+
+      // Don't cache this to avoid pushing other bitmaps out of the cache.
+      memoryCachePolicy(CachePolicy.READ_ONLY)
+
       // Adding a 1px transparent border improves anti-aliasing
       // when the image rotates while being dragged.
       transformations(CoilPaddingTransformation(
           paddingPx = 1F,
           paddingColor = Color.TRANSPARENT
       ))
-      if (id != null) {
-        crossfade(0)
-      }
+
+      target(
+          onStart = imageView::setImageDrawable,
+          onSuccess = {
+            if (isTransitionEnded) {
+              imageView.setImageDrawable(it)
+            } else {
+              pendingImage = it
+            }
+          }
+      )
     }
 
     activityBackgroundDrawable = rootLayout.background
     rootLayout.background = activityBackgroundDrawable
     animateDimmingEnterExit(0, 255, 200)
-    if (id != null) {
-      postponeEnterTransition()
-    }
   }
 
   private fun setResultAndFinish() {
@@ -241,10 +260,10 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun animateDimmingEnterExit(
-    start: Int,
-    end: Int,
-    duration: Long,
-    onEnd: ((animator: Animator) -> Unit)? = null
+      start: Int,
+      end: Int,
+      duration: Long,
+      onEnd: ((animator: Animator) -> Unit)? = null
   ) {
     ObjectAnimator.ofInt(start, end).apply {
       setDuration(duration)
@@ -261,7 +280,7 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun updateBackgroundDimmingAlpha(
-    @FloatRange(from = 0.0, to = 1.0) transparencyFactor: Float
+      @FloatRange(from = 0.0, to = 1.0) transparencyFactor: Float
   ) {
     // Increase dimming exponentially so that the background is
     // fully transparent while the image has been moved by half.
@@ -282,8 +301,8 @@ private fun Context.dip(units: Int): Int {
 
 /** Adds a solid padding around an image. */
 private class CoilPaddingTransformation(
-  private val paddingPx: Float,
-  @ColorInt private val paddingColor: Int
+    private val paddingPx: Float,
+    @ColorInt private val paddingColor: Int
 ) : Transformation {
   override fun key(): String = "padding_$paddingPx"
 
@@ -329,8 +348,8 @@ private class CoilPaddingTransformation(
  * I should email Mrs. Huebner and thank her for teaching me geometry in high school.
  */
 class FlickDismissRotate(
-  private val imageView: ImageView,
-  private val flickDismissLayout: FlickDismissLayout
+    private val imageView: ImageView,
+    private val flickDismissLayout: FlickDismissLayout
 ) : Transition() {
 
   override fun captureStartValues(transitionValues: TransitionValues?) {
@@ -357,9 +376,9 @@ class FlickDismissRotate(
   }
 
   override fun createAnimator(
-    sceneRoot: ViewGroup,
-    startValues: TransitionValues?,
-    endValues: TransitionValues?
+      sceneRoot: ViewGroup,
+      startValues: TransitionValues?,
+      endValues: TransitionValues?
   ): Animator? {
     if (startValues == null || endValues == null) {
       return null
