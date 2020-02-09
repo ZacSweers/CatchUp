@@ -315,15 +315,15 @@ internal class ImageAdapter(
 /** A [Transition] that saturates and fades in the new drawable on load */
 @ExperimentalCoil
 private class SaturatingTransformation(
-    private val durationMillis: Long = SATURATION_ANIMATION_DURATION
+  private val durationMillis: Long = SATURATION_ANIMATION_DURATION
 ) : Transition {
   init {
     require(durationMillis > 0) { "durationMillis must be > 0." }
   }
 
   override suspend fun transition(
-      target: TransitionTarget<*>,
-      result: TransitionResult
+    target: TransitionTarget<*>,
+    result: TransitionResult
   ) {
     // Don't animate if the request was fulfilled by the memory cache.
     if (result is TransitionResult.Success && result.isMemoryCache) {
@@ -352,9 +352,9 @@ private class SaturatingTransformation(
 }
 
 private fun saturateDrawableAnimator(
-    current: Drawable,
-    duration: Long = SATURATION_ANIMATION_DURATION,
-    view: View? = null
+  current: Drawable,
+  duration: Long = SATURATION_ANIMATION_DURATION,
+  view: View? = null
 ): Animator {
   current.mutate()
   view?.setHasTransientState(true)

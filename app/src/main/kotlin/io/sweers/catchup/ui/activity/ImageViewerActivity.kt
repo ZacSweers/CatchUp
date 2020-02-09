@@ -265,10 +265,10 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun animateDimmingEnterExit(
-      start: Int,
-      end: Int,
-      duration: Long,
-      onEnd: ((animator: Animator) -> Unit)? = null
+    start: Int,
+    end: Int,
+    duration: Long,
+    onEnd: ((animator: Animator) -> Unit)? = null
   ) {
     ObjectAnimator.ofInt(start, end).apply {
       setDuration(duration)
@@ -285,7 +285,7 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun updateBackgroundDimmingAlpha(
-      @FloatRange(from = 0.0, to = 1.0) transparencyFactor: Float
+    @FloatRange(from = 0.0, to = 1.0) transparencyFactor: Float
   ) {
     // Increase dimming exponentially so that the background is
     // fully transparent while the image has been moved by half.
@@ -305,8 +305,8 @@ private fun Context.dip(units: Int): Int {
 
 /** Adds a solid padding around an image. */
 private class CoilPaddingTransformation(
-    private val paddingPx: Float,
-    @ColorInt private val paddingColor: Int
+  private val paddingPx: Float,
+  @ColorInt private val paddingColor: Int
 ) : Transformation {
   override fun key(): String = "padding_$paddingPx"
 
@@ -352,8 +352,8 @@ private class CoilPaddingTransformation(
  * I should email Mrs. Huebner and thank her for teaching me geometry in high school.
  */
 class FlickDismissRotate(
-    private val imageView: ImageView,
-    private val flickDismissLayout: FlickDismissLayout
+  private val imageView: ImageView,
+  private val flickDismissLayout: FlickDismissLayout
 ) : Transition() {
 
   override fun captureStartValues(transitionValues: TransitionValues?) {
@@ -380,9 +380,9 @@ class FlickDismissRotate(
   }
 
   override fun createAnimator(
-      sceneRoot: ViewGroup,
-      startValues: TransitionValues?,
-      endValues: TransitionValues?
+    sceneRoot: ViewGroup,
+    startValues: TransitionValues?,
+    endValues: TransitionValues?
   ): Animator? {
     if (startValues == null || endValues == null) {
       return null
