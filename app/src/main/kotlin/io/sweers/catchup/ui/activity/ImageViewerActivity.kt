@@ -120,6 +120,9 @@ class ImageViewerActivity : AppCompatActivity() {
 
     binding = setContentView(ActivityImageViewerBinding::inflate)
 
+    // TODO this should be set in XML but if I set it there then viewbinding crashes
+    binding.bottomappbar.elevation = 0f
+
     sourceUrl(intent)?.let { source ->
       sourceButton.setOnClickListener {
         // TODO bring in LinkManager here
