@@ -70,7 +70,8 @@ internal class DribbbleService @Inject constructor(
               tag = null,
               itemClickUrl = it.images.best(),
               imageInfo = ImageInfo(
-                  it.images.best(),
+                  it.images.normal,
+                  it.images.best(true),
                   it.animated,
                   it.htmlUrl,
                   it.images.bestSize(),

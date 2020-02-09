@@ -17,8 +17,11 @@ package io.sweers.catchup.service.api
 
 data class ImageInfo(
   val url: String,
+  val detailUrl: String,
   val animatable: Boolean,
   val sourceUrl: String,
   val bestSize: Pair<Int, Int>?,
-  val imageId: String? = null
-)
+  val imageId: String
+) {
+  @Transient val cacheKey: String = imageId
+}

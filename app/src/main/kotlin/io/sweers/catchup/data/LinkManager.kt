@@ -100,6 +100,7 @@ class LinkManager @Inject constructor(
       val intent = Intent(activity, ImageViewerActivity::class.java)
       intent.putExtra(ImageViewerActivity.INTENT_ID, imageData.id)
       intent.putExtra(ImageViewerActivity.INTENT_URL, imageData.imageUrl)
+      intent.putExtra(ImageViewerActivity.INTENT_ALIAS, imageData.cacheKey)
       intent.putExtra(ImageViewerActivity.INTENT_SOURCE_URL, imageData.sourceUrl)
       val options = getActivityOptions(imageData)
       activity.startActivityForResult(intent, 101, options.toBundle())

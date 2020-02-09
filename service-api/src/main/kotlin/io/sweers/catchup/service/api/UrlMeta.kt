@@ -51,6 +51,7 @@ data class UrlMeta(
 data class ImageViewerData(
   val id: String,
   val imageUrl: String,
+  val cacheKey: String,
   val sourceUrl: String,
   val image: View
 )

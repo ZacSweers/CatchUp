@@ -20,12 +20,14 @@ import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.drawable.Drawable
+import android.os.Build
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import coil.Coil
 import coil.DefaultRequestOptions
 import coil.ImageLoader
 import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.request.GetRequest
 import coil.request.LoadRequest
 import coil.request.RequestDisposable
@@ -260,13 +262,11 @@ abstract class ApplicationModule {
         crossfade(300)
 
         componentRegistry {
-          // TODO re-enable native decoder once https://github.com/coil-kt/coil/issues/101 is fixed
-//          if (Build.VERSION.SDK_INT >= 28) {
-//            add(ImageDecoderDecoder())
-//          } else {
-//            add(GifDecoder())
-//          }
-          add(GifDecoder())
+          if (Build.VERSION.SDK_INT >= 28) {
+            add(ImageDecoderDecoder())
+          } else {
+            add(GifDecoder())
+          }
         }
       }
     }

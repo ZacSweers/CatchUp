@@ -42,15 +42,22 @@ import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.addListener
+import androidx.core.transition.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import coil.Coil
 import coil.api.load
 import coil.bitmappool.BitmapPool
+import coil.request.CachePolicy
+import coil.size.Precision
+import coil.size.Scale
 import coil.size.Size
+import coil.size.ViewSizeResolver
 import coil.transform.Transformation
 import io.sweers.catchup.R
 import io.sweers.catchup.databinding.ActivityImageViewerBinding
 import io.sweers.catchup.ui.immersive.SystemUiHelper
 import io.sweers.catchup.util.setContentView
+import io.sweers.catchup.util.showIf
 import io.sweers.catchup.util.toggleVisibility
 import me.saket.flick.ContentSizeProvider2
 import me.saket.flick.FlickCallbacks
@@ -67,15 +74,12 @@ class ImageViewerActivity : AppCompatActivity() {
   companion object {
     const val INTENT_ID = "imageviewer.id"
     const val INTENT_URL = "imageviewer.url"
+    const val INTENT_ALIAS = "imageviewer.alias"
     const val INTENT_SOURCE_URL = "imageviewer.sourceUrl"
     const val RETURN_IMAGE_ID = "imageviewer.returnimageid"
 
     fun intent(context: Context, url: String): Intent {
       return Intent(context, ImageViewerActivity::class.java).putExtra("url", url)
-    }
-
-    fun targetImageUrl(intent: Intent): String? {
-      return intent.getStringExtra(INTENT_URL)
     }
 
     fun targetImageId(intent: Intent): String? {
@@ -96,13 +100,19 @@ class ImageViewerActivity : AppCompatActivity() {
   private lateinit var systemUiHelper: SystemUiHelper
   private lateinit var activityBackgroundDrawable: Drawable
   private lateinit var url: String
+  private var cacheKey: String? = null
   private var id: String? = null
+
+  private inline fun parseUrls(intent: Intent, onMissing: () -> Nothing) {
+    url = intent.getStringExtra(INTENT_URL) ?: onMissing()
+    cacheKey = intent.getStringExtra(INTENT_ALIAS)
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     super.onCreate(savedInstanceState)
 
-    url = targetImageUrl(intent) ?: run {
+    parseUrls(intent) {
       finishAfterTransition()
       return
     }
@@ -110,6 +120,9 @@ class ImageViewerActivity : AppCompatActivity() {
     id = targetImageId(intent)
 
     binding = setContentView(ActivityImageViewerBinding::inflate)
+
+    // TODO this should be set in XML but if I set it there then viewbinding crashes
+    binding.bottomappbar.elevation = 0f
 
     sourceUrl(intent)?.let { source ->
       sourceButton.setOnClickListener {
@@ -140,32 +153,56 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun loadImage() {
-    imageView.load(url) {
+    var isTransitionEnded = false
+    var pendingImage: Drawable? = null
+
+    val transition: Transition? = window.sharedElementEnterTransition
+    if (transition != null) {
+      transition.addListener(
+          onEnd = {
+            isTransitionEnded = true
+            pendingImage?.let(imageView::setImageDrawable)
+          }
+      )
+    } else {
+      isTransitionEnded = true
+    }
+
+    Coil.load(this, url) {
+      cacheKey?.let(this::key)
+      precision(Precision.EXACT)
+      size(ViewSizeResolver(imageView))
+      scale(Scale.FILL)
+
+      // Don't cache this to avoid pushing other bitmaps out of the cache.
+      memoryCachePolicy(CachePolicy.READ_ONLY)
+
+      // Crossfade in the higher res version when it arrives
+      // ...hopefully
+      crossfade(true)
+
       // Adding a 1px transparent border improves anti-aliasing
       // when the image rotates while being dragged.
       transformations(CoilPaddingTransformation(
           paddingPx = 1F,
           paddingColor = Color.TRANSPARENT
       ))
-      if (id != null) {
-        crossfade(0)
-        listener(
-            onError = { _, _ ->
-              startPostponedEnterTransition()
-            },
-            onSuccess = { _, _ ->
-              startPostponedEnterTransition()
+
+      target(
+          onStart = imageView::setImageDrawable,
+          onSuccess = {
+            if (isTransitionEnded) {
+              imageView.setImageDrawable(it)
+            } else {
+              pendingImage = it
             }
-        )
-      }
+          }
+      )
     }
 
     activityBackgroundDrawable = rootLayout.background
     rootLayout.background = activityBackgroundDrawable
     animateDimmingEnterExit(0, 255, 200)
-    if (id != null) {
-      postponeEnterTransition()
-    }
   }
 
   private fun setResultAndFinish() {
@@ -206,6 +243,7 @@ class ImageViewerActivity : AppCompatActivity() {
 
       override fun onMove(@FloatRange(from = -1.0, to = 1.0) moveRatio: Float) {
         updateBackgroundDimmingAlpha(abs(moveRatio))
+        sourceButton.showIf(moveRatio == 0f, animate = true)
       }
     }
 
@@ -258,7 +296,6 @@ class ImageViewerActivity : AppCompatActivity() {
     val dimming = 1f - min(1f, transparencyFactor * 2)
     val finalAlpha = (dimming * 255).toInt()
     activityBackgroundDrawable.alpha = finalAlpha
-    sourceButton.imageAlpha = finalAlpha
   }
 }
 

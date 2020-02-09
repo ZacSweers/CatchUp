@@ -44,8 +44,9 @@ interface VisualService : Service {
                     meta().themeColor),
                 context = context,
                 imageViewerData = ImageViewerData(
-                    id = item.imageInfo!!.imageId!!,
-                    imageUrl = item.imageInfo.url,
+                    id = item.imageInfo!!.imageId,
+                    imageUrl = item.imageInfo.detailUrl,
+                    cacheKey = item.imageInfo.cacheKey,
                     sourceUrl = item.imageInfo.sourceUrl,
                     image = holder.itemView()
                 )
