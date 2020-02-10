@@ -44,7 +44,6 @@ import io.noties.markwon.Markwon
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.base.ui.InjectingBaseFragment
-import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.databinding.ActivityGenericContainerBinding
 import io.sweers.catchup.databinding.FragmentAboutBinding
