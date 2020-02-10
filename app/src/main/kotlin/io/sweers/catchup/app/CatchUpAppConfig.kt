@@ -34,7 +34,6 @@ class CatchUpAppConfig @Inject constructor(
   override val isDebug: Boolean = io.sweers.catchup.BuildConfig.DEBUG
   override val applicationId: String = io.sweers.catchup.BuildConfig.APPLICATION_ID
   override val buildType: String = io.sweers.catchup.BuildConfig.BUILD_TYPE
-  override val flavor: String = io.sweers.catchup.BuildConfig.FLAVOR
   override val versionCode: Long = versionInfo.code
   override val versionName: String = versionInfo.name
   override val timestamp: String = versionInfo.timestamp
