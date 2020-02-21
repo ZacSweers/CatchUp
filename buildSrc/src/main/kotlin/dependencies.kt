@@ -71,7 +71,7 @@ object deps {
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
-    const val kotlin = "1.3.70-eap-184"
+    const val kotlin = "1.3.70-eap-274"
     const val kotpref = "2.10.0"
     const val leakcanary = "2.1"
     const val legacySupport = "28.0.0"
