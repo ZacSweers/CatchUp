@@ -77,7 +77,7 @@ object deps {
     const val legacySupport = "28.0.0"
     const val markwon = "4.2.1"
     const val moshi = "1.9.2"
-    const val okhttp = "4.3.1"
+    const val okhttp = "4.4.0"
     const val retrofit = "2.7.1"
     const val spotless = "3.27.1"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
@@ -95,7 +95,7 @@ object deps {
 
       const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
       const val customTabs = "androidx.browser:browser:1.3.0-alpha01"
-      const val design = "com.google.android.material:material:1.2.0-alpha04"
+      const val design = "com.google.android.material:material:1.2.0-alpha05"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0-alpha03"
       const val emoji = "androidx.emoji:emoji:1.0.0"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:1.0.0"
