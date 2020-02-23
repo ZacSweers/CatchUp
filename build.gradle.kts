@@ -72,6 +72,9 @@ allprojects {
   }
 
   configurations.all {
+    dependencies {
+      add(name, platform("com.squareup.okhttp3:okhttp-bom:4.4.0"))
+    }
     resolutionStrategy.eachDependency {
       when {
         requested.name.startsWith("kotlin-stdlib") -> {
