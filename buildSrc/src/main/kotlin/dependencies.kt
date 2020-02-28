@@ -156,7 +156,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:4.0.0-alpha09"
+    const val gradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha01"
   }
 
   object apollo {
@@ -213,7 +213,7 @@ object deps {
 
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.7.3"
-      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.6.2"
+      const val playPublisher = "com.github.triplet.gradle:play-publisher:2.7.2"
       const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.2.0"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${versions.spotless}"
     }
