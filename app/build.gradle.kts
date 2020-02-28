@@ -99,7 +99,7 @@ android {
         isV2SigningEnabled = true
       }
     } else {
-      create("release").initWith(findByName("debug"))
+      create("release").initWith(getByName("debug"))
     }
   }
   packagingOptions {
@@ -150,7 +150,7 @@ android {
     javaMaxHeapSize = "2g"
   }
   lintOptions {
-    setLintConfig(file("lint.xml"))
+    lintConfig = file("lint.xml")
     isAbortOnError = true
     check("InlinedApi")
     check("Interoperability")
@@ -188,7 +188,7 @@ android {
     applicationVariants.forEach { variant ->
       // Configure firebase
       fun firebaseProperty(property: String, resolveName: Boolean = true) {
-        val buildTypeName = variant.buildType.name
+        val buildTypeName = variant.buildType.getName()
         if (buildTypeName in firebaseVariants) {
           val name = if (resolveName && buildTypeName == "debug") {
             "$property.debug"
