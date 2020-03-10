@@ -16,7 +16,7 @@
 package io.sweers.catchup.service.newsapi.model
 
 import com.squareup.moshi.JsonClass
-import org.threeten.bp.Instant
+import java.time.Instant
 
 @JsonClass(generateAdapter = true)
 internal data class Article(

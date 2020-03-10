@@ -36,6 +36,9 @@ android {
     buildConfigField("String", "PRODUCT_HUNT_DEVELOPER_TOKEN",
         "\"${project.properties["catchup_product_hunt_developer_token"]}\"")
   }
+  buildFeatures {
+    buildConfig = true
+  }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -43,12 +46,6 @@ android {
   lintOptions {
     isCheckReleaseBuilds = false
     isAbortOnError = false
-  }
-  libraryVariants.all {
-    generateBuildConfigProvider?.configure {
-      // Can't enable until we have somewhere else for the token
-//      enabled = false
-    }
   }
 }
 
@@ -85,6 +82,5 @@ dependencies {
   api(project(":service-api"))
   api(deps.android.androidx.annotations)
   api(deps.dagger.runtime)
-  api(deps.misc.lazythreeten)
   api(deps.rx.java)
 }

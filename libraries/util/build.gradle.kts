@@ -31,6 +31,7 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+    isCoreLibraryDesugaringEnabled = true
   }
   sourceSets {
     findByName("main")?.java?.srcDirs("src/main/kotlin")
@@ -40,11 +41,6 @@ android {
   }
   buildFeatures {
     viewBinding = true
-  }
-  libraryVariants.all {
-    generateBuildConfigProvider?.configure {
-      enabled = false
-    }
   }
 }
 
@@ -60,6 +56,7 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
+  coreLibraryDesugaring(deps.build.coreLibraryDesugaring)
   api(deps.android.androidx.annotations)
 
   implementation(deps.android.androidx.appCompat)
@@ -70,7 +67,6 @@ dependencies {
   api(deps.android.androidx.coreKtx)
   api(deps.dagger.runtime)
   api(deps.kotlin.stdlib.jdk7)
-  api(deps.misc.lazythreeten)
   api(deps.moshi.core)
   api(deps.misc.timber)
   api(deps.okhttp.core)

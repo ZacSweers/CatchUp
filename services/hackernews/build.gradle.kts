@@ -46,11 +46,6 @@ android {
   buildFeatures {
     viewBinding = true
   }
-  libraryVariants.all {
-    generateBuildConfigProvider?.configure {
-      enabled = false
-    }
-  }
 }
 
 noArg {
@@ -89,6 +84,5 @@ dependencies {
   api(deps.android.androidx.fragmentKtx)
   api(deps.android.androidx.annotations)
   api(deps.dagger.runtime)
-  api(deps.misc.lazythreeten)
   api(deps.rx.java)
 }

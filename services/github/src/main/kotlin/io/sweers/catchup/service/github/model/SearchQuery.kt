@@ -15,8 +15,8 @@
  */
 package io.sweers.catchup.service.github.model
 
-import org.threeten.bp.LocalDate
-import org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 internal data class SearchQuery(val createdSince: LocalDate?, val minStars: Int) {
 

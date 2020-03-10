@@ -45,11 +45,6 @@ android {
     findByName("release")?.java?.srcDirs("src/release/kotlin")
     findByName("test")?.java?.srcDirs("src/test/kotlin")
   }
-  libraryVariants.all {
-    generateBuildConfigProvider?.configure {
-      enabled = false
-    }
-  }
 }
 
 dependencies {

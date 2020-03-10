@@ -47,7 +47,7 @@ import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.launch
-import org.threeten.bp.Instant
+import java.time.Instant
 import java.io.IOException
 import javax.inject.Inject
 

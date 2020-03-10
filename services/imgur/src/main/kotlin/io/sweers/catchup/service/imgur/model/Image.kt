@@ -21,7 +21,7 @@ import android.content.res.Configuration
 import androidx.core.content.getSystemService
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import org.threeten.bp.Instant
+import java.time.Instant
 
 @JsonClass(generateAdapter = true)
 internal data class Image(

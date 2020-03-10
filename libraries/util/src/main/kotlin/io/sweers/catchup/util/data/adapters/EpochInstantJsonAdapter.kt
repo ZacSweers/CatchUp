@@ -18,7 +18,7 @@ package io.sweers.catchup.util.data.adapters
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import org.threeten.bp.Instant
+import java.time.Instant
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 

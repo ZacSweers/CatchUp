@@ -19,7 +19,7 @@ import androidx.annotation.Keep
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import org.threeten.bp.Instant
+import java.time.Instant
 
 @Keep
 @Entity(tableName = "items")

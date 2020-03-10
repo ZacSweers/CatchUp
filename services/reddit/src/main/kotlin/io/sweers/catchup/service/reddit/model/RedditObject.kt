@@ -18,7 +18,7 @@ package io.sweers.catchup.service.reddit.model
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.sweers.catchup.service.api.HasStableId
-import org.threeten.bp.Instant
+import java.time.Instant
 
 internal sealed class RedditObject
 

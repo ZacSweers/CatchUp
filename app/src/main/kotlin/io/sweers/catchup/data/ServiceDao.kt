@@ -25,7 +25,7 @@ import androidx.room.Query
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
-import org.threeten.bp.Instant
+import java.time.Instant
 
 @Dao
 interface ServiceDao {

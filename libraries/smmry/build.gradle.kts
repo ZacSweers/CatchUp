@@ -38,6 +38,9 @@ android {
     buildConfigField("String", "SMMRY_API_KEY",
         "\"${properties["catchup_smmry_api_key"]}\"")
   }
+  buildFeatures {
+    buildConfig = true
+  }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8

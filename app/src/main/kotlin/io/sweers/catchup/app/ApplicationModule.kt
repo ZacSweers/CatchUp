@@ -33,7 +33,6 @@ import coil.request.LoadRequest
 import coil.request.RequestDisposable
 import coil.util.CoilLogger
 import coil.util.CoilUtils.createDefaultCache
-import com.gabrielittner.threetenbp.LazyThreeTen
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -145,15 +144,6 @@ abstract class ApplicationModule {
           ))
           .build()
         }
-
-    @AsyncInitializers
-    @JvmStatic
-    @IntoSet
-    @Provides
-    fun threeTenInit(application: Application): () -> Unit = {
-      LazyThreeTen.init(application)
-      LazyThreeTen.cacheZones()
-    }
 
     @AsyncInitializers
     @JvmStatic
