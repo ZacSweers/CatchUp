@@ -51,6 +51,7 @@ object build {
       "-Xinline-classes",
       "-Xjvm-default=enable",
       "-Xuse-experimental=kotlin.Experimental",
+      "-Xuse-experimental=kotlin.OptIn",
       "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
       "-Xuse-experimental=kotlin.experimental.ExperimentalTypeInference",
       "-Xuse-experimental=kotlinx.coroutines.FlowPreview",

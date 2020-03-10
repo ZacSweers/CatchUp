@@ -247,7 +247,7 @@ internal class ImageAdapter(
           UiUtil.createRipple(palette, 0.25f, 0.5f, 0x40808080, true)
     }
 
-    @UseExperimental(ExperimentalCoil::class)
+    @OptIn(ExperimentalCoil::class)
     override fun bind(
       item: CatchUpItem,
       itemClickHandler: OnClickListener?,
