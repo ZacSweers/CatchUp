@@ -49,7 +49,6 @@ android {
     targetSdkVersion(deps.android.build.targetSdkVersion)
     versionCode = deps.build.versionCodePH
     versionName = deps.build.versionNamePH
-    multiDexEnabled = false
 
     the<BasePluginConvention>().archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
@@ -60,6 +59,7 @@ android {
   }
   buildFeatures {
     viewBinding = true
+    buildConfig = true
   }
   val commitCountLazy by lazy { deps.build.gitCommitCount(project).toString() }
   val versionNameLazy by lazy { deps.build.gitTag(project) }
@@ -88,6 +88,7 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+    isCoreLibraryDesugaringEnabled = true
   }
   signingConfigs {
     if (rootProject.file("signing/app-release.jks").exists()) {
@@ -238,7 +239,7 @@ apollo {
   service("github") {
     @Suppress("UnstableApiUsage")
     customTypeMapping.set(mapOf(
-        "DateTime" to "org.threeten.bp.Instant",
+        "DateTime" to "java.time.Instant",
         "URI" to "okhttp3.HttpUrl"
     ))
     generateKotlinModels.set(true)
@@ -410,6 +411,7 @@ tasks.create("updateVersion", UpdateVersion::class.java) {
 }
 
 dependencies {
+  coreLibraryDesugaring(deps.build.coreLibraryDesugaring)
   kapt(project(":libraries:tooling:spi-visualizer"))
 
   implementation(deps.markwon.core)
@@ -480,7 +482,6 @@ dependencies {
   implementation(deps.retrofit.rxJava2)
   implementation(deps.rx.android)
   implementation(deps.rx.java)
-  implementation(deps.misc.lazythreeten)
   implementation(deps.misc.tapTargetView)
   implementation(deps.misc.timber)
   implementation(deps.misc.debug.processPhoenix)

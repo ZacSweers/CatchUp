@@ -15,9 +15,9 @@
  */
 package io.sweers.catchup.service.github.model
 
-import org.threeten.bp.LocalDate
-import org.threeten.bp.temporal.ChronoUnit
-import org.threeten.bp.temporal.TemporalUnit
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalUnit
 
 // https://github.com/google/error-prone/issues/512
 internal enum class TrendingTimespan constructor(

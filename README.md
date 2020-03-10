@@ -55,7 +55,6 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Coil
 - Apollo GraphQL
 - Standard Square buffet of Okio/OkHttp 3/Retrofit 2/Moshi
-- ThreetenABP
 - Inspector
 
 There's a lot of neat/interesting little tidbits in the CatchUp source code that I plan to write a

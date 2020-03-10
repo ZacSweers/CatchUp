@@ -19,7 +19,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
-import org.threeten.bp.Instant
+import java.time.Instant
 import java.io.IOException
 
 class ISO8601InstantAdapter : JsonAdapter<Instant>() {

@@ -17,8 +17,8 @@
 
 package io.sweers.catchup.util
 
-import org.threeten.bp.Instant
-import org.threeten.bp.OffsetDateTime
+import java.time.Instant
+import java.time.OffsetDateTime
 
 /*
  * Utilities for dealing with [Instant]

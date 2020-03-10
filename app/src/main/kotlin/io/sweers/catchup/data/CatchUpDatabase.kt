@@ -23,7 +23,7 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.SummarizationType
-import org.threeten.bp.Instant
+import java.time.Instant
 
 @Database(
     entities = [

@@ -23,8 +23,8 @@ import io.sweers.catchup.service.dribbble.model.User
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import org.threeten.bp.Instant
-import org.threeten.bp.format.DateTimeFormatter
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
 /**
@@ -62,7 +62,8 @@ internal object DribbbleParser {
     val createdAt: Instant = try {
       DATE_FORMAT.parse(descriptionBlock.select("em.timestamp")
           .first()
-          .text(), Instant.FROM)
+          .text(),
+          Instant::from)
     } catch (e2: Exception) {
       Instant.now()
     }

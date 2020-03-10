@@ -41,11 +41,6 @@ android {
     isCheckReleaseBuilds = false
     isAbortOnError = false
   }
-  libraryVariants.all {
-    generateBuildConfigProvider?.configure {
-      enabled = false
-    }
-  }
 }
 
 tasks.withType<KotlinCompile> {

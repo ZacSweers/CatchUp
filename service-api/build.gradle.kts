@@ -41,11 +41,6 @@ android {
     isCheckReleaseBuilds = false
     isAbortOnError = false
   }
-  libraryVariants.all {
-    generateBuildConfigProvider?.configure {
-      enabled = false
-    }
-  }
 }
 
 tasks.withType<KotlinCompile> {
@@ -74,7 +69,6 @@ dependencies {
   api(deps.android.androidx.fragment)
   api(deps.dagger.runtime)
   api(deps.kotlin.coroutines)
-  api(deps.misc.lazythreeten)
   api(deps.rx.java)
 
   implementation(deps.okhttp.core)

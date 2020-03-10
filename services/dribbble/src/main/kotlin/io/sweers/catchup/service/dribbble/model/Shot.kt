@@ -15,7 +15,7 @@
  */
 package io.sweers.catchup.service.dribbble.model
 
-import org.threeten.bp.Instant
+import java.time.Instant
 
 /**
  * Models a dibbble shot
