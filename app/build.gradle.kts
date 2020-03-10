@@ -25,9 +25,8 @@ plugins {
   id("com.apollographql.apollo")
 //  id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
+  id("catchup")
 }
-
-pluginManager.apply("catchup")
 
 apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
