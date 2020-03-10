@@ -40,5 +40,5 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-  implementation("com.android.tools.build:gradle:4.1.0-alpha01")
+  implementation("com.android.tools.build:gradle:4.1.0-alpha02")
 }
