@@ -25,15 +25,13 @@ plugins {
   id("com.apollographql.apollo")
 //  id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
+  id("catchup")
 }
 
 apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
 
-val commitCountLazy by lazy(LazyThreadSafetyMode.NONE) { deps.build.gitCommitCount(project).toString() }
-val versionNameLazy by lazy(LazyThreadSafetyMode.NONE) { deps.build.gitSha(project) }
-val timestampLazy by lazy(LazyThreadSafetyMode.NONE) { deps.build.gitTimestamp(project) }
 android {
   compileSdkVersion(deps.android.build.compileSdkVersion)
 
@@ -47,8 +45,10 @@ android {
     applicationId = "io.sweers.catchup"
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
-    versionCode = deps.build.versionCodePH
-    versionName = deps.build.versionNamePH
+
+    // These are for debug only. Release versioning is set by CatchUpPlugin
+    versionCode = 1
+    versionName = "1.0"
 
     the<BasePluginConvention>().archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
@@ -60,30 +60,6 @@ android {
   buildFeatures {
     viewBinding = true
     buildConfig = true
-  }
-  val commitCountLazy by lazy { deps.build.gitCommitCount(project).toString() }
-  val versionNameLazy by lazy { deps.build.gitTag(project) }
-  applicationVariants.all {
-    outputs.all {
-      processManifestProvider.configure {
-        inputs.property("commit_count") { commitCountLazy }
-        inputs.property("version_name") { versionNameLazy }
-        inputs.property("build_timestamp") { timestampLazy }
-        doLast {
-          // Have to walk the tree here because APK splits results in more nested dirs
-          this@configure.manifestOutputDirectory.get().asFile.walkTopDown()
-              .filter { it.name == "AndroidManifest.xml" }
-              .forEach { manifest ->
-                val content = manifest.readText()
-                manifest.writeText(
-                    content.replaceFirst("${deps.build.versionCodePH}", commitCountLazy)
-                        .replaceFirst(deps.build.versionNamePH, versionNameLazy)
-                        .replaceFirst("buildTimestampPlaceholder", timestampLazy)
-                )
-              }
-        }
-      }
-    }
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8

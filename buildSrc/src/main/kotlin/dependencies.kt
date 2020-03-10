@@ -159,7 +159,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha01"
+    const val gradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha02"
   }
 
   object apollo {
@@ -191,8 +191,6 @@ object deps {
   object build {
     val ci get() = System.getenv("GITHUB_WORKFLOW") != null
     const val coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:1.0.5"
-    const val versionCodePH = 99999
-    const val versionNamePH = "versionplaceholder"
 
     fun gitSha(project: Project): String {
       // query git for the SHA, Tag and commit count. Use these to automate versioning.
