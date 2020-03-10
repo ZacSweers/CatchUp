@@ -45,6 +45,8 @@ android {
     applicationId = "io.sweers.catchup"
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
+
+    // These are for debug only. Release versioning is set by CatchUpPlugin
     versionCode = 1
     versionName = "1.0"
 
