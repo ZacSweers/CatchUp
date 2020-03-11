@@ -101,8 +101,6 @@ private fun Project.configureAndroid() {
         isCheckReleaseBuilds = true
         textReport = deps.build.ci
         textOutput("stdout")
-        htmlReport = !deps.build.ci
-        xmlReport = !deps.build.ci
         isCheckDependencies = true
 
         // Pending fix in https://android-review.googlesource.com/c/platform/frameworks/support/+/1217923
