@@ -68,7 +68,7 @@ object deps {
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
-    const val dagger = "2.25.2"
+    const val dagger = "2.26"
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
@@ -87,7 +87,6 @@ object deps {
   object android {
     object androidx {
       const val annotations = "androidx.annotation:annotation:1.1.0"
-      const val legacyAnnotations = "com.android.support:support-annotations:28.0.0"
       const val appCompat = "androidx.appcompat:appcompat:1.2.0-alpha03"
 
       private const val coreVersion = "1.3.0-alpha02"

@@ -48,14 +48,12 @@ abstract class DataModule {
   @Multibinds
   internal abstract fun provideInterceptors(): Set<Interceptor>
 
-  @Module
   companion object {
 
     private const val HTTP_RESPONSE_CACHE = (10 * 1024 * 1024).toLong()
     private const val HTTP_TIMEOUT_S = 30
 
     @Provides
-    @JvmStatic
     @Singleton
     internal fun provideCache(@ApplicationContext context: Context): Cache {
       if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -65,7 +63,6 @@ abstract class DataModule {
     }
 
     @Provides
-    @JvmStatic
     @Singleton
     internal fun provideOkHttpClient(
       cache: Cache,
@@ -90,7 +87,6 @@ abstract class DataModule {
     }
 
     @Provides
-    @JvmStatic
     @Singleton
     internal fun provideMoshi(): Moshi {
       return Moshi.Builder()
@@ -102,14 +98,12 @@ abstract class DataModule {
     }
 
     @Provides
-    @JvmStatic
     @Singleton
     internal fun provideRxJavaCallAdapterFactory(): RxJava2CallAdapterFactory {
       return RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
     }
 
     @Provides
-    @JvmStatic
     @Singleton
     @SharedPreferencesName
     fun provideSharedPreferencesName(): String {
@@ -117,21 +111,18 @@ abstract class DataModule {
     }
 
     @Provides
-    @JvmStatic
     @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context, @SharedPreferencesName name: String): SharedPreferences {
       return context.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
 
     @Provides
-    @JvmStatic
     @Singleton
     internal fun provideCatchUpDatabase(@ApplicationContext context: Context): CatchUpDatabase {
       return CatchUpDatabase.getDatabase(context)
     }
 
     @Provides
-    @JvmStatic
     @Singleton
     internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase): ServiceDao {
       return catchUpDatabase.serviceDao()
