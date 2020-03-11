@@ -42,7 +42,6 @@ buildscript {
 
 plugins {
   id("com.github.ben-manes.versions") version "0.28.0"
-  id("com.github.plnice.canidropjetifier") version "0.5"
   id("catchup")
 }
 
@@ -53,11 +52,6 @@ apply {
 buildScan {
   termsOfServiceAgree = "yes"
   termsOfServiceUrl = "https://gradle.com/terms-of-service"
-}
-
-// https://github.com/ZacSweers/CatchUp/issues/197
-canIDropJetifier {
-  verbose = true
 }
 
 allprojects {
