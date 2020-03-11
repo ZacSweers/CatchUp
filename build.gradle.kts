@@ -41,8 +41,9 @@ buildscript {
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.28.0"
   id("catchup")
+  id("com.github.ben-manes.versions") version "0.28.0"
+  id("com.autonomousapps.dependency-analysis") version "0.24.1"
 }
 
 apply {
@@ -52,6 +53,10 @@ apply {
 buildScan {
   termsOfServiceAgree = "yes"
   termsOfServiceUrl = "https://gradle.com/terms-of-service"
+}
+
+dependencyAnalysis {
+  setVariants("release")
 }
 
 allprojects {
