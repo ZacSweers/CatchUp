@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import org.gradle.api.JavaVersion.VERSION_1_8
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("com.android.library")
   kotlin("android")
@@ -25,35 +22,6 @@ plugins {
 
 apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
-}
-
-android {
-  compileSdkVersion(deps.android.build.compileSdkVersion)
-
-  defaultConfig {
-    minSdkVersion(deps.android.build.minSdkVersion)
-    targetSdkVersion(deps.android.build.targetSdkVersion)
-  }
-  compileOptions {
-    sourceCompatibility = VERSION_1_8
-    targetCompatibility = VERSION_1_8
-  }
-  lintOptions {
-    isCheckReleaseBuilds = false
-    isAbortOnError = false
-  }
-}
-
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = build.standardFreeKotlinCompilerArgs
-    jvmTarget = "1.8"
-  }
-}
-
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
 }
 
 dependencies {

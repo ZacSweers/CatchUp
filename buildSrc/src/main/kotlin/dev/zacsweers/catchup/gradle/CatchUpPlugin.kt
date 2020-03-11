@@ -17,32 +17,145 @@
 
 package dev.zacsweers.catchup.gradle
 
+import build
 import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import deps
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Locale
 
 @Suppress("unused")
 class CatchUpPlugin : Plugin<Project> {
   override fun apply(project: Project) {
-    project.configureVersioning()
+    project.subprojects {
+      configureJvm()
+    }
+  }
+}
+
+private fun Project.configureJvm() {
+  configureAndroid()
+  configureKotlin()
+  configureJava()
+}
+
+private val baseExtensionConfig: BaseExtension.() -> Unit = {
+  compileSdkVersion(deps.android.build.compileSdkVersion)
+  defaultConfig {
+    minSdkVersion(deps.android.build.minSdkVersion)
+    vectorDrawables.useSupportLibrary = true
+  }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    isCoreLibraryDesugaringEnabled = true
+  }
+  lintOptions {
+    isCheckReleaseBuilds = false
+    isAbortOnError = false
+  }
+  sourceSets {
+    findByName("main")?.java?.srcDirs("src/main/kotlin")
+    findByName("debug")?.java?.srcDirs("src/debug/kotlin")
+    findByName("release")?.java?.srcDirs("src/release/kotlin")
+    findByName("test")?.java?.srcDirs("src/test/kotlin")
+  }
+}
+
+private fun Project.configureAndroid() {
+  plugins.withType<AppPlugin> {
+    // NOTE: BaseAppModuleExtension is internal. This will be replaced by a public
+    // interface
+    extensions.getByType<BaseAppModuleExtension>().apply {
+      baseExtensionConfig()
+      defaultConfig {
+        targetSdkVersion(deps.android.build.targetSdkVersion)
+      }
+      if (deps.build.ci) {
+        // This is what github actions has available
+        // Necessary due to AGP bug https://issuetracker.google.com/issues/143630825
+        ndkVersion = "21.0.6113669"
+      }
+      configureVersioning(project)
+      lintOptions {
+        lintConfig = rootProject.file("lint.xml")
+        isAbortOnError = true
+        check("InlinedApi")
+        check("Interoperability")
+        check("NewApi")
+        fatal("NewApi")
+        fatal("InlinedApi")
+        enable("UnusedResources")
+        isCheckReleaseBuilds = true
+        textReport = deps.build.ci
+        textOutput("stdout")
+        isCheckDependencies = true
+
+        // Pending fix in https://android-review.googlesource.com/c/platform/frameworks/support/+/1217923
+        disable("UnsafeExperimentalUsageError", "UnsafeExperimentalUsageWarning")
+      }
+      buildTypes {
+        getByName("debug") {
+          setMatchingFallbacks("release")
+          isDefault = true
+        }
+      }
+    }
+
+    dependencies.add("coreLibraryDesugaring", deps.build.coreLibraryDesugaring)
+  }
+  plugins.withType<LibraryPlugin> {
+    extensions.getByType<LibraryExtension>().apply {
+      baseExtensionConfig()
+
+      variantFilter {
+        ignore = buildType.getName() != "release"
+      }
+    }
+
+    dependencies.add("coreLibraryDesugaring", deps.build.coreLibraryDesugaring)
+  }
+}
+
+private fun Project.configureKotlin() {
+  tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+      jvmTarget = "1.8"
+      @Suppress("SuspiciousCollectionReassignment")
+      freeCompilerArgs += build.standardFreeKotlinCompilerArgs
+    }
+  }
+  plugins.withId("org.jetbrains.kotlin.kapt") {
+    extensions.getByType<KaptExtension>().apply {
+      correctErrorTypes = true
+      mapDiagnosticLocations = true
+    }
+  }
+}
+
+private fun Project.configureJava() {
+  plugins.withType<JavaBasePlugin> {
+    extensions.getByType<JavaPluginExtension>().apply {
+      sourceCompatibility = JavaVersion.VERSION_1_8
+      targetCompatibility = JavaVersion.VERSION_1_8
+    }
   }
 }
 
 // Adapted from https://github.com/ducrohet/versionCode-4.0-sample
-private fun Project.configureVersioning() {
-  plugins.withType<AppPlugin> {
-    // NOTE: BaseAppModuleExtension is internal. This will be replaced by a public
-    // interface
-    val extension = project.extensions.getByName("android") as BaseAppModuleExtension
-    extension.configure(project)
-  }
-}
-
-private fun BaseAppModuleExtension.configure(project: Project) {
+private fun BaseAppModuleExtension.configureVersioning(project: Project) {
   // use filter to apply onVariantProperties to a subset of the variants
   onVariantProperties.withBuildType("release") {
     val versionCodeTask = project.tasks.register<VersionCodeTask>(
