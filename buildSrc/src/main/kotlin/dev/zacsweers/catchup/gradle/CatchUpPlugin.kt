@@ -53,7 +53,6 @@ private fun Project.configureJvm() {
 
 private val baseExtensionConfig: BaseExtension.() -> Unit = {
   compileSdkVersion(deps.android.build.compileSdkVersion)
-
   defaultConfig {
     minSdkVersion(deps.android.build.minSdkVersion)
     vectorDrawables.useSupportLibrary = true
@@ -66,6 +65,12 @@ private val baseExtensionConfig: BaseExtension.() -> Unit = {
   lintOptions {
     isCheckReleaseBuilds = false
     isAbortOnError = false
+  }
+  sourceSets {
+    findByName("main")?.java?.srcDirs("src/main/kotlin")
+    findByName("debug")?.java?.srcDirs("src/debug/kotlin")
+    findByName("release")?.java?.srcDirs("src/release/kotlin")
+    findByName("test")?.java?.srcDirs("src/test/kotlin")
   }
 }
 
@@ -116,13 +121,6 @@ private fun Project.configureAndroid() {
   plugins.withType<LibraryPlugin> {
     extensions.getByType<LibraryExtension>().apply {
       baseExtensionConfig()
-
-      sourceSets {
-        findByName("main")?.java?.srcDirs("src/main/kotlin")
-        findByName("debug")?.java?.srcDirs("src/debug/kotlin")
-        findByName("release")?.java?.srcDirs("src/release/kotlin")
-        findByName("test")?.java?.srcDirs("src/test/kotlin")
-      }
 
       variantFilter {
         ignore = buildType.getName() != "release"
