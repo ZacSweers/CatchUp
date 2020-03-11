@@ -111,7 +111,6 @@ private fun Project.configureAndroid() {
     extensions.getByType<LibraryExtension>().apply {
       baseExtensionConfig()
 
-      // TODO is this still needed?
       sourceSets {
         findByName("main")?.java?.srcDirs("src/main/kotlin")
         findByName("debug")?.java?.srcDirs("src/debug/kotlin")
