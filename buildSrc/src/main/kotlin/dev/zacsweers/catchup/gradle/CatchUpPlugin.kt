@@ -103,6 +103,12 @@ private fun Project.configureAndroid() {
         // Pending fix in https://android-review.googlesource.com/c/platform/frameworks/support/+/1217923
         disable("UnsafeExperimentalUsageError", "UnsafeExperimentalUsageWarning")
       }
+      buildTypes {
+        getByName("debug") {
+          setMatchingFallbacks("release")
+          isDefault = true
+        }
+      }
     }
 
     dependencies.add("coreLibraryDesugaring", deps.build.coreLibraryDesugaring)
@@ -116,6 +122,10 @@ private fun Project.configureAndroid() {
         findByName("debug")?.java?.srcDirs("src/debug/kotlin")
         findByName("release")?.java?.srcDirs("src/release/kotlin")
         findByName("test")?.java?.srcDirs("src/test/kotlin")
+      }
+
+      variantFilter {
+        ignore = buildType.getName() != "release"
       }
     }
 
