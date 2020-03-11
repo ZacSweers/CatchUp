@@ -46,11 +46,9 @@ abstract class FlipperModule {
   @Singleton
   abstract fun provideNetworkFlipperPluginIntoSet(plugin: NetworkFlipperPlugin): FlipperPlugin
 
-  @Module
   companion object {
 
     @IntoSet
-    @JvmStatic
     @Provides
     @Singleton
     fun provideSharedPreferencesPlugin(
@@ -61,14 +59,12 @@ abstract class FlipperModule {
     }
 
     @IntoSet
-    @JvmStatic
     @Provides
     @Singleton
     fun provideViewInspectorPlugin(@ApplicationContext context: Context): FlipperPlugin {
       return InspectorFlipperPlugin(context, DescriptorMapping.withDefaults())
     }
 
-    @JvmStatic
     @Provides
     @Singleton
     fun provideOkHttpInspectorPlugin(): NetworkFlipperPlugin {
@@ -78,7 +74,6 @@ abstract class FlipperModule {
     // TODO This should go at the end of the list. We can try to differentiate these by wrapping them
     //  in a "ReadOnlyInterceptor" type that we sort at the interceptor injection site
     @IntoSet
-    @JvmStatic
     @NetworkInterceptor
     @Provides
     @Singleton
@@ -88,13 +83,11 @@ abstract class FlipperModule {
 
     @IntoSet
     @Provides
-    @JvmStatic
     fun provideFlipperDatabasesPlugin(@ApplicationContext context: Context): FlipperPlugin {
       return DatabasesFlipperPlugin(context)
     }
 
     @Provides
-    @JvmStatic
     fun provideFlipperCrashReporterPlugin(): CrashReporterPlugin = CrashReporterPlugin.getInstance()
   }
 }

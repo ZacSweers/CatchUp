@@ -105,7 +105,6 @@ abstract class ApplicationModule {
   @Singleton
   abstract fun provideUiPreferences(catchupPreferences: CatchUpPreferences): UiPreferences
 
-  @Module
   companion object {
 
     /**
@@ -114,17 +113,14 @@ abstract class ApplicationModule {
      * Wrapped so no one can try to cast it as an Application.
      */
     @Provides
-    @JvmStatic
     @Singleton
     internal fun provideGeneralUseContext(@ApplicationContext appContext: Context): Context = ContextWrapper(appContext)
 
     @Provides
-    @JvmStatic
     @Singleton
     internal fun versionInfo(@ApplicationContext appContext: Context): VersionInfo = appContext.versionInfo
 
     @Provides
-    @JvmStatic
     @Singleton
     internal fun markwon(
       @LazyDelegate imageLoader: ImageLoader,
@@ -146,7 +142,6 @@ abstract class ApplicationModule {
         }
 
     @AsyncInitializers
-    @JvmStatic
     @IntoSet
     @Provides
     fun mainDispatcherInit(): () -> Unit = {
@@ -155,7 +150,6 @@ abstract class ApplicationModule {
     }
 
     @Initializers
-    @JvmStatic
     @IntoSet
     @Provides
     fun coilInit(imageLoader: ImageLoader): () -> Unit = {
@@ -173,7 +167,6 @@ abstract class ApplicationModule {
 
     @IsLowRamDevice
     @Singleton
-    @JvmStatic
     @Provides
     fun isLowRam(@ApplicationContext context: Context): Boolean {
       // Prefer higher quality images unless we're on a low RAM device
@@ -184,13 +177,11 @@ abstract class ApplicationModule {
 
     @CoilOkHttpStack
     @Singleton
-    @JvmStatic
     @Provides
     fun coilCache(@ApplicationContext context: Context): Cache = createDefaultCache(context)
 
     @CoilOkHttpStack
     @Singleton
-    @JvmStatic
     @Provides
     fun coilHttpClient(
       okHttpClient: OkHttpClient,
@@ -202,7 +193,6 @@ abstract class ApplicationModule {
     }
 
     @Singleton
-    @JvmStatic
     @Provides
     @LazyDelegate
     fun lazyImageLoader(imageLoader: dagger.Lazy<ImageLoader>): ImageLoader {
@@ -229,7 +219,6 @@ abstract class ApplicationModule {
     }
 
     @Singleton
-    @JvmStatic
     @Provides
     fun imageLoader(
       @ApplicationContext context: Context,
