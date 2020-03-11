@@ -15,6 +15,7 @@ repositories {
 }
 
 plugins {
+  kotlin("jvm") version "1.3.70"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
@@ -41,4 +42,5 @@ tasks.withType<KotlinCompile>().configureEach {
 
 dependencies {
   implementation("com.android.tools.build:gradle:4.1.0-alpha02")
+  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.70")
 }

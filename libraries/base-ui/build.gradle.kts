@@ -14,43 +14,10 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
-}
-
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = build.standardFreeKotlinCompilerArgs
-    jvmTarget = "1.8"
-  }
-}
-
-android {
-  compileSdkVersion(deps.android.build.compileSdkVersion)
-
-  defaultConfig {
-    minSdkVersion(deps.android.build.minSdkVersion)
-    targetSdkVersion(deps.android.build.targetSdkVersion)
-  }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-  }
-  sourceSets {
-    findByName("main")?.java?.srcDirs("src/main/kotlin")
-    findByName("debug")?.java?.srcDirs("src/debug/kotlin")
-    findByName("release")?.java?.srcDirs("src/release/kotlin")
-    findByName("test")?.java?.srcDirs("src/test/kotlin")
-  }
-}
-
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
 }
 
 dependencies {

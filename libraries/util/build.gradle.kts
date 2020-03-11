@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.android.library")
@@ -21,42 +20,11 @@ plugins {
   id("dev.zacsweers.redacted.redacted-gradle-plugin")
 }
 
-android {
-  compileSdkVersion(deps.android.build.compileSdkVersion)
-
-  defaultConfig {
-    minSdkVersion(deps.android.build.minSdkVersion)
-    targetSdkVersion(deps.android.build.targetSdkVersion)
-  }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-    isCoreLibraryDesugaringEnabled = true
-  }
-  sourceSets {
-    findByName("main")?.java?.srcDirs("src/main/kotlin")
-    findByName("debug")?.java?.srcDirs("src/debug/kotlin")
-    findByName("release")?.java?.srcDirs("src/release/kotlin")
-    findByName("test")?.java?.srcDirs("src/test/kotlin")
-  }
-  buildFeatures {
-    viewBinding = true
-  }
-}
-
 redacted {
   redactedAnnotation = "io.sweers.catchup.util.network.Redacted"
 }
 
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = build.standardFreeKotlinCompilerArgs
-    jvmTarget = "1.8"
-  }
-}
-
 dependencies {
-  coreLibraryDesugaring(deps.build.coreLibraryDesugaring)
   api(deps.android.androidx.annotations)
 
   implementation(deps.android.androidx.appCompat)

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   kotlin("jvm")
   kotlin("kapt")
@@ -23,18 +21,6 @@ plugins {
 
 apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
-}
-
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    jvmTarget = "1.8"
-    freeCompilerArgs = build.standardFreeKotlinCompilerArgs
-  }
-}
-
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
 }
 
 dependencies {

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -25,7 +24,6 @@ plugins {
   id("com.apollographql.apollo")
 //  id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
-  id("catchup")
 }
 
 apply {
@@ -33,38 +31,21 @@ apply {
 }
 
 android {
-  compileSdkVersion(deps.android.build.compileSdkVersion)
-
-  if (deps.build.ci) {
-    // This is what github actions has available
-    // Necessary due to AGP bug https://issuetracker.google.com/issues/143630825
-    ndkVersion = "21.0.6113669"
-  }
-
   defaultConfig {
     applicationId = "io.sweers.catchup"
-    minSdkVersion(deps.android.build.minSdkVersion)
-    targetSdkVersion(deps.android.build.targetSdkVersion)
 
     // These are for debug only. Release versioning is set by CatchUpPlugin
     versionCode = 1
     versionName = "1.0"
 
     the<BasePluginConvention>().archivesBaseName = "catchup"
-    vectorDrawables.useSupportLibrary = true
 
     buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
         "\"${properties["catchup_github_developer_token"]}\"")
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
   }
   buildFeatures {
-    viewBinding = true
     buildConfig = true
-  }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-    isCoreLibraryDesugaringEnabled = true
   }
   signingConfigs {
     if (rootProject.file("signing/app-release.jks").exists()) {
@@ -126,25 +107,6 @@ android {
   dexOptions {
     javaMaxHeapSize = "2g"
   }
-  lintOptions {
-    lintConfig = file("lint.xml")
-    isAbortOnError = true
-    check("InlinedApi")
-    check("Interoperability")
-    check("NewApi")
-    fatal("NewApi")
-    fatal("InlinedApi")
-    enable("UnusedResources")
-    isCheckReleaseBuilds = true
-    textReport = deps.build.ci
-    textOutput("stdout")
-    htmlReport = !deps.build.ci
-    xmlReport = !deps.build.ci
-    isCheckDependencies = true
-
-    // Pending fix in https://android-review.googlesource.com/c/platform/frameworks/support/+/1217923
-    disable("UnsafeExperimentalUsageError", "UnsafeExperimentalUsageWarning")
-  }
   // Should be fixed now, disable if need be
   // https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/59
   splits {
@@ -190,8 +152,6 @@ android {
 }
 
 kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
@@ -221,13 +181,6 @@ apollo {
     generateKotlinModels.set(true)
     rootPackageName.set("io.sweers.catchup.data.github")
     schemaFile.set(file("src/main/graphql/io/sweers/catchup/data/github/schema.json"))
-  }
-}
-
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = build.standardFreeKotlinCompilerArgs
-    jvmTarget = "1.8"
   }
 }
 
@@ -387,7 +340,6 @@ tasks.create("updateVersion", UpdateVersion::class.java) {
 }
 
 dependencies {
-  coreLibraryDesugaring(deps.build.coreLibraryDesugaring)
   kapt(project(":libraries:tooling:spi-visualizer"))
 
   implementation(deps.markwon.core)
