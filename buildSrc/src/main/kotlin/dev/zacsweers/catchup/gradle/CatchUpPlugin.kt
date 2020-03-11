@@ -28,7 +28,9 @@ import java.util.Locale
 @Suppress("unused")
 class CatchUpPlugin : Plugin<Project> {
   override fun apply(project: Project) {
-    project.configureVersioning()
+    project.subprojects {
+      configureVersioning()
+    }
   }
 }
 
