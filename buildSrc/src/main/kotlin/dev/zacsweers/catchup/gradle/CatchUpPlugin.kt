@@ -175,7 +175,7 @@ private fun Project.configureKotlin() {
   plugins.withId("org.jetbrains.kotlin.kapt") {
     extensions.getByType<KaptExtension>().apply {
       correctErrorTypes = true
-      mapDiagnosticLocations = true
+//      mapDiagnosticLocations = true
     }
   }
 }

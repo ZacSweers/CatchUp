@@ -40,8 +40,7 @@ dependencies {
 
   api(deps.android.androidx.room.runtime)
   api(deps.dagger.runtime)
-  api(deps.kotlin.stdlib.jdk7)
-  api(deps.moshi.core)
+  api(deps.kotlin.stdlib.core)
 
   testImplementation(deps.test.junit)
   testImplementation(deps.test.truth)

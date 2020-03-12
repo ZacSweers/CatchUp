@@ -368,7 +368,7 @@ object deps {
     const val flick = "me.saket:flick:1.7.0"
     const val gestureViews = "com.alexvasilkov:gesture-views:2.2.0"
     const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta3"
-    const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
+    const val javaxInject = "javax.inject:javax.inject:1"
     const val jsoup = "org.jsoup:jsoup:1.13.1"
     const val jsr250 = "javax.annotation:jsr250-api:1.0"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"

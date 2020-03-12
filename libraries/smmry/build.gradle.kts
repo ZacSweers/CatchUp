@@ -44,8 +44,6 @@ dependencies {
   kapt(deps.moshi.sealed.compiler)
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
-  implementation(deps.dagger.android.runtime)
-  implementation(deps.dagger.android.support)
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
   implementation(project(":libraries:base-ui"))
@@ -61,11 +59,9 @@ dependencies {
   kapt(deps.android.androidx.room.apt)
   implementation(deps.android.androidx.lifecycle.ktx)
   implementation(deps.kotlin.coroutines)
-  implementation(deps.kotlin.stdlib.jdk7)
+  implementation(deps.kotlin.stdlib.core)
 
   api(project(":service-api"))
   api(deps.android.androidx.annotations)
-  api(deps.android.androidx.appCompat)
   api(deps.android.androidx.core)
-  api(deps.android.androidx.design)
 }

@@ -30,7 +30,6 @@ dependencies {
   api(deps.kotlin.coroutines)
   api(deps.kotlin.stdlib.jdk7)
   api(deps.autoDispose.core)
-  api(deps.autoDispose.android)
   api(deps.autoDispose.lifecycle)
   api(deps.autoDispose.androidArch)
   api(deps.rx.java)
@@ -40,5 +39,4 @@ dependencies {
   api(deps.android.androidx.core)
   api(deps.android.androidx.design)
   api(deps.android.androidx.palette)
-  api(deps.android.androidx.paletteKtx)
 }

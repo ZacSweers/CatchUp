@@ -65,7 +65,6 @@ dependencies {
   // Apollo
   implementation(deps.apollo.runtime)
   implementation(deps.apollo.rx2Support)
-  implementation(deps.apollo.androidSupport)
 
   api(project(":service-api"))
   api(deps.android.androidx.annotations)

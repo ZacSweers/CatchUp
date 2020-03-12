@@ -346,7 +346,6 @@ dependencies {
   implementation(deps.markwon.extStrikethrough)
   implementation(deps.markwon.extTables)
   implementation(deps.markwon.extTasklist)
-  implementation(deps.markwon.html)
   implementation(deps.markwon.image)
   implementation(deps.markwon.imageCoil)
   implementation(deps.markwon.linkify)
@@ -376,13 +375,12 @@ dependencies {
   implementation(deps.android.androidx.preferenceKtx)
   implementation(deps.android.androidx.viewPager2)
   implementation(deps.android.androidx.swipeRefresh)
+  implementation(deps.android.androidx.design)
 
   // Arch components
-  implementation(deps.android.androidx.lifecycle.extensions)
   kapt(deps.android.androidx.lifecycle.apt)
   implementation(deps.android.androidx.room.runtime)
   implementation(deps.android.androidx.room.rxJava2)
-  implementation(deps.android.androidx.room.ktx)
   kapt(deps.android.androidx.room.apt)
 
   // Kotlin
@@ -390,14 +388,13 @@ dependencies {
   implementation(deps.kotlin.stdlib.jdk7)
   implementation(deps.kotlin.coroutines)
   implementation(deps.kotlin.coroutinesAndroid)
-  implementation(deps.kotlin.coroutinesRx)
   implementation(deps.android.androidx.lifecycle.ktx)
 
   // Moshi
   kapt(deps.moshi.compiler)
   implementation(deps.moshi.core)
 
-  // Firebase
+  // Firebase for dagger
   implementation(deps.android.firebase.core)
   implementation(deps.android.firebase.database)
 
@@ -427,13 +424,11 @@ dependencies {
 
   // Misc
   implementation(deps.autoDispose.core)
-  implementation(deps.autoDispose.android)
-  implementation(deps.autoDispose.lifecycle)
   implementation(deps.misc.byteunits)
   implementation(deps.misc.flick)
   implementation(deps.misc.gestureViews)
   implementation(deps.misc.inboxRecyclerView)
-  implementation(deps.misc.lottie)
+  implementation(deps.misc.lottie) // For dagger
   implementation(deps.misc.recyclerViewAnimators)
   implementation(deps.rx.relay)
   implementation(deps.rx.dogTag)
@@ -441,10 +436,9 @@ dependencies {
   implementation(deps.misc.moshiLazyAdapters)
   implementation(deps.autoDispose.androidArch)
   implementation(deps.misc.kotpref)
-  implementation(deps.misc.kotprefEnum)
+  implementation(deps.corbind.material)
 
   // Apollo
-  implementation(deps.apollo.androidSupport)
   implementation(deps.apollo.httpcache)
   implementation(deps.apollo.runtime)
   implementation(deps.apollo.rx2Support)
@@ -475,14 +469,14 @@ dependencies {
   kapt(deps.dagger.apt.compiler)
   kapt(deps.dagger.android.apt.processor)
   compileOnly(deps.misc.javaxInject)
+  compileOnly(deps.misc.jsr250)
+  compileOnly(deps.misc.jsr305)
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.android.runtime)
   implementation(deps.dagger.android.support)
 
   // Inspector exposed for dagger
   implementation(deps.inspector.core)
-
-  implementation(deps.misc.jsr305)
 
   // Test
   testImplementation(deps.rx.relay)

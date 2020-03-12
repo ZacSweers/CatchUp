@@ -25,16 +25,14 @@ redacted {
 }
 
 dependencies {
+  compileOnly(deps.misc.javaxInject)
   api(deps.android.androidx.annotations)
 
-  implementation(deps.android.androidx.appCompat)
-  implementation(deps.android.androidx.core)
   implementation(deps.android.androidx.design)
   implementation(deps.rx.android)
 
   api(deps.android.androidx.coreKtx)
-  api(deps.dagger.runtime)
-  api(deps.kotlin.stdlib.jdk7)
+  api(deps.kotlin.stdlib.core)
   api(deps.moshi.core)
   api(deps.misc.timber)
   api(deps.okhttp.core)

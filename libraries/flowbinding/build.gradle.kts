@@ -21,13 +21,9 @@ plugins {
 
 dependencies {
   api(deps.kotlin.coroutines)
-  api(deps.kotlin.stdlib.jdk7)
-  api(deps.corbind.core)
-  api(deps.corbind.androidx.core)
-  api(deps.corbind.material)
+  api(deps.kotlin.stdlib.core)
 
   api(deps.android.androidx.annotations)
-  api(deps.android.androidx.appCompat)
   api(deps.android.androidx.core)
   api(deps.android.androidx.design)
 }

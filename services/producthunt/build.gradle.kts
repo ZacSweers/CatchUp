@@ -47,7 +47,6 @@ dependencies {
   kapt(deps.moshi.compiler)
 
   implementation(project(":libraries:util"))
-  implementation(deps.misc.okio)
   implementation(deps.moshi.core)
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)

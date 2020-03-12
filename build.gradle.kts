@@ -57,6 +57,11 @@ buildScan {
 
 dependencyAnalysis {
   setVariants("release")
+  issues {
+    onAny {
+      warn("androidx.databinding:viewbinding", "org.jetbrains.kotlin:kotlin-stdlib")
+    }
+  }
 }
 
 allprojects {

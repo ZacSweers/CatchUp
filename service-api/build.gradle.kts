@@ -27,14 +27,10 @@ apply {
 dependencies {
   kapt(deps.android.androidx.room.apt)
 
-  implementation(deps.kotlin.coroutinesAndroid)
-  implementation(deps.kotlin.coroutinesRx)
-
   api(project(":service-registry:service-registry-annotations"))
   api(project(":libraries:retrofitconverters"))
   api(deps.android.androidx.room.runtime)
   api(deps.android.androidx.annotations)
-  api(deps.android.androidx.coreKtx)
   api(deps.android.androidx.fragment)
   api(deps.dagger.runtime)
   api(deps.kotlin.coroutines)
