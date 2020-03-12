@@ -43,7 +43,7 @@ buildscript {
 plugins {
   id("catchup")
   id("com.github.ben-manes.versions") version "0.28.0"
-  id("com.autonomousapps.dependency-analysis") version "0.24.1"
+  id("com.autonomousapps.dependency-analysis") version "0.25.0"
 }
 
 apply {
