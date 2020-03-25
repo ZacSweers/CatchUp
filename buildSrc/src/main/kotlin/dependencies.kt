@@ -47,7 +47,6 @@ object build {
       "-Xjsr305=strict",
       "-progressive",
       "-XXLanguage:+NewInference",
-      "-XXLanguage:+SamConversionForKotlinFunctions",
       "-Xinline-classes",
       "-Xjvm-default=enable",
       "-Xuse-experimental=kotlin.Experimental",
