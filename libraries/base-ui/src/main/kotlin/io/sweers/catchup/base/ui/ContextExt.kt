@@ -29,6 +29,7 @@ import io.sweers.catchup.util.setLightNavBar
 
 private typealias MaterialAttr = com.google.android.material.R.attr
 
+@SuppressLint("NewApi") // False positive
 fun Activity.updateNavBarColor(
   @ColorInt color: Int? = null,
   context: Context = this,
