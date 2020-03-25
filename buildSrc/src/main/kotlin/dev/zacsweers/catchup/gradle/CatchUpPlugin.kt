@@ -121,7 +121,7 @@ private fun Project.configureAndroid() {
       baseExtensionConfig()
 
       variantFilter {
-        ignore = buildType.getName() != "release"
+        ignore = buildType.name != "release"
       }
     }
 
@@ -132,6 +132,7 @@ private fun Project.configureAndroid() {
 private fun Project.configureKotlin() {
   tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
+      languageVersion = "1.4"
       jvmTarget = "1.8"
       @Suppress("SuspiciousCollectionReassignment")
       freeCompilerArgs += build.standardFreeKotlinCompilerArgs
