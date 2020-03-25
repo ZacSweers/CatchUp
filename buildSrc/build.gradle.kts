@@ -4,6 +4,9 @@ buildscript {
   repositories {
     mavenCentral()
     google()
+    maven {
+      setUrl("https://dl.bintray.com/kotlin/kotlin-eap")
+    }
     jcenter()
   }
 }
@@ -11,11 +14,14 @@ buildscript {
 repositories {
   mavenCentral()
   google()
+  maven {
+    setUrl("https://dl.bintray.com/kotlin/kotlin-eap")
+  }
   jcenter()
 }
 
 plugins {
-  kotlin("jvm") version "1.3.70"
+  kotlin("jvm") version "1.3.71"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
@@ -41,6 +47,6 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-  implementation("com.android.tools.build:gradle:4.1.0-alpha02")
-  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.70")
+  implementation("com.android.tools.build:gradle:4.1.0-alpha04")
+  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.71")
 }
