@@ -29,12 +29,23 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Locale
+
+private val PLATFORM_CONFIGURATIONS = setOf(
+    "annotationProcessor",
+    "api",
+    "compile",
+    "compileOnly",
+    "implementation",
+    "kapt",
+    "runtimeOnly"
+)
 
 @Suppress("unused")
 class CatchUpPlugin : Plugin<Project> {
@@ -45,10 +56,33 @@ class CatchUpPlugin : Plugin<Project> {
   }
 }
 
+private fun isPlatformConfigurationName(name: String): Boolean {
+  // Kapt and compileOnly are special cases since they can be combined with others
+  if (name.startsWith("kapt", ignoreCase = true) || name == "compileOnly") {
+    return true
+  }
+  // Try trimming the flavor by just matching the suffix
+  PLATFORM_CONFIGURATIONS.forEach { platformConfig ->
+    if (name.endsWith(platformConfig, ignoreCase = true)) {
+      return true
+    }
+  }
+  return false
+}
+
 private fun Project.configureJvm() {
   configureAndroid()
   configureKotlin()
   configureJava()
+
+  // Apply platforms
+  configurations
+      .matching { isPlatformConfigurationName(it.name) }
+      .configureEach {
+        dependencies {
+          add(name, platform(deps.okhttp.bom))
+        }
+      }
 }
 
 private val baseExtensionConfig: BaseExtension.() -> Unit = {

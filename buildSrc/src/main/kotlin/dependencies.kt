@@ -77,7 +77,6 @@ object deps {
     const val legacySupport = "28.0.0"
     const val markwon = "4.3.0"
     const val moshi = "1.9.2"
-    const val okhttp = "4.5.0-RC1"
     const val retrofit = "2.8.0"
     const val spotless = "3.28.0"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
@@ -396,13 +395,14 @@ object deps {
   }
 
   object okhttp {
-    const val core = "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+    const val bom = "com.squareup.okhttp3:okhttp-bom:4.5.0-RC1"
+    const val core = "com.squareup.okhttp3:okhttp"
 
     object debug {
-      const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:${versions.okhttp}"
+      const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor"
     }
 
-    const val webSockets = "com.squareup.okhttp3:okhttp-ws:${versions.okhttp}"
+    const val webSockets = "com.squareup.okhttp3:okhttp-ws"
   }
 
   object retrofit {
