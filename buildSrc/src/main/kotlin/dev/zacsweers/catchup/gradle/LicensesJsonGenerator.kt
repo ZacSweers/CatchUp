@@ -67,13 +67,13 @@ class LicensesJsonGeneratorPlugin : Plugin<Project> {
   }
 }
 
-open class LicensesJsonGenerator @Inject constructor(objects: ObjectFactory) : DefaultTask() {
+abstract class LicensesJsonGenerator : DefaultTask() {
   /**
    * This is the "official" input for wiring task dependencies correctly, but is otherwise
    * unused. See [configuration].
    */
   @get:Classpath
-  val artifactFiles: ConfigurableFileCollection = objects.fileCollection()
+  abstract val artifactFiles: ConfigurableFileCollection
 
   /**
    * This is what the task actually uses as its input.
@@ -82,7 +82,7 @@ open class LicensesJsonGenerator @Inject constructor(objects: ObjectFactory) : D
   lateinit var configuration: Configuration
 
   @get:OutputFile
-  val jsonFile: RegularFileProperty = objects.fileProperty()
+  abstract val jsonFile: RegularFileProperty
 
   @TaskAction
   fun generateFile() {
