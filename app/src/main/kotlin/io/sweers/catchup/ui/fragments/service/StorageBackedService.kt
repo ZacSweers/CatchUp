@@ -15,13 +15,13 @@
  */
 package io.sweers.catchup.ui.fragments.service
 
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.data.ServicePage
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
@@ -40,7 +40,8 @@ import java.io.IOException
 
 class StorageBackedService(
   private val dao: ServiceDao,
-  private val delegate: Service
+  private val delegate: Service,
+  private val appConfig: AppConfig
 ) : Service {
 
   private var currentSessionId: Long = -1
@@ -114,7 +115,7 @@ class StorageBackedService(
       // If no prev session ID, grab the latest page
       // If we do have a prev session ID, we want those pages
       val useLatest = currentSessionId == -1L
-      if (BuildConfig.DEBUG && useLatest && page != meta().firstPageKey) {
+      if (appConfig.isDebug && useLatest && page != meta().firstPageKey) {
         // This shouldn't happen. If we have no session, we should be fetching the first page
         w(IllegalStateException(
             "Fetching first local ($page) but not first page! Received $page")) {

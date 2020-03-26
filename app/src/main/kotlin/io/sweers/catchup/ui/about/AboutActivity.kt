@@ -39,11 +39,11 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.uber.autodispose.autoDispose
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.noties.markwon.Markwon
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.base.ui.InjectingBaseFragment
-import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.databinding.ActivityGenericContainerBinding
 import io.sweers.catchup.databinding.FragmentAboutBinding
@@ -126,7 +126,7 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
   @Inject
   internal lateinit var markwon: Markwon
   @Inject
-  internal lateinit var versionInfo: VersionInfo
+  internal lateinit var appConfig: AppConfig
 
   private val rootLayout get() = binding.aboutFragmentRoot
   private val appBarLayout get() = binding.appbarlayout
@@ -205,7 +205,7 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
 
     with(activity as AppCompatActivity) {
       if (!isInNightMode()) {
-        toolbar.setLightStatusBar()
+        toolbar.setLightStatusBar(appConfig)
       }
       setSupportActionBar(toolbar)
       supportActionBar?.run {
@@ -230,7 +230,7 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
     aboutText.text = buildMarkdown {
       text(aboutText.resources.getString(R.string.about_description))
       newline(3)
-      text(aboutText.resources.getString(R.string.about_version, versionInfo.name))
+      text(aboutText.resources.getString(R.string.about_version, appConfig.versionName))
       newline(2)
       text(aboutText.resources.getString(R.string.about_by))
       space()

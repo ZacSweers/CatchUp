@@ -27,6 +27,7 @@ import dagger.multibindings.Multibinds
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
 import io.sweers.catchup.gemoji.GemojiModule
+import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.injection.SharedPreferencesName
 import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
@@ -66,8 +67,8 @@ abstract class DataModule {
     @Singleton
     internal fun provideOkHttpClient(
       cache: Cache,
-      interceptors: Set<@JvmSuppressWildcards Interceptor>,
-      @NetworkInterceptor networkInterceptors: Set<@JvmSuppressWildcards Interceptor>
+      interceptors: DaggerSet<Interceptor>,
+      @NetworkInterceptor networkInterceptors: DaggerSet<Interceptor>
     ): OkHttpClient {
       if (Looper.myLooper() == Looper.getMainLooper()) {
         throw IllegalStateException("HTTP client initialized on main thread.")

@@ -32,6 +32,7 @@ dependencies {
   implementation(deps.android.androidx.design)
   implementation(deps.rx.android)
 
+  api(project(":libraries:appconfig"))
   api(deps.android.androidx.coreKtx)
   api(deps.dagger.runtime)
   api(deps.kotlin.stdlib.jdk7)

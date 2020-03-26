@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.util
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Build
 import android.text.Html
@@ -26,6 +27,7 @@ import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.noties.markwon.Markwon
 
 /*
@@ -97,9 +99,10 @@ fun TextView.setTextWithNiceLinks(input: CharSequence) {
  */
 fun String.parseHtml(
   linkTextColor: ColorStateList,
-  @ColorInt linkHighlightColor: Int
+  @ColorInt linkHighlightColor: Int,
+  appConfig: AppConfig
 ): SpannableStringBuilder {
-  var spanned = fromHtml()
+  var spanned = fromHtml(appConfig)
 
   // strip any trailing newlines
   while (spanned[spanned.length - 1] == '\n') {
@@ -109,11 +112,11 @@ fun String.parseHtml(
   return spanned.linkifyPlainLinks(linkTextColor, linkHighlightColor)
 }
 
-fun TextView.parseAndSetText(input: String) {
-  if (TextUtils.isEmpty(input)) {
+fun TextView.parseAndSetText(input: String, appConfig: AppConfig) {
+  if (input.isEmpty()) {
     return
   }
-  setTextWithNiceLinks(input.parseHtml(linkTextColors, highlightColor))
+  setTextWithNiceLinks(input.parseHtml(linkTextColors, highlightColor, appConfig))
 }
 
 private fun CharSequence.linkifyPlainLinks(
@@ -159,8 +162,9 @@ private fun setSpan(
       Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 }
 
-private fun String.fromHtml(): SpannableStringBuilder {
-  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+@SuppressLint("NewApi") // False positive
+private fun String.fromHtml(appConfig: AppConfig): SpannableStringBuilder {
+  return if (appConfig.sdkInt >= Build.VERSION_CODES.N) {
     Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY) as SpannableStringBuilder
   } else {
     @Suppress("DEPRECATION")

@@ -21,6 +21,7 @@ import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.injection.scopes.PerActivity
@@ -72,7 +73,8 @@ internal object BugReportModule {
   internal fun provideImgurService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
-    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
+    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+    appConfig: AppConfig
   ): ImgurUploadApi {
     return Retrofit.Builder()
         .baseUrl("https://api.imgur.com/3/")
@@ -81,7 +83,7 @@ internal object BugReportModule {
         .addConverterFactory(MoshiConverterFactory.create(moshi.newBuilder()
             .add(Wrapped.ADAPTER_FACTORY)
             .build()))
-        .validateEagerly(BuildConfig.DEBUG)
+        .validateEagerly(appConfig.isDebug)
         .build()
         .create(ImgurUploadApi::class.java)
   }
@@ -91,14 +93,15 @@ internal object BugReportModule {
   internal fun provideGithubIssueService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
-    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
+    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+    appConfig: AppConfig
   ): GitHubIssueApi {
     return Retrofit.Builder()
         .baseUrl("https://api.github.com/")
         .delegatingCallFactory(client)
         .addCallAdapterFactory(rxJavaCallAdapterFactory)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .validateEagerly(BuildConfig.DEBUG)
+        .validateEagerly(appConfig.isDebug)
         .build()
         .create(GitHubIssueApi::class.java)
   }

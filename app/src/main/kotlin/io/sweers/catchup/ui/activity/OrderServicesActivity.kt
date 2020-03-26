@@ -41,6 +41,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton.OnV
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ColorUtils
@@ -56,6 +57,7 @@ import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
+import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
@@ -88,13 +90,16 @@ class OrderServicesActivity : InjectingBaseActivity() {
 class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBinding>() {
 
   @Inject
-  lateinit var serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>
+  lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
   @Inject
   lateinit var catchUpPreferences: CatchUpPreferences
   @Inject
   internal lateinit var syllabus: Syllabus
   @Inject
   internal lateinit var fontHelper: FontHelper
+  @Inject
+  internal lateinit var appConfig: AppConfig
+
   private val save get() = binding.save
   private val toolbar get() = binding.toolbar
   private val recyclerView get() = binding.list
@@ -127,7 +132,7 @@ class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBindin
     super.onViewCreated(view, savedInstanceState)
     with(activity as AppCompatActivity) {
       if (!isInNightMode()) {
-        toolbar.setLightStatusBar()
+        toolbar.setLightStatusBar(appConfig)
       }
     }
     val lm = LinearLayoutManager(view.context)

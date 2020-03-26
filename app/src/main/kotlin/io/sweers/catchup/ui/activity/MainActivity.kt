@@ -27,6 +27,7 @@ import com.uber.autodispose.autoDispose
 import dagger.Binds
 import dagger.Provides
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.data.LinkManager
@@ -41,6 +42,7 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
 import io.sweers.catchup.ui.DetailDisplayer
+import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.ui.fragments.PagerFragment
 import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
@@ -116,9 +118,10 @@ class MainActivity : InjectingBaseActivity() {
       @FinalServices
       fun provideFinalServices(
         serviceDao: ServiceDao,
-        serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>,
+        serviceMetas: DaggerMap<String, ServiceMeta>,
         sharedPreferences: SharedPreferences,
-        services: Map<String, @JvmSuppressWildcards Provider<Service>>
+        services: DaggerMap<String, Provider<Service>>,
+        appConfig: AppConfig
       ): Map<String, Provider<Service>> {
         return services
             .filter {
@@ -126,7 +129,7 @@ class MainActivity : InjectingBaseActivity() {
                   serviceMetas.getValue(it.key).enabledPreferenceKey, true)
             }
             .mapValues { (_, value) ->
-              Provider { StorageBackedService(serviceDao, value.get()) }
+              Provider { StorageBackedService(serviceDao, value.get(), appConfig) }
             }
       }
     }
@@ -138,7 +141,7 @@ class MainActivity : InjectingBaseActivity() {
     abstract fun serviceMetas(): Map<String, ServiceMeta>
 
     @Multibinds
-    abstract fun fragmentCreators(): Map<Class<out Fragment>, @JvmSuppressWildcards Fragment>
+    abstract fun fragmentCreators(): DaggerMap<Class<out Fragment>, Fragment>
 
     @Binds
     @PerActivity

@@ -48,12 +48,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.Provides
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.databinding.FragmentPagerBinding
+import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
@@ -96,6 +98,8 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
   lateinit var changelogHelper: ChangelogHelper
   @Inject
   lateinit var catchUpPreferences: CatchUpPreferences
+  @Inject
+  lateinit var appConfig: AppConfig
 
   private val rootLayout get() = binding.pagerFragmentRoot
   private val tabLayout get() = binding.tabLayout
@@ -150,7 +154,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
     val isInNightMode = view.context.isInNightMode()
     if (!isInNightMode) {
       // Start with a light status bar in normal mode
-      appBarLayout.setLightStatusBar()
+      appBarLayout.setLightStatusBar(appConfig)
     }
     viewLifecycleOwner.lifecycleScope.launch {
       appBarLayout.offsetChanges()
@@ -171,7 +175,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
                     interpolator = LinearOutSlowInInterpolator()
                     start()
                   }
-              appBarLayout.clearLightStatusBar()
+              appBarLayout.clearLightStatusBar(appConfig)
             } else {
               val wasPinned = tabLayoutIsPinned
               tabLayoutIsPinned = false
@@ -187,7 +191,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
                   duration = 200
                   interpolator = DecelerateInterpolator()
                   if (!isInNightMode) {
-                    appBarLayout.setLightStatusBar()
+                    appBarLayout.setLightStatusBar(appConfig)
                   }
                   start()
                 }
@@ -246,7 +250,8 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
           }
           activity?.updateNavBarColor(color,
               context = view.context,
-              uiPreferences = catchUpPreferences)
+              uiPreferences = catchUpPreferences,
+              appConfig = appConfig)
         }
       }
 
@@ -294,7 +299,8 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
                   }
                   activity?.updateNavBarColor(color,
                       context = view.context,
-                      uiPreferences = catchUpPreferences)
+                      uiPreferences = catchUpPreferences,
+                      appConfig = appConfig)
                 }
                 start()
               }
@@ -346,7 +352,8 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
             activity?.updateNavBarColor(color = (tabLayout.background as ColorDrawable).color,
                 context = view!!.context,
                 recreate = true,
-                uiPreferences = catchUpPreferences)
+                uiPreferences = catchUpPreferences,
+                appConfig = appConfig)
           }
         }
       }
@@ -360,7 +367,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
     @Provides
     fun provideServiceHandlers(
       sharedPrefs: SharedPreferences,
-      serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>,
+      serviceMetas: DaggerMap<String, ServiceMeta>,
       catchUpPreferences: CatchUpPreferences
     ): Array<ServiceHandler> {
       val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()

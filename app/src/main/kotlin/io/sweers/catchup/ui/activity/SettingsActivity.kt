@@ -32,10 +32,10 @@ import com.uber.autodispose.autoDispose
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.android.support.AndroidSupportInjection
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BaseActivity
@@ -78,7 +78,7 @@ class SettingsActivity : InjectingBaseActivity() {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     if (!isInNightMode()) {
-      binding.toolbar.setLightStatusBar()
+      binding.toolbar.setLightStatusBar(appConfig)
     }
 
     if (savedInstanceState == null) {
@@ -126,6 +126,8 @@ class SettingsActivity : InjectingBaseActivity() {
     lateinit var sharedPreferences: SharedPreferences
     @Inject
     lateinit var catchUpPreferences: CatchUpPreferences
+    @Inject
+    lateinit var appConfig: AppConfig
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
       AndroidSupportInjection.inject(this)
@@ -175,7 +177,7 @@ class SettingsActivity : InjectingBaseActivity() {
           catchUpPreferences.themeNavigationBar = (preference as CheckBoxPreference).isChecked
           (activity as SettingsActivity).run {
             resultData.putBoolean(NAV_COLOR_UPDATED, true)
-            updateNavBarColor(recreate = true, uiPreferences = catchUpPreferences)
+            updateNavBarColor(recreate = true, uiPreferences = catchUpPreferences, appConfig = appConfig)
           }
           return true
         }
@@ -198,7 +200,7 @@ class SettingsActivity : InjectingBaseActivity() {
           Single.fromCallable {
             val appContext = activity!!.applicationContext
             var cleanedSize = 0L
-            val prefsRoot = File("/data/data/${BuildConfig.APPLICATION_ID}/shared_prefs")
+            val prefsRoot = File("/data/data/${appConfig.applicationId}/shared_prefs")
             if (prefsRoot.isDirectory) {
               for (prefFile in prefsRoot.listFiles()!!) {
                 val fileSize = prefFile.length()

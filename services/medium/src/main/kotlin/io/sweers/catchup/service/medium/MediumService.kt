@@ -22,6 +22,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
@@ -183,14 +184,15 @@ abstract class MediumModule {
       @InternalApi client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,
       inspectorConverterFactory: InspectorConverterFactory,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
+      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      appConfig: AppConfig
     ): MediumApi {
       val retrofit = Retrofit.Builder().baseUrl(MediumApi.ENDPOINT)
           .delegatingCallFactory(client)
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(inspectorConverterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
-          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
+          .validateEagerly(appConfig.isDebug)
           .build()
       return retrofit.create(MediumApi::class.java)
     }

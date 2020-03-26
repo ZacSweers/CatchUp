@@ -25,11 +25,13 @@ import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import timber.log.Timber
 import javax.inject.Qualifier
+import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 
 @Module
 object ReleaseApplicationModule {
 
+  @Singleton
   @Provides
   fun provideObjectWatcher(): CatchUpObjectWatcher = CatchUpObjectWatcher.None
 
@@ -37,10 +39,12 @@ object ReleaseApplicationModule {
   @Retention(BINARY)
   private annotation class BugsnagKey
 
+  @Singleton
   @BugsnagKey
   @Provides
   fun provideBugsnagKey(): String = BuildConfig.BUGSNAG_KEY
 
+  @Singleton
   @Initializers
   @IntoSet
   @Provides
@@ -48,9 +52,11 @@ object ReleaseApplicationModule {
     Bugsnag.init(application, key)
   }
 
+  @Singleton
   @IntoSet
   @Provides
-  fun provideBugsnagTree(): Timber.Tree = BugsnagTree().also {
+  fun provideBugsnagTree(application: Application, @BugsnagKey key: String): Timber.Tree = BugsnagTree().also {
+    Bugsnag.init(application, key) // TODO nix this by allowing ordering of inits
     Bugsnag.getClient()
         .beforeNotify { error ->
           it.update(error)

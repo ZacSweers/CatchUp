@@ -49,22 +49,7 @@ object UiUtil {
     @ColorInt color: Int,
     mask: Drawable?
   ): Drawable? {
-    return when {
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> RippleDrawable(
-          ColorStateList.valueOf(color), null, mask)
-      mask == null -> {
-        val colorDrawable = ColorDrawable(color)
-        val statefulDrawable = StateListDrawable()
-        statefulDrawable.setEnterFadeDuration(200)
-        statefulDrawable.setExitFadeDuration(200)
-        statefulDrawable.addState(intArrayOf(android.R.attr.state_pressed), colorDrawable)
-        statefulDrawable.addState(intArrayOf(android.R.attr.state_focused), colorDrawable)
-        statefulDrawable.addState(intArrayOf(), null)
-        statefulDrawable
-      }
-      else -> // We don't do it on pre-lollipop because normally selectors can't abide by a mask
-        null
-    }
+    return RippleDrawable(ColorStateList.valueOf(color), null, mask)
   }
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)

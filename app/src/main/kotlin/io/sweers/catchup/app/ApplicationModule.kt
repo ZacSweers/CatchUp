@@ -38,6 +38,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.appconfig.AppConfigMetadataContributor
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
@@ -46,7 +48,6 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.base.ui.VersionInfo
@@ -80,6 +81,12 @@ abstract class ApplicationModule {
   annotation class LazyDelegate
 
   /**
+   * Provides AppConfig metadata contributors.
+   */
+  @Multibinds
+  abstract fun metadataContributors(): Set<AppConfigMetadataContributor>
+
+  /**
    * Provides initializers for app startup.
    */
   @Initializers
@@ -105,6 +112,11 @@ abstract class ApplicationModule {
   @Singleton
   abstract fun provideUiPreferences(catchupPreferences: CatchUpPreferences): UiPreferences
 
+  @Binds
+  @Singleton
+  abstract fun bindAppConfig(catchUpAppConfig: CatchUpAppConfig): AppConfig
+
+  @Module
   companion object {
 
     /**
@@ -124,10 +136,11 @@ abstract class ApplicationModule {
     @Singleton
     internal fun markwon(
       @LazyDelegate imageLoader: ImageLoader,
-      @ApplicationContext context: Context // TODO should use themed one from activity?
+      @ApplicationContext context: Context, // TODO should use themed one from activity?
+      appConfig: AppConfig
     ): Markwon {
       return Markwon.builder(context)
-          .textSetter(PrecomputedTextSetterCompat.create())
+          .textSetter(PrecomputedTextSetterCompat.create(appConfig = appConfig))
           .usePlugins(listOf(
               MovementMethodPlugin.create(LinkTouchMovementMethod()),
               ImagesPlugin.create(),
@@ -152,9 +165,9 @@ abstract class ApplicationModule {
     @Initializers
     @IntoSet
     @Provides
-    fun coilInit(imageLoader: ImageLoader): () -> Unit = {
+    fun coilInit(imageLoader: ImageLoader, appConfig: AppConfig): () -> Unit = {
       Coil.setDefaultImageLoader(imageLoader)
-      CoilLogger.setEnabled(BuildConfig.DEBUG)
+      CoilLogger.setEnabled(appConfig.isDebug)
     }
 
     @Qualifier

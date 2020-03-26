@@ -20,19 +20,40 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks
 import dagger.android.AndroidInjection
+import dev.zacsweers.catchup.appconfig.AppConfig
 import javax.inject.Inject
 
 abstract class InjectableBaseActivity : BaseActivity() {
+
+  companion object {
+    private const val APP_CONFIG_SERVICE_NAME = "catchup.service.appconfig"
+  }
 
   @Inject
   protected lateinit var viewContainer: ViewContainer
   @Inject
   protected lateinit var uiPreferences: UiPreferences
+  @Inject
+  override lateinit var appConfig: AppConfig
 
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidInjection.inject(this)
     setFragmentFactory()
     super.onCreate(savedInstanceState)
+  }
+
+  override fun getSystemServiceName(serviceClass: Class<*>): String? {
+    if (serviceClass == AppConfig::class.java) {
+      return APP_CONFIG_SERVICE_NAME
+    }
+    return super.getSystemServiceName(serviceClass)
+  }
+
+  override fun getSystemService(name: String): Any? {
+    if (name == APP_CONFIG_SERVICE_NAME) {
+      return appConfig
+    }
+    return super.getSystemService(name)
   }
 
   /**
@@ -54,6 +75,6 @@ abstract class InjectableBaseActivity : BaseActivity() {
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
-    updateNavBarColor(uiPreferences = uiPreferences)
+    updateNavBarColor(uiPreferences = uiPreferences, appConfig = appConfig)
   }
 }

@@ -22,6 +22,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
@@ -141,7 +142,8 @@ abstract class DesignerNewsModule {
     internal fun provideDesignerNewsService(
       client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
+      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      appConfig: AppConfig
     ): DesignerNewsApi {
 
       val retrofit = Retrofit.Builder().baseUrl(
@@ -149,7 +151,7 @@ abstract class DesignerNewsModule {
           .delegatingCallFactory(client)
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
-          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
+          .validateEagerly(appConfig.isDebug)
           .build()
       return retrofit.create(DesignerNewsApi::class.java)
     }

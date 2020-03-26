@@ -78,7 +78,8 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
   }
 
   fun setBadgeColor(@ColorInt color: Int) {
-    sdk(29) {
+    @Suppress("DEPRECATION") // We can maybe try to inject AppConfig in this in the future
+    context.sdk(29) {
       badge.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
     } ?: run {
       @Suppress("DEPRECATION")

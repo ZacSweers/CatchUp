@@ -21,6 +21,7 @@ plugins {
 include(
     ":app",
     ":libraries:base-ui",
+    ":libraries:appconfig",
     ":libraries:gemoji",
     ":libraries:flowbinding",
     ":libraries:kotlinutil",

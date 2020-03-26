@@ -22,6 +22,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.SingleSource
@@ -191,13 +192,14 @@ abstract class NewsApiModule {
     internal fun provideNewsApiService(
       @InternalApi client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
+      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      appConfig: AppConfig
     ): NewsApiApi {
       return Retrofit.Builder().baseUrl(NewsApiApi.ENDPOINT)
           .callFactory(client.get()::newCall)
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(MoshiConverterFactory.create(moshi))
-          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
+          .validateEagerly(appConfig.isDebug)
           .build()
           .create(NewsApiApi::class.java)
     }

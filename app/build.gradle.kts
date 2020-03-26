@@ -354,6 +354,7 @@ dependencies {
   implementation(project(":service-api"))
   implementation(project(":service-registry:service-registry"))
   implementation(project(":libraries:base-ui"))
+  implementation(project(":libraries:appconfig"))
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:smmry"))

@@ -15,13 +15,12 @@
  */
 package io.sweers.catchup.ui.bugreport
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.util.DisplayMetrics
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -32,12 +31,12 @@ import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.mattprecious.telescope.Lens
 import com.uber.autodispose.autoDispose
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BaseActivity
-import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
@@ -62,7 +61,7 @@ internal class BugReportLens @Inject constructor(
   private val lumberYard: LumberYard,
   private val imgurUploadApi: ImgurUploadApi,
   private val gitHubIssueApi: GitHubIssueApi,
-  private val versionInfo: VersionInfo
+  private val appConfig: AppConfig
 ) : Lens(), ReportListener {
 
   private var screenshot: File? = null
@@ -106,9 +105,9 @@ internal class BugReportLens @Inject constructor(
       }
       h4("App")
       codeBlock(buildString {
-        append("Version: ").append(versionInfo.name).append('\n')
-        append("Version code: ").append(versionInfo.code).append('\n')
-        append("Version timestamp: ").append(versionInfo.timestamp).append('\n')
+        append("Version: ").append(appConfig.versionName).append('\n')
+        append("Version code: ").append(appConfig.versionCode).append('\n')
+        append("Version timestamp: ").append(appConfig.timestamp).append('\n')
       })
       newline()
       h4("Device details")
@@ -125,8 +124,8 @@ internal class BugReportLens @Inject constructor(
             .append("dpi (")
             .append(densityBucket)
             .append(")\n")
-        append("Release: ").append(VERSION.RELEASE).append('\n')
-        append("API: ").append(VERSION.SDK_INT).append('\n')
+        append("Release: ").append(Build.VERSION.RELEASE).append('\n')
+        append("API: ").append(appConfig.sdkInt).append('\n')
       })
     }
     val body = StringBuilder()
@@ -135,11 +134,12 @@ internal class BugReportLens @Inject constructor(
     uploadIssue(report, body, logs)
   }
 
+  @SuppressLint("NewApi") // False positive
   private fun uploadIssue(report: Report, body: StringBuilder, logs: File?) {
     val channelId = "bugreports"
     val notificationManager = activity.getSystemService<NotificationManager>()
         ?: throw IllegalStateException("No notificationmanager?")
-    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+    if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
       val channels = notificationManager.notificationChannels
       if (channels.none { it.id == channelId }) {
         NotificationChannel(

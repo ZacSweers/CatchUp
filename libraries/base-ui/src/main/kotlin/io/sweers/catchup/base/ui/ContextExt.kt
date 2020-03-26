@@ -20,8 +20,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.os.Build
 import androidx.annotation.ColorInt
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.util.clearLightNavBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.sdk
@@ -34,20 +34,21 @@ fun Activity.updateNavBarColor(
   @ColorInt color: Int? = null,
   context: Context = this,
   recreate: Boolean = false,
-  uiPreferences: UiPreferences
+  uiPreferences: UiPreferences,
+  appConfig: AppConfig
 ) {
   // Update the nav bar with whatever prefs we had
   @Suppress("CascadeIf") // Because I think if-else makes more sense readability-wise
   if (color != null && uiPreferences.themeNavigationBar) {
     window.navigationBarColor = color
     window.navigationBarDividerColor = Color.TRANSPARENT
-    window.decorView.clearLightNavBar() // TODO why do I need to do this every time?
+    window.decorView.clearLightNavBar(appConfig) // TODO why do I need to do this every time?
   } else if (recreate) {
     recreate()
   } else {
     val currentColor = window.navigationBarColor
     val isDark = ColorUtils.isDark(currentColor)
-    if (Build.VERSION.SDK_INT < 26) {
+    if (appConfig.sdkInt < 26) {
       // SOME devices have naturally light status bars, try to cover for that here if we're in
       // night mode
       if (context.isInNightMode() && !isDark) {
@@ -56,16 +57,16 @@ fun Activity.updateNavBarColor(
     } else {
       if (context.isInNightMode()) {
         window.navigationBarColor = MaterialColors.getColor(context, MaterialAttr.colorPrimaryDark, "No colorPrimaryDark found!")
-        sdk(27) {
+        appConfig.sdk(27) {
           window.navigationBarDividerColor = Color.TRANSPARENT
         }
-        window.decorView.clearLightNavBar()
+        window.decorView.clearLightNavBar(appConfig)
       } else {
         window.navigationBarColor = MaterialColors.getColor(context, MaterialAttr.colorPrimary, "No colorPrimaryDark found!")
-        sdk(27) {
+        appConfig.sdk(27) {
           window.navigationBarDividerColor = MaterialColors.getColor(context, MaterialAttr.colorPrimaryDark, "No colorPrimaryDark found!")
         }
-        window.decorView.setLightNavBar()
+        window.decorView.setLightNavBar(appConfig)
       }
     }
   }

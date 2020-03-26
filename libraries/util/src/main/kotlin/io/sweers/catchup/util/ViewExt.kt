@@ -19,6 +19,7 @@ package io.sweers.catchup.util
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
@@ -27,9 +28,11 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
+import dev.zacsweers.catchup.appconfig.AppConfig
 
-fun View.setLightStatusBar() {
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+@SuppressLint("InlinedApi") // False positive
+fun View.setLightStatusBar(appConfig: AppConfig) {
+  if (appConfig.sdkInt >= Build.VERSION_CODES.M) {
     if ((View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR and systemUiVisibility) != View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) {
       var flags = systemUiVisibility
       flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -38,8 +41,9 @@ fun View.setLightStatusBar() {
   }
 }
 
-fun View.clearLightStatusBar() {
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+@SuppressLint("InlinedApi") // False positive
+fun View.clearLightStatusBar(appConfig: AppConfig) {
+  if (appConfig.sdkInt >= Build.VERSION_CODES.M) {
     var flags = systemUiVisibility
     // TODO noop if it's already not set. My bitwise-fu is not strong enough to figure out the inverse of setting it
     flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
@@ -47,8 +51,9 @@ fun View.clearLightStatusBar() {
   }
 }
 
-fun View.setLightNavBar() {
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+@SuppressLint("InlinedApi") // False positive
+fun View.setLightNavBar(appConfig: AppConfig) {
+  if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
     if ((View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR and systemUiVisibility) != View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR) {
       var flags = systemUiVisibility
       flags = flags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
@@ -57,8 +62,9 @@ fun View.setLightNavBar() {
   }
 }
 
-fun View.clearLightNavBar() {
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+@SuppressLint("InlinedApi") // False positive
+fun View.clearLightNavBar(appConfig: AppConfig) {
+  if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
     var flags = systemUiVisibility
     // TODO noop if it's already not set. My bitwise-fu is not strong enough to figure out the inverse of setting it
     flags = flags and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()

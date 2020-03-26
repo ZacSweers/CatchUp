@@ -18,6 +18,7 @@
 package io.sweers.catchup.util
 
 import android.app.Activity
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -140,11 +141,12 @@ inline fun Resources.dp2px(dipValue: Float) =
     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
 
 @Suppress("DEPRECATION")
-val Resources.primaryLocale: Locale
+val Context.primaryLocale: Locale
+  @SuppressLint("NewApi") // False positive
   get() {
     return sdk(24) {
-      configuration.locales[0]
-    } ?: configuration.locale
+      resources.configuration.locales[0]
+    } ?: resources.configuration.locale
   }
 
 @CheckResult

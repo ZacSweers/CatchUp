@@ -26,7 +26,6 @@ import androidx.core.provider.FontsContractCompat.FontRequestCallback
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.EmojiCompat.InitCallback
 import androidx.emoji.text.FontRequestEmojiCompatConfig
-import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
@@ -35,7 +34,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FontHelper @Inject constructor(@ApplicationContext context: Context) {
+class FontHelper @Inject constructor(
+  @ApplicationContext context: Context,
+  private val appConfig: dev.zacsweers.catchup.appconfig.AppConfig
+) {
 
   private var font: Typeface? = null
 
@@ -50,7 +52,7 @@ class FontHelper @Inject constructor(@ApplicationContext context: Context) {
         "Noto Color Emoji Compat",
         R.array.com_google_android_gms_fonts_certs)
     val emojiConfig = FontRequestEmojiCompatConfig(context, emojiRequest)
-        .setEmojiSpanIndicatorEnabled(BuildConfig.DEBUG)
+        .setEmojiSpanIndicatorEnabled(appConfig.isDebug)
         .setEmojiSpanIndicatorColor(Color.GREEN)
         .registerInitCallback(object : InitCallback() {
           override fun onInitialized() = d { "EmojiCompat initialized" }

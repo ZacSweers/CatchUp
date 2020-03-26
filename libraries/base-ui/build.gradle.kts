@@ -24,6 +24,7 @@ dependencies {
   kapt(deps.dagger.apt.compiler)
   kapt(deps.dagger.android.apt.processor)
   compileOnly(deps.misc.javaxInject)
+  api(project(":libraries:appconfig"))
   api(project(":libraries:util"))
   api(deps.dagger.android.runtime)
   api(deps.dagger.android.support)

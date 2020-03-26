@@ -27,6 +27,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
@@ -208,13 +209,14 @@ abstract class GitHubModule {
     @JvmStatic
     internal fun provideGitHubService(
       client: Lazy<OkHttpClient>,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory
+      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      appConfig: AppConfig
     ): GitHubApi {
       return Retrofit.Builder().baseUrl(GitHubApi.ENDPOINT)
           .delegatingCallFactory(client)
           .addCallAdapterFactory(rxJavaCallAdapterFactory)
           .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))
-          // .validateEagerly(BuildConfig.DEBUG) // Enable with cross-module debug build configs
+          .validateEagerly(appConfig.isDebug)
           .build()
           .create(GitHubApi::class.java)
     }

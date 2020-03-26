@@ -22,12 +22,14 @@ import com.uber.rxdogtag.RxDogTag
 import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.flowFor
+import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.util.d
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -58,14 +60,16 @@ class CatchUpApplication : Application(), HasAndroidInjector {
   internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
   @Inject
   internal lateinit var catchUpPreferences: CatchUpPreferences
+  @Inject
+  internal lateinit var appConfig: AppConfig
 
   @Inject
-  internal fun plantTimberTrees(trees: Set<@JvmSuppressWildcards Timber.Tree>) {
+  internal fun plantTimberTrees(trees: DaggerSet<Timber.Tree>) {
     Timber.plant(*trees.toTypedArray())
   }
 
   @Inject
-  internal fun asyncInits(@AsyncInitializers asyncInitializers: Set<@JvmSuppressWildcards InitializerFunction>) {
+  internal fun asyncInits(@AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>) {
     GlobalScope.launch(Dispatchers.IO) {
       // TODO - run these in parallel?
       asyncInitializers.forEach { it() }
@@ -73,7 +77,7 @@ class CatchUpApplication : Application(), HasAndroidInjector {
   }
 
   @Inject
-  internal fun inits(@Initializers initializers: Set<@JvmSuppressWildcards InitializerFunction>) {
+  internal fun inits(@Initializers initializers: DaggerSet<InitializerFunction>) {
     initializers.forEach { it() }
   }
 
