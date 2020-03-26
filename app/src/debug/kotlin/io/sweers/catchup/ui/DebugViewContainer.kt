@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.Rect
@@ -195,6 +196,7 @@ internal class DebugViewContainer @Inject constructor(
      * both of these conditions are already true. If you deployed from the IDE, however, this will
      * save you from hundreds of power button presses and pattern swiping per day!
      */
+    @SuppressLint("NewApi") // False positive
     @Suppress("DEPRECATION")
     fun riseAndShine(activity: Activity, appConfig: AppConfig) {
       if (appConfig.sdkInt >= 27) {
