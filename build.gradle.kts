@@ -21,13 +21,16 @@ buildscript {
     google()
     mavenCentral()
     jcenter()
-    maven { url = uri(deps.build.repositories.kotlineap) }
-    maven { url = uri(deps.build.repositories.kotlinx) }
-    maven { url = uri(deps.build.repositories.plugins) }
-    maven { url = uri(deps.build.repositories.snapshots) }
+    maven(deps.build.repositories.kotlineap)
+    maven(deps.build.repositories.kotlinx)
+    maven(deps.build.repositories.plugins)
+    maven(deps.build.repositories.snapshots)
+    maven(deps.build.repositories.snapshots)
+    maven("https://storage.googleapis.com/r8-releases/raw")
   }
 
   dependencies {
+    classpath("com.android.tools:r8:2.0.52")
     classpath(deps.android.gradlePlugin)
     classpath(deps.kotlin.gradlePlugin)
     classpath(deps.kotlin.noArgGradlePlugin)
@@ -55,15 +58,14 @@ buildScan {
 }
 
 allprojects {
-
   repositories {
     google()
     mavenCentral()
     jcenter()
-    maven { url = uri(deps.build.repositories.kotlineap) }
-    maven { url = uri(deps.build.repositories.kotlinx) }
-    maven { url = uri(deps.build.repositories.jitpack) }
-    maven { url = uri(deps.build.repositories.snapshots) }
+    maven(deps.build.repositories.kotlineap)
+    maven(deps.build.repositories.kotlinx)
+    maven(deps.build.repositories.jitpack)
+    maven(deps.build.repositories.snapshots)
   }
 
   configurations.all {
