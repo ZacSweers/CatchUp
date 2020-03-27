@@ -46,7 +46,6 @@ object build {
   val standardFreeKotlinCompilerArgs = listOf(
       "-Xjsr305=strict",
       "-progressive",
-      "-XXLanguage:+NewInference",
       "-Xinline-classes",
       "-Xjvm-default=enable",
       "-Xuse-experimental=kotlin.Experimental",
