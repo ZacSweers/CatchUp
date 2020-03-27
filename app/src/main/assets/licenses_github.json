@@ -12,108 +12,20 @@
     "name": "processphoenix"
   },
   {
-    "owner": "jakewharton",
-    "name": "Timber"
-  },
-  {
-    "owner": "jakewharton",
-    "name": "RxRelay"
-  },
-  {
-    "owner": "square",
-    "name": "okhttp"
-  },
-  {
-    "owner": "square",
-    "name": "okio"
-  },
-  {
-    "owner": "square",
-    "name": "moshi"
-  },
-  {
-    "owner": "square",
-    "name": "retrofit"
-  },
-  {
-    "owner": "reactivex",
-    "name": "rxjava"
-  },
-  {
-    "owner": "reactivex",
-    "name": "rxandroid"
-  },
-  {
-    "owner": "bugsnag",
-    "name": "bugsnag-android"
-  },
-  {
-    "owner": "uber",
-    "name": "AutoDispose"
-  },
-  {
-    "owner": "ZacSweers",
-    "name": "moshi-sealed"
-  },
-  {
     "owner": "ZacSweers",
     "name": "Inspector"
-  },
-  {
-    "owner": "coil-kt",
-    "name": "coil"
-  },
-  {
-    "owner": "Airbnb",
-    "name": "lottie-android"
-  },
-  {
-    "owner": "wasabeef",
-    "name": "recyclerview-animators"
-  },
-  {
-    "owner": "jetbrains",
-    "name": "kotlin"
-  },
-  {
-    "owner": "serj-lotutovici",
-    "name": "moshi-lazy-adapters"
-  },
-  {
-    "owner": "apollographql",
-    "name": "apollo-android"
   },
   {
     "owner": "github",
     "name": "gemoji"
   },
   {
-    "owner": "jgilfelt",
-    "name": "android-sqlite-asset-helper"
-  },
-  {
     "owner": "google",
     "name": "dagger"
   },
   {
-    "owner": "google",
-    "name": "auto"
-  },
-  {
     "owner": "unbescape",
     "name": "unbescape"
-  },
-  {
-    "owner": "square",
-    "name": "LeakCanary"
-  },
-  {
-    "owner": "jgilfelt",
-    "name": "chuck"
-  },
-  {
-    "owner": "Tickaroo",
-    "name": "tikxml"
   },
   {
     "owner": "nickbutcher",
@@ -122,10 +34,6 @@
   {
     "owner": "Doist",
     "name": "RecyclerViewExtensions"
-  },
-  {
-    "owner": "rharter",
-    "name": "auto-value-moshi"
   },
   {
     "owner": "simple-icons",
@@ -140,19 +48,7 @@
     "name": "custom-tabs-client"
   },
   {
-    "owner": "noties",
-    "name": "markwon"
-  },
-  {
-    "owner": "KeepSafe",
-    "name": "TapTargetView"
-  },
-  {
     "owner": "jhy",
     "name": "jsoup"
-  },
-  {
-    "owner": "chibatching",
-    "name": "Kotpref"
   }
 ]
