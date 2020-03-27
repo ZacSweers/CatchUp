@@ -16,6 +16,7 @@
 package dev.zacsweers.catchup.gradle
 
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.squareup.moshi.JsonWriter
 import okio.buffer
 import okio.sink
@@ -49,12 +50,18 @@ class LicensesJsonGeneratorPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     project.extensions.findByType<AppExtension>()!!.applicationVariants.configureEach {
       if (buildType.name == "release") {
-        project.tasks.register<LicensesJsonGenerator>("generateLicensesJson") {
+        val licensesTask = project.tasks.register<LicensesJsonGenerator>("generateLicensesJson") {
           group = "licenses"
           artifactFiles.from(runtimeConfiguration.artifactView().artifacts.artifactFiles)
           configuration = runtimeConfiguration
-          jsonFile.set(project.file("licenses.json"))
+
+          // TODO should we just generate this into an intermediate and not check it in?
+          jsonFile.set(project.file("src/main/assets/generated_licenses.json"))
         }
+
+        // Make the release assemble task depend on this to be safe
+        project.tasks.named("assemble${name.capitalize(Locale.US)}")
+            .dependsOn(licensesTask)
       }
     }
   }
