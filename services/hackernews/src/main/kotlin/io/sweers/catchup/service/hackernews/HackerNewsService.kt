@@ -206,7 +206,7 @@ abstract class HackerNewsModule {
   companion object {
     @Provides
     @JvmStatic
-    internal fun provideDataBase(): FirebaseDatabase =
+    internal fun provideDatabase(): FirebaseDatabase =
         FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/")
   }
 }
@@ -233,13 +233,13 @@ internal object FragmentViewModelFactoryModule {
           override fun <T : ViewModel> create(
             key: String,
             modelClass: Class<T>,
-            handle: SavedStateHandle
+            arg0: SavedStateHandle // weird name because kapt doesn't preserve the names in the constructor
           ): T {
             // TODO this is ugly extract these constants
-            handle.set("detailKey", fragment.arguments!!.getString("detailKey")!!)
-            handle.set("detailTitle", fragment.arguments!!.getString("detailTitle"))
+            arg0.set("detailKey", fragment.requireArguments().getString("detailKey")!!)
+            arg0.set("detailTitle", fragment.requireArguments().getString("detailTitle"))
             @Suppress("UNCHECKED_CAST")
-            return viewModels.getValue(modelClass).create(handle) as T
+            return viewModels.getValue(modelClass).create(arg0) as T
           }
         }
       }

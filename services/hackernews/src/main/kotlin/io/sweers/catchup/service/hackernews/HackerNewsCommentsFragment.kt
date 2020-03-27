@@ -50,15 +50,11 @@ internal class HackerNewsCommentsFragment @Inject constructor(
     const val ARG_DETAIL_TITLE = "detailTitle"
   }
 
-  // TODO file a bug for this? Breaks kapt stubs when it's a property
-//  private lateinit var binding: HackerNewsStoryBinding
-//  private val list get() = binding.list
-//  private val progress get() = binding.progress
-//  private val toolbar get() = binding.toolbar
+  private lateinit var binding: HackerNewsStoryBinding
+  private val list get() = binding.list
+  private val progress get() = binding.progress
+  private val toolbar get() = binding.toolbar
 
-  private lateinit var list: RecyclerView
-  private lateinit var progress: ProgressBar
-  private lateinit var toolbar: Toolbar
   private val viewModel: HackerNewsCommentsViewModel by viewModels { viewModelFactoryInstantiator.create(this) }
 
   override fun onCreateView(
@@ -66,10 +62,7 @@ internal class HackerNewsCommentsFragment @Inject constructor(
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    val binding = HackerNewsStoryBinding.inflate(inflater, container, false)
-    list = binding.list
-    progress = binding.progress
-    toolbar = binding.toolbar
+    binding = HackerNewsStoryBinding.inflate(inflater, container, false)
     return binding.root
   }
 
