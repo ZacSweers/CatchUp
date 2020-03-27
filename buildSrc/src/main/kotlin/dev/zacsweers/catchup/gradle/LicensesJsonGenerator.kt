@@ -29,7 +29,6 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
@@ -40,9 +39,11 @@ import org.gradle.maven.MavenModule
 import org.gradle.maven.MavenPomArtifact
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import java.io.File
 import java.util.Locale
-import javax.inject.Inject
 import javax.xml.parsers.DocumentBuilderFactory
+
+private const val TAG = "LicensesJsonGenerator"
 
 class LicensesJsonGeneratorPlugin : Plugin<Project> {
   override fun apply(project: Project) {
@@ -88,32 +89,37 @@ abstract class LicensesJsonGenerator : DefaultTask() {
   fun generateFile() {
     val componentIds = configuration.incoming.resolutionResult.allDependencies.map { it.from.id }
         .filterIsInstance<ModuleComponentIdentifier>()
-    val result = project.dependencies.createArtifactResolutionQuery()
+
+    val githubDetails = project.dependencies.createArtifactResolutionQuery()
         .forComponents(componentIds)
         .withArtifacts(MavenModule::class.java, MavenPomArtifact::class.java)
         .execute()
-
-    val poms = result.resolvedComponents
+        .resolvedComponents
         .flatMap { component ->
           component.getArtifacts(MavenPomArtifact::class.java)
               .filterIsInstance<ResolvedArtifactResult>()
               .onEach {
-                println("POM file for ${component.id}: ${it.file}")
+                logger.debug("$TAG: POM file for ${component.id}: ${it.file}")
               }
-              .map { it.file }
+              .mapNotNull { result ->
+                val pomFile = result.file
+                pomFile.readGithubProjectsFromPom() ?: run {
+                  val id = component.id as ModuleComponentIdentifier
+                  val group = id.group
+                  knownMapping(group)
+                }
+              }
         }
-        .distinct()
-
-    val githubDetails = poms.mapNotNull { readGithubProjectsFromPom(it.absolutePath) }
         .map { it.substringAfter(".com/") }
-        .associate { repo ->
+        .map { repo ->
           val (owner, name) = repo.split("/")
           owner to name
         }
+        .distinct()
 
     JsonWriter.of(jsonFile.get().asFile.sink().buffer()).use { writer ->
       writer.beginArray()
-      githubDetails.entries.sortedBy { it.toString().toLowerCase(Locale.US) }
+      githubDetails.sortedBy { it.toString().toLowerCase(Locale.US) }
           .forEach { (owner, name) ->
             writer.beginObject()
             writer.name("owner")
@@ -127,12 +133,27 @@ abstract class LicensesJsonGenerator : DefaultTask() {
   }
 }
 
+private fun knownMapping(group: String): String? {
+  if (group.startsWith("androidx.") || group.startsWith("com.google.android.gms")) {
+    // These are handled via licenses_mixins.json
+    return null
+  }
+  return when (group) {
+    "com.squareup.moshi" -> "square/moshi"
+    "com.squareup.retrofit2" -> "square/retrofit"
+    "com.tickaroo.tikxml" -> "Tickaroo/tikxml"
+    "com.atlassian.commonmark" -> "atlassian/commonmark-java"
+    "com.google.firebase" -> "firebase/firebase-android-sdk"
+    else -> error("Unrecognized group! $group")
+  }
+}
+
 /*
  * Below bits borrowed from https://github.com/kropp/gradle-plugin-thanks.
  */
 
-private fun readGithubProjectsFromPom(filename: String): String? {
-  val document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filename)
+private fun File.readGithubProjectsFromPom(): String? {
+  val document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(absolutePath)
   val scm = document.getElementsByTagName("scm").asSequence().firstOrNull() ?: return null
   val url = scm.childNodes.asSequence()
       .filter { it.textContent.contains("github.com") }
