@@ -22,6 +22,7 @@ plugins {
   kotlin("android")
   kotlin("kapt")
   id("com.apollographql.apollo")
+  id("licensesJsonGenerator")
 //  id("com.bugsnag.android.gradle")
 //  id("com.github.triplet.play")
 }

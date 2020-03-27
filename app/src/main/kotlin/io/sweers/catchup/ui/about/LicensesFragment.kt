@@ -169,9 +169,11 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
   private suspend fun requestItems(): List<OssBaseItem> {
     // Start with a fetch of our github entries from assets
     val githubEntries = withContext(Dispatchers.Default) {
-      moshi.adapter<List<OssGitHubEntry>>(
-          Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java))
-          .fromJson(resources.assets.open("licenses_github.json").source().buffer())!!
+      val adapter = moshi.adapter<List<OssGitHubEntry>>(
+              Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java))
+      val regular = adapter.fromJson(resources.assets.open("licenses_github.json").source().buffer())!!
+      val generated = adapter.fromJson(resources.assets.open("generated_licenses.json").source().buffer())!!
+      return@withContext regular + generated
     }
     // Fetch repos, send down a map of the ids to owner ids
     val idsToOwnerIds = githubEntries.asFlow()
