@@ -236,7 +236,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
           moshi.adapter<List<OssItem>>(
               Types.newParameterizedType(List::class.java, OssItem::class.java))
               .fromJson(resources.assets.open("licenses_mixins.json").source().buffer())!!
-              .asFlow()
+              .forEach { emit(it) }
         }
         .flowOn(Dispatchers.IO)
         .groupBy { it.author }
