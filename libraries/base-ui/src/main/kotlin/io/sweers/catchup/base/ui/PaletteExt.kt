@@ -15,7 +15,7 @@
  */
 @file:Suppress("NOTHING_TO_INLINE")
 
-package io.sweers.catchup.util
+package io.sweers.catchup.base.ui
 
 import androidx.annotation.FloatRange
 import androidx.palette.graphics.Palette
