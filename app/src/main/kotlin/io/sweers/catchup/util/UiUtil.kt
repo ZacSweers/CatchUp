@@ -31,6 +31,7 @@ import androidx.annotation.FloatRange
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.palette.graphics.Palette
 import io.sweers.catchup.base.ui.ColorUtils
+import io.sweers.catchup.base.ui.orderedSwatches
 
 object UiUtil {
 
