@@ -46,7 +46,7 @@
         android:background="?colorPrimary"
         android:minHeight="?actionBarSize"
         app:tabMode="scrollable"
-        style="@style/CatchUp.TabLayout"
+        style="@style/CatchUp.TabLayout.Colored"
         />
 
   </com.google.android.material.appbar.AppBarLayout>
