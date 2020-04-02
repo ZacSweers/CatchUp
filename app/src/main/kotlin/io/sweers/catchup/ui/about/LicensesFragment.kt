@@ -64,14 +64,14 @@ import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.dp2px
-import io.sweers.catchup.util.findSwatch
-import io.sweers.catchup.util.generateAsync
+import io.sweers.catchup.base.ui.findSwatch
+import io.sweers.catchup.base.ui.generateAsync
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.distinct
 import io.sweers.catchup.util.kotlin.groupBy
 import io.sweers.catchup.util.kotlin.sortBy
-import io.sweers.catchup.util.luminosity
+import io.sweers.catchup.base.ui.luminosity
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.Dispatchers
