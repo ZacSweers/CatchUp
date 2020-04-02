@@ -57,7 +57,7 @@ import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.UiUtil.fastOutSlowInInterpolator
-import io.sweers.catchup.util.generateAsync
+import io.sweers.catchup.base.ui.generateAsync
 import io.sweers.catchup.util.isInNightMode
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
