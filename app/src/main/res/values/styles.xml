@@ -72,14 +72,27 @@
     <item name="fontFamily">@font/nunito</item>
   </style>
 
-  <style name="CatchUp.TabLayout" parent="Widget.Design.TabLayout">
-    <item name="android:theme">@style/Theme.MaterialComponents</item>
-    <item name="tabIndicatorColor">#FFFFFF</item>
+  <style name="CatchUp.TabLayout.Colored" parent="Widget.MaterialComponents.TabLayout.Colored">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.CatchUp.WhiteOnPrimary</item>
+  </style>
+  <style name="ThemeOverlay.CatchUp.WhiteOnPrimary" parent="ThemeOverlay.MaterialComponents">
+    <item name="colorOnPrimary">#FFFFFF</item>
+  </style>
+
+  <style name="CatchUp.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.CatchUp.WhitePrimary</item>
+  </style>
+
+  <style name="ThemeOverlay.CatchUp.WhitePrimary" parent="ThemeOverlay.MaterialComponents">
+    <item name="colorPrimary">#FFFFFF</item>
   </style>
 
   <style name="CatchUp.TabLayout.Inverted" parent="Widget.MaterialComponents.TabLayout">
-    <item name="android:theme">@style/Theme.MaterialComponents.Light</item>
-    <item name="tabIndicatorColor">?android:textColorPrimary</item>
+    <item name="materialThemeOverlay">@style/ThemeOverlay.CatchUp.TextColorPrimary</item>
+  </style>
+
+  <style name="ThemeOverlay.CatchUp.TextColorPrimary" parent="ThemeOverlay.MaterialComponents">
+    <item name="colorPrimary">?android:textColorPrimary</item>
   </style>
 
 </resources>
