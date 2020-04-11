@@ -41,7 +41,7 @@ jobs:
         with:
           init: |
             echo "Line one"
-            echo "Line two"
+            echo "Line two ${{ matrix.java_version }}"
           gradle-version: wrapper
           arguments: spotlessCheck :app:assembleDebug test check --stacktrace
 #      - name: Build with Gradle
