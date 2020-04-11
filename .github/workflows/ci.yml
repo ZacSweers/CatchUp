@@ -38,12 +38,12 @@ jobs:
             ${{ runner.os }}-gradle-
       - uses: zacsweers/gradle-command-action@v0.0.1
         name: Build with Gradle
-          with:
-            init: |
-              echo "Line one"
-              echo "Line two"
-            gradle-version: wrapper
-            arguments: spotlessCheck :app:assembleDebug test check --stacktrace
+        with:
+          init: |
+            echo "Line one"
+            echo "Line two"
+          gradle-version: wrapper
+          arguments: spotlessCheck :app:assembleDebug test check --stacktrace
 #      - name: Build with Gradle
 #        run: ./gradlew spotlessCheck :app:assembleDebug test check --stacktrace
       - name: (Fail-only) Bundle the build report
