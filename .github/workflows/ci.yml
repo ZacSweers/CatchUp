@@ -36,9 +36,16 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
-      - name: Build with Gradle
-        run: ./gradlew spotlessCheck :app:assembleDebug test check --stacktrace
+      - uses: zacsweers/gradle-command-action@v0.0.1
+        name: Build with Gradle
+          with:
+            init: |
+              echo "Line one"
+              echo "Line two"
+            gradle-version: wrapper
+            arguments: spotlessCheck :app:assembleDebug test check --stacktrace
+#      - name: Build with Gradle
+#        run: ./gradlew spotlessCheck :app:assembleDebug test check --stacktrace
       - name: (Fail-only) Bundle the build report
         if: failure()
         run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
