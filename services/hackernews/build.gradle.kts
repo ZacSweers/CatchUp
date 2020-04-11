@@ -32,18 +32,25 @@ noArg {
 dependencies {
   api(project(":service-api"))
   implementation(project(":libraries:util"))
+  implementation(project(":libraries:base-ui"))
 
   kapt(project(":service-registry:service-registry-compiler"))
   kapt(deps.crumb.compiler)
   kapt(deps.dagger.apt.compiler)
   kapt(deps.assistedInject.processor)
+  kapt(deps.moshi.compiler)
   compileOnly(deps.assistedInject.annotations)
 
   implementation(deps.android.androidx.swipeRefresh)
   implementation(deps.android.androidx.viewModel.core)
   implementation(deps.android.androidx.viewModel.ktx)
   implementation(deps.android.androidx.viewModel.savedState)
+  implementation(deps.android.androidx.constraintLayout)
   implementation(deps.android.firebase.database)
+  implementation(deps.retrofit.core)
+  implementation(deps.retrofit.moshi)
+  implementation(deps.moshi.core)
+  implementation(deps.coil.default)
 
   api(deps.android.androidx.design)
   api(deps.android.androidx.fragmentKtx)

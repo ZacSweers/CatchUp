@@ -27,6 +27,8 @@ import com.squareup.inject.assisted.AssistedInject
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Success
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
+import io.sweers.catchup.service.hackernews.preview.UrlPreview
+import io.sweers.catchup.service.hackernews.preview.UrlPreviewResponse
 import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
 import io.sweers.catchup.util.d
 import kotlinx.coroutines.Dispatchers
@@ -42,13 +44,16 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 internal class HackerNewsCommentsViewModel @AssistedInject constructor(
-  @Assisted private val savedState: SavedStateHandle,
-  private val database: FirebaseDatabase
+    @Assisted private val savedState: SavedStateHandle,
+    private val database: FirebaseDatabase,
+    private val urlPreview: UrlPreview
 ) : ViewModel() {
 
   sealed class State {
     object Loading : State()
-    class Success(val data: Pair<HackerNewsStory, List<HackerNewsComment>>) : State()
+    class Success(val data: Pair<HackerNewsStory, List<HackerNewsComment>>,
+        val urlPreviewResponse: UrlPreviewResponse) : State()
+
     class Failure(val error: Throwable) : State()
   }
 
@@ -57,9 +62,13 @@ internal class HackerNewsCommentsViewModel @AssistedInject constructor(
   val viewState: Flow<State> = ConflatedBroadcastChannel<State>(State.Loading).apply {
     viewModelScope.launch {
       try {
-        val result = withContext(Dispatchers.IO) {
-          Success(loadComments())
+        val story = withContext(Dispatchers.IO) {
+          loadComments()
         }
+        val urlPreview = withContext(Dispatchers.IO) {
+          urlPreview.previewUrl("", story.first.url!!)
+        }
+        val result = Success(story, urlPreview)
         offer(result)
       } catch (exception: Exception) {
         offer(State.Failure(exception))
@@ -98,7 +107,8 @@ internal class HackerNewsCommentsViewModel @AssistedInject constructor(
     ref.addValueEventListener(listener)
   }
 
-  private suspend fun loadItem(id: String) = suspendCancellableCoroutine<HackerNewsComment> { cont ->
+  private suspend fun loadItem(
+      id: String) = suspendCancellableCoroutine<HackerNewsComment> { cont ->
     val ref = database.getReference("v0/item/$id").apply {
       keepSynced(true)
     }
