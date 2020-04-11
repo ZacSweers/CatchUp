@@ -36,7 +36,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: ZacSweers/gradle-command-action@v0.0.1
+      - uses: ZacSweers/gradle-command-action@v0.0.2
         name: Build with Gradle
         with:
           init: |
