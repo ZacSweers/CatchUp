@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <style name="TextAppearance.Author.Title" parent="@style/TextAppearance.CommentAuthor">
+    <item name="android:textSize">20sp</item>
+    <item name="lineHeightHint">28sp</item>
+  </style>
+
+  <style name="TextAppearance.CommentAuthor" parent="@style/TextAppearance.MaterialComponents.Caption">
+    <item name="android:fontFamily">sans-serif-medium</item>
+    <item name="android:textSize">14sp</item>
+    <item name="android:textColor">?colorAccent</item>
+    <item name="android:fontFeatureSettings">smcp, onum</item>
+    <item name="android:letterSpacing">0.02</item>
+  </style>
+
+  <style name="TextAppearance.Comment" parent="@style/TextAppearance.MaterialComponents.Body1">
+    <item name="android:textSize">14sp</item>
+    <item name="android:textColor">?android:textColorSecondary</item>
+    <item name="lineHeightHint">20sp</item>
+  </style>
+
+  <style name="TextAppearance.Comment.None">
+    <item name="android:textColor">?android:textColorTertiary</item>
+  </style>
+
+  <style name="TextAppearance.CommentTimestamp" parent="@style/TextAppearance.MaterialComponents.Caption">
+    <item name="android:textColor">?android:textColorTertiary</item>
+    <item name="android:textSize">14sp</item>
+    <item name="android:fontFeatureSettings">onum, smcp</item>
+    <item name="android:letterSpacing">0.02</item>
+  </style>
+</resources>

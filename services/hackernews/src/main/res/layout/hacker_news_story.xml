@@ -15,22 +15,104 @@
   -->
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app ="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:background="?android:windowBackground"
+    android:orientation="vertical"
     >
 
   <com.google.android.material.appbar.AppBarLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       >
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+        android:orientation="vertical"
+        android:padding="16dp"
+        >
+      <androidx.appcompat.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          />
+      <io.sweers.catchup.base.ui.widget.BaselineGridTextView
+          android:id="@+id/link"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+          />
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          >
+        <io.sweers.catchup.base.ui.widget.BaselineGridTextView
+            android:id="@+id/score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <io.sweers.catchup.base.ui.widget.BaselineGridTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=" · "
+            />
+        <io.sweers.catchup.base.ui.widget.BaselineGridTextView
+            android:id="@+id/author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <io.sweers.catchup.base.ui.widget.BaselineGridTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=" · "
+            />
+        <io.sweers.catchup.base.ui.widget.BaselineGridTextView
+            android:id="@+id/time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+      </LinearLayout>
+      <LinearLayout
+          android:id="@+id/url_text_container"
+          android:layout_width="match_parent"
+          android:layout_height="?actionBarSize"
+          android:layout_margin="8dp"
+          android:clickable="true"
+          android:focusable="true"
+          android:foreground="?selectableItemBackground"
+          android:orientation="horizontal"
+          android:padding="8dp"
+          app:shapeAppearance="@style/ShapeAppearance.MaterialComponents.SmallComponent"
+          >
+        <ImageView
+            android:id="@+id/url_image"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_weight="4"
+            android:orientation="vertical"
+            >
+          <TextView
+              android:id="@+id/url_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_margin="8dp"
+              />
+          <TextView
+              android:id="@+id/url_url"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              />
+        </LinearLayout>
+      </LinearLayout>
+    </LinearLayout>
   </com.google.android.material.appbar.AppBarLayout>
   <ProgressBar
       android:id="@+id/progress"

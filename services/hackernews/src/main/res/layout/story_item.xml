@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 Zac Sweers
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="4dp"
+    android:foreground="?android:selectableItemBackground"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    >
+
+  <ImageView
+      android:id="@+id/depth"
+      android:layout_width="wrap_content"
+      android:layout_height="0dp"
+      android:layout_marginStart="16dp"
+      android:paddingEnd="16dp"
+      app:layout_constraintBottom_toBottomOf="@+id/comment_text"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:tint="?colorAccent"
+      />
+
+  <io.sweers.catchup.base.ui.widget.BaselineGridTextView
+      android:id="@+id/comment_time_ago"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:paddingTop="4dp"
+      android:paddingEnd="16dp"
+      android:textAppearance="@style/TextAppearance.CommentTimestamp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:text="3 hours ago"
+      />
+
+  <TextView
+      android:id="@+id/comment_author"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:ellipsize="end"
+      android:paddingStart="8dp"
+      android:paddingTop="4dp"
+      android:textAppearance="@style/TextAppearance.CommentAuthor"
+      app:layout_constraintEnd_toStartOf="@id/comment_time_ago"
+      app:layout_constraintHorizontal_bias="0"
+      app:layout_constraintStart_toEndOf="@id/depth"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:text="Nick B"
+      />
+
+  <io.sweers.catchup.base.ui.widget.BaselineGridTextView
+      android:id="@+id/comment_text"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="4dp"
+      android:paddingStart="8dp"
+      android:paddingEnd="8dp"
+      android:paddingBottom="8dp"
+      android:textAppearance="@style/TextAppearance.Comment"
+      android:textColorHighlight="?colorAccent"
+      android:textColorLink="?colorAccent"
+      android:linksClickable="true"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@id/depth"
+      app:layout_constraintTop_toBottomOf="@id/comment_author"
+      tools:text="Dude do you use sketch? You should totally use sketch. Should designers code??"
+      />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
