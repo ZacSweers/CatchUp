@@ -1,16 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-  repositories {
-    mavenCentral()
-    google()
-    maven {
-      setUrl("https://dl.bintray.com/kotlin/kotlin-eap")
-    }
-    jcenter()
-  }
-}
-
 repositories {
   mavenCentral()
   google()
@@ -21,7 +10,7 @@ repositories {
 }
 
 plugins {
-  kotlin("jvm") version "1.3.71"
+  kotlin("jvm") version "1.4-M1"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
@@ -46,13 +35,14 @@ gradlePlugin {
 tasks.withType<KotlinCompile>().configureEach {
   kotlinOptions {
     @Suppress("SuspiciousCollectionReassignment")
-    freeCompilerArgs += listOf("-Xuse-experimental=kotlin.ExperimentalStdlibApi")
+    freeCompilerArgs += listOf("-progressive", "-Xuse-experimental=kotlin.ExperimentalStdlibApi")
+    languageVersion = "1.4"
   }
 }
 
 dependencies {
-  implementation("com.android.tools.build:gradle:4.1.0-alpha05")
-  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.71")
+  implementation("com.android.tools.build:gradle:4.1.0-alpha06")
+  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4-M1")
   implementation("com.squareup.moshi:moshi:1.9.2")
   implementation("com.squareup.okio:okio:2.5.0")
 }
