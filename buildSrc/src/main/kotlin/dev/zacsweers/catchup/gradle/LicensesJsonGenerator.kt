@@ -30,14 +30,17 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.internal.artifacts.DefaultModuleIdentifier
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.internal.component.external.model.DefaultModuleComponentIdentifier
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.maven.MavenModule
 import org.gradle.maven.MavenPomArtifact
+import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.File
@@ -97,26 +100,7 @@ abstract class LicensesJsonGenerator : DefaultTask() {
     val componentIds = configuration.incoming.resolutionResult.allDependencies.map { it.from.id }
         .filterIsInstance<ModuleComponentIdentifier>()
 
-    val githubDetails = project.dependencies.createArtifactResolutionQuery()
-        .forComponents(componentIds)
-        .withArtifacts(MavenModule::class.java, MavenPomArtifact::class.java)
-        .execute()
-        .resolvedComponents
-        .flatMap { component ->
-          component.getArtifacts(MavenPomArtifact::class.java)
-              .filterIsInstance<ResolvedArtifactResult>()
-              .onEach {
-                logger.debug("$TAG: POM file for ${component.id}: ${it.file}")
-              }
-              .mapNotNull { result ->
-                val pomFile = result.file
-                pomFile.readGithubProjectsFromPom() ?: run {
-                  val id = component.id as ModuleComponentIdentifier
-                  val group = id.group
-                  knownMapping(group)
-                }
-              }
-        }
+    val githubDetails = fetchComponents(componentIds)
         .map { it.substringAfter(".com/") }
         .map { repo ->
           val (owner, name) = repo.split("/")
@@ -138,6 +122,68 @@ abstract class LicensesJsonGenerator : DefaultTask() {
       writer.endArray()
     }
   }
+
+  private fun fetchComponents(componentIds: List<ModuleComponentIdentifier>): Sequence<String> {
+    return project.dependencies.createArtifactResolutionQuery()
+        .forComponents(componentIds)
+        .withArtifacts(MavenModule::class.java, MavenPomArtifact::class.java)
+        .execute()
+        .resolvedComponents
+        .asSequence()
+        .flatMap { component ->
+          component.getArtifacts(MavenPomArtifact::class.java)
+              .filterIsInstance<ResolvedArtifactResult>()
+              .onEach {
+                logger.debug("$TAG: POM file for ${component.id}: ${it.file}")
+              }
+              .asSequence()
+              .flatMap { result ->
+                val pomFile = result.file
+                pomFile.readGithubProjectsFromPom() ?: run {
+                  val id = component.id as ModuleComponentIdentifier
+                  val group = id.group
+                  sequenceOf(knownMapping(group))
+                }
+              }
+        }
+        .filterNotNull()
+  }
+
+  private fun File.readGithubProjectsFromPom(): Sequence<String>? {
+    val document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(absolutePath)
+    document.parseScm()?.let { return sequenceOf(it) }
+
+    // If there's a parent tag, try to fetch that instead
+    val parent = document.getElementsByTagName("parent").asSequence().firstOrNull() ?: return null
+    val parentNodes = parent.childNodes.asSequence()
+        .associateBy { it.nodeName }
+
+    val groupId = parentNodes["groupId"]?.textContent ?: return null
+    val artifactId = parentNodes["artifactId"]?.textContent ?: return null
+    val version = parentNodes["version"]?.textContent ?: return null
+
+    val component = DefaultModuleComponentIdentifier
+        .newId(DefaultModuleIdentifier.newId(groupId, artifactId), version)
+
+    logger.debug("$TAG: Fetching parent $component")
+
+    return fetchComponents(listOf(component))
+        .onEach {
+          logger.debug("$TAG: Resolved parent version for '$component': $it")
+        }
+  }
+
+  private fun Document.parseScm(): String? {
+    val scm = getElementsByTagName("scm").asSequence().firstOrNull() ?: return null
+    val url = scm.childNodes.asSequence()
+        .filter { it.textContent.contains("github.com") }
+        .firstOrNull()?.textContent
+    return url?.substringAfter("github.com")
+        ?.removePrefix("/")
+        ?.removePrefix(":")
+        ?.removeSuffix(".git")
+        ?.removeSuffix("/issues")
+  }
 }
 
 private fun knownMapping(group: String): String? {
@@ -146,10 +192,6 @@ private fun knownMapping(group: String): String? {
     return null
   }
   return when (group) {
-    "com.squareup.moshi" -> "square/moshi"
-    "com.squareup.retrofit2" -> "square/retrofit"
-    "com.tickaroo.tikxml" -> "Tickaroo/tikxml"
-    "com.atlassian.commonmark" -> "atlassian/commonmark-java"
     "com.google.firebase" -> "firebase/firebase-android-sdk"
     else -> error("Unrecognized group! $group")
   }
@@ -158,19 +200,6 @@ private fun knownMapping(group: String): String? {
 /*
  * Below bits borrowed from https://github.com/kropp/gradle-plugin-thanks.
  */
-
-private fun File.readGithubProjectsFromPom(): String? {
-  val document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(absolutePath)
-  val scm = document.getElementsByTagName("scm").asSequence().firstOrNull() ?: return null
-  val url = scm.childNodes.asSequence()
-      .filter { it.textContent.contains("github.com") }
-      .firstOrNull()?.textContent
-  return url?.substringAfter("github.com")
-      ?.removePrefix("/")
-      ?.removePrefix(":")
-      ?.removeSuffix(".git")
-      ?.removeSuffix("/issues")
-}
 
 private fun NodeList.asSequence() = NodeListSequence(this)
 
