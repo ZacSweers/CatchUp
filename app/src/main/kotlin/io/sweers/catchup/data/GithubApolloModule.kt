@@ -124,9 +124,9 @@ internal object GithubApolloModule {
 
       override fun interceptor(): Interceptor = httpCache.get().interceptor()
 
-      override fun read(cacheKey: String): Response = httpCache.get().read(cacheKey)
+      override fun read(cacheKey: String): Response? = httpCache.get().read(cacheKey)
 
-      override fun read(cacheKey: String, expireAfterRead: Boolean): Response = httpCache.get().read(cacheKey, expireAfterRead)
+      override fun read(cacheKey: String, expireAfterRead: Boolean): Response? = httpCache.get().read(cacheKey, expireAfterRead)
     }
     return ApolloClient.builder()
         .serverUrl(SERVER_URL)
