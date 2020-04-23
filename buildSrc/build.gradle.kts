@@ -19,6 +19,44 @@ kotlinDslPluginOptions {
   experimentalWarning.set(false)
 }
 
+/**
+ * These are magic shared versions that are used in both buildSrc's build file and dependencies.kt.
+ * These are copied as a source into the main source set and templated for replacement.
+ */
+object SharedBuildVersions {
+  const val agp = "4.1.0-alpha07"
+  const val kotlin = "1.4-M1"
+  const val moshi = "1.9.2"
+  const val okio = "2.5.0"
+  const val kotlinJvmTarget = "1.8"
+  val kotlinCompilerArgs = listOf(
+      "-progressive",
+      "-Xinline-classes",
+      "-Xjsr305=strict",
+      "-Xjvm-default=enable",
+      "-Xassertions=jvm",
+      "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+      "-Xopt-in=kotlin.experimental.ExperimentalTypeInference",
+      "-Xopt-in=kotlin.ExperimentalStdlibApi",
+      "-Xopt-in=kotlin.RequiresOptIn",
+      "-Xopt-in=kotlin.time.ExperimentalTime",
+      "-Xskip-metadata-version-check",
+      "-Xopt-in=kotlinx.coroutines.FlowPreview",
+      "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+  )
+
+  fun asTemplatesMap(): Map<String, String> {
+    return mapOf(
+        "agpVersion" to agp,
+        "kotlinVersion" to kotlin,
+        "moshiVersion" to moshi,
+        "okioVersion" to okio,
+        "kotlinCompilerArgs" to kotlinCompilerArgs.joinToString(", ") { "\"$it\"" },
+        "kotlinJvmTarget" to kotlinJvmTarget
+    )
+  }
+}
+
 gradlePlugin {
   plugins {
     create("CatchUpPlugin") {
@@ -32,17 +70,34 @@ gradlePlugin {
   }
 }
 
+sourceSets {
+  main.configure {
+    java.srcDir(project.file("$buildDir/generated/sources/version-templates/kotlin/main"))
+  }
+}
+
+val copyVersionTemplatesProvider = tasks.register<Copy>("copyVersionTemplates") {
+  val templatesMap = SharedBuildVersions.asTemplatesMap()
+  inputs.property("buildversions", templatesMap.hashCode())
+  from(layout.projectDirectory.dir("version-templates"))
+  into(project.layout.buildDirectory.dir("generated/sources/version-templates/kotlin/main"))
+  expand(templatesMap)
+  filteringCharset = "UTF-8"
+}
+
 tasks.withType<KotlinCompile>().configureEach {
+  dependsOn(copyVersionTemplatesProvider)
   kotlinOptions {
     @Suppress("SuspiciousCollectionReassignment")
-    freeCompilerArgs += listOf("-progressive", "-Xuse-experimental=kotlin.ExperimentalStdlibApi")
+    freeCompilerArgs += SharedBuildVersions.kotlinCompilerArgs
+    jvmTarget = SharedBuildVersions.kotlinJvmTarget
     languageVersion = "1.4"
   }
 }
 
 dependencies {
-  implementation("com.android.tools.build:gradle:4.1.0-alpha07")
-  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4-M1")
-  implementation("com.squareup.moshi:moshi:1.9.2")
-  implementation("com.squareup.okio:okio:2.5.0")
+  implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
+  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${SharedBuildVersions.kotlin}")
+  implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
+  implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
 }
