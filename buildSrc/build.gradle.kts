@@ -41,7 +41,7 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-  implementation("com.android.tools.build:gradle:4.1.0-alpha06")
+  implementation("com.android.tools.build:gradle:4.1.0-alpha07")
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4-M1")
   implementation("com.squareup.moshi:moshi:1.9.2")
   implementation("com.squareup.okio:okio:2.5.0")
