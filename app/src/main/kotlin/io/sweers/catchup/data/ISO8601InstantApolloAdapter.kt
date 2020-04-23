@@ -15,9 +15,10 @@
  */
 package io.sweers.catchup.data
 
-import com.apollographql.apollo.response.CustomTypeAdapter
-import com.apollographql.apollo.response.CustomTypeValue
-import com.apollographql.apollo.response.CustomTypeValue.GraphQLString
+import com.apollographql.apollo.api.CustomTypeAdapter
+import com.apollographql.apollo.api.CustomTypeValue
+import com.apollographql.apollo.api.CustomTypeValue.Companion.fromRawValue
+import com.apollographql.apollo.api.CustomTypeValue.GraphQLString
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import java.time.Instant
 
@@ -32,6 +33,6 @@ object ISO8601InstantApolloAdapter : CustomTypeAdapter<Instant> {
   }
 
   override fun encode(instant: Instant): CustomTypeValue<*> {
-    return GraphQLString.fromRawValue(instant.toString())
+    return fromRawValue(instant.toString())
   }
 }

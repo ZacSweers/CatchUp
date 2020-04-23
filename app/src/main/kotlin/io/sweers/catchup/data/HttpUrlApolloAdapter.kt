@@ -15,9 +15,10 @@
  */
 package io.sweers.catchup.data
 
-import com.apollographql.apollo.response.CustomTypeAdapter
-import com.apollographql.apollo.response.CustomTypeValue
-import com.apollographql.apollo.response.CustomTypeValue.GraphQLString
+import com.apollographql.apollo.api.CustomTypeAdapter
+import com.apollographql.apollo.api.CustomTypeValue
+import com.apollographql.apollo.api.CustomTypeValue.Companion.fromRawValue
+import com.apollographql.apollo.api.CustomTypeValue.GraphQLString
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
@@ -26,7 +27,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
  */
 object HttpUrlApolloAdapter : CustomTypeAdapter<HttpUrl> {
   override fun encode(value: HttpUrl): CustomTypeValue<*> {
-    return GraphQLString.fromRawValue(value.toString())
+    return fromRawValue(value.toString())
   }
 
   override fun decode(value: CustomTypeValue<*>): HttpUrl {

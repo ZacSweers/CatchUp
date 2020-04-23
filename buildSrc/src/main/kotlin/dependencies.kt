@@ -48,6 +48,7 @@ object build {
       "-progressive",
       "-Xinline-classes",
       "-Xjvm-default=enable",
+      "-Xassertions=jvm",
       "-Xuse-experimental=kotlin.Experimental",
       "-Xuse-experimental=kotlin.RequiresOptIn",
       "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
@@ -62,7 +63,7 @@ object build {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val apollo = "1.3.3"
+    const val apollo = "2.0.0"
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
@@ -386,6 +387,7 @@ object deps {
     const val adapters = "com.squareup.moshi:moshi-adapters:${versions.moshi}"
     const val core = "com.squareup.moshi:moshi:${versions.moshi}"
     const val compiler = "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi}"
+    const val shimo = "com.jakewharton.moshi:shimo:0.1.0"
     object sealed {
       private const val VERSION = "0.1.0"
       const val annotations = "dev.zacsweers.moshisealed:moshi-sealed-annotations:${VERSION}"
