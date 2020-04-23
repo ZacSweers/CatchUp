@@ -22,6 +22,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import dev.zacsweers.catchup.gradle.SharedBuildVersions
 
 fun String?.letIfEmpty(fallback: String): String {
   return if (this == null || isEmpty()) {
@@ -43,19 +44,7 @@ fun String?.execute(workingDir: File, fallback: String): String {
 }
 
 object build {
-  val standardFreeKotlinCompilerArgs = listOf(
-      "-Xjsr305=strict",
-      "-progressive",
-      "-Xinline-classes",
-      "-Xjvm-default=enable",
-      "-Xassertions=jvm",
-      "-Xuse-experimental=kotlin.Experimental",
-      "-Xuse-experimental=kotlin.RequiresOptIn",
-      "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
-      "-Xuse-experimental=kotlin.experimental.ExperimentalTypeInference",
-      "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
-      "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
-  )
+  val standardFreeKotlinCompilerArgs = SharedBuildVersions.kotlinCompilerArgs
 
   fun isCi(): Boolean = System.getenv("CI")?.toBoolean() == true
 }
@@ -71,12 +60,12 @@ object deps {
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
-    const val kotlin = "1.4-M1"
+    const val kotlin = SharedBuildVersions.kotlin
     const val kotpref = "2.10.0"
     const val leakcanary = "2.2"
     const val legacySupport = "28.0.0"
     const val markwon = "4.3.0"
-    const val moshi = "1.9.2"
+    const val moshi = SharedBuildVersions.moshi
     const val retrofit = "2.8.0"
     const val spotless = "3.28.0"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
@@ -156,7 +145,7 @@ object deps {
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
 
-    const val gradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha07"
+    val gradlePlugin = "com.android.tools.build:gradle:${SharedBuildVersions.agp}"
   }
 
   object apollo {
