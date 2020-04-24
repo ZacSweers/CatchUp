@@ -398,7 +398,7 @@ dependencies {
   // Moshi
   kapt(deps.moshi.compiler)
   implementation(deps.moshi.core)
-  debugImplementation(deps.moshi.shimo)
+  implementation(deps.moshi.shimo)
 
   // Firebase
   implementation(deps.android.firebase.core)

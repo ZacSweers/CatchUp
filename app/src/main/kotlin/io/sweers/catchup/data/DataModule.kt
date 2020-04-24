@@ -18,12 +18,14 @@ package io.sweers.catchup.data
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Looper
+import com.jakewharton.shimo.ObjectOrderRandomizer
 import com.serjltt.moshi.adapters.Wrapped
 import com.squareup.moshi.ArrayMapJsonAdapter
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
 import io.sweers.catchup.gemoji.GemojiModule
@@ -89,8 +91,14 @@ abstract class DataModule {
 
     @Provides
     @Singleton
-    internal fun provideMoshi(): Moshi {
+    internal fun provideMoshi(appConfig: AppConfig): Moshi {
       return Moshi.Builder()
+          .apply {
+            // TODO would like to just have this in debug but need to abstract it better
+            if (appConfig.isDebug) {
+              add(ObjectOrderRandomizer.create())
+            }
+          }
           .add(Wrapped.ADAPTER_FACTORY)
           .add(UnescapeJsonAdapter.FACTORY)
           .add(ArrayMapJsonAdapter.FACTORY)
