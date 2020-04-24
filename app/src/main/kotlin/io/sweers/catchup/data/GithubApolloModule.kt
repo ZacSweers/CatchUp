@@ -86,9 +86,9 @@ internal object GithubApolloModule {
 
     override fun fromFieldRecordSet(
       field: ResponseField,
-      objectSource: Map<String, Any>
+      recordSet: Map<String, Any>
     ): CacheKey = // Most objects use id
-        objectSource["id"].let {
+        recordSet["id"].let {
           return when (val value = it) {
             is String -> formatter(value)
             else -> CacheKey.NO_KEY

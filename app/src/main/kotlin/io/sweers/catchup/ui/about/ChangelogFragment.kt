@@ -113,7 +113,7 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
 
   private fun requestItems(): Single<List<ChangeLogItem>> {
     return Rx2Apollo.from(apolloClient.query(RepoReleasesQuery()))
-        .flatMapIterable { it.data()!!.repository!!.releases.nodes }
+        .flatMapIterable { it.data!!.repository!!.releases.nodes }
         .map {
           with(it) {
             ChangeLogItem(

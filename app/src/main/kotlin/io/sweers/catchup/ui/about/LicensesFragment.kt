@@ -183,7 +183,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
               .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
               .toFlow()
               .map {
-                with(it.data()!!.repository!!) {
+                with(it.data!!.repository!!) {
                   id to owner.id
                 }
               }
@@ -201,7 +201,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
       apolloClient.query(ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct()))
           .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
           .toFlow()
-          .map { it.data()!!.nodes.filterNotNull().asFlow() }
+          .map { it.data!!.nodes.filterNotNull().asFlow() }
           .flattenConcat()
           // Reduce into a map of the owner ID -> display name
           .fold(mutableMapOf<String, String>()) { map, node ->
@@ -216,7 +216,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
         .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
         .toFlow()
         .map {
-          it.data()!!.nodes.asSequence()
+          it.data!!.nodes.asSequence()
               .mapNotNull { it?.asRepository }
               .asFlow()
         }
