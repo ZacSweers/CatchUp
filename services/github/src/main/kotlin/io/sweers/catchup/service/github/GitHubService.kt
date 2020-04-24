@@ -130,10 +130,10 @@ internal class GitHubService @Inject constructor(
         .firstOrError()
         .doOnSuccess {
           if (it.hasErrors()) {
-            throw ApolloException(it.errors().toString())
+            throw ApolloException(it.errors.toString())
           }
         }
-        .map { it.data()!! }
+        .map { it.data!! }
         .flatMap { (search) ->
           Observable.fromIterable(search.nodes?.mapNotNull { it?.asRepository }.orEmpty())
               .map {

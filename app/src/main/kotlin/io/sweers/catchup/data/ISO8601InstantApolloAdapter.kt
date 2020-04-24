@@ -32,7 +32,7 @@ object ISO8601InstantApolloAdapter : CustomTypeAdapter<Instant> {
     } else throw IllegalArgumentException("Value is not a string!")
   }
 
-  override fun encode(instant: Instant): CustomTypeValue<*> {
-    return fromRawValue(instant.toString())
+  override fun encode(value: Instant): CustomTypeValue<*> {
+    return fromRawValue(value.toString())
   }
 }
