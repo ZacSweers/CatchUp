@@ -66,7 +66,7 @@ object deps {
     const val legacySupport = "28.0.0"
     const val markwon = "4.3.0"
     const val moshi = SharedBuildVersions.moshi
-    const val retrofit = "2.8.0"
+    const val retrofit = "2.8.1"
     const val spotless = "3.28.0"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
