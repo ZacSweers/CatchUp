@@ -73,6 +73,7 @@ hs_err_pid*
 *.ipr
 *.iws
 .idea/
+!.idea/icon.png
 
 
 ###Eclipse###
