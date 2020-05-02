@@ -19,7 +19,6 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
-import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
@@ -31,8 +30,9 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.GetRequest
 import coil.request.LoadRequest
 import coil.request.RequestDisposable
-import coil.util.CoilLogger
+import coil.request.RequestResult
 import coil.util.CoilUtils.createDefaultCache
+import coil.util.DebugLogger
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -165,9 +165,8 @@ abstract class ApplicationModule {
     @Initializers
     @IntoSet
     @Provides
-    fun coilInit(imageLoader: ImageLoader, appConfig: AppConfig): () -> Unit = {
-      Coil.setDefaultImageLoader(imageLoader)
-      CoilLogger.setEnabled(appConfig.isDebug)
+    fun coilInit(imageLoader: ImageLoader): () -> Unit = {
+      Coil.setImageLoader(imageLoader)
     }
 
     @Qualifier
@@ -217,12 +216,16 @@ abstract class ApplicationModule {
           imageLoader.get().clearMemory()
         }
 
-        override suspend fun get(request: GetRequest): Drawable {
-          return imageLoader.get().get(request)
+        override suspend fun execute(request: GetRequest): RequestResult {
+          return imageLoader.get().execute(request)
         }
 
-        override fun load(request: LoadRequest): RequestDisposable {
-          return imageLoader.get().load(request)
+        override fun execute(request: LoadRequest): RequestDisposable {
+          return imageLoader.get().execute(request)
+        }
+
+        override fun invalidate(key: String) {
+          imageLoader.get().invalidate(key)
         }
 
         override fun shutdown() {
@@ -236,9 +239,11 @@ abstract class ApplicationModule {
     fun imageLoader(
       @ApplicationContext context: Context,
       @IsLowRamDevice isLowRamDevice: Boolean,
-      @CoilOkHttpStack okHttpClient: dagger.Lazy<OkHttpClient>
+      @CoilOkHttpStack okHttpClient: dagger.Lazy<OkHttpClient>,
+      appConfig: AppConfig
     ): ImageLoader {
-      return ImageLoader(context) {
+      // TODO make this like an actual builder. But for now run works...
+      return ImageLoader.Builder(context).run {
         // Coil will do lazy delegation on its own under the hood, but we
         // don't need that here because we've already made it lazy. Wish this
         // wasn't the default.
@@ -247,6 +252,10 @@ abstract class ApplicationModule {
             return okHttpClient.get().newCall(request)
           }
         })
+
+        if (appConfig.isDebug) {
+          logger(DebugLogger())
+        }
 
         // Hardware bitmaps don't work with the saturation effect
         allowHardware(false)
@@ -260,6 +269,8 @@ abstract class ApplicationModule {
             add(GifDecoder())
           }
         }
+
+        build()
       }
     }
   }

@@ -45,9 +45,9 @@ import androidx.core.animation.addListener
 import androidx.core.transition.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import coil.Coil
-import coil.api.load
 import coil.bitmappool.BitmapPool
 import coil.request.CachePolicy
+import coil.request.LoadRequest
 import coil.size.Precision
 import coil.size.Scale
 import coil.size.Size
@@ -168,7 +168,7 @@ class ImageViewerActivity : AppCompatActivity() {
       isTransitionEnded = true
     }
 
-    Coil.load(this, url) {
+    Coil.execute(LoadRequest.Builder(this).data(url).apply {
       cacheKey?.let(this::key)
       precision(Precision.EXACT)
       size(ViewSizeResolver(imageView))
@@ -198,7 +198,7 @@ class ImageViewerActivity : AppCompatActivity() {
             }
           }
       )
-    }
+    }.build())
 
     activityBackgroundDrawable = rootLayout.background
     rootLayout.background = activityBackgroundDrawable

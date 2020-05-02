@@ -39,11 +39,14 @@ import androidx.core.animation.doOnEnd
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import coil.annotation.ExperimentalCoil
+import coil.annotation.ExperimentalCoilApi
 import coil.api.load
+import coil.decode.DataSource.MEMORY_CACHE
 import coil.drawable.MovieDrawable
+import coil.request.ErrorResult
+import coil.request.RequestResult
+import coil.request.SuccessResult
 import coil.transition.Transition
-import coil.transition.TransitionResult
 import coil.transition.TransitionTarget
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ColorUtils
@@ -247,7 +250,7 @@ internal class ImageAdapter(
           UiUtil.createRipple(palette, 0.25f, 0.5f, 0x40808080, true)
     }
 
-    @OptIn(ExperimentalCoil::class)
+    @OptIn(ExperimentalCoilApi::class)
     override fun bind(
       item: CatchUpItem,
       itemClickHandler: OnClickListener?,
@@ -313,7 +316,7 @@ internal class ImageAdapter(
 }
 
 /** A [Transition] that saturates and fades in the new drawable on load */
-@ExperimentalCoil
+@ExperimentalCoilApi
 private class SaturatingTransformation(
   private val durationMillis: Long = SATURATION_ANIMATION_DURATION
 ) : Transition {
@@ -321,12 +324,9 @@ private class SaturatingTransformation(
     require(durationMillis > 0) { "durationMillis must be > 0." }
   }
 
-  override suspend fun transition(
-    target: TransitionTarget<*>,
-    result: TransitionResult
-  ) {
+  override suspend fun transition(target: TransitionTarget<*>, result: RequestResult) {
     // Don't animate if the request was fulfilled by the memory cache.
-    if (result is TransitionResult.Success && result.isMemoryCache) {
+    if (result is SuccessResult && result.source == MEMORY_CACHE) {
       target.onSuccess(result.drawable)
       return
     }
@@ -334,7 +334,7 @@ private class SaturatingTransformation(
     // Animate the drawable and suspend until the animation is completes.
     suspendCancellableCoroutine<Unit> { continuation ->
       when (result) {
-        is TransitionResult.Success -> {
+        is SuccessResult -> {
           val animator = saturateDrawableAnimator(result.drawable,
               durationMillis, target.view)
           animator.doOnEnd {
@@ -345,7 +345,7 @@ private class SaturatingTransformation(
           continuation.invokeOnCancellation { animator.cancel() }
           target.onSuccess(result.drawable)
         }
-        is TransitionResult.Error -> target.onError(result.drawable)
+        is ErrorResult -> target.onError(result.drawable)
       }
     }
   }
