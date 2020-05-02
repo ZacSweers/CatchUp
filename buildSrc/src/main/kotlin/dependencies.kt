@@ -224,7 +224,7 @@ object deps {
   }
 
   object coil {
-    private const val VERSION = "0.9.5"
+    private const val VERSION = "0.10.1"
     const val base = "io.coil-kt:coil-base:$VERSION"
     const val default = "io.coil-kt:coil:$VERSION"
     const val gif = "io.coil-kt:coil-gif:$VERSION"
