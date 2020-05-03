@@ -44,15 +44,17 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 internal class HackerNewsCommentsViewModel @AssistedInject constructor(
-    @Assisted private val savedState: SavedStateHandle,
-    private val database: FirebaseDatabase,
-    private val urlPreview: UrlPreview
+  @Assisted private val savedState: SavedStateHandle,
+  private val database: FirebaseDatabase,
+  private val urlPreview: UrlPreview
 ) : ViewModel() {
 
   sealed class State {
     object Loading : State()
-    class Success(val data: Pair<HackerNewsStory, List<HackerNewsComment>>,
-        val urlPreviewResponse: UrlPreviewResponse) : State()
+    class Success(
+      val data: Pair<HackerNewsStory, List<HackerNewsComment>>,
+      val urlPreviewResponse: UrlPreviewResponse
+    ) : State()
 
     class Failure(val error: Throwable) : State()
   }
@@ -108,7 +110,8 @@ internal class HackerNewsCommentsViewModel @AssistedInject constructor(
   }
 
   private suspend fun loadItem(
-      id: String) = suspendCancellableCoroutine<HackerNewsComment> { cont ->
+    id: String
+  ) = suspendCancellableCoroutine<HackerNewsComment> { cont ->
     val ref = database.getReference("v0/item/$id").apply {
       keepSynced(true)
     }

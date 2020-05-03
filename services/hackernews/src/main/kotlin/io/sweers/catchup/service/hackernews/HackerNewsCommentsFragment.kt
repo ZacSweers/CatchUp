@@ -51,7 +51,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import javax.inject.Inject
 
 internal class HackerNewsCommentsFragment @Inject constructor(
-    viewModelFactoryInstantiator: ViewModelProviderFactoryInstantiator
+  viewModelFactoryInstantiator: ViewModelProviderFactoryInstantiator
 ) : Fragment(), ScrollableContent {
 
   companion object {
@@ -68,9 +68,9 @@ internal class HackerNewsCommentsFragment @Inject constructor(
   }
 
   override fun onCreateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
   ): View? {
     binding = HackerNewsStoryBinding.inflate(inflater, container, false)
     return binding.root
@@ -147,7 +147,7 @@ internal class HackerNewsCommentsFragment @Inject constructor(
   }
 
   private class CommentsAdapter(
-      private val comments: List<HackerNewsComment>
+    private val comments: List<HackerNewsComment>
   ) : RecyclerView.Adapter<CommentViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
       return CommentViewHolder(
@@ -180,6 +180,6 @@ internal class HackerNewsCommentsFragment @Inject constructor(
   }
 
   private class CommentViewHolder(
-      val binding: StoryItemBinding
+    val binding: StoryItemBinding
   ) : RecyclerView.ViewHolder(binding.root)
 }

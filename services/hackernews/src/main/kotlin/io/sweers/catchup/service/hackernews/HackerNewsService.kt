@@ -64,8 +64,8 @@ private annotation class InternalApi
 private const val SERVICE_KEY = "hn"
 
 internal class HackerNewsService @Inject constructor(
-    @InternalApi private val serviceMeta: ServiceMeta,
-    private val database: dagger.Lazy<FirebaseDatabase>
+  @InternalApi private val serviceMeta: ServiceMeta,
+  private val database: dagger.Lazy<FirebaseDatabase>
 ) : TextService {
 
   override fun meta() = serviceMeta
@@ -226,15 +226,15 @@ internal abstract class ViewModelModule {
 internal object FragmentViewModelFactoryModule {
   @Provides
   fun viewModelFactory(
-      viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, AssistedFactory>
+    viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, AssistedFactory>
   ): ViewModelProviderFactoryInstantiator {
     return object : ViewModelProviderFactoryInstantiator {
       override fun create(fragment: Fragment): ViewModelProvider.Factory {
         return object : AbstractSavedStateViewModelFactory(fragment, null) {
           override fun <T : ViewModel> create(
-              key: String,
-              modelClass: Class<T>,
-              arg0: SavedStateHandle // weird name because kapt doesn't preserve the names in the constructor
+            key: String,
+            modelClass: Class<T>,
+            arg0: SavedStateHandle // weird name because kapt doesn't preserve the names in the constructor
           ): T {
             // TODO this is ugly extract these constants
             arg0.set("detailKey", fragment.requireArguments().getString("detailKey")!!)
