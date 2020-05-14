@@ -73,7 +73,7 @@ object deps {
 
   object android {
     object androidx {
-      const val annotations = "androidx.annotation:annotation:1.1.0"
+      const val annotations = "androidx.annotation:annotation:1.2.0-alpha01"
       const val appCompat = "androidx.appcompat:appcompat:1.2.0-alpha03"
 
       private const val coreVersion = "1.3.0-alpha02"

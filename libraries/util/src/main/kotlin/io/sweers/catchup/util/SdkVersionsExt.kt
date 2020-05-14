@@ -17,6 +17,7 @@ package io.sweers.catchup.util
 
 import android.content.Context
 import android.os.Build
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.core.content.getSystemService
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.appconfig.EmptyAppConfig
@@ -34,6 +35,7 @@ internal val BUILD_APP_CONFIG = object : EmptyAppConfig {
 
 @Suppress("DeprecatedCallableAddReplaceWith")
 @Deprecated("This should only be used when AppConfig is not available")
+@ChecksSdkIntAtLeast(parameter = 0, lambda = 1)
 inline fun <T> Context.sdk(level: Int, func: () -> T): T? {
   // Try to dig one out of services
   val config = getSystemService<AppConfig>() ?: BUILD_APP_CONFIG
@@ -42,6 +44,7 @@ inline fun <T> Context.sdk(level: Int, func: () -> T): T? {
 
 // Not totally safe to use yet
 // https://issuetracker.google.com/issues/64550633
+@ChecksSdkIntAtLeast(parameter = 0, lambda = 1)
 inline fun <T> AppConfig.sdk(level: Int, func: () -> T): T? {
   return if (sdkInt >= level) {
     func()

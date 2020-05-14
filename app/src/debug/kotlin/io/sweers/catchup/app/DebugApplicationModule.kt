@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.app
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.app.Application.ActivityLifecycleCallbacks
@@ -134,7 +133,6 @@ object DebugApplicationModule {
   @Initializers
   @IntoSet
   @Provides
-  @SuppressLint("NewApi") // False positive
   fun strictModeInit(
     @StrictModeExecutor penaltyListenerExecutor: dagger.Lazy<ExecutorService>,
     appConfig: AppConfig
