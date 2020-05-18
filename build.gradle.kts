@@ -52,11 +52,6 @@ apply {
   from(rootProject.file("gradle/spotless-config.gradle"))
 }
 
-buildScan {
-  termsOfServiceAgree = "yes"
-  termsOfServiceUrl = "https://gradle.com/terms-of-service"
-}
-
 allprojects {
   repositories {
     google()
