@@ -24,8 +24,6 @@ gradleEnterprise {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
   }
 }
-
-
 include(
     ":app",
     ":libraries:base-ui",
