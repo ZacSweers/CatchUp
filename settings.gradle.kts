@@ -15,8 +15,16 @@
  */
 
 plugins {
-  id("com.gradle.enterprise") version "3.0"
+  id("com.gradle.enterprise") version "3.3.1"
 }
+
+gradleEnterprise {
+  buildScan {
+    termsOfServiceAgree = "yes"
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+  }
+}
+
 
 include(
     ":app",
