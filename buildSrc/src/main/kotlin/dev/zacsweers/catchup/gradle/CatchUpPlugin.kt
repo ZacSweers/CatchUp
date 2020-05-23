@@ -117,18 +117,14 @@ private fun Project.configureAndroid() {
       defaultConfig {
         targetSdkVersion(deps.android.build.targetSdkVersion)
       }
-      if (deps.build.ci) {
-        // This is what github actions has available
-        // Necessary due to AGP bug https://issuetracker.google.com/issues/143630825
-        ndkVersion = "21.0.6113669"
-      }
+      ndkVersion = "21.0.6113669"
       configureVersioning(project)
       lintOptions {
         lintConfig = rootProject.file("lint.xml")
         isAbortOnError = true
-        check("InlinedApi")
-        check("Interoperability")
-        check("NewApi")
+        checkOnly("InlinedApi")
+        checkOnly("Interoperability")
+        checkOnly("NewApi")
         fatal("NewApi")
         fatal("InlinedApi")
         enable("UnusedResources")
