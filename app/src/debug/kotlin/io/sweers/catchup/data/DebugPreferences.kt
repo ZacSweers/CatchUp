@@ -20,7 +20,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.chibatching.kotpref.ContextProvider
 import com.chibatching.kotpref.KotprefModel
-import com.chibatching.kotpref.PreferencesOpener
+import com.chibatching.kotpref.PreferencesProvider
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,8 +32,8 @@ class DebugPreferences @Inject constructor(
     contextProvider = object : ContextProvider {
       override fun getApplicationContext(): Context = application
     },
-    opener = object : PreferencesOpener {
-      override fun openPreferences(context: Context, name: String, mode: Int): SharedPreferences {
+    preferencesProvider = object : PreferencesProvider {
+      override fun get(context: Context, name: String, mode: Int): SharedPreferences {
         return sharedPreferences
       }
     }

@@ -21,7 +21,7 @@ import android.content.SharedPreferences
 import androidx.annotation.Keep
 import com.chibatching.kotpref.ContextProvider
 import com.chibatching.kotpref.KotprefModel
-import com.chibatching.kotpref.PreferencesOpener
+import com.chibatching.kotpref.PreferencesProvider
 import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.flowbinding.safeOffer
 import kotlinx.coroutines.channels.awaitClose
@@ -42,8 +42,8 @@ class CatchUpPreferences @Inject constructor(
     contextProvider = object : ContextProvider {
       override fun getApplicationContext(): Context = application
     },
-    opener = object : PreferencesOpener {
-      override fun openPreferences(context: Context, name: String, mode: Int): SharedPreferences {
+    preferencesProvider = object : PreferencesProvider {
+      override fun get(context: Context, name: String, mode: Int): SharedPreferences {
         return sharedPreferences
       }
     }
