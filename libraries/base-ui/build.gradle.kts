@@ -37,9 +37,11 @@ dependencies {
   api(deps.rx.java)
   implementation(deps.rx.relay)
   api(deps.android.androidx.annotations)
+  api(deps.android.androidx.activity)
   api(deps.android.androidx.appCompat)
   api(deps.android.androidx.core)
   api(deps.android.androidx.design)
+  api(deps.android.androidx.fragment)
   api(deps.android.androidx.palette)
   api(deps.android.androidx.paletteKtx)
 }
