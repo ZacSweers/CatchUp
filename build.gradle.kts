@@ -30,7 +30,7 @@ buildscript {
   }
 
   dependencies {
-    classpath("com.android.tools:r8:2.0.52")
+    classpath("com.android.tools:r8:2.0.73")
     classpath(deps.android.gradlePlugin)
     classpath(deps.kotlin.gradlePlugin)
     classpath(deps.kotlin.noArgGradlePlugin)
@@ -40,6 +40,7 @@ buildscript {
     classpath(deps.build.gradlePlugins.playPublisher)
     classpath(deps.build.gradlePlugins.spotless)
     classpath(deps.build.gradlePlugins.redacted)
+    classpath(deps.dagger.hilt.gradlePlugin)
   }
 }
 
@@ -77,7 +78,13 @@ allprojects {
             }
           }
           "org.jetbrains.kotlin" -> useVersion(versions.kotlin)
-          "com.google.dagger" -> useVersion(versions.dagger)
+          "com.google.dagger" -> {
+            if ("hilt" in requested.name) {
+              useVersion(deps.dagger.hilt.HILT_VERSION)
+            } else {
+              useVersion(versions.dagger)
+            }
+          }
         }
       }
     }

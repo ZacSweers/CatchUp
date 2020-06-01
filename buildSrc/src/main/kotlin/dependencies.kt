@@ -56,7 +56,7 @@ object deps {
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
-    const val dagger = "2.26"
+    const val dagger = "2.28"
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
@@ -254,6 +254,15 @@ object deps {
 
       const val runtime = "com.google.dagger:dagger-android:${versions.dagger}"
       const val support = "com.google.dagger:dagger-android-support:${versions.dagger}"
+    }
+
+    object hilt {
+      const val HILT_VERSION = "${versions.dagger}-alpha"
+      object apt {
+        const val compiler = "com.google.dagger:hilt-android-compiler:$HILT_VERSION"
+      }
+      const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$HILT_VERSION"
+      const val android = "com.google.dagger:hilt-android:$HILT_VERSION"
     }
 
     object apt {
