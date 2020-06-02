@@ -31,6 +31,12 @@ apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
 
+val localProperty = providers.gradleProperty("localProperty").orElse("not found")
+val rootProperty = providers.gradleProperty("rootProperty").orElse("not found")
+
+println("Local property is ${localProperty.get()}")
+println("Root property is ${rootProperty.get()}")
+
 android {
   defaultConfig {
     applicationId = "io.sweers.catchup"
