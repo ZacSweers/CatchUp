@@ -94,7 +94,6 @@ private val baseExtensionConfig: BaseExtension.() -> Unit = {
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-    isCoreLibraryDesugaringEnabled = true
   }
   lintOptions {
     isCheckReleaseBuilds = false
@@ -118,6 +117,9 @@ private fun Project.configureAndroid() {
         targetSdkVersion(deps.android.build.targetSdkVersion)
       }
       ndkVersion = "21.0.6113669"
+      compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+      }
       configureVersioning(project)
       lintOptions {
         lintConfig = rootProject.file("lint.xml")
@@ -154,8 +156,6 @@ private fun Project.configureAndroid() {
         ignore = buildType.name != "release"
       }
     }
-
-    dependencies.add("coreLibraryDesugaring", deps.build.coreLibraryDesugaring)
   }
 }
 
