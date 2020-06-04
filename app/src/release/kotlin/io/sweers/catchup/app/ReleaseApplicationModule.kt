@@ -49,16 +49,16 @@ object ReleaseApplicationModule {
   @IntoSet
   @Provides
   fun bugsnagInit(application: Application, @BugsnagKey key: String): () -> Unit = {
-    Bugsnag.init(application, key)
+    Bugsnag.start(application, key)
   }
 
   @Singleton
   @IntoSet
   @Provides
   fun provideBugsnagTree(application: Application, @BugsnagKey key: String): Timber.Tree = BugsnagTree().also {
-    Bugsnag.init(application, key) // TODO nix this by allowing ordering of inits
+    Bugsnag.start(application, key) // TODO nix this by allowing ordering of inits
     Bugsnag.getClient()
-        .beforeNotify { error ->
+        .addOnError { error ->
           it.update(error)
           true
         }

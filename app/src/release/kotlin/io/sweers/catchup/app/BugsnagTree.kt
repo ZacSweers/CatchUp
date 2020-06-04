@@ -18,6 +18,7 @@ package io.sweers.catchup.app
 import android.util.Log
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Error
+import com.bugsnag.android.Event
 import timber.log.Timber
 import java.util.ArrayDeque
 import java.util.Locale
@@ -55,11 +56,11 @@ internal class BugsnagTree : Timber.Tree() {
     }
   }
 
-  fun update(error: Error) {
+  fun update(event: Event) {
     synchronized(buffer) {
       var i = 1
       for (message in buffer) {
-        error.addToTab("Log", String.format(Locale.US, "%03d", i++), message)
+        event.addMetadata("Log", String.format(Locale.US, "%03d", i++), message)
       }
     }
   }
