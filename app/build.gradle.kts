@@ -90,19 +90,21 @@ android {
       ext["enableBugsnag"] = false
       buildConfigField("String", "IMGUR_CLIENT_ACCESS_TOKEN",
           "\"${project.properties["catchup_imgur_access_token"]}\"")
+      isDebuggable = false
     }
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
           "\"${properties["catchup_bugsnag_key"]}\"")
       signingConfig = signingConfigs.getByName(
           if ("useDebugSigning" in properties) "debug" else "release")
-      postprocessing.apply {
-        proguardFiles("proguard-rules.pro")
-        isOptimizeCode = true
-        isObfuscate = true
-        isRemoveUnusedCode = true
-        isRemoveUnusedResources = true
-      }
+      setMinifyEnabled(false)
+//      postprocessing.apply {
+//        proguardFiles("proguard-rules.pro")
+//        isOptimizeCode = true
+//        isObfuscate = true
+//        isRemoveUnusedCode = true
+//        isRemoveUnusedResources = true
+//      }
     }
   }
   dexOptions {
