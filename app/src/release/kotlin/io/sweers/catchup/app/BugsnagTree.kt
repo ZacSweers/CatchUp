@@ -17,7 +17,6 @@ package io.sweers.catchup.app
 
 import android.util.Log
 import com.bugsnag.android.Bugsnag
-import com.bugsnag.android.Error
 import com.bugsnag.android.Event
 import timber.log.Timber
 import java.util.ArrayDeque
