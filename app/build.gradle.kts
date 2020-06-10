@@ -94,6 +94,7 @@ android {
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
           "\"${properties["catchup_bugsnag_key"]}\"")
+      versionNameSuffix = "-release"
       signingConfig = signingConfigs.getByName(
           if ("useDebugSigning" in properties) "debug" else "release")
       postprocessing.apply {
