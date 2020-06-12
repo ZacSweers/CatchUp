@@ -10,7 +10,7 @@ repositories {
 }
 
 plugins {
-  kotlin("jvm") version "1.4-M1"
+  kotlin("jvm") version "1.4-M2"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
@@ -24,8 +24,8 @@ kotlinDslPluginOptions {
  * These are copied as a source into the main source set and templated for replacement.
  */
 object SharedBuildVersions {
-  const val agp = "4.1.0-alpha09"
-  const val kotlin = "1.4-M1"
+  const val agp = "4.2.0-alpha01"
+  const val kotlin = "1.4-M2"
   const val moshi = "1.9.2"
   const val okio = "2.5.0"
   const val kotlinJvmTarget = "1.8"
