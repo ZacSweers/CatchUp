@@ -30,7 +30,7 @@ buildscript {
   }
 
   dependencies {
-    classpath("com.android.tools:r8:2.0.73")
+    classpath("com.android.tools:r8:2.1.30")
     classpath(deps.android.gradlePlugin)
     classpath(deps.kotlin.gradlePlugin)
     classpath(deps.kotlin.noArgGradlePlugin)
