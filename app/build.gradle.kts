@@ -361,6 +361,7 @@ dependencies {
   implementation(project(":libraries:smmry"))
   implementation(project(":libraries:util"))
   implementation(project(":libraries:flowbinding"))
+  implementation(project(":libraries:tzdata"))
 
   // Support libs
   implementation(deps.android.androidx.annotations)

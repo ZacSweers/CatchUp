@@ -100,4 +100,5 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${SharedBuildVersions.kotlin}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
+  implementation("de.undercouch:gradle-download-task:4.0.4")
 }
