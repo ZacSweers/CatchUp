@@ -37,6 +37,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.ZoneId
 import javax.inject.Inject
 
 private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
@@ -46,9 +47,11 @@ class CatchUpApplication : Application(), HasAndroidInjector {
   companion object {
 
     init {
+      // This only works while minSdk < 26!
+      // https://issuetracker.google.com/issues/159421054
       System.setProperty(
           "java.time.zone.DefaultZoneRulesProvider",
-          "j$.time.zone.TzdbZoneRulesProvider"
+          "dev.zacsweers.catchup.tzdata.TzdbZoneRulesProvider"
       )
       RxAndroidPlugins.setInitMainThreadSchedulerHandler {
         AndroidSchedulers.from(Looper.getMainLooper(), true)
