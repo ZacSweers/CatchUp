@@ -92,7 +92,15 @@ class CatchUpApplication : Application(), HasAndroidInjector {
   override fun onCreate() {
     super.onCreate()
     GlobalScope.launch {
-      LazyZoneInit.cacheZones()
+      // Initialize TZ data
+      try {
+        Class.forName("java.time.Instant")
+        LazyZoneInit.backdoorInstallForMinSdk26OrHigher()
+        LazyZoneInit.cacheZones()
+      } catch (ignored: ClassNotFoundException) {
+        // Cache the current zone eagerly through normal APIs
+        ZoneId.systemDefault()
+      }
     }
     appComponent = inject()
 
