@@ -1,4 +1,21 @@
+/*
+ * Copyright (C) 2020. Zac Sweers
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.gabrielittner.threetenbp;
+
+import static java.util.Objects.requireNonNull;
 
 import dev.zacsweers.catchup.tzdata.SerCompat;
 import java.io.BufferedInputStream;
@@ -18,18 +35,18 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import static java.util.Objects.requireNonNull;
-
 // In this package because that's where LazyZoneRules is generated to for now.
 public final class LazyZoneRulesProvider extends ZoneRulesProvider {
 
   private final NavigableMap<String, ZoneRules> map = new ConcurrentSkipListMap<>();
 
-  @Override protected Set<String> provideZoneIds() {
+  @Override
+  protected Set<String> provideZoneIds() {
     return new HashSet<>(LazyZoneRules.REGION_IDS);
   }
 
-  @Override protected ZoneRules provideRules(String zoneId, boolean forCaching) {
+  @Override
+  protected ZoneRules provideRules(String zoneId, boolean forCaching) {
     requireNonNull(zoneId, "zoneId");
     ZoneRules rules = map.get(zoneId);
     if (rules == null) {
@@ -39,7 +56,8 @@ public final class LazyZoneRulesProvider extends ZoneRulesProvider {
     return rules;
   }
 
-  @Override protected NavigableMap<String, ZoneRules> provideVersions(String zoneId) {
+  @Override
+  protected NavigableMap<String, ZoneRules> provideVersions(String zoneId) {
     String versionId = LazyZoneRules.VERSION;
     ZoneRules rules = provideRules(zoneId, false);
     return new TreeMap<>(Collections.singletonMap(versionId, rules));
@@ -49,8 +67,7 @@ public final class LazyZoneRulesProvider extends ZoneRulesProvider {
     String fileName = "tzdb/" + zoneId + ".dat";
     InputStream is = null;
     try {
-      URL datUrl = LazyZoneRulesProvider.class.getClassLoader()
-          .getResource(fileName);
+      URL datUrl = LazyZoneRulesProvider.class.getClassLoader().getResource(fileName);
       // Intentionally NPE on .openStream() if requisite resource is missing.
       is = new DataInputStream(new BufferedInputStream(datUrl.openStream()));
       return loadData(is);
