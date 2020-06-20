@@ -23,6 +23,7 @@ plugins {
 
 val threeten = configurations.maybeCreate("threeten")
 dependencies {
+  compileOnly(deps.android.androidx.annotations)
   api(deps.kotlin.coroutines)
   api(deps.kotlin.stdlib.core)
   dependencies.add(threeten.name, "com.gabrielittner.threetenbp:compiler:0.9.0")
