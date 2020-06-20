@@ -17,7 +17,8 @@ package com.gabrielittner.threetenbp;
 
 import static java.util.Objects.requireNonNull;
 
-import dev.zacsweers.catchup.tzdata.SerCompat;
+import androidx.annotation.RequiresApi;
+import dev.zacsweers.catchup.tzdata.StandardZoneRules;
 import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -36,9 +37,14 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 // In this package because that's where LazyZoneRules is generated to for now.
+@RequiresApi(api = 26)
 public final class LazyZoneRulesProvider extends ZoneRulesProvider {
 
   private final NavigableMap<String, ZoneRules> map = new ConcurrentSkipListMap<>();
+
+  public LazyZoneRulesProvider() {
+    System.out.println("Using LazyZoneRulesProvider");
+  }
 
   @Override
   protected Set<String> provideZoneIds() {
@@ -88,7 +94,7 @@ public final class LazyZoneRulesProvider extends ZoneRulesProvider {
     if (!"TZDB-ZONE".equals(groupId)) {
       throw new StreamCorruptedException("File format not recognised");
     }
-    return (ZoneRules) SerCompat.read(dis);
+    return StandardZoneRules.readExternal(dis);
   }
 
   private void close(Closeable closeable) {
