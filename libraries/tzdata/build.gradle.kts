@@ -80,15 +80,14 @@ abstract class GenerateTzDataTask : JavaExec() {
   }
 }
 
-val tzdatOutputDir = tzdbVersion.flatMap { layout.buildDirectory.dir("tzdb/$it/dat") }
 val generateTzDat = tasks.register<GenerateTzDataTask>("generateTzData") {
   classpath(threeten)
   mainClass.set("com.gabrielittner.threetenbp.LazyZoneRulesCompiler")
   tzVersion.set(tzdbVersion)
-  inputDir.set(unzipTzData.map { it.destinationDir.parentFile })
+  inputDir.set(unzipTzData.map { it.destinationDir })
   argumentProviders.add(CommandLineArgumentProvider(::computeArguments))
 
   // Note: we generate and check these in rather than count on gradle caching
-  tzOutputDir.set(layout.projectDirectory.dir("src/main/resources/tzdata"))
+  tzOutputDir.set(layout.projectDirectory.dir("src/main/resources"))
   codeOutputDir.set(layout.projectDirectory.dir("src/main/java"))
 }
