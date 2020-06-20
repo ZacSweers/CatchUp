@@ -17,7 +17,7 @@ import com.android.build.gradle.internal.tasks.factory.dependsOn
 import de.undercouch.gradle.tasks.download.Download
 
 plugins {
-  kotlin("jvm")
+  `java-library`
   id("de.undercouch.download")
 }
 
@@ -25,7 +25,7 @@ val threeten = configurations.maybeCreate("threeten")
 dependencies {
   api(deps.kotlin.coroutines)
   api(deps.kotlin.stdlib.core)
-  dependencies.add(threeten.name, "org.threeten:threetenbp:1.4.4")
+  dependencies.add(threeten.name, "com.gabrielittner.threetenbp:compiler:0.9.0")
 
   testImplementation(deps.test.junit)
   testImplementation(deps.test.truth)
@@ -34,7 +34,9 @@ dependencies {
 // TODO make this an actual gradle plugin
 val tzdbVersion = providers.gradleProperty("tzdbVersion")
     .forUseAtConfigurationTime()
-val tzDbOutput = tzdbVersion.flatMap { layout.buildDirectory.file("tzdb/$it/download/${it}.tar.gz") }
+val tzDbOutput = tzdbVersion.flatMap {
+  layout.buildDirectory.file("tzdb/$it/download/${it}.tar.gz")
+}
     .map { it.asFile }
 val downloadTzdb = tasks.register<Download>("downloadTzdb") {
   src(tzdbVersion.map { "https://data.iana.org/time-zones/releases/tzdata${it}.tar.gz" })
@@ -48,7 +50,7 @@ val unzipTzData = tasks.register<Copy>("unzipTzdb") {
 }
 unzipTzData.dependsOn(downloadTzdb)
 
-abstract class GenerateTzDatTask : JavaExec() {
+abstract class GenerateTzDataTask : JavaExec() {
   @get:Input
   abstract val tzVersion: Property<String>
 
@@ -58,38 +60,35 @@ abstract class GenerateTzDatTask : JavaExec() {
 
   @get:PathSensitive(PathSensitivity.RELATIVE)
   @get:OutputDirectory
-  abstract val outputDir: DirectoryProperty
+  abstract val tzOutputDir: DirectoryProperty
+
+  @get:PathSensitive(PathSensitivity.RELATIVE)
+  @get:OutputDirectory
+  abstract val codeOutputDir: DirectoryProperty
 
   fun computeArguments(): List<String> {
     return listOf(
-        "-srcdir",
+        "--srcdir",
         inputDir.get().canonicalPath,
-        "-dstdir",
-        outputDir.get().asFile.canonicalPath,
-        "-version",
-        tzVersion.get(),
-        "-unpacked"
+        "--codeoutdir",
+        codeOutputDir.get().asFile.canonicalPath,
+        "--tzdboutdir",
+        tzOutputDir.get().asFile.canonicalPath,
+        "--version",
+        tzVersion.get()
     )
   }
 }
 
 val tzdatOutputDir = tzdbVersion.flatMap { layout.buildDirectory.dir("tzdb/$it/dat") }
-val generateTzDat = tasks.register<GenerateTzDatTask>("generateTzDat") {
+val generateTzDat = tasks.register<GenerateTzDataTask>("generateTzData") {
   classpath(threeten)
-  mainClass.set("org.threeten.bp.zone.TzdbZoneRulesCompiler")
+  mainClass.set("com.gabrielittner.threetenbp.LazyZoneRulesCompiler")
   tzVersion.set(tzdbVersion)
   inputDir.set(unzipTzData.map { it.destinationDir.parentFile })
-  outputDir.set(tzdatOutputDir)
   argumentProviders.add(CommandLineArgumentProvider(::computeArguments))
 
-  doLast {
-    // The CLI outputs TZDB.dat. We want lowercase
-    val tzdb = outputDir.file("TZDB.dat").get().asFile
-    tzdb.renameTo(File(tzdb.parentFile, "tzdb.dat"))
-  }
-}
-
-tasks.register<Copy>("copyTzDataToResources") {
-  from(generateTzDat.map { it.outputDir })
-  into(layout.projectDirectory.dir("src/main/resources/j\$/time/zone"))
+  // Note: we generate and check these in rather than count on gradle caching
+  tzOutputDir.set(layout.projectDirectory.dir("src/main/resources/tzdata"))
+  codeOutputDir.set(layout.projectDirectory.dir("src/main/java"))
 }

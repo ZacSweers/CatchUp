@@ -51,7 +51,7 @@ class CatchUpApplication : Application(), HasAndroidInjector {
       // https://issuetracker.google.com/issues/159421054
       System.setProperty(
           "java.time.zone.DefaultZoneRulesProvider",
-          "dev.zacsweers.catchup.tzdata.TzdbZoneRulesProvider"
+          "com.gabrielittner.threetenbp.LazyZoneRulesProvider"
       )
       RxAndroidPlugins.setInitMainThreadSchedulerHandler {
         AndroidSchedulers.from(Looper.getMainLooper(), true)
@@ -95,7 +95,6 @@ class CatchUpApplication : Application(), HasAndroidInjector {
       // Initialize TZ data
       try {
         Class.forName("java.time.Instant")
-        LazyZoneInit.backdoorInstallForMinSdk26OrHigher()
         LazyZoneInit.cacheZones()
       } catch (ignored: ClassNotFoundException) {
         // Cache the current zone eagerly through normal APIs
