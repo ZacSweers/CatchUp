@@ -18,6 +18,7 @@ package io.sweers.catchup.app
 import android.app.Application
 import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
+import dev.zacsweers.catchup.tzdata.LazyZoneInit
 import com.uber.rxdogtag.RxDogTag
 import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
 import dagger.android.DispatchingAndroidInjector
@@ -87,6 +88,9 @@ class CatchUpApplication : Application(), HasAndroidInjector {
 
   override fun onCreate() {
     super.onCreate()
+    GlobalScope.launch {
+      LazyZoneInit.cacheZones()
+    }
     appComponent = inject()
 
     GlobalScope.launch {
