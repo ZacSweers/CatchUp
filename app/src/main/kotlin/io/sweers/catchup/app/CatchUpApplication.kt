@@ -45,6 +45,10 @@ class CatchUpApplication : Application(), HasAndroidInjector {
   companion object {
 
     init {
+      System.setProperty(
+          "java.time.zone.DefaultZoneRulesProvider",
+          "j$.time.zone.TzdbZoneRulesProvider"
+      )
       RxAndroidPlugins.setInitMainThreadSchedulerHandler {
         AndroidSchedulers.from(Looper.getMainLooper(), true)
       }
