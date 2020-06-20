@@ -31,6 +31,7 @@ include(
     ":libraries:gemoji",
     ":libraries:flowbinding",
     ":libraries:kotlinutil",
+    ":libraries:tzdata",
     ":libraries:retrofitconverters",
     ":libraries:smmry",
     ":libraries:tooling:spi-visualizer",
