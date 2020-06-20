@@ -9,8 +9,8 @@ Note that in order to enable this, the following property should be set in the c
 
 ```kotlin
 System.setProperty(
-    "java.time.zone.DefaultZoneRulesProvider",
-    "j$.time.zone.TzdbZoneRulesProvider"
+	"java.time.zone.DefaultZoneRulesProvider",
+	"j$.time.zone.TzdbZoneRulesProvider"
 )
 ```
 
