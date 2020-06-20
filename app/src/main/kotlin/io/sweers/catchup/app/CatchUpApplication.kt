@@ -37,7 +37,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.ZoneId
 import javax.inject.Inject
 
 private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
@@ -94,11 +93,10 @@ class CatchUpApplication : Application(), HasAndroidInjector {
     GlobalScope.launch {
       // Initialize TZ data
       try {
-        Class.forName("java.time.Instant")
         LazyZoneInit.cacheZones()
-      } catch (ignored: ClassNotFoundException) {
-        // Cache the current zone eagerly through normal APIs
-        ZoneId.systemDefault()
+      } catch (ignored: NoSuchMethodError) {
+        // If targeting a newer device or minSdk 26, this will fail because ZoneRulesProvider is a
+        // strangely hidden API: https://issuetracker.google.com/issues/159421054
       }
     }
     appComponent = inject()
