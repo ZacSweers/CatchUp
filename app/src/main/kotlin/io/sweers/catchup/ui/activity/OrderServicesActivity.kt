@@ -41,7 +41,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton.OnV
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.FragmentComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
@@ -55,7 +54,6 @@ import io.sweers.catchup.databinding.OrderServicesItemBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
-import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
@@ -85,10 +83,6 @@ class OrderServicesActivity : InjectingBaseActivity() {
       }
     }
   }
-
-  @InstallIn(ActivityComponent::class)
-  @dagger.Module
-  abstract class Module : ActivityModule<OrderServicesActivity>
 }
 
 @AndroidEntryPoint

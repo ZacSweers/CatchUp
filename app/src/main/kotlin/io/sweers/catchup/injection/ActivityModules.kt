@@ -15,7 +15,29 @@
  */
 package io.sweers.catchup.injection
 
+import android.app.Activity
 import androidx.activity.ComponentActivity
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import io.sweers.catchup.ui.activity.MainActivity
 
-@Deprecated("Will eventually remove this")
-interface ActivityModule<T : ComponentActivity>
+@InstallIn(ActivityComponent::class)
+@Module
+object ComponentActivityModule {
+  @Provides
+  fun provideComponentActivity(activity: Activity): ComponentActivity {
+    return activity as ComponentActivity
+  }
+}
+
+// This weirds me out
+@InstallIn(ActivityComponent::class)
+@Module
+object MainActivityModule {
+  @Provides
+  fun provideComponentActivity(activity: Activity): MainActivity {
+    return activity as MainActivity
+  }
+}

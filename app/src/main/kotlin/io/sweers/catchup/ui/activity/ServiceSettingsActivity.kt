@@ -30,14 +30,12 @@ import dagger.Module
 import dagger.android.support.AndroidSupportInjection
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.FragmentComponent
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.databinding.ActivitySettingsBinding
-import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
 import io.sweers.catchup.service.api.ServiceMeta
@@ -74,10 +72,6 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
       }
     }
   }
-
-  @InstallIn(ActivityComponent::class)
-  @Module
-  abstract class ServiceSettingsActivityModule : ActivityModule<ServiceSettingsActivity>
 
   @AndroidEntryPoint
   class ServiceSettingsFrag : PreferenceFragmentCompat() {

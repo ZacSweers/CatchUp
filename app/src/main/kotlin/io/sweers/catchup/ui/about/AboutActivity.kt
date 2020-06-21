@@ -37,10 +37,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.uber.autodispose.autoDispose
-import dagger.Module
-import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.ActivityComponent
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.noties.markwon.Markwon
 import io.sweers.catchup.R
@@ -49,7 +46,6 @@ import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.databinding.ActivityGenericContainerBinding
 import io.sweers.catchup.databinding.FragmentAboutBinding
-import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.util.LinkTouchMovementMethod
@@ -111,10 +107,6 @@ class AboutActivity : InjectingBaseActivity() {
       }
     }
   }
-
-  @InstallIn(ActivityComponent::class)
-  @dagger.Module
-  abstract class Module : ActivityModule<AboutActivity>
 }
 
 @AndroidEntryPoint

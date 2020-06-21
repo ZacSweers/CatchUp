@@ -29,11 +29,8 @@ import androidx.preference.children
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.byteunits.BinaryByteUnit
 import com.uber.autodispose.autoDispose
-import dagger.Module
 import dagger.android.support.AndroidSupportInjection
-import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.ActivityComponent
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -46,7 +43,6 @@ import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.databinding.ActivitySettingsBinding
-import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.isInNightMode
@@ -112,10 +108,6 @@ class SettingsActivity : InjectingBaseActivity() {
     }
     super.onBackPressed()
   }
-
-  @InstallIn(ActivityComponent::class)
-  @Module
-  abstract class SettingsActivityModule : ActivityModule<SettingsActivity>
 
   @AndroidEntryPoint
   class SettingsFrag : PreferenceFragmentCompat() {
