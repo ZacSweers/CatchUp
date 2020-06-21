@@ -5,6 +5,7 @@ on: pull_request
 jobs:
   # Builds current master. Should be entirely cached most of the time!
   build-master:
+    if: contains(github.event.pull_request.labels.*.name, 'stats-pls')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -39,6 +40,7 @@ jobs:
 
   # Builds the current PR
   build-pr:
+    if: contains(github.event.pull_request.labels.*.name, 'stats-pls')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -67,6 +69,7 @@ jobs:
   # Diffs the master and PR APKs, uploads the full diff to the PR, and comments a short diff to it
   # Only runs if the label 'stats" is applied
   diff-apks:
+    if: contains(github.event.pull_request.labels.*.name, 'stats-pls')
     needs: [build-pr, build-master]
     runs-on: ubuntu-latest
     steps:
