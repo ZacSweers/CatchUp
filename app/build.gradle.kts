@@ -481,12 +481,9 @@ dependencies {
   // Dagger
   kapt(deps.dagger.hilt.apt.compiler)
   kapt(deps.dagger.apt.compiler)
-  kapt(deps.dagger.android.apt.processor)
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.hilt.android)
-  implementation(deps.dagger.android.runtime)
-  implementation(deps.dagger.android.support)
 
   // Inspector exposed for dagger
   implementation(deps.inspector.core)

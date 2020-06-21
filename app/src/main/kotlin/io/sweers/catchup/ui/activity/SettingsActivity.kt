@@ -29,7 +29,6 @@ import androidx.preference.children
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.byteunits.BinaryByteUnit
 import com.uber.autodispose.autoDispose
-import dagger.android.support.AndroidSupportInjection
 import dagger.hilt.android.AndroidEntryPoint
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
@@ -126,7 +125,6 @@ class SettingsActivity : InjectingBaseActivity() {
     lateinit var appConfig: AppConfig
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-      AndroidSupportInjection.inject(this)
       addPreferencesFromResource(R.xml.prefs_general)
 
       // Because why on earth is the default true

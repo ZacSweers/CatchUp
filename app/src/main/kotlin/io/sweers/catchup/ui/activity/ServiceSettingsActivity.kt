@@ -27,7 +27,6 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import dagger.Module
-import dagger.android.support.AndroidSupportInjection
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.FragmentComponent
@@ -83,7 +82,6 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     lateinit var catchUpPreferences: CatchUpPreferences
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-      AndroidSupportInjection.inject(this)
       // Replace backing sharedPreferences with ours
       preferenceManager.apply {
         sharedPreferencesName = "catchup"

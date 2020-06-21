@@ -43,13 +43,10 @@ kapt {
 dependencies {
   kapt(deps.dagger.hilt.apt.compiler)
   kapt(deps.dagger.apt.compiler)
-  kapt(deps.dagger.android.apt.processor)
   kapt(deps.moshi.sealed.compiler)
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.hilt.android)
-  implementation(deps.dagger.android.runtime)
-  implementation(deps.dagger.android.support)
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
   implementation(project(":libraries:base-ui"))
