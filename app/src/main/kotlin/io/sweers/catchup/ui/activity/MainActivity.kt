@@ -27,6 +27,7 @@ import com.uber.autodispose.autoDispose
 import dagger.Binds
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.scopes.ActivityScoped
 import dagger.multibindings.Multibinds
@@ -37,7 +38,6 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.databinding.ActivityMainBinding
 import io.sweers.catchup.edu.Syllabus
-import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.Service
@@ -57,6 +57,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Qualifier
 
+@AndroidEntryPoint
 class MainActivity : InjectingBaseActivity() {
 
   @Inject
@@ -100,7 +101,7 @@ class MainActivity : InjectingBaseActivity() {
 
   @InstallIn(ActivityComponent::class)
   @dagger.Module(includes = [ResolvedCatchUpServiceRegistry::class])
-  abstract class ServiceIntegrationModule : ActivityModule<MainActivity> {
+  abstract class ServiceIntegrationModule {
     companion object {
       @TextViewPool
       @Provides
