@@ -30,12 +30,12 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.collection.ArrayMap
 import androidx.core.util.toAndroidPair
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.scopes.ActivityScoped
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.flowFor
 import io.sweers.catchup.flowbinding.intentReceivers
-import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.ImageViewerData
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.UrlMeta
@@ -53,7 +53,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@PerActivity
+@ActivityScoped
 class LinkManager @Inject constructor(
   private val customTab: CustomTabActivityHelper,
   private val activity: Activity,

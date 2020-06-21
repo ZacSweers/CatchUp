@@ -20,7 +20,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import io.sweers.catchup.base.ui.ViewContainer
-import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.DebugViewContainer
 import io.sweers.catchup.ui.bugreport.BugReportModule
 
@@ -29,7 +28,6 @@ import io.sweers.catchup.ui.bugreport.BugReportModule
 object UiModule {
 
   @Provides
-  @PerActivity
   internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer =
       viewContainer
 }

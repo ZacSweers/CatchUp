@@ -28,6 +28,7 @@ import dagger.Binds
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.R
@@ -37,7 +38,6 @@ import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.databinding.ActivityMainBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.injection.ActivityModule
-import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.Service
@@ -104,16 +104,13 @@ class MainActivity : InjectingBaseActivity() {
     companion object {
       @TextViewPool
       @Provides
-      @PerActivity
       fun provideTextViewPool() = RecycledViewPool()
 
       @VisualViewPool
       @Provides
-      @PerActivity
       fun provideVisualViewPool() = RecycledViewPool()
 
       @Provides
-      @PerActivity
       @FinalServices
       fun provideFinalServices(
         serviceDao: ServiceDao,
@@ -143,15 +140,12 @@ class MainActivity : InjectingBaseActivity() {
     abstract fun fragmentCreators(): DaggerMap<Class<out Fragment>, Fragment>
 
     @Binds
-    @PerActivity
     abstract fun provideLinkHandler(linkManager: LinkManager): LinkHandler
 
     @Binds
-    @PerActivity
     abstract fun provideDetailDisplayer(mainActivityDetailDisplayer: MainActivityDetailDisplayer): DetailDisplayer
 
     @Binds
-    @PerActivity
     abstract fun provideFragmentFactory(fragmentFactory: MainActivityFragmentFactory): FragmentFactory
   }
 }
@@ -168,7 +162,7 @@ annotation class FinalServices
 /**
  * A displayer that repeatedly shows new detail views in a new ExpandablePageLayout.
  */
-@PerActivity
+@ActivityScoped
 class MainActivityDetailDisplayer @Inject constructor(
   private val mainActivity: MainActivity
 ) : DetailDisplayer {

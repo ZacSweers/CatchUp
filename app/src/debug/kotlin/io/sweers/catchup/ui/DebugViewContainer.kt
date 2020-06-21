@@ -39,6 +39,7 @@ import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.android.scope
 import com.uber.autodispose.autoDispose
 import dagger.Lazy
+import dagger.hilt.android.scopes.ActivityScoped
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -56,7 +57,6 @@ import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.flowFor
-import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
 import kotlinx.coroutines.CoroutineScope
@@ -75,7 +75,7 @@ import kotlin.coroutines.CoroutineContext
  * An [ViewContainer] for debug builds which wraps a sliding drawer on the right that holds
  * all of the debug information and settings.
  */
-@PerActivity
+@ActivityScoped
 internal class DebugViewContainer @Inject constructor(
   private val bugReportLens: BugReportLens,
   private val lumberYard: LumberYard,

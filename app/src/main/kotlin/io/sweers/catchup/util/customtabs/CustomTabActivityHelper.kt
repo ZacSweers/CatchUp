@@ -25,7 +25,7 @@ import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
-import io.sweers.catchup.injection.scopes.PerActivity
+import dagger.hilt.android.scopes.ActivityScoped
 import io.sweers.catchup.util.maybeStartActivity
 import javax.inject.Inject
 
@@ -35,7 +35,7 @@ import javax.inject.Inject
  *
  * Adapted from github.com/GoogleChrome/custom-tabs-client
  */
-@PerActivity
+@ActivityScoped
 class CustomTabActivityHelper @Inject constructor() {
   private var customTabsSession: CustomTabsSession? = null
   private var client: CustomTabsClient? = null
