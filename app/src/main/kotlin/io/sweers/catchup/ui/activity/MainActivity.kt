@@ -103,14 +103,17 @@ class MainActivity : InjectingBaseActivity() {
   @dagger.Module(includes = [ResolvedCatchUpServiceRegistry::class])
   abstract class ServiceIntegrationModule {
     companion object {
+      @ActivityScoped
       @TextViewPool
       @Provides
       fun provideTextViewPool() = RecycledViewPool()
 
+      @ActivityScoped
       @VisualViewPool
       @Provides
       fun provideVisualViewPool() = RecycledViewPool()
 
+      @ActivityScoped
       @Provides
       @FinalServices
       fun provideFinalServices(
@@ -140,12 +143,15 @@ class MainActivity : InjectingBaseActivity() {
     @Multibinds
     abstract fun fragmentCreators(): DaggerMap<Class<out Fragment>, Fragment>
 
+    @ActivityScoped
     @Binds
     abstract fun provideLinkHandler(linkManager: LinkManager): LinkHandler
 
+    @ActivityScoped
     @Binds
     abstract fun provideDetailDisplayer(mainActivityDetailDisplayer: MainActivityDetailDisplayer): DetailDisplayer
 
+    @ActivityScoped
     @Binds
     abstract fun provideFragmentFactory(fragmentFactory: MainActivityFragmentFactory): FragmentFactory
   }

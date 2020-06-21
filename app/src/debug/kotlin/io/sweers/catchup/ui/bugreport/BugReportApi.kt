@@ -23,6 +23,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
@@ -70,6 +71,7 @@ data class GitHubIssue(
 @Module
 internal object BugReportModule {
 
+  @ActivityScoped
   @Provides
   internal fun provideImgurService(
     client: Lazy<OkHttpClient>,
@@ -89,6 +91,7 @@ internal object BugReportModule {
         .create(ImgurUploadApi::class.java)
   }
 
+  @ActivityScoped
   @Provides
   internal fun provideGithubIssueService(
     client: Lazy<OkHttpClient>,

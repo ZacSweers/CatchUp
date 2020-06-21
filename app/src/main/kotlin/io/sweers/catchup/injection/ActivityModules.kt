@@ -21,11 +21,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import io.sweers.catchup.ui.activity.MainActivity
 
 @InstallIn(ActivityComponent::class)
 @Module
 object ComponentActivityModule {
+  @ActivityScoped
   @Provides
   fun provideComponentActivity(activity: Activity): ComponentActivity {
     return activity as ComponentActivity
@@ -36,6 +38,7 @@ object ComponentActivityModule {
 @InstallIn(ActivityComponent::class)
 @Module
 object MainActivityModule {
+  @ActivityScoped
   @Provides
   fun provideComponentActivity(activity: Activity): MainActivity {
     return activity as MainActivity

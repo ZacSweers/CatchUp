@@ -19,6 +19,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import io.sweers.catchup.base.ui.ViewContainer
 import io.sweers.catchup.ui.DebugViewContainer
 import io.sweers.catchup.ui.bugreport.BugReportModule
@@ -27,6 +28,7 @@ import io.sweers.catchup.ui.bugreport.BugReportModule
 @Module(includes = [BugReportModule::class])
 object UiModule {
 
+  @ActivityScoped
   @Provides
   internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer =
       viewContainer

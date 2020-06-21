@@ -41,6 +41,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import javax.inject.Qualifier
+import javax.inject.Singleton
 
 @InstallIn(ApplicationComponent::class)
 @Module
@@ -55,15 +56,18 @@ internal object GithubApolloModule {
    * TODO this hits disk on startup -_-
    */
   @Provides
+  @Singleton
   internal fun provideHttpCacheStore(@ApplicationContext context: Context): HttpCacheStore =
       DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
 
   @Provides
+  @Singleton
   internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache =
       ApolloHttpCache(httpCacheStore, null)
 
   @Provides
   @InternalApi
+  @Singleton
   internal fun provideGitHubOkHttpClient(
     client: OkHttpClient,
     httpCache: HttpCache
@@ -73,6 +77,7 @@ internal object GithubApolloModule {
       .build()
 
   @Provides
+  @Singleton
   internal fun provideCacheKeyResolver(): CacheKeyResolver = object : CacheKeyResolver() {
     private val formatter = { id: String ->
       if (id.isEmpty()) {
@@ -100,10 +105,12 @@ internal object GithubApolloModule {
   }
 
   @Provides
+  @Singleton
   internal fun provideNormalizedCacheFactory(): NormalizedCacheFactory<*> =
       LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION)
 
   @Provides
+  @Singleton
   internal fun provideApolloClient(
     @InternalApi client: Lazy<OkHttpClient>,
     cacheFactory: NormalizedCacheFactory<*>,

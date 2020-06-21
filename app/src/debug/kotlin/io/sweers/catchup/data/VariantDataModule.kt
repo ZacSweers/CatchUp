@@ -28,6 +28,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
 import okhttp3.logging.HttpLoggingInterceptor.Logger
 import timber.log.Timber
+import javax.inject.Singleton
 
 private inline fun httpLoggingInterceptor(level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE, crossinline logger: (String) -> Unit): HttpLoggingInterceptor {
   return HttpLoggingInterceptor(object : Logger {
@@ -41,6 +42,7 @@ private inline fun httpLoggingInterceptor(level: HttpLoggingInterceptor.Level = 
 @Module
 object VariantDataModule {
 
+  @Singleton
   @Provides
   @NetworkInterceptor
   @IntoSet
@@ -50,11 +52,13 @@ object VariantDataModule {
   }
 
 //  @Provides
+//  @Singleton
 //  @NetworkInterceptor
 //  @IntoSet
 //  internal fun provideChuckInterceptor(@ApplicationContext context: Context): Interceptor =
 //      ChuckInterceptor(context)
 
+  @Singleton
   @Provides
   @IntoSet
   internal fun provideMockDataInterceptor(
