@@ -33,6 +33,12 @@ apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
 
+val useDebugSigning: Boolean = providers.gradleProperty("useDebugSigning")
+    .forUseAtConfigurationTime()
+    .orElse("false")
+    .map { it.toBoolean() }
+    .get()
+
 android {
   defaultConfig {
     applicationId = "io.sweers.catchup"
@@ -51,7 +57,7 @@ android {
     buildConfig = true
   }
   signingConfigs {
-    if (rootProject.file("signing/app-release.jks").exists()) {
+    if (!useDebugSigning && rootProject.file("signing/app-release.jks").exists()) {
       create("release") {
         keyAlias = "catchupkey"
         storeFile = rootProject.file("signing/app-release.jks")
@@ -59,8 +65,6 @@ android {
         keyPassword = properties["catchup_signing_key_password"].toString()
         isV2SigningEnabled = true
       }
-    } else {
-      create("release").initWith(getByName("debug"))
     }
   }
   packagingOptions {
@@ -96,8 +100,7 @@ android {
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
           "\"${properties["catchup_bugsnag_key"]}\"")
-      signingConfig = signingConfigs.getByName(
-          if (rootProject.file("signing/app-release.jks").exists()) "debug" else "release")
+      signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       postprocessing.apply {
         proguardFiles("proguard-rules.pro")
         isOptimizeCode = true

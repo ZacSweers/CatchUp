@@ -28,7 +28,7 @@ jobs:
         with:
           java-version: 11
       - name: Build
-        run: ./gradlew :app:assembleRelease -x lintVitalRelease
+        run: ./gradlew :app:assembleRelease -x lintVitalRelease -PuseDebugSigning=true
       - name: Move apk
         run: mv app/build/outputs/apk/release/catchup-universal-release.apk release-${{ github.base_ref }}.apk
       - name: Upload apk
@@ -55,7 +55,7 @@ jobs:
         with:
           java-version: 11
       - name: Build
-        run: ./gradlew :app:assembleRelease -x lintVitalRelease
+        run: ./gradlew :app:assembleRelease -x lintVitalRelease -PuseDebugSigning=true
       - name: Move apks
         run: mv app/build/outputs/apk/release/catchup-universal-release.apk release-${{ github.sha }}.apk
       - name: Upload apk
