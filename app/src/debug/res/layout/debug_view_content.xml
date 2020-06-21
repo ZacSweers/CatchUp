@@ -156,7 +156,7 @@
       tools:ignore="HardcodedText"
       />
 
-  <SwitchMaterial
+  <com.google.android.material.switchmaterial.SwitchMaterial
       android:id="@+id/debug_enable_mock_mode"
       style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
       android:layout_gravity="start|center_vertical"
@@ -193,7 +193,7 @@
       tools:ignore="HardcodedText"
       />
 
-  <SwitchMaterial
+  <com.google.android.material.switchmaterial.SwitchMaterial
       android:id="@+id/debug_ui_pixel_grid"
       style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
       android:layout_gravity="start|center_vertical"
@@ -206,7 +206,7 @@
       tools:ignore="HardcodedText"
       />
 
-  <SwitchMaterial
+  <com.google.android.material.switchmaterial.SwitchMaterial
       android:id="@+id/debug_ui_pixel_ratio"
       style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
       android:layout_gravity="start|center_vertical"
@@ -219,7 +219,7 @@
       tools:ignore="HardcodedText"
       />
 
-  <SwitchMaterial
+  <com.google.android.material.switchmaterial.SwitchMaterial
       android:id="@+id/debug_ui_scalpel"
       style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
       android:layout_gravity="start|center_vertical"
@@ -232,7 +232,7 @@
       tools:ignore="HardcodedText"
       />
 
-  <SwitchMaterial
+  <com.google.android.material.switchmaterial.SwitchMaterial
       android:id="@+id/debug_ui_scalpel_wireframe"
       style="@style/Widget.CatchUp.DebugDrawer.RowWidget"
       android:layout_gravity="start|center_vertical"
