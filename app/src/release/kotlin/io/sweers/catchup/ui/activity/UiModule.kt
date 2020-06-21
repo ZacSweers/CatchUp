@@ -17,14 +17,15 @@ package io.sweers.catchup.ui.activity
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import io.sweers.catchup.base.ui.ViewContainer
-import io.sweers.catchup.injection.scopes.PerActivity
 
+@InstallIn(ActivityComponent::class)
 @Module
 object UiModule {
 
   @Provides
-  @PerActivity
   internal fun provideViewContainer(): ViewContainer {
     return ViewContainer.DEFAULT
   }

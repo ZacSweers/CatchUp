@@ -19,6 +19,8 @@ import android.app.Application
 import com.bugsnag.android.Bugsnag
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.IntoSet
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.app.ApplicationModule.Initializers
@@ -28,6 +30,7 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 
+@InstallIn(ApplicationComponent::class)
 @Module
 object ReleaseApplicationModule {
 
