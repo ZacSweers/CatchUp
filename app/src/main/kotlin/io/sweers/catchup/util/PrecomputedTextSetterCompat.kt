@@ -18,7 +18,6 @@ package io.sweers.catchup.util
 import android.annotation.SuppressLint
 import android.os.Build
 import android.text.Spanned
-import android.util.Log
 import android.widget.TextView
 import androidx.core.text.PrecomputedTextCompat
 import dev.zacsweers.catchup.appconfig.AppConfig
@@ -27,6 +26,7 @@ import io.sweers.catchup.flowbinding.viewScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -54,7 +54,7 @@ class PrecomputedTextSetterCompat internal constructor(
           applyText(textView, markdown, bufferType, onComplete)
         }
       } catch (t: Throwable) {
-        Log.e("PrecomputdTxtSetterCmpt", "Exception during pre-computing text", t)
+        Timber.tag("PrecomputdTxtSetterCmpt").e(t, "Exception during pre-computing text")
         // apply initial markdown
         applyText(textView, markdown, bufferType, onComplete)
       }
