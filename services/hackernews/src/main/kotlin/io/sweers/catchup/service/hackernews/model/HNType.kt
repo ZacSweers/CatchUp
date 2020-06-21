@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.service.hackernews.model
 
+import java.util.Locale
+
 internal enum class HNType {
   COMMENT, JOB, POLL, POLLOPT, STORY;
 
@@ -22,7 +24,7 @@ internal enum class HNType {
     return if (nullIfStory && this == STORY) {
       null
     } else {
-      name.toLowerCase().capitalize()
+      name.toLowerCase(Locale.US).capitalize(Locale.US)
     }
   }
 }

@@ -124,12 +124,14 @@ private fun Project.configureAndroid() {
       lintOptions {
         lintConfig = rootProject.file("lint.xml")
         isAbortOnError = true
-        checkOnly("InlinedApi")
-        checkOnly("Interoperability")
-        checkOnly("NewApi")
+        disable("IidCompatibilityCheckFailure")
+        enable("InlinedApi")
+        enable("Interoperability")
+        enable("NewApi")
         fatal("NewApi")
         fatal("InlinedApi")
         enable("UnusedResources")
+        warning("MissingTranslation")
         isCheckReleaseBuilds = true
         textReport = deps.build.ci
         textOutput("stdout")

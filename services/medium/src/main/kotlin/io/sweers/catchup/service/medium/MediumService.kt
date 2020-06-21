@@ -112,13 +112,11 @@ abstract class MediumMetaModule {
   @Binds
   internal abstract fun mediumServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @Module
   companion object {
 
     @InternalApi
     @Provides
     @Reusable
-    @JvmStatic
     internal fun provideMediumServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.medium,
@@ -138,12 +136,10 @@ abstract class MediumModule {
   @Binds
   internal abstract fun mediumService(mediumService: MediumService): Service
 
-  @Module
   companion object {
 
     @Provides
     @InternalApi
-    @JvmStatic
     internal fun provideMediumOkHttpClient(client: OkHttpClient): OkHttpClient {
       return client.newBuilder()
           .addInterceptor { chain ->
@@ -167,7 +163,6 @@ abstract class MediumModule {
 
     @Provides
     @InternalApi
-    @JvmStatic
     internal fun provideMediumMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
           .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
@@ -175,11 +170,9 @@ abstract class MediumModule {
     }
 
     @Provides
-    @JvmStatic
     internal fun provideInspector() = Inspector.Builder().build()
 
     @Provides
-    @JvmStatic
     internal fun provideMediumService(
       @InternalApi client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,

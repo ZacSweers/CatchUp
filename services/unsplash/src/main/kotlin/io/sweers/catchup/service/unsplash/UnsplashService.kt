@@ -112,13 +112,11 @@ abstract class UnsplashMetaModule {
   @Binds
   internal abstract fun unsplashServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @Module
   companion object {
 
     @InternalApi
     @Provides
     @Reusable
-    @JvmStatic
     internal fun provideUnsplashServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.unsplash,
@@ -141,11 +139,9 @@ abstract class UnsplashModule {
   @Binds
   internal abstract fun unsplashService(unsplashService: UnsplashService): Service
 
-  @Module
   companion object {
 
     @Provides
-    @JvmStatic
     @InternalApi
     internal fun provideUnsplashMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
@@ -154,7 +150,6 @@ abstract class UnsplashModule {
     }
 
     @Provides
-    @JvmStatic
     @InternalApi
     internal fun provideUnsplashOkHttpClient(client: OkHttpClient): OkHttpClient {
       return client.newBuilder()
@@ -168,7 +163,6 @@ abstract class UnsplashModule {
     }
 
     @Provides
-    @JvmStatic
     internal fun provideUnsplashService(
       @InternalApi client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,

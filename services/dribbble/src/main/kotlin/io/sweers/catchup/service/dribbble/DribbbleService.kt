@@ -96,13 +96,11 @@ abstract class DribbbleMetaModule {
   @Binds
   internal abstract fun dribbbleServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @Module
   companion object {
 
     @InternalApi
     @Provides
     @Reusable
-    @JvmStatic
     internal fun provideDribbbleServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.dribbble,
@@ -124,11 +122,9 @@ abstract class DribbbleModule {
   @Binds
   internal abstract fun dribbbleService(dribbbleService: DribbbleService): Service
 
-  @Module
   companion object {
 
     @Provides
-    @JvmStatic
     internal fun provideDribbbleService(
       client: Lazy<OkHttpClient>,
       rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,

@@ -18,9 +18,9 @@ package io.sweers.catchup.util.customtabs
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.browser.customtabs.CustomTabsService
 import androidx.core.net.toUri
+import timber.log.Timber
 import java.util.ArrayList
 
 /**
@@ -113,7 +113,7 @@ object CustomTabsHelper {
         return true
       }
     } catch (e: RuntimeException) {
-      Log.e(TAG, "Runtime exception while getting specialized handlers")
+      Timber.tag(TAG).e("Runtime exception while getting specialized handlers")
     }
 
     return false

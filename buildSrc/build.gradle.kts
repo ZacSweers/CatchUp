@@ -96,8 +96,15 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
+  // Explicitly declare all the kotlin bits to avoid mismatched versions
+  implementation(kotlin("gradle-plugin", version = SharedBuildVersions.kotlin))
+  implementation(kotlin("stdlib", version = SharedBuildVersions.kotlin))
+  implementation(kotlin("stdlib-common", version = SharedBuildVersions.kotlin))
+  implementation(kotlin("stdlib-jdk7", version = SharedBuildVersions.kotlin))
+  implementation(kotlin("stdlib-jdk8", version = SharedBuildVersions.kotlin))
+  implementation(kotlin("reflect", version = SharedBuildVersions.kotlin))
+
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
-  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${SharedBuildVersions.kotlin}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
   implementation("de.undercouch:gradle-download-task:4.0.4")

@@ -176,13 +176,11 @@ abstract class GitHubMetaModule {
   @Binds
   internal abstract fun githubServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @Module
   companion object {
 
     @InternalApi
     @Provides
     @Reusable
-    @JvmStatic
     internal fun provideGitHubServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.github,
@@ -203,10 +201,8 @@ abstract class GitHubModule {
   @Binds
   internal abstract fun githubService(githubService: GitHubService): Service
 
-  @Module
   companion object {
     @Provides
-    @JvmStatic
     internal fun provideGitHubService(
       client: Lazy<OkHttpClient>,
       rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,

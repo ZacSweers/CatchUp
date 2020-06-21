@@ -97,13 +97,11 @@ abstract class UplabsMetaModule {
   @Binds
   internal abstract fun uplabsServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @Module
   companion object {
 
     @InternalApi
     @Provides
     @Reusable
-    @JvmStatic
     internal fun provideUplabsServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.uplabs,
@@ -125,11 +123,9 @@ abstract class UplabsModule {
   @Binds
   internal abstract fun uplabsService(uplabsService: UplabsService): Service
 
-  @Module
   companion object {
 
     @Provides
-    @JvmStatic
     @InternalApi
     internal fun provideUplabsMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
@@ -138,7 +134,6 @@ abstract class UplabsModule {
     }
 
     @Provides
-    @JvmStatic
     internal fun provideUplabsService(
       client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,

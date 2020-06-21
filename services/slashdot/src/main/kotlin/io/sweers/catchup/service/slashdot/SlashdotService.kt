@@ -95,11 +95,9 @@ abstract class SlashdotMetaModule {
   @Binds
   internal abstract fun slashdotServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @Module
   companion object {
 
     @Provides
-    @JvmStatic
     @Reusable
     @InternalApi
     internal fun provideSlashdotServiceMeta() = ServiceMeta(
@@ -121,11 +119,9 @@ abstract class SlashdotModule {
   @Binds
   internal abstract fun slashdotService(slashdotService: SlashdotService): Service
 
-  @Module
   companion object {
 
     @Provides
-    @JvmStatic
     internal fun provideTikXml(): TikXml = TikXml.Builder()
         .exceptionOnUnreadXml(false)
         .addTypeConverter(Instant::class.java, InstantTypeConverter())
@@ -133,7 +129,6 @@ abstract class SlashdotModule {
 
     @Provides
     @InternalApi
-    @JvmStatic
     internal fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
       return okHttpClient.newBuilder()
           .addNetworkInterceptor { chain ->
@@ -148,7 +143,6 @@ abstract class SlashdotModule {
     }
 
     @Provides
-    @JvmStatic
     internal fun provideSlashdotApi(
       @InternalApi client: Lazy<OkHttpClient>,
       rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,

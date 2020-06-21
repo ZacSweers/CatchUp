@@ -22,6 +22,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import java.lang.reflect.Type
+import java.util.Locale
 
 internal class RedditObjectFactory : JsonAdapter.Factory {
 
@@ -45,7 +46,7 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
 
         @Suppress("UNCHECKED_CAST")
         val value = jsonValue as Map<String, Any>
-        val redditType = RedditType.valueOf((value["kind"] as String).toUpperCase())
+        val redditType = RedditType.valueOf((value["kind"] as String).toUpperCase(Locale.US))
         val redditObject = value["data"]
         return with(moshi.adapter(redditType.derivedClass)) {
           fromJsonValue(redditObject)

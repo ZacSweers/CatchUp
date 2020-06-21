@@ -32,6 +32,7 @@
       android:hint="Your GitHub username"
       android:inputType="text|textNoSuggestions"
       android:maxLines="1"
+      android:importantForAutofill="no"
       />
   <EditText
       android:id="@+id/title"
@@ -41,6 +42,7 @@
       android:hint="What's the problem?"
       android:inputType="textCapSentences|textAutoCorrect"
       android:maxLines="1"
+      android:importantForAutofill="no"
       />
   <EditText
       android:id="@+id/description"
@@ -50,6 +52,7 @@
       android:paddingBottom="16dp"
       android:hint="Additional details"
       android:inputType="textCapSentences|textAutoCorrect"
+      android:importantForAutofill="no"
       />
   <CheckBox
       android:id="@+id/screenshot"

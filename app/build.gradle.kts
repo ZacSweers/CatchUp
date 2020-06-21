@@ -24,7 +24,7 @@ plugins {
   id("com.apollographql.apollo")
   id("licensesJsonGenerator")
 //  id("com.bugsnag.android.gradle")
-//  id("com.github.triplet.play")
+  id("com.github.triplet.play")
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
@@ -32,6 +32,12 @@ apply(plugin = "dagger.hilt.android.plugin")
 apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
+
+val useDebugSigning: Boolean = providers.gradleProperty("useDebugSigning")
+    .forUseAtConfigurationTime()
+    .orElse("false")
+    .map { it.toBoolean() }
+    .get()
 
 android {
   defaultConfig {
@@ -51,7 +57,7 @@ android {
     buildConfig = true
   }
   signingConfigs {
-    if (rootProject.file("signing/app-release.jks").exists()) {
+    if (!useDebugSigning && rootProject.file("signing/app-release.jks").exists()) {
       create("release") {
         keyAlias = "catchupkey"
         storeFile = rootProject.file("signing/app-release.jks")
@@ -96,8 +102,7 @@ android {
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
           "\"${properties["catchup_bugsnag_key"]}\"")
-      signingConfig = signingConfigs.getByName(
-          if ("useDebugSigning" in properties) "debug" else "release")
+      signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       postprocessing.apply {
         proguardFiles("proguard-rules.pro")
         isOptimizeCode = true
@@ -163,11 +168,11 @@ kapt {
   }
 }
 
-//play {
-//  track = "alpha"
-//  serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
-//  serviceAccountCredentials = rootProject.file("signing/play-account.p12")
-//}
+play {
+  track = "alpha"
+  serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
+  serviceAccountCredentials = rootProject.file("signing/play-account.p12")
+}
 
 //bugsnag {
 //  apiKey = properties["catchup_bugsnag_key"].toString()
