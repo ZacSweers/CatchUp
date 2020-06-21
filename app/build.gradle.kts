@@ -65,6 +65,8 @@ android {
         keyPassword = properties["catchup_signing_key_password"].toString()
         isV2SigningEnabled = true
       }
+    } else {
+      create("release").initWith(getByName("debug"))
     }
   }
   packagingOptions {
