@@ -19,19 +19,20 @@ import android.app.Application
 import com.bugsnag.android.Bugsnag
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.IntoSet
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import timber.log.Timber
 import javax.inject.Qualifier
-import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 
+@InstallIn(ApplicationComponent::class)
 @Module
 object ReleaseApplicationModule {
 
-  @Singleton
   @Provides
   fun provideObjectWatcher(): CatchUpObjectWatcher = CatchUpObjectWatcher.None
 
@@ -39,12 +40,10 @@ object ReleaseApplicationModule {
   @Retention(BINARY)
   private annotation class BugsnagKey
 
-  @Singleton
   @BugsnagKey
   @Provides
   fun provideBugsnagKey(): String = BuildConfig.BUGSNAG_KEY
 
-  @Singleton
   @Initializers
   @IntoSet
   @Provides
@@ -52,7 +51,6 @@ object ReleaseApplicationModule {
     Bugsnag.start(application, key)
   }
 
-  @Singleton
   @IntoSet
   @Provides
   fun provideBugsnagTree(application: Application, @BugsnagKey key: String): Timber.Tree = BugsnagTree().also {

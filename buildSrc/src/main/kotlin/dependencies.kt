@@ -247,15 +247,6 @@ object deps {
   }
 
   object dagger {
-    object android {
-      object apt {
-        const val processor = "com.google.dagger:dagger-android-processor:${versions.dagger}"
-      }
-
-      const val runtime = "com.google.dagger:dagger-android:${versions.dagger}"
-      const val support = "com.google.dagger:dagger-android-support:${versions.dagger}"
-    }
-
     object hilt {
       const val HILT_VERSION = "${versions.dagger}-alpha"
       object apt {

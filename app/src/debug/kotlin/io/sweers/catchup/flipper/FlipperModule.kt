@@ -27,14 +27,16 @@ import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
+import dagger.hilt.android.components.ApplicationComponent
 import io.sweers.catchup.injection.SharedPreferencesName
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Interceptor
-import javax.inject.Singleton
 
+@InstallIn(ApplicationComponent::class)
 @Module
 abstract class FlipperModule {
 
@@ -43,14 +45,12 @@ abstract class FlipperModule {
 
   @Binds
   @IntoSet
-  @Singleton
   abstract fun provideNetworkFlipperPluginIntoSet(plugin: NetworkFlipperPlugin): FlipperPlugin
 
   companion object {
 
     @IntoSet
     @Provides
-    @Singleton
     fun provideSharedPreferencesPlugin(
       @ApplicationContext context: Context,
       @SharedPreferencesName preferencesName: String
@@ -60,13 +60,11 @@ abstract class FlipperModule {
 
     @IntoSet
     @Provides
-    @Singleton
     fun provideViewInspectorPlugin(@ApplicationContext context: Context): FlipperPlugin {
       return InspectorFlipperPlugin(context, DescriptorMapping.withDefaults())
     }
 
     @Provides
-    @Singleton
     fun provideOkHttpInspectorPlugin(): NetworkFlipperPlugin {
       return NetworkFlipperPlugin()
     }
@@ -76,7 +74,6 @@ abstract class FlipperModule {
     @IntoSet
     @NetworkInterceptor
     @Provides
-    @Singleton
     fun provideOkHttpInspectorPluginInterceptor(plugin: NetworkFlipperPlugin): Interceptor {
       return FlipperOkhttpInterceptor(plugin)
     }

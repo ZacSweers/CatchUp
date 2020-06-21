@@ -15,15 +15,4 @@
  */
 package io.sweers.catchup.base.ui
 
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import javax.inject.Inject
-
-abstract class InjectingBaseActivity : InjectableBaseActivity(), HasAndroidInjector {
-
-  @Inject
-  protected lateinit var androidInjector: DispatchingAndroidInjector<Any>
-
-  final override fun androidInjector(): AndroidInjector<Any> = androidInjector
-}
+abstract class InjectingBaseActivity : InjectableBaseActivity()

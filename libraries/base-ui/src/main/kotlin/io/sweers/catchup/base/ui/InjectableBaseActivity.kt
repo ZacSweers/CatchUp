@@ -19,7 +19,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks
-import dagger.android.AndroidInjection
 import dev.zacsweers.catchup.appconfig.AppConfig
 import javax.inject.Inject
 
@@ -37,7 +36,6 @@ abstract class InjectableBaseActivity : BaseActivity() {
   override lateinit var appConfig: AppConfig
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidInjection.inject(this)
     setFragmentFactory()
     super.onCreate(savedInstanceState)
   }

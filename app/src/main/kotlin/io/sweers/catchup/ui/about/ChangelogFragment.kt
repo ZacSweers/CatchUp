@@ -28,6 +28,7 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.rx2.Rx2Apollo
 import com.google.android.material.snackbar.Snackbar
 import com.uber.autodispose.autoDispose
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -51,6 +52,7 @@ import java.time.Instant
 import java.io.IOException
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Scrollable {
 
   @Inject

@@ -24,6 +24,8 @@ import com.squareup.moshi.ArrayMapJsonAdapter
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.schedulers.Schedulers
@@ -39,8 +41,8 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
+@InstallIn(ApplicationComponent::class)
 @Module(includes = [GithubApolloModule::class, GemojiModule::class])
 abstract class DataModule {
 
@@ -57,7 +59,6 @@ abstract class DataModule {
     private const val HTTP_TIMEOUT_S = 30
 
     @Provides
-    @Singleton
     internal fun provideCache(@ApplicationContext context: Context): Cache {
       if (Looper.myLooper() == Looper.getMainLooper()) {
         throw IllegalStateException("Cache initialized on main thread.")
@@ -66,7 +67,6 @@ abstract class DataModule {
     }
 
     @Provides
-    @Singleton
     internal fun provideOkHttpClient(
       cache: Cache,
       interceptors: DaggerSet<Interceptor>,
@@ -90,7 +90,6 @@ abstract class DataModule {
     }
 
     @Provides
-    @Singleton
     internal fun provideMoshi(appConfig: AppConfig): Moshi {
       return Moshi.Builder()
           .apply {
@@ -107,32 +106,27 @@ abstract class DataModule {
     }
 
     @Provides
-    @Singleton
     internal fun provideRxJavaCallAdapterFactory(): RxJava2CallAdapterFactory {
       return RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
     }
 
     @Provides
-    @Singleton
     @SharedPreferencesName
     fun provideSharedPreferencesName(): String {
       return "catchup"
     }
 
     @Provides
-    @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context, @SharedPreferencesName name: String): SharedPreferences {
       return context.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
 
     @Provides
-    @Singleton
     internal fun provideCatchUpDatabase(@ApplicationContext context: Context): CatchUpDatabase {
       return CatchUpDatabase.getDatabase(context)
     }
 
     @Provides
-    @Singleton
     internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase): ServiceDao {
       return catchUpDatabase.serviceDao()
     }

@@ -26,6 +26,10 @@ import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.uber.autodispose.autoDispose
 import dagger.Binds
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.R
@@ -34,8 +38,6 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.databinding.ActivityMainBinding
 import io.sweers.catchup.edu.Syllabus
-import io.sweers.catchup.injection.ActivityModule
-import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.Service
@@ -55,6 +57,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Qualifier
 
+@AndroidEntryPoint
 class MainActivity : InjectingBaseActivity() {
 
   @Inject
@@ -96,25 +99,19 @@ class MainActivity : InjectingBaseActivity() {
     }
   }
 
+  @InstallIn(ActivityComponent::class)
   @dagger.Module(includes = [ResolvedCatchUpServiceRegistry::class])
-  abstract class ServiceIntegrationModule : ActivityModule<MainActivity> {
-    @dagger.Module
+  abstract class ServiceIntegrationModule {
     companion object {
       @TextViewPool
       @Provides
-      @JvmStatic
-      @PerActivity
       fun provideTextViewPool() = RecycledViewPool()
 
       @VisualViewPool
       @Provides
-      @JvmStatic
-      @PerActivity
       fun provideVisualViewPool() = RecycledViewPool()
 
       @Provides
-      @PerActivity
-      @JvmStatic
       @FinalServices
       fun provideFinalServices(
         serviceDao: ServiceDao,
@@ -144,15 +141,12 @@ class MainActivity : InjectingBaseActivity() {
     abstract fun fragmentCreators(): DaggerMap<Class<out Fragment>, Fragment>
 
     @Binds
-    @PerActivity
     abstract fun provideLinkHandler(linkManager: LinkManager): LinkHandler
 
     @Binds
-    @PerActivity
     abstract fun provideDetailDisplayer(mainActivityDetailDisplayer: MainActivityDetailDisplayer): DetailDisplayer
 
     @Binds
-    @PerActivity
     abstract fun provideFragmentFactory(fragmentFactory: MainActivityFragmentFactory): FragmentFactory
   }
 }
@@ -169,7 +163,7 @@ annotation class FinalServices
 /**
  * A displayer that repeatedly shows new detail views in a new ExpandablePageLayout.
  */
-@PerActivity
+@ActivityScoped
 class MainActivityDetailDisplayer @Inject constructor(
   private val mainActivity: MainActivity
 ) : DetailDisplayer {

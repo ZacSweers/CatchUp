@@ -17,20 +17,27 @@ package io.sweers.catchup.injection
 
 import android.app.Activity
 import androidx.activity.ComponentActivity
-import dagger.Binds
 import dagger.Module
-import io.sweers.catchup.injection.scopes.PerActivity
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import io.sweers.catchup.ui.activity.MainActivity
 
-/**
- * TODO Why can't we not annotate this as Module
- */
+@InstallIn(ActivityComponent::class)
 @Module
-interface ActivityModule<T : ComponentActivity> {
-  @Binds
-  @PerActivity
-  fun provideComponentActivity(componentActivity: T): ComponentActivity
+object ComponentActivityModule {
+  @Provides
+  fun provideComponentActivity(activity: Activity): ComponentActivity {
+    return activity as ComponentActivity
+  }
+}
 
-  @Binds
-  @PerActivity
-  fun provideActivity(componentActivity: T): Activity
+// This weirds me out
+@InstallIn(ActivityComponent::class)
+@Module
+object MainActivityModule {
+  @Provides
+  fun provideComponentActivity(activity: Activity): MainActivity {
+    return activity as MainActivity
+  }
 }

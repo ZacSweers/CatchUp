@@ -18,6 +18,8 @@ package io.sweers.catchup.data
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.IntoSet
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
@@ -26,7 +28,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
 import okhttp3.logging.HttpLoggingInterceptor.Logger
 import timber.log.Timber
-import javax.inject.Singleton
 
 private inline fun httpLoggingInterceptor(level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE, crossinline logger: (String) -> Unit): HttpLoggingInterceptor {
   return HttpLoggingInterceptor(object : Logger {
@@ -36,13 +37,13 @@ private inline fun httpLoggingInterceptor(level: HttpLoggingInterceptor.Level = 
   }).also { it.level = level }
 }
 
+@InstallIn(ApplicationComponent::class)
 @Module
 object VariantDataModule {
 
   @Provides
   @NetworkInterceptor
   @IntoSet
-  @Singleton
   internal fun provideLoggingInterceptor(): Interceptor = httpLoggingInterceptor(BASIC) { message ->
     Timber.tag("OkHttp")
         .v(message)
@@ -51,13 +52,11 @@ object VariantDataModule {
 //  @Provides
 //  @NetworkInterceptor
 //  @IntoSet
-//  @Singleton
 //  internal fun provideChuckInterceptor(@ApplicationContext context: Context): Interceptor =
 //      ChuckInterceptor(context)
 
   @Provides
   @IntoSet
-  @Singleton
   internal fun provideMockDataInterceptor(
     @ApplicationContext context: Context,
     debugPreferences: DebugPreferences

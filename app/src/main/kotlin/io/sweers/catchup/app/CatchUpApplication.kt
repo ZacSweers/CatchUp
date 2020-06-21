@@ -21,8 +21,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import dev.zacsweers.catchup.tzdata.LazyZoneInit
 import com.uber.rxdogtag.RxDogTag
 import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
+import dagger.hilt.android.HiltAndroidApp
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -41,7 +40,8 @@ import javax.inject.Inject
 
 private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
 
-class CatchUpApplication : Application(), HasAndroidInjector {
+@HiltAndroidApp
+class CatchUpApplication : Application() {
 
   companion object {
 
@@ -59,12 +59,8 @@ class CatchUpApplication : Application(), HasAndroidInjector {
           .configureWith(AutoDisposeConfigurer::configure)
           .install()
     }
-
-    internal lateinit var appComponent: ApplicationComponent
   }
 
-  @Inject
-  internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
   @Inject
   internal lateinit var catchUpPreferences: CatchUpPreferences
   @Inject
@@ -99,7 +95,6 @@ class CatchUpApplication : Application(), HasAndroidInjector {
         // strangely hidden API: https://issuetracker.google.com/issues/159421054
       }
     }
-    appComponent = inject()
 
     GlobalScope.launch {
       catchUpPreferences.flowFor { ::daynightAuto }
@@ -117,9 +112,6 @@ class CatchUpApplication : Application(), HasAndroidInjector {
           }
     }
   }
-
-  override fun androidInjector(): DispatchingAndroidInjector<Any> =
-      androidInjector
 
   override fun onTrimMemory(level: Int) {
     super.onTrimMemory(level)

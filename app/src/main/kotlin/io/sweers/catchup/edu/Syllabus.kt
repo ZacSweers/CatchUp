@@ -23,16 +23,16 @@ import com.getkeepsafe.taptargetview.TapTargetSequence.Listener
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
 import com.uber.autodispose.autoDispose
+import dagger.hilt.android.scopes.ActivityScoped
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.sweers.catchup.base.ui.BaseActivity
-import io.sweers.catchup.injection.scopes.PerActivity
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 /**
  * Syllabus is a helper that orchestrates feature EDUs and hints via TapTargets.
  */
-@PerActivity
+@ActivityScoped
 class Syllabus @Inject constructor(
   private val activity: Activity,
   private val preferences: SharedPreferences

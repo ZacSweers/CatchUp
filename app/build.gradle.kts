@@ -27,6 +27,8 @@ plugins {
 //  id("com.github.triplet.play")
 }
 
+apply(plugin = "dagger.hilt.android.plugin")
+
 apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
@@ -157,6 +159,7 @@ kapt {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
     arg("moshi.generated", "javax.annotation.Generated")
+    arg("dagger.experimentalDaggerErrorMessages", "enabled")
   }
 }
 
@@ -476,12 +479,11 @@ dependencies {
 //  debugImplementation(deps.hyperion.plugins.timber)
 
   // Dagger
+  kapt(deps.dagger.hilt.apt.compiler)
   kapt(deps.dagger.apt.compiler)
-  kapt(deps.dagger.android.apt.processor)
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
-  implementation(deps.dagger.android.runtime)
-  implementation(deps.dagger.android.support)
+  implementation(deps.dagger.hilt.android)
 
   // Inspector exposed for dagger
   implementation(deps.inspector.core)

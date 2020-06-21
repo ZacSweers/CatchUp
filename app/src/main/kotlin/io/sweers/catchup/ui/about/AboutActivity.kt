@@ -37,8 +37,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.uber.autodispose.autoDispose
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
+import dagger.hilt.android.AndroidEntryPoint
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.noties.markwon.Markwon
 import io.sweers.catchup.R
@@ -47,8 +46,6 @@ import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.databinding.ActivityGenericContainerBinding
 import io.sweers.catchup.databinding.FragmentAboutBinding
-import io.sweers.catchup.injection.ActivityModule
-import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.util.LinkTouchMovementMethod
@@ -69,6 +66,7 @@ import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.abs
 
+@AndroidEntryPoint
 class AboutActivity : InjectingBaseActivity() {
 
   @Inject
@@ -109,11 +107,9 @@ class AboutActivity : InjectingBaseActivity() {
       }
     }
   }
-
-  @dagger.Module
-  abstract class Module : ActivityModule<AboutActivity>
 }
 
+@AndroidEntryPoint
 class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
 
   companion object {
@@ -364,22 +360,6 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
           }
     }
   }
-}
-
-@Module
-abstract class AboutFragmentBindingModule {
-
-  @PerFragment
-  @ContributesAndroidInjector
-  internal abstract fun aboutFragment(): AboutFragment
-
-  @PerFragment
-  @ContributesAndroidInjector
-  internal abstract fun licensesFragment(): LicensesFragment
-
-  @PerFragment
-  @ContributesAndroidInjector
-  internal abstract fun changelogFragment(): ChangelogFragment
 }
 
 private enum class ScrollDirection {

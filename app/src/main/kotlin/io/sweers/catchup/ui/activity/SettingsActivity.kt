@@ -29,9 +29,7 @@ import androidx.preference.children
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.byteunits.BinaryByteUnit
 import com.uber.autodispose.autoDispose
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -44,8 +42,6 @@ import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.databinding.ActivitySettingsBinding
-import io.sweers.catchup.injection.ActivityModule
-import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.util.clearCache
 import io.sweers.catchup.util.isInNightMode
@@ -56,6 +52,7 @@ import okhttp3.Cache
 import java.io.File
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsActivity : InjectingBaseActivity() {
 
   companion object {
@@ -111,9 +108,7 @@ class SettingsActivity : InjectingBaseActivity() {
     super.onBackPressed()
   }
 
-  @Module
-  abstract class SettingsActivityModule : ActivityModule<SettingsActivity>
-
+  @AndroidEntryPoint
   class SettingsFrag : PreferenceFragmentCompat() {
 
     @Inject
@@ -130,7 +125,6 @@ class SettingsActivity : InjectingBaseActivity() {
     lateinit var appConfig: AppConfig
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-      AndroidSupportInjection.inject(this)
       addPreferencesFromResource(R.xml.prefs_general)
 
       // Because why on earth is the default true
@@ -257,14 +251,6 @@ class SettingsActivity : InjectingBaseActivity() {
       }
 
       return super.onPreferenceTreeClick(preference)
-    }
-
-    @Module
-    abstract class SettingsFragmentBindingModule {
-
-      @PerFragment
-      @ContributesAndroidInjector
-      internal abstract fun settingsFragment(): SettingsFrag
     }
   }
 }

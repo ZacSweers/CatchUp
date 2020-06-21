@@ -27,15 +27,14 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import dagger.Module
-import dagger.android.ContributesAndroidInjector
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.FragmentComponent
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.databinding.ActivitySettingsBinding
-import io.sweers.catchup.injection.ActivityModule
-import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
 import io.sweers.catchup.service.api.ServiceMeta
@@ -48,6 +47,7 @@ import javax.inject.Inject
 
 private const val TARGET_PREF_RESOURCE = "catchup.servicesettings.resource"
 
+@AndroidEntryPoint
 class ServiceSettingsActivity : InjectingBaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,9 +72,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     }
   }
 
-  @Module
-  abstract class ServiceSettingsActivityModule : ActivityModule<ServiceSettingsActivity>
-
+  @AndroidEntryPoint
   class ServiceSettingsFrag : PreferenceFragmentCompat() {
 
     @Inject
@@ -84,7 +82,6 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     lateinit var catchUpPreferences: CatchUpPreferences
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-      AndroidSupportInjection.inject(this)
       // Replace backing sharedPreferences with ours
       preferenceManager.apply {
         sharedPreferencesName = "catchup"
@@ -111,7 +108,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
           .forEach { meta ->
             meta.run {
               // Create a category
-              val metaColor = ContextCompat.getColor(activity!!.asDayContext(), meta.themeColor)
+              val metaColor = ContextCompat.getColor(requireActivity().asDayContext(), meta.themeColor)
               val category = PreferenceCategory(activity).apply {
                 title = resources.getString(meta.name)
 //                titleColor = metaColor
@@ -159,15 +156,12 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
           }
     }
 
+    @InstallIn(FragmentComponent::class)
     @Module(includes = [ResolvedCatchUpServiceMetaRegistry::class])
     abstract class ServiceSettingsModule {
 
       @Multibinds
       abstract fun serviceMetas(): Map<String, ServiceMeta>
-
-      @PerFragment
-      @ContributesAndroidInjector
-      internal abstract fun serviceSettingsFragment(): ServiceSettingsFrag
     }
   }
 }

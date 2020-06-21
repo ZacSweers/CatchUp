@@ -17,12 +17,12 @@ package io.sweers.catchup.ui.activity
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
+import dagger.hilt.android.scopes.ActivityScoped
 import io.sweers.catchup.injection.DaggerMap
-import io.sweers.catchup.injection.scopes.PerActivity
 import javax.inject.Inject
 import javax.inject.Provider
 
-@PerActivity
+@ActivityScoped
 class MainActivityFragmentFactory @Inject constructor(
   private val providers: DaggerMap<Class<out Fragment>, Provider<Fragment>>
 ) : FragmentFactory() {

@@ -15,14 +15,6 @@
  */
 package io.sweers.catchup.base.ui
 
-import android.content.Context
 import androidx.viewbinding.ViewBinding
-import dagger.android.support.AndroidSupportInjection
 
-abstract class InjectableBaseFragment<T : ViewBinding> : BaseFragment<T>() {
-
-  override fun onAttach(context: Context) {
-    AndroidSupportInjection.inject(this)
-    super.onAttach(context)
-  }
-}
+abstract class InjectableBaseFragment<T : ViewBinding> : BaseFragment<T>()

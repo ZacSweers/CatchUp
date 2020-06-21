@@ -48,6 +48,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.FragmentComponent
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
@@ -84,6 +87,7 @@ data class ServiceHandler(
   val instantiator: () -> Fragment
 )
 
+@AndroidEntryPoint
 class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
 
   companion object {
@@ -168,7 +172,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
               statusBarColorAnimator = ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor)
                   .apply {
                     addUpdateListener { animation ->
-                      this@PagerFragment.activity!!
+                      this@PagerFragment.requireActivity()
                           .window.statusBarColor = animation.animatedValue as Int
                     }
                     duration = 200
@@ -181,11 +185,11 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
               tabLayoutIsPinned = false
               if (wasPinned) {
                 statusBarColorAnimator?.cancel()
-                statusBarColorAnimator = ValueAnimator.ofArgb(this@PagerFragment.activity!!
+                statusBarColorAnimator = ValueAnimator.ofArgb(this@PagerFragment.requireActivity()
                     .window
                     .statusBarColor, colorPrimaryDark).apply {
                   addUpdateListener { animation ->
-                    this@PagerFragment.activity!!
+                    this@PagerFragment.requireActivity()
                         .window.statusBarColor = animation.animatedValue as Int
                   }
                   duration = 200
@@ -350,7 +354,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
           }
           if (extras.getBoolean(SettingsActivity.NAV_COLOR_UPDATED, false)) {
             activity?.updateNavBarColor(color = (tabLayout.background as ColorDrawable).color,
-                context = view!!.context,
+                context = requireView().context,
                 recreate = true,
                 uiPreferences = catchUpPreferences,
                 appConfig = appConfig)
@@ -360,10 +364,10 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
     }
   }
 
+  @InstallIn(FragmentComponent::class)
   @dagger.Module
   object Module {
 
-    @JvmStatic
     @Provides
     fun provideServiceHandlers(
       sharedPrefs: SharedPreferences,
@@ -379,7 +383,6 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
           .toTypedArray()
     }
 
-    @JvmStatic
     @Provides
     fun provideColorCache(serviceHandlers: Array<ServiceHandler>) = ColorCache(IntArray(
         serviceHandlers.size).apply { fill(R.color.no_color) })

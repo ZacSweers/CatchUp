@@ -31,6 +31,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.mattprecious.telescope.Lens
 import com.uber.autodispose.autoDispose
+import dagger.hilt.android.scopes.ActivityScoped
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -38,7 +39,6 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BaseActivity
 import io.sweers.catchup.data.LumberYard
-import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
 import io.sweers.catchup.util.buildMarkdown
@@ -55,7 +55,7 @@ import javax.inject.Inject
  * Pops a dialog asking for more information about the bug report and then creates an upload with a
  * markdown-formatted body.
  */
-@PerActivity
+@ActivityScoped
 internal class BugReportLens @Inject constructor(
   private val activity: ComponentActivity,
   private val lumberYard: LumberYard,

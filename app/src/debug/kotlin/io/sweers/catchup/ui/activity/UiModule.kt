@@ -17,16 +17,17 @@ package io.sweers.catchup.ui.activity
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import io.sweers.catchup.base.ui.ViewContainer
-import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.DebugViewContainer
 import io.sweers.catchup.ui.bugreport.BugReportModule
 
+@InstallIn(ActivityComponent::class)
 @Module(includes = [BugReportModule::class])
 object UiModule {
 
   @Provides
-  @PerActivity
   internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer =
       viewContainer
 }

@@ -21,10 +21,11 @@ import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -65,11 +66,11 @@ data class GitHubIssue(
   val body: String
 )
 
+@InstallIn(ActivityComponent::class)
 @Module
 internal object BugReportModule {
 
   @Provides
-  @PerActivity
   internal fun provideImgurService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
@@ -89,7 +90,6 @@ internal object BugReportModule {
   }
 
   @Provides
-  @PerActivity
   internal fun provideGithubIssueService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
