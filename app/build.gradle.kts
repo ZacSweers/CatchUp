@@ -24,7 +24,7 @@ plugins {
   id("com.apollographql.apollo")
   id("licensesJsonGenerator")
 //  id("com.bugsnag.android.gradle")
-//  id("com.github.triplet.play")
+  id("com.github.triplet.play")
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
@@ -163,11 +163,11 @@ kapt {
   }
 }
 
-//play {
-//  track = "alpha"
-//  serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
-//  serviceAccountCredentials = rootProject.file("signing/play-account.p12")
-//}
+play {
+  track = "alpha"
+  serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
+  serviceAccountCredentials = rootProject.file("signing/play-account.p12")
+}
 
 //bugsnag {
 //  apiKey = properties["catchup_bugsnag_key"].toString()
