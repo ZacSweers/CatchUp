@@ -97,7 +97,7 @@ android {
       buildConfigField("String", "BUGSNAG_KEY",
           "\"${properties["catchup_bugsnag_key"]}\"")
       signingConfig = signingConfigs.getByName(
-          if ("useDebugSigning" in properties) "debug" else "release")
+          if (rootProject.file("signing/app-release.jks").exists()) "debug" else "release")
       postprocessing.apply {
         proguardFiles("proguard-rules.pro")
         isOptimizeCode = true
