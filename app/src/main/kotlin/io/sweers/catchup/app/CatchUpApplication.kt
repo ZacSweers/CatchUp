@@ -22,7 +22,6 @@ import dev.zacsweers.catchup.tzdata.LazyZoneInit
 import com.uber.rxdogtag.RxDogTag
 import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
 import dagger.hilt.android.HiltAndroidApp
-import dagger.hilt.android.components.ApplicationComponent
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.android.schedulers.AndroidSchedulers
