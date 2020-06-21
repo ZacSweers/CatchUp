@@ -21,6 +21,8 @@ import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Single
 import io.sweers.catchup.BuildConfig
@@ -65,6 +67,7 @@ data class GitHubIssue(
   val body: String
 )
 
+@InstallIn(ActivityComponent::class)
 @Module
 internal object BugReportModule {
 

@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.uber.autodispose.autoDispose
 import dagger.Binds
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.R
@@ -96,25 +98,22 @@ class MainActivity : InjectingBaseActivity() {
     }
   }
 
+  @InstallIn(ActivityComponent::class)
   @dagger.Module(includes = [ResolvedCatchUpServiceRegistry::class])
   abstract class ServiceIntegrationModule : ActivityModule<MainActivity> {
-    @dagger.Module
     companion object {
       @TextViewPool
       @Provides
-      @JvmStatic
       @PerActivity
       fun provideTextViewPool() = RecycledViewPool()
 
       @VisualViewPool
       @Provides
-      @JvmStatic
       @PerActivity
       fun provideVisualViewPool() = RecycledViewPool()
 
       @Provides
       @PerActivity
-      @JvmStatic
       @FinalServices
       fun provideFinalServices(
         serviceDao: ServiceDao,

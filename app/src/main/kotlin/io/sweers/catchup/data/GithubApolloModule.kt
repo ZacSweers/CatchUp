@@ -31,6 +31,8 @@ import com.apollographql.apollo.cache.normalized.lru.LruNormalizedCacheFactory
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.github.type.CustomType
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
@@ -41,6 +43,7 @@ import okhttp3.Response
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
+@InstallIn(ApplicationComponent::class)
 @Module
 internal object GithubApolloModule {
 

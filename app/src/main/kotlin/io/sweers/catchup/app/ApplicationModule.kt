@@ -36,6 +36,8 @@ import coil.util.DebugLogger
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
@@ -65,6 +67,7 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 
+@InstallIn(ApplicationComponent::class)
 @Module
 abstract class ApplicationModule {
 
@@ -116,7 +119,6 @@ abstract class ApplicationModule {
   @Singleton
   abstract fun bindAppConfig(catchUpAppConfig: CatchUpAppConfig): AppConfig
 
-  @Module
   companion object {
 
     /**

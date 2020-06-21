@@ -24,6 +24,8 @@ import com.squareup.moshi.ArrayMapJsonAdapter
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.schedulers.Schedulers
@@ -41,6 +43,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+@InstallIn(ApplicationComponent::class)
 @Module(includes = [GithubApolloModule::class, GemojiModule::class])
 abstract class DataModule {
 

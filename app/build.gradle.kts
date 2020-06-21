@@ -27,6 +27,8 @@ plugins {
 //  id("com.github.triplet.play")
 }
 
+apply(plugin = "dagger.hilt.android.plugin")
+
 apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
@@ -476,10 +478,12 @@ dependencies {
 //  debugImplementation(deps.hyperion.plugins.timber)
 
   // Dagger
+  kapt(deps.dagger.hilt.apt.compiler)
   kapt(deps.dagger.apt.compiler)
   kapt(deps.dagger.android.apt.processor)
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
+  implementation(deps.dagger.hilt.android)
   implementation(deps.dagger.android.runtime)
   implementation(deps.dagger.android.support)
 

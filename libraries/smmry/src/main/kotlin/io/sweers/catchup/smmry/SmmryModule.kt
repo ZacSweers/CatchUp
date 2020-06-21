@@ -21,6 +21,8 @@ import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.smmry.model.SmmryDao
@@ -31,6 +33,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Qualifier
 
+@InstallIn(FragmentComponent::class)
 @Module
 object SmmryModule {
 

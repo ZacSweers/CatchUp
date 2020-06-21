@@ -15,10 +15,13 @@
  */
 package io.sweers.catchup.app
 
+import dagger.hilt.android.components.ApplicationComponent
+
 fun CatchUpApplication.inject(): ApplicationComponent {
-  return DaggerApplicationComponent.factory()
-      .create(this)
-      .apply {
-        inject(this@inject)
-      }
+  return TODO()
+  // DaggerApplicationComponent.factory()
+  //      .create(this)
+  //      .apply {
+  //        inject(this@inject)
+  //      }
 }

@@ -16,15 +16,5 @@
 package io.sweers.catchup.base.ui
 
 import androidx.viewbinding.ViewBinding
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import javax.inject.Inject
 
-abstract class InjectingBaseFragment<T : ViewBinding> : InjectableBaseFragment<T>(), HasAndroidInjector {
-
-  @Inject
-  protected lateinit var androidInjector: DispatchingAndroidInjector<Any>
-
-  final override fun androidInjector(): AndroidInjector<Any> = androidInjector
-}
+abstract class InjectingBaseFragment<T : ViewBinding> : InjectableBaseFragment<T>()

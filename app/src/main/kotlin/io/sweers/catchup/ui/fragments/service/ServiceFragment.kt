@@ -44,6 +44,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.apollographql.apollo.exception.ApolloException
 import com.uber.autodispose.autoDispose
+import dagger.hilt.android.AndroidEntryPoint
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
@@ -129,6 +130,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   }
 }
 
+@AndroidEntryPoint
 class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
     SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
 

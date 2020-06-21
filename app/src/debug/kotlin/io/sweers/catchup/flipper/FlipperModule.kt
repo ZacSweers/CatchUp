@@ -27,14 +27,17 @@ import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
+import dagger.hilt.android.components.ApplicationComponent
 import io.sweers.catchup.injection.SharedPreferencesName
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Interceptor
 import javax.inject.Singleton
 
+@InstallIn(ApplicationComponent::class)
 @Module
 abstract class FlipperModule {
 

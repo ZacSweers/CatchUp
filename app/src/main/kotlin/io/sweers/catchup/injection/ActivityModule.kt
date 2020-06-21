@@ -19,11 +19,14 @@ import android.app.Activity
 import androidx.activity.ComponentActivity
 import dagger.Binds
 import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import io.sweers.catchup.injection.scopes.PerActivity
 
 /**
  * TODO Why can't we not annotate this as Module
  */
+@InstallIn(ActivityComponent::class)
 @Module
 interface ActivityModule<T : ComponentActivity> {
   @Binds

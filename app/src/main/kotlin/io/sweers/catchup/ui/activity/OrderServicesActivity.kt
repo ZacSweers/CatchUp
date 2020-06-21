@@ -39,7 +39,10 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
 import dagger.Module
-import dagger.android.ContributesAndroidInjector
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.components.FragmentComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.CatchUpPreferences
@@ -53,11 +56,10 @@ import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.injection.ActivityModule
-import io.sweers.catchup.injection.scopes.PerFragment
+import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
@@ -65,6 +67,7 @@ import io.sweers.catchup.util.setLightStatusBar
 import java.util.Collections
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class OrderServicesActivity : InjectingBaseActivity() {
 
   @Inject
@@ -83,20 +86,26 @@ class OrderServicesActivity : InjectingBaseActivity() {
     }
   }
 
+  @InstallIn(ActivityComponent::class)
   @dagger.Module
-  abstract inner class Module : ActivityModule<OrderServicesActivity>
+  abstract class Module : ActivityModule<OrderServicesActivity>
 }
 
+@AndroidEntryPoint
 class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBinding>() {
 
   @Inject
   lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
+
   @Inject
   lateinit var catchUpPreferences: CatchUpPreferences
+
   @Inject
   internal lateinit var syllabus: Syllabus
+
   @Inject
   internal lateinit var fontHelper: FontHelper
+
   @Inject
   internal lateinit var appConfig: AppConfig
 
@@ -351,16 +360,7 @@ private class MoveCallback(
   }
 }
 
-@Module
-abstract class OrderServicesBindingModule {
-
-  @PerFragment
-  @ContributesAndroidInjector(
-      modules = [OrderServicesModule::class]
-  )
-  internal abstract fun orderServicesFragment(): OrderServicesFragment
-}
-
+@InstallIn(FragmentComponent::class)
 @Module(includes = [ResolvedCatchUpServiceMetaRegistry::class])
 abstract class OrderServicesModule {
 

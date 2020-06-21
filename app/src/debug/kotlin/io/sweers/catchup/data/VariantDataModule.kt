@@ -18,6 +18,8 @@ package io.sweers.catchup.data
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.IntoSet
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
@@ -36,6 +38,7 @@ private inline fun httpLoggingInterceptor(level: HttpLoggingInterceptor.Level = 
   }).also { it.level = level }
 }
 
+@InstallIn(ApplicationComponent::class)
 @Module
 object VariantDataModule {
 

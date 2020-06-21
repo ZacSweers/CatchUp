@@ -31,6 +31,7 @@ import com.airbnb.lottie.model.KeyPath
 import com.airbnb.lottie.value.LottieValueCallback
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
+import dagger.hilt.android.AndroidEntryPoint
 import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.SummarizationInfo
@@ -54,6 +55,7 @@ import javax.inject.Inject
 /**
  * Overlay fragment for displaying Smmry API results.
  */
+@AndroidEntryPoint
 class SmmryFragment : InjectableBaseFragment<FragmentSmmryBinding>(), ScrollableContent {
 
   companion object {
