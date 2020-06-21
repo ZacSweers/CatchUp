@@ -60,8 +60,6 @@ class CatchUpApplication : Application() {
           .configureWith(AutoDisposeConfigurer::configure)
           .install()
     }
-
-    internal lateinit var appComponent: ApplicationComponent
   }
 
   @Inject
@@ -98,7 +96,6 @@ class CatchUpApplication : Application() {
         // strangely hidden API: https://issuetracker.google.com/issues/159421054
       }
     }
-    appComponent = inject()
 
     GlobalScope.launch {
       catchUpPreferences.flowFor { ::daynightAuto }
