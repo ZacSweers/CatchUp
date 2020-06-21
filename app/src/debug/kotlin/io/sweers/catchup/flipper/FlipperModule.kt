@@ -35,6 +35,7 @@ import io.sweers.catchup.injection.SharedPreferencesName
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Interceptor
+import javax.inject.Singleton
 
 @InstallIn(ApplicationComponent::class)
 @Module
@@ -45,6 +46,7 @@ abstract class FlipperModule {
 
   @Binds
   @IntoSet
+  @Singleton
   abstract fun provideNetworkFlipperPluginIntoSet(plugin: NetworkFlipperPlugin): FlipperPlugin
 
   companion object {
@@ -65,6 +67,7 @@ abstract class FlipperModule {
     }
 
     @Provides
+    @Singleton
     fun provideOkHttpInspectorPlugin(): NetworkFlipperPlugin {
       return NetworkFlipperPlugin()
     }
@@ -85,6 +88,7 @@ abstract class FlipperModule {
     }
 
     @Provides
+    @Singleton
     fun provideFlipperCrashReporterPlugin(): CrashReporterPlugin = CrashReporterPlugin.getInstance()
   }
 }

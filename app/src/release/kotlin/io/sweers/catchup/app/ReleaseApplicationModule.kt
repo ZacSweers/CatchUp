@@ -27,6 +27,7 @@ import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import timber.log.Timber
 import javax.inject.Qualifier
+import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 
 @InstallIn(ApplicationComponent::class)
@@ -34,6 +35,7 @@ import kotlin.annotation.AnnotationRetention.BINARY
 object ReleaseApplicationModule {
 
   @Provides
+  @Singleton
   fun provideObjectWatcher(): CatchUpObjectWatcher = CatchUpObjectWatcher.None
 
   @Qualifier
@@ -42,6 +44,7 @@ object ReleaseApplicationModule {
 
   @BugsnagKey
   @Provides
+  @Singleton
   fun provideBugsnagKey(): String = BuildConfig.BUGSNAG_KEY
 
   @Initializers
