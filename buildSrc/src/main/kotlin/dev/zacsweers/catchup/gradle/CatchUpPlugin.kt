@@ -131,6 +131,7 @@ private fun Project.configureAndroid() {
         fatal("NewApi")
         fatal("InlinedApi")
         enable("UnusedResources")
+        warning("MissingTranslation")
         isCheckReleaseBuilds = true
         textReport = deps.build.ci
         textOutput("stdout")
