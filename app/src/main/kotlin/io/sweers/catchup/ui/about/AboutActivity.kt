@@ -217,7 +217,7 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
       Toast.makeText(activity, R.string.icon_attribution, Toast.LENGTH_SHORT).show()
       viewLifecycleOwner.lifecycleScope.launch {
         linkManager.openUrl(
-            UrlMeta("https://cookicons.co", aboutText.highlightColor, activity!!))
+            UrlMeta("https://cookicons.co", aboutText.highlightColor, requireActivity()))
       }
       true
     }

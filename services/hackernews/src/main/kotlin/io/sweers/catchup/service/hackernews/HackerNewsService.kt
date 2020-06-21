@@ -163,13 +163,11 @@ abstract class HackerNewsMetaModule {
   @Binds
   internal abstract fun hackerNewsServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @Module
   companion object {
 
     @InternalApi
     @Provides
     @Reusable
-    @JvmStatic
     internal fun provideHackerNewsServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.hn,
@@ -203,10 +201,8 @@ abstract class HackerNewsModule {
   @FragmentKey(HackerNewsCommentsFragment::class)
   internal abstract fun bindHnFragment(mainFragment: HackerNewsCommentsFragment): Fragment
 
-  @Module
   companion object {
     @Provides
-    @JvmStatic
     internal fun provideDatabase(): FirebaseDatabase =
         FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/")
   }

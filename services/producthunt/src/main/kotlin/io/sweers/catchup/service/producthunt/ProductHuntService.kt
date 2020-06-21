@@ -95,13 +95,11 @@ abstract class ProductHuntMetaModule {
   @Binds
   internal abstract fun productHuntServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @Module
   companion object {
 
     @InternalApi
     @Provides
     @Reusable
-    @JvmStatic
     internal fun provideProductHuntServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.ph,
@@ -125,12 +123,10 @@ abstract class ProductHuntModule {
   @Binds
   internal abstract fun productHuntService(productHuntService: ProductHuntService): Service
 
-  @Module
   companion object {
 
     @Provides
     @InternalApi
-    @JvmStatic
     internal fun provideProductHuntOkHttpClient(
       client: OkHttpClient
     ): OkHttpClient {
@@ -142,7 +138,6 @@ abstract class ProductHuntModule {
 
     @Provides
     @InternalApi
-    @JvmStatic
     internal fun provideProductHuntMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
           .add(Instant::class.java, ISO8601InstantAdapter())
@@ -150,7 +145,6 @@ abstract class ProductHuntModule {
     }
 
     @Provides
-    @JvmStatic
     internal fun provideProductHuntService(
       @InternalApi client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,

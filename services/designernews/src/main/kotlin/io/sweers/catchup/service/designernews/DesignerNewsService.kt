@@ -98,13 +98,11 @@ abstract class DesignerNewsMetaModule {
   @Binds
   internal abstract fun designerNewsServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @Module
   companion object {
 
     @InternalApi
     @Provides
     @Reusable
-    @JvmStatic
     internal fun provideDesignerNewsMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.dn,
@@ -125,12 +123,10 @@ abstract class DesignerNewsModule {
   @Binds
   internal abstract fun designerNewsService(service: DesignerNewsService): Service
 
-  @Module
   companion object {
 
     @Provides
     @InternalApi
-    @JvmStatic
     internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
           .add(Instant::class.java, ISO8601InstantAdapter())
@@ -138,7 +134,6 @@ abstract class DesignerNewsModule {
     }
 
     @Provides
-    @JvmStatic
     internal fun provideDesignerNewsService(
       client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,

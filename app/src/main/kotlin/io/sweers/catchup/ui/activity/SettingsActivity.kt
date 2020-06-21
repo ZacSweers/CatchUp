@@ -192,7 +192,7 @@ class SettingsActivity : InjectingBaseActivity() {
         }
         CatchUpPreferences.ITEM_KEY_CLEAR_CACHE -> {
           Single.fromCallable {
-            val appContext = activity!!.applicationContext
+            val appContext = requireActivity().applicationContext
             var cleanedSize = 0L
             val prefsRoot = File("/data/data/${appConfig.applicationId}/shared_prefs")
             if (prefsRoot.isDirectory) {

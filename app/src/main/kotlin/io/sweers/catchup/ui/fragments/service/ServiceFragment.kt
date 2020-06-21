@@ -189,7 +189,7 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
-    service = arguments!![ARG_SERVICE_KEY].let {
+    service = requireArguments()[ARG_SERVICE_KEY].let {
       services[it]?.get() ?: throw IllegalArgumentException("No service provided for $it!")
     }
     nextPage = service.meta().firstPageKey

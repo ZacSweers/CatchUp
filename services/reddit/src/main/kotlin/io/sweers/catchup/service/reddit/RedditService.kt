@@ -100,13 +100,11 @@ abstract class RedditMetaModule {
   @Binds
   internal abstract fun redditServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
-  @Module
   companion object {
 
     @InternalApi
     @Provides
     @Reusable
-    @JvmStatic
     internal fun provideRedditServiceMeta() = ServiceMeta(
         SERVICE_KEY,
         R.string.reddit,
@@ -126,12 +124,10 @@ abstract class RedditModule {
   @Binds
   internal abstract fun redditService(redditService: RedditService): Service
 
-  @Module
   companion object {
 
     @InternalApi
     @Provides
-    @JvmStatic
     internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
       return upstreamMoshi.newBuilder()
           .add(RedditObjectFactory.INSTANCE)
@@ -141,7 +137,6 @@ abstract class RedditModule {
 
     @InternalApi
     @Provides
-    @JvmStatic
     internal fun provideRedditOkHttpClient(
       client: OkHttpClient
     ): OkHttpClient {
@@ -162,7 +157,6 @@ abstract class RedditModule {
     }
 
     @Provides
-    @JvmStatic
     internal fun provideRedditApi(
       @InternalApi client: Lazy<OkHttpClient>,
       rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
