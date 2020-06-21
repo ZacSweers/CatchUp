@@ -64,7 +64,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
 import javax.inject.Qualifier
-import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 
 @InstallIn(ApplicationComponent::class)
@@ -108,15 +107,12 @@ abstract class ApplicationModule {
 
   @Binds
   @ApplicationContext
-  @Singleton
   abstract fun provideApplicationContext(application: Application): Context
 
   @Binds
-  @Singleton
   abstract fun provideUiPreferences(catchupPreferences: CatchUpPreferences): UiPreferences
 
   @Binds
-  @Singleton
   abstract fun bindAppConfig(catchUpAppConfig: CatchUpAppConfig): AppConfig
 
   companion object {
@@ -127,15 +123,12 @@ abstract class ApplicationModule {
      * Wrapped so no one can try to cast it as an Application.
      */
     @Provides
-    @Singleton
     internal fun provideGeneralUseContext(@ApplicationContext appContext: Context): Context = ContextWrapper(appContext)
 
     @Provides
-    @Singleton
     internal fun versionInfo(@ApplicationContext appContext: Context): VersionInfo = appContext.versionInfo
 
     @Provides
-    @Singleton
     internal fun markwon(
       @LazyDelegate imageLoader: ImageLoader,
       @ApplicationContext context: Context, // TODO should use themed one from activity?
@@ -180,7 +173,6 @@ abstract class ApplicationModule {
     annotation class IsLowRamDevice
 
     @IsLowRamDevice
-    @Singleton
     @Provides
     fun isLowRam(@ApplicationContext context: Context): Boolean {
       // Prefer higher quality images unless we're on a low RAM device
@@ -190,12 +182,10 @@ abstract class ApplicationModule {
     }
 
     @CoilOkHttpStack
-    @Singleton
     @Provides
     fun coilCache(@ApplicationContext context: Context): Cache = createDefaultCache(context)
 
     @CoilOkHttpStack
-    @Singleton
     @Provides
     fun coilHttpClient(
       okHttpClient: OkHttpClient,
@@ -206,7 +196,6 @@ abstract class ApplicationModule {
           .build()
     }
 
-    @Singleton
     @Provides
     @LazyDelegate
     fun lazyImageLoader(imageLoader: dagger.Lazy<ImageLoader>): ImageLoader {
@@ -236,7 +225,6 @@ abstract class ApplicationModule {
       }
     }
 
-    @Singleton
     @Provides
     fun imageLoader(
       @ApplicationContext context: Context,
