@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 Zac Sweers
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/about_fragment_root"
@@ -91,11 +89,12 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
+        style="@style/CatchUp.TabLayout.Inverted"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:background="@null"
         app:tabMode="fixed"
-        style="@style/CatchUp.TabLayout.Inverted"
+        app:tabUnboundedRipple="false"
         />
 
   </com.google.android.material.appbar.AppBarLayout>
