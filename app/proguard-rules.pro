@@ -89,3 +89,13 @@
 
 # Check that qualifier annotations have been discarded.
 -checkdiscard @javax.inject.Qualifier class *
+
+# Coroutines debug agent bits
+-dontwarn java.lang.instrument.ClassFileTransformer
+-dontwarn sun.misc.SignalHandler
+
+# From OkHttp but gated appropriately
+-dontwarn org.conscrypt.ConscryptHostnameVerifier
+
+# ZoneRulesProvider _does_ exist!
+-dontwarn java.time.zone.ZoneRulesProvider
