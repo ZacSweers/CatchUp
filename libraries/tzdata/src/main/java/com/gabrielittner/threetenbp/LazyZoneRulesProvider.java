@@ -17,6 +17,7 @@ package com.gabrielittner.threetenbp;
 
 import static java.util.Objects.requireNonNull;
 
+import androidx.annotation.Keep;
 import androidx.annotation.RequiresApi;
 import dev.zacsweers.catchup.tzdata.StandardZoneRules;
 import java.io.BufferedInputStream;
@@ -37,6 +38,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 // In this package because that's where LazyZoneRules is generated to for now.
+@Keep
 @RequiresApi(api = 26)
 public final class LazyZoneRulesProvider extends ZoneRulesProvider {
 
