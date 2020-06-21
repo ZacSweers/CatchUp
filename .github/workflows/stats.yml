@@ -97,7 +97,7 @@ jobs:
           ls -al
           ./diffuse/build/diffuse diff release-${{ github.base_ref }}.apk release-${{ github.sha }}.apk > apk-diff-${{ github.base_ref }}-${{ github.sha }}.txt
       - name: Prepare PR comment
-        run: printf "### Δ Diffuse stats for $(echo ${GITHUB_BASE_REF} | cut -c1-7) ➡ $(echo ${GITHUB_SHA} | cut -c1-7) Δ\n\n\`\`\`\n" > pr-comment.txt && sed '/====   DEX   ====/q' apk-diff-${{ github.base_ref }}-${{ github.sha }}.txt | tac | sed "1,2d" | tac | sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba' >> pr-comment.txt && echo "\`\`\`"  >> pr-comment.txt
+        run: printf "### Δ Diffuse stats for `$(echo ${GITHUB_BASE_REF} | cut -c1-7)` ➡ $(echo ${GITHUB_SHA} | cut -c1-7) Δ\n\n\`\`\`\n" > pr-comment.txt && sed '/====   DEX   ====/q' apk-diff-${{ github.base_ref }}-${{ github.sha }}.txt | tac | sed "1,2d" | tac | sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba' >> pr-comment.txt && echo "\`\`\`"  >> pr-comment.txt
       - name: Comment PR
         uses: machine-learning-apps/pr-comment@1.0.0
         env:
