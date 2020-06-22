@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2020. Zac Sweers
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package dev.zacsweers.catchup.gradle
 
 import de.undercouch.gradle.tasks.download.Download
@@ -46,11 +61,11 @@ class TickTockPlugin : Plugin<Project> {
 
     val tzdbVersion = extension.tzVersion
     val tzDbOutput = tzdbVersion.flatMap {
-      layout.buildDirectory.file("$INTERMEDIATES/$it/download/${it}.tar.gz")
+      layout.buildDirectory.file("$INTERMEDIATES/$it/download/$it.tar.gz")
     }
         .map { it.asFile }
     val downloadTzdb = tasks.register<Download>("downloadTzData") {
-      src(tzdbVersion.map { "https://data.iana.org/time-zones/releases/tzdata${it}.tar.gz" })
+      src(tzdbVersion.map { "https://data.iana.org/time-zones/releases/tzdata$it.tar.gz" })
       dest(tzDbOutput)
     }
 
@@ -96,7 +111,7 @@ class TickTockPlugin : Plugin<Project> {
   }
 
   private fun <T : Task> TaskProvider<out T>.dependsOn(
-      vararg tasks: TaskProvider<out Task>
+    vararg tasks: TaskProvider<out Task>
   ): TaskProvider<out T> = apply {
     if (tasks.isNotEmpty()) {
       configure { dependsOn(*tasks) }
@@ -105,8 +120,8 @@ class TickTockPlugin : Plugin<Project> {
 }
 
 abstract class TickTockExtension @Inject constructor(
-    layout: ProjectLayout,
-    objects: ObjectFactory
+  layout: ProjectLayout,
+  objects: ObjectFactory
 ) {
   val tzVersion: Property<String> = objects.property<String>()
       .convention("2020a")
