@@ -56,7 +56,7 @@ class TickTockPlugin : Plugin<Project> {
     }
     unzipTzData.dependsOn(downloadTzdb)
 
-    tasks.register<GenerateTzDataTask>("generateTzData") {
+    tasks.register<GenerateZoneRuleFilesTask>("generateTzData") {
       classpath(threeten)
       mainClass.set("com.gabrielittner.threetenbp.LazyZoneRulesCompiler")
       tzVersion.set(tzdbVersion)
@@ -84,7 +84,7 @@ interface TickTockExtension {
 }
 
 @CacheableTask
-abstract class GenerateTzDataTask : JavaExec() {
+abstract class GenerateZoneRuleFilesTask : JavaExec() {
   @get:Input
   abstract val tzVersion: Property<String>
 
