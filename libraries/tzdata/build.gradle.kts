@@ -18,6 +18,14 @@ plugins {
   id("tick-tock")
 }
 
+tickTock {
+  tzVersion.set(providers.gradleProperty("tzdbVersion")
+      .forUseAtConfigurationTime())
+  // Note: we generate and check these in rather than count on gradle caching
+  tzOutputDir.set(layout.projectDirectory.dir("src/main/resources"))
+  codeOutputDir.set(layout.projectDirectory.dir("src/main/java"))
+}
+
 dependencies {
   compileOnly(deps.android.androidx.annotations)
   api(deps.kotlin.coroutines)

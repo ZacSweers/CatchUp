@@ -15,23 +15,31 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import org.gradle.process.CommandLineArgumentProvider
 import java.io.File
 
 class TickTockPlugin : Plugin<Project> {
+
+  companion object {
+    const val INTERMEDIATES = "intermediates/ticktock"
+  }
+
   override fun apply(project: Project) {
     project.setup()
   }
 
   private fun Project.setup() {
+    // TODO allow customizing this?
     val threeten = configurations.maybeCreate("threeten")
-    project.dependencies.add(threeten.name, "com.gabrielittner.threetenbp:compiler:0.9.0")
+    dependencies.add(threeten.name, "com.gabrielittner.threetenbp:compiler:0.9.0")
 
-    val tzdbVersion = providers.gradleProperty("tzdbVersion")
-        .forUseAtConfigurationTime()
+    val extension = extensions.create<TickTockExtension>("tickTock")
+
+    val tzdbVersion = extension.tzVersion
     val tzDbOutput = tzdbVersion.flatMap {
-      layout.buildDirectory.file("tzdb/$it/download/${it}.tar.gz")
+      layout.buildDirectory.file("$INTERMEDIATES/$it/download/${it}.tar.gz")
     }
         .map { it.asFile }
     val downloadTzdb = tasks.register<Download>("downloadTzdb") {
@@ -39,7 +47,9 @@ class TickTockPlugin : Plugin<Project> {
       dest(tzDbOutput)
     }
 
-    val unzippedOutput = tzdbVersion.flatMap { layout.buildDirectory.dir("tzdb/$it/unpacked/$it") }
+    val unzippedOutput = tzdbVersion.flatMap {
+      layout.buildDirectory.dir("$INTERMEDIATES/$it/unpacked/$it")
+    }
     val unzipTzData = tasks.register<Copy>("unzipTzdb") {
       from(tzDbOutput.map { tarTree(resources.gzip(it)) })
       into(unzippedOutput)
@@ -53,17 +63,24 @@ class TickTockPlugin : Plugin<Project> {
       inputDir.set(unzipTzData.map { it.destinationDir })
       argumentProviders.add(CommandLineArgumentProvider(::computeArguments))
 
-      // Note: we generate and check these in rather than count on gradle caching
-      tzOutputDir.set(layout.projectDirectory.dir("src/main/resources"))
-      codeOutputDir.set(layout.projectDirectory.dir("src/main/java"))
+      tzOutputDir.set(extension.tzOutputDir)
+      codeOutputDir.set(extension.codeOutputDir)
     }
   }
 
-  private fun <T: Task> TaskProvider<out T>.dependsOn(vararg tasks: TaskProvider<out Task>): TaskProvider<out T> = apply {
+  private fun <T : Task> TaskProvider<out T>.dependsOn(
+      vararg tasks: TaskProvider<out Task>
+  ): TaskProvider<out T> = apply {
     if (tasks.isNotEmpty()) {
       configure { dependsOn(*tasks) }
     }
   }
+}
+
+interface TickTockExtension {
+  val tzVersion: Property<String>
+  val tzOutputDir: DirectoryProperty
+  val codeOutputDir: DirectoryProperty
 }
 
 @CacheableTask
