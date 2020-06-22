@@ -66,6 +66,10 @@ gradlePlugin {
       id = "licensesJsonGenerator"
       implementationClass = "dev.zacsweers.catchup.gradle.LicensesJsonGeneratorPlugin"
     }
+    create("TickTockPlugin") {
+      id = "tick-tock"
+      implementationClass = "dev.zacsweers.catchup.gradle.TickTockPlugin"
+    }
   }
 }
 
