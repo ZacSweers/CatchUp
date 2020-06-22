@@ -9,13 +9,13 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.property
@@ -57,7 +57,7 @@ class TickTockPlugin : Plugin<Project> {
     val unzippedOutput = tzdbVersion.flatMap {
       layout.buildDirectory.dir("$INTERMEDIATES/$it/unpacked/$it")
     }
-    val unzipTzData = tasks.register<Copy>("unzipTzdata") {
+    val unzipTzData = tasks.register<Sync>("unzipTzdata") {
       from(tzDbOutput.map { tarTree(resources.gzip(it)) })
       into(unzippedOutput)
     }
@@ -85,7 +85,7 @@ class TickTockPlugin : Plugin<Project> {
       argumentProviders.add(CommandLineArgumentProvider(::computeArguments))
     }
 
-    tasks.register<Copy>("copyTzDatToResources") {
+    tasks.register<Sync>("syncTzDatToResources") {
       from(generateTzDat.map { it.outputDir })
       into(extension.tzOutputDir.map { it.dir("j\$/time/zone") })
       // The CLI outputs TZDB.dat but we want lowercase
