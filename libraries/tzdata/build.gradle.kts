@@ -19,8 +19,7 @@ plugins {
 }
 
 tickTock {
-  tzVersion.set(providers.gradleProperty("tzdbVersion")
-      .forUseAtConfigurationTime())
+  tzVersion.set("2020a")
   // Note: we generate and check these in rather than count on gradle caching
   tzOutputDir.set(layout.projectDirectory.dir("src/main/resources"))
   codeOutputDir.set(layout.projectDirectory.dir("src/main/java"))
