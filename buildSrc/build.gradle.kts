@@ -3,9 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 repositories {
   mavenCentral()
   google()
-  maven {
-    setUrl("https://dl.bintray.com/kotlin/kotlin-eap")
-  }
+  maven("https://dl.bintray.com/kotlin/kotlin-eap")
+  maven("https://storage.googleapis.com/r8-releases/raw")
   jcenter()
 }
 
@@ -96,6 +95,8 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
+  implementation("com.android.tools:r8:2.1.44")
+
   // Explicitly declare all the kotlin bits to avoid mismatched versions
   implementation(kotlin("gradle-plugin", version = SharedBuildVersions.kotlin))
   implementation(kotlin("stdlib", version = SharedBuildVersions.kotlin))
