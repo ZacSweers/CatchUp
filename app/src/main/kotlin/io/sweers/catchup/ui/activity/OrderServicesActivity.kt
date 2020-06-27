@@ -326,7 +326,7 @@ private class MoveCallback(
     viewHolder: ViewHolder,
     target: ViewHolder
   ): Boolean {
-    callback(viewHolder.adapterPosition, target.adapterPosition)
+    callback(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
     return true
   }
 
