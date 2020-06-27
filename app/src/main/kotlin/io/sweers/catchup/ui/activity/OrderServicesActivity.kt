@@ -56,7 +56,6 @@ import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
 import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
@@ -355,7 +354,7 @@ private class MoveCallback(
 }
 
 @InstallIn(FragmentComponent::class)
-@Module(includes = [ResolvedCatchUpServiceMetaRegistry::class])
+@Module
 abstract class OrderServicesModule {
 
   @Multibinds

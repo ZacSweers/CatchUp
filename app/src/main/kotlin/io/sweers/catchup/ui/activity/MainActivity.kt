@@ -42,7 +42,6 @@ import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
 import io.sweers.catchup.ui.DetailDisplayer
 import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.ui.fragments.PagerFragment
@@ -100,7 +99,7 @@ class MainActivity : InjectingBaseActivity() {
   }
 
   @InstallIn(ActivityComponent::class)
-  @dagger.Module(includes = [ResolvedCatchUpServiceRegistry::class])
+  @dagger.Module
   abstract class ServiceIntegrationModule {
     companion object {
       @ActivityScoped

@@ -38,7 +38,6 @@ import io.sweers.catchup.databinding.ActivitySettingsBinding
 import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
@@ -157,7 +156,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     }
 
     @InstallIn(FragmentComponent::class)
-    @Module(includes = [ResolvedCatchUpServiceMetaRegistry::class])
+    @Module
     abstract class ServiceSettingsModule {
 
       @Multibinds

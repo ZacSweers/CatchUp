@@ -19,6 +19,7 @@ import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreElements.isAnnotationPresent
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
@@ -185,6 +186,11 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
                 postfix = "\n]") { "    %T::class" },
             *modules)
         .build()
+    val activityComponent = ClassName("dagger.hilt.android.components", "ActivityComponent")
+    val installIn = ClassName("dagger.hilt", "InstallIn")
+    val installInAnnotation = AnnotationSpec.builder(installIn)
+        .addMember("%T::class", activityComponent)
+        .build()
 
     val objectName = "Resolved${type.simpleName.toString().capitalize(Locale.US)}"
     try {
@@ -194,6 +200,7 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
           objectName)
           .addType(TypeSpec.objectBuilder(objectName)
               .addAnnotation(moduleAnnotation)
+              .addAnnotation(installInAnnotation)
               .addSuperinterface(type.asClassName())
               .addOriginatingElement(type)
               .build())
