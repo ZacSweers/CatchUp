@@ -20,16 +20,20 @@ plugins {
   kotlin("kapt")
 }
 
+apply(plugin = "dagger.hilt.android.plugin")
+
 apply {
   from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
 
 dependencies {
   kapt(deps.crumb.compiler)
+  kapt(deps.dagger.hilt.apt.compiler)
   kapt(project(":service-registry:service-registry-compiler"))
 
   implementation(project(":service-registry:service-registry-annotations"))
   implementation(deps.kotlin.stdlib.jdk7)
+  implementation(deps.dagger.hilt.android)
 
   api(project(":services:hackernews"))
   api(project(":services:reddit"))
