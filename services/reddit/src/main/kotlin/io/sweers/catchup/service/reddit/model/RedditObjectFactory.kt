@@ -22,7 +22,6 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import java.lang.reflect.Type
-import java.util.Locale
 
 internal class RedditObjectFactory : JsonAdapter.Factory {
 
@@ -38,19 +37,43 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
     return object : JsonAdapter<RedditObject>() {
 
       override fun fromJson(reader: JsonReader): RedditObject? {
-        val jsonValue = reader.readJsonValue()
-        if (jsonValue is String || jsonValue == null) {
+        val nextToken = reader.peek()
+        if (nextToken == JsonReader.Token.STRING || nextToken == JsonReader.Token.NULL) {
           // It's null or there are no replies, just return null
           return null
         }
 
-        @Suppress("UNCHECKED_CAST")
-        val value = jsonValue as Map<String, Any>
-        val redditType = RedditType.valueOf((value["kind"] as String).toUpperCase(Locale.US))
-        val redditObject = value["data"]
-        return with(moshi.adapter(redditType.derivedClass)) {
-          fromJsonValue(redditObject)
-        } ?: throw JsonDataException()
+        val kind = reader.peekJson().use(::readKind)
+
+        while (reader.hasNext()) {
+          if (reader.selectName(DATA_OPTIONS) == -1) {
+            reader.skipName()
+            reader.skipValue()
+            continue
+          }
+
+          return moshi.adapter(kind.derivedClass).fromJson(reader) ?: throw JsonDataException()
+        }
+
+        throw JsonDataException("Missing 'data' label!")
+      }
+
+      private fun readKind(reader: JsonReader): RedditType {
+        while (reader.hasNext()) {
+          if (reader.selectName(KIND_OPTIONS) == -1) {
+            reader.skipName()
+            reader.skipValue()
+            continue
+          }
+          val kind = reader.selectString(KIND_VALUE_OPTIONS)
+          if (kind == -1) {
+            throw JsonDataException("Unrecognized kind: ${reader.nextString()}")
+          }
+          // Our KIND_VALUE_OPTIONS are in order of their index in the enum!
+          return RedditType.values()[kind]
+        }
+
+        throw JsonDataException("Missing 'kind' label!")
       }
 
       override fun toJson(writer: JsonWriter, value: RedditObject?) {
@@ -74,5 +97,14 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
 
   companion object {
     val INSTANCE: RedditObjectFactory by lazy { RedditObjectFactory() }
+    private val KIND_OPTIONS = JsonReader.Options.of("kind")
+    private val KIND_VALUE_OPTIONS = JsonReader.Options.of(
+        *RedditType.values().mapArray(RedditType::jsonName)
+    )
+    private val DATA_OPTIONS = JsonReader.Options.of("data")
+
+    private inline fun <T, reified R> Array<T>.mapArray(transform: (T) -> R): Array<R> {
+      return Array(size) { i -> transform(this@mapArray[i]) }
+    }
   }
 }
