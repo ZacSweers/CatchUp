@@ -19,8 +19,8 @@ package io.sweers.catchup.service.reddit.model
  * A subset of reddit types used by CatchUp.
  */
 internal enum class RedditType constructor(
-    val jsonName: String,
-    val derivedClass: Class<out RedditObject>
+  val jsonName: String,
+  val derivedClass: Class<out RedditObject>
 ) {
   T1("t1", RedditComment::class.java),
   T3("t3", RedditLink::class.java),
