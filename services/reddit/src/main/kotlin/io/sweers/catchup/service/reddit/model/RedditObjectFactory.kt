@@ -43,8 +43,9 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
           return null
         }
 
+        reader.beginObject()
         val kind = reader.peekJson().use(::readKind)
-
+        var data: RedditObject? = null
         while (reader.hasNext()) {
           if (reader.selectName(DATA_OPTIONS) == -1) {
             reader.skipName()
@@ -52,10 +53,12 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
             continue
           }
 
-          return moshi.adapter(kind.derivedClass).fromJson(reader) ?: throw JsonDataException()
+          data = moshi.adapter(kind.derivedClass)
+              .fromJson(reader)
+              ?: throw JsonDataException()
         }
-
-        throw JsonDataException("Missing 'data' label!")
+        reader.endObject()
+        return data ?: throw JsonDataException("Missing 'data' label!")
       }
 
       private fun readKind(reader: JsonReader): RedditType {
