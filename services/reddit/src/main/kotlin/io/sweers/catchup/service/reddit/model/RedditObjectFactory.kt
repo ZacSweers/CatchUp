@@ -36,6 +36,8 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
     }
     return object : JsonAdapter<RedditObject>() {
 
+      private val kindAdapter = moshi.adapter(RedditKind::class.java)
+
       override fun fromJson(reader: JsonReader): RedditObject? {
         val nextToken = reader.peek()
         if (nextToken == JsonReader.Token.STRING || nextToken == JsonReader.Token.NULL) {
@@ -61,19 +63,14 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
         return data ?: throw JsonDataException("Missing 'data' label!")
       }
 
-      private fun readKind(reader: JsonReader): RedditType {
+      private fun readKind(reader: JsonReader): RedditKind {
         while (reader.hasNext()) {
           if (reader.selectName(KIND_OPTIONS) == -1) {
             reader.skipName()
             reader.skipValue()
             continue
           }
-          val kind = reader.selectString(KIND_VALUE_OPTIONS)
-          if (kind == -1) {
-            throw JsonDataException("Unrecognized kind: ${reader.nextString()}")
-          }
-          // Our KIND_VALUE_OPTIONS are in order of their index in the enum!
-          return RedditType.values()[kind]
+          return kindAdapter.fromJson(reader) ?: throw JsonDataException("Unrecognized kind: ${reader.nextString()}")
         }
 
         throw JsonDataException("Missing 'kind' label!")
@@ -90,8 +87,8 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
       // TODO still duplicating some here, but reified types DRY this up nicely
       private inline fun <reified T : RedditObject> JsonWriter.write(value: T?) {
         name("kind")
-        moshi.adapter(RedditType::class.java)
-            .toJson(this, RedditType.values().find { it.derivedClass == T::class.java })
+        moshi.adapter(RedditKind::class.java)
+            .toJson(this, RedditKind.values().find { it.derivedClass == T::class.java })
         name("data")
         moshi.adapter(T::class.java).toJson(this, value)
       }
@@ -101,13 +98,6 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
   companion object {
     val INSTANCE: RedditObjectFactory by lazy { RedditObjectFactory() }
     private val KIND_OPTIONS = JsonReader.Options.of("kind")
-    private val KIND_VALUE_OPTIONS = JsonReader.Options.of(
-        *RedditType.values().mapArray(RedditType::jsonName)
-    )
     private val DATA_OPTIONS = JsonReader.Options.of("data")
-
-    private inline fun <T, reified R> Array<T>.mapArray(transform: (T) -> R): Array<R> {
-      return Array(size) { i -> transform(this@mapArray[i]) }
-    }
   }
 }
