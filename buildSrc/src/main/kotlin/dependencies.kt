@@ -177,7 +177,7 @@ object deps {
 
   object build {
     val ci get() = System.getenv("GITHUB_WORKFLOW") != null
-    const val coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:1.0.5"
+    const val coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:1.0.9"
 
     fun gitSha(project: Project): String {
       // query git for the SHA, Tag and commit count. Use these to automate versioning.
