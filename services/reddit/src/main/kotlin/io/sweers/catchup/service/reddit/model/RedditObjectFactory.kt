@@ -22,7 +22,6 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import java.lang.reflect.Type
-import java.util.Locale
 
 internal class RedditObjectFactory : JsonAdapter.Factory {
 
@@ -37,20 +36,44 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
     }
     return object : JsonAdapter<RedditObject>() {
 
+      private val kindAdapter = moshi.adapter(RedditKind::class.java)
+
       override fun fromJson(reader: JsonReader): RedditObject? {
-        val jsonValue = reader.readJsonValue()
-        if (jsonValue is String || jsonValue == null) {
+        val nextToken = reader.peek()
+        if (nextToken == JsonReader.Token.STRING || nextToken == JsonReader.Token.NULL) {
           // It's null or there are no replies, just return null
           return null
         }
 
-        @Suppress("UNCHECKED_CAST")
-        val value = jsonValue as Map<String, Any>
-        val redditType = RedditType.valueOf((value["kind"] as String).toUpperCase(Locale.US))
-        val redditObject = value["data"]
-        return with(moshi.adapter(redditType.derivedClass)) {
-          fromJsonValue(redditObject)
-        } ?: throw JsonDataException()
+        reader.beginObject()
+        val kind = reader.peekJson().use(::readKind)
+        var data: RedditObject? = null
+        while (reader.hasNext()) {
+          if (reader.selectName(DATA_OPTIONS) == -1) {
+            reader.skipName()
+            reader.skipValue()
+            continue
+          }
+
+          data = moshi.adapter(kind.derivedClass)
+              .fromJson(reader)
+              ?: throw JsonDataException()
+        }
+        reader.endObject()
+        return data ?: throw JsonDataException("Missing 'data' label!")
+      }
+
+      private fun readKind(reader: JsonReader): RedditKind {
+        while (reader.hasNext()) {
+          if (reader.selectName(KIND_OPTIONS) == -1) {
+            reader.skipName()
+            reader.skipValue()
+            continue
+          }
+          return kindAdapter.fromJson(reader) ?: throw JsonDataException("Unrecognized kind: ${reader.nextString()}")
+        }
+
+        throw JsonDataException("Missing 'kind' label!")
       }
 
       override fun toJson(writer: JsonWriter, value: RedditObject?) {
@@ -64,8 +87,8 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
       // TODO still duplicating some here, but reified types DRY this up nicely
       private inline fun <reified T : RedditObject> JsonWriter.write(value: T?) {
         name("kind")
-        moshi.adapter(RedditType::class.java)
-            .toJson(this, RedditType.values().find { it.derivedClass == T::class.java })
+        moshi.adapter(RedditKind::class.java)
+            .toJson(this, RedditKind.values().find { it.derivedClass == T::class.java })
         name("data")
         moshi.adapter(T::class.java).toJson(this, value)
       }
@@ -74,5 +97,7 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
 
   companion object {
     val INSTANCE: RedditObjectFactory by lazy { RedditObjectFactory() }
+    private val KIND_OPTIONS = JsonReader.Options.of("kind")
+    private val DATA_OPTIONS = JsonReader.Options.of("data")
   }
 }

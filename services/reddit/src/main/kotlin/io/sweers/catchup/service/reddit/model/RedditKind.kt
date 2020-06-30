@@ -20,14 +20,11 @@ import com.squareup.moshi.Json
 /**
  * A subset of reddit types used by CatchUp.
  */
-internal enum class RedditType constructor(val derivedClass: Class<out RedditObject>) {
-
+internal enum class RedditKind constructor(val derivedClass: Class<out RedditObject>) {
   @Json(name = "t1")
   T1(RedditComment::class.java),
-
   @Json(name = "t3")
   T3(RedditLink::class.java),
-
   @Json(name = "Listing")
-  LISTING(RedditListing::class.java),
+  LISTING(RedditListing::class.java)
 }
