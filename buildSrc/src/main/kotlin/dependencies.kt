@@ -123,6 +123,11 @@ object deps {
         const val ktx = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
       }
 
+      object paging {
+        private const val VERSION = "3.0.0-alpha02"
+        const val runtime = "androidx.paging:paging-runtime:$VERSION"
+      }
+
       object room {
         private const val version = "2.3.0-alpha02"
         const val apt = "androidx.room:room-compiler:$version"
