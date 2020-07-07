@@ -369,7 +369,7 @@ dependencies {
   implementation(project(":libraries:smmry"))
   implementation(project(":libraries:util"))
   implementation(project(":libraries:flowbinding"))
-  implementation(project(":libraries:tzdata"))
+  implementation("dev.zacsweers.ticktock:ticktock-android-tzdb:0.1.0-SNAPSHOT")
 
   // Support libs
   implementation(deps.android.androidx.annotations)

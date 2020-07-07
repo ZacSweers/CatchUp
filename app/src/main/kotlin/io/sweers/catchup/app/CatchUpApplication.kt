@@ -18,11 +18,11 @@ package io.sweers.catchup.app
 import android.app.Application
 import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
-import dev.zacsweers.catchup.tzdata.LazyZoneInit
 import com.uber.rxdogtag.RxDogTag
 import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
 import dagger.hilt.android.HiltAndroidApp
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.ticktock.runtime.EagerZoneRulesLoading
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.CatchUpPreferences
@@ -46,12 +46,6 @@ class CatchUpApplication : Application() {
   companion object {
 
     init {
-      // This only works while minSdk < 26!
-      // https://issuetracker.google.com/issues/159421054
-      System.setProperty(
-          "java.time.zone.DefaultZoneRulesProvider",
-          "com.gabrielittner.threetenbp.LazyZoneRulesProvider"
-      )
       RxAndroidPlugins.setInitMainThreadSchedulerHandler {
         AndroidSchedulers.from(Looper.getMainLooper(), true)
       }
@@ -89,7 +83,7 @@ class CatchUpApplication : Application() {
     GlobalScope.launch {
       // Initialize TZ data
       try {
-        LazyZoneInit.cacheZones()
+        EagerZoneRulesLoading.cacheZones()
       } catch (ignored: NoSuchMethodError) {
         // If targeting a newer device or minSdk 26, this will fail because ZoneRulesProvider is a
         // strangely hidden API: https://issuetracker.google.com/issues/159421054
