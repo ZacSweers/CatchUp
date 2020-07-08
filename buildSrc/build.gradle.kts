@@ -9,7 +9,7 @@ repositories {
 }
 
 plugins {
-  kotlin("jvm") version "1.4-M2"
+  kotlin("jvm") version "1.4-M3"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
@@ -24,9 +24,9 @@ kotlinDslPluginOptions {
  */
 object SharedBuildVersions {
   const val agp = "4.2.0-alpha03"
-  const val kotlin = "1.4-M2"
+  const val kotlin = "1.4-M3"
   const val moshi = "1.9.3"
-  const val okio = "2.6.0"
+  const val okio = "2.7.0"
   const val kotlinJvmTarget = "1.8"
   val kotlinCompilerArgs = listOf(
       "-progressive",
