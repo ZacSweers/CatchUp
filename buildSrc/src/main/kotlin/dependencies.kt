@@ -369,6 +369,7 @@ object deps {
     const val okio = "com.squareup.okio:okio:2.6.0"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:3.0.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.0"
+    const val ticktock = "dev.zacsweers.ticktock:ticktock-android-lazyzonerules:0.1.0-SNAPSHOT"
     const val timber = "com.jakewharton.timber:timber:4.7.1"
     const val unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"
   }
