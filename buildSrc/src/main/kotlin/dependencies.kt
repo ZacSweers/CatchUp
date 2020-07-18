@@ -52,11 +52,11 @@ object build {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val apollo = "2.2.0"
+    const val apollo = "2.2.2"
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
-    const val dagger = "2.28"
+    const val dagger = "2.28.1"
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
@@ -67,7 +67,7 @@ object deps {
     const val markwon = "4.4.0"
     const val moshi = SharedBuildVersions.moshi
     const val retrofit = "2.9.0"
-    const val spotless = "4.4.0"
+    const val spotless = "4.5.1"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
 
@@ -81,12 +81,12 @@ object deps {
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
-      const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta7"
-      const val customTabs = "androidx.browser:browser:1.3.0-alpha03"
+      const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta8"
+      const val customTabs = "androidx.browser:browser:1.3.0-alpha04"
       const val design = "com.google.android.material:material:1.3.0-alpha01"
-      const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0-rc01"
+      const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0"
 
-      private const val emojiVersion = "1.1.0-rc01"
+      private const val emojiVersion = "1.1.0"
       const val emoji = "androidx.emoji:emoji:$emojiVersion"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:$emojiVersion"
 
@@ -95,14 +95,14 @@ object deps {
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
       object viewModel {
-        private const val version = "2.3.0-alpha04"
+        private const val version = "2.3.0-alpha05"
         const val core = "androidx.lifecycle:lifecycle-viewmodel:$version"
         const val ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         const val savedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:$version"
       }
 
       const val viewPager2 = "androidx.viewpager2:viewpager2:1.1.0-alpha01"
-      const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01"
+      const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
       const val palette = "androidx.palette:palette:1.0.0"
       const val paletteKtx = "androidx.palette:palette-ktx:1.0.0"
 
@@ -112,7 +112,7 @@ object deps {
       const val recyclerView = "androidx.recyclerview:recyclerview:1.1.0-beta03"
 
       object lifecycle {
-        private const val version = "2.3.0-alpha04"
+        private const val version = "2.3.0-alpha05"
         const val apt = "androidx.lifecycle:lifecycle-compiler:$version"
         const val extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
         const val ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
@@ -139,14 +139,14 @@ object deps {
     }
 
     object firebase {
-      const val core = "com.google.firebase:firebase-core:17.4.3"
+      const val core = "com.google.firebase:firebase-core:17.4.4"
       const val config = "com.google.firebase:firebase-config:18.0.0"
       const val database = "com.google.firebase:firebase-database:19.3.1"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
 
-    val gradlePlugin = "com.android.tools.build:gradle:${SharedBuildVersions.agp}"
+    const val gradlePlugin = "com.android.tools.build:gradle:${SharedBuildVersions.agp}"
   }
 
   object apollo {
@@ -203,7 +203,7 @@ object deps {
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.7.5"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:2.8.0"
-      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.2.0"
+      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.2.0-1.4-M3"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${versions.spotless}"
     }
 
@@ -211,6 +211,7 @@ object deps {
       const val google = "https://maven.google.com"
       const val jitpack = "https://jitpack.io"
       const val kotlineap = "https://dl.bintray.com/kotlin/kotlin-eap"
+      const val kotlindev = "https://dl.bintray.com/kotlin/kotlin-dev"
       const val kotlinx = "https://kotlin.bintray.com/kotlinx"
       const val plugins = "https://plugins.gradle.org/m2/"
       const val snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
@@ -309,7 +310,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.3.7"
+    private const val coroutinesVersion = "1.3.7-1.4-M3"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
@@ -344,7 +345,7 @@ object deps {
     const val byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
     object debug {
-      private const val FLIPPER_VERSION = "0.47.0"
+      private const val FLIPPER_VERSION = "0.49.0"
       const val flipper = "com.facebook.flipper:flipper:$FLIPPER_VERSION"
       const val flipperNetwork = "com.facebook.flipper:flipper-network-plugin:$FLIPPER_VERSION"
       const val soLoader = "com.facebook.soloader:soloader:0.9.0"
