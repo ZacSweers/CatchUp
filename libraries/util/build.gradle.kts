@@ -17,13 +17,12 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  // TODO reenable after new release https://github.com/ZacSweers/redacted-compiler-plugin/issues/18
-//  id("dev.zacsweers.redacted.redacted-gradle-plugin")
+  id("dev.zacsweers.redacted.redacted-gradle-plugin")
 }
 
-//redacted {
-//redactedAnnotation = "io.sweers.catchup.util.network.Redacted"
-//}
+redacted {
+  redactedAnnotation = "io.sweers.catchup.util.network.Redacted"
+}
 
 dependencies {
   api(deps.android.androidx.annotations)
