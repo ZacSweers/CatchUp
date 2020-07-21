@@ -24,7 +24,7 @@ kotlinDslPluginOptions {
  * These are copied as a source into the main source set and templated for replacement.
  */
 object SharedBuildVersions {
-  const val agp = "4.2.0-alpha04"
+  const val agp = "4.2.0-alpha05"
   const val kotlin = "1.4.0-rc-154"
   const val moshi = "1.9.3"
   const val okio = "2.7.0"
