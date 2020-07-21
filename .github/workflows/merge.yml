@@ -1,9 +1,9 @@
 on:
   issue_comment:
     types: [created]
-name: Automatic Merge
+name: Update PR
 jobs:
-  rebase:
+  update-pr:
     name: Rebase
     if: github.event.issue.pull_request != '' && (contains(github.event.comment.body, '/rebase') || contains(github.event.comment.body, '/merge'))
     runs-on: ubuntu-latest
