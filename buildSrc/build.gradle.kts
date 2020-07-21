@@ -33,16 +33,28 @@ object SharedBuildVersions {
       "-progressive",
       "-Xinline-classes",
       "-Xjsr305=strict",
-      "-Xjvm-default=enable",
       "-Xassertions=jvm",
       "-Xopt-in=kotlin.contracts.ExperimentalContracts",
       "-Xopt-in=kotlin.experimental.ExperimentalTypeInference",
       "-Xopt-in=kotlin.ExperimentalStdlibApi",
       "-Xopt-in=kotlin.RequiresOptIn",
       "-Xopt-in=kotlin.time.ExperimentalTime",
-      "-Xskip-metadata-version-check",
       "-Xopt-in=kotlinx.coroutines.FlowPreview",
-      "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+      "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+      "-Xskip-metadata-version-check",
+      // New type inference front end. Matches IDE behavior, allows new behaviors and should also be a perf improvement.
+      // Was originally intended to be teh default in 1.4, but TBD.
+      "-Xnew-inference",
+      // Potentially useful for static analysis tools or annotation processors.
+      "-Xemit-jvm-type-annotations",
+      // Match JVM assertion behavior: https://publicobject.com/2019/11/18/kotlins-assert-is-not-like-javas-assert/
+      "-Xassertions=jvm",
+      "-Xproper-ieee754-comparisons",
+      // Generate nullability assertions for non-null Java expressions
+      "-Xstrict-java-nullability-assertions",
+      // Enable new jvmdefault behavior
+      // https://blog.jetbrains.com/kotlin/2020/07/kotlin-1-4-m3-generating-default-methods-in-interfaces/
+      "-Xjvm-default=all"
   )
 
   fun asTemplatesMap(): Map<String, String> {
