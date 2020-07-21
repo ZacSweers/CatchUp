@@ -13,7 +13,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Automatic Rebase
-        uses: zacsweers/rebase@77d1e670b55cde2858093f33d25da2b04bf05155
+        uses: zacsweers/rebase@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
           GITHUB_LABEL: ${{ github.event.label.name }}
