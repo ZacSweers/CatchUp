@@ -439,7 +439,7 @@ object deps {
     }
 
     const val junit = "junit:junit:4.13"
-    const val robolectric = "org.robolectric:robolectric:4.0-alpha-1"
+    const val robolectric = "org.robolectric:robolectric:4.4-alpha-1"
     const val truth = "com.google.truth:truth:1.0.1"
   }
 }
