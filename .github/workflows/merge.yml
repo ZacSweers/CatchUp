@@ -22,4 +22,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
           GITHUB_COMMENT: ${{ github.event.comment.body }}
           GITHUB_COMMENT_ID: ${{ github.event.comment.node_id }}
-          GITHUB_COMMENT_ACTION: hide
+          GITHUB_COMMENT_ACTION: delete
