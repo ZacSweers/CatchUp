@@ -1,0 +1,20 @@
+on:
+  issue_comment:
+    types: [created]
+name: Automatic Merge
+jobs:
+  merge:
+    name: Merge
+    if: github.event.issue.pull_request != '' && (contains(github.event.comment.body, '/rebase') || contains(github.event.comment.body, '/merge'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the latest code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Automatic Rebase
+        uses: zacsweers/rebase@a841334683451e022997e0b5600767ab81bf099d
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
+          GITHUB_COMMENT: ${{ github.event.comment.body }}
+          GITHUB_COMMENT_ID: ${{ github.event.comment.id }}
