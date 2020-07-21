@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout the latest code
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
       - name: Update PR ('${{ github.event.comment.body }}')
         uses: zacsweers/rebase@v2.0.1
