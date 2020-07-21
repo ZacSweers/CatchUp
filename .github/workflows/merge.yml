@@ -1,11 +1,11 @@
 on:
-  issue_comment:
-    types: [created]
+  pull_request:
+    types: [labeled]
 name: Automatic Merge
 jobs:
   merge:
     name: Merge
-    if: github.event.issue.pull_request != '' && (contains(github.event.comment.body, '/rebase') || contains(github.event.comment.body, '/merge'))
+    if: github.event.issue.pull_request != '' && (contains(github.event.pull_request.labels.*.name, 'merge-pls') || contains(github.event.pull_request.labels.*.name, 'rebase-pls'))
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
@@ -16,10 +16,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Automatic Rebase
-        uses: zacsweers/rebase@9b5b45f10f297d69269ad4734a7cdd87b71cd7ce
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
-          GITHUB_COMMENT: ${{ github.event.comment.body }}
-          GITHUB_COMMENT_ID: ${{ github.event.comment.node_id }}
-          GITHUB_COMMENT_ACTION: delete
+     # - name: Automatic Rebase
+     #   uses: zacsweers/rebase@9b5b45f10f297d69269ad4734a7cdd87b71cd7ce
+     #   env:
+     #     GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
+     #     GITHUB_LABEL: ${{ github.event.comment.body }}
+     #     GITHUB_COMMENT_ID: ${{ github.event.comment.node_id }}
