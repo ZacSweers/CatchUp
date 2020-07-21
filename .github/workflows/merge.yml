@@ -8,16 +8,12 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'merge-pls') || contains(github.event.pull_request.labels.*.name, 'rebase-pls')
     runs-on: ubuntu-latest
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
       - name: Checkout the latest code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Automatic Rebase
-        uses: zacsweers/rebase@9b5b45f10f297d69269ad4734a7cdd87b71cd7ce
+        uses: zacsweers/rebase@77d1e670b55cde2858093f33d25da2b04bf05155
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
           GITHUB_LABEL: ${{ github.event.label.name }}
