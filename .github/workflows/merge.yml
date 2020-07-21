@@ -17,8 +17,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Automatic Rebase
-        uses: zacsweers/rebase@a841334683451e022997e0b5600767ab81bf099d
+        uses: zacsweers/rebase@9b5b45f10f297d69269ad4734a7cdd87b71cd7ce
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
           GITHUB_COMMENT: ${{ github.event.comment.body }}
-          GITHUB_COMMENT_ID: ${{ github.event.comment.id }}
+          GITHUB_COMMENT_ID: ${{ github.event.comment.node_id }}
+          GITHUB_COMMENT_ACTION: hide
