@@ -9,14 +9,13 @@ jobs:
     if: github.event.issue.pull_request != '' && (contains(github.event.comment.body, '/rebase') || contains(github.event.comment.body, '/merge'))
     runs-on: ubuntu-latest
     steps:
-      - name: Calculate commit depth
-        run: |
-          depth_count=$(($(git rev-list --count main..HEAD)+1))
-          echo "::set-env name=DEPTH::$depth_count"
       - name: Checkout the latest code
         uses: actions/checkout@v2
-        with:
-          fetch-depth: ${{ env.DEPTH }}
+
+      - name: Backfill commit history to base
+        run: |
+          depth_count=$(($(git rev-list --count main..HEAD)+1))
+          git fetch --depth=$depth_count
 
       - name: Update PR ('${{ github.event.comment.body }}')
         uses: zacsweers/rebase@v2.0.1
