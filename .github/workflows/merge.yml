@@ -1,0 +1,23 @@
+on:
+  issue_comment:
+    types: [created]
+
+name: Update PR
+jobs:
+  update-pr:
+    name: Update PR (Merge or Rebase)
+    if: github.event.issue.pull_request != '' && (contains(github.event.comment.body, '/rebase') || contains(github.event.comment.body, '/merge'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the latest code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Update PR ('${{ github.event.comment.body }}')
+        uses: zacsweers/rebase@v2.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_COMMENT: ${{ github.event.comment.body }}
+          # Optional, specify if you want it to hide or delete the merge comment
+          GITHUB_COMMENT_ID: ${{ github.event.comment.node_id }}
