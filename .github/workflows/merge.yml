@@ -16,9 +16,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-     # - name: Automatic Rebase
-     #   uses: zacsweers/rebase@9b5b45f10f297d69269ad4734a7cdd87b71cd7ce
-     #   env:
-     #     GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
-     #     GITHUB_LABEL: ${{ github.event.comment.body }}
-     #     GITHUB_COMMENT_ID: ${{ github.event.comment.node_id }}
+      - name: Automatic Rebase
+        uses: zacsweers/rebase@9b5b45f10f297d69269ad4734a7cdd87b71cd7ce
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
+          GITHUB_LABEL: ${{ github.event.label.name }}
+          GITHUB_LABEL_ID: ${{ github.event.label.node_id }}
+          GITHUB_PR_ID: ${{ github.event.pull_request.node_id }}
