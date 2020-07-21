@@ -70,6 +70,7 @@ gradlePlugin {
   }
 }
 
+println("Project")
 sourceSets {
   main.configure {
     java.srcDir(project.file("$buildDir/generated/sources/version-templates/kotlin/main"))
