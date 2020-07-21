@@ -54,7 +54,8 @@ object SharedBuildVersions {
       "-Xstrict-java-nullability-assertions",
       // Enable new jvmdefault behavior
       // https://blog.jetbrains.com/kotlin/2020/07/kotlin-1-4-m3-generating-default-methods-in-interfaces/
-      "-Xjvm-default=all"
+      // TODO change to "all" again after https://youtrack.jetbrains.com/issue/KT-40485
+      "-Xjvm-default=enable"
   )
 
   fun asTemplatesMap(): Map<String, String> {
