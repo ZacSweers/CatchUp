@@ -16,7 +16,7 @@ jobs:
         # Format is YYYY-MM-DD
         run: |
           FETCH_START=`date -d "-3 months" +"%Y-%m-%d"`
-          git fetch --shallow-since=$FETCH_START origin master
+          git fetch --shallow-since=$FETCH_START origin ${{ github.base_ref }}
         
       - name: Update PR ('${{ github.event.comment.body }}')
         uses: zacsweers/rebase@v2.0.1
