@@ -15,7 +15,7 @@ jobs:
       - name: Backfill commit history up to 3 months
         # Format is YYYY-MM-DD
         run: |
-          FETCH_START=`gdate -d "-3 months" +"%Y-%m-%d"`
+          FETCH_START=`date -d "-3 months" +"%Y-%m-%d"`
           git fetch --shallow-since=$FETCH_START origin master
         
       - name: Update PR ('${{ github.event.comment.body }}')
