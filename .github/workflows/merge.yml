@@ -12,11 +12,11 @@ jobs:
       - name: Checkout the latest code
         uses: actions/checkout@v2
 
-      - name: Backfill commit history up to 3 months
-        # Format is YYYY-MM-DD
+      - name: Backfill commit history for merge
         run: |
-          FETCH_START=`date -d "-3 months" +"%Y-%m-%d"`
-          git fetch --shallow-since=$FETCH_START origin ${{ github.base_ref }}
+          while [ -z $( git merge-base ${{ github.base_ref }} ${{ github.head_ref }} ) ]; do     
+            git fetch -q --deepen=100 origin ${{ github.base_ref }} ${{ github.head_ref }};
+          done
         
       - name: Update PR ('${{ github.event.comment.body }}')
         uses: zacsweers/rebase@v2.0.1
