@@ -10,7 +10,7 @@ repositories {
 }
 
 plugins {
-  kotlin("jvm") version "1.4.0-rc-154"
+  kotlin("jvm") version "1.4.0-rc"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
