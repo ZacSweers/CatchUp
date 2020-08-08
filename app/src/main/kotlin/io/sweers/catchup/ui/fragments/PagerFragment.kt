@@ -374,6 +374,9 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
       serviceMetas: DaggerMap<String, ServiceMeta>,
       catchUpPreferences: CatchUpPreferences
     ): Array<ServiceHandler> {
+      check(serviceMetas.isNotEmpty()) {
+        "No services found!"
+      }
       val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
       return (serviceMetas.values
           .filter(ServiceMeta::enabled)
