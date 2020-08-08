@@ -95,6 +95,10 @@
         android:name="fontProviderRequests"
         android:value="Noto Color Emoji Compat"/>
 
+    <meta-data
+        android:name="com.bugsnag.android.API_KEY"
+        android:value="${BUGSNAG_API_KEY}" />
+
     <meta-data android:name="buildTimestamp" android:value="buildTimestampPlaceholder" />
 
     <!-- Unclear what these are being used for but CatchUp gets booted because of them. -->
