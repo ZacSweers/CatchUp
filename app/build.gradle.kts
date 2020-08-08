@@ -52,6 +52,7 @@ android {
     buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
         "\"${properties["catchup_github_developer_token"]}\"")
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
+    manifestPlaceholders(mapOf("BUGSNAG_API_KEY" to "placeholder"))
   }
   buildFeatures {
     buildConfig = true
@@ -95,13 +96,14 @@ android {
     getByName("debug") {
       applicationIdSuffix = ".debug"
       versionNameSuffix = "-dev"
-      ext["enableBugsnag"] = false
+      ext.properties["enableBugsnag"] = false
       buildConfigField("String", "IMGUR_CLIENT_ACCESS_TOKEN",
           "\"${project.properties["catchup_imgur_access_token"]}\"")
     }
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
           "\"${properties["catchup_bugsnag_key"]}\"")
+      manifestPlaceholders(mapOf("BUGSNAG_API_KEY" to properties["catchup_bugsnag_key"].toString()))
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       postprocessing.apply {
         proguardFiles("proguard-rules.pro")
@@ -115,8 +117,6 @@ android {
   dexOptions {
     javaMaxHeapSize = "2g"
   }
-  // Should be fixed now, disable if need be
-  // https://github.com/bugsnag/bugsnag-android-gradle-plugin/issues/59
   splits {
     density {
       isEnable = true
@@ -173,12 +173,6 @@ play {
   serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
   serviceAccountCredentials = rootProject.file("signing/play-account.p12")
 }
-
-//bugsnag {
-//  apiKey = properties["catchup_bugsnag_key"].toString()
-//  autoProguardConfig = false
-//  ndk = true
-//}
 
 apollo {
   service("github") {

@@ -28,6 +28,7 @@ buildscript {
     maven(deps.build.repositories.snapshots)
     maven(deps.build.repositories.snapshots)
     maven("https://storage.googleapis.com/r8-releases/raw")
+    mavenLocal()
   }
 
   dependencies {
@@ -45,8 +46,9 @@ buildscript {
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.28.0"
+  id("com.github.ben-manes.versions") version "0.29.0"
   id("catchup")
+  id("com.osacky.doctor") version "0.4.0"
 }
 
 apply {
