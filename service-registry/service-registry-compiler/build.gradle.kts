@@ -33,6 +33,6 @@ dependencies {
   implementation(deps.crumb.compilerApi)
   implementation(deps.dagger.runtime)
   implementation(deps.kotlin.metadata)
-  implementation(deps.kotlin.poet)
+  implementation(deps.build.javapoet)
   implementation(deps.kotlin.stdlib.jdk8)
 }

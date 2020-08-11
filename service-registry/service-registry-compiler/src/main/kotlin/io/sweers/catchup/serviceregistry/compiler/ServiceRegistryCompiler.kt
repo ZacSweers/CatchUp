@@ -18,11 +18,10 @@ package io.sweers.catchup.serviceregistry.compiler
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreElements.isAnnotationPresent
 import com.google.auto.service.AutoService
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.asClassName
+import com.squareup.javapoet.AnnotationSpec
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.TypeSpec
 import com.uber.crumb.compiler.api.ConsumerMetadata
 import com.uber.crumb.compiler.api.CrumbConsumerExtension
 import com.uber.crumb.compiler.api.CrumbContext
@@ -42,6 +41,7 @@ import java.util.Locale
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.ElementKind
+import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic.Kind.ERROR
 
@@ -176,34 +176,36 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
         .distinct()
         .map(context.processingEnv.elementUtils::getTypeElement)
         .filter { it.isMeta == isConsumingMeta }
-        .map(TypeElement::asClassName)
+        .map { ClassName.get(it) }
         .toList()
         .toTypedArray()
 
-    val moduleAnnotation = AnnotationSpec.builder(Module::class)
-        .addMember(
-            modules.joinToString(separator = ",\n", prefix = "includes = [\n",
-                postfix = "\n]") { "    %T::class" },
+    val moduleAnnotation = AnnotationSpec.builder(Module::class.java)
+        .addMember("includes",
+            modules.joinToString(separator = ",\n", prefix = "{\n",
+                postfix = "\n}") { "    \$T.class" },
             *modules)
         .build()
-    val activityComponent = ClassName("dagger.hilt.android.components", "ActivityComponent")
-    val installIn = ClassName("dagger.hilt", "InstallIn")
+    val activityComponent = ClassName.get("dagger.hilt.android.components", "ActivityComponent")
+    val installIn = ClassName.get("dagger.hilt", "InstallIn")
     val installInAnnotation = AnnotationSpec.builder(installIn)
-        .addMember("%T::class", activityComponent)
+        .addMember("value", "\$T.class", activityComponent)
         .build()
 
-    val objectName = "Resolved${type.simpleName.toString().capitalize(Locale.US)}"
+    val className = "Resolved${type.simpleName.toString().capitalize(Locale.US)}"
     try {
       // Generate the file
       @Suppress("UnstableApiUsage")
-      FileSpec.builder(MoreElements.getPackage(type).qualifiedName.toString(),
-          objectName)
-          .addType(TypeSpec.objectBuilder(objectName)
+      JavaFile.builder(
+          MoreElements.getPackage(type).qualifiedName.toString(),
+          TypeSpec.classBuilder(className)
+              .addModifiers(Modifier.ABSTRACT)
               .addAnnotation(moduleAnnotation)
               .addAnnotation(installInAnnotation)
-              .addSuperinterface(type.asClassName())
+              .addSuperinterface(ClassName.get(type))
               .addOriginatingElement(type)
-              .build())
+              .build()
+      )
           .build()
           .writeTo(context.processingEnv.filer)
     } catch (e: IOException) {
