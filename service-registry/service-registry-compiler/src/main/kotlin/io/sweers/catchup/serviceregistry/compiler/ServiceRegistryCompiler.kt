@@ -59,31 +59,31 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
   override fun supportedConsumerAnnotations() = setOf(ServiceRegistry::class.java)
 
   override fun isProducerApplicable(
-      context: CrumbContext,
-      type: TypeElement,
-      annotations: Collection<AnnotationMirror>
+    context: CrumbContext,
+    type: TypeElement,
+    annotations: Collection<AnnotationMirror>
   ): Boolean {
     return isAnnotationPresent(type, ServiceModule::class.java)
   }
 
   override fun isConsumerApplicable(
-      context: CrumbContext,
-      type: TypeElement,
-      annotations: Collection<AnnotationMirror>
+    context: CrumbContext,
+    type: TypeElement,
+    annotations: Collection<AnnotationMirror>
   ): Boolean {
     return isAnnotationPresent(type, ServiceRegistry::class.java)
   }
 
   override fun producerIncrementalType(
-      processingEnvironment: ProcessingEnvironment
+    processingEnvironment: ProcessingEnvironment
   ): IncrementalExtensionType {
     return ISOLATING
   }
 
   override fun produce(
-      context: CrumbContext,
-      type: TypeElement,
-      annotations: Collection<AnnotationMirror>
+    context: CrumbContext,
+    type: TypeElement,
+    annotations: Collection<AnnotationMirror>
   ): ProducerMetadata {
     // Must be a class
     if (type.kind !== ElementKind.CLASS) {
@@ -111,16 +111,16 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
   }
 
   override fun consumerIncrementalType(
-      processingEnvironment: ProcessingEnvironment
+    processingEnvironment: ProcessingEnvironment
   ): IncrementalExtensionType {
     return ISOLATING
   }
 
   override fun consume(
-      context: CrumbContext,
-      type: TypeElement,
-      annotations: Collection<AnnotationMirror>,
-      metadata: Set<ConsumerMetadata>
+    context: CrumbContext,
+    type: TypeElement,
+    annotations: Collection<AnnotationMirror>,
+    metadata: Set<ConsumerMetadata>
   ) {
     // Pull out the kotlin data
     val kmetadata = type.getAnnotation(Metadata::class.java)?.let {
