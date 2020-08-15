@@ -56,13 +56,14 @@ interface TextService : Service {
         }
     )
   }
-
-  private fun createUrlMeta(url: String, context: Context) = UrlMeta(
-      url = url,
-      // Use "day" accents as those are usually the "real" accent colors
-      accentColor = ContextCompat.getColor(
-          context.createConfigurationContext(
-              Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }),
-          meta().themeColor),
-      context = context)
 }
+
+private fun TextService.createUrlMeta(url: String, context: Context) = UrlMeta(
+    url = url,
+    // Use "day" accents as those are usually the "real" accent colors
+    accentColor = ContextCompat.getColor(
+        context.createConfigurationContext(
+            Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }),
+        meta().themeColor),
+    context = context
+)

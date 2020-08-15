@@ -164,7 +164,6 @@ private fun Project.configureAndroid() {
 private fun Project.configureKotlin() {
   tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
-      languageVersion = "1.4"
       jvmTarget = SharedBuildVersions.kotlinJvmTarget
       @Suppress("SuspiciousCollectionReassignment")
       freeCompilerArgs += build.standardFreeKotlinCompilerArgs
