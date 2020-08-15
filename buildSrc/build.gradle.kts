@@ -10,7 +10,7 @@ repositories {
 }
 
 plugins {
-  kotlin("jvm") version "1.4.0-rc"
+  kotlin("jvm") version "1.4.0"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
@@ -25,7 +25,7 @@ kotlinDslPluginOptions {
  */
 object SharedBuildVersions {
   const val agp = "4.2.0-alpha07"
-  const val kotlin = "1.4.0-rc"
+  const val kotlin = "1.4.0"
   const val moshi = "1.9.3"
   const val okio = "2.7.0"
   const val kotlinJvmTarget = "1.8"
@@ -41,7 +41,6 @@ object SharedBuildVersions {
       "-Xopt-in=kotlin.time.ExperimentalTime",
       "-Xopt-in=kotlinx.coroutines.FlowPreview",
       "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-      "-Xskip-metadata-version-check",
       // New type inference front end. Matches IDE behavior, allows new behaviors and should also be a perf improvement.
       // Was originally intended to be teh default in 1.4, but TBD.
       "-Xnew-inference",
@@ -54,8 +53,7 @@ object SharedBuildVersions {
       "-Xstrict-java-nullability-assertions",
       // Enable new jvmdefault behavior
       // https://blog.jetbrains.com/kotlin/2020/07/kotlin-1-4-m3-generating-default-methods-in-interfaces/
-      // TODO change to "all" again after https://youtrack.jetbrains.com/issue/KT-40485
-      "-Xjvm-default=enable"
+      "-Xjvm-default=all"
   )
 
   fun asTemplatesMap(): Map<String, String> {
@@ -104,12 +102,11 @@ tasks.withType<KotlinCompile>().configureEach {
     @Suppress("SuspiciousCollectionReassignment")
     freeCompilerArgs += SharedBuildVersions.kotlinCompilerArgs
     jvmTarget = SharedBuildVersions.kotlinJvmTarget
-    languageVersion = "1.4"
   }
 }
 
 dependencies {
-  implementation("com.android.tools:r8:2.1.44")
+  implementation("com.android.tools:r8:2.1.60")
 
   // Explicitly declare all the kotlin bits to avoid mismatched versions
   implementation(kotlin("gradle-plugin", version = SharedBuildVersions.kotlin))
@@ -122,5 +119,5 @@ dependencies {
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
-  implementation("de.undercouch:gradle-download-task:4.0.4")
+  implementation("de.undercouch:gradle-download-task:4.1.1")
 }

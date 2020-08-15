@@ -24,11 +24,11 @@ import kotlinx.coroutines.channels.SendChannel
 
 interface TextService : Service {
   override fun bindItemView(
-    item: CatchUpItem,
-    holder: BindableCatchUpItemViewHolder,
-    clicksChannel: SendChannel<UrlMeta>,
-    markClicksChannel: SendChannel<UrlMeta>,
-    longClicksChannel: SendChannel<UrlMeta>
+      item: CatchUpItem,
+      holder: BindableCatchUpItemViewHolder,
+      clicksChannel: SendChannel<UrlMeta>,
+      markClicksChannel: SendChannel<UrlMeta>,
+      longClicksChannel: SendChannel<UrlMeta>
   ) {
     val context = holder.itemView().context
     val accentColor = ContextCompat.getColor(context, meta().themeColor)
@@ -57,12 +57,14 @@ interface TextService : Service {
     )
   }
 
-  private fun createUrlMeta(url: String, context: Context) = UrlMeta(
-      url = url,
-      // Use "day" accents as those are usually the "real" accent colors
-      accentColor = ContextCompat.getColor(
-          context.createConfigurationContext(
-              Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }),
-          meta().themeColor),
-      context = context)
 }
+
+private fun TextService.createUrlMeta(url: String, context: Context) = UrlMeta(
+    url = url,
+    // Use "day" accents as those are usually the "real" accent colors
+    accentColor = ContextCompat.getColor(
+        context.createConfigurationContext(
+            Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }),
+        meta().themeColor),
+    context = context
+)

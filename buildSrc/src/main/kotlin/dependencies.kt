@@ -52,7 +52,7 @@ object build {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val apollo = "2.2.3"
+    const val apollo = "2.3.0"
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
@@ -64,7 +64,7 @@ object deps {
     const val kotpref = "2.11.0"
     const val leakcanary = "2.4"
     const val legacySupport = "28.0.0"
-    const val markwon = "4.5.0"
+    const val markwon = "4.5.1"
     const val moshi = SharedBuildVersions.moshi
     const val retrofit = "2.9.0"
     const val spotless = "5.1.1"
@@ -139,7 +139,7 @@ object deps {
     }
 
     object firebase {
-      const val core = "com.google.firebase:firebase-core:17.4.4"
+      const val core = "com.google.firebase:firebase-core:17.5.0"
       const val config = "com.google.firebase:firebase-config:18.0.0"
       const val database = "com.google.firebase:firebase-database:19.3.1"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
@@ -164,7 +164,7 @@ object deps {
   }
 
   object auto {
-    const val common = "com.google.auto:auto-common:0.10"
+    const val common = "com.google.auto:auto-common:0.11"
     const val service = "com.google.auto.service:auto-service:1.0-rc7"
   }
 
@@ -203,7 +203,7 @@ object deps {
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.7.5"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:2.8.0"
-      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.2.0-1.4-M3"
+      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.3.0"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${versions.spotless}"
     }
 
@@ -310,7 +310,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.3.8-1.4.0-rc-218"
+    private const val coroutinesVersion = "1.3.9"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
@@ -358,7 +358,7 @@ object deps {
 
     const val flick = "me.saket:flick:1.7.0"
     const val gestureViews = "com.alexvasilkov:gesture-views:2.2.0"
-    const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta3"
+    const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0"
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
     const val jsoup = "org.jsoup:jsoup:1.13.1"
     const val jsr250 = "javax.annotation:jsr250-api:1.0"
