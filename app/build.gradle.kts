@@ -23,7 +23,7 @@ plugins {
   kotlin("kapt")
   id("com.apollographql.apollo")
   id("licensesJsonGenerator")
-//  id("com.bugsnag.android.gradle")
+  id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
 }
 
@@ -96,7 +96,6 @@ android {
     getByName("debug") {
       applicationIdSuffix = ".debug"
       versionNameSuffix = "-dev"
-      ext.properties["enableBugsnag"] = false
       buildConfigField("String", "IMGUR_CLIENT_ACCESS_TOKEN",
           "\"${project.properties["catchup_imgur_access_token"]}\"")
     }
@@ -135,7 +134,7 @@ android {
     applicationVariants.forEach { variant ->
       // Configure firebase
       fun firebaseProperty(property: String, resolveName: Boolean = true) {
-        val buildTypeName = variant.buildType.getName()
+        val buildTypeName = variant.buildType.name
         if (buildTypeName in firebaseVariants) {
           val name = if (resolveName && buildTypeName == "debug") {
             "$property.debug"
