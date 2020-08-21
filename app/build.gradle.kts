@@ -16,6 +16,7 @@
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 plugins {
   id("com.android.application")
@@ -64,7 +65,6 @@ android {
         storeFile = rootProject.file("signing/app-release.jks")
         storePassword = properties["catchup_signing_store_password"].toString()
         keyPassword = properties["catchup_signing_key_password"].toString()
-        isV2SigningEnabled = true
       }
     } else {
       create("release").initWith(getByName("debug"))
@@ -155,6 +155,13 @@ android {
       firebaseProperty("catchup.google_crash_reporting_api_key")
       firebaseProperty("catchup.project_id", false)
     }
+  }
+}
+
+bugsnag {
+  // Prevent bugsnag from wiring build UUIDs into debug builds
+  variantFilter {
+    setEnabled("debug" !in name.toLowerCase(Locale.US))
   }
 }
 
