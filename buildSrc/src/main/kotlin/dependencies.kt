@@ -201,7 +201,7 @@ object deps {
     }
 
     object gradlePlugins {
-      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:4.7.5"
+      const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:5.0.0"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:2.8.0"
       const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.3.0"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${versions.spotless}"
@@ -341,7 +341,7 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:5.0.1"
+    const val bugsnag = "com.bugsnag:bugsnag-android:5.0.2"
     const val byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
     object debug {

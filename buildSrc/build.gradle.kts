@@ -27,7 +27,7 @@ object SharedBuildVersions {
   const val agp = "4.2.0-alpha07"
   const val kotlin = "1.4.0"
   const val moshi = "1.9.3"
-  const val okio = "2.7.0"
+  const val okio = "2.8.0"
   const val kotlinJvmTarget = "1.8"
   val kotlinCompilerArgs = listOf(
       "-progressive",
