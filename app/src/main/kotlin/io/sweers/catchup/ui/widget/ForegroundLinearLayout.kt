@@ -42,8 +42,10 @@ class ForegroundLinearLayout @JvmOverloads constructor(
   init {
     val a = context.obtainStyledAttributes(attrs, R.styleable.ForegroundView, defStyle, 0)
 
-    mForegroundGravity = a.getInt(R.styleable.ForegroundView_android_foregroundGravity,
-        mForegroundGravity)
+    mForegroundGravity = a.getInt(
+      R.styleable.ForegroundView_android_foregroundGravity,
+      mForegroundGravity
+    )
 
     a.getDrawable(R.styleable.ForegroundView_android_foreground)?.run {
       foreground = this
@@ -175,16 +177,20 @@ class ForegroundLinearLayout @JvmOverloads constructor(
         val w = right - left
         val h = bottom - top
 
-        selfBounds.set(paddingLeft,
-            paddingTop,
-            w - paddingRight,
-            h - paddingBottom)
+        selfBounds.set(
+          paddingLeft,
+          paddingTop,
+          w - paddingRight,
+          h - paddingBottom
+        )
 
-        Gravity.apply(mForegroundGravity,
-            intrinsicWidth,
-            intrinsicHeight,
-            selfBounds,
-            overlayBounds)
+        Gravity.apply(
+          mForegroundGravity,
+          intrinsicWidth,
+          intrinsicHeight,
+          selfBounds,
+          overlayBounds
+        )
         bounds = overlayBounds
       }
 

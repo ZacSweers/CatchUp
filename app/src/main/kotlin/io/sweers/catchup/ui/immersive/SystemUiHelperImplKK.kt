@@ -27,7 +27,11 @@ internal class SystemUiHelperImplKK(
   flags: Int,
   onSystemUiVisibilityChangeListener: SystemUiHelper.OnSystemUiVisibilityChangeListener?
 ) : SystemUiHelperImplJB(
-    activity, level, flags, onSystemUiVisibilityChangeListener) {
+  activity,
+  level,
+  flags,
+  onSystemUiVisibilityChangeListener
+) {
 
   override fun createHideFlags(): Int {
     var flag = super.createHideFlags()

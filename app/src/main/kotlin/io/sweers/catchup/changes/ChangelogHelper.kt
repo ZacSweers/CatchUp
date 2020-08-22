@@ -82,16 +82,20 @@ class ChangelogHelper @Inject constructor(
           }
         }
         syllabus.showIfNeverSeen("changelog_seen") {
-          TapTarget.forToolbarMenuItem(toolbar, R.id.changes, "Changes",
-              "Click here for new changes")
-              .outerCircleColorInt(hintColor)
-              .outerCircleAlpha(0.96f)
-              .targetCircleColor(R.color.colorPrimary)
-              .titleTextColorInt(Color.WHITE)
-              .descriptionTextColorInt(Color.parseColor("#33FFFFFF"))
-              .drawShadow(true)
-              .id("changelog")
-              .apply { fontHelper.getFont()?.let(::textTypeface) }
+          TapTarget.forToolbarMenuItem(
+            toolbar,
+            R.id.changes,
+            "Changes",
+            "Click here for new changes"
+          )
+            .outerCircleColorInt(hintColor)
+            .outerCircleAlpha(0.96f)
+            .targetCircleColor(R.color.colorPrimary)
+            .titleTextColorInt(Color.WHITE)
+            .descriptionTextColorInt(Color.parseColor("#33FFFFFF"))
+            .drawShadow(true)
+            .id("changelog")
+            .apply { fontHelper.getFont()?.let(::textTypeface) }
         }
       }
     }
@@ -105,70 +109,74 @@ class ChangelogHelper @Inject constructor(
   ): Boolean {
     // TODO Make this a custom fragment instead, which should make the animation less jarring
     BottomSheetDialog(context)
-        .apply {
-          val content = FragmentWhatsnewBinding.inflate(layoutInflater)
-          setContentView(content.root)
-          val title = content.buildName.apply {
-            typeface = fontHelper.getFont()
-            text = appConfig.versionName
-          }
-          val changes = content.changes.also { changesTextView ->
-            changesTextView.typeface = fontHelper.getFont()
-            changesTextView.movementMethod = LinkTouchMovementMethod.getInstance()
-            changesTextView.highlightColor = highlightColor
-            changesTextView.setLinkTextColor(highlightColor)
-            changesTextView.text = changelog
-                .markdown()
-                .parseMarkdownAndPlainLinks(
-                    on = changesTextView,
-                    with = markwon.get(),
-                    alternateSpans = { url: String ->
-                      setOf(
-                          object : TouchableUrlSpan(url,
-                              ColorStateList.valueOf(highlightColor),
-                              ColorUtils.modifyAlpha(highlightColor, 0.1f)) {
-                            override fun onClick(url: String) {
-                              val resolvedActivity = context.resolveActivity()
-                              resolvedActivity.lifecycleScope.launch {
-                                linkManager.openUrl(
-                                    UrlMeta(url, highlightColor, resolvedActivity))
-                              }
-                            }
-                          },
-                          StyleSpan(Typeface.BOLD)
-                      )
-                    })
-          }
-
-          content.root.doOnLayout {
-            val duration = 400L
-            val height = content.root.bottom
-            title.translationY = (height - title.y) * 0.25f
-            title.alpha = 0f
-            title.show()
-            changes.translationY = (height - changes.y) * 0.25f
-            changes.alpha = 0f
-            changes.show()
-            val interpolator = UiUtil.fastOutSlowInInterpolator
-            ViewCompat.animate(title)
-                .alpha(1f)
-                .withLayer()
-                .translationY(0f)
-                .setInterpolator(interpolator)
-                .setDuration(duration)
-                .setStartDelay(50)
-                .start()
-            ViewCompat.animate(changes)
-                .alpha(1f)
-                .withLayer()
-                .translationY(0f)
-                .setInterpolator(interpolator)
-                .setStartDelay(100)
-                .setDuration(duration)
-                .start()
-          }
+      .apply {
+        val content = FragmentWhatsnewBinding.inflate(layoutInflater)
+        setContentView(content.root)
+        val title = content.buildName.apply {
+          typeface = fontHelper.getFont()
+          text = appConfig.versionName
         }
-        .show()
+        val changes = content.changes.also { changesTextView ->
+          changesTextView.typeface = fontHelper.getFont()
+          changesTextView.movementMethod = LinkTouchMovementMethod.getInstance()
+          changesTextView.highlightColor = highlightColor
+          changesTextView.setLinkTextColor(highlightColor)
+          changesTextView.text = changelog
+            .markdown()
+            .parseMarkdownAndPlainLinks(
+              on = changesTextView,
+              with = markwon.get(),
+              alternateSpans = { url: String ->
+                setOf(
+                  object : TouchableUrlSpan(
+                    url,
+                    ColorStateList.valueOf(highlightColor),
+                    ColorUtils.modifyAlpha(highlightColor, 0.1f)
+                  ) {
+                    override fun onClick(url: String) {
+                      val resolvedActivity = context.resolveActivity()
+                      resolvedActivity.lifecycleScope.launch {
+                        linkManager.openUrl(
+                          UrlMeta(url, highlightColor, resolvedActivity)
+                        )
+                      }
+                    }
+                  },
+                  StyleSpan(Typeface.BOLD)
+                )
+              }
+            )
+        }
+
+        content.root.doOnLayout {
+          val duration = 400L
+          val height = content.root.bottom
+          title.translationY = (height - title.y) * 0.25f
+          title.alpha = 0f
+          title.show()
+          changes.translationY = (height - changes.y) * 0.25f
+          changes.alpha = 0f
+          changes.show()
+          val interpolator = UiUtil.fastOutSlowInInterpolator
+          ViewCompat.animate(title)
+            .alpha(1f)
+            .withLayer()
+            .translationY(0f)
+            .setInterpolator(interpolator)
+            .setDuration(duration)
+            .setStartDelay(50)
+            .start()
+          ViewCompat.animate(changes)
+            .alpha(1f)
+            .withLayer()
+            .translationY(0f)
+            .setInterpolator(interpolator)
+            .setStartDelay(100)
+            .setDuration(duration)
+            .start()
+        }
+      }
+      .show()
     return true
   }
 }

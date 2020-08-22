@@ -219,8 +219,9 @@ internal object MaterialColors {
     for (i in states.indices.reversed()) {
       val curState = states[i]
       val layeredStateColor = layer(
-          backgroundColor.getColorForState(curState, defaultBackgroundColor),
-          overlayColor.getColorForState(curState, defaultOverlayColor))
+        backgroundColor.getColorForState(curState, defaultBackgroundColor),
+        overlayColor.getColorForState(curState, defaultOverlayColor)
+      )
 
       if (shouldAddColorForState(uniqueColors, layeredStateColor, uniqueStateSet, curState)) {
         // Add to the front of the list in original CSL order.

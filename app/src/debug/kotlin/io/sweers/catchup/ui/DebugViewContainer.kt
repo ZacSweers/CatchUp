@@ -105,50 +105,57 @@ internal class DebugViewContainer @Inject constructor(
     //        HierarchyTreeChangeListener.wrap(contextualActions));
 
     //    viewHolder.drawerLayout.setDrawerShadow(R.drawable.debug_drawer_shadow, GravityCompat.END);
-    viewHolder.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
-      override fun onDrawerOpened(drawerView: View) {
-        debugView.onDrawerOpened()
+    viewHolder.drawerLayout.addDrawerListener(
+      object : DrawerLayout.SimpleDrawerListener() {
+        override fun onDrawerOpened(drawerView: View) {
+          debugView.onDrawerOpened()
+        }
       }
-    })
+    )
 
     viewHolder.telescopeLayout.setPointerCount(3)
     Completable
-        .fromAction {
-          TelescopeLayout.cleanUp(activity) // Clean up any old screenshots.
-        }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .autoDispose(activity)
-        .subscribe {
-          viewHolder.telescopeLayout.setLens(bugReportLens)
-        }
+      .fromAction {
+        TelescopeLayout.cleanUp(activity) // Clean up any old screenshots.
+      }
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .autoDispose(activity)
+      .subscribe {
+        viewHolder.telescopeLayout.setLens(bugReportLens)
+      }
 
     // If you have not seen the debug drawer before, show it with a message
-    syllabus.showIfNeverSeen(debugPreferences::seenDebugDrawer.name, TargetRequest(
+    syllabus.showIfNeverSeen(
+      debugPreferences::seenDebugDrawer.name,
+      TargetRequest(
         target = {
           DrawerTapTarget(
-              delegateTarget = TapTarget.forView(debugView.icon,
-                  "",
-                  ""),
-              drawerLayout = viewHolder.drawerLayout,
-              gravity = Gravity.END,
-              title = debugView.resources.getString(R.string.development_settings),
-              description = debugView.resources.getString(R.string.debug_drawer_welcome)
+            delegateTarget = TapTarget.forView(
+              debugView.icon,
+              "",
+              ""
+            ),
+            drawerLayout = viewHolder.drawerLayout,
+            gravity = Gravity.END,
+            title = debugView.resources.getString(R.string.development_settings),
+            description = debugView.resources.getString(R.string.debug_drawer_welcome)
           )
-              .outerCircleColorInt(Color.parseColor("#EE222222"))
-              .outerCircleAlpha(0.96f)
-              .titleTextColorInt(Color.WHITE)
-              .descriptionTextColorInt(Color.parseColor("#33FFFFFF"))
-              .targetCircleColorInt(Color.WHITE)
-              .drawShadow(true)
-              .transparentTarget(true)
-              .id("DebugDrawer")
-              .apply { fontHelper.getFont()?.let(::textTypeface) }
+            .outerCircleColorInt(Color.parseColor("#EE222222"))
+            .outerCircleAlpha(0.96f)
+            .titleTextColorInt(Color.WHITE)
+            .descriptionTextColorInt(Color.parseColor("#33FFFFFF"))
+            .targetCircleColorInt(Color.WHITE)
+            .drawShadow(true)
+            .transparentTarget(true)
+            .id("DebugDrawer")
+            .apply { fontHelper.getFont()?.let(::textTypeface) }
         },
         postDisplay = {
           viewHolder.drawerLayout.closeDrawer(GravityCompat.END)
         }
-    ))
+      )
+    )
 
     val scope = object : CoroutineScope {
       override val coroutineContext: CoroutineContext = SupervisorJob() + Dispatchers.Main.immediate
@@ -158,16 +165,16 @@ internal class DebugViewContainer @Inject constructor(
 
     riseAndShine(activity, appConfig)
     activity.lifecycle()
-        .filter { event -> event === ActivityEvent.DESTROY }
-        .firstElement()
-        // Why is the below all so awkward?
-        .doOnDispose {
-          scope.cancel()
-        }
-        .autoDispose(activity)
-        .subscribe {
-          scope.cancel()
-        }
+      .filter { event -> event === ActivityEvent.DESTROY }
+      .firstElement()
+      // Why is the below all so awkward?
+      .doOnDispose {
+        scope.cancel()
+      }
+      .autoDispose(activity)
+      .subscribe {
+        scope.cancel()
+      }
     return viewHolder.debugContent
   }
 
@@ -209,10 +216,12 @@ internal class DebugViewContainer @Inject constructor(
         }
       } else {
         activity.window
-            .addFlags(FLAG_SHOW_WHEN_LOCKED)
+          .addFlags(FLAG_SHOW_WHEN_LOCKED)
         activity.getSystemService<PowerManager>()?.run {
-          newWakeLock(FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
-              "CatchUp:wakeup!").run {
+          newWakeLock(
+            FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
+            "CatchUp:wakeup!"
+          ).run {
             acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
             release()
           }
@@ -268,10 +277,10 @@ class DrawerTapTarget(
           e.setDisposable(listener)
           drawerLayout.addDrawerListener(listener)
         }
-            .autoDispose(drawerLayout.scope())
-            .subscribe {
-              delegateTarget.onReady(runnable)
-            }
+          .autoDispose(drawerLayout.scope())
+          .subscribe {
+            delegateTarget.onReady(runnable)
+          }
 
         drawerLayout.openDrawer(gravity)
       }

@@ -37,9 +37,10 @@ internal class InspectorConverterFactory @Inject constructor(private val inspect
     retrofit: Retrofit
   ): Converter<ResponseBody, *> {
     val delegateConverter = retrofit.nextResponseBodyConverter<Converter<ResponseBody, *>>(
-        this,
-        type,
-        annotations)
+      this,
+      type,
+      annotations
+    )
     return InspectorResponseConverter(type, inspector, delegateConverter)
   }
 }

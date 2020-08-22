@@ -39,6 +39,6 @@ class CatchUpAppConfig @Inject constructor(
   override val timestamp: String = versionInfo.timestamp
   override val sdkInt: Int = Build.VERSION.SDK_INT
   override val metadata: Map<Any, Any?> = mutableMapOf<Any, Any?>()
-      .apply { metadataContributors.forEach { putAll(it.data()) } }
-      .toMap()
+    .apply { metadataContributors.forEach { putAll(it.data()) } }
+    .toMap()
 }

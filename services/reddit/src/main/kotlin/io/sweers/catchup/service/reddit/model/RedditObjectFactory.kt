@@ -56,8 +56,8 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
           }
 
           data = moshi.adapter(kind.derivedClass)
-              .fromJson(reader)
-              ?: throw JsonDataException()
+            .fromJson(reader)
+            ?: throw JsonDataException()
         }
         reader.endObject()
         return data ?: throw JsonDataException("Missing 'data' label!")
@@ -88,7 +88,7 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
       private inline fun <reified T : RedditObject> JsonWriter.write(value: T?) {
         name("kind")
         moshi.adapter(RedditKind::class.java)
-            .toJson(this, RedditKind.values().find { it.derivedClass == T::class.java })
+          .toJson(this, RedditKind.values().find { it.derivedClass == T::class.java })
         name("data")
         moshi.adapter(T::class.java).toJson(this, value)
       }

@@ -60,7 +60,7 @@ internal class RingBuffer<T>(val capacity: Int) : AbstractList<T>(), RandomAcces
   @Suppress("UNCHECKED_CAST")
   override fun <T> toArray(array: Array<T>): Array<T> {
     val result: Array<T?> =
-        if (array.size < this.size) array.copyOf(this.size) else array as Array<T?>
+      if (array.size < this.size) array.copyOf(this.size) else array as Array<T?>
 
     val size = this.size
 

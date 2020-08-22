@@ -122,12 +122,14 @@ class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBindin
     }
 
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentOrderServicesBinding =
-      FragmentOrderServicesBinding::inflate
+    FragmentOrderServicesBinding::inflate
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    outState.putStringArrayList("pendingChanges",
-        pendingChanges?.mapTo(ArrayList(), ServiceMeta::id))
+    outState.putStringArrayList(
+      "pendingChanges",
+      pendingChanges?.mapTo(ArrayList(), ServiceMeta::id)
+    )
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -146,9 +148,10 @@ class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBindin
 
     val currentItemsSorted = serviceMetas.values.sortedBy { displayOrder.indexOf(it.id) }
     val adapter = Adapter(
-        // Use a day context since this is like the tablayout UI
-        recyclerView.context.asDayContext(),
-        currentItemsSorted) { newItemOrder ->
+      // Use a day context since this is like the tablayout UI
+      recyclerView.context.asDayContext(),
+      currentItemsSorted
+    ) { newItemOrder ->
       pendingChanges = if (newItemOrder != currentItemsSorted) {
         newItemOrder
       } else {
@@ -157,7 +160,8 @@ class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBindin
     }
     recyclerView.adapter = adapter
     savedInstanceState?.getParcelable<Parcelable>("orderServicesState")?.let(
-        lm::onRestoreInstanceState)
+      lm::onRestoreInstanceState
+    )
     toolbar.apply {
       setNavigationIcon(R.drawable.ic_arrow_back_black_24dp)
       setNavigationOnClickListener {
@@ -184,44 +188,50 @@ class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBindin
 
     val primaryColor = ContextCompat.getColor(save.context, R.color.colorPrimary)
     val textColor = save.context.resolveAttributeColor(android.R.attr.textColorPrimary)
-    syllabus.showIfNeverSeen(catchUpPreferences::servicesOrderSeen.name,
-        TargetRequest(
-            target = {
-              FabShowTapTarget(delegateTarget = { TapTarget.forView(save, "", "") },
-                  fab = save,
-                  title = save.resources.getString(R.string.pref_reorder_services),
-                  description = save.resources.getString(
-                      R.string.pref_order_services_description))
-                  .outerCircleColorInt(primaryColor)
-                  .outerCircleAlpha(0.96f)
-                  .titleTextColorInt(textColor)
-                  .descriptionTextColorInt(
-                      ColorUtils.modifyAlpha(textColor, 0.2f))
-                  .targetCircleColorInt(textColor)
-                  .transparentTarget(true)
-                  .drawShadow(true)
-                  .id("Save")
-                  .apply { fontHelper.getFont()?.let(::textTypeface) }
-            },
-            postDisplay = save::hide
-        ))
+    syllabus.showIfNeverSeen(
+      catchUpPreferences::servicesOrderSeen.name,
+      TargetRequest(
+        target = {
+          FabShowTapTarget(
+            delegateTarget = { TapTarget.forView(save, "", "") },
+            fab = save,
+            title = save.resources.getString(R.string.pref_reorder_services),
+            description = save.resources.getString(
+              R.string.pref_order_services_description
+            )
+          )
+            .outerCircleColorInt(primaryColor)
+            .outerCircleAlpha(0.96f)
+            .titleTextColorInt(textColor)
+            .descriptionTextColorInt(
+              ColorUtils.modifyAlpha(textColor, 0.2f)
+            )
+            .targetCircleColorInt(textColor)
+            .transparentTarget(true)
+            .drawShadow(true)
+            .id("Save")
+            .apply { fontHelper.getFont()?.let(::textTypeface) }
+        },
+        postDisplay = save::hide
+      )
+    )
   }
 
   override fun onBackPressed(): Boolean {
     if (pendingChanges != null) {
       AlertDialog.Builder(save.context)
-          .setTitle(R.string.pending_changes_title)
-          .setMessage(R.string.pending_changes_message)
-          .setNeutralButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
-          .setPositiveButton(R.string.dontsave) { dialog, _ ->
-            dialog.dismiss()
-            activity?.finish()
-          }
-          .setNegativeButton(R.string.save) { dialog, _ ->
-            dialog.dismiss()
-            save.performClick()
-          }
-          .show()
+        .setTitle(R.string.pending_changes_title)
+        .setMessage(R.string.pending_changes_message)
+        .setNeutralButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
+        .setPositiveButton(R.string.dontsave) { dialog, _ ->
+          dialog.dismiss()
+          activity?.finish()
+        }
+        .setNegativeButton(R.string.save) { dialog, _ ->
+          dialog.dismiss()
+          save.performClick()
+        }
+        .show()
       return true
     }
     activity?.finish()
@@ -244,19 +254,21 @@ private class Adapter(
   fun shuffle() {
     val current = items.toList()
     items.shuffle()
-    DiffUtil.calculateDiff(object : Callback() {
-      override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return current[oldItemPosition].id == items[newItemPosition].id
+    DiffUtil.calculateDiff(
+      object : Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+          return current[oldItemPosition].id == items[newItemPosition].id
+        }
+
+        override fun getOldListSize() = current.size
+
+        override fun getNewListSize() = items.size
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+          return current[oldItemPosition] == items[newItemPosition]
+        }
       }
-
-      override fun getOldListSize() = current.size
-
-      override fun getNewListSize() = items.size
-
-      override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return current[oldItemPosition] == items[newItemPosition]
-      }
-    }).dispatchUpdatesTo(this)
+    ).dispatchUpdatesTo(this)
     changeListener(items)
   }
 
@@ -265,8 +277,11 @@ private class Adapter(
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-    val itemView = LayoutInflater.from(context).inflate(R.layout.order_services_item, parent,
-        false)
+    val itemView = LayoutInflater.from(context).inflate(
+      R.layout.order_services_item,
+      parent,
+      false
+    )
     return Holder(itemView)
   }
 
@@ -297,13 +312,16 @@ private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
   private val title = binding.title
   private val icon = binding.icon
   private val raise = itemView.resources.getDimensionPixelSize(R.dimen.touch_raise).toFloat()
-  private val elevationAnimator = AnimatorInflater.loadStateListAnimator(itemView.context,
-      R.animator.raise)
+  private val elevationAnimator = AnimatorInflater.loadStateListAnimator(
+    itemView.context,
+    R.animator.raise
+  )
 
   fun bind(meta: ServiceMeta) {
     title.setText(meta.name)
     container.setBackgroundColor(
-        ContextCompat.getColor(title.context, meta.themeColor))
+      ContextCompat.getColor(title.context, meta.themeColor)
+    )
     icon.setImageResource(meta.icon)
   }
 
@@ -320,7 +338,9 @@ private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 private class MoveCallback(
   private val callback: (Int, Int) -> Unit
 ) : ItemTouchHelper.SimpleCallback(
-    ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+  ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+  0
+) {
   override fun onMove(
     recyclerView: RecyclerView,
     viewHolder: ViewHolder,
@@ -371,8 +391,12 @@ private class FabShowTapTarget(
   override fun bounds(): Rect {
     val location = IntArray(2)
     fab.getLocationOnScreen(location)
-    return Rect(location[0], location[1],
-        location[0] + fab.width, location[1] + fab.height)
+    return Rect(
+      location[0],
+      location[1],
+      location[0] + fab.width,
+      location[1] + fab.height
+    )
   }
 
   override fun onReady(runnable: Runnable) {
@@ -380,11 +404,13 @@ private class FabShowTapTarget(
       if (fab.isShown) {
         delegateTarget().onReady(runnable)
       } else {
-        fab.show(object : OnVisibilityChangedListener() {
-          override fun onShown(fab: FloatingActionButton) {
-            delegateTarget().onReady(runnable)
+        fab.show(
+          object : OnVisibilityChangedListener() {
+            override fun onShown(fab: FloatingActionButton) {
+              delegateTarget().onReady(runnable)
+            }
           }
-        })
+        )
       }
     }
   }

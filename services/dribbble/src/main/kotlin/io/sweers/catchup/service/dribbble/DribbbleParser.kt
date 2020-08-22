@@ -39,72 +39,74 @@ internal object DribbbleParser {
 
   fun parse(body: ResponseBody): List<Shot> {
     val shotElements = Jsoup.parse(body.string(), ENDPOINT)
-        .select("li[id^=screenshot]")
+      .select("li[id^=screenshot]")
     return shotElements.mapNotNull(::parseShot)
   }
 
   private fun parseShot(element: Element): Shot? {
     val descriptionBlock = element.select("a.dribbble-over")
-        .first()
+      .first()
     // API responses wrap description in a <p> tag. Do the same for consistent display.
     var description = descriptionBlock.select("span.comment")
-        .text()
-        .trim { it <= ' ' }
+      .text()
+      .trim { it <= ' ' }
     if (!TextUtils.isEmpty(description)) {
       description = "<p>$description</p>"
     }
     var imgUrl = element.select("img")
-        .first()
-        .attr("src")
+      .first()
+      .attr("src")
     if (imgUrl.contains("_teaser.")) {
       imgUrl = imgUrl.replace("_teaser.", ".")
     }
     val createdAt: Instant = try {
-      DATE_FORMAT.parse(descriptionBlock.select("em.timestamp")
+      DATE_FORMAT.parse(
+        descriptionBlock.select("em.timestamp")
           .first()
           .text(),
-          Instant::from)
+        Instant::from
+      )
     } catch (e2: Exception) {
       Instant.now()
     }
 
     val isAnimated = imgUrl.endsWith(".gif")
     return Shot(
-        id = element.id().replace("screenshot-", "").toLong(),
-        htmlUrl = "$ENDPOINT${element.select("a.dribbble-link").first().attr("href")}",
-        title = descriptionBlock.select("strong").first().text(),
-        description = description,
-        images = Images(null, if (isAnimated) imgUrl.replace("_1x", "") else imgUrl),
-        animated = isAnimated,
-        createdAt = createdAt,
-        likesCount = element.select("li.fav")
-            .first()
-            .child(0)
-            .text()
-            .replace(",", "")
-            .toLong(),
-        commentsCount = element.select("li.cmnt")
-            .first()
-            .child(0)
-            .text()
-            .replace(",", "")
-            .toLong(),
-        viewsCount = element.select("li.views")
-            .first()
-            .child(0)
-            .text()
-            .replace(",", "")
-            .toLong(),
-        user = parsePlayer(element)
+      id = element.id().replace("screenshot-", "").toLong(),
+      htmlUrl = "$ENDPOINT${element.select("a.dribbble-link").first().attr("href")}",
+      title = descriptionBlock.select("strong").first().text(),
+      description = description,
+      images = Images(null, if (isAnimated) imgUrl.replace("_1x", "") else imgUrl),
+      animated = isAnimated,
+      createdAt = createdAt,
+      likesCount = element.select("li.fav")
+        .first()
+        .child(0)
+        .text()
+        .replace(",", "")
+        .toLong(),
+      commentsCount = element.select("li.cmnt")
+        .first()
+        .child(0)
+        .text()
+        .replace(",", "")
+        .toLong(),
+      viewsCount = element.select("li.views")
+        .first()
+        .child(0)
+        .text()
+        .replace(",", "")
+        .toLong(),
+      user = parsePlayer(element)
     )
   }
 
   private fun parsePlayer(element: Element): User {
     val userBlock = element.select("a.url")
-        .first()
+      .first()
     var avatarUrl = userBlock.select("img.photo")
-        .first()
-        .attr("src")
+      .first()
+      .attr("src")
     if (avatarUrl.contains("/mini/")) {
       avatarUrl = avatarUrl.replace("/mini/", "/normal/")
     }
@@ -118,12 +120,12 @@ internal object DribbbleParser {
     val slashUsername = userBlock.attr("href")
     val username = if (slashUsername.isEmpty()) null else slashUsername.substring(1)
     return User(
-        id = id,
-        name = userBlock.text(),
-        username = username,
-        htmlUrl = "$ENDPOINT$slashUsername",
-        avatarUrl = avatarUrl,
-        pro = element.select("span.badge-pro").size > 0
+      id = id,
+      name = userBlock.text(),
+      username = username,
+      htmlUrl = "$ENDPOINT$slashUsername",
+      avatarUrl = avatarUrl,
+      pro = element.select("span.badge-pro").size > 0
     )
   }
 }

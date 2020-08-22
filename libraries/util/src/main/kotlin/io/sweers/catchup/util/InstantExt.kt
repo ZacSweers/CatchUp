@@ -32,7 +32,7 @@ import java.time.OffsetDateTime
 inline fun String.parsePossiblyOffsetInstant(): Instant {
   return if (!endsWith("Z")) {
     OffsetDateTime.parse(this)
-        .toInstant()
+      .toInstant()
   } else {
     Instant.parse(this)
   }

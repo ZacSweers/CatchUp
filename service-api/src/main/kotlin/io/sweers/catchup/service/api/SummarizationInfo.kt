@@ -46,23 +46,25 @@ data class SummarizationInfo(
       }
 
       if (url.endsWith(".png") ||
-          url.endsWith(".gifv") ||
-          url.endsWith(".jpg") ||
-          url.endsWith(".jpeg")) {
+        url.endsWith(".gifv") ||
+        url.endsWith(".jpg") ||
+        url.endsWith(".jpeg")
+      ) {
         return false
       }
 
       url.toHttpUrlOrNull()?.let {
         it.host.let {
           if ("imgur" in it ||
-              "streamable" in it ||
-              "gfycat" in it ||
-              "i.reddit" in it ||
-              "v.reddit" in it ||
-              "twitter.com" in it ||
-              "t.co" in it ||
-              "youtube" in it ||
-              "youtu.be" in it)
+            "streamable" in it ||
+            "gfycat" in it ||
+            "i.reddit" in it ||
+            "v.reddit" in it ||
+            "twitter.com" in it ||
+            "t.co" in it ||
+            "youtube" in it ||
+            "youtu.be" in it
+          )
             return false
         }
       }

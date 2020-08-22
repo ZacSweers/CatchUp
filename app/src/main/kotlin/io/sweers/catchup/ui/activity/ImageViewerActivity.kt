@@ -45,9 +45,9 @@ import androidx.core.animation.addListener
 import androidx.core.transition.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import coil.Coil
-import coil.bitmappool.BitmapPool
+import coil.bitmap.BitmapPool
 import coil.request.CachePolicy
-import coil.request.LoadRequest
+import coil.request.ImageRequest
 import coil.size.Precision
 import coil.size.Scale
 import coil.size.Size
@@ -159,36 +159,39 @@ class ImageViewerActivity : AppCompatActivity() {
     val transition: Transition? = window.sharedElementEnterTransition
     if (transition != null) {
       transition.addListener(
-          onEnd = {
-            isTransitionEnded = true
-            pendingImage?.let(imageView::setImageDrawable)
-          }
+        onEnd = {
+          isTransitionEnded = true
+          pendingImage?.let(imageView::setImageDrawable)
+        }
       )
     } else {
       isTransitionEnded = true
     }
 
-    Coil.execute(LoadRequest.Builder(this).data(url).apply {
-      cacheKey?.let(this::key)
-      precision(Precision.EXACT)
-      size(ViewSizeResolver(imageView))
-      scale(Scale.FILL)
+    Coil.enqueue(
+      ImageRequest.Builder(this).data(url).apply {
+        cacheKey?.let(this::memoryCacheKey)
+        precision(Precision.EXACT)
+        size(ViewSizeResolver(imageView))
+        scale(Scale.FILL)
 
-      // Don't cache this to avoid pushing other bitmaps out of the cache.
-      memoryCachePolicy(CachePolicy.READ_ONLY)
+// Don't cache this to avoid pushing other bitmaps out of the cache.
+        memoryCachePolicy(CachePolicy.READ_ONLY)
 
-      // Crossfade in the higher res version when it arrives
-      // ...hopefully
-      crossfade(true)
+// Crossfade in the higher res version when it arrives
+// ...hopefully
+        crossfade(true)
 
-      // Adding a 1px transparent border improves anti-aliasing
-      // when the image rotates while being dragged.
-      transformations(CoilPaddingTransformation(
-          paddingPx = 1F,
-          paddingColor = Color.TRANSPARENT
-      ))
+// Adding a 1px transparent border improves anti-aliasing
+// when the image rotates while being dragged.
+        transformations(
+          CoilPaddingTransformation(
+            paddingPx = 1F,
+            paddingColor = Color.TRANSPARENT
+          )
+        )
 
-      target(
+        target(
           onStart = imageView::setImageDrawable,
           onSuccess = {
             if (isTransitionEnded) {
@@ -197,8 +200,9 @@ class ImageViewerActivity : AppCompatActivity() {
               pendingImage = it
             }
           }
-      )
-    }.build())
+        )
+      }.build()
+    )
 
     activityBackgroundDrawable = rootLayout.background
     rootLayout.background = activityBackgroundDrawable
@@ -225,11 +229,11 @@ class ImageViewerActivity : AppCompatActivity() {
       override fun onFlickDismiss(flickAnimationDuration: Long) {
         window.sharedElementReturnTransition.let { originalTransition ->
           window.sharedElementReturnTransition = TransitionSet()
-              .addTransition(originalTransition)
-              .addTransition(FlickDismissRotate(imageView, flickDismissLayout))
-              .addTarget(R.id.image)
-              .setDuration(originalTransition.duration)
-              .setInterpolator(originalTransition.interpolator)
+            .addTransition(originalTransition)
+            .addTransition(FlickDismissRotate(imageView, flickDismissLayout))
+            .addTarget(R.id.image)
+            .setDuration(originalTransition.duration)
+            .setInterpolator(originalTransition.interpolator)
         }
         if (id == null) {
           animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, flickAnimationDuration) {
@@ -248,9 +252,9 @@ class ImageViewerActivity : AppCompatActivity() {
     }
 
     val gestureListener = FlickGestureListener(
-        context = this,
-        contentSizeProvider = contentSizeProvider,
-        flickCallbacks = callbacks
+      context = this,
+      contentSizeProvider = contentSizeProvider,
+      flickCallbacks = callbacks
     )
 
     // Block flick gestures if the image can pan further.
@@ -301,9 +305,9 @@ class ImageViewerActivity : AppCompatActivity() {
 
 private fun Context.dip(units: Int): Int {
   return TypedValue.applyDimension(
-      COMPLEX_UNIT_DIP,
-      units.toFloat(),
-      resources.displayMetrics
+    COMPLEX_UNIT_DIP,
+    units.toFloat(),
+    resources.displayMetrics
   ).toInt()
 }
 
@@ -322,8 +326,11 @@ private class CoilPaddingTransformation(
     val targetWidth = input.width + paddingPx * 2F
     val targetHeight = input.height + paddingPx * 2F
 
-    val bitmapWithPadding = pool.get(targetWidth.toInt(), targetHeight.toInt(),
-        Bitmap.Config.ARGB_8888)
+    val bitmapWithPadding = pool.get(
+      targetWidth.toInt(),
+      targetHeight.toInt(),
+      Bitmap.Config.ARGB_8888
+    )
     val canvas = Canvas(bitmapWithPadding)
 
     val paint = Paint()
@@ -399,9 +406,9 @@ class FlickDismissRotate(
       val finalScaleY = endValues.values[PROPNAME_SCALE_Y] as Double
       return AnimatorSet().apply {
         playTogether(
-            ObjectAnimator.ofFloat(view, View.ROTATION, rotation, delta),
-            ObjectAnimator.ofFloat(view, View.SCALE_X, view.scaleX, finalScaleX.toFloat()),
-            ObjectAnimator.ofFloat(view, View.SCALE_Y, view.scaleY, finalScaleY.toFloat())
+          ObjectAnimator.ofFloat(view, View.ROTATION, rotation, delta),
+          ObjectAnimator.ofFloat(view, View.SCALE_X, view.scaleX, finalScaleX.toFloat()),
+          ObjectAnimator.ofFloat(view, View.SCALE_Y, view.scaleY, finalScaleY.toFloat())
         )
       }
     }

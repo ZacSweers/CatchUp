@@ -32,25 +32,25 @@ inline fun Palette.orderedSwatches(
   @FloatRange(from = 0.0, to = 1.0) lightAlpha: Float
 ): List<Pair<Swatch, Float>> {
   return listOfNotNull(
-      vibrantSwatch?.let { it to darkAlpha },
-      lightVibrantSwatch?.let { it to lightAlpha },
-      darkVibrantSwatch?.let { it to darkAlpha },
-      mutedSwatch?.let { it to darkAlpha },
-      lightMutedSwatch?.let { it to lightAlpha },
-      darkMutedSwatch?.let { it to darkAlpha }
+    vibrantSwatch?.let { it to darkAlpha },
+    lightVibrantSwatch?.let { it to lightAlpha },
+    darkVibrantSwatch?.let { it to darkAlpha },
+    mutedSwatch?.let { it to darkAlpha },
+    lightMutedSwatch?.let { it to lightAlpha },
+    darkMutedSwatch?.let { it to darkAlpha }
   )
 }
 
 inline fun Palette.findSwatch(predicate: (Swatch) -> Boolean): Swatch? {
   return listOfNotNull(
-      darkVibrantSwatch,
-      lightMutedSwatch,
-      vibrantSwatch,
-      mutedSwatch,
-      lightVibrantSwatch,
-      darkMutedSwatch
+    darkVibrantSwatch,
+    lightMutedSwatch,
+    vibrantSwatch,
+    mutedSwatch,
+    lightVibrantSwatch,
+    darkMutedSwatch
   )
-      .firstOrNull(predicate)
+    .firstOrNull(predicate)
 }
 
 suspend fun Palette.Builder.generateAsync(): Palette? = withContext(Dispatchers.Default) {

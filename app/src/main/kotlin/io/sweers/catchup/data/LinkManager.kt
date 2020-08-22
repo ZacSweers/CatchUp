@@ -75,8 +75,8 @@ class LinkManager @Inject constructor(
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED)
     activity.lifecycleScope.launch {
       activity.intentReceivers(filter)
-          .mergeWith(catchUpPreferences.flowFor { ::smartlinkingGlobal })
-          .collect { dumbCache.clear() }
+        .mergeWith(catchUpPreferences.flowFor { ::smartlinkingGlobal })
+        .collect { dumbCache.clear() }
     }
   }
 
@@ -117,7 +117,7 @@ class LinkManager @Inject constructor(
     }
     val uri = meta.uri ?: run {
       Toast.makeText(meta.context, R.string.error_no_url, Toast.LENGTH_SHORT)
-          .show()
+        .show()
       return
     }
     val intent = Intent(Intent.ACTION_VIEW, meta.uri)
@@ -136,21 +136,33 @@ class LinkManager @Inject constructor(
   }
 
   private fun getActivityOptions(imageData: ImageViewerData): ActivityOptions {
-    val imagePair = (imageData.image to activity.getString(
-        R.string.transition_image)).toAndroidPair()
+    val imagePair = (
+      imageData.image to activity.getString(
+        R.string.transition_image
+      )
+      ).toAndroidPair()
     val decorView = activity.window.decorView
     val statusBackground: View = decorView.findViewById(android.R.id.statusBarBackground)
     val navBackground: View? = decorView.findViewById(android.R.id.navigationBarBackground)
-    val statusPair = Pair(statusBackground,
-        statusBackground.transitionName).toAndroidPair()
+    val statusPair = Pair(
+      statusBackground,
+      statusBackground.transitionName
+    ).toAndroidPair()
 
     return if (navBackground == null) {
-      ActivityOptions.makeSceneTransitionAnimation(activity,
-          imagePair, statusPair)
+      ActivityOptions.makeSceneTransitionAnimation(
+        activity,
+        imagePair,
+        statusPair
+      )
     } else {
       val navPair = Pair(navBackground, navBackground.transitionName).toAndroidPair()
-      ActivityOptions.makeSceneTransitionAnimation(activity,
-          imagePair, statusPair, navPair)
+      ActivityOptions.makeSceneTransitionAnimation(
+        activity,
+        imagePair,
+        statusPair,
+        navPair
+      )
     }
   }
 
@@ -162,12 +174,14 @@ class LinkManager @Inject constructor(
   ) {
     val manager = context.packageManager
     val matchedUri = flow {
-      manager.queryIntentActivities(intent,
-          PackageManager.MATCH_DEFAULT_ONLY).forEach {
+      manager.queryIntentActivities(
+        intent,
+        PackageManager.MATCH_DEFAULT_ONLY
+      ).forEach {
         emit(it)
       }
     }.flowOn(Dispatchers.IO)
-        .any { resolveInfo -> isSpecificUriMatch(resolveInfo.match) }
+      .any { resolveInfo -> isSpecificUriMatch(resolveInfo.match) }
 
     if (matchedUri) {
       dumbCache[uri.host] = true
@@ -186,16 +200,18 @@ class LinkManager @Inject constructor(
     } else {
       CustomTabsIntent.COLOR_SCHEME_LIGHT
     }
-    customTab.openCustomTab(context,
-        customTab.customTabIntent
-            .applyIf(appConfig.sdkInt < 29) {
-              // I like the Q animations, so don't override these there 😬
-              setStartAnimations(context, R.anim.slide_up, R.anim.inset)
-              setExitAnimations(context, R.anim.outset, R.anim.slide_down)
-            }
-            .setColorScheme(colorScheme)
-            .setToolbarColor(accentColor)
-            .build(),
-        uri)
+    customTab.openCustomTab(
+      context,
+      customTab.customTabIntent
+        .applyIf(appConfig.sdkInt < 29) {
+          // I like the Q animations, so don't override these there 😬
+          setStartAnimations(context, R.anim.slide_up, R.anim.inset)
+          setExitAnimations(context, R.anim.outset, R.anim.slide_down)
+        }
+        .setColorScheme(colorScheme)
+        .setToolbarColor(accentColor)
+        .build(),
+      uri
+    )
   }
 }

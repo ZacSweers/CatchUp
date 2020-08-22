@@ -43,7 +43,8 @@ internal class BugsnagTree : Timber.Tree() {
   private val buffer = ArrayDeque<String>(BUFFER_SIZE + 1)
 
   override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-    val adjustedMessage = """${System.currentTimeMillis()} ${priorityToString(priority)} $message"""
+    val adjustedMessage =
+      """${System.currentTimeMillis()} ${priorityToString(priority)} $message"""
     synchronized(buffer) {
       buffer.addLast(adjustedMessage)
       if (buffer.size > BUFFER_SIZE) {

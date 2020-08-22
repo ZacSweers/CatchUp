@@ -36,9 +36,9 @@ data class AuthInterceptor(
   @Throws(IOException::class)
   override fun intercept(chain: Interceptor.Chain): Response {
     val request = chain.request()
-        .newBuilder()
-        .addHeader("Authorization", "$method $accessToken")
-        .build()
+      .newBuilder()
+      .addHeader("Authorization", "$method $accessToken")
+      .build()
     return chain.proceed(request)
   }
 }

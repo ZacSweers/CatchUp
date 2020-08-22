@@ -40,9 +40,9 @@ import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import okhttp3.OkHttpClient
-import java.time.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -61,27 +61,27 @@ internal class SlashdotService @Inject constructor(
 
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     return service.main()
-        .map(Feed::itemList)
-        .flattenAsObservable { it }
-        .map { (title, id, _, summary, updated, section, comments, author, department) ->
-          CatchUpItem(
-              id = id.hashCode().toLong(),
-              title = title,
-              score = null,
-              timestamp = updated,
-              author = author.name,
-              source = department,
-              tag = section,
-              itemClickUrl = id,
-              summarizationInfo = SummarizationInfo(summary.substringBefore("<p>"), NONE),
-              mark = createCommentMark(
-                  count = comments,
-                  clickUrl = "$id#comments"
-              )
+      .map(Feed::itemList)
+      .flattenAsObservable { it }
+      .map { (title, id, _, summary, updated, section, comments, author, department) ->
+        CatchUpItem(
+          id = id.hashCode().toLong(),
+          title = title,
+          score = null,
+          timestamp = updated,
+          author = author.name,
+          source = department,
+          tag = section,
+          itemClickUrl = id,
+          summarizationInfo = SummarizationInfo(summary.substringBefore("<p>"), NONE),
+          mark = createCommentMark(
+            count = comments,
+            clickUrl = "$id#comments"
           )
-        }
-        .toList()
-        .map { DataResult(it, null) }
+        )
+      }
+      .toList()
+      .map { DataResult(it, null) }
   }
 }
 
@@ -101,11 +101,11 @@ abstract class SlashdotMetaModule {
     @Reusable
     @InternalApi
     internal fun provideSlashdotServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.slashdot,
-        R.color.slashdotAccent,
-        R.drawable.logo_sd,
-        firstPageKey = "main"
+      SERVICE_KEY,
+      R.string.slashdot,
+      R.color.slashdotAccent,
+      R.drawable.logo_sd,
+      firstPageKey = "main"
     )
   }
 }
@@ -123,23 +123,23 @@ abstract class SlashdotModule {
 
     @Provides
     internal fun provideTikXml(): TikXml = TikXml.Builder()
-        .exceptionOnUnreadXml(false)
-        .addTypeConverter(Instant::class.java, InstantTypeConverter())
-        .build()
+      .exceptionOnUnreadXml(false)
+      .addTypeConverter(Instant::class.java, InstantTypeConverter())
+      .build()
 
     @Provides
     @InternalApi
     internal fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
       return okHttpClient.newBuilder()
-          .addNetworkInterceptor { chain ->
-            val originalResponse = chain.proceed(chain.request())
-            // read from cache for 30 minutes, per slashdot's preferred limit
-            val maxAge = 60 * 30
-            originalResponse.newBuilder()
-                .header("Cache-Control", "public, max-age=$maxAge")
-                .build()
-          }
-          .build()
+        .addNetworkInterceptor { chain ->
+          val originalResponse = chain.proceed(chain.request())
+          // read from cache for 30 minutes, per slashdot's preferred limit
+          val maxAge = 60 * 30
+          originalResponse.newBuilder()
+            .header("Cache-Control", "public, max-age=$maxAge")
+            .build()
+        }
+        .build()
     }
 
     @Provides
@@ -150,11 +150,11 @@ abstract class SlashdotModule {
       appConfig: AppConfig
     ): SlashdotApi {
       val retrofit = Retrofit.Builder().baseUrl(SlashdotApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(TikXmlConverterFactory.create(tikXml))
-          .validateEagerly(appConfig.isDebug)
-          .build()
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(TikXmlConverterFactory.create(tikXml))
+        .validateEagerly(appConfig.isDebug)
+        .build()
       return retrofit.create(SlashdotApi::class.java)
     }
   }

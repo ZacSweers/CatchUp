@@ -122,8 +122,12 @@ class CatchUpItemViewHolder(
 
   fun title(titleText: CharSequence?) {
     title.setTextFuture(
-        PrecomputedTextCompat.getTextFuture(titleText ?: "",
-            TextViewCompat.getTextMetricsParams(title), null))
+      PrecomputedTextCompat.getTextFuture(
+        titleText ?: "",
+        TextViewCompat.getTextMetricsParams(title),
+        null
+      )
+    )
   }
 
   fun score(scoreValue: Pair<String, Int>?) {
@@ -140,16 +144,16 @@ class CatchUpItemViewHolder(
 
   private fun updateDividerVisibility() {
     val numVisible = arrayOf(score, tag, timestamp)
-        .asSequence()
-        .map { (it to it.text.isBlank()) }
-        .onEach { (view, isBlank) ->
-          if (isBlank) {
-            view.hide()
-          } else {
-            view.show()
-          }
+      .asSequence()
+      .map { (it to it.text.isBlank()) }
+      .onEach { (view, isBlank) ->
+        if (isBlank) {
+          view.hide()
+        } else {
+          view.show()
         }
-        .count { (_, isBlank) -> !isBlank }
+      }
+      .count { (_, isBlank) -> !isBlank }
     tagsContainer showIf (numVisible > 0)
     when (numVisible) {
       0, 1 -> {
@@ -183,10 +187,12 @@ class CatchUpItemViewHolder(
 
   private fun timestamp(date: Long?) {
     timestamp.text = date?.let {
-      DateUtils.getRelativeTimeSpanString(it,
-          System.currentTimeMillis(),
-          0L,
-          DateUtils.FORMAT_ABBREV_ALL)
+      DateUtils.getRelativeTimeSpanString(
+        it,
+        System.currentTimeMillis(),
+        0L,
+        DateUtils.FORMAT_ABBREV_ALL
+      )
     }
     updateDividerVisibility()
   }
@@ -241,10 +247,12 @@ class CatchUpItemViewHolder(
     }
 
     sourceMark.icon?.let { color ->
-      mark.setCompoundDrawablesWithIntrinsicBounds(null,
-          AppCompatResources.getDrawable(mark.context, color),
-          null,
-          null)
+      mark.setCompoundDrawablesWithIntrinsicBounds(
+        null,
+        AppCompatResources.getDrawable(mark.context, color),
+        null,
+        null
+      )
 
       tintMark(sourceMark.iconTintColor ?: score.currentTextColor)
     }

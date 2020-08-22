@@ -59,30 +59,30 @@ internal class DribbbleService @Inject constructor(
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
     return api.getPopular(page, 50)
-        .flattenAsObservable { it }
-        .map {
-          CatchUpItem(
-              id = it.id,
-              title = "",
-              score = "+" to it.likesCount.toInt(),
-              timestamp = it.createdAt,
-              author = "/u/" + it.user.name,
-              source = null,
-              tag = null,
-              itemClickUrl = it.images.best(),
-              imageInfo = ImageInfo(
-                  it.images.normal,
-                  it.images.best(true),
-                  it.animated,
-                  it.htmlUrl,
-                  it.images.bestSize(),
-                  it.id.toString()
-              ),
-              mark = createCommentMark(count = it.commentsCount.toInt())
-          )
-        }
-        .toList()
-        .map { DataResult(it, (page + 1).toString()) }
+      .flattenAsObservable { it }
+      .map {
+        CatchUpItem(
+          id = it.id,
+          title = "",
+          score = "+" to it.likesCount.toInt(),
+          timestamp = it.createdAt,
+          author = "/u/" + it.user.name,
+          source = null,
+          tag = null,
+          itemClickUrl = it.images.best(),
+          imageInfo = ImageInfo(
+            it.images.normal,
+            it.images.best(true),
+            it.animated,
+            it.htmlUrl,
+            it.images.bestSize(),
+            it.id.toString()
+          ),
+          mark = createCommentMark(count = it.commentsCount.toInt())
+        )
+      }
+      .toList()
+      .map { DataResult(it, (page + 1).toString()) }
   }
 }
 
@@ -102,13 +102,13 @@ abstract class DribbbleMetaModule {
     @Provides
     @Reusable
     internal fun provideDribbbleServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.dribbble,
-        R.color.dribbbleAccent,
-        R.drawable.logo_dribbble,
-        isVisual = true,
-        pagesAreNumeric = true,
-        firstPageKey = "1"
+      SERVICE_KEY,
+      R.string.dribbble,
+      R.color.dribbbleAccent,
+      R.drawable.logo_dribbble,
+      isVisual = true,
+      pagesAreNumeric = true,
+      firstPageKey = "1"
     )
   }
 }
@@ -131,12 +131,12 @@ abstract class DribbbleModule {
       appConfig: AppConfig
     ): DribbbleApi {
       return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(DecodingConverter.newFactory(DribbbleParser::parse))
-          .validateEagerly(appConfig.isDebug)
-          .build()
-          .create(DribbbleApi::class.java)
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(DecodingConverter.newFactory(DribbbleParser::parse))
+        .validateEagerly(appConfig.isDebug)
+        .build()
+        .create(DribbbleApi::class.java)
     }
   }
 }

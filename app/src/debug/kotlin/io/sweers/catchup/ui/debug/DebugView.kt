@@ -67,7 +67,10 @@ class DebugView(
 ) : FrameLayout(context, attrs) {
   // Inflate all of the controls and inject them.
   private val binding = DebugViewContentBinding.inflate(
-      LayoutInflater.from(context), this, true)
+    LayoutInflater.from(context),
+    this,
+    true
+  )
   internal val icon = binding.debugIcon
   private val networkDelayView = binding.debugNetworkDelay
   private val networkVarianceView = binding.debugNetworkVariance
@@ -131,50 +134,57 @@ class DebugView(
 
     val delayAdapter = NetworkDelayAdapter(context)
     networkDelayView.adapter = delayAdapter
-    networkDelayView.setSelection(NetworkDelayAdapter.getPositionForValue(behavior.delay(
-        MILLISECONDS)))
+    networkDelayView.setSelection(
+      NetworkDelayAdapter.getPositionForValue(
+        behavior.delay(
+          MILLISECONDS
+        )
+      )
+    )
 
     viewScope().launch {
       networkDelayView.itemSelections()
-          .map { delayAdapter.getItem(it) }
-          .filter { item -> item != behavior.delay(MILLISECONDS) }
-          .collect { selected ->
-            d { "Setting network delay to ${selected}ms" }
-            behavior.setDelay(selected, MILLISECONDS)
-            debugPreferences.networkDelay = selected
-          }
+        .map { delayAdapter.getItem(it) }
+        .filter { item -> item != behavior.delay(MILLISECONDS) }
+        .collect { selected ->
+          d { "Setting network delay to ${selected}ms" }
+          behavior.setDelay(selected, MILLISECONDS)
+          debugPreferences.networkDelay = selected
+        }
     }
 
     val varianceAdapter = NetworkVarianceAdapter(context)
     networkVarianceView.adapter = varianceAdapter
     networkVarianceView.setSelection(
-        NetworkVarianceAdapter.getPositionForValue(behavior.variancePercent()))
+      NetworkVarianceAdapter.getPositionForValue(behavior.variancePercent())
+    )
 
     viewScope().launch {
       networkVarianceView.itemSelections()
-          .map { varianceAdapter.getItem(it) }
-          .filter { item -> item != behavior.variancePercent() }
-          .collect { selected ->
-            d { "Setting network variance to $selected%" }
-            behavior.setVariancePercent(selected)
-            debugPreferences.networkVariancePercent = selected
-          }
+        .map { varianceAdapter.getItem(it) }
+        .filter { item -> item != behavior.variancePercent() }
+        .collect { selected ->
+          d { "Setting network variance to $selected%" }
+          behavior.setVariancePercent(selected)
+          debugPreferences.networkVariancePercent = selected
+        }
     }
 
     val errorAdapter = NetworkErrorAdapter(context)
     networkErrorView.adapter = errorAdapter
     networkErrorView.setSelection(
-        NetworkErrorAdapter.getPositionForValue(behavior.failurePercent()))
+      NetworkErrorAdapter.getPositionForValue(behavior.failurePercent())
+    )
 
     viewScope().launch {
       networkErrorView.itemSelections()
-          .map { errorAdapter.getItem(it) }
-          .filter { item -> item != behavior.failurePercent() }
-          .collect { selected ->
-            d { "Setting network error to $selected%" }
-            behavior.setFailurePercent(selected)
-            debugPreferences.networkFailurePercent = selected
-          }
+        .map { errorAdapter.getItem(it) }
+        .filter { item -> item != behavior.failurePercent() }
+        .collect { selected ->
+          d { "Setting network error to $selected%" }
+          behavior.setFailurePercent(selected)
+          debugPreferences.networkFailurePercent = selected
+        }
     }
 
     if (!isMockMode) {
@@ -189,10 +199,10 @@ class DebugView(
     enableMockModeView.isChecked = debugPreferences.mockModeEnabled
     viewScope().launch {
       enableMockModeView.clicks()
-          .collect {
-            debugPreferences.mockModeEnabled = enableMockModeView.isChecked
-            context.restartApp()
-          }
+        .collect {
+          debugPreferences.mockModeEnabled = enableMockModeView.isChecked
+          context.restartApp()
+        }
     }
   }
 
@@ -201,17 +211,18 @@ class DebugView(
     uiAnimationSpeedView.adapter = speedAdapter
     val animationSpeedValue = animationSpeed
     uiAnimationSpeedView.setSelection(
-        AnimationSpeedAdapter.getPositionForValue(animationSpeedValue))
+      AnimationSpeedAdapter.getPositionForValue(animationSpeedValue)
+    )
 
     viewScope().launch {
       uiAnimationSpeedView.itemSelections()
-          .map { speedAdapter.getItem(it) }
-          .filter { item -> item != animationSpeed }
-          .collect { selected ->
-            d { "Setting animation speed to ${selected}x" }
-            animationSpeed = selected
-            applyAnimationSpeed(selected)
-          }
+        .map { speedAdapter.getItem(it) }
+        .filter { item -> item != animationSpeed }
+        .collect { selected ->
+          d { "Setting animation speed to ${selected}x" }
+          animationSpeed = selected
+          applyAnimationSpeed(selected)
+        }
     }
     // Ensure the animation speed value is always applied across app restarts.
     post { applyAnimationSpeed(animationSpeedValue) }
@@ -264,7 +275,7 @@ class DebugView(
 
   private fun setupDeviceSection() {
     val displayMetrics = context.resources
-        .displayMetrics
+      .displayMetrics
     val densityBucket = getDensityString(displayMetrics)
     deviceMakeView.text = Build.MANUFACTURER truncateAt 20
     deviceModelView.text = Build.MODEL truncateAt 20
@@ -290,8 +301,10 @@ class DebugView(
   @SuppressLint("DiscouragedPrivateApi")
   private fun applyAnimationSpeed(multiplier: Int) {
     try {
-      val method = ValueAnimator::class.java.getDeclaredMethod("setDurationScale",
-          Float::class.javaPrimitiveType)
+      val method = ValueAnimator::class.java.getDeclaredMethod(
+        "setDurationScale",
+        Float::class.javaPrimitiveType
+      )
       method.invoke(null, multiplier.toFloat())
     } catch (e: Exception) {
       throw RuntimeException("Unable to apply animation speed.", e)

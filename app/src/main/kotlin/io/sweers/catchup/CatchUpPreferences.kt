@@ -39,15 +39,16 @@ class CatchUpPreferences @Inject constructor(
   application: Application,
   sharedPreferences: SharedPreferences
 ) : KotprefModel(
-    contextProvider = object : ContextProvider {
-      override fun getApplicationContext(): Context = application
-    },
-    preferencesProvider = object : PreferencesProvider {
-      override fun get(context: Context, name: String, mode: Int): SharedPreferences {
-        return sharedPreferences
-      }
+  contextProvider = object : ContextProvider {
+    override fun getApplicationContext(): Context = application
+  },
+  preferencesProvider = object : PreferencesProvider {
+    override fun get(context: Context, name: String, mode: Int): SharedPreferences {
+      return sharedPreferences
     }
-), UiPreferences {
+  }
+),
+  UiPreferences {
 
   companion object {
     const val ITEM_KEY_ABOUT = "about"
@@ -69,20 +70,20 @@ class CatchUpPreferences @Inject constructor(
 fun <T, Model : KotprefModel> Model.flowFor(propertyResolver: Model.() -> KProperty0<T>): Flow<T> {
   val lazilyResolved by lazy(NONE) { propertyResolver() }
   return preferences.flowFor(
-      keyResolver = {
-        // With kotlin-reflect, we could get the key declared on the delegate
+    keyResolver = {
+      // With kotlin-reflect, we could get the key declared on the delegate
 //        (lazilyResolved.getDelegate() as PreferenceKey).key ?: lazilyResolved.name
-        lazilyResolved.name
-      },
-      valueResolver = {
-        lazilyResolved.get()
-      }
+      lazilyResolved.name
+    },
+    valueResolver = {
+      lazilyResolved.get()
+    }
   )
 }
 
 fun <T> SharedPreferences.flowFor(keyResolver: () -> String, valueResolver: () -> T): Flow<T> {
   return flowFor(keyResolver)
-      .map { valueResolver() }
+    .map { valueResolver() }
 }
 
 fun SharedPreferences.flowFor(targetKey: String): Flow<Unit> {

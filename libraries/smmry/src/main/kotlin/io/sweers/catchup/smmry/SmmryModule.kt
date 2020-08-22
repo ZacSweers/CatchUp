@@ -44,8 +44,8 @@ object SmmryModule {
   @ForSmmry
   internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
     return moshi.newBuilder()
-        .add(SmmryResponseFactory.getInstance())
-        .build()
+      .add(SmmryResponseFactory.getInstance())
+      .build()
   }
 
   @Provides
@@ -55,20 +55,22 @@ object SmmryModule {
     appConfig: AppConfig
   ): SmmryService {
     return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
-        .delegatingCallFactory(client)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .validateEagerly(appConfig.isDebug)
-        .build()
-        .create(SmmryService::class.java)
+      .delegatingCallFactory(client)
+      .addConverterFactory(MoshiConverterFactory.create(moshi))
+      .validateEagerly(appConfig.isDebug)
+      .build()
+      .create(SmmryService::class.java)
   }
 
   @Provides
   internal fun provideDatabase(context: Context): SmmryDatabase {
-    return Room.databaseBuilder(context.applicationContext,
-        SmmryDatabase::class.java,
-        "smmry.db")
-        .fallbackToDestructiveMigration()
-        .build()
+    return Room.databaseBuilder(
+      context.applicationContext,
+      SmmryDatabase::class.java,
+      "smmry.db"
+    )
+      .fallbackToDestructiveMigration()
+      .build()
   }
 
   @Provides

@@ -58,7 +58,7 @@ internal class NetworkVarianceAdapter(context: Context) : BindableAdapter<Int>(c
 
     fun getPositionForValue(value: Int): Int {
       return VALUES.indices.firstOrNull { VALUES[it] == value }
-          ?: 1 // Default to 40% if something changes.
+        ?: 1 // Default to 40% if something changes.
     }
   }
 }

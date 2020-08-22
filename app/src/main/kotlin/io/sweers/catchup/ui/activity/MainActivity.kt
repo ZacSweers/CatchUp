@@ -38,12 +38,12 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.databinding.ActivityMainBinding
 import io.sweers.catchup.edu.Syllabus
+import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.DetailDisplayer
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.ui.fragments.PagerFragment
 import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
@@ -79,12 +79,12 @@ class MainActivity : InjectingBaseActivity() {
     super.onCreate(savedInstanceState)
     syllabus.bind(this)
     lifecycle()
-        .doOnStart(linkManager) { connect(this@MainActivity) }
-        .doOnStart(customTab) { bindCustomTabsService(this@MainActivity) }
-        .doOnStop(customTab) { unbindCustomTabsService(this@MainActivity) }
-        .doOnDestroy(customTab) { connectionCallback = null }
-        .autoDispose(this)
-        .subscribe()
+      .doOnStart(linkManager) { connect(this@MainActivity) }
+      .doOnStart(customTab) { bindCustomTabsService(this@MainActivity) }
+      .doOnStop(customTab) { unbindCustomTabsService(this@MainActivity) }
+      .doOnDestroy(customTab) { connectionCallback = null }
+      .autoDispose(this)
+      .subscribe()
 
     val binding = viewContainer.inflateBinding(ActivityMainBinding::inflate)
     detailPage = binding.detailPage
@@ -123,13 +123,15 @@ class MainActivity : InjectingBaseActivity() {
         appConfig: AppConfig
       ): Map<String, Provider<Service>> {
         return services
-            .filter {
-              serviceMetas.getValue(it.key).enabled && sharedPreferences.getBoolean(
-                  serviceMetas.getValue(it.key).enabledPreferenceKey, true)
-            }
-            .mapValues { (_, value) ->
-              Provider { StorageBackedService(serviceDao, value.get(), appConfig) }
-            }
+          .filter {
+            serviceMetas.getValue(it.key).enabled && sharedPreferences.getBoolean(
+              serviceMetas.getValue(it.key).enabledPreferenceKey,
+              true
+            )
+          }
+          .mapValues { (_, value) ->
+            Provider { StorageBackedService(serviceDao, value.get(), appConfig) }
+          }
       }
     }
 
@@ -182,12 +184,14 @@ class MainActivityDetailDisplayer @Inject constructor(
   override fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit) {
     collapser?.invoke()
     collapser = null
-    detailPage.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
-      override fun onPageCollapsed() {
-        detailPage.removeStateChangeCallbacks(this)
-        collapser = null
+    detailPage.addStateChangeCallbacks(
+      object : SimplePageStateChangeCallbacks() {
+        override fun onPageCollapsed() {
+          detailPage.removeStateChangeCallbacks(this)
+          collapser = null
+        }
       }
-    })
+    )
     collapser = body(detailPage, mainActivity.supportFragmentManager)
   }
 
@@ -207,8 +211,8 @@ class MainActivityDetailDisplayer @Inject constructor(
     }
     irv.expandablePage = detailPage
     irv.tintPainter = TintPainter.uncoveredArea(
-        color = ContextCompat.getColor(irv.context, R.color.colorPrimary),
-        opacity = 0.65F
+      color = ContextCompat.getColor(irv.context, R.color.colorPrimary),
+      opacity = 0.65F
     )
     if (targetFragment is ScrollableContent) {
       detailPage.pullToCollapseInterceptor = { _, _, upwardPull ->

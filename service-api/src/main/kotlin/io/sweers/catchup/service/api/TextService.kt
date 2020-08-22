@@ -37,33 +37,35 @@ interface TextService : Service {
     val itemClickUrl = item.itemClickUrl ?: markClickUrl
     val finalMarkClickUrl = markClickUrl?.let { if (itemClickUrl == markClickUrl) null else it }
     holder.bind(
-        item = item,
-        itemClickHandler = itemClickUrl?.let { url ->
-          OnClickListener {
-            clicksChannel.offer(createUrlMeta(url, context))
-          }
-        },
-        markClickHandler = finalMarkClickUrl?.let { url ->
-          OnClickListener {
-            markClicksChannel.offer(createUrlMeta(url, context))
-          }
-        },
-        longClickHandler = item.summarizationInfo?.let {
-          OnLongClickListener {
-            // TODO
-            false
-          }
+      item = item,
+      itemClickHandler = itemClickUrl?.let { url ->
+        OnClickListener {
+          clicksChannel.offer(createUrlMeta(url, context))
         }
+      },
+      markClickHandler = finalMarkClickUrl?.let { url ->
+        OnClickListener {
+          markClicksChannel.offer(createUrlMeta(url, context))
+        }
+      },
+      longClickHandler = item.summarizationInfo?.let {
+        OnLongClickListener {
+          // TODO
+          false
+        }
+      }
     )
   }
 }
 
 private fun TextService.createUrlMeta(url: String, context: Context) = UrlMeta(
-    url = url,
-    // Use "day" accents as those are usually the "real" accent colors
-    accentColor = ContextCompat.getColor(
-        context.createConfigurationContext(
-            Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }),
-        meta().themeColor),
-    context = context
+  url = url,
+  // Use "day" accents as those are usually the "real" accent colors
+  accentColor = ContextCompat.getColor(
+    context.createConfigurationContext(
+      Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
+    ),
+    meta().themeColor
+  ),
+  context = context
 )

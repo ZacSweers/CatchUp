@@ -38,10 +38,10 @@ import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import okhttp3.OkHttpClient
-import java.time.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -61,29 +61,29 @@ internal class UplabsService @Inject constructor(
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
     return api.getPopular(page, 1)
-        .flattenAsObservable { it }
-        .map {
-          CatchUpItem(
-              id = it.id.hashCode().toLong(),
-              title = it.name,
-              score = "▲" to it.points,
-              timestamp = it.showcasedAt,
-              author = it.makerName,
-              source = it.label,
-              tag = it.category,
-              itemClickUrl = if (it.animated) it.animatedTeaserUrl else it.teaserUrl,
-              imageInfo = ImageInfo(
-                  url = if (it.animated) it.animatedTeaserUrl else it.teaserUrl,
-                  detailUrl = it.previewUrl, // Both animated and not are the preview url
-                  animatable = it.animated,
-                  sourceUrl = it.url,
-                  bestSize = null,
-                  imageId = it.id.toString()
-              )
+      .flattenAsObservable { it }
+      .map {
+        CatchUpItem(
+          id = it.id.hashCode().toLong(),
+          title = it.name,
+          score = "▲" to it.points,
+          timestamp = it.showcasedAt,
+          author = it.makerName,
+          source = it.label,
+          tag = it.category,
+          itemClickUrl = if (it.animated) it.animatedTeaserUrl else it.teaserUrl,
+          imageInfo = ImageInfo(
+            url = if (it.animated) it.animatedTeaserUrl else it.teaserUrl,
+            detailUrl = it.previewUrl, // Both animated and not are the preview url
+            animatable = it.animated,
+            sourceUrl = it.url,
+            bestSize = null,
+            imageId = it.id.toString()
           )
-        }
-        .toList()
-        .map { DataResult(it, (page + 1).toString()) }
+        )
+      }
+      .toList()
+      .map { DataResult(it, (page + 1).toString()) }
   }
 }
 
@@ -103,13 +103,13 @@ abstract class UplabsMetaModule {
     @Provides
     @Reusable
     internal fun provideUplabsServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.uplabs,
-        R.color.uplabsAccent,
-        R.drawable.logo_uplabs,
-        isVisual = true,
-        pagesAreNumeric = true,
-        firstPageKey = "0"
+      SERVICE_KEY,
+      R.string.uplabs,
+      R.color.uplabsAccent,
+      R.drawable.logo_uplabs,
+      isVisual = true,
+      pagesAreNumeric = true,
+      firstPageKey = "0"
     )
   }
 }
@@ -129,8 +129,8 @@ abstract class UplabsModule {
     @InternalApi
     internal fun provideUplabsMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Instant::class.java, ISO8601InstantAdapter())
-          .build()
+        .add(Instant::class.java, ISO8601InstantAdapter())
+        .build()
     }
 
     @Provides
@@ -141,12 +141,12 @@ abstract class UplabsModule {
       appConfig: AppConfig
     ): UplabsApi {
       return Retrofit.Builder().baseUrl(UplabsApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(appConfig.isDebug)
-          .build()
-          .create(UplabsApi::class.java)
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
+        .create(UplabsApi::class.java)
     }
   }
 }

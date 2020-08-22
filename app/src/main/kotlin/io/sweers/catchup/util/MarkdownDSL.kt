@@ -60,20 +60,20 @@ abstract class MarkerElement(val marker: String) : MarkdownElement() {
 class LinkElement(val url: String, val text: String) : Element {
   override fun render(builder: StringBuilder) {
     builder.append("[")
-        .append(text)
-        .append("](")
-        .append(url)
-        .append(")")
+      .append(text)
+      .append("](")
+      .append(url)
+      .append(")")
   }
 }
 
 class CodeBlockElement(val text: String, val language: String = "") : Element {
   override fun render(builder: StringBuilder) {
     builder.append("```")
-        .append(language)
-        .append("\n")
-        .append(text)
-        .append("\n```")
+      .append(language)
+      .append("\n")
+      .append(text)
+      .append("\n```")
   }
 }
 
@@ -94,7 +94,8 @@ class Document : MarkdownElement() {
   fun code(init: Code.() -> Unit) = initTag(Code(), init)
   fun link(url: String, text: String) = children.add(LinkElement(url, text))
   fun codeBlock(text: String, language: String = "") = children.add(
-      CodeBlockElement(text, language))
+    CodeBlockElement(text, language)
+  )
 
   fun h1(init: H1.() -> Unit) = initTag(H1(), init)
   fun h1(text: String) = h1 {

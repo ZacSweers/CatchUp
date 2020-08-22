@@ -36,7 +36,7 @@ internal enum class TrendingTimespan constructor(
    */
   fun createdSince(): LocalDate {
     return LocalDate.now()
-        .minus(duration, durationUnit)
+      .minus(duration, durationUnit)
   }
 
   override fun toString(): String = contextualReference

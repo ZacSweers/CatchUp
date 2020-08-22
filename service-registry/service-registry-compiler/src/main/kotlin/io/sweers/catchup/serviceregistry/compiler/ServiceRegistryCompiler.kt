@@ -88,22 +88,24 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
     // Must be a class
     if (type.kind !== ElementKind.CLASS) {
       context.processingEnv
-          .messager
-          .printMessage(
-              ERROR,
-              "@${ServiceModule::class.java.simpleName} is only applicable on classes!",
-              type)
+        .messager
+        .printMessage(
+          ERROR,
+          "@${ServiceModule::class.java.simpleName} is only applicable on classes!",
+          type
+        )
       return emptyMap<String, String>() to emptySet()
     }
 
     // Check has Dagger Module annotation
     if (type.getAnnotation(Module::class.java) == null) {
       context.processingEnv
-          .messager
-          .printMessage(
-              ERROR,
-              "Must be a dagger module!",
-              type)
+        .messager
+        .printMessage(
+          ERROR,
+          "Must be a dagger module!",
+          type
+        )
       return emptyMap<String, String>() to emptySet()
     }
 
@@ -124,7 +126,8 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
   ) {
     // Pull out the kotlin data
     val kmetadata = type.getAnnotation(Metadata::class.java)?.let {
-      KotlinClassMetadata.read(KotlinClassHeader(
+      KotlinClassMetadata.read(
+        KotlinClassHeader(
           kind = it.kind,
           metadataVersion = it.metadataVersion,
           bytecodeVersion = it.bytecodeVersion,
@@ -133,24 +136,29 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
           extraString = it.extraString,
           packageName = it.packageName,
           extraInt = it.extraInt
-      ))
+        )
+      )
     } ?: run {
       context.processingEnv
-          .messager
-          .printMessage(ERROR,
-              "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: " +
-                  "must be a Kotlin class.]",
-              type)
+        .messager
+        .printMessage(
+          ERROR,
+          "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: " +
+            "must be a Kotlin class.]",
+          type
+        )
       return
     }
 
     if (kmetadata !is KotlinClassMetadata.Class) {
       context.processingEnv
-          .messager
-          .printMessage(ERROR,
-              "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: " +
-                  "must be a class.]",
-              type)
+        .messager
+        .printMessage(
+          ERROR,
+          "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: " +
+            "must be a class.]",
+          type
+        )
       return
     }
 
@@ -159,11 +167,13 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
     // Must be an object class.
     if (!Flag.Class.IS_INTERFACE(classData.flags)) {
       context.processingEnv
-          .messager
-          .printMessage(ERROR,
-              "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: must be a " +
-                  "Kotlin interface class",
-              type)
+        .messager
+        .printMessage(
+          ERROR,
+          "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: must be a " +
+            "Kotlin interface class",
+          type
+        )
       return
     }
 
@@ -171,50 +181,56 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
 
     // List of module TypeElements by type
     val modules = metadata
-        .asSequence()
-        .mapNotNull { it[METADATA_KEY] }
-        .distinct()
-        .map(context.processingEnv.elementUtils::getTypeElement)
-        .filter { it.isMeta == isConsumingMeta }
-        .map { ClassName.get(it) }
-        .toList()
-        .toTypedArray()
+      .asSequence()
+      .mapNotNull { it[METADATA_KEY] }
+      .distinct()
+      .map(context.processingEnv.elementUtils::getTypeElement)
+      .filter { it.isMeta == isConsumingMeta }
+      .map { ClassName.get(it) }
+      .toList()
+      .toTypedArray()
 
     val moduleAnnotation = AnnotationSpec.builder(Module::class.java)
-        .addMember("includes",
-            modules.joinToString(separator = ",\n", prefix = "{\n",
-                postfix = "\n}") { "    \$T.class" },
-            *modules)
-        .build()
+      .addMember(
+        "includes",
+        modules.joinToString(
+          separator = ",\n",
+          prefix = "{\n",
+          postfix = "\n}"
+        ) { "    \$T.class" },
+        *modules
+      )
+      .build()
     val activityComponent = ClassName.get("dagger.hilt.android.components", "ActivityComponent")
     val installIn = ClassName.get("dagger.hilt", "InstallIn")
     val installInAnnotation = AnnotationSpec.builder(installIn)
-        .addMember("value", "\$T.class", activityComponent)
-        .build()
+      .addMember("value", "\$T.class", activityComponent)
+      .build()
 
     val className = "Resolved${type.simpleName.toString().capitalize(Locale.US)}"
     try {
       // Generate the file
       @Suppress("UnstableApiUsage")
       JavaFile.builder(
-          MoreElements.getPackage(type).qualifiedName.toString(),
-          TypeSpec.classBuilder(className)
-              .addModifiers(Modifier.ABSTRACT)
-              .addAnnotation(moduleAnnotation)
-              .addAnnotation(installInAnnotation)
-              .addSuperinterface(ClassName.get(type))
-              .addOriginatingElement(type)
-              .build()
-      )
+        MoreElements.getPackage(type).qualifiedName.toString(),
+        TypeSpec.classBuilder(className)
+          .addModifiers(Modifier.ABSTRACT)
+          .addAnnotation(moduleAnnotation)
+          .addAnnotation(installInAnnotation)
+          .addSuperinterface(ClassName.get(type))
+          .addOriginatingElement(type)
           .build()
-          .writeTo(context.processingEnv.filer)
+      )
+        .build()
+        .writeTo(context.processingEnv.filer)
     } catch (e: IOException) {
       context.processingEnv
-          .messager
-          .printMessage(
-              ERROR,
-              "Failed to write generated registry! ${e.message}",
-              type)
+        .messager
+        .printMessage(
+          ERROR,
+          "Failed to write generated registry! ${e.message}",
+          type
+        )
     }
   }
 }

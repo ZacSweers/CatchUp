@@ -48,8 +48,8 @@ import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.launch
-import java.time.Instant
 import java.io.IOException
+import java.time.Instant
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -69,7 +69,7 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
   private lateinit var adapter: ChangelogAdapter
 
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChangelogBinding =
-      FragmentChangelogBinding::inflate
+    FragmentChangelogBinding::inflate
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
@@ -88,53 +88,55 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
     }
 
     requestItems()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doFinally {
-          progressBar.hide()
-        }
-        .autoDispose(this)
-        .subscribe { data, error ->
-          if (data != null) {
-            adapter.setItems(data)
-            pendingRvState?.let(layoutManager::onRestoreInstanceState)
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .doFinally {
+        progressBar.hide()
+      }
+      .autoDispose(this)
+      .subscribe { data, error ->
+        if (data != null) {
+          adapter.setItems(data)
+          pendingRvState?.let(layoutManager::onRestoreInstanceState)
+        } else {
+          // TODO Show a better error
+          if (error is IOException) {
+            w(error) { "Could not load changelog." }
           } else {
-            // TODO Show a better error
-            if (error is IOException) {
-              w(error) { "Could not load changelog." }
-            } else {
-              e(error) { "Could not load changelog." }
-            }
-            Snackbar.make(recyclerView,
-                R.string.changelog_error,
-                Snackbar.LENGTH_SHORT)
-                .show()
+            e(error) { "Could not load changelog." }
           }
+          Snackbar.make(
+            recyclerView,
+            R.string.changelog_error,
+            Snackbar.LENGTH_SHORT
+          )
+            .show()
         }
+      }
   }
 
   private fun requestItems(): Single<List<ChangeLogItem>> {
     return Rx2Apollo.from(apolloClient.query(RepoReleasesQuery()))
-        .flatMapIterable { it.data!!.repository!!.releases.nodes }
-        .map {
-          with(it) {
-            ChangeLogItem(
-                name = name!!,
-                timestamp = publishedAt!!,
-                tag = tag!!.name,
-                sha = tag.target.abbreviatedOid,
-                url = url.toString(),
-                description = description!!
-            )
-          }
-        }
-        .map {
-          it.copy(
-              name = markdownConverter.replaceMarkdownEmojisIn(it.name),
-              description = markdownConverter.replaceMarkdownEmojisIn(it.description)
+      .flatMapIterable { it.data!!.repository!!.releases.nodes }
+      .map {
+        with(it) {
+          ChangeLogItem(
+            name = name!!,
+            timestamp = publishedAt!!,
+            tag = tag!!.name,
+            sha = tag.target.abbreviatedOid,
+            url = url.toString(),
+            description = description!!
           )
         }
-        .toList()
+      }
+      .map {
+        it.copy(
+          name = markdownConverter.replaceMarkdownEmojisIn(it.name),
+          description = markdownConverter.replaceMarkdownEmojisIn(it.description)
+        )
+      }
+      .toList()
   }
 
   override fun onRequestScrollToTop() {
@@ -157,8 +159,10 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
     override fun getItemCount() = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatchUpItemViewHolder {
-      return CatchUpItemViewHolder(LayoutInflater.from(parent.context)
-          .inflate(layout.list_item_general, parent, false))
+      return CatchUpItemViewHolder(
+        LayoutInflater.from(parent.context)
+          .inflate(layout.list_item_general, parent, false)
+      )
     }
 
     override fun onBindViewHolder(holder: CatchUpItemViewHolder, position: Int) {

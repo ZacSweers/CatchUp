@@ -53,8 +53,10 @@ class ArrayMapJsonAdapter<K, V>(
       val value = valueAdapter.fromJson(reader)
       val replaced = result.put(name, value)
       if (replaced != null) {
-        throw JsonDataException("Map key '" + name + "' has multiple values at path " +
-            reader.path)
+        throw JsonDataException(
+          "Map key '" + name + "' has multiple values at path " +
+            reader.path
+        )
       }
     }
     reader.endObject()

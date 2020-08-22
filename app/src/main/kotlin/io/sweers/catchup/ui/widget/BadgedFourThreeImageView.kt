@@ -67,8 +67,10 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
   init {
     badge = GifBadge(context)
     context.obtainStyledAttributes(attrs, R.styleable.BadgedImageView).use {
-      badgeGravity = it.getInt(R.styleable.BadgedImageView_catchupBadgeGravity,
-          Gravity.END or Gravity.BOTTOM)
+      badgeGravity = it.getInt(
+        R.styleable.BadgedImageView_catchupBadgeGravity,
+        Gravity.END or Gravity.BOTTOM
+      )
       badgePadding = it.getDimensionPixelSize(R.styleable.BadgedImageView_badgePadding, 0)
     }
   }
@@ -110,13 +112,15 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
 
   private fun layoutBadge() {
     val badgeBounds = badge.bounds
-    Gravity.apply(badgeGravity,
-        badge.intrinsicWidth,
-        badge.intrinsicHeight,
-        Rect(0, 0, width, height),
-        badgePadding,
-        badgePadding,
-        badgeBounds)
+    Gravity.apply(
+      badgeGravity,
+      badge.intrinsicWidth,
+      badge.intrinsicHeight,
+      Rect(0, 0, width, height),
+      badgePadding,
+      badgePadding,
+      badgeBounds
+    )
     badge.bounds = badgeBounds
     badgeBoundsSet = true
   }
@@ -148,8 +152,15 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
         val canvas = Canvas(bitmap!!)
         val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         backgroundPaint.color = BACKGROUND_COLOR
-        canvas.drawRoundRect(0f, 0f, width.toFloat(), height.toFloat(), cornerRadius, cornerRadius,
-            backgroundPaint)
+        canvas.drawRoundRect(
+          0f,
+          0f,
+          width.toFloat(),
+          height.toFloat(),
+          cornerRadius,
+          cornerRadius,
+          backgroundPaint
+        )
         // punch out the word 'GIF', leaving transparency
         textPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
         canvas.drawText(GIF, padding, height - padding, textPaint)

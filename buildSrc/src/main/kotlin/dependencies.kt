@@ -67,35 +67,35 @@ object deps {
     const val markwon = "4.5.1"
     const val moshi = SharedBuildVersions.moshi
     const val retrofit = "2.9.0"
-    const val spotless = "5.1.1"
+    const val spotless = "5.1.2"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
 
   object android {
     object androidx {
       const val annotations = "androidx.annotation:annotation:1.2.0-alpha01"
-      const val activity = "androidx.activity:activity:1.2.0-alpha07"
+      const val activity = "androidx.activity:activity:1.2.0-alpha08"
       const val appCompat = "androidx.appcompat:appcompat:1.3.0-alpha01"
 
-      private const val coreVersion = "1.5.0-alpha01"
+      private const val coreVersion = "1.5.0-alpha02"
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
-      const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.0.0-rc1"
+      const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.0.0"
       const val customTabs = "androidx.browser:browser:1.3.0-alpha05"
       const val design = "com.google.android.material:material:1.3.0-alpha02"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.0"
 
-      private const val emojiVersion = "1.1.0"
+      private const val emojiVersion = "1.2.0-alpha01"
       const val emoji = "androidx.emoji:emoji:$emojiVersion"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:$emojiVersion"
 
-      private const val fragmentVersion = "1.3.0-alpha07"
+      private const val fragmentVersion = "1.3.0-alpha08"
       const val fragment = "androidx.fragment:fragment:$fragmentVersion"
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
       object viewModel {
-        private const val version = "2.3.0-alpha06"
+        private const val version = "2.3.0-alpha07"
         const val core = "androidx.lifecycle:lifecycle-viewmodel:$version"
         const val ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         const val savedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:$version"
@@ -112,7 +112,7 @@ object deps {
       const val recyclerView = "androidx.recyclerview:recyclerview:1.1.0-beta03"
 
       object lifecycle {
-        private const val version = "2.3.0-alpha06"
+        private const val version = "2.3.0-alpha07"
         const val apt = "androidx.lifecycle:lifecycle-compiler:$version"
         const val extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
         const val ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
@@ -226,7 +226,7 @@ object deps {
   }
 
   object coil {
-    private const val VERSION = "0.11.0"
+    private const val VERSION = "1.0.0-rc1"
     const val base = "io.coil-kt:coil-base:$VERSION"
     const val default = "io.coil-kt:coil:$VERSION"
     const val gif = "io.coil-kt:coil-gif:$VERSION"
@@ -367,7 +367,7 @@ object deps {
     const val kotprefEnum = "com.chibatching.kotpref:enum-support:${versions.kotpref}"
     const val lottie = "com.airbnb.android:lottie:3.4.1"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-    const val okio = "com.squareup.okio:okio:2.7.0"
+    const val okio = "com.squareup.okio:okio:2.8.0"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:3.0.0"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.0"
     const val ticktock = "dev.zacsweers.ticktock:ticktock-android-lazyzonerules:0.1.1"

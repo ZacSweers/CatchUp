@@ -58,12 +58,12 @@ internal object GithubApolloModule {
   @Provides
   @Singleton
   internal fun provideHttpCacheStore(@ApplicationContext context: Context): HttpCacheStore =
-      DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
+    DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
 
   @Provides
   @Singleton
   internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache =
-      ApolloHttpCache(httpCacheStore, null)
+    ApolloHttpCache(httpCacheStore, null)
 
   @Provides
   @InternalApi
@@ -72,9 +72,9 @@ internal object GithubApolloModule {
     client: OkHttpClient,
     httpCache: HttpCache
   ): OkHttpClient = client.newBuilder()
-      .addInterceptor(httpCache.interceptor())
-      .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
-      .build()
+    .addInterceptor(httpCache.interceptor())
+    .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
+    .build()
 
   @Provides
   @Singleton
@@ -91,12 +91,12 @@ internal object GithubApolloModule {
       field: ResponseField,
       recordSet: Map<String, Any>
     ): CacheKey = // Most objects use id
-        recordSet["id"].let {
-          return when (val value = it) {
-            is String -> formatter(value)
-            else -> CacheKey.NO_KEY
-          }
+      recordSet["id"].let {
+        return when (val value = it) {
+          is String -> formatter(value)
+          else -> CacheKey.NO_KEY
         }
+      }
 
     override fun fromFieldArguments(
       field: ResponseField,
@@ -107,7 +107,7 @@ internal object GithubApolloModule {
   @Provides
   @Singleton
   internal fun provideNormalizedCacheFactory(): NormalizedCacheFactory<*> =
-      LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION)
+    LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION)
 
   @Provides
   @Singleton
@@ -132,14 +132,14 @@ internal object GithubApolloModule {
       override fun read(cacheKey: String, expireAfterRead: Boolean): Response? = httpCache.get().read(cacheKey, expireAfterRead)
     }
     return ApolloClient.builder()
-        .serverUrl(SERVER_URL)
-        .httpCache(lazyHttpCache)
-        .callFactory { client.get().newCall(it) }
-        .normalizedCache(cacheFactory, resolver)
-        .addCustomTypeAdapter(CustomType.DATETIME, ISO8601InstantApolloAdapter)
-        .addCustomTypeAdapter(CustomType.URI, HttpUrlApolloAdapter)
-        .addCustomTypeAdapter(io.sweers.catchup.service.github.type.CustomType.DATETIME, ISO8601InstantApolloAdapter)
-        .addCustomTypeAdapter(io.sweers.catchup.service.github.type.CustomType.URI, HttpUrlApolloAdapter)
-        .build()
+      .serverUrl(SERVER_URL)
+      .httpCache(lazyHttpCache)
+      .callFactory { client.get().newCall(it) }
+      .normalizedCache(cacheFactory, resolver)
+      .addCustomTypeAdapter(CustomType.DATETIME, ISO8601InstantApolloAdapter)
+      .addCustomTypeAdapter(CustomType.URI, HttpUrlApolloAdapter)
+      .addCustomTypeAdapter(io.sweers.catchup.service.github.type.CustomType.DATETIME, ISO8601InstantApolloAdapter)
+      .addCustomTypeAdapter(io.sweers.catchup.service.github.type.CustomType.URI, HttpUrlApolloAdapter)
+      .build()
   }
 }

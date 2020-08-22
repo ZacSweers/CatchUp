@@ -26,11 +26,11 @@ import io.sweers.catchup.service.api.SummarizationType
 import java.time.Instant
 
 @Database(
-    entities = [
-      ServicePage::class,
-      CatchUpItem::class
-    ],
-    version = 5
+  entities = [
+    ServicePage::class,
+    CatchUpItem::class
+  ],
+  version = 5
 )
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {
@@ -42,12 +42,14 @@ abstract class CatchUpDatabase : RoomDatabase() {
     private var INSTANCE: CatchUpDatabase? = null
 
     fun getDatabase(context: Context): CatchUpDatabase {
-      return INSTANCE ?: Room.databaseBuilder(context.applicationContext,
-          CatchUpDatabase::class.java,
-          "catchup.db")
-          .fallbackToDestructiveMigration()
-          .build()
-          .also { INSTANCE = it }
+      return INSTANCE ?: Room.databaseBuilder(
+        context.applicationContext,
+        CatchUpDatabase::class.java,
+        "catchup.db"
+      )
+        .fallbackToDestructiveMigration()
+        .build()
+        .also { INSTANCE = it }
     }
   }
 }
@@ -84,7 +86,7 @@ internal class CatchUpConverters {
   // Pair<String, Int>
   @TypeConverter
   fun toPair(pairString: String?) =
-      pairString?.let { it.split(",").let { it[0] to it[1].toInt() } }
+    pairString?.let { it.split(",").let { it[0] to it[1].toInt() } }
 
   @TypeConverter
   fun toPairString(pair: Pair<String, Int>?) = pair?.let { "${pair.first},${pair.second}" }
@@ -92,7 +94,7 @@ internal class CatchUpConverters {
   // Pair<Int, Int>
   @TypeConverter
   fun toIntPair(pairString: String?) =
-      pairString?.let { it.split(",").let { it[0].toInt() to it[1].toInt() } }
+    pairString?.let { it.split(",").let { it[0].toInt() to it[1].toInt() } }
 
   @TypeConverter
   fun toIntPairString(pair: Pair<Int, Int>?) = pair?.let { "${pair.first},${pair.second}" }

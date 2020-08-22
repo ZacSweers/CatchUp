@@ -80,15 +80,17 @@ inline fun View.show(animate: Boolean = false) {
     alpha = 0F
     visibility = View.VISIBLE
     animate()
-        .setDuration(300)
-        .setInterpolator(FastOutSlowInInterpolator())
-        .withLayer()
-        .alpha(1F)
-        .setListener(object : AnimatorListenerAdapter() {
+      .setDuration(300)
+      .setInterpolator(FastOutSlowInInterpolator())
+      .withLayer()
+      .alpha(1F)
+      .setListener(
+        object : AnimatorListenerAdapter() {
           override fun onAnimationEnd(animation: Animator) {
             animation.removeAllListeners()
           }
-        })
+        }
+      )
   } else {
     visibility = View.VISIBLE
   }
@@ -112,17 +114,19 @@ inline fun View.hide(animate: Boolean = false) {
   }
   if (animate && !isInvisible) {
     animate()
-        .setDuration(300)
-        .setInterpolator(LinearOutSlowInInterpolator())
-        .withLayer()
-        .alpha(0F)
-        .setListener(object : AnimatorListenerAdapter() {
+      .setDuration(300)
+      .setInterpolator(LinearOutSlowInInterpolator())
+      .withLayer()
+      .alpha(0F)
+      .setListener(
+        object : AnimatorListenerAdapter() {
           override fun onAnimationEnd(animation: Animator) {
             animation.removeAllListeners()
             visibility = View.GONE
             alpha = 1F
           }
-        })
+        }
+      )
   } else {
     visibility = View.GONE
   }
@@ -147,7 +151,8 @@ inline fun View.toggleVisibility(animate: Boolean = false) {
 fun Context.asDayContext(): Context {
   return if (isInNightMode()) {
     createConfigurationContext(
-        Configuration(resources.configuration)
-            .apply { uiMode = Configuration.UI_MODE_NIGHT_NO })
+      Configuration(resources.configuration)
+        .apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
+    )
   } else this
 }

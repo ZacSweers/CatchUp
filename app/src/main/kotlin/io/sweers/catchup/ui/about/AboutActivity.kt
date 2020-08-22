@@ -92,11 +92,11 @@ class AboutActivity : InjectingBaseActivity() {
 //      }
 //    })
     lifecycle()
-        .doOnStart(customTab) { bindCustomTabsService(this@AboutActivity) }
-        .doOnStop(customTab) { unbindCustomTabsService(this@AboutActivity) }
-        .doOnDestroy(customTab) { connectionCallback = null }
-        .autoDispose(this)
-        .subscribe()
+      .doOnStart(customTab) { bindCustomTabsService(this@AboutActivity) }
+      .doOnStop(customTab) { unbindCustomTabsService(this@AboutActivity) }
+      .doOnDestroy(customTab) { connectionCallback = null }
+      .autoDispose(this)
+      .subscribe()
 
     val viewGroup = viewContainer.forActivity(this)
     ActivityGenericContainerBinding.inflate(layoutInflater, viewGroup, true)
@@ -137,12 +137,14 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
   private lateinit var compositeClickSpan: (String) -> Set<Any>
 
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAboutBinding =
-      FragmentAboutBinding::inflate
+    FragmentAboutBinding::inflate
 
   override fun onSaveInstanceState(outState: Bundle) {
     (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior?.let { behavior ->
-      outState.putParcelable("collapsingToolbarState",
-          behavior.onSaveInstanceState(rootLayout, appBarLayout))
+      outState.putParcelable(
+        "collapsingToolbarState",
+        behavior.onSaveInstanceState(rootLayout, appBarLayout)
+      )
     }
     outState.putParcelable("aboutAdapter", (viewPager.adapter as FragmentStateAdapter).saveState())
     super.onSaveInstanceState(outState)
@@ -176,23 +178,27 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
 
     compositeClickSpan = { url: String ->
       setOf(
-          object : TouchableUrlSpan(url, aboutText.linkTextColors, 0) {
-            override fun onClick(url: String) {
-              viewLifecycleOwner.lifecycleScope.launch {
-                linkManager.openUrl(
-                    UrlMeta(url, aboutText.highlightColor,
-                        activity!!))
-              }
+        object : TouchableUrlSpan(url, aboutText.linkTextColors, 0) {
+          override fun onClick(url: String) {
+            viewLifecycleOwner.lifecycleScope.launch {
+              linkManager.openUrl(
+                UrlMeta(
+                  url,
+                  aboutText.highlightColor,
+                  activity!!
+                )
+              )
             }
-          },
-          StyleSpan(Typeface.BOLD)
+          }
+        },
+        StyleSpan(Typeface.BOLD)
       )
     }
 
     savedInstanceState?.let { state ->
       state.getParcelable<Parcelable>("collapsingToolbarState")?.let {
         (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior
-            ?.onRestoreInstanceState(rootLayout, appBarLayout, it)
+          ?.onRestoreInstanceState(rootLayout, appBarLayout, it)
       }
       state.getParcelable<Parcelable>("aboutAdapter")?.let {
         pagerAdapter.restoreState(it)
@@ -217,7 +223,8 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
       Toast.makeText(activity, R.string.icon_attribution, Toast.LENGTH_SHORT).show()
       viewLifecycleOwner.lifecycleScope.launch {
         linkManager.openUrl(
-            UrlMeta("https://cookicons.co", aboutText.highlightColor, requireActivity()))
+          UrlMeta("https://cookicons.co", aboutText.highlightColor, requireActivity())
+        )
       }
       true
     }
@@ -232,12 +239,15 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
       space()
       link("https://twitter.com/ZacSweers", "Zac Sweers")
       text(" - ")
-      link("https://github.com/ZacSweers/CatchUp",
-          aboutText.resources.getString(R.string.about_source_code))
+      link(
+        "https://github.com/ZacSweers/CatchUp",
+        aboutText.resources.getString(R.string.about_source_code)
+      )
     }.parseMarkdownAndPlainLinks(
-        on = aboutText,
-        with = markwon,
-        alternateSpans = compositeClickSpan)
+      on = aboutText,
+      with = markwon,
+      alternateSpans = compositeClickSpan
+    )
 
     // Set up pager
     viewPager.adapter = pagerAdapter
@@ -249,19 +259,21 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
       }
     }.attach()
 
-    tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-      override fun onTabSelected(tab: TabLayout.Tab) {}
+    tabLayout.addOnTabSelectedListener(
+      object : TabLayout.OnTabSelectedListener {
+        override fun onTabSelected(tab: TabLayout.Tab) {}
 
-      override fun onTabUnselected(tab: TabLayout.Tab) {}
+        override fun onTabUnselected(tab: TabLayout.Tab) {}
 
-      override fun onTabReselected(tab: TabLayout.Tab) {
-        pagerAdapter.getFragment(tab.position).let {
-          if (it is Scrollable) {
-            it.onRequestScrollToTop()
+        override fun onTabReselected(tab: TabLayout.Tab) {
+          pagerAdapter.getFragment(tab.position).let {
+            if (it is Scrollable) {
+              it.onRequestScrollToTop()
+            }
           }
         }
       }
-    })
+    )
 
     // Wait till things are measured
     val callSetUpHeader = { setUpHeader() }
@@ -319,45 +331,45 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
      * reacting to the offset changes *is* manipulating those child views (vicious cycle).
      */
       appBarLayout.offsetChanges()
-          .windowed(2, 1) // Buffer in pairs to compare the previous, skip none
-          .filter { it[1] != it[0] }
-          .map {
-            // Map to a direction
-            it[1] to ScrollDirection.resolve(it[1], it[0])
-          }
-          .collect { (offset, _) ->
-            // Note: Direction is unused for now but left because this was neat
-            val percentage = abs(offset).toFloat() / translatableHeight
+        .windowed(2, 1) // Buffer in pairs to compare the previous, skip none
+        .filter { it[1] != it[0] }
+        .map {
+          // Map to a direction
+          it[1] to ScrollDirection.resolve(it[1], it[0])
+        }
+        .collect { (offset, _) ->
+          // Note: Direction is unused for now but left because this was neat
+          val percentage = abs(offset).toFloat() / translatableHeight
 
-            // Force versions outside boundaries to be safe
-            if (percentage > FADE_PERCENT) {
-              bannerIcon.alpha = 0F
-              aboutText.alpha = 0F
-            }
-            if (percentage < TITLE_TRANSLATION_PERCENT) {
-              title.translationX = 0F
-              title.translationY = 0F
-            }
-            if (percentage < FADE_PERCENT) {
-              // We want to accelerate fading to be the first [FADE_PERCENT]% of the translation,
-              // so adjust accordingly below and use the new calculated percentage for our
-              // interpolation
-              val adjustedPercentage = 1 - (percentage * (1.0F / FADE_PERCENT))
-              val interpolation = interpolator.getInterpolation(adjustedPercentage)
-              bannerIcon.alpha = interpolation
-              aboutText.alpha = interpolation
-            }
-            if (percentage > TITLE_TRANSLATION_PERCENT) {
-              // Start translating about halfway through (to give a staggered effect next to the alpha
-              // so they have time to fade out sufficiently). From here we just set translation offsets
-              // to adjust the position naturally to give the appearance of settling in to the right
-              // place.
-              val adjustedPercentage = (1 - percentage) * (1.0F / TITLE_TRANSLATION_PERCENT)
-              val interpolation = interpolator.getInterpolation(adjustedPercentage)
-              title.translationX = -(xDelta - (interpolation * xDelta))
-              title.translationY = yDelta - (interpolation * yDelta)
-            }
+          // Force versions outside boundaries to be safe
+          if (percentage > FADE_PERCENT) {
+            bannerIcon.alpha = 0F
+            aboutText.alpha = 0F
           }
+          if (percentage < TITLE_TRANSLATION_PERCENT) {
+            title.translationX = 0F
+            title.translationY = 0F
+          }
+          if (percentage < FADE_PERCENT) {
+            // We want to accelerate fading to be the first [FADE_PERCENT]% of the translation,
+            // so adjust accordingly below and use the new calculated percentage for our
+            // interpolation
+            val adjustedPercentage = 1 - (percentage * (1.0F / FADE_PERCENT))
+            val interpolation = interpolator.getInterpolation(adjustedPercentage)
+            bannerIcon.alpha = interpolation
+            aboutText.alpha = interpolation
+          }
+          if (percentage > TITLE_TRANSLATION_PERCENT) {
+            // Start translating about halfway through (to give a staggered effect next to the alpha
+            // so they have time to fade out sufficiently). From here we just set translation offsets
+            // to adjust the position naturally to give the appearance of settling in to the right
+            // place.
+            val adjustedPercentage = (1 - percentage) * (1.0F / TITLE_TRANSLATION_PERCENT)
+            val interpolation = interpolator.getInterpolation(adjustedPercentage)
+            title.translationX = -(xDelta - (interpolation * xDelta))
+            title.translationY = yDelta - (interpolation * yDelta)
+          }
+        }
     }
   }
 }

@@ -50,8 +50,8 @@ class CatchUpApplication : Application() {
         AndroidSchedulers.from(Looper.getMainLooper(), true)
       }
       RxDogTag.builder()
-          .configureWith(AutoDisposeConfigurer::configure)
-          .install()
+        .configureWith(AutoDisposeConfigurer::configure)
+        .install()
     }
   }
 
@@ -92,18 +92,18 @@ class CatchUpApplication : Application() {
 
     GlobalScope.launch {
       catchUpPreferences.flowFor { ::daynightAuto }
-          .collect { autoEnabled ->
-            d { "Updating daynight" }
-            // Someday would like to add activity lifecycle callbacks to automatically call recreate
-            // when resumed since this was updated
-            var nightMode = AppCompatDelegate.MODE_NIGHT_NO
-            if (autoEnabled) {
-              nightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
-            } else if (catchUpPreferences.dayNight) {
-              nightMode = AppCompatDelegate.MODE_NIGHT_YES
-            }
-            AppCompatDelegate.setDefaultNightMode(nightMode)
+        .collect { autoEnabled ->
+          d { "Updating daynight" }
+          // Someday would like to add activity lifecycle callbacks to automatically call recreate
+          // when resumed since this was updated
+          var nightMode = AppCompatDelegate.MODE_NIGHT_NO
+          if (autoEnabled) {
+            nightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+          } else if (catchUpPreferences.dayNight) {
+            nightMode = AppCompatDelegate.MODE_NIGHT_YES
           }
+          AppCompatDelegate.setDefaultNightMode(nightMode)
+        }
     }
   }
 

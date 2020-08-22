@@ -33,7 +33,8 @@ enum class ActivityEvent {
         PAUSE -> STOP
         STOP -> DESTROY
         DESTROY -> throw LifecycleEndedException(
-            "Cannot bind to Activity lifecycle after it's been destroyed.")
+          "Cannot bind to Activity lifecycle after it's been destroyed."
+        )
       }
     }
   }

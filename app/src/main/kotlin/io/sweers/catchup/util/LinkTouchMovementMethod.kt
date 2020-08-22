@@ -37,9 +37,11 @@ class LinkTouchMovementMethod : LinkMovementMethod() {
       pressedSpan = getPressedSpan(textView, spannable, event)
       if (pressedSpan != null) {
         pressedSpan!!.setPressed(true)
-        Selection.setSelection(spannable,
-            spannable.getSpanStart(pressedSpan),
-            spannable.getSpanEnd(pressedSpan))
+        Selection.setSelection(
+          spannable,
+          spannable.getSpanStart(pressedSpan),
+          spannable.getSpanEnd(pressedSpan)
+        )
         handled = true
       }
     } else if (event.action == MotionEvent.ACTION_MOVE) {

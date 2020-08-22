@@ -55,8 +55,11 @@ object UiUtil {
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   inline fun createRipple(@ColorInt color: Int, bounded: Boolean): RippleDrawable {
-    return RippleDrawable(ColorStateList.valueOf(color), null,
-        if (bounded) ColorDrawable(Color.WHITE) else null)
+    return RippleDrawable(
+      ColorStateList.valueOf(color),
+      null,
+      if (bounded) ColorDrawable(Color.WHITE) else null
+    )
   }
 
   @SuppressLint("Range")
@@ -68,8 +71,11 @@ object UiUtil {
   ): RippleDrawable {
     var color = inputColor
     color = ColorUtils.modifyAlpha(color, alpha)
-    return RippleDrawable(ColorStateList.valueOf(color), null,
-        if (bounded) ColorDrawable(Color.WHITE) else null)
+    return RippleDrawable(
+      ColorStateList.valueOf(color),
+      null,
+      if (bounded) ColorDrawable(Color.WHITE) else null
+    )
   }
 
   @SuppressLint("Range")
@@ -83,11 +89,14 @@ object UiUtil {
   ): RippleDrawable {
     // try the named swatches in preference order
     val rippleColor = palette.orderedSwatches(darkAlpha, lightAlpha)
-        .firstOrNull()
-        ?.let { (swatch, alpha) ->
-          return@let ColorUtils.modifyAlpha(swatch.rgb, alpha)
-        } ?: fallbackColor
-    return RippleDrawable(ColorStateList.valueOf(rippleColor), null,
-        if (bounded) ColorDrawable(Color.WHITE) else null)
+      .firstOrNull()
+      ?.let { (swatch, alpha) ->
+        return@let ColorUtils.modifyAlpha(swatch.rgb, alpha)
+      } ?: fallbackColor
+    return RippleDrawable(
+      ColorStateList.valueOf(rippleColor),
+      null,
+      if (bounded) ColorDrawable(Color.WHITE) else null
+    )
   }
 }

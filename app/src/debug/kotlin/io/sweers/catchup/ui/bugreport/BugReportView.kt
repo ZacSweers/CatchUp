@@ -48,28 +48,28 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
     binding = BugreportViewBinding.bind(this)
     viewScope().launch {
       usernameView.focusChanges()
-          .drop(1)
-          .collect { hasFocus ->
-            if (!hasFocus) {
-              usernameView.error = if (usernameView.text.isNullOrBlank()) "Cannot be empty." else null
-            }
+        .drop(1)
+        .collect { hasFocus ->
+          if (!hasFocus) {
+            usernameView.error = if (usernameView.text.isNullOrBlank()) "Cannot be empty." else null
           }
+        }
       titleView.focusChanges()
-          .drop(1)
-          .collect { hasFocus ->
-            if (!hasFocus) {
-              titleView.error = if (titleView.text.isNullOrBlank()) "Cannot be empty." else null
-            }
+        .drop(1)
+        .collect { hasFocus ->
+          if (!hasFocus) {
+            titleView.error = if (titleView.text.isNullOrBlank()) "Cannot be empty." else null
           }
+        }
       combine(
-          titleView.afterTextChangeEvents()
-              .map { !it.editable.isNullOrBlank() },
-          usernameView.afterTextChangeEvents()
-              .map { !it.editable.isNullOrBlank() },
-          transform = { title, username -> title && username }
+        titleView.afterTextChangeEvents()
+          .map { !it.editable.isNullOrBlank() },
+        usernameView.afterTextChangeEvents()
+          .map { !it.editable.isNullOrBlank() },
+        transform = { title, username -> title && username }
       )
-          .onEach { listener?.onStateChanged(it) }
-          .collect()
+        .onEach { listener?.onStateChanged(it) }
+        .collect()
     }
 
     screenshotView.isChecked = true
@@ -81,11 +81,13 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
   }
 
   val report: Report
-    get() = Report(usernameView.text.toString().trim().removePrefix("@"),
-        titleView.text.toString(),
-        descriptionView.text.toString(),
-        screenshotView.isChecked,
-        logsView.isChecked)
+    get() = Report(
+      usernameView.text.toString().trim().removePrefix("@"),
+      titleView.text.toString(),
+      descriptionView.text.toString(),
+      screenshotView.isChecked,
+      logsView.isChecked
+    )
 
   data class Report(
     val username: String,

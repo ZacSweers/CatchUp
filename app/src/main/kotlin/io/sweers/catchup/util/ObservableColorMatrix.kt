@@ -36,7 +36,8 @@ class ObservableColorMatrix : ColorMatrix() {
   companion object {
 
     val SATURATION: Property<ObservableColorMatrix, Float> = object : FloatProperty<ObservableColorMatrix>(
-        "saturation") {
+      "saturation"
+    ) {
 
       override fun setValue(target: ObservableColorMatrix, value: Float) {
         target.setSaturation(value)

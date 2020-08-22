@@ -62,7 +62,7 @@ sealed class SmmryResponse {
     companion object {
 
       fun just(title: String, text: String): Success =
-          Success(text.length.toString(), title, text, null)
+        Success(text.length.toString(), title, text, null)
     }
   }
 
@@ -144,6 +144,6 @@ class SmmryResponseFactory : JsonAdapter.Factory {
     private var instance: WeakReference<SmmryResponseFactory>? = null
 
     fun getInstance() =
-        instance?.get() ?: SmmryResponseFactory().also { instance = WeakReference(it) }
+      instance?.get() ?: SmmryResponseFactory().also { instance = WeakReference(it) }
   }
 }

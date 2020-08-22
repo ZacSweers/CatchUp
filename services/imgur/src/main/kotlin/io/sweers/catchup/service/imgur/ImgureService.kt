@@ -39,10 +39,10 @@ import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
-import java.time.Instant
 import retrofit2.Retrofit.Builder
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -63,28 +63,28 @@ internal class ImgurService @Inject constructor(
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
     val page = request.pageId.toInt()
     return api.subreddit("EarthPorn", page)
-        .flattenAsObservable { it }
-        .map {
-          val resolvedLink = it.resolveDisplayLink()
-          CatchUpItem(
-              id = it.id.hashCode().toLong(),
-              title = it.title,
-              score = "⬆" to it.resolveScore(),
-              timestamp = it.datetime,
-              author = it.accountUrl,
-              itemClickUrl = resolvedLink,
-              imageInfo = ImageInfo(
-                  resolvedLink,
-                  resolvedLink.endsWith(".gif"),
-                  it.resolveClickLink(),
-                  null,
-                  it.id
-              )
+      .flattenAsObservable { it }
+      .map {
+        val resolvedLink = it.resolveDisplayLink()
+        CatchUpItem(
+          id = it.id.hashCode().toLong(),
+          title = it.title,
+          score = "⬆" to it.resolveScore(),
+          timestamp = it.datetime,
+          author = it.accountUrl,
+          itemClickUrl = resolvedLink,
+          imageInfo = ImageInfo(
+            resolvedLink,
+            resolvedLink.endsWith(".gif"),
+            it.resolveClickLink(),
+            null,
+            it.id
           )
-        }
-        .toList()
-        .map { DataResult(it, (page + 1).toString()) }
-        .toMaybe()
+        )
+      }
+      .toList()
+      .map { DataResult(it, (page + 1).toString()) }
+      .toMaybe()
   }
 
   override fun linkHandler() = linkHandler
@@ -108,14 +108,14 @@ abstract class ImgurMetaModule {
     @Reusable
     @JvmStatic
     internal fun provideImgurServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.imgur,
-        R.color.imgurAccent,
-        R.drawable.logo_imgur,
-        isVisual = true,
-        pagesAreNumeric = true,
-        firstPageKey = "0",
-        enabled = BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN.run { !isNullOrEmpty() && !equals("null") }
+      SERVICE_KEY,
+      R.string.imgur,
+      R.color.imgurAccent,
+      R.drawable.logo_imgur,
+      isVisual = true,
+      pagesAreNumeric = true,
+      firstPageKey = "0",
+      enabled = BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN.run { !isNullOrEmpty() && !equals("null") }
     )
   }
 }
@@ -139,9 +139,13 @@ abstract class ImgurModule {
       client: OkHttpClient
     ): OkHttpClient {
       return client.newBuilder()
-          .addInterceptor(AuthInterceptor("Client-ID",
-              BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN))
-          .build()
+        .addInterceptor(
+          AuthInterceptor(
+            "Client-ID",
+            BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN
+          )
+        )
+        .build()
     }
 
     @Provides
@@ -149,8 +153,8 @@ abstract class ImgurModule {
     @JvmStatic
     internal fun provideImgurMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Instant::class.java, EpochInstantJsonAdapter())
-          .build()
+        .add(Instant::class.java, EpochInstantJsonAdapter())
+        .build()
     }
 
     @Provides
@@ -162,12 +166,12 @@ abstract class ImgurModule {
       appConfig: AppConfig
     ): ImgurApi {
       return Builder().baseUrl(ImgurApi.ENDPOINT)
-          .callFactory { client.get().newCall(it) }
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(appConfig.isDebug)
-          .build()
-          .create(ImgurApi::class.java)
+        .callFactory { client.get().newCall(it) }
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
+        .create(ImgurApi::class.java)
     }
   }
 }

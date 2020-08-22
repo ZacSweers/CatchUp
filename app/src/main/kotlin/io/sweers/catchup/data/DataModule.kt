@@ -80,14 +80,14 @@ abstract class DataModule {
       }
 
       val builder = OkHttpClient.Builder().connectTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-          .readTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-          .writeTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-          .cache(cache)
+        .readTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+        .writeTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+        .cache(cache)
 
       builder.networkInterceptors()
-          .addAll(networkInterceptors)
+        .addAll(networkInterceptors)
       builder.interceptors()
-          .addAll(interceptors)
+        .addAll(interceptors)
 
       return builder.build()
     }
@@ -96,17 +96,17 @@ abstract class DataModule {
     @Singleton
     internal fun provideMoshi(appConfig: AppConfig): Moshi {
       return Moshi.Builder()
-          .apply {
-            // TODO would like to just have this in debug but need to abstract it better
-            if (appConfig.isDebug) {
-              add(ObjectOrderRandomizer.create())
-            }
+        .apply {
+          // TODO would like to just have this in debug but need to abstract it better
+          if (appConfig.isDebug) {
+            add(ObjectOrderRandomizer.create())
           }
-          .add(Wrapped.ADAPTER_FACTORY)
-          .add(UnescapeJsonAdapter.FACTORY)
-          .add(ArrayMapJsonAdapter.FACTORY)
-          .add(ArrayCollectionJsonAdapter.FACTORY)
-          .build()
+        }
+        .add(Wrapped.ADAPTER_FACTORY)
+        .add(UnescapeJsonAdapter.FACTORY)
+        .add(ArrayMapJsonAdapter.FACTORY)
+        .add(ArrayCollectionJsonAdapter.FACTORY)
+        .build()
     }
 
     @Provides

@@ -31,5 +31,5 @@ object UiModule {
   @ActivityScoped
   @Provides
   internal fun provideViewContainer(viewContainer: DebugViewContainer): ViewContainer =
-      viewContainer
+    viewContainer
 }

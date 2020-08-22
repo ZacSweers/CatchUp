@@ -23,14 +23,15 @@ import android.os.Build
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import coil.Coil
-import coil.DefaultRequestOptions
 import coil.ImageLoader
+import coil.bitmap.BitmapPool
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
-import coil.request.GetRequest
-import coil.request.LoadRequest
-import coil.request.RequestDisposable
-import coil.request.RequestResult
+import coil.memory.MemoryCache
+import coil.request.DefaultRequestOptions
+import coil.request.Disposable
+import coil.request.ImageRequest
+import coil.request.ImageResult
 import coil.util.CoilUtils.createDefaultCache
 import coil.util.DebugLogger
 import dagger.Binds
@@ -109,15 +110,15 @@ abstract class ApplicationModule {
   @Binds
   @ApplicationContext
   @Singleton
-  abstract fun provideApplicationContext(application: Application): Context
+  abstract fun Application.provideApplicationContext(): Context
 
   @Binds
   @Singleton
-  abstract fun provideUiPreferences(catchupPreferences: CatchUpPreferences): UiPreferences
+  abstract fun CatchUpPreferences.provideUiPreferences(): UiPreferences
 
   @Binds
   @Singleton
-  abstract fun bindAppConfig(catchUpAppConfig: CatchUpAppConfig): AppConfig
+  abstract fun CatchUpAppConfig.bindAppConfig(): AppConfig
 
   companion object {
 
@@ -128,11 +129,11 @@ abstract class ApplicationModule {
      */
     @Provides
     @Singleton
-    internal fun provideGeneralUseContext(@ApplicationContext appContext: Context): Context = ContextWrapper(appContext)
+    internal fun @receiver:ApplicationContext Context.provideGeneralUseContext(): Context = ContextWrapper(this)
 
     @Provides
     @Singleton
-    internal fun versionInfo(@ApplicationContext appContext: Context): VersionInfo = appContext.versionInfo
+    internal fun @receiver:ApplicationContext Context.versionInfo(): VersionInfo = versionInfo
 
     @Provides
     @Singleton
@@ -142,19 +143,21 @@ abstract class ApplicationModule {
       appConfig: AppConfig
     ): Markwon {
       return Markwon.builder(context)
-          .textSetter(PrecomputedTextSetterCompat.create(appConfig = appConfig))
-          .usePlugins(listOf(
-              MovementMethodPlugin.create(LinkTouchMovementMethod()),
-              ImagesPlugin.create(),
-              StrikethroughPlugin.create(),
-              CoilImagesPlugin.create(context, imageLoader),
-              TablePlugin.create(context),
-              LinkifyPlugin.create(),
-              TaskListPlugin.create(context)
-        //            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
-          ))
-          .build()
-        }
+        .textSetter(PrecomputedTextSetterCompat.create(appConfig = appConfig))
+        .usePlugins(
+          listOf(
+            MovementMethodPlugin.create(LinkTouchMovementMethod()),
+            ImagesPlugin.create(),
+            StrikethroughPlugin.create(),
+            CoilImagesPlugin.create(context, imageLoader),
+            TablePlugin.create(context),
+            LinkifyPlugin.create(),
+            TaskListPlugin.create(context)
+//            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
+          )
+        )
+        .build()
+    }
 
     @AsyncInitializers
     @IntoSet
@@ -202,8 +205,8 @@ abstract class ApplicationModule {
       @CoilOkHttpStack cache: Cache
     ): OkHttpClient {
       return okHttpClient.newBuilder()
-          .cache(cache)
-          .build()
+        .cache(cache)
+        .build()
     }
 
     @Provides
@@ -211,23 +214,19 @@ abstract class ApplicationModule {
     @Singleton
     fun lazyImageLoader(imageLoader: dagger.Lazy<ImageLoader>): ImageLoader {
       return object : ImageLoader {
+        override val bitmapPool: BitmapPool
+          get() = imageLoader.get().bitmapPool
         override val defaults: DefaultRequestOptions
           get() = imageLoader.get().defaults
+        override val memoryCache: MemoryCache
+          get() = imageLoader.get().memoryCache
 
-        override fun clearMemory() {
-          imageLoader.get().clearMemory()
+        override fun enqueue(request: ImageRequest): Disposable {
+          return imageLoader.get().enqueue(request)
         }
 
-        override suspend fun execute(request: GetRequest): RequestResult {
+        override suspend fun execute(request: ImageRequest): ImageResult {
           return imageLoader.get().execute(request)
-        }
-
-        override fun execute(request: LoadRequest): RequestDisposable {
-          return imageLoader.get().execute(request)
-        }
-
-        override fun invalidate(key: String) {
-          imageLoader.get().invalidate(key)
         }
 
         override fun shutdown() {
@@ -249,11 +248,13 @@ abstract class ApplicationModule {
         // Coil will do lazy delegation on its own under the hood, but we
         // don't need that here because we've already made it lazy. Wish this
         // wasn't the default.
-        callFactory(object : Call.Factory {
-          override fun newCall(request: Request): Call {
-            return okHttpClient.get().newCall(request)
+        callFactory(
+          object : Call.Factory {
+            override fun newCall(request: Request): Call {
+              return okHttpClient.get().newCall(request)
+            }
           }
-        })
+        )
 
         if (appConfig.isDebug) {
           logger(DebugLogger())

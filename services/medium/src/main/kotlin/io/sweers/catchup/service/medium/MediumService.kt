@@ -42,10 +42,10 @@ import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.inspector.Inspector
 import okhttp3.OkHttpClient
-import java.time.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.time.Instant
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -65,40 +65,41 @@ internal class MediumService @Inject constructor(
 
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     return api.top()
-        .concatMapEager { references ->
-          Observable.fromIterable(references.post.values)
-              .map { post ->
-                MediumPost(
-                    post = post,
-                    user = references.user[post.creatorId]
-                        ?: throw IllegalStateException("Missing user on post!"),
-                    collection = references.collection?.get(post.homeCollectionId))
-              }
-        }
-        .map {
-          with(it) {
-            val url = constructUrl()
-            CatchUpItem(
-                id = post.id.hashCode().toLong(),
-                title = post.title,
-                score =
-                "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
-                    to post.virtuals.recommends,
-                timestamp = post.createdAt,
-                author = user.name,
-                tag = collection?.name,
-                source = "\u2605".takeIf { post.isSubscriptionLocked }, // TODO use "★" directly?
-                itemClickUrl = url,
-                summarizationInfo = SummarizationInfo.from(url),
-                mark = createCommentMark(
-                    count = post.virtuals.responsesCreatedCount,
-                    clickUrl = constructCommentsUrl()
-                )
+      .concatMapEager { references ->
+        Observable.fromIterable(references.post.values)
+          .map { post ->
+            MediumPost(
+              post = post,
+              user = references.user[post.creatorId]
+                ?: throw IllegalStateException("Missing user on post!"),
+              collection = references.collection?.get(post.homeCollectionId)
             )
           }
+      }
+      .map {
+        with(it) {
+          val url = constructUrl()
+          CatchUpItem(
+            id = post.id.hashCode().toLong(),
+            title = post.title,
+            score =
+              "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+                to post.virtuals.recommends,
+            timestamp = post.createdAt,
+            author = user.name,
+            tag = collection?.name,
+            source = "\u2605".takeIf { post.isSubscriptionLocked }, // TODO use "★" directly?
+            itemClickUrl = url,
+            summarizationInfo = SummarizationInfo.from(url),
+            mark = createCommentMark(
+              count = post.virtuals.responsesCreatedCount,
+              clickUrl = constructCommentsUrl()
+            )
+          )
         }
-        .toList()
-        .map { DataResult(it, null) }
+      }
+      .toList()
+      .map { DataResult(it, null) }
   }
 }
 
@@ -118,11 +119,11 @@ abstract class MediumMetaModule {
     @Provides
     @Reusable
     internal fun provideMediumServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.medium,
-        R.color.mediumAccent,
-        R.drawable.logo_medium,
-        firstPageKey = ""
+      SERVICE_KEY,
+      R.string.medium,
+      R.color.mediumAccent,
+      R.drawable.logo_medium,
+      firstPageKey = ""
     )
   }
 }
@@ -142,31 +143,35 @@ abstract class MediumModule {
     @InternalApi
     internal fun provideMediumOkHttpClient(client: OkHttpClient): OkHttpClient {
       return client.newBuilder()
-          .addInterceptor { chain ->
-            chain.proceed(chain.request().newBuilder()
-                // Tack format=json to the end
-                .url(chain.request().url
-                    .newBuilder()
-                    .addQueryParameter("format", "json")
-                    .build())
-                .build())
-                .apply {
-                  body?.source()?.let {
-                    // Medium prefixes with a while loop to prevent javascript eval attacks, so
-                    // skip to the first open curly brace
-                    it.skip(it.indexOf('{'.toByte()))
-                  }
-                }
-          }
-          .build()
+        .addInterceptor { chain ->
+          chain.proceed(
+            chain.request().newBuilder()
+              // Tack format=json to the end
+              .url(
+                chain.request().url
+                  .newBuilder()
+                  .addQueryParameter("format", "json")
+                  .build()
+              )
+              .build()
+          )
+            .apply {
+              body?.source()?.let {
+                // Medium prefixes with a while loop to prevent javascript eval attacks, so
+                // skip to the first open curly brace
+                it.skip(it.indexOf('{'.toByte()))
+              }
+            }
+        }
+        .build()
     }
 
     @Provides
     @InternalApi
     internal fun provideMediumMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
-          .build()
+        .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
+        .build()
     }
 
     @Provides
@@ -181,12 +186,12 @@ abstract class MediumModule {
       appConfig: AppConfig
     ): MediumApi {
       val retrofit = Retrofit.Builder().baseUrl(MediumApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(inspectorConverterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(appConfig.isDebug)
-          .build()
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(inspectorConverterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
       return retrofit.create(MediumApi::class.java)
     }
   }

@@ -17,8 +17,8 @@
 
 package io.sweers.catchup.util
 
-import android.app.Activity
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -46,17 +46,17 @@ fun Context.clearCache() = cleanDir(applicationContext.cacheDir)
 private fun cleanDir(dir: File): Long {
   var bytesDeleted: Long = 0
   dir.listFiles()
-      ?.forEach {
-        val length = it.length()
-        try {
-          if (it.delete()) {
-            d { "Deleted file" }
-            bytesDeleted += length
-          }
-        } catch (e: IOException) {
-          // Ignore these for now
+    ?.forEach {
+      val length = it.length()
+      try {
+        if (it.delete()) {
+          d { "Deleted file" }
+          bytesDeleted += length
         }
+      } catch (e: IOException) {
+        // Ignore these for now
       }
+    }
   return bytesDeleted
 }
 
@@ -85,8 +85,11 @@ private fun Context.maybeStartActivity(
     startActivity(intent)
     true
   } else {
-    Toast.makeText(this, R.string.no_intent_handler,
-        LENGTH_LONG).show()
+    Toast.makeText(
+      this,
+      R.string.no_intent_handler,
+      LENGTH_LONG
+    ).show()
     false
   }
 }
@@ -95,7 +98,7 @@ private fun Context.maybeStartActivity(
  * Queries on-device packages for a handler for the supplied [Intent].
  */
 private fun Context.hasHandler(intent: Intent) =
-    packageManager.queryIntentActivities(intent, 0).isNotEmpty()
+  packageManager.queryIntentActivities(intent, 0).isNotEmpty()
 
 private val typedValue = TypedValue()
 
@@ -138,7 +141,7 @@ fun Context.isNavBarOnBottom(): Boolean {
 inline fun Context.dp2px(dipValue: Float) = resources.dp2px(dipValue)
 
 inline fun Resources.dp2px(dipValue: Float) =
-    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
+  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
 
 @Suppress("DEPRECATION")
 val Context.primaryLocale: Locale

@@ -62,7 +62,7 @@ internal class NetworkErrorAdapter(context: Context) : BindableAdapter<Int>(cont
 
     fun getPositionForValue(value: Int): Int {
       return VALUES.indices.firstOrNull { VALUES[it] == value }
-          ?: 1 // Default to 3% if something changes.
+        ?: 1 // Default to 3% if something changes.
     }
   }
 }

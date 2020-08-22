@@ -35,10 +35,10 @@ import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.databinding.ActivitySettingsBinding
+import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
@@ -61,12 +61,16 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
 
     if (savedInstanceState == null) {
       supportFragmentManager.commitNow {
-        add(R.id.container, ServiceSettingsFrag().apply {
-          if (intent.extras?.containsKey(TARGET_PREF_RESOURCE) == true) {
-            arguments = bundleOf(
-                TARGET_PREF_RESOURCE to intent.extras!!.getInt(TARGET_PREF_RESOURCE))
+        add(
+          R.id.container,
+          ServiceSettingsFrag().apply {
+            if (intent.extras?.containsKey(TARGET_PREF_RESOURCE) == true) {
+              arguments = bundleOf(
+                TARGET_PREF_RESOURCE to intent.extras!!.getInt(TARGET_PREF_RESOURCE)
+              )
+            }
           }
-        })
+        )
       }
     }
   }
@@ -99,60 +103,66 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
       preferenceScreen = preferenceManager.createPreferenceScreen(activity)
 
       val currentOrder = catchUpPreferences.servicesOrder?.split(",")
-          ?: emptyList()
+        ?: emptyList()
       serviceMetas
-          .values
-          .asSequence()
-          .sortedBy { currentOrder.indexOf(it.id) }
-          .forEach { meta ->
-            meta.run {
-              // Create a category
-              val metaColor = ContextCompat.getColor(requireActivity().asDayContext(), meta.themeColor)
-              val category = PreferenceCategory(activity).apply {
-                title = resources.getString(meta.name)
+        .values
+        .asSequence()
+        .sortedBy { currentOrder.indexOf(it.id) }
+        .forEach { meta ->
+          meta.run {
+            // Create a category
+            val metaColor = ContextCompat.getColor(requireActivity().asDayContext(), meta.themeColor)
+            val category = PreferenceCategory(activity).apply {
+              title = resources.getString(meta.name)
 //                titleColor = metaColor
-                icon = AppCompatResources.getDrawable(context, meta.icon)!!.apply {
-                  setTint(metaColor)
-                }
+              icon = AppCompatResources.getDrawable(context, meta.icon)!!.apply {
+                setTint(metaColor)
               }
-              preferenceScreen.addPreference(category)
+            }
+            preferenceScreen.addPreference(category)
 
-              // Create an "enabled" pref
-              val enabledPref = SwitchPreference(activity).apply {
-                title = resources.getString(R.string.enabled)
-                key = meta.enabledPreferenceKey
+            // Create an "enabled" pref
+            val enabledPref = SwitchPreference(activity).apply {
+              title = resources.getString(R.string.enabled)
+              key = meta.enabledPreferenceKey
 //                themeColor = metaColor
-                setDefaultValue(true)
-              }
-              category.addPreference(enabledPref)
+              setDefaultValue(true)
+            }
+            category.addPreference(enabledPref)
 
-              // If there's a custom config, point to it
-              meta.serviceConfiguration?.let { config ->
-                when (config) {
-                  is ActivityConfiguration -> {
-                    category.addPreference(Preference(activity).apply {
+            // If there's a custom config, point to it
+            meta.serviceConfiguration?.let { config ->
+              when (config) {
+                is ActivityConfiguration -> {
+                  category.addPreference(
+                    Preference(activity).apply {
                       dependency = meta.enabledPreferenceKey
                       setOnPreferenceClickListener {
                         startActivity(Intent(activity, config.activity))
                         true
                       }
-                    })
-                  }
-                  is PreferencesConfiguration -> {
-                    category.addPreference(Preference(activity).apply {
+                    }
+                  )
+                }
+                is PreferencesConfiguration -> {
+                  category.addPreference(
+                    Preference(activity).apply {
                       dependency = meta.enabledPreferenceKey
                       setOnPreferenceClickListener {
-                        startActivity(Intent(activity, ServiceSettingsActivity::class.java).apply {
-                          putExtra(TARGET_PREF_RESOURCE, config.preferenceResource)
-                        })
+                        startActivity(
+                          Intent(activity, ServiceSettingsActivity::class.java).apply {
+                            putExtra(TARGET_PREF_RESOURCE, config.preferenceResource)
+                          }
+                        )
                         true
                       }
-                    })
-                  }
+                    }
+                  )
                 }
               }
             }
           }
+        }
     }
 
     @InstallIn(FragmentComponent::class)

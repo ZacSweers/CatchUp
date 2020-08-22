@@ -34,13 +34,13 @@ internal data class User(
 
   companion object {
     val NONE: User = User(
-        "",
-        "",
-        "",
-        0,
-        "",
-        "",
-        ""
+      "",
+      "",
+      "",
+      0,
+      "",
+      "",
+      ""
     )
   }
 }

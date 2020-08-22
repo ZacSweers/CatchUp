@@ -99,31 +99,33 @@ object DebugApplicationModule {
     leakCanaryConfig: LeakCanary.Config
   ): () -> Unit = {
     AppWatcher.config.copy(
-        watchDurationMillis = TimeUnit.SECONDS.toMillis(10)
+      watchDurationMillis = TimeUnit.SECONDS.toMillis(10)
     )
     LeakCanary.config = leakCanaryConfig
 
-    application.registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
-      override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+    application.registerActivityLifecycleCallbacks(
+      object : ActivityLifecycleCallbacks {
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
-      override fun onActivityStarted(activity: Activity) {}
+        override fun onActivityStarted(activity: Activity) {}
 
-      override fun onActivityResumed(activity: Activity) {}
+        override fun onActivityResumed(activity: Activity) {}
 
-      override fun onActivityPaused(activity: Activity) {}
+        override fun onActivityPaused(activity: Activity) {}
 
-      override fun onActivityStopped(activity: Activity) {}
+        override fun onActivityStopped(activity: Activity) {}
 
-      override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
 
-      override fun onActivityDestroyed(activity: Activity) {
+        override fun onActivityDestroyed(activity: Activity) {
 //        if (activity is MainActivity) {
 //          // Ignore Chuck
 //          return
 //        }
-        objectWatcher.watch(activity)
+          objectWatcher.watch(activity)
+        }
       }
-    })
+    )
   }
 
   @Qualifier
@@ -142,44 +144,54 @@ object DebugApplicationModule {
     @StrictModeExecutor penaltyListenerExecutor: dagger.Lazy<ExecutorService>,
     appConfig: AppConfig
   ): () -> Unit = {
-    StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
+    StrictMode.setThreadPolicy(
+      StrictMode.ThreadPolicy.Builder()
         .detectAll()
         .apply {
           appConfig.sdk(28) {
-            penaltyListener(penaltyListenerExecutor.get(), StrictMode.OnThreadViolationListener {
-              Timber.w(it)
-            }) ?: run {
+            penaltyListener(
+              penaltyListenerExecutor.get(),
+              StrictMode.OnThreadViolationListener {
+                Timber.w(it)
+              }
+            ) ?: run {
               penaltyLog()
             }
           }
         }
-        .build())
-    StrictMode.setVmPolicy(VmPolicy.Builder()
+        .build()
+    )
+    StrictMode.setVmPolicy(
+      VmPolicy.Builder()
         .detectAll()
         .penaltyLog()
         .apply {
           appConfig.sdk(28) {
-            penaltyListener(penaltyListenerExecutor.get(), StrictMode.OnVmViolationListener {
-              when (it) {
-                is UntaggedSocketViolation -> {
-                  // Firebase and OkHttp don't tag sockets
-                  return@OnVmViolationListener
-                }
-                is DiskReadViolation -> {
-                  if (it.stackTrace.any { it.methodName == "onCreatePreferences" }) {
-                    // PreferenceFragment hits preferences directly
+            penaltyListener(
+              penaltyListenerExecutor.get(),
+              StrictMode.OnVmViolationListener {
+                when (it) {
+                  is UntaggedSocketViolation -> {
+// Firebase and OkHttp don't tag sockets
                     return@OnVmViolationListener
                   }
+                  is DiskReadViolation -> {
+                    if (it.stackTrace.any { it.methodName == "onCreatePreferences" }) {
+// PreferenceFragment hits preferences directly
+                      return@OnVmViolationListener
+                    }
+                  }
                 }
+// Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
+                Timber.w(it)
               }
-              // Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
-              Timber.w(it)
-            })
+            )
           } ?: run {
             penaltyLog()
           }
         }
-        .build())
+        .build()
+    )
   }
 
   @Qualifier
@@ -231,8 +243,8 @@ object DebugApplicationModule {
           val exception = RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
           // Show this in the Flipper heads up notification
           flipperCrashReporter.sendExceptionMessage(
-              Thread.currentThread(),
-              exception
+            Thread.currentThread(),
+            exception
           )
         }
       }

@@ -30,7 +30,7 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import coil.api.load
+import coil.load
 import coil.size.Precision
 import coil.size.Scale
 import coil.size.ViewSizeResolver
@@ -100,19 +100,19 @@ internal class HackerNewsCommentsFragment @Inject constructor(
               scale(Scale.FILL)
               crossfade(true)
               listener(
-                  onSuccess = { data, source ->
-                    val bitmap = (binding.urlImage.drawable as BitmapDrawable).bitmap
-                    viewLifecycleOwner.lifecycleScope.launch paletteLaunch@{
-                      val swatch = Palette.from(bitmap)
-                          .clearFilters()
-                          .generateAsync()
-                          ?.dominantSwatch
-                          ?: return@paletteLaunch
-                      binding.urlTextContainer.background = ColorDrawable(swatch.rgb)
-                      binding.urlTitle.setTextColor(swatch.titleTextColor)
-                      binding.urlUrl.setTextColor(swatch.bodyTextColor)
-                    }
+                onSuccess = { data, source ->
+                  val bitmap = (binding.urlImage.drawable as BitmapDrawable).bitmap
+                  viewLifecycleOwner.lifecycleScope.launch paletteLaunch@{
+                    val swatch = Palette.from(bitmap)
+                      .clearFilters()
+                      .generateAsync()
+                      ?.dominantSwatch
+                      ?: return@paletteLaunch
+                    binding.urlTextContainer.background = ColorDrawable(swatch.rgb)
+                    binding.urlTitle.setTextColor(swatch.titleTextColor)
+                    binding.urlUrl.setTextColor(swatch.bodyTextColor)
                   }
+                }
               )
             }
             binding.urlTextContainer.setOnClickListener {
@@ -124,10 +124,11 @@ internal class HackerNewsCommentsFragment @Inject constructor(
             binding.score.text = story.score.toString()
             binding.link.text = story.title
             binding.author.text = story.by
-            binding.time.text = DateUtils.getRelativeTimeSpanString(story.realTime().toEpochMilli(),
-                System.currentTimeMillis(),
-                0L,
-                DateUtils.FORMAT_ABBREV_ALL
+            binding.time.text = DateUtils.getRelativeTimeSpanString(
+              story.realTime().toEpochMilli(),
+              System.currentTimeMillis(),
+              0L,
+              DateUtils.FORMAT_ABBREV_ALL
             )
             val adapter = CommentsAdapter(comments)
             list.adapter = adapter
@@ -151,7 +152,8 @@ internal class HackerNewsCommentsFragment @Inject constructor(
   ) : RecyclerView.Adapter<CommentViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
       return CommentViewHolder(
-          StoryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        StoryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+      )
     }
 
     override fun getItemCount(): Int {
@@ -163,10 +165,10 @@ internal class HackerNewsCommentsFragment @Inject constructor(
       holder.binding.depth.visibility = View.GONE
       holder.binding.commentAuthor.text = comment.by
       holder.binding.commentTimeAgo.text = DateUtils.getRelativeTimeSpanString(
-          comment.realTime().toEpochMilli(),
-          System.currentTimeMillis(),
-          0L,
-          DateUtils.FORMAT_ABBREV_ALL
+        comment.realTime().toEpochMilli(),
+        System.currentTimeMillis(),
+        0L,
+        DateUtils.FORMAT_ABBREV_ALL
       )
       holder.binding.commentText.text = try {
         comment.text.let {

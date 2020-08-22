@@ -56,7 +56,7 @@ class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDi
 
     scope.newScope().launch {
       lumberYard.logs()
-          .collect { adapter.addEntry(it) }
+        .collect { adapter.addEntry(it) }
     }
   }
 
@@ -76,7 +76,7 @@ class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDi
         context.maybeStartChooser(sendIntent)
       } catch (e: Exception) {
         Toast.makeText(context, "Couldn't save the logs for sharing.", Toast.LENGTH_SHORT)
-            .show()
+          .show()
       }
     }
   }

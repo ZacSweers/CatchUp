@@ -42,10 +42,10 @@ import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.catchup.util.nullIfBlank
 import okhttp3.OkHttpClient
-import java.time.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -65,28 +65,28 @@ internal class RedditService @Inject constructor(
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     // We special case the front page
     return api.frontPage(25, request.pageId.nullIfBlank())
-        .map { redditListingRedditResponse ->
-          @Suppress("UNCHECKED_CAST")
-          val data = (redditListingRedditResponse.data.children as List<RedditLink>)
-              .map {
-                CatchUpItem(
-                    id = it.id.hashCode().toLong(),
-                    title = it.title,
-                    score = "+" to it.score,
-                    timestamp = it.createdUtc,
-                    author = "/u/" + it.author,
-                    source = it.domain ?: "self",
-                    tag = it.subreddit,
-                    itemClickUrl = it.url,
-                    summarizationInfo = SummarizationInfo.from(it.url, it.selftext),
-                    mark = createCommentMark(
-                        count = it.commentsCount,
-                        clickUrl = "https://reddit.com/comments/${it.id}"
-                    )
-                )
-              }
-          DataResult(data, redditListingRedditResponse.data.after)
-        }
+      .map { redditListingRedditResponse ->
+        @Suppress("UNCHECKED_CAST")
+        val data = (redditListingRedditResponse.data.children as List<RedditLink>)
+          .map {
+            CatchUpItem(
+              id = it.id.hashCode().toLong(),
+              title = it.title,
+              score = "+" to it.score,
+              timestamp = it.createdUtc,
+              author = "/u/" + it.author,
+              source = it.domain ?: "self",
+              tag = it.subreddit,
+              itemClickUrl = it.url,
+              summarizationInfo = SummarizationInfo.from(it.url, it.selftext),
+              mark = createCommentMark(
+                count = it.commentsCount,
+                clickUrl = "https://reddit.com/comments/${it.id}"
+              )
+            )
+          }
+        DataResult(data, redditListingRedditResponse.data.after)
+      }
   }
 }
 
@@ -106,11 +106,11 @@ abstract class RedditMetaModule {
     @Provides
     @Reusable
     internal fun provideRedditServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.reddit,
-        R.color.redditAccent,
-        R.drawable.logo_reddit,
-        firstPageKey = ""
+      SERVICE_KEY,
+      R.string.reddit,
+      R.color.redditAccent,
+      R.drawable.logo_reddit,
+      firstPageKey = ""
     )
   }
 }
@@ -130,9 +130,9 @@ abstract class RedditModule {
     @Provides
     internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
       return upstreamMoshi.newBuilder()
-          .add(RedditObjectFactory.INSTANCE)
-          .add(Instant::class.java, EpochInstantJsonAdapter())
-          .build()
+        .add(RedditObjectFactory.INSTANCE)
+        .add(Instant::class.java, EpochInstantJsonAdapter())
+        .build()
     }
 
     @InternalApi
@@ -141,19 +141,21 @@ abstract class RedditModule {
       client: OkHttpClient
     ): OkHttpClient {
       return client.newBuilder()
-          .addNetworkInterceptor { chain ->
-            var request = chain.request()
-            val url = request.url
-            request = request.newBuilder()
-                .header("User-Agent", "CatchUp app by /u/pandanomic")
-                .url(url.newBuilder()
-                    .encodedPath("${url.encodedPath}.json")
-                    .addQueryParameter("raw_json", "1") // So tokens aren't escaped
-                    .build())
+        .addNetworkInterceptor { chain ->
+          var request = chain.request()
+          val url = request.url
+          request = request.newBuilder()
+            .header("User-Agent", "CatchUp app by /u/pandanomic")
+            .url(
+              url.newBuilder()
+                .encodedPath("${url.encodedPath}.json")
+                .addQueryParameter("raw_json", "1") // So tokens aren't escaped
                 .build()
-            chain.proceed(request)
-          }
-          .build()
+            )
+            .build()
+          chain.proceed(request)
+        }
+        .build()
     }
 
     @Provides
@@ -164,11 +166,11 @@ abstract class RedditModule {
       appConfig: AppConfig
     ): RedditApi {
       val retrofit = Retrofit.Builder().baseUrl(RedditApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(appConfig.isDebug)
-          .build()
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
       return retrofit.create(RedditApi::class.java)
     }
   }
