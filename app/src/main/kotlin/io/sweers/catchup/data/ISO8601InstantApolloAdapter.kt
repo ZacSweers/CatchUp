@@ -20,7 +20,7 @@ import com.apollographql.apollo.api.CustomTypeValue
 import com.apollographql.apollo.api.CustomTypeValue.Companion.fromRawValue
 import com.apollographql.apollo.api.CustomTypeValue.GraphQLString
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 /**
  * A CustomTypeAdapter for apollo that can convert ISO style date strings to Instant.

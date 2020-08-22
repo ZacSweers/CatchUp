@@ -20,10 +20,12 @@ import io.sweers.catchup.service.dribbble.DribbbleApi.Companion.ENDPOINT
 import io.sweers.catchup.service.dribbble.model.Images
 import io.sweers.catchup.service.dribbble.model.Shot
 import io.sweers.catchup.service.dribbble.model.User
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.toKotlinInstant
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
@@ -64,10 +66,10 @@ internal object DribbbleParser {
         descriptionBlock.select("em.timestamp")
           .first()
           .text(),
-        Instant::from
-      )
+        java.time.Instant::from
+      ).toKotlinInstant()
     } catch (e2: Exception) {
-      Instant.now()
+      Clock.System.now()
     }
 
     val isAnimated = imgUrl.endsWith(".gif")

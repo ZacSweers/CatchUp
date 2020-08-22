@@ -18,7 +18,7 @@ package io.sweers.catchup.util.data.adapters
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import java.time.Instant
+import kotlinx.datetime.Instant
 import java.util.concurrent.TimeUnit
 
 /**
@@ -32,11 +32,11 @@ class EpochInstantJsonAdapter(
 
   override fun fromJson(reader: JsonReader): Instant? {
     val l = reader.nextLong()
-    return Instant.ofEpochMilli(TimeUnit.MILLISECONDS.convert(l, timeUnit))
+    return Instant.fromEpochMilliseconds(TimeUnit.MILLISECONDS.convert(l, timeUnit))
   }
 
   override fun toJson(writer: JsonWriter, value: Instant?) {
-    val longTime = value!!.toEpochMilli()
+    val longTime = value!!.toEpochMilliseconds()
     writer.value(TimeUnit.MILLISECONDS.convert(longTime, timeUnit))
   }
 }

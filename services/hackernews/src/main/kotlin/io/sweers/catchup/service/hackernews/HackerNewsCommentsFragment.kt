@@ -125,7 +125,7 @@ internal class HackerNewsCommentsFragment @Inject constructor(
             binding.link.text = story.title
             binding.author.text = story.by
             binding.time.text = DateUtils.getRelativeTimeSpanString(
-              story.realTime().toEpochMilli(),
+              story.realTime().toEpochMilliseconds(),
               System.currentTimeMillis(),
               0L,
               DateUtils.FORMAT_ABBREV_ALL
@@ -165,7 +165,7 @@ internal class HackerNewsCommentsFragment @Inject constructor(
       holder.binding.depth.visibility = View.GONE
       holder.binding.commentAuthor.text = comment.by
       holder.binding.commentTimeAgo.text = DateUtils.getRelativeTimeSpanString(
-        comment.realTime().toEpochMilli(),
+        comment.realTime().toEpochMilliseconds(),
         System.currentTimeMillis(),
         0L,
         DateUtils.FORMAT_ABBREV_ALL

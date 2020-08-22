@@ -19,7 +19,8 @@ import androidx.annotation.Keep
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.Exclude
 import io.sweers.catchup.service.api.HasStableId
-import java.time.Instant
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.annotation.AnnotationRetention.SOURCE
@@ -61,10 +62,10 @@ internal data class HackerNewsStory(
 
   @Exclude
   fun realTime(): Instant = time?.let {
-    Instant.ofEpochMilli(
+    Instant.fromEpochMilliseconds(
       TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS)
     )
-  } ?: Instant.now()
+  } ?: Clock.System.now()
 
   @Exclude
   fun realType() = type?.let { HNType.valueOf(it.toUpperCase(Locale.US)) }
@@ -110,10 +111,10 @@ internal data class HackerNewsComment(
 
   @Exclude
   fun realTime(): Instant = time?.let {
-    Instant.ofEpochMilli(
+    Instant.fromEpochMilliseconds(
       TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS)
     )
-  } ?: Instant.now()
+  } ?: Clock.System.now()
 
   @Exclude
   fun realType() = type?.let { HNType.valueOf(it.toUpperCase(Locale.US)) }

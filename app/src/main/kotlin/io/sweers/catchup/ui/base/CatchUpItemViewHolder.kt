@@ -42,7 +42,7 @@ import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.primaryLocale
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.showIf
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 class CatchUpItemViewHolder(
   itemView: View
@@ -183,7 +183,7 @@ class CatchUpItemViewHolder(
     }
   }
 
-  fun timestamp(instant: Instant?) = timestamp(instant?.toEpochMilli())
+  fun timestamp(instant: Instant?) = timestamp(instant?.toEpochMilliseconds())
 
   private fun timestamp(date: Long?) {
     timestamp.text = date?.let {

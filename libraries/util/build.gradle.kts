@@ -31,6 +31,7 @@ dependencies {
   implementation(deps.android.androidx.core)
   implementation(deps.android.androidx.design)
   implementation(deps.rx.android)
+  implementation(deps.kotlin.datetime)
 
   api(project(":libraries:appconfig"))
   api(deps.android.androidx.coreKtx)

@@ -23,7 +23,7 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.SummarizationType
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 @Database(
   entities = [
@@ -65,10 +65,10 @@ internal class CatchUpConverters {
 
   // Instant
   @TypeConverter
-  fun toInstant(timestamp: Long?) = timestamp?.let { Instant.ofEpochMilli(it) }
+  fun toInstant(timestamp: Long?) = timestamp?.let { Instant.fromEpochMilliseconds(it) }
 
   @TypeConverter
-  fun toTimestamp(instant: Instant?) = instant?.toEpochMilli()
+  fun toTimestamp(instant: Instant?) = instant?.toEpochMilliseconds()
 
   // List<Long>
   @TypeConverter

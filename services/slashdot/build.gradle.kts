@@ -37,6 +37,7 @@ dependencies {
   implementation(deps.tikxml.annotation)
   implementation(deps.tikxml.core)
   implementation(deps.tikxml.retrofit)
+  implementation(deps.kotlin.datetime)
 
   api(project(":service-api"))
   api(deps.android.androidx.annotations)
