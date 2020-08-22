@@ -39,10 +39,10 @@ import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
-import java.time.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -62,26 +62,26 @@ internal class ProductHuntService @Inject constructor(
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
     return api.getPosts(page)
-        .flattenAsObservable { it }
-        .map {
-          with(it) {
-            CatchUpItem(
-                id = id,
-                title = name,
-                score = "▲" to votesCount,
-                timestamp = createdAt,
-                author = user.name,
-                tag = firstTopic,
-                itemClickUrl = redirectUrl,
-                mark = createCommentMark(
-                    count = commentsCount,
-                    clickUrl = discussionUrl
-                )
+      .flattenAsObservable { it }
+      .map {
+        with(it) {
+          CatchUpItem(
+            id = id,
+            title = name,
+            score = "▲" to votesCount,
+            timestamp = createdAt,
+            author = user.name,
+            tag = firstTopic,
+            itemClickUrl = redirectUrl,
+            mark = createCommentMark(
+              count = commentsCount,
+              clickUrl = discussionUrl
             )
-          }
+          )
         }
-        .toList()
-        .map { DataResult(it, (page + 1).toString()) }
+      }
+      .toList()
+      .map { DataResult(it, (page + 1).toString()) }
   }
 }
 
@@ -101,15 +101,15 @@ abstract class ProductHuntMetaModule {
     @Provides
     @Reusable
     internal fun provideProductHuntServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.ph,
-        R.color.phAccent,
-        R.drawable.logo_ph,
-        pagesAreNumeric = true,
-        firstPageKey = "0",
-        enabled = BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN.run {
-          !isNullOrEmpty() && !equals("null")
-        }
+      SERVICE_KEY,
+      R.string.ph,
+      R.color.phAccent,
+      R.drawable.logo_ph,
+      pagesAreNumeric = true,
+      firstPageKey = "0",
+      enabled = BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN.run {
+        !isNullOrEmpty() && !equals("null")
+      }
     )
   }
 }
@@ -131,17 +131,21 @@ abstract class ProductHuntModule {
       client: OkHttpClient
     ): OkHttpClient {
       return client.newBuilder()
-          .addInterceptor(AuthInterceptor("Bearer",
-              BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN))
-          .build()
+        .addInterceptor(
+          AuthInterceptor(
+            "Bearer",
+            BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN
+          )
+        )
+        .build()
     }
 
     @Provides
     @InternalApi
     internal fun provideProductHuntMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Instant::class.java, ISO8601InstantAdapter())
-          .build()
+        .add(Instant::class.java, ISO8601InstantAdapter())
+        .build()
     }
 
     @Provides
@@ -152,12 +156,12 @@ abstract class ProductHuntModule {
       appConfig: AppConfig
     ): ProductHuntApi {
       return Retrofit.Builder().baseUrl(ProductHuntApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(appConfig.isDebug)
-          .build()
-          .create(ProductHuntApi::class.java)
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
+        .create(ProductHuntApi::class.java)
     }
   }
 }

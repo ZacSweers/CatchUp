@@ -72,7 +72,8 @@ allprojects {
       when {
         requested.name.startsWith("kotlin-stdlib") -> {
           useTarget(
-              "${requested.group}:${requested.name.replace("jre", "jdk")}:${requested.version}")
+            "${requested.group}:${requested.name.replace("jre", "jdk")}:${requested.version}"
+          )
         }
         else -> when (requested.group) {
           "com.android.support" -> {

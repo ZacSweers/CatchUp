@@ -23,9 +23,11 @@ import retrofit2.Retrofit
 @PublishedApi
 internal inline fun Retrofit.Builder.callFactory(
   crossinline body: (Request) -> Call
-) = callFactory(object : Call.Factory {
-  override fun newCall(request: Request): Call = body(request)
-})
+) = callFactory(
+  object : Call.Factory {
+    override fun newCall(request: Request): Call = body(request)
+  }
+)
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun Retrofit.Builder.delegatingCallFactory(

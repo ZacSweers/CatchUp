@@ -131,15 +131,18 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
 }
 
 @AndroidEntryPoint
-class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
-    SwipeRefreshLayout.OnRefreshListener, Scrollable, DataLoadingSubject {
+class ServiceFragment :
+  InjectingBaseFragment<FragmentServiceBinding>(),
+  SwipeRefreshLayout.OnRefreshListener,
+  Scrollable,
+  DataLoadingSubject {
 
   companion object {
     const val ARG_SERVICE_KEY = "serviceKey"
     fun newInstance(serviceKey: String) =
-        ServiceFragment().apply {
-          arguments = bundleOf(ARG_SERVICE_KEY to serviceKey)
-        }
+      ServiceFragment().apply {
+        arguments = bundleOf(ARG_SERVICE_KEY to serviceKey)
+      }
   }
 
   private val errorView get() = binding.errorContainer
@@ -185,7 +188,7 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
   override fun isDataLoading(): Boolean = dataLoading
 
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentServiceBinding =
-      FragmentServiceBinding::inflate
+    FragmentServiceBinding::inflate
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -233,11 +236,12 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
     if (service.meta().isVisual) {
       val spanConfig = (service.rootService() as VisualService).spanConfig()
       val adapter = ImageAdapter(context, spanConfig.spanCount) { item, holder, clicksChannel ->
-        service.bindItemView(item.realItem(),
-            holder,
-            clicksChannel,
-            clicksChannel,
-            clicksChannel
+        service.bindItemView(
+          item.realItem(),
+          holder,
+          clicksChannel,
+          clicksChannel,
+          clicksChannel
         )
       }
       // TODO adapt this for Coil
@@ -249,16 +253,18 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
       return adapter
     } else {
       return TextAdapter { item, holder, clicksChannel ->
-        service.bindItemView(item, holder,
-            clicksChannel,
-            clicksChannel,
-            clicksChannel
+        service.bindItemView(
+          item,
+          holder,
+          clicksChannel,
+          clicksChannel,
+          clicksChannel
         )
         if (appConfig.isDebug) {
           item.detailKey?.let { key ->
             val args = bundleOf(
-                "detailKey" to key,
-                "detailTitle" to item.title
+              "detailKey" to key,
+              "detailTitle" to item.title
             )
             val targetProvider = fragmentCreators[service.meta().deeplinkFragment] ?: error("No deeplink for $key")
             holder.setLongClickHandler {
@@ -268,16 +274,18 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
                   arguments = args
                 }
                 detailDisplayer.bind(recyclerView, targetFragment)
-                page.addStateChangeCallbacks(object : SimplePageStateChangeCallbacks() {
-                  override fun onPageCollapsed() {
-                    detailDisplayed = false
-                    page.removeStateChangeCallbacks(this)
-                    detailDisplayer.unbind(recyclerView)
-                    fragmentManager.commitNow(allowStateLoss = true) {
-                      remove(targetFragment)
+                page.addStateChangeCallbacks(
+                  object : SimplePageStateChangeCallbacks() {
+                    override fun onPageCollapsed() {
+                      detailDisplayed = false
+                      page.removeStateChangeCallbacks(this)
+                      detailDisplayer.unbind(recyclerView)
+                      fragmentManager.commitNow(allowStateLoss = true) {
+                        remove(targetFragment)
+                      }
                     }
                   }
-                })
+                )
                 fragmentManager.commitNow(allowStateLoss = true) {
                   add(page.id, targetFragment)
                 }
@@ -318,8 +326,10 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
       onErrorClick(binding.errorImage)
     }
     @ColorInt val accentColor = ContextCompat.getColor(view.context, service.meta().themeColor)
-    @ColorInt val dayAccentColor = ContextCompat.getColor(dayOnlyContext!!,
-        service.meta().themeColor)
+    @ColorInt val dayAccentColor = ContextCompat.getColor(
+      dayOnlyContext!!,
+      service.meta().themeColor
+    )
     swipeRefreshLayout.run {
       setColorSchemeColors(dayAccentColor)
       setOnRefreshListener(this@ServiceFragment)
@@ -334,11 +344,12 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
     layoutManager = createLayoutManager(view.context, adapter)
     recyclerView.layoutManager = layoutManager
     recyclerView.addOnScrollListener(
-        object : InfiniteScrollListener(layoutManager, this@ServiceFragment) {
-          override fun onLoadMore() {
-            loadData()
-          }
-        })
+      object : InfiniteScrollListener(layoutManager, this@ServiceFragment) {
+        override fun onLoadMore() {
+          loadData()
+        }
+      }
+    )
     if (service.meta().isVisual) {
       recyclerView.setRecycledViewPool(visualViewPool)
     } else {
@@ -401,69 +412,77 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
       recyclerView.itemAnimator = defaultItemAnimator
     }
     service.fetchPage(
-        DataRequest(
-            fromRefresh = fromRefresh && !isRestoring,
-            multiPage = multiPage,
-            pageId = pageToRequest)
-            .also {
-              isRestoring = false
-              pageToRestoreTo = null
-            })
-        .map { (data, nextPageToken, wasFresh) ->
-          data.also {
-            nextPage = nextPageToken
-            currentPage = pageToRequest
-            if (wasFresh) {
-              // If it was fresh data but we thought we were restoring (i.e. stale cache or
-              // something), don't restore to to some now-random position
-              pendingRVState = null
-            }
+      DataRequest(
+        fromRefresh = fromRefresh && !isRestoring,
+        multiPage = multiPage,
+        pageId = pageToRequest
+      )
+        .also {
+          isRestoring = false
+          pageToRestoreTo = null
+        }
+    )
+      .map { (data, nextPageToken, wasFresh) ->
+        data.also {
+          nextPage = nextPageToken
+          currentPage = pageToRequest
+          if (wasFresh) {
+            // If it was fresh data but we thought we were restoring (i.e. stale cache or
+            // something), don't restore to to some now-random position
+            pendingRVState = null
           }
         }
-        .flattenAsObservable { it }
-        .let {
-          // If these are images, wrap in our visual item
-          if (service.meta().isVisual) {
-            it.map { catchupItem ->
-              // If any already exist, we don't need to re-fade them in
-              ImageItem(catchupItem)
-                  .apply {
-                    adapter.getItems()
-                        .find { it.realItem().id == catchupItem.id }
-                        ?.let {
-                          hasFadedIn = (it as ImageItem).hasFadedIn
-                        }
+      }
+      .flattenAsObservable { it }
+      .let {
+        // If these are images, wrap in our visual item
+        if (service.meta().isVisual) {
+          it.map { catchupItem ->
+            // If any already exist, we don't need to re-fade them in
+            ImageItem(catchupItem)
+              .apply {
+                adapter.getItems()
+                  .find { it.realItem().id == catchupItem.id }
+                  ?.let {
+                    hasFadedIn = (it as ImageItem).hasFadedIn
                   }
-            }
-          } else it
-        }
-        .cast(DisplayableItem::class.java)
-        .toList()
-        .toMaybe()
-        .map { newData ->
-          if (fromRefresh) {
-            DiffResultData(newData,
-                DiffUtil.calculateDiff(
-                    ItemUpdateCallback(adapter.getItems(),
-                        newData)))
-          } else {
-            NewData(newData)
+              }
           }
+        } else it
+      }
+      .cast(DisplayableItem::class.java)
+      .toList()
+      .toMaybe()
+      .map { newData ->
+        if (fromRefresh) {
+          DiffResultData(
+            newData,
+            DiffUtil.calculateDiff(
+              ItemUpdateCallback(
+                adapter.getItems(),
+                newData
+              )
+            )
+          )
+        } else {
+          NewData(newData)
         }
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnEvent { _, _ ->
-          swipeRefreshLayout.isEnabled = true
-          swipeRefreshLayout.isRefreshing = false
+      }
+      .observeOn(AndroidSchedulers.mainThread())
+      .doOnEvent { _, _ ->
+        swipeRefreshLayout.isEnabled = true
+        swipeRefreshLayout.isRefreshing = false
+      }
+      .doFinally {
+        dataLoading = false
+        recyclerView.post {
+          adapter.dataFinishedLoading()
         }
-        .doFinally {
-          dataLoading = false
-          recyclerView.post {
-            adapter.dataFinishedLoading()
-          }
-        }
-        .doOnComplete { moreDataAvailable = false }
-        .autoDispose(this)
-        .subscribe({ loadResult ->
+      }
+      .doOnComplete { moreDataAvailable = false }
+      .autoDispose(this)
+      .subscribe(
+        { loadResult ->
           applyOn(progress, errorView) { hide() }
           swipeRefreshLayout.show()
           recyclerView.post {
@@ -481,7 +500,8 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
               pendingRVState = null
             }
           }
-        }, { error: Throwable ->
+        },
+        { error: Throwable ->
           val activity = activity
           if (activity != null) {
             when (error) {
@@ -491,10 +511,10 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
                 swipeRefreshLayout.hide()
                 errorView.show()
                 AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
-                    ?.let {
-                      errorImage.setImageDrawable(it)
-                      it.start()
-                    }
+                  ?.let {
+                    errorImage.setImageDrawable(it)
+                    it.start()
+                  }
                 w(error) { "IOException" }
               }
               is ServiceException -> {
@@ -503,10 +523,10 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
                 swipeRefreshLayout.hide()
                 errorView.show()
                 AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
-                    ?.let {
-                      errorImage.setImageDrawable(it)
-                      it.start()
-                    }
+                  ?.let {
+                    errorImage.setImageDrawable(it)
+                    it.start()
+                  }
                 e(error) { "ServiceException: ${error.message}" }
               }
               is HttpException, is ApolloException -> {
@@ -516,10 +536,10 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
                 swipeRefreshLayout.hide()
                 errorView.show()
                 AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
-                    ?.let {
-                      errorImage.setImageDrawable(it)
-                      it.start()
-                    }
+                  ?.let {
+                    errorImage.setImageDrawable(it)
+                    it.start()
+                  }
                 e(error) { "HttpException" }
               }
               else -> {
@@ -529,17 +549,18 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
                 errorTextView.text = activity.getString(io.sweers.catchup.base.ui.R.string.unknown_issue)
                 errorView.show()
                 AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
-                    ?.let {
-                      errorImage.setImageDrawable(it)
-                      it.start()
-                    }
+                  ?.let {
+                    errorImage.setImageDrawable(it)
+                    it.start()
+                  }
                 e(error) { "Unknown issue." }
               }
             }
           } else {
             pageToRestoreTo = pageToRequest
           }
-        })
+        }
+      )
   }
 
   override fun onRefresh() {
@@ -557,7 +578,7 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
   private class TextAdapter(
     private val bindDelegate: (CatchUpItem, CatchUpItemViewHolder, clicksChannel: SendChannel<UrlMeta>) -> Unit
   ) :
-      DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
+    DisplayableItemAdapter<CatchUpItem, ViewHolder>() {
 
     private var showLoadingMore = false
 
@@ -576,24 +597,31 @@ class ServiceFragment : InjectingBaseFragment<FragmentServiceBinding>(),
       val layoutInflater = LayoutInflater.from(parent.context)
       when (viewType) {
         TYPE_ITEM -> return CatchUpItemViewHolder(
-            layoutInflater.inflate(R.layout.list_item_general,
-                parent,
-                false))
+          layoutInflater.inflate(
+            R.layout.list_item_general,
+            parent,
+            false
+          )
+        )
         TYPE_LOADING_MORE -> return LoadingMoreHolder(
-            layoutInflater.inflate(R.layout.infinite_loading,
-                parent,
-                false))
+          layoutInflater.inflate(
+            R.layout.infinite_loading,
+            parent,
+            false
+          )
+        )
       }
       throw InvalidParameterException("Unrecognized view type - $viewType")
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
       when (getItemViewType(position)) {
-        TYPE_ITEM -> try {
-          bindDelegate(data[position], holder as CatchUpItemViewHolder, clicksChannel())
-        } catch (error: Exception) {
-          e(error) { "Bind delegate failure!" }
-        }
+        TYPE_ITEM ->
+          try {
+            bindDelegate(data[position], holder as CatchUpItemViewHolder, clicksChannel())
+          } catch (error: Exception) {
+            e(error) { "Bind delegate failure!" }
+          }
 
         TYPE_LOADING_MORE -> (holder as LoadingMoreHolder).progress.visibility = if (position > 0) View.VISIBLE else View.INVISIBLE
       }
@@ -652,12 +680,12 @@ internal class ItemUpdateCallback<T : DisplayableItem>(
   private val newItems: List<T>
 ) : DiffUtil.Callback() {
   override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-      oldItems[oldItemPosition].stableId() == newItems[newItemPosition].stableId()
+    oldItems[oldItemPosition].stableId() == newItems[newItemPosition].stableId()
 
   override fun getOldListSize() = oldItems.size
 
   override fun getNewListSize() = newItems.size
 
   override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-      oldItems[oldItemPosition] == newItems[newItemPosition]
+    oldItems[oldItemPosition] == newItems[newItemPosition]
 }

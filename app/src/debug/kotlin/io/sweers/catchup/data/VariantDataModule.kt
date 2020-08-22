@@ -31,11 +31,13 @@ import timber.log.Timber
 import javax.inject.Singleton
 
 private inline fun httpLoggingInterceptor(level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE, crossinline logger: (String) -> Unit): HttpLoggingInterceptor {
-  return HttpLoggingInterceptor(object : Logger {
-    override fun log(message: String) {
-      logger(message)
+  return HttpLoggingInterceptor(
+    object : Logger {
+      override fun log(message: String) {
+        logger(message)
+      }
     }
-  }).also { it.level = level }
+  ).also { it.level = level }
 }
 
 @InstallIn(ApplicationComponent::class)
@@ -48,7 +50,7 @@ object VariantDataModule {
   @IntoSet
   internal fun provideLoggingInterceptor(): Interceptor = httpLoggingInterceptor(BASIC) { message ->
     Timber.tag("OkHttp")
-        .v(message)
+      .v(message)
   }
 
 //  @Provides
@@ -65,5 +67,5 @@ object VariantDataModule {
     @ApplicationContext context: Context,
     debugPreferences: DebugPreferences
   ): Interceptor =
-      MockDataInterceptor(context, debugPreferences)
+    MockDataInterceptor(context, debugPreferences)
 }

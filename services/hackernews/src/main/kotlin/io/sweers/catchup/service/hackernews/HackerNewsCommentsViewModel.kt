@@ -82,8 +82,8 @@ internal class HackerNewsCommentsViewModel @AssistedInject constructor(
     val story = loadStory(storyId)
 
     return story to story.kids!!.asFlow()
-        .map { loadItem(it.toString()) }
-        .toList()
+      .map { loadItem(it.toString()) }
+      .toList()
   }
 
   private suspend fun loadStory(id: String) = suspendCancellableCoroutine<HackerNewsStory> { cont ->

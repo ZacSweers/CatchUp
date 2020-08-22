@@ -29,9 +29,9 @@ object GemojiModule {
   @Singleton
   internal fun provideGemojiDatabase(@ApplicationContext context: Context): GemojiDatabase {
     return Room.databaseBuilder(context, GemojiDatabase::class.java, "gemoji.db")
-        .fallbackToDestructiveMigration()
-        .createFromAsset("databases/gemoji.db")
-        .build()
+      .fallbackToDestructiveMigration()
+      .createFromAsset("databases/gemoji.db")
+      .build()
   }
 
   @Provides

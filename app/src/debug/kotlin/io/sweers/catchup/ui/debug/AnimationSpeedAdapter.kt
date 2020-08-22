@@ -63,7 +63,7 @@ internal class AnimationSpeedAdapter(context: Context) : BindableAdapter<Int>(co
     @JvmStatic
     fun getPositionForValue(value: Int): Int {
       return VALUES.indices.firstOrNull { VALUES[it] == value }
-          ?: 0 // Default to 1x if something changes.
+        ?: 0 // Default to 1x if something changes.
     }
   }
 }

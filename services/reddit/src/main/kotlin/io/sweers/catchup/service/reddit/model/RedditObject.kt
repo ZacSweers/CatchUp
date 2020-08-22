@@ -57,7 +57,7 @@ internal data class RedditComment(
   val replies: RedditObject,
   @Json(name = "subreddit_id") val subredditId: String,
 
-    // Inherited from RedditSubmission. A little grody
+  // Inherited from RedditSubmission. A little grody
   override val author: String,
   @Json(name = "author_flair_text") override val authorFlairText: String?,
   @Json(name = "banned_by") override val bannedBy: String?,
@@ -89,7 +89,7 @@ internal data class RedditLink(
   val url: String,
   val visited: Boolean,
 
-    // Inherited from RedditSubmission. A little grody
+  // Inherited from RedditSubmission. A little grody
   override val author: String,
   @Json(name = "author_flair_text") override val authorFlairText: String?,
   @Json(name = "banned_by") override val bannedBy: String?,

@@ -27,11 +27,11 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.util.ArrayDeque
 import java.util.ArrayList
 import javax.inject.Inject
@@ -71,38 +71,38 @@ class LumberYard @Inject constructor(private val app: Application) {
    * Save the current logs to disk.
    */
   suspend fun save(): File = suspendCancellableCoroutine { continuation ->
-      val folder = app.getExternalFilesDir(null)
-      if (folder == null) {
-        continuation.resumeWithException(IOException("External storage is not mounted."))
-      } else {
-        val fileName = ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())
-        val output = File(folder, fileName)
+    val folder = app.getExternalFilesDir(null)
+    if (folder == null) {
+      continuation.resumeWithException(IOException("External storage is not mounted."))
+    } else {
+      val fileName = ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())
+      val output = File(folder, fileName)
 
-        var sink: BufferedSink? = null
-        try {
-          sink = output.sink().buffer()
-          val entries1 = bufferedLogs()
-          for (entry in entries1) {
-            sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.toInt())
-          }
-          // need to close before emiting file to the subscriber, because when subscriber receives
-          // data in the same thread the file may be truncated
-          sink.close()
-          sink = null
+      var sink: BufferedSink? = null
+      try {
+        sink = output.sink().buffer()
+        val entries1 = bufferedLogs()
+        for (entry in entries1) {
+          sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.toInt())
+        }
+        // need to close before emiting file to the subscriber, because when subscriber receives
+        // data in the same thread the file may be truncated
+        sink.close()
+        sink = null
 
-          continuation.resume(output)
-        } catch (e: IOException) {
-          continuation.resumeWithException(e)
-        } finally {
-          if (sink != null) {
-            try {
-              sink.close()
-            } catch (e: IOException) {
-              continuation.resumeWithException(e)
-            }
+        continuation.resume(output)
+      } catch (e: IOException) {
+        continuation.resumeWithException(e)
+      } finally {
+        if (sink != null) {
+          try {
+            sink.close()
+          } catch (e: IOException) {
+            continuation.resumeWithException(e)
           }
         }
       }
+    }
   }
 
   /**
@@ -114,18 +114,22 @@ class LumberYard @Inject constructor(private val app: Application) {
     return app.getExternalFilesDir(null)?.let { folder ->
       val initialSize = folder.length()
       (folder.listFiles() ?: return -1L)
-          .asSequence()
-          .filter { it.name.endsWith(".log") }
-          .forEach { it.delete() }
+        .asSequence()
+        .filter { it.name.endsWith(".log") }
+        .forEach { it.delete() }
       return@let initialSize - folder.length()
     } ?: -1L
   }
 
   data class Entry(val level: Int, val tag: String?, val message: String) {
     fun prettyPrint(): String {
-      return String.format("%22s %s %s", tag ?: "CATCHUP", displayLevel(),
-          // Indent newlines to match the original indentation.
-          message.replace("\\n".toRegex(), "\n                         "))
+      return String.format(
+        "%22s %s %s",
+        tag ?: "CATCHUP",
+        displayLevel(),
+        // Indent newlines to match the original indentation.
+        message.replace("\\n".toRegex(), "\n                         ")
+      )
     }
 
     fun displayLevel() = when (level) {

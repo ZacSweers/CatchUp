@@ -38,13 +38,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Locale
 
 private val PLATFORM_CONFIGURATIONS = setOf(
-    "annotationProcessor",
-    "api",
-    "compile",
-    "compileOnly",
-    "implementation",
-    "kapt",
-    "runtimeOnly"
+  "annotationProcessor",
+  "api",
+  "compile",
+  "compileOnly",
+  "implementation",
+  "kapt",
+  "runtimeOnly"
 )
 
 @Suppress("unused")
@@ -77,12 +77,12 @@ private fun Project.configureJvm() {
 
   // Apply platforms
   configurations
-      .matching { isPlatformConfigurationName(it.name) }
-      .configureEach {
-        dependencies {
-          add(name, platform(deps.okhttp.bom))
-        }
+    .matching { isPlatformConfigurationName(it.name) }
+    .configureEach {
+      dependencies {
+        add(name, platform(deps.okhttp.bom))
       }
+    }
 }
 
 private val baseExtensionConfig: BaseExtension.() -> Unit = {
@@ -189,13 +189,15 @@ private fun BaseAppModuleExtension.configureVersioning(project: Project) {
   // use filter to apply onVariantProperties to a subset of the variants
   onVariantProperties.withBuildType("release") {
     val versionCodeTask = project.tasks.register<VersionCodeTask>(
-        "computeVersionCodeFor${name.capitalize(Locale.US)}") {
+      "computeVersionCodeFor${name.capitalize(Locale.US)}"
+    ) {
       group = "versioning"
       outputFile.set(project.layout.buildDirectory.file("intermediates/versioning/versionCode.txt"))
     }
     val mappedVersionCodeTask = versionCodeTask.map { it.outputFile.get().asFile.readText().toInt() }
     val versionNameTask = project.tasks.register<VersionNameTask>(
-        "computeVersionNameFor${name.capitalize(Locale.US)}") {
+      "computeVersionNameFor${name.capitalize(Locale.US)}"
+    ) {
       group = "versioning"
       outputFile.set(project.layout.buildDirectory.file("intermediates/versioning/versionName.txt"))
     }

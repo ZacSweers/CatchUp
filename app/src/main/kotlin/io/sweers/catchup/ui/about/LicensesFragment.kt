@@ -47,6 +47,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.base.ui.InjectableBaseFragment
+import io.sweers.catchup.base.ui.findSwatch
+import io.sweers.catchup.base.ui.generateAsync
+import io.sweers.catchup.base.ui.luminosity
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.ProjectOwnersByIdsQuery
 import io.sweers.catchup.data.github.RepositoriesByIdsQuery
@@ -65,14 +68,11 @@ import io.sweers.catchup.ui.StickyHeadersLinearLayoutManager
 import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.dp2px
-import io.sweers.catchup.base.ui.findSwatch
-import io.sweers.catchup.base.ui.generateAsync
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.distinct
 import io.sweers.catchup.util.kotlin.groupBy
 import io.sweers.catchup.util.kotlin.sortBy
-import io.sweers.catchup.base.ui.luminosity
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.Dispatchers
@@ -124,7 +124,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
   private lateinit var layoutManager: StickyHeadersLinearLayoutManager<Adapter>
 
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLicensesBinding =
-      FragmentLicensesBinding::inflate
+    FragmentLicensesBinding::inflate
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
@@ -169,116 +169,122 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     // Start with a fetch of our github entries from assets
     val githubEntries = withContext(Dispatchers.Default) {
       val adapter = moshi.adapter<List<OssGitHubEntry>>(
-              Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java))
+        Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java)
+      )
       val regular = adapter.fromJson(resources.assets.open("licenses_github.json").source().buffer())!!
       val generated = adapter.fromJson(resources.assets.open("generated_licenses.json").source().buffer())!!
       return@withContext regular + generated
     }
     // Fetch repos, send down a map of the ids to owner ids
     val idsToOwnerIds = githubEntries.asFlow()
-        .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
-        .flatMapMerge {
-          apolloClient.query(it)
-            .toBuilder()
-              .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
-            .build()
-              .toFlow()
-              .map {
-                with(it.data!!.repository!!) {
-                  id to owner.id
-                }
-              }
-              .flowOn(Dispatchers.IO)
-        }
-        .distinct()
-        .fold(mutableMapOf()) { map: MutableMap<String, String>, (first, second) ->
-          map.apply {
-            put(first, second)
+      .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
+      .flatMapMerge {
+        apolloClient.query(it)
+          .toBuilder()
+          .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
+          .build()
+          .toFlow()
+          .map {
+            with(it.data!!.repository!!) {
+              id to owner.id
+            }
           }
+          .flowOn(Dispatchers.IO)
+      }
+      .distinct()
+      .fold(mutableMapOf()) { map: MutableMap<String, String>, (first, second) ->
+        map.apply {
+          put(first, second)
         }
+      }
 
     // Fetch the users by their IDs
     val userIdToNameMap = withContext(Dispatchers.IO) {
       apolloClient.query(ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct()))
         .toBuilder()
-          .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
+        .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
         .build()
-          .toFlow()
-          .map { it.data!!.nodes.filterNotNull().asFlow() }
-          .flattenConcat()
-          // Reduce into a map of the owner ID -> display name
-          .fold(mutableMapOf<String, String>()) { map, node ->
-            map.apply {
-              node.asOrganization?.run { map[id] = (name ?: login) }
-              node.asUser?.run { map[id] = (name ?: login) }
-            }
+        .toFlow()
+        .map { it.data!!.nodes.filterNotNull().asFlow() }
+        .flattenConcat()
+        // Reduce into a map of the owner ID -> display name
+        .fold(mutableMapOf<String, String>()) { map, node ->
+          map.apply {
+            node.asOrganization?.run { map[id] = (name ?: login) }
+            node.asUser?.run { map[id] = (name ?: login) }
           }
+        }
     }
     // Fetch the repositories by their IDs, map down to its
     return apolloClient.query(RepositoriesByIdsQuery(idsToOwnerIds.keys.toList()))
       .toBuilder()
-        .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
+      .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
       .build()
-        .toFlow()
-        .map {
-          it.data!!.nodes.asSequence()
-              .mapNotNull { it?.asRepository }
-              .asFlow()
-        }
-        .flattenConcat()
-        .map { it to userIdToNameMap.getValue(it.owner.id) }
-        .map { (repo, ownerName) ->
-          OssItem(
-              avatarUrl = repo.owner.avatarUrl.toString(),
-              author = ownerName,
-              name = repo.name,
-              clickUrl = repo.url.toString(),
-              license = repo.licenseInfo?.name,
-              description = repo.description
+      .toFlow()
+      .map {
+        it.data!!.nodes.asSequence()
+          .mapNotNull { it?.asRepository }
+          .asFlow()
+      }
+      .flattenConcat()
+      .map { it to userIdToNameMap.getValue(it.owner.id) }
+      .map { (repo, ownerName) ->
+        OssItem(
+          avatarUrl = repo.owner.avatarUrl.toString(),
+          author = ownerName,
+          name = repo.name,
+          clickUrl = repo.url.toString(),
+          license = repo.licenseInfo?.name,
+          description = repo.description
+        )
+      }
+      .onStart {
+        moshi.adapter<List<OssItem>>(
+          Types.newParameterizedType(List::class.java, OssItem::class.java)
+        )
+          .fromJson(resources.assets.open("licenses_mixins.json").source().buffer())!!
+          .forEach { emit(it) }
+      }
+      .flowOn(Dispatchers.IO)
+      .groupBy { it.author }
+      .sortBy { it.first }
+      .flatMapConcat { it.second.asFlow().sortBy { it.name } }
+      .map {
+        // TODO use CopyDynamic when 0.3.0 is out
+        it.copy(
+          author = markdownConverter.replaceMarkdownEmojisIn(it.author),
+          name = markdownConverter.replaceMarkdownEmojisIn(it.name),
+          description = it.description?.let {
+            markdownConverter.replaceMarkdownEmojisIn(it)
+          } ?: it.description
+        )
+      }
+      .flowOn(Dispatchers.IO)
+      .toList()
+      .let {
+        val collector = mutableListOf<OssBaseItem>()
+        with(it[0]) {
+          collector.add(
+            OssItemHeader(
+              name = author,
+              avatarUrl = avatarUrl
+            )
           )
         }
-        .onStart {
-          moshi.adapter<List<OssItem>>(
-              Types.newParameterizedType(List::class.java, OssItem::class.java))
-              .fromJson(resources.assets.open("licenses_mixins.json").source().buffer())!!
-              .forEach { emit(it) }
-        }
-        .flowOn(Dispatchers.IO)
-        .groupBy { it.author }
-        .sortBy { it.first }
-        .flatMapConcat { it.second.asFlow().sortBy { it.name } }
-        .map {
-          // TODO use CopyDynamic when 0.3.0 is out
-          it.copy(
-              author = markdownConverter.replaceMarkdownEmojisIn(it.author),
-              name = markdownConverter.replaceMarkdownEmojisIn(it.name),
-              description = it.description?.let {
-                markdownConverter.replaceMarkdownEmojisIn(it)
-              } ?: it.description
-          )
-        }
-        .flowOn(Dispatchers.IO)
-        .toList()
-        .let {
-          val collector = mutableListOf<OssBaseItem>()
-          with(it[0]) {
-            collector.add(OssItemHeader(
-                name = author,
-                avatarUrl = avatarUrl
-            ))
+        it.fold(it[0].author) { lastAuthor, currentItem ->
+          if (currentItem.author != lastAuthor) {
+            collector.add(
+              OssItemHeader(
+                name = currentItem.author,
+                avatarUrl = currentItem.avatarUrl
+              )
+            )
           }
-          it.fold(it[0].author) { lastAuthor, currentItem ->
-            if (currentItem.author != lastAuthor) {
-              collector.add(OssItemHeader(
-                  name = currentItem.author,
-                  avatarUrl = currentItem.avatarUrl
-              ))
-            }
-            collector.add(currentItem)
-            currentItem.author
-          }
-          collector
+          collector.add(currentItem)
+          currentItem.author
         }
+        collector
+      }
   }
 
   override fun onRequestScrollToTop() {
@@ -289,8 +295,10 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     }
   }
 
-  private inner class Adapter : RecyclerView.Adapter<ViewHolder>(),
-      StickyHeaders, StickyHeaders.ViewSetup {
+  private inner class Adapter :
+    RecyclerView.Adapter<ViewHolder>(),
+    StickyHeaders,
+    StickyHeaders.ViewSetup {
 
     private val items = mutableListOf<OssBaseItem>()
     private val headerColorThresholdFun = { swatch: Swatch ->
@@ -309,20 +317,20 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
 
     override fun setupStickyHeaderView(stickyHeader: View) {
       stickyHeader.animate()
-          .z(stickyHeader.resources.dp2px(4f))
-          .setInterpolator(UiUtil.fastOutSlowInInterpolator)
-          .setDuration(200)
-          .start()
+        .z(stickyHeader.resources.dp2px(4f))
+        .setInterpolator(UiUtil.fastOutSlowInInterpolator)
+        .setDuration(200)
+        .start()
     }
 
     override fun teardownStickyHeaderView(stickyHeader: View) {
       with(stickyHeader) {
         findViewById<TextView>(R.id.title).setTextColor(defaultHeaderTextColor)
         animate()
-            .z(0f)
-            .setInterpolator(UiUtil.fastOutSlowInInterpolator)
-            .setDuration(200)
-            .start()
+          .z(0f)
+          .setInterpolator(UiUtil.fastOutSlowInInterpolator)
+          .setDuration(200)
+          .start()
       }
     }
 
@@ -338,23 +346,23 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
             transformations(CircleCropTransformation())
             size(dimenSize, dimenSize)
             listener(
-                onSuccess = { _, _ ->
-                  val bitmap: Bitmap? = when (val data = icon.drawable) {
-                    is BitmapDrawable -> data.bitmap
-                    else -> null
-                  }
-                  bitmap?.let {
-                    newScope().launch {
-                      val color = Palette.from(it)
-                          .clearFilters()
-                          .generateAsync()
-                          ?.findSwatch(headerColorThresholdFun)
-                          ?.rgb
-                          ?: defaultHeaderTextColor
-                      holder.title.setTextColor(color)
-                    }
+              onSuccess = { _, _ ->
+                val bitmap: Bitmap? = when (val data = icon.drawable) {
+                  is BitmapDrawable -> data.bitmap
+                  else -> null
+                }
+                bitmap?.let {
+                  newScope().launch {
+                    val color = Palette.from(it)
+                      .clearFilters()
+                      .generateAsync()
+                      ?.findSwatch(headerColorThresholdFun)
+                      ?.rgb
+                      ?: defaultHeaderTextColor
+                    holder.title.setTextColor(color)
                   }
                 }
+              }
             )
           }
           title.text = item.name
@@ -364,7 +372,8 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
           // See https://issuetracker.google.com/issues/68768935
           setTitleTopMargin(holder)
           title(
-              "${item.name}${if (!item.description.isNullOrEmpty()) " — ${item.description}" else ""}")
+            "${item.name}${if (!item.description.isNullOrEmpty()) " — ${item.description}" else ""}"
+          )
           score(null)
           timestamp(null)
           author(item.license)
@@ -376,17 +385,23 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
             // Maybe someday we should just return the groups rather than flattening
             // but this was neat to write in kotlin
             val accentColor = (holder.bindingAdapterPosition downTo 0)
-                .find(::isStickyHeader)
-                ?.let {
-                  (recyclerView.findViewHolderForAdapterPosition(it)
-                      as HeaderHolder)
-                      .title.textColors.defaultColor
-                } ?: 0
+              .find(::isStickyHeader)
+              ?.let {
+                (
+                  recyclerView.findViewHolderForAdapterPosition(it)
+                    as HeaderHolder
+                  )
+                  .title.textColors.defaultColor
+              } ?: 0
             val context = itemView.context
             viewLifecycleOwner.lifecycleScope.launch {
               linkManager.openUrl(
-                  UrlMeta(item.clickUrl, accentColor,
-                      context))
+                UrlMeta(
+                  item.clickUrl,
+                  accentColor,
+                  context
+                )
+              )
             }
           }
         }
@@ -397,11 +412,15 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
       return if (viewType == 0) {
-        HeaderHolder(LayoutInflater.from(parent.context)
-            .inflate(layout.about_header_item, parent, false))
+        HeaderHolder(
+          LayoutInflater.from(parent.context)
+            .inflate(layout.about_header_item, parent, false)
+        )
       } else {
-        CatchUpItemViewHolder(LayoutInflater.from(parent.context)
-            .inflate(layout.list_item_general, parent, false))
+        CatchUpItemViewHolder(
+          LayoutInflater.from(parent.context)
+            .inflate(layout.list_item_general, parent, false)
+        )
       }
     }
 
@@ -421,8 +440,11 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
 @JsonClass(generateAdapter = true)
 internal data class OssGitHubEntry(val owner: String, val name: String)
 
-private class HeaderHolder(view: View) : ViewHolder(
-    view), TemporaryScopeHolder by temporaryScope() {
+private class HeaderHolder(view: View) :
+  ViewHolder(
+    view
+  ),
+  TemporaryScopeHolder by temporaryScope() {
   val binding = AboutHeaderItemBinding.bind(view)
   val icon = binding.icon
   val title = binding.title
@@ -456,21 +478,23 @@ internal data class OssItem(
  * Converts an [ApolloCall] to a [Flow].
  */
 suspend fun <T> ApolloCall<T>.toFlow(): Flow<Response<T>> = callbackFlow<Response<T>> {
-  enqueue(object : ApolloCall.Callback<T>() {
-    override fun onResponse(response: Response<T>) {
-      safeOffer(response)
-    }
+  enqueue(
+    object : ApolloCall.Callback<T>() {
+      override fun onResponse(response: Response<T>) {
+        safeOffer(response)
+      }
 
-    override fun onFailure(e: ApolloException) {
-      throw e
-    }
+      override fun onFailure(e: ApolloException) {
+        throw e
+      }
 
-    override fun onStatusEvent(event: StatusEvent) {
-      if (event == COMPLETED && !isClosedForSend) {
-        close()
+      override fun onStatusEvent(event: StatusEvent) {
+        if (event == COMPLETED && !isClosedForSend) {
+          close()
+        }
       }
     }
-  })
+  )
   awaitClose {
     if (!isCanceled) {
       cancel()

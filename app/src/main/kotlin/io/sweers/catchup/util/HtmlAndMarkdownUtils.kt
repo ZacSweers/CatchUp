@@ -74,7 +74,8 @@ fun Markdown.parseMarkdownAndSetText(
     return
   }
   textView.setTextWithNiceLinks(
-      parseMarkdownAndPlainLinks(textView, markwon, alternateUrlSpan))
+    parseMarkdownAndPlainLinks(textView, markwon, alternateUrlSpan)
+  )
 }
 
 /**
@@ -137,14 +138,18 @@ private fun CharSequence.linkifyPlainLinks(
   for (urlSpan in urlSpans) {
     ssb.removeSpan(urlSpan)
     alternateUrlSpan
-        ?.invoke(urlSpan.url)
-        ?.forEach { setSpan(ssb, urlSpan, plainLinks, it) }
-        ?: setSpan(ssb, urlSpan, plainLinks,
-            object : TouchableUrlSpan(urlSpan.url, linkTextColor, linkHighlightColor) {
-              override fun onClick(url: String) {
-                // TODO wat
-              }
-            })
+      ?.invoke(urlSpan.url)
+      ?.forEach { setSpan(ssb, urlSpan, plainLinks, it) }
+      ?: setSpan(
+        ssb,
+        urlSpan,
+        plainLinks,
+        object : TouchableUrlSpan(urlSpan.url, linkTextColor, linkHighlightColor) {
+          override fun onClick(url: String) {
+            // TODO wat
+          }
+        }
+      )
   }
 
   return ssb
@@ -156,10 +161,12 @@ private fun setSpan(
   plainLinks: SpannableString,
   span: Any
 ) {
-  ssb.setSpan(span,
-      plainLinks.getSpanStart(urlSpan),
-      plainLinks.getSpanEnd(urlSpan),
-      Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+  ssb.setSpan(
+    span,
+    plainLinks.getSpanStart(urlSpan),
+    plainLinks.getSpanEnd(urlSpan),
+    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+  )
 }
 
 @SuppressLint("NewApi") // False positive

@@ -41,11 +41,11 @@ internal data class HackerNewsStory(
   val parent: HackerNewsStory?,
   val parts: List<String>?,
   val score: Int,
-    /* private, but Firebase is too dumb to read private fields */
+  /* private, but Firebase is too dumb to read private fields */
   val time: Long?,
   val title: String,
   val text: String?,
-    /* private, but Firebase is too dumb to read private fields */
+  /* private, but Firebase is too dumb to read private fields */
   val type: String?,
   val url: String?
 ) : HasStableId {
@@ -62,7 +62,8 @@ internal data class HackerNewsStory(
   @Exclude
   fun realTime(): Instant = time?.let {
     Instant.ofEpochMilli(
-        TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS))
+      TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS)
+    )
   } ?: Instant.now()
 
   @Exclude
@@ -89,11 +90,11 @@ internal data class HackerNewsComment(
   val parent: Long?,
 //  val parts: List<String>?,
 //  val score: Int,
-    /* private, but Firebase is too dumb to read private fields */
+  /* private, but Firebase is too dumb to read private fields */
   val time: Long?,
 //  val title: String?,
   val text: String,
-    /* private, but Firebase is too dumb to read private fields */
+  /* private, but Firebase is too dumb to read private fields */
   val type: String?
 //  val url: String?
 ) : HasStableId {
@@ -110,7 +111,8 @@ internal data class HackerNewsComment(
   @Exclude
   fun realTime(): Instant = time?.let {
     Instant.ofEpochMilli(
-        TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS))
+      TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS)
+    )
   } ?: Instant.now()
 
   @Exclude

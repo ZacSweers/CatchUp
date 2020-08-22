@@ -32,7 +32,8 @@ operator fun <T> Iterator<T>.get(position: Int): T {
   val skipped = advance(position)
   if (!hasNext()) {
     throw IndexOutOfBoundsException(
-        "position ($position) must be less than the number of elements that remained ($skipped)")
+      "position ($position) must be less than the number of elements that remained ($skipped)"
+    )
   }
   return next()
 }

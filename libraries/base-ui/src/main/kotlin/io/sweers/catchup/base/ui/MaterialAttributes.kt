@@ -50,14 +50,18 @@ internal object MaterialAttributes {
   ): Int {
     val typedValue = resolve(context, attributeResId)
     if (typedValue == null) {
-      val errorMessage = ("%1\$s requires a value for the %2\$s attribute to be set in your app theme. " +
+      val errorMessage = (
+        "%1\$s requires a value for the %2\$s attribute to be set in your app theme. " +
           "You can either set the attribute in your theme or " +
-          "update your theme to inherit from Theme.MaterialComponents (or a descendant).")
+          "update your theme to inherit from Theme.MaterialComponents (or a descendant)."
+        )
       throw IllegalArgumentException(
-          String.format(
-              errorMessage,
-              errorMessageComponent,
-              context.resources.getResourceName(attributeResId)))
+        String.format(
+          errorMessage,
+          errorMessageComponent,
+          context.resources.getResourceName(attributeResId)
+        )
+      )
     }
     return typedValue.data
   }
@@ -70,7 +74,10 @@ internal object MaterialAttributes {
    */
   fun resolveOrThrow(componentView: View, @AttrRes attributeResId: Int): Int {
     return resolveOrThrow(
-        componentView.context, attributeResId, componentView.javaClass.canonicalName)
+      componentView.context,
+      attributeResId,
+      componentView.javaClass.canonicalName
+    )
   }
 
   /**

@@ -77,9 +77,10 @@ object CustomTabsHelper {
       packagesSupportingCustomTabs.isEmpty() -> null
       packagesSupportingCustomTabs.size == 1 -> packagesSupportingCustomTabs[0]
       !defaultViewHandlerPackageName.isNullOrBlank() &&
-          !hasSpecializedHandlerIntents(context, activityIntent)
-          && packagesSupportingCustomTabs.contains(
-          defaultViewHandlerPackageName) -> defaultViewHandlerPackageName
+        !hasSpecializedHandlerIntents(context, activityIntent)
+        && packagesSupportingCustomTabs.contains(
+          defaultViewHandlerPackageName
+        ) -> defaultViewHandlerPackageName
       STABLE_PACKAGE in packagesSupportingCustomTabs -> STABLE_PACKAGE
       BETA_PACKAGE in packagesSupportingCustomTabs -> BETA_PACKAGE
       DEV_PACKAGE in packagesSupportingCustomTabs -> DEV_PACKAGE
@@ -101,8 +102,9 @@ object CustomTabsHelper {
     try {
       val pm = context.packageManager
       val handlers = pm.queryIntentActivities(
-          intent,
-          PackageManager.GET_RESOLVED_FILTER)
+        intent,
+        PackageManager.GET_RESOLVED_FILTER
+      )
       if (handlers.size == 0) {
         return false
       }

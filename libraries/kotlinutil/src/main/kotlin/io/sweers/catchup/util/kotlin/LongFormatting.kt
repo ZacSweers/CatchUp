@@ -31,8 +31,10 @@ private val SUFFIXES = TreeMap<Long, String>().apply {
 fun Long.format(): String {
   var shortened = shorten()
   if (shortened.isNotEmpty() && !Character.isDigit(shortened.substring(shortened.length - 1)[0])) {
-    shortened = shortened.replace('.',
-        DecimalFormatSymbols(Locale.getDefault()).decimalSeparator)
+    shortened = shortened.replace(
+      '.',
+      DecimalFormatSymbols(Locale.getDefault()).decimalSeparator
+    )
   }
   return shortened
 }

@@ -77,94 +77,100 @@ internal class GitHubService @Inject constructor(
 
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     return fetchByScraping()
-        .onErrorResumeNext { t: Throwable ->
-          e(t) { "GitHub trending scraping failed." }
-          fetchByQuery(request)
-        }
+      .onErrorResumeNext { t: Throwable ->
+        e(t) { "GitHub trending scraping failed." }
+        fetchByQuery(request)
+      }
   }
 
   private fun fetchByScraping(): Single<DataResult> {
     return gitHubApi
-        .get()
-        .getTrending(language = All, since = DAILY)
-        .flattenAsObservable { it }
-        .map {
-          with(it) {
-            CatchUpItem(
-                id = "$author/$repoName".hashCode().toLong(),
-                title = "$repoName — $description",
-                author = author,
-                timestamp = null,
-                score = "★" to stars,
-                tag = language,
-                itemClickUrl = url,
-                mark = starsToday?.toString()?.let {
-                  Mark(text = it,
-                      icon = R.drawable.ic_star_black_24dp,
-                      iconTintColor = languageColor?.let(Color::parseColor)
-                  )
-                }
-            )
-          }
+      .get()
+      .getTrending(language = All, since = DAILY)
+      .flattenAsObservable { it }
+      .map {
+        with(it) {
+          CatchUpItem(
+            id = "$author/$repoName".hashCode().toLong(),
+            title = "$repoName — $description",
+            author = author,
+            timestamp = null,
+            score = "★" to stars,
+            tag = language,
+            itemClickUrl = url,
+            mark = starsToday?.toString()?.let {
+              Mark(
+                text = it,
+                icon = R.drawable.ic_star_black_24dp,
+                iconTintColor = languageColor?.let(Color::parseColor)
+              )
+            }
+          )
         }
-        .toList()
-        .map { DataResult(it, null) }
+      }
+      .toList()
+      .map { DataResult(it, null) }
   }
 
   private fun fetchByQuery(request: DataRequest): Single<DataResult> {
     val query = SearchQuery(
-        createdSince = TrendingTimespan.WEEK.createdSince(),
-        minStars = 50)
-        .toString()
+      createdSince = TrendingTimespan.WEEK.createdSince(),
+      minStars = 50
+    )
+      .toString()
 
-    val searchQuery = apolloClient.get().query(GitHubSearchQuery(query,
+    val searchQuery = apolloClient.get().query(
+      GitHubSearchQuery(
+        query,
         50,
         LanguageOrder(
-            direction = OrderDirection.DESC,
-            field_ = LanguageOrderField.SIZE
+          direction = OrderDirection.DESC,
+          field_ = LanguageOrderField.SIZE
         ),
-        Input.fromNullable(request.pageId.nullIfBlank())))
-        .toBuilder()
-        .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
-        .build()
+        Input.fromNullable(request.pageId.nullIfBlank())
+      )
+    )
+      .toBuilder()
+      .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
+      .build()
 
     return Rx2Apollo.from(searchQuery)
-        .firstOrError()
-        .doOnSuccess {
-          if (it.hasErrors()) {
-            throw ApolloException(it.errors.toString())
-          }
+      .firstOrError()
+      .doOnSuccess {
+        if (it.hasErrors()) {
+          throw ApolloException(it.errors.toString())
         }
-        .map { it.data!! }
-        .flatMap { (search) ->
-          Observable.fromIterable(search.nodes?.mapNotNull { it?.asRepository }.orEmpty())
-              .map {
-                with(it) {
-                  val description = description
-                      ?.let { " — ${emojiMarkdownConverter.get().replaceMarkdownEmojisIn(it)}" }
-                      .orEmpty()
+      }
+      .map { it.data!! }
+      .flatMap { (search) ->
+        Observable.fromIterable(search.nodes?.mapNotNull { it?.asRepository }.orEmpty())
+          .map {
+            with(it) {
+              val description = description
+                ?.let { " — ${emojiMarkdownConverter.get().replaceMarkdownEmojisIn(it)}" }
+                .orEmpty()
 
-                  CatchUpItem(
-                      id = id.hashCode().toLong(),
-                      title = "$name$description",
-                      score = "★" to stargazers.totalCount,
-                      timestamp = createdAt,
-                      author = owner.login,
-                      tag = languages?.nodes?.firstOrNull()?.name,
-                      source = licenseInfo?.name,
-                      itemClickUrl = url.toString()
-                  )
-                }
-              }
-              .toList()
-              .map {
-                if (search.pageInfo.hasNextPage) {
-                  DataResult(it, search.pageInfo.endCursor)
-                } else {
-                  DataResult(it, null)
-                }
-              }
-        }
+              CatchUpItem(
+                id = id.hashCode().toLong(),
+                title = "$name$description",
+                score = "★" to stargazers.totalCount,
+                timestamp = createdAt,
+                author = owner.login,
+                tag = languages?.nodes?.firstOrNull()?.name,
+                source = licenseInfo?.name,
+                itemClickUrl = url.toString()
+              )
+            }
+          }
+          .toList()
+          .map {
+            if (search.pageInfo.hasNextPage) {
+              DataResult(it, search.pageInfo.endCursor)
+            } else {
+              DataResult(it, null)
+            }
+          }
+      }
   }
 }
 
@@ -184,12 +190,12 @@ abstract class GitHubMetaModule {
     @Provides
     @Reusable
     internal fun provideGitHubServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.github,
-        R.color.githubAccent,
-        R.drawable.logo_github,
-        firstPageKey = "",
-        enabled = BuildConfig.GITHUB_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
+      SERVICE_KEY,
+      R.string.github,
+      R.color.githubAccent,
+      R.drawable.logo_github,
+      firstPageKey = "",
+      enabled = BuildConfig.GITHUB_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
     )
   }
 }
@@ -211,12 +217,12 @@ abstract class GitHubModule {
       appConfig: AppConfig
     ): GitHubApi {
       return Retrofit.Builder().baseUrl(GitHubApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))
-          .validateEagerly(appConfig.isDebug)
-          .build()
-          .create(GitHubApi::class.java)
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))
+        .validateEagerly(appConfig.isDebug)
+        .build()
+        .create(GitHubApi::class.java)
     }
   }
 }

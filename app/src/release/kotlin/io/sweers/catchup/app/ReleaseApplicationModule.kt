@@ -59,9 +59,9 @@ object ReleaseApplicationModule {
   fun provideBugsnagTree(application: Application, @BugsnagKey key: String): Timber.Tree = BugsnagTree().also {
     Bugsnag.start(application, key) // TODO nix this by allowing ordering of inits
     Bugsnag.getClient()
-        .addOnError { error ->
-          it.update(error)
-          true
-        }
+      .addOnError { error ->
+        it.update(error)
+        true
+      }
   }
 }

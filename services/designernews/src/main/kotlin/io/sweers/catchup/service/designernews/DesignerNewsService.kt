@@ -39,10 +39,10 @@ import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import okhttp3.OkHttpClient
-import java.time.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -62,29 +62,29 @@ internal class DesignerNewsService @Inject constructor(
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
     return api.getTopStories(page)
-        .flatMapObservable { stories ->
-          Observable.fromIterable(stories)
-        }
-        .map { story ->
-          with(story) {
-            CatchUpItem(
-                id = id.toLong(),
-                title = title,
-                score = "▲" to voteCount,
-                timestamp = createdAt,
-                source = hostname,
-                tag = badge,
-                itemClickUrl = url,
-                mark = createCommentMark(
-                    count = commentCount,
-                    clickUrl = href.replace("api.", "www.")
-                        .replace("api/v2/", "")
-                )
+      .flatMapObservable { stories ->
+        Observable.fromIterable(stories)
+      }
+      .map { story ->
+        with(story) {
+          CatchUpItem(
+            id = id.toLong(),
+            title = title,
+            score = "▲" to voteCount,
+            timestamp = createdAt,
+            source = hostname,
+            tag = badge,
+            itemClickUrl = url,
+            mark = createCommentMark(
+              count = commentCount,
+              clickUrl = href.replace("api.", "www.")
+                .replace("api/v2/", "")
             )
-          }
+          )
         }
-        .toList()
-        .map { DataResult(it, (page + 1).toString()) }
+      }
+      .toList()
+      .map { DataResult(it, (page + 1).toString()) }
   }
 }
 
@@ -104,12 +104,12 @@ abstract class DesignerNewsMetaModule {
     @Provides
     @Reusable
     internal fun provideDesignerNewsMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.dn,
-        R.color.dnAccent,
-        R.drawable.logo_dn,
-        pagesAreNumeric = true,
-        firstPageKey = "1"
+      SERVICE_KEY,
+      R.string.dn,
+      R.color.dnAccent,
+      R.drawable.logo_dn,
+      pagesAreNumeric = true,
+      firstPageKey = "1"
     )
   }
 }
@@ -129,8 +129,8 @@ abstract class DesignerNewsModule {
     @InternalApi
     internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Instant::class.java, ISO8601InstantAdapter())
-          .build()
+        .add(Instant::class.java, ISO8601InstantAdapter())
+        .build()
     }
 
     @Provides
@@ -142,12 +142,13 @@ abstract class DesignerNewsModule {
     ): DesignerNewsApi {
 
       val retrofit = Retrofit.Builder().baseUrl(
-          DesignerNewsApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(appConfig.isDebug)
-          .build()
+        DesignerNewsApi.ENDPOINT
+      )
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
       return retrofit.create(DesignerNewsApi::class.java)
     }
   }

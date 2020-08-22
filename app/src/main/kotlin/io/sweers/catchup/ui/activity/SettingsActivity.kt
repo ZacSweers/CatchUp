@@ -152,13 +152,13 @@ class SettingsActivity : InjectingBaseActivity() {
         catchUpPreferences::daynightAuto.name -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
           catchUpPreferences.daynightAuto = isChecked
-              .apply {
-                if (isChecked) {
-                  // If we're enabling auto, clear out the prev daynight night-only mode
-                  catchUpPreferences.dayNightForceNight = false
-                  (findPreference(catchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)?.isChecked = false
-                }
+            .apply {
+              if (isChecked) {
+                // If we're enabling auto, clear out the prev daynight night-only mode
+                catchUpPreferences.dayNightForceNight = false
+                (findPreference(catchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)?.isChecked = false
               }
+            }
           activity?.updateNightMode(catchUpPreferences)
           return true
         }
@@ -184,10 +184,10 @@ class SettingsActivity : InjectingBaseActivity() {
           val isChecked = (preference as CheckBoxPreference).isChecked
           catchUpPreferences.reports = isChecked
           Snackbar.make(requireView(), R.string.settings_reset, Snackbar.LENGTH_LONG)
-              .setAction(R.string.restart) {
-                it.context.restartApp()
-              }
-              .show()
+            .setAction(R.string.restart) {
+              it.context.restartApp()
+            }
+            .show()
           return true
         }
         CatchUpPreferences.ITEM_KEY_CLEAR_CACHE -> {
@@ -225,18 +225,18 @@ class SettingsActivity : InjectingBaseActivity() {
             cleanedSize += lumberYard.cleanUp()
             return@fromCallable cleanedSize
           }.subscribeOn(Schedulers.io())
-              .observeOn(AndroidSchedulers.mainThread())
-              .autoDispose(activity as BaseActivity)
-              .subscribe { cleanedAmount, throwable ->
-                val message = throwable?.let {
-                  getString(R.string.settings_error_cleaning_cache)
-                } ?: getString(R.string.clear_cache_success, BinaryByteUnit.format(cleanedAmount))
-                Snackbar.make(requireView(), message, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.restart) {
-                      it.context.restartApp()
-                    }
-                    .show()
-              }
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDispose(activity as BaseActivity)
+            .subscribe { cleanedAmount, throwable ->
+              val message = throwable?.let {
+                getString(R.string.settings_error_cleaning_cache)
+              } ?: getString(R.string.clear_cache_success, BinaryByteUnit.format(cleanedAmount))
+              Snackbar.make(requireView(), message, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.restart) {
+                  it.context.restartApp()
+                }
+                .show()
+            }
           return true
         }
         CatchUpPreferences.ITEM_KEY_ABOUT -> {

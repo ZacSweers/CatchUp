@@ -37,9 +37,10 @@ data class Mark(
 
   companion object {
     fun createCommentMark(count: Int, clickUrl: String? = null): Mark {
-      return Mark(text = count.toString(),
-          clickUrl = clickUrl,
-          formatTextAsCount = true
+      return Mark(
+        text = count.toString(),
+        clickUrl = clickUrl,
+        formatTextAsCount = true
       )
     }
   }

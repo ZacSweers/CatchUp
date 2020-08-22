@@ -74,10 +74,35 @@ internal class HackerNewsService @Inject constructor(
     val page = request.pageId.toInt()
     val itemsPerPage = 25 // TODO Pref this
     return Single
-        .create { emitter: SingleEmitter<DataSnapshot> ->
+      .create { emitter: SingleEmitter<DataSnapshot> ->
+        val listener = object : ValueEventListener {
+          override fun onDataChange(dataSnapshot: DataSnapshot) {
+            emitter.onSuccess(dataSnapshot)
+          }
+
+          override fun onCancelled(firebaseError: DatabaseError) {
+            d { "${firebaseError.code}" }
+            emitter.onError(firebaseError.toException())
+          }
+        }
+
+        val ref = database.get().getReference("v0/topstories").apply {
+          keepSynced(true)
+        }
+        emitter.setCancellable { ref.removeEventListener(listener) }
+        ref.addValueEventListener(listener)
+      }
+      .flattenAsObservable { it.children }
+      .skip(((page + 1) * itemsPerPage - itemsPerPage).toLong())
+      .take(itemsPerPage.toLong())
+      .map { d -> d.value as Long }
+      .concatMapEager { id ->
+        Observable.create<DataSnapshot> { emitter ->
+          val ref = database.get().getReference("v0/item/$id")
           val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-              emitter.onSuccess(dataSnapshot)
+              emitter.onNext(dataSnapshot)
+              emitter.onComplete()
             }
 
             override fun onCancelled(firebaseError: DatabaseError) {
@@ -85,71 +110,49 @@ internal class HackerNewsService @Inject constructor(
               emitter.onError(firebaseError.toException())
             }
           }
-
-          val ref = database.get().getReference("v0/topstories").apply {
-            keepSynced(true)
-          }
           emitter.setCancellable { ref.removeEventListener(listener) }
           ref.addValueEventListener(listener)
         }
-        .flattenAsObservable { it.children }
-        .skip(((page + 1) * itemsPerPage - itemsPerPage).toLong())
-        .take(itemsPerPage.toLong())
-        .map { d -> d.value as Long }
-        .concatMapEager { id ->
-          Observable.create<DataSnapshot> { emitter ->
-            val ref = database.get().getReference("v0/item/$id")
-            val listener = object : ValueEventListener {
-              override fun onDataChange(dataSnapshot: DataSnapshot) {
-                emitter.onNext(dataSnapshot)
-                emitter.onComplete()
-              }
-
-              override fun onCancelled(firebaseError: DatabaseError) {
-                d { "${firebaseError.code}" }
-                emitter.onError(firebaseError.toException())
-              }
-            }
-            emitter.setCancellable { ref.removeEventListener(listener) }
-            ref.addValueEventListener(listener)
-          }
+      }
+      .filter { it.hasChild("title") } // Some HN items are just empty junk
+      .map { HackerNewsStory.create(it) }
+      .map {
+        val url = it.url
+        with(it) {
+          CatchUpItem(
+            id = id,
+            title = title,
+            score = "+" to score,
+            timestamp = realTime(),
+            author = by,
+            source = url?.let { it.toHttpUrlOrNull()!!.host },
+            tag = realType()?.tag(nullIfStory = true),
+            itemClickUrl = url,
+            summarizationInfo = SummarizationInfo.from(url),
+            mark = kids?.size?.let {
+              createCommentMark(
+                count = it,
+                clickUrl = "https://news.ycombinator.com/item?id=$id"
+              )
+            },
+            detailKey = id.toString()
+          )
         }
-        .filter { it.hasChild("title") } // Some HN items are just empty junk
-        .map { HackerNewsStory.create(it) }
-        .map {
-          val url = it.url
-          with(it) {
-            CatchUpItem(
-                id = id,
-                title = title,
-                score = "+" to score,
-                timestamp = realTime(),
-                author = by,
-                source = url?.let { it.toHttpUrlOrNull()!!.host },
-                tag = realType()?.tag(nullIfStory = true),
-                itemClickUrl = url,
-                summarizationInfo = SummarizationInfo.from(url),
-                mark = kids?.size?.let {
-                  createCommentMark(
-                      count = it,
-                      clickUrl = "https://news.ycombinator.com/item?id=$id"
-                  )
-                },
-                detailKey = id.toString()
+      }
+      .toList()
+      .map { DataResult(it, if (it.isEmpty()) null else (page + 1).toString()) }
+      .onErrorResumeNext { t: Throwable ->
+        if (t is IllegalArgumentException) {
+          // Firebase didn't init
+          Single.error(
+            ServiceException(
+              "Firebase wasn't able to initialize, likely due to missing credentials."
             )
-          }
+          )
+        } else {
+          Single.error(t)
         }
-        .toList()
-        .map { DataResult(it, if (it.isEmpty()) null else (page + 1).toString()) }
-        .onErrorResumeNext { t: Throwable ->
-          if (t is IllegalArgumentException) {
-            // Firebase didn't init
-            Single.error(ServiceException(
-                "Firebase wasn't able to initialize, likely due to missing credentials."))
-          } else {
-            Single.error(t)
-          }
-        }
+      }
   }
 }
 
@@ -169,25 +172,25 @@ abstract class HackerNewsMetaModule {
     @Provides
     @Reusable
     internal fun provideHackerNewsServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.hn,
-        R.color.hnAccent,
-        R.drawable.logo_hn,
-        pagesAreNumeric = true,
-        firstPageKey = "0",
-        deeplinkFragment = HackerNewsCommentsFragment::class.java
+      SERVICE_KEY,
+      R.string.hn,
+      R.color.hnAccent,
+      R.drawable.logo_hn,
+      pagesAreNumeric = true,
+      firstPageKey = "0",
+      deeplinkFragment = HackerNewsCommentsFragment::class.java
     )
   }
 }
 
 @ServiceModule
 @Module(
-    includes = [
-      HackerNewsMetaModule::class,
-      FragmentViewModelFactoryModule::class,
-      ViewModelModule::class,
-      UrlPreviewModule::class
-    ]
+  includes = [
+    HackerNewsMetaModule::class,
+    FragmentViewModelFactoryModule::class,
+    ViewModelModule::class,
+    UrlPreviewModule::class
+  ]
 )
 abstract class HackerNewsModule {
 
@@ -204,7 +207,7 @@ abstract class HackerNewsModule {
   companion object {
     @Provides
     internal fun provideDatabase(): FirebaseDatabase =
-        FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/")
+      FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/")
   }
 }
 

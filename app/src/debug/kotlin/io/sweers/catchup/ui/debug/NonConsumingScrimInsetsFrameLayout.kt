@@ -46,14 +46,21 @@ class NonConsumingScrimInsetsFrameLayout : FrameLayout {
     init(context, attrs, 0)
   }
 
-  constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs,
-      defStyle) {
+  constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
+    context,
+    attrs,
+    defStyle
+  ) {
     init(context, attrs, defStyle)
   }
 
   private fun init(context: Context, attrs: AttributeSet?, defStyle: Int) {
-    context.obtainStyledAttributes(attrs, R.styleable.NonConsumingScrimInsetsView, defStyle,
-        0).use {
+    context.obtainStyledAttributes(
+      attrs,
+      R.styleable.NonConsumingScrimInsetsView,
+      defStyle,
+      0
+    ).use {
       insetForeground = it.getDrawable(R.styleable.NonConsumingScrimInsetsView_insetForeground)
     }
     setWillNotDraw(true)

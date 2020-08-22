@@ -24,7 +24,8 @@ import java.util.concurrent.atomic.AtomicInteger
 
 internal object NULL
 private class LocalAbortFlowException : CancellationException(
-    "Flow was aborted, no more elements needed") {
+  "Flow was aborted, no more elements needed"
+) {
   override fun fillInStackTrace(): Throwable {
     return this
   }

@@ -48,12 +48,18 @@ class UnescapeJsonAdapter(private val delegate: JsonAdapter<String>) : JsonAdapt
       }
 
       annotations
-          .find { it is UnEscape }
-          ?.let {
-            UnescapeJsonAdapter(moshi.adapter(type,
-                Types.nextAnnotations(annotations,
-                    UnEscape::class.java)!!))
-          }
+        .find { it is UnEscape }
+        ?.let {
+          UnescapeJsonAdapter(
+            moshi.adapter(
+              type,
+              Types.nextAnnotations(
+                annotations,
+                UnEscape::class.java
+              )!!
+            )
+          )
+        }
     }
   }
 }

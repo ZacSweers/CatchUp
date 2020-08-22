@@ -90,8 +90,8 @@ class PrecomputedTextSetterCompat internal constructor(
         if (appConfig.sdkInt >= Build.VERSION_CODES.M) {
           // another miss on API surface, this can easily be done by the compat class itself
           builder
-              .setBreakStrategy(textView.breakStrategy)
-              .setHyphenationFrequency(textView.hyphenationFrequency)
+            .setBreakStrategy(textView.breakStrategy)
+            .setHyphenationFrequency(textView.hyphenationFrequency)
         }
 
         params = builder.build()

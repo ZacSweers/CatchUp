@@ -43,16 +43,21 @@ class NewsApiResponseFactory : Factory {
         val value = jsonValue as Map<String, Any>
         value["status"]?.let {
           val status = moshi.adapter(Status::class.java).fromJson("\"${it as String}\"")
-              ?: throw JsonDataException("Invalid status received: $it")
+            ?: throw JsonDataException("Invalid status received: $it")
           return when (status) {
             OK -> moshi.adapter(
-                Success::class.java).fromJsonValue(value)
-            ERROR -> moshi.adapter(value["code"]
-                ?.let {
-                  moshi.adapter(ErrorCode::class.java).fromJson("\"${it as String}\"")
-                }?.derivedClass?.java
-                ?: throw JsonDataException(
-                    "No error code received for error status!"))
+              Success::class.java
+            ).fromJsonValue(value)
+            ERROR ->
+              moshi.adapter(
+                value["code"]
+                  ?.let {
+                    moshi.adapter(ErrorCode::class.java).fromJson("\"${it as String}\"")
+                  }?.derivedClass?.java
+                  ?: throw JsonDataException(
+                    "No error code received for error status!"
+                  )
+              )
                 .fromJsonValue(value)
           }
         } ?: throw JsonDataException("No status received!")

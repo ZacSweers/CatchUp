@@ -59,9 +59,11 @@ fun Palette.getMostPopulousSwatch(): Palette.Swatch? {
 object ColorUtils {
 
   @Retention(SOURCE)
-  @IntDef(IS_LIGHT,
-      IS_DARK,
-      LIGHTNESS_UNKNOWN)
+  @IntDef(
+    IS_LIGHT,
+    IS_DARK,
+    LIGHTNESS_UNKNOWN
+  )
   annotation class Lightness
 
   const val IS_LIGHT = 0

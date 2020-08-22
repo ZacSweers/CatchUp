@@ -45,12 +45,12 @@ class Syllabus @Inject constructor(
     // TODO would be nice to handle starting mid-sequence for state restoration someday
     // Debounced buffer
     queue.buffer(queue.debounce(1, SECONDS))
-        .delay { displaying.filter { !it } }
-        .observeOn(mainThread())
-        .autoDispose(activity)
-        .subscribe { requests ->
-          show(requests)
-        }
+      .delay { displaying.filter { !it } }
+      .observeOn(mainThread())
+      .autoDispose(activity)
+      .subscribe { requests ->
+        show(requests)
+      }
   }
 
   fun showIfNeverSeen(key: String, body: () -> TapTarget) {
@@ -80,10 +80,11 @@ class Syllabus @Inject constructor(
     var index = 0
     requests[index].preDisplay?.invoke()
     TapTargetSequence(activity)
-        .targets(requests.map { it.target() })
-        .considerOuterCircleCanceled(false)
-        .continueOnCancel(true)
-        .listener(object : Listener {
+      .targets(requests.map { it.target() })
+      .considerOuterCircleCanceled(false)
+      .continueOnCancel(true)
+      .listener(
+        object : Listener {
           override fun onSequenceCanceled(lastTarget: TapTarget) {
             displaying.accept(false)
           }
@@ -99,8 +100,9 @@ class Syllabus @Inject constructor(
               requests[index].preDisplay?.invoke()
             }
           }
-        })
-        .start()
+        }
+      )
+      .start()
   }
 }
 

@@ -29,14 +29,14 @@ class DebugPreferences @Inject constructor(
   application: Application,
   sharedPreferences: SharedPreferences
 ) : KotprefModel(
-    contextProvider = object : ContextProvider {
-      override fun getApplicationContext(): Context = application
-    },
-    preferencesProvider = object : PreferencesProvider {
-      override fun get(context: Context, name: String, mode: Int): SharedPreferences {
-        return sharedPreferences
-      }
+  contextProvider = object : ContextProvider {
+    override fun getApplicationContext(): Context = application
+  },
+  preferencesProvider = object : PreferencesProvider {
+    override fun get(context: Context, name: String, mode: Int): SharedPreferences {
+      return sharedPreferences
     }
+  }
 ) {
   var animationSpeed by intPref(default = 1, key = "debug_animation_speed")
   var mockModeEnabled by booleanPref(default = false, key = "debug_mock_mode_enabled")

@@ -144,16 +144,18 @@ abstract class ApplicationModule {
     ): Markwon {
       return Markwon.builder(context)
         .textSetter(PrecomputedTextSetterCompat.create(appConfig = appConfig))
-        .usePlugins(listOf(
-          MovementMethodPlugin.create(LinkTouchMovementMethod()),
-          ImagesPlugin.create(),
-          StrikethroughPlugin.create(),
-          CoilImagesPlugin.create(context, imageLoader),
-          TablePlugin.create(context),
-          LinkifyPlugin.create(),
-          TaskListPlugin.create(context)
-          //            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
-        ))
+        .usePlugins(
+          listOf(
+            MovementMethodPlugin.create(LinkTouchMovementMethod()),
+            ImagesPlugin.create(),
+            StrikethroughPlugin.create(),
+            CoilImagesPlugin.create(context, imageLoader),
+            TablePlugin.create(context),
+            LinkifyPlugin.create(),
+            TaskListPlugin.create(context)
+//            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
+          )
+        )
         .build()
     }
 
@@ -246,11 +248,13 @@ abstract class ApplicationModule {
         // Coil will do lazy delegation on its own under the hood, but we
         // don't need that here because we've already made it lazy. Wish this
         // wasn't the default.
-        callFactory(object : Call.Factory {
-          override fun newCall(request: Request): Call {
-            return okHttpClient.get().newCall(request)
+        callFactory(
+          object : Call.Factory {
+            override fun newCall(request: Request): Call {
+              return okHttpClient.get().newCall(request)
+            }
           }
-        })
+        )
 
         if (appConfig.isDebug) {
           logger(DebugLogger())

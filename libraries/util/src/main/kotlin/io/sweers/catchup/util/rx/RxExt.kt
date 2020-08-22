@@ -36,9 +36,9 @@ import java.util.concurrent.TimeUnit
 @Suppress("UNCHECKED_CAST")
 abstract class OmniTransformer<Upstream, Downstream> :
   ObservableTransformer<Upstream, Downstream>,
-    SingleTransformer<Upstream, Downstream>,
-    MaybeTransformer<Upstream, Downstream>,
-    CompletableTransformer {
+  SingleTransformer<Upstream, Downstream>,
+  MaybeTransformer<Upstream, Downstream>,
+  CompletableTransformer {
 
   override fun apply(upstream: Completable): CompletableSource = upstream
 
@@ -50,83 +50,84 @@ abstract class OmniTransformer<Upstream, Downstream> :
 }
 
 fun <T> Observable<T>.doOnEmpty(action: () -> Unit): Observable<T> =
-    switchIfEmpty(Observable.empty<T>().doOnComplete(action))
+  switchIfEmpty(Observable.empty<T>().doOnComplete(action))
 
 fun <T : Any> Observable<T>.delayedMessage(view: View, message: String): Observable<T> =
-    compose(delayedMessageTransformer(view, message))
+  compose(delayedMessageTransformer(view, message))
 
 fun <T : Any> Single<T>.delayedMessage(view: View, message: String): Single<T> =
-    compose(delayedMessageTransformer(view, message))
+  compose(delayedMessageTransformer(view, message))
 
 fun <T : Any> Maybe<T>.delayedMessage(view: View, message: String): Maybe<T> =
-    compose(delayedMessageTransformer(view, message))
+  compose(delayedMessageTransformer(view, message))
 
 fun Completable.delayedMessage(view: View, message: String): Completable =
-    compose(delayedMessageTransformer<Any>(view, message))
+  compose(delayedMessageTransformer<Any>(view, message))
 
 fun <T> delayedMessageTransformer(view: View, message: String): OmniTransformer<T, T> {
   var snackbar: Snackbar? = null
   return timeoutActionTransformer(
-      onTimeout = {
-        verifyMainThread()
-        snackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).apply { show() }
-      },
-      onTerminate = { snackbar?.dismiss()?.also { snackbar = null } })
+    onTimeout = {
+      verifyMainThread()
+      snackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).apply { show() }
+    },
+    onTerminate = { snackbar?.dismiss()?.also { snackbar = null } }
+  )
 }
 
 fun <T : Any> Observable<T>.timeoutAction(
   onTimeout: (() -> Unit)? = null,
   onTerminate: (() -> Unit)? = null
 ): Observable<T> =
-    compose(timeoutActionTransformer(onTimeout, onTerminate))
+  compose(timeoutActionTransformer(onTimeout, onTerminate))
 
 fun <T : Any> Single<T>.timeoutAction(
   onTimeout: (() -> Unit)? = null,
   onTerminate: (() -> Unit)? = null
 ): Single<T> =
-    compose(timeoutActionTransformer(onTimeout, onTerminate))
+  compose(timeoutActionTransformer(onTimeout, onTerminate))
 
 fun <T : Any> Maybe<T>.timeoutAction(
   onTimeout: (() -> Unit)? = null,
   onTerminate: (() -> Unit)? = null
 ): Maybe<T> =
-    compose(timeoutActionTransformer(onTimeout, onTerminate))
+  compose(timeoutActionTransformer(onTimeout, onTerminate))
 
 fun Completable.timeoutAction(
   onTimeout: (() -> Unit)? = null,
   onTerminate: (() -> Unit)? = null
 ): Completable =
-    compose(timeoutActionTransformer<Any>(onTimeout, onTerminate))
+  compose(timeoutActionTransformer<Any>(onTimeout, onTerminate))
 
 fun <T> timeoutActionTransformer(
   onTimeout: (() -> Unit)? = null,
   onTerminate: (() -> Unit)? = null,
   delay: Long = 300
 ): OmniTransformer<T, T> =
-    object : OmniTransformer<T, T>() {
+  object : OmniTransformer<T, T>() {
 
-      private val timer = Observable.timer(delay, TimeUnit.MILLISECONDS)
+    private val timer = Observable.timer(delay, TimeUnit.MILLISECONDS)
 
-      override fun apply(upstream: Observable<T>): Observable<T> {
-        val shared = upstream.share()
-        return shared
-            .doOnSubscribe {
-              timer.takeUntil(shared)
-                  .subscribe {
-                    onTimeout?.invoke()
-                  }
+    override fun apply(upstream: Observable<T>): Observable<T> {
+      val shared = upstream.share()
+      return shared
+        .doOnSubscribe {
+          timer.takeUntil(shared)
+            .subscribe {
+              onTimeout?.invoke()
             }
-            .doOnTerminate {
-              onTerminate?.invoke()
-            }
-      }
-
-      override fun apply(upstream: Maybe<T>) = apply(upstream.toObservable()).firstElement()
-
-      override fun apply(upstream: Single<T>) = apply(upstream.toObservable()).firstOrError()
-
-      override fun apply(upstream: Completable) = apply(upstream.toObservable()).ignoreElements()
+        }
+        .doOnTerminate {
+          onTerminate?.invoke()
+        }
     }
+
+    override fun apply(upstream: Maybe<T>) = apply(upstream.toObservable()).firstElement()
+
+    override fun apply(upstream: Single<T>) = apply(upstream.toObservable()).firstOrError()
+
+    override fun apply(upstream: Completable) = apply(upstream.toObservable()).ignoreElements()
+  }
 
 /**
  * Utility for working with enums when you want to run actions only on specific values

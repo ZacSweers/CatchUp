@@ -29,8 +29,9 @@ open class FourThreeImageView(context: Context, attrs: AttributeSet) :
 
   override fun onMeasure(widthSpec: Int, heightSpec: Int) {
     val fourThreeHeight = makeMeasureSpec(
-        getSize(widthSpec) * 3 / 4,
-        EXACTLY)
+      getSize(widthSpec) * 3 / 4,
+      EXACTLY
+    )
     super.onMeasure(widthSpec, fourThreeHeight)
   }
 }

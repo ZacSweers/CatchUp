@@ -58,7 +58,7 @@ internal class NetworkDelayAdapter(context: Context) : BindableAdapter<Long>(con
 
     fun getPositionForValue(value: Long): Int {
       return VALUES.indices.firstOrNull { VALUES[it] == value }
-          ?: 3 // Default to 2000 if something changes.
+        ?: 3 // Default to 2000 if something changes.
     }
   }
 }

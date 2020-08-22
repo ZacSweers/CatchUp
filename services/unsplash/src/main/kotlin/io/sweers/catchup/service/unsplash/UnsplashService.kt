@@ -40,10 +40,10 @@ import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
-import java.time.Instant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -63,31 +63,31 @@ internal class UnsplashService @Inject constructor(
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
     return api.getPhotos(page, 50)
-        .flattenAsObservable { it }
-        .map {
-          CatchUpItem(
-              id = it.id.hashCode().toLong(),
-              title = "",
-              score =
-              "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
-                  to it.likes,
-              timestamp = it.createdAt,
-              author = it.user.name,
-              source = null,
-              tag = null,
-              itemClickUrl = it.urls.full,
-              imageInfo = ImageInfo(
-                  url = it.urls.small,
-                  detailUrl = it.urls.raw,
-                  animatable = false,
-                  sourceUrl = it.links.html,
-                  bestSize = null,
-                  imageId = it.id
-              )
+      .flattenAsObservable { it }
+      .map {
+        CatchUpItem(
+          id = it.id.hashCode().toLong(),
+          title = "",
+          score =
+            "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+              to it.likes,
+          timestamp = it.createdAt,
+          author = it.user.name,
+          source = null,
+          tag = null,
+          itemClickUrl = it.urls.full,
+          imageInfo = ImageInfo(
+            url = it.urls.small,
+            detailUrl = it.urls.raw,
+            animatable = false,
+            sourceUrl = it.links.html,
+            bestSize = null,
+            imageId = it.id
           )
-        }
-        .toList()
-        .map { DataResult(it, (page + 1).toString()) }
+        )
+      }
+      .toList()
+      .map { DataResult(it, (page + 1).toString()) }
   }
 
   override fun spanConfig() = SpanConfig(3) {
@@ -118,14 +118,14 @@ abstract class UnsplashMetaModule {
     @Provides
     @Reusable
     internal fun provideUnsplashServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.unsplash,
-        R.color.unsplashAccent,
-        R.drawable.logo_unsplash,
-        isVisual = true,
-        pagesAreNumeric = true,
-        firstPageKey = "1",
-        enabled = BuildConfig.UNSPLASH_API_KEY.run { !isNullOrEmpty() && !equals("null") }
+      SERVICE_KEY,
+      R.string.unsplash,
+      R.color.unsplashAccent,
+      R.drawable.logo_unsplash,
+      isVisual = true,
+      pagesAreNumeric = true,
+      firstPageKey = "1",
+      enabled = BuildConfig.UNSPLASH_API_KEY.run { !isNullOrEmpty() && !equals("null") }
     )
   }
 }
@@ -145,21 +145,23 @@ abstract class UnsplashModule {
     @InternalApi
     internal fun provideUnsplashMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(Instant::class.java, ISO8601InstantAdapter())
-          .build()
+        .add(Instant::class.java, ISO8601InstantAdapter())
+        .build()
     }
 
     @Provides
     @InternalApi
     internal fun provideUnsplashOkHttpClient(client: OkHttpClient): OkHttpClient {
       return client.newBuilder()
-          .addInterceptor {
-            it.proceed(it.request().newBuilder()
-                .addHeader("Accept-Version", "v1")
-                .build())
-          }
-          .addInterceptor(AuthInterceptor("Client-ID", BuildConfig.UNSPLASH_API_KEY))
-          .build()
+        .addInterceptor {
+          it.proceed(
+            it.request().newBuilder()
+              .addHeader("Accept-Version", "v1")
+              .build()
+          )
+        }
+        .addInterceptor(AuthInterceptor("Client-ID", BuildConfig.UNSPLASH_API_KEY))
+        .build()
     }
 
     @Provides
@@ -170,12 +172,12 @@ abstract class UnsplashModule {
       appConfig: AppConfig
     ): UnsplashApi {
       return Retrofit.Builder().baseUrl(UnsplashApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(appConfig.isDebug)
-          .build()
-          .create(UnsplashApi::class.java)
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
+        .create(UnsplashApi::class.java)
     }
   }
 }

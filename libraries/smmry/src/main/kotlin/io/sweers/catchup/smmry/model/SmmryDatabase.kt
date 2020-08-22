@@ -45,8 +45,8 @@ interface SmmryDao {
 }
 
 @Database(
-    entities = [SmmryStorageEntry::class],
-    version = 1
+  entities = [SmmryStorageEntry::class],
+  version = 1
 )
 abstract class SmmryDatabase : RoomDatabase() {
 

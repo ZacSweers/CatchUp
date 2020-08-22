@@ -45,12 +45,14 @@ class MockDataInterceptor(
     val serviceData = SUPPORTED_ENDPOINTS[host]
     return if (debugPreferences.mockModeEnabled && serviceData != null && serviceData.supports(path)) {
       Response.Builder().request(request)
-          .body(context.assets
-              .open(formatUrl(serviceData, url)).source().buffer()
-              .readUtf8().toResponseBody("application/json".toMediaTypeOrNull()))
-          .code(200)
-          .protocol(Protocol.HTTP_1_1)
-          .build()
+        .body(
+          context.assets
+            .open(formatUrl(serviceData, url)).source().buffer()
+            .readUtf8().toResponseBody("application/json".toMediaTypeOrNull())
+        )
+        .code(200)
+        .protocol(Protocol.HTTP_1_1)
+        .build()
     } else {
       chain.proceed(request)
     }

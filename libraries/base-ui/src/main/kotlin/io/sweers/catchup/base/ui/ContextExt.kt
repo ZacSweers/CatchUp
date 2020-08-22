@@ -79,13 +79,13 @@ fun Activity.updateNavBarColor(
 val Context.versionInfo: VersionInfo
   get() {
     val metadataBundle = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
-        .metaData
+      .metaData
     val timestamp = metadataBundle.getString("buildTimestamp") ?: "Missing timestamp!"
     return with(packageManager.getPackageInfo(packageName, 0)) {
       VersionInfo(
-          code = sdk(28) { longVersionCode } ?: versionCode.toLong(),
-          name = versionName,
-          timestamp = timestamp
+        code = sdk(28) { longVersionCode } ?: versionCode.toLong(),
+        name = versionName,
+        timestamp = timestamp
       )
     }
   }

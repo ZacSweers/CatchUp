@@ -45,8 +45,11 @@ class BaselineGridTextView @JvmOverloads constructor(
   context: Context,
   attrs: AttributeSet? = null,
   defStyleAttr: Int = android.R.attr.textViewStyle
-) : AppCompatTextView(context, attrs,
-    defStyleAttr) {
+) : AppCompatTextView(
+  context,
+  attrs,
+  defStyleAttr
+) {
 
   private val fourDip: Float
 
@@ -74,14 +77,21 @@ class BaselineGridTextView @JvmOverloads constructor(
 
   init {
     context.obtainStyledAttributes(
-        attrs, R.styleable.BaselineGridTextView, defStyleAttr, 0).use {
+      attrs,
+      R.styleable.BaselineGridTextView,
+      defStyleAttr,
+      0
+    ).use {
       // first check TextAppearance for line height & font attributes
       if (it.hasValue(R.styleable.BaselineGridTextView_android_textAppearance)) {
         val textAppearanceId = it.getResourceId(
-            R.styleable.BaselineGridTextView_android_textAppearance,
-            android.R.style.TextAppearance)
+          R.styleable.BaselineGridTextView_android_textAppearance,
+          android.R.style.TextAppearance
+        )
         context.obtainStyledAttributes(
-            textAppearanceId, R.styleable.BaselineGridTextView).use {
+          textAppearanceId,
+          R.styleable.BaselineGridTextView
+        ).use {
           parseTextAttrs(it)
         }
       }
@@ -92,7 +102,10 @@ class BaselineGridTextView @JvmOverloads constructor(
     }
 
     fourDip = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, 4f, resources.displayMetrics)
+      TypedValue.COMPLEX_UNIT_DIP,
+      4f,
+      resources.displayMetrics
+    )
     computeLineHeight()
   }
 
@@ -120,11 +133,15 @@ class BaselineGridTextView @JvmOverloads constructor(
   private fun parseTextAttrs(a: TypedArray) {
     if (a.hasValue(R.styleable.BaselineGridTextView_lineHeightMultiplierHint)) {
       lineHeightMultiplierHint = a.getFloat(
-          R.styleable.BaselineGridTextView_lineHeightMultiplierHint, 1f)
+        R.styleable.BaselineGridTextView_lineHeightMultiplierHint,
+        1f
+      )
     }
     if (a.hasValue(R.styleable.BaselineGridTextView_lineHeightHint)) {
       lineHeightHint = a.getDimensionPixelSize(
-          R.styleable.BaselineGridTextView_lineHeightHint, 0).toFloat()
+        R.styleable.BaselineGridTextView_lineHeightHint,
+        0
+      ).toFloat()
     }
     if (a.hasValue(R.styleable.BaselineGridTextView_android_fontFamily)) {
       fontResId = a.getResourceId(R.styleable.BaselineGridTextView_android_fontFamily, 0)

@@ -64,7 +64,7 @@ class LicensesJsonGeneratorPlugin : Plugin<Project> {
 
         // Make the release assemble task depend on this to be safe
         project.tasks.named("assemble${name.capitalize(Locale.US)}")
-            .dependsOn(licensesTask)
+          .dependsOn(licensesTask)
       }
     }
   }
@@ -98,55 +98,55 @@ abstract class LicensesJsonGenerator : DefaultTask() {
   @TaskAction
   fun generateFile() {
     val componentIds = configuration.incoming.resolutionResult.allDependencies.map { it.from.id }
-        .filterIsInstance<ModuleComponentIdentifier>()
+      .filterIsInstance<ModuleComponentIdentifier>()
 
     val githubDetails = fetchComponents(componentIds)
-        .map { it.substringAfter(".com/") }
-        .map { repo ->
-          val (owner, name) = repo.split("/")
-          owner to name
-        }
-        .distinct()
+      .map { it.substringAfter(".com/") }
+      .map { repo ->
+        val (owner, name) = repo.split("/")
+        owner to name
+      }
+      .distinct()
 
     JsonWriter.of(jsonFile.get().asFile.sink().buffer()).use { writer ->
       writer.beginArray()
       githubDetails.sortedBy { it.toString().toLowerCase(Locale.US) }
-          .forEach { (owner, name) ->
-            writer.beginObject()
-            writer.name("owner")
-                .value(owner)
-                .name("name")
-                .value(name)
-            writer.endObject()
-          }
+        .forEach { (owner, name) ->
+          writer.beginObject()
+          writer.name("owner")
+            .value(owner)
+            .name("name")
+            .value(name)
+          writer.endObject()
+        }
       writer.endArray()
     }
   }
 
   private fun fetchComponents(componentIds: List<ModuleComponentIdentifier>): Sequence<String> {
     return project.dependencies.createArtifactResolutionQuery()
-        .forComponents(componentIds)
-        .withArtifacts(MavenModule::class.java, MavenPomArtifact::class.java)
-        .execute()
-        .resolvedComponents
-        .asSequence()
-        .flatMap { component ->
-          component.getArtifacts(MavenPomArtifact::class.java)
-              .filterIsInstance<ResolvedArtifactResult>()
-              .onEach {
-                logger.debug("$TAG: POM file for ${component.id}: ${it.file}")
-              }
-              .asSequence()
-              .flatMap { result ->
-                val pomFile = result.file
-                pomFile.readGithubProjectsFromPom() ?: run {
-                  val id = component.id as ModuleComponentIdentifier
-                  val group = id.group
-                  sequenceOf(knownMapping(group))
-                }
-              }
-        }
-        .filterNotNull()
+      .forComponents(componentIds)
+      .withArtifacts(MavenModule::class.java, MavenPomArtifact::class.java)
+      .execute()
+      .resolvedComponents
+      .asSequence()
+      .flatMap { component ->
+        component.getArtifacts(MavenPomArtifact::class.java)
+          .filterIsInstance<ResolvedArtifactResult>()
+          .onEach {
+            logger.debug("$TAG: POM file for ${component.id}: ${it.file}")
+          }
+          .asSequence()
+          .flatMap { result ->
+            val pomFile = result.file
+            pomFile.readGithubProjectsFromPom() ?: run {
+              val id = component.id as ModuleComponentIdentifier
+              val group = id.group
+              sequenceOf(knownMapping(group))
+            }
+          }
+      }
+      .filterNotNull()
   }
 
   private fun File.readGithubProjectsFromPom(): Sequence<String>? {
@@ -156,33 +156,33 @@ abstract class LicensesJsonGenerator : DefaultTask() {
     // If there's a parent tag, try to fetch that instead
     val parent = document.getElementsByTagName("parent").asSequence().firstOrNull() ?: return null
     val parentNodes = parent.childNodes.asSequence()
-        .associateBy { it.nodeName }
+      .associateBy { it.nodeName }
 
     val groupId = parentNodes["groupId"]?.textContent ?: return null
     val artifactId = parentNodes["artifactId"]?.textContent ?: return null
     val version = parentNodes["version"]?.textContent ?: return null
 
     val component = DefaultModuleComponentIdentifier
-        .newId(DefaultModuleIdentifier.newId(groupId, artifactId), version)
+      .newId(DefaultModuleIdentifier.newId(groupId, artifactId), version)
 
     logger.debug("$TAG: Fetching parent $component")
 
     return fetchComponents(listOf(component))
-        .onEach {
-          logger.debug("$TAG: Resolved parent version for '$component': $it")
-        }
+      .onEach {
+        logger.debug("$TAG: Resolved parent version for '$component': $it")
+      }
   }
 
   private fun Document.parseScm(): String? {
     val scm = getElementsByTagName("scm").asSequence().firstOrNull() ?: return null
     val url = scm.childNodes.asSequence()
-        .filter { it.textContent.contains("github.com") }
-        .firstOrNull()?.textContent
+      .filter { it.textContent.contains("github.com") }
+      .firstOrNull()?.textContent
     return url?.substringAfter("github.com")
-        ?.removePrefix("/")
-        ?.removePrefix(":")
-        ?.removeSuffix(".git")
-        ?.removeSuffix("/issues")
+      ?.removePrefix("/")
+      ?.removePrefix(":")
+      ?.removeSuffix(".git")
+      ?.removeSuffix("/issues")
   }
 }
 

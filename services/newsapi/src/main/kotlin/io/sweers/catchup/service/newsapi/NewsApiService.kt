@@ -47,14 +47,14 @@ import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import io.sweers.catchup.util.rx.filterIsInstance
 import okhttp3.OkHttpClient
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -75,36 +75,37 @@ internal class NewsApiService @Inject constructor(
 
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
     val twelveHoursAgoISO = DateTimeFormatter.ISO_LOCAL_DATE
-        .withZone(ZoneId.systemDefault())
-        .format(Instant.now().minus(12, ChronoUnit.HOURS))
+      .withZone(ZoneId.systemDefault())
+      .format(Instant.now().minus(12, ChronoUnit.HOURS))
     val page = request.pageId.toInt()
     return api
-        .getStories(pageSize = 50,
-            page = page,
-            from = twelveHoursAgoISO,
-            query = "tech", // Required but not sure how to get results that aren't garbage
-            language = EN,
-            sortBy = POPULARITY
-        )
-        .onErrorResumeNext(errorConverter)
-        .filterIsInstance<Success>()
-        .flattenAsObservable(Success::articles)
-        .map {
-          with(it) {
-            CatchUpItem(
-                id = url.hashCode().toLong(),
-                title = title,
-                timestamp = publishedAt,
-                source = source.name,
-                author = author,
-                itemClickUrl = url,
-                summarizationInfo = SummarizationInfo.from(it.url)
-            )
-          }
+      .getStories(
+        pageSize = 50,
+        page = page,
+        from = twelveHoursAgoISO,
+        query = "tech", // Required but not sure how to get results that aren't garbage
+        language = EN,
+        sortBy = POPULARITY
+      )
+      .onErrorResumeNext(errorConverter)
+      .filterIsInstance<Success>()
+      .flattenAsObservable(Success::articles)
+      .map {
+        with(it) {
+          CatchUpItem(
+            id = url.hashCode().toLong(),
+            title = title,
+            timestamp = publishedAt,
+            source = source.name,
+            author = author,
+            itemClickUrl = url,
+            summarizationInfo = SummarizationInfo.from(it.url)
+          )
         }
-        .toList()
-        .map { DataResult(it, (page + 1).toString()) }
-        .toMaybe()
+      }
+      .toList()
+      .map { DataResult(it, (page + 1).toString()) }
+      .toMaybe()
   }
 
   override fun linkHandler() = linkHandler
@@ -128,13 +129,13 @@ abstract class NewsApiMetaModule {
     @Reusable
     @JvmStatic
     internal fun provideNewsApiServiceMeta() = ServiceMeta(
-        SERVICE_KEY,
-        R.string.ns,
-        R.color.nsAccent,
-        R.drawable.logo_ns,
-        pagesAreNumeric = true,
-        firstPageKey = "1",
-        enabled = BuildConfig.NEWS_API_API_KEY.run { !isNullOrEmpty() && !equals("null") }
+      SERVICE_KEY,
+      R.string.ns,
+      R.color.nsAccent,
+      R.drawable.logo_ns,
+      pagesAreNumeric = true,
+      firstPageKey = "1",
+      enabled = BuildConfig.NEWS_API_API_KEY.run { !isNullOrEmpty() && !equals("null") }
     )
   }
 }
@@ -158,8 +159,8 @@ abstract class NewsApiModule {
       client: OkHttpClient
     ): OkHttpClient {
       return client.newBuilder()
-          .addInterceptor(AuthInterceptor("Bearer", BuildConfig.NEWS_API_API_KEY))
-          .build()
+        .addInterceptor(AuthInterceptor("Bearer", BuildConfig.NEWS_API_API_KEY))
+        .build()
     }
 
     @Provides
@@ -167,9 +168,9 @@ abstract class NewsApiModule {
     @JvmStatic
     internal fun provideNewsApiMoshi(moshi: Moshi): Moshi {
       return moshi.newBuilder()
-          .add(NewsApiResponseFactory())
-          .add(Instant::class.java, ISO8601InstantAdapter())
-          .build()
+        .add(NewsApiResponseFactory())
+        .add(Instant::class.java, ISO8601InstantAdapter())
+        .build()
     }
 
     @Provides
@@ -178,8 +179,10 @@ abstract class NewsApiModule {
       return object : ErrorConverter {
         override fun apply(t: Throwable): SingleSource<NewsApiResponse> {
           return if (t is HttpException) {
-            Single.just(moshi.adapter(NewsApiResponse::class.java)
-                .fromJson(t.response().errorBody()!!.source()))
+            Single.just(
+              moshi.adapter(NewsApiResponse::class.java)
+                .fromJson(t.response().errorBody()!!.source())
+            )
           } else {
             Single.error(t)
           }
@@ -196,12 +199,12 @@ abstract class NewsApiModule {
       appConfig: AppConfig
     ): NewsApiApi {
       return Retrofit.Builder().baseUrl(NewsApiApi.ENDPOINT)
-          .callFactory(client.get()::newCall)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(appConfig.isDebug)
-          .build()
-          .create(NewsApiApi::class.java)
+        .callFactory(client.get()::newCall)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
+        .create(NewsApiApi::class.java)
     }
   }
 }

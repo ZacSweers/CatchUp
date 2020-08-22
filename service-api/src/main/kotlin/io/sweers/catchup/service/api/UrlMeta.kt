@@ -33,7 +33,11 @@ data class UrlMeta(
     context: Context,
     imageViewerData: ImageViewerData? = null
   ) : this(
-      if (url.isNullOrBlank()) null else Uri.parse(url), accentColor, context, imageViewerData)
+    if (url.isNullOrBlank()) null else Uri.parse(url),
+    accentColor,
+    context,
+    imageViewerData
+  )
 
   fun isSupportedInMediaViewer(): Boolean {
     return uri?.toString()?.let {

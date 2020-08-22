@@ -22,11 +22,11 @@ import org.gradle.api.tasks.TaskAction
 
 abstract class VersionCodeTask : DefaultTask() {
 
-    @get:OutputFile
-    abstract val outputFile: RegularFileProperty
+  @get:OutputFile
+  abstract val outputFile: RegularFileProperty
 
-    @TaskAction
-    fun action() {
-        outputFile.get().asFile.writeText(deps.build.gitCommitCount(project).toString())
-    }
+  @TaskAction
+  fun action() {
+    outputFile.get().asFile.writeText(deps.build.gitCommitCount(project).toString())
+  }
 }

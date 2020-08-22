@@ -104,29 +104,33 @@ internal class BugReportLens @Inject constructor(
         newline(2)
       }
       h4("App")
-      codeBlock(buildString {
-        append("Version: ").append(appConfig.versionName).append('\n')
-        append("Version code: ").append(appConfig.versionCode).append('\n')
-        append("Version timestamp: ").append(appConfig.timestamp).append('\n')
-      })
+      codeBlock(
+        buildString {
+          append("Version: ").append(appConfig.versionName).append('\n')
+          append("Version code: ").append(appConfig.versionCode).append('\n')
+          append("Version timestamp: ").append(appConfig.timestamp).append('\n')
+        }
+      )
       newline()
       h4("Device details")
-      codeBlock(buildString {
-        append("Make: ").append(Build.MANUFACTURER).append('\n')
-        append("Model: ").append(Build.MODEL).append('\n')
-        append("Resolution: ")
+      codeBlock(
+        buildString {
+          append("Make: ").append(Build.MANUFACTURER).append('\n')
+          append("Model: ").append(Build.MODEL).append('\n')
+          append("Resolution: ")
             .append(dm.heightPixels)
             .append("x")
             .append(dm.widthPixels)
             .append('\n')
-        append("Density: ")
+          append("Density: ")
             .append(dm.densityDpi)
             .append("dpi (")
             .append(densityBucket)
             .append(")\n")
-        append("Release: ").append(Build.VERSION.RELEASE).append('\n')
-        append("API: ").append(appConfig.sdkInt).append('\n')
-      })
+          append("Release: ").append(Build.VERSION.RELEASE).append('\n')
+          append("API: ").append(appConfig.sdkInt).append('\n')
+        }
+      )
     }
     val body = StringBuilder()
     body.append(markdown)
@@ -138,130 +142,140 @@ internal class BugReportLens @Inject constructor(
   private fun uploadIssue(report: Report, body: StringBuilder, logs: File?) {
     val channelId = "bugreports"
     val notificationManager = activity.getSystemService<NotificationManager>()
-        ?: throw IllegalStateException("No notificationmanager?")
+      ?: throw IllegalStateException("No notificationmanager?")
     if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
       val channels = notificationManager.notificationChannels
       if (channels.none { it.id == channelId }) {
         NotificationChannel(
-            channelId, "Bug reports", NotificationManager.IMPORTANCE_HIGH)
-            .apply {
-              description = "This is the channel for uploading bug reports. Debug only."
-            }
-            .let {
-              notificationManager.createNotificationChannel(it)
-            }
+          channelId,
+          "Bug reports",
+          NotificationManager.IMPORTANCE_HIGH
+        )
+          .apply {
+            description = "This is the channel for uploading bug reports. Debug only."
+          }
+          .let {
+            notificationManager.createNotificationChannel(it)
+          }
       }
     }
 
     val notificationId = activity.getString(R.string.app_name).hashCode()
     val notificationBuilder = NotificationCompat.Builder(activity, channelId)
-        .apply {
-          setSmallIcon(android.R.drawable.stat_sys_upload)
-          color = ContextCompat.getColor(activity, R.color.colorAccent)
-          setContentTitle("Uploading bug report")
-          setAutoCancel(true)
-          setProgress(0, 0, true)
-          setTicker("Upload in progress")
-          setOngoing(true)
-          setOnlyAlertOnce(true)
-        }
+      .apply {
+        setSmallIcon(android.R.drawable.stat_sys_upload)
+        color = ContextCompat.getColor(activity, R.color.colorAccent)
+        setContentTitle("Uploading bug report")
+        setAutoCancel(true)
+        setProgress(0, 0, true)
+        setTicker("Upload in progress")
+        setOngoing(true)
+        setOnlyAlertOnce(true)
+      }
 
     val finalScreenshot = screenshot
     val screenshotStringStream = if (report.includeScreenshot && finalScreenshot != null) {
       imgurUploadApi
-          .postImage(MultipartBody.Part.createFormData(
-              "image",
-              finalScreenshot.name,
-              finalScreenshot.asRequestBody("image/*".toMediaTypeOrNull())
-          ))
-          .map { "\n\n!${buildMarkdown { link(it, "Screenshot") }}" }
+        .postImage(
+          MultipartBody.Part.createFormData(
+            "image",
+            finalScreenshot.name,
+            finalScreenshot.asRequestBody("image/*".toMediaTypeOrNull())
+          )
+        )
+        .map { "\n\n!${buildMarkdown { link(it, "Screenshot") }}" }
     } else Single.just("\n\nNo screenshot provided")
 
     screenshotStringStream
-        .map { screenshotText ->
-          body.append(screenshotText)
-          val screenshotMarkdown = buildMarkdown {
-            newline(2)
-            h4("Logs")
-            if (report.includeLogs && logs != null) {
-              codeBlock(logs.readText())
-            } else {
-              text("No logs provided")
-            }
+      .map { screenshotText ->
+        body.append(screenshotText)
+        val screenshotMarkdown = buildMarkdown {
+          newline(2)
+          h4("Logs")
+          if (report.includeLogs && logs != null) {
+            codeBlock(logs.readText())
+          } else {
+            text("No logs provided")
           }
-          body.append(screenshotMarkdown)
-          body.toString()
         }
-        .flatMap { bodyText ->
-          gitHubIssueApi.createIssue(
-              GitHubIssue(report.title, bodyText)
-          )
-        }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnSubscribe { notificationManager.notify(notificationId, notificationBuilder.build()) }
-        .doOnDispose {
+        body.append(screenshotMarkdown)
+        body.toString()
+      }
+      .flatMap { bodyText ->
+        gitHubIssueApi.createIssue(
+          GitHubIssue(report.title, bodyText)
+        )
+      }
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .doOnSubscribe { notificationManager.notify(notificationId, notificationBuilder.build()) }
+      .doOnDispose {
+        NotificationCompat.Builder(activity, channelId)
+          .apply {
+            setSmallIcon(R.drawable.ic_error_black_24dp)
+            color = ContextCompat.getColor(activity, R.color.colorAccent)
+            setContentTitle("Upload canceled")
+            setContentInfo("Probably because the activity was killed ¯\\_(ツ)_/¯")
+            setAutoCancel(true)
+          }
+          .let { notificationManager.notify(notificationId, it.build()) }
+      }
+      .autoDispose(activity as BaseActivity)
+      .subscribe { issueUrl, error ->
+        issueUrl?.let {
           NotificationCompat.Builder(activity, channelId)
-              .apply {
-                setSmallIcon(R.drawable.ic_error_black_24dp)
-                color = ContextCompat.getColor(activity, R.color.colorAccent)
-                setContentTitle("Upload canceled")
-                setContentInfo("Probably because the activity was killed ¯\\_(ツ)_/¯")
-                setAutoCancel(true)
-              }
-              .let { notificationManager.notify(notificationId, it.build()) }
-        }
-        .autoDispose(activity as BaseActivity)
-        .subscribe { issueUrl, error ->
-          issueUrl?.let {
-            NotificationCompat.Builder(activity, channelId)
-                .apply {
-                  setSmallIcon(R.drawable.ic_check_black_24dp)
-                  color = ContextCompat.getColor(activity, R.color.colorAccent)
-                  setContentTitle("Bug report successfully uploaded")
-                  setContentText(it)
-                  val uri = it.toUri()
-                  val resultIntent = Intent(Intent.ACTION_VIEW, uri)
-                  setContentIntent(PendingIntent.getActivity(activity, 0, resultIntent, 0))
-                  setAutoCancel(true)
+            .apply {
+              setSmallIcon(R.drawable.ic_check_black_24dp)
+              color = ContextCompat.getColor(activity, R.color.colorAccent)
+              setContentTitle("Bug report successfully uploaded")
+              setContentText(it)
+              val uri = it.toUri()
+              val resultIntent = Intent(Intent.ACTION_VIEW, uri)
+              setContentIntent(PendingIntent.getActivity(activity, 0, resultIntent, 0))
+              setAutoCancel(true)
 
-                  val shareIntent = Intent(Intent.ACTION_SEND, uri)
-                  shareIntent.type = "text/plain"
-                  shareIntent.putExtra(Intent.EXTRA_TEXT, it)
-                  shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+              val shareIntent = Intent(Intent.ACTION_SEND, uri)
+              shareIntent.type = "text/plain"
+              shareIntent.putExtra(Intent.EXTRA_TEXT, it)
+              shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
-                  addAction(NotificationCompat.Action(R.drawable.ic_share_black_24dp,
-                      "Share link",
-                      PendingIntent.getActivity(activity, 0, shareIntent, 0)))
-                }
-                .let {
-                  notificationManager.notify(notificationId, it.build())
-                }
-          }
-          error?.let {
-            NotificationCompat.Builder(activity, channelId)
-                .apply {
-                  setSmallIcon(R.drawable.ic_error_black_24dp)
-                  color = ContextCompat.getColor(activity, R.color.colorAccent)
-                  setContentTitle("Upload failed")
-                  setContentInfo(
-                      "Bug report upload failed. Please try again. If problem persists, take consolation in knowing you got farther than I did.")
-                  setAutoCancel(true)
-                }
-                .let { notificationManager.notify(notificationId, it.build()) }
-          }
+              addAction(
+                NotificationCompat.Action(
+                  R.drawable.ic_share_black_24dp,
+                  "Share link",
+                  PendingIntent.getActivity(activity, 0, shareIntent, 0)
+                )
+              )
+            }
+            .let {
+              notificationManager.notify(notificationId, it.build())
+            }
         }
+        error?.let {
+          NotificationCompat.Builder(activity, channelId)
+            .apply {
+              setSmallIcon(R.drawable.ic_error_black_24dp)
+              color = ContextCompat.getColor(activity, R.color.colorAccent)
+              setContentTitle("Upload failed")
+              setContentInfo(
+                "Bug report upload failed. Please try again. If problem persists, take consolation in knowing you got farther than I did."
+              )
+              setAutoCancel(true)
+            }
+            .let { notificationManager.notify(notificationId, it.build()) }
+        }
+      }
   }
 
   private fun getDensityString(displayMetrics: DisplayMetrics) =
-      when (val dpi = displayMetrics.densityDpi) {
-        DisplayMetrics.DENSITY_LOW -> "ldpi"
-        DisplayMetrics.DENSITY_MEDIUM -> "mdpi"
-        DisplayMetrics.DENSITY_HIGH -> "hdpi"
-        DisplayMetrics.DENSITY_XHIGH -> "xhdpi"
-        DisplayMetrics.DENSITY_XXHIGH -> "xxhdpi"
-        DisplayMetrics.DENSITY_XXXHIGH -> "xxxhdpi"
-        DisplayMetrics.DENSITY_TV -> "tvdpi"
-        else -> dpi.toString()
-      }
+    when (val dpi = displayMetrics.densityDpi) {
+      DisplayMetrics.DENSITY_LOW -> "ldpi"
+      DisplayMetrics.DENSITY_MEDIUM -> "mdpi"
+      DisplayMetrics.DENSITY_HIGH -> "hdpi"
+      DisplayMetrics.DENSITY_XHIGH -> "xhdpi"
+      DisplayMetrics.DENSITY_XXHIGH -> "xxhdpi"
+      DisplayMetrics.DENSITY_XXXHIGH -> "xxxhdpi"
+      DisplayMetrics.DENSITY_TV -> "tvdpi"
+      else -> dpi.toString()
+    }
 }

@@ -25,14 +25,14 @@ internal data class SearchQuery(val createdSince: LocalDate?, val minStars: Int)
     val builder = StringBuilder()
     if (createdSince != null) {
       builder.append("created:>=")
-          .append(ISO_LOCAL_DATE.format(createdSince))
-          .append(' ')
+        .append(ISO_LOCAL_DATE.format(createdSince))
+        .append(' ')
     }
     if (minStars != 0) {
       builder.append("stars:>=")
-          .append(minStars)
+        .append(minStars)
     }
     return builder.toString()
-        .trim { it <= ' ' }
+      .trim { it <= ' ' }
   }
 }

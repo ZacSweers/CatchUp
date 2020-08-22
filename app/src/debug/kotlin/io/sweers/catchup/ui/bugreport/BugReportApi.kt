@@ -51,10 +51,10 @@ internal interface ImgurUploadApi {
 
 internal interface GitHubIssueApi {
   @Headers(
-      value = [
-        "Authorization: token ${BuildConfig.GITHUB_DEVELOPER_TOKEN}",
-        "Accept: application/vnd.github.v3+json"
-      ]
+    value = [
+      "Authorization: token ${BuildConfig.GITHUB_DEVELOPER_TOKEN}",
+      "Accept: application/vnd.github.v3+json"
+    ]
   )
   @POST("repos/zacsweers/catchup/issues")
   @Wrapped(path = ["html_url"])
@@ -80,15 +80,19 @@ internal object BugReportModule {
     appConfig: AppConfig
   ): ImgurUploadApi {
     return Retrofit.Builder()
-        .baseUrl("https://api.imgur.com/3/")
-        .delegatingCallFactory(client)
-        .addCallAdapterFactory(rxJavaCallAdapterFactory)
-        .addConverterFactory(MoshiConverterFactory.create(moshi.newBuilder()
+      .baseUrl("https://api.imgur.com/3/")
+      .delegatingCallFactory(client)
+      .addCallAdapterFactory(rxJavaCallAdapterFactory)
+      .addConverterFactory(
+        MoshiConverterFactory.create(
+          moshi.newBuilder()
             .add(Wrapped.ADAPTER_FACTORY)
-            .build()))
-        .validateEagerly(appConfig.isDebug)
-        .build()
-        .create(ImgurUploadApi::class.java)
+            .build()
+        )
+      )
+      .validateEagerly(appConfig.isDebug)
+      .build()
+      .create(ImgurUploadApi::class.java)
   }
 
   @ActivityScoped
@@ -100,12 +104,12 @@ internal object BugReportModule {
     appConfig: AppConfig
   ): GitHubIssueApi {
     return Retrofit.Builder()
-        .baseUrl("https://api.github.com/")
-        .delegatingCallFactory(client)
-        .addCallAdapterFactory(rxJavaCallAdapterFactory)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .validateEagerly(appConfig.isDebug)
-        .build()
-        .create(GitHubIssueApi::class.java)
+      .baseUrl("https://api.github.com/")
+      .delegatingCallFactory(client)
+      .addCallAdapterFactory(rxJavaCallAdapterFactory)
+      .addConverterFactory(MoshiConverterFactory.create(moshi))
+      .validateEagerly(appConfig.isDebug)
+      .build()
+      .create(GitHubIssueApi::class.java)
   }
 }

@@ -35,8 +35,9 @@ inline fun Activity.updateNightMode(catchUpPreferences: CatchUpPreferences) {
     else -> AppCompatDelegate.MODE_NIGHT_NO
   }
   if (nightMode == AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY ||
-      (isCurrentlyInNightMode && nightMode != AppCompatDelegate.MODE_NIGHT_YES) ||
-      !isCurrentlyInNightMode && nightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+    (isCurrentlyInNightMode && nightMode != AppCompatDelegate.MODE_NIGHT_YES) ||
+    !isCurrentlyInNightMode && nightMode == AppCompatDelegate.MODE_NIGHT_YES
+  ) {
     AppCompatDelegate.setDefaultNightMode(nightMode)
     recreate()
   }
@@ -53,6 +54,8 @@ fun Context.resolveActivity(): ComponentActivity {
 }
 
 fun Context.restartApp() {
-  ProcessPhoenix.triggerRebirth(this,
-      Intent(this, LauncherActivity::class.java))
+  ProcessPhoenix.triggerRebirth(
+    this,
+    Intent(this, LauncherActivity::class.java)
+  )
 }

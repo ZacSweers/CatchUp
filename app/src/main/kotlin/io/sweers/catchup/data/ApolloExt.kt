@@ -21,6 +21,8 @@ import okhttp3.Request
 
 inline fun ApolloClient.Builder.callFactory(
   crossinline body: (Request) -> Call
-) = callFactory(object : Call.Factory {
-  override fun newCall(request: Request): Call = body(request)
-})
+) = callFactory(
+  object : Call.Factory {
+    override fun newCall(request: Request): Call = body(request)
+  }
+)
