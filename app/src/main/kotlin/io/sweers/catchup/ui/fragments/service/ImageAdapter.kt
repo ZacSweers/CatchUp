@@ -40,11 +40,11 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.annotation.ExperimentalCoilApi
-import coil.api.load
+import coil.load
 import coil.decode.DataSource.MEMORY_CACHE
 import coil.drawable.MovieDrawable
 import coil.request.ErrorResult
-import coil.request.RequestResult
+import coil.request.ImageResult
 import coil.request.SuccessResult
 import coil.transition.Transition
 import coil.transition.TransitionTarget
@@ -259,8 +259,8 @@ internal class ImageAdapter(
     ) {
       backingImageItem?.let { imageItem ->
         image.load(imageItem.imageInfo.url) {
-          key(imageItem.imageInfo.cacheKey)
-          placeholder(loadingPlaceholders[adapterPosition % loadingPlaceholders.size])
+          memoryCacheKey(imageItem.imageInfo.cacheKey)
+          placeholder(loadingPlaceholders[bindingAdapterPosition % loadingPlaceholders.size])
           if (!imageItem.hasFadedIn) {
             transition(SaturatingTransformation())
           } else {
@@ -308,7 +308,7 @@ internal class ImageAdapter(
           )
         }
         // need both placeholder & background to prevent seeing through image as it fades in
-        image.background = loadingPlaceholders[adapterPosition % loadingPlaceholders.size]
+        image.background = loadingPlaceholders[bindingAdapterPosition % loadingPlaceholders.size]
         image.showBadge(imageItem.imageInfo.animatable)
       }
     }
@@ -324,9 +324,9 @@ private class SaturatingTransformation(
     require(durationMillis > 0) { "durationMillis must be > 0." }
   }
 
-  override suspend fun transition(target: TransitionTarget<*>, result: RequestResult) {
+  override suspend fun transition(target: TransitionTarget, result: ImageResult) {
     // Don't animate if the request was fulfilled by the memory cache.
-    if (result is SuccessResult && result.source == MEMORY_CACHE) {
+    if (result is SuccessResult && result.metadata.dataSource == MEMORY_CACHE) {
       target.onSuccess(result.drawable)
       return
     }

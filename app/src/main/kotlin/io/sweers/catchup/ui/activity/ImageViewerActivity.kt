@@ -45,9 +45,9 @@ import androidx.core.animation.addListener
 import androidx.core.transition.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import coil.Coil
-import coil.bitmappool.BitmapPool
+import coil.bitmap.BitmapPool
 import coil.request.CachePolicy
-import coil.request.LoadRequest
+import coil.request.ImageRequest
 import coil.size.Precision
 import coil.size.Scale
 import coil.size.Size
@@ -168,8 +168,8 @@ class ImageViewerActivity : AppCompatActivity() {
       isTransitionEnded = true
     }
 
-    Coil.execute(LoadRequest.Builder(this).data(url).apply {
-      cacheKey?.let(this::key)
+    Coil.enqueue(ImageRequest.Builder(this).data(url).apply {
+      cacheKey?.let(this::memoryCacheKey)
       precision(Precision.EXACT)
       size(ViewSizeResolver(imageView))
       scale(Scale.FILL)

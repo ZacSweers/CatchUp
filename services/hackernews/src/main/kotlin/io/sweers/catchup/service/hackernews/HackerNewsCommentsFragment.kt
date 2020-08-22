@@ -30,7 +30,7 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import coil.api.load
+import coil.load
 import coil.size.Precision
 import coil.size.Scale
 import coil.size.ViewSizeResolver
