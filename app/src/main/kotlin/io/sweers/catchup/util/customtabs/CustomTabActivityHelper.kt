@@ -63,8 +63,8 @@ class CustomTabActivityHelper @Inject constructor() {
 
   val customTabIntent: CustomTabsIntent.Builder
     get() = CustomTabsIntent.Builder(session).setShowTitle(true)
-        .enableUrlBarHiding()
-        .addDefaultShareMenuItem()
+        .setUrlBarHidingEnabled(true)
+        .setDefaultShareMenuItemEnabled(true)
 
   /**
    * Binds the Activity to the Custom Tabs Service
