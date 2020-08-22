@@ -124,7 +124,9 @@ internal class GitHubService @Inject constructor(
             field_ = LanguageOrderField.SIZE
         ),
         Input.fromNullable(request.pageId.nullIfBlank())))
+        .toBuilder()
         .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
+        .build()
 
     return Rx2Apollo.from(searchQuery)
         .firstOrError()
@@ -174,7 +176,7 @@ abstract class GitHubMetaModule {
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  internal abstract fun githubServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
+  internal abstract fun @receiver:InternalApi ServiceMeta.githubServiceMeta(): ServiceMeta
 
   companion object {
 
@@ -199,7 +201,7 @@ abstract class GitHubModule {
   @IntoMap
   @ServiceKey(SERVICE_KEY)
   @Binds
-  internal abstract fun githubService(githubService: GitHubService): Service
+  internal abstract fun GitHubService.githubService(): Service
 
   companion object {
     @Provides

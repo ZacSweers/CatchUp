@@ -30,7 +30,7 @@ import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import coil.api.load
+import coil.load
 import coil.transform.CircleCropTransformation
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.ApolloCall.StatusEvent
@@ -90,14 +90,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.source
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 /**
  * A fragment that displays oss licenses.
@@ -182,7 +179,9 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
         .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
         .flatMapMerge {
           apolloClient.query(it)
+            .toBuilder()
               .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
+            .build()
               .toFlow()
               .map {
                 with(it.data!!.repository!!) {
@@ -201,7 +200,9 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     // Fetch the users by their IDs
     val userIdToNameMap = withContext(Dispatchers.IO) {
       apolloClient.query(ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct()))
+        .toBuilder()
           .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
+        .build()
           .toFlow()
           .map { it.data!!.nodes.filterNotNull().asFlow() }
           .flattenConcat()
@@ -215,7 +216,9 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     }
     // Fetch the repositories by their IDs, map down to its
     return apolloClient.query(RepositoriesByIdsQuery(idsToOwnerIds.keys.toList()))
+      .toBuilder()
         .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
+      .build()
         .toFlow()
         .map {
           it.data!!.nodes.asSequence()
@@ -372,7 +375,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
             // Search up to the first sticky header position
             // Maybe someday we should just return the groups rather than flattening
             // but this was neat to write in kotlin
-            val accentColor = (holder.adapterPosition downTo 0)
+            val accentColor = (holder.bindingAdapterPosition downTo 0)
                 .find(::isStickyHeader)
                 ?.let {
                   (recyclerView.findViewHolderForAdapterPosition(it)
@@ -447,32 +450,6 @@ internal data class OssItem(
   val authorUrl: String? = null
 ) : OssBaseItem() {
   override fun itemType() = 1
-}
-
-/**
- * Converts an [ApolloCall] to a suspending coroutine.
- */
-suspend fun <T> ApolloCall<T>.suspending(): Response<T>? {
-  return suspendCancellableCoroutine { continuation ->
-    continuation.invokeOnCancellation {
-      cancel()
-    }
-    enqueue(object : ApolloCall.Callback<T>() {
-      override fun onResponse(response: Response<T>) {
-        continuation.resume(response)
-      }
-
-      override fun onFailure(e: ApolloException) {
-        continuation.resumeWithException(e)
-      }
-
-      override fun onStatusEvent(event: StatusEvent) {
-        if (event == COMPLETED && continuation.isActive) {
-          continuation.resume(null)
-        }
-      }
-    })
-  }
 }
 
 /**
