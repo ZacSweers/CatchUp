@@ -54,6 +54,7 @@ dependencies {
   implementation(deps.retrofit.rxJava2)
   implementation(deps.okhttp.core)
   implementation(deps.misc.moshiLazyAdapters)
+  implementation(deps.kotlin.datetime)
 
   api(project(":service-api"))
   api(deps.android.androidx.annotations)

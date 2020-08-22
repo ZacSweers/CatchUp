@@ -44,6 +44,7 @@ dependencies {
   implementation(deps.retrofit.rxJava2)
   implementation(deps.okhttp.core)
   implementation(deps.misc.moshiLazyAdapters)
+  implementation(deps.kotlin.datetime)
 
   // Inspector
   compileOnly(deps.inspector.factoryCompiler.compileOnly.annotations)

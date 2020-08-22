@@ -17,7 +17,7 @@ package io.sweers.catchup.service.designernews.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 /**
  * Models a Designer News story

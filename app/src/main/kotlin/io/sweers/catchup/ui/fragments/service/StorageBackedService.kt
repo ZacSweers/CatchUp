@@ -30,13 +30,15 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.UrlMeta
+import io.sweers.catchup.util.isAfter
 import io.sweers.catchup.util.kotlin.switchIf
 import io.sweers.catchup.util.w
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.datetime.Clock
 import retrofit2.HttpException
 import java.io.IOException
-import java.time.Instant
-import java.time.temporal.ChronoUnit
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class StorageBackedService(
   private val dao: ServiceDao,
@@ -164,7 +166,7 @@ class StorageBackedService(
     pageId: String,
     useLatest: Boolean
   ): Maybe<DataResult> {
-    val now = Instant.now()
+    val now = Clock.System.now()
     val pageFetcher = with(dao) {
       if (pageId == meta().firstPageKey && useLatest) {
         getFirstServicePage(meta().id, page = pageId)
@@ -195,10 +197,10 @@ class StorageBackedService(
   private fun fetchPageFromNetwork(pageId: String, isRefresh: Boolean): Single<DataResult> {
     return delegate.fetchPage(DataRequest(true, false, pageId))
       .flatMap { result ->
-        val calculatedExpiration = Instant.now()
-          .plus(2, ChronoUnit.HOURS) // TODO preference this
+        val calculatedExpiration = Clock.System.now()
+          .plus(2.toDuration(DurationUnit.HOURS)) // TODO preference this
         if (currentSessionId == -1L || isRefresh) {
-          currentSessionId = calculatedExpiration.toEpochMilli()
+          currentSessionId = calculatedExpiration.toEpochMilliseconds()
         }
         val putPage = dao.putPage(
           ServicePage(
@@ -208,7 +210,7 @@ class StorageBackedService(
             items = result.data.map { it.stableId() },
             expiration = calculatedExpiration,
             sessionId = if (pageId == meta().firstPageKey && isRefresh) {
-              calculatedExpiration.toEpochMilli()
+              calculatedExpiration.toEpochMilliseconds()
             } else {
               currentSessionId
             },

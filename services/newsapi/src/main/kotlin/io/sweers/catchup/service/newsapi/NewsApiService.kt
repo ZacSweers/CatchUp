@@ -46,15 +46,15 @@ import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import io.sweers.catchup.util.rx.filterIsInstance
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format.DateTimeFormatter
+import kotlinx.datetime.temporal.ChronoUnit
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -75,7 +75,7 @@ internal class NewsApiService @Inject constructor(
 
   override fun fetchPage(request: DataRequest): Maybe<DataResult> {
     val twelveHoursAgoISO = DateTimeFormatter.ISO_LOCAL_DATE
-      .withZone(ZoneId.systemDefault())
+      .withZone(TimeZone.currentSystemDefault())
       .format(Instant.now().minus(12, ChronoUnit.HOURS))
     val page = request.pageId.toInt()
     return api

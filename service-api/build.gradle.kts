@@ -29,6 +29,7 @@ dependencies {
 
   implementation(deps.kotlin.coroutinesAndroid)
   implementation(deps.kotlin.coroutinesRx)
+  implementation(deps.kotlin.datetime)
 
   api(project(":service-registry:service-registry-annotations"))
   api(project(":libraries:appconfig"))

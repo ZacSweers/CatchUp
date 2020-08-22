@@ -39,7 +39,7 @@ apollo {
   service("github") {
     @Suppress("UnstableApiUsage")
     customTypeMapping.set(mapOf(
-        "DateTime" to "java.time.Instant",
+        "DateTime" to "kotlinx.datetime.Instant",
         "URI" to "okhttp3.HttpUrl"
     ))
     generateKotlinModels.set(true)
@@ -61,6 +61,7 @@ dependencies {
   implementation(deps.misc.jsoup)
   implementation(deps.retrofit.rxJava2)
   implementation(deps.okhttp.core)
+  implementation(deps.kotlin.datetime)
 
   // Apollo
   implementation(deps.apollo.runtime)

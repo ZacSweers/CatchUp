@@ -25,7 +25,7 @@ import androidx.room.Query
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 @Dao
 interface ServiceDao {

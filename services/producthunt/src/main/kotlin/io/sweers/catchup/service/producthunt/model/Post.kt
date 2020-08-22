@@ -18,8 +18,8 @@ package io.sweers.catchup.service.producthunt.model
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.sweers.catchup.util.e
+import kotlinx.datetime.Instant
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import java.time.Instant
 
 /**
  * Models a post on Product Hunt.

@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 repositories {
   mavenCentral()
   google()
+  maven("https://kotlin.bintray.com/kotlinx/")
   maven("https://dl.bintray.com/kotlin/kotlin-eap")
   maven("https://dl.bintray.com/kotlin/kotlin-dev")
   maven("https://storage.googleapis.com/r8-releases/raw")
@@ -116,6 +117,7 @@ dependencies {
   implementation(kotlin("stdlib-jdk8", version = SharedBuildVersions.kotlin))
   implementation(kotlin("reflect", version = SharedBuildVersions.kotlin))
 
+  implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.1.0")
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")

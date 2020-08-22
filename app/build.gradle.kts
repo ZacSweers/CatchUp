@@ -184,7 +184,7 @@ apollo {
   service("github") {
     @Suppress("UnstableApiUsage")
     customTypeMapping.set(mapOf(
-        "DateTime" to "java.time.Instant",
+        "DateTime" to "kotlinx.datetime.Instant",
         "URI" to "okhttp3.HttpUrl"
     ))
     generateKotlinModels.set(true)
@@ -454,6 +454,7 @@ dependencies {
   implementation(deps.autoDispose.androidArch)
   implementation(deps.misc.kotpref)
   implementation(deps.misc.kotprefEnum)
+  implementation(deps.kotlin.datetime)
 
   // Apollo
   implementation(deps.apollo.androidSupport)
@@ -465,8 +466,9 @@ dependencies {
   debugImplementation(deps.misc.debug.flipper)
   debugImplementation(deps.misc.debug.flipperNetwork)
   debugImplementation(deps.misc.debug.soLoader)
-  debugImplementation(
-      deps.misc.debug.guava) // To force a newer version that doesn't conflict ListenableFuture
+
+  // To force a newer version that doesn't conflict ListenableFuture
+  debugImplementation(deps.misc.debug.guava)
 
   // Hyperion
 //  releaseImplementation(deps.hyperion.core.release)

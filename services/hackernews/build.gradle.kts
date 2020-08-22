@@ -51,6 +51,7 @@ dependencies {
   implementation(deps.retrofit.moshi)
   implementation(deps.moshi.core)
   implementation(deps.coil.default)
+  implementation(deps.kotlin.datetime)
 
   api(deps.android.androidx.design)
   api(deps.android.androidx.fragmentKtx)

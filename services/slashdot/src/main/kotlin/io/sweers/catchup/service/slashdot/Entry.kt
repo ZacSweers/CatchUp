@@ -23,7 +23,7 @@ import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
 import io.sweers.catchup.service.api.HasStableId
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 private const val SLASH_PREFIX = "slash:"
 
