@@ -165,6 +165,7 @@ private fun Project.configureKotlin() {
       jvmTarget = SharedBuildVersions.kotlinJvmTarget
       @Suppress("SuspiciousCollectionReassignment")
       freeCompilerArgs += build.standardFreeKotlinCompilerArgs
+      useIR = true
     }
   }
   plugins.withId("org.jetbrains.kotlin.kapt") {
