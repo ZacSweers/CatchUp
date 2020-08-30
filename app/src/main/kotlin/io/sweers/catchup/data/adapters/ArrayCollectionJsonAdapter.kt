@@ -59,9 +59,9 @@ abstract class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T> private c
       if (annotations.isEmpty()) {
         val rawType = Types.getRawType(type)
         if (rawType.isAssignableFrom(Set::class.java)) {
-          newSetAdapter<Any>(type, moshi).nullSafe()
+          return@Factory newSetAdapter<Any>(type, moshi).nullSafe()
         } else if (rawType.isAssignableFrom(Collection::class.java)) {
-          newListAdapter<Any>(type, moshi).nullSafe()
+          return@Factory newListAdapter<Any>(type, moshi).nullSafe()
         }
       }
       null

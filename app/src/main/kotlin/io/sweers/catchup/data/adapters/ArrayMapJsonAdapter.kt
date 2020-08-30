@@ -80,7 +80,7 @@ class ArrayMapJsonAdapter<K, V>(
         val rawType = Types.getRawType(type)
         if (rawType == Map::class.java) {
           val keyAndValue = type.actualTypeArguments
-          ArrayMapJsonAdapter<Any, Any>(moshi, keyAndValue[0], keyAndValue[1]).nullSafe()
+          return@Factory ArrayMapJsonAdapter<Any, Any>(moshi, keyAndValue[0], keyAndValue[1]).nullSafe()
         }
       }
       null
