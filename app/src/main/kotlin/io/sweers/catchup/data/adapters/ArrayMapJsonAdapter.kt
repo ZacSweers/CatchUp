@@ -13,10 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.moshi
+package io.sweers.catchup.data.adapters
 
 import androidx.collection.ArrayMap
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonAdapter.Factory
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 /**
@@ -28,8 +35,8 @@ class ArrayMapJsonAdapter<K, V>(
   valueType: Type
 ) : JsonAdapter<Map<K, V>>() {
 
-  private val keyAdapter: JsonAdapter<K> = moshi.adapter<K>(keyType)
-  private val valueAdapter: JsonAdapter<V> = moshi.adapter<V>(valueType)
+  private val keyAdapter = moshi.adapter<K>(keyType)
+  private val valueAdapter = moshi.adapter<V>(valueType)
 
   override fun toJson(writer: JsonWriter, map: Map<K, V>?) {
     writer.beginObject()
@@ -54,8 +61,7 @@ class ArrayMapJsonAdapter<K, V>(
       val replaced = result.put(name, value)
       if (replaced != null) {
         throw JsonDataException(
-          "Map key '" + name + "' has multiple values at path " +
-            reader.path
+          "Map key '$name' has multiple values at path ${reader.path}"
         )
       }
     }
@@ -70,11 +76,11 @@ class ArrayMapJsonAdapter<K, V>(
   companion object {
     @JvmField
     val FACTORY = Factory { type, annotations, moshi ->
-      if (annotations.isEmpty()) {
+      if (annotations.isEmpty() && type is ParameterizedType) {
         val rawType = Types.getRawType(type)
         if (rawType == Map::class.java) {
-          val keyAndValue = Types.mapKeyAndValueTypes(type, rawType)
-          ArrayMapJsonAdapter<Any, Any>(moshi, keyAndValue[0], keyAndValue[1]).nullSafe()
+          val keyAndValue = type.actualTypeArguments
+          return@Factory ArrayMapJsonAdapter<Any, Any>(moshi, keyAndValue[0], keyAndValue[1]).nullSafe()
         }
       }
       null
