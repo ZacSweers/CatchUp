@@ -25,15 +25,14 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import java.util.Properties
 
 /**
  * Converts maps with string keys to JSON objects.
  */
 class ArrayMapJsonAdapter<K, V>(
-    moshi: Moshi,
-    keyType: Type,
-    valueType: Type
+  moshi: Moshi,
+  keyType: Type,
+  valueType: Type
 ) : JsonAdapter<Map<K, V>>() {
 
   private val keyAdapter = moshi.adapter<K>(keyType)
@@ -62,7 +61,7 @@ class ArrayMapJsonAdapter<K, V>(
       val replaced = result.put(name, value)
       if (replaced != null) {
         throw JsonDataException(
-            "Map key '$name' has multiple values at path ${reader.path}"
+          "Map key '$name' has multiple values at path ${reader.path}"
         )
       }
     }

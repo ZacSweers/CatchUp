@@ -20,7 +20,6 @@ import android.content.SharedPreferences
 import android.os.Looper
 import com.jakewharton.shimo.ObjectOrderRandomizer
 import com.serjltt.moshi.adapters.Wrapped
-import io.sweers.catchup.data.adapters.ArrayMapJsonAdapter
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -30,6 +29,7 @@ import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
+import io.sweers.catchup.data.adapters.ArrayMapJsonAdapter
 import io.sweers.catchup.gemoji.GemojiModule
 import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.injection.SharedPreferencesName
