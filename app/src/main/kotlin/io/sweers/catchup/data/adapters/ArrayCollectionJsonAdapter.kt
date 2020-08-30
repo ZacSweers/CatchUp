@@ -50,7 +50,7 @@ abstract class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T> private c
   }
 
   override fun toString(): String {
-    return elementAdapter.toString() + ".collection()"
+    return "$elementAdapter.collection()"
   }
 
   companion object {
@@ -72,7 +72,7 @@ abstract class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T> private c
       val elementAdapter = moshi.adapter<T>(elementType)
       return object : ArrayCollectionJsonAdapter<MutableCollection<T>, T>(elementAdapter) {
         override fun newCollection(): MutableCollection<T> {
-          return ArraySet()
+          return ArrayList()
         }
       }
     }

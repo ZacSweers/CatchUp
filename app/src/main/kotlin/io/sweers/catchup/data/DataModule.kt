@@ -20,7 +20,7 @@ import android.content.SharedPreferences
 import android.os.Looper
 import com.jakewharton.shimo.ObjectOrderRandomizer
 import com.serjltt.moshi.adapters.Wrapped
-import com.squareup.moshi.ArrayMapJsonAdapter
+import io.sweers.catchup.data.adapters.ArrayMapJsonAdapter
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
