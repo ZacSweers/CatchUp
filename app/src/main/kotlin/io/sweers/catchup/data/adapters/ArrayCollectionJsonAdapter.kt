@@ -25,7 +25,7 @@ import com.squareup.moshi.Types
 import java.lang.reflect.Type
 
 /** Converts collection types to JSON arrays containing their converted contents.  */
-abstract class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T> private constructor(
+sealed class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T>(
   private val elementAdapter: JsonAdapter<T>
 ) : JsonAdapter<C>() {
 
@@ -70,20 +70,28 @@ abstract class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T> private c
     private fun <T> newListAdapter(type: Type, moshi: Moshi): JsonAdapter<MutableCollection<T>> {
       val elementType = Types.collectionElementType(type, MutableCollection::class.java)
       val elementAdapter = moshi.adapter<T>(elementType)
-      return object : ArrayCollectionJsonAdapter<MutableCollection<T>, T>(elementAdapter) {
-        override fun newCollection(): MutableCollection<T> {
-          return ArrayList()
-        }
-      }
+      return ArrayListJsonAdapter(elementAdapter)
     }
 
     private fun <T> newSetAdapter(type: Type, moshi: Moshi): JsonAdapter<MutableCollection<T>> {
       val elementType = Types.collectionElementType(type, Collection::class.java)
       val elementAdapter = moshi.adapter<T>(elementType)
-      return object : ArrayCollectionJsonAdapter<MutableCollection<T>, T>(elementAdapter) {
-        override fun newCollection(): MutableCollection<T> {
-          return ArraySet()
-        }
+      return ArraySetJsonAdapter(elementAdapter)
+    }
+
+    private class ArrayListJsonAdapter<T>(
+        elementAdapter: JsonAdapter<T>
+    ) : ArrayCollectionJsonAdapter<MutableCollection<T>, T>(elementAdapter) {
+      override fun newCollection(): MutableCollection<T> {
+        return ArrayList()
+      }
+    }
+
+    private class ArraySetJsonAdapter<T>(
+        elementAdapter: JsonAdapter<T>
+    ) : ArrayCollectionJsonAdapter<MutableCollection<T>, T>(elementAdapter) {
+      override fun newCollection(): MutableCollection<T> {
+        return ArraySet()
       }
     }
   }
