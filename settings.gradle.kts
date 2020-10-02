@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id("com.gradle.enterprise") version "3.3.1"
+  id("com.gradle.enterprise") version "3.4.1"
 }
 
 gradleEnterprise {
