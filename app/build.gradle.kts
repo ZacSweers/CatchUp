@@ -24,7 +24,7 @@ plugins {
   kotlin("kapt")
   id("com.apollographql.apollo")
   id("licensesJsonGenerator")
-  id("com.bugsnag.android.gradle")
+//  id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
 }
 
@@ -158,12 +158,12 @@ android {
   }
 }
 
-bugsnag {
-  // Prevent bugsnag from wiring build UUIDs into debug builds
-  variantFilter {
-    setEnabled("debug" !in name.toLowerCase(Locale.US))
-  }
-}
+//bugsnag {
+//  // Prevent bugsnag from wiring build UUIDs into debug builds
+//  variantFilter {
+//    setEnabled("debug" !in name.toLowerCase(Locale.US))
+//  }
+//}
 
 kapt {
   arguments {
