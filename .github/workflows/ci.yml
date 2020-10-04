@@ -8,10 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # TODO Add 12 and 13 after Kotlin 1.4.0 due to https://youtrack.jetbrains.com/issue/KT-36039
-        # Can't use 9 because Kapt doesn't work on it with certain zips -_-
-        # Can't use 10 because it has all sort of bizarre Generated annotation issues -_-
-        java_version: [11, 13, 14]
+        java_version: [1.8, 11, 15]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
