@@ -123,6 +123,8 @@ private fun Project.configureAndroid() {
         lintConfig = rootProject.file("lint.xml")
         isAbortOnError = true
         disable("IidCompatibilityCheckFailure")
+        // https://issuetracker.google.com/issues/170026127
+        disable("InvalidFragmentVersionForActivityResult")
         enable("InlinedApi")
         enable("Interoperability")
         enable("NewApi")
