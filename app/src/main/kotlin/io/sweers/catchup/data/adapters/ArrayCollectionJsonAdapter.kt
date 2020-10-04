@@ -80,7 +80,7 @@ sealed class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T>(
     }
 
     private class ArrayListJsonAdapter<T>(
-        elementAdapter: JsonAdapter<T>
+      elementAdapter: JsonAdapter<T>
     ) : ArrayCollectionJsonAdapter<MutableCollection<T>, T>(elementAdapter) {
       override fun newCollection(): MutableCollection<T> {
         return ArrayList()
@@ -88,7 +88,7 @@ sealed class ArrayCollectionJsonAdapter<C : MutableCollection<T>, T>(
     }
 
     private class ArraySetJsonAdapter<T>(
-        elementAdapter: JsonAdapter<T>
+      elementAdapter: JsonAdapter<T>
     ) : ArrayCollectionJsonAdapter<MutableCollection<T>, T>(elementAdapter) {
       override fun newCollection(): MutableCollection<T> {
         return ArraySet()
