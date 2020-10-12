@@ -57,6 +57,7 @@ android {
   }
   buildFeatures {
     buildConfig = true
+    compose = true
   }
   signingConfigs {
     if (!useDebugSigning && rootProject.file("signing/app-release.jks").exists()) {
@@ -395,6 +396,13 @@ dependencies {
   implementation(deps.android.androidx.room.rxJava2)
   implementation(deps.android.androidx.room.ktx)
   kapt(deps.android.androidx.room.apt)
+
+  // Compose
+  "kotlinCompilerVersion"(deps.versions.kotlin)
+  "kotlinCompilerExtensionVersion"(deps.android.androidx.compose.version)
+  implementation(deps.android.androidx.compose.uiTooling)
+  implementation(deps.android.androidx.compose.foundation)
+  implementation(deps.android.androidx.compose.material)
 
   // Kotlin
   implementation(deps.android.androidx.coreKtx)
