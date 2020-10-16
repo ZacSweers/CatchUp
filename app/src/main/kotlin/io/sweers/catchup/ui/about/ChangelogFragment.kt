@@ -33,7 +33,6 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
-import io.sweers.catchup.R.layout
 import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
@@ -159,10 +158,7 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
     override fun getItemCount() = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatchUpItemViewHolder {
-      return CatchUpItemViewHolder(
-        LayoutInflater.from(parent.context)
-          .inflate(layout.list_item_general, parent, false)
-      )
+      return CatchUpItemViewHolder.create(parent)
     }
 
     override fun onBindViewHolder(holder: CatchUpItemViewHolder, position: Int) {

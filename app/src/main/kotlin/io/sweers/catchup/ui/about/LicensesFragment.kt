@@ -72,7 +72,6 @@ import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.distinct
 import io.sweers.catchup.util.kotlin.groupBy
-import io.sweers.catchup.util.kotlin.sortBy
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.Dispatchers
@@ -81,14 +80,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flattenConcat
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okio.buffer
@@ -417,10 +414,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
             .inflate(layout.about_header_item, parent, false)
         )
       } else {
-        CatchUpItemViewHolder(
-          LayoutInflater.from(parent.context)
-            .inflate(layout.list_item_general, parent, false)
-        )
+        CatchUpItemViewHolder.create(parent)
       }
     }
 

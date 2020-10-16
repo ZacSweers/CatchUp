@@ -43,7 +43,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.apollographql.apollo.exception.ApolloException
-import com.uber.autodispose.autoDispose
 import dagger.hilt.android.AndroidEntryPoint
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -596,13 +595,7 @@ class ServiceFragment :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
       val layoutInflater = LayoutInflater.from(parent.context)
       when (viewType) {
-        TYPE_ITEM -> return CatchUpItemViewHolder(
-          layoutInflater.inflate(
-            R.layout.list_item_general,
-            parent,
-            false
-          )
-        )
+        TYPE_ITEM -> return CatchUpItemViewHolder.create(parent)
         TYPE_LOADING_MORE -> return LoadingMoreHolder(
           layoutInflater.inflate(
             R.layout.infinite_loading,
