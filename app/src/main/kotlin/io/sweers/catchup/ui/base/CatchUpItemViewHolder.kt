@@ -99,11 +99,15 @@ class CatchUpItemViewHolder private constructor(
   }
 
   override fun bind(
-    item: CatchUpItem,
+    item: CatchUpItem?,
     itemClickHandler: OnClickListener?,
     markClickHandler: OnClickListener?,
     longClickHandler: OnLongClickListener?
   ) {
+    if (item == null) {
+      // TODO do we want to support clearing here?
+      return
+    }
     title(item.title.trim())
     score(item.score)
     timestamp(item.timestamp)
