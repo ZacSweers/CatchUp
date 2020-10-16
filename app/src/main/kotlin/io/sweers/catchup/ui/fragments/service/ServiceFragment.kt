@@ -144,11 +144,11 @@ class ServiceFragment :
       }
   }
 
-  private val errorView get() = binding.errorContainer
-  private val errorTextView get() = binding.errorMessage
-  private val errorImage get() = binding.errorImage
+  private val errorView get() = binding.loadStatusContainer.errorContainer
+  private val errorTextView get() = binding.loadStatusContainer.errorMessage
+  private val errorImage get() = binding.loadStatusContainer.errorImage
   private val recyclerView get() = binding.list
-  private val progress get() = binding.progress
+  private val progress get() = binding.loadStatusContainer.progress
   private val swipeRefreshLayout get() = binding.refresh
 
   private lateinit var layoutManager: LinearLayoutManager
@@ -318,11 +318,11 @@ class ServiceFragment :
         detailDisplayer.bind(recyclerView, useExistingFragment = true)
       }
     }
-    binding.retryButton.setOnClickListener {
+    binding.loadStatusContainer.retryButton.setOnClickListener {
       onRetry()
     }
-    binding.errorImage.setOnClickListener {
-      onErrorClick(binding.errorImage)
+    binding.loadStatusContainer.errorImage.setOnClickListener {
+      onErrorClick(binding.loadStatusContainer.errorImage)
     }
     @ColorInt val accentColor = ContextCompat.getColor(view.context, service.meta().themeColor)
     @ColorInt val dayAccentColor = ContextCompat.getColor(
