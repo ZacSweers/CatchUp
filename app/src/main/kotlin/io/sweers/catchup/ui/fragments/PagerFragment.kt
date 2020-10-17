@@ -60,7 +60,7 @@ import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
-import io.sweers.catchup.ui.fragments.service.ServiceFragment
+import io.sweers.catchup.ui.fragments.service.v2.ServiceFragment2
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
@@ -76,7 +76,7 @@ fun ServiceMeta.toServiceHandler() = ServiceHandler(
   name,
   icon,
   themeColor
-) { ServiceFragment.newInstance(id) }
+) { ServiceFragment2.newInstance(id) }
 
 data class ServiceHandler(
   @StringRes val name: Int,
@@ -94,12 +94,16 @@ class PagerFragment : InjectingBaseFragment() {
 
   @Inject
   lateinit var resolvedColorCache: ColorCache
+
   @Inject
   lateinit var serviceHandlers: Array<ServiceHandler>
+
   @Inject
   lateinit var changelogHelper: ChangelogHelper
+
   @Inject
   lateinit var catchUpPreferences: CatchUpPreferences
+
   @Inject
   lateinit var appConfig: AppConfig
 
@@ -246,7 +250,8 @@ class PagerFragment : InjectingBaseFragment() {
     // adapted from http://kubaspatny.github.io/2014/09/18/viewpager-background-transition/
     viewPager.registerOnPageChangeCallback(
       object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+        override fun onPageScrolled(position: Int, positionOffset: Float,
+          positionOffsetPixels: Int) {
           if (canAnimateColor) {
             val color: Int = if (position < pagerAdapter.itemCount - 1 && position < serviceHandlers.size - 1) {
               argbEvaluator.evaluate(
@@ -286,12 +291,12 @@ class PagerFragment : InjectingBaseFragment() {
           val position = tab.position
           toolbar.setTitle(serviceHandlers[position].name)
 
-// If we're switching between more than one page, we just want to manually set the color
-// once rather than let the usual page scroll logic cycle through all the colors in a weird
-// flashy way.
+          // If we're switching between more than one page, we just want to manually set the color
+          // once rather than let the usual page scroll logic cycle through all the colors in a weird
+          // flashy way.
           if (abs(lastPosition - position) > 1) {
             canAnimateColor = false
-// Start with the current tablayout color to feel more natural if we're in between
+            // Start with the current tablayout color to feel more natural if we're in between
             @ColorInt val startColor = (tabLayout.background as ColorDrawable).color
             @ColorInt val endColor = getAndSaveColor(position)
             tabLayoutColorAnimator?.cancel()
