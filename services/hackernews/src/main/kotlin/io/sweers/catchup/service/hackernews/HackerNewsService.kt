@@ -73,6 +73,7 @@ internal class HackerNewsService @Inject constructor(
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId?.toInt() ?: 0
     val itemsPerPage = 25 // TODO Pref this
+    // TODO this is broken right now and never emits
     return Single.just(DataResult(emptyList(), null, true))
     return Single
       .create { emitter: SingleEmitter<DataSnapshot> ->
