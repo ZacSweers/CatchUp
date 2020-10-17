@@ -174,7 +174,6 @@ kapt {
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
-    arg("moshi.generated", "javax.annotation.Generated")
     arg("dagger.experimentalDaggerErrorMessages", "enabled")
   }
 }
