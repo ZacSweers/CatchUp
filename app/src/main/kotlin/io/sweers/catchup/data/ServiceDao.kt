@@ -15,60 +15,25 @@
  */
 package io.sweers.catchup.data
 
-import androidx.annotation.Keep
+import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
 import androidx.room.Query
-import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
-import kotlinx.datetime.Instant
 
 @Dao
 interface ServiceDao {
 
-  @Query("SELECT * FROM pages WHERE type = :type AND page = 0 AND expiration > :expiration")
-  fun getFirstServicePage(type: String, expiration: Instant): Maybe<ServicePage>
-
-  @Query("SELECT * FROM pages WHERE type = :type AND page = 0 ORDER BY expiration DESC")
-  fun getFirstServicePage(type: String): Maybe<ServicePage>
-
-  @Query("SELECT * FROM pages WHERE type = :type AND page = :page ORDER BY expiration DESC")
-  fun getFirstServicePage(type: String, page: String): Maybe<ServicePage>
-
-  @Query("SELECT * FROM pages WHERE type = :type AND page = :page AND sessionId = :sessionId")
-  fun getServicePage(type: String, page: String, sessionId: Long): Maybe<ServicePage>
-
-  @Query("SELECT * FROM items WHERE id = :id")
-  fun getItemById(id: Long): Maybe<CatchUpItem>
-
-  @Query("SELECT * FROM items WHERE id IN(:ids)")
-  fun getItemByIds(ids: Array<Long>): Maybe<List<CatchUpItem>>
-
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putPage(page: ServicePage): Completable
+  suspend fun insertAll(posts: List<CatchUpItem>)
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItem(item: CatchUpItem)
+  @Query("SELECT * FROM items WHERE serviceId = :serviceId ORDER BY indexInResponse ASC")
+  fun itemsByService(serviceId: String): PagingSource<Int, CatchUpItem>
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItems(vararg item: CatchUpItem): Completable
+  @Query("DELETE FROM items WHERE serviceId = :serviceId")
+  suspend fun deleteByService(serviceId: String)
+
+  @Query("SELECT MAX(indexInResponse) + 1 FROM items WHERE serviceId = :serviceId")
+  suspend fun getNextIndexInService(serviceId: String): Int
 }
-
-@Keep
-@Entity(tableName = "pages")
-data class ServicePage(
-  /**
-   * Combination of the sessionId and type
-   */
-  @PrimaryKey val id: String,
-  val type: String,
-  val expiration: Instant,
-  val page: String,
-  val sessionId: Long = -1,
-  val items: List<Long>,
-  val nextPageToken: String?
-)
