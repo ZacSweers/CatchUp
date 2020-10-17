@@ -2,16 +2,27 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/load_status_container"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
+<!--  <ProgressBar-->
+<!--      android:id="@+id/progress"-->
+<!--      style="@style/Widget.AppCompat.ProgressBar"-->
+<!--      android:layout_width="wrap_content"-->
+<!--      android:layout_height="wrap_content"-->
+<!--      android:layout_gravity="center"-->
+<!--      android:indeterminate="true"-->
+<!--      />-->
   <ProgressBar
       android:id="@+id/progress"
-      style="@style/Widget.AppCompat.ProgressBar"
-      android:layout_width="wrap_content"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_marginTop="32dp"
+      android:layout_marginBottom="64dp"
       android:layout_gravity="center"
       android:indeterminate="true"
+      android:indeterminateTint="?android:textColorSecondary"
+      android:indeterminateTintMode="src_in"
       />
   <LinearLayout
       android:id="@+id/error_container"
