@@ -130,8 +130,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
 }
 
 @AndroidEntryPoint
-class ServiceFragment :
-  InjectingBaseFragment<FragmentServiceBinding>(),
+class ServiceFragment : InjectingBaseFragment(),
   SwipeRefreshLayout.OnRefreshListener,
   Scrollable,
   DataLoadingSubject {
@@ -144,6 +143,7 @@ class ServiceFragment :
       }
   }
 
+  private val binding by viewBinding(FragmentServiceBinding::inflate)
   private val errorView get() = binding.loadStatusContainer.errorContainer
   private val errorTextView get() = binding.loadStatusContainer.errorMessage
   private val errorImage get() = binding.loadStatusContainer.errorImage
@@ -185,9 +185,6 @@ class ServiceFragment :
   override fun toString() = "ServiceFragment: ${arguments?.get(ARG_SERVICE_KEY)}"
 
   override fun isDataLoading(): Boolean = dataLoading
-
-  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentServiceBinding =
-    FragmentServiceBinding::inflate
 
   override fun onAttach(context: Context) {
     super.onAttach(context)

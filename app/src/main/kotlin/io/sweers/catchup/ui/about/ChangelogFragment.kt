@@ -17,7 +17,6 @@ package io.sweers.catchup.ui.about
 
 import android.os.Bundle
 import android.os.Parcelable
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
@@ -52,7 +51,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Scrollable {
+class ChangelogFragment : InjectableBaseFragment(), Scrollable {
 
   @Inject
   lateinit var apolloClient: ApolloClient
@@ -61,14 +60,12 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
   @Inject
   internal lateinit var markdownConverter: EmojiMarkdownConverter
 
+  private val binding by viewBinding(FragmentChangelogBinding::inflate)
   private val progressBar get() = binding.progress
   private val recyclerView get() = binding.list
 
   private lateinit var layoutManager: LinearLayoutManager
   private lateinit var adapter: ChangelogAdapter
-
-  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChangelogBinding =
-    FragmentChangelogBinding::inflate
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)

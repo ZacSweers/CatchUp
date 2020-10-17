@@ -97,7 +97,7 @@ import kotlin.LazyThreadSafetyMode.NONE
  * A fragment that displays oss licenses.
  */
 @AndroidEntryPoint
-class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scrollable {
+class LicensesFragment : InjectableBaseFragment(), Scrollable {
 
   @Inject
   lateinit var apolloClient: ApolloClient
@@ -114,14 +114,13 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
   private val dimenSize by lazy(NONE) {
     resources.getDimensionPixelSize(R.dimen.avatar)
   }
+
+  private val binding by viewBinding(FragmentLicensesBinding::inflate)
   private val progressBar get() = binding.progress
   private val recyclerView get() = binding.list
 
   private lateinit var adapter: Adapter
   private lateinit var layoutManager: StickyHeadersLinearLayoutManager<Adapter>
-
-  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLicensesBinding =
-    FragmentLicensesBinding::inflate
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)

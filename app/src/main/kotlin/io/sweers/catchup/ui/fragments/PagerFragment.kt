@@ -24,9 +24,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.SparseArray
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -88,7 +86,7 @@ data class ServiceHandler(
 )
 
 @AndroidEntryPoint
-class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
+class PagerFragment : InjectingBaseFragment() {
 
   companion object {
     private const val SETTINGS_ACTIVITY_REQUEST = 100
@@ -105,6 +103,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
   @Inject
   lateinit var appConfig: AppConfig
 
+  private val binding by viewBinding(FragmentPagerBinding::inflate)
   private val rootLayout get() = binding.pagerFragmentRoot
   private val tabLayout get() = binding.tabLayout
   private val viewPager get() = binding.viewPager
@@ -129,9 +128,6 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
       }
     }
   }
-
-  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentPagerBinding =
-    FragmentPagerBinding::inflate
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
