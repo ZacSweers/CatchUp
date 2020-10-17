@@ -18,7 +18,6 @@ package io.sweers.catchup.data.adapters
 import androidx.collection.ArraySet
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import com.squareup.moshi.adapter
 import org.junit.Test
 

@@ -42,7 +42,6 @@ import com.apollographql.apollo.exception.ApolloException
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import com.squareup.moshi.adapter
 import dagger.hilt.android.AndroidEntryPoint
 import io.sweers.catchup.R

@@ -250,8 +250,11 @@ class PagerFragment : InjectingBaseFragment() {
     // adapted from http://kubaspatny.github.io/2014/09/18/viewpager-background-transition/
     viewPager.registerOnPageChangeCallback(
       object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageScrolled(position: Int, positionOffset: Float,
-          positionOffsetPixels: Int) {
+        override fun onPageScrolled(
+          position: Int,
+          positionOffset: Float,
+          positionOffsetPixels: Int
+        ) {
           if (canAnimateColor) {
             val color: Int = if (position < pagerAdapter.itemCount - 1 && position < serviceHandlers.size - 1) {
               argbEvaluator.evaluate(

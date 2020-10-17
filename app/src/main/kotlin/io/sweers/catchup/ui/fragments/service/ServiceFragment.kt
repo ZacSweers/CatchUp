@@ -131,7 +131,8 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
 }
 
 @AndroidEntryPoint
-class ServiceFragment : InjectingBaseFragment(),
+class ServiceFragment :
+  InjectingBaseFragment(),
   SwipeRefreshLayout.OnRefreshListener,
   Scrollable,
   DataLoadingSubject {
