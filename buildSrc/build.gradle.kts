@@ -43,6 +43,7 @@ object SharedBuildVersions {
       "-Xopt-in=kotlin.time.ExperimentalTime",
       "-Xopt-in=kotlinx.coroutines.FlowPreview",
       "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+      "-Xopt-in=androidx.paging.ExperimentalPagingApi",
       // New type inference front end. Matches IDE behavior, allows new behaviors and should also be a perf improvement.
       // Was originally intended to be teh default in 1.4, but TBD.
       "-Xnew-inference",
