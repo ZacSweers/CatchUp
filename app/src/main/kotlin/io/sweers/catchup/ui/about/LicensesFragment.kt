@@ -43,6 +43,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import com.squareup.moshi.adapter
 import dagger.hilt.android.AndroidEntryPoint
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
@@ -72,6 +73,7 @@ import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.distinct
 import io.sweers.catchup.util.kotlin.groupBy
+import io.sweers.catchup.util.kotlin.sortBy
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.Dispatchers
@@ -80,12 +82,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flattenConcat
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okio.buffer
@@ -164,9 +168,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
   private suspend fun requestItems(): List<OssBaseItem> {
     // Start with a fetch of our github entries from assets
     val githubEntries = withContext(Dispatchers.Default) {
-      val adapter = moshi.adapter<List<OssGitHubEntry>>(
-        Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java)
-      )
+      val adapter = moshi.adapter<List<OssGitHubEntry>>()
       val regular = adapter.fromJson(resources.assets.open("licenses_github.json").source().buffer())!!
       val generated = adapter.fromJson(resources.assets.open("generated_licenses.json").source().buffer())!!
       return@withContext regular + generated
@@ -235,9 +237,7 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
         )
       }
       .onStart {
-        moshi.adapter<List<OssItem>>(
-          Types.newParameterizedType(List::class.java, OssItem::class.java)
-        )
+        moshi.adapter<List<OssItem>>()
           .fromJson(resources.assets.open("licenses_mixins.json").source().buffer())!!
           .forEach { emit(it) }
       }
@@ -260,23 +260,19 @@ class LicensesFragment : InjectableBaseFragment(), Scrollable {
       .let {
         val collector = mutableListOf<OssBaseItem>()
         with(it[0]) {
-          collector.add(
-            OssItemHeader(
-              name = author,
-              avatarUrl = avatarUrl
-            )
+          collector += OssItemHeader(
+            name = author,
+            avatarUrl = avatarUrl
           )
         }
         it.fold(it[0].author) { lastAuthor, currentItem ->
           if (currentItem.author != lastAuthor) {
-            collector.add(
-              OssItemHeader(
-                name = currentItem.author,
-                avatarUrl = currentItem.avatarUrl
-              )
+            collector += OssItemHeader(
+              name = currentItem.author,
+              avatarUrl = currentItem.avatarUrl
             )
           }
-          collector.add(currentItem)
+          collector += currentItem
           currentItem.author
         }
         collector
