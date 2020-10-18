@@ -251,7 +251,7 @@ object deps {
     object hilt {
       const val HILT_VERSION = "${versions.dagger}-alpha"
       object apt {
-        const val compiler = "com.google.dagger:hilt-android-compiler:$HILT_VERSION"
+        const val compiler = "com.google.dagger:hilt-compiler:$HILT_VERSION"
       }
       const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$HILT_VERSION"
       const val android = "com.google.dagger:hilt-android:$HILT_VERSION"
