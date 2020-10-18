@@ -34,6 +34,8 @@ object SharedBuildVersions {
       "-progressive",
       "-Xinline-classes",
       "-Xjsr305=strict",
+      "-Xallow-jvm-ir-dependencies",
+      "-Xskip-prerelease-check",
       "-Xopt-in=kotlin.contracts.ExperimentalContracts",
       "-Xopt-in=kotlin.experimental.ExperimentalTypeInference",
       "-Xopt-in=kotlin.ExperimentalStdlibApi",
