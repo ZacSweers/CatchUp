@@ -130,6 +130,10 @@ android {
       isUniversalApk = true
     }
   }
+  composeOptions {
+    kotlinCompilerVersion = deps.versions.kotlin
+    kotlinCompilerExtensionVersion = deps.android.androidx.compose.version
+  }
   afterEvaluate {
     val firebaseVariants = setOf("release", "debug")
     applicationVariants.forEach { variant ->
@@ -398,8 +402,6 @@ dependencies {
   kapt(deps.android.androidx.room.apt)
 
   // Compose
-  "kotlinCompilerVersion"(deps.versions.kotlin)
-  "kotlinCompilerExtensionVersion"(deps.android.androidx.compose.version)
   implementation(deps.android.androidx.compose.uiTooling)
   implementation(deps.android.androidx.compose.foundation)
   implementation(deps.android.androidx.compose.material)
