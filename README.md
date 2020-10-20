@@ -71,16 +71,6 @@ work of others. Particularly:
 - [Nick Butcher](https://twitter.com/@crafty) and his [Plaid](https://github.com/nickbutcher/plaid) app
 - [Jake Wharton](https://twitter.com/@jakewharton) and his [u2020](https://github.com/jakewharton/u2020) demo app
 
-## Download
-
-CatchUp is in open alpha, but master tends to be rather far ahead of what's on the Play Store.
-
-<a href='https://play.google.com/store/apps/details?id=io.sweers.catchup'>
-	<img alt='Get it on Google Play'
-		src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'
-		height="116" width="300"/>
-</a>
-
 ## Development
 
 If you'd like to build CatchUp locally, you _should_ be able to just clone and build with no issues.
