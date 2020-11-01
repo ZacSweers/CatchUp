@@ -132,7 +132,7 @@ object deps {
       }
 
       object compose {
-        const val version = "1.0.0-alpha05"
+        const val version = "1.0.0-alpha06"
         const val uiTooling = "androidx.ui:ui-tooling:$version"
         const val foundation = "androidx.compose.foundation:foundation:$version"
         const val material = "androidx.compose.material:material:$version"
