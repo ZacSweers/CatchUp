@@ -402,6 +402,7 @@ dependencies {
   kapt(deps.android.androidx.room.apt)
 
   // Compose
+  implementation(project(":libraries:compose-extensions"))
   implementation(deps.android.androidx.compose.uiTooling)
   implementation(deps.android.androidx.compose.foundation)
   implementation(deps.android.androidx.compose.material)
