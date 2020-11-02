@@ -80,7 +80,6 @@ import dev.zacsweers.catchup.compose.accessibilityLabel
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectableBaseFragment
-import io.sweers.catchup.databinding.FragmentOrderServicesBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.flowFor
 import io.sweers.catchup.injection.DaggerMap
