@@ -18,14 +18,16 @@ fun CatchUpTheme(
     darkColors(
       primary = Color(0xff343434),
       primaryVariant = Color(0xffc10000),
-      secondary = Color(0xffFC4D29)
+      secondary = Color(0xffFC4D29),
+      onPrimary = Color.White
     )
   } else {
     lightColors(
       primary = Color(0xfff9f9f9),
       primaryVariant = Color(0xff343434),
       secondary = Color(0xffFC4D29),
-      secondaryVariant = Color(0xffc10000)
+      secondaryVariant = Color(0xffc10000),
+      onPrimary = Color.Black
     )
   }
   val fontFamily = fontFamily(fonts = listOf(ResourceFont(R.font.nunito)))
