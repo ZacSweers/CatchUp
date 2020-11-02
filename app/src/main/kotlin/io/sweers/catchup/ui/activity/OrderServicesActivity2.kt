@@ -213,9 +213,7 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
           },
           actions = {
             IconButton(
-              onClick = {
-                viewModel.shuffle()
-              },
+              onClick = viewModel::shuffle,
               icon = {
                 Image(vectorResource(id = R.drawable.ic_shuffle_black_24dp))
               },
