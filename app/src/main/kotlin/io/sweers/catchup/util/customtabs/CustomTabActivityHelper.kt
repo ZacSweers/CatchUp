@@ -23,6 +23,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.browser.customtabs.CustomTabsIntent.SHARE_STATE_ON
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
 import dagger.hilt.android.scopes.ActivityScoped
@@ -64,7 +65,7 @@ class CustomTabActivityHelper @Inject constructor() {
   val customTabIntent: CustomTabsIntent.Builder
     get() = CustomTabsIntent.Builder(session).setShowTitle(true)
       .setUrlBarHidingEnabled(true)
-      .setDefaultShareMenuItemEnabled(true)
+      .setShareState(SHARE_STATE_ON)
 
   /**
    * Binds the Activity to the Custom Tabs Service
