@@ -23,10 +23,6 @@ import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 
 class ItemsAdapter : PagingDataAdapter<CatchUpItem, CatchUpItemViewHolder>(ITEM_COMPARATOR) {
 
-  init {
-    setHasStableIds(true)
-  }
-
   override fun onBindViewHolder(holder: CatchUpItemViewHolder, position: Int) {
     holder.bind(getItem(position))
   }
