@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019. Zac Sweers
+ * Copyright (C) 2020. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,131 +15,136 @@
  */
 package io.sweers.catchup.ui.activity
 
-import android.animation.AnimatorInflater
-import android.content.Context
-import android.graphics.Rect
-import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Box
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ConstrainedLayoutReference
 import androidx.compose.foundation.layout.ConstraintLayout
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
-import androidx.compose.material.TextField
-import androidx.compose.material.Typography
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.lightColors
+import androidx.compose.material.ripple.RippleIndication
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.VectorAsset
-import androidx.compose.ui.graphics.vector.VectorAssetBuilder
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.globalPosition
+import androidx.compose.ui.onGloballyPositioned
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.loadVectorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.accessibilityLabel
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.Typeface
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.ResourceFont
 import androidx.compose.ui.text.font.fontFamily
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.viewModel
-import androidx.core.content.ContextCompat
-import androidx.core.view.doOnLayout
-import androidx.fragment.app.commitNow
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DiffUtil.Callback
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.chibatching.kotpref.bulk
-import com.getkeepsafe.taptargetview.TapTarget
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.FragmentComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.compose.CatchUpTheme
+import dev.zacsweers.catchup.compose.accessibilityLabel
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
-import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.base.ui.InjectableBaseFragment
-import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.databinding.FragmentOrderServicesBinding
-import io.sweers.catchup.databinding.OrderServicesItemBinding
 import io.sweers.catchup.edu.Syllabus
-import io.sweers.catchup.edu.TargetRequest
-import io.sweers.catchup.edu.id
+import io.sweers.catchup.flowFor
 import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.FontHelper
-import io.sweers.catchup.util.asDayContext
-import io.sweers.catchup.util.isInNightMode
-import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.launch
-import java.util.Collections
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-private class OrderServicesViewModel : ViewModel() {
+/*
+ * This is a WIP implementation of OrderServices view with Compose.
+ *
+ * TODO:
+ *  * Syllabus handling - requires integrating tap target on the location
+ *  * Drag-and-drop - compose doesn't support this out of the box.
+ *    * An intermediate solution might be to add up/down arrows
+ */
 
-  private val _pendingChanges = MutableStateFlow(emptyList<ServiceMeta>())
-  val pendingChanges: StateFlow<List<ServiceMeta>> = _pendingChanges
+private class OrderServicesViewModel(
+  serviceMetasMap: DaggerMap<String, ServiceMeta>,
+  private val catchUpPreferences: CatchUpPreferences
+) : ViewModel() {
 
-  private val _canSave = MutableStateFlow(false)
-  val canSave: StateFlow<Boolean> = _canSave
+  private val storedOrder: StateFlow<List<String>>
+  val serviceMetas: StateFlow<List<ServiceMeta>>
+  val canSave: StateFlow<Boolean>
 
   init {
-//    storedOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
-    // TODO should we wire this with a flow of stored pref changes?
-    viewModelScope.launch {
-      pendingChanges
-        .drop(1) // skip first
-        .distinctUntilChanged()
-        .collect { _canSave.value }
-    }
+    val initialOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
+    val initialOrderedServices = serviceMetasMap.values.sortedBy { initialOrder.indexOf(it.id) }
+    storedOrder = catchUpPreferences.flowFor { ::servicesOrder }
+      .drop(1) // Ignore the initial value we read synchronously
+      .map { it?.split(",") ?: emptyList() }
+      .stateIn(viewModelScope, SharingStarted.Lazily, initialOrder)
+    serviceMetas = storedOrder
+      .map { newOrder ->
+        serviceMetasMap.values.sortedBy { newOrder.indexOf(it.id) }
+      }
+      .stateIn(viewModelScope, SharingStarted.Lazily, initialOrderedServices)
+    canSave = serviceMetas
+      .map { it != initialOrderedServices }
+      .stateIn(viewModelScope, SharingStarted.Lazily, false)
   }
 
-  fun updateOrder(items: List<ServiceMeta>) {
-    _pendingChanges.value = items
-  }
-
-  fun shouldShowSyllabus(): Boolean {
-    TODO()
+  fun shuffle() {
+    val items = serviceMetas.value.toMutableList()
+    items.shuffle()
   }
 
   fun save() {
-    check(canSave.value)
-    TODO()
-    _canSave.value = false
+    catchUpPreferences.bulk {
+      servicesOrder = serviceMetas.value.joinToString(",", transform = ServiceMeta::id)
+    }
+  }
+
+  fun shouldShowSyllabus(): Boolean {
+    // TODO implement this
+    return false
   }
 }
 
@@ -161,86 +166,121 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
   @Inject
   internal lateinit var appConfig: AppConfig
 
-  // TODO move to viewmodel
-  //  - pendingChanges updates
-  //  - hasPendingChanges flowAsState
-  private lateinit var storedOrder: List<String>
-  private var pendingChanges: List<ServiceMeta>? = null
-    set(value) {
-      var toStore = value
-      if (value?.map(ServiceMeta::id)?.sortedBy(storedOrder::indexOf) == storedOrder) {
-        toStore = null
-      }
-      field = toStore
-      if (toStore == null) {
-        save.hide()
-      } else {
-        save.show()
+  // Have to do this here because we can't set a factory separately
+  @Suppress("UNCHECKED_CAST")
+  private val viewModel by viewModels<OrderServicesViewModel> {
+    object : ViewModelProvider.Factory {
+      override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return OrderServicesViewModel(serviceMetas, catchUpPreferences) as T
       }
     }
+  }
 
   // TODO remove with viewbinding API change
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentOrderServicesBinding =
     FragmentOrderServicesBinding::inflate
 
-  override fun onSaveInstanceState(outState: Bundle) {
-    super.onSaveInstanceState(outState)
-    outState.putStringArrayList(
-      "pendingChanges",
-      pendingChanges?.mapTo(ArrayList(), ServiceMeta::id)
-    )
-  }
-
   override fun initView(inflater: LayoutInflater, container: ViewGroup?): View {
-    val view = ComposeView(inflater.context)
-    view.setContent {
-      // TODO control fontFamily globally here
-      MaterialTheme {
-        prepareContent()
+    return ComposeView(inflater.context).apply {
+      setLightStatusBar(appConfig)
+      setContent {
+        CatchUpTheme {
+          // Have to pass the viewmodel here rather than use compose' viewModel() because otherwise it
+          // will try the reflective instantiation since the factory isn't initialized because lol
+          prepareContent(viewModel)
+        }
       }
     }
-    return view
   }
 
+  @OptIn(ExperimentalAnimationApi::class)
   @Composable
-  private fun prepareContent() {
-    val viewModel: OrderServicesViewModel = viewModel()
-    // Scaffold with toolbar
-    // List
-
-    val canSave by viewModel.canSave.collectAsState()
-
+  private fun prepareContent(viewModel: OrderServicesViewModel) {
+    val canSave: Boolean by viewModel.canSave.collectAsState()
     Scaffold(
-      topBar = {}, // TODO toolbar setup
-      bodyContent = { prepareBody(viewModel) }
+      topBar = {
+        TopAppBar(
+          title = {
+            Text(stringResource(id = R.string.pref_reorder_services))
+          },
+          navigationIcon = {
+            IconButton(
+              onClick = ::onBackPressed,
+              icon = {
+                Image(vectorResource(id = R.drawable.ic_arrow_back_black_24dp))
+              }
+            )
+          },
+          actions = {
+            IconButton(
+              onClick = {
+                viewModel.shuffle()
+              },
+              icon = {
+                Image(vectorResource(id = R.drawable.ic_shuffle_black_24dp))
+              },
+              modifier = Modifier.accessibilityLabel(resId = R.string.shuffle)
+            )
+
+          }
+        )
+      },
+      bodyContent = { prepareBody(viewModel) },
+      floatingActionButton = {
+        AnimatedVisibility(
+          visible = canSave,
+          enter = expandIn(expandFrom = Alignment.Center),
+          exit = shrinkOut(shrinkTowards = Alignment.Center)
+        ) {
+          // TODO ripple color?
+          FloatingActionButton(
+            modifier = Modifier
+              .accessibilityLabel(resId = R.string.save)
+              .indication(InteractionState(), indication = RippleIndication(
+                color = Color.White
+              ))
+              .onGloballyPositioned { coordinates ->
+                val (x, y) = coordinates.globalPosition
+                // TODO show syllabus on fab
+              },
+            backgroundColor = colorResource(R.color.colorAccent),
+            onClick = {
+              viewModel.save()
+              activity?.finish()
+            },
+            icon = {
+              Image(
+                vectorResource(R.drawable.ic_save_black_24dp),
+                colorFilter = ColorFilter.tint(Color.White)
+              )
+            }
+          )
+        }
+      }
     )
-    // Pending changes
   }
 
   @Composable
   private fun prepareBody(viewModel: OrderServicesViewModel) {
-//    val instanceChanges = savedInstanceState?.getStringArrayList("pendingChanges")
-    storedOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
-//    pendingChanges = instanceChanges?.map { serviceMetas[it] as ServiceMeta }
-//    val displayOrder = instanceChanges ?: storedOrder
-    val displayOrder = storedOrder
-
-    val currentItemsSorted = serviceMetas.values.sortedBy { displayOrder.indexOf(it.id) }
+    val currentItemsSorted by viewModel.serviceMetas.collectAsState()
     Surface(Modifier.fillMaxSize()) {
       LazyColumnFor(
         items = currentItemsSorted,
         modifier = Modifier,
         itemContent = { item ->
           Box(
-            backgroundColor = colorResource(id = item.themeColor),
-            padding = 16.dp
+            Modifier.background(colorResource(id = item.themeColor))
+              .padding(16.dp)
           ) {
             ConstraintLayout(
-              modifier = Modifier.fillMaxWidth()
+              modifier = Modifier
+                .fillMaxWidth() // TODO remove this...?
                 .wrapContentHeight()
+                .wrapContentWidth(Alignment.Start)
             ) {
-              val (icon, text) = createRefs()
+              val (icon, spacer, text) = createRefs()
               val image = loadVectorResource(id = item.icon)
+              var startRef: ConstrainedLayoutReference? = null
               image.resource.resource?.let {
                 Image(
                   asset = it,
@@ -250,23 +290,32 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
                     .accessibilityLabel(R.string.service_icon)
                     .constrainAs(icon) {
                       bottom.linkTo(parent.bottom)
-                      end.linkTo(text.start)
+                      end.linkTo(spacer.start)
                       start.linkTo(parent.start)
                       top.linkTo(parent.top)
                     }
                 )
+                Spacer(modifier = Modifier.width(8.dp)
+                  .height(40.dp)
+                  .constrainAs(spacer) {
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(text.start)
+                    start.linkTo(icon.end)
+                    top.linkTo(parent.top)
+                  }
+                )
+                startRef = spacer
               }
               Text(
                 text = stringResource(id = item.name),
                 modifier = Modifier.constrainAs(text) {
+                  val actualStartRef = startRef ?: parent
                   bottom.linkTo(parent.bottom)
                   end.linkTo(parent.end)
-                  start.linkTo(icon.end)
+                  start.linkTo(actualStartRef.end)
                   top.linkTo(parent.top)
                 },
                 fontStyle = FontStyle.Normal,
-                // TODO define this somewhere higher level
-                fontFamily = fontFamily(fonts = listOf(ResourceFont(R.font.nunito))),
                 // TODO what about Subhead?
                 style = MaterialTheme.typography.subtitle1,
                 color = Color.White
@@ -278,94 +327,9 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
     }
   }
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    with(activity as AppCompatActivity) {
-      if (!isInNightMode()) {
-        toolbar.setLightStatusBar(appConfig)
-      }
-    }
-    val lm = LinearLayoutManager(view.context)
-    recyclerView.layoutManager = lm
-    val instanceChanges = savedInstanceState?.getStringArrayList("pendingChanges")
-    storedOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
-    pendingChanges = instanceChanges?.map { serviceMetas[it] as ServiceMeta }
-    val displayOrder = instanceChanges ?: storedOrder
-
-    val currentItemsSorted = serviceMetas.values.sortedBy { displayOrder.indexOf(it.id) }
-    val adapter = Adapter2(
-      // Use a day context since this is like the tablayout UI
-      recyclerView.context.asDayContext(),
-      currentItemsSorted
-    ) { newItemOrder ->
-      pendingChanges = if (newItemOrder != currentItemsSorted) {
-        newItemOrder
-      } else {
-        null
-      }
-    }
-    recyclerView.adapter = adapter
-    savedInstanceState?.getParcelable<Parcelable>("orderServicesState")?.let(
-      lm::onRestoreInstanceState
-    )
-    toolbar.apply {
-      setNavigationIcon(R.drawable.ic_arrow_back_black_24dp)
-      setNavigationOnClickListener {
-        onBackPressed()
-      }
-      title = context.getString(R.string.pref_reorder_services)
-      inflateMenu(R.menu.order_services)
-      menu.findItem(R.id.shuffle).setOnMenuItemClickListener {
-        adapter.shuffle()
-        true
-      }
-    }
-    val callback = MoveCallback2 { start, end -> adapter.move(start, end) }
-    ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
-
-    save.setOnClickListener {
-      pendingChanges?.let { changes ->
-        catchUpPreferences.bulk {
-          servicesOrder = changes.joinToString(",", transform = ServiceMeta::id)
-        }
-      }
-      activity?.finish()
-    }
-
-    val primaryColor = ContextCompat.getColor(save.context, R.color.colorPrimary)
-    val textColor = save.context.resolveAttributeColor(android.R.attr.textColorPrimary)
-    syllabus.showIfNeverSeen(
-      catchUpPreferences::servicesOrderSeen.name,
-      TargetRequest(
-        target = {
-          FabShowTapTarget2(
-            delegateTarget = { TapTarget.forView(save, "", "") },
-            fab = save,
-            title = save.resources.getString(R.string.pref_reorder_services),
-            description = save.resources.getString(
-              R.string.pref_order_services_description
-            )
-          )
-            .outerCircleColorInt(primaryColor)
-            .outerCircleAlpha(0.96f)
-            .titleTextColorInt(textColor)
-            .descriptionTextColorInt(
-              ColorUtils.modifyAlpha(textColor, 0.2f)
-            )
-            .targetCircleColorInt(textColor)
-            .transparentTarget(true)
-            .drawShadow(true)
-            .id("Save")
-            .apply { fontHelper.getFont()?.let(::textTypeface) }
-        },
-        postDisplay = save::hide
-      )
-    )
-  }
-
   override fun onBackPressed(): Boolean {
-    if (pendingChanges != null) {
-      AlertDialog.Builder(save.context)
+    if (viewModel.canSave.value) {
+      AlertDialog.Builder(requireContext())
         .setTitle(R.string.pending_changes_title)
         .setMessage(R.string.pending_changes_message)
         .setNeutralButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
@@ -375,7 +339,8 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
         }
         .setNegativeButton(R.string.save) { dialog, _ ->
           dialog.dismiss()
-          save.performClick()
+          viewModel.save()
+          activity?.finish()
         }
         .show()
       return true
@@ -385,188 +350,10 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
   }
 }
 
-// TODO define this somewhere higher level
-@Composable
-fun Modifier.accessibilityLabel(@StringRes resId: Int) = composed {
-  val res = stringResource(resId)
-  semantics {
-    accessibilityLabel = res
-  }
-}
-
-private class Adapter2(
-  private val context: Context,
-  inputItems: List<ServiceMeta>,
-  private val changeListener: (List<ServiceMeta>) -> Unit
-) : RecyclerView.Adapter<Holder2>() {
-
-  private val items = inputItems.toMutableList()
-
-  init {
-    setHasStableIds(true)
-  }
-
-  fun shuffle() {
-    val current = items.toList()
-    items.shuffle()
-    DiffUtil.calculateDiff(
-      object : Callback() {
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-          return current[oldItemPosition].id == items[newItemPosition].id
-        }
-
-        override fun getOldListSize() = current.size
-
-        override fun getNewListSize() = items.size
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-          return current[oldItemPosition] == items[newItemPosition]
-        }
-      }
-    ).dispatchUpdatesTo(this)
-    changeListener(items)
-  }
-
-  override fun getItemId(position: Int): Long {
-    return items[position].id.hashCode().toLong()
-  }
-
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder2 {
-    val itemView = LayoutInflater.from(context).inflate(
-      R.layout.order_services_item,
-      parent,
-      false
-    )
-    return Holder2(itemView)
-  }
-
-  override fun getItemCount() = items.size
-
-  override fun onBindViewHolder(holder: Holder2, position: Int) {
-    holder.bind(items[position])
-  }
-
-  fun move(start: Int, end: Int) {
-    if (start < end) {
-      for (i in start until end) {
-        Collections.swap(items, i, i + 1)
-      }
-    } else {
-      for (i in start downTo end + 1) {
-        Collections.swap(items, i, i - 1)
-      }
-    }
-    changeListener(items.toList())
-    notifyItemMoved(start, end)
-  }
-}
-
-private class Holder2(itemView: View) : RecyclerView.ViewHolder(itemView) {
-  private val binding = OrderServicesItemBinding.bind(itemView)
-  private val container = binding.container
-  private val title = binding.title
-  private val icon = binding.icon
-  private val raise = itemView.resources.getDimensionPixelSize(R.dimen.touch_raise).toFloat()
-  private val elevationAnimator = AnimatorInflater.loadStateListAnimator(
-    itemView.context,
-    R.animator.raise
-  )
-
-  fun bind(meta: ServiceMeta) {
-    title.setText(meta.name)
-    container.setBackgroundColor(
-      ContextCompat.getColor(title.context, meta.themeColor)
-    )
-    icon.setImageResource(meta.icon)
-  }
-
-  fun updateSelection(selected: Boolean) {
-    container.elevation = if (selected) raise else 0F
-    if (selected) {
-      container.stateListAnimator = null
-    } else {
-      container.stateListAnimator = elevationAnimator
-    }
-  }
-}
-
-private class MoveCallback2(
-  private val callback: (Int, Int) -> Unit
-) : ItemTouchHelper.SimpleCallback(
-  ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-  0
-) {
-  override fun onMove(
-    recyclerView: RecyclerView,
-    viewHolder: ViewHolder,
-    target: ViewHolder
-  ): Boolean {
-    callback(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
-    return true
-  }
-
-  override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
-    // Noop
-  }
-
-  override fun isLongPressDragEnabled() = true
-
-  override fun isItemViewSwipeEnabled() = false
-
-  override fun onSelectedChanged(viewHolder: ViewHolder?, actionState: Int) {
-    super.onSelectedChanged(viewHolder, actionState)
-    if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-      viewHolder?.let {
-        (it as Holder2).updateSelection(true)
-      }
-    }
-  }
-
-  override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder) {
-    super.clearView(recyclerView, viewHolder)
-    (viewHolder as Holder2).updateSelection(false)
-  }
-}
-
 @InstallIn(FragmentComponent::class)
 @Module
 abstract class OrderServicesModule2 {
 
   @Multibinds
   abstract fun serviceMetas(): Map<String, ServiceMeta>
-}
-
-private class FabShowTapTarget2(
-  private val delegateTarget: () -> TapTarget,
-  private val fab: FloatingActionButton,
-  title: CharSequence,
-  description: CharSequence?
-) : TapTarget(title, description) {
-
-  override fun bounds(): Rect {
-    val location = IntArray(2)
-    fab.getLocationOnScreen(location)
-    return Rect(
-      location[0],
-      location[1],
-      location[0] + fab.width,
-      location[1] + fab.height
-    )
-  }
-
-  override fun onReady(runnable: Runnable) {
-    fab.doOnLayout {
-      if (fab.isShown) {
-        delegateTarget().onReady(runnable)
-      } else {
-        fab.show(
-          object : OnVisibilityChangedListener() {
-            override fun onShown(fab: FloatingActionButton) {
-              delegateTarget().onReady(runnable)
-            }
-          }
-        )
-      }
-    }
-  }
 }
