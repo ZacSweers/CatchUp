@@ -30,6 +30,7 @@ android {
 }
 
 dependencies {
+  api(project(":libraries:base-ui"))
   api(deps.android.androidx.annotations)
   api(deps.android.androidx.compose.uiTooling)
   api(deps.android.androidx.compose.foundation)
