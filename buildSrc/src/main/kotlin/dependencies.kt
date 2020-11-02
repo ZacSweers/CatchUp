@@ -124,7 +124,7 @@ object deps {
       }
 
       object paging {
-        private const val VERSION = "3.0.0-alpha02"
+        private const val VERSION = "3.0.0-alpha08"
         const val runtime = "androidx.paging:paging-runtime:$VERSION"
       }
 
