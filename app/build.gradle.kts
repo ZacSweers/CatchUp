@@ -57,6 +57,7 @@ android {
   }
   buildFeatures {
     buildConfig = true
+    compose = true
   }
   signingConfigs {
     if (!useDebugSigning && rootProject.file("signing/app-release.jks").exists()) {
@@ -128,6 +129,10 @@ android {
       include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
       isUniversalApk = true
     }
+  }
+  composeOptions {
+    kotlinCompilerVersion = deps.versions.kotlin
+    kotlinCompilerExtensionVersion = deps.android.androidx.compose.version
   }
   afterEvaluate {
     val firebaseVariants = setOf("release", "debug")
@@ -395,6 +400,12 @@ dependencies {
   implementation(deps.android.androidx.room.rxJava2)
   implementation(deps.android.androidx.room.ktx)
   kapt(deps.android.androidx.room.apt)
+
+  // Compose
+  implementation(project(":libraries:compose-extensions"))
+  implementation(deps.android.androidx.compose.uiTooling)
+  implementation(deps.android.androidx.compose.foundation)
+  implementation(deps.android.androidx.compose.material)
 
   // Kotlin
   implementation(deps.android.androidx.coreKtx)

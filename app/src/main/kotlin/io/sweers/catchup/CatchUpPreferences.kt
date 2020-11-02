@@ -16,12 +16,9 @@
 package io.sweers.catchup
 
 import android.app.Application
-import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.Keep
-import com.chibatching.kotpref.ContextProvider
 import com.chibatching.kotpref.KotprefModel
-import com.chibatching.kotpref.PreferencesProvider
 import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.flowbinding.safeOffer
 import kotlinx.coroutines.channels.awaitClose
@@ -39,14 +36,8 @@ class CatchUpPreferences @Inject constructor(
   application: Application,
   sharedPreferences: SharedPreferences
 ) : KotprefModel(
-  contextProvider = object : ContextProvider {
-    override fun getApplicationContext(): Context = application
-  },
-  preferencesProvider = object : PreferencesProvider {
-    override fun get(context: Context, name: String, mode: Int): SharedPreferences {
-      return sharedPreferences
-    }
-  }
+  contextProvider = { application },
+  preferencesProvider = { _, _, _ -> sharedPreferences }
 ),
   UiPreferences {
 
@@ -76,6 +67,7 @@ fun <T, Model : KotprefModel> Model.flowFor(propertyResolver: Model.() -> KPrope
       lazilyResolved.name
     },
     valueResolver = {
+      println("ORDER getting value for ${lazilyResolved.name}")
       lazilyResolved.get()
     }
   )
@@ -91,7 +83,7 @@ fun SharedPreferences.flowFor(targetKey: String): Flow<Unit> {
 }
 
 fun SharedPreferences.flowFor(keyResolver: () -> String): Flow<Unit> {
-  return callbackFlow<Unit> {
+  return callbackFlow {
     val targetKey = keyResolver()
     val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
       // TODO this is called twice when updating, say, a switch bound to this. Need to find a way

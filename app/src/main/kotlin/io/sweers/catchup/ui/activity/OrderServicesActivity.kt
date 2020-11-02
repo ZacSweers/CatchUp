@@ -78,7 +78,7 @@ class OrderServicesActivity : InjectingBaseActivity() {
 
     if (savedInstanceState == null) {
       supportFragmentManager.commitNow {
-        add(R.id.fragment_container, OrderServicesFragment())
+        add(R.id.fragment_container, OrderServicesFragment2())
       }
     }
   }

@@ -28,6 +28,7 @@ include(
   ":app",
   ":libraries:base-ui",
   ":libraries:appconfig",
+  ":libraries:compose-extensions",
   ":libraries:gemoji",
   ":libraries:flowbinding",
   ":libraries:kotlinutil",

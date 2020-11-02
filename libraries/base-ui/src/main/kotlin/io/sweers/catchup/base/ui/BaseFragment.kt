@@ -54,6 +54,14 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), ScopeProvider, Backpr
     savedInstanceState: Bundle?
   ): View {
     lifecycleProvider = viewLifecycleOwner.scope()
+    return initView(inflater, container)
+  }
+
+  // TODO remove when compose fragment is separated
+  protected open fun initView(
+    inflater: LayoutInflater,
+    container: ViewGroup?
+  ): View {
     binding = bindingInflater(inflater, container, false)
     return binding.root
   }

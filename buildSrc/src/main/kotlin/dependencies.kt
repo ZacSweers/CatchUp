@@ -130,6 +130,17 @@ object deps {
         const val runtime = "androidx.room:room-runtime:$version"
         const val rxJava2 = "androidx.room:room-rxjava2:$version"
       }
+
+      object compose {
+        const val version = "1.0.0-alpha06"
+        const val uiTooling = "androidx.ui:ui-tooling:$version"
+        const val foundation = "androidx.compose.foundation:foundation:$version"
+        const val material = "androidx.compose.material:material:$version"
+        const val materialIcons = "androidx.compose.material:material-icons-core:$version"
+        const val materialIconsExtended = "androidx.compose.material:material-icons-extended:$version"
+        const val livedata = "androidx.compose.runtime:runtime-livedata:$version"
+        const val rxjava2 = "androidx.compose.runtime:runtime-rxjava2:$version"
+      }
     }
 
     object build {
@@ -310,7 +321,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.3.9"
+    private const val coroutinesVersion = "1.4.0"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
