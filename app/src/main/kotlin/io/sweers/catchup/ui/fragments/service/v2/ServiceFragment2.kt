@@ -32,10 +32,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.databinding.FragmentService2Binding
 import io.sweers.catchup.ui.Scrollable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -111,9 +113,11 @@ class ServiceFragment2 : InjectingBaseFragment(), Scrollable {
     }
 
     lifecycleScope.launchWhenCreated {
-      model.posts.collectLatest {
-        adapter.submitData(it)
-      }
+      model.posts
+        .flowOn(Dispatchers.IO)
+        .collectLatest {
+          adapter.submitData(it)
+        }
     }
 
     lifecycleScope.launchWhenCreated {
