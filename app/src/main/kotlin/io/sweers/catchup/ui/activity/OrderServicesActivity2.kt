@@ -228,7 +228,6 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
               },
               modifier = Modifier.accessibilityLabel(resId = R.string.shuffle)
             )
-
           }
         )
       },
@@ -243,9 +242,12 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
           FloatingActionButton(
             modifier = Modifier
               .accessibilityLabel(resId = R.string.save)
-              .indication(InteractionState(), indication = RippleIndication(
-                color = Color.White
-              ))
+              .indication(
+                InteractionState(),
+                indication = RippleIndication(
+                  color = Color.White
+                )
+              )
               .onGloballyPositioned { coordinates ->
                 val (x, y) = coordinates.globalPosition
                 // TODO show syllabus on fab
@@ -302,14 +304,15 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
                       top.linkTo(parent.top)
                     }
                 )
-                Spacer(modifier = Modifier.width(8.dp)
-                  .height(40.dp)
-                  .constrainAs(spacer) {
-                    bottom.linkTo(parent.bottom)
-                    end.linkTo(text.start)
-                    start.linkTo(icon.end)
-                    top.linkTo(parent.top)
-                  }
+                Spacer(
+                  modifier = Modifier.width(8.dp)
+                    .height(40.dp)
+                    .constrainAs(spacer) {
+                      bottom.linkTo(parent.bottom)
+                      end.linkTo(text.start)
+                      start.linkTo(icon.end)
+                      top.linkTo(parent.top)
+                    }
                 )
                 startRef = spacer
               }
