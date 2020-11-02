@@ -46,7 +46,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.lightColors
 import androidx.compose.material.ripple.RippleIndication
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -63,8 +62,6 @@ import androidx.compose.ui.res.loadVectorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.ResourceFont
-import androidx.compose.ui.text.font.fontFamily
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
@@ -89,11 +86,14 @@ import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.util.setLightStatusBar
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /*
@@ -111,7 +111,8 @@ private class OrderServicesViewModel(
 ) : ViewModel() {
 
   private val storedOrder: StateFlow<List<String>>
-  val serviceMetas: StateFlow<List<ServiceMeta>>
+  private val _serviceMetas: MutableStateFlow<List<ServiceMeta>>
+  val serviceMetas: StateFlow<List<ServiceMeta>> get() = _serviceMetas
   val canSave: StateFlow<Boolean>
 
   init {
@@ -121,11 +122,18 @@ private class OrderServicesViewModel(
       .drop(1) // Ignore the initial value we read synchronously
       .map { it?.split(",") ?: emptyList() }
       .stateIn(viewModelScope, SharingStarted.Lazily, initialOrder)
-    serviceMetas = storedOrder
-      .map { newOrder ->
-        serviceMetasMap.values.sortedBy { newOrder.indexOf(it.id) }
-      }
-      .stateIn(viewModelScope, SharingStarted.Lazily, initialOrderedServices)
+    _serviceMetas = MutableStateFlow(initialOrderedServices)
+
+    viewModelScope.launch {
+      storedOrder
+        .map { newOrder ->
+          serviceMetasMap.values.sortedBy { newOrder.indexOf(it.id) }
+        }
+        .collect {
+          _serviceMetas.value = it
+        }
+    }
+
     canSave = serviceMetas
       .map { it != initialOrderedServices }
       .stateIn(viewModelScope, SharingStarted.Lazily, false)
@@ -134,6 +142,7 @@ private class OrderServicesViewModel(
   fun shuffle() {
     val items = serviceMetas.value.toMutableList()
     items.shuffle()
+    _serviceMetas.value = items
   }
 
   fun save() {
