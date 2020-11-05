@@ -28,7 +28,7 @@ interface ServiceDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun insertAll(posts: List<CatchUpItem>)
 
-  @Query("SELECT * FROM items WHERE serviceId = :serviceId ORDER BY indexInResponse ASC")
+  @Query("SELECT * FROM items WHERE serviceId = :serviceId ORDER BY generatedId ASC")
   fun itemsByService(serviceId: String): PagingSource<Int, CatchUpItem>
 
   @Query("DELETE FROM items WHERE serviceId = :serviceId")
