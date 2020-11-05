@@ -24,7 +24,8 @@ import kotlinx.datetime.Instant
 @Keep
 @Entity(tableName = "items")
 data class CatchUpItem(
-  @PrimaryKey val id: Long,
+  @PrimaryKey(autoGenerate = true) val generatedId: Int = 0,
+  val id: Long,
   val title: String,
   val timestamp: Instant?,
   val serviceId: String,
