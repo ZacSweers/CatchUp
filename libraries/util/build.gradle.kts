@@ -17,13 +17,12 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  // TODO disabled for now for IR https://github.com/ZacSweers/redacted-compiler-plugin/issues/22
-//  id("dev.zacsweers.redacted.redacted-gradle-plugin")
+  id("dev.zacsweers.redacted.redacted-gradle-plugin")
 }
 
-//redacted {
-//  redactedAnnotation = "io.sweers.catchup.util.network.Redacted"
-//}
+redacted {
+  redactedAnnotation.set("io.sweers.catchup.util.network.Redacted")
+}
 
 dependencies {
   api(deps.android.androidx.annotations)
