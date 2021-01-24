@@ -73,7 +73,8 @@ work of others. Particularly:
 
 ## Development
 
-If you'd like to build CatchUp locally, you _should_ be able to just clone and build with no issues.
+If you'd like to build CatchUp locally, you _should_ be able to just clone and build with no
+issues. The project requires AGP
 
 CatchUp tends to keep up with Android Studio canaries, so you may have to use a canary version.
 Check the Android Gradle Plugin `deps.android.gradlePlugin` dependency in `gradle/dependencies.kt`.

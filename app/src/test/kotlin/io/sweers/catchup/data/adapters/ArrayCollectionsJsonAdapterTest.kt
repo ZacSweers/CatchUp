@@ -26,12 +26,16 @@ class ArrayCollectionsJsonAdapterTest {
   @Test
   fun testList() {
     val moshi = Moshi.Builder()
-      .add(CustomCollectionJsonAdapter.newFactory(listUpdaterFactory = object : Factory {
-        override fun <E, C : Collection<E>> create(): CollectionUpdater<E, C> {
-          @Suppress("UNCHECKED_CAST")
-          return ArrayListCollectionUpdater<E>() as CollectionUpdater<E, C>
-        }
-      }))
+      .add(
+        CustomCollectionJsonAdapter.newFactory(
+          listUpdaterFactory = object : Factory {
+            override fun <E, C : Collection<E>> create(): CollectionUpdater<E, C> {
+              @Suppress("UNCHECKED_CAST")
+              return ArrayListCollectionUpdater<E>() as CollectionUpdater<E, C>
+            }
+          }
+        )
+      )
       .build()
     val collection = listOf("one", "two", "three")
     val adapter = moshi.adapter<List<String>>(Types.newParameterizedType(List::class.java, String::class.java))
@@ -45,12 +49,16 @@ class ArrayCollectionsJsonAdapterTest {
   @Test
   fun testSet() {
     val moshi = Moshi.Builder()
-      .add(CustomCollectionJsonAdapter.newFactory(setUpdaterFactory = object : Factory {
-        override fun <E, C : Collection<E>> create(): CollectionUpdater<E, C> {
-          @Suppress("UNCHECKED_CAST")
-          return ArraySetCollectionUpdater<E>() as CollectionUpdater<E, C>
-        }
-      }))
+      .add(
+        CustomCollectionJsonAdapter.newFactory(
+          setUpdaterFactory = object : Factory {
+            override fun <E, C : Collection<E>> create(): CollectionUpdater<E, C> {
+              @Suppress("UNCHECKED_CAST")
+              return ArraySetCollectionUpdater<E>() as CollectionUpdater<E, C>
+            }
+          }
+        )
+      )
       .build()
     val collection = setOf("one", "two", "three")
     val adapter = moshi.adapter<Set<String>>(Types.newParameterizedType(Set::class.java, String::class.java))

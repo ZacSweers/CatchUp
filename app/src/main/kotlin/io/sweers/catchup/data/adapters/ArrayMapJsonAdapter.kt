@@ -37,8 +37,8 @@ interface MapUpdater<K, V> {
 
 // Standard LinkedHashMap
 class LinkedHashMapMapUpdater<K, V>(
-    initialCapacity: Int = 16,
-    loadFactor: Float = 0.75f
+  initialCapacity: Int = 16,
+  loadFactor: Float = 0.75f
 ) : MapUpdater<K, V> {
 
   private val map = LinkedHashMap<K, V>(initialCapacity, loadFactor)
@@ -93,9 +93,11 @@ class CustomMapJsonAdapter<K, V> private constructor(
     while (reader.hasNext()) {
       reader.promoteNameToValue()
       val name = keyAdapter.fromJson(reader) ?: throw JsonDataException(
-          "Unexpected null key at ${reader.path}")
+        "Unexpected null key at ${reader.path}"
+      )
       val value = valueAdapter.fromJson(reader) ?: throw JsonDataException(
-          "Unexpected null value at ${reader.path}")
+        "Unexpected null value at ${reader.path}"
+      )
       val replaced = mapUpdater.put(name, value)
       if (replaced != null) {
         throw JsonDataException(
@@ -125,11 +127,11 @@ class CustomMapJsonAdapter<K, V> private constructor(
             val keyAndValue = type.actualTypeArguments
             val toJsonDelegate = moshi.nextAdapter<Map<Any, Any>>(this, type, annotations)
             return CustomMapJsonAdapter(
-                moshi,
-                keyAndValue[0],
-                keyAndValue[1],
-                mapUpdaterFactory,
-                toJsonDelegate
+              moshi,
+              keyAndValue[0],
+              keyAndValue[1],
+              mapUpdaterFactory,
+              toJsonDelegate
             ).nullSafe()
           }
         }

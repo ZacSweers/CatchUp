@@ -72,8 +72,8 @@ class ArraySetCollectionUpdater<E>(initialCapacity: Int = 0) : CollectionUpdater
 }
 
 class LinkedHashSetCollectionUpdater<E>(
-    initialCapacity: Int = 16,
-    loadFactor: Float = 0.75f
+  initialCapacity: Int = 16,
+  loadFactor: Float = 0.75f
 ) : CollectionUpdater<E, Set<E>> {
   private val set = LinkedHashSet<E>(initialCapacity, loadFactor)
 
@@ -120,8 +120,8 @@ class CustomCollectionJsonAdapter<C : MutableCollection<E>, E> private construct
   companion object {
     @JvmStatic
     fun newFactory(
-        listUpdaterFactory: CollectionUpdater.Factory? = null,
-        setUpdaterFactory: CollectionUpdater.Factory? = null
+      listUpdaterFactory: CollectionUpdater.Factory? = null,
+      setUpdaterFactory: CollectionUpdater.Factory? = null
     ) = object : Factory {
       override fun create(type: Type, annotations: Set<Annotation>, moshi: Moshi): JsonAdapter<*>? {
         if (annotations.isEmpty()) {
@@ -136,9 +136,9 @@ class CustomCollectionJsonAdapter<C : MutableCollection<E>, E> private construct
       }
 
       private fun <T> newListAdapter(
-          type: Type,
-          moshi: Moshi,
-          listUpdaterFactory: CollectionUpdater.Factory
+        type: Type,
+        moshi: Moshi,
+        listUpdaterFactory: CollectionUpdater.Factory
       ): JsonAdapter<MutableCollection<T>> {
         val elementType = Types.collectionElementType(type, MutableCollection::class.java)
         val elementAdapter = moshi.adapter<T>(elementType)
@@ -146,15 +146,14 @@ class CustomCollectionJsonAdapter<C : MutableCollection<E>, E> private construct
       }
 
       private fun <T> newSetAdapter(
-          type: Type,
-          moshi: Moshi,
-          setUpdaterFactory: CollectionUpdater.Factory
+        type: Type,
+        moshi: Moshi,
+        setUpdaterFactory: CollectionUpdater.Factory
       ): JsonAdapter<MutableCollection<T>> {
         val elementType = Types.collectionElementType(type, MutableCollection::class.java)
         val elementAdapter = moshi.adapter<T>(elementType)
         return CustomCollectionJsonAdapter(elementAdapter, setUpdaterFactory, moshi.nextAdapter(this, type, emptySet()))
       }
     }
-
   }
 }
