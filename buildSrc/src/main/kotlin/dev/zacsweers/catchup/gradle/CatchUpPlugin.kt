@@ -18,6 +18,7 @@
 package dev.zacsweers.catchup.gradle
 
 import build
+import com.android.build.api.extension.ApplicationAndroidComponentsExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
@@ -29,10 +30,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.withType
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Locale
@@ -112,13 +110,15 @@ private fun Project.configureAndroid() {
   plugins.withType<AppPlugin> {
     // NOTE: BaseAppModuleExtension is internal. This will be replaced by a public
     // interface
+    extensions.configure<ApplicationAndroidComponentsExtension> {
+      configureVersioning(project)
+    }
     extensions.getByType<BaseAppModuleExtension>().apply {
       baseExtensionConfig()
       defaultConfig {
         targetSdkVersion(deps.android.build.targetSdkVersion)
       }
       ndkVersion = "21.0.6113669"
-      configureVersioning(project)
       lintOptions {
         lintConfig = rootProject.file("lint.xml")
         isAbortOnError = true
@@ -188,18 +188,18 @@ private fun Project.configureJava() {
 }
 
 // Adapted from https://github.com/ducrohet/versionCode-4.0-sample
-private fun BaseAppModuleExtension.configureVersioning(project: Project) {
+private fun ApplicationAndroidComponentsExtension.configureVersioning(project: Project) {
   // use filter to apply onVariantProperties to a subset of the variants
-  onVariantProperties.withBuildType("release") {
+  onVariants(selector().withBuildType("release")) { variant ->
     val versionCodeTask = project.tasks.register<VersionCodeTask>(
-      "computeVersionCodeFor${name.capitalize(Locale.US)}"
+      "computeVersionCodeFor${variant.name.capitalize(Locale.US)}"
     ) {
       group = "versioning"
       outputFile.set(project.layout.buildDirectory.file("intermediates/versioning/versionCode.txt"))
     }
     val mappedVersionCodeTask = versionCodeTask.map { it.outputFile.get().asFile.readText().toInt() }
     val versionNameTask = project.tasks.register<VersionNameTask>(
-      "computeVersionNameFor${name.capitalize(Locale.US)}"
+      "computeVersionNameFor${variant.name.capitalize(Locale.US)}"
     ) {
       group = "versioning"
       outputFile.set(project.layout.buildDirectory.file("intermediates/versioning/versionName.txt"))
@@ -207,7 +207,7 @@ private fun BaseAppModuleExtension.configureVersioning(project: Project) {
     val mappedVersionNameTask = versionNameTask.map { it.outputFile.get().asFile.readText() }
 
     // Have to iterate outputs because of APK splits.
-    outputs.forEach { variantOutput ->
+    variant.outputs.forEach { variantOutput ->
       variantOutput.versionCode.set(mappedVersionCodeTask)
       variantOutput.versionName.set(mappedVersionNameTask)
     }
