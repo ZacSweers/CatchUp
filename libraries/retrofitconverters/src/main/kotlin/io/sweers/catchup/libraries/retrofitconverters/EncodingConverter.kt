@@ -23,7 +23,7 @@ import java.lang.reflect.Type
 /**
  * A [Converter] that only encodes requests with a given [convertBody].
  */
-class EncodingConverter<T> private constructor(
+class EncodingConverter<T : Any> private constructor(
   private val convertBody: (T) -> RequestBody
 ) : Converter<T, RequestBody> {
 
@@ -33,7 +33,7 @@ class EncodingConverter<T> private constructor(
 
   companion object {
     /** Creates a new factory for creating converter. We only care about encoding requests. */
-    fun <T> newFactory(encoder: (T) -> RequestBody): Converter.Factory {
+    fun <T : Any> newFactory(encoder: (T) -> RequestBody): Converter.Factory {
       return object : Converter.Factory() {
         private val converter by lazy { EncodingConverter(encoder) }
         override fun requestBodyConverter(
@@ -41,7 +41,7 @@ class EncodingConverter<T> private constructor(
           parameterAnnotations: Array<out Annotation>,
           methodAnnotations: Array<out Annotation>,
           retrofit: Retrofit
-        ): Converter<*, RequestBody>? {
+        ): Converter<*, RequestBody> {
           return converter
         }
       }
