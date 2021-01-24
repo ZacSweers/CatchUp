@@ -46,9 +46,15 @@ buildscript {
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.33.0"
+  id("com.github.ben-manes.versions") version "0.36.0"
   id("catchup")
-  id("com.osacky.doctor") version "0.6.2"
+  id("com.osacky.doctor") version "0.7.0"
+}
+
+doctor {
+  javaHome {
+    ensureJavaHomeMatches.set(false)
+  }
 }
 
 apply {
