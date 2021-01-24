@@ -90,8 +90,8 @@ private val baseExtensionConfig: BaseExtension.() -> Unit = {
     vectorDrawables.useSupportLibrary = true
   }
   compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
     isCoreLibraryDesugaringEnabled = true
   }
   lintOptions {
@@ -181,8 +181,8 @@ private fun Project.configureKotlin() {
 private fun Project.configureJava() {
   plugins.withType<JavaBasePlugin> {
     extensions.getByType<JavaPluginExtension>().apply {
-      sourceCompatibility = JavaVersion.VERSION_1_8
-      targetCompatibility = JavaVersion.VERSION_1_8
+      sourceCompatibility = JavaVersion.VERSION_11
+      targetCompatibility = JavaVersion.VERSION_11
     }
   }
 }
