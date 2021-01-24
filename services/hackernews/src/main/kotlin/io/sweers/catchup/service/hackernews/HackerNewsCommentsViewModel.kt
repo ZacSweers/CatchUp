@@ -22,8 +22,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Success
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
@@ -134,6 +135,6 @@ internal class HackerNewsCommentsViewModel @AssistedInject constructor(
     ref.addValueEventListener(listener)
   }
 
-  @AssistedInject.Factory
+  @AssistedFactory
   interface Factory : ViewModelAssistedFactory<HackerNewsCommentsViewModel>
 }

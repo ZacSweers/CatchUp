@@ -169,12 +169,6 @@ object deps {
     const val rx2Support = "com.apollographql.apollo:apollo-rx2-support:${versions.apollo}"
   }
 
-  object assistedInject {
-    private const val version = "0.6.0"
-    const val annotations = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
-    const val processor = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
-  }
-
   object auto {
     const val common = "com.google.auto:auto-common:0.11"
     const val service = "com.google.auto.service:auto-service:1.0-rc7"

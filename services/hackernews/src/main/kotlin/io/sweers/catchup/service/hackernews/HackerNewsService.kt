@@ -24,7 +24,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -56,7 +55,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-typealias AssistedFactory = ViewModelAssistedFactory<out ViewModel>
+typealias ViewModelCreator = ViewModelAssistedFactory<out ViewModel>
 
 @Qualifier
 private annotation class InternalApi
@@ -211,13 +210,12 @@ abstract class HackerNewsModule {
   }
 }
 
-@AssistedModule
-@Module(includes = [AssistedInject_ViewModelModule::class])
+@Module
 internal abstract class ViewModelModule {
   @Binds
   @IntoMap
   @ViewModelKey(HackerNewsCommentsViewModel::class)
-  abstract fun mainViewModel(viewModel: HackerNewsCommentsViewModel.Factory): AssistedFactory
+  abstract fun mainViewModel(viewModel: HackerNewsCommentsViewModel.Factory): ViewModelCreator
 }
 
 // TODO generify this somewhere once something other than HN does it
@@ -225,7 +223,7 @@ internal abstract class ViewModelModule {
 internal object FragmentViewModelFactoryModule {
   @Provides
   fun viewModelFactory(
-    viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, AssistedFactory>
+    viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, ViewModelCreator>
   ): ViewModelProviderFactoryInstantiator {
     return object : ViewModelProviderFactoryInstantiator {
       override fun create(fragment: Fragment): ViewModelProvider.Factory {

@@ -37,9 +37,7 @@ dependencies {
   kapt(project(":service-registry:service-registry-compiler"))
   kapt(deps.crumb.compiler)
   kapt(deps.dagger.apt.compiler)
-  kapt(deps.assistedInject.processor)
   kapt(deps.moshi.compiler)
-  compileOnly(deps.assistedInject.annotations)
 
   implementation(deps.android.androidx.swipeRefresh)
   implementation(deps.android.androidx.viewModel.core)
