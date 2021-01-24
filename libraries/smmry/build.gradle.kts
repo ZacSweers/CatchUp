@@ -36,7 +36,7 @@ kapt {
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
-    arg("moshi.generated", "javax.annotation.Generated")
+    arg("moshi.generated", "javax.annotation.processing.Generated")
   }
 }
 

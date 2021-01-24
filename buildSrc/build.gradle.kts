@@ -29,7 +29,7 @@ object SharedBuildVersions {
   const val kotlin = "1.4.30-RC"
   const val moshi = "1.11.0"
   const val okio = "2.10.0"
-  const val kotlinJvmTarget = "1.8"
+  const val kotlinJvmTarget = "11"
   val kotlinCompilerArgs = listOf(
       "-progressive",
       "-Xinline-classes",
