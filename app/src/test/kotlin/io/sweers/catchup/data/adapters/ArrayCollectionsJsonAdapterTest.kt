@@ -19,13 +19,19 @@ import androidx.collection.ArraySet
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import io.sweers.catchup.data.adapters.CollectionUpdater.Factory
 import org.junit.Test
 
 class ArrayCollectionsJsonAdapterTest {
   @Test
   fun testList() {
     val moshi = Moshi.Builder()
-      .add(ArrayCollectionJsonAdapter.FACTORY)
+      .add(CustomCollectionJsonAdapter.newFactory(listUpdaterFactory = object : Factory {
+        override fun <E, C : Collection<E>> create(): CollectionUpdater<E, C> {
+          @Suppress("UNCHECKED_CAST")
+          return ArrayListCollectionUpdater<E>() as CollectionUpdater<E, C>
+        }
+      }))
       .build()
     val collection = listOf("one", "two", "three")
     val adapter = moshi.adapter<List<String>>(Types.newParameterizedType(List::class.java, String::class.java))
@@ -39,7 +45,12 @@ class ArrayCollectionsJsonAdapterTest {
   @Test
   fun testSet() {
     val moshi = Moshi.Builder()
-      .add(ArrayCollectionJsonAdapter.FACTORY)
+      .add(CustomCollectionJsonAdapter.newFactory(setUpdaterFactory = object : Factory {
+        override fun <E, C : Collection<E>> create(): CollectionUpdater<E, C> {
+          @Suppress("UNCHECKED_CAST")
+          return ArraySetCollectionUpdater<E>() as CollectionUpdater<E, C>
+        }
+      }))
       .build()
     val collection = setOf("one", "two", "three")
     val adapter = moshi.adapter<Set<String>>(Types.newParameterizedType(Set::class.java, String::class.java))

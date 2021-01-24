@@ -19,13 +19,14 @@ import androidx.collection.ArrayMap
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import io.sweers.catchup.data.adapters.MapUpdater.Factory
 import org.junit.Test
 
 class ArrayMapJsonAdapterTest {
   @Test
   fun testMap() {
     val moshi = Moshi.Builder()
-      .add(ArrayMapJsonAdapter.FACTORY)
+      .add(CustomMapJsonAdapter.newFactory { ArrayMapUpdater<Any, Any>() })
       .build()
     val map = mapOf("1" to "2", "3" to "4")
     val adapter = moshi.adapter<Map<String, String>>(Types.newParameterizedType(Map::class.java, String::class.java, String::class.java))
@@ -35,4 +36,8 @@ class ArrayMapJsonAdapterTest {
     assertThat(parsedMap).isEqualTo(map)
     assertThat(parsedMap).isInstanceOf(ArrayMap::class.java)
   }
+}
+
+fun Moshi.Builder.addMapAdapter(mapUpdaterFactory: MapUpdater.Factory) {
+  add(CustomMapJsonAdapter.newFactory(mapUpdaterFactory))
 }
