@@ -11,7 +11,7 @@ repositories {
 }
 
 plugins {
-  kotlin("jvm") version "1.4.10"
+  kotlin("jvm") version "1.4.30-RC"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
@@ -25,16 +25,15 @@ kotlinDslPluginOptions {
  * These are copied as a source into the main source set and templated for replacement.
  */
 object SharedBuildVersions {
-  const val agp = "4.2.0-alpha15"
-  const val kotlin = "1.4.10"
-  const val moshi = "1.10.0"
-  const val okio = "2.8.0"
+  const val agp = "7.0.0-alpha04"
+  const val kotlin = "1.4.30-RC"
+  const val moshi = "1.11.0"
+  const val okio = "2.10.0"
   const val kotlinJvmTarget = "1.8"
   val kotlinCompilerArgs = listOf(
       "-progressive",
       "-Xinline-classes",
       "-Xjsr305=strict",
-      "-Xallow-jvm-ir-dependencies",
       "-Xskip-prerelease-check",
       "-Xopt-in=kotlin.contracts.ExperimentalContracts",
       "-Xopt-in=kotlin.experimental.ExperimentalTypeInference",
@@ -108,7 +107,7 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-  implementation("com.android.tools:r8:2.1.67")
+  implementation("com.android.tools:r8:2.2.42")
 
   // Explicitly declare all the kotlin bits to avoid mismatched versions
   implementation(kotlin("gradle-plugin", version = SharedBuildVersions.kotlin))
@@ -118,7 +117,7 @@ dependencies {
   implementation(kotlin("stdlib-jdk8", version = SharedBuildVersions.kotlin))
   implementation(kotlin("reflect", version = SharedBuildVersions.kotlin))
 
-  implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.1.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.1.1")
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
