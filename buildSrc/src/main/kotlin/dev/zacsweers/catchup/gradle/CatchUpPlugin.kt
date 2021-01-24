@@ -169,6 +169,7 @@ private fun Project.configureKotlin() {
   tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
       jvmTarget = SharedBuildVersions.kotlinJvmTarget
+      languageVersion = "1.5"
       @Suppress("SuspiciousCollectionReassignment")
       freeCompilerArgs += build.standardFreeKotlinCompilerArgs
       useIR = true
