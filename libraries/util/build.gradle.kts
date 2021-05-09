@@ -17,7 +17,7 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  id("dev.zacsweers.redacted.redacted-gradle-plugin")
+  id("dev.zacsweers.redacted")
 }
 
 redacted {

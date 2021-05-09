@@ -24,7 +24,7 @@ plugins {
   kotlin("kapt")
   id("com.apollographql.apollo")
   id("licensesJsonGenerator")
-  id("com.bugsnag.android.gradle")
+//  id("com.bugsnag.android.gradle")
 //  id("com.github.triplet.play")
 }
 
@@ -128,7 +128,6 @@ android {
     }
   }
   composeOptions {
-    kotlinCompilerVersion = deps.versions.kotlin
     kotlinCompilerExtensionVersion = deps.android.androidx.compose.version
   }
   afterEvaluate {
@@ -142,7 +141,8 @@ android {
             "$property.debug"
           } else property
           val value = project.properties[name].toString()
-          variant.resValue("string", property.removePrefix("catchup."), value)
+          // TODO this is too late it seems
+          // variant.resValue("string", property.removePrefix("catchup."), value)
         } else {
           return
         }
@@ -160,12 +160,12 @@ android {
   }
 }
 
-bugsnag {
-  // Prevent bugsnag from wiring build UUIDs into debug builds
-  variantFilter {
-    setEnabled("debug" !in name.toLowerCase(Locale.US))
-  }
-}
+// bugsnag {
+//   // Prevent bugsnag from wiring build UUIDs into debug builds
+//   variantFilter {
+//     setEnabled("debug" !in name.toLowerCase(Locale.US))
+//   }
+// }
 
 kapt {
   arguments {

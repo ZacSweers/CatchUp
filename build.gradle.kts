@@ -21,11 +21,8 @@ buildscript {
     google()
     mavenCentral()
     jcenter()
-    maven(deps.build.repositories.kotlineap)
-    maven(deps.build.repositories.kotlindev)
     maven(deps.build.repositories.kotlinx)
     maven(deps.build.repositories.plugins)
-    maven(deps.build.repositories.snapshots)
     maven(deps.build.repositories.snapshots)
     maven("https://storage.googleapis.com/r8-releases/raw")
     mavenLocal()
@@ -46,7 +43,7 @@ buildscript {
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.36.0"
+  id("com.github.ben-manes.versions") version "0.38.0"
   id("catchup")
   id("com.osacky.doctor") version "0.7.0"
 }
@@ -88,13 +85,7 @@ allprojects {
             }
           }
           "org.jetbrains.kotlin" -> useVersion(versions.kotlin)
-          "com.google.dagger" -> {
-            if ("hilt" in requested.name) {
-              useVersion(deps.dagger.hilt.HILT_VERSION)
-            } else {
-              useVersion(versions.dagger)
-            }
-          }
+          "com.google.dagger" -> useVersion(versions.dagger)
         }
       }
     }

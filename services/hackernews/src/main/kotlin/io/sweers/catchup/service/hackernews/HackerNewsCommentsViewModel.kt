@@ -72,9 +72,9 @@ internal class HackerNewsCommentsViewModel @AssistedInject constructor(
           urlPreview.previewUrl("", story.first.url!!)
         }
         val result = Success(story, urlPreview)
-        offer(result)
+        trySend(result).isSuccess
       } catch (exception: Exception) {
-        offer(State.Failure(exception))
+        trySend(State.Failure(exception)).isSuccess
       }
     }
   }.asFlow()

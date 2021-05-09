@@ -25,9 +25,9 @@ kotlinDslPluginOptions {
  * These are copied as a source into the main source set and templated for replacement.
  */
 object SharedBuildVersions {
-  const val agp = "7.0.0-alpha04"
-  const val kotlin = "1.4.30-RC"
-  const val moshi = "1.11.0"
+  const val agp = "7.0.0-alpha14"
+  const val kotlin = "1.5.0"
+  const val moshi = "1.12.0"
   const val okio = "2.10.0"
   const val kotlinJvmTarget = "11"
   val kotlinCompilerArgs = listOf(
@@ -42,9 +42,6 @@ object SharedBuildVersions {
       "-Xopt-in=kotlin.time.ExperimentalTime",
       "-Xopt-in=kotlinx.coroutines.FlowPreview",
       "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-      // New type inference front end. Matches IDE behavior, allows new behaviors and should also be a perf improvement.
-      // Was originally intended to be teh default in 1.4, but TBD.
-      "-Xnew-inference",
       // Potentially useful for static analysis tools or annotation processors.
       "-Xemit-jvm-type-annotations",
       // Match JVM assertion behavior: https://publicobject.com/2019/11/18/kotlins-assert-is-not-like-javas-assert/
@@ -107,8 +104,6 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-  implementation("com.android.tools:r8:2.2.42")
-
   // Explicitly declare all the kotlin bits to avoid mismatched versions
   implementation(kotlin("gradle-plugin", version = SharedBuildVersions.kotlin))
   implementation(kotlin("stdlib", version = SharedBuildVersions.kotlin))

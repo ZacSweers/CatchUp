@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id("com.gradle.enterprise") version "3.4.1"
+  id("com.gradle.enterprise") version "3.6.1"
 }
 
 gradleEnterprise {
@@ -24,6 +24,7 @@ gradleEnterprise {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
   }
 }
+
 include(
   ":app",
   ":libraries:base-ui",

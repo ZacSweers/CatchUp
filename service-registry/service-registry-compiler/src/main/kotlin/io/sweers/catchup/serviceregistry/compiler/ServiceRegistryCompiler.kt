@@ -130,7 +130,6 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
         KotlinClassHeader(
           kind = it.kind,
           metadataVersion = it.metadataVersion,
-          bytecodeVersion = it.bytecodeVersion,
           data1 = it.data1,
           data2 = it.data2,
           extraString = it.extraString,
