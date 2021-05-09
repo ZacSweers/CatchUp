@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java_version: [1.8, 11, 15]
+        java_version: [11, 15]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -17,7 +17,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Install JDK ${{ matrix.java_version }}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ matrix.java_version }}
 
@@ -46,4 +46,4 @@ jobs:
           path: build-reports.zip
 #      - name: Upload alpha APK to play store (master only)
 #        run: CATCHUP_SIGNING_ENCRYPT_KEY=${{ secrets.CatchupSigningEncryptKey }} CATCHUP_P12_ENCRYPT_KEY=${{ secrets.CatchupP12EncryptKey }} ./createRelease.sh
-#        if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && matrix.java_version == '1.8'
+#        if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && matrix.java_version == '11'

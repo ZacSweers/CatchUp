@@ -171,7 +171,7 @@ kapt {
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
-    arg("moshi.generated", "javax.annotation.processing.Generated")
+    //arg("moshi.generated", "javax.annotation.processing.Generated")
     arg("dagger.experimentalDaggerErrorMessages", "enabled")
   }
 }
@@ -396,6 +396,7 @@ dependencies {
   implementation(deps.android.androidx.room.runtime)
   implementation(deps.android.androidx.room.rxJava2)
   implementation(deps.android.androidx.room.ktx)
+  kapt(deps.android.androidx.room.xerial)
   kapt(deps.android.androidx.room.apt)
 
   // Compose

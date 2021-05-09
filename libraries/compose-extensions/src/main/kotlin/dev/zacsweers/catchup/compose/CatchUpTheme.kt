@@ -22,8 +22,9 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.ResourceFont
-import androidx.compose.ui.text.font.fontFamily
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import dev.zacsweers.catchup.compose.R.font
 
 @Composable
 fun CatchUpTheme(
@@ -45,7 +46,7 @@ fun CatchUpTheme(
       onPrimary = Color.Black
     )
   }
-  val fontFamily = fontFamily(fonts = listOf(ResourceFont(R.font.nunito)))
+  val fontFamily = FontFamily(fonts = listOf(Font(font.nunito)))
   val typography = Typography(defaultFontFamily = fontFamily)
   MaterialTheme(
     colors = colors,

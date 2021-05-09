@@ -36,7 +36,7 @@ kapt {
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
-    arg("moshi.generated", "javax.annotation.processing.Generated")
+    //arg("moshi.generated", "javax.annotation.processing.Generated")
   }
 }
 
@@ -59,6 +59,7 @@ dependencies {
   implementation(deps.moshi.sealed.annotations)
   implementation(deps.android.androidx.room.runtime)
   implementation(deps.android.androidx.room.ktx)
+  kapt(deps.android.androidx.room.xerial)
   kapt(deps.android.androidx.room.apt)
   implementation(deps.android.androidx.lifecycle.ktx)
   implementation(deps.kotlin.coroutines)

@@ -126,6 +126,9 @@ object deps {
       object room {
         private const val version = "2.4.0-alpha02"
         const val apt = "androidx.room:room-compiler:$version"
+        // Temporary until Room releases arm64 support
+        // https://issuetracker.google.com/issues/174695268
+        const val xerial = "org.xerial:sqlite-jdbc:3.34.0"
         const val ktx = "androidx.room:room-ktx:$version"
         const val runtime = "androidx.room:room-runtime:$version"
         const val rxJava2 = "androidx.room:room-rxjava2:$version"

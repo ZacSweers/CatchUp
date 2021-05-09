@@ -3,21 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 repositories {
   mavenCentral()
   google()
-  maven("https://kotlin.bintray.com/kotlinx/")
-  maven("https://dl.bintray.com/kotlin/kotlin-eap")
-  maven("https://dl.bintray.com/kotlin/kotlin-dev")
   maven("https://storage.googleapis.com/r8-releases/raw")
   jcenter()
 }
 
 plugins {
-  kotlin("jvm") version "1.4.30-RC"
+  kotlin("jvm") version "1.5.0"
   `kotlin-dsl`
   `java-gradle-plugin`
-}
-
-kotlinDslPluginOptions {
-  experimentalWarning.set(false)
 }
 
 /**
@@ -32,16 +25,14 @@ object SharedBuildVersions {
   const val kotlinJvmTarget = "11"
   val kotlinCompilerArgs = listOf(
       "-progressive",
-      "-Xinline-classes",
       "-Xjsr305=strict",
-      "-Xskip-prerelease-check",
       "-Xopt-in=kotlin.contracts.ExperimentalContracts",
       "-Xopt-in=kotlin.experimental.ExperimentalTypeInference",
       "-Xopt-in=kotlin.ExperimentalStdlibApi",
       "-Xopt-in=kotlin.RequiresOptIn",
       "-Xopt-in=kotlin.time.ExperimentalTime",
-      "-Xopt-in=kotlinx.coroutines.FlowPreview",
-      "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+//      "-Xopt-in=kotlinx.coroutines.FlowPreview",
+//      "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
       // Potentially useful for static analysis tools or annotation processors.
       "-Xemit-jvm-type-annotations",
       // Match JVM assertion behavior: https://publicobject.com/2019/11/18/kotlins-assert-is-not-like-javas-assert/
@@ -112,7 +103,7 @@ dependencies {
   implementation(kotlin("stdlib-jdk8", version = SharedBuildVersions.kotlin))
   implementation(kotlin("reflect", version = SharedBuildVersions.kotlin))
 
-  implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.1.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.2.0")
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")

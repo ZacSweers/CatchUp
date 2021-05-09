@@ -26,7 +26,7 @@ apply {
 
 kapt {
   arguments {
-    arg("moshi.generated", "javax.annotation.processing.Generated")
+    //arg("moshi.generated", "javax.annotation.processing.Generated")
   }
 }
 

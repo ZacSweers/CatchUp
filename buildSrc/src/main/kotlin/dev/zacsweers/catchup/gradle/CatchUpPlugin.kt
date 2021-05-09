@@ -123,7 +123,7 @@ private fun Project.configureAndroid() {
         targetSdkVersion(deps.android.build.targetSdkVersion)
       }
       ndkVersion = "21.0.6113669"
-      lintOptions {
+      lint {
         lintConfig = rootProject.file("lint.xml")
         isAbortOnError = true
         disable("IidCompatibilityCheckFailure")
@@ -184,6 +184,7 @@ private fun Project.configureKotlin() {
 private fun Project.configureJava() {
   plugins.withType<JavaBasePlugin> {
     extensions.getByType<JavaPluginExtension>().apply {
+      // TODO toolchains
       sourceCompatibility = JavaVersion.VERSION_11
       targetCompatibility = JavaVersion.VERSION_11
     }
