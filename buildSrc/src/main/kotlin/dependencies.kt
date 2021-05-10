@@ -335,6 +335,11 @@ object deps {
     }
   }
 
+  object ksp {
+    const val version = "1.5.0-alpha09"
+    const val pluginId = "com.google.devtools.ksp"
+  }
+
   object markwon {
     const val core = "io.noties.markwon:core:${versions.markwon}"
     const val extStrikethrough = "io.noties.markwon:ext-strikethrough:${versions.markwon}"
@@ -389,10 +394,15 @@ object deps {
     const val core = "com.squareup.moshi:moshi:${versions.moshi}"
     const val compiler = "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi}"
     const val shimo = "com.jakewharton.moshi:shimo:0.1.0"
-    object sealed {
-      private const val VERSION = "0.2.0"
-      const val annotations = "dev.zacsweers.moshisealed:moshi-sealed-annotations:${VERSION}"
-      const val compiler = "dev.zacsweers.moshisealed:moshi-sealed-codegen:${VERSION}"
+    object moshix {
+      private const val VERSION = "0.10.0"
+
+      const val ksp = "dev.zacsweers.moshix:moshi-ksp:$VERSION"
+
+      object sealed {
+        const val runtime = "dev.zacsweers.moshix:moshi-sealed-runtime:${VERSION}"
+        const val compiler = "dev.zacsweers.moshix:moshi-sealed-codegen:${VERSION}"
+      }
     }
   }
 

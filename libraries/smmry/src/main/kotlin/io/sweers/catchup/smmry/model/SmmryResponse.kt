@@ -22,8 +22,8 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import dev.zacsweers.moshisealed.annotations.DefaultObject
-import dev.zacsweers.moshisealed.annotations.TypeLabel
+import dev.zacsweers.moshix.sealed.annotations.DefaultObject
+import dev.zacsweers.moshix.sealed.annotations.TypeLabel
 import io.sweers.catchup.util.data.adapters.UnEscape
 import java.io.IOException
 import java.lang.ref.WeakReference
