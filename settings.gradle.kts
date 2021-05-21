@@ -40,7 +40,6 @@ include(
   ":service-api",
   ":service-registry:service-registry",
   ":service-registry:service-registry-annotations",
-  ":service-registry:service-registry-compiler",
   ":services:designernews",
   ":services:dribbble",
   ":services:github",

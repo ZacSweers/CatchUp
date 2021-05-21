@@ -56,7 +56,9 @@ object deps {
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
-    const val dagger = "2.35.1"
+    // Incompatible with AGP 7.1.0 https://github.com/google/dagger/issues/2634
+    // Next release will support
+    const val dagger = "HEAD-SNAPSHOT"
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
@@ -135,12 +137,14 @@ object deps {
       }
 
       object compose {
-        const val version = "1.0.0-beta06"
+        // TODO use beta08 when it's out for kotlin 1.5.0
+        const val version = "1.0.0-SNAPSHOT"
         const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
         const val foundation = "androidx.compose.foundation:foundation:$version"
         const val material = "androidx.compose.material:material:$version"
         const val materialIcons = "androidx.compose.material:material-icons-core:$version"
         const val materialIconsExtended = "androidx.compose.material:material-icons-extended:$version"
+        const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha07"
         const val livedata = "androidx.compose.runtime:runtime-livedata:$version"
         const val rxjava2 = "androidx.compose.runtime:runtime-rxjava2:$version"
       }
@@ -162,6 +166,11 @@ object deps {
     }
 
     const val gradlePlugin = "com.android.tools.build:gradle:${SharedBuildVersions.agp}"
+  }
+
+  object anvil {
+    const val version = "2.2.2"
+    const val pluginId = "com.squareup.anvil"
   }
 
   object apollo {
@@ -224,6 +233,7 @@ object deps {
       const val kotlinx = "https://kotlin.bintray.com/kotlinx"
       const val plugins = "https://plugins.gradle.org/m2/"
       const val snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
+      const val androidxSnapshots = "https://androidx.dev/snapshots/latest/artifacts/repository"
     }
 
     const val javapoet = "com.squareup:javapoet:1.13.0"
@@ -336,7 +346,7 @@ object deps {
   }
 
   object ksp {
-    const val version = "1.5.0-alpha09"
+    const val version = "1.5.0-1.0.0-alpha10"
     const val pluginId = "com.google.devtools.ksp"
   }
 
@@ -395,7 +405,7 @@ object deps {
     const val compiler = "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi}"
     const val shimo = "com.jakewharton.moshi:shimo:0.1.0"
     object moshix {
-      private const val VERSION = "0.10.0"
+      private const val VERSION = "0.11.0"
 
       const val ksp = "dev.zacsweers.moshix:moshi-ksp:$VERSION"
 

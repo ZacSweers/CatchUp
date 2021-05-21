@@ -24,7 +24,7 @@ import retrofit2.http.Query
 /**
  * Models the Product Hunt API. See https://api.producthunt.com/v1/docs
  */
-internal interface ProductHuntApi {
+interface ProductHuntApi {
 
   @GET("/v1/posts")
   @Wrapped(path = ["posts"])

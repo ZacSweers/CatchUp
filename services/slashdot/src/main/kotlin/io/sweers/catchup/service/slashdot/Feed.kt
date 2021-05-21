@@ -20,7 +20,7 @@ import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 
 @Xml
-internal data class Feed(
+data class Feed(
   @Element
   val itemList: List<Entry>,
 

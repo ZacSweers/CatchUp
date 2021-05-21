@@ -3,8 +3,7 @@ pluginManagement {
     mavenCentral()
     google()
     gradlePluginPortal()
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
-    maven("https://dl.bintray.com/kotlin/kotlin-dev")
-    jcenter()
+    maven("https://androidx.dev/snapshots/latest/artifacts/repository")
+//    jcenter()
   }
 }

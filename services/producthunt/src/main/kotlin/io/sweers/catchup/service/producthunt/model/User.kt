@@ -22,7 +22,7 @@ import com.squareup.moshi.JsonClass
  * Models a user on Product Hunt.
  */
 @JsonClass(generateAdapter = true)
-internal data class User(
+data class User(
   @Json(name = "created_at") val createdAt: String,
   val headline: String?,
   val id: Long,

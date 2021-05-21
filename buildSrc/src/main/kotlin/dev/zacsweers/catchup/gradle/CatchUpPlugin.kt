@@ -24,6 +24,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import com.squareup.anvil.plugin.AnvilExtension
 import deps
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -90,7 +91,7 @@ private fun Project.configureJvm() {
 private val baseExtensionConfig: BaseExtension.() -> Unit = {
   compileSdkVersion(deps.android.build.compileSdkVersion)
   defaultConfig {
-    minSdkVersion(deps.android.build.minSdkVersion)
+    minSdk = deps.android.build.minSdkVersion
     vectorDrawables.useSupportLibrary = true
   }
   compileOptions {
@@ -120,7 +121,7 @@ private fun Project.configureAndroid() {
     extensions.getByType<BaseAppModuleExtension>().apply {
       baseExtensionConfig()
       defaultConfig {
-        targetSdkVersion(deps.android.build.targetSdkVersion)
+        targetSdk = deps.android.build.targetSdkVersion
       }
       ndkVersion = "21.0.6113669"
       lint {
@@ -146,7 +147,7 @@ private fun Project.configureAndroid() {
       }
       buildTypes {
         getByName("debug") {
-          setMatchingFallbacks("release")
+          matchingFallbacks += "release"
           isDefault = true
         }
       }
@@ -179,6 +180,11 @@ private fun Project.configureKotlin() {
       mapDiagnosticLocations = true
     }
   }
+  plugins.withId(deps.anvil.pluginId) {
+    extensions.configure<AnvilExtension> {
+      generateDaggerFactories = true
+    }
+  }
 }
 
 private fun Project.configureJava() {
@@ -196,14 +202,22 @@ private fun ApplicationAndroidComponentsExtension.configureVersioning(project: P
   // use filter to apply onVariantProperties to a subset of the variants
   onVariants(selector().withBuildType("release")) { variant ->
     val versionCodeTask = project.tasks.register<VersionCodeTask>(
-      "computeVersionCodeFor${variant.name.capitalize(Locale.US)}"
+      "computeVersionCodeFor${
+      variant.name.replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
+      }
+      }"
     ) {
       group = "versioning"
       outputFile.set(project.layout.buildDirectory.file("intermediates/versioning/versionCode.txt"))
     }
     val mappedVersionCodeTask = versionCodeTask.map { it.outputFile.get().asFile.readText().toInt() }
     val versionNameTask = project.tasks.register<VersionNameTask>(
-      "computeVersionNameFor${variant.name.capitalize(Locale.US)}"
+      "computeVersionNameFor${
+      variant.name.replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
+      }
+      }"
     ) {
       group = "versioning"
       outputFile.set(project.layout.buildDirectory.file("intermediates/versioning/versionName.txt"))

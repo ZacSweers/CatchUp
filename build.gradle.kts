@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
+import com.google.devtools.ksp.gradle.KspExtension
 import deps.versions
 
 buildscript {
   repositories {
     google()
     mavenCentral()
-    jcenter()
-    maven(deps.build.repositories.kotlinx)
+//    jcenter()
     maven(deps.build.repositories.plugins)
     maven(deps.build.repositories.snapshots)
+    maven(deps.build.repositories.androidxSnapshots)
     maven("https://storage.googleapis.com/r8-releases/raw")
     mavenLocal()
   }
@@ -39,6 +40,8 @@ buildscript {
     classpath(deps.build.gradlePlugins.spotless)
     classpath(deps.build.gradlePlugins.redacted)
     classpath(deps.dagger.hilt.gradlePlugin)
+    classpath("com.squareup.anvil:gradle-plugin:${deps.anvil.version}")
+    classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:${deps.ksp.version}")
   }
 }
 
@@ -62,12 +65,13 @@ allprojects {
   repositories {
     google()
     mavenCentral()
-    jcenter()
+//    jcenter()
     maven(deps.build.repositories.kotlineap)
     maven(deps.build.repositories.kotlindev)
     maven(deps.build.repositories.kotlinx)
     maven(deps.build.repositories.jitpack)
     maven(deps.build.repositories.snapshots)
+    maven(deps.build.repositories.androidxSnapshots)
   }
 
   configurations.all {
@@ -88,6 +92,12 @@ allprojects {
           "com.google.dagger" -> useVersion(versions.dagger)
         }
       }
+    }
+  }
+
+  pluginManager.withPlugin(deps.ksp.pluginId) {
+    configure<KspExtension> {
+      blockOtherCompilerPlugins = false
     }
   }
 }

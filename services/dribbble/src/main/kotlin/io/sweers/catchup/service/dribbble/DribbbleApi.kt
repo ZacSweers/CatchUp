@@ -23,7 +23,7 @@ import retrofit2.http.Query
 /**
  * Dribbble API - http://developer.dribbble.com/v1/
  */
-internal interface DribbbleApi {
+interface DribbbleApi {
 
   @GET("/shots")
   fun getPopular(

@@ -33,8 +33,8 @@ import io.sweers.catchup.service.hackernews.preview.UrlPreviewResponse
 import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
 import io.sweers.catchup.util.d
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -44,7 +44,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-internal class HackerNewsCommentsViewModel @AssistedInject constructor(
+class HackerNewsCommentsViewModel @AssistedInject constructor(
   @Assisted private val savedState: SavedStateHandle,
   private val database: FirebaseDatabase,
   private val urlPreview: UrlPreview
@@ -62,9 +62,9 @@ internal class HackerNewsCommentsViewModel @AssistedInject constructor(
 
   private val storyId = savedState.get<String>(HackerNewsCommentsFragment.ARG_DETAIL_KEY)!!
 
-  val viewState: Flow<State> = ConflatedBroadcastChannel<State>(State.Loading).apply {
+  val viewState: Flow<State> = MutableStateFlow<State>(State.Loading).apply {
     viewModelScope.launch {
-      try {
+      value = try {
         val story = withContext(Dispatchers.IO) {
           loadComments()
         }
@@ -72,12 +72,12 @@ internal class HackerNewsCommentsViewModel @AssistedInject constructor(
           urlPreview.previewUrl("", story.first.url!!)
         }
         val result = Success(story, urlPreview)
-        trySend(result).isSuccess
+        result
       } catch (exception: Exception) {
-        trySend(State.Failure(exception)).isSuccess
+        State.Failure(exception)
       }
     }
-  }.asFlow()
+  }
 
   private suspend fun loadComments(): Pair<HackerNewsStory, List<HackerNewsComment>> {
     val story = loadStory(storyId)

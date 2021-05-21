@@ -73,7 +73,9 @@ sealed class SmmryResponse {
 
     init {
       val locale = Locale.getDefault()
-      normalizedMessage = message.toLowerCase(locale).capitalize(locale)
+      normalizedMessage = message.lowercase(locale).replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(locale) else it.toString()
+      }
     }
 
     // 0 - Internal server problem which isn't your fault

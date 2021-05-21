@@ -55,7 +55,7 @@ private annotation class InternalApi
 
 private const val SERVICE_KEY = "medium"
 
-internal class MediumService @Inject constructor(
+class MediumService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val api: MediumApi
 ) :
@@ -118,7 +118,7 @@ abstract class MediumMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideMediumServiceMeta() = ServiceMeta(
+    internal fun provideMediumServiceMeta(): ServiceMeta = ServiceMeta(
       SERVICE_KEY,
       R.string.medium,
       R.color.mediumAccent,
@@ -175,7 +175,7 @@ abstract class MediumModule {
     }
 
     @Provides
-    internal fun provideInspector() = Inspector.Builder().build()
+    internal fun provideInspector(): Inspector = Inspector.Builder().build()
 
     @Provides
     internal fun provideMediumService(

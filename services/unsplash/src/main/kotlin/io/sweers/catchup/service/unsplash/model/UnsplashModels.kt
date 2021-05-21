@@ -20,7 +20,7 @@ import com.squareup.moshi.JsonClass
 import kotlinx.datetime.Instant
 
 @JsonClass(generateAdapter = true)
-internal data class UnsplashPhoto(
+data class UnsplashPhoto(
   val id: String,
   @Json(name = "created_at") val createdAt: Instant,
   val color: String,
@@ -32,7 +32,7 @@ internal data class UnsplashPhoto(
 )
 
 @JsonClass(generateAdapter = true)
-internal data class Urls(
+data class Urls(
   val raw: String,
   val full: String,
   val regular: String,
@@ -41,7 +41,7 @@ internal data class Urls(
 )
 
 @JsonClass(generateAdapter = true)
-internal data class Links(
+data class Links(
   val self: String,
   val html: String,
   val download: String,
@@ -49,7 +49,7 @@ internal data class Links(
 )
 
 @JsonClass(generateAdapter = true)
-internal data class User(
+data class User(
   val id: String,
   val name: String,
   val username: String

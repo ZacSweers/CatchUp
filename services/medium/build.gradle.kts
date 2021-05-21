@@ -18,23 +18,18 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
+  id(deps.anvil.pluginId)
+  id(deps.ksp.pluginId)
 }
 
-apply {
-  from(rootProject.file("gradle/config-kotlin-sources.gradle"))
-}
-
-kapt {
-  arguments {
-    //arg("moshi.generated", "javax.annotation.processing.Generated")
-  }
-}
+//kapt {
+//  arguments {
+//    //arg("moshi.generated", "javax.annotation.processing.Generated")
+//  }
+//}
 
 dependencies {
-  kapt(project(":service-registry:service-registry-compiler"))
-  kapt(deps.crumb.compiler)
-  kapt(deps.dagger.apt.compiler)
-  kapt(deps.moshi.compiler)
+  ksp(deps.moshi.moshix.ksp)
 
   implementation(project(":libraries:util"))
   implementation(deps.misc.okio)
@@ -50,10 +45,11 @@ dependencies {
   compileOnly(deps.inspector.factoryCompiler.compileOnly.annotations)
   compileOnly(deps.inspector.apt.extensions.android)
   compileOnly(deps.inspector.apt.extensions.nullability)
-  kapt(deps.inspector.apt.extensions.autovalue)
   kapt(deps.inspector.apt.compiler)
   kapt(deps.inspector.factoryCompiler.apt)
-  implementation(deps.inspector.core)
+  implementation(deps.inspector.core) {
+    exclude(group = "com.android.support")
+  }
 
   api(project(":service-api"))
   api(deps.android.androidx.annotations)

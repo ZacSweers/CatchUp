@@ -63,7 +63,13 @@ class LicensesJsonGeneratorPlugin : Plugin<Project> {
         }
 
         // Make the release assemble task depend on this to be safe
-        project.tasks.named("assemble${name.capitalize(Locale.US)}")
+        project.tasks.named(
+          "assemble${
+          name.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
+          }
+          }"
+        )
           .dependsOn(licensesTask)
       }
     }
@@ -110,7 +116,7 @@ abstract class LicensesJsonGenerator : DefaultTask() {
 
     JsonWriter.of(jsonFile.get().asFile.sink().buffer()).use { writer ->
       writer.beginArray()
-      githubDetails.sortedBy { it.toString().toLowerCase(Locale.US) }
+      githubDetails.sortedBy { it.toString().lowercase(Locale.US) }
         .forEach { (owner, name) ->
           writer.beginObject()
           writer.name("owner")

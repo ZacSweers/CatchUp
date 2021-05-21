@@ -4,7 +4,7 @@ repositories {
   mavenCentral()
   google()
   maven("https://storage.googleapis.com/r8-releases/raw")
-  jcenter()
+//  jcenter()
 }
 
 plugins {
@@ -18,7 +18,7 @@ plugins {
  * These are copied as a source into the main source set and templated for replacement.
  */
 object SharedBuildVersions {
-  const val agp = "7.0.0-alpha14"
+  const val agp = "7.1.0-alpha01"
   const val kotlin = "1.5.0"
   const val moshi = "1.12.0"
   const val okio = "2.10.0"
@@ -108,4 +108,5 @@ dependencies {
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
   implementation("de.undercouch:gradle-download-task:4.1.1")
+  implementation("com.squareup.anvil:gradle-plugin:2.2.2")
 }

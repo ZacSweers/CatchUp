@@ -38,7 +38,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
@@ -68,7 +68,7 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 abstract class ApplicationModule {
 
@@ -227,6 +227,10 @@ abstract class ApplicationModule {
 
         override suspend fun execute(request: ImageRequest): ImageResult {
           return imageLoader.get().execute(request)
+        }
+
+        override fun newBuilder(): Builder {
+          return imageLoader.get().newBuilder()
         }
 
         override fun shutdown() {

@@ -20,7 +20,7 @@ import kotlinx.datetime.Instant
 /**
  * Models a dibbble shot
  */
-internal data class Shot(
+data class Shot(
   val animated: Boolean,
   val commentsCount: Long,
   val createdAt: Instant,

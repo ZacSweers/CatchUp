@@ -50,7 +50,7 @@ import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import javax.inject.Inject
 
-internal class HackerNewsCommentsFragment @Inject constructor(
+class HackerNewsCommentsFragment @Inject constructor(
   viewModelFactoryInstantiator: ViewModelProviderFactoryInstantiator
 ) : Fragment(), ScrollableContent {
 

@@ -24,13 +24,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.InteractionState
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ConstrainedLayoutReference
-import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,14 +36,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.ripple.RippleIndication
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -54,15 +52,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.globalPosition
-import androidx.compose.ui.onGloballyPositioned
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.loadVectorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstrainedLayoutReference
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -75,7 +74,6 @@ import dagger.hilt.android.components.FragmentComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.compose.CatchUpTheme
-import dev.zacsweers.catchup.compose.accessibilityLabel
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectableBaseFragment
@@ -179,7 +177,7 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
   @Suppress("UNCHECKED_CAST")
   private val viewModel by viewModels<OrderServicesViewModel> {
     object : ViewModelProvider.Factory {
-      override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+      override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return OrderServicesViewModel(serviceMetas, catchUpPreferences) as T
       }
     }
@@ -196,7 +194,7 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
         CatchUpTheme {
           // Have to pass the viewmodel here rather than use compose' viewModel() because otherwise it
           // will try the reflective instantiation since the factory isn't initialized because lol
-          prepareContent(viewModel)
+          ScaffoldContent(viewModel)
         }
       }
     }
@@ -204,7 +202,7 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
 
   @OptIn(ExperimentalAnimationApi::class)
   @Composable
-  private fun prepareContent(viewModel: OrderServicesViewModel) {
+  private fun ScaffoldContent(viewModel: OrderServicesViewModel) {
     val canSave: Boolean by viewModel.canSave.collectAsState()
     Scaffold(
       topBar = {
@@ -215,23 +213,28 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
           navigationIcon = {
             IconButton(
               onClick = ::onBackPressed,
-              icon = {
-                Image(vectorResource(id = R.drawable.ic_arrow_back_black_24dp))
+              content = {
+                Image(
+                  painterResource(id = R.drawable.ic_arrow_back_black_24dp),
+                  stringResource(id = R.string.back)
+                )
               }
             )
           },
           actions = {
             IconButton(
               onClick = viewModel::shuffle,
-              icon = {
-                Image(vectorResource(id = R.drawable.ic_shuffle_black_24dp))
-              },
-              modifier = Modifier.accessibilityLabel(resId = R.string.shuffle)
+              content = {
+                Image(
+                  painterResource(R.drawable.ic_shuffle_black_24dp),
+                  stringResource(R.string.shuffle)
+                )
+              }
             )
           }
         )
       },
-      bodyContent = { prepareBody(viewModel) },
+      content = { ListContent(viewModel) },
       floatingActionButton = {
         AnimatedVisibility(
           visible = canSave,
@@ -241,15 +244,14 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
           // TODO ripple color?
           FloatingActionButton(
             modifier = Modifier
-              .accessibilityLabel(resId = R.string.save)
               .indication(
-                InteractionState(),
-                indication = RippleIndication(
+                MutableInteractionSource(),
+                indication = rememberRipple(
                   color = Color.White
                 )
               )
               .onGloballyPositioned { coordinates ->
-                val (x, y) = coordinates.globalPosition
+                val (x, y) = coordinates.positionInRoot()
                 // TODO show syllabus on fab
               },
             backgroundColor = colorResource(R.color.colorAccent),
@@ -257,9 +259,10 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
               viewModel.save()
               activity?.finish()
             },
-            icon = {
+            content = {
               Image(
-                vectorResource(R.drawable.ic_save_black_24dp),
+                painterResource(R.drawable.ic_save_black_24dp),
+                stringResource(R.string.save),
                 colorFilter = ColorFilter.tint(Color.White)
               )
             }
@@ -270,15 +273,15 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
   }
 
   @Composable
-  private fun prepareBody(viewModel: OrderServicesViewModel) {
+  private fun ListContent(viewModel: OrderServicesViewModel) {
     val currentItemsSorted by viewModel.serviceMetas.collectAsState()
     Surface(Modifier.fillMaxSize()) {
-      LazyColumnFor(
-        items = currentItemsSorted,
-        modifier = Modifier,
-        itemContent = { item ->
+      LazyColumn {
+        items(currentItemsSorted.size) { index ->
+          val item = currentItemsSorted[index]
           Box(
-            Modifier.background(colorResource(id = item.themeColor))
+            Modifier
+              .background(colorResource(id = item.themeColor))
               .padding(16.dp)
           ) {
             ConstraintLayout(
@@ -288,41 +291,37 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
                 .wrapContentWidth(Alignment.Start)
             ) {
               val (icon, spacer, text) = createRefs()
-              val image = loadVectorResource(id = item.icon)
-              var startRef: ConstrainedLayoutReference? = null
-              image.resource.resource?.let {
-                Image(
-                  asset = it,
-                  modifier = Modifier
-                    .width(40.dp)
-                    .height(40.dp)
-                    .accessibilityLabel(R.string.service_icon)
-                    .constrainAs(icon) {
-                      bottom.linkTo(parent.bottom)
-                      end.linkTo(spacer.start)
-                      start.linkTo(parent.start)
-                      top.linkTo(parent.top)
-                    }
-                )
-                Spacer(
-                  modifier = Modifier.width(8.dp)
-                    .height(40.dp)
-                    .constrainAs(spacer) {
-                      bottom.linkTo(parent.bottom)
-                      end.linkTo(text.start)
-                      start.linkTo(icon.end)
-                      top.linkTo(parent.top)
-                    }
-                )
-                startRef = spacer
-              }
+              Image(
+                painterResource(id = item.icon),
+                stringResource(R.string.service_icon),
+                modifier = Modifier
+                  .width(40.dp)
+                  .height(40.dp)
+                  .constrainAs(icon) {
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(spacer.start)
+                    start.linkTo(parent.start)
+                    top.linkTo(parent.top)
+                  }
+              )
+              Spacer(
+                modifier = Modifier
+                  .width(8.dp)
+                  .height(40.dp)
+                  .constrainAs(spacer) {
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(text.start)
+                    start.linkTo(icon.end)
+                    top.linkTo(parent.top)
+                  }
+              )
+              val startRef: ConstrainedLayoutReference = spacer
               Text(
                 text = stringResource(id = item.name),
                 modifier = Modifier.constrainAs(text) {
-                  val actualStartRef = startRef ?: parent
                   bottom.linkTo(parent.bottom)
                   end.linkTo(parent.end)
-                  start.linkTo(actualStartRef.end)
+                  start.linkTo(startRef.end)
                   top.linkTo(parent.top)
                 },
                 fontStyle = FontStyle.Normal,
@@ -333,7 +332,7 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
             }
           }
         }
-      )
+      }
     }
   }
 

@@ -16,7 +16,6 @@
 package io.sweers.catchup.data.adapters
 
 import androidx.collection.ArrayMap
-import com.google.common.collect.ImmutableMap
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
@@ -35,19 +34,6 @@ interface MapUpdater<K, V> {
   }
 }
 
-// Standard LinkedHashMap
-class LinkedHashMapMapUpdater<K, V>(
-  initialCapacity: Int = 16,
-  loadFactor: Float = 0.75f
-) : MapUpdater<K, V> {
-
-  private val map = LinkedHashMap<K, V>(initialCapacity, loadFactor)
-
-  override fun put(key: K, value: V) = map.put(key, value)
-
-  override fun getMap() = map
-}
-
 // Android ArrayMap
 class ArrayMapUpdater<K, V>(initialCapacity: Int = 0) : MapUpdater<K, V> {
   private val map = ArrayMap<K, V>(initialCapacity)
@@ -55,19 +41,6 @@ class ArrayMapUpdater<K, V>(initialCapacity: Int = 0) : MapUpdater<K, V> {
   override fun put(key: K, value: V) = map.put(key, value)
 
   override fun getMap() = map
-}
-
-// Guava ImmutableMap
-class ImmutableMapUpdater<K, V>(expectedSize: Int = 4) : MapUpdater<K, V> {
-  private val builder = ImmutableMap.builderWithExpectedSize<K, V>(expectedSize)
-
-  override fun put(key: K, value: V): V? {
-    builder.put(key, value)
-    // Guava doesn't permit duplicate keys and will throw
-    return null
-  }
-
-  override fun getMap() = builder.build()
 }
 
 /**

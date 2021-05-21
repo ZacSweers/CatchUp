@@ -22,7 +22,7 @@ import com.squareup.moshi.JsonClass
  * Models a Designer News User
  */
 @JsonClass(generateAdapter = true)
-internal data class User(
+data class User(
   @Json(name = "cover_photo_url") val coverPhotoUrl: String,
   @Json(name = "display_name") val displayName: String,
   @Json(name = "first_name") val firstName: String,

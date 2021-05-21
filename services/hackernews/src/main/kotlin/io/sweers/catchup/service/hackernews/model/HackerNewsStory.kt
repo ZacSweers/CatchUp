@@ -32,7 +32,7 @@ annotation class NoArg
 
 @Keep
 @NoArg
-internal data class HackerNewsStory(
+data class HackerNewsStory(
   val by: String,
   val dead: Boolean,
   val deleted: Boolean,
@@ -68,7 +68,7 @@ internal data class HackerNewsStory(
   } ?: Clock.System.now()
 
   @Exclude
-  fun realType() = type?.let { HNType.valueOf(it.toUpperCase(Locale.US)) }
+  fun realType() = type?.let { HNType.valueOf(it.uppercase(Locale.US)) }
 
   companion object {
 
@@ -81,7 +81,7 @@ internal data class HackerNewsStory(
 // DataSnapshot { key = 20516882, value = {parent=20516063, by=frou_dh, id=20516882, text=stuff, time=1563986039, type=comment} }
 @Keep
 @NoArg
-internal data class HackerNewsComment(
+data class HackerNewsComment(
   val by: String,
 //  val dead: Boolean,
   val deleted: Boolean,
@@ -117,7 +117,7 @@ internal data class HackerNewsComment(
   } ?: Clock.System.now()
 
   @Exclude
-  fun realType() = type?.let { HNType.valueOf(it.toUpperCase(Locale.US)) }
+  fun realType() = type?.let { HNType.valueOf(it.uppercase(Locale.US)) }
 
   companion object {
 

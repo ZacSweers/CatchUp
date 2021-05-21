@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.service.dribbble
 
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Lazy
 import dagger.Module
@@ -31,12 +33,12 @@ import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.ImageInfo
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceIndex
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.service.api.ServiceMetaIndex
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
-import io.sweers.catchup.serviceregistry.annotations.Meta
-import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -48,7 +50,9 @@ private annotation class InternalApi
 
 private const val SERVICE_KEY = "dribbble"
 
-internal class DribbbleService @Inject constructor(
+@ServiceKey(SERVICE_KEY)
+@ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
+class DribbbleService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val api: DribbbleApi
 ) :
@@ -86,8 +90,7 @@ internal class DribbbleService @Inject constructor(
   }
 }
 
-@Meta
-@ServiceModule
+@ContributesTo(ServiceMetaIndex::class)
 @Module
 abstract class DribbbleMetaModule {
 
@@ -101,7 +104,7 @@ abstract class DribbbleMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideDribbbleServiceMeta() = ServiceMeta(
+    internal fun provideDribbbleServiceMeta(): ServiceMeta = ServiceMeta(
       SERVICE_KEY,
       R.string.dribbble,
       R.color.dribbbleAccent,
@@ -113,30 +116,21 @@ abstract class DribbbleMetaModule {
   }
 }
 
-@ServiceModule
+@ContributesTo(ServiceIndex::class)
 @Module(includes = [DribbbleMetaModule::class])
-abstract class DribbbleModule {
-
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun dribbbleService(dribbbleService: DribbbleService): Service
-
-  companion object {
-
-    @Provides
-    internal fun provideDribbbleService(
-      client: Lazy<OkHttpClient>,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
-      appConfig: AppConfig
-    ): DribbbleApi {
-      return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)
-        .delegatingCallFactory(client)
-        .addCallAdapterFactory(rxJavaCallAdapterFactory)
-        .addConverterFactory(DecodingConverter.newFactory(DribbbleParser::parse))
-        .validateEagerly(appConfig.isDebug)
-        .build()
-        .create(DribbbleApi::class.java)
-    }
+object DribbbleModule {
+  @Provides
+  internal fun provideDribbbleService(
+    client: Lazy<OkHttpClient>,
+    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+    appConfig: AppConfig
+  ): DribbbleApi {
+    return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)
+      .delegatingCallFactory(client)
+      .addCallAdapterFactory(rxJavaCallAdapterFactory)
+      .addConverterFactory(DecodingConverter.newFactory(DribbbleParser::parse))
+      .validateEagerly(appConfig.isDebug)
+      .build()
+      .create(DribbbleApi::class.java)
   }
 }

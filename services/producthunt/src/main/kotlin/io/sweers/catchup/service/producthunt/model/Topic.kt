@@ -18,7 +18,7 @@ package io.sweers.catchup.service.producthunt.model
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-internal data class Topic(
+data class Topic(
   val id: Long,
   val name: String,
   val slug: String

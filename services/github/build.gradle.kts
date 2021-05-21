@@ -17,12 +17,8 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id(deps.anvil.pluginId)
   id("com.apollographql.apollo")
-}
-
-apply {
-  from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
 
 android {
@@ -49,10 +45,6 @@ apollo {
 }
 
 dependencies {
-  kapt(project(":service-registry:service-registry-compiler"))
-  kapt(deps.crumb.compiler)
-  kapt(deps.dagger.apt.compiler)
-
   compileOnly(deps.misc.javaxInject)
 
   implementation(project(":libraries:gemoji"))

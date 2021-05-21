@@ -18,7 +18,7 @@ package io.sweers.catchup.service.dribbble.model
 /**
  * Models links to the various quality of images of a shot.
  */
-internal data class Images(
+data class Images(
   val hidpi: String?,
   val normal: String
 ) {

@@ -23,7 +23,7 @@ import retrofit2.http.Query
 /**
  * Uplabds API - https://www.uplabs.com/all.json ¯\_(ツ)_/¯
  */
-internal interface UplabsApi {
+interface UplabsApi {
 
   @GET("/all.json")
   fun getPopular(

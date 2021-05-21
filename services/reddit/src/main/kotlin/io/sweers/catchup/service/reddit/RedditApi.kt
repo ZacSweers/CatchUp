@@ -21,7 +21,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-internal interface RedditApi {
+interface RedditApi {
 
   @GET("/r/{subreddit}/comments/{id}")
   fun comments(

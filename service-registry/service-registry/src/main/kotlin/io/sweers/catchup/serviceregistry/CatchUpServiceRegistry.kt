@@ -15,12 +15,12 @@
  */
 package io.sweers.catchup.serviceregistry
 
-import io.sweers.catchup.serviceregistry.annotations.Meta
-import io.sweers.catchup.serviceregistry.annotations.ServiceRegistry
+import com.squareup.anvil.annotations.compat.MergeModules
+import io.sweers.catchup.service.api.ServiceIndex
+import io.sweers.catchup.service.api.ServiceMetaIndex
 
-@ServiceRegistry
+@MergeModules(ServiceIndex::class)
 interface CatchUpServiceRegistry
 
-@Meta
-@ServiceRegistry
+@MergeModules(ServiceMetaIndex::class)
 interface CatchUpServiceMetaRegistry
