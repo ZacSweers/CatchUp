@@ -52,7 +52,7 @@ object build {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val apollo = "2.5.6"
+    const val apollo = "2.5.7"
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
@@ -69,17 +69,17 @@ object deps {
     const val markwon = "4.6.2"
     const val moshi = SharedBuildVersions.moshi
     const val retrofit = "2.9.0"
-    const val spotless = "5.12.4"
+    const val spotless = "5.12.5"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
 
   object android {
     object androidx {
       const val annotations = "androidx.annotation:annotation:1.3.0-alpha01"
-      const val activity = "androidx.activity:activity:1.3.0-alpha07"
-      const val appCompat = "androidx.appcompat:appcompat:1.3.0-rc01"
+      const val activity = "androidx.activity:activity:1.3.0-alpha08"
+      const val appCompat = "androidx.appcompat:appcompat:1.4.0-alpha01"
 
-      private const val coreVersion = "1.6.0-alpha03"
+      private const val coreVersion = "1.6.0-beta01"
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
@@ -92,7 +92,7 @@ object deps {
       const val emoji = "androidx.emoji:emoji:$emojiVersion"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:$emojiVersion"
 
-      private const val fragmentVersion = "1.3.3"
+      private const val fragmentVersion = "1.4.0-alpha01"
       const val fragment = "androidx.fragment:fragment:$fragmentVersion"
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
@@ -158,9 +158,9 @@ object deps {
 
     object firebase {
       // TODO use bom
-      const val core = "com.google.firebase:firebase-core:18.0.3"
+      const val core = "com.google.firebase:firebase-core:19.0.0"
       const val config = "com.google.firebase:firebase-config:18.0.0"
-      const val database = "com.google.firebase:firebase-database:19.7.0"
+      const val database = "com.google.firebase:firebase-database:20.0.0"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
@@ -252,7 +252,7 @@ object deps {
   }
 
   object corbind {
-    private const val VERSION = "1.5.0"
+    private const val VERSION = "1.5.1"
     const val core = "ru.ldralighieri.corbind:corbind:$VERSION"
     object androidx {
       const val core = "ru.ldralighieri.corbind:corbind-core:$VERSION"
@@ -328,7 +328,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.5.0-RC"
+    private const val coroutinesVersion = "1.5.0"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
@@ -365,11 +365,11 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:5.9.1"
+    const val bugsnag = "com.bugsnag:bugsnag-android:5.9.3"
     const val byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
     object debug {
-      private const val FLIPPER_VERSION = "0.87.0"
+      private const val FLIPPER_VERSION = "0.91.1"
       const val flipper = "com.facebook.flipper:flipper:$FLIPPER_VERSION"
       const val flipperNetwork = "com.facebook.flipper:flipper-network-plugin:$FLIPPER_VERSION"
       const val soLoader = "com.facebook.soloader:soloader:0.10.1"

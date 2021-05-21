@@ -19,6 +19,7 @@ jobs:
       - name: Install JDK ${{ matrix.java_version }}
         uses: actions/setup-java@v2
         with:
+          distribution: 'adopt'
           java-version: ${{ matrix.java_version }}
 
       - name: Generate cache key
