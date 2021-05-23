@@ -16,8 +16,6 @@ jobs:
         run: |
           git fetch --no-tags --prune --depth=1 origin +refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
           git checkout ${{ github.base_ref }}
-      - name: Copy CI gradle.properties
-        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
       - uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
@@ -45,8 +43,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Copy CI gradle.properties
-        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
       - uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
