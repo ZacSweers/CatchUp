@@ -76,6 +76,7 @@ import io.sweers.catchup.util.kotlin.sortBy
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -165,6 +166,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
   /**
    * I give you: the most over-engineered OSS licenses section ever.
    */
+  @OptIn(FlowPreview::class)
   private suspend fun requestItems(): List<OssBaseItem> {
     // Start with a fetch of our github entries from assets
     val githubEntries = withContext(Dispatchers.Default) {

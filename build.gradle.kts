@@ -21,7 +21,6 @@ buildscript {
   repositories {
     google()
     mavenCentral()
-//    jcenter()
     maven(deps.build.repositories.plugins)
     maven(deps.build.repositories.snapshots)
     maven(deps.build.repositories.androidxSnapshots)
@@ -65,7 +64,6 @@ allprojects {
   repositories {
     google()
     mavenCentral()
-//    jcenter()
     maven(deps.build.repositories.kotlineap)
     maven(deps.build.repositories.kotlindev)
     maven(deps.build.repositories.kotlinx)

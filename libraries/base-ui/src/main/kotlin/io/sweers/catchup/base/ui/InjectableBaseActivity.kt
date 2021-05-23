@@ -36,8 +36,8 @@ abstract class InjectableBaseActivity : BaseActivity() {
   override lateinit var appConfig: AppConfig
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    setFragmentFactory()
     super.onCreate(savedInstanceState)
+    setFragmentFactory()
   }
 
   override fun getSystemServiceName(serviceClass: Class<*>): String? {

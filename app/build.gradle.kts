@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 plugins {
   id("com.android.application")
@@ -30,10 +29,6 @@ plugins {
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
-
-apply {
-  from(rootProject.file("gradle/config-kotlin-sources.gradle"))
-}
 
 val useDebugSigning: Boolean = providers.gradleProperty("useDebugSigning")
     .forUseAtConfigurationTime()

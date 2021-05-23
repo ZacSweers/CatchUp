@@ -69,8 +69,8 @@ class UnsplashService @Inject constructor(
           id = it.id.hashCode().toLong(),
           title = "",
           score =
-            "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
-              to it.likes,
+          "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+            to it.likes,
           timestamp = it.createdAt,
           author = it.user.name,
           source = null,

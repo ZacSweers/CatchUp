@@ -62,6 +62,7 @@ import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.UiUtil.fastOutSlowInInterpolator
 import io.sweers.catchup.util.isInNightMode
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -338,6 +339,7 @@ private class SaturatingTransformation(
     require(durationMillis > 0) { "durationMillis must be > 0." }
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   override suspend fun transition(target: TransitionTarget, result: ImageResult) {
     // Don't animate if the request was fulfilled by the memory cache.
     if (result is SuccessResult && result.metadata.dataSource == MEMORY_CACHE) {

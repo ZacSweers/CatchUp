@@ -4,6 +4,5 @@ pluginManagement {
     google()
     gradlePluginPortal()
     maven("https://androidx.dev/snapshots/latest/artifacts/repository")
-//    jcenter()
   }
 }

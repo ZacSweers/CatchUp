@@ -21,6 +21,7 @@ import androidx.annotation.Keep
 import com.chibatching.kotpref.KotprefModel
 import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.flowbinding.safeOffer
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -82,6 +83,7 @@ fun SharedPreferences.flowFor(targetKey: String): Flow<Unit> {
   return flowFor { targetKey }
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 fun SharedPreferences.flowFor(keyResolver: () -> String): Flow<Unit> {
   return callbackFlow {
     val targetKey = keyResolver()

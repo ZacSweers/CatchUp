@@ -28,7 +28,7 @@ anvil {
 dependencies {
   implementation(project(":service-registry:service-registry-annotations"))
   implementation(deps.kotlin.stdlib.jdk7)
-  implementation(deps.dagger.hilt.android)
+  kapt(deps.dagger.apt.compiler)
 
   api(project(":services:hackernews"))
   api(project(":services:reddit"))

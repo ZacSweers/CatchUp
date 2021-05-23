@@ -83,8 +83,8 @@ class MediumService @Inject constructor(
             id = post.id.hashCode().toLong(),
             title = post.title,
             score =
-              "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
-                to post.virtuals.recommends,
+            "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+              to post.virtuals.recommends,
             timestamp = post.createdAt,
             author = user.name,
             tag = collection?.name,

@@ -73,7 +73,7 @@ object DebugApplicationModule {
     return if (leakCanaryEnabled) {
       object : CatchUpObjectWatcher {
         override fun watch(watchedReference: Any) {
-          AppWatcher.objectWatcher.watch(watchedReference, "Uhhh because reasons")
+          AppWatcher.objectWatcher.expectWeaklyReachable(watchedReference, "Uhhh because reasons")
         }
       }
     } else {
@@ -98,8 +98,9 @@ object DebugApplicationModule {
     objectWatcher: CatchUpObjectWatcher,
     leakCanaryConfig: LeakCanary.Config
   ): () -> Unit = {
-    AppWatcher.config.copy(
-      watchDurationMillis = TimeUnit.SECONDS.toMillis(10)
+    AppWatcher.manualInstall(
+      application,
+      TimeUnit.SECONDS.toMillis(10)
     )
     LeakCanary.config = leakCanaryConfig
 
@@ -151,12 +152,8 @@ object DebugApplicationModule {
           appConfig.sdk(28) {
             penaltyListener(
               penaltyListenerExecutor.get(),
-              StrictMode.OnThreadViolationListener {
-                Timber.w(it)
-              }
-            ) ?: run {
-              penaltyLog()
-            }
+              { Timber.w(it) }
+            )
           }
         }
         .build()

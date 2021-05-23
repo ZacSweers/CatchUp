@@ -48,7 +48,7 @@ import io.sweers.catchup.ui.fragments.PagerFragment
 import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import me.saket.inboxrecyclerview.InboxRecyclerView
-import me.saket.inboxrecyclerview.dimming.TintPainter
+import me.saket.inboxrecyclerview.dimming.DimPainter
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
@@ -210,9 +210,9 @@ class MainActivityDetailDisplayer @Inject constructor(
       detailPage.pushParentToolbarOnExpand(it)
     }
     irv.expandablePage = detailPage
-    irv.tintPainter = TintPainter.uncoveredArea(
+    irv.dimPainter = DimPainter.listAndPage(
       color = ContextCompat.getColor(irv.context, R.color.colorPrimary),
-      opacity = 0.65F
+      alpha = 0.65F
     )
     if (targetFragment is ScrollableContent) {
       detailPage.pullToCollapseInterceptor = { _, _, upwardPull ->

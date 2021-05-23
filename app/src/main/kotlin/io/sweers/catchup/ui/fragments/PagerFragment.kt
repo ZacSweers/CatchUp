@@ -150,7 +150,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
       // TODO not sure this is right, may need to listen to Fragment's onDestroy(View?) directly
       override fun onViewDetachedFromWindow(holder: FragmentViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        registeredFragments.remove(holder.adapterPosition)
+        registeredFragments.remove(holder.bindingAdapterPosition)
       }
 
       fun getRegisteredFragment(position: Int) = registeredFragments[position]

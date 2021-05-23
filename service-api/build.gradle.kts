@@ -35,6 +35,7 @@ dependencies {
   api(project(":service-registry:service-registry-annotations"))
   api(project(":libraries:appconfig"))
   api(project(":libraries:retrofitconverters"))
+  api(project(":libraries:gemoji"))
   api(deps.android.androidx.room.runtime)
   api(deps.android.androidx.annotations)
   api(deps.android.androidx.coreKtx)
@@ -42,6 +43,8 @@ dependencies {
   api(deps.dagger.runtime)
   api(deps.kotlin.coroutines)
   api(deps.rx.java)
-
-  implementation(deps.okhttp.core)
+  api(deps.okhttp.core)
+  api(deps.retrofit.core)
+  api(deps.retrofit.rxJava2)
+  api(deps.apollo.runtime)
 }
