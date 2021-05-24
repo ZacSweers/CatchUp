@@ -48,7 +48,6 @@ import shark.AndroidReferenceMatchers
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
 
@@ -98,10 +97,6 @@ object DebugApplicationModule {
     objectWatcher: CatchUpObjectWatcher,
     leakCanaryConfig: LeakCanary.Config
   ): () -> Unit = {
-    AppWatcher.manualInstall(
-      application,
-      TimeUnit.SECONDS.toMillis(10)
-    )
     LeakCanary.config = leakCanaryConfig
 
     application.registerActivityLifecycleCallbacks(
