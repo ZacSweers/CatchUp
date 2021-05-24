@@ -250,7 +250,7 @@ abstract class ApplicationModule {
         // Coil will do lazy delegation on its own under the hood, but we
         // don't need that here because we've already made it lazy. Wish this
         // wasn't the default.
-        callFactory(okHttpClient.get()::newCall)
+        callFactory { request -> okHttpClient.get().newCall(request) }
 
         if (appConfig.isDebug) {
           logger(DebugLogger())
