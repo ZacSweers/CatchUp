@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.android.build.api.extension.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.ResValue
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -103,13 +105,9 @@ android {
           "\"${properties["catchup_bugsnag_key"]}\"")
       manifestPlaceholders["BUGSNAG_API_KEY"] = properties["catchup_bugsnag_key"].toString()
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
-//      postprocessing.apply {
-//        proguardFiles("proguard-rules.pro")
-//        isOptimizeCode = true
-//        isObfuscate = true
-//        isRemoveUnusedCode = true
-//        isRemoveUnusedResources = true
-//      }
+      proguardFiles += file("proguard-rules.pro")
+      isMinifyEnabled = true
+      isShrinkResources = true
     }
   }
   splits {
@@ -126,37 +124,35 @@ android {
     }
   }
   composeOptions {
-    // TODO where the heck is this defined
-//    suppressKotlinVersionCompatibilityCheck = true
     kotlinCompilerExtensionVersion = deps.android.androidx.compose.version
   }
-  afterEvaluate {
-    val firebaseVariants = setOf("release", "debug")
-//    applicationVariants.forEach { variant ->
-//      // Configure firebase
-//      fun firebaseProperty(property: String, resolveName: Boolean = true) {
-//        val buildTypeName = variant.buildType.name
-//        if (buildTypeName in firebaseVariants) {
-//          val name = if (resolveName && buildTypeName == "debug") {
-//            "$property.debug"
-//          } else property
-//          val value = project.properties[name].toString()
-//          // TODO this is too late it seems
-//          // variant.resValue("string", property.removePrefix("catchup."), value)
-//        } else {
-//          return
-//        }
-//      }
-//      firebaseProperty("catchup.google_api_key")
-//      firebaseProperty("catchup.google_app_id")
-//      firebaseProperty("catchup.firebase_database_url")
-//      firebaseProperty("catchup.ga_trackingId")
-//      firebaseProperty("catchup.gcm_defaultSenderId")
-//      firebaseProperty("catchup.google_storage_bucket")
-//      firebaseProperty("catchup.default_web_client_id")
-//      firebaseProperty("catchup.google_crash_reporting_api_key")
-//      firebaseProperty("catchup.project_id", false)
-//    }
+}
+
+configure<ApplicationAndroidComponentsExtension> {
+  val firebaseVariants = setOf("release", "debug")
+  onVariants(selector().withBuildType("release").withBuildType("debug")) { variant ->
+    // Configure firebase
+    fun firebaseProperty(property: String, resolveName: Boolean = true) {
+      val buildTypeName = variant.buildType!!
+      if (buildTypeName in firebaseVariants) {
+        val name = if (resolveName && buildTypeName == "debug") {
+          "$property.debug"
+        } else property
+        val value = project.properties[name].toString()
+        variant.resValues.put(variant.makeResValueKey("string", property.removePrefix("catchup.")), ResValue(value))
+      } else {
+        return
+      }
+    }
+    firebaseProperty("catchup.google_api_key")
+    firebaseProperty("catchup.google_app_id")
+    firebaseProperty("catchup.firebase_database_url")
+    firebaseProperty("catchup.ga_trackingId")
+    firebaseProperty("catchup.gcm_defaultSenderId")
+    firebaseProperty("catchup.google_storage_bucket")
+    firebaseProperty("catchup.default_web_client_id")
+    firebaseProperty("catchup.google_crash_reporting_api_key")
+    firebaseProperty("catchup.project_id", false)
   }
 }
 
@@ -171,7 +167,6 @@ kapt {
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
-    //arg("moshi.generated", "javax.annotation.processing.Generated")
     arg("dagger.experimentalDaggerErrorMessages", "enabled")
   }
 }
@@ -224,7 +219,7 @@ open class CutChangelogTask : DefaultTask() {
         val builder = StringBuilder()
         for (line in it.lineSequence()) {
           if (builder.length + line.length + 1 < remainingAmount) {
-            builder.appendln(line)
+            builder.appendLine(line)
           } else {
             break
           }
