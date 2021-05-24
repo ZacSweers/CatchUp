@@ -156,7 +156,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
       fun getRegisteredFragment(position: Int) = registeredFragments[position]
     }
 
-    @ColorInt val colorPrimaryDark = view.context.resolveAttributeColor(R.attr.colorPrimaryDark)
+    @ColorInt val colorPrimaryDark = view.context.resolveAttributeColor(com.google.android.material.R.attr.colorPrimaryDark)
     val isInNightMode = view.context.isInNightMode()
     if (!isInNightMode) {
       // Start with a light status bar in normal mode

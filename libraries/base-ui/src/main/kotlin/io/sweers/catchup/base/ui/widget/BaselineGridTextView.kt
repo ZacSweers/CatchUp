@@ -23,7 +23,7 @@ import android.util.TypedValue
 import androidx.annotation.FontRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.use
-import io.sweers.catchup.base.ui.R
+import catchup.ui.core.R
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor

@@ -16,5 +16,5 @@
   -->
 
 <manifest
-    package="io.sweers.catchup.base.ui"
+    package="catchup.ui.core"
     />

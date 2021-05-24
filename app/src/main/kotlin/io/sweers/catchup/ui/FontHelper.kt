@@ -26,7 +26,6 @@ import androidx.core.provider.FontsContractCompat.FontRequestCallback
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.EmojiCompat.InitCallback
 import androidx.emoji.text.FontRequestEmojiCompatConfig
-import io.sweers.catchup.R
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
@@ -51,7 +50,7 @@ class FontHelper @Inject constructor(
       "com.google.android.gms.fonts",
       "com.google.android.gms",
       "Noto Color Emoji Compat",
-      R.array.com_google_android_gms_fonts_certs
+      catchup.ui.core.R.array.com_google_android_gms_fonts_certs
     )
     val emojiConfig = FontRequestEmojiCompatConfig(context, emojiRequest)
       .setEmojiSpanIndicatorEnabled(appConfig.isDebug)
@@ -70,7 +69,7 @@ class FontHelper @Inject constructor(
       "com.google.android.gms.fonts",
       "com.google.android.gms",
       "Nunito",
-      R.array.com_google_android_gms_fonts_certs
+      catchup.ui.core.R.array.com_google_android_gms_fonts_certs
     )
     val callback = object : FontRequestCallback() {
       override fun onTypefaceRetrieved(typeface: Typeface) {
