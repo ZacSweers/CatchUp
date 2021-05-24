@@ -19,7 +19,7 @@ plugins {
  */
 object SharedBuildVersions {
   const val agp = "7.1.0-alpha01"
-  const val kotlin = "1.5.0"
+  const val kotlin = "1.5.10"
   const val moshi = "1.12.0"
   const val okio = "2.10.0"
   const val kotlinJvmTarget = "11"
