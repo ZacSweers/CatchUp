@@ -47,7 +47,7 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Debugging tooling as a first class citizen in the debug build
 - Leak Canary, Scalpel, debug drawer, Flipper, bug reporting, the works
 - AndroidX/Jetpack
-- Dagger 2
+- Dagger 2 + Hilt
 - One of the more interesting parts of CatchUp is that its service architecture is a Dagger-powered plugin system
 - Room
 - Firebase
@@ -56,6 +56,7 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Standard Square buffet of Okio/OkHttp 3/Retrofit 2/Moshi
 - Inspector
 - Anvil
+- KSP
 
 There's a lot of neat/interesting little tidbits in the CatchUp source code that I plan to write a
 mini blog series about. Each service has its own nuances that make them unique to work with in code.
@@ -74,10 +75,10 @@ work of others. Particularly:
 ## Development
 
 If you'd like to build CatchUp locally, you _should_ be able to just clone and build with no
-issues. The project requires AGP
+issues. The project requires JDK 11 or higher.
 
 CatchUp tends to keep up with Android Studio canaries, so you may have to use a canary version.
-Check the Android Gradle Plugin `deps.android.gradlePlugin` dependency in `gradle/dependencies.kt`.
+Check the Android Gradle Plugin `SharedBuildVersions.agp` version in `buildSrc/build.gradle.kts`.
 
 If you want to build with working services, some require API keys. See the
 [wiki](https://github.com/ZacSweers/CatchUp/wiki/Authentication-information) for more details on
@@ -86,10 +87,6 @@ which services require keys.
 Bug fixes are always welcome. Tests are too if you're into that kinda thing, but I'm not actively
 trying to make this project a shining icon of TDD. For new features or otherwise significant work,
 please discuss in an issue first.
-
-For apollo-android's code generation: if you want to use a local installation of the `apollo-codegen`
-node module you'll need to make sure `0.19.` is installed and linked (`npm install -g apollo-codegen@0.19.1`). Otherwise,
-the gradle plugin should gracefully fallback to downloading it on demand.
 
 License
 -------
