@@ -21,14 +21,12 @@ import io.reactivex.functions.Predicate
 /**
  * A consumer that only calls the [accept] method if [test] returns true.
  */
-abstract class PredicateConsumer<T> : Consumer<T>, Predicate<T> {
-  @Throws(Exception::class)
+abstract class PredicateConsumer<T : Any> : Consumer<T>, Predicate<T> {
   override fun accept(testValue: T) {
     if (test(testValue)) {
       acceptActual(testValue)
     }
   }
 
-  @Throws(Exception::class)
   abstract fun acceptActual(value: T)
 }

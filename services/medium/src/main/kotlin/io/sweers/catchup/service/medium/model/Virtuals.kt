@@ -18,4 +18,4 @@ package io.sweers.catchup.service.medium.model
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-internal data class Virtuals(val recommends: Int, val responsesCreatedCount: Int)
+data class Virtuals(val recommends: Int, val responsesCreatedCount: Int)

@@ -21,6 +21,8 @@ import com.apollographql.apollo.api.Input
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.exception.ApolloException
 import com.apollographql.apollo.rx2.Rx2Apollo
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Lazy
 import dagger.Module
@@ -39,8 +41,10 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.Mark
 import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceIndex
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.service.api.ServiceMetaIndex
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.github.GitHubApi.Language.All
@@ -50,8 +54,6 @@ import io.sweers.catchup.service.github.model.TrendingTimespan
 import io.sweers.catchup.service.github.type.LanguageOrder
 import io.sweers.catchup.service.github.type.LanguageOrderField
 import io.sweers.catchup.service.github.type.OrderDirection
-import io.sweers.catchup.serviceregistry.annotations.Meta
-import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.nullIfBlank
 import okhttp3.OkHttpClient
@@ -65,7 +67,9 @@ private annotation class InternalApi
 
 private const val SERVICE_KEY = "github"
 
-internal class GitHubService @Inject constructor(
+@ServiceKey(SERVICE_KEY)
+@ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
+class GitHubService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val apolloClient: Lazy<ApolloClient>,
   private val emojiMarkdownConverter: Lazy<EmojiMarkdownConverter>,
@@ -174,8 +178,7 @@ internal class GitHubService @Inject constructor(
   }
 }
 
-@Meta
-@ServiceModule
+@ContributesTo(ServiceMetaIndex::class)
 @Module
 abstract class GitHubMetaModule {
 
@@ -189,7 +192,7 @@ abstract class GitHubMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideGitHubServiceMeta() = ServiceMeta(
+    internal fun provideGitHubServiceMeta(): ServiceMeta = ServiceMeta(
       SERVICE_KEY,
       R.string.github,
       R.color.githubAccent,
@@ -200,29 +203,22 @@ abstract class GitHubMetaModule {
   }
 }
 
-@ServiceModule
+@ContributesTo(ServiceIndex::class)
 @Module(includes = [GitHubMetaModule::class])
-abstract class GitHubModule {
+object GitHubModule {
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun GitHubService.githubService(): Service
-
-  companion object {
-    @Provides
-    internal fun provideGitHubService(
-      client: Lazy<OkHttpClient>,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
-      appConfig: AppConfig
-    ): GitHubApi {
-      return Retrofit.Builder().baseUrl(GitHubApi.ENDPOINT)
-        .delegatingCallFactory(client)
-        .addCallAdapterFactory(rxJavaCallAdapterFactory)
-        .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))
-        .validateEagerly(appConfig.isDebug)
-        .build()
-        .create(GitHubApi::class.java)
-    }
+  @Provides
+  internal fun provideGitHubService(
+    client: Lazy<OkHttpClient>,
+    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+    appConfig: AppConfig
+  ): GitHubApi {
+    return Retrofit.Builder().baseUrl(GitHubApi.ENDPOINT)
+      .delegatingCallFactory(client)
+      .addCallAdapterFactory(rxJavaCallAdapterFactory)
+      .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))
+      .validateEagerly(appConfig.isDebug)
+      .build()
+      .create(GitHubApi::class.java)
   }
 }

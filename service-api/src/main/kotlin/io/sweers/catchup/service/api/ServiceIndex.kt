@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020. Zac Sweers
+ * Copyright (C) 2021. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.zacsweers.catchup.compose
+package io.sweers.catchup.service.api
 
-import androidx.annotation.StringRes
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.accessibilityLabel
-import androidx.compose.ui.semantics.semantics
-
-@Composable
-fun Modifier.accessibilityLabel(@StringRes resId: Int) = composed {
-  val res = stringResource(resId)
-  semantics {
-    accessibilityLabel = res
-  }
-}
+abstract class ServiceIndex private constructor()
+abstract class ServiceMetaIndex private constructor()

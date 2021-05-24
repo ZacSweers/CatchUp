@@ -17,24 +17,18 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id(deps.anvil.pluginId)
+  id(deps.ksp.pluginId)
 }
 
-apply {
-  from(rootProject.file("gradle/config-kotlin-sources.gradle"))
-}
-
-kapt {
-  arguments {
-    arg("moshi.generated", "javax.annotation.Generated")
-  }
-}
+//kapt {
+//  arguments {
+//    //arg("moshi.generated", "javax.annotation.processing.Generated")
+//  }
+//}
 
 dependencies {
-  kapt(project(":service-registry:service-registry-compiler"))
-  kapt(deps.crumb.compiler)
-  kapt(deps.dagger.apt.compiler)
-  kapt(deps.moshi.compiler)
+  ksp(deps.moshi.moshix.ksp)
 
   implementation(project(":libraries:util"))
   implementation(deps.misc.okio)

@@ -150,13 +150,13 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
       // TODO not sure this is right, may need to listen to Fragment's onDestroy(View?) directly
       override fun onViewDetachedFromWindow(holder: FragmentViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        registeredFragments.remove(holder.adapterPosition)
+        registeredFragments.remove(holder.bindingAdapterPosition)
       }
 
       fun getRegisteredFragment(position: Int) = registeredFragments[position]
     }
 
-    @ColorInt val colorPrimaryDark = view.context.resolveAttributeColor(R.attr.colorPrimaryDark)
+    @ColorInt val colorPrimaryDark = view.context.resolveAttributeColor(com.google.android.material.R.attr.colorPrimaryDark)
     val isInNightMode = view.context.isInNightMode()
     if (!isInNightMode) {
       // Start with a light status bar in normal mode

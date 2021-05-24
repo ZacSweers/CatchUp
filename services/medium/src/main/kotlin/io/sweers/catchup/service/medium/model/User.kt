@@ -18,4 +18,4 @@ package io.sweers.catchup.service.medium.model
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-internal data class User(val name: String, val userId: String, val username: String)
+data class User(val name: String, val userId: String, val username: String)

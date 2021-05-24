@@ -33,7 +33,7 @@ import com.facebook.soloader.SoLoader
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
@@ -48,11 +48,10 @@ import shark.AndroidReferenceMatchers
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 object DebugApplicationModule {
 
@@ -73,7 +72,7 @@ object DebugApplicationModule {
     return if (leakCanaryEnabled) {
       object : CatchUpObjectWatcher {
         override fun watch(watchedReference: Any) {
-          AppWatcher.objectWatcher.watch(watchedReference, "Uhhh because reasons")
+          AppWatcher.objectWatcher.expectWeaklyReachable(watchedReference, "Uhhh because reasons")
         }
       }
     } else {
@@ -98,9 +97,6 @@ object DebugApplicationModule {
     objectWatcher: CatchUpObjectWatcher,
     leakCanaryConfig: LeakCanary.Config
   ): () -> Unit = {
-    AppWatcher.config.copy(
-      watchDurationMillis = TimeUnit.SECONDS.toMillis(10)
-    )
     LeakCanary.config = leakCanaryConfig
 
     application.registerActivityLifecycleCallbacks(
@@ -151,12 +147,8 @@ object DebugApplicationModule {
           appConfig.sdk(28) {
             penaltyListener(
               penaltyListenerExecutor.get(),
-              StrictMode.OnThreadViolationListener {
-                Timber.w(it)
-              }
-            ) ?: run {
-              penaltyLog()
-            }
+              { Timber.w(it) }
+            )
           }
         }
         .build()

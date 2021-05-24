@@ -17,18 +17,10 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
-}
-
-apply {
-  from(rootProject.file("gradle/config-kotlin-sources.gradle"))
+  id(deps.anvil.pluginId)
 }
 
 dependencies {
-  kapt(project(":service-registry:service-registry-compiler"))
-  kapt(deps.crumb.compiler)
-  kapt(deps.dagger.apt.compiler)
-
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
   implementation(deps.misc.jsoup)

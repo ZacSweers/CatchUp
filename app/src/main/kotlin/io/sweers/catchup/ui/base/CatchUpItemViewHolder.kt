@@ -138,7 +138,9 @@ class CatchUpItemViewHolder(
   }
 
   fun tag(text: String?) {
-    tag.text = text?.capitalize(tag.context.primaryLocale)
+    tag.text = text?.replaceFirstChar {
+      if (it.isLowerCase()) it.titlecase(tag.context.primaryLocale) else it.toString()
+    }
     updateDividerVisibility()
   }
 

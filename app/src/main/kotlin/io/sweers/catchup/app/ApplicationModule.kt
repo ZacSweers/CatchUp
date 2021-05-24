@@ -38,7 +38,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
@@ -60,15 +60,13 @@ import io.sweers.catchup.util.PrecomputedTextSetterCompat
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import okhttp3.Cache
-import okhttp3.Call
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import timber.log.Timber
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 abstract class ApplicationModule {
 
@@ -229,6 +227,10 @@ abstract class ApplicationModule {
           return imageLoader.get().execute(request)
         }
 
+        override fun newBuilder(): ImageLoader.Builder {
+          return imageLoader.get().newBuilder()
+        }
+
         override fun shutdown() {
           imageLoader.get().shutdown()
         }
@@ -248,13 +250,7 @@ abstract class ApplicationModule {
         // Coil will do lazy delegation on its own under the hood, but we
         // don't need that here because we've already made it lazy. Wish this
         // wasn't the default.
-        callFactory(
-          object : Call.Factory {
-            override fun newCall(request: Request): Call {
-              return okHttpClient.get().newCall(request)
-            }
-          }
-        )
+        callFactory { request -> okHttpClient.get().newCall(request) }
 
         if (appConfig.isDebug) {
           logger(DebugLogger())
@@ -267,7 +263,7 @@ abstract class ApplicationModule {
 
         componentRegistry {
           if (Build.VERSION.SDK_INT >= 28) {
-            add(ImageDecoderDecoder())
+            add(ImageDecoderDecoder(context))
           } else {
             add(GifDecoder())
           }

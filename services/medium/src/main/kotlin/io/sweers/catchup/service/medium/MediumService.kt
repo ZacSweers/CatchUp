@@ -55,7 +55,7 @@ private annotation class InternalApi
 
 private const val SERVICE_KEY = "medium"
 
-internal class MediumService @Inject constructor(
+class MediumService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val api: MediumApi
 ) :
@@ -83,8 +83,8 @@ internal class MediumService @Inject constructor(
             id = post.id.hashCode().toLong(),
             title = post.title,
             score =
-              "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
-                to post.virtuals.recommends,
+            "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+              to post.virtuals.recommends,
             timestamp = post.createdAt,
             author = user.name,
             tag = collection?.name,
@@ -118,7 +118,7 @@ abstract class MediumMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideMediumServiceMeta() = ServiceMeta(
+    internal fun provideMediumServiceMeta(): ServiceMeta = ServiceMeta(
       SERVICE_KEY,
       R.string.medium,
       R.color.mediumAccent,
@@ -159,7 +159,7 @@ abstract class MediumModule {
               body?.source()?.let {
                 // Medium prefixes with a while loop to prevent javascript eval attacks, so
                 // skip to the first open curly brace
-                it.skip(it.indexOf('{'.toByte()))
+                it.skip(it.indexOf('{'.code.toByte()))
               }
             }
         }
@@ -175,7 +175,7 @@ abstract class MediumModule {
     }
 
     @Provides
-    internal fun provideInspector() = Inspector.Builder().build()
+    internal fun provideInspector(): Inspector = Inspector.Builder().build()
 
     @Provides
     internal fun provideMediumService(

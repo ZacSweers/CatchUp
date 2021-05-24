@@ -29,7 +29,7 @@ import javax.inject.Inject
  * A converter factory that uses Inspector to validate responses and fails fast if the response
  * models are invalid.
  */
-internal class InspectorConverterFactory @Inject constructor(private val inspector: Inspector) :
+class InspectorConverterFactory @Inject constructor(private val inspector: Inspector) :
   Converter.Factory() {
   override fun responseBodyConverter(
     type: Type,
@@ -45,7 +45,7 @@ internal class InspectorConverterFactory @Inject constructor(private val inspect
   }
 }
 
-private class InspectorResponseConverter internal constructor(
+private class InspectorResponseConverter(
   private val type: Type,
   private val inspector: Inspector,
   private val delegateConverter: Converter<ResponseBody, *>

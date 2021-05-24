@@ -25,7 +25,7 @@ import java.util.Locale
 /**
  * Fake API for https://github.com/trending
  */
-internal interface GitHubApi {
+interface GitHubApi {
 
   @GET("/trending{$LANGUAGE}")
   fun getTrending(
@@ -37,7 +37,7 @@ internal interface GitHubApi {
     DAILY, WEEKLY, MONTHLY;
 
     override fun toString(): String {
-      return super.toString().toLowerCase(Locale.US)
+      return super.toString().lowercase(Locale.US)
     }
   }
 
@@ -50,7 +50,7 @@ internal interface GitHubApi {
 
     data class Custom(val name: String) : Language() {
       override fun toString(): String {
-        return "/${name.toLowerCase(Locale.US)}"
+        return "/${name.lowercase(Locale.US)}"
       }
     }
   }

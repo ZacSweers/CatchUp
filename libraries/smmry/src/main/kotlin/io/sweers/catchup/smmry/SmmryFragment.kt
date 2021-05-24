@@ -214,7 +214,7 @@ class SmmryFragment : InjectableBaseFragment<FragmentSmmryBinding>(), Scrollable
     if (smmry.keywords != null) {
       tags.setTextColor(accentColor)
       tags.text = smmry.keywords.joinToString("  —  ") { s ->
-        s.trim { it <= ' ' }.toUpperCase(Locale.getDefault())
+        s.trim { it <= ' ' }.uppercase(Locale.getDefault())
       }
       tags.show()
     } else {

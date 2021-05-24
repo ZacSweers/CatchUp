@@ -24,12 +24,10 @@ import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.schedulers.Schedulers
-import io.sweers.catchup.data.adapters.ArrayCollectionJsonAdapter
-import io.sweers.catchup.data.adapters.ArrayMapJsonAdapter
 import io.sweers.catchup.gemoji.GemojiModule
 import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.injection.SharedPreferencesName
@@ -43,7 +41,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module(includes = [GithubApolloModule::class, GemojiModule::class])
 abstract class DataModule {
 
@@ -104,8 +102,6 @@ abstract class DataModule {
         }
         .add(Wrapped.ADAPTER_FACTORY)
         .add(UnescapeJsonAdapter.FACTORY)
-        .add(ArrayMapJsonAdapter.FACTORY)
-        .add(ArrayCollectionJsonAdapter.FACTORY)
         .build()
     }
 

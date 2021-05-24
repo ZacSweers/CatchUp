@@ -20,7 +20,7 @@ import com.squareup.moshi.JsonClass
 import kotlinx.datetime.Instant
 
 @JsonClass(generateAdapter = true)
-internal data class UplabsImage(
+data class UplabsImage(
   val id: Long,
   @Json(name = "showcased_at") val showcasedAt: Instant,
   @Json(name = "comments_count") val commentsCount: Int,
@@ -40,7 +40,7 @@ internal data class UplabsImage(
 )
 
 @JsonClass(generateAdapter = true)
-internal data class Image(
+data class Image(
   @Json(name = "content_type") val contentType: String,
   val height: Int,
   val width: Int,
@@ -49,7 +49,7 @@ internal data class Image(
 )
 
 @JsonClass(generateAdapter = true)
-internal data class Urls(
+data class Urls(
   val full: String,
   val thumbnail: String
 )

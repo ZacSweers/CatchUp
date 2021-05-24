@@ -53,7 +53,7 @@ interface VisualService : Service {
               image = holder.itemView()
             )
           )
-          clicksChannel.offer(urlMeta)
+          clicksChannel.trySend(urlMeta).isSuccess
         }
       }
     )

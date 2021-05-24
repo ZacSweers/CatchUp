@@ -22,8 +22,8 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import dev.zacsweers.moshisealed.annotations.DefaultObject
-import dev.zacsweers.moshisealed.annotations.TypeLabel
+import dev.zacsweers.moshix.sealed.annotations.DefaultObject
+import dev.zacsweers.moshix.sealed.annotations.TypeLabel
 import io.sweers.catchup.util.data.adapters.UnEscape
 import java.io.IOException
 import java.lang.ref.WeakReference
@@ -73,7 +73,9 @@ sealed class SmmryResponse {
 
     init {
       val locale = Locale.getDefault()
-      normalizedMessage = message.toLowerCase(locale).capitalize(locale)
+      normalizedMessage = message.lowercase(locale).replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(locale) else it.toString()
+      }
     }
 
     // 0 - Internal server problem which isn't your fault

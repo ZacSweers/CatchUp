@@ -23,7 +23,7 @@ import kotlinx.datetime.Instant
  * Models a Designer News story
  */
 @JsonClass(generateAdapter = true)
-internal data class Story(
+data class Story(
   val badge: String?,
   val comment: String?,
   @Json(name = "comment_count") val commentCount: Int,

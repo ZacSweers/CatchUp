@@ -83,7 +83,7 @@ class LumberYard @Inject constructor(private val app: Application) {
         sink = output.sink().buffer()
         val entries1 = bufferedLogs()
         for (entry in entries1) {
-          sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.toInt())
+          sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
         }
         // need to close before emiting file to the subscriber, because when subscriber receives
         // data in the same thread the file may be truncated

@@ -29,7 +29,7 @@ import retrofit2.http.Query
  *
  * v2 docs: https://github.com/DesignerNews/dn_api_v2
  */
-internal interface DesignerNewsApi {
+interface DesignerNewsApi {
 
   @GET("stories")
   @Wrapped(path = ["stories"])

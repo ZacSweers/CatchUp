@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.android.build.api.extension.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.ResValue
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 plugins {
   id("com.android.application")
@@ -29,10 +31,6 @@ plugins {
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
-
-apply {
-  from(rootProject.file("gradle/config-kotlin-sources.gradle"))
-}
 
 val useDebugSigning: Boolean = providers.gradleProperty("useDebugSigning")
     .forUseAtConfigurationTime()
@@ -53,7 +51,7 @@ android {
     buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
         "\"${properties["catchup_github_developer_token"]}\"")
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
-    manifestPlaceholders(mapOf("BUGSNAG_API_KEY" to "placeholder"))
+    manifestPlaceholders["BUGSNAG_API_KEY"] = "placeholder"
   }
   buildFeatures {
     buildConfig = true
@@ -68,31 +66,33 @@ android {
         keyPassword = properties["catchup_signing_key_password"].toString()
       }
     } else {
-      create("release").initWith(getByName("debug"))
+      create("release")//.initWith(getByName("debug"))
     }
   }
-  packagingOptions {
-    exclude("**/*.dot")
-    exclude("**/*.kotlin_metadata")
-    exclude("**/*.properties")
-    exclude("*.properties")
-    exclude("kotlin/**")
-    exclude("LICENSE.txt")
-    exclude("LICENSE_OFL")
-    exclude("LICENSE_UNICODE")
-    exclude("META-INF/*.kotlin_module")
-    exclude("META-INF/*.version")
-    exclude("META-INF/androidx.*")
-    exclude("META-INF/CHANGES")
-    exclude("META-INF/com.uber.crumb/**")
-    exclude("META-INF/LICENSE")
-    exclude("META-INF/LICENSE.txt")
-    exclude("META-INF/NOTICE")
-    exclude("META-INF/NOTICE.txt")
-    exclude("META-INF/README.md")
-    exclude("META-INF/rxjava.properties")
-    exclude("META-INF/services/javax.annotation.processing.Processor")
-  }
+  packagingOptions.resources.excludes.addAll(
+    listOf(
+        "**/*.dot",
+        "**/*.kotlin_metadata",
+        "**/*.properties",
+        "*.properties",
+        "kotlin/**",
+        "LICENSE.txt",
+        "LICENSE_OFL",
+        "LICENSE_UNICODE",
+        "META-INF/*.kotlin_module",
+        "META-INF/*.version",
+        "META-INF/androidx.*",
+        "META-INF/CHANGES",
+        "META-INF/com.uber.crumb/**",
+        "META-INF/LICENSE",
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE",
+        "META-INF/NOTICE.txt",
+        "META-INF/README.md",
+        "META-INF/rxjava.properties",
+        "META-INF/services/javax.annotation.processing.Processor",
+    )
+  )
   buildTypes {
     getByName("debug") {
       applicationIdSuffix = ".debug"
@@ -103,19 +103,12 @@ android {
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY",
           "\"${properties["catchup_bugsnag_key"]}\"")
-      manifestPlaceholders(mapOf("BUGSNAG_API_KEY" to properties["catchup_bugsnag_key"].toString()))
+      manifestPlaceholders["BUGSNAG_API_KEY"] = properties["catchup_bugsnag_key"].toString()
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
-      postprocessing.apply {
-        proguardFiles("proguard-rules.pro")
-        isOptimizeCode = true
-        isObfuscate = true
-        isRemoveUnusedCode = true
-        isRemoveUnusedResources = true
-      }
+      proguardFiles += file("proguard-rules.pro")
+      isMinifyEnabled = true
+      isShrinkResources = true
     }
-  }
-  dexOptions {
-    javaMaxHeapSize = "2g"
   }
   splits {
     density {
@@ -131,51 +124,59 @@ android {
     }
   }
   composeOptions {
-    kotlinCompilerVersion = deps.versions.kotlin
     kotlinCompilerExtensionVersion = deps.android.androidx.compose.version
-  }
-  afterEvaluate {
-    val firebaseVariants = setOf("release", "debug")
-    applicationVariants.forEach { variant ->
-      // Configure firebase
-      fun firebaseProperty(property: String, resolveName: Boolean = true) {
-        val buildTypeName = variant.buildType.name
-        if (buildTypeName in firebaseVariants) {
-          val name = if (resolveName && buildTypeName == "debug") {
-            "$property.debug"
-          } else property
-          val value = project.properties[name].toString()
-          variant.resValue("string", property.removePrefix("catchup."), value)
-        } else {
-          return
-        }
-      }
-      firebaseProperty("catchup.google_api_key")
-      firebaseProperty("catchup.google_app_id")
-      firebaseProperty("catchup.firebase_database_url")
-      firebaseProperty("catchup.ga_trackingId")
-      firebaseProperty("catchup.gcm_defaultSenderId")
-      firebaseProperty("catchup.google_storage_bucket")
-      firebaseProperty("catchup.default_web_client_id")
-      firebaseProperty("catchup.google_crash_reporting_api_key")
-      firebaseProperty("catchup.project_id", false)
-    }
   }
 }
 
-//bugsnag {
-//  // Prevent bugsnag from wiring build UUIDs into debug builds
-//  variantFilter {
-//    setEnabled("debug" !in name.toLowerCase(Locale.US))
-//  }
-//}
+configure<ApplicationAndroidComponentsExtension> {
+  val firebaseVariants = setOf("release", "debug")
+  onVariants(selector().withBuildType("release").withBuildType("debug")) { variant ->
+    // Configure firebase
+    fun firebaseProperty(property: String, resolveName: Boolean = true) {
+      val buildTypeName = variant.buildType!!
+      if (buildTypeName in firebaseVariants) {
+        val name = if (resolveName && buildTypeName == "debug") {
+          "$property.debug"
+        } else property
+        val value = project.properties[name].toString()
+        variant.resValues.put(variant.makeResValueKey("string", property.removePrefix("catchup.")), ResValue(value))
+      } else {
+        return
+      }
+    }
+    firebaseProperty("catchup.google_api_key")
+    firebaseProperty("catchup.google_app_id")
+    firebaseProperty("catchup.firebase_database_url")
+    firebaseProperty("catchup.ga_trackingId")
+    firebaseProperty("catchup.gcm_defaultSenderId")
+    firebaseProperty("catchup.google_storage_bucket")
+    firebaseProperty("catchup.default_web_client_id")
+    firebaseProperty("catchup.google_crash_reporting_api_key")
+    firebaseProperty("catchup.project_id", false)
+  }
+}
+
+// bugsnag {
+//   // Prevent bugsnag from wiring build UUIDs into debug builds
+//   variantFilter {
+//     setEnabled("debug" !in name.toLowerCase(Locale.US))
+//   }
+// }
 
 kapt {
   arguments {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
-    arg("moshi.generated", "javax.annotation.Generated")
     arg("dagger.experimentalDaggerErrorMessages", "enabled")
+  }
+}
+
+tasks.withType<KotlinCompile>().matching { !it.name.startsWith("ksp") }.configureEach {
+  kotlinOptions {
+    @Suppress("SuspiciousCollectionReassignment")
+    freeCompilerArgs += listOf(
+        "-P", "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+    )
   }
 }
 
@@ -218,7 +219,7 @@ open class CutChangelogTask : DefaultTask() {
         val builder = StringBuilder()
         for (line in it.lineSequence()) {
           if (builder.length + line.length + 1 < remainingAmount) {
-            builder.appendln(line)
+            builder.appendLine(line)
           } else {
             break
           }
@@ -381,6 +382,7 @@ dependencies {
   implementation(deps.android.androidx.appCompat)
   implementation(deps.android.androidx.core)
   implementation(deps.android.androidx.constraintLayout)
+  implementation(deps.android.androidx.compose.constraintLayout)
   implementation(deps.android.androidx.customTabs)
   implementation(deps.android.androidx.design)
   implementation(deps.android.androidx.emoji)
@@ -399,6 +401,7 @@ dependencies {
   implementation(deps.android.androidx.room.runtime)
   implementation(deps.android.androidx.room.rxJava2)
   implementation(deps.android.androidx.room.ktx)
+  kapt(deps.android.androidx.room.xerial)
   kapt(deps.android.androidx.room.apt)
 
   // Compose

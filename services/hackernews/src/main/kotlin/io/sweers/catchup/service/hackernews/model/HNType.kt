@@ -17,14 +17,16 @@ package io.sweers.catchup.service.hackernews.model
 
 import java.util.Locale
 
-internal enum class HNType {
+enum class HNType {
   COMMENT, JOB, POLL, POLLOPT, STORY;
 
   fun tag(nullIfStory: Boolean = false): String? {
     return if (nullIfStory && this == STORY) {
       null
     } else {
-      name.toLowerCase(Locale.US).capitalize(Locale.US)
+      name.lowercase(Locale.US).replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
+      }
     }
   }
 }

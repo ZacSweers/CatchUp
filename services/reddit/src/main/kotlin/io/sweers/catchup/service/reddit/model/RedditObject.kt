@@ -20,9 +20,9 @@ import com.squareup.moshi.JsonClass
 import io.sweers.catchup.service.api.HasStableId
 import kotlinx.datetime.Instant
 
-internal sealed class RedditObject
+sealed class RedditObject
 
-internal interface RedditSubmission : HasStableId {
+interface RedditSubmission : HasStableId {
   val author: String
   @Json(name = "author_flair_text")
   val authorFlairText: String?
@@ -42,7 +42,7 @@ internal interface RedditSubmission : HasStableId {
 }
 
 @JsonClass(generateAdapter = true)
-internal data class RedditComment(
+data class RedditComment(
   val body: String,
   @Json(name = "body_html") val bodyHtml: String,
   val controversiality: Int,
@@ -73,7 +73,7 @@ internal data class RedditComment(
 ) : RedditObject(), RedditSubmission
 
 @JsonClass(generateAdapter = true)
-internal data class RedditLink(
+data class RedditLink(
   val clicked: Boolean,
   val domain: String?,
   val hidden: Boolean,
@@ -105,7 +105,7 @@ internal data class RedditLink(
 ) : RedditObject(), RedditSubmission
 
 @JsonClass(generateAdapter = true)
-internal data class RedditListing(
+data class RedditListing(
   val after: String,
   val before: String?,
   val children: List<RedditObject>,

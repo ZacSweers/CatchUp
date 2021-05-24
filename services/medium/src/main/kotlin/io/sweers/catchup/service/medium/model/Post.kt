@@ -19,7 +19,7 @@ import com.squareup.moshi.JsonClass
 import kotlinx.datetime.Instant
 
 @JsonClass(generateAdapter = true)
-internal data class Post(
+data class Post(
   val createdAt: Instant,
   val creatorId: String,
   val homeCollectionId: String,

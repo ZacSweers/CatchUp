@@ -24,7 +24,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.squareup.inject.assisted.dagger2.AssistedModule
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -40,8 +41,10 @@ import io.sweers.catchup.service.api.FragmentKey
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
+import io.sweers.catchup.service.api.ServiceIndex
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.service.api.ServiceMetaIndex
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
@@ -49,21 +52,21 @@ import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.service.hackernews.preview.UrlPreviewModule
 import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
 import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelKey
-import io.sweers.catchup.serviceregistry.annotations.Meta
-import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.d
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import javax.inject.Inject
 import javax.inject.Qualifier
 
-typealias AssistedFactory = ViewModelAssistedFactory<out ViewModel>
+typealias ViewModelCreator = ViewModelAssistedFactory<out ViewModel>
 
 @Qualifier
 private annotation class InternalApi
 
 private const val SERVICE_KEY = "hn"
 
-internal class HackerNewsService @Inject constructor(
+@ServiceKey(SERVICE_KEY)
+@ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
+class HackerNewsService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val database: dagger.Lazy<FirebaseDatabase>
 ) : TextService {
@@ -156,8 +159,7 @@ internal class HackerNewsService @Inject constructor(
   }
 }
 
-@Meta
-@ServiceModule
+@ContributesTo(ServiceMetaIndex::class)
 @Module
 abstract class HackerNewsMetaModule {
 
@@ -171,7 +173,7 @@ abstract class HackerNewsMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideHackerNewsServiceMeta() = ServiceMeta(
+    internal fun provideHackerNewsServiceMeta(): ServiceMeta = ServiceMeta(
       SERVICE_KEY,
       R.string.hn,
       R.color.hnAccent,
@@ -183,7 +185,7 @@ abstract class HackerNewsMetaModule {
   }
 }
 
-@ServiceModule
+@ContributesTo(ServiceIndex::class)
 @Module(
   includes = [
     HackerNewsMetaModule::class,
@@ -193,11 +195,6 @@ abstract class HackerNewsMetaModule {
   ]
 )
 abstract class HackerNewsModule {
-
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun hackerNewsService(hackerNewsService: HackerNewsService): Service
 
   @Binds
   @IntoMap
@@ -211,21 +208,20 @@ abstract class HackerNewsModule {
   }
 }
 
-@AssistedModule
-@Module(includes = [AssistedInject_ViewModelModule::class])
+@Module
 internal abstract class ViewModelModule {
   @Binds
   @IntoMap
   @ViewModelKey(HackerNewsCommentsViewModel::class)
-  abstract fun mainViewModel(viewModel: HackerNewsCommentsViewModel.Factory): AssistedFactory
+  abstract fun mainViewModel(viewModel: HackerNewsCommentsViewModel.Factory): ViewModelCreator
 }
 
 // TODO generify this somewhere once something other than HN does it
 @Module
-internal object FragmentViewModelFactoryModule {
+object FragmentViewModelFactoryModule {
   @Provides
   fun viewModelFactory(
-    viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, AssistedFactory>
+    viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, ViewModelCreator>
   ): ViewModelProviderFactoryInstantiator {
     return object : ViewModelProviderFactoryInstantiator {
       override fun create(fragment: Fragment): ViewModelProvider.Factory {

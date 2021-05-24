@@ -45,17 +45,17 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Kotlin
 - RxJava 2/AutoDispose
 - Debugging tooling as a first class citizen in the debug build
-- Leak Canary, Chuck, Scalpel, debug drawer, Flipper, bug reporting, the works
+- Leak Canary, Scalpel, debug drawer, Flipper, bug reporting, the works
 - AndroidX/Jetpack
 - Dagger 2
 - One of the more interesting parts of CatchUp is that its service architecture is a Dagger-powered plugin system
-- Room (Arch components)
-- AutoValue + extensions
+- Room
 - Firebase
 - Coil
 - Apollo GraphQL
 - Standard Square buffet of Okio/OkHttp 3/Retrofit 2/Moshi
 - Inspector
+- Anvil
 
 There's a lot of neat/interesting little tidbits in the CatchUp source code that I plan to write a
 mini blog series about. Each service has its own nuances that make them unique to work with in code.
@@ -73,7 +73,8 @@ work of others. Particularly:
 
 ## Development
 
-If you'd like to build CatchUp locally, you _should_ be able to just clone and build with no issues.
+If you'd like to build CatchUp locally, you _should_ be able to just clone and build with no
+issues. The project requires AGP
 
 CatchUp tends to keep up with Android Studio canaries, so you may have to use a canary version.
 Check the Android Gradle Plugin `deps.android.gradlePlugin` dependency in `gradle/dependencies.kt`.

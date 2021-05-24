@@ -22,10 +22,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.scopes.ActivityScoped
+import io.sweers.catchup.serviceregistry.CatchUpServiceMetaRegistry
+import io.sweers.catchup.serviceregistry.CatchUpServiceRegistry
 import io.sweers.catchup.ui.activity.MainActivity
 
 @InstallIn(ActivityComponent::class)
-@Module
+@Module(includes = [CatchUpServiceRegistry::class, CatchUpServiceMetaRegistry::class])
 object ComponentActivityModule {
   @ActivityScoped
   @Provides

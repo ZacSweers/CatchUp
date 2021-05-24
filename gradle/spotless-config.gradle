@@ -43,14 +43,14 @@ spotless {
     target "**/src/**/*.kt", "**/src/**/*.kt"
     targetExclude '**/spotless/*.kt'
     targetExclude(copiedKotlinFiles)
-    ktlint("0.38.0").userData(['indent_size': '2', 'continuation_indent_size' : '2'])
+    ktlint("0.41.0").userData(['indent_size': '2', 'continuation_indent_size' : '2'])
     licenseHeaderFile rootProject.file('spotless/copyright.kt')
     trimTrailingWhitespace()
     endWithNewline()
   }
   kotlinGradle {
     target '*.gradle.kts'
-    ktlint("0.38.0").userData(['indent_size': '2', 'continuation_indent_size' : '2'])
+    ktlint("0.41.0").userData(['indent_size': '2', 'continuation_indent_size' : '2'])
     trimTrailingWhitespace()
     endWithNewline()
   }
@@ -58,7 +58,7 @@ spotless {
     target "**/src/**/*.java"
     targetExclude '**/spotless/*.java'
     targetExclude(copiedJavaFiles)
-    googleJavaFormat("1.7")
+    googleJavaFormat("1.10.0")
     licenseHeaderFile rootProject.file('spotless/copyright.java')
     removeUnusedImports()
     trimTrailingWhitespace()

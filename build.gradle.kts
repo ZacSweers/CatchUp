@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
+import com.google.devtools.ksp.gradle.KspExtension
 import deps.versions
 
 buildscript {
   repositories {
     google()
     mavenCentral()
-    jcenter()
-    maven(deps.build.repositories.kotlineap)
-    maven(deps.build.repositories.kotlindev)
-    maven(deps.build.repositories.kotlinx)
     maven(deps.build.repositories.plugins)
     maven(deps.build.repositories.snapshots)
-    maven(deps.build.repositories.snapshots)
+    maven(deps.build.repositories.androidxSnapshots)
     maven("https://storage.googleapis.com/r8-releases/raw")
     mavenLocal()
   }
@@ -42,13 +39,21 @@ buildscript {
     classpath(deps.build.gradlePlugins.spotless)
     classpath(deps.build.gradlePlugins.redacted)
     classpath(deps.dagger.hilt.gradlePlugin)
+    classpath("com.squareup.anvil:gradle-plugin:${deps.anvil.version}")
+    classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:${deps.ksp.version}")
   }
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.33.0"
+  id("com.github.ben-manes.versions") version "0.38.0"
   id("catchup")
-  id("com.osacky.doctor") version "0.6.2"
+  id("com.osacky.doctor") version "0.7.0"
+}
+
+doctor {
+  javaHome {
+    ensureJavaHomeMatches.set(false)
+  }
 }
 
 apply {
@@ -59,12 +64,12 @@ allprojects {
   repositories {
     google()
     mavenCentral()
-    jcenter()
     maven(deps.build.repositories.kotlineap)
     maven(deps.build.repositories.kotlindev)
     maven(deps.build.repositories.kotlinx)
     maven(deps.build.repositories.jitpack)
     maven(deps.build.repositories.snapshots)
+    maven(deps.build.repositories.androidxSnapshots)
   }
 
   configurations.all {
@@ -82,15 +87,15 @@ allprojects {
             }
           }
           "org.jetbrains.kotlin" -> useVersion(versions.kotlin)
-          "com.google.dagger" -> {
-            if ("hilt" in requested.name) {
-              useVersion(deps.dagger.hilt.HILT_VERSION)
-            } else {
-              useVersion(versions.dagger)
-            }
-          }
+          "com.google.dagger" -> useVersion(versions.dagger)
         }
       }
+    }
+  }
+
+  pluginManager.withPlugin(deps.ksp.pluginId) {
+    configure<KspExtension> {
+      blockOtherCompilerPlugins = false
     }
   }
 }

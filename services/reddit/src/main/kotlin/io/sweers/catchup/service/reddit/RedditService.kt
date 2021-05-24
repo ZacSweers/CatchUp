@@ -54,7 +54,7 @@ private annotation class InternalApi
 
 private const val SERVICE_KEY = "reddit"
 
-internal class RedditService @Inject constructor(
+class RedditService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val api: RedditApi
 ) :
@@ -105,7 +105,7 @@ abstract class RedditMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideRedditServiceMeta() = ServiceMeta(
+    internal fun provideRedditServiceMeta(): ServiceMeta = ServiceMeta(
       SERVICE_KEY,
       R.string.reddit,
       R.color.redditAccent,

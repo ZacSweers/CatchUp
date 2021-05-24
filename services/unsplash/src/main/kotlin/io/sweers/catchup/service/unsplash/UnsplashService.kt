@@ -52,7 +52,7 @@ private annotation class InternalApi
 
 private const val SERVICE_KEY = "unsplash"
 
-internal class UnsplashService @Inject constructor(
+class UnsplashService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val api: UnsplashApi
 ) :
@@ -69,8 +69,8 @@ internal class UnsplashService @Inject constructor(
           id = it.id.hashCode().toLong(),
           title = "",
           score =
-            "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
-              to it.likes,
+          "\u2665\uFE0E" // Because lol: https://code.google.com/p/android/issues/detail?id=231068
+            to it.likes,
           timestamp = it.createdAt,
           author = it.user.name,
           source = null,
@@ -117,7 +117,7 @@ abstract class UnsplashMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideUnsplashServiceMeta() = ServiceMeta(
+    internal fun provideUnsplashServiceMeta(): ServiceMeta = ServiceMeta(
       SERVICE_KEY,
       R.string.unsplash,
       R.color.unsplashAccent,

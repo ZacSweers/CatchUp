@@ -15,7 +15,7 @@
  */
 package io.sweers.catchup.service.github.model
 
-internal data class TrendingItem(
+data class TrendingItem(
   val author: String,
   val repoName: String,
   val url: String,

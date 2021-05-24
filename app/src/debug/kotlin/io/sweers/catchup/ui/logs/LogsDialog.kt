@@ -25,6 +25,7 @@ import androidx.core.net.toUri
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.service.api.temporaryScope
 import io.sweers.catchup.util.maybeStartChooser
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
@@ -65,6 +66,7 @@ class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDi
     scope.cancel()
   }
 
+  @OptIn(DelicateCoroutinesApi::class)
   private fun share() {
     // Dialog's dismissed by this point, so we need a new scope here. We're kicking to the system, so just finish on global scope
     GlobalScope.launch {

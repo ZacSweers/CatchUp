@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.service.uplabs
 
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -30,12 +32,12 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.ImageInfo
 import io.sweers.catchup.service.api.Service
+import io.sweers.catchup.service.api.ServiceIndex
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.service.api.ServiceMetaIndex
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
-import io.sweers.catchup.serviceregistry.annotations.Meta
-import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
@@ -50,11 +52,12 @@ private annotation class InternalApi
 
 private const val SERVICE_KEY = "uplabs"
 
-internal class UplabsService @Inject constructor(
+@ServiceKey(SERVICE_KEY)
+@ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
+class UplabsService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val api: UplabsApi
-) :
-  VisualService {
+) : VisualService {
 
   override fun meta() = serviceMeta
 
@@ -87,8 +90,7 @@ internal class UplabsService @Inject constructor(
   }
 }
 
-@Meta
-@ServiceModule
+@ContributesTo(ServiceMetaIndex::class)
 @Module
 abstract class UplabsMetaModule {
 
@@ -102,7 +104,7 @@ abstract class UplabsMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideUplabsServiceMeta() = ServiceMeta(
+    internal fun provideUplabsServiceMeta(): ServiceMeta = ServiceMeta(
       SERVICE_KEY,
       R.string.uplabs,
       R.color.uplabsAccent,
@@ -114,39 +116,30 @@ abstract class UplabsMetaModule {
   }
 }
 
-@ServiceModule
+@ContributesTo(ServiceIndex::class)
 @Module(includes = [UplabsMetaModule::class])
-abstract class UplabsModule {
+object UplabsModule {
+  @Provides
+  @InternalApi
+  internal fun provideUplabsMoshi(moshi: Moshi): Moshi {
+    return moshi.newBuilder()
+      .add(Instant::class.java, ISO8601InstantAdapter())
+      .build()
+  }
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun uplabsService(uplabsService: UplabsService): Service
-
-  companion object {
-
-    @Provides
-    @InternalApi
-    internal fun provideUplabsMoshi(moshi: Moshi): Moshi {
-      return moshi.newBuilder()
-        .add(Instant::class.java, ISO8601InstantAdapter())
-        .build()
-    }
-
-    @Provides
-    internal fun provideUplabsService(
-      client: Lazy<OkHttpClient>,
-      @InternalApi moshi: Moshi,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
-      appConfig: AppConfig
-    ): UplabsApi {
-      return Retrofit.Builder().baseUrl(UplabsApi.ENDPOINT)
-        .delegatingCallFactory(client)
-        .addCallAdapterFactory(rxJavaCallAdapterFactory)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .validateEagerly(appConfig.isDebug)
-        .build()
-        .create(UplabsApi::class.java)
-    }
+  @Provides
+  internal fun provideUplabsService(
+    client: Lazy<OkHttpClient>,
+    @InternalApi moshi: Moshi,
+    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+    appConfig: AppConfig
+  ): UplabsApi {
+    return Retrofit.Builder().baseUrl(UplabsApi.ENDPOINT)
+      .delegatingCallFactory(client)
+      .addCallAdapterFactory(rxJavaCallAdapterFactory)
+      .addConverterFactory(MoshiConverterFactory.create(moshi))
+      .validateEagerly(appConfig.isDebug)
+      .build()
+      .create(UplabsApi::class.java)
   }
 }

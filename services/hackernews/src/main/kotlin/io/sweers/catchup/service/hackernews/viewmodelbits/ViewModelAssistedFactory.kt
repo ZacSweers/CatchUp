@@ -18,6 +18,6 @@ package io.sweers.catchup.service.hackernews.viewmodelbits
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
-interface ViewModelAssistedFactory<T : ViewModel> {
+fun interface ViewModelAssistedFactory<T : ViewModel> {
   fun create(savedState: SavedStateHandle): T
 }

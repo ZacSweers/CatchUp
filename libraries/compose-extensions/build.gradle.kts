@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Copyright (c) 2020 Zac Sweers
  *
@@ -24,8 +26,16 @@ android {
     compose = true
   }
   composeOptions {
-    kotlinCompilerVersion = deps.versions.kotlin
     kotlinCompilerExtensionVersion = deps.android.androidx.compose.version
+  }
+}
+
+tasks.withType<KotlinCompile>().matching { !it.name.startsWith("ksp") }.configureEach {
+  kotlinOptions {
+    @Suppress("SuspiciousCollectionReassignment")
+    freeCompilerArgs += listOf(
+        "-P", "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+    )
   }
 }
 

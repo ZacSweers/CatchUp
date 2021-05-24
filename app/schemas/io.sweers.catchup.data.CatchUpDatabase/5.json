@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "82d6644ae73de282f394819293f56ca0",
+    "identityHash": "fa79432db8d74f182c757b2105424a01",
     "entities": [
       {
         "tableName": "pages",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT, `timestamp` INTEGER, `score` TEXT, `tag` TEXT, `author` TEXT, `source` TEXT, `itemClickUrl` TEXT, `detailKey` TEXT, `value` TEXT, `type` TEXT, `url` TEXT, `detailUrl` TEXT, `animatable` INTEGER, `sourceUrl` TEXT, `bestSize` TEXT, `imageId` TEXT, `text` TEXT, `textPrefix` TEXT, `icon` INTEGER, `clickUrl` TEXT, `iconTintColor` INTEGER, `formatTextAsCount` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `timestamp` INTEGER, `score` TEXT, `tag` TEXT, `author` TEXT, `source` TEXT, `itemClickUrl` TEXT, `detailKey` TEXT, `value` TEXT, `type` TEXT, `url` TEXT, `detailUrl` TEXT, `animatable` INTEGER, `sourceUrl` TEXT, `bestSize` TEXT, `imageId` TEXT, `text` TEXT, `textPrefix` TEXT, `icon` INTEGER, `clickUrl` TEXT, `iconTintColor` INTEGER, `formatTextAsCount` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -74,7 +74,7 @@
             "fieldPath": "title",
             "columnName": "title",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "timestamp",
@@ -216,7 +216,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '82d6644ae73de282f394819293f56ca0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fa79432db8d74f182c757b2105424a01')"
     ]
   }
 }

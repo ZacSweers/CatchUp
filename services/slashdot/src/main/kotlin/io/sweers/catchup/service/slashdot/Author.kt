@@ -19,4 +19,4 @@ import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 
 @Xml
-internal data class Author(@PropertyElement val name: String)
+data class Author(@PropertyElement val name: String)

@@ -546,7 +546,7 @@ class ServiceFragment :
                 // TODO Show some sort of generic response error
                 progress.hide()
                 swipeRefreshLayout.hide()
-                errorTextView.text = activity.getString(io.sweers.catchup.base.ui.R.string.unknown_issue)
+                errorTextView.text = activity.getString(catchup.ui.core.R.string.unknown_issue)
                 errorView.show()
                 AnimatedVectorDrawableCompat.create(activity, R.drawable.avd_no_connection)
                   ?.let {

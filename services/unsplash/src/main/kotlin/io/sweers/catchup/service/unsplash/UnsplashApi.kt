@@ -24,7 +24,7 @@ import java.util.Locale
 /**
  * Unsplash API - https://unsplash.com/documentation
  */
-internal interface UnsplashApi {
+interface UnsplashApi {
 
   @GET("/photos")
   fun getPhotos(
@@ -42,7 +42,7 @@ internal interface UnsplashApi {
     LATEST, OLDEST, POPULAR;
 
     override fun toString(): String {
-      return super.toString().toLowerCase(Locale.US)
+      return super.toString().lowercase(Locale.US)
     }
   }
 }

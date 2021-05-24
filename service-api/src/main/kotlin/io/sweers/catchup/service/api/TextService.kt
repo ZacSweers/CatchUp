@@ -40,12 +40,12 @@ interface TextService : Service {
       item = item,
       itemClickHandler = itemClickUrl?.let { url ->
         OnClickListener {
-          clicksChannel.offer(createUrlMeta(url, context))
+          clicksChannel.trySend(createUrlMeta(url, context)).isSuccess
         }
       },
       markClickHandler = finalMarkClickUrl?.let { url ->
         OnClickListener {
-          markClicksChannel.offer(createUrlMeta(url, context))
+          markClicksChannel.trySend(createUrlMeta(url, context)).isSuccess
         }
       },
       longClickHandler = item.summarizationInfo?.let {

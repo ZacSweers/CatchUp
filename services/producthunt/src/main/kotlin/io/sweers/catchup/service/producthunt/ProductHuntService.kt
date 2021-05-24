@@ -51,7 +51,7 @@ private annotation class InternalApi
 
 private const val SERVICE_KEY = "ph"
 
-internal class ProductHuntService @Inject constructor(
+class ProductHuntService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val api: ProductHuntApi
 ) :
@@ -100,7 +100,7 @@ abstract class ProductHuntMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideProductHuntServiceMeta() = ServiceMeta(
+    internal fun provideProductHuntServiceMeta(): ServiceMeta = ServiceMeta(
       SERVICE_KEY,
       R.string.ph,
       R.color.phAccent,

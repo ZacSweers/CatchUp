@@ -34,7 +34,8 @@ import io.noties.markwon.Markwon
  * Utility methods for working with HTML and markdown.
  */
 
-inline class Markdown(val rawValue: String) {
+@JvmInline
+value class Markdown(val rawValue: String) {
   override fun toString(): String = rawValue
 }
 

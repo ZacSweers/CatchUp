@@ -51,7 +51,7 @@ private annotation class InternalApi
 
 private const val SERVICE_KEY = "sd"
 
-internal class SlashdotService @Inject constructor(
+class SlashdotService @Inject constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val service: SlashdotApi
 ) :
@@ -100,7 +100,7 @@ abstract class SlashdotMetaModule {
     @Provides
     @Reusable
     @InternalApi
-    internal fun provideSlashdotServiceMeta() = ServiceMeta(
+    internal fun provideSlashdotServiceMeta(): ServiceMeta = ServiceMeta(
       SERVICE_KEY,
       R.string.slashdot,
       R.color.slashdotAccent,

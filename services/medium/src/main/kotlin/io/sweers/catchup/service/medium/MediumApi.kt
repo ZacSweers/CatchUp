@@ -20,7 +20,7 @@ import io.reactivex.Observable
 import io.sweers.catchup.service.medium.model.References
 import retrofit2.http.GET
 
-internal interface MediumApi {
+interface MediumApi {
 
   @GET("/topic/popular")
   @Wrapped(path = ["payload", "references"])

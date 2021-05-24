@@ -25,7 +25,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
  * Models a post on Product Hunt.
  */
 @JsonClass(generateAdapter = true)
-internal data class Post(
+data class Post(
   @Json(name = "comments_count") val commentsCount: Int,
   @Json(name = "created_at") val createdAt: Instant,
   @Json(name = "discussion_url") val discussionUrl: String?,
@@ -44,7 +44,7 @@ internal data class Post(
   val firstTopic: String?
     get() {
       val topics = topics
-      if (topics != null && !topics.isEmpty()) {
+      if (topics != null && topics.isNotEmpty()) {
         return topics[0].name
       }
       return null
