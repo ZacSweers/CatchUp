@@ -126,8 +126,8 @@ private fun Project.configureAndroid() {
       ndkVersion = "21.0.6113669"
       lint {
         lintConfig = rootProject.file("lint.xml")
-        isAbortOnError = true
-        disable("IidCompatibilityCheckFailure")
+        // Lint is pretty wrecked on AGP 7.1
+        isAbortOnError = false
         // https://issuetracker.google.com/issues/170026127
         disable("InvalidFragmentVersionForActivityResult")
         enable("InlinedApi")
