@@ -32,7 +32,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew spotlessCheck :app:assembleDebug test check --stacktrace
+        run: ./gradlew spotlessCheck :app:assembleDebug test :app:lintRelease --stacktrace
       - name: (Fail-only) Bundle the build report
         if: failure()
         run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
