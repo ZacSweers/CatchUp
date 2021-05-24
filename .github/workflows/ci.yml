@@ -32,7 +32,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew spotlessCheck :app:assembleDebug test check --stacktrace
+        # Don't run lint because fragment lints are borked on new AGP versions
+        run: ./gradlew spotlessCheck :app:assembleDebug test check -x lintRelease --stacktrace
       - name: (Fail-only) Bundle the build report
         if: failure()
         run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
