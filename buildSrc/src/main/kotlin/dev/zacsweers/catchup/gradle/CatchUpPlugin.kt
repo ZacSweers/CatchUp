@@ -19,6 +19,7 @@ package dev.zacsweers.catchup.gradle
 
 import build
 import com.android.build.api.extension.ApplicationAndroidComponentsExtension
+import com.android.build.api.extension.LibraryAndroidComponentsExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
@@ -156,12 +157,14 @@ private fun Project.configureAndroid() {
     dependencies.add("coreLibraryDesugaring", deps.build.coreLibraryDesugaring)
   }
   plugins.withType<LibraryPlugin> {
+    configure<LibraryAndroidComponentsExtension> {
+      beforeVariants { variant ->
+        variant.enabled = variant.buildType != "release"
+        variant.enableAndroidTest = false
+      }
+    }
     extensions.getByType<LibraryExtension>().apply {
       baseExtensionConfig()
-
-      variantFilter {
-        ignore = buildType.name != "release"
-      }
     }
   }
 }
