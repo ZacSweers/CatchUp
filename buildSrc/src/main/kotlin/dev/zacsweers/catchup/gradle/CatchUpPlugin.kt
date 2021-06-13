@@ -182,7 +182,7 @@ private fun Project.configureKotlin() {
   }
   plugins.withId(deps.anvil.pluginId) {
     extensions.configure<AnvilExtension> {
-      generateDaggerFactories = true
+      generateDaggerFactories.set(true)
     }
   }
 }

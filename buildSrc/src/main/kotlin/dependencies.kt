@@ -56,9 +56,7 @@ object deps {
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
-    // Incompatible with AGP 7.1.0 https://github.com/google/dagger/issues/2634
-    // Next release will support
-    const val dagger = "HEAD-SNAPSHOT"
+    const val dagger = "2.37"
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
@@ -137,8 +135,7 @@ object deps {
       }
 
       object compose {
-        // TODO use beta08 when it's out for kotlin 1.5.0
-        const val version = "1.0.0-SNAPSHOT"
+        const val version = "1.0.0-beta08"
         const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
         const val foundation = "androidx.compose.foundation:foundation:$version"
         const val material = "androidx.compose.material:material:$version"
@@ -169,7 +166,7 @@ object deps {
   }
 
   object anvil {
-    const val version = "2.2.2"
+    const val version = "2.3.1"
     const val pluginId = "com.squareup.anvil"
   }
 
@@ -245,7 +242,7 @@ object deps {
   }
 
   object coil {
-    private const val VERSION = "1.2.1"
+    private const val VERSION = "1.2.2"
     const val base = "io.coil-kt:coil-base:$VERSION"
     const val default = "io.coil-kt:coil:$VERSION"
     const val gif = "io.coil-kt:coil-gif:$VERSION"
@@ -346,7 +343,7 @@ object deps {
   }
 
   object ksp {
-    const val version = "1.5.0-1.0.0-alpha10"
+    const val version = "1.5.10-1.0.0-beta02"
     const val pluginId = "com.google.devtools.ksp"
   }
 
@@ -365,7 +362,7 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:5.9.3"
+    const val bugsnag = "com.bugsnag:bugsnag-android:5.9.4"
     const val byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
     object debug {
@@ -391,7 +388,7 @@ object deps {
     const val kotprefEnum = "com.chibatching.kotpref:enum-support:${versions.kotpref}"
     const val lottie = "com.airbnb.android:lottie:3.7.0"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-    const val okio = "com.squareup.okio:okio:3.0.0-alpha.5"
+    const val okio = "com.squareup.okio:okio:${SharedBuildVersions.okio}"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:4.0.2"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.2"
     const val ticktock = "dev.zacsweers.ticktock:ticktock-android-lazyzonerules:1.1.0-2020f"
@@ -405,7 +402,7 @@ object deps {
     const val compiler = "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi}"
     const val shimo = "com.jakewharton.moshi:shimo:0.1.0"
     object moshix {
-      private const val VERSION = "0.11.0"
+      private const val VERSION = "0.11.2"
 
       const val ksp = "dev.zacsweers.moshix:moshi-ksp:$VERSION"
 

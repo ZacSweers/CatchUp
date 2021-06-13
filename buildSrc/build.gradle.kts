@@ -18,10 +18,10 @@ plugins {
  * These are copied as a source into the main source set and templated for replacement.
  */
 object SharedBuildVersions {
-  const val agp = "7.1.0-alpha01"
+  const val agp = "7.1.0-alpha02"
   const val kotlin = "1.5.10"
   const val moshi = "1.12.0"
-  const val okio = "2.10.0"
+  const val okio = "3.0.0-alpha.6"
   const val kotlinJvmTarget = "11"
   val kotlinCompilerArgs = listOf(
       "-progressive",
@@ -103,10 +103,10 @@ dependencies {
   implementation(kotlin("stdlib-jdk8", version = SharedBuildVersions.kotlin))
   implementation(kotlin("reflect", version = SharedBuildVersions.kotlin))
 
-  implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.2.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.2.1")
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
   implementation("de.undercouch:gradle-download-task:4.1.1")
-  implementation("com.squareup.anvil:gradle-plugin:2.2.2")
+  implementation("com.squareup.anvil:gradle-plugin:2.3.1")
 }
