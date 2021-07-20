@@ -12,6 +12,12 @@ plugins {
   `java-gradle-plugin`
 }
 
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(16))
+  }
+}
+
 /**
  * These are magic shared versions that are used in both buildSrc's build file and dependencies.kt.
  * These are copied as a source into the main source set and templated for replacement.

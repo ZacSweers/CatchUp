@@ -30,11 +30,15 @@ import deps
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.hasPlugin
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
@@ -193,9 +197,15 @@ private fun Project.configureKotlin() {
 private fun Project.configureJava() {
   plugins.withType<JavaBasePlugin> {
     extensions.getByType<JavaPluginExtension>().apply {
-      // TODO toolchains
-      sourceCompatibility = JavaVersion.VERSION_11
-      targetCompatibility = JavaVersion.VERSION_11
+      toolchain {
+        languageVersion.set(JavaLanguageVersion.of(16))
+      }
+    }
+
+    if (!plugins.hasPlugin(BasePlugin::class)) {
+      tasks.withType<JavaCompile>().configureEach {
+        options.release.set(11)
+      }
     }
   }
 }
