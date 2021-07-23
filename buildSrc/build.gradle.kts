@@ -24,7 +24,7 @@ java {
  */
 object SharedBuildVersions {
   const val agp = "7.1.0-alpha04"
-  const val kotlin = "1.5.21"
+  const val kotlin = "1.5.30-M1"
   const val moshi = "1.12.0"
   const val okio = "3.0.0-alpha.8"
   const val kotlinJvmTarget = "11"
