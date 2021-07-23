@@ -141,6 +141,7 @@ object deps {
         const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha08"
         const val livedata = "androidx.compose.runtime:runtime-livedata:$version"
         const val rxjava2 = "androidx.compose.runtime:runtime-rxjava2:$version"
+        const val rxjava3 = "androidx.compose.runtime:runtime-rxjava3:$version"
       }
     }
 
@@ -430,6 +431,7 @@ object deps {
 
     const val moshi = "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
     const val rxJava2 = "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
+    const val rxJava3 = "com.squareup.retrofit2:adapter-rxjava3:${versions.retrofit}"
   }
 
   object rx {
@@ -437,7 +439,7 @@ object deps {
 
     const val dogTag = "com.uber.rxdogtag:rxdogtag:1.0.1"
     const val dogTagAutoDispose = "com.uber.rxdogtag:rxdogtag-autodispose:1.0.1"
-    const val java = "io.reactivex.rxjava2:rxjava:2.2.21"
+    const val java = "io.reactivex.rxjava3:rxjava:3.0.13"
     const val relay = "com.jakewharton.rxrelay2:rxrelay:2.1.1"
   }
 
