@@ -31,9 +31,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.SingleEmitter
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.core.SingleEmitter
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult

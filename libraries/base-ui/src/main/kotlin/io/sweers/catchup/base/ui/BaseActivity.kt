@@ -25,11 +25,11 @@ import androidx.annotation.CheckResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
 import androidx.viewbinding.ViewBinding
-import com.jakewharton.rxrelay2.BehaviorRelay
-import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
-import com.uber.autodispose.lifecycle.LifecycleScopeProvider
+import autodispose2.lifecycle.CorrespondingEventsFunction
+import autodispose2.lifecycle.LifecycleScopeProvider
+import com.jakewharton.rxrelay3.BehaviorRelay
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 import io.sweers.catchup.base.ui.ActivityEvent.CREATE
 import io.sweers.catchup.base.ui.ActivityEvent.DESTROY
 import io.sweers.catchup.base.ui.ActivityEvent.PAUSE

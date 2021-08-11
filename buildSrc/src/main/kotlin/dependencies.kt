@@ -53,7 +53,7 @@ object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
     const val apollo = "3.0.0-alpha03"
-    const val autodispose = "1.4.0"
+    const val autodispose = "2.1.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
     const val dagger = "2.38.1"
@@ -128,7 +128,7 @@ object deps {
         const val apt = "androidx.room:room-compiler:$version"
         const val ktx = "androidx.room:room-ktx:$version"
         const val runtime = "androidx.room:room-runtime:$version"
-        const val rxJava2 = "androidx.room:room-rxjava2:$version"
+        const val rxJava3 = "androidx.room:room-rxjava3:$version"
       }
 
       object compose {
@@ -140,7 +140,6 @@ object deps {
         const val materialIconsExtended = "androidx.compose.material:material-icons-extended:$version"
         const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
         const val livedata = "androidx.compose.runtime:runtime-livedata:$version"
-        const val rxjava2 = "androidx.compose.runtime:runtime-rxjava2:$version"
         const val rxjava3 = "androidx.compose.runtime:runtime-rxjava3:$version"
       }
     }
@@ -173,8 +172,6 @@ object deps {
     const val httpcache = "com.apollographql.apollo3:apollo-http-cache:${versions.apollo}"
     const val normalizedCache = "com.apollographql.apollo3:apollo-normalized-cache:${versions.apollo}"
     const val runtime = "com.apollographql.apollo3:apollo-runtime:${versions.apollo}"
-    const val rx2Support = "com.apollographql.apollo3:apollo-rx2-support:${versions.apollo}"
-    const val rx3Support = "com.apollographql.apollo3:apollo-rx3-support:${versions.apollo}"
   }
 
   object auto {
@@ -183,10 +180,10 @@ object deps {
   }
 
   object autoDispose {
-    const val core = "com.uber.autodispose:autodispose:${versions.autodispose}"
-    const val android = "com.uber.autodispose:autodispose-android:${versions.autodispose}"
-    const val androidArch = "com.uber.autodispose:autodispose-android-archcomponents:${versions.autodispose}"
-    const val lifecycle = "com.uber.autodispose:autodispose-lifecycle:${versions.autodispose}"
+    const val core = "com.uber.autodispose2:autodispose:${versions.autodispose}"
+    const val android = "com.uber.autodispose2:autodispose-android:${versions.autodispose}"
+    const val androidxLifecycle = "com.uber.autodispose2:autodispose-androidx-lifecycle:${versions.autodispose}"
+    const val lifecycle = "com.uber.autodispose2:autodispose-lifecycle:${versions.autodispose}"
   }
 
   object build {
@@ -324,7 +321,7 @@ object deps {
     private const val coroutinesVersion = "1.5.1"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
-    const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
+    const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:$coroutinesVersion"
     const val datetime = "org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.2.0"
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     const val metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0"
@@ -428,17 +425,16 @@ object deps {
     }
 
     const val moshi = "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
-    const val rxJava2 = "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
     const val rxJava3 = "com.squareup.retrofit2:adapter-rxjava3:${versions.retrofit}"
   }
 
   object rx {
-    const val android = "io.reactivex.rxjava2:rxandroid:2.1.1"
+    const val android = "io.reactivex.rxjava3:rxandroid:3.0.0"
 
-    const val dogTag = "com.uber.rxdogtag:rxdogtag:1.0.1"
-    const val dogTagAutoDispose = "com.uber.rxdogtag:rxdogtag-autodispose:1.0.1"
+    const val dogTag = "com.uber.rxdogtag2:rxdogtag:2.0.1"
+    const val dogTagAutoDispose = "com.uber.rxdogtag2:rxdogtag-autodispose:2.0.1"
     const val java = "io.reactivex.rxjava3:rxjava:3.1.0"
-    const val relay = "com.jakewharton.rxrelay2:rxrelay:2.1.1"
+    const val relay = "com.jakewharton.rxrelay3:rxrelay:3.0.1"
   }
 
   object tikxml {

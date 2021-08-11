@@ -33,10 +33,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import autodispose2.autoDispose
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.uber.autodispose.autoDispose
 import dagger.hilt.android.AndroidEntryPoint
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.noties.markwon.Markwon

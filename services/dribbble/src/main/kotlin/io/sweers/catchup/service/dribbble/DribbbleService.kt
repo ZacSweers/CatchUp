@@ -24,7 +24,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
@@ -41,7 +41,7 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -122,7 +122,7 @@ object DribbbleModule {
   @Provides
   internal fun provideDribbbleService(
     client: Lazy<OkHttpClient>,
-    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): DribbbleApi {
     return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)

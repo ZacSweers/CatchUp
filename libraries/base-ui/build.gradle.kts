@@ -30,7 +30,7 @@ dependencies {
   api(deps.autoDispose.core)
   api(deps.autoDispose.android)
   api(deps.autoDispose.lifecycle)
-  api(deps.autoDispose.androidArch)
+  api(deps.autoDispose.androidxLifecycle)
   api(deps.rx.java)
   implementation(deps.rx.relay)
   api(deps.android.androidx.annotations)

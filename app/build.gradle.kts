@@ -398,7 +398,7 @@ dependencies {
   implementation(deps.android.androidx.lifecycle.extensions)
   kapt(deps.android.androidx.lifecycle.apt)
   implementation(deps.android.androidx.room.runtime)
-  implementation(deps.android.androidx.room.rxJava2)
+  implementation(deps.android.androidx.room.rxJava3)
   implementation(deps.android.androidx.room.ktx)
   kapt(deps.android.androidx.room.apt)
 
@@ -430,7 +430,7 @@ dependencies {
   implementation(deps.misc.okio)
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
-  implementation(deps.retrofit.rxJava2)
+  implementation(deps.retrofit.rxJava3)
   implementation(deps.rx.android)
   implementation(deps.rx.java)
   implementation(deps.misc.tapTargetView)
@@ -463,7 +463,7 @@ dependencies {
   implementation(deps.rx.dogTag)
   implementation(deps.rx.dogTagAutoDispose)
   implementation(deps.misc.moshiLazyAdapters)
-  implementation(deps.autoDispose.androidArch)
+  implementation(deps.autoDispose.androidxLifecycle)
   implementation(deps.misc.kotpref)
   implementation(deps.misc.kotprefEnum)
   implementation(deps.kotlin.datetime)
@@ -472,7 +472,6 @@ dependencies {
   implementation(deps.apollo.httpcache)
   implementation(deps.apollo.normalizedCache)
   implementation(deps.apollo.runtime)
-  implementation(deps.apollo.rx2Support)
 
   // Flipper
   debugImplementation(deps.misc.debug.flipper)

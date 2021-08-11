@@ -15,8 +15,8 @@
  */
 package io.sweers.catchup.service.newsapi
 
-import io.reactivex.SingleSource
-import io.reactivex.functions.Function
+import io.reactivex.rxjava3.core.SingleSource
+import io.reactivex.rxjava3.functions.Function
 import io.sweers.catchup.service.newsapi.model.NewsApiResponse
 
 /**

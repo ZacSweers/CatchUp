@@ -25,7 +25,7 @@ dependencies {
   implementation(project(":libraries:util"))
   implementation(deps.misc.jsoup)
   implementation(deps.retrofit.core)
-  implementation(deps.retrofit.rxJava2)
+  implementation(deps.retrofit.rxJava3)
   implementation(deps.okhttp.core)
   implementation(deps.kotlin.datetime)
 

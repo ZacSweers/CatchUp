@@ -15,7 +15,7 @@
  */
 package io.sweers.catchup.service.reddit
 
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.reddit.model.RedditResponse
 import retrofit2.http.GET
 import retrofit2.http.Path

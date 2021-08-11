@@ -31,7 +31,7 @@ dependencies {
   implementation(project(":libraries:util"))
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
-  implementation(deps.retrofit.rxJava2)
+  implementation(deps.retrofit.rxJava3)
   implementation(deps.okhttp.core)
   implementation(deps.kotlin.datetime)
 

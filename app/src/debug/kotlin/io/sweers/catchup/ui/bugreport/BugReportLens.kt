@@ -29,13 +29,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import autodispose2.autoDispose
 import com.mattprecious.telescope.Lens
-import com.uber.autodispose.autoDispose
 import dagger.hilt.android.scopes.ActivityScoped
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BaseActivity
 import io.sweers.catchup.data.LumberYard

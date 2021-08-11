@@ -24,9 +24,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
-import com.uber.autodispose.ScopeProvider
-import com.uber.autodispose.android.lifecycle.scope
-import io.reactivex.CompletableSource
+import autodispose2.ScopeProvider
+import autodispose2.androidx.lifecycle.scope
+import io.reactivex.rxjava3.core.CompletableSource
 
 abstract class BaseFragment<T : ViewBinding> : Fragment(), ScopeProvider, BackpressHandler {
 

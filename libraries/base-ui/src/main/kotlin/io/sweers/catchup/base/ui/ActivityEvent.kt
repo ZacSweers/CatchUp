@@ -15,8 +15,8 @@
  */
 package io.sweers.catchup.base.ui
 
-import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
-import com.uber.autodispose.lifecycle.LifecycleEndedException
+import autodispose2.lifecycle.CorrespondingEventsFunction
+import autodispose2.lifecycle.LifecycleEndedException
 
 /**
  * Activity lifecycle events.

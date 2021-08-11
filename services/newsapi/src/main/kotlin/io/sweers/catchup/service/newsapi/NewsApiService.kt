@@ -23,9 +23,9 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Maybe
-import io.reactivex.Single
-import io.reactivex.SingleSource
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.core.SingleSource
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -53,7 +53,7 @@ import kotlinx.datetime.temporal.ChronoUnit
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -195,7 +195,7 @@ abstract class NewsApiModule {
     internal fun provideNewsApiService(
       @InternalApi client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
       appConfig: AppConfig
     ): NewsApiApi {
       return Retrofit.Builder().baseUrl(NewsApiApi.ENDPOINT)

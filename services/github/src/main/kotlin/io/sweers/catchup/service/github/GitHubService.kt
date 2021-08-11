@@ -17,8 +17,11 @@ package io.sweers.catchup.service.github
 
 import android.graphics.Color
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.ApolloRequest
+import com.apollographql.apollo3.api.Query
+import com.apollographql.apollo3.cache.http.HttpFetchPolicy.NetworkOnly
+import com.apollographql.apollo3.cache.http.withHttpFetchPolicy
 import com.apollographql.apollo3.exception.ApolloException
-import com.apollographql.apollo3.rx2.Rx2ApolloClient
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
@@ -28,9 +31,8 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
@@ -55,9 +57,11 @@ import io.sweers.catchup.service.github.type.LanguageOrderField
 import io.sweers.catchup.service.github.type.OrderDirection
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.nullIfBlank
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.rx3.rxSingle
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -122,23 +126,21 @@ class GitHubService @Inject constructor(
     )
       .toString()
 
-    val searchQuery = Rx2ApolloClient(
-      apolloClient.get(),
-//      .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
-//      .build()
-      Schedulers.io()
-    )
-      .query(
-        GitHubSearchQuery(
-          queryString = query,
-          firstCount = 50,
-          order = LanguageOrder(
-            direction = OrderDirection.DESC,
-            field_ = LanguageOrderField.SIZE
-          ),
-          after = request.pageId.nullIfBlank()
+    val searchQuery = rxSingle(Dispatchers.IO) {
+      apolloClient.get()
+        .query(
+          GitHubSearchQuery(
+            queryString = query,
+            firstCount = 50,
+            order = LanguageOrder(
+              direction = OrderDirection.DESC,
+              field_ = LanguageOrderField.SIZE
+            ),
+            after = request.pageId.nullIfBlank()
+          ).toApolloRequest()
+            .withHttpFetchPolicy(NetworkOnly)
         )
-      )
+    }
 
     return searchQuery
       .doOnSuccess {
@@ -211,7 +213,7 @@ object GitHubModule {
   @Provides
   internal fun provideGitHubService(
     client: Lazy<OkHttpClient>,
-    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): GitHubApi {
     return Retrofit.Builder().baseUrl(GitHubApi.ENDPOINT)
@@ -222,4 +224,8 @@ object GitHubModule {
       .build()
       .create(GitHubApi::class.java)
   }
+}
+
+private fun <D : Query.Data> Query<D>.toApolloRequest(): ApolloRequest<D> {
+  return ApolloRequest(this)
 }

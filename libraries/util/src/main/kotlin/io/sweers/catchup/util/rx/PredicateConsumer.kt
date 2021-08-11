@@ -15,8 +15,8 @@
  */
 package io.sweers.catchup.util.rx
 
-import io.reactivex.functions.Consumer
-import io.reactivex.functions.Predicate
+import io.reactivex.rxjava3.functions.Consumer
+import io.reactivex.rxjava3.functions.Predicate
 
 /**
  * A consumer that only calls the [accept] method if [test] returns true.

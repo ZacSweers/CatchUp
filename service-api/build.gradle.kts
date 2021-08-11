@@ -40,6 +40,6 @@ dependencies {
   api(deps.rx.java)
   api(deps.okhttp.core)
   api(deps.retrofit.core)
-  api(deps.retrofit.rxJava2)
+  api(deps.retrofit.rxJava3)
   api(deps.apollo.runtime)
 }

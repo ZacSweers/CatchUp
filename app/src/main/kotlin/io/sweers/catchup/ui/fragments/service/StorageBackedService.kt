@@ -16,12 +16,12 @@
 package io.sweers.catchup.ui.fragments.service
 
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.data.ServicePage
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder

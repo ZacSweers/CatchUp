@@ -15,7 +15,7 @@
  */
 package io.sweers.catchup.service.dribbble
 
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.dribbble.model.Shot
 import retrofit2.http.GET
 import retrofit2.http.Query

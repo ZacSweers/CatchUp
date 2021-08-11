@@ -16,7 +16,7 @@
 package io.sweers.catchup.service.producthunt
 
 import com.serjltt.moshi.adapters.Wrapped
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.producthunt.model.Post
 import retrofit2.http.GET
 import retrofit2.http.Query

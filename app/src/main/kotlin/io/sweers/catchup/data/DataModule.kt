@@ -27,7 +27,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.sweers.catchup.gemoji.GemojiModule
 import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.injection.SharedPreferencesName
@@ -37,7 +37,7 @@ import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -107,8 +107,8 @@ abstract class DataModule {
 
     @Provides
     @Singleton
-    internal fun provideRxJavaCallAdapterFactory(): RxJava2CallAdapterFactory {
-      return RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
+    internal fun provideRxJavaCallAdapterFactory(): RxJava3CallAdapterFactory {
+      return RxJava3CallAdapterFactory.createWithScheduler(Schedulers.io())
     }
 
     @Provides
