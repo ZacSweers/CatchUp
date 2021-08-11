@@ -119,6 +119,12 @@ private fun Project.configureAndroid() {
     // interface
     extensions.configure<ApplicationAndroidComponentsExtension> {
       configureVersioning(project)
+      beforeVariants { variant ->
+        if (variant.buildType == "release") {
+          variant.enableUnitTest = false
+          variant.enableAndroidTest = false
+        }
+      }
     }
     extensions.getByType<BaseAppModuleExtension>().apply {
       baseExtensionConfig()
