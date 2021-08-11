@@ -67,7 +67,7 @@ object deps {
     const val markwon = "4.6.2"
     const val moshi = SharedBuildVersions.moshi
     const val retrofit = "2.9.0"
-    const val spotless = "5.14.1"
+    const val spotless = "5.14.2"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
 
