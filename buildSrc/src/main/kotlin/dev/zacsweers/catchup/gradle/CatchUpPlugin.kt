@@ -189,13 +189,6 @@ private fun Project.configureKotlin() {
       generateDaggerFactories.set(true)
     }
   }
-
-  plugins.withId(deps.ksp.pluginId) {
-    // https://github.com/google/ksp/issues/552
-    tasks.withType<KspTaskJvm>().configureEach {
-      useClasspathSnapshot.set(true)
-    }
-  }
 }
 
 private fun Project.configureJava() {
