@@ -63,7 +63,6 @@ import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.UiUtil.fastOutSlowInInterpolator
 import io.sweers.catchup.util.isInNightMode
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.math.roundToLong
@@ -71,13 +70,14 @@ import kotlin.math.roundToLong
 internal class ImageAdapter(
   context: Context,
   spanCount: Int,
-  private val bindDelegate: (ImageItem, ImageHolder, clicksChannel: SendChannel<UrlMeta>) -> Unit
+  private val bindDelegate: (ImageItem, ImageHolder, clicksReceiver: (UrlMeta) -> Boolean) -> Unit
 ) :
   DisplayableItemAdapter<ImageItem, ViewHolder>(columnCount = spanCount),
   DataLoadingSubject.DataLoadingCallbacks {
 
   companion object {
     const val PRELOAD_AHEAD_ITEMS = 6
+
     @ColorInt
     private const val INITIAL_GIF_BADGE_COLOR = 0x40ffffff
   }
@@ -188,7 +188,7 @@ internal class ImageAdapter(
         }
         // TODO This is kind of ugly but not sure what else to do. Holder can't be an inner class to avoid mem leaks
         imageHolder.backingImageItem = imageItem
-        bindDelegate(imageItem, holder, clicksChannel())
+        bindDelegate(imageItem, holder, clicksReceiver())
           .also {
             holder.backingImageItem = null
           }

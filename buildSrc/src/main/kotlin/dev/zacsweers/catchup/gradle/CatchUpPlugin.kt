@@ -18,7 +18,8 @@
 package dev.zacsweers.catchup.gradle
 
 import build
-import com.android.build.api.extension.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
@@ -29,11 +30,16 @@ import deps
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.hasPlugin
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
@@ -99,10 +105,6 @@ private val baseExtensionConfig: BaseExtension.() -> Unit = {
     targetCompatibility = JavaVersion.VERSION_11
     isCoreLibraryDesugaringEnabled = true
   }
-  lintOptions {
-    isCheckReleaseBuilds = false
-    isAbortOnError = false
-  }
   sourceSets {
     findByName("main")?.java?.srcDirs("src/main/kotlin")
     findByName("debug")?.java?.srcDirs("src/debug/kotlin")
@@ -117,6 +119,12 @@ private fun Project.configureAndroid() {
     // interface
     extensions.configure<ApplicationAndroidComponentsExtension> {
       configureVersioning(project)
+      beforeVariants { variant ->
+        if (variant.buildType == "release") {
+          variant.enableUnitTest = false
+          variant.enableAndroidTest = false
+        }
+      }
     }
     extensions.getByType<BaseAppModuleExtension>().apply {
       baseExtensionConfig()
@@ -127,23 +135,23 @@ private fun Project.configureAndroid() {
       lint {
         lintConfig = rootProject.file("lint.xml")
         // Lint is pretty wrecked on AGP 7.1
-        isAbortOnError = false
-        // https://issuetracker.google.com/issues/170026127
-        disable("InvalidFragmentVersionForActivityResult")
-        enable("InlinedApi")
-        enable("Interoperability")
-        enable("NewApi")
-        fatal("NewApi")
-        fatal("InlinedApi")
-        enable("UnusedResources")
-        warning("MissingTranslation")
-        isCheckReleaseBuilds = true
+        abortOnError = false
+        enable += setOf(
+          "InlinedApi",
+          "Interoperability",
+          "NewApi",
+          "UnusedResources",
+        )
+        fatal += setOf(
+          "NewApi",
+          "InlinedApi",
+        )
+        warning += "MissingTranslation"
+        checkReleaseBuilds = true
         textReport = deps.build.ci
-        textOutput("stdout")
-        isCheckDependencies = true
-
-        // Pending fix in https://android-review.googlesource.com/c/platform/frameworks/support/+/1217923
-        disable("UnsafeExperimentalUsageError", "UnsafeExperimentalUsageWarning")
+        // https://issuetracker.google.com/issues/196209595
+//        textOutput("stdout")
+        checkDependencies = true
       }
       buildTypes {
         getByName("debug") {
@@ -156,12 +164,14 @@ private fun Project.configureAndroid() {
     dependencies.add("coreLibraryDesugaring", deps.build.coreLibraryDesugaring)
   }
   plugins.withType<LibraryPlugin> {
+    configure<LibraryAndroidComponentsExtension> {
+      beforeVariants { variant ->
+        variant.enabled = variant.buildType == "release"
+        variant.enableAndroidTest = false
+      }
+    }
     extensions.getByType<LibraryExtension>().apply {
       baseExtensionConfig()
-
-      variantFilter {
-        ignore = buildType.name != "release"
-      }
     }
   }
 }
@@ -180,9 +190,12 @@ private fun Project.configureKotlin() {
       mapDiagnosticLocations = true
     }
   }
+  plugins.withId("org.jetbrains.kotlin.jvm") {
+    apply(plugin = "com.android.lint")
+  }
   plugins.withId(deps.anvil.pluginId) {
     extensions.configure<AnvilExtension> {
-      generateDaggerFactories = true
+      generateDaggerFactories.set(true)
     }
   }
 }
@@ -190,9 +203,15 @@ private fun Project.configureKotlin() {
 private fun Project.configureJava() {
   plugins.withType<JavaBasePlugin> {
     extensions.getByType<JavaPluginExtension>().apply {
-      // TODO toolchains
-      sourceCompatibility = JavaVersion.VERSION_11
-      targetCompatibility = JavaVersion.VERSION_11
+      toolchain {
+        languageVersion.set(JavaLanguageVersion.of(16))
+      }
+    }
+
+    if (!plugins.hasPlugin(BasePlugin::class)) {
+      tasks.withType<JavaCompile>().configureEach {
+        options.release.set(11)
+      }
     }
   }
 }

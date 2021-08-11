@@ -26,6 +26,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.collection.ArrayMap
 import androidx.core.util.toAndroidPair
@@ -209,7 +210,11 @@ class LinkManager @Inject constructor(
           setExitAnimations(context, R.anim.outset, R.anim.slide_down)
         }
         .setColorScheme(colorScheme)
-        .setToolbarColor(accentColor)
+        .setDefaultColorSchemeParams(
+          CustomTabColorSchemeParams.Builder()
+            .setToolbarColor(accentColor)
+            .build()
+        )
         .build(),
       uri
     )
