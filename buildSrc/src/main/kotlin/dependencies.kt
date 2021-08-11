@@ -341,7 +341,7 @@ object deps {
   }
 
   object ksp {
-    const val version = "1.5.21-1.0.0-beta05"
+    const val version = "1.5.21-1.0.0-beta06"
     const val pluginId = "com.google.devtools.ksp"
   }
 
