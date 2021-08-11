@@ -35,6 +35,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
@@ -165,7 +166,7 @@ private fun Project.configureAndroid() {
   plugins.withType<LibraryPlugin> {
     configure<LibraryAndroidComponentsExtension> {
       beforeVariants { variant ->
-        variant.enabled = variant.buildType != "release"
+        variant.enabled = variant.buildType == "release"
         variant.enableAndroidTest = false
       }
     }
@@ -188,6 +189,9 @@ private fun Project.configureKotlin() {
       correctErrorTypes = true
       mapDiagnosticLocations = true
     }
+  }
+  plugins.withId("org.jetbrains.kotlin.jvm") {
+    apply(plugin = "com.android.lint")
   }
   plugins.withId(deps.anvil.pluginId) {
     extensions.configure<AnvilExtension> {

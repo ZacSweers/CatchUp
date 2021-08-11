@@ -25,7 +25,7 @@ import timber.log.Timber
 
 /** Invokes an action if any trees are planted */
 inline fun ifPlanted(action: () -> Unit) {
-  if (Timber.treeCount() != 0) {
+  if (Timber.treeCount != 0) {
     action()
   }
 }

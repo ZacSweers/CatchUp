@@ -56,7 +56,7 @@ object deps {
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
-    const val dagger = "2.37"
+    const val dagger = "2.38.1"
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
@@ -390,7 +390,7 @@ object deps {
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:4.0.2"
     const val tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.3"
     const val ticktock = "dev.zacsweers.ticktock:ticktock-android-lazyzonerules:1.1.0-2020f"
-    const val timber = "com.jakewharton.timber:timber:4.7.1"
+    const val timber = "com.jakewharton.timber:timber:5.0.0"
     const val unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"
   }
 
