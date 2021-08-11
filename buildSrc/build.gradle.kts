@@ -108,6 +108,7 @@ dependencies {
   implementation(kotlin("stdlib-jdk8", version = SharedBuildVersions.kotlin))
   implementation(kotlin("reflect", version = SharedBuildVersions.kotlin))
 
+  compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.5.21-1.0.0-beta06")
   implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.2.1")
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
