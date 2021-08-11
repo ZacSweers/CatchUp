@@ -17,15 +17,11 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
-}
-
-apply {
-  from(rootProject.file("gradle/config-kotlin-sources.gradle"))
+  id(deps.ksp.pluginId)
 }
 
 dependencies {
-  kapt(deps.android.androidx.room.apt)
+  ksp(deps.android.androidx.room.apt)
 
   implementation(deps.kotlin.coroutinesAndroid)
   implementation(deps.kotlin.coroutinesRx)
