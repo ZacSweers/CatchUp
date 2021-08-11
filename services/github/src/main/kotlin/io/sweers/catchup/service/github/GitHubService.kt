@@ -16,11 +16,9 @@
 package io.sweers.catchup.service.github
 
 import android.graphics.Color
-import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Input
-import com.apollographql.apollo.api.cache.http.HttpCachePolicy
-import com.apollographql.apollo.exception.ApolloException
-import com.apollographql.apollo.rx2.Rx2Apollo
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo3.rx2.Rx2ApolloClient
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
@@ -32,6 +30,7 @@ import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
@@ -123,23 +122,25 @@ class GitHubService @Inject constructor(
     )
       .toString()
 
-    val searchQuery = apolloClient.get().query(
-      GitHubSearchQuery(
-        query,
-        50,
-        LanguageOrder(
-          direction = OrderDirection.DESC,
-          field_ = LanguageOrderField.SIZE
-        ),
-        Input.fromNullable(request.pageId.nullIfBlank())
-      )
+    val searchQuery = Rx2ApolloClient(
+      apolloClient.get(),
+//      .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
+//      .build()
+      Schedulers.io()
     )
-      .toBuilder()
-      .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
-      .build()
+      .query(
+        GitHubSearchQuery(
+          queryString = query,
+          firstCount = 50,
+          order = LanguageOrder(
+            direction = OrderDirection.DESC,
+            field_ = LanguageOrderField.SIZE
+          ),
+          after = request.pageId.nullIfBlank()
+        )
+      )
 
-    return Rx2Apollo.from(searchQuery)
-      .firstOrError()
+    return searchQuery
       .doOnSuccess {
         if (it.hasErrors()) {
           throw ApolloException(it.errors.toString())

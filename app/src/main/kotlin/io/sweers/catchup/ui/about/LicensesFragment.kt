@@ -33,13 +33,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import coil.transform.CircleCropTransformation
-import com.apollographql.apollo.ApolloCall
-import com.apollographql.apollo.ApolloCall.StatusEvent
-import com.apollographql.apollo.ApolloCall.StatusEvent.COMPLETED
-import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Response
-import com.apollographql.apollo.api.cache.http.HttpCachePolicy
-import com.apollographql.apollo.exception.ApolloException
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.ApolloRequest
+import com.apollographql.apollo3.api.Query
+import com.apollographql.apollo3.cache.http.HttpFetchPolicy.CacheFirst
+import com.apollographql.apollo3.cache.http.withHttpFetchPolicy
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -57,7 +55,6 @@ import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
 import io.sweers.catchup.databinding.AboutHeaderItemBinding
 import io.sweers.catchup.databinding.FragmentLicensesBinding
-import io.sweers.catchup.flowbinding.safeOffer
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.service.api.TemporaryScopeHolder
@@ -79,14 +76,8 @@ import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flattenConcat
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.map
@@ -186,18 +177,14 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     // Fetch repos, send down a map of the ids to owner ids
     val idsToOwnerIds = githubEntries.asFlow()
       .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
-      .flatMapMerge {
-        apolloClient.query(it)
-          .toBuilder()
-          .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
-          .build()
-          .toFlow()
-          .map {
-            with(it.data!!.repository!!) {
-              id to owner.id
-            }
-          }
-          .flowOn(Dispatchers.IO)
+      .map {
+        val response = apolloClient.query(
+          it.toApolloRequest()
+            .withHttpFetchPolicy(CacheFirst)
+        )
+        with(response.data!!.repository!!) {
+          id to owner.id
+        }
       }
       .distinct()
       .fold(mutableMapOf()) { map: MutableMap<String, String>, (first, second) ->
@@ -208,13 +195,13 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
 
     // Fetch the users by their IDs
     val userIdToNameMap = withContext(Dispatchers.IO) {
-      apolloClient.query(ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct()))
-        .toBuilder()
-        .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
-        .build()
-        .toFlow()
-        .map { it.data!!.nodes.filterNotNull().asFlow() }
-        .flattenConcat()
+      val response = apolloClient.query(
+        ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct())
+          .toApolloRequest()
+          .withHttpFetchPolicy(CacheFirst)
+      )
+
+      response.data!!.nodes.filterNotNull().asFlow()
         // Reduce into a map of the owner ID -> display name
         .fold(mutableMapOf<String, String>()) { map, node ->
           map.apply {
@@ -224,17 +211,14 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
         }
     }
     // Fetch the repositories by their IDs, map down to its
-    return apolloClient.query(RepositoriesByIdsQuery(idsToOwnerIds.keys.toList()))
-      .toBuilder()
-      .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
-      .build()
-      .toFlow()
-      .map {
-        it.data!!.nodes.asSequence()
-          .mapNotNull { it?.asRepository }
-          .asFlow()
-      }
-      .flattenConcat()
+    return apolloClient.query(
+      RepositoriesByIdsQuery(idsToOwnerIds.keys.toList())
+        .toApolloRequest()
+        .withHttpFetchPolicy(CacheFirst)
+    )
+      .data!!.nodes.asSequence()
+      .mapNotNull { it?.asRepository }
+      .asFlow()
       .map { it to userIdToNameMap.getValue(it.owner.id) }
       .map { (repo, ownerName) ->
         OssItem(
@@ -482,30 +466,6 @@ internal data class OssItem(
   override fun itemType() = 1
 }
 
-/**
- * Converts an [ApolloCall] to a [Flow].
- */
-suspend fun <T> ApolloCall<T>.toFlow(): Flow<Response<T>> = callbackFlow {
-  enqueue(
-    object : ApolloCall.Callback<T>() {
-      override fun onResponse(response: Response<T>) {
-        safeOffer(response)
-      }
-
-      override fun onFailure(e: ApolloException) {
-        throw e
-      }
-
-      override fun onStatusEvent(event: StatusEvent) {
-        if (event == COMPLETED && !isClosedForSend) {
-          close()
-        }
-      }
-    }
-  )
-  awaitClose {
-    if (!isCanceled) {
-      cancel()
-    }
-  }
-}.conflate()
+private fun <D : Query.Data> Query<D>.toApolloRequest(): ApolloRequest<D> {
+  return ApolloRequest(this)
+}

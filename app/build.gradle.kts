@@ -24,7 +24,7 @@ plugins {
   id("com.android.application")
   kotlin("android")
   kotlin("kapt")
-  id("com.apollographql.apollo")
+  id("com.apollographql.apollo3")
   id("licensesJsonGenerator")
 //  id("com.bugsnag.android.gradle")
 //  id("com.github.triplet.play")
@@ -189,12 +189,11 @@ tasks.withType<KotlinCompile>().matching { !it.name.startsWith("ksp") }.configur
 apollo {
   service("github") {
     @Suppress("UnstableApiUsage")
-    customTypeMapping.set(mapOf(
+    customScalarsMapping.set(mapOf(
         "DateTime" to "kotlinx.datetime.Instant",
         "URI" to "okhttp3.HttpUrl"
     ))
-    generateKotlinModels.set(true)
-    rootPackageName.set("io.sweers.catchup.data.github")
+    packageName.set("io.sweers.catchup.data.github")
     schemaFile.set(file("src/main/graphql/io/sweers/catchup/data/github/schema.json"))
   }
 }
@@ -470,8 +469,8 @@ dependencies {
   implementation(deps.kotlin.datetime)
 
   // Apollo
-  implementation(deps.apollo.androidSupport)
   implementation(deps.apollo.httpcache)
+  implementation(deps.apollo.normalizedCache)
   implementation(deps.apollo.runtime)
   implementation(deps.apollo.rx2Support)
 
