@@ -210,9 +210,11 @@ class LinkManager @Inject constructor(
           setExitAnimations(context, R.anim.outset, R.anim.slide_down)
         }
         .setColorScheme(colorScheme)
-        .setDefaultColorSchemeParams(CustomTabColorSchemeParams.Builder()
+        .setDefaultColorSchemeParams(
+          CustomTabColorSchemeParams.Builder()
             .setToolbarColor(accentColor)
-            .build())
+            .build()
+        )
         .build(),
       uri
     )

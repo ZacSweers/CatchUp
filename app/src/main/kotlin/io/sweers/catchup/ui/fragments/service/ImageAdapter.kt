@@ -63,7 +63,6 @@ import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.UiUtil.fastOutSlowInInterpolator
 import io.sweers.catchup.util.isInNightMode
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.math.roundToLong
@@ -143,10 +142,10 @@ internal class ImageAdapter(
               // check if it's an event we care about, else bail fast
               val action = event.action
               if (!(
-                  action == MotionEvent.ACTION_DOWN ||
-                    action == MotionEvent.ACTION_UP ||
-                    action == MotionEvent.ACTION_CANCEL
-                  )
+                action == MotionEvent.ACTION_DOWN ||
+                  action == MotionEvent.ACTION_UP ||
+                  action == MotionEvent.ACTION_CANCEL
+                )
               ) {
                 return@setOnTouchListener false
               }

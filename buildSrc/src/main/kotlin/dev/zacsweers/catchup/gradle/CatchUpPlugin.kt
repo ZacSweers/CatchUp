@@ -25,7 +25,6 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
-import com.google.devtools.ksp.gradle.KspTaskJvm
 import com.squareup.anvil.plugin.AnvilExtension
 import deps
 import org.gradle.api.JavaVersion

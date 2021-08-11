@@ -33,7 +33,6 @@ import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.util.isAfter
 import io.sweers.catchup.util.kotlin.switchIf
 import io.sweers.catchup.util.w
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.datetime.Clock
 import retrofit2.HttpException
 import java.io.IOException

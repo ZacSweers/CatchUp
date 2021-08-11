@@ -16,7 +16,6 @@
 package io.sweers.catchup.service.api
 
 import io.reactivex.Single
-import kotlinx.coroutines.channels.SendChannel
 
 interface Service {
   fun meta(): ServiceMeta
