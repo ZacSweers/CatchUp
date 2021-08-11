@@ -47,7 +47,7 @@ buildscript {
 plugins {
   id("com.github.ben-manes.versions") version "0.39.0"
   id("catchup")
-  id("com.osacky.doctor") version "0.7.0"
+  id("com.osacky.doctor") version "0.7.1"
 }
 
 doctor {
