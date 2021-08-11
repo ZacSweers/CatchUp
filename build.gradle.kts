@@ -65,9 +65,6 @@ allprojects {
   repositories {
     google()
     mavenCentral()
-    maven(deps.build.repositories.kotlineap)
-    maven(deps.build.repositories.kotlindev)
-    maven(deps.build.repositories.kotlinx)
     maven(deps.build.repositories.jitpack)
     maven(deps.build.repositories.snapshots)
     maven(deps.build.repositories.androidxSnapshots)

@@ -15,24 +15,30 @@
  */
 package io.sweers.catchup.data
 
-import com.apollographql.apollo.api.CustomTypeAdapter
-import com.apollographql.apollo.api.CustomTypeValue
-import com.apollographql.apollo.api.CustomTypeValue.Companion.fromRawValue
-import com.apollographql.apollo.api.CustomTypeValue.GraphQLString
+import com.apollographql.apollo3.api.Adapter
+import com.apollographql.apollo3.api.CustomScalarAdapters
+import com.apollographql.apollo3.api.json.JsonReader
+import com.apollographql.apollo3.api.json.JsonReader.Token.STRING
+import com.apollographql.apollo3.api.json.JsonWriter
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import kotlinx.datetime.Instant
 
 /**
  * A CustomTypeAdapter for apollo that can convert ISO style date strings to Instant.
  */
-object ISO8601InstantApolloAdapter : CustomTypeAdapter<Instant> {
-  override fun decode(value: CustomTypeValue<*>): Instant {
-    if (value is GraphQLString) {
-      return value.value.parsePossiblyOffsetInstant()
-    } else throw IllegalArgumentException("Value is not a string!")
+object ISO8601InstantApolloAdapter : Adapter<Instant> {
+  override fun fromJson(reader: JsonReader, customScalarAdapters: CustomScalarAdapters): Instant {
+    return when (reader.peek()) {
+      STRING -> reader.nextString()!!.parsePossiblyOffsetInstant()
+      else -> throw IllegalArgumentException("Value wasn't a string!")
+    }
   }
 
-  override fun encode(value: Instant): CustomTypeValue<*> {
-    return fromRawValue(value.toString())
+  override fun toJson(
+    writer: JsonWriter,
+    customScalarAdapters: CustomScalarAdapters,
+    value: Instant
+  ) {
+    writer.value(value.toString())
   }
 }

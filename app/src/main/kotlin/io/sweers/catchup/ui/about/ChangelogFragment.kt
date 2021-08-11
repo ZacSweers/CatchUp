@@ -24,11 +24,12 @@ import android.view.animation.OvershootInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.rx2.Rx2Apollo
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.rx2.Rx2ApolloClient
 import com.google.android.material.snackbar.Snackbar
 import com.uber.autodispose.autoDispose
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -116,8 +117,8 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
   }
 
   private fun requestItems(): Single<List<ChangeLogItem>> {
-    return Rx2Apollo.from(apolloClient.query(RepoReleasesQuery()))
-      .flatMapIterable { it.data!!.repository!!.releases.nodes }
+    return Rx2ApolloClient(apolloClient, Schedulers.io()).query(RepoReleasesQuery())
+      .flatMapObservable { Observable.fromIterable(it.data!!.repository!!.releases.nodes) }
       .map {
         with(it) {
           ChangeLogItem(

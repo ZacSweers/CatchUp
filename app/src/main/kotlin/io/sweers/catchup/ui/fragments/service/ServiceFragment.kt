@@ -42,7 +42,7 @@ import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
-import com.apollographql.apollo.exception.ApolloException
+import com.apollographql.apollo3.exception.ApolloException
 import com.uber.autodispose.autoDispose
 import dagger.hilt.android.AndroidEntryPoint
 import dev.zacsweers.catchup.appconfig.AppConfig

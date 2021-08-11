@@ -16,30 +16,35 @@
 package io.sweers.catchup.data
 
 import android.content.Context
-import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Operation
-import com.apollographql.apollo.api.ResponseField
-import com.apollographql.apollo.api.cache.http.HttpCache
-import com.apollographql.apollo.api.cache.http.HttpCacheStore
-import com.apollographql.apollo.cache.http.ApolloHttpCache
-import com.apollographql.apollo.cache.http.DiskLruHttpCacheStore
-import com.apollographql.apollo.cache.normalized.CacheKey
-import com.apollographql.apollo.cache.normalized.CacheKeyResolver
-import com.apollographql.apollo.cache.normalized.NormalizedCacheFactory
-import com.apollographql.apollo.cache.normalized.lru.EvictionPolicy
-import com.apollographql.apollo.cache.normalized.lru.LruNormalizedCacheFactory
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.CompiledField
+import com.apollographql.apollo3.api.CustomScalarAdapters
+import com.apollographql.apollo3.api.Executable.Variables
+import com.apollographql.apollo3.api.http.DefaultHttpRequestComposer
+import com.apollographql.apollo3.api.http.HttpRequestComposer
+import com.apollographql.apollo3.cache.http.CachingHttpEngine
+import com.apollographql.apollo3.cache.http.DiskLruHttpCache
+import com.apollographql.apollo3.cache.normalized.CacheKey
+import com.apollographql.apollo3.cache.normalized.CacheKeyResolver
+import com.apollographql.apollo3.cache.normalized.MemoryCacheFactory
+import com.apollographql.apollo3.cache.normalized.NormalizedCacheFactory
+import com.apollographql.apollo3.cache.normalized.ObjectIdGenerator
+import com.apollographql.apollo3.cache.normalized.ObjectIdGeneratorContext
+import com.apollographql.apollo3.cache.normalized.withNormalizedCache
+import com.apollographql.apollo3.network.NetworkTransport
+import com.apollographql.apollo3.network.http.DefaultHttpEngine
+import com.apollographql.apollo3.network.http.HttpEngine
+import com.apollographql.apollo3.network.http.HttpNetworkTransport
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.data.github.type.CustomType
+import io.sweers.catchup.data.github.type.Types
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.network.AuthInterceptor
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -57,89 +62,104 @@ internal object GithubApolloModule {
    */
   @Provides
   @Singleton
-  internal fun provideHttpCacheStore(@ApplicationContext context: Context): HttpCacheStore =
-    DiskLruHttpCacheStore(context.cacheDir, 1_000_000)
-
-  @Provides
-  @Singleton
-  internal fun provideHttpCache(httpCacheStore: HttpCacheStore): HttpCache =
-    ApolloHttpCache(httpCacheStore, null)
+  internal fun provideHttpCacheStore(@ApplicationContext context: Context): DiskLruHttpCache =
+    DiskLruHttpCache(context.cacheDir, 1_000_000)
 
   @Provides
   @InternalApi
   @Singleton
   internal fun provideGitHubOkHttpClient(
-    client: OkHttpClient,
-    httpCache: HttpCache
+    client: OkHttpClient
   ): OkHttpClient = client.newBuilder()
-    .addInterceptor(httpCache.interceptor())
     .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
     .build()
 
   @Provides
   @Singleton
-  internal fun provideCacheKeyResolver(): CacheKeyResolver = object : CacheKeyResolver() {
+  internal fun provideObjectIdGenerator(): ObjectIdGenerator = object : ObjectIdGenerator {
     private val formatter = { id: String ->
       if (id.isEmpty()) {
-        CacheKey.NO_KEY
+        null
       } else {
         CacheKey.from(id)
       }
     }
 
-    override fun fromFieldRecordSet(
-      field: ResponseField,
-      recordSet: Map<String, Any>
-    ): CacheKey = // Most objects use id
-      recordSet["id"].let {
+    override fun cacheKeyForObject(
+      obj: Map<String, Any?>,
+      context: ObjectIdGeneratorContext
+    ): CacheKey? {
+      // Most objects use id
+      obj["id"].let {
         return when (val value = it) {
           is String -> formatter(value)
-          else -> CacheKey.NO_KEY
+          else -> null
         }
       }
-
-    override fun fromFieldArguments(
-      field: ResponseField,
-      variables: Operation.Variables
-    ): CacheKey = CacheKey.NO_KEY
+    }
   }
 
   @Provides
   @Singleton
-  internal fun provideNormalizedCacheFactory(): NormalizedCacheFactory<*> =
-    LruNormalizedCacheFactory(EvictionPolicy.NO_EVICTION)
+  internal fun provideCacheKeyResolver(): CacheKeyResolver = object : CacheKeyResolver() {
+    override fun cacheKeyForField(field: CompiledField, variables: Variables): CacheKey? {
+      return null
+    }
+  }
+
+  @Provides
+  @Singleton
+  internal fun provideNormalizedCacheFactory(): NormalizedCacheFactory =
+    MemoryCacheFactory()
+
+  @Provides
+  @Singleton
+  internal fun provideHttpEngine(
+    @InternalApi client: Lazy<OkHttpClient>,
+    @ApplicationContext context: Context,
+  ): HttpEngine {
+    val delegate = DefaultHttpEngine { client.get().newCall(it) }
+    return CachingHttpEngine(
+      directory = context.cacheDir,
+      maxSize = 1_000_000,
+      delegate = delegate
+    )
+  }
+
+  @Provides
+  @Singleton
+  internal fun provideHttpRequestComposer(): HttpRequestComposer {
+    return DefaultHttpRequestComposer(SERVER_URL)
+  }
+
+  @Provides
+  @Singleton
+  internal fun provideNetworkTransport(
+    httpEngine: HttpEngine,
+    httpRequestComposer: HttpRequestComposer
+  ): NetworkTransport {
+    return HttpNetworkTransport(httpRequestComposer, httpEngine)
+  }
 
   @Provides
   @Singleton
   internal fun provideApolloClient(
-    @InternalApi client: Lazy<OkHttpClient>,
-    cacheFactory: NormalizedCacheFactory<*>,
-    resolver: CacheKeyResolver,
-    httpCache: Lazy<HttpCache>
+    networkTransport: NetworkTransport,
+    cacheFactory: NormalizedCacheFactory,
+    cacheKeyResolver: CacheKeyResolver,
+    objectIdGenerator: ObjectIdGenerator
   ): ApolloClient {
-    // Lazily involve httpcache so we don't hit disk when instantiating this
-    val lazyHttpCache = object : HttpCache {
-      override fun clear() = httpCache.get().clear()
-
-      override fun removeQuietly(cacheKey: String) = httpCache.get().removeQuietly(cacheKey)
-
-      override fun remove(cacheKey: String) = httpCache.get().remove(cacheKey)
-
-      override fun interceptor(): Interceptor = httpCache.get().interceptor()
-
-      override fun read(cacheKey: String): Response? = httpCache.get().read(cacheKey)
-
-      override fun read(cacheKey: String, expireAfterRead: Boolean): Response? = httpCache.get().read(cacheKey, expireAfterRead)
-    }
-    return ApolloClient.builder()
-      .serverUrl(SERVER_URL)
-      .httpCache(lazyHttpCache)
-      .callFactory { client.get().newCall(it) }
-      .normalizedCache(cacheFactory, resolver)
-      .addCustomTypeAdapter(CustomType.DATETIME, ISO8601InstantApolloAdapter)
-      .addCustomTypeAdapter(CustomType.URI, HttpUrlApolloAdapter)
-      .addCustomTypeAdapter(io.sweers.catchup.service.github.type.CustomType.DATETIME, ISO8601InstantApolloAdapter)
-      .addCustomTypeAdapter(io.sweers.catchup.service.github.type.CustomType.URI, HttpUrlApolloAdapter)
-      .build()
+    return ApolloClient(
+      networkTransport = networkTransport,
+      customScalarAdapters = CustomScalarAdapters(
+        mapOf(
+          Types.DateTime.name to ISO8601InstantApolloAdapter,
+          Types.URI.name to HttpUrlApolloAdapter,
+        )
+      ),
+    ).withNormalizedCache(
+      cacheFactory, cacheResolver = cacheKeyResolver,
+      objectIdGenerator = objectIdGenerator
+    )
   }
 }

@@ -18,7 +18,7 @@ plugins {
   id("com.android.library")
   kotlin("android")
   id(deps.anvil.pluginId)
-  id("com.apollographql.apollo")
+  id("com.apollographql.apollo3")
 }
 
 android {
@@ -34,12 +34,11 @@ android {
 apollo {
   service("github") {
     @Suppress("UnstableApiUsage")
-    customTypeMapping.set(mapOf(
+    customScalarsMapping.set(mapOf(
         "DateTime" to "kotlinx.datetime.Instant",
         "URI" to "okhttp3.HttpUrl"
     ))
-    generateKotlinModels.set(true)
-    rootPackageName.set("io.sweers.catchup.service.github")
+    packageName.set("io.sweers.catchup.service.github")
     schemaFile.set(file("src/main/graphql/io/sweers/catchup/service/github/schema.json"))
   }
 }
@@ -58,7 +57,6 @@ dependencies {
   // Apollo
   implementation(deps.apollo.runtime)
   implementation(deps.apollo.rx2Support)
-  implementation(deps.apollo.androidSupport)
 
   api(project(":service-api"))
   api(deps.android.androidx.annotations)

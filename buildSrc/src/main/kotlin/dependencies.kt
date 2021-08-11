@@ -52,7 +52,7 @@ object build {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val apollo = "2.5.9"
+    const val apollo = "3.0.0-alpha03"
     const val autodispose = "1.4.0"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
@@ -169,11 +169,12 @@ object deps {
   }
 
   object apollo {
-    const val androidSupport = "com.apollographql.apollo:apollo-android-support:${versions.apollo}"
-    const val gradlePlugin = "com.apollographql.apollo:apollo-gradle-plugin:${versions.apollo}"
-    const val httpcache = "com.apollographql.apollo:apollo-http-cache:${versions.apollo}"
-    const val runtime = "com.apollographql.apollo:apollo-runtime:${versions.apollo}"
-    const val rx2Support = "com.apollographql.apollo:apollo-rx2-support:${versions.apollo}"
+    const val gradlePlugin = "com.apollographql.apollo3:apollo-gradle-plugin:${versions.apollo}"
+    const val httpcache = "com.apollographql.apollo3:apollo-http-cache:${versions.apollo}"
+    const val normalizedCache = "com.apollographql.apollo3:apollo-normalized-cache:${versions.apollo}"
+    const val runtime = "com.apollographql.apollo3:apollo-runtime:${versions.apollo}"
+    const val rx2Support = "com.apollographql.apollo3:apollo-rx2-support:${versions.apollo}"
+    const val rx3Support = "com.apollographql.apollo3:apollo-rx3-support:${versions.apollo}"
   }
 
   object auto {
@@ -223,9 +224,6 @@ object deps {
     object repositories {
       const val google = "https://maven.google.com"
       const val jitpack = "https://jitpack.io"
-      const val kotlineap = "https://dl.bintray.com/kotlin/kotlin-eap"
-      const val kotlindev = "https://dl.bintray.com/kotlin/kotlin-dev"
-      const val kotlinx = "https://kotlin.bintray.com/kotlinx"
       const val plugins = "https://plugins.gradle.org/m2/"
       const val snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
       const val androidxSnapshots = "https://androidx.dev/snapshots/latest/artifacts/repository"
