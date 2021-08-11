@@ -132,13 +132,13 @@ object deps {
       }
 
       object compose {
-        const val version = "1.0.0-rc02"
+        const val version = "1.0.1"
         const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
         const val foundation = "androidx.compose.foundation:foundation:$version"
         const val material = "androidx.compose.material:material:$version"
         const val materialIcons = "androidx.compose.material:material-icons-core:$version"
         const val materialIconsExtended = "androidx.compose.material:material-icons-extended:$version"
-        const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha08"
+        const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
         const val livedata = "androidx.compose.runtime:runtime-livedata:$version"
         const val rxjava2 = "androidx.compose.runtime:runtime-rxjava2:$version"
         const val rxjava3 = "androidx.compose.runtime:runtime-rxjava3:$version"

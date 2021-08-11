@@ -104,10 +104,6 @@ private val baseExtensionConfig: BaseExtension.() -> Unit = {
     targetCompatibility = JavaVersion.VERSION_11
     isCoreLibraryDesugaringEnabled = true
   }
-  lintOptions {
-    isCheckReleaseBuilds = false
-    isAbortOnError = false
-  }
   sourceSets {
     findByName("main")?.java?.srcDirs("src/main/kotlin")
     findByName("debug")?.java?.srcDirs("src/debug/kotlin")
@@ -132,23 +128,23 @@ private fun Project.configureAndroid() {
       lint {
         lintConfig = rootProject.file("lint.xml")
         // Lint is pretty wrecked on AGP 7.1
-        isAbortOnError = false
-        // https://issuetracker.google.com/issues/170026127
-        disable("InvalidFragmentVersionForActivityResult")
-        enable("InlinedApi")
-        enable("Interoperability")
-        enable("NewApi")
-        fatal("NewApi")
-        fatal("InlinedApi")
-        enable("UnusedResources")
-        warning("MissingTranslation")
-        isCheckReleaseBuilds = true
+        abortOnError = false
+        enable += setOf(
+          "InlinedApi",
+          "Interoperability",
+          "NewApi",
+          "UnusedResources",
+        )
+        fatal += setOf(
+          "NewApi",
+          "InlinedApi",
+        )
+        warning += "MissingTranslation"
+        checkReleaseBuilds = true
         textReport = deps.build.ci
-        textOutput("stdout")
-        isCheckDependencies = true
-
-        // Pending fix in https://android-review.googlesource.com/c/platform/frameworks/support/+/1217923
-        disable("UnsafeExperimentalUsageError", "UnsafeExperimentalUsageWarning")
+        // https://issuetracker.google.com/issues/196209595
+//        textOutput("stdout")
+        checkDependencies = true
       }
       buildTypes {
         getByName("debug") {
