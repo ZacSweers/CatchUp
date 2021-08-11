@@ -25,6 +25,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import com.google.devtools.ksp.gradle.KspTaskJvm
 import com.squareup.anvil.plugin.AnvilExtension
 import deps
 import org.gradle.api.JavaVersion
@@ -186,6 +187,13 @@ private fun Project.configureKotlin() {
   plugins.withId(deps.anvil.pluginId) {
     extensions.configure<AnvilExtension> {
       generateDaggerFactories.set(true)
+    }
+  }
+
+  plugins.withId(deps.ksp.pluginId) {
+    // https://github.com/google/ksp/issues/552
+    tasks.withType<KspTaskJvm>().configureEach {
+      useClasspathSnapshot.set(true)
     }
   }
 }
