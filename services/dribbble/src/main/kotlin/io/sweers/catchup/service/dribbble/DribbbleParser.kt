@@ -45,9 +45,9 @@ internal object DribbbleParser {
     return shotElements.mapNotNull(::parseShot)
   }
 
-  private fun parseShot(element: Element): Shot? {
+  private fun parseShot(element: Element): Shot {
     val descriptionBlock = element.select("a.dribbble-over")
-      .first()
+      .first()!!
     // API responses wrap description in a <p> tag. Do the same for consistent display.
     var description = descriptionBlock.select("span.comment")
       .text()
@@ -56,7 +56,7 @@ internal object DribbbleParser {
       description = "<p>$description</p>"
     }
     var imgUrl = element.select("img")
-      .first()
+      .first()!!
       .attr("src")
     if (imgUrl.contains("_teaser.")) {
       imgUrl = imgUrl.replace("_teaser.", ".")
@@ -64,7 +64,7 @@ internal object DribbbleParser {
     val createdAt: Instant = try {
       DATE_FORMAT.parse(
         descriptionBlock.select("em.timestamp")
-          .first()
+          .first()!!
           .text(),
         java.time.Instant::from
       ).toKotlinInstant()
@@ -75,26 +75,26 @@ internal object DribbbleParser {
     val isAnimated = imgUrl.endsWith(".gif")
     return Shot(
       id = element.id().replace("screenshot-", "").toLong(),
-      htmlUrl = "$ENDPOINT${element.select("a.dribbble-link").first().attr("href")}",
-      title = descriptionBlock.select("strong").first().text(),
+      htmlUrl = "$ENDPOINT${element.select("a.dribbble-link").first()!!.attr("href")}",
+      title = descriptionBlock.select("strong").first()!!.text(),
       description = description,
       images = Images(null, if (isAnimated) imgUrl.replace("_1x", "") else imgUrl),
       animated = isAnimated,
       createdAt = createdAt,
       likesCount = element.select("li.fav")
-        .first()
+        .first()!!
         .child(0)
         .text()
         .replace(",", "")
         .toLong(),
       commentsCount = element.select("li.cmnt")
-        .first()
+        .first()!!
         .child(0)
         .text()
         .replace(",", "")
         .toLong(),
       viewsCount = element.select("li.views")
-        .first()
+        .first()!!
         .child(0)
         .text()
         .replace(",", "")
@@ -105,9 +105,9 @@ internal object DribbbleParser {
 
   private fun parsePlayer(element: Element): User {
     val userBlock = element.select("a.url")
-      .first()
+      .first()!!
     var avatarUrl = userBlock.select("img.photo")
-      .first()
+      .first()!!
       .attr("src")
     if (avatarUrl.contains("/mini/")) {
       avatarUrl = avatarUrl.replace("/mini/", "/normal/")

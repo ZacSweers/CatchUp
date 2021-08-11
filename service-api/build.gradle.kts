@@ -21,7 +21,6 @@ plugins {
 }
 
 dependencies {
-  ksp(deps.android.androidx.room.xerial)
   ksp(deps.android.androidx.room.apt)
 
   implementation(deps.kotlin.coroutinesAndroid)

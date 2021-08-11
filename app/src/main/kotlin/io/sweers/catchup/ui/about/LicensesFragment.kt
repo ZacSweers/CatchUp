@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:OptIn(ExperimentalCoroutinesApi::class)
 package io.sweers.catchup.ui.about
 
 import android.graphics.Bitmap
@@ -76,6 +77,7 @@ import io.sweers.catchup.util.kotlin.sortBy
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -173,8 +175,12 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
       val adapter = moshi.adapter<List<OssGitHubEntry>>(
         Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java)
       )
-      val regular = adapter.fromJson(resources.assets.open("licenses_github.json").source().buffer())!!
-      val generated = adapter.fromJson(resources.assets.open("generated_licenses.json").source().buffer())!!
+      val regular = withContext(Dispatchers.IO) {
+        adapter.fromJson(resources.assets.open("licenses_github.json").source().buffer())!!
+      }
+      val generated = withContext(Dispatchers.IO) {
+        adapter.fromJson(resources.assets.open("generated_licenses.json").source().buffer())!!
+      }
       return@withContext regular + generated
     }
     // Fetch repos, send down a map of the ids to owner ids
@@ -479,7 +485,7 @@ internal data class OssItem(
 /**
  * Converts an [ApolloCall] to a [Flow].
  */
-suspend fun <T> ApolloCall<T>.toFlow(): Flow<Response<T>> = callbackFlow<Response<T>> {
+suspend fun <T> ApolloCall<T>.toFlow(): Flow<Response<T>> = callbackFlow {
   enqueue(
     object : ApolloCall.Callback<T>() {
       override fun onResponse(response: Response<T>) {

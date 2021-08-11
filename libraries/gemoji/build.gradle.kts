@@ -32,7 +32,6 @@ ksp {
 dependencies {
   implementation(project(":libraries:util"))
 
-  ksp(deps.android.androidx.room.xerial)
   ksp(deps.android.androidx.room.apt)
   compileOnly(deps.misc.jsr250)
 
