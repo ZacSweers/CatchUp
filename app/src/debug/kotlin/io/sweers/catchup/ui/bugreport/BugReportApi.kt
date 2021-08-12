@@ -25,13 +25,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.scopes.ActivityScoped
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Headers
@@ -76,7 +76,7 @@ internal object BugReportModule {
   internal fun provideImgurService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
-    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): ImgurUploadApi {
     return Retrofit.Builder()
@@ -100,7 +100,7 @@ internal object BugReportModule {
   internal fun provideGithubIssueService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
-    rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): GitHubIssueApi {
     return Retrofit.Builder()

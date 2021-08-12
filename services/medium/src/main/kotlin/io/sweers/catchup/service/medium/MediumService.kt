@@ -23,8 +23,8 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -44,7 +44,7 @@ import io.sweers.inspector.Inspector
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
@@ -182,7 +182,7 @@ abstract class MediumModule {
       @InternalApi client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,
       inspectorConverterFactory: InspectorConverterFactory,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
       appConfig: AppConfig
     ): MediumApi {
       val retrofit = Retrofit.Builder().baseUrl(MediumApi.ENDPOINT)

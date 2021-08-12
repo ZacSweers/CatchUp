@@ -24,7 +24,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -42,7 +42,7 @@ import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -145,7 +145,7 @@ abstract class SlashdotModule {
     @Provides
     internal fun provideSlashdotApi(
       @InternalApi client: Lazy<OkHttpClient>,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
       tikXml: TikXml,
       appConfig: AppConfig
     ): SlashdotApi {

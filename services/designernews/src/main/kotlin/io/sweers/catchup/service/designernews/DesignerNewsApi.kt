@@ -16,7 +16,7 @@
 package io.sweers.catchup.service.designernews
 
 import com.serjltt.moshi.adapters.Wrapped
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.designernews.model.Story
 import io.sweers.catchup.service.designernews.model.User
 import io.sweers.catchup.util.collect.CommaJoinerList

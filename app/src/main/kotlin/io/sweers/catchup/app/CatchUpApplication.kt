@@ -18,13 +18,11 @@ package io.sweers.catchup.app
 import android.app.Application
 import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
-import com.uber.rxdogtag.RxDogTag
-import com.uber.rxdogtag.autodispose.AutoDisposeConfigurer
 import dagger.hilt.android.HiltAndroidApp
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.ticktock.runtime.EagerZoneRulesLoading
-import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
@@ -36,6 +34,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import rxdogtag2.RxDogTag
+import rxdogtag2.autodispose2.AutoDisposeConfigurer
 import timber.log.Timber
 import javax.inject.Inject
 

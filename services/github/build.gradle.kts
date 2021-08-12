@@ -50,13 +50,14 @@ dependencies {
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
   implementation(deps.misc.jsoup)
-  implementation(deps.retrofit.rxJava2)
+  implementation(deps.retrofit.rxJava3)
   implementation(deps.okhttp.core)
   implementation(deps.kotlin.datetime)
+  implementation(deps.kotlin.coroutinesRx)
 
   // Apollo
   implementation(deps.apollo.runtime)
-  implementation(deps.apollo.rx2Support)
+  implementation(deps.apollo.httpcache)
 
   api(project(":service-api"))
   api(deps.android.androidx.annotations)

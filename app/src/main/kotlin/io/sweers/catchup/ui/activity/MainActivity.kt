@@ -23,7 +23,7 @@ import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
-import com.uber.autodispose.autoDispose
+import autodispose2.autoDispose
 import dagger.Binds
 import dagger.Provides
 import dagger.hilt.InstallIn

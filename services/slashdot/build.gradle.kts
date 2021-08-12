@@ -28,7 +28,7 @@ dependencies {
   implementation(project(":libraries:util"))
   implementation(deps.okhttp.core)
   implementation(deps.retrofit.core)
-  implementation(deps.retrofit.rxJava2)
+  implementation(deps.retrofit.rxJava3)
   implementation(deps.tikxml.annotation)
   implementation(deps.tikxml.core)
   implementation(deps.tikxml.retrofit)

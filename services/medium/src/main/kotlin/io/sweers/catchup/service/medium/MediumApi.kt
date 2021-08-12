@@ -16,7 +16,7 @@
 package io.sweers.catchup.service.medium
 
 import com.serjltt.moshi.adapters.Wrapped
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 import io.sweers.catchup.service.medium.model.References
 import retrofit2.http.GET
 

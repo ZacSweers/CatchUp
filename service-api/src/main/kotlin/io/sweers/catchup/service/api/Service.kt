@@ -15,7 +15,7 @@
  */
 package io.sweers.catchup.service.api
 
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 
 interface Service {
   fun meta(): ServiceMeta

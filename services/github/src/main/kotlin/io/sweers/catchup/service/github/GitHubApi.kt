@@ -15,7 +15,7 @@
  */
 package io.sweers.catchup.service.github
 
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.github.model.TrendingItem
 import retrofit2.http.GET
 import retrofit2.http.Path

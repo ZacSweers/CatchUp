@@ -23,7 +23,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -44,7 +44,7 @@ import io.sweers.catchup.util.nullIfBlank
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -161,7 +161,7 @@ abstract class RedditModule {
     @Provides
     internal fun provideRedditApi(
       @InternalApi client: Lazy<OkHttpClient>,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
       @InternalApi moshi: Moshi,
       appConfig: AppConfig
     ): RedditApi {

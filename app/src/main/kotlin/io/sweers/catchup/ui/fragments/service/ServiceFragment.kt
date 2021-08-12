@@ -42,11 +42,11 @@ import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
+import autodispose2.autoDispose
 import com.apollographql.apollo3.exception.ApolloException
-import com.uber.autodispose.autoDispose
 import dagger.hilt.android.AndroidEntryPoint
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager

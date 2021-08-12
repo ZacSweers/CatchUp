@@ -36,7 +36,7 @@ dependencies {
   implementation(deps.moshi.core)
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)
-  implementation(deps.retrofit.rxJava2)
+  implementation(deps.retrofit.rxJava3)
   implementation(deps.okhttp.core)
   implementation(deps.misc.moshiLazyAdapters)
   implementation(deps.kotlin.datetime)

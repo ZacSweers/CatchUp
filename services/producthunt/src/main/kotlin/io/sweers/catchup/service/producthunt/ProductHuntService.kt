@@ -23,7 +23,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -41,7 +41,7 @@ import io.sweers.catchup.util.network.AuthInterceptor
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -152,7 +152,7 @@ abstract class ProductHuntModule {
     internal fun provideProductHuntService(
       @InternalApi client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,
-      rxJavaCallAdapterFactory: RxJava2CallAdapterFactory,
+      rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
       appConfig: AppConfig
     ): ProductHuntApi {
       return Retrofit.Builder().baseUrl(ProductHuntApi.ENDPOINT)

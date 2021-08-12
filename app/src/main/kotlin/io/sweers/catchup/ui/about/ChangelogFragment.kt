@@ -24,15 +24,14 @@ import android.view.animation.OvershootInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.Adapter
+import autodispose2.autoDispose
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.rx2.Rx2ApolloClient
 import com.google.android.material.snackbar.Snackbar
-import com.uber.autodispose.autoDispose
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.base.ui.InjectableBaseFragment
@@ -48,7 +47,9 @@ import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.w
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx3.rxSingle
 import kotlinx.datetime.Instant
 import java.io.IOException
 import javax.inject.Inject
@@ -117,10 +118,10 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
   }
 
   private fun requestItems(): Single<List<ChangeLogItem>> {
-    return Rx2ApolloClient(apolloClient, Schedulers.io()).query(RepoReleasesQuery())
+    return rxSingle(Dispatchers.IO) { apolloClient.query(RepoReleasesQuery()) }
       .flatMapObservable { Observable.fromIterable(it.data!!.repository!!.releases.nodes) }
       .map {
-        with(it) {
+        with(it!!) {
           ChangeLogItem(
             name = name!!,
             timestamp = publishedAt!!,

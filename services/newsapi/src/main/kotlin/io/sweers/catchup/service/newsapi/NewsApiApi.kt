@@ -15,7 +15,7 @@
  */
 package io.sweers.catchup.service.newsapi
 
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.newsapi.model.NewsApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Query

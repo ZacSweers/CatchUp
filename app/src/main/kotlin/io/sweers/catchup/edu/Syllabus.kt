@@ -17,14 +17,14 @@ package io.sweers.catchup.edu
 
 import android.app.Activity
 import android.content.SharedPreferences
+import autodispose2.autoDispose
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetSequence.Listener
-import com.jakewharton.rxrelay2.BehaviorRelay
-import com.jakewharton.rxrelay2.PublishRelay
-import com.uber.autodispose.autoDispose
+import com.jakewharton.rxrelay3.BehaviorRelay
+import com.jakewharton.rxrelay3.PublishRelay
 import dagger.hilt.android.scopes.ActivityScoped
-import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread
 import io.sweers.catchup.base.ui.BaseActivity
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
