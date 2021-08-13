@@ -40,8 +40,8 @@ import io.sweers.catchup.service.hackernews.FragmentViewModelFactoryModule.ViewM
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Failure
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Loading
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Success
-import io.sweers.catchup.service.hackernews.databinding.HackerNewsStoryBinding
-import io.sweers.catchup.service.hackernews.databinding.StoryItemBinding
+import catchup.service.hackernews.databinding.HackerNewsStoryBinding
+import catchup.service.hackernews.databinding.StoryItemBinding
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
