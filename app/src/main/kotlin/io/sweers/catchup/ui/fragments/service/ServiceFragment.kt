@@ -81,6 +81,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.launch
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import retrofit2.HttpException
@@ -100,6 +101,13 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
 
   protected val data = mutableListOf<T>()
   private val _clicksFlow = MutableSharedFlow<UrlMeta>()
+  private val clicksFlow = _clicksFlow.asSharedFlow()
+
+  init {
+    _clicksFlow.onSubscription {
+      println("Subscribed")
+    }
+  }
 
   internal fun update(loadResult: LoadResult<T>) {
     when (loadResult) {
@@ -115,9 +123,13 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
     }
   }
 
-  fun clicksFlow(): Flow<UrlMeta> = _clicksFlow.asSharedFlow()
+  fun clicksFlow(): Flow<UrlMeta> {
+    return clicksFlow
+  }
 
-  protected fun clicksReceiver() = _clicksFlow::tryEmit
+  protected fun clicksReceiver() = { value: UrlMeta ->
+    _clicksFlow.tryEmit(value)
+  }
 
   fun getItems(): List<DisplayableItem> = data
 
@@ -341,9 +353,10 @@ class ServiceFragment :
     progress.indeterminateTintList = ColorStateList.valueOf(accentColor)
     adapter = createAdapter(view.context)
     viewLifecycleOwner.lifecycleScope.launch {
-      adapter.clicksFlow().collect {
-        linkManager.openUrl(it)
-      }
+      adapter.clicksFlow()
+        .collect {
+          linkManager.openUrl(it)
+        }
     }
     layoutManager = createLayoutManager(view.context, adapter)
     recyclerView.layoutManager = layoutManager
