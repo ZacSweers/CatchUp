@@ -77,7 +77,7 @@ internal object GitHubTrendingParser {
       .map(String::toInt)
       .toList()
 
-    val stars = counts[0]
+    val stars = counts.getOrNull(0) ?: 0
     val forks = counts.getOrNull(1)
 
     // "691 stars today"
