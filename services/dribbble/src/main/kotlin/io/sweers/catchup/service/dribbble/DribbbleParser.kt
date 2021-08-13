@@ -21,12 +21,9 @@ import io.sweers.catchup.service.dribbble.model.Images
 import io.sweers.catchup.service.dribbble.model.Shot
 import io.sweers.catchup.service.dribbble.model.User
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.toKotlinInstant
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
 /**
@@ -37,7 +34,6 @@ import java.util.regex.Pattern
 internal object DribbbleParser {
 
   private val PATTERN_PLAYER_ID = Pattern.compile("users/(\\d+?)/", Pattern.DOTALL)
-  private val DATE_FORMAT = DateTimeFormatter.ofPattern("MMMM d, yyyy")
 
   fun parse(body: ResponseBody): List<Shot> {
     val shotElements = Jsoup.parse(body.string(), ENDPOINT)
@@ -46,59 +42,35 @@ internal object DribbbleParser {
   }
 
   private fun parseShot(element: Element): Shot {
-    val descriptionBlock = element.select("a.dribbble-over")
+    val image = element.select("img")
       .first()!!
-    // API responses wrap description in a <p> tag. Do the same for consistent display.
-    var description = descriptionBlock.select("span.comment")
-      .text()
-      .trim { it <= ' ' }
-    if (!TextUtils.isEmpty(description)) {
-      description = "<p>$description</p>"
-    }
-    var imgUrl = element.select("img")
-      .first()!!
+    var imgUrl = image
       .attr("src")
     if (imgUrl.contains("_teaser.")) {
       imgUrl = imgUrl.replace("_teaser.", ".")
     }
-    val createdAt: Instant = try {
-      DATE_FORMAT.parse(
-        descriptionBlock.select("em.timestamp")
-          .first()!!
-          .text(),
-        java.time.Instant::from
-      ).toKotlinInstant()
-    } catch (e2: Exception) {
-      Clock.System.now()
+    // API responses wrap description in a <p> tag. Do the same for consistent display.
+    var description = image
+      .attr("alt")
+    if (!TextUtils.isEmpty(description)) {
+      description = "<p>$description</p>"
     }
+
+    //
+    val createdAt = Clock.System.now()
 
     val isAnimated = imgUrl.endsWith(".gif")
     return Shot(
       id = element.id().replace("screenshot-", "").toLong(),
       htmlUrl = "$ENDPOINT${element.select("a.dribbble-link").first()!!.attr("href")}",
-      title = descriptionBlock.select("strong").first()!!.text(),
+      title = element.getElementsByClass("shot-title").first()!!.text(),
       description = description,
       images = Images(null, if (isAnimated) imgUrl.replace("_1x", "") else imgUrl),
       animated = isAnimated,
       createdAt = createdAt,
-      likesCount = element.select("li.fav")
-        .first()!!
-        .child(0)
-        .text()
-        .replace(",", "")
-        .toLong(),
-      commentsCount = element.select("li.cmnt")
-        .first()!!
-        .child(0)
-        .text()
-        .replace(",", "")
-        .toLong(),
-      viewsCount = element.select("li.views")
-        .first()!!
-        .child(0)
-        .text()
-        .replace(",", "")
-        .toLong(),
+      likesCount = element.getElementsByClass("js-shot-likes-count").first()!!.text().parseCount(),
+      commentsCount = 0,
+      viewsCount = element.getElementsByClass("js-shot-views-count").first()!!.text().parseCount(),
       user = parsePlayer(element)
     )
   }
@@ -106,9 +78,9 @@ internal object DribbbleParser {
   private fun parsePlayer(element: Element): User {
     val userBlock = element.select("a.url")
       .first()!!
-    var avatarUrl = userBlock.select("img.photo")
+    var avatarUrl = userBlock.select("img")
       .first()!!
-      .attr("src")
+      .attr("data-src")
     if (avatarUrl.contains("/mini/")) {
       avatarUrl = avatarUrl.replace("/mini/", "/normal/")
     }
@@ -129,5 +101,17 @@ internal object DribbbleParser {
       avatarUrl = avatarUrl,
       pro = element.select("span.badge-pro").size > 0
     )
+  }
+}
+
+private fun String.parseCount(): Long {
+  return when {
+    endsWith("k") -> {
+      (removeSuffix("k").toFloat() * 1000)
+        .toLong()
+    }
+    else -> {
+      toLong()
+    }
   }
 }
