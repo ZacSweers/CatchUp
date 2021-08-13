@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.android.build.api.extension.ApplicationAndroidComponentsExtension
-import com.android.build.api.variant.ResValue
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -46,7 +44,9 @@ android {
     versionCode = 1
     versionName = "1.0"
 
-    the<BasePluginConvention>().archivesBaseName = "catchup"
+    configure<BasePluginExtension> {
+      archivesName.set("catchup")
+    }
 
     buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
         "\"${properties["catchup_github_developer_token"]}\"")
@@ -125,34 +125,6 @@ android {
   }
   composeOptions {
     kotlinCompilerExtensionVersion = deps.android.androidx.compose.version
-  }
-}
-
-configure<ApplicationAndroidComponentsExtension> {
-  val firebaseVariants = setOf("release", "debug")
-  onVariants(selector().withBuildType("release").withBuildType("debug")) { variant ->
-    // Configure firebase
-    fun firebaseProperty(property: String, resolveName: Boolean = true) {
-      val buildTypeName = variant.buildType!!
-      if (buildTypeName in firebaseVariants) {
-        val name = if (resolveName && buildTypeName == "debug") {
-          "$property.debug"
-        } else property
-        val value = project.properties[name].toString()
-        variant.resValues.put(variant.makeResValueKey("string", property.removePrefix("catchup.")), ResValue(value))
-      } else {
-        return
-      }
-    }
-    firebaseProperty("catchup.google_api_key")
-    firebaseProperty("catchup.google_app_id")
-    firebaseProperty("catchup.firebase_database_url")
-    firebaseProperty("catchup.ga_trackingId")
-    firebaseProperty("catchup.gcm_defaultSenderId")
-    firebaseProperty("catchup.google_storage_bucket")
-    firebaseProperty("catchup.default_web_client_id")
-    firebaseProperty("catchup.google_crash_reporting_api_key")
-    firebaseProperty("catchup.project_id", false)
   }
 }
 
@@ -256,7 +228,7 @@ open class CutChangelogTask : DefaultTask() {
     }
 
     val finalLog = log.toString().trim()
-    return if (finalLog.isEmpty()) defaultIfEmpty else finalLog
+    return finalLog.ifEmpty { defaultIfEmpty }
   }
 }
 

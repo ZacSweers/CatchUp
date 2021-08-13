@@ -152,7 +152,7 @@
       android:maxLines="5"
       android:ellipsize="end"
       app:fontFamily="@font/nunito"
-      app:layout_constraintBottom_toTopOf="@+id/source"
+      app:layout_constraintBottom_toTopOf="@+id/description"
       app:layout_constraintLeft_toLeftOf="@+id/guideline"
       app:layout_constraintLeft_toRightOf="@+id/guideline"
       app:layout_constraintRight_toLeftOf="@+id/mark"
@@ -160,6 +160,25 @@
       app:layout_goneMarginTop="0dp"
       tools:text="Show HN: Into.js Hints"
       style="@style/TextAppearance.AppCompat.Subhead"
+      />
+
+  <io.sweers.catchup.base.ui.widget.BaselineGridTextView
+      android:id="@+id/description"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="4dp"
+      android:fontFamily="@font/nunito"
+      android:maxLines="5"
+      android:ellipsize="end"
+      app:fontFamily="@font/nunito"
+      app:layout_constraintBottom_toTopOf="@+id/source"
+      app:layout_constraintLeft_toLeftOf="@+id/guideline"
+      app:layout_constraintLeft_toRightOf="@+id/guideline"
+      app:layout_constraintRight_toLeftOf="@+id/mark"
+      app:layout_constraintTop_toBottomOf="@+id/title"
+      app:layout_goneMarginTop="0dp"
+      tools:text="Here's a longer description for everything \nand multiline"
+      style="@style/TextAppearance.AppCompat.Small"
       />
 
   <androidx.appcompat.widget.AppCompatTextView
@@ -174,7 +193,7 @@
       app:layout_constraintHorizontal_bias="0"
       app:layout_constraintHorizontal_chainStyle="packed"
       app:layout_constraintStart_toStartOf="@+id/guideline"
-      app:layout_constraintTop_toBottomOf="@+id/title"
+      app:layout_constraintTop_toBottomOf="@+id/description"
       tools:text="pandanomic"
       style="@style/TextAppearance.AppCompat.Caption"
       />
@@ -205,7 +224,7 @@
       app:layout_constraintBottom_toBottomOf="@+id/guideline_bottom"
       app:layout_constraintEnd_toStartOf="@+id/mark"
       app:layout_constraintStart_toEndOf="@+id/author_divider"
-      app:layout_constraintTop_toBottomOf="@+id/title"
+      app:layout_constraintTop_toBottomOf="@+id/description"
       tools:text="medium.com"
       style="@style/TextAppearance.AppCompat.Caption"
       />

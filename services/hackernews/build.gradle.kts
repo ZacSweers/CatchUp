@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.android.build.api.variant.LibraryAndroidComponentsExtension
 
 plugins {
   id("com.android.library")
@@ -20,6 +21,30 @@ plugins {
   id(deps.anvil.pluginId)
   id(deps.ksp.pluginId)
   id("kotlin-noarg")
+}
+
+configure<LibraryAndroidComponentsExtension> {
+  onVariants { variant ->
+    // Configure firebase
+    fun firebaseProperty(property: String, resolveName: Boolean = true) {
+      val buildTypeName = variant.buildType!!
+      val name = if (resolveName && buildTypeName == "debug") {
+        "$property.debug"
+      } else property
+      val value = project.properties[name].toString()
+      variant.resValues.put(variant.makeResValueKey("string", property.removePrefix("catchup.")),
+        com.android.build.api.variant.ResValue(value))
+    }
+    firebaseProperty("catchup.google_api_key")
+    firebaseProperty("catchup.google_app_id")
+    firebaseProperty("catchup.firebase_database_url")
+    firebaseProperty("catchup.ga_trackingId")
+    firebaseProperty("catchup.gcm_defaultSenderId")
+    firebaseProperty("catchup.google_storage_bucket")
+    firebaseProperty("catchup.default_web_client_id")
+    firebaseProperty("catchup.google_crash_reporting_api_key")
+    firebaseProperty("catchup.project_id", false)
+  }
 }
 
 noArg {

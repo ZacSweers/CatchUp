@@ -15,6 +15,11 @@
   ~ limitations under the License.
   -->
 
-<manifest
-    package="io.sweers.catchup.service.hackernews"
-    />
+<manifest package="catchup.service.hackernews"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+  <application>
+    <meta-data
+        android:name="firebase_messaging_auto_init_enabled"
+        android:value="false" />
+  </application>
+</manifest>

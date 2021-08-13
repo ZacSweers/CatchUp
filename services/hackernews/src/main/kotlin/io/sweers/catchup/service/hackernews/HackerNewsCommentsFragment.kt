@@ -30,6 +30,8 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import catchup.service.hackernews.databinding.HackerNewsStoryBinding
+import catchup.service.hackernews.databinding.StoryItemBinding
 import coil.load
 import coil.size.Precision
 import coil.size.Scale
@@ -40,8 +42,6 @@ import io.sweers.catchup.service.hackernews.FragmentViewModelFactoryModule.ViewM
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Failure
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Loading
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Success
-import io.sweers.catchup.service.hackernews.databinding.HackerNewsStoryBinding
-import io.sweers.catchup.service.hackernews.databinding.StoryItemBinding
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show

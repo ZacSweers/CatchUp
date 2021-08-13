@@ -52,6 +52,7 @@ class CatchUpItemViewHolder(
   internal val container = binding.container
   internal val tagsContainer = binding.tagsContainer
   internal val title = binding.title
+  internal val description = binding.description
   internal val score = binding.score
   internal val scoreDivider = binding.scoreDivider
   internal val timestamp = binding.timestamp
@@ -62,13 +63,8 @@ class CatchUpItemViewHolder(
   internal val tag = binding.tag
   internal val tagDivider = binding.tagDivider
 
-  private val markBackground: Drawable
-  private val constraintSet: ConstraintSet
-
-  init {
-    markBackground = mark.background
-    constraintSet = ConstraintSet()
-  }
+  private val markBackground: Drawable = mark.background
+  private val constraintSet: ConstraintSet = ConstraintSet()
 
   override fun itemView(): View = itemView
 
@@ -97,6 +93,7 @@ class CatchUpItemViewHolder(
     longClickHandler: OnLongClickListener?
   ) {
     title(item.title.trim())
+    description(item.description?.trim())
     score(item.score)
     timestamp(item.timestamp)
     author(item.author?.trim())
@@ -128,6 +125,21 @@ class CatchUpItemViewHolder(
         null
       )
     )
+  }
+
+  fun description(titleText: CharSequence?) {
+    if (titleText != null) {
+      description.isVisible = true
+      description.setTextFuture(
+        PrecomputedTextCompat.getTextFuture(
+          titleText,
+          TextViewCompat.getTextMetricsParams(description),
+          null
+        )
+      )
+    } else {
+      description.isVisible = false
+    }
   }
 
   fun score(scoreValue: Pair<String, Int>?) {

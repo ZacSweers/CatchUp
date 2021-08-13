@@ -70,26 +70,28 @@ internal object GitHubTrendingParser {
       }
 
     // "3,441" stars, forks
-    val counts = element.select(".muted-link.d-inline-block.mr-3")
+    val counts = element.select(".Link--muted.d-inline-block.mr-3")
       .asSequence()
       .map(Element::text)
       .map { it.removeCommas() }
       .map(String::toInt)
       .toList()
 
-    val stars = counts[0]
+    val stars = counts.getOrNull(0) ?: 0
     val forks = counts.getOrNull(1)
 
     // "691 stars today"
-    val starsToday = element.select(".f6.text-gray.mt-2 > span:last-child")[0]
-      .text()
-      .removeCommas()
-      .let {
+    val starsToday = element.select(".f6.color-text-secondary.mt-2 > span:last-child")
+      .firstOrNull()
+      ?.text()
+      ?.removeCommas()
+      ?.let {
         NUMBER_PATTERN.find(it)?.groups?.firstOrNull()?.value?.toInt() ?: run {
           d { "$authorAndName didn't have today" }
           null
         }
       }
+      ?: 0
 
     return TrendingItem(
       author = author,

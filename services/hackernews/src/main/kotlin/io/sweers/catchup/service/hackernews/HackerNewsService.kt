@@ -15,11 +15,15 @@
  */
 package io.sweers.catchup.service.hackernews
 
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import catchup.service.hackernews.R
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -53,6 +57,7 @@ import io.sweers.catchup.service.hackernews.preview.UrlPreviewModule
 import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
 import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelKey
 import io.sweers.catchup.util.d
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -203,8 +208,23 @@ abstract class HackerNewsModule {
 
   companion object {
     @Provides
-    internal fun provideDatabase(): FirebaseDatabase =
-      FirebaseDatabase.getInstance("https://hacker-news.firebaseio.com/")
+    internal fun provideDatabase(@ApplicationContext context: Context): FirebaseDatabase {
+      val resources = context.resources
+      val app = FirebaseApp.initializeApp(
+        context,
+        FirebaseOptions.Builder()
+          .setApiKey(resources.getString(R.string.google_api_key))
+          .setApplicationId(resources.getString(R.string.google_app_id))
+          .setDatabaseUrl("https://hacker-news.firebaseio.com/")
+          .setGaTrackingId(resources.getString(R.string.ga_trackingId))
+          .setGcmSenderId(resources.getString(R.string.gcm_defaultSenderId))
+          .setStorageBucket(resources.getString(R.string.google_storage_bucket))
+          .setProjectId(resources.getString(R.string.project_id))
+          .build(),
+        "HN"
+      )
+      return FirebaseDatabase.getInstance(app)
+    }
   }
 }
 
