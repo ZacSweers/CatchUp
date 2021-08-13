@@ -210,7 +210,8 @@ abstract class HackerNewsModule {
     @Provides
     internal fun provideDatabase(@ApplicationContext context: Context): FirebaseDatabase {
       val resources = context.resources
-      val app = FirebaseApp.initializeApp(context,
+      val app = FirebaseApp.initializeApp(
+        context,
         FirebaseOptions.Builder()
           .setApiKey(resources.getString(R.string.google_api_key))
           .setApplicationId(resources.getString(R.string.google_app_id))
