@@ -99,15 +99,15 @@ class GitHubService @Inject constructor(
         with(it) {
           CatchUpItem(
             id = "$author/$repoName".hashCode().toLong(),
-            title = "$repoName — $description",
-            author = author,
+            title = "$author / $repoName",
+            description = description,
             timestamp = null,
             score = "★" to stars,
             tag = language,
             itemClickUrl = url,
             mark = starsToday?.toString()?.let {
               Mark(
-                text = it,
+                text = "+$it",
                 icon = R.drawable.ic_star_black_24dp,
                 iconTintColor = languageColor?.let(Color::parseColor)
               )
