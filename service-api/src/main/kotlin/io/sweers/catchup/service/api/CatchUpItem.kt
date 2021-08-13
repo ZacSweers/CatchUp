@@ -26,6 +26,7 @@ import kotlinx.datetime.Instant
 data class CatchUpItem(
   @PrimaryKey val id: Long,
   val title: String,
+  val description: String? = null,
   val timestamp: Instant?,
   val score: Pair<String, Int>? = null,
   val tag: String? = null,

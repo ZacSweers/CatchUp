@@ -30,7 +30,7 @@ import kotlinx.datetime.Instant
     ServicePage::class,
     CatchUpItem::class
   ],
-  version = 5
+  version = 6
 )
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {
