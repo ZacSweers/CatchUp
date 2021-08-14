@@ -100,14 +100,9 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
   }
 
   protected val data = mutableListOf<T>()
-  private val _clicksFlow = MutableSharedFlow<UrlMeta>()
+  // Buffer capacity so that tryEmit will work
+  private val _clicksFlow = MutableSharedFlow<UrlMeta>(extraBufferCapacity = Int.MAX_VALUE)
   private val clicksFlow = _clicksFlow.asSharedFlow()
-
-  init {
-    _clicksFlow.onSubscription {
-      println("Subscribed")
-    }
-  }
 
   internal fun update(loadResult: LoadResult<T>) {
     when (loadResult) {
@@ -127,9 +122,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
     return clicksFlow
   }
 
-  protected fun clicksReceiver() = { value: UrlMeta ->
-    _clicksFlow.tryEmit(value)
-  }
+  protected fun clicksReceiver() = _clicksFlow::tryEmit
 
   fun getItems(): List<DisplayableItem> = data
 
