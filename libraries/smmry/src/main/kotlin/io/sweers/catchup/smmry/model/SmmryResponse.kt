@@ -24,6 +24,8 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dev.zacsweers.moshix.sealed.annotations.DefaultObject
 import dev.zacsweers.moshix.sealed.annotations.TypeLabel
+import io.sweers.catchup.smmry.model.SmmryResponse.Failure
+import io.sweers.catchup.smmry.model.SmmryResponse.Success
 import io.sweers.catchup.util.data.adapters.UnEscape
 import java.io.IOException
 import java.lang.ref.WeakReference
@@ -135,8 +137,9 @@ class SmmryResponseFactory : JsonAdapter.Factory {
       @Throws(IOException::class)
       override fun toJson(writer: JsonWriter, value: SmmryResponse?) {
         when (value) {
-          is SmmryResponse.Success -> successAdapter.toJson(writer, value)
-          is SmmryResponse.Failure -> failureAdapter.toJson(writer, value)
+          is Success -> successAdapter.toJson(writer, value)
+          is Failure -> failureAdapter.toJson(writer, value)
+          null -> writer.nullValue()
         }
       }
     }

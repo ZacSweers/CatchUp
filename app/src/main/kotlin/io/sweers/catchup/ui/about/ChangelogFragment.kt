@@ -37,6 +37,7 @@ import io.sweers.catchup.R.layout
 import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
+import io.sweers.catchup.data.github.RepoReleasesQuery.Node
 import io.sweers.catchup.databinding.FragmentChangelogBinding
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
@@ -96,7 +97,7 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
         progressBar.hide()
       }
       .autoDispose(this)
-      .subscribe { data, error ->
+      .subscribe { data: List<ChangeLogItem>?, error: Throwable? ->
         if (data != null) {
           adapter.setItems(data)
           pendingRvState?.let(layoutManager::onRestoreInstanceState)
@@ -119,9 +120,9 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
 
   private fun requestItems(): Single<List<ChangeLogItem>> {
     return rxSingle(Dispatchers.IO) { apolloClient.query(RepoReleasesQuery()) }
-      .flatMapObservable { Observable.fromIterable(it.data!!.repository!!.releases.nodes) }
+      .flatMapObservable { Observable.fromIterable(it.data!!.repository!!.releases.nodes as List<Node>) }
       .map {
-        with(it!!) {
+        with(it) {
           ChangeLogItem(
             name = name!!,
             timestamp = publishedAt!!,

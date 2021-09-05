@@ -34,7 +34,7 @@ import io.reactivex.rxjava3.core.SingleTransformer
 import java.util.concurrent.TimeUnit
 
 @Suppress("UNCHECKED_CAST")
-abstract class OmniTransformer<Upstream, Downstream> :
+abstract class OmniTransformer<Upstream : Any, Downstream : Any> :
   ObservableTransformer<Upstream, Downstream>,
   SingleTransformer<Upstream, Downstream>,
   MaybeTransformer<Upstream, Downstream>,
@@ -49,7 +49,7 @@ abstract class OmniTransformer<Upstream, Downstream> :
   override fun apply(upstream: Single<Upstream>) = upstream as SingleSource<Downstream>
 }
 
-fun <T> Observable<T>.doOnEmpty(action: () -> Unit): Observable<T> =
+fun <T : Any> Observable<T>.doOnEmpty(action: () -> Unit): Observable<T> =
   switchIfEmpty(Observable.empty<T>().doOnComplete(action))
 
 fun <T : Any> Observable<T>.delayedMessage(view: View, message: String): Observable<T> =
@@ -64,7 +64,7 @@ fun <T : Any> Maybe<T>.delayedMessage(view: View, message: String): Maybe<T> =
 fun Completable.delayedMessage(view: View, message: String): Completable =
   compose(delayedMessageTransformer<Any>(view, message))
 
-fun <T> delayedMessageTransformer(view: View, message: String): OmniTransformer<T, T> {
+fun <T : Any> delayedMessageTransformer(view: View, message: String): OmniTransformer<T, T> {
   var snackbar: Snackbar? = null
   return timeoutActionTransformer(
     onTimeout = {
@@ -99,7 +99,7 @@ fun Completable.timeoutAction(
 ): Completable =
   compose(timeoutActionTransformer<Any>(onTimeout, onTerminate))
 
-fun <T> timeoutActionTransformer(
+fun <T : Any> timeoutActionTransformer(
   onTimeout: (() -> Unit)? = null,
   onTerminate: (() -> Unit)? = null,
   delay: Long = 300
@@ -139,18 +139,18 @@ inline fun <T : Enum<T>> Observable<T>.doOn(
   doOnNext { if (it == target) action() }
 }
 
-inline fun <reified R> Observable<*>.filterIsInstance(): Observable<R> {
+inline fun <reified R : Any> Observable<*>.filterIsInstance(): Observable<R> {
   return filter { it is R }.cast(R::class.java)
 }
 
-inline fun <reified R> Flowable<*>.filterIsInstance(): Flowable<R> {
+inline fun <reified R : Any> Flowable<*>.filterIsInstance(): Flowable<R> {
   return filter { it is R }.cast(R::class.java)
 }
 
-inline fun <reified R> Single<*>.filterIsInstance(): Maybe<R> {
+inline fun <reified R : Any> Single<*>.filterIsInstance(): Maybe<R> {
   return filter { it is R }.cast(R::class.java)
 }
 
-inline fun <reified R> Maybe<*>.filterIsInstance(): Maybe<R> {
+inline fun <reified R : Any> Maybe<*>.filterIsInstance(): Maybe<R> {
   return filter { it is R }.cast(R::class.java)
 }
