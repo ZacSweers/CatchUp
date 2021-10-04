@@ -132,7 +132,7 @@ object deps {
       }
 
       object compose {
-        const val version = "1.1.0-alpha03"
+        const val version = "1.1.0-alpha05"
         const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
         const val foundation = "androidx.compose.foundation:foundation:$version"
         const val material = "androidx.compose.material:material:$version"
@@ -326,7 +326,7 @@ object deps {
     const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     const val metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0"
     const val noArgGradlePlugin = "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
-    const val poet = "com.squareup:kotlinpoet:1.9.0"
+    const val poet = "com.squareup:kotlinpoet:1.12.1"
 
     object stdlib {
       const val core = "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
@@ -336,7 +336,7 @@ object deps {
   }
 
   object ksp {
-    const val version = "1.5.30-1.0.0-beta09"
+    const val version = "1.5.31-1.0.0"
     const val pluginId = "com.google.devtools.ksp"
   }
 
