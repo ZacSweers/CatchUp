@@ -97,3 +97,16 @@ allprojects {
     }
   }
 }
+
+subprojects {
+  // Ensure kotlin subprojects all have unique "module names" to avoid conflicting names in
+  // merged jars (like in packaging).
+  val pathifiedModuleName by lazy {
+    path.replace(":", "-")
+  }
+  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+      moduleName = pathifiedModuleName
+    }
+  }
+}
