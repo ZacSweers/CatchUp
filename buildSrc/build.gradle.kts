@@ -7,7 +7,7 @@ repositories {
 }
 
 plugins {
-  kotlin("jvm") version "1.5.21"
+  kotlin("jvm") version "1.5.30"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
@@ -23,8 +23,8 @@ java {
  * These are copied as a source into the main source set and templated for replacement.
  */
 object SharedBuildVersions {
-  const val agp = "7.1.0-alpha08"
-  const val kotlin = "1.5.21"
+  const val agp = "7.1.0-alpha12"
+  const val kotlin = "1.5.31"
   const val moshi = "1.12.0"
   const val okio = "3.0.0-alpha.9"
   const val kotlinJvmTarget = "11"
@@ -108,7 +108,7 @@ dependencies {
   implementation(kotlin("stdlib-jdk8", version = SharedBuildVersions.kotlin))
   implementation(kotlin("reflect", version = SharedBuildVersions.kotlin))
 
-  compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.5.21-1.0.0-beta06")
+  compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.5.31-1.0.0")
   implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.2.1")
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")

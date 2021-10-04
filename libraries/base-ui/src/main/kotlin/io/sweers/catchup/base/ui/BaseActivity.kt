@@ -42,7 +42,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
   protected abstract val appConfig: AppConfig
 
-  protected inline fun <T, R> Observable<T>.doOnCreate(
+  protected inline fun <T : Any, R : Any> Observable<T>.doOnCreate(
     r: R,
     crossinline action: R.() -> Unit
   ): Observable<T> = apply {
@@ -53,7 +53,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     }
   }
 
-  protected inline fun <T, R> Observable<T>.doOnStart(
+  protected inline fun <T : Any, R : Any> Observable<T>.doOnStart(
     r: R,
     crossinline action: R.() -> Unit
   ): Observable<T> = apply {
@@ -64,7 +64,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     }
   }
 
-  protected inline fun <T, R> Observable<T>.doOnResume(
+  protected inline fun <T : Any, R : Any> Observable<T>.doOnResume(
     r: R,
     crossinline action: R.() -> Unit
   ): Observable<T> = apply {
@@ -75,7 +75,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     }
   }
 
-  protected inline fun <T, R> Observable<T>.doOnPause(
+  protected inline fun <T : Any, R : Any> Observable<T>.doOnPause(
     r: R,
     crossinline action: R.() -> Unit
   ): Observable<T> = apply {
@@ -86,7 +86,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     }
   }
 
-  protected inline fun <T, R> Observable<T>.doOnStop(
+  protected inline fun <T : Any, R : Any> Observable<T>.doOnStop(
     r: R,
     crossinline action: R.() -> Unit
   ): Observable<T> = apply {
@@ -97,7 +97,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     }
   }
 
-  protected inline fun <T, R> Observable<T>.doOnDestroy(
+  protected inline fun <T : Any, R : Any> Observable<T>.doOnDestroy(
     r: R,
     crossinline action: R.() -> Unit
   ): Observable<T> = apply {
@@ -109,7 +109,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
   }
 
   @SuppressLint("AutoDispose")
-  protected inline fun <T> T.doOnDestroy(crossinline action: T.() -> Unit): T = apply {
+  protected inline fun <T : Any> T.doOnDestroy(crossinline action: T.() -> Unit): T = apply {
     lifecycle().doOnDestroy(this) { action() }.subscribe()
   }
 

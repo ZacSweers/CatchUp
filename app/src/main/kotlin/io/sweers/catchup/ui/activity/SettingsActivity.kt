@@ -227,10 +227,10 @@ class SettingsActivity : InjectingBaseActivity() {
           }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDispose(activity as BaseActivity)
-            .subscribe { cleanedAmount, throwable ->
+            .subscribe { cleanedAmount: Long?, throwable: Throwable? ->
               val message = throwable?.let {
                 getString(R.string.settings_error_cleaning_cache)
-              } ?: getString(R.string.clear_cache_success, BinaryByteUnit.format(cleanedAmount))
+              } ?: getString(R.string.clear_cache_success, BinaryByteUnit.format(cleanedAmount!!))
               Snackbar.make(requireView(), message, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.restart) {
                   it.context.restartApp()

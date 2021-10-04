@@ -221,7 +221,7 @@ internal class BugReportLens @Inject constructor(
           .let { notificationManager.notify(notificationId, it.build()) }
       }
       .autoDispose(activity as BaseActivity)
-      .subscribe { issueUrl, error ->
+      .subscribe { issueUrl: String?, error: Throwable? ->
         issueUrl?.let {
           NotificationCompat.Builder(activity, channelId)
             .apply {

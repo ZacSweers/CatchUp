@@ -81,6 +81,7 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
           is RedditComment -> writer.write(value)
           is RedditLink -> writer.write(value)
           is RedditListing -> writer.write(value)
+          else -> writer.nullValue()
         }
       }
 
