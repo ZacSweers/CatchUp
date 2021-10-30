@@ -20,6 +20,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloRequest
 import com.apollographql.apollo3.api.Query
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy.NetworkOnly
+import com.apollographql.apollo3.cache.http.httpFetchPolicy
 import com.apollographql.apollo3.cache.http.withHttpFetchPolicy
 import com.apollographql.apollo3.exception.ApolloException
 import com.squareup.anvil.annotations.ContributesMultibinding
@@ -138,7 +139,9 @@ class GitHubService @Inject constructor(
             ),
             after = request.pageId.nullIfBlank()
           ).toApolloRequest()
-            .withHttpFetchPolicy(NetworkOnly)
+            .newBuilder()
+            .httpFetchPolicy(NetworkOnly)
+            .build()
         )
     }
 
@@ -150,7 +153,7 @@ class GitHubService @Inject constructor(
       }
       .map { it.data!! }
       .flatMap { (search) ->
-        Observable.fromIterable(search.nodes?.mapNotNull { it?.asRepository }.orEmpty())
+        Observable.fromIterable(search.nodes?.mapNotNull { it?.onRepository }.orEmpty())
           .map {
             with(it) {
               val description = description
@@ -227,5 +230,5 @@ object GitHubModule {
 }
 
 private fun <D : Query.Data> Query<D>.toApolloRequest(): ApolloRequest<D> {
-  return ApolloRequest(this)
+  return ApolloRequest.Builder(this).build()
 }
