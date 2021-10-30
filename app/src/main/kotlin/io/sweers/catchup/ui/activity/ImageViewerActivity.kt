@@ -174,15 +174,15 @@ class ImageViewerActivity : AppCompatActivity() {
       size(ViewSizeResolver(imageView))
       scale(Scale.FILL)
 
-    // Don't cache this to avoid pushing other bitmaps out of the cache.
+      // Don't cache this to avoid pushing other bitmaps out of the cache.
       memoryCachePolicy(CachePolicy.READ_ONLY)
 
-    // Crossfade in the higher res version when it arrives
-    // ...hopefully
+      // Crossfade in the higher res version when it arrives
+      // ...hopefully
       crossfade(true)
 
-    // Adding a 1px transparent border improves anti-aliasing
-    // when the image rotates while being dragged.
+      // Adding a 1px transparent border improves anti-aliasing
+      // when the image rotates while being dragged.
       transformations(
         CoilPaddingTransformation(
           paddingPx = 1F,

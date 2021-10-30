@@ -21,7 +21,6 @@ import com.apollographql.apollo3.api.ApolloRequest
 import com.apollographql.apollo3.api.Query
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.http.httpFetchPolicy
-import com.apollographql.apollo3.cache.http.withHttpFetchPolicy
 import com.apollographql.apollo3.exception.ApolloException
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo

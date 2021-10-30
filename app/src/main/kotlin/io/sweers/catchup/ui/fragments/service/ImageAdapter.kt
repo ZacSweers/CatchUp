@@ -62,9 +62,7 @@ import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.UiUtil.fastOutSlowInInterpolator
 import io.sweers.catchup.util.isInNightMode
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.math.roundToLong
 
 internal class ImageAdapter(
@@ -372,7 +370,6 @@ private class SaturatingTransformation(
     override fun create(target: TransitionTarget, result: ImageResult): Transition {
       return SaturatingTransformation(target = target, result = result)
     }
-
   }
 }
 

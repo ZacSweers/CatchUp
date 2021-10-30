@@ -245,12 +245,14 @@ abstract class ApplicationModule {
         allowRgb565(isLowRamDevice)
         crossfade(300)
 
-        components{
-          add(if (VERSION.SDK_INT >= 28) {
-            ImageDecoderDecoder.Factory()
-          } else {
-            GifDecoder.Factory()
-          })
+        components {
+          add(
+            if (VERSION.SDK_INT >= 28) {
+              ImageDecoderDecoder.Factory()
+            } else {
+              GifDecoder.Factory()
+            }
+          )
         }
 
         build()
