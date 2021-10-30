@@ -182,7 +182,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
           it.toApolloRequest()
             .withHttpFetchPolicy(CacheFirst)
         )
-        with(response.data!!.repository!!) {
+        with(response.data!!.repository!!.onRepository) {
           id to owner.id
         }
       }
@@ -205,8 +205,8 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
         // Reduce into a map of the owner ID -> display name
         .fold(mutableMapOf<String, String>()) { map, node ->
           map.apply {
-            node.asOrganization?.run { map[id] = (name ?: login) }
-            node.asUser?.run { map[id] = (name ?: login) }
+            node.onOrganization?.run { map[id] = (name ?: login) }
+            node.onUser?.run { map[id] = (name ?: login) }
           }
         }
     }
@@ -217,7 +217,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
         .withHttpFetchPolicy(CacheFirst)
     )
       .data!!.nodes.asSequence()
-      .mapNotNull { it?.asRepository }
+      .mapNotNull { it?.onRepository }
       .asFlow()
       .map { it to userIdToNameMap.getValue(it.owner.id) }
       .map { (repo, ownerName) ->
@@ -467,5 +467,5 @@ internal data class OssItem(
 }
 
 private fun <D : Query.Data> Query<D>.toApolloRequest(): ApolloRequest<D> {
-  return ApolloRequest(this)
+  return ApolloRequest.Builder(this).build()
 }

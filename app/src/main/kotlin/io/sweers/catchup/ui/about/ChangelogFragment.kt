@@ -120,9 +120,9 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
 
   private fun requestItems(): Single<List<ChangeLogItem>> {
     return rxSingle(Dispatchers.IO) { apolloClient.query(RepoReleasesQuery()) }
-      .flatMapObservable { Observable.fromIterable(it.data!!.repository!!.releases.nodes as List<Node>) }
+      .flatMapObservable { Observable.fromIterable(it.data!!.repository!!.onRepository.releases.nodes as List<Node>) }
       .map {
-        with(it) {
+        with(it.onRelease) {
           ChangeLogItem(
             name = name!!,
             timestamp = publishedAt!!,
