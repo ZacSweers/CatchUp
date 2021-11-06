@@ -214,7 +214,7 @@ object deps {
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:7.1.0"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:3.6.0"
-      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.8.0"
+      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.8.3"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${versions.spotless}"
     }
 
@@ -336,7 +336,7 @@ object deps {
   }
 
   object ksp {
-    const val version = "1.5.31-1.0.0"
+    const val version = "1.6.0-RC-1.0.1-RC"
     const val pluginId = "com.google.devtools.ksp"
   }
 

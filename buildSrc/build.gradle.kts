@@ -7,14 +7,14 @@ repositories {
 }
 
 plugins {
-  kotlin("jvm") version "1.5.31"
+  kotlin("jvm") version "1.6.0-RC"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
 
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(11))
+    languageVersion.set(JavaLanguageVersion.of(17))
   }
 }
 
@@ -24,7 +24,7 @@ java {
  */
 object SharedBuildVersions {
   const val agp = "7.2.0-alpha03"
-  const val kotlin = "1.5.31"
+  const val kotlin = "1.6.0-RC"
   const val moshi = "1.12.0"
   const val okio = "3.0.0"
   const val kotlinJvmTarget = "11"
@@ -95,7 +95,7 @@ tasks.withType<KotlinCompile>().configureEach {
   kotlinOptions {
     @Suppress("SuspiciousCollectionReassignment")
     freeCompilerArgs += SharedBuildVersions.kotlinCompilerArgs
-    jvmTarget = "11"
+    jvmTarget = SharedBuildVersions.kotlinJvmTarget
   }
 }
 
@@ -108,11 +108,11 @@ dependencies {
   implementation(kotlin("stdlib-jdk8", version = SharedBuildVersions.kotlin))
   implementation(kotlin("reflect", version = SharedBuildVersions.kotlin))
 
-  compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.5.31-1.0.0")
+  compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.6.0-RC-1.0.1-RC")
   implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.3.1")
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
   implementation("de.undercouch:gradle-download-task:4.1.1")
-  implementation("com.squareup.anvil:gradle-plugin:2.3.6")
+  implementation("com.squareup.anvil:gradle-plugin:2.3.6-1-6-0-RC-1")
 }
