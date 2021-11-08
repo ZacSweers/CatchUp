@@ -7,7 +7,7 @@ repositories {
 }
 
 plugins {
-  kotlin("jvm") version "1.6.0-RC"
+  kotlin("jvm") version "1.6.0-RC2"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
@@ -24,7 +24,7 @@ java {
  */
 object SharedBuildVersions {
   const val agp = "7.2.0-alpha03"
-  const val kotlin = "1.6.0-RC"
+  const val kotlin = "1.6.0-RC2"
   const val moshi = "1.12.0"
   const val okio = "3.0.0"
   const val kotlinJvmTarget = "11"
