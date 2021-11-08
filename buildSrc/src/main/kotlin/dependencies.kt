@@ -163,7 +163,7 @@ object deps {
   }
 
   object anvil {
-    const val version = "2.3.8-1-6-0-RC"
+    const val version = "2.3.8-1-6-0-RC2"
     const val pluginId = "com.squareup.anvil"
   }
 
