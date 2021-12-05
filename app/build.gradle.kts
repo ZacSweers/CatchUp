@@ -24,6 +24,7 @@ plugins {
   kotlin("kapt")
   id("com.apollographql.apollo3")
   id("licensesJsonGenerator")
+  id("com.google.devtools.ksp")
 //  id("com.bugsnag.android.gradle")
 //  id("com.github.triplet.play")
 }
@@ -389,7 +390,7 @@ dependencies {
   implementation(deps.android.androidx.lifecycle.ktx)
 
   // Moshi
-  kapt(deps.moshi.compiler)
+  ksp(deps.moshi.moshix.ksp)
   implementation(deps.moshi.core)
   implementation(deps.moshi.shimo)
 

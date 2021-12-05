@@ -18,6 +18,7 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
+  id("com.google.devtools.ksp")
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
@@ -43,7 +44,7 @@ kapt {
 dependencies {
   kapt(deps.dagger.hilt.apt.compiler)
   kapt(deps.dagger.apt.compiler)
-  kapt(deps.moshi.moshix.sealed.compiler)
+  ksp(deps.moshi.moshix.sealed.compiler)
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.hilt.android)
@@ -53,13 +54,13 @@ dependencies {
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
   implementation(deps.misc.lottie)
-  kapt(deps.moshi.compiler)
+  ksp(deps.moshi.moshix.ksp)
   implementation(deps.moshi.adapters)
   implementation(deps.moshi.core)
   implementation(deps.moshi.moshix.sealed.runtime)
   implementation(deps.android.androidx.room.runtime)
   implementation(deps.android.androidx.room.ktx)
-  kapt(deps.android.androidx.room.apt)
+  ksp(deps.android.androidx.room.apt)
   implementation(deps.android.androidx.lifecycle.ktx)
   implementation(deps.kotlin.coroutines)
   implementation(deps.kotlin.stdlib.jdk7)

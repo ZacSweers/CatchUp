@@ -132,7 +132,7 @@ object deps {
       }
 
       object compose {
-        const val version = "1.1.0-beta01"
+        const val version = "1.1.0-beta04"
         const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
         const val foundation = "androidx.compose.foundation:foundation:$version"
         const val material = "androidx.compose.material:material:$version"
@@ -163,7 +163,7 @@ object deps {
   }
 
   object anvil {
-    const val version = "2.3.8-1-6-0-RC2"
+    const val version = "2.3.10-1-6-0"
     const val pluginId = "com.squareup.anvil"
   }
 
@@ -336,7 +336,7 @@ object deps {
   }
 
   object ksp {
-    const val version = "1.6.0-RC-1.0.1-RC"
+    const val version = "1.6.0-1.0.1"
     const val pluginId = "com.google.devtools.ksp"
   }
 
