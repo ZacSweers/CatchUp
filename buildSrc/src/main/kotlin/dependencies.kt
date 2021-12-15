@@ -56,7 +56,7 @@ object deps {
     const val autodispose = "2.1.1"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
-    const val dagger = "2.40"
+    const val dagger = "2.40.5"
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
@@ -336,7 +336,7 @@ object deps {
   }
 
   object ksp {
-    const val version = "1.6.0-1.0.1"
+    const val version = "1.6.10-1.0.2"
     const val pluginId = "com.google.devtools.ksp"
   }
 
@@ -355,7 +355,7 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:5.14.0"
+    const val bugsnag = "com.bugsnag:bugsnag-android:5.17.0"
     const val byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
     object debug {
