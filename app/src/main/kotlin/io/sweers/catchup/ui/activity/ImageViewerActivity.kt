@@ -42,10 +42,10 @@ import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.addListener
+import androidx.core.graphics.createBitmap
 import androidx.core.transition.addListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import coil.Coil
-import coil.bitmap.BitmapPool
+import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.size.Precision
@@ -168,41 +168,40 @@ class ImageViewerActivity : AppCompatActivity() {
       isTransitionEnded = true
     }
 
-    Coil.enqueue(
-      ImageRequest.Builder(this).data(url).apply {
-        cacheKey?.let(this::memoryCacheKey)
-        precision(Precision.EXACT)
-        size(ViewSizeResolver(imageView))
-        scale(Scale.FILL)
+    val request = ImageRequest.Builder(this).data(url).apply {
+      cacheKey?.let(this::memoryCacheKey)
+      precision(Precision.EXACT)
+      size(ViewSizeResolver(imageView))
+      scale(Scale.FILL)
 
-// Don't cache this to avoid pushing other bitmaps out of the cache.
-        memoryCachePolicy(CachePolicy.READ_ONLY)
+      // Don't cache this to avoid pushing other bitmaps out of the cache.
+      memoryCachePolicy(CachePolicy.READ_ONLY)
 
-// Crossfade in the higher res version when it arrives
-// ...hopefully
-        crossfade(true)
+      // Crossfade in the higher res version when it arrives
+      // ...hopefully
+      crossfade(true)
 
-// Adding a 1px transparent border improves anti-aliasing
-// when the image rotates while being dragged.
-        transformations(
-          CoilPaddingTransformation(
-            paddingPx = 1F,
-            paddingColor = Color.TRANSPARENT
-          )
+      // Adding a 1px transparent border improves anti-aliasing
+      // when the image rotates while being dragged.
+      transformations(
+        CoilPaddingTransformation(
+          paddingPx = 1F,
+          paddingColor = Color.TRANSPARENT
         )
+      )
 
-        target(
-          onStart = imageView::setImageDrawable,
-          onSuccess = {
-            if (isTransitionEnded) {
-              imageView.setImageDrawable(it)
-            } else {
-              pendingImage = it
-            }
+      target(
+        onStart = imageView::setImageDrawable,
+        onSuccess = {
+          if (isTransitionEnded) {
+            imageView.setImageDrawable(it)
+          } else {
+            pendingImage = it
           }
-        )
-      }.build()
-    )
+        }
+      )
+    }.build()
+    request.context.imageLoader.enqueue(request)
 
     activityBackgroundDrawable = rootLayout.background
     rootLayout.background = activityBackgroundDrawable
@@ -316,9 +315,11 @@ private class CoilPaddingTransformation(
   private val paddingPx: Float,
   @ColorInt private val paddingColor: Int
 ) : Transformation {
-  override fun key(): String = "padding_$paddingPx"
 
-  override suspend fun transform(pool: BitmapPool, input: Bitmap, size: Size): Bitmap {
+  override val cacheKey: String
+    get() = "padding_$paddingPx"
+
+  override suspend fun transform(input: Bitmap, size: Size): Bitmap {
     if (paddingPx == 0F) {
       return input
     }
@@ -326,7 +327,7 @@ private class CoilPaddingTransformation(
     val targetWidth = input.width + paddingPx * 2F
     val targetHeight = input.height + paddingPx * 2F
 
-    val bitmapWithPadding = pool.get(
+    val bitmapWithPadding = createBitmap(
       targetWidth.toInt(),
       targetHeight.toInt(),
       Bitmap.Config.ARGB_8888

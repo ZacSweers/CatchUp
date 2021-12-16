@@ -19,20 +19,20 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
-import android.os.Build
+import android.os.Build.VERSION
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import coil.Coil
+import coil.ComponentRegistry
 import coil.ImageLoader
-import coil.bitmap.BitmapPool
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.DefaultRequestOptions
 import coil.request.Disposable
 import coil.request.ImageRequest
 import coil.request.ImageResult
-import coil.util.CoilUtils.createDefaultCache
 import coil.util.DebugLogger
 import dagger.Binds
 import dagger.Module
@@ -59,7 +59,6 @@ import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.PrecomputedTextSetterCompat
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import okhttp3.Cache
 import okhttp3.OkHttpClient
 import timber.log.Timber
 import javax.inject.Qualifier
@@ -190,33 +189,18 @@ abstract class ApplicationModule {
       } ?: true
     }
 
-    @CoilOkHttpStack
-    @Provides
-    @Singleton
-    fun coilCache(@ApplicationContext context: Context): Cache = createDefaultCache(context)
-
-    @CoilOkHttpStack
-    @Provides
-    @Singleton
-    fun coilHttpClient(
-      okHttpClient: OkHttpClient,
-      @CoilOkHttpStack cache: Cache
-    ): OkHttpClient {
-      return okHttpClient.newBuilder()
-        .cache(cache)
-        .build()
-    }
-
     @Provides
     @LazyDelegate
     @Singleton
     fun lazyImageLoader(imageLoader: dagger.Lazy<ImageLoader>): ImageLoader {
       return object : ImageLoader {
-        override val bitmapPool: BitmapPool
-          get() = imageLoader.get().bitmapPool
+        override val components: ComponentRegistry
+          get() = imageLoader.get().components
         override val defaults: DefaultRequestOptions
           get() = imageLoader.get().defaults
-        override val memoryCache: MemoryCache
+        override val diskCache: DiskCache?
+          get() = imageLoader.get().diskCache
+        override val memoryCache: MemoryCache?
           get() = imageLoader.get().memoryCache
 
         override fun enqueue(request: ImageRequest): Disposable {
@@ -242,7 +226,7 @@ abstract class ApplicationModule {
     fun imageLoader(
       @ApplicationContext context: Context,
       @IsLowRamDevice isLowRamDevice: Boolean,
-      @CoilOkHttpStack okHttpClient: dagger.Lazy<OkHttpClient>,
+      okHttpClient: dagger.Lazy<OkHttpClient>,
       appConfig: AppConfig
     ): ImageLoader {
       // TODO make this like an actual builder. But for now run works...
@@ -261,12 +245,14 @@ abstract class ApplicationModule {
         allowRgb565(isLowRamDevice)
         crossfade(300)
 
-        componentRegistry {
-          if (Build.VERSION.SDK_INT >= 28) {
-            add(ImageDecoderDecoder(context))
-          } else {
-            add(GifDecoder())
-          }
+        components {
+          add(
+            if (VERSION.SDK_INT >= 28) {
+              ImageDecoderDecoder.Factory()
+            } else {
+              GifDecoder.Factory()
+            }
+          )
         }
 
         build()

@@ -24,6 +24,7 @@ import com.apollographql.apollo3.api.http.DefaultHttpRequestComposer
 import com.apollographql.apollo3.api.http.HttpRequestComposer
 import com.apollographql.apollo3.cache.http.CachingHttpEngine
 import com.apollographql.apollo3.cache.http.DiskLruHttpCache
+import com.apollographql.apollo3.cache.http.internal.FileSystem
 import com.apollographql.apollo3.cache.normalized.CacheKey
 import com.apollographql.apollo3.cache.normalized.CacheKeyResolver
 import com.apollographql.apollo3.cache.normalized.MemoryCacheFactory
@@ -41,7 +42,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.data.github.type.Types
+import io.sweers.catchup.data.github.type.DateTime
+import io.sweers.catchup.data.github.type.URI
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
@@ -63,7 +65,7 @@ internal object GithubApolloModule {
   @Provides
   @Singleton
   internal fun provideHttpCacheStore(@ApplicationContext context: Context): DiskLruHttpCache =
-    DiskLruHttpCache(context.cacheDir, 1_000_000)
+    DiskLruHttpCache(FileSystem.SYSTEM, context.cacheDir, 1_000_000)
 
   @Provides
   @InternalApi
@@ -153,8 +155,8 @@ internal object GithubApolloModule {
       networkTransport = networkTransport,
       customScalarAdapters = CustomScalarAdapters(
         mapOf(
-          Types.DateTime.name to ISO8601InstantApolloAdapter,
-          Types.URI.name to HttpUrlApolloAdapter,
+          DateTime.type.name to ISO8601InstantApolloAdapter,
+          URI.type.name to HttpUrlApolloAdapter,
         )
       ),
     ).withNormalizedCache(

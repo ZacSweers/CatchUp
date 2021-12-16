@@ -62,9 +62,7 @@ import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.UiUtil.fastOutSlowInInterpolator
 import io.sweers.catchup.util.isInNightMode
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.math.roundToLong
 
 internal class ImageAdapter(
@@ -272,7 +270,7 @@ internal class ImageAdapter(
           memoryCacheKey(imageItem.imageInfo.cacheKey)
           placeholder(loadingPlaceholders[bindingAdapterPosition % loadingPlaceholders.size])
           if (!imageItem.hasFadedIn) {
-            transition(SaturatingTransformation())
+            transitionFactory(SaturatingTransformation.Factory)
           } else {
             crossfade(0)
           }
@@ -333,39 +331,44 @@ internal class ImageAdapter(
 /** A [Transition] that saturates and fades in the new drawable on load */
 @ExperimentalCoilApi
 private class SaturatingTransformation(
-  private val durationMillis: Long = SATURATION_ANIMATION_DURATION
+  private val durationMillis: Long = SATURATION_ANIMATION_DURATION,
+  private val target: TransitionTarget,
+  private val result: ImageResult
 ) : Transition {
   init {
     require(durationMillis > 0) { "durationMillis must be > 0." }
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
-  override suspend fun transition(target: TransitionTarget, result: ImageResult) {
+  override fun transition() {
     // Don't animate if the request was fulfilled by the memory cache.
-    if (result is SuccessResult && result.metadata.dataSource == MEMORY_CACHE) {
+    if (result is SuccessResult && result.dataSource == MEMORY_CACHE) {
       target.onSuccess(result.drawable)
       return
     }
 
     // Animate the drawable and suspend until the animation is completes.
-    suspendCancellableCoroutine<Unit> { continuation ->
-      when (result) {
-        is SuccessResult -> {
-          val animator = saturateDrawableAnimator(
-            result.drawable,
-            durationMillis,
-            target.view
-          )
-          animator.doOnEnd {
-            continuation.resume(Unit) { animator.cancel() }
-          }
-          animator.start()
-
-          continuation.invokeOnCancellation { animator.cancel() }
-          target.onSuccess(result.drawable)
+    when (result) {
+      is SuccessResult -> {
+        val animator = saturateDrawableAnimator(
+          result.drawable,
+          durationMillis,
+          target.view
+        )
+        animator.doOnEnd {
+          animator.cancel()
         }
-        is ErrorResult -> target.onError(result.drawable)
+        animator.start()
+
+        animator.cancel()
+        target.onSuccess(result.drawable)
       }
+      is ErrorResult -> target.onError(result.drawable)
+    }
+  }
+
+  companion object Factory : Transition.Factory {
+    override fun create(target: TransitionTarget, result: ImageResult): Transition {
+      return SaturatingTransformation(target = target, result = result)
     }
   }
 }

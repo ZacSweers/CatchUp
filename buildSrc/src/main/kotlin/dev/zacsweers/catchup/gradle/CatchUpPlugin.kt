@@ -204,7 +204,7 @@ private fun Project.configureJava() {
   plugins.withType<JavaBasePlugin> {
     extensions.getByType<JavaPluginExtension>().apply {
       toolchain {
-        languageVersion.set(JavaLanguageVersion.of(16))
+        languageVersion.set(JavaLanguageVersion.of(17))
       }
     }
 
