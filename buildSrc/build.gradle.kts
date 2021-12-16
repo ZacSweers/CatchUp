@@ -114,5 +114,6 @@ dependencies {
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
   implementation("de.undercouch:gradle-download-task:4.1.1")
+  implementation("com.squareup:javapoet:1.13.0")
   implementation("com.squareup.anvil:gradle-plugin:2.3.10-1-6-0")
 }
