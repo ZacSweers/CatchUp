@@ -33,12 +33,8 @@ android {
   }
 }
 
-kapt {
-  arguments {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.incremental", "true")
-    //arg("moshi.generated", "javax.annotation.processing.Generated")
-  }
+ksp {
+  arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
@@ -54,7 +50,7 @@ dependencies {
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
   implementation(deps.misc.lottie)
-  ksp(deps.moshi.moshix.ksp)
+  ksp(deps.moshi.compiler)
   implementation(deps.moshi.adapters)
   implementation(deps.moshi.core)
   implementation(deps.moshi.moshix.sealed.runtime)

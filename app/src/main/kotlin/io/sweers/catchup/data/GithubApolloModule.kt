@@ -22,16 +22,14 @@ import com.apollographql.apollo3.api.CustomScalarAdapters
 import com.apollographql.apollo3.api.Executable.Variables
 import com.apollographql.apollo3.api.http.DefaultHttpRequestComposer
 import com.apollographql.apollo3.api.http.HttpRequestComposer
-import com.apollographql.apollo3.cache.http.CachingHttpEngine
 import com.apollographql.apollo3.cache.http.DiskLruHttpCache
-import com.apollographql.apollo3.cache.http.internal.FileSystem
-import com.apollographql.apollo3.cache.normalized.CacheKey
-import com.apollographql.apollo3.cache.normalized.CacheKeyResolver
-import com.apollographql.apollo3.cache.normalized.MemoryCacheFactory
-import com.apollographql.apollo3.cache.normalized.NormalizedCacheFactory
-import com.apollographql.apollo3.cache.normalized.ObjectIdGenerator
-import com.apollographql.apollo3.cache.normalized.ObjectIdGeneratorContext
-import com.apollographql.apollo3.cache.normalized.withNormalizedCache
+import com.apollographql.apollo3.cache.normalized.api.CacheKey
+import com.apollographql.apollo3.cache.normalized.api.CacheKeyGenerator
+import com.apollographql.apollo3.cache.normalized.api.CacheKeyGeneratorContext
+import com.apollographql.apollo3.cache.normalized.api.CacheKeyResolver
+import com.apollographql.apollo3.cache.normalized.api.MemoryCacheFactory
+import com.apollographql.apollo3.cache.normalized.api.NormalizedCacheFactory
+import com.apollographql.apollo3.cache.normalized.normalizedCache
 import com.apollographql.apollo3.network.NetworkTransport
 import com.apollographql.apollo3.network.http.DefaultHttpEngine
 import com.apollographql.apollo3.network.http.HttpEngine
@@ -47,6 +45,7 @@ import io.sweers.catchup.data.github.type.URI
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.network.AuthInterceptor
 import okhttp3.OkHttpClient
+import okio.FileSystem
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -78,18 +77,18 @@ internal object GithubApolloModule {
 
   @Provides
   @Singleton
-  internal fun provideObjectIdGenerator(): ObjectIdGenerator = object : ObjectIdGenerator {
+  internal fun provideCacheKeyGenerator(): CacheKeyGenerator = object : CacheKeyGenerator {
     private val formatter = { id: String ->
       if (id.isEmpty()) {
         null
       } else {
-        CacheKey.from(id)
+        CacheKey(id)
       }
     }
 
     override fun cacheKeyForObject(
       obj: Map<String, Any?>,
-      context: ObjectIdGeneratorContext
+      context: CacheKeyGeneratorContext
     ): CacheKey? {
       // Most objects use id
       obj["id"].let {
@@ -117,15 +116,9 @@ internal object GithubApolloModule {
   @Provides
   @Singleton
   internal fun provideHttpEngine(
-    @InternalApi client: Lazy<OkHttpClient>,
-    @ApplicationContext context: Context,
+    @InternalApi client: Lazy<OkHttpClient>
   ): HttpEngine {
-    val delegate = DefaultHttpEngine { client.get().newCall(it) }
-    return CachingHttpEngine(
-      directory = context.cacheDir,
-      maxSize = 1_000_000,
-      delegate = delegate
-    )
+    return DefaultHttpEngine { client.get().newCall(it) }
   }
 
   @Provides
@@ -140,7 +133,10 @@ internal object GithubApolloModule {
     httpEngine: HttpEngine,
     httpRequestComposer: HttpRequestComposer
   ): NetworkTransport {
-    return HttpNetworkTransport(httpRequestComposer, httpEngine)
+    return HttpNetworkTransport.Builder()
+      .httpRequestComposer(httpRequestComposer)
+      .httpEngine(httpEngine)
+      .build()
   }
 
   @Provides
@@ -149,19 +145,21 @@ internal object GithubApolloModule {
     networkTransport: NetworkTransport,
     cacheFactory: NormalizedCacheFactory,
     cacheKeyResolver: CacheKeyResolver,
-    objectIdGenerator: ObjectIdGenerator
+    cacheKeyGenerator: CacheKeyGenerator
   ): ApolloClient {
-    return ApolloClient(
-      networkTransport = networkTransport,
-      customScalarAdapters = CustomScalarAdapters(
-        mapOf(
-          DateTime.type.name to ISO8601InstantApolloAdapter,
-          URI.type.name to HttpUrlApolloAdapter,
-        )
-      ),
-    ).withNormalizedCache(
-      cacheFactory, cacheResolver = cacheKeyResolver,
-      objectIdGenerator = objectIdGenerator
-    )
+    return ApolloClient.Builder()
+      .networkTransport(networkTransport)
+      .customScalarAdapters(
+        CustomScalarAdapters.Builder()
+          .add(DateTime.type, ISO8601InstantApolloAdapter)
+          .add(URI.type, HttpUrlApolloAdapter)
+          .build()
+      )
+      .normalizedCache(
+        normalizedCacheFactory = cacheFactory,
+        cacheResolver = cacheKeyResolver,
+        cacheKeyGenerator = cacheKeyGenerator
+      )
+      .build()
   }
 }

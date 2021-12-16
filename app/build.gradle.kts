@@ -138,10 +138,12 @@ android {
 
 kapt {
   arguments {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.incremental", "true")
     arg("dagger.experimentalDaggerErrorMessages", "enabled")
   }
+}
+
+ksp {
+  arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 tasks.withType<KotlinCompile>().matching { !it.name.startsWith("ksp") }.configureEach {
@@ -390,7 +392,7 @@ dependencies {
   implementation(deps.android.androidx.lifecycle.ktx)
 
   // Moshi
-  ksp(deps.moshi.moshix.ksp)
+  ksp(deps.moshi.compiler)
   implementation(deps.moshi.core)
   implementation(deps.moshi.shimo)
 

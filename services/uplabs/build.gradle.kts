@@ -26,7 +26,7 @@ anvil {
 }
 
 dependencies {
-  ksp(deps.moshi.moshix.ksp)
+  ksp(deps.moshi.compiler)
 
   implementation(project(":libraries:util"))
   implementation(deps.retrofit.core)

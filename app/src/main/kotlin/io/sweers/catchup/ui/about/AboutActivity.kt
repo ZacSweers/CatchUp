@@ -319,17 +319,17 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
 
     viewLifecycleOwner.lifecycleScope.launch {
       /*
-     * Here we want to get the appbar offset changes paired with the direction it's moving and
-     * using `offsetChanges` API to make an rx Observable of this. The first
-     * part buffers two while skipping one at a time and emits "scroll direction" enums. Second
-     * part is just a simple map to pair the offset with the resolved scroll direction comparing
-     * to the previous offset. This gives us a nice stream of (offset, direction) emissions.
-     *
-     * Note that the filter() is important if you manipulate child views of the ABL. If any child
-     * view requests layout again, it will trigger an emission from the offset listener with the
-     * same value as before, potentially causing measure/layout/draw thrashing if your logic
-     * reacting to the offset changes *is* manipulating those child views (vicious cycle).
-     */
+       * Here we want to get the appbar offset changes paired with the direction it's moving and
+       * using `offsetChanges` API to make an rx Observable of this. The first
+       * part buffers two while skipping one at a time and emits "scroll direction" enums. Second
+       * part is just a simple map to pair the offset with the resolved scroll direction comparing
+       * to the previous offset. This gives us a nice stream of (offset, direction) emissions.
+       *
+       * Note that the filter() is important if you manipulate child views of the ABL. If any child
+       * view requests layout again, it will trigger an emission from the offset listener with the
+       * same value as before, potentially causing measure/layout/draw thrashing if your logic
+       * reacting to the offset changes *is* manipulating those child views (vicious cycle).
+       */
       appBarLayout.offsetChanges()
         .windowed(2, 1) // Buffer in pairs to compare the previous, skip none
         .filter { it[1] != it[0] }

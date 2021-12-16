@@ -34,10 +34,8 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.ApolloRequest
-import com.apollographql.apollo3.api.Query
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy.CacheFirst
-import com.apollographql.apollo3.cache.http.withHttpFetchPolicy
+import com.apollographql.apollo3.cache.http.httpFetchPolicy
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -68,7 +66,6 @@ import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.dp2px
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.isInNightMode
-import io.sweers.catchup.util.kotlin.distinct
 import io.sweers.catchup.util.kotlin.groupBy
 import io.sweers.catchup.util.kotlin.sortBy
 import io.sweers.catchup.util.w
@@ -77,6 +74,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.fold
@@ -178,15 +176,17 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     val idsToOwnerIds = githubEntries.asFlow()
       .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
       .map {
-        val response = apolloClient.query(
-          it.toApolloRequest()
-            .withHttpFetchPolicy(CacheFirst)
-        )
+        val response = apolloClient
+          .newBuilder()
+          .httpFetchPolicy(CacheFirst)
+          .build()
+          .query(it)
+          .execute()
         with(response.data!!.repository!!.onRepository) {
           id to owner.id
         }
       }
-      .distinct()
+      .distinctUntilChangedBy { it }
       .fold(mutableMapOf()) { map: MutableMap<String, String>, (first, second) ->
         map.apply {
           put(first, second)
@@ -195,11 +195,14 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
 
     // Fetch the users by their IDs
     val userIdToNameMap = withContext(Dispatchers.IO) {
-      val response = apolloClient.query(
-        ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct())
-          .toApolloRequest()
-          .withHttpFetchPolicy(CacheFirst)
-      )
+      val response = apolloClient
+        .newBuilder()
+        .httpFetchPolicy(CacheFirst)
+        .build()
+        .query(
+          ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct())
+        )
+        .execute()
 
       response.data!!.nodes.filterNotNull().asFlow()
         // Reduce into a map of the owner ID -> display name
@@ -211,11 +214,14 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
         }
     }
     // Fetch the repositories by their IDs, map down to its
-    return apolloClient.query(
-      RepositoriesByIdsQuery(idsToOwnerIds.keys.toList())
-        .toApolloRequest()
-        .withHttpFetchPolicy(CacheFirst)
-    )
+    return apolloClient
+      .newBuilder()
+      .httpFetchPolicy(CacheFirst)
+      .build()
+      .query(
+        RepositoriesByIdsQuery(idsToOwnerIds.keys.toList())
+      )
+      .execute()
       .data!!.nodes.asSequence()
       .mapNotNull { it?.onRepository }
       .asFlow()
@@ -464,8 +470,4 @@ internal data class OssItem(
   val authorUrl: String? = null
 ) : OssBaseItem() {
   override fun itemType() = 1
-}
-
-private fun <D : Query.Data> Query<D>.toApolloRequest(): ApolloRequest<D> {
-  return ApolloRequest.Builder(this).build()
 }

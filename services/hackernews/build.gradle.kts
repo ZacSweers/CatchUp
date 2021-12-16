@@ -56,7 +56,7 @@ dependencies {
   implementation(project(":libraries:util"))
   implementation(project(":libraries:base-ui"))
 
-  ksp(deps.moshi.moshix.ksp)
+  ksp(deps.moshi.compiler)
 
   implementation(deps.android.androidx.swipeRefresh)
   implementation(deps.android.androidx.viewModel.core)
