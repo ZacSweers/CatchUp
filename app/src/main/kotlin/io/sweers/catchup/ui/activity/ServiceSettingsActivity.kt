@@ -100,7 +100,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     }
 
     private fun setUpGeneralSettings() {
-      preferenceScreen = preferenceManager.createPreferenceScreen(activity)
+      preferenceScreen = preferenceManager.createPreferenceScreen(requireActivity())
 
       val currentOrder = catchUpPreferences.servicesOrder?.split(",")
         ?: emptyList()
@@ -112,7 +112,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
           meta.run {
             // Create a category
             val metaColor = ContextCompat.getColor(requireActivity().asDayContext(), meta.themeColor)
-            val category = PreferenceCategory(activity).apply {
+            val category = PreferenceCategory(requireActivity()).apply {
               title = resources.getString(meta.name)
 //                titleColor = metaColor
               icon = AppCompatResources.getDrawable(context, meta.icon)!!.apply {
@@ -122,7 +122,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
             preferenceScreen.addPreference(category)
 
             // Create an "enabled" pref
-            val enabledPref = SwitchPreference(activity).apply {
+            val enabledPref = SwitchPreference(requireActivity()).apply {
               title = resources.getString(R.string.enabled)
               key = meta.enabledPreferenceKey
 //                themeColor = metaColor
@@ -135,7 +135,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
               when (config) {
                 is ActivityConfiguration -> {
                   category.addPreference(
-                    Preference(activity).apply {
+                    Preference(requireActivity()).apply {
                       dependency = meta.enabledPreferenceKey
                       setOnPreferenceClickListener {
                         startActivity(Intent(activity, config.activity))
@@ -146,7 +146,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
                 }
                 is PreferencesConfiguration -> {
                   category.addPreference(
-                    Preference(activity).apply {
+                    Preference(requireActivity()).apply {
                       dependency = meta.enabledPreferenceKey
                       setOnPreferenceClickListener {
                         startActivity(

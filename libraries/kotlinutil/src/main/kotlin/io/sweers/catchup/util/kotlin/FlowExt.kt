@@ -15,46 +15,12 @@
  */
 package io.sweers.catchup.util.kotlin
 
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.merge
 import java.util.concurrent.atomic.AtomicInteger
-
-internal object NULL
-private class LocalAbortFlowException : CancellationException(
-  "Flow was aborted, no more elements needed"
-) {
-  override fun fillInStackTrace(): Throwable {
-    return this
-  }
-}
-
-/**
- * A terminal operator that returns the first element emitted by the flow matching the given [predicate] and then cancels flow's collection.
- * Returns null if the flow has not contained elements matching the [predicate].
- */
-suspend fun <T> Flow<T>.firstOrNull(predicate: suspend (T) -> Boolean): T? {
-  var result: Any? = NULL
-  try {
-    collect { value ->
-      if (predicate(value)) {
-        result = value
-        throw LocalAbortFlowException()
-      }
-    }
-  } catch (e: LocalAbortFlowException) {
-    // Do nothing
-  }
-
-  return if (result === NULL) {
-    null
-  } else {
-    @Suppress("UNCHECKED_CAST")
-    result as T
-  }
-}
 
 suspend fun <V, K> Flow<V>.groupBy(selector: (V) -> K): Flow<Pair<K, List<V>>> = flow {
   val map = mutableMapOf<K, MutableList<V>>()
@@ -75,13 +41,6 @@ suspend fun <T, K : Comparable<K>> Flow<T>.sortBy(selector: (T) -> K): Flow<T> =
   list.forEach { emit(it) }
 }
 
-suspend fun <T> Flow<T>.distinct(): Flow<T> = distinctBy { it }
-
-suspend fun <T, K> Flow<T>.distinctBy(selector: suspend (T) -> K): Flow<T> {
-  val set = mutableSetOf<K>()
-  return filter { set.add(selector(it)) }
-}
-
 /**
  * A terminal operator that returns `true` if at least one element emitted by the flow matches the
  * given [predicate]. If there's a match, it then cancels flow's collection. Returns `false` if no
@@ -91,14 +50,7 @@ suspend fun <T> Flow<T>.any(predicate: suspend (T) -> Boolean): Boolean {
   return firstOrNull(predicate) != null
 }
 
-fun <T> Flow<T>.mergeWith(other: Flow<T>): Flow<T> = flow {
-  other.collect {
-    emit(it)
-  }
-  collect {
-    emit(it)
-  }
-}
+fun <T> Flow<T>.mergeWith(other: Flow<T>): Flow<T> = merge(this, other)
 
 fun <T> Flow<T>.windowed(
   size: Int,

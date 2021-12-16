@@ -18,6 +18,7 @@ package io.sweers.catchup.service.github
 import android.graphics.Color
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloRequest
+import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.api.Query
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.http.httpFetchPolicy
@@ -128,20 +129,21 @@ class GitHubService @Inject constructor(
 
     val searchQuery = rxSingle(Dispatchers.IO) {
       apolloClient.get()
+        .newBuilder()
+        .httpFetchPolicy(NetworkOnly)
+        .build()
         .query(
           GitHubSearchQuery(
             queryString = query,
             firstCount = 50,
             order = LanguageOrder(
               direction = OrderDirection.DESC,
-              field_ = LanguageOrderField.SIZE
+              field = LanguageOrderField.SIZE
             ),
-            after = request.pageId.nullIfBlank()
-          ).toApolloRequest()
-            .newBuilder()
-            .httpFetchPolicy(NetworkOnly)
-            .build()
+            after = Optional.presentIfNotNull(request.pageId.nullIfBlank())
+          )
         )
+        .execute()
     }
 
     return searchQuery

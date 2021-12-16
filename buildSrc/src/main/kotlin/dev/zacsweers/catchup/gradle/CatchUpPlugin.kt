@@ -166,7 +166,7 @@ private fun Project.configureAndroid() {
   plugins.withType<LibraryPlugin> {
     configure<LibraryAndroidComponentsExtension> {
       beforeVariants { variant ->
-        variant.enabled = variant.buildType == "release"
+        variant.enable = variant.buildType == "release"
         variant.enableAndroidTest = false
       }
     }
