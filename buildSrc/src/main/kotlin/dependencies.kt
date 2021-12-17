@@ -118,11 +118,6 @@ object deps {
         const val ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
       }
 
-      object liveData {
-        private const val version = "2.2.0-alpha01"
-        const val ktx = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
-      }
-
       object room {
         private const val version = "2.4.0"
         const val apt = "androidx.room:room-compiler:$version"
