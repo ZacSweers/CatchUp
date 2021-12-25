@@ -52,7 +52,7 @@ object build {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val apollo = "3.0.0-rc03"
+    const val apollo = "3.0.0"
     const val autodispose = "2.1.1"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
@@ -147,7 +147,7 @@ object deps {
 
     object firebase {
       // TODO use bom
-      const val core = "com.google.firebase:firebase-core:20.0.1"
+      const val core = "com.google.firebase:firebase-core:20.0.2"
       const val config = "com.google.firebase:firebase-config:18.0.0"
       const val database = "com.google.firebase:firebase-database:20.0.3"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
@@ -209,7 +209,7 @@ object deps {
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:7.1.0"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:3.7.0"
-      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.9.0"
+      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:0.10.0"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${versions.spotless}"
     }
 
@@ -230,7 +230,7 @@ object deps {
   }
 
   object coil {
-    private const val VERSION = "2.0.0-alpha05"
+    private const val VERSION = "2.0.0-alpha06"
     const val base = "io.coil-kt:coil-base:$VERSION"
     const val default = "io.coil-kt:coil:$VERSION"
     const val gif = "io.coil-kt:coil-gif:$VERSION"
@@ -313,7 +313,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.6.0-RC3"
+    private const val coroutinesVersion = "1.6.0"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:$coroutinesVersion"
