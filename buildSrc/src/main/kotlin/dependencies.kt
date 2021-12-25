@@ -67,7 +67,7 @@ object deps {
     const val markwon = "4.6.2"
     const val moshi = SharedBuildVersions.moshi
     const val retrofit = "2.9.0"
-    const val spotless = "6.0.4"
+    const val spotless = "6.1.0"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
 
@@ -387,14 +387,12 @@ object deps {
   object moshi {
     const val adapters = "com.squareup.moshi:moshi-adapters:${versions.moshi}"
     const val core = "com.squareup.moshi:moshi:${versions.moshi}"
-    const val compiler = "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi}"
     const val shimo = "com.jakewharton.moshi:shimo:0.1.0"
     object moshix {
-      private const val VERSION = "0.15.0"
+      const val VERSION = "0.16.0"
 
       object sealed {
         const val runtime = "dev.zacsweers.moshix:moshi-sealed-runtime:${VERSION}"
-        const val compiler = "dev.zacsweers.moshix:moshi-sealed-codegen:${VERSION}"
       }
     }
   }

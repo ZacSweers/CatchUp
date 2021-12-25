@@ -18,7 +18,7 @@ plugins {
   id("com.android.library")
   kotlin("android")
   id(deps.anvil.pluginId)
-  id(deps.ksp.pluginId)
+  id("dev.zacsweers.moshix")
 }
 
 anvil {
@@ -26,8 +26,6 @@ anvil {
 }
 
 dependencies {
-  ksp(deps.moshi.compiler)
-
   implementation(project(":libraries:util"))
   implementation(deps.retrofit.core)
   implementation(deps.retrofit.moshi)

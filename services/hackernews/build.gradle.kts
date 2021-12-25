@@ -19,8 +19,8 @@ plugins {
   id("com.android.library")
   kotlin("android")
   id(deps.anvil.pluginId)
-  id(deps.ksp.pluginId)
   id("kotlin-noarg")
+  id("dev.zacsweers.moshix")
 }
 
 configure<LibraryAndroidComponentsExtension> {
@@ -55,8 +55,6 @@ dependencies {
   api(project(":service-api"))
   implementation(project(":libraries:util"))
   implementation(project(":libraries:base-ui"))
-
-  ksp(deps.moshi.compiler)
 
   implementation(deps.android.androidx.swipeRefresh)
   implementation(deps.android.androidx.viewModel.core)
