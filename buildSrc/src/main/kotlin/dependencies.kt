@@ -127,7 +127,7 @@ object deps {
       }
 
       object compose {
-        const val version = "1.1.0-rc02"
+        const val version = "1.1.0-rc01"
         const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
         const val foundation = "androidx.compose.foundation:foundation:$version"
         const val material = "androidx.compose.material:material:$version"
