@@ -19,6 +19,7 @@ plugins {
   kotlin("android")
   kotlin("kapt")
   id("com.google.devtools.ksp")
+  id("dev.zacsweers.moshix")
 }
 
 apply(plugin = "dagger.hilt.android.plugin")
@@ -37,10 +38,13 @@ ksp {
   arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+moshi {
+  enableSealed.set(true)
+}
+
 dependencies {
   kapt(deps.dagger.hilt.apt.compiler)
   kapt(deps.dagger.apt.compiler)
-  ksp(deps.moshi.moshix.sealed.compiler)
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.hilt.android)
@@ -50,7 +54,6 @@ dependencies {
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
   implementation(deps.misc.lottie)
-  ksp(deps.moshi.compiler)
   implementation(deps.moshi.adapters)
   implementation(deps.moshi.core)
   implementation(deps.moshi.moshix.sealed.runtime)

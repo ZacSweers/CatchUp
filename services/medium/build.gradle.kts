@@ -19,18 +19,10 @@ plugins {
   kotlin("android")
   kotlin("kapt")
   id(deps.anvil.pluginId)
-  id(deps.ksp.pluginId)
+  id("dev.zacsweers.moshix")
 }
 
-//kapt {
-//  arguments {
-//    //arg("moshi.generated", "javax.annotation.processing.Generated")
-//  }
-//}
-
 dependencies {
-  ksp(deps.moshi.compiler)
-
   implementation(project(":libraries:util"))
   implementation(deps.misc.okio)
   implementation(deps.moshi.core)

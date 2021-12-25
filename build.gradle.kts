@@ -41,6 +41,7 @@ buildscript {
     classpath(deps.dagger.hilt.gradlePlugin)
     classpath("com.squareup.anvil:gradle-plugin:${deps.anvil.version}")
     classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:${deps.ksp.version}")
+    classpath("dev.zacsweers.moshix:moshi-gradle-plugin:${deps.moshi.moshix.VERSION}")
   }
 }
 

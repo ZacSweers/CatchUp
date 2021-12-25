@@ -18,6 +18,7 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
+  id("dev.zacsweers.moshix")
 }
 
 apply {
@@ -31,17 +32,10 @@ android {
   }
 }
 
-kapt {
-  arguments {
-    //arg("moshi.generated", "javax.annotation.processing.Generated")
-  }
-}
-
 dependencies {
   kapt(project(":service-registry:service-registry-compiler"))
   kapt(deps.crumb.compiler)
   kapt(deps.dagger.apt.compiler)
-  kapt(deps.moshi.compiler)
 
   implementation(project(":libraries:util"))
   implementation(deps.moshi.core)

@@ -25,6 +25,7 @@ plugins {
   id("com.apollographql.apollo3")
   id("licensesJsonGenerator")
   id("com.google.devtools.ksp")
+  id("dev.zacsweers.moshix")
 //  id("com.bugsnag.android.gradle")
 //  id("com.github.triplet.play")
 }
@@ -392,7 +393,7 @@ dependencies {
   implementation(deps.android.androidx.lifecycle.ktx)
 
   // Moshi
-  ksp(deps.moshi.compiler)
+//  ksp(deps.moshi.compiler)
   implementation(deps.moshi.core)
   implementation(deps.moshi.shimo)
 
