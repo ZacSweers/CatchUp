@@ -393,7 +393,6 @@ dependencies {
   implementation(deps.android.androidx.lifecycle.ktx)
 
   // Moshi
-//  ksp(deps.moshi.compiler)
   implementation(deps.moshi.core)
   implementation(deps.moshi.shimo)
 
