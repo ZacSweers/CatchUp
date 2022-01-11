@@ -390,7 +390,7 @@ object deps {
     const val core = "com.squareup.moshi:moshi:${versions.moshi}"
     const val shimo = "com.jakewharton.moshi:shimo:0.1.0"
     object moshix {
-      const val VERSION = "0.16.2"
+      const val VERSION = "0.16.3"
 
       object sealed {
         const val runtime = "dev.zacsweers.moshix:moshi-sealed-runtime:${VERSION}"

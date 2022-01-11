@@ -25,7 +25,6 @@ buildscript {
     maven(deps.build.repositories.snapshots)
     maven(deps.build.repositories.androidxSnapshots)
     maven("https://storage.googleapis.com/r8-releases/raw")
-    mavenLocal()
   }
 
   dependencies {
