@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.service.hackernews.model
 
+import com.squareup.moshi.JsonClass
 import java.util.Locale
 
 enum class HNType {
@@ -30,3 +31,6 @@ enum class HNType {
     }
   }
 }
+
+@JsonClass(generateAdapter = true)
+data class ExampleClass<T>(val value: T)

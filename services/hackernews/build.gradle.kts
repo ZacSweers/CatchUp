@@ -47,6 +47,15 @@ configure<LibraryAndroidComponentsExtension> {
   }
 }
 
+android {
+  buildFeatures {
+    compose = true
+  }
+  composeOptions {
+    kotlinCompilerExtensionVersion = deps.android.androidx.compose.compilerVersion
+  }
+}
+
 noArg {
   annotation("io.sweers.catchup.service.hackernews.model.NoArg")
 }
@@ -56,6 +65,9 @@ dependencies {
   implementation(project(":libraries:util"))
   implementation(project(":libraries:base-ui"))
 
+  implementation(deps.android.androidx.compose.uiTooling)
+  implementation(deps.android.androidx.compose.foundation)
+  implementation(deps.android.androidx.compose.material)
   implementation(deps.android.androidx.swipeRefresh)
   implementation(deps.android.androidx.viewModel.core)
   implementation(deps.android.androidx.viewModel.ktx)
