@@ -95,7 +95,7 @@ allprojects {
 
   pluginManager.withPlugin(deps.ksp.pluginId) {
     configure<KspExtension> {
-      blockOtherCompilerPlugins = true
+      blockOtherCompilerPlugins = false
     }
   }
 }
