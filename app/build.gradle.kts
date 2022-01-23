@@ -33,7 +33,6 @@ plugins {
 apply(plugin = "dagger.hilt.android.plugin")
 
 val useDebugSigning: Boolean = providers.gradleProperty("useDebugSigning")
-    .forUseAtConfigurationTime()
     .orElse("false")
     .map { it.toBoolean() }
     .get()
