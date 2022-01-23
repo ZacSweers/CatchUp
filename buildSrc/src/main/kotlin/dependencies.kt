@@ -220,6 +220,7 @@ object deps {
       const val plugins = "https://plugins.gradle.org/m2/"
       const val snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
       const val androidxSnapshots = "https://androidx.dev/snapshots/latest/artifacts/repository"
+      const val kotlinDev = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/"
     }
 
     const val javapoet = "com.squareup:javapoet:1.13.0"
@@ -288,29 +289,6 @@ object deps {
       const val sharedPreferences = "com.willowtreeapps.hyperion:hyperion-shared-preferences:${versions.hyperion}"
       const val timber = "com.willowtreeapps.hyperion:hyperion-timber:${versions.hyperion}"
     }
-  }
-
-  object inspector {
-    object apt {
-      const val compiler = "io.sweers.inspector:inspector-compiler:${versions.inspector}"
-
-      object extensions {
-        const val android = "io.sweers.inspector:inspector-android-compiler-extension:${versions.inspector}"
-        const val autovalue = "io.sweers.inspector:inspector-autovalue-compiler-extension:${versions.inspector}"
-        const val nullability = "io.sweers.inspector:inspector-nullability-compiler-extension:${versions.inspector}"
-      }
-    }
-
-    const val core = "io.sweers.inspector:inspector:${versions.inspector}"
-
-    object factoryCompiler {
-      const val apt = "io.sweers.inspector:inspector-factory-compiler:${versions.inspector}"
-
-      object compileOnly {
-        const val annotations = "io.sweers.inspector:inspector-factory-compiler-annotations:${versions.inspector}"
-      }
-    }
-
   }
 
   object kotlin {

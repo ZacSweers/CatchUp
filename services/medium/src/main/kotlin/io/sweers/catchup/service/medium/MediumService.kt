@@ -40,7 +40,6 @@ import io.sweers.catchup.service.medium.model.MediumPost
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
-import io.sweers.inspector.Inspector
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -175,20 +174,15 @@ abstract class MediumModule {
     }
 
     @Provides
-    internal fun provideInspector(): Inspector = Inspector.Builder().build()
-
-    @Provides
     internal fun provideMediumService(
       @InternalApi client: Lazy<OkHttpClient>,
       @InternalApi moshi: Moshi,
-      inspectorConverterFactory: InspectorConverterFactory,
       rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
       appConfig: AppConfig
     ): MediumApi {
       val retrofit = Retrofit.Builder().baseUrl(MediumApi.ENDPOINT)
         .delegatingCallFactory(client)
         .addCallAdapterFactory(rxJavaCallAdapterFactory)
-        .addConverterFactory(inspectorConverterFactory)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .validateEagerly(appConfig.isDebug)
         .build()

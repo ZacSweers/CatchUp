@@ -33,16 +33,6 @@ dependencies {
   implementation(deps.misc.moshiLazyAdapters)
   implementation(deps.kotlin.datetime)
 
-  // Inspector
-  compileOnly(deps.inspector.factoryCompiler.compileOnly.annotations)
-  compileOnly(deps.inspector.apt.extensions.android)
-  compileOnly(deps.inspector.apt.extensions.nullability)
-  kapt(deps.inspector.apt.compiler)
-  kapt(deps.inspector.factoryCompiler.apt)
-  implementation(deps.inspector.core) {
-    exclude(group = "com.android.support")
-  }
-
   api(project(":service-api"))
   api(deps.android.androidx.annotations)
   api(deps.dagger.runtime)

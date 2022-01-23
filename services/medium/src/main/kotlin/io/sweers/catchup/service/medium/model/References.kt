@@ -17,21 +17,22 @@ package io.sweers.catchup.service.medium.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.sweers.inspector.Inspector
-import io.sweers.inspector.SelfValidating
-import io.sweers.inspector.ValidationException
 
 @JsonClass(generateAdapter = true)
 data class References(
   @Json(name = "Collection") val collection: Map<String, Collection>?,
   @Json(name = "Post") val post: Map<String, Post>,
   @Json(name = "User") val user: Map<String, User>
-) : SelfValidating {
+) {
 
-  override fun validate(inspector: Inspector) {
+  init {
+    validate()
+  }
+
+  private fun validate() {
     post.values.forEach {
       if (it.creatorId !in user) {
-        throw ValidationException("Medium Post ${it.id} creator not in user map.")
+        error("Medium Post ${it.id} creator not in user map.")
       }
     }
   }

@@ -478,9 +478,6 @@ dependencies {
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.hilt.android)
 
-  // Inspector exposed for dagger
-  implementation(deps.inspector.core)
-
   implementation(deps.misc.jsr305)
 
   // Test
