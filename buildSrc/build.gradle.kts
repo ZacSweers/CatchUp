@@ -4,6 +4,7 @@ repositories {
   mavenCentral()
   google()
   maven("https://storage.googleapis.com/r8-releases/raw")
+  maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
 }
 
 plugins {

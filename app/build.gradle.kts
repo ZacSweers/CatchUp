@@ -33,7 +33,6 @@ plugins {
 apply(plugin = "dagger.hilt.android.plugin")
 
 val useDebugSigning: Boolean = providers.gradleProperty("useDebugSigning")
-    .forUseAtConfigurationTime()
     .orElse("false")
     .map { it.toBoolean() }
     .get()
@@ -477,9 +476,6 @@ dependencies {
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.hilt.android)
-
-  // Inspector exposed for dagger
-  implementation(deps.inspector.core)
 
   implementation(deps.misc.jsr305)
 

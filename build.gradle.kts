@@ -24,6 +24,7 @@ buildscript {
     maven(deps.build.repositories.plugins)
     maven(deps.build.repositories.snapshots)
     maven(deps.build.repositories.androidxSnapshots)
+    maven(deps.build.repositories.kotlinDev)
     maven("https://storage.googleapis.com/r8-releases/raw")
   }
 
@@ -45,7 +46,7 @@ buildscript {
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.39.0"
+  id("com.github.ben-manes.versions") version "0.41.0"
   id("catchup")
   id("com.osacky.doctor") version "0.7.3"
 }
@@ -69,6 +70,7 @@ allprojects {
     maven(deps.build.repositories.jitpack)
     maven(deps.build.repositories.snapshots)
     maven(deps.build.repositories.androidxSnapshots)
+    maven(deps.build.repositories.kotlinDev)
   }
 
   configurations.all {
