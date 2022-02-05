@@ -16,19 +16,11 @@
 
 apply plugin: 'com.diffplug.spotless'
 String[] copiedJavaFiles = [
-    "AtomicThrowable",
-    "AutoDisposableHelper",
-    "AutoDisposeBackpressureHelper",
-    "AutoDisposeEndConsumerHelper",
-    "AutoSubscriptionHelper",
-    "ExceptionHelper",
-    "HalfSerializer",
     "copyright",
 ].collect { "**/*${it}.java" } as String[]
 String[] copiedKotlinFiles = [
     "dependencies",
     "copyright",
-    "WeakHashSet",
     "KotterKnife"
 ].collect { "**/*${it}.kt" } as String[]
 spotless {

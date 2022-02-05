@@ -24,7 +24,7 @@ java {
  * These are copied as a source into the main source set and templated for replacement.
  */
 object SharedBuildVersions {
-  const val agp = "7.2.0-alpha07"
+  const val agp = "7.3.0-alpha01"
   const val kotlin = "1.6.10"
   const val moshi = "1.13.0"
   const val okio = "3.0.0"
@@ -110,11 +110,11 @@ dependencies {
   implementation(kotlin("reflect", version = SharedBuildVersions.kotlin))
 
   compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.6.10-1.0.2")
-  implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.3.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.3.2")
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
   implementation("de.undercouch:gradle-download-task:4.1.1")
   implementation("com.squareup:javapoet:1.13.0")
-  implementation("com.squareup.anvil:gradle-plugin:2.3.10-1-6-0")
+  implementation("com.squareup.anvil:gradle-plugin:2.3.11-1-6-10")
 }
