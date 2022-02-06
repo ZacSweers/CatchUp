@@ -220,25 +220,26 @@ private fun Project.configureJava() {
 private fun ApplicationAndroidComponentsExtension.configureVersioning(project: Project) {
   // use filter to apply onVariantProperties to a subset of the variants
   onVariants(selector().withBuildType("release")) { variant ->
-    val versionCodeTask = project.tasks.register<VersionCodeTask>(
-      "computeVersionCodeFor${
-      variant.name.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
-      }
-      }"
-    ) {
+    val vcTaskName = "computeVersionCodeFor${
+    variant.name.replaceFirstChar {
+      if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
+    }
+    }"
+    val versionCodeTask = project.tasks.register<VersionCodeTask>(vcTaskName) {
       group = "versioning"
+      // TODO replace with exec provider in Gradle 7.5
+      commitCount.set(project.provider { deps.build.gitCommitCount(project).toString() })
       outputFile.set(project.layout.buildDirectory.file("intermediates/versioning/versionCode.txt"))
     }
     val mappedVersionCodeTask = versionCodeTask.map { it.outputFile.get().asFile.readText().toInt() }
-    val versionNameTask = project.tasks.register<VersionNameTask>(
-      "computeVersionNameFor${
-      variant.name.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
-      }
-      }"
-    ) {
+    val vnTaskName = "computeVersionNameFor${
+    variant.name.replaceFirstChar {
+      if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
+    }
+    }"
+    val versionNameTask = project.tasks.register<VersionNameTask>(vnTaskName) {
       group = "versioning"
+      versionName.set(project.provider { deps.build.gitTag(project) })
       outputFile.set(project.layout.buildDirectory.file("intermediates/versioning/versionName.txt"))
     }
     val mappedVersionNameTask = versionNameTask.map { it.outputFile.get().asFile.readText() }
