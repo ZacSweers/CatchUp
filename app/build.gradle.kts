@@ -70,29 +70,27 @@ android {
       create("release")//.initWith(getByName("debug"))
     }
   }
-  packagingOptions.resources.excludes.addAll(
-    listOf(
-        "**/*.dot",
-        "**/*.kotlin_metadata",
-        "**/*.properties",
-        "*.properties",
-        "kotlin/**",
-        "LICENSE.txt",
-        "LICENSE_OFL",
-        "LICENSE_UNICODE",
-        "META-INF/*.kotlin_module",
-        "META-INF/*.version",
-        "META-INF/androidx.*",
-        "META-INF/CHANGES",
-        "META-INF/com.uber.crumb/**",
-        "META-INF/LICENSE",
-        "META-INF/LICENSE.txt",
-        "META-INF/NOTICE",
-        "META-INF/NOTICE.txt",
-        "META-INF/README.md",
-        "META-INF/rxjava.properties",
-        "META-INF/services/javax.annotation.processing.Processor",
-    )
+  packagingOptions.resources.excludes += listOf(
+    "**/*.dot",
+    "**/*.kotlin_metadata",
+    "**/*.properties",
+    "*.properties",
+    "kotlin/**",
+    "LICENSE.txt",
+    "LICENSE_OFL",
+    "LICENSE_UNICODE",
+    "META-INF/*.kotlin_module",
+    "META-INF/*.version",
+    "META-INF/androidx.*",
+    "META-INF/CHANGES",
+    "META-INF/com.uber.crumb/**",
+    "META-INF/LICENSE",
+    "META-INF/LICENSE.txt",
+    "META-INF/NOTICE",
+    "META-INF/NOTICE.txt",
+    "META-INF/README.md",
+    "META-INF/rxjava.properties",
+    "META-INF/services/javax.annotation.processing.Processor",
   )
   buildTypes {
     getByName("debug") {
@@ -126,6 +124,10 @@ android {
   }
   composeOptions {
     kotlinCompilerExtensionVersion = deps.android.androidx.compose.compilerVersion
+  }
+  lint {
+    // Dagger's lint checks target a super old API
+    disable += listOf("JvmStaticProvidesInObjectDetector", "FieldSiteTargetOnQualifierAnnotation", "ModuleCompanionObjects", "ModuleCompanionObjectsNotInModuleParent")
   }
 }
 
