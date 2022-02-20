@@ -126,8 +126,9 @@ android {
     kotlinCompilerExtensionVersion = deps.android.androidx.compose.compilerVersion
   }
   lint {
-    disable += "Typos"
-    disable += "ExtraTranslation"
+    disable += "Typos" // https://twitter.com/ZacSweers/status/1495491162920136706
+    disable += "ExtraTranslation" // wrong?
+    disable += "VectorPath" // Always complains about long paths as if I could do something about it
     checkDependencies = true
   }
 }
