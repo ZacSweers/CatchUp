@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.base.ui
 
-import android.os.Build
 import android.util.FloatProperty
 import android.util.Property
 

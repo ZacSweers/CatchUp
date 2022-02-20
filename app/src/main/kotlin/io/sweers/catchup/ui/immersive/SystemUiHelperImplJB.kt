@@ -15,9 +15,7 @@
  */
 package io.sweers.catchup.ui.immersive
 
-import android.annotation.TargetApi
 import android.app.Activity
-import android.os.Build
 import android.view.View
 
 internal open class SystemUiHelperImplJB(
