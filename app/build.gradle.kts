@@ -126,8 +126,6 @@ android {
     kotlinCompilerExtensionVersion = deps.android.androidx.compose.compilerVersion
   }
   lint {
-    // Dagger's lint checks target a super old API
-    disable += listOf("JvmStaticProvidesInObjectDetector", "FieldSiteTargetOnQualifierAnnotation", "ModuleCompanionObjects", "ModuleCompanionObjectsNotInModuleParent")
     checkDependencies = true
   }
 }
