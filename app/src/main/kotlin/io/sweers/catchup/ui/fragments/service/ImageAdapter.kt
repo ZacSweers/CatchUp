@@ -120,7 +120,6 @@ internal class ImageAdapter(
     return data[position].realItem().id
   }
 
-  @TargetApi(Build.VERSION_CODES.M)
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val layoutInflater = LayoutInflater.from(parent.context)
     return when (viewType) {

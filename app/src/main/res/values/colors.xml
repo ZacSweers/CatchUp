@@ -16,8 +16,8 @@
   -->
 
 <resources>
+  <color name="colorPrimaryDark">#e2e2e2</color>
   <color name="colorPrimary">#f9f9f9</color>
-  <color name="colorPrimaryDark">#343434</color>
   <color name="colorPrimaryAlt">#343434</color>
   <color name="colorPrimaryDarkAlt">#282828</color>
 

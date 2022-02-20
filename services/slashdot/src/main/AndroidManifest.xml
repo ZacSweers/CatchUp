@@ -23,6 +23,5 @@
 
   <application
       android:networkSecurityConfig="@xml/slashdot_network_security_config"
-      tools:targetApi="n"
       />
 </manifest>

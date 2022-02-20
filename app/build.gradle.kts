@@ -126,6 +126,8 @@ android {
     kotlinCompilerExtensionVersion = deps.android.androidx.compose.compilerVersion
   }
   lint {
+    disable += "Typos"
+    disable += "ExtraTranslation"
     checkDependencies = true
   }
 }

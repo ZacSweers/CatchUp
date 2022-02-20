@@ -25,6 +25,7 @@ import androidx.core.content.getSystemService
 import coil.Coil
 import coil.ComponentRegistry
 import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.disk.DiskCache
@@ -189,6 +190,7 @@ abstract class ApplicationModule {
       } ?: true
     }
 
+    @ExperimentalCoilApi
     @Provides
     @LazyDelegate
     @Singleton

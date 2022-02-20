@@ -100,7 +100,7 @@ class HackerNewsCommentsFragment @Inject constructor(
               scale(Scale.FILL)
               crossfade(true)
               listener(
-                onSuccess = { data, source ->
+                onSuccess = { _, source ->
                   val bitmap = (source.drawable as BitmapDrawable).bitmap
                   viewLifecycleOwner.lifecycleScope.launch paletteLaunch@{
                     val swatch = Palette.from(bitmap)

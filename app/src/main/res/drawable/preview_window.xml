@@ -19,10 +19,8 @@
 
   <item android:drawable="@color/colorPrimary"/>
 
-  <item>
-    <bitmap
-        android:gravity="center"
-        android:src="@drawable/ic_icon_flattened"/>
-  </item>
+  <item
+      android:drawable="@drawable/ic_icon_flattened"
+      android:gravity="center"/>
 
 </layer-list>

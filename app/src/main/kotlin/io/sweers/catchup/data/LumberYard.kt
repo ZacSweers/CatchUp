@@ -61,7 +61,7 @@ class LumberYard @Inject constructor(private val app: Application) {
     sharedFlow.tryEmit(entry)
   }
 
-  fun bufferedLogs() = ArrayList(entries)
+  fun bufferedLogs() = entries.toList()
 
   fun logs(): Flow<Entry> = sharedFlow.asSharedFlow()
 

@@ -53,7 +53,6 @@ object UiUtil {
     return RippleDrawable(ColorStateList.valueOf(color), null, mask)
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   inline fun createRipple(@ColorInt color: Int, bounded: Boolean): RippleDrawable {
     return RippleDrawable(
       ColorStateList.valueOf(color),
@@ -63,7 +62,6 @@ object UiUtil {
   }
 
   @SuppressLint("Range")
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   inline fun createRipple(
     @ColorInt inputColor: Int,
     @FloatRange(from = 0.0, to = 1.0) alpha: Float,
@@ -79,7 +77,6 @@ object UiUtil {
   }
 
   @SuppressLint("Range")
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   inline fun createRipple(
     palette: Palette,
     @FloatRange(from = 0.0, to = 1.0) darkAlpha: Float,
