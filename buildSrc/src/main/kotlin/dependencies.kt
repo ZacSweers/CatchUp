@@ -310,7 +310,7 @@ object deps {
   }
 
   object ksp {
-    const val version = "1.6.10-1.0.3"
+    const val version = "1.6.10-1.0.2"
     const val pluginId = "com.google.devtools.ksp"
   }
 
