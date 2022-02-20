@@ -61,4 +61,10 @@ spotless {
     trimTrailingWhitespace()
     endWithNewline()
   }
+  json {
+    target '**/*.json'
+    gson()
+      .indentWithSpaces(2)
+      .version('2.9.0')
+  }
 }
