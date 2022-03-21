@@ -109,7 +109,7 @@ dependencies {
 
   compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.6.21-1.0.5")
   implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.3.2")
-  implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
+  implementation("com.android.tools.build:gradle:7.3.0-alpha07")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
   implementation("de.undercouch:gradle-download-task:4.1.1")

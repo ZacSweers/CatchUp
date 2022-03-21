@@ -29,6 +29,7 @@ android {
   buildFeatures {
     buildConfig = true
   }
+  namespace = "io.sweers.catchup.service.unsplash"
 }
 
 dependencies {

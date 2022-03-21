@@ -42,3 +42,6 @@ dependencies {
   api(deps.android.androidx.palette)
   api(deps.android.androidx.paletteKtx)
 }
+android {
+  namespace = "catchup.ui.core"
+}

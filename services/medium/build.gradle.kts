@@ -38,3 +38,6 @@ dependencies {
   api(deps.dagger.runtime)
   api(deps.rx.java)
 }
+android {
+  namespace = "io.sweers.catchup.service.medium"
+}

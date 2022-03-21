@@ -28,6 +28,7 @@ android {
   composeOptions {
     kotlinCompilerExtensionVersion = deps.android.androidx.compose.version
   }
+  namespace = "dev.zacsweers.catchup.compose"
 }
 
 tasks.withType<KotlinCompile>().matching { !it.name.startsWith("ksp") }.configureEach {

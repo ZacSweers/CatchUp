@@ -131,6 +131,7 @@ android {
     disable += "VectorPath" // Always complains about long paths as if I could do something about it
     checkDependencies = true
   }
+  namespace = "io.sweers.catchup"
 }
 
 // bugsnag {

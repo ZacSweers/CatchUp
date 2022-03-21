@@ -15,6 +15,4 @@
   ~ limitations under the License.
   -->
 
-<manifest
-    package="io.sweers.catchup.util"
-    />
+<manifest />

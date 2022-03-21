@@ -43,3 +43,6 @@ dependencies {
   api(project(":services:unsplash"))
   api(project(":services:uplabs"))
 }
+android {
+  namespace = "io.sweers.catchup.service.registry"
+}
