@@ -24,7 +24,7 @@ java {
  * These are copied as a source into the main source set and templated for replacement.
  */
 object SharedBuildVersions {
-  const val agp = "7.3.0-alpha03"
+  const val agp = "7.3.0-alpha07"
   const val kotlin = "1.6.10"
   const val moshi = "1.13.0"
   const val okio = "3.0.0"
