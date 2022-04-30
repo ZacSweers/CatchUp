@@ -8,7 +8,7 @@ repositories {
 }
 
 plugins {
-  kotlin("jvm") version "1.6.10"
+  kotlin("jvm") version "1.6.21"
   `kotlin-dsl`
   `java-gradle-plugin`
 }
@@ -24,8 +24,8 @@ java {
  * These are copied as a source into the main source set and templated for replacement.
  */
 object SharedBuildVersions {
-  const val agp = "7.3.0-alpha07"
-  const val kotlin = "1.6.10"
+  const val agp = "7.3.0-alpha09"
+  const val kotlin = "1.6.21"
   const val moshi = "1.13.0"
   const val okio = "3.0.0"
   const val kotlinJvmTarget = "11"
@@ -44,8 +44,6 @@ object SharedBuildVersions {
       // Match JVM assertion behavior: https://publicobject.com/2019/11/18/kotlins-assert-is-not-like-javas-assert/
       "-Xassertions=jvm",
       "-Xproper-ieee754-comparisons",
-      // Generate nullability assertions for non-null Java expressions
-      "-Xstrict-java-nullability-assertions",
       // Enable new jvmdefault behavior
       // https://blog.jetbrains.com/kotlin/2020/07/kotlin-1-4-m3-generating-default-methods-in-interfaces/
       "-Xjvm-default=all"
@@ -109,12 +107,12 @@ dependencies {
   implementation(kotlin("stdlib-jdk8", version = SharedBuildVersions.kotlin))
   implementation(kotlin("reflect", version = SharedBuildVersions.kotlin))
 
-  compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.6.10-1.0.2")
+  compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.6.21-1.0.5")
   implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.3.2")
   implementation("com.android.tools.build:gradle:${SharedBuildVersions.agp}")
   implementation("com.squareup.moshi:moshi:${SharedBuildVersions.moshi}")
   implementation("com.squareup.okio:okio:${SharedBuildVersions.okio}")
   implementation("de.undercouch:gradle-download-task:4.1.1")
   implementation("com.squareup:javapoet:1.13.0")
-  implementation("com.squareup.anvil:gradle-plugin:2.3.11-1-6-10")
+  implementation("com.squareup.anvil:gradle-plugin:2.4.0")
 }
