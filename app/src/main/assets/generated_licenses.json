@@ -1,1 +1,162 @@
-[{"owner":"airbnb","name":"lottie-android"},{"owner":"androidx","name":"constraintlayout"},{"owner":"apollographql","name":"apollo-android"},{"owner":"atlassian","name":"commonmark-java"},{"owner":"benasher44","name":"uuid"},{"owner":"bugsnag","name":"bugsnag-android"},{"owner":"chibatching","name":"kotpref"},{"owner":"coil-kt","name":"coil"},{"owner":"firebase","name":"firebase-android-sdk"},{"owner":"google","name":"dagger"},{"owner":"JakeWharton","name":"RxRelay"},{"owner":"JakeWharton","name":"shimo"},{"owner":"JakeWharton","name":"timber"},{"owner":"JetBrains","name":"kotlin"},{"owner":"KeepSafe","name":"TapTargetView"},{"owner":"Kotlin","name":"kotlinx-datetime"},{"owner":"Kotlin","name":"kotlinx.coroutines"},{"owner":"LDRAlighieri","name":"Corbind"},{"owner":"material-components","name":"material-components-android"},{"owner":"noties","name":"Markwon"},{"owner":"ReactiveX","name":"RxAndroid"},{"owner":"ReactiveX","name":"RxJava"},{"owner":"saket","name":"flick"},{"owner":"saket","name":"InboxRecyclerView"},{"owner":"serj-lotutovici","name":"moshi-lazy-adapters"},{"owner":"square","name":"anvil"},{"owner":"square","name":"curtains"},{"owner":"square","name":"leakcanary"},{"owner":"square","name":"moshi"},{"owner":"square","name":"okhttp"},{"owner":"square","name":"okio"},{"owner":"square","name":"retrofit"},{"owner":"Tickaroo","name":"tikxml"},{"owner":"uber","name":"AutoDispose"},{"owner":"uber","name":"RxDogTag"},{"owner":"wasabeef","name":"recyclerview-animators"},{"owner":"willowtreeapps","name":"assertk"},{"owner":"willowtreeapps","name":"opentest4k"},{"owner":"ZacSweers","name":"MoshiX"},{"owner":"ZacSweers","name":"ticktock"}]
+[
+  {
+    "owner": "airbnb",
+    "name": "lottie-android"
+  },
+  {
+    "owner": "androidx",
+    "name": "constraintlayout"
+  },
+  {
+    "owner": "apollographql",
+    "name": "apollo-android"
+  },
+  {
+    "owner": "atlassian",
+    "name": "commonmark-java"
+  },
+  {
+    "owner": "benasher44",
+    "name": "uuid"
+  },
+  {
+    "owner": "bugsnag",
+    "name": "bugsnag-android"
+  },
+  {
+    "owner": "chibatching",
+    "name": "kotpref"
+  },
+  {
+    "owner": "coil-kt",
+    "name": "coil"
+  },
+  {
+    "owner": "firebase",
+    "name": "firebase-android-sdk"
+  },
+  {
+    "owner": "google",
+    "name": "dagger"
+  },
+  {
+    "owner": "JakeWharton",
+    "name": "RxRelay"
+  },
+  {
+    "owner": "JakeWharton",
+    "name": "shimo"
+  },
+  {
+    "owner": "JakeWharton",
+    "name": "timber"
+  },
+  {
+    "owner": "JetBrains",
+    "name": "kotlin"
+  },
+  {
+    "owner": "KeepSafe",
+    "name": "TapTargetView"
+  },
+  {
+    "owner": "Kotlin",
+    "name": "kotlinx-datetime"
+  },
+  {
+    "owner": "Kotlin",
+    "name": "kotlinx.coroutines"
+  },
+  {
+    "owner": "LDRAlighieri",
+    "name": "Corbind"
+  },
+  {
+    "owner": "material-components",
+    "name": "material-components-android"
+  },
+  {
+    "owner": "noties",
+    "name": "Markwon"
+  },
+  {
+    "owner": "ReactiveX",
+    "name": "RxAndroid"
+  },
+  {
+    "owner": "ReactiveX",
+    "name": "RxJava"
+  },
+  {
+    "owner": "saket",
+    "name": "flick"
+  },
+  {
+    "owner": "saket",
+    "name": "InboxRecyclerView"
+  },
+  {
+    "owner": "serj-lotutovici",
+    "name": "moshi-lazy-adapters"
+  },
+  {
+    "owner": "square",
+    "name": "anvil"
+  },
+  {
+    "owner": "square",
+    "name": "curtains"
+  },
+  {
+    "owner": "square",
+    "name": "leakcanary"
+  },
+  {
+    "owner": "square",
+    "name": "moshi"
+  },
+  {
+    "owner": "square",
+    "name": "okhttp"
+  },
+  {
+    "owner": "square",
+    "name": "okio"
+  },
+  {
+    "owner": "square",
+    "name": "retrofit"
+  },
+  {
+    "owner": "Tickaroo",
+    "name": "tikxml"
+  },
+  {
+    "owner": "uber",
+    "name": "AutoDispose"
+  },
+  {
+    "owner": "uber",
+    "name": "RxDogTag"
+  },
+  {
+    "owner": "wasabeef",
+    "name": "recyclerview-animators"
+  },
+  {
+    "owner": "willowtreeapps",
+    "name": "assertk"
+  },
+  {
+    "owner": "willowtreeapps",
+    "name": "opentest4k"
+  },
+  {
+    "owner": "ZacSweers",
+    "name": "MoshiX"
+  },
+  {
+    "owner": "ZacSweers",
+    "name": "ticktock"
+  }
+]
