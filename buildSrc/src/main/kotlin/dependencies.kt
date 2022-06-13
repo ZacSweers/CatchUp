@@ -62,7 +62,7 @@ object deps {
     const val inspector = "0.3.0"
     const val kotlin = SharedBuildVersions.kotlin
     const val kotpref = "2.13.2"
-    const val leakcanary = "2.90.1"
+    const val leakcanary = "2.9.1"
     const val legacySupport = "28.0.0"
     const val markwon = "4.6.2"
     const val moshi = SharedBuildVersions.moshi
