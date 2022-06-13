@@ -26,5 +26,4 @@
     android:fontProviderPackage="com.google.android.gms"
     android:fontProviderQuery="Nunito"
     android:fontProviderCerts="@array/com_google_android_gms_fonts_certs"
-    tools:targetApi="o"
     tools:ignore="FontValidationWarning"/>

@@ -43,3 +43,6 @@ dependencies {
   testImplementation(deps.test.junit)
   testImplementation(deps.test.truth)
 }
+android {
+  namespace = "io.sweers.catchup.gemoji"
+}

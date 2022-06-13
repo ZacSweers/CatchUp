@@ -40,3 +40,6 @@ dependencies {
   api(deps.rx.java)
   api(deps.tikxml.htmlEscape)
 }
+android {
+  namespace = "io.sweers.catchup.service.slashdot"
+}

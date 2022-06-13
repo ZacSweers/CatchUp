@@ -111,6 +111,9 @@ private val baseExtensionConfig: BaseExtension.() -> Unit = {
     findByName("release")?.java?.srcDirs("src/release/kotlin")
     findByName("test")?.java?.srcDirs("src/test/kotlin")
   }
+  composeOptions {
+    kotlinCompilerExtensionVersion = deps.android.androidx.compose.compilerVersion
+  }
 }
 
 private fun Project.configureAndroid() {
@@ -146,6 +149,8 @@ private fun Project.configureAndroid() {
           "NewApi",
           "InlinedApi",
         )
+        // This one's broken
+        disable += "DialogFragmentCallbacksDetector"
         warning += "MissingTranslation"
         checkReleaseBuilds = true
         textReport = deps.build.ci
@@ -220,25 +225,20 @@ private fun Project.configureJava() {
 private fun ApplicationAndroidComponentsExtension.configureVersioning(project: Project) {
   // use filter to apply onVariantProperties to a subset of the variants
   onVariants(selector().withBuildType("release")) { variant ->
-    val versionCodeTask = project.tasks.register<VersionCodeTask>(
-      "computeVersionCodeFor${
-      variant.name.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
-      }
-      }"
-    ) {
+    val vcTaskName = "computeVersionCodeFor${variant.name.capitalizeUS()}"
+    val commitCountProvider = project.provider { deps.build.gitCommitCount(project).toString() }
+    val versionCodeTask = project.tasks.register<VersionCodeTask>(vcTaskName) {
       group = "versioning"
+      // TODO replace with exec provider in Gradle 7.5
+      commitCount.set(commitCountProvider)
       outputFile.set(project.layout.buildDirectory.file("intermediates/versioning/versionCode.txt"))
     }
     val mappedVersionCodeTask = versionCodeTask.map { it.outputFile.get().asFile.readText().toInt() }
-    val versionNameTask = project.tasks.register<VersionNameTask>(
-      "computeVersionNameFor${
-      variant.name.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
-      }
-      }"
-    ) {
+    val vnTaskName = "computeVersionNameFor${variant.name.capitalizeUS()}"
+    val gitTagProvider = project.provider { deps.build.gitTag(project) }
+    val versionNameTask = project.tasks.register<VersionNameTask>(vnTaskName) {
       group = "versioning"
+      versionName.set(gitTagProvider)
       outputFile.set(project.layout.buildDirectory.file("intermediates/versioning/versionName.txt"))
     }
     val mappedVersionNameTask = versionNameTask.map { it.outputFile.get().asFile.readText() }
@@ -248,5 +248,11 @@ private fun ApplicationAndroidComponentsExtension.configureVersioning(project: P
       variantOutput.versionCode.set(mappedVersionCodeTask)
       variantOutput.versionName.set(mappedVersionNameTask)
     }
+  }
+}
+
+private fun String.capitalizeUS(): String {
+  return replaceFirstChar {
+    if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
   }
 }

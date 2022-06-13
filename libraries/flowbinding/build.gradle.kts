@@ -31,3 +31,6 @@ dependencies {
   api(deps.android.androidx.core)
   api(deps.android.androidx.design)
 }
+android {
+  namespace = "io.sweers.catchup.flowbinding"
+}

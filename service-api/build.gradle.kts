@@ -43,3 +43,6 @@ dependencies {
   api(deps.retrofit.rxJava3)
   api(deps.apollo.runtime)
 }
+android {
+  namespace = "io.sweers.catchup.service"
+}

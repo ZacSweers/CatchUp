@@ -77,8 +77,8 @@ object CustomTabsHelper {
       packagesSupportingCustomTabs.isEmpty() -> null
       packagesSupportingCustomTabs.size == 1 -> packagesSupportingCustomTabs[0]
       !defaultViewHandlerPackageName.isNullOrBlank() &&
-        !hasSpecializedHandlerIntents(context, activityIntent)
-        && packagesSupportingCustomTabs.contains(
+        !hasSpecializedHandlerIntents(context, activityIntent) &&
+        packagesSupportingCustomTabs.contains(
           defaultViewHandlerPackageName
         ) -> defaultViewHandlerPackageName
       STABLE_PACKAGE in packagesSupportingCustomTabs -> STABLE_PACKAGE
@@ -93,7 +93,6 @@ object CustomTabsHelper {
 
   /**
    * Used to check whether there is a specialized handler for a given intent.
-
    * @param intent The intent to check with.
    * *
    * @return Whether there is a specialized handler for the given intent.

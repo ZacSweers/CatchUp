@@ -17,16 +17,21 @@ package dev.zacsweers.catchup.gradle
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 abstract class VersionNameTask : DefaultTask() {
+
+  @get:Input
+  abstract val versionName: Property<String>
 
   @get:OutputFile
   abstract val outputFile: RegularFileProperty
 
   @TaskAction
   fun action() {
-    outputFile.get().asFile.writeText(deps.build.gitTag(project))
+    outputFile.get().asFile.writeText(versionName.get())
   }
 }

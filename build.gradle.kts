@@ -46,9 +46,9 @@ buildscript {
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.41.0"
+  id("com.github.ben-manes.versions") version "0.42.0"
   id("catchup")
-  id("com.osacky.doctor") version "0.7.3"
+  id("com.osacky.doctor") version "0.8.1"
 }
 
 doctor {
@@ -71,9 +71,18 @@ allprojects {
     maven(deps.build.repositories.snapshots)
     maven(deps.build.repositories.androidxSnapshots)
     maven(deps.build.repositories.kotlinDev)
+    // Pre-release artifacts of compose-compiler, used to test with future Kotlin versions
+    // https://androidx.dev/storage/compose-compiler/repository
+    maven("https://androidx.dev/storage/compose-compiler/repository/") {
+      name = "compose-compiler"
+      content {
+        // this repository *only* contains compose-compiler artifacts
+        includeGroup("androidx.compose.compiler")
+      }
+    }
   }
 
-  configurations.all {
+  configurations.configureEach {
     resolutionStrategy.eachDependency {
       when {
         requested.name.startsWith("kotlin-stdlib") -> {

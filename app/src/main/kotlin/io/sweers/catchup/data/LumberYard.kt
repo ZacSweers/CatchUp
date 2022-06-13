@@ -31,7 +31,6 @@ import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.util.ArrayDeque
-import java.util.ArrayList
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
@@ -61,7 +60,7 @@ class LumberYard @Inject constructor(private val app: Application) {
     sharedFlow.tryEmit(entry)
   }
 
-  fun bufferedLogs() = ArrayList(entries)
+  fun bufferedLogs() = entries.toList()
 
   fun logs(): Flow<Entry> = sharedFlow.asSharedFlow()
 

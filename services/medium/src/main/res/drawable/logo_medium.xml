@@ -25,14 +25,12 @@
       android:fillType="nonZero"
       android:pathData="M0,0h195v195h-195z"
       android:strokeColor="#00000000"
-      android:strokeWidth="1"
-      tools:targetApi="n"/>
+      android:strokeWidth="1"/>
   <!-- I grew the M to be the full width because it's not being inset like the normal monogram here -->
   <path
       android:fillColor="#FFFFFF"
       android:fillType="nonZero"
       android:pathData="M23.12,50.62C23.37,48.22 22.45,45.85 20.67,44.24L2.46,22.28L2.46,19L58.99,19L102.69,114.95L141.11,19L195,19L195,22.28L179.43,37.22C178.09,38.25 177.42,39.93 177.7,41.6L177.7,151.4C177.42,153.07 178.09,154.75 179.43,155.78L194.64,170.72L194.64,174L118.17,174L118.17,170.72L133.91,155.41C135.46,153.86 135.46,153.41 135.46,151.04L135.46,62.28L91.67,173.64L85.76,173.64L34.78,62.28L34.78,136.91C34.35,140.05 35.39,143.21 37.6,145.48L58.08,170.36L58.08,173.64L0,173.64L0,170.36L20.48,145.48C22.67,143.21 23.65,140.03 23.12,136.91L23.12,50.62Z"
       android:strokeColor="#00000000"
-      android:strokeWidth="1"
-      tools:targetApi="n"/>
+      android:strokeWidth="1"/>
 </vector>

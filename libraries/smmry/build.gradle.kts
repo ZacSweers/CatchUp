@@ -32,6 +32,7 @@ android {
   buildFeatures {
     buildConfig = true
   }
+  namespace = "io.sweers.catchup.smmry"
 }
 
 ksp {

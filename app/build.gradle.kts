@@ -70,29 +70,27 @@ android {
       create("release")//.initWith(getByName("debug"))
     }
   }
-  packagingOptions.resources.excludes.addAll(
-    listOf(
-        "**/*.dot",
-        "**/*.kotlin_metadata",
-        "**/*.properties",
-        "*.properties",
-        "kotlin/**",
-        "LICENSE.txt",
-        "LICENSE_OFL",
-        "LICENSE_UNICODE",
-        "META-INF/*.kotlin_module",
-        "META-INF/*.version",
-        "META-INF/androidx.*",
-        "META-INF/CHANGES",
-        "META-INF/com.uber.crumb/**",
-        "META-INF/LICENSE",
-        "META-INF/LICENSE.txt",
-        "META-INF/NOTICE",
-        "META-INF/NOTICE.txt",
-        "META-INF/README.md",
-        "META-INF/rxjava.properties",
-        "META-INF/services/javax.annotation.processing.Processor",
-    )
+  packagingOptions.resources.excludes += listOf(
+    "**/*.dot",
+    "**/*.kotlin_metadata",
+    "**/*.properties",
+    "*.properties",
+    "kotlin/**",
+    "LICENSE.txt",
+    "LICENSE_OFL",
+    "LICENSE_UNICODE",
+    "META-INF/*.kotlin_module",
+    "META-INF/*.version",
+    "META-INF/androidx.*",
+    "META-INF/CHANGES",
+    "META-INF/com.uber.crumb/**",
+    "META-INF/LICENSE",
+    "META-INF/LICENSE.txt",
+    "META-INF/NOTICE",
+    "META-INF/NOTICE.txt",
+    "META-INF/README.md",
+    "META-INF/rxjava.properties",
+    "META-INF/services/javax.annotation.processing.Processor",
   )
   buildTypes {
     getByName("debug") {
@@ -124,9 +122,13 @@ android {
       isUniversalApk = true
     }
   }
-  composeOptions {
-    kotlinCompilerExtensionVersion = deps.android.androidx.compose.compilerVersion
+  lint {
+    disable += "Typos" // https://twitter.com/ZacSweers/status/1495491162920136706
+    disable += "ExtraTranslation" // wrong?
+    disable += "VectorPath" // Always complains about long paths as if I could do something about it
+    checkDependencies = true
   }
+  namespace = "io.sweers.catchup"
 }
 
 // bugsnag {

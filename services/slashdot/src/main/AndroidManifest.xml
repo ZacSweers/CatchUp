@@ -17,12 +17,9 @@
 
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="io.sweers.catchup.service.slashdot"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
 
   <application
       android:networkSecurityConfig="@xml/slashdot_network_security_config"
-      tools:targetApi="n"
       />
 </manifest>

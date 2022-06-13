@@ -28,6 +28,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -234,7 +235,7 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
           }
         )
       },
-      content = { ListContent(viewModel) },
+      content = { paddingValues -> ListContent(paddingValues, viewModel) },
       floatingActionButton = {
         AnimatedVisibility(
           visible = canSave,
@@ -273,9 +274,9 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
   }
 
   @Composable
-  private fun ListContent(viewModel: OrderServicesViewModel) {
+  private fun ListContent(paddingValues: PaddingValues, viewModel: OrderServicesViewModel) {
     val currentItemsSorted by viewModel.serviceMetas.collectAsState()
-    Surface(Modifier.fillMaxSize()) {
+    Surface(Modifier.fillMaxSize().padding(paddingValues)) {
       LazyColumn {
         items(currentItemsSorted.size) { index ->
           val item = currentItemsSorted[index]

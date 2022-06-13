@@ -74,3 +74,6 @@ dependencies {
   api(deps.dagger.runtime)
   api(deps.rx.java)
 }
+android {
+  namespace = "catchup.service.hackernews"
+}
