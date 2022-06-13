@@ -11,13 +11,13 @@ jobs:
         java_version: [17]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
 
       - name: Install JDK ${{ matrix.java_version }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java_version }}
@@ -25,7 +25,7 @@ jobs:
       - name: Generate cache key
         run: ./checksum.sh checksum.txt
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
