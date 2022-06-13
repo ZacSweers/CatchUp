@@ -122,9 +122,6 @@ android {
       isUniversalApk = true
     }
   }
-  composeOptions {
-    kotlinCompilerExtensionVersion = deps.android.androidx.compose.compilerVersion
-  }
   lint {
     disable += "Typos" // https://twitter.com/ZacSweers/status/1495491162920136706
     disable += "ExtraTranslation" // wrong?

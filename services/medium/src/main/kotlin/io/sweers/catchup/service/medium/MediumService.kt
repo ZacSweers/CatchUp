@@ -155,7 +155,7 @@ abstract class MediumModule {
               .build()
           )
             .apply {
-              body?.source()?.let {
+              body.source().let {
                 // Medium prefixes with a while loop to prevent javascript eval attacks, so
                 // skip to the first open curly brace
                 it.skip(it.indexOf('{'.code.toByte()))

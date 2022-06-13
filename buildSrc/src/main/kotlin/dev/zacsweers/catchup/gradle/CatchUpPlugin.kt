@@ -111,6 +111,9 @@ private val baseExtensionConfig: BaseExtension.() -> Unit = {
     findByName("release")?.java?.srcDirs("src/release/kotlin")
     findByName("test")?.java?.srcDirs("src/test/kotlin")
   }
+  composeOptions {
+    kotlinCompilerExtensionVersion = deps.android.androidx.compose.compilerVersion
+  }
 }
 
 private fun Project.configureAndroid() {

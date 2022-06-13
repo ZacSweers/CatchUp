@@ -74,10 +74,10 @@ object deps {
   object android {
     object androidx {
       const val annotations = "androidx.annotation:annotation:1.4.0-rc01"
-      const val activity = "androidx.activity:activity:1.5.0-alpha04"
-      const val appCompat = "androidx.appcompat:appcompat:1.6.0-alpha04"
+      const val activity = "androidx.activity:activity:1.5.0-rc01"
+      const val appCompat = "androidx.appcompat:appcompat:1.4.2"
 
-      private const val coreVersion = "1.9.0-alpha04"
+      private const val coreVersion = "1.8.0"
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 

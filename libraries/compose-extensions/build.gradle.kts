@@ -25,9 +25,6 @@ android {
   buildFeatures {
     compose = true
   }
-  composeOptions {
-    kotlinCompilerExtensionVersion = deps.android.androidx.compose.version
-  }
   namespace = "dev.zacsweers.catchup.compose"
 }
 
