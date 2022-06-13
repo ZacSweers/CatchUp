@@ -52,50 +52,50 @@ object build {
 object deps {
   object versions {
     const val androidTestSupport = "1.1.0-rc01"
-    const val apollo = "3.1.0"
+    const val apollo = "3.3.1"
     const val autodispose = "2.1.1"
     const val chuck = "1.1.0"
     const val crumb = "0.1.0"
-    const val dagger = "2.41"
+    const val dagger = "2.42"
     const val espresso = "3.1.0-alpha1"
     const val hyperion = "0.9.24"
     const val inspector = "0.3.0"
     const val kotlin = SharedBuildVersions.kotlin
     const val kotpref = "2.13.2"
-    const val leakcanary = "2.8.1"
+    const val leakcanary = "2.90.1"
     const val legacySupport = "28.0.0"
     const val markwon = "4.6.2"
     const val moshi = SharedBuildVersions.moshi
     const val retrofit = "2.9.0"
-    const val spotless = "6.3.0"
+    const val spotless = "6.7.2"
     const val tikxml = "0.8.13" // https://github.com/Tickaroo/tikxml/issues/114
   }
 
   object android {
     object androidx {
-      const val annotations = "androidx.annotation:annotation:1.4.0-alpha02"
-      const val activity = "androidx.activity:activity:1.5.0-alpha02"
-      const val appCompat = "androidx.appcompat:appcompat:1.4.1"
+      const val annotations = "androidx.annotation:annotation:1.4.0-rc01"
+      const val activity = "androidx.activity:activity:1.5.0-alpha04"
+      const val appCompat = "androidx.appcompat:appcompat:1.6.0-alpha04"
 
-      private const val coreVersion = "1.8.0-alpha04"
+      private const val coreVersion = "1.9.0-alpha04"
       const val core = "androidx.core:core:$coreVersion"
       const val coreKtx = "androidx.core:core-ktx:$coreVersion"
 
-      const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.3"
+      const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha02"
       const val customTabs = "androidx.browser:browser:1.4.0"
-      const val design = "com.google.android.material:material:1.6.0-alpha02"
+      const val design = "com.google.android.material:material:1.7.0-alpha02"
       const val drawerLayout = "androidx.drawerlayout:drawerlayout:1.1.1"
 
       private const val emojiVersion = "1.2.0-alpha03"
       const val emoji = "androidx.emoji:emoji:$emojiVersion"
       const val emojiAppcompat = "androidx.emoji:emoji-appcompat:$emojiVersion"
 
-      private const val fragmentVersion = "1.5.0-alpha02"
+      private const val fragmentVersion = "1.5.0-rc01"
       const val fragment = "androidx.fragment:fragment:$fragmentVersion"
       const val fragmentKtx = "androidx.fragment:fragment-ktx:$fragmentVersion"
 
       object viewModel {
-        private const val version = "2.5.0-alpha02"
+        private const val version = "2.5.0-rc01"
         const val core = "androidx.lifecycle:lifecycle-viewmodel:$version"
         const val ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         const val savedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:$version"
@@ -112,14 +112,14 @@ object deps {
       const val recyclerView = "androidx.recyclerview:recyclerview:1.1.0-beta03"
 
       object lifecycle {
-        private const val version = "2.5.0-alpha02"
+        private const val version = "2.5.0-rc01"
         const val apt = "androidx.lifecycle:lifecycle-compiler:$version"
         const val extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
         const val ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
       }
 
       object room {
-        private const val version = "2.4.1"
+        private const val version = "2.5.0-alpha02"
         const val apt = "androidx.room:room-compiler:$version"
         const val ktx = "androidx.room:room-ktx:$version"
         const val runtime = "androidx.room:room-runtime:$version"
@@ -127,30 +127,30 @@ object deps {
       }
 
       object compose {
-        const val version = "1.2.0-alpha03"
-        const val compilerVersion = "1.2.0-alpha02"
+        const val version = "1.2.0-beta03"
+        const val compilerVersion = "1.2.0-dev-k1.7.0-53370d83bb1"
         const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
         const val foundation = "androidx.compose.foundation:foundation:$version"
         const val material = "androidx.compose.material:material:$version"
         const val materialIcons = "androidx.compose.material:material-icons-core:$version"
         const val materialIconsExtended = "androidx.compose.material:material-icons-extended:$version"
-        const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0"
+        const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha02"
         const val livedata = "androidx.compose.runtime:runtime-livedata:$version"
         const val rxjava3 = "androidx.compose.runtime:runtime-rxjava3:$version"
       }
     }
 
     object build {
-      const val compileSdkVersion = 31
+      const val compileSdkVersion = 32
       const val minSdkVersion = 26
-      const val targetSdkVersion = 31
+      const val targetSdkVersion = 32
     }
 
     object firebase {
       // TODO use bom
-      const val core = "com.google.firebase:firebase-core:20.1.0"
+      const val core = "com.google.firebase:firebase-core:21.0.0"
       const val config = "com.google.firebase:firebase-config:18.0.0"
-      const val database = "com.google.firebase:firebase-database:20.0.3"
+      const val database = "com.google.firebase:firebase-database:20.0.5"
       const val gradlePlugin = "com.google.firebase:firebase-plugins:2.0.0"
       const val perf = "com.google.firebase:firebase-perf:18.0.0"
     }
@@ -159,7 +159,7 @@ object deps {
   }
 
   object anvil {
-    const val version = "2.3.11-1-6-10"
+    const val version = "2.4.1"
     const val pluginId = "com.squareup.anvil"
   }
 
@@ -210,7 +210,7 @@ object deps {
     object gradlePlugins {
       const val bugsnag = "com.bugsnag:bugsnag-android-gradle-plugin:7.2.0"
       const val playPublisher = "com.github.triplet.gradle:play-publisher:3.7.0"
-      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:1.0.1"
+      const val redacted = "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:1.1.0"
       const val spotless = "com.diffplug.spotless:spotless-plugin-gradle:${versions.spotless}"
     }
 
@@ -232,14 +232,14 @@ object deps {
   }
 
   object coil {
-    private const val VERSION = "2.0.0-alpha09"
+    private const val VERSION = "2.1.0"
     const val base = "io.coil-kt:coil-base:$VERSION"
     const val default = "io.coil-kt:coil:$VERSION"
     const val gif = "io.coil-kt:coil-gif:$VERSION"
   }
 
   object corbind {
-    private const val VERSION = "1.5.3"
+    private const val VERSION = "1.5.4"
     const val core = "ru.ldralighieri.corbind:corbind:$VERSION"
     object androidx {
       const val core = "ru.ldralighieri.corbind:corbind-core:$VERSION"
@@ -292,7 +292,7 @@ object deps {
   }
 
   object kotlin {
-    private const val coroutinesVersion = "1.6.0"
+    private const val coroutinesVersion = "1.6.2"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val coroutinesRx = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:$coroutinesVersion"
@@ -310,7 +310,7 @@ object deps {
   }
 
   object ksp {
-    const val version = "1.6.21-1.0.5"
+    const val version = "1.7.0-1.0.6"
     const val pluginId = "com.google.devtools.ksp"
   }
 
@@ -329,15 +329,15 @@ object deps {
   object misc {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     const val leakCanaryObjectWatcherAndroid = "com.squareup.leakcanary:leakcanary-object-watcher-android:${versions.leakcanary}"
-    const val bugsnag = "com.bugsnag:bugsnag-android:5.19.2"
+    const val bugsnag = "com.bugsnag:bugsnag-android:5.22.4"
     const val byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
     object debug {
-      private const val FLIPPER_VERSION = "0.135.0"
+      private const val FLIPPER_VERSION = "0.149.0"
       const val flipper = "com.facebook.flipper:flipper:$FLIPPER_VERSION"
       const val flipperNetwork = "com.facebook.flipper:flipper-network-plugin:$FLIPPER_VERSION"
       const val soLoader = "com.facebook.soloader:soloader:0.10.3"
-      const val guava = "com.google.guava:guava:31.0.1-jre"
+      const val guava = "com.google.guava:guava:31.1-jre"
       const val madge = "com.jakewharton.madge:madge:1.1.4"
       const val processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
       const val scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
@@ -348,12 +348,12 @@ object deps {
     const val gestureViews = "com.alexvasilkov:gesture-views:2.2.0"
     const val inboxRecyclerView = "me.saket:inboxrecyclerview:3.0.0"
     const val javaxInject = "org.glassfish:javax.annotation:10.0-b28"
-    const val jsoup = "org.jsoup:jsoup:1.14.3"
+    const val jsoup = "org.jsoup:jsoup:1.15.1"
     const val jsr250 = "javax.annotation:jsr250-api:1.0"
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
     const val kotpref = "com.chibatching.kotpref:kotpref:${versions.kotpref}"
     const val kotprefEnum = "com.chibatching.kotpref:enum-support:${versions.kotpref}"
-    const val lottie = "com.airbnb.android:lottie:4.2.2"
+    const val lottie = "com.airbnb.android:lottie:5.2.0"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
     const val okio = "com.squareup.okio:okio:${SharedBuildVersions.okio}"
     const val recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:4.0.2"
@@ -368,7 +368,7 @@ object deps {
     const val core = "com.squareup.moshi:moshi:${versions.moshi}"
     const val shimo = "com.jakewharton.moshi:shimo:0.1.0"
     object moshix {
-      const val VERSION = "0.17.0"
+      const val VERSION = "0.18.1"
 
       object sealed {
         const val runtime = "dev.zacsweers.moshix:moshi-sealed-runtime:${VERSION}"
@@ -377,7 +377,7 @@ object deps {
   }
 
   object okhttp {
-    const val bom = "com.squareup.okhttp3:okhttp-bom:5.0.0-alpha.4"
+    const val bom = "com.squareup.okhttp3:okhttp-bom:5.0.0-alpha.8"
     const val core = "com.squareup.okhttp3:okhttp"
 
     object debug {
@@ -403,7 +403,7 @@ object deps {
 
     const val dogTag = "com.uber.rxdogtag2:rxdogtag:2.0.1"
     const val dogTagAutoDispose = "com.uber.rxdogtag2:rxdogtag-autodispose:2.0.1"
-    const val java = "io.reactivex.rxjava3:rxjava:3.1.3"
+    const val java = "io.reactivex.rxjava3:rxjava:3.1.5"
     const val relay = "com.jakewharton.rxrelay3:rxrelay:3.0.1"
   }
 
