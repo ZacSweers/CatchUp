@@ -149,6 +149,8 @@ private fun Project.configureAndroid() {
           "NewApi",
           "InlinedApi",
         )
+        // This one's broken
+        disable += "DialogFragmentCallbacksDetector"
         warning += "MissingTranslation"
         checkReleaseBuilds = true
         textReport = deps.build.ci
