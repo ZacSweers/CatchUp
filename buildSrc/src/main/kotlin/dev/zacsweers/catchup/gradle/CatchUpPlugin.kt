@@ -134,11 +134,10 @@ private fun Project.configureAndroid() {
       defaultConfig {
         targetSdk = deps.android.build.targetSdkVersion
       }
-      ndkVersion = "21.0.6113669"
+      ndkVersion = "25.1.8937393"
       lint {
         lintConfig = rootProject.file("lint.xml")
-        // Lint is pretty wrecked on AGP 7.1
-        abortOnError = false
+        abortOnError = true
         enable += setOf(
           "InlinedApi",
           "Interoperability",

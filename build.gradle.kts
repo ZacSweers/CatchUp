@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import com.google.devtools.ksp.gradle.KspExtension
 import deps.versions
 
 buildscript {
@@ -46,8 +45,8 @@ buildscript {
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.42.0"
   id("catchup")
+  id("com.github.ben-manes.versions") version "0.44.0"
   id("com.osacky.doctor") version "0.8.1"
 }
 
@@ -100,12 +99,6 @@ allprojects {
           "com.google.dagger" -> useVersion(versions.dagger)
         }
       }
-    }
-  }
-
-  pluginManager.withPlugin(deps.ksp.pluginId) {
-    configure<KspExtension> {
-      blockOtherCompilerPlugins = true
     }
   }
 }

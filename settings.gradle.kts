@@ -33,6 +33,7 @@ include(
   ":libraries:gemoji",
   ":libraries:flowbinding",
   ":libraries:kotlinutil",
+  ":libraries:newark",
   ":libraries:retrofitconverters",
   ":libraries:smmry",
   ":libraries:tooling:spi-visualizer",

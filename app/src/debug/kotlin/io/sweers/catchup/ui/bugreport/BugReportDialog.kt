@@ -49,6 +49,7 @@ class BugReportDialog(context: Context) :
   }
 
   override fun onStart() {
+    super.onStart()
     getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
   }
 

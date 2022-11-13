@@ -231,11 +231,18 @@ internal class BugReportLens @Inject constructor(
               setContentText(it)
               val uri = it.toUri()
               val resultIntent = Intent(Intent.ACTION_VIEW, uri)
-              setContentIntent(PendingIntent.getActivity(activity, 0, resultIntent, 0))
+              setContentIntent(
+                PendingIntent.getActivity(
+                  activity,
+                  0,
+                  resultIntent,
+                  PendingIntent.FLAG_IMMUTABLE
+                )
+              )
               setAutoCancel(true)
 
               val shareIntent = Intent(Intent.ACTION_SEND, uri)
-              shareIntent.type = "text/plain"
+              shareIntent.setDataAndType(null, "text/plain")
               shareIntent.putExtra(Intent.EXTRA_TEXT, it)
               shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
@@ -243,7 +250,7 @@ internal class BugReportLens @Inject constructor(
                 NotificationCompat.Action(
                   R.drawable.ic_share_black_24dp,
                   "Share link",
-                  PendingIntent.getActivity(activity, 0, shareIntent, 0)
+                  PendingIntent.getActivity(activity, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE)
                 )
               )
             }

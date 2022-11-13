@@ -148,14 +148,14 @@ ksp {
   arg("room.schemaLocation", "$projectDir/schemas")
 }
 
-tasks.withType<KotlinCompile>().matching { !it.name.startsWith("ksp") }.configureEach {
-  kotlinOptions {
-    @Suppress("SuspiciousCollectionReassignment")
-    freeCompilerArgs += listOf(
-        "-P", "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
-    )
-  }
-}
+//tasks.withType<KotlinCompile>().matching { !it.name.startsWith("ksp") }.configureEach {
+//  kotlinOptions {
+//    @Suppress("SuspiciousCollectionReassignment")
+//    freeCompilerArgs += listOf(
+//        "-P", "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+//    )
+//  }
+//}
 
 //play {
 //  track = "alpha"
