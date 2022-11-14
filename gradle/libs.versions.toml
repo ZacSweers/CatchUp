@@ -194,7 +194,7 @@ misc-gestureViews = "com.alexvasilkov:gesture-views:2.2.0"
 misc-inboxRecyclerView = "me.saket:inboxrecyclerview:3.0.0"
 misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
 misc-jsoup = "org.jsoup:jsoup:1.15.3"
-misc-jsr250 = "javax.annotation:jsr250-api:1.0"
+misc-jsr250 = "javax.annotation:jsr250-api:1.0-20050927.133100"
 misc-jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 misc-kotpref = { module = "com.chibatching.kotpref:kotpref", version.ref = "kotpref" }
 misc-kotprefEnum = { module = "com.chibatching.kotpref:enum-support", version.ref = "kotpref" }
