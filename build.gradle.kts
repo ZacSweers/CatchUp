@@ -25,6 +25,7 @@ plugins {
   alias(libs.plugins.detekt) apply false
   alias(libs.plugins.kotlin.noarg) apply false
   alias(libs.plugins.moshix) apply false
+  alias(libs.plugins.retry) apply false
 }
 
 buildscript {
