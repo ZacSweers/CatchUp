@@ -17,7 +17,6 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
   alias(libs.plugins.sgp.base)
 }
 
@@ -28,9 +27,13 @@ android {
   }
 }
 
+slack {
+  features {
+    dagger()
+  }
+}
+
 dependencies {
-  kapt(libs.dagger.apt.compiler)
-  compileOnly(libs.misc.javaxInject)
   api(project(":libraries:appconfig"))
   api(project(":libraries:util"))
   api(libs.kotlin.coroutines)

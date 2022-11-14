@@ -17,7 +17,6 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
   alias(libs.plugins.moshix)
   alias(libs.plugins.sgp.base)
 }

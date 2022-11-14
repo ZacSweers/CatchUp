@@ -43,6 +43,7 @@ kapt {
 
 slack {
   features {
+    dagger(enableComponents = true)
     moshi(codegen = true) {
       sealed(codegen = true)
     }
@@ -51,9 +52,6 @@ slack {
 
 dependencies {
   kapt(libs.dagger.hilt.apt.compiler)
-  kapt(libs.dagger.apt.compiler)
-  compileOnly(libs.misc.javaxInject)
-  implementation(libs.dagger.runtime)
   implementation(libs.dagger.hilt.android)
   implementation(libs.retrofit.core)
   implementation(libs.retrofit.moshi)

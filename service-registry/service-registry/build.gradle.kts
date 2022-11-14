@@ -17,11 +17,8 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
-  alias(libs.plugins.anvil)
   alias(libs.plugins.sgp.base)
 }
-
 
 android {
   namespace = "io.sweers.catchup.service.registry"
@@ -30,13 +27,14 @@ android {
   }
 }
 
-anvil {
-  generateDaggerFactories.set(true)
+slack {
+  features {
+    dagger(enableComponents = true)
+  }
 }
 
 dependencies {
   implementation(project(":service-registry:service-registry-annotations"))
-  kapt(libs.dagger.apt.compiler)
 
   api(project(":services:hackernews"))
   api(project(":services:reddit"))
