@@ -34,12 +34,12 @@ import io.sweers.catchup.injection.SharedPreferencesName
 import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module(includes = [GithubApolloModule::class, GemojiModule::class])
@@ -49,8 +49,7 @@ abstract class DataModule {
   @Multibinds
   internal abstract fun provideNetworkInterceptors(): Set<Interceptor>
 
-  @Multibinds
-  internal abstract fun provideInterceptors(): Set<Interceptor>
+  @Multibinds internal abstract fun provideInterceptors(): Set<Interceptor>
 
   companion object {
 
@@ -77,15 +76,15 @@ abstract class DataModule {
         throw IllegalStateException("HTTP client initialized on main thread.")
       }
 
-      val builder = OkHttpClient.Builder().connectTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-        .readTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-        .writeTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-        .cache(cache)
+      val builder =
+        OkHttpClient.Builder()
+          .connectTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+          .readTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+          .writeTimeout(HTTP_TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+          .cache(cache)
 
-      builder.networkInterceptors()
-        .addAll(networkInterceptors)
-      builder.interceptors()
-        .addAll(interceptors)
+      builder.networkInterceptors().addAll(networkInterceptors)
+      builder.interceptors().addAll(interceptors)
 
       return builder.build()
     }
@@ -120,7 +119,10 @@ abstract class DataModule {
 
     @Provides
     @Singleton
-    fun provideSharedPreferences(@ApplicationContext context: Context, @SharedPreferencesName name: String): SharedPreferences {
+    fun provideSharedPreferences(
+      @ApplicationContext context: Context,
+      @SharedPreferencesName name: String
+    ): SharedPreferences {
       return context.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
 

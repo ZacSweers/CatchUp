@@ -44,10 +44,10 @@ import io.sweers.catchup.data.github.type.DateTime
 import io.sweers.catchup.data.github.type.URI
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.network.AuthInterceptor
-import okhttp3.OkHttpClient
-import okio.FileSystem
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import okhttp3.OkHttpClient
+import okio.FileSystem
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -55,12 +55,9 @@ internal object GithubApolloModule {
 
   private const val SERVER_URL = "https://api.github.com/graphql"
 
-  @Qualifier
-  private annotation class InternalApi
+  @Qualifier private annotation class InternalApi
 
-  /**
-   * TODO this hits disk on startup -_-
-   */
+  /** TODO this hits disk on startup -_- */
   @Provides
   @Singleton
   internal fun provideHttpCacheStore(@ApplicationContext context: Context): DiskLruHttpCache =
@@ -69,55 +66,54 @@ internal object GithubApolloModule {
   @Provides
   @InternalApi
   @Singleton
-  internal fun provideGitHubOkHttpClient(
-    client: OkHttpClient
-  ): OkHttpClient = client.newBuilder()
-    .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
-    .build()
+  internal fun provideGitHubOkHttpClient(client: OkHttpClient): OkHttpClient =
+    client
+      .newBuilder()
+      .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
+      .build()
 
   @Provides
   @Singleton
-  internal fun provideCacheKeyGenerator(): CacheKeyGenerator = object : CacheKeyGenerator {
-    private val formatter = { id: String ->
-      if (id.isEmpty()) {
-        null
-      } else {
-        CacheKey(id)
+  internal fun provideCacheKeyGenerator(): CacheKeyGenerator =
+    object : CacheKeyGenerator {
+      private val formatter = { id: String ->
+        if (id.isEmpty()) {
+          null
+        } else {
+          CacheKey(id)
+        }
       }
-    }
 
-    override fun cacheKeyForObject(
-      obj: Map<String, Any?>,
-      context: CacheKeyGeneratorContext
-    ): CacheKey? {
-      // Most objects use id
-      obj["id"].let {
-        return when (val value = it) {
-          is String -> formatter(value)
-          else -> null
+      override fun cacheKeyForObject(
+        obj: Map<String, Any?>,
+        context: CacheKeyGeneratorContext
+      ): CacheKey? {
+        // Most objects use id
+        obj["id"].let {
+          return when (val value = it) {
+            is String -> formatter(value)
+            else -> null
+          }
         }
       }
     }
-  }
 
   @Provides
   @Singleton
-  internal fun provideCacheKeyResolver(): CacheKeyResolver = object : CacheKeyResolver() {
-    override fun cacheKeyForField(field: CompiledField, variables: Variables): CacheKey? {
-      return null
+  internal fun provideCacheKeyResolver(): CacheKeyResolver =
+    object : CacheKeyResolver() {
+      override fun cacheKeyForField(field: CompiledField, variables: Variables): CacheKey? {
+        return null
+      }
     }
-  }
 
   @Provides
   @Singleton
-  internal fun provideNormalizedCacheFactory(): NormalizedCacheFactory =
-    MemoryCacheFactory()
+  internal fun provideNormalizedCacheFactory(): NormalizedCacheFactory = MemoryCacheFactory()
 
   @Provides
   @Singleton
-  internal fun provideHttpEngine(
-    @InternalApi client: Lazy<OkHttpClient>
-  ): HttpEngine {
+  internal fun provideHttpEngine(@InternalApi client: Lazy<OkHttpClient>): HttpEngine {
     return DefaultHttpEngine { client.get().newCall(it) }
   }
 

@@ -19,11 +19,8 @@ import com.squareup.moshi.JsonClass
 import io.sweers.catchup.service.api.HasStableId
 
 @JsonClass(generateAdapter = true)
-internal data class MediumPost(
-  val collection: Collection?,
-  val post: Post,
-  val user: User
-) : HasStableId {
+internal data class MediumPost(val collection: Collection?, val post: Post, val user: User) :
+  HasStableId {
 
   fun constructUrl() = "https://medium.com/@${user.username}/${post.uniqueSlug}"
 

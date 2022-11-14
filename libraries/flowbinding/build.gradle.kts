@@ -17,19 +17,19 @@
 plugins {
   id("com.android.library")
   kotlin("android")
+  alias(libs.plugins.sgp.base)
 }
 
 dependencies {
-  api(deps.kotlin.coroutines)
-  api(deps.kotlin.stdlib.jdk7)
-  api(deps.corbind.core)
-  api(deps.corbind.androidx.core)
-  api(deps.corbind.material)
+  api(libs.kotlin.coroutines)
+  api(libs.corbind)
+  api(libs.corbind.core)
+  api(libs.corbind.material)
 
-  api(deps.android.androidx.annotations)
-  api(deps.android.androidx.appCompat)
-  api(deps.android.androidx.core)
-  api(deps.android.androidx.design)
+  api(libs.androidx.annotations)
+  api(libs.androidx.appCompat)
+  api(libs.androidx.core)
+  api(libs.androidx.design)
 }
 android {
   namespace = "io.sweers.catchup.flowbinding"

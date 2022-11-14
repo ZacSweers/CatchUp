@@ -24,13 +24,10 @@ sealed class RedditObject
 
 interface RedditSubmission : HasStableId {
   val author: String
-  @Json(name = "author_flair_text")
-  val authorFlairText: String?
-  @Json(name = "banned_by")
-  val bannedBy: String?
+  @Json(name = "author_flair_text") val authorFlairText: String?
+  @Json(name = "banned_by") val bannedBy: String?
   val created: Instant
-  @Json(name = "created_utc")
-  val createdUtc: Instant
+  @Json(name = "created_utc") val createdUtc: Instant
   val gilded: Int
   val id: String
   val name: String

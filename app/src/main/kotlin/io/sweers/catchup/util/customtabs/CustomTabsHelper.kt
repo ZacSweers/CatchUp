@@ -20,8 +20,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.browser.customtabs.CustomTabsService
 import androidx.core.net.toUri
-import timber.log.Timber
 import java.util.ArrayList
+import timber.log.Timber
 
 /**
  * Helper class for Custom Tabs.
@@ -38,9 +38,8 @@ object CustomTabsHelper {
   private var sPackageNameToUse: String? = null
 
   /**
-   * Goes through all apps that handle VIEW intents and have a warmup service. Picks
-   * the one chosen by the user if there is one, otherwise makes a best effort to return a
-   * valid package name.
+   * Goes through all apps that handle VIEW intents and have a warmup service. Picks the one chosen
+   * by the user if there is one, otherwise makes a best effort to return a valid package name.
    *
    * This is **not** threadsafe.
    *
@@ -48,7 +47,9 @@ object CustomTabsHelper {
    * @return The package name recommended to use for connecting to custom tabs related components.
    */
   fun getPackageNameToUse(context: Context): String? {
-    sPackageNameToUse?.run { return this }
+    sPackageNameToUse?.run {
+      return this
+    }
 
     val pm = context.packageManager
     // Get default VIEW intent handler.
@@ -78,17 +79,14 @@ object CustomTabsHelper {
       packagesSupportingCustomTabs.size == 1 -> packagesSupportingCustomTabs[0]
       !defaultViewHandlerPackageName.isNullOrBlank() &&
         !hasSpecializedHandlerIntents(context, activityIntent) &&
-        packagesSupportingCustomTabs.contains(
-          defaultViewHandlerPackageName
-        ) -> defaultViewHandlerPackageName
+        packagesSupportingCustomTabs.contains(defaultViewHandlerPackageName) ->
+        defaultViewHandlerPackageName
       STABLE_PACKAGE in packagesSupportingCustomTabs -> STABLE_PACKAGE
       BETA_PACKAGE in packagesSupportingCustomTabs -> BETA_PACKAGE
       DEV_PACKAGE in packagesSupportingCustomTabs -> DEV_PACKAGE
       LOCAL_PACKAGE in packagesSupportingCustomTabs -> LOCAL_PACKAGE
       else -> null
-    }.apply {
-      sPackageNameToUse = this
-    }
+    }.apply { sPackageNameToUse = this }
   }
 
   /**
@@ -100,10 +98,7 @@ object CustomTabsHelper {
   private fun hasSpecializedHandlerIntents(context: Context, intent: Intent): Boolean {
     try {
       val pm = context.packageManager
-      val handlers = pm.queryIntentActivities(
-        intent,
-        PackageManager.GET_RESOLVED_FILTER
-      )
+      val handlers = pm.queryIntentActivities(intent, PackageManager.GET_RESOLVED_FILTER)
       if (handlers.size == 0) {
         return false
       }
@@ -120,9 +115,7 @@ object CustomTabsHelper {
     return false
   }
 
-  /**
-   * @return All possible chrome package names that provide custom tabs feature.
-   */
+  /** @return All possible chrome package names that provide custom tabs feature. */
   val packages: Array<String>
     get() = arrayOf("", STABLE_PACKAGE, BETA_PACKAGE, DEV_PACKAGE, LOCAL_PACKAGE)
 }

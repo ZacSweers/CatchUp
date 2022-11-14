@@ -21,9 +21,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewOutlineProvider
 
-/**
- * An extension to image view that has a circular outline.
- */
+/** An extension to image view that has a circular outline. */
 class CircularImageView(context: Context, attrs: AttributeSet) :
   ForegroundImageView(context, attrs) {
 
@@ -34,15 +32,16 @@ class CircularImageView(context: Context, attrs: AttributeSet) :
 
   companion object {
 
-    val CIRCULAR_OUTLINE: ViewOutlineProvider = object : ViewOutlineProvider() {
-      override fun getOutline(view: View, outline: Outline) {
-        outline.setOval(
-          view.paddingLeft,
-          view.paddingTop,
-          view.width - view.paddingRight,
-          view.height - view.paddingBottom
-        )
+    val CIRCULAR_OUTLINE: ViewOutlineProvider =
+      object : ViewOutlineProvider() {
+        override fun getOutline(view: View, outline: Outline) {
+          outline.setOval(
+            view.paddingLeft,
+            view.paddingTop,
+            view.width - view.paddingRight,
+            view.height - view.paddingBottom
+          )
+        }
       }
-    }
   }
 }

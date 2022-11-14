@@ -18,28 +18,37 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
-  id(deps.anvil.pluginId)
-  id(deps.ksp.pluginId)
+  alias(libs.plugins.sgp.base)
+}
+
+android {
+  namespace = "io.sweers.catchup.service.slashdot"
+  buildFeatures {
+    androidResources = true
+  }
+}
+
+slack {
+  features {
+    dagger()
+  }
 }
 
 dependencies {
-  kapt(deps.tikxml.apt)
+  kapt(libs.tikxml.apt)
 
   implementation(project(":libraries:util"))
-  implementation(deps.okhttp.core)
-  implementation(deps.retrofit.core)
-  implementation(deps.retrofit.rxJava3)
-  implementation(deps.tikxml.annotation)
-  implementation(deps.tikxml.core)
-  implementation(deps.tikxml.retrofit)
-  implementation(deps.kotlin.datetime)
+  implementation(libs.okhttp.core)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.rxJava3)
+  implementation(libs.tikxml.annotation)
+  implementation(libs.tikxml.core)
+  implementation(libs.tikxml.retrofit)
+  implementation(libs.kotlin.datetime)
 
   api(project(":service-api"))
-  api(deps.android.androidx.annotations)
-  api(deps.dagger.runtime)
-  api(deps.rx.java)
-  api(deps.tikxml.htmlEscape)
-}
-android {
-  namespace = "io.sweers.catchup.service.slashdot"
+  api(libs.androidx.annotations)
+  api(libs.dagger.runtime)
+  api(libs.rx.java)
+  api(libs.tikxml.htmlEscape)
 }

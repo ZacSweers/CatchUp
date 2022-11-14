@@ -33,9 +33,10 @@ import io.sweers.catchup.ui.immersive.SystemUiHelper.Companion.LEVEL_LOW_PROFILE
  * extent to which the System UI's visibility is changed when you call [hide] or [toggle].
  *
  * @param activity The Activity who's system UI should be changed
- * @param level The level of hiding. Should be either [LEVEL_LOW_PROFILE], [LEVEL_HIDE_STATUS_BAR], [LEVEL_LEAN_BACK] or
- * [LEVEL_IMMERSIVE]
- * @param flags Additional options. See [FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES] and [FLAG_IMMERSIVE_STICKY]
+ * @param level The level of hiding. Should be either [LEVEL_LOW_PROFILE], [LEVEL_HIDE_STATUS_BAR],
+ * [LEVEL_LEAN_BACK] or [LEVEL_IMMERSIVE]
+ * @param flags Additional options. See [FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES] and
+ * [FLAG_IMMERSIVE_STICKY]
  * @param listener A listener which is called when the system visibility is changed
  */
 class SystemUiHelper(
@@ -58,8 +59,8 @@ class SystemUiHelper(
     get() = impl.isShowing
 
   /**
-   * Show the system UI. What this means depends on the mode this [SystemUiHelper] was
-   * instantiated with.
+   * Show the system UI. What this means depends on the mode this [SystemUiHelper] was instantiated
+   * with.
    *
    * Any currently queued delayed hide requests will be removed.
    */
@@ -71,8 +72,8 @@ class SystemUiHelper(
   }
 
   /**
-   * Hide the system UI. What this means depends on the mode this [SystemUiHelper] was
-   * instantiated with.
+   * Hide the system UI. What this means depends on the mode this [SystemUiHelper] was instantiated
+   * with.
    *
    * Any currently queued delayed hide requests will be removed.
    */
@@ -97,9 +98,7 @@ class SystemUiHelper(
     handler.postDelayed(hideRunnable, delayMillis)
   }
 
-  /**
-   * Toggle whether the system UI is displayed.
-   */
+  /** Toggle whether the system UI is displayed. */
   fun toggle() {
     if (impl.isShowing) {
       impl.hide()
@@ -113,9 +112,7 @@ class SystemUiHelper(
     handler.removeCallbacks(hideRunnable)
   }
 
-  /**
-   * A callback interface used to listen for system UI visibility changes.
-   */
+  /** A callback interface used to listen for system UI visibility changes. */
   interface OnSystemUiVisibilityChangeListener {
     /**
      * Called when the system UI visibility has changed.
@@ -155,9 +152,7 @@ class SystemUiHelper(
 
   companion object {
 
-    /**
-     * In this level, the helper will toggle low profile mode.
-     */
+    /** In this level, the helper will toggle low profile mode. */
     const val LEVEL_LOW_PROFILE = 0
 
     /**
@@ -175,33 +170,29 @@ class SystemUiHelper(
 
     /**
      * In this level, the helper will toggle the visibility of the navigation bar (if present and if
-     * possible) and status bar, in an immersive mode.
-     * This means that the app will continue to receive all touch events. The user can reveal the
-     * system bars with an inward swipe along the region
-     * where the system bars normally appear.
+     * possible) and status bar, in an immersive mode. This means that the app will continue to
+     * receive all touch events. The user can reveal the system bars with an inward swipe along the
+     * region where the system bars normally appear.
      *
-     * The [FLAG_IMMERSIVE_STICKY] flag can be used to control how the system bars are
-     * displayed.
+     * The [FLAG_IMMERSIVE_STICKY] flag can be used to control how the system bars are displayed.
      */
     const val LEVEL_IMMERSIVE = 3
 
     /**
      * When this flag is set, the [android.view.WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN]
-     * flag will be set on older devices, making the
-     * status bar "float" on top of the activity layout. This is most useful when there are no
-     * controls at the top of the activity layout.
+     * flag will be set on older devices, making the status bar "float" on top of the activity
+     * layout. This is most useful when there are no controls at the top of the activity layout.
      *
-     * This flag isn't used on newer devices because the [actionbar](http://developer.android.com/design/patterns/actionbar.html), the most
-     * important structural element of an Android app, should be visible and not obscured by the
-     * system UI.
+     * This flag isn't used on newer devices because the
+     * [actionbar](http://developer.android.com/design/patterns/actionbar.html), the most important
+     * structural element of an Android app, should be visible and not obscured by the system UI.
      */
     const val FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES = 0x1
 
     /**
-     * Used with [LEVEL_IMMERSIVE]. When this flag is set, an inward swipe in the system bars
-     * areas will cause the system bars to temporarily
-     * appear in a semi-transparent state, but no flags are cleared, and your system UI visibility
-     * change listeners are not triggered. The bars
+     * Used with [LEVEL_IMMERSIVE]. When this flag is set, an inward swipe in the system bars areas
+     * will cause the system bars to temporarily appear in a semi-transparent state, but no flags
+     * are cleared, and your system UI visibility change listeners are not triggered. The bars
      * automatically hide again after a short delay, or if the user interacts with the middle of the
      * screen.
      */

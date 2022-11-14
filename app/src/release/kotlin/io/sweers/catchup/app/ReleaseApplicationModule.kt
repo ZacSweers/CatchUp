@@ -25,27 +25,20 @@ import dagger.multibindings.IntoSet
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
-import timber.log.Timber
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
+import timber.log.Timber
 
 @InstallIn(SingletonComponent::class)
 @Module
 object ReleaseApplicationModule {
 
-  @Provides
-  @Singleton
-  fun provideObjectWatcher(): CatchUpObjectWatcher = CatchUpObjectWatcher.None
+  @Provides @Singleton fun provideObjectWatcher(): CatchUpObjectWatcher = CatchUpObjectWatcher.None
 
-  @Qualifier
-  @Retention(BINARY)
-  private annotation class BugsnagKey
+  @Qualifier @Retention(BINARY) private annotation class BugsnagKey
 
-  @BugsnagKey
-  @Provides
-  @Singleton
-  fun provideBugsnagKey(): String = BuildConfig.BUGSNAG_KEY
+  @BugsnagKey @Provides @Singleton fun provideBugsnagKey(): String = BuildConfig.BUGSNAG_KEY
 
   @Initializers
   @IntoSet
@@ -56,12 +49,12 @@ object ReleaseApplicationModule {
 
   @IntoSet
   @Provides
-  fun provideBugsnagTree(application: Application, @BugsnagKey key: String): Timber.Tree = BugsnagTree().also {
-    Bugsnag.start(application, key) // TODO nix this by allowing ordering of inits
-    Bugsnag.getClient()
-      .addOnError { error ->
+  fun provideBugsnagTree(application: Application, @BugsnagKey key: String): Timber.Tree =
+    BugsnagTree().also {
+      Bugsnag.start(application, key) // TODO nix this by allowing ordering of inits
+      Bugsnag.getClient().addOnError { error ->
         it.update(error)
         true
       }
-  }
+    }
 }

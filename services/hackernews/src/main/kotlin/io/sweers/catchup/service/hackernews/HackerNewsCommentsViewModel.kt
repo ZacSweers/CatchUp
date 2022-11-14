@@ -32,6 +32,8 @@ import io.sweers.catchup.service.hackernews.preview.UrlPreview
 import io.sweers.catchup.service.hackernews.preview.UrlPreviewResponse
 import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
 import io.sweers.catchup.util.d
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,10 +43,10 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
-class HackerNewsCommentsViewModel @AssistedInject constructor(
+class HackerNewsCommentsViewModel
+@AssistedInject
+constructor(
   @Assisted private val savedState: SavedStateHandle,
   private val database: FirebaseDatabase,
   private val urlPreview: UrlPreview
@@ -62,79 +64,73 @@ class HackerNewsCommentsViewModel @AssistedInject constructor(
 
   private val storyId = savedState.get<String>(HackerNewsCommentsFragment.ARG_DETAIL_KEY)!!
 
-  val viewState: Flow<State> = MutableStateFlow<State>(State.Loading).apply {
-    viewModelScope.launch {
-      value = try {
-        val story = withContext(Dispatchers.IO) {
-          loadComments()
-        }
-        val urlPreview = withContext(Dispatchers.IO) {
-          urlPreview.previewUrl("", story.first.url!!)
-        }
-        val result = Success(story, urlPreview)
-        result
-      } catch (exception: Exception) {
-        State.Failure(exception)
+  val viewState: Flow<State> =
+    MutableStateFlow<State>(State.Loading).apply {
+      viewModelScope.launch {
+        value =
+          try {
+            val story = withContext(Dispatchers.IO) { loadComments() }
+            val urlPreview =
+              withContext(Dispatchers.IO) { urlPreview.previewUrl("", story.first.url!!) }
+            val result = Success(story, urlPreview)
+            result
+          } catch (exception: Exception) {
+            State.Failure(exception)
+          }
       }
     }
-  }
 
   private suspend fun loadComments(): Pair<HackerNewsStory, List<HackerNewsComment>> {
     val story = loadStory(storyId)
 
-    return story to story.kids!!.asFlow()
-      .map { loadItem(it.toString()) }
-      .toList()
+    return story to story.kids!!.asFlow().map { loadItem(it.toString()) }.toList()
   }
 
-  private suspend fun loadStory(id: String) = suspendCancellableCoroutine<HackerNewsStory> { cont ->
-    val ref = database.getReference("v0/item/$id").apply {
-      keepSynced(true)
-    }
-    val listener = object : ValueEventListener {
-      override fun onDataChange(dataSnapshot: DataSnapshot) {
-        try {
-          ref.removeEventListener(this)
-          cont.resume(HackerNewsStory.create(dataSnapshot))
-        } catch (e: Exception) {
-          cont.resumeWithException(e)
+  private suspend fun loadStory(id: String) =
+    suspendCancellableCoroutine<HackerNewsStory> { cont ->
+      val ref = database.getReference("v0/item/$id").apply { keepSynced(true) }
+      val listener =
+        object : ValueEventListener {
+          override fun onDataChange(dataSnapshot: DataSnapshot) {
+            try {
+              ref.removeEventListener(this)
+              cont.resume(HackerNewsStory.create(dataSnapshot))
+            } catch (e: Exception) {
+              cont.resumeWithException(e)
+            }
+          }
+
+          override fun onCancelled(firebaseError: DatabaseError) {
+            d { "${firebaseError.code}" }
+            cont.resumeWithException(firebaseError.toException())
+          }
         }
-      }
-
-      override fun onCancelled(firebaseError: DatabaseError) {
-        d { "${firebaseError.code}" }
-        cont.resumeWithException(firebaseError.toException())
-      }
+      cont.invokeOnCancellation { ref.removeEventListener(listener) }
+      ref.addValueEventListener(listener)
     }
-    cont.invokeOnCancellation { ref.removeEventListener(listener) }
-    ref.addValueEventListener(listener)
-  }
 
-  private suspend fun loadItem(
-    id: String
-  ) = suspendCancellableCoroutine<HackerNewsComment> { cont ->
-    val ref = database.getReference("v0/item/$id").apply {
-      keepSynced(true)
-    }
-    val listener = object : ValueEventListener {
-      override fun onDataChange(dataSnapshot: DataSnapshot) {
-        try {
-          ref.removeEventListener(this)
-          cont.resume(HackerNewsComment.create(dataSnapshot))
-        } catch (e: Exception) {
-          cont.resumeWithException(e)
+  private suspend fun loadItem(id: String) =
+    suspendCancellableCoroutine<HackerNewsComment> { cont ->
+      val ref = database.getReference("v0/item/$id").apply { keepSynced(true) }
+      val listener =
+        object : ValueEventListener {
+          override fun onDataChange(dataSnapshot: DataSnapshot) {
+            try {
+              ref.removeEventListener(this)
+              cont.resume(HackerNewsComment.create(dataSnapshot))
+            } catch (e: Exception) {
+              cont.resumeWithException(e)
+            }
+          }
+
+          override fun onCancelled(firebaseError: DatabaseError) {
+            d { "${firebaseError.code}" }
+            cont.resumeWithException(firebaseError.toException())
+          }
         }
-      }
-
-      override fun onCancelled(firebaseError: DatabaseError) {
-        d { "${firebaseError.code}" }
-        cont.resumeWithException(firebaseError.toException())
-      }
+      cont.invokeOnCancellation { ref.removeEventListener(listener) }
+      ref.addValueEventListener(listener)
     }
-    cont.invokeOnCancellation { ref.removeEventListener(listener) }
-    ref.addValueEventListener(listener)
-  }
 
-  @AssistedFactory
-  interface Factory : ViewModelAssistedFactory<HackerNewsCommentsViewModel>
+  @AssistedFactory interface Factory : ViewModelAssistedFactory<HackerNewsCommentsViewModel>
 }

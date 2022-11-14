@@ -29,25 +29,24 @@ import com.alexvasilkov.gestures.views.GestureImageView
 private const val MAX_OVER_ZOOM = 4F
 
 /**
- * FYI: GestureImageView does not support a foreground ripple, because it intercepts
- * all touch events for handling scale and pan.
+ * FYI: GestureImageView does not support a foreground ripple, because it intercepts all touch
+ * events for handling scale and pan.
  */
-class ZoomableGestureImageView(context: Context, attrs: AttributeSet) : GestureImageView(
-  context,
-  attrs
-) {
+class ZoomableGestureImageView(context: Context, attrs: AttributeSet) :
+  GestureImageView(context, attrs) {
 
   // Bug workarounds: GestureImageView doesn't request parent ViewGroups
   // to stop intercepting touch events when it starts consuming them to zoom.
-  private val gestureDetector = GestureDetector(
-    context,
-    object : GestureDetector.SimpleOnGestureListener() {
-      override fun onDoubleTapEvent(e: MotionEvent): Boolean {
-        parent.requestDisallowInterceptTouchEvent(true)
-        return super.onDoubleTapEvent(e)
+  private val gestureDetector =
+    GestureDetector(
+      context,
+      object : GestureDetector.SimpleOnGestureListener() {
+        override fun onDoubleTapEvent(e: MotionEvent): Boolean {
+          parent.requestDisallowInterceptTouchEvent(true)
+          return super.onDoubleTapEvent(e)
+        }
       }
-    }
-  )
+    )
   private val imageMovementRect = RectF()
 
   val zoomedImageHeight: Float
@@ -67,15 +66,15 @@ class ZoomableGestureImageView(context: Context, attrs: AttributeSet) : GestureI
     controller.setOnGesturesListener(
       object : GestureController.SimpleOnGestureListener() {
         override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
-// GestureImageView doesn't support a click
-// listener because it intercepts all touch events.
+          // GestureImageView doesn't support a click
+          // listener because it intercepts all touch events.
           performClick()
           return true
         }
 
         override fun onUpOrCancel(event: MotionEvent) {
-// Bug workaround: Image zoom stops working after first over-zoom.
-// Resetting it when the finger is lifted seems to solve the problem.
+          // Bug workaround: Image zoom stops working after first over-zoom.
+          // Resetting it when the finger is lifted seems to solve the problem.
           controller.settings.overzoomFactor = MAX_OVER_ZOOM
         }
       }
@@ -99,18 +98,14 @@ class ZoomableGestureImageView(context: Context, attrs: AttributeSet) : GestureI
     return super.onTouchEvent(event)
   }
 
-  /**
-   * Check if the image can be panned anymore vertically. FYI, downwardPan == upwards scroll.
-   */
+  /** Check if the image can be panned anymore vertically. FYI, downwardPan == upwards scroll. */
   override fun canScrollVertically(direction: Int): Boolean {
     val downwardPan = direction < 0
 
     val state = controller.state
     controller.stateController.getMovementArea(state, imageMovementRect)
 
-    return (
-      downwardPan.not() && State.compare(state.y, imageMovementRect.bottom) < 0f ||
-        downwardPan && State.compare(state.y, imageMovementRect.top) > 0f
-      )
+    return (downwardPan.not() && State.compare(state.y, imageMovementRect.bottom) < 0f ||
+      downwardPan && State.compare(state.y, imageMovementRect.top) > 0f)
   }
 }

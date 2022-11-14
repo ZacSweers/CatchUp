@@ -48,9 +48,9 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.restartApp
 import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNightMode
-import okhttp3.Cache
 import java.io.File
 import javax.inject.Inject
+import okhttp3.Cache
 
 @AndroidEntryPoint
 class SettingsActivity : InjectingBaseActivity() {
@@ -63,9 +63,7 @@ class SettingsActivity : InjectingBaseActivity() {
     const val ARG_FROM_RECREATE = "fromRecreate"
   }
 
-  /**
-   * Backpress hijacks activity result codes, so store ours here in case
-   */
+  /** Backpress hijacks activity result codes, so store ours here in case */
   private val resultData = Bundle()
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,9 +77,7 @@ class SettingsActivity : InjectingBaseActivity() {
     }
 
     if (savedInstanceState == null) {
-      supportFragmentManager.commitNow {
-        add(R.id.container, SettingsFrag())
-      }
+      supportFragmentManager.commitNow { add(R.id.container, SettingsFrag()) }
     } else if (savedInstanceState.getBoolean(ARG_FROM_RECREATE, false)) {
       resultData.putBoolean(NIGHT_MODE_UPDATED, true)
     }
@@ -111,34 +107,31 @@ class SettingsActivity : InjectingBaseActivity() {
   @AndroidEntryPoint
   class SettingsFrag : PreferenceFragmentCompat() {
 
-    @Inject
-    lateinit var cache: dagger.Lazy<Cache>
-    @Inject
-    lateinit var database: CatchUpDatabase
-    @Inject
-    lateinit var lumberYard: LumberYard
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-    @Inject
-    lateinit var catchUpPreferences: CatchUpPreferences
-    @Inject
-    lateinit var appConfig: AppConfig
+    @Inject lateinit var cache: dagger.Lazy<Cache>
+    @Inject lateinit var database: CatchUpDatabase
+    @Inject lateinit var lumberYard: LumberYard
+    @Inject lateinit var sharedPreferences: SharedPreferences
+    @Inject lateinit var catchUpPreferences: CatchUpPreferences
+    @Inject lateinit var appConfig: AppConfig
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
       addPreferencesFromResource(R.xml.prefs_general)
 
       // Because why on earth is the default true
       // Note categories don't work yet due to https://issuetracker.google.com/issues/111662669
-      preferenceScreen.allChildren.forEach {
-        it.isIconSpaceReserved = false
-      }
+      preferenceScreen.allChildren.forEach { it.isIconSpaceReserved = false }
 
-      (findPreference(catchUpPreferences::smartlinkingGlobal.name) as? CheckBoxPreference)?.isChecked = catchUpPreferences.smartlinkingGlobal
-      (findPreference(catchUpPreferences::daynightAuto.name) as? CheckBoxPreference)?.isChecked = catchUpPreferences.daynightAuto
-      (findPreference(catchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)?.isChecked = catchUpPreferences.dayNightForceNight
-      (findPreference(catchUpPreferences::reports.name) as? CheckBoxPreference)?.isChecked = catchUpPreferences.reports
+      (findPreference(catchUpPreferences::smartlinkingGlobal.name) as? CheckBoxPreference)
+        ?.isChecked = catchUpPreferences.smartlinkingGlobal
+      (findPreference(catchUpPreferences::daynightAuto.name) as? CheckBoxPreference)?.isChecked =
+        catchUpPreferences.daynightAuto
+      (findPreference(catchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)
+        ?.isChecked = catchUpPreferences.dayNightForceNight
+      (findPreference(catchUpPreferences::reports.name) as? CheckBoxPreference)?.isChecked =
+        catchUpPreferences.reports
 
-      val themeNavBarPref = findPreference(catchUpPreferences::themeNavigationBar.name) as? CheckBoxPreference
+      val themeNavBarPref =
+        findPreference(catchUpPreferences::themeNavigationBar.name) as? CheckBoxPreference
       themeNavBarPref?.isChecked = catchUpPreferences.themeNavigationBar
     }
 
@@ -151,12 +144,13 @@ class SettingsActivity : InjectingBaseActivity() {
         }
         catchUpPreferences::daynightAuto.name -> {
           val isChecked = (preference as CheckBoxPreference).isChecked
-          catchUpPreferences.daynightAuto = isChecked
-            .apply {
+          catchUpPreferences.daynightAuto =
+            isChecked.apply {
               if (isChecked) {
                 // If we're enabling auto, clear out the prev daynight night-only mode
                 catchUpPreferences.dayNightForceNight = false
-                (findPreference(catchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)?.isChecked = false
+                (findPreference(catchUpPreferences::dayNightForceNight.name) as? CheckBoxPreference)
+                  ?.isChecked = false
               }
             }
           activity?.updateNightMode(catchUpPreferences)
@@ -171,7 +165,11 @@ class SettingsActivity : InjectingBaseActivity() {
           catchUpPreferences.themeNavigationBar = (preference as CheckBoxPreference).isChecked
           (activity as SettingsActivity).run {
             resultData.putBoolean(NAV_COLOR_UPDATED, true)
-            updateNavBarColor(recreate = true, uiPreferences = catchUpPreferences, appConfig = appConfig)
+            updateNavBarColor(
+              recreate = true,
+              uiPreferences = catchUpPreferences,
+              appConfig = appConfig
+            )
           }
           return true
         }
@@ -184,57 +182,55 @@ class SettingsActivity : InjectingBaseActivity() {
           val isChecked = (preference as CheckBoxPreference).isChecked
           catchUpPreferences.reports = isChecked
           Snackbar.make(requireView(), R.string.settings_reset, Snackbar.LENGTH_LONG)
-            .setAction(R.string.restart) {
-              it.context.restartApp()
-            }
+            .setAction(R.string.restart) { it.context.restartApp() }
             .show()
           return true
         }
         CatchUpPreferences.ITEM_KEY_CLEAR_CACHE -> {
           Single.fromCallable {
-            val appContext = requireActivity().applicationContext
-            var cleanedSize = 0L
-            val prefsRoot = File("/data/data/${appConfig.applicationId}/shared_prefs")
-            if (prefsRoot.isDirectory) {
-              for (prefFile in prefsRoot.listFiles()!!) {
-                val fileSize = prefFile.length()
-                if (prefFile.delete()) {
+              val appContext = requireActivity().applicationContext
+              var cleanedSize = 0L
+              val prefsRoot = File("/data/data/${appConfig.applicationId}/shared_prefs")
+              if (prefsRoot.isDirectory) {
+                for (prefFile in prefsRoot.listFiles()!!) {
+                  val fileSize = prefFile.length()
+                  if (prefFile.delete()) {
+                    cleanedSize += fileSize
+                  }
+                }
+              }
+              for (file in appContext.filesDir.walkBottomUp()) {
+                val fileSize = file.length()
+                if (file.delete()) {
                   cleanedSize += fileSize
                 }
               }
-            }
-            for (file in appContext.filesDir.walkBottomUp()) {
-              val fileSize = file.length()
-              if (file.delete()) {
-                cleanedSize += fileSize
+              cleanedSize += appContext.clearCache()
+              cleanedSize +=
+                with(cache.get()) {
+                  val initialSize = size()
+                  evictAll()
+                  return@with initialSize - size()
+                }
+              for (dbName in appContext.databaseList()) {
+                val dbFile = appContext.getDatabasePath(dbName)
+                val initialDbSize = dbFile.length()
+                if (appContext.deleteDatabase(dbName)) {
+                  cleanedSize += initialDbSize
+                }
               }
+              cleanedSize += lumberYard.cleanUp()
+              return@fromCallable cleanedSize
             }
-            cleanedSize += appContext.clearCache()
-            cleanedSize += with(cache.get()) {
-              val initialSize = size()
-              evictAll()
-              return@with initialSize - size()
-            }
-            for (dbName in appContext.databaseList()) {
-              val dbFile = appContext.getDatabasePath(dbName)
-              val initialDbSize = dbFile.length()
-              if (appContext.deleteDatabase(dbName)) {
-                cleanedSize += initialDbSize
-              }
-            }
-            cleanedSize += lumberYard.cleanUp()
-            return@fromCallable cleanedSize
-          }.subscribeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDispose(activity as BaseActivity)
             .subscribe { cleanedAmount: Long?, throwable: Throwable? ->
-              val message = throwable?.let {
-                getString(R.string.settings_error_cleaning_cache)
-              } ?: getString(R.string.clear_cache_success, BinaryByteUnit.format(cleanedAmount!!))
+              val message =
+                throwable?.let { getString(R.string.settings_error_cleaning_cache) }
+                  ?: getString(R.string.clear_cache_success, BinaryByteUnit.format(cleanedAmount!!))
               Snackbar.make(requireView(), message, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.restart) {
-                  it.context.restartApp()
-                }
+                .setAction(R.string.restart) { it.context.restartApp() }
                 .show()
             }
           return true
@@ -255,9 +251,7 @@ class SettingsActivity : InjectingBaseActivity() {
   }
 }
 
-/**
- * Recursively gets all children in a preference (group).
- */
+/** Recursively gets all children in a preference (group). */
 val Preference.allChildren: Sequence<Preference>
   get() {
     return if (this is PreferenceGroup) {

@@ -47,26 +47,22 @@ import io.sweers.catchup.ui.DetailDisplayer
 import io.sweers.catchup.ui.fragments.PagerFragment
 import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
+import javax.inject.Inject
+import javax.inject.Provider
+import javax.inject.Qualifier
 import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.dimming.DimPainter
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Qualifier
 
 @AndroidEntryPoint
 class MainActivity : InjectingBaseActivity() {
 
-  @Inject
-  internal lateinit var customTab: CustomTabActivityHelper
-  @Inject
-  internal lateinit var linkManager: LinkManager
-  @Inject
-  internal lateinit var syllabus: Syllabus
-  @Inject
-  internal lateinit var fragmentFactory: FragmentFactory
+  @Inject internal lateinit var customTab: CustomTabActivityHelper
+  @Inject internal lateinit var linkManager: LinkManager
+  @Inject internal lateinit var syllabus: Syllabus
+  @Inject internal lateinit var fragmentFactory: FragmentFactory
 
   internal lateinit var detailPage: ExpandablePageLayout
   internal var pagerFragment: PagerFragment? = null
@@ -94,7 +90,8 @@ class MainActivity : InjectingBaseActivity() {
         add(R.id.fragment_container, PagerFragment().also { pagerFragment = it })
       }
     } else {
-      pagerFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as PagerFragment
+      pagerFragment =
+        supportFragmentManager.findFragmentById(R.id.fragment_container) as PagerFragment
     }
   }
 
@@ -102,15 +99,9 @@ class MainActivity : InjectingBaseActivity() {
   @dagger.Module
   abstract class ServiceIntegrationModule {
     companion object {
-      @ActivityScoped
-      @TextViewPool
-      @Provides
-      fun provideTextViewPool() = RecycledViewPool()
+      @ActivityScoped @TextViewPool @Provides fun provideTextViewPool() = RecycledViewPool()
 
-      @ActivityScoped
-      @VisualViewPool
-      @Provides
-      fun provideVisualViewPool() = RecycledViewPool()
+      @ActivityScoped @VisualViewPool @Provides fun provideVisualViewPool() = RecycledViewPool()
 
       @ActivityScoped
       @Provides
@@ -124,10 +115,8 @@ class MainActivity : InjectingBaseActivity() {
       ): Map<String, Provider<Service>> {
         return services
           .filter {
-            serviceMetas.getValue(it.key).enabled && sharedPreferences.getBoolean(
-              serviceMetas.getValue(it.key).enabledPreferenceKey,
-              true
-            )
+            serviceMetas.getValue(it.key).enabled &&
+              sharedPreferences.getBoolean(serviceMetas.getValue(it.key).enabledPreferenceKey, true)
           }
           .mapValues { (_, value) ->
             Provider { StorageBackedService(serviceDao, value.get(), appConfig) }
@@ -135,51 +124,46 @@ class MainActivity : InjectingBaseActivity() {
       }
     }
 
-    @Multibinds
-    abstract fun services(): Map<String, Service>
+    @Multibinds abstract fun services(): Map<String, Service>
 
-    @Multibinds
-    abstract fun serviceMetas(): Map<String, ServiceMeta>
+    @Multibinds abstract fun serviceMetas(): Map<String, ServiceMeta>
 
-    @Multibinds
-    abstract fun fragmentCreators(): DaggerMap<Class<out Fragment>, Fragment>
+    @Multibinds abstract fun fragmentCreators(): DaggerMap<Class<out Fragment>, Fragment>
 
-    @ActivityScoped
-    @Binds
-    abstract fun provideLinkHandler(linkManager: LinkManager): LinkHandler
+    @ActivityScoped @Binds abstract fun provideLinkHandler(linkManager: LinkManager): LinkHandler
 
     @ActivityScoped
     @Binds
-    abstract fun provideDetailDisplayer(mainActivityDetailDisplayer: MainActivityDetailDisplayer): DetailDisplayer
+    abstract fun provideDetailDisplayer(
+      mainActivityDetailDisplayer: MainActivityDetailDisplayer
+    ): DetailDisplayer
 
     @ActivityScoped
     @Binds
-    abstract fun provideFragmentFactory(fragmentFactory: MainActivityFragmentFactory): FragmentFactory
+    abstract fun provideFragmentFactory(
+      fragmentFactory: MainActivityFragmentFactory
+    ): FragmentFactory
   }
 }
 
-@Qualifier
-annotation class TextViewPool
+@Qualifier annotation class TextViewPool
 
-@Qualifier
-annotation class VisualViewPool
+@Qualifier annotation class VisualViewPool
 
-@Qualifier
-annotation class FinalServices
+@Qualifier annotation class FinalServices
 
-/**
- * A displayer that repeatedly shows new detail views in a new ExpandablePageLayout.
- */
+/** A displayer that repeatedly shows new detail views in a new ExpandablePageLayout. */
 @ActivityScoped
-class MainActivityDetailDisplayer @Inject constructor(
-  private val mainActivity: MainActivity
-) : DetailDisplayer {
+class MainActivityDetailDisplayer @Inject constructor(private val mainActivity: MainActivity) :
+  DetailDisplayer {
 
   private var collapser: (() -> Unit)? = null
 
-  private inline val detailPage get() = mainActivity.detailPage
+  private inline val detailPage
+    get() = mainActivity.detailPage
 
-  override val isExpandedOrExpanding get() = detailPage.isExpandedOrExpanding
+  override val isExpandedOrExpanding
+    get() = detailPage.isExpandedOrExpanding
 
   override fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit) {
     collapser?.invoke()
@@ -196,24 +180,24 @@ class MainActivityDetailDisplayer @Inject constructor(
   }
 
   override fun bind(irv: InboxRecyclerView, useExistingFragment: Boolean) {
-    val targetFragment = if (useExistingFragment) {
-      mainActivity.supportFragmentManager.findFragmentById(detailPage.id)
-    } else {
-      null
-    }
+    val targetFragment =
+      if (useExistingFragment) {
+        mainActivity.supportFragmentManager.findFragmentById(detailPage.id)
+      } else {
+        null
+      }
     bind(irv, targetFragment)
   }
 
   override fun bind(irv: InboxRecyclerView, targetFragment: Fragment?) {
     // TODO this is ugly, do better
-    mainActivity.pagerFragment?.appBarLayout?.let {
-      detailPage.pushParentToolbarOnExpand(it)
-    }
+    mainActivity.pagerFragment?.appBarLayout?.let { detailPage.pushParentToolbarOnExpand(it) }
     irv.expandablePage = detailPage
-    irv.dimPainter = DimPainter.listAndPage(
-      color = ContextCompat.getColor(irv.context, R.color.colorPrimary),
-      alpha = 0.65F
-    )
+    irv.dimPainter =
+      DimPainter.listAndPage(
+        color = ContextCompat.getColor(irv.context, R.color.colorPrimary),
+        alpha = 0.65F
+      )
     if (targetFragment is ScrollableContent) {
       detailPage.pullToCollapseInterceptor = { _, _, upwardPull ->
         val directionInt = if (upwardPull) +1 else -1

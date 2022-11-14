@@ -18,24 +18,53 @@ package io.sweers.catchup.util
 import com.google.common.truth.Truth.assertThat
 import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.kotlin.shorten
+import java.util.Locale
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.util.Locale
 
 class NumberUtilTest {
 
   companion object {
-    val NUMBERS = longArrayOf(
-      0, 5, 999, 1000, -5821, 10500, -101800, 2000000, -7800000, 92150000,
-      123200000, 9999999, 999_999_999_999_999_999L, 1_230_000_000_000_000L,
-      java.lang.Long.MIN_VALUE, java.lang.Long.MAX_VALUE
-    )
+    val NUMBERS =
+      longArrayOf(
+        0,
+        5,
+        999,
+        1000,
+        -5821,
+        10500,
+        -101800,
+        2000000,
+        -7800000,
+        92150000,
+        123200000,
+        9999999,
+        999_999_999_999_999_999L,
+        1_230_000_000_000_000L,
+        java.lang.Long.MIN_VALUE,
+        java.lang.Long.MAX_VALUE
+      )
     val DEFAULT_LOCALE: Locale = Locale.US
-    val EXPECTED = arrayOf(
-      "0", "5", "999", "1k", "-5.8k", "10k", "-101k", "2M", "-7.8M", "92M",
-      "123M", "9.9M", "999P", "1.2P", "-9.2E", "9.2E"
-    )
+    val EXPECTED =
+      arrayOf(
+        "0",
+        "5",
+        "999",
+        "1k",
+        "-5.8k",
+        "10k",
+        "-101k",
+        "2M",
+        "-7.8M",
+        "92M",
+        "123M",
+        "9.9M",
+        "999P",
+        "1.2P",
+        "-9.2E",
+        "9.2E"
+      )
   }
 
   @Before

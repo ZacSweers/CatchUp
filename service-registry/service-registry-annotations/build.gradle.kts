@@ -16,9 +16,9 @@
 
 plugins {
   kotlin("jvm")
+  alias(libs.plugins.sgp.base)
 }
 
 dependencies {
-  api(deps.crumb.annotations)
-  api(deps.kotlin.stdlib.core)
+  api(libs.crumb.annotations)
 }

@@ -23,12 +23,7 @@ internal class SystemUiHelperImplKK(
   level: Int,
   flags: Int,
   onSystemUiVisibilityChangeListener: SystemUiHelper.OnSystemUiVisibilityChangeListener?
-) : SystemUiHelperImplJB(
-  activity,
-  level,
-  flags,
-  onSystemUiVisibilityChangeListener
-) {
+) : SystemUiHelperImplJB(activity, level, flags, onSystemUiVisibilityChangeListener) {
 
   override fun createHideFlags(): Int {
     var flag = super.createHideFlags()
@@ -39,10 +34,11 @@ internal class SystemUiHelperImplKK(
       // IMMERSIVE prevents the activity from accepting all touch events,
       // so we only do this on Android 4.4 and later (where IMMERSIVE is
       // present).
-      flag = flag or if (flags and SystemUiHelper.FLAG_IMMERSIVE_STICKY != 0)
-        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-      else
-        View.SYSTEM_UI_FLAG_IMMERSIVE
+      flag =
+        flag or
+          if (flags and SystemUiHelper.FLAG_IMMERSIVE_STICKY != 0)
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+          else View.SYSTEM_UI_FLAG_IMMERSIVE
     }
 
     return flag

@@ -25,9 +25,10 @@ class EmojiMarkdownConverterTest {
     const val emoji = ":emoji:"
   }
 
-  private val converter = object : EmojiMarkdownConverter {
-    override fun convert(alias: String) = if (alias == "emoji") replaced else null
-  }
+  private val converter =
+    object : EmojiMarkdownConverter {
+      override fun convert(alias: String) = if (alias == "emoji") replaced else null
+    }
 
   @Test
   fun testEmpty() {

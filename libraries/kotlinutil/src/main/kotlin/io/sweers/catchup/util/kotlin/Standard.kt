@@ -41,9 +41,7 @@ inline fun <T> T.alsoIf(condition: Boolean, block: (T) -> T): T = also {
   }
 }
 
-inline fun <T> T.switch(block: T.() -> T): T = run {
-  block()
-}
+inline fun <T> T.switch(block: T.() -> T): T = run { block() }
 
 inline fun <T> T.switchIf(condition: Boolean, block: T.() -> T): T = switch {
   if (condition) {
@@ -51,24 +49,19 @@ inline fun <T> T.switchIf(condition: Boolean, block: T.() -> T): T = switch {
   } else this
 }
 
-/**
- * Applies a [block] on a set of [args].
- */
+/** Applies a [block] on a set of [args]. */
 inline fun <T> applyOn(vararg args: T, crossinline block: T.() -> Unit) {
   args.asSequence().forEach { block(it) }
 }
 
 inline fun <T, R : T> Collection<R>.castUp() = this as Collection<T>
 
-@Suppress("UNCHECKED_CAST")
-inline fun <R, T : R> Collection<R>.castDown() = this as Collection<T>
+@Suppress("UNCHECKED_CAST") inline fun <R, T : R> Collection<R>.castDown() = this as Collection<T>
 
 inline fun <T, R : T> List<R>.castUp() = this as List<T>
 
-@Suppress("UNCHECKED_CAST")
-inline fun <R, T : R> List<R>.castDown() = this as List<T>
+@Suppress("UNCHECKED_CAST") inline fun <R, T : R> List<R>.castDown() = this as List<T>
 
 inline fun <T, R : T> Set<R>.castUp() = this as Set<T>
 
-@Suppress("UNCHECKED_CAST")
-inline fun <R, T : R> Set<R>.castDown() = this as Set<T>
+@Suppress("UNCHECKED_CAST") inline fun <R, T : R> Set<R>.castDown() = this as Set<T>

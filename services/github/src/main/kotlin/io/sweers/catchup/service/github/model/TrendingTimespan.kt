@@ -20,7 +20,8 @@ import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
 
 // https://github.com/google/error-prone/issues/512
-internal enum class TrendingTimespan constructor(
+internal enum class TrendingTimespan
+constructor(
   private val contextualReference: String,
   duration: Int,
   private val durationUnit: TemporalUnit
@@ -31,12 +32,9 @@ internal enum class TrendingTimespan constructor(
 
   private val duration: Long = duration.toLong()
 
-  /**
-   * Returns a [LocalDate] to use with [SearchQuery.createdSince].
-   */
+  /** Returns a [LocalDate] to use with [SearchQuery.createdSince]. */
   fun createdSince(): LocalDate {
-    return LocalDate.now()
-      .minus(duration, durationUnit)
+    return LocalDate.now().minus(duration, durationUnit)
   }
 
   override fun toString(): String = contextualReference

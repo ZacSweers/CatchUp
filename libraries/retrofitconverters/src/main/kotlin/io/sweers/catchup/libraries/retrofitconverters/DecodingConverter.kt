@@ -15,18 +15,15 @@
  */
 package io.sweers.catchup.libraries.retrofitconverters
 
+import java.io.IOException
+import java.lang.reflect.Type
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
-import java.io.IOException
-import java.lang.reflect.Type
 
-/**
- * A [Converter] that only decodes responses with a given [convertBody].
- */
-class DecodingConverter<T> private constructor(
-  private val convertBody: (ResponseBody) -> T
-) : Converter<ResponseBody, T> {
+/** A [Converter] that only decodes responses with a given [convertBody]. */
+class DecodingConverter<T> private constructor(private val convertBody: (ResponseBody) -> T) :
+  Converter<ResponseBody, T> {
 
   @Throws(IOException::class)
   override fun convert(value: ResponseBody): T {

@@ -19,8 +19,8 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
-import kotlinx.datetime.Instant
 import java.io.IOException
+import kotlinx.datetime.Instant
 
 class ISO8601InstantAdapter : JsonAdapter<Instant>() {
 

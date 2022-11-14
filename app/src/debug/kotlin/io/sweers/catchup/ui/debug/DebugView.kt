@@ -40,6 +40,7 @@ import io.sweers.catchup.util.kotlin.getValue
 import io.sweers.catchup.util.kotlin.setValue
 import io.sweers.catchup.util.restartApp
 import io.sweers.catchup.util.truncateAt
+import java.util.concurrent.TimeUnit.MILLISECONDS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
@@ -51,7 +52,6 @@ import okhttp3.OkHttpClient
 import retrofit2.mock.NetworkBehavior
 import ru.ldralighieri.corbind.view.clicks
 import ru.ldralighieri.corbind.widget.itemSelections
-import java.util.concurrent.TimeUnit.MILLISECONDS
 
 // TODO check out jw's assisted injection. Dagger-android doesn't make view injection easy
 //  because it doesn't support it, and via subcomponents we can't get ahold of an instance of the
@@ -66,11 +66,7 @@ class DebugView(
   private val appConfig: AppConfig
 ) : FrameLayout(context, attrs) {
   // Inflate all of the controls and inject them.
-  private val binding = DebugViewContentBinding.inflate(
-    LayoutInflater.from(context),
-    this,
-    true
-  )
+  private val binding = DebugViewContentBinding.inflate(LayoutInflater.from(context), this, true)
   internal val icon = binding.debugIcon
   private val networkDelayView = binding.debugNetworkDelay
   private val networkVarianceView = binding.debugNetworkVariance
@@ -96,11 +92,12 @@ class DebugView(
   private val okHttpCacheNetworkCountView = binding.debugOkhttpCacheNetworkCount
   private val okHttpCacheHitCountView = binding.debugOkhttpCacheHitCount
   private var isMockMode by debugPreferences::mockModeEnabled
-  private var behavior: NetworkBehavior = NetworkBehavior.create().apply {
-    setDelay(debugPreferences.networkDelay, MILLISECONDS)
-    setFailurePercent(debugPreferences.networkFailurePercent)
-    setVariancePercent(debugPreferences.networkVariancePercent)
-  }
+  private var behavior: NetworkBehavior =
+    NetworkBehavior.create().apply {
+      setDelay(debugPreferences.networkDelay, MILLISECONDS)
+      setFailurePercent(debugPreferences.networkFailurePercent)
+      setVariancePercent(debugPreferences.networkVariancePercent)
+    }
   private var animationSpeed by debugPreferences::animationSpeed
   private var pixelGridEnabled by debugPreferences::pixelGridEnabled
   private var pixelRatioEnabled by debugPreferences::pixelRatioEnabled
@@ -114,9 +111,9 @@ class DebugView(
     binding.debugLeaksShow.setOnClickListener {
       startDebugActivity(LeakCanary.newLeakDisplayActivityIntent())
     }
-//    onSubviewClick<View>(R.id.debug_network_logs) {
-//      startDebugActivity(Intent(context, MainActivity::class.java))
-//    }
+    //    onSubviewClick<View>(R.id.debug_network_logs) {
+    //      startDebugActivity(Intent(context, MainActivity::class.java))
+    //    }
 
     setupNetworkSection()
     setupMockBehaviorSection()
@@ -135,15 +132,12 @@ class DebugView(
     val delayAdapter = NetworkDelayAdapter(context)
     networkDelayView.adapter = delayAdapter
     networkDelayView.setSelection(
-      NetworkDelayAdapter.getPositionForValue(
-        behavior.delay(
-          MILLISECONDS
-        )
-      )
+      NetworkDelayAdapter.getPositionForValue(behavior.delay(MILLISECONDS))
     )
 
     viewScope().launch {
-      networkDelayView.itemSelections()
+      networkDelayView
+        .itemSelections()
         .map { delayAdapter.getItem(it) }
         .filter { item -> item != behavior.delay(MILLISECONDS) }
         .collect { selected ->
@@ -160,7 +154,8 @@ class DebugView(
     )
 
     viewScope().launch {
-      networkVarianceView.itemSelections()
+      networkVarianceView
+        .itemSelections()
         .map { varianceAdapter.getItem(it) }
         .filter { item -> item != behavior.variancePercent() }
         .collect { selected ->
@@ -177,7 +172,8 @@ class DebugView(
     )
 
     viewScope().launch {
-      networkErrorView.itemSelections()
+      networkErrorView
+        .itemSelections()
         .map { errorAdapter.getItem(it) }
         .filter { item -> item != behavior.failurePercent() }
         .collect { selected ->
@@ -189,20 +185,17 @@ class DebugView(
 
     if (!isMockMode) {
       // Disable network controls if we are not in mock mode.
-      applyOn(networkDelayView, networkVarianceView, networkErrorView) {
-        isEnabled = false
-      }
+      applyOn(networkDelayView, networkVarianceView, networkErrorView) { isEnabled = false }
     }
   }
 
   private fun setupMockBehaviorSection() {
     enableMockModeView.isChecked = debugPreferences.mockModeEnabled
     viewScope().launch {
-      enableMockModeView.clicks()
-        .collect {
-          debugPreferences.mockModeEnabled = enableMockModeView.isChecked
-          context.restartApp()
-        }
+      enableMockModeView.clicks().collect {
+        debugPreferences.mockModeEnabled = enableMockModeView.isChecked
+        context.restartApp()
+      }
     }
   }
 
@@ -215,7 +208,8 @@ class DebugView(
     )
 
     viewScope().launch {
-      uiAnimationSpeedView.itemSelections()
+      uiAnimationSpeedView
+        .itemSelections()
         .map { speedAdapter.getItem(it) }
         .filter { item -> item != animationSpeed }
         .collect { selected ->
@@ -274,8 +268,7 @@ class DebugView(
   }
 
   private fun setupDeviceSection() {
-    val displayMetrics = context.resources
-      .displayMetrics
+    val displayMetrics = context.resources.displayMetrics
     val densityBucket = getDensityString(displayMetrics)
     deviceMakeView.text = Build.MANUFACTURER truncateAt 20
     deviceModelView.text = Build.MODEL truncateAt 20
@@ -301,10 +294,10 @@ class DebugView(
   @SuppressLint("DiscouragedPrivateApi")
   private fun applyAnimationSpeed(multiplier: Int) {
     try {
-      val method = ValueAnimator::class.java.getDeclaredMethod(
-        "setDurationScale",
-        Float::class.javaPrimitiveType
-      )
+      val method =
+        ValueAnimator::class
+          .java
+          .getDeclaredMethod("setDurationScale", Float::class.javaPrimitiveType)
       method.invoke(null, multiplier.toFloat())
     } catch (e: Exception) {
       throw RuntimeException("Unable to apply animation speed.", e)

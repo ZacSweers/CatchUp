@@ -21,25 +21,25 @@ import androidx.annotation.Keep
 import com.chibatching.kotpref.KotprefModel
 import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.flowbinding.safeOffer
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.LazyThreadSafetyMode.NONE
+import kotlin.reflect.KProperty0
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.LazyThreadSafetyMode.NONE
-import kotlin.reflect.KProperty0
 
 @Keep
 @Singleton
-class CatchUpPreferences @Inject constructor(
-  application: Application,
-  sharedPreferences: SharedPreferences
-) : KotprefModel(
-  contextProvider = { application },
-  preferencesProvider = { _, _, _ -> sharedPreferences }
-),
+class CatchUpPreferences
+@Inject
+constructor(application: Application, sharedPreferences: SharedPreferences) :
+  KotprefModel(
+    contextProvider = { application },
+    preferencesProvider = { _, _, _ -> sharedPreferences }
+  ),
   UiPreferences {
 
   companion object {
@@ -64,7 +64,7 @@ fun <T, Model : KotprefModel> Model.flowFor(propertyResolver: Model.() -> KPrope
   return preferences.flowFor(
     keyResolver = {
       // With kotlin-reflect, we could get the key declared on the delegate
-//        (lazilyResolved.getDelegate() as PreferenceKey).key ?: lazilyResolved.name
+      //        (lazilyResolved.getDelegate() as PreferenceKey).key ?: lazilyResolved.name
       lazilyResolved.name
     },
     valueResolver = {
@@ -75,8 +75,7 @@ fun <T, Model : KotprefModel> Model.flowFor(propertyResolver: Model.() -> KPrope
 }
 
 fun <T> SharedPreferences.flowFor(keyResolver: () -> String, valueResolver: () -> T): Flow<T> {
-  return flowFor(keyResolver)
-    .map { valueResolver() }
+  return flowFor(keyResolver).map { valueResolver() }
 }
 
 fun SharedPreferences.flowFor(targetKey: String): Flow<Unit> {
@@ -87,16 +86,15 @@ fun SharedPreferences.flowFor(targetKey: String): Flow<Unit> {
 fun SharedPreferences.flowFor(keyResolver: () -> String): Flow<Unit> {
   return callbackFlow {
     val targetKey = keyResolver()
-    val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-      // TODO this is called twice when updating, say, a switch bound to this. Need to find a way
-      //  to handle reentrant cases
-      if (key == targetKey) {
-        safeOffer(Unit)
+    val prefsListener =
+      SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        // TODO this is called twice when updating, say, a switch bound to this. Need to find a way
+        //  to handle reentrant cases
+        if (key == targetKey) {
+          safeOffer(Unit)
+        }
       }
-    }
     registerOnSharedPreferenceChangeListener(prefsListener)
-    awaitClose {
-      unregisterOnSharedPreferenceChangeListener(prefsListener)
-    }
+    awaitClose { unregisterOnSharedPreferenceChangeListener(prefsListener) }
   }
 }

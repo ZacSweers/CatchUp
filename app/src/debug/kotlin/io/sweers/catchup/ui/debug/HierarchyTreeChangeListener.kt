@@ -22,9 +22,8 @@ import android.view.ViewGroup
  * A [hierarchy change listener][android.view.ViewGroup.OnHierarchyChangeListener] which recursively
  * monitors an entire tree of views.
  */
-class HierarchyTreeChangeListener private constructor(
-  private val delegate: ViewGroup.OnHierarchyChangeListener
-) :
+class HierarchyTreeChangeListener
+private constructor(private val delegate: ViewGroup.OnHierarchyChangeListener) :
   ViewGroup.OnHierarchyChangeListener {
 
   override fun onChildViewAdded(parent: View, child: View) {
@@ -52,8 +51,8 @@ class HierarchyTreeChangeListener private constructor(
   companion object {
 
     /**
-     * Wrap a regular [hierarchy change listener][android.view.ViewGroup.OnHierarchyChangeListener] with one
-     * that monitors an entire tree of views.
+     * Wrap a regular [hierarchy change listener][android.view.ViewGroup.OnHierarchyChangeListener]
+     * with one that monitors an entire tree of views.
      */
     fun wrap(delegate: ViewGroup.OnHierarchyChangeListener): HierarchyTreeChangeListener {
       return HierarchyTreeChangeListener(delegate)

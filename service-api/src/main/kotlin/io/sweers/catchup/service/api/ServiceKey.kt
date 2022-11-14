@@ -17,5 +17,4 @@ package io.sweers.catchup.service.api
 
 import dagger.MapKey
 
-@MapKey
-annotation class ServiceKey(val value: String)
+@MapKey annotation class ServiceKey(val value: String)

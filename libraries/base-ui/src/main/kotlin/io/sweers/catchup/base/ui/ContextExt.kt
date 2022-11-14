@@ -52,19 +52,33 @@ fun Activity.updateNavBarColor(
       // SOME devices have naturally light status bars, try to cover for that here if we're in
       // night mode
       if (context.isInNightMode() && !isDark) {
-        window.navigationBarColor = MaterialColors.getColor(context, MaterialAttr.colorPrimaryDark, "No colorPrimaryDark found!")
+        window.navigationBarColor =
+          MaterialColors.getColor(
+            context,
+            MaterialAttr.colorPrimaryDark,
+            "No colorPrimaryDark found!"
+          )
       }
     } else {
       if (context.isInNightMode()) {
-        window.navigationBarColor = MaterialColors.getColor(context, MaterialAttr.colorPrimaryDark, "No colorPrimaryDark found!")
-        appConfig.sdk(27) {
-          window.navigationBarDividerColor = Color.TRANSPARENT
-        }
+        window.navigationBarColor =
+          MaterialColors.getColor(
+            context,
+            MaterialAttr.colorPrimaryDark,
+            "No colorPrimaryDark found!"
+          )
+        appConfig.sdk(27) { window.navigationBarDividerColor = Color.TRANSPARENT }
         window.decorView.clearLightNavBar(appConfig)
       } else {
-        window.navigationBarColor = MaterialColors.getColor(context, MaterialAttr.colorPrimary, "No colorPrimaryDark found!")
+        window.navigationBarColor =
+          MaterialColors.getColor(context, MaterialAttr.colorPrimary, "No colorPrimaryDark found!")
         appConfig.sdk(27) {
-          window.navigationBarDividerColor = MaterialColors.getColor(context, MaterialAttr.colorPrimaryDark, "No colorPrimaryDark found!")
+          window.navigationBarDividerColor =
+            MaterialColors.getColor(
+              context,
+              MaterialAttr.colorPrimaryDark,
+              "No colorPrimaryDark found!"
+            )
         }
         window.decorView.setLightNavBar(appConfig)
       }
@@ -78,8 +92,8 @@ fun Activity.updateNavBarColor(
 @get:SuppressLint("NewApi") // False positive
 val Context.versionInfo: VersionInfo
   get() {
-    val metadataBundle = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
-      .metaData
+    val metadataBundle =
+      packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA).metaData
     val timestamp = metadataBundle.getString("buildTimestamp") ?: "Missing timestamp!"
     return with(packageManager.getPackageInfo(packageName, 0)) {
       VersionInfo(
@@ -90,8 +104,4 @@ val Context.versionInfo: VersionInfo
     }
   }
 
-data class VersionInfo(
-  val code: Long,
-  val name: String,
-  val timestamp: String
-)
+data class VersionInfo(val code: Long, val name: String, val timestamp: String)

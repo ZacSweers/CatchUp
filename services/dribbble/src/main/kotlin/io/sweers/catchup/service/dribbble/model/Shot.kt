@@ -17,9 +17,7 @@ package io.sweers.catchup.service.dribbble.model
 
 import kotlinx.datetime.Instant
 
-/**
- * Models a dibbble shot
- */
+/** Models a dibbble shot */
 data class Shot(
   val animated: Boolean,
   val commentsCount: Long,

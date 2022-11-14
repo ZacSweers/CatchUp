@@ -42,17 +42,14 @@ interface ServiceDao {
   @Query("SELECT * FROM pages WHERE type = :type AND page = :page AND sessionId = :sessionId")
   fun getServicePage(type: String, page: String, sessionId: Long): Maybe<ServicePage>
 
-  @Query("SELECT * FROM items WHERE id = :id")
-  fun getItemById(id: Long): Maybe<CatchUpItem>
+  @Query("SELECT * FROM items WHERE id = :id") fun getItemById(id: Long): Maybe<CatchUpItem>
 
   @Query("SELECT * FROM items WHERE id IN(:ids)")
   fun getItemByIds(ids: Array<Long>): Maybe<List<CatchUpItem>>
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putPage(page: ServicePage): Completable
+  @Insert(onConflict = OnConflictStrategy.REPLACE) fun putPage(page: ServicePage): Completable
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItem(item: CatchUpItem)
+  @Insert(onConflict = OnConflictStrategy.REPLACE) fun putItem(item: CatchUpItem)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun putItems(vararg item: CatchUpItem): Completable
@@ -61,9 +58,7 @@ interface ServiceDao {
 @Keep
 @Entity(tableName = "pages")
 data class ServicePage(
-  /**
-   * Combination of the sessionId and type
-   */
+  /** Combination of the sessionId and type */
   @PrimaryKey val id: String,
   val type: String,
   val expiration: Instant,

@@ -14,40 +14,30 @@
  * limitations under the License.
  */
 
-import deps.versions
-
-buildscript {
-  repositories {
-    google()
-    mavenCentral()
-    maven(deps.build.repositories.plugins)
-    maven(deps.build.repositories.snapshots)
-    maven(deps.build.repositories.androidxSnapshots)
-    maven(deps.build.repositories.kotlinDev)
-    maven("https://storage.googleapis.com/r8-releases/raw")
-  }
-
-  dependencies {
-    classpath(deps.android.gradlePlugin)
-    classpath(deps.kotlin.gradlePlugin)
-    classpath(deps.kotlin.noArgGradlePlugin)
-    classpath(deps.android.firebase.gradlePlugin)
-    classpath(deps.build.gradlePlugins.bugsnag)
-    classpath(deps.apollo.gradlePlugin)
-    classpath(deps.build.gradlePlugins.playPublisher)
-    classpath(deps.build.gradlePlugins.spotless)
-    classpath(deps.build.gradlePlugins.redacted)
-    classpath(deps.dagger.hilt.gradlePlugin)
-    classpath("com.squareup.anvil:gradle-plugin:${deps.anvil.version}")
-    classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:${deps.ksp.version}")
-    classpath("dev.zacsweers.moshix:moshi-gradle-plugin:${deps.moshi.moshix.VERSION}")
-  }
+plugins {
+  alias(libs.plugins.sgp.root)
+  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.versions)
+  alias(libs.plugins.spotless)
+  alias(libs.plugins.doctor)
+  alias(libs.plugins.anvil) apply false
+  alias(libs.plugins.cacheFixPlugin) apply false
+  alias(libs.plugins.detekt) apply false
+  alias(libs.plugins.kotlin.noarg) apply false
+  alias(libs.plugins.moshix) apply false
 }
 
-plugins {
-  id("catchup")
-  id("com.github.ben-manes.versions") version "0.44.0"
-  id("com.osacky.doctor") version "0.8.1"
+buildscript {
+  dependencies {
+//    classpath(platform(libs.asm.bom))
+    // AGP dependency. Must go before Kotlin's
+    classpath("com.android.tools.build:gradle:${libs.versions.agp.get()}")
+    classpath(libs.javapoet)
+    // We have to declare this here in order for kotlin-facets to be generated in iml files
+    // https://youtrack.jetbrains.com/issue/KT-36331
+    classpath(kotlin("gradle-plugin", version = libs.versions.kotlin.get()))
+//    classpath(platform(libs.coroutines.bom))
+  }
 }
 
 doctor {
@@ -58,47 +48,10 @@ doctor {
   }
 }
 
-apply {
-  from(rootProject.file("gradle/spotless-config.gradle"))
-}
-
-allprojects {
-  repositories {
-    google()
-    mavenCentral()
-    maven(deps.build.repositories.jitpack)
-    maven(deps.build.repositories.snapshots)
-    maven(deps.build.repositories.androidxSnapshots)
-    maven(deps.build.repositories.kotlinDev)
-    // Pre-release artifacts of compose-compiler, used to test with future Kotlin versions
-    // https://androidx.dev/storage/compose-compiler/repository
-    maven("https://androidx.dev/storage/compose-compiler/repository/") {
-      name = "compose-compiler"
-      content {
-        // this repository *only* contains compose-compiler artifacts
-        includeGroup("androidx.compose.compiler")
-      }
-    }
-  }
-
-  configurations.configureEach {
-    resolutionStrategy.eachDependency {
-      when {
-        requested.name.startsWith("kotlin-stdlib") -> {
-          useTarget(
-            "${requested.group}:${requested.name.replace("jre", "jdk")}:${requested.version}"
-          )
-        }
-        else -> when (requested.group) {
-          "com.android.support" -> {
-            if ("multidex" !in requested.name) {
-              useVersion(versions.legacySupport)
-            }
-          }
-          "org.jetbrains.kotlin" -> useVersion(versions.kotlin)
-          "com.google.dagger" -> useVersion(versions.dagger)
-        }
-      }
+subprojects {
+  pluginManager.withPlugin("com.squareup.anvil") {
+    dependencies {
+      add("compileOnly", libs.anvil.annotations)
     }
   }
 }

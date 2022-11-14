@@ -18,11 +18,9 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
-  id("com.google.devtools.ksp")
-  id("dev.zacsweers.moshix")
+  alias(libs.plugins.hilt)
+  alias(libs.plugins.sgp.base)
 }
-
-apply(plugin = "dagger.hilt.android.plugin")
 
 android {
   defaultConfig {
@@ -31,43 +29,50 @@ android {
   }
   buildFeatures {
     buildConfig = true
+    androidResources = true
+    viewBinding = true
   }
   namespace = "io.sweers.catchup.smmry"
 }
 
-ksp {
-  arg("room.schemaLocation", "$projectDir/schemas")
+kapt {
+  arguments {
+    arg("room.schemaLocation", "$projectDir/schemas")
+  }
 }
 
-moshi {
-  enableSealed.set(true)
+slack {
+  features {
+    moshi(codegen = true) {
+      sealed(codegen = true)
+    }
+  }
 }
 
 dependencies {
-  kapt(deps.dagger.hilt.apt.compiler)
-  kapt(deps.dagger.apt.compiler)
-  compileOnly(deps.misc.javaxInject)
-  implementation(deps.dagger.runtime)
-  implementation(deps.dagger.hilt.android)
-  implementation(deps.retrofit.core)
-  implementation(deps.retrofit.moshi)
+  kapt(libs.dagger.hilt.apt.compiler)
+  kapt(libs.dagger.apt.compiler)
+  compileOnly(libs.misc.javaxInject)
+  implementation(libs.dagger.runtime)
+  implementation(libs.dagger.hilt.android)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.moshi)
   implementation(project(":libraries:base-ui"))
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
-  implementation(deps.misc.lottie)
-  implementation(deps.moshi.adapters)
-  implementation(deps.moshi.core)
-  implementation(deps.moshi.moshix.sealed.runtime)
-  implementation(deps.android.androidx.room.runtime)
-  implementation(deps.android.androidx.room.ktx)
-  ksp(deps.android.androidx.room.apt)
-  implementation(deps.android.androidx.lifecycle.ktx)
-  implementation(deps.kotlin.coroutines)
-  implementation(deps.kotlin.stdlib.jdk7)
+  implementation(libs.misc.lottie)
+  implementation(libs.moshi.adapters)
+  implementation(libs.moshi.core)
+  implementation(libs.moshi.moshix.sealed.runtime)
+  implementation(libs.androidx.room.runtime)
+  implementation(libs.androidx.room.ktx)
+  kapt(libs.androidx.room.apt)
+  implementation(libs.androidx.lifecycle.ktx)
+  implementation(libs.kotlin.coroutines)
 
   api(project(":service-api"))
-  api(deps.android.androidx.annotations)
-  api(deps.android.androidx.appCompat)
-  api(deps.android.androidx.core)
-  api(deps.android.androidx.design)
+  api(libs.androidx.annotations)
+  api(libs.androidx.appCompat)
+  api(libs.androidx.core)
+  api(libs.androidx.design)
 }

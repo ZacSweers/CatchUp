@@ -37,9 +37,7 @@ import androidx.core.content.res.use
 import io.sweers.catchup.R
 import io.sweers.catchup.util.sdk
 
-/**
- * A view group that draws a badge drawable on top of it's contents.
- */
+/** A view group that draws a badge drawable on top of it's contents. */
 class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
   FourThreeImageView(context, attrs) {
 
@@ -57,8 +55,7 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
   }
 
   var badgeGravity: Int = Gravity.END or Gravity.BOTTOM
-  @Px
-  var badgePadding: Int = 0
+  @Px var badgePadding: Int = 0
 
   private val badge: Drawable
   private var drawBadge: Boolean = false
@@ -67,10 +64,8 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
   init {
     badge = GifBadge(context)
     context.obtainStyledAttributes(attrs, R.styleable.BadgedImageView).use {
-      badgeGravity = it.getInt(
-        R.styleable.BadgedImageView_catchupBadgeGravity,
-        Gravity.END or Gravity.BOTTOM
-      )
+      badgeGravity =
+        it.getInt(R.styleable.BadgedImageView_catchupBadgeGravity, Gravity.END or Gravity.BOTTOM)
       badgePadding = it.getDimensionPixelSize(R.styleable.BadgedImageView_badgePadding, 0)
     }
   }
@@ -81,12 +76,8 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
 
   fun setBadgeColor(@ColorInt color: Int) {
     @Suppress("DEPRECATION") // We can maybe try to inject AppConfig in this in the future
-    context.sdk(29) {
-      badge.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-    } ?: run {
-      @Suppress("DEPRECATION")
-      badge.setColorFilter(color, PorterDuff.Mode.SRC_IN)
-    }
+    context.sdk(29) { badge.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN) }
+      ?: run { @Suppress("DEPRECATION") badge.setColorFilter(color, PorterDuff.Mode.SRC_IN) }
   }
 
   override fun draw(canvas: Canvas) {
@@ -125,9 +116,7 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
     badgeBoundsSet = true
   }
 
-  /**
-   * A drawable for indicating that an image is animated
-   */
+  /** A drawable for indicating that an image is animated */
   private class GifBadge internal constructor(context: Context) : Drawable() {
     private val paint: Paint
 
@@ -146,9 +135,8 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
         textPaint.getTextBounds(GIF, 0, GIF.length, textBounds)
         height = (padding + textBounds.height().toFloat() + padding).toInt()
         width = (padding + textBounds.width().toFloat() + padding).toInt()
-        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)?.apply {
-          setHasAlpha(true)
-        }
+        bitmap =
+          Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)?.apply { setHasAlpha(true) }
         val canvas = Canvas(bitmap!!)
         val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         backgroundPaint.color = BACKGROUND_COLOR

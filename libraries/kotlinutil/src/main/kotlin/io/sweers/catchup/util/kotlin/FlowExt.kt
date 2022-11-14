@@ -15,28 +15,22 @@
  */
 package io.sweers.catchup.util.kotlin
 
+import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.merge
-import java.util.concurrent.atomic.AtomicInteger
 
 suspend fun <V, K> Flow<V>.groupBy(selector: (V) -> K): Flow<Pair<K, List<V>>> = flow {
   val map = mutableMapOf<K, MutableList<V>>()
-  collect {
-    map.getOrPut(selector(it), ::mutableListOf).add(it)
-  }
-  map.entries.forEach { (key, value) ->
-    emit(key to value)
-  }
+  collect { map.getOrPut(selector(it), ::mutableListOf).add(it) }
+  map.entries.forEach { (key, value) -> emit(key to value) }
 }
 
 suspend fun <T, K : Comparable<K>> Flow<T>.sortBy(selector: (T) -> K): Flow<T> = flow {
   val list = mutableListOf<T>()
-  collect {
-    list.add(it)
-  }
+  collect { list.add(it) }
   list.sortBy(selector)
   list.forEach { emit(it) }
 }
@@ -70,10 +64,10 @@ fun <T> Flow<T>.windowed(
     var buffer = ArrayList<T>(size)
     val skip = AtomicInteger(0)
     // TODO if you just use an int here the kotlin compiler blows up
-//    var skip = 0
+    //    var skip = 0
     collect { e ->
       if (skip.get() > 0) {
-//        skip -= 1
+        //        skip -= 1
         skip.decrementAndGet()
         return@collect
       }
@@ -82,7 +76,7 @@ fun <T> Flow<T>.windowed(
         emit(buffer)
         if (reuseBuffer) buffer.clear() else buffer = ArrayList(size)
         skip.set(gap)
-//        skip = gap
+        //        skip = gap
       }
     }
     if (buffer.isNotEmpty()) {

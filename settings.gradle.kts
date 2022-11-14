@@ -14,8 +14,220 @@
  * limitations under the License.
  */
 
+pluginManagement {
+  // Non-delegate APIs are annoyingly not public so we have to use withGroovyBuilder
+  fun hasProperty(key: String): Boolean {
+    return settings.withGroovyBuilder { "hasProperty"(key) as Boolean }
+  }
+
+  fun findProperty(key: String): String? {
+    return if (hasProperty(key)) {
+      settings.withGroovyBuilder { "getProperty"(key) as String }
+    } else {
+      null
+    }
+  }
+
+  repositories {
+    // Snapshots
+    if (hasProperty("catchup.config.enableSnapshots")) {
+      maven("https://oss.sonatype.org/content/repositories/snapshots") {
+        name = "snapshots-maven-central"
+        mavenContent { snapshotsOnly() }
+      }
+      maven("https://s01.oss.sonatype.org/content/repositories/snapshots") {
+        name = "snapshots-maven-central-s01"
+        mavenContent { snapshotsOnly() }
+      }
+      maven("https://androidx.dev/snapshots/latest/artifacts/repository") {
+        name = "snapshots-androidx"
+        mavenContent { snapshotsOnly() }
+        content { includeGroupByRegex("androidx.*") }
+      }
+    }
+
+    // MavenLocal, used when consuming a locally-installed artifact
+    if (hasProperty("catchup.config.enableMavenLocal")) {
+      mavenLocal()
+    }
+
+    // Maven central
+    // Specifically Google's maven central mirror:
+    // https://maven-central.storage.googleapis.com/index.html
+    maven("https://maven-central.storage-download.googleapis.com/maven2/") {
+      name = "Maven Central (GCP Mirror)"
+    }
+    // Google's mirror is sometimes slow to index new releases, so check central just in case!
+    mavenCentral()
+
+    // Google/Firebase/GMS/Androidx libraries
+    // Note that we don't use exclusiveContent for androidx libraries so that snapshots work
+    google {
+      content {
+        includeGroupByRegex("androidx.*")
+        includeGroupByRegex("com\\.google.*")
+        includeGroupByRegex("com\\.android.*")
+        includeGroupByRegex("android\\.arch.*")
+        includeGroupByRegex("org\\.chromium.*")
+      }
+    }
+
+    // Kotlin dev (previously bootstrap) repository, useful for testing against Kotlin dev builds.
+    // Usually only tested on CI shadow jobs
+    // https://kotlinlang.slack.com/archives/C0KLZSCHF/p1616514468003200?thread_ts=1616509748.001400&cid=C0KLZSCHF
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/") {
+      name = "Kotlin-Bootstrap"
+      content {
+        // this repository *only* contains Kotlin artifacts (don't try others here)
+        includeGroupByRegex("org\\.jetbrains.*")
+      }
+    }
+
+    // Pre-release artifacts of compose-compiler, used to test with future Kotlin versions
+    // https://androidx.dev/storage/compose-compiler/repository
+    maven("https://androidx.dev/storage/compose-compiler/repository/") {
+      name = "compose-compiler"
+      content {
+        // this repository *only* contains compose-compiler artifacts
+        includeGroup("androidx.compose.compiler")
+      }
+    }
+
+    // R8 repo for R8/D8 releases
+    exclusiveContent {
+      forRepository {
+        maven("https://storage.googleapis.com/r8-releases/raw") { name = "R8-releases" }
+      }
+      filter { includeModule("com.android.tools", "r8") }
+    }
+
+    // JB Compose Repo
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev") { name = "Compose-JB" }
+
+    // For Gradle plugins only. Last because this proxies to jcenter >_>
+    gradlePluginPortal()
+  }
+}
+
+dependencyResolutionManagement {
+  versionCatalogs {
+    if (System.getenv("DEP_OVERRIDES") == "true") {
+      val overrides = System.getenv().filterKeys { it.startsWith("DEP_OVERRIDE_") }
+      for (catalog in this) {
+        for ((key, value) in overrides) {
+          // Case-sensitive, don't adjust it after removing the prefix!
+          val catalogKey = key.removePrefix("DEP_OVERRIDE_")
+          println("Overriding $catalogKey with $value")
+          catalog.version(catalogKey, value)
+        }
+      }
+    }
+  }
+
+  // Always use repositories we define here and fail if any per-project plugin attempts to source
+  // from their own. We want to keep this a (mostly) hermetic environment and keep repo declarations
+  // consolidated in one place!
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
+  // Non-delegate APIs are annoyingly not public so we have to use withGroovyBuilder
+  fun hasProperty(key: String): Boolean {
+    return settings.withGroovyBuilder { "hasProperty"(key) as Boolean }
+  }
+
+  fun findProperty(key: String): String? {
+    return if (hasProperty(key)) {
+      settings.withGroovyBuilder { "getProperty"(key) as String }
+    } else {
+      null
+    }
+  }
+
+  repositories {
+    // Repos are declared roughly in order of likely to hit.
+
+    // Snapshots/local go first in order to preempt other repos that may contain unscrupulous
+    // snapshot artifacts
+
+    // Snapshots
+    if (hasProperty("catchup.config.enableSnapshots")) {
+      maven("https://oss.sonatype.org/content/repositories/snapshots") {
+        name = "snapshots-maven-central"
+        mavenContent { snapshotsOnly() }
+      }
+      maven("https://s01.oss.sonatype.org/content/repositories/snapshots") {
+        name = "snapshots-maven-central-s01"
+        mavenContent { snapshotsOnly() }
+      }
+      maven("https://androidx.dev/snapshots/latest/artifacts/repository") {
+        name = "snapshots-androidx"
+        mavenContent { snapshotsOnly() }
+        content { includeGroupByRegex("androidx.*") }
+      }
+    }
+
+    // MavenLocal, used when consuming a locally-installed artifact
+    if (hasProperty("catchup.config.enableMavenLocal")) {
+      mavenLocal()
+    }
+
+    // Maven central
+    // Specifically Google's maven central mirror:
+    // https://maven-central.storage.googleapis.com/index.html
+    maven("https://maven-central.storage-download.googleapis.com/maven2/") {
+      name = "Maven Central (GCP Mirror)"
+    }
+    // Google's mirror is sometimes slow to index new releases, so check central just in case!
+    mavenCentral()
+
+    // Google/Firebase/GMS/Androidx libraries
+    // Note that we don't use exclusiveContent for androidx libraries so that snapshots work
+    google {
+      content {
+        includeGroupByRegex("androidx.*")
+        includeGroupByRegex("com\\.google.*")
+        includeGroupByRegex("com\\.android.*")
+        includeGroupByRegex("android\\.arch.*")
+        includeGroupByRegex("org\\.chromium.*")
+        includeModule("com.google.android.flexbox", "flexbox")
+      }
+    }
+
+    // Kotlin dev (previously bootstrap) repository, useful for testing against Kotlin dev builds.
+    // Usually only tested on CI shadow jobs
+    // https://kotlinlang.slack.com/archives/C0KLZSCHF/p1616514468003200?thread_ts=1616509748.001400&cid=C0KLZSCHF
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/") {
+      name = "Kotlin-Bootstrap"
+      content {
+        // this repository *only* contains Kotlin artifacts (don't try others here)
+        includeGroupByRegex("org\\.jetbrains.*")
+      }
+    }
+
+    // Pre-release artifacts of compose-compiler, used to test with future Kotlin versions
+    // https://androidx.dev/storage/compose-compiler/repository
+    maven("https://androidx.dev/storage/compose-compiler/repository/") {
+      name = "compose-compiler"
+      content {
+        // this repository *only* contains compose-compiler artifacts
+        includeGroup("androidx.compose.compiler")
+      }
+    }
+
+    // R8 repo for R8/D8 releases
+    exclusiveContent {
+      forRepository {
+        maven("https://storage.googleapis.com/r8-releases/raw") { name = "R8-releases" }
+      }
+      filter { includeModule("com.android.tools", "r8") }
+    }
+
+    // JB Compose Repo
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev") { name = "Compose-JB" }
+  }
+}
+
 plugins {
-  id("com.gradle.enterprise") version "3.6.1"
+  id("com.gradle.enterprise") version "3.11.4"
 }
 
 gradleEnterprise {
@@ -52,5 +264,6 @@ include(
   ":services:reddit",
   ":services:slashdot",
   ":services:unsplash",
-  ":services:uplabs"
+  ":services:uplabs",
+  ":platform",
 )

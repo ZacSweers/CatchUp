@@ -24,9 +24,7 @@ import retrofit2.http.QueryMap
 interface SmmryService {
 
   @POST(".")
-  suspend fun summarizeUrl(
-    @QueryMap params: Map<String, @JvmSuppressWildcards Any>
-  ): SmmryResponse
+  suspend fun summarizeUrl(@QueryMap params: Map<String, @JvmSuppressWildcards Any>): SmmryResponse
 
   @POST(".")
   @FormUrlEncoded

@@ -44,9 +44,8 @@ import io.sweers.catchup.util.show
 import io.sweers.catchup.util.showIf
 import kotlinx.datetime.Instant
 
-class CatchUpItemViewHolder(
-  itemView: View
-) : ViewHolder(itemView), BindableCatchUpItemViewHolder, TemporaryScopeHolder by temporaryScope() {
+class CatchUpItemViewHolder(itemView: View) :
+  ViewHolder(itemView), BindableCatchUpItemViewHolder, TemporaryScopeHolder by temporaryScope() {
 
   private val binding = ListItemGeneralBinding.bind(itemView)
   internal val container = binding.container
@@ -114,7 +113,8 @@ class CatchUpItemViewHolder(
         mark.isClickable = false
         mark.isFocusable = false
       }
-    } ?: run { hideMark() }
+    }
+      ?: run { hideMark() }
   }
 
   fun title(titleText: CharSequence?) {
@@ -143,34 +143,35 @@ class CatchUpItemViewHolder(
   }
 
   fun score(scoreValue: Pair<String, Int>?) {
-    score.text = scoreValue?.let {
-      "${scoreValue.first} ${scoreValue.second.toLong().format()}"
-    }
+    score.text = scoreValue?.let { "${scoreValue.first} ${scoreValue.second.toLong().format()}" }
     updateDividerVisibility()
   }
 
   fun tag(text: String?) {
-    tag.text = text?.replaceFirstChar {
-      if (it.isLowerCase()) it.titlecase(tag.context.primaryLocale) else it.toString()
-    }
+    tag.text =
+      text?.replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(tag.context.primaryLocale) else it.toString()
+      }
     updateDividerVisibility()
   }
 
   private fun updateDividerVisibility() {
-    val numVisible = arrayOf(score, tag, timestamp)
-      .asSequence()
-      .map { (it to it.text.isBlank()) }
-      .onEach { (view, isBlank) ->
-        if (isBlank) {
-          view.hide()
-        } else {
-          view.show()
+    val numVisible =
+      arrayOf(score, tag, timestamp)
+        .asSequence()
+        .map { (it to it.text.isBlank()) }
+        .onEach { (view, isBlank) ->
+          if (isBlank) {
+            view.hide()
+          } else {
+            view.show()
+          }
         }
-      }
-      .count { (_, isBlank) -> !isBlank }
+        .count { (_, isBlank) -> !isBlank }
     tagsContainer showIf (numVisible > 0)
     when (numVisible) {
-      0, 1 -> {
+      0,
+      1 -> {
         scoreDivider.hide()
         tagDivider.hide()
       }
@@ -200,14 +201,15 @@ class CatchUpItemViewHolder(
   fun timestamp(instant: Instant?) = timestamp(instant?.toEpochMilliseconds())
 
   private fun timestamp(date: Long?) {
-    timestamp.text = date?.let {
-      DateUtils.getRelativeTimeSpanString(
-        it,
-        System.currentTimeMillis(),
-        0L,
-        DateUtils.FORMAT_ABBREV_ALL
-      )
-    }
+    timestamp.text =
+      date?.let {
+        DateUtils.getRelativeTimeSpanString(
+          it,
+          System.currentTimeMillis(),
+          0L,
+          DateUtils.FORMAT_ABBREV_ALL
+        )
+      }
     updateDividerVisibility()
   }
 
@@ -254,9 +256,10 @@ class CatchUpItemViewHolder(
   fun mark(sourceMark: Mark) {
     mark.show()
     sourceMark.text?.let { text ->
-      val finalText = if (sourceMark.formatTextAsCount) {
-        text.toLong().format()
-      } else text
+      val finalText =
+        if (sourceMark.formatTextAsCount) {
+          text.toLong().format()
+        } else text
       mark.text = "${sourceMark.textPrefix.orEmpty()}$finalText"
     }
 
@@ -274,14 +277,12 @@ class CatchUpItemViewHolder(
 
   fun hideMark() = mark.hide()
 
-  private fun getVerticalBias(
-    sourceBlank: Boolean,
-    authorBlank: Boolean
-  ) = if (sourceBlank && authorBlank) {
-    0.5f // Center
-  } else if (sourceBlank) {
-    0f // Top
-  } else {
-    0.5f // Center
-  }
+  private fun getVerticalBias(sourceBlank: Boolean, authorBlank: Boolean) =
+    if (sourceBlank && authorBlank) {
+      0.5f // Center
+    } else if (sourceBlank) {
+      0f // Top
+    } else {
+      0.5f // Center
+    }
 }

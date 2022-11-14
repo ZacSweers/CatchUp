@@ -18,14 +18,10 @@ package io.sweers.catchup.util.kotlin
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
-suspend fun <T, R> Collection<T>.concatMapEager(
-  body: suspend (T) -> R
-): List<R> = coroutineScope {
+suspend fun <T, R> Collection<T>.concatMapEager(body: suspend (T) -> R): List<R> = coroutineScope {
   map { async { body(it) } }.map { it.await() }
 }
 
-suspend fun <T, R> Sequence<T>.concatMapEager(
-  body: suspend (T) -> R
-): List<R> = coroutineScope {
+suspend fun <T, R> Sequence<T>.concatMapEager(body: suspend (T) -> R): List<R> = coroutineScope {
   map { async { body(it) } }.toList().map { it.await() }
 }

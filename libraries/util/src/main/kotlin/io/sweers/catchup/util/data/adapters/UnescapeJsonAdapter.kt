@@ -23,8 +23,8 @@ import com.squareup.moshi.Types
 import org.unbescape.java.JavaEscape
 
 /**
- * [JsonAdapter] that defaults the given element if it is a collection to an empty form
- * if it is null, denoted via [UnEscape].
+ * [JsonAdapter] that defaults the given element if it is a collection to an empty form if it is
+ * null, denoted via [UnEscape].
  */
 class UnescapeJsonAdapter(private val delegate: JsonAdapter<String>) : JsonAdapter<String>() {
 
@@ -51,13 +51,7 @@ class UnescapeJsonAdapter(private val delegate: JsonAdapter<String>) : JsonAdapt
         .find { it is UnEscape }
         ?.let {
           UnescapeJsonAdapter(
-            moshi.adapter(
-              type,
-              Types.nextAnnotations(
-                annotations,
-                UnEscape::class.java
-              )!!
-            )
+            moshi.adapter(type, Types.nextAnnotations(annotations, UnEscape::class.java)!!)
           )
         }
     }

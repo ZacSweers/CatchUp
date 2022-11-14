@@ -32,29 +32,33 @@ interface VisualService : Service {
     holder.tint(accentColor)
     holder.bind(
       item = item,
-      itemClickHandler = item.itemClickUrl?.let { url ->
-        OnClickListener {
-          val urlMeta = UrlMeta(
-            url = url,
-            // Use "day" accents as those are usually the "real" accent colors
-            accentColor = ContextCompat.getColor(
-              context.createConfigurationContext(
-                Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
-              ),
-              meta().themeColor
-            ),
-            context = context,
-            imageViewerData = ImageViewerData(
-              id = item.imageInfo!!.imageId,
-              imageUrl = item.imageInfo.detailUrl,
-              cacheKey = item.imageInfo.cacheKey,
-              sourceUrl = item.imageInfo.sourceUrl,
-              image = holder.itemView()
-            )
-          )
-          clicksReceiver(urlMeta)
+      itemClickHandler =
+        item.itemClickUrl?.let { url ->
+          OnClickListener {
+            val urlMeta =
+              UrlMeta(
+                url = url,
+                // Use "day" accents as those are usually the "real" accent colors
+                accentColor =
+                  ContextCompat.getColor(
+                    context.createConfigurationContext(
+                      Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
+                    ),
+                    meta().themeColor
+                  ),
+                context = context,
+                imageViewerData =
+                  ImageViewerData(
+                    id = item.imageInfo!!.imageId,
+                    imageUrl = item.imageInfo.detailUrl,
+                    cacheKey = item.imageInfo.cacheKey,
+                    sourceUrl = item.imageInfo.sourceUrl,
+                    image = holder.itemView()
+                  )
+              )
+            clicksReceiver(urlMeta)
+          }
         }
-      }
     )
   }
 

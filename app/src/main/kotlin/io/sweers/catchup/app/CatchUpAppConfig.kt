@@ -26,7 +26,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CatchUpAppConfig @Inject constructor(
+class CatchUpAppConfig
+@Inject
+constructor(
   @ApplicationContext appContext: Context,
   metadataContributors: DaggerSet<AppConfigMetadataContributor>
 ) : AppConfig {
@@ -38,7 +40,6 @@ class CatchUpAppConfig @Inject constructor(
   override val versionName: String = versionInfo.name
   override val timestamp: String = versionInfo.timestamp
   override val sdkInt: Int = Build.VERSION.SDK_INT
-  override val metadata: Map<Any, Any?> = mutableMapOf<Any, Any?>()
-    .apply { metadataContributors.forEach { putAll(it.data()) } }
-    .toMap()
+  override val metadata: Map<Any, Any?> =
+    mutableMapOf<Any, Any?>().apply { metadataContributors.forEach { putAll(it.data()) } }.toMap()
 }

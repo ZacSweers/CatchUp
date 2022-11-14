@@ -17,14 +17,12 @@ package io.sweers.catchup.service.github
 
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.github.model.TrendingItem
+import java.util.Locale
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.util.Locale
 
-/**
- * Fake API for https://github.com/trending
- */
+/** Fake API for https://github.com/trending */
 interface GitHubApi {
 
   @GET("/trending{$LANGUAGE}")
@@ -34,7 +32,9 @@ interface GitHubApi {
   ): Single<List<TrendingItem>>
 
   enum class Since {
-    DAILY, WEEKLY, MONTHLY;
+    DAILY,
+    WEEKLY,
+    MONTHLY;
 
     override fun toString(): String {
       return super.toString().lowercase(Locale.US)

@@ -26,9 +26,7 @@ import androidx.annotation.DrawableRes
 data class Mark(
   val text: String? = null,
   val textPrefix: String? = null,
-  /**
-   * By default, the icon used is a comment icon if this is null
-   */
+  /** By default, the icon used is a comment icon if this is null */
   @DrawableRes val icon: Int? = null,
   val clickUrl: String? = null,
   @ColorInt val iconTintColor: Int? = null,
@@ -37,11 +35,7 @@ data class Mark(
 
   companion object {
     fun createCommentMark(count: Int, clickUrl: String? = null): Mark {
-      return Mark(
-        text = count.toString(),
-        clickUrl = clickUrl,
-        formatTextAsCount = true
-      )
+      return Mark(text = count.toString(), clickUrl = clickUrl, formatTextAsCount = true)
     }
   }
 }

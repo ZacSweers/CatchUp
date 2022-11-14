@@ -17,8 +17,5 @@ package io.sweers.catchup.service.designernews.model
 
 import com.squareup.moshi.JsonClass
 
-/**
- * Models a response from the Designer News API that returns a single story
- */
-@JsonClass(generateAdapter = true)
-internal data class StoryResponse(val story: Story)
+/** Models a response from the Designer News API that returns a single story */
+@JsonClass(generateAdapter = true) internal data class StoryResponse(val story: Story)

@@ -44,10 +44,7 @@ object UiUtil {
    * @param mask Mask drawable for ripples to be bound to
    * @return The drawable if successful, or null if not valid for this case (masked on pre-lollipop)
    */
-  inline fun createColorSelector(
-    @ColorInt color: Int,
-    mask: Drawable?
-  ): Drawable? {
+  inline fun createColorSelector(@ColorInt color: Int, mask: Drawable?): Drawable? {
     return RippleDrawable(ColorStateList.valueOf(color), null, mask)
   }
 
@@ -83,11 +80,11 @@ object UiUtil {
     bounded: Boolean
   ): RippleDrawable {
     // try the named swatches in preference order
-    val rippleColor = palette.orderedSwatches(darkAlpha, lightAlpha)
-      .firstOrNull()
-      ?.let { (swatch, alpha) ->
+    val rippleColor =
+      palette.orderedSwatches(darkAlpha, lightAlpha).firstOrNull()?.let { (swatch, alpha) ->
         return@let ColorUtils.modifyAlpha(swatch.rgb, alpha)
-      } ?: fallbackColor
+      }
+        ?: fallbackColor
     return RippleDrawable(
       ColorStateList.valueOf(rippleColor),
       null,

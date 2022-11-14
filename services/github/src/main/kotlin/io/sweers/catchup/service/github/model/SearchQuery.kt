@@ -24,15 +24,11 @@ internal data class SearchQuery(val createdSince: LocalDate?, val minStars: Int)
     // Returning null here is not ideal, but it lets retrofit drop the query param altogether.
     val builder = StringBuilder()
     if (createdSince != null) {
-      builder.append("created:>=")
-        .append(ISO_LOCAL_DATE.format(createdSince))
-        .append(' ')
+      builder.append("created:>=").append(ISO_LOCAL_DATE.format(createdSince)).append(' ')
     }
     if (minStars != 0) {
-      builder.append("stars:>=")
-        .append(minStars)
+      builder.append("stars:>=").append(minStars)
     }
-    return builder.toString()
-      .trim { it <= ' ' }
+    return builder.toString().trim { it <= ' ' }
   }
 }

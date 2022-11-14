@@ -29,14 +29,11 @@ import io.sweers.catchup.base.ui.BaseActivity
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
-/**
- * Syllabus is a helper that orchestrates feature EDUs and hints via TapTargets.
- */
+/** Syllabus is a helper that orchestrates feature EDUs and hints via TapTargets. */
 @ActivityScoped
-class Syllabus @Inject constructor(
-  private val activity: Activity,
-  private val preferences: SharedPreferences
-) {
+class Syllabus
+@Inject
+constructor(private val activity: Activity, private val preferences: SharedPreferences) {
 
   private val queue = PublishRelay.create<TargetRequest>()
   private var displaying = BehaviorRelay.createDefault(false)
@@ -44,13 +41,12 @@ class Syllabus @Inject constructor(
   fun bind(activity: BaseActivity) {
     // TODO would be nice to handle starting mid-sequence for state restoration someday
     // Debounced buffer
-    queue.buffer(queue.debounce(1, SECONDS))
+    queue
+      .buffer(queue.debounce(1, SECONDS))
       .delay { displaying.filter { !it } }
       .observeOn(mainThread())
       .autoDispose(activity)
-      .subscribe { requests ->
-        show(requests)
-      }
+      .subscribe { requests -> show(requests) }
   }
 
   fun showIfNeverSeen(key: String, body: () -> TapTarget) {
@@ -106,8 +102,7 @@ class Syllabus @Inject constructor(
   }
 }
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun TapTarget.id(id: String): TapTarget = id(id.hashCode())
+@Suppress("NOTHING_TO_INLINE") inline fun TapTarget.id(id: String): TapTarget = id(id.hashCode())
 
 /**
  * @property preDisplay a hook for pre-display callbacks. Note that you may want to create a custom

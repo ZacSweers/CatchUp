@@ -20,8 +20,7 @@ import retrofit2.http.GET
 
 interface SlashdotApi {
 
-  @GET("/Slashdot/slashdotMainatom")
-  fun main(): Single<Feed>
+  @GET("/Slashdot/slashdotMainatom") fun main(): Single<Feed>
 
   companion object {
     const val HOST = "rss.slashdot.org"

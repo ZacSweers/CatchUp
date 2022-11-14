@@ -15,9 +15,7 @@
  */
 package io.sweers.catchup.service.api
 
-/**
- * Helper interface to generalize reporting stable IDs.
- */
+/** Helper interface to generalize reporting stable IDs. */
 interface HasStableId {
   fun stableId(): Long
 }

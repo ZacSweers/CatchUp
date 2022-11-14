@@ -23,9 +23,7 @@ import com.apollographql.apollo3.api.json.JsonWriter
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-/**
- * An Apollo adapter for converting between URI types to HttpUrl.
- */
+/** An Apollo adapter for converting between URI types to HttpUrl. */
 object HttpUrlApolloAdapter : Adapter<HttpUrl> {
   override fun fromJson(reader: JsonReader, customScalarAdapters: CustomScalarAdapters): HttpUrl {
     return when (reader.peek()) {

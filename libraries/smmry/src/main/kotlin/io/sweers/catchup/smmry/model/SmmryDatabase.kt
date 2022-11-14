@@ -29,10 +29,7 @@ private const val TABLE = "smmryEntries"
 
 @Keep
 @Entity(tableName = TABLE)
-data class SmmryStorageEntry(
-  @PrimaryKey val url: String,
-  val json: String
-)
+data class SmmryStorageEntry(@PrimaryKey val url: String, val json: String)
 
 @Dao
 interface SmmryDao {
@@ -40,14 +37,10 @@ interface SmmryDao {
   @Query("SELECT * FROM $TABLE WHERE url = :url")
   suspend fun getItem(url: String): SmmryStorageEntry?
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun putItem(item: SmmryStorageEntry)
+  @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun putItem(item: SmmryStorageEntry)
 }
 
-@Database(
-  entities = [SmmryStorageEntry::class],
-  version = 1
-)
+@Database(entities = [SmmryStorageEntry::class], version = 1)
 abstract class SmmryDatabase : RoomDatabase() {
 
   abstract fun dao(): SmmryDao

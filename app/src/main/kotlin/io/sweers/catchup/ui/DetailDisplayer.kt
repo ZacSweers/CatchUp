@@ -23,14 +23,12 @@ import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 interface DetailDisplayer {
   val isExpandedOrExpanding: Boolean
 
-  /**
-   * Shows a detail activity given an available page and fragmentmanager.
-   */
+  /** Shows a detail activity given an available page and fragmentmanager. */
   fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit)
 
   /**
-   * Binds (via [InboxRecyclerView.expandablePage] an irv to the available page/fragment only,
-   * does nothing with [FragmentManager]. Used mostly for state restoration.
+   * Binds (via [InboxRecyclerView.expandablePage] an irv to the available page/fragment only, does
+   * nothing with [FragmentManager]. Used mostly for state restoration.
    *
    * If [useExistingFragment], it should be resolved from a [FragmentManager] and call through to
    * [bind] with the result.
@@ -38,15 +36,15 @@ interface DetailDisplayer {
   fun bind(irv: InboxRecyclerView, useExistingFragment: Boolean = false)
 
   /**
-   * Binds (via [InboxRecyclerView.expandablePage] an irv to the available page/fragment only,
-   * does nothing with [FragmentManager]. Used mostly for state restoration. [bind] can call this,
-   * but this should not call [bind].
+   * Binds (via [InboxRecyclerView.expandablePage] an irv to the available page/fragment only, does
+   * nothing with [FragmentManager]. Used mostly for state restoration. [bind] can call this, but
+   * this should not call [bind].
    */
   fun bind(irv: InboxRecyclerView, targetFragment: Fragment?)
 
   /**
-   * Unbinds (via [InboxRecyclerView.expandablePage] from an irv to the available page only, does nothing
-   * with fragmentmanagers. Used mostly for state restoration.
+   * Unbinds (via [InboxRecyclerView.expandablePage] from an irv to the available page only, does
+   * nothing with fragmentmanagers. Used mostly for state restoration.
    */
   fun unbind(irv: InboxRecyclerView)
 }

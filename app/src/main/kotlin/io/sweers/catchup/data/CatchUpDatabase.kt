@@ -25,13 +25,7 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.SummarizationType
 import kotlinx.datetime.Instant
 
-@Database(
-  entities = [
-    ServicePage::class,
-    CatchUpItem::class
-  ],
-  version = 6
-)
+@Database(entities = [ServicePage::class, CatchUpItem::class], version = 6)
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {
 
@@ -42,14 +36,15 @@ abstract class CatchUpDatabase : RoomDatabase() {
     private var INSTANCE: CatchUpDatabase? = null
 
     fun getDatabase(context: Context): CatchUpDatabase {
-      return INSTANCE ?: Room.databaseBuilder(
-        context.applicationContext,
-        CatchUpDatabase::class.java,
-        "catchup.db"
-      )
-        .fallbackToDestructiveMigration()
-        .build()
-        .also { INSTANCE = it }
+      return INSTANCE
+        ?: Room.databaseBuilder(
+            context.applicationContext,
+            CatchUpDatabase::class.java,
+            "catchup.db"
+          )
+          .fallbackToDestructiveMigration()
+          .build()
+          .also { INSTANCE = it }
     }
   }
 }
@@ -67,8 +62,7 @@ internal class CatchUpConverters {
   @TypeConverter
   fun toInstant(timestamp: Long?) = timestamp?.let { Instant.fromEpochMilliseconds(it) }
 
-  @TypeConverter
-  fun toTimestamp(instant: Instant?) = instant?.toEpochMilliseconds()
+  @TypeConverter fun toTimestamp(instant: Instant?) = instant?.toEpochMilliseconds()
 
   // List<Long>
   @TypeConverter
@@ -80,13 +74,11 @@ internal class CatchUpConverters {
     }
   }
 
-  @TypeConverter
-  fun toListString(list: List<Long>?) = list?.joinToString(",")
+  @TypeConverter fun toListString(list: List<Long>?) = list?.joinToString(",")
 
   // Pair<String, Int>
   @TypeConverter
-  fun toPair(pairString: String?) =
-    pairString?.let { it.split(",").let { it[0] to it[1].toInt() } }
+  fun toPair(pairString: String?) = pairString?.let { it.split(",").let { it[0] to it[1].toInt() } }
 
   @TypeConverter
   fun toPairString(pair: Pair<String, Int>?) = pair?.let { "${pair.first},${pair.second}" }

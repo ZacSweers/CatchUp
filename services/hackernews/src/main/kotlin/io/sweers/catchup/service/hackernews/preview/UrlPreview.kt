@@ -49,11 +49,13 @@ object UrlPreviewModule {
     moshi: Moshi,
     appConfig: AppConfig
   ): UrlPreview {
-    val retrofit = Retrofit.Builder().baseUrl("https://api.linkpreview.net")
-      .delegatingCallFactory(client)
-      .addConverterFactory(MoshiConverterFactory.create(moshi))
-      .validateEagerly(appConfig.isDebug)
-      .build()
+    val retrofit =
+      Retrofit.Builder()
+        .baseUrl("https://api.linkpreview.net")
+        .delegatingCallFactory(client)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
     return retrofit.create(UrlPreview::class.java)
   }
 }

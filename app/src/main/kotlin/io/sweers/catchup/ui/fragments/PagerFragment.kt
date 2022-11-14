@@ -67,18 +67,15 @@ import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
+import javax.inject.Inject
+import kotlin.math.abs
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import ru.ldralighieri.corbind.material.offsetChanges
-import javax.inject.Inject
-import kotlin.math.abs
 
-fun ServiceMeta.toServiceHandler() = ServiceHandler(
-  name,
-  icon,
-  themeColor
-) { ServiceFragment.newInstance(id) }
+fun ServiceMeta.toServiceHandler() =
+  ServiceHandler(name, icon, themeColor) { ServiceFragment.newInstance(id) }
 
 data class ServiceHandler(
   @StringRes val name: Int,
@@ -94,22 +91,22 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
     private const val SETTINGS_ACTIVITY_REQUEST = 100
   }
 
-  @Inject
-  lateinit var resolvedColorCache: ColorCache
-  @Inject
-  lateinit var serviceHandlers: Array<ServiceHandler>
-  @Inject
-  lateinit var changelogHelper: ChangelogHelper
-  @Inject
-  lateinit var catchUpPreferences: CatchUpPreferences
-  @Inject
-  lateinit var appConfig: AppConfig
+  @Inject lateinit var resolvedColorCache: ColorCache
+  @Inject lateinit var serviceHandlers: Array<ServiceHandler>
+  @Inject lateinit var changelogHelper: ChangelogHelper
+  @Inject lateinit var catchUpPreferences: CatchUpPreferences
+  @Inject lateinit var appConfig: AppConfig
 
-  private val rootLayout get() = binding.pagerFragmentRoot
-  private val tabLayout get() = binding.tabLayout
-  private val viewPager get() = binding.viewPager
-  private val toolbar get() = binding.toolbar
-  val appBarLayout get() = binding.appbarlayout
+  private val rootLayout
+    get() = binding.pagerFragmentRoot
+  private val tabLayout
+    get() = binding.tabLayout
+  private val viewPager
+    get() = binding.viewPager
+  private val toolbar
+    get() = binding.toolbar
+  val appBarLayout
+    get() = binding.appbarlayout
 
   private val argbEvaluator = ArgbEvaluator()
   private var statusBarColorAnimator: ValueAnimator? = null
@@ -136,78 +133,77 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     viewPager.offscreenPageLimit = 1
-    val pagerAdapter = object : FragmentStateAdapter(childFragmentManager, lifecycle) {
-      private val registeredFragments = SparseArray<Fragment>()
+    val pagerAdapter =
+      object : FragmentStateAdapter(childFragmentManager, lifecycle) {
+        private val registeredFragments = SparseArray<Fragment>()
 
-      override fun getItemCount(): Int = serviceHandlers.size
+        override fun getItemCount(): Int = serviceHandlers.size
 
-      override fun createFragment(position: Int): Fragment {
-        return serviceHandlers[position].instantiator().also {
-          registeredFragments[position] = it
+        override fun createFragment(position: Int): Fragment {
+          return serviceHandlers[position].instantiator().also {
+            registeredFragments[position] = it
+          }
         }
+
+        // TODO not sure this is right, may need to listen to Fragment's onDestroy(View?) directly
+        override fun onViewDetachedFromWindow(holder: FragmentViewHolder) {
+          super.onViewDetachedFromWindow(holder)
+          registeredFragments.remove(holder.bindingAdapterPosition)
+        }
+
+        fun getRegisteredFragment(position: Int) = registeredFragments[position]
       }
 
-      // TODO not sure this is right, may need to listen to Fragment's onDestroy(View?) directly
-      override fun onViewDetachedFromWindow(holder: FragmentViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        registeredFragments.remove(holder.bindingAdapterPosition)
-      }
-
-      fun getRegisteredFragment(position: Int) = registeredFragments[position]
-    }
-
-    @ColorInt val colorPrimaryDark = view.context.resolveAttributeColor(com.google.android.material.R.attr.colorPrimaryDark)
+    @ColorInt
+    val colorPrimaryDark =
+      view.context.resolveAttributeColor(com.google.android.material.R.attr.colorPrimaryDark)
     val isInNightMode = view.context.isInNightMode()
     if (!isInNightMode) {
       // Start with a light status bar in normal mode
       appBarLayout.setLightStatusBar(appConfig)
     }
     viewLifecycleOwner.lifecycleScope.launch {
-      appBarLayout.offsetChanges()
-        .distinctUntilChanged()
-        .collect { offset ->
-          if (offset == -toolbar.height) {
-            statusBarColorAnimator?.cancel()
-            tabLayoutIsPinned = true
-            val newStatusColor = this@PagerFragment.getAndSaveColor(
-              tabLayout.selectedTabPosition
-            )
-            statusBarColorAnimator = ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor)
-              .apply {
-                addUpdateListener { animation ->
-                  this@PagerFragment.requireActivity()
-                    .window.statusBarColor = animation.animatedValue as Int
-                }
-                duration = 200
-                interpolator = LinearOutSlowInInterpolator()
-                start()
+      appBarLayout.offsetChanges().distinctUntilChanged().collect { offset ->
+        if (offset == -toolbar.height) {
+          statusBarColorAnimator?.cancel()
+          tabLayoutIsPinned = true
+          val newStatusColor = this@PagerFragment.getAndSaveColor(tabLayout.selectedTabPosition)
+          statusBarColorAnimator =
+            ValueAnimator.ofArgb(colorPrimaryDark, newStatusColor).apply {
+              addUpdateListener { animation ->
+                this@PagerFragment.requireActivity().window.statusBarColor =
+                  animation.animatedValue as Int
               }
-            appBarLayout.clearLightStatusBar(appConfig)
-          } else {
-            val wasPinned = tabLayoutIsPinned
-            tabLayoutIsPinned = false
-            if (wasPinned) {
-              statusBarColorAnimator?.cancel()
-              statusBarColorAnimator = ValueAnimator.ofArgb(
-                this@PagerFragment.requireActivity()
-                  .window
-                  .statusBarColor,
-                colorPrimaryDark
-              ).apply {
-                addUpdateListener { animation ->
-                  this@PagerFragment.requireActivity()
-                    .window.statusBarColor = animation.animatedValue as Int
-                }
-                duration = 200
-                interpolator = DecelerateInterpolator()
-                if (!isInNightMode) {
-                  appBarLayout.setLightStatusBar(appConfig)
-                }
-                start()
-              }
+              duration = 200
+              interpolator = LinearOutSlowInInterpolator()
+              start()
             }
+          appBarLayout.clearLightStatusBar(appConfig)
+        } else {
+          val wasPinned = tabLayoutIsPinned
+          tabLayoutIsPinned = false
+          if (wasPinned) {
+            statusBarColorAnimator?.cancel()
+            statusBarColorAnimator =
+              ValueAnimator.ofArgb(
+                  this@PagerFragment.requireActivity().window.statusBarColor,
+                  colorPrimaryDark
+                )
+                .apply {
+                  addUpdateListener { animation ->
+                    this@PagerFragment.requireActivity().window.statusBarColor =
+                      animation.animatedValue as Int
+                  }
+                  duration = 200
+                  interpolator = DecelerateInterpolator()
+                  if (!isInNightMode) {
+                    appBarLayout.setLightStatusBar(appConfig)
+                  }
+                  start()
+                }
           }
         }
+      }
     }
     toolbar.inflateMenu(R.menu.main)
     toolbar.setOnMenuItemClickListener { item ->
@@ -231,36 +227,39 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
     tabLayout.setBackgroundColor(initialColor)
     viewPager.adapter = pagerAdapter
     TabLayoutMediator(tabLayout, viewPager) { tab, _ ->
-      viewPager.setCurrentItem(tab.position, true)
-    }.attach()
+        viewPager.setCurrentItem(tab.position, true)
+      }
+      .attach()
     changelogHelper.bindWith(toolbar, initialColor) {
       getAndSaveColor(tabLayout.selectedTabPosition)
     }
 
     // Set icons
     serviceHandlers.forEachIndexed { index, serviceHandler ->
-      tabLayout.getTabAt(index)?.icon = VectorDrawableCompat.create(
-        resources,
-        serviceHandler.icon,
-        null
-      )
+      tabLayout.getTabAt(index)?.icon =
+        VectorDrawableCompat.create(resources, serviceHandler.icon, null)
     }
 
     // Animate color changes
     // adapted from http://kubaspatny.github.io/2014/09/18/viewpager-background-transition/
     viewPager.registerOnPageChangeCallback(
       object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+        override fun onPageScrolled(
+          position: Int,
+          positionOffset: Float,
+          positionOffsetPixels: Int
+        ) {
           if (canAnimateColor) {
-            val color: Int = if (position < pagerAdapter.itemCount - 1 && position < serviceHandlers.size - 1) {
-              argbEvaluator.evaluate(
-                positionOffset,
-                getAndSaveColor(position),
-                getAndSaveColor(position + 1)
-              ) as Int
-            } else {
-              getAndSaveColor(serviceHandlers.size - 1)
-            }
+            val color: Int =
+              if (position < pagerAdapter.itemCount - 1 && position < serviceHandlers.size - 1) {
+                argbEvaluator.evaluate(
+                  positionOffset,
+                  getAndSaveColor(position),
+                  getAndSaveColor(position + 1)
+                ) as Int
+              } else {
+                getAndSaveColor(serviceHandlers.size - 1)
+              }
             tabLayout.setBackgroundColor(color)
             if (tabLayoutIsPinned) {
               activity?.window?.statusBarColor = color
@@ -290,45 +289,42 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
           val position = tab.position
           toolbar.setTitle(serviceHandlers[position].name)
 
-// If we're switching between more than one page, we just want to manually set the color
-// once rather than let the usual page scroll logic cycle through all the colors in a weird
-// flashy way.
+          // If we're switching between more than one page, we just want to manually set the color
+          // once rather than let the usual page scroll logic cycle through all the colors in a
+          // weird
+          // flashy way.
           if (abs(lastPosition - position) > 1) {
             canAnimateColor = false
-// Start with the current tablayout color to feel more natural if we're in between
+            // Start with the current tablayout color to feel more natural if we're in between
             @ColorInt val startColor = (tabLayout.background as ColorDrawable).color
             @ColorInt val endColor = getAndSaveColor(position)
             tabLayoutColorAnimator?.cancel()
-            ValueAnimator.ofFloat(0f, 1f)
-              .run {
-                interpolator = FastOutSlowInInterpolator() // TODO Use singleton
-                duration = 400
-                doOnStart {
-                  tabLayoutColorAnimator = it
-                }
-                doOnEnd {
-                  removeAllUpdateListeners()
-                  tabLayoutColorAnimator = null
-                }
-                addUpdateListener { animator ->
-                  @ColorInt val color = argbEvaluator.evaluate(
-                    animator.animatedValue as Float,
-                    startColor,
-                    endColor
-                  ) as Int
-                  tabLayout.setBackgroundColor(color)
-                  if (tabLayoutIsPinned) {
-                    activity?.window?.statusBarColor = color
-                  }
-                  activity?.updateNavBarColor(
-                    color,
-                    context = view.context,
-                    uiPreferences = catchUpPreferences,
-                    appConfig = appConfig
-                  )
-                }
-                start()
+            ValueAnimator.ofFloat(0f, 1f).run {
+              interpolator = FastOutSlowInInterpolator() // TODO Use singleton
+              duration = 400
+              doOnStart { tabLayoutColorAnimator = it }
+              doOnEnd {
+                removeAllUpdateListeners()
+                tabLayoutColorAnimator = null
               }
+              addUpdateListener { animator ->
+                @ColorInt
+                val color =
+                  argbEvaluator.evaluate(animator.animatedValue as Float, startColor, endColor)
+                    as Int
+                tabLayout.setBackgroundColor(color)
+                if (tabLayoutIsPinned) {
+                  activity?.window?.statusBarColor = color
+                }
+                activity?.updateNavBarColor(
+                  color,
+                  context = view.context,
+                  uiPreferences = catchUpPreferences,
+                  appConfig = appConfig
+                )
+              }
+              start()
+            }
           }
           lastPosition = position
         }
@@ -348,7 +344,8 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
 
     savedInstanceState?.run {
       getParcelable<Parcelable>("collapsingToolbarState")?.let {
-        (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior
+        (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams)
+          .behavior
           ?.onRestoreInstanceState(rootLayout, appBarLayout, it)
       }
     }
@@ -358,10 +355,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
   private fun getAndSaveColor(position: Int): Int {
     dayOnlyContext?.let {
       if (resolvedColorCache[position] == R.color.no_color) {
-        resolvedColorCache[position] = ContextCompat.getColor(
-          it,
-          serviceHandlers[position].accent
-        )
+        resolvedColorCache[position] = ContextCompat.getColor(it, serviceHandlers[position].accent)
       }
     }
     return resolvedColorCache[position]
@@ -372,8 +366,9 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
     if (requestCode == SETTINGS_ACTIVITY_REQUEST) {
       if (resultCode == SettingsActivity.SETTINGS_RESULT_DATA && data != null) {
         data.extras?.let { extras ->
-          if (extras.getBoolean(SettingsActivity.NIGHT_MODE_UPDATED, false) ||
-            extras.getBoolean(SettingsActivity.SERVICE_ORDER_UPDATED, false)
+          if (
+            extras.getBoolean(SettingsActivity.NIGHT_MODE_UPDATED, false) ||
+              extras.getBoolean(SettingsActivity.SERVICE_ORDER_UPDATED, false)
           ) {
             activity?.recreate()
           }
@@ -401,26 +396,19 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
       serviceMetas: DaggerMap<String, ServiceMeta>,
       catchUpPreferences: CatchUpPreferences
     ): Array<ServiceHandler> {
-      check(serviceMetas.isNotEmpty()) {
-        "No services found!"
-      }
+      check(serviceMetas.isNotEmpty()) { "No services found!" }
       val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
-      return (
-        serviceMetas.values
+      return (serviceMetas.values
           .filter(ServiceMeta::enabled)
           .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }
           .sortedBy { currentOrder.indexOf(it.id) }
-          .map(ServiceMeta::toServiceHandler)
-        )
+          .map(ServiceMeta::toServiceHandler))
         .toTypedArray()
     }
 
     @Provides
-    fun provideColorCache(serviceHandlers: Array<ServiceHandler>) = ColorCache(
-      IntArray(
-        serviceHandlers.size
-      ).apply { fill(R.color.no_color) }
-    )
+    fun provideColorCache(serviceHandlers: Array<ServiceHandler>) =
+      ColorCache(IntArray(serviceHandlers.size).apply { fill(R.color.no_color) })
   }
 }
 

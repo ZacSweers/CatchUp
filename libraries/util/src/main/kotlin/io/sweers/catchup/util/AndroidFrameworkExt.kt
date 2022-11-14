@@ -45,38 +45,33 @@ fun Context.clearCache() = cleanDir(applicationContext.cacheDir)
 
 private fun cleanDir(dir: File): Long {
   var bytesDeleted: Long = 0
-  dir.listFiles()
-    ?.forEach {
-      val length = it.length()
-      try {
-        if (it.delete()) {
-          d { "Deleted file" }
-          bytesDeleted += length
-        }
-      } catch (e: IOException) {
-        // Ignore these for now
+  dir.listFiles()?.forEach {
+    val length = it.length()
+    try {
+      if (it.delete()) {
+        d { "Deleted file" }
+        bytesDeleted += length
       }
+    } catch (e: IOException) {
+      // Ignore these for now
     }
+  }
   return bytesDeleted
 }
 
 /**
- * Attempt to launch the supplied [Intent]. Queries on-device packages before launching and
- * will display a simple message if none are available to handle it.
+ * Attempt to launch the supplied [Intent]. Queries on-device packages before launching and will
+ * display a simple message if none are available to handle it.
  */
 fun Context.maybeStartActivity(intent: Intent): Boolean = maybeStartActivity(intent, false)
 
 /**
- * Attempt to launch Android's chooser for the supplied [Intent]. Queries on-device
- * packages before launching and will display a simple message if none are available to handle
- * it.
+ * Attempt to launch Android's chooser for the supplied [Intent]. Queries on-device packages before
+ * launching and will display a simple message if none are available to handle it.
  */
 fun Context.maybeStartChooser(intent: Intent): Boolean = maybeStartActivity(intent, true)
 
-private fun Context.maybeStartActivity(
-  inputIntent: Intent,
-  chooser: Boolean
-): Boolean {
+private fun Context.maybeStartActivity(inputIntent: Intent, chooser: Boolean): Boolean {
   var intent = inputIntent
   return if (hasHandler(intent)) {
     if (chooser) {
@@ -85,18 +80,12 @@ private fun Context.maybeStartActivity(
     startActivity(intent)
     true
   } else {
-    Toast.makeText(
-      this,
-      R.string.no_intent_handler,
-      LENGTH_LONG
-    ).show()
+    Toast.makeText(this, R.string.no_intent_handler, LENGTH_LONG).show()
     false
   }
 }
 
-/**
- * Queries on-device packages for a handler for the supplied [Intent].
- */
+/** Queries on-device packages for a handler for the supplied [Intent]. */
 private fun Context.hasHandler(intent: Intent) =
   packageManager.queryIntentActivities(intent, 0).isNotEmpty()
 
@@ -109,11 +98,12 @@ fun Context.resolveAttributeColor(@AttrRes resId: Int): Int {
   if (typedValue.type in TypedValue.TYPE_FIRST_COLOR_INT..TypedValue.TYPE_LAST_COLOR_INT) {
     return typedValue.data
   }
-  val colorRes = if (typedValue.resourceId != 0) {
-    typedValue.resourceId
-  } else {
-    typedValue.data
-  }
+  val colorRes =
+    if (typedValue.resourceId != 0) {
+      typedValue.resourceId
+    } else {
+      typedValue.data
+    }
   return ContextCompat.getColor(this, colorRes)
 }
 
@@ -147,14 +137,9 @@ inline fun Resources.dp2px(dipValue: Float) =
 val Context.primaryLocale: Locale
   @SuppressLint("NewApi") // False positive
   get() {
-    return sdk(24) {
-      resources.configuration.locales[0]
-    } ?: resources.configuration.locale
+    return sdk(24) { resources.configuration.locales[0] } ?: resources.configuration.locale
   }
 
 @CheckResult
-fun <T : ViewBinding> Activity.setContentView(
-  inflate: (LayoutInflater) -> T
-): T = inflate(layoutInflater).also {
-  setContentView(it.root)
-}
+fun <T : ViewBinding> Activity.setContentView(inflate: (LayoutInflater) -> T): T =
+  inflate(layoutInflater).also { setContentView(it.root) }

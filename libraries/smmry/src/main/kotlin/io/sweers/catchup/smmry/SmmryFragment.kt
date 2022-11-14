@@ -47,14 +47,12 @@ import io.sweers.catchup.smmry.model.SmmryResponse
 import io.sweers.catchup.smmry.model.SmmryStorageEntry
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
-/**
- * Overlay fragment for displaying Smmry API results.
- */
+/** Overlay fragment for displaying Smmry API results. */
 @AndroidEntryPoint
 class SmmryFragment : InjectableBaseFragment<FragmentSmmryBinding>(), ScrollableContent {
 
@@ -73,36 +71,38 @@ class SmmryFragment : InjectableBaseFragment<FragmentSmmryBinding>(), Scrollable
       info: SummarizationInfo
     ): SmmryFragment {
       return SmmryFragment().apply {
-        arguments = bundleOf(
-          ID_ID to id,
-          ID_ACCENT to accentColor,
-          ID_TITLE to inputTitle,
-          ID_VALUE to info.value,
-          ID_TYPE to info.type.name
-        )
+        arguments =
+          bundleOf(
+            ID_ID to id,
+            ID_ACCENT to accentColor,
+            ID_TITLE to inputTitle,
+            ID_VALUE to info.value,
+            ID_TYPE to info.type.name
+          )
       }
     }
   }
 
-  @Inject
-  lateinit var smmryService: SmmryService
-  @ForSmmry
-  @Inject
-  lateinit var moshi: Moshi
-  @Inject
-  lateinit var smmryDao: SmmryDao
+  @Inject lateinit var smmryService: SmmryService
+  @ForSmmry @Inject lateinit var moshi: Moshi
+  @Inject lateinit var smmryDao: SmmryDao
 
-  private val loadingView get() = binding.loadingView
-  private val lottieView get() = binding.smmryLoading
-  private val content get() = binding.contentContainer
-  private val tags get() = binding.tags
-  private val title get() = binding.title
-  private val summary get() = binding.summary
+  private val loadingView
+    get() = binding.loadingView
+  private val lottieView
+    get() = binding.smmryLoading
+  private val content
+    get() = binding.contentContainer
+  private val tags
+    get() = binding.tags
+  private val title
+    get() = binding.title
+  private val summary
+    get() = binding.summary
 
   private lateinit var id: String
   private lateinit var info: SummarizationInfo
-  @ColorInt
-  private var accentColor: Int = 0
+  @ColorInt private var accentColor: Int = 0
   private lateinit var inputTitle: String
   private var alreadyLoaded = false
 
@@ -168,36 +168,39 @@ class SmmryFragment : InjectableBaseFragment<FragmentSmmryBinding>(), Scrollable
     return content.canScrollVertically(directionInt)
   }
 
-  private suspend fun tryRequestFromStorage() = smmryDao.getItem(id)?.let {
-    moshi.adapter(SmmryResponse::class.java).fromJson(it.json) ?: throw JsonDataException(
-      "Could not parse entry"
-    )
-  }
+  private suspend fun tryRequestFromStorage() =
+    smmryDao.getItem(id)?.let {
+      moshi.adapter(SmmryResponse::class.java).fromJson(it.json)
+        ?: throw JsonDataException("Could not parse entry")
+    }
 
   private suspend fun fetchFromNetwork(): SmmryResponse {
-    val response: SmmryResponse = try {
-      when (info.type) {
-        TEXT -> smmryService.summarizeText(
-          SmmryRequestBuilder.forText()
-            .withBreak(true)
-            .keywordCount(5)
-            .sentenceCount(5)
-            .build(),
-          info.value
-        )
-        URL -> smmryService.summarizeUrl(
-          SmmryRequestBuilder.forUrl(info.value)
-            .withBreak(true)
-            .keywordCount(5)
-            .sentenceCount(5)
-            .build()
-        )
-        NONE -> SmmryResponse.Success.just(inputTitle, info.value)
+    val response: SmmryResponse =
+      try {
+        when (info.type) {
+          TEXT ->
+            smmryService.summarizeText(
+              SmmryRequestBuilder.forText()
+                .withBreak(true)
+                .keywordCount(5)
+                .sentenceCount(5)
+                .build(),
+              info.value
+            )
+          URL ->
+            smmryService.summarizeUrl(
+              SmmryRequestBuilder.forUrl(info.value)
+                .withBreak(true)
+                .keywordCount(5)
+                .sentenceCount(5)
+                .build()
+            )
+          NONE -> SmmryResponse.Success.just(inputTitle, info.value)
+        }
+      } catch (error: Exception) {
+        // We should indicate when something's network related
+        SmmryResponse.Failure.UnknownErrorCode
       }
-    } catch (error: Exception) {
-      // We should indicate when something's network related
-      SmmryResponse.Failure.UnknownErrorCode
-    }
     if (response != SmmryResponse.Failure.UnknownErrorCode) {
       smmryDao.putItem(
         SmmryStorageEntry(
@@ -213,15 +216,17 @@ class SmmryFragment : InjectableBaseFragment<FragmentSmmryBinding>(), Scrollable
   private fun showSummary(smmry: SmmryResponse.Success) {
     if (smmry.keywords != null) {
       tags.setTextColor(accentColor)
-      tags.text = smmry.keywords.joinToString("  —  ") { s ->
-        s.trim { it <= ' ' }.uppercase(Locale.getDefault())
-      }
+      tags.text =
+        smmry.keywords.joinToString("  —  ") { s ->
+          s.trim { it <= ' ' }.uppercase(Locale.getDefault())
+        }
       tags.show()
     } else {
       tags.hide()
     }
-    summary.text = smmry.title.takeIf { it.isNotEmpty() }?.let { "$it\n\n" }.orEmpty() + smmry.content
-      .replace("[BREAK]", "\n\n")
+    summary.text =
+      smmry.title.takeIf { it.isNotEmpty() }?.let { "$it\n\n" }.orEmpty() +
+        smmry.content.replace("[BREAK]", "\n\n")
     if (content.isGone) {
       content.show(true)
     }

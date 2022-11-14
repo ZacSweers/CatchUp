@@ -29,6 +29,7 @@ import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.flowFor
 import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.util.d
+import javax.inject.Inject
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -37,7 +38,6 @@ import kotlinx.coroutines.launch
 import rxdogtag2.RxDogTag
 import rxdogtag2.autodispose2.AutoDisposeConfigurer
 import timber.log.Timber
-import javax.inject.Inject
 
 private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
 
@@ -50,16 +50,12 @@ class CatchUpApplication : Application() {
       RxAndroidPlugins.setInitMainThreadSchedulerHandler {
         AndroidSchedulers.from(Looper.getMainLooper(), true)
       }
-      RxDogTag.builder()
-        .configureWith(AutoDisposeConfigurer::configure)
-        .install()
+      RxDogTag.builder().configureWith(AutoDisposeConfigurer::configure).install()
     }
   }
 
-  @Inject
-  internal lateinit var catchUpPreferences: CatchUpPreferences
-  @Inject
-  internal lateinit var appConfig: AppConfig
+  @Inject internal lateinit var catchUpPreferences: CatchUpPreferences
+  @Inject internal lateinit var appConfig: AppConfig
 
   @Inject
   internal fun plantTimberTrees(trees: DaggerSet<Timber.Tree>) {
@@ -94,7 +90,8 @@ class CatchUpApplication : Application() {
     }
 
     GlobalScope.launch {
-      catchUpPreferences.flowFor { ::daynightAuto }
+      catchUpPreferences
+        .flowFor { ::daynightAuto }
         .collect { autoEnabled ->
           d { "Updating daynight" }
           // Someday would like to add activity lifecycle callbacks to automatically call recreate

@@ -33,7 +33,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FontHelper @Inject constructor(
+class FontHelper
+@Inject
+constructor(
   @ApplicationContext context: Context,
   private val appConfig: dev.zacsweers.catchup.appconfig.AppConfig
 ) {
@@ -46,41 +48,45 @@ class FontHelper @Inject constructor(
 
   fun load(context: Context) {
     d { "Downloading fonts" }
-    val emojiRequest = FontRequest(
-      "com.google.android.gms.fonts",
-      "com.google.android.gms",
-      "Noto Color Emoji Compat",
-      catchup.ui.core.R.array.com_google_android_gms_fonts_certs
-    )
-    val emojiConfig = FontRequestEmojiCompatConfig(context, emojiRequest)
-      .setEmojiSpanIndicatorEnabled(appConfig.isDebug)
-      .setEmojiSpanIndicatorColor(Color.GREEN)
-      .registerInitCallback(
-        object : InitCallback() {
-          override fun onInitialized() = d { "EmojiCompat initialized" }
-
-          override fun onFailed(throwable: Throwable?) {
-            e(throwable) { "EmojiCompat initialization failure." }
-          }
-        }
+    val emojiRequest =
+      FontRequest(
+        "com.google.android.gms.fonts",
+        "com.google.android.gms",
+        "Noto Color Emoji Compat",
+        catchup.ui.core.R.array.com_google_android_gms_fonts_certs
       )
-    EmojiCompat.init(emojiConfig)
-    val request = FontRequest(
-      "com.google.android.gms.fonts",
-      "com.google.android.gms",
-      "Nunito",
-      catchup.ui.core.R.array.com_google_android_gms_fonts_certs
-    )
-    val callback = object : FontRequestCallback() {
-      override fun onTypefaceRetrieved(typeface: Typeface) {
-        d { "Font received" }
-        font = typeface
-      }
+    val emojiConfig =
+      FontRequestEmojiCompatConfig(context, emojiRequest)
+        .setEmojiSpanIndicatorEnabled(appConfig.isDebug)
+        .setEmojiSpanIndicatorColor(Color.GREEN)
+        .registerInitCallback(
+          object : InitCallback() {
+            override fun onInitialized() = d { "EmojiCompat initialized" }
 
-      override fun onTypefaceRequestFailed(reason: Int) {
-        e { "Font download failed with reason $reason" }
+            override fun onFailed(throwable: Throwable?) {
+              e(throwable) { "EmojiCompat initialization failure." }
+            }
+          }
+        )
+    EmojiCompat.init(emojiConfig)
+    val request =
+      FontRequest(
+        "com.google.android.gms.fonts",
+        "com.google.android.gms",
+        "Nunito",
+        catchup.ui.core.R.array.com_google_android_gms_fonts_certs
+      )
+    val callback =
+      object : FontRequestCallback() {
+        override fun onTypefaceRetrieved(typeface: Typeface) {
+          d { "Font received" }
+          font = typeface
+        }
+
+        override fun onTypefaceRequestFailed(reason: Int) {
+          e { "Font download failed with reason $reason" }
+        }
       }
-    }
     FontsContractCompat.requestFont(
       context.applicationContext,
       request,
@@ -89,8 +95,6 @@ class FontHelper @Inject constructor(
     )
   }
 
-  /**
-   * Returns the font, or null if it's not present.
-   */
+  /** Returns the font, or null if it's not present. */
   fun getFont() = font
 }

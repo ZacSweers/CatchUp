@@ -15,17 +15,14 @@
  */
 package io.sweers.catchup.libraries.retrofitconverters
 
+import java.lang.reflect.Type
 import okhttp3.RequestBody
 import retrofit2.Converter
 import retrofit2.Retrofit
-import java.lang.reflect.Type
 
-/**
- * A [Converter] that only encodes requests with a given [convertBody].
- */
-class EncodingConverter<T : Any> private constructor(
-  private val convertBody: (T) -> RequestBody
-) : Converter<T, RequestBody> {
+/** A [Converter] that only encodes requests with a given [convertBody]. */
+class EncodingConverter<T : Any> private constructor(private val convertBody: (T) -> RequestBody) :
+  Converter<T, RequestBody> {
 
   override fun convert(value: T): RequestBody {
     return convertBody(value)

@@ -55,9 +55,7 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
             continue
           }
 
-          data = moshi.adapter(kind.derivedClass)
-            .fromJson(reader)
-            ?: throw JsonDataException()
+          data = moshi.adapter(kind.derivedClass).fromJson(reader) ?: throw JsonDataException()
         }
         reader.endObject()
         return data ?: throw JsonDataException("Missing 'data' label!")
@@ -70,7 +68,8 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
             reader.skipValue()
             continue
           }
-          return kindAdapter.fromJson(reader) ?: throw JsonDataException("Unrecognized kind: ${reader.nextString()}")
+          return kindAdapter.fromJson(reader)
+            ?: throw JsonDataException("Unrecognized kind: ${reader.nextString()}")
         }
 
         throw JsonDataException("Missing 'kind' label!")
@@ -88,7 +87,8 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
       // TODO still duplicating some here, but reified types DRY this up nicely
       private inline fun <reified T : RedditObject> JsonWriter.write(value: T?) {
         name("kind")
-        moshi.adapter(RedditKind::class.java)
+        moshi
+          .adapter(RedditKind::class.java)
           .toJson(this, RedditKind.values().find { it.derivedClass == T::class.java })
         name("data")
         moshi.adapter(T::class.java).toJson(this, value)

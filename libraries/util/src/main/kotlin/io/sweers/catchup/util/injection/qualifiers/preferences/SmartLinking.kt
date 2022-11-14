@@ -17,5 +17,4 @@ package io.sweers.catchup.util.injection.qualifiers.preferences
 
 import javax.inject.Qualifier
 
-@Qualifier
-annotation class SmartLinking
+@Qualifier annotation class SmartLinking

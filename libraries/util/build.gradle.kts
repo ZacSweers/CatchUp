@@ -17,7 +17,16 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  id("dev.zacsweers.redacted")
+  alias(libs.plugins.redacted)
+  alias(libs.plugins.sgp.base)
+}
+
+android {
+  namespace = "io.sweers.catchup.util"
+  buildFeatures {
+    androidResources = true
+    viewBinding = true
+  }
 }
 
 redacted {
@@ -25,28 +34,24 @@ redacted {
 }
 
 dependencies {
-  api(deps.android.androidx.annotations)
+  api(libs.androidx.annotations)
 
-  implementation(deps.android.androidx.appCompat)
-  implementation(deps.android.androidx.core)
-  implementation(deps.android.androidx.design)
-  implementation(deps.rx.android)
-  implementation(deps.kotlin.datetime)
+  implementation(libs.androidx.appCompat)
+  implementation(libs.androidx.core)
+  implementation(libs.androidx.design)
+  implementation(libs.rx.android)
+  implementation(libs.kotlin.datetime)
 
   api(project(":libraries:appconfig"))
-  api(deps.android.androidx.coreKtx)
-  api(deps.dagger.runtime)
-  api(deps.kotlin.stdlib.jdk7)
-  api(deps.moshi.core)
-  api(deps.misc.timber)
-  api(deps.okhttp.core)
-  api(deps.rx.java)
+  api(libs.androidx.coreKtx)
+  api(libs.dagger.runtime)
+  api(libs.moshi.core)
+  api(libs.misc.timber)
+  api(libs.okhttp.core)
+  api(libs.rx.java)
 
-  implementation(deps.misc.unbescape)
+  implementation(libs.misc.unbescape)
 
-  testImplementation(deps.test.junit)
-  testImplementation(deps.test.truth)
-}
-android {
-  namespace = "io.sweers.catchup.util"
+  testImplementation(libs.test.junit)
+  testImplementation(libs.test.truth)
 }

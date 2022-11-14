@@ -33,27 +33,8 @@ inline operator fun <T> KProperty0<T>.getValue(thisRef: Any?, property: KPropert
  *
  * This extension allows for delegating on property to another. E.g. `var foo by SomeClass:otherFoo`
  */
-inline operator fun <T> KMutableProperty0<T>.setValue(thisRef: Any?, property: KProperty<*>, value: T) = set(value)
-
-// interface InstanceProperty<T> {
-//  val instance: T
-// }
-
-// inline fun <T, R> instanceProperty(instance: R, property: KProperty1<T, R>) = object : InstanceProperty<R> {
-//  override val instance: R = instance
-// }
-
-// TODO binding to an instance property
-// /**
-// * An extension to delegate a read-only property of type [T] to another property.
-// *
-// * This extension allows for delegating on property to another. E.g. `val foo by SomeClass:otherFoo`
-// */
-// inline operator fun <T, R> KProperty1<T, R>.getValue(thisRef: Any?, property: KProperty<*>): T = get()
-//
-// /**
-// * An extension to delegate a read-write property of type [T] to another read-write property.
-// *
-// * This extension allows for delegating on property to another. E.g. `var foo by SomeClass:otherFoo`
-// */
-// inline operator fun <T, R> KMutableProperty1<T, R>.setValue(thisRef: Any?, property: KProperty<*>, value: T) = set(value)
+inline operator fun <T> KMutableProperty0<T>.setValue(
+  thisRef: Any?,
+  property: KProperty<*>,
+  value: T
+) = set(value)

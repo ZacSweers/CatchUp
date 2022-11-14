@@ -78,26 +78,22 @@ fun <T : Any> delayedMessageTransformer(view: View, message: String): OmniTransf
 fun <T : Any> Observable<T>.timeoutAction(
   onTimeout: (() -> Unit)? = null,
   onTerminate: (() -> Unit)? = null
-): Observable<T> =
-  compose(timeoutActionTransformer(onTimeout, onTerminate))
+): Observable<T> = compose(timeoutActionTransformer(onTimeout, onTerminate))
 
 fun <T : Any> Single<T>.timeoutAction(
   onTimeout: (() -> Unit)? = null,
   onTerminate: (() -> Unit)? = null
-): Single<T> =
-  compose(timeoutActionTransformer(onTimeout, onTerminate))
+): Single<T> = compose(timeoutActionTransformer(onTimeout, onTerminate))
 
 fun <T : Any> Maybe<T>.timeoutAction(
   onTimeout: (() -> Unit)? = null,
   onTerminate: (() -> Unit)? = null
-): Maybe<T> =
-  compose(timeoutActionTransformer(onTimeout, onTerminate))
+): Maybe<T> = compose(timeoutActionTransformer(onTimeout, onTerminate))
 
 fun Completable.timeoutAction(
   onTimeout: (() -> Unit)? = null,
   onTerminate: (() -> Unit)? = null
-): Completable =
-  compose(timeoutActionTransformer<Any>(onTimeout, onTerminate))
+): Completable = compose(timeoutActionTransformer<Any>(onTimeout, onTerminate))
 
 fun <T : Any> timeoutActionTransformer(
   onTimeout: (() -> Unit)? = null,
@@ -111,15 +107,8 @@ fun <T : Any> timeoutActionTransformer(
     override fun apply(upstream: Observable<T>): Observable<T> {
       val shared = upstream.share()
       return shared
-        .doOnSubscribe {
-          timer.takeUntil(shared)
-            .subscribe {
-              onTimeout?.invoke()
-            }
-        }
-        .doOnTerminate {
-          onTerminate?.invoke()
-        }
+        .doOnSubscribe { timer.takeUntil(shared).subscribe { onTimeout?.invoke() } }
+        .doOnTerminate { onTerminate?.invoke() }
     }
 
     override fun apply(upstream: Maybe<T>) = apply(upstream.toObservable()).firstElement()
@@ -129,15 +118,11 @@ fun <T : Any> timeoutActionTransformer(
     override fun apply(upstream: Completable) = apply(upstream.toObservable()).ignoreElements()
   }
 
-/**
- * Utility for working with enums when you want to run actions only on specific values
- */
+/** Utility for working with enums when you want to run actions only on specific values */
 inline fun <T : Enum<T>> Observable<T>.doOn(
   target: T,
   crossinline action: () -> Unit
-): Observable<T> = apply {
-  doOnNext { if (it == target) action() }
-}
+): Observable<T> = apply { doOnNext { if (it == target) action() } }
 
 inline fun <reified R : Any> Observable<*>.filterIsInstance(): Observable<R> {
   return filter { it is R }.cast(R::class.java)

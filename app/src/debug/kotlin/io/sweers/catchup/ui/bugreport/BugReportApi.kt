@@ -44,28 +44,23 @@ internal interface ImgurUploadApi {
   @Headers("Authorization: Client-ID ${BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN}")
   @POST("image")
   @Wrapped(path = ["data", "link"])
-  fun postImage(
-    @Part file: MultipartBody.Part
-  ): Single<String>
+  fun postImage(@Part file: MultipartBody.Part): Single<String>
 }
 
 internal interface GitHubIssueApi {
   @Headers(
-    value = [
-      "Authorization: token ${BuildConfig.GITHUB_DEVELOPER_TOKEN}",
-      "Accept: application/vnd.github.v3+json"
-    ]
+    value =
+      [
+        "Authorization: token ${BuildConfig.GITHUB_DEVELOPER_TOKEN}",
+        "Accept: application/vnd.github.v3+json"
+      ]
   )
   @POST("repos/zacsweers/catchup/issues")
   @Wrapped(path = ["html_url"])
   fun createIssue(@Body issue: GitHubIssue): Single<String>
 }
 
-@JsonClass(generateAdapter = true)
-data class GitHubIssue(
-  val title: String,
-  val body: String
-)
+@JsonClass(generateAdapter = true) data class GitHubIssue(val title: String, val body: String)
 
 @InstallIn(ActivityComponent::class)
 @Module
@@ -84,11 +79,7 @@ internal object BugReportModule {
       .delegatingCallFactory(client)
       .addCallAdapterFactory(rxJavaCallAdapterFactory)
       .addConverterFactory(
-        MoshiConverterFactory.create(
-          moshi.newBuilder()
-            .add(Wrapped.ADAPTER_FACTORY)
-            .build()
-        )
+        MoshiConverterFactory.create(moshi.newBuilder().add(Wrapped.ADAPTER_FACTORY).build())
       )
       .validateEagerly(appConfig.isDebug)
       .build()

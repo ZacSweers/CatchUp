@@ -23,9 +23,7 @@ import com.apollographql.apollo3.api.json.JsonWriter
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import kotlinx.datetime.Instant
 
-/**
- * A CustomTypeAdapter for apollo that can convert ISO style date strings to Instant.
- */
+/** A CustomTypeAdapter for apollo that can convert ISO style date strings to Instant. */
 object ISO8601InstantApolloAdapter : Adapter<Instant> {
   override fun fromJson(reader: JsonReader, customScalarAdapters: CustomScalarAdapters): Instant {
     return when (reader.peek()) {

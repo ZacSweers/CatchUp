@@ -18,5 +18,4 @@ package io.sweers.catchup.service.slashdot
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 
-@Xml
-data class Author(@PropertyElement val name: String)
+@Xml data class Author(@PropertyElement val name: String)

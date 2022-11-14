@@ -23,9 +23,10 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @ActivityScoped
-class MainActivityFragmentFactory @Inject constructor(
-  private val providers: DaggerMap<Class<out Fragment>, Provider<Fragment>>
-) : FragmentFactory() {
+class MainActivityFragmentFactory
+@Inject
+constructor(private val providers: DaggerMap<Class<out Fragment>, Provider<Fragment>>) :
+  FragmentFactory() {
   override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
     val fragmentClass = classLoader.loadClass(className)
     return providers[fragmentClass]?.get() ?: super.instantiate(classLoader, className)

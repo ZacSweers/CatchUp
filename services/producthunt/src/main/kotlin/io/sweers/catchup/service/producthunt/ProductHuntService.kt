@@ -38,30 +38,29 @@ import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
+import javax.inject.Inject
+import javax.inject.Qualifier
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import javax.inject.Inject
-import javax.inject.Qualifier
 
-@Qualifier
-private annotation class InternalApi
+@Qualifier private annotation class InternalApi
 
 private const val SERVICE_KEY = "ph"
 
-class ProductHuntService @Inject constructor(
-  @InternalApi private val serviceMeta: ServiceMeta,
-  private val api: ProductHuntApi
-) :
+class ProductHuntService
+@Inject
+constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: ProductHuntApi) :
   TextService {
 
   override fun meta() = serviceMeta
 
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
-    return api.getPosts(page)
+    return api
+      .getPosts(page)
       .flattenAsObservable { it }
       .map {
         with(it) {
@@ -73,10 +72,7 @@ class ProductHuntService @Inject constructor(
             author = user.name,
             tag = firstTopic,
             itemClickUrl = redirectUrl,
-            mark = createCommentMark(
-              count = commentsCount,
-              clickUrl = discussionUrl
-            )
+            mark = createCommentMark(count = commentsCount, clickUrl = discussionUrl)
           )
         }
       }
@@ -100,17 +96,17 @@ abstract class ProductHuntMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideProductHuntServiceMeta(): ServiceMeta = ServiceMeta(
-      SERVICE_KEY,
-      R.string.ph,
-      R.color.phAccent,
-      R.drawable.logo_ph,
-      pagesAreNumeric = true,
-      firstPageKey = "0",
-      enabled = BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN.run {
-        !isNullOrEmpty() && !equals("null")
-      }
-    )
+    internal fun provideProductHuntServiceMeta(): ServiceMeta =
+      ServiceMeta(
+        SERVICE_KEY,
+        R.string.ph,
+        R.color.phAccent,
+        R.drawable.logo_ph,
+        pagesAreNumeric = true,
+        firstPageKey = "0",
+        enabled =
+          BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
+      )
   }
 }
 
@@ -127,25 +123,17 @@ abstract class ProductHuntModule {
 
     @Provides
     @InternalApi
-    internal fun provideProductHuntOkHttpClient(
-      client: OkHttpClient
-    ): OkHttpClient {
-      return client.newBuilder()
-        .addInterceptor(
-          AuthInterceptor(
-            "Bearer",
-            BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN
-          )
-        )
+    internal fun provideProductHuntOkHttpClient(client: OkHttpClient): OkHttpClient {
+      return client
+        .newBuilder()
+        .addInterceptor(AuthInterceptor("Bearer", BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN))
         .build()
     }
 
     @Provides
     @InternalApi
     internal fun provideProductHuntMoshi(moshi: Moshi): Moshi {
-      return moshi.newBuilder()
-        .add(Instant::class.java, ISO8601InstantAdapter())
-        .build()
+      return moshi.newBuilder().add(Instant::class.java, ISO8601InstantAdapter()).build()
     }
 
     @Provides
@@ -155,7 +143,8 @@ abstract class ProductHuntModule {
       rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
       appConfig: AppConfig
     ): ProductHuntApi {
-      return Retrofit.Builder().baseUrl(ProductHuntApi.ENDPOINT)
+      return Retrofit.Builder()
+        .baseUrl(ProductHuntApi.ENDPOINT)
         .delegatingCallFactory(client)
         .addCallAdapterFactory(rxJavaCallAdapterFactory)
         .addConverterFactory(MoshiConverterFactory.create(moshi))

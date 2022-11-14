@@ -18,14 +18,6 @@ package io.sweers.catchup.data
 import android.app.Application
 import android.util.Log
 import androidx.annotation.WorkerThread
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
-import okio.BufferedSink
-import okio.buffer
-import okio.sink
-import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.time.LocalDateTime
@@ -35,6 +27,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
+import okio.BufferedSink
+import okio.buffer
+import okio.sink
+import timber.log.Timber
 
 @Singleton
 class LumberYard @Inject constructor(private val app: Application) {
@@ -64,9 +64,7 @@ class LumberYard @Inject constructor(private val app: Application) {
 
   fun logs(): Flow<Entry> = sharedFlow.asSharedFlow()
 
-  /**
-   * Save the current logs to disk.
-   */
+  /** Save the current logs to disk. */
   suspend fun save(): File = suspendCancellableCoroutine { continuation ->
     val folder = app.getExternalFilesDir(null)
     if (folder == null) {
@@ -115,7 +113,8 @@ class LumberYard @Inject constructor(private val app: Application) {
         .filter { it.name.endsWith(".log") }
         .forEach { it.delete() }
       return@let initialSize - folder.length()
-    } ?: -1L
+    }
+      ?: -1L
   }
 
   data class Entry(val level: Int, val tag: String?, val message: String) {
@@ -129,15 +128,16 @@ class LumberYard @Inject constructor(private val app: Application) {
       )
     }
 
-    fun displayLevel() = when (level) {
-      Log.VERBOSE -> "V"
-      Log.DEBUG -> "D"
-      Log.INFO -> "I"
-      Log.WARN -> "W"
-      Log.ERROR -> "E"
-      Log.ASSERT -> "A"
-      else -> "?"
-    }
+    fun displayLevel() =
+      when (level) {
+        Log.VERBOSE -> "V"
+        Log.DEBUG -> "D"
+        Log.INFO -> "I"
+        Log.WARN -> "W"
+        Log.ERROR -> "E"
+        Log.ASSERT -> "A"
+        else -> "?"
+      }
   }
 
   companion object {

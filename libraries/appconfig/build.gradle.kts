@@ -16,12 +16,12 @@
 
 plugins {
   kotlin("jvm")
+  alias(libs.plugins.sgp.base)
 }
 
 dependencies {
-  api(deps.kotlin.coroutines)
-  api(deps.kotlin.stdlib.core)
+  api(libs.kotlin.coroutines)
 
-  testImplementation(deps.test.junit)
-  testImplementation(deps.test.truth)
+  testImplementation(libs.test.junit)
+  testImplementation(libs.test.truth)
 }

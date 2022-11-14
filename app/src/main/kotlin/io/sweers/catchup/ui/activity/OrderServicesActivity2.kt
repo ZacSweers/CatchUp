@@ -85,6 +85,7 @@ import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.util.setLightStatusBar
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -93,7 +94,6 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /*
  * This is a WIP implementation of OrderServices view with Compose.
@@ -111,31 +111,31 @@ private class OrderServicesViewModel(
 
   private val storedOrder: StateFlow<List<String>>
   private val _serviceMetas: MutableStateFlow<List<ServiceMeta>>
-  val serviceMetas: StateFlow<List<ServiceMeta>> get() = _serviceMetas
+  val serviceMetas: StateFlow<List<ServiceMeta>>
+    get() = _serviceMetas
   val canSave: StateFlow<Boolean>
 
   init {
     val initialOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
     val initialOrderedServices = serviceMetasMap.values.sortedBy { initialOrder.indexOf(it.id) }
-    storedOrder = catchUpPreferences.flowFor { ::servicesOrder }
-      .drop(1) // Ignore the initial value we read synchronously
-      .map { it?.split(",") ?: emptyList() }
-      .stateIn(viewModelScope, SharingStarted.Lazily, initialOrder)
+    storedOrder =
+      catchUpPreferences
+        .flowFor { ::servicesOrder }
+        .drop(1) // Ignore the initial value we read synchronously
+        .map { it?.split(",") ?: emptyList() }
+        .stateIn(viewModelScope, SharingStarted.Lazily, initialOrder)
     _serviceMetas = MutableStateFlow(initialOrderedServices)
 
     viewModelScope.launch {
       storedOrder
-        .map { newOrder ->
-          serviceMetasMap.values.sortedBy { newOrder.indexOf(it.id) }
-        }
-        .collect {
-          _serviceMetas.value = it
-        }
+        .map { newOrder -> serviceMetasMap.values.sortedBy { newOrder.indexOf(it.id) } }
+        .collect { _serviceMetas.value = it }
     }
 
-    canSave = serviceMetas
-      .map { it != initialOrderedServices }
-      .stateIn(viewModelScope, SharingStarted.Lazily, false)
+    canSave =
+      serviceMetas
+        .map { it != initialOrderedServices }
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
   }
 
   fun shuffle() {
@@ -159,33 +159,30 @@ private class OrderServicesViewModel(
 @AndroidEntryPoint
 class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBinding>() {
 
-  @Inject
-  lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
+  @Inject lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
 
-  @Inject
-  lateinit var catchUpPreferences: CatchUpPreferences
+  @Inject lateinit var catchUpPreferences: CatchUpPreferences
 
-  @Inject
-  internal lateinit var syllabus: Syllabus
+  @Inject internal lateinit var syllabus: Syllabus
 
-  @Inject
-  internal lateinit var fontHelper: FontHelper
+  @Inject internal lateinit var fontHelper: FontHelper
 
-  @Inject
-  internal lateinit var appConfig: AppConfig
+  @Inject internal lateinit var appConfig: AppConfig
 
   // Have to do this here because we can't set a factory separately
   @Suppress("UNCHECKED_CAST")
-  private val viewModel by viewModels<OrderServicesViewModel> {
-    object : ViewModelProvider.Factory {
-      override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return OrderServicesViewModel(serviceMetas, catchUpPreferences) as T
+  private val viewModel by
+    viewModels<OrderServicesViewModel> {
+      object : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+          return OrderServicesViewModel(serviceMetas, catchUpPreferences) as T
+        }
       }
     }
-  }
 
   // TODO remove with viewbinding API change
-  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentOrderServicesBinding =
+  override val bindingInflater:
+    (LayoutInflater, ViewGroup?, Boolean) -> FragmentOrderServicesBinding =
     FragmentOrderServicesBinding::inflate
 
   override fun initView(inflater: LayoutInflater, container: ViewGroup?): View {
@@ -193,7 +190,8 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
       setLightStatusBar(appConfig)
       setContent {
         CatchUpTheme {
-          // Have to pass the viewmodel here rather than use compose' viewModel() because otherwise it
+          // Have to pass the viewmodel here rather than use compose' viewModel() because otherwise
+          // it
           // will try the reflective instantiation since the factory isn't initialized because lol
           ScaffoldContent(viewModel)
         }
@@ -208,9 +206,7 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
     Scaffold(
       topBar = {
         TopAppBar(
-          title = {
-            Text(stringResource(id = R.string.pref_reorder_services))
-          },
+          title = { Text(stringResource(id = R.string.pref_reorder_services)) },
           navigationIcon = {
             IconButton(
               onClick = ::onBackPressed,
@@ -244,17 +240,15 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
         ) {
           // TODO ripple color?
           FloatingActionButton(
-            modifier = Modifier
-              .indication(
-                MutableInteractionSource(),
-                indication = rememberRipple(
-                  color = Color.White
+            modifier =
+              Modifier.indication(
+                  MutableInteractionSource(),
+                  indication = rememberRipple(color = Color.White)
                 )
-              )
-              .onGloballyPositioned { coordinates ->
-                val (x, y) = coordinates.positionInRoot()
-                // TODO show syllabus on fab
-              },
+                .onGloballyPositioned { coordinates ->
+                  val (x, y) = coordinates.positionInRoot()
+                  // TODO show syllabus on fab
+                },
             backgroundColor = colorResource(R.color.colorAccent),
             onClick = {
               viewModel.save()
@@ -280,25 +274,19 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
       LazyColumn {
         items(currentItemsSorted.size) { index ->
           val item = currentItemsSorted[index]
-          Box(
-            Modifier
-              .background(colorResource(id = item.themeColor))
-              .padding(16.dp)
-          ) {
+          Box(Modifier.background(colorResource(id = item.themeColor)).padding(16.dp)) {
             ConstraintLayout(
-              modifier = Modifier
-                .fillMaxWidth() // TODO remove this...?
-                .wrapContentHeight()
-                .wrapContentWidth(Alignment.Start)
+              modifier =
+                Modifier.fillMaxWidth() // TODO remove this...?
+                  .wrapContentHeight()
+                  .wrapContentWidth(Alignment.Start)
             ) {
               val (icon, spacer, text) = createRefs()
               Image(
                 painterResource(id = item.icon),
                 stringResource(R.string.service_icon),
-                modifier = Modifier
-                  .width(40.dp)
-                  .height(40.dp)
-                  .constrainAs(icon) {
+                modifier =
+                  Modifier.width(40.dp).height(40.dp).constrainAs(icon) {
                     bottom.linkTo(parent.bottom)
                     end.linkTo(spacer.start)
                     start.linkTo(parent.start)
@@ -306,10 +294,8 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
                   }
               )
               Spacer(
-                modifier = Modifier
-                  .width(8.dp)
-                  .height(40.dp)
-                  .constrainAs(spacer) {
+                modifier =
+                  Modifier.width(8.dp).height(40.dp).constrainAs(spacer) {
                     bottom.linkTo(parent.bottom)
                     end.linkTo(text.start)
                     start.linkTo(icon.end)
@@ -319,12 +305,13 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
               val startRef: ConstrainedLayoutReference = spacer
               Text(
                 text = stringResource(id = item.name),
-                modifier = Modifier.constrainAs(text) {
-                  bottom.linkTo(parent.bottom)
-                  end.linkTo(parent.end)
-                  start.linkTo(startRef.end)
-                  top.linkTo(parent.top)
-                },
+                modifier =
+                  Modifier.constrainAs(text) {
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(parent.end)
+                    start.linkTo(startRef.end)
+                    top.linkTo(parent.top)
+                  },
                 fontStyle = FontStyle.Normal,
                 // TODO what about Subhead?
                 style = MaterialTheme.typography.subtitle1,
@@ -364,6 +351,5 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
 @Module
 abstract class OrderServicesModule2 {
 
-  @Multibinds
-  abstract fun serviceMetas(): Map<String, ServiceMeta>
+  @Multibinds abstract fun serviceMetas(): Map<String, ServiceMeta>
 }

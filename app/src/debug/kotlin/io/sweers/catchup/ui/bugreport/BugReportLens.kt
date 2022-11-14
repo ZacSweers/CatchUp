@@ -42,21 +42,23 @@ import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
 import io.sweers.catchup.util.buildMarkdown
+import java.io.File
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import javax.inject.Inject
 
 /**
  * Pops a dialog asking for more information about the bug report and then creates an upload with a
  * markdown-formatted body.
  */
 @ActivityScoped
-internal class BugReportLens @Inject constructor(
+internal class BugReportLens
+@Inject
+constructor(
   private val activity: ComponentActivity,
   private val lumberYard: LumberYard,
   private val imgurUploadApi: ImgurUploadApi,
@@ -141,28 +143,21 @@ internal class BugReportLens @Inject constructor(
   @SuppressLint("NewApi") // False positive
   private fun uploadIssue(report: Report, body: StringBuilder, logs: File?) {
     val channelId = "bugreports"
-    val notificationManager = activity.getSystemService<NotificationManager>()
-      ?: throw IllegalStateException("No notificationmanager?")
+    val notificationManager =
+      activity.getSystemService<NotificationManager>()
+        ?: throw IllegalStateException("No notificationmanager?")
     if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
       val channels = notificationManager.notificationChannels
       if (channels.none { it.id == channelId }) {
-        NotificationChannel(
-          channelId,
-          "Bug reports",
-          NotificationManager.IMPORTANCE_HIGH
-        )
-          .apply {
-            description = "This is the channel for uploading bug reports. Debug only."
-          }
-          .let {
-            notificationManager.createNotificationChannel(it)
-          }
+        NotificationChannel(channelId, "Bug reports", NotificationManager.IMPORTANCE_HIGH)
+          .apply { description = "This is the channel for uploading bug reports. Debug only." }
+          .let { notificationManager.createNotificationChannel(it) }
       }
     }
 
     val notificationId = activity.getString(R.string.app_name).hashCode()
-    val notificationBuilder = NotificationCompat.Builder(activity, channelId)
-      .apply {
+    val notificationBuilder =
+      NotificationCompat.Builder(activity, channelId).apply {
         setSmallIcon(android.R.drawable.stat_sys_upload)
         color = ContextCompat.getColor(activity, R.color.colorAccent)
         setContentTitle("Uploading bug report")
@@ -174,17 +169,18 @@ internal class BugReportLens @Inject constructor(
       }
 
     val finalScreenshot = screenshot
-    val screenshotStringStream = if (report.includeScreenshot && finalScreenshot != null) {
-      imgurUploadApi
-        .postImage(
-          MultipartBody.Part.createFormData(
-            "image",
-            finalScreenshot.name,
-            finalScreenshot.asRequestBody("image/*".toMediaTypeOrNull())
+    val screenshotStringStream =
+      if (report.includeScreenshot && finalScreenshot != null) {
+        imgurUploadApi
+          .postImage(
+            MultipartBody.Part.createFormData(
+              "image",
+              finalScreenshot.name,
+              finalScreenshot.asRequestBody("image/*".toMediaTypeOrNull())
+            )
           )
-        )
-        .map { "\n\n!${buildMarkdown { link(it, "Screenshot") }}" }
-    } else Single.just("\n\nNo screenshot provided")
+          .map { "\n\n!${buildMarkdown { link(it, "Screenshot") }}" }
+      } else Single.just("\n\nNo screenshot provided")
 
     screenshotStringStream
       .map { screenshotText ->
@@ -201,11 +197,7 @@ internal class BugReportLens @Inject constructor(
         body.append(screenshotMarkdown)
         body.toString()
       }
-      .flatMap { bodyText ->
-        gitHubIssueApi.createIssue(
-          GitHubIssue(report.title, bodyText)
-        )
-      }
+      .flatMap { bodyText -> gitHubIssueApi.createIssue(GitHubIssue(report.title, bodyText)) }
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .doOnSubscribe { notificationManager.notify(notificationId, notificationBuilder.build()) }
@@ -232,12 +224,7 @@ internal class BugReportLens @Inject constructor(
               val uri = it.toUri()
               val resultIntent = Intent(Intent.ACTION_VIEW, uri)
               setContentIntent(
-                PendingIntent.getActivity(
-                  activity,
-                  0,
-                  resultIntent,
-                  PendingIntent.FLAG_IMMUTABLE
-                )
+                PendingIntent.getActivity(activity, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE)
               )
               setAutoCancel(true)
 
@@ -254,9 +241,7 @@ internal class BugReportLens @Inject constructor(
                 )
               )
             }
-            .let {
-              notificationManager.notify(notificationId, it.build())
-            }
+            .let { notificationManager.notify(notificationId, it.build()) }
         }
         error?.let {
           NotificationCompat.Builder(activity, channelId)

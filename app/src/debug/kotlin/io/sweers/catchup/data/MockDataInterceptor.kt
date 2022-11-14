@@ -43,12 +43,18 @@ class MockDataInterceptor(
     val host = url.host
     val path = url.encodedPath
     val serviceData = SUPPORTED_ENDPOINTS[host]
-    return if (debugPreferences.mockModeEnabled && serviceData != null && serviceData.supports(path)) {
-      Response.Builder().request(request)
+    return if (
+      debugPreferences.mockModeEnabled && serviceData != null && serviceData.supports(path)
+    ) {
+      Response.Builder()
+        .request(request)
         .body(
           context.assets
-            .open(formatUrl(serviceData, url)).source().buffer()
-            .readUtf8().toResponseBody("application/json".toMediaTypeOrNull())
+            .open(formatUrl(serviceData, url))
+            .source()
+            .buffer()
+            .readUtf8()
+            .toResponseBody("application/json".toMediaTypeOrNull())
         )
         .code(200)
         .protocol(Protocol.HTTP_1_1)
@@ -62,27 +68,28 @@ class MockDataInterceptor(
 
     // TODO Generate this?
     // Can also use arrayMapOf()
-    private val SUPPORTED_ENDPOINTS = mapOf<String, ServiceData>(
-//        put(RedditApi.HOST,
-//            ServiceData.Builder("r").addEndpoint("/")
-//                .build())
-//        put(MediumApi.HOST,
-//            ServiceData.Builder("m").addEndpoint("/browse/top")
-//                .build())
-//        put(ProductHuntApi.HOST,
-//            ServiceData.Builder("ph").addEndpoint("/v1/posts")
-//                .build())
-//        put(SlashdotApi.HOST,
-//            ServiceData.Builder("sd").addEndpoint("/Slashdot/slashdotMainatom")
-//                .fileType("xml")
-//                .build())
-//        put(DesignerNewsApi.HOST,
-//            ServiceData.Builder("dn").addEndpoint("/api/v1/stories")
-//                .build())
-//        put(DribbbleApi.HOST,
-//            ServiceData.Builder("dr").addEndpoint("/v1/shots")
-//                .build())
-    )
+    private val SUPPORTED_ENDPOINTS =
+      mapOf<String, ServiceData>(
+        //        put(RedditApi.HOST,
+        //            ServiceData.Builder("r").addEndpoint("/")
+        //                .build())
+        //        put(MediumApi.HOST,
+        //            ServiceData.Builder("m").addEndpoint("/browse/top")
+        //                .build())
+        //        put(ProductHuntApi.HOST,
+        //            ServiceData.Builder("ph").addEndpoint("/v1/posts")
+        //                .build())
+        //        put(SlashdotApi.HOST,
+        //            ServiceData.Builder("sd").addEndpoint("/Slashdot/slashdotMainatom")
+        //                .fileType("xml")
+        //                .build())
+        //        put(DesignerNewsApi.HOST,
+        //            ServiceData.Builder("dn").addEndpoint("/api/v1/stories")
+        //                .build())
+        //        put(DribbbleApi.HOST,
+        //            ServiceData.Builder("dr").addEndpoint("/v1/shots")
+        //                .build())
+        )
 
     private fun formatUrl(service: ServiceData, url: HttpUrl): String {
       var lastSegment = url.pathSegments[url.pathSize - 1]

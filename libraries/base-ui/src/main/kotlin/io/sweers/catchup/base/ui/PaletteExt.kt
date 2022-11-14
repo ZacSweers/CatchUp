@@ -43,19 +43,18 @@ inline fun Palette.orderedSwatches(
 
 inline fun Palette.findSwatch(predicate: (Swatch) -> Boolean): Swatch? {
   return listOfNotNull(
-    darkVibrantSwatch,
-    lightMutedSwatch,
-    vibrantSwatch,
-    mutedSwatch,
-    lightVibrantSwatch,
-    darkMutedSwatch
-  )
+      darkVibrantSwatch,
+      lightMutedSwatch,
+      vibrantSwatch,
+      mutedSwatch,
+      lightVibrantSwatch,
+      darkMutedSwatch
+    )
     .firstOrNull(predicate)
 }
 
-suspend fun Palette.Builder.generateAsync(): Palette? = withContext(Dispatchers.Default) {
-  generate()
-}
+suspend fun Palette.Builder.generateAsync(): Palette? =
+  withContext(Dispatchers.Default) { generate() }
 
 val Swatch.hue: Float
   get() = hsl[0]

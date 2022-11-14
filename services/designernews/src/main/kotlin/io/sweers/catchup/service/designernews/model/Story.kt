@@ -19,9 +19,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.datetime.Instant
 
-/**
- * Models a Designer News story
- */
+/** Models a Designer News story */
 @JsonClass(generateAdapter = true)
 data class Story(
   val badge: String?,

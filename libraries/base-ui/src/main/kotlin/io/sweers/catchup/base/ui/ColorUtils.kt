@@ -58,39 +58,23 @@ fun Palette.getMostPopulousSwatch(): Palette.Swatch? {
  */
 object ColorUtils {
 
-  @Retention(SOURCE)
-  @IntDef(
-    IS_LIGHT,
-    IS_DARK,
-    LIGHTNESS_UNKNOWN
-  )
-  annotation class Lightness
+  @Retention(SOURCE) @IntDef(IS_LIGHT, IS_DARK, LIGHTNESS_UNKNOWN) annotation class Lightness
 
   const val IS_LIGHT = 0
   const val IS_DARK = 1
   const val LIGHTNESS_UNKNOWN = 2
 
-  /**
-   * Set the alpha component of `color` to be `alpha`.
-   */
+  /** Set the alpha component of `color` to be `alpha`. */
   @CheckResult
   @ColorInt
-  fun modifyAlpha(
-    @ColorInt color: Int,
-    @IntRange(from = 0, to = 255) alpha: Int
-  ): Int {
+  fun modifyAlpha(@ColorInt color: Int, @IntRange(from = 0, to = 255) alpha: Int): Int {
     return color and 0x00ffffff or (alpha shl 24)
   }
 
-  /**
-   * Set the alpha component of `color` to be `alpha`.
-   */
+  /** Set the alpha component of `color` to be `alpha`. */
   @CheckResult
   @ColorInt
-  fun modifyAlpha(
-    @ColorInt color: Int,
-    @FloatRange(from = 0.0, to = 1.0) alpha: Float
-  ): Int {
+  fun modifyAlpha(@ColorInt color: Int, @FloatRange(from = 0.0, to = 1.0) alpha: Float): Int {
     return modifyAlpha(color, (255f * alpha).toInt())
   }
 
@@ -113,19 +97,13 @@ object ColorUtils {
     }
   }
 
-  /**
-   * Check that the lightness value (0–1)
-   */
+  /** Check that the lightness value (0–1) */
   fun isDark(@Size(3) hsl: FloatArray): Boolean {
     return hsl[2] < 0.5f
   }
 
-  /**
-   * Convert to HSL & check that the lightness value
-   */
-  fun isDark(
-    @ColorInt color: Int
-  ): Boolean {
+  /** Convert to HSL & check that the lightness value */
+  fun isDark(@ColorInt color: Int): Boolean {
     val hsl = FloatArray(3)
     colorToHSL(color, hsl)
     return isDark(hsl)

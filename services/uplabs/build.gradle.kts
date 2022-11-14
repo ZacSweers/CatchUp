@@ -17,27 +17,33 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  id(deps.anvil.pluginId)
-  id("dev.zacsweers.moshix")
+  alias(libs.plugins.moshix)
+  alias(libs.plugins.sgp.base)
 }
 
-anvil {
-  generateDaggerFactories.set(true)
+android {
+  namespace = "io.sweers.catchup.service.uplabs"
+  buildFeatures {
+    androidResources = true
+  }
+}
+
+slack {
+  features {
+    dagger()
+  }
 }
 
 dependencies {
   implementation(project(":libraries:util"))
-  implementation(deps.retrofit.core)
-  implementation(deps.retrofit.moshi)
-  implementation(deps.retrofit.rxJava3)
-  implementation(deps.okhttp.core)
-  implementation(deps.kotlin.datetime)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.moshi)
+  implementation(libs.retrofit.rxJava3)
+  implementation(libs.okhttp.core)
+  implementation(libs.kotlin.datetime)
 
   api(project(":service-api"))
-  api(deps.android.androidx.annotations)
-  api(deps.dagger.runtime)
-  api(deps.rx.java)
-}
-android {
-  namespace = "io.sweers.catchup.service.uplabs"
+  api(libs.androidx.annotations)
+  api(libs.dagger.runtime)
+  api(libs.rx.java)
 }

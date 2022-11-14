@@ -19,28 +19,25 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
+  alias(libs.plugins.sgp.base)
 }
 
 android {
-  buildFeatures {
-    compose = true
-  }
   namespace = "dev.zacsweers.catchup.compose"
 }
 
-//tasks.withType<KotlinCompile>().matching { !it.name.startsWith("ksp") }.configureEach {
-//  kotlinOptions {
-//    @Suppress("SuspiciousCollectionReassignment")
-//    freeCompilerArgs += listOf(
-//        "-P", "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
-//    )
-//  }
-//}
+slack {
+  android {
+    features {
+      compose()
+    }
+  }
+}
 
 dependencies {
   api(project(":libraries:base-ui"))
-  api(deps.android.androidx.annotations)
-  api(deps.android.androidx.compose.uiTooling)
-  api(deps.android.androidx.compose.foundation)
-  api(deps.android.androidx.compose.material)
+  api(libs.androidx.annotations)
+  api(libs.androidx.compose.uiTooling)
+  api(libs.androidx.compose.foundation)
+  api(libs.androidx.compose.material)
 }

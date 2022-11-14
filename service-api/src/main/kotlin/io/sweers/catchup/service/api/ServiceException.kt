@@ -15,7 +15,5 @@
  */
 package io.sweers.catchup.service.api
 
-/**
- * A custom exception that allows for signaling more detailed error feedback on service failures
- */
+/** A custom exception that allows for signaling more detailed error feedback on service failures */
 class ServiceException(message: String) : Exception(message)

@@ -30,24 +30,15 @@ private const val SLASH_PREFIX = "slash:"
 @Keep
 @Xml
 data class Entry(
-  @PropertyElement(converter = HtmlEscapeStringConverter::class)
-  val title: String,
-  @PropertyElement
-  val id: String,
-  @PropertyElement
-  val link: String,
-  @PropertyElement(converter = HtmlEscapeStringConverter::class)
-  val summary: String,
-  @PropertyElement(converter = InstantTypeConverter::class)
-  val updated: Instant,
-  @PropertyElement(name = "${SLASH_PREFIX}section")
-  val section: String,
-  @PropertyElement(name = "${SLASH_PREFIX}comments")
-  val comments: Int = 0,
-  @Element
-  val author: Author,
-  @PropertyElement(name = "${SLASH_PREFIX}department")
-  val department: String
+  @PropertyElement(converter = HtmlEscapeStringConverter::class) val title: String,
+  @PropertyElement val id: String,
+  @PropertyElement val link: String,
+  @PropertyElement(converter = HtmlEscapeStringConverter::class) val summary: String,
+  @PropertyElement(converter = InstantTypeConverter::class) val updated: Instant,
+  @PropertyElement(name = "${SLASH_PREFIX}section") val section: String,
+  @PropertyElement(name = "${SLASH_PREFIX}comments") val comments: Int = 0,
+  @Element val author: Author,
+  @PropertyElement(name = "${SLASH_PREFIX}department") val department: String
 ) : HasStableId {
   override fun stableId(): Long = id.hashCode().toLong()
 }

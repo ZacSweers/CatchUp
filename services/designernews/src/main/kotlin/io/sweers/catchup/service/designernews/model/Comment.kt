@@ -19,9 +19,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.datetime.Instant
 
-/**
- * Models a comment on a designer news story.
- */
+/** Models a comment on a designer news story. */
 @JsonClass(generateAdapter = true)
 internal data class Comment(
   val body: String,

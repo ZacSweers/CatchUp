@@ -15,7 +15,8 @@
  */
 package io.sweers.catchup.data.model
 
-class ServiceData private constructor(
+class ServiceData
+private constructor(
   val assetsPrefix: String,
   val fileType: String,
   private val supportedEndpoints: Set<String>

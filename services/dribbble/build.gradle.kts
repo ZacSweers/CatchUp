@@ -17,23 +17,33 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  id(deps.anvil.pluginId)
+  alias(libs.plugins.sgp.base)
+}
+
+android {
+  namespace = "io.sweers.catchup.service.dribbble"
+  buildFeatures {
+    androidResources = true
+  }
+}
+
+slack {
+  features {
+    dagger()
+  }
 }
 
 dependencies {
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
-  implementation(deps.misc.jsoup)
-  implementation(deps.retrofit.core)
-  implementation(deps.retrofit.rxJava3)
-  implementation(deps.okhttp.core)
-  implementation(deps.kotlin.datetime)
+  implementation(libs.misc.jsoup)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.rxJava3)
+  implementation(libs.okhttp.core)
+  implementation(libs.kotlin.datetime)
 
   api(project(":service-api"))
-  api(deps.android.androidx.annotations)
-  api(deps.dagger.runtime)
-  api(deps.rx.java)
-}
-android {
-  namespace = "io.sweers.catchup.service.dribbble"
+  api(libs.androidx.annotations)
+  api(libs.dagger.runtime)
+  api(libs.rx.java)
 }

@@ -18,9 +18,24 @@ import com.android.build.api.variant.LibraryAndroidComponentsExtension
 plugins {
   id("com.android.library")
   kotlin("android")
-  id(deps.anvil.pluginId)
-  id("kotlin-noarg")
-  id("dev.zacsweers.moshix")
+  kotlin("plugin.noarg")
+  alias(libs.plugins.moshix)
+  alias(libs.plugins.sgp.base)
+}
+
+android {
+  namespace = "catchup.service.hackernews"
+  buildFeatures {
+    androidResources = true
+    resValues = true
+    viewBinding = true
+  }
+}
+
+slack {
+  features {
+    dagger()
+  }
 }
 
 configure<LibraryAndroidComponentsExtension> {
@@ -56,24 +71,21 @@ dependencies {
   implementation(project(":libraries:util"))
   implementation(project(":libraries:base-ui"))
 
-  implementation(deps.android.androidx.swipeRefresh)
-  implementation(deps.android.androidx.viewModel.core)
-  implementation(deps.android.androidx.viewModel.ktx)
-  implementation(deps.android.androidx.viewModel.savedState)
-  implementation(deps.android.androidx.constraintLayout)
-  implementation(deps.android.firebase.database)
-  implementation(deps.retrofit.core)
-  implementation(deps.retrofit.moshi)
-  implementation(deps.moshi.core)
-  implementation(deps.coil.default)
-  implementation(deps.kotlin.datetime)
+  implementation(libs.androidx.swipeRefresh)
+  implementation(libs.androidx.lifecycle.viewmodel.core)
+  implementation(libs.androidx.lifecycle.viewmodel.ktx)
+  implementation(libs.androidx.lifecycle.viewmodel.savedState)
+  implementation(libs.androidx.constraintLayout)
+  implementation(libs.firebase.database)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.moshi)
+  implementation(libs.moshi.core)
+  implementation(libs.coil.default)
+  implementation(libs.kotlin.datetime)
 
-  api(deps.android.androidx.design)
-  api(deps.android.androidx.fragmentKtx)
-  api(deps.android.androidx.annotations)
-  api(deps.dagger.runtime)
-  api(deps.rx.java)
-}
-android {
-  namespace = "catchup.service.hackernews"
+  api(libs.androidx.design)
+  api(libs.androidx.fragmentKtx)
+  api(libs.androidx.annotations)
+  api(libs.dagger.runtime)
+  api(libs.rx.java)
 }

@@ -55,10 +55,7 @@ class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDi
 
     adapter.setLogs(lumberYard.bufferedLogs())
 
-    scope.newScope().launch {
-      lumberYard.logs()
-        .collect { adapter.addEntry(it) }
-    }
+    scope.newScope().launch { lumberYard.logs().collect { adapter.addEntry(it) } }
   }
 
   override fun onStop() {
@@ -68,7 +65,8 @@ class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDi
 
   @OptIn(DelicateCoroutinesApi::class)
   private fun share() {
-    // Dialog's dismissed by this point, so we need a new scope here. We're kicking to the system, so just finish on global scope
+    // Dialog's dismissed by this point, so we need a new scope here. We're kicking to the system,
+    // so just finish on global scope
     GlobalScope.launch {
       try {
         val file = withContext(Dispatchers.IO) { lumberYard.save() }
@@ -77,8 +75,7 @@ class LogsDialog(context: Context, private val lumberYard: LumberYard) : AlertDi
         sendIntent.putExtra(Intent.EXTRA_STREAM, file.toUri())
         context.maybeStartChooser(sendIntent)
       } catch (e: Exception) {
-        Toast.makeText(context, "Couldn't save the logs for sharing.", Toast.LENGTH_SHORT)
-          .show()
+        Toast.makeText(context, "Couldn't save the logs for sharing.", Toast.LENGTH_SHORT).show()
       }
     }
   }

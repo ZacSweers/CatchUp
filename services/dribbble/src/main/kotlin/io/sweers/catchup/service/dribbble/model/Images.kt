@@ -15,13 +15,8 @@
  */
 package io.sweers.catchup.service.dribbble.model
 
-/**
- * Models links to the various quality of images of a shot.
- */
-data class Images(
-  val hidpi: String?,
-  val normal: String
-) {
+/** Models links to the various quality of images of a shot. */
+data class Images(val hidpi: String?, val normal: String) {
 
   fun best(preferHidpi: Boolean = false): String {
     return if (preferHidpi && hidpi != null) hidpi else normal

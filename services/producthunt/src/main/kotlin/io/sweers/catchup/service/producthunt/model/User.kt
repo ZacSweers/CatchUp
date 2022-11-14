@@ -18,9 +18,7 @@ package io.sweers.catchup.service.producthunt.model
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-/**
- * Models a user on Product Hunt.
- */
+/** Models a user on Product Hunt. */
 @JsonClass(generateAdapter = true)
 data class User(
   @Json(name = "created_at") val createdAt: String,

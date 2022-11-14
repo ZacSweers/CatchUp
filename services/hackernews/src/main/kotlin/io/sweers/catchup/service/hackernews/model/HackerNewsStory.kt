@@ -19,16 +19,14 @@ import androidx.annotation.Keep
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.Exclude
 import io.sweers.catchup.service.api.HasStableId
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.annotation.AnnotationRetention.SOURCE
 import kotlin.annotation.AnnotationTarget.CLASS
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
-@Retention(SOURCE)
-@Target(CLASS)
-annotation class NoArg
+@Retention(SOURCE) @Target(CLASS) annotation class NoArg
 
 @Keep
 @NoArg
@@ -51,8 +49,7 @@ data class HackerNewsStory(
   val url: String?
 ) : HasStableId {
 
-  @Exclude
-  override fun stableId() = id
+  @Exclude override fun stableId() = id
 
   /*
    * Excluded "real" fields. Would like to expose these as the main fields, but firebase matches property names to them anyway
@@ -61,14 +58,11 @@ data class HackerNewsStory(
    */
 
   @Exclude
-  fun realTime(): Instant = time?.let {
-    Instant.fromEpochMilliseconds(
-      TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS)
-    )
-  } ?: Clock.System.now()
+  fun realTime(): Instant =
+    time?.let { Instant.fromEpochMilliseconds(TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS)) }
+      ?: Clock.System.now()
 
-  @Exclude
-  fun realType() = type?.let { HNType.valueOf(it.uppercase(Locale.US)) }
+  @Exclude fun realType() = type?.let { HNType.valueOf(it.uppercase(Locale.US)) }
 
   companion object {
 
@@ -78,30 +72,30 @@ data class HackerNewsStory(
   }
 }
 
-// DataSnapshot { key = 20516882, value = {parent=20516063, by=frou_dh, id=20516882, text=stuff, time=1563986039, type=comment} }
+// DataSnapshot { key = 20516882, value = {parent=20516063, by=frou_dh, id=20516882, text=stuff,
+// time=1563986039, type=comment} }
 @Keep
 @NoArg
 data class HackerNewsComment(
   val by: String,
-//  val dead: Boolean,
+  //  val dead: Boolean,
   val deleted: Boolean,
-//  val descendants: Int,
+  //  val descendants: Int,
   val id: Long,
   val kids: List<Long>?,
   val parent: Long?,
-//  val parts: List<String>?,
-//  val score: Int,
+  //  val parts: List<String>?,
+  //  val score: Int,
   /* private, but Firebase is too dumb to read private fields */
   val time: Long?,
-//  val title: String?,
+  //  val title: String?,
   val text: String,
   /* private, but Firebase is too dumb to read private fields */
   val type: String?
 //  val url: String?
 ) : HasStableId {
 
-  @Exclude
-  override fun stableId() = id
+  @Exclude override fun stableId() = id
 
   /*
    * Excluded "real" fields. Would like to expose these as the main fields, but firebase matches property names to them anyway
@@ -110,14 +104,11 @@ data class HackerNewsComment(
    */
 
   @Exclude
-  fun realTime(): Instant = time?.let {
-    Instant.fromEpochMilliseconds(
-      TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS)
-    )
-  } ?: Clock.System.now()
+  fun realTime(): Instant =
+    time?.let { Instant.fromEpochMilliseconds(TimeUnit.MILLISECONDS.convert(it, TimeUnit.SECONDS)) }
+      ?: Clock.System.now()
 
-  @Exclude
-  fun realType() = type?.let { HNType.valueOf(it.uppercase(Locale.US)) }
+  @Exclude fun realType() = type?.let { HNType.valueOf(it.uppercase(Locale.US)) }
 
   companion object {
 

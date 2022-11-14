@@ -21,9 +21,7 @@ import io.sweers.catchup.util.e
 import kotlinx.datetime.Instant
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-/**
- * Models a post on Product Hunt.
- */
+/** Models a post on Product Hunt. */
 @JsonClass(generateAdapter = true)
 data class Post(
   @Json(name = "comments_count") val commentsCount: Int,

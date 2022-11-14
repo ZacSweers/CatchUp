@@ -78,9 +78,7 @@ class SmmryRequestBuilder private constructor() {
     }
 
     // This has to be last!
-    url?.run {
-      map.put("SM_URL", this)
-    }
+    url?.run { map.put("SM_URL", this) }
     return map
   }
 
