@@ -16,6 +16,7 @@
 package io.sweers.catchup.serviceregistry
 
 import com.squareup.anvil.annotations.compat.MergeModules
+import dagger.Module
 import dagger.multibindings.Multibinds
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceIndex
@@ -26,11 +27,13 @@ import io.sweers.catchup.service.api.ServiceMetaIndex
 //  until https://github.com/google/ksp/issues/438
 
 @MergeModules(ServiceIndex::class)
+@Module
 interface CatchUpServiceRegistry {
   @Multibinds fun serviceIndexes(): Map<String, Service>
 }
 
 @MergeModules(ServiceMetaIndex::class)
+@Module
 interface CatchUpServiceMetaRegistry {
   @Multibinds fun serviceMetaIndexes(): Map<String, ServiceMeta>
 }

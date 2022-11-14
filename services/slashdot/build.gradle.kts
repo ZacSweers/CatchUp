@@ -30,7 +30,8 @@ android {
 
 slack {
   features {
-    dagger()
+    // Because of tikxml
+    dagger(enableComponents = true)
   }
 }
 

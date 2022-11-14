@@ -17,13 +17,8 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
   alias(libs.plugins.moshix)
   alias(libs.plugins.sgp.base)
-}
-
-apply {
-  from(rootProject.file("gradle/config-kotlin-sources.gradle"))
 }
 
 android {
@@ -33,11 +28,13 @@ android {
   }
 }
 
-dependencies {
-  kapt(project(":service-registry:service-registry-compiler"))
-  kapt(libs.crumb.compiler)
-  kapt(libs.dagger.apt.compiler)
+slack {
+  features {
+    compose()
+  }
+}
 
+dependencies {
   implementation(project(":libraries:util"))
   implementation(libs.moshi.core)
   implementation(libs.retrofit.core)
