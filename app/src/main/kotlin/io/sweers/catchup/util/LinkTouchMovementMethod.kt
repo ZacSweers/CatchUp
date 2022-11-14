@@ -23,8 +23,7 @@ import android.view.MotionEvent
 import android.widget.TextView
 
 /**
- * A movement method that only highlights any touched
- * [TouchableUrlSpan]s
+ * A movement method that only highlights any touched [TouchableUrlSpan]s
  *
  * Adapted from http://stackoverflow.com/a/20905824
  */

@@ -65,9 +65,8 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
           R.id.container,
           ServiceSettingsFrag().apply {
             if (intent.extras?.containsKey(TARGET_PREF_RESOURCE) == true) {
-              arguments = bundleOf(
-                TARGET_PREF_RESOURCE to intent.extras!!.getInt(TARGET_PREF_RESOURCE)
-              )
+              arguments =
+                bundleOf(TARGET_PREF_RESOURCE to intent.extras!!.getInt(TARGET_PREF_RESOURCE))
             }
           }
         )
@@ -78,11 +77,9 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
   @AndroidEntryPoint
   class ServiceSettingsFrag : PreferenceFragmentCompat() {
 
-    @Inject
-    lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
+    @Inject lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
 
-    @Inject
-    lateinit var catchUpPreferences: CatchUpPreferences
+    @Inject lateinit var catchUpPreferences: CatchUpPreferences
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
       // Replace backing sharedPreferences with ours
@@ -102,32 +99,32 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     private fun setUpGeneralSettings() {
       preferenceScreen = preferenceManager.createPreferenceScreen(requireActivity())
 
-      val currentOrder = catchUpPreferences.servicesOrder?.split(",")
-        ?: emptyList()
-      serviceMetas
-        .values
+      val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
+      serviceMetas.values
         .asSequence()
         .sortedBy { currentOrder.indexOf(it.id) }
         .forEach { meta ->
           meta.run {
             // Create a category
-            val metaColor = ContextCompat.getColor(requireActivity().asDayContext(), meta.themeColor)
-            val category = PreferenceCategory(requireActivity()).apply {
-              title = resources.getString(meta.name)
-//                titleColor = metaColor
-              icon = AppCompatResources.getDrawable(context, meta.icon)!!.apply {
-                setTint(metaColor)
+            val metaColor =
+              ContextCompat.getColor(requireActivity().asDayContext(), meta.themeColor)
+            val category =
+              PreferenceCategory(requireActivity()).apply {
+                title = resources.getString(meta.name)
+                //                titleColor = metaColor
+                icon =
+                  AppCompatResources.getDrawable(context, meta.icon)!!.apply { setTint(metaColor) }
               }
-            }
             preferenceScreen.addPreference(category)
 
             // Create an "enabled" pref
-            val enabledPref = SwitchPreference(requireActivity()).apply {
-              title = resources.getString(R.string.enabled)
-              key = meta.enabledPreferenceKey
-//                themeColor = metaColor
-              setDefaultValue(true)
-            }
+            val enabledPref =
+              SwitchPreference(requireActivity()).apply {
+                title = resources.getString(R.string.enabled)
+                key = meta.enabledPreferenceKey
+                //                themeColor = metaColor
+                setDefaultValue(true)
+              }
             category.addPreference(enabledPref)
 
             // If there's a custom config, point to it
@@ -169,8 +166,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     @Module
     abstract class ServiceSettingsModule {
 
-      @Multibinds
-      abstract fun serviceMetas(): Map<String, ServiceMeta>
+      @Multibinds abstract fun serviceMetas(): Map<String, ServiceMeta>
     }
   }
 }

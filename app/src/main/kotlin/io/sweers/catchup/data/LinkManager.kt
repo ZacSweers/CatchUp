@@ -47,15 +47,17 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.any
 import io.sweers.catchup.util.kotlin.applyIf
 import io.sweers.catchup.util.kotlin.mergeWith
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @ActivityScoped
-class LinkManager @Inject constructor(
+class LinkManager
+@Inject
+constructor(
   private val customTab: CustomTabActivityHelper,
   private val activity: Activity,
   private val catchUpPreferences: CatchUpPreferences,
@@ -70,12 +72,12 @@ class LinkManager @Inject constructor(
     // Invalidate the cache when a new install/update happens or prefs changed
     val filter = IntentFilter()
     if (appConfig.sdkInt < 29) {
-      @Suppress("DEPRECATION")
-      filter.addAction(Intent.ACTION_INSTALL_PACKAGE)
+      @Suppress("DEPRECATION") filter.addAction(Intent.ACTION_INSTALL_PACKAGE)
     }
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED)
     activity.lifecycleScope.launch {
-      activity.intentReceivers(filter)
+      activity
+        .intentReceivers(filter)
         .mergeWith(catchUpPreferences.flowFor { ::smartlinkingGlobal })
         .collect { dumbCache.clear() }
     }
@@ -83,8 +85,8 @@ class LinkManager @Inject constructor(
 
   /**
    * Neat little helper method to check if a [android.content.pm.ResolveInfo.match] is for a
-   * specific match or not. This is useful for checking if the ResolveInfo instance itself
-   * is a browser or not.
+   * specific match or not. This is useful for checking if the ResolveInfo instance itself is a
+   * browser or not.
    *
    * @param inputMatch the match int as provided by the ResolveInfo result
    * @return `true` if it's a specific Uri match, `false` if not.
@@ -116,11 +118,12 @@ class LinkManager @Inject constructor(
       activity.startActivityForResult(intent, 102)
       return
     }
-    val uri = meta.uri ?: run {
-      Toast.makeText(meta.context, R.string.error_no_url, Toast.LENGTH_SHORT)
-        .show()
-      return
-    }
+    val uri =
+      meta.uri
+        ?: run {
+          Toast.makeText(meta.context, R.string.error_no_url, Toast.LENGTH_SHORT).show()
+          return
+        }
     val intent = Intent(Intent.ACTION_VIEW, meta.uri)
     if (!catchUpPreferences.smartlinkingGlobal) {
       openCustomTab(meta.context, uri, meta.accentColor)
@@ -137,33 +140,18 @@ class LinkManager @Inject constructor(
   }
 
   private fun getActivityOptions(imageData: ImageViewerData): ActivityOptions {
-    val imagePair = (
-      imageData.image to activity.getString(
-        R.string.transition_image
-      )
-      ).toAndroidPair()
+    val imagePair =
+      (imageData.image to activity.getString(R.string.transition_image)).toAndroidPair()
     val decorView = activity.window.decorView
     val statusBackground: View = decorView.findViewById(android.R.id.statusBarBackground)
     val navBackground: View? = decorView.findViewById(android.R.id.navigationBarBackground)
-    val statusPair = Pair(
-      statusBackground,
-      statusBackground.transitionName
-    ).toAndroidPair()
+    val statusPair = Pair(statusBackground, statusBackground.transitionName).toAndroidPair()
 
     return if (navBackground == null) {
-      ActivityOptions.makeSceneTransitionAnimation(
-        activity,
-        imagePair,
-        statusPair
-      )
+      ActivityOptions.makeSceneTransitionAnimation(activity, imagePair, statusPair)
     } else {
       val navPair = Pair(navBackground, navBackground.transitionName).toAndroidPair()
-      ActivityOptions.makeSceneTransitionAnimation(
-        activity,
-        imagePair,
-        statusPair,
-        navPair
-      )
+      ActivityOptions.makeSceneTransitionAnimation(activity, imagePair, statusPair, navPair)
     }
   }
 
@@ -174,15 +162,14 @@ class LinkManager @Inject constructor(
     @ColorInt accentColor: Int
   ) {
     val manager = context.packageManager
-    val matchedUri = flow {
-      manager.queryIntentActivities(
-        intent,
-        PackageManager.MATCH_DEFAULT_ONLY
-      ).forEach {
-        emit(it)
-      }
-    }.flowOn(Dispatchers.IO)
-      .any { resolveInfo -> isSpecificUriMatch(resolveInfo.match) }
+    val matchedUri =
+      flow {
+          manager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).forEach {
+            emit(it)
+          }
+        }
+        .flowOn(Dispatchers.IO)
+        .any { resolveInfo -> isSpecificUriMatch(resolveInfo.match) }
 
     if (matchedUri) {
       dumbCache[uri.host] = true
@@ -196,11 +183,12 @@ class LinkManager @Inject constructor(
   private fun openCustomTab(context: Context, uri: Uri, @ColorInt accentColor: Int) {
     // TODO this actually doesn't seem to make a difference as the scheme behavior seems to be
     //  controlled via chrome://flags and ignore whatever apps or system define.
-    val colorScheme = if (context.isInNightMode()) {
-      CustomTabsIntent.COLOR_SCHEME_DARK
-    } else {
-      CustomTabsIntent.COLOR_SCHEME_LIGHT
-    }
+    val colorScheme =
+      if (context.isInNightMode()) {
+        CustomTabsIntent.COLOR_SCHEME_DARK
+      } else {
+        CustomTabsIntent.COLOR_SCHEME_LIGHT
+      }
     customTab.openCustomTab(
       context,
       customTab.customTabIntent
@@ -211,9 +199,7 @@ class LinkManager @Inject constructor(
         }
         .setColorScheme(colorScheme)
         .setDefaultColorSchemeParams(
-          CustomTabColorSchemeParams.Builder()
-            .setToolbarColor(accentColor)
-            .build()
+          CustomTabColorSchemeParams.Builder().setToolbarColor(accentColor).build()
         )
         .build(),
       uri

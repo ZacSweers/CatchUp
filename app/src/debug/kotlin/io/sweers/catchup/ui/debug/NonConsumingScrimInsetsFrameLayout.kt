@@ -26,12 +26,11 @@ import androidx.core.view.ViewCompat
 import io.sweers.catchup.R
 
 /**
- * A layout that draws something in the insets passed to [.fitSystemWindows], i.e. the
- * area above UI chrome (status and navigation bars, overlay action bars).
+ * A layout that draws something in the insets passed to [.fitSystemWindows], i.e. the area above UI
+ * chrome (status and navigation bars, overlay action bars).
  *
- *
- * Unlike the `ScrimInsetsFrameLayout` in the design support library, this variant does not
- * consume the insets.
+ * Unlike the `ScrimInsetsFrameLayout` in the design support library, this variant does not consume
+ * the insets.
  */
 class NonConsumingScrimInsetsFrameLayout : FrameLayout {
   private var insetForeground: Drawable? = null
@@ -46,23 +45,20 @@ class NonConsumingScrimInsetsFrameLayout : FrameLayout {
     init(context, attrs, 0)
   }
 
-  constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
-    context,
-    attrs,
-    defStyle
-  ) {
+  constructor(
+    context: Context,
+    attrs: AttributeSet,
+    defStyle: Int
+  ) : super(context, attrs, defStyle) {
     init(context, attrs, defStyle)
   }
 
   private fun init(context: Context, attrs: AttributeSet?, defStyle: Int) {
-    context.obtainStyledAttributes(
-      attrs,
-      R.styleable.NonConsumingScrimInsetsView,
-      defStyle,
-      0
-    ).use {
-      insetForeground = it.getDrawable(R.styleable.NonConsumingScrimInsetsView_insetForeground)
-    }
+    context
+      .obtainStyledAttributes(attrs, R.styleable.NonConsumingScrimInsetsView, defStyle, 0)
+      .use {
+        insetForeground = it.getDrawable(R.styleable.NonConsumingScrimInsetsView_insetForeground)
+      }
     setWillNotDraw(true)
   }
 

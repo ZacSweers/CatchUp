@@ -33,7 +33,10 @@ import dev.zacsweers.catchup.appconfig.AppConfig
 @SuppressLint("InlinedApi") // False positive
 fun View.setLightStatusBar(appConfig: AppConfig) {
   if (appConfig.sdkInt >= Build.VERSION_CODES.M) {
-    if ((View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR and systemUiVisibility) != View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) {
+    if (
+      (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR and systemUiVisibility) !=
+        View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    ) {
       var flags = systemUiVisibility
       flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
       systemUiVisibility = flags
@@ -45,7 +48,8 @@ fun View.setLightStatusBar(appConfig: AppConfig) {
 fun View.clearLightStatusBar(appConfig: AppConfig) {
   if (appConfig.sdkInt >= Build.VERSION_CODES.M) {
     var flags = systemUiVisibility
-    // TODO noop if it's already not set. My bitwise-fu is not strong enough to figure out the inverse of setting it
+    // TODO noop if it's already not set. My bitwise-fu is not strong enough to figure out the
+    // inverse of setting it
     flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
     systemUiVisibility = flags
   }
@@ -54,7 +58,10 @@ fun View.clearLightStatusBar(appConfig: AppConfig) {
 @SuppressLint("InlinedApi") // False positive
 fun View.setLightNavBar(appConfig: AppConfig) {
   if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
-    if ((View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR and systemUiVisibility) != View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR) {
+    if (
+      (View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR and systemUiVisibility) !=
+        View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+    ) {
       var flags = systemUiVisibility
       flags = flags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
       systemUiVisibility = flags
@@ -66,7 +73,8 @@ fun View.setLightNavBar(appConfig: AppConfig) {
 fun View.clearLightNavBar(appConfig: AppConfig) {
   if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
     var flags = systemUiVisibility
-    // TODO noop if it's already not set. My bitwise-fu is not strong enough to figure out the inverse of setting it
+    // TODO noop if it's already not set. My bitwise-fu is not strong enough to figure out the
+    // inverse of setting it
     flags = flags and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
     systemUiVisibility = flags
   }
@@ -151,8 +159,7 @@ inline fun View.toggleVisibility(animate: Boolean = false) {
 fun Context.asDayContext(): Context {
   return if (isInNightMode()) {
     createConfigurationContext(
-      Configuration(resources.configuration)
-        .apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
+      Configuration(resources.configuration).apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
     )
   } else this
 }

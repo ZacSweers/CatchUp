@@ -40,34 +40,32 @@ import io.sweers.catchup.service.api.ServiceMetaIndex
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
+import javax.inject.Inject
+import javax.inject.Qualifier
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import javax.inject.Inject
-import javax.inject.Qualifier
 
-@Qualifier
-private annotation class InternalApi
+@Qualifier private annotation class InternalApi
 
 private const val SERVICE_KEY = "dn"
 
 @ServiceKey(SERVICE_KEY)
 @ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
-class DesignerNewsService @Inject constructor(
-  @InternalApi private val serviceMeta: ServiceMeta,
-  private val api: DesignerNewsApi
-) : TextService {
+class DesignerNewsService
+@Inject
+constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: DesignerNewsApi) :
+  TextService {
 
   override fun meta() = serviceMeta
 
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
-    return api.getTopStories(page)
-      .flatMapObservable { stories ->
-        Observable.fromIterable(stories)
-      }
+    return api
+      .getTopStories(page)
+      .flatMapObservable { stories -> Observable.fromIterable(stories) }
       .map { story ->
         with(story) {
           CatchUpItem(
@@ -78,11 +76,11 @@ class DesignerNewsService @Inject constructor(
             source = hostname,
             tag = badge,
             itemClickUrl = url,
-            mark = createCommentMark(
-              count = commentCount,
-              clickUrl = href.replace("api.", "www.")
-                .replace("api/v2/", "")
-            )
+            mark =
+              createCommentMark(
+                count = commentCount,
+                clickUrl = href.replace("api.", "www.").replace("api/v2/", "")
+              )
           )
         }
       }
@@ -105,14 +103,15 @@ abstract class DesignerNewsMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideDesignerNewsMeta(): ServiceMeta = ServiceMeta(
-      SERVICE_KEY,
-      R.string.dn,
-      R.color.dnAccent,
-      R.drawable.logo_dn,
-      pagesAreNumeric = true,
-      firstPageKey = "1"
-    )
+    internal fun provideDesignerNewsMeta(): ServiceMeta =
+      ServiceMeta(
+        SERVICE_KEY,
+        R.string.dn,
+        R.color.dnAccent,
+        R.drawable.logo_dn,
+        pagesAreNumeric = true,
+        firstPageKey = "1"
+      )
   }
 }
 
@@ -122,9 +121,7 @@ object DesignerNewsModule {
   @Provides
   @InternalApi
   internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
-    return moshi.newBuilder()
-      .add(Instant::class.java, ISO8601InstantAdapter())
-      .build()
+    return moshi.newBuilder().add(Instant::class.java, ISO8601InstantAdapter()).build()
   }
 
   @Provides
@@ -135,14 +132,14 @@ object DesignerNewsModule {
     appConfig: AppConfig
   ): DesignerNewsApi {
 
-    val retrofit = Retrofit.Builder().baseUrl(
-      DesignerNewsApi.ENDPOINT
-    )
-      .delegatingCallFactory(client)
-      .addCallAdapterFactory(rxJavaCallAdapterFactory)
-      .addConverterFactory(MoshiConverterFactory.create(moshi))
-      .validateEagerly(appConfig.isDebug)
-      .build()
+    val retrofit =
+      Retrofit.Builder()
+        .baseUrl(DesignerNewsApi.ENDPOINT)
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
     return retrofit.create(DesignerNewsApi::class.java)
   }
 }

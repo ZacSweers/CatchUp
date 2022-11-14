@@ -44,13 +44,12 @@ fun String.markdown(): Markdown = Markdown(this)
 /**
  * Parse Markdown and plain-text links.
  *
- * [Markwon] does not handle plain text links (i.e. not md syntax) and requires a
- * `String` input (i.e. squashes any spans). [Linkify] handles plain links but also
- * removes any existing spans. So we can't just run our input through both.
+ * [Markwon] does not handle plain text links (i.e. not md syntax) and requires a `String` input
+ * (i.e. squashes any spans). [Linkify] handles plain links but also removes any existing spans. So
+ * we can't just run our input through both.
  *
- * Instead we use the markdown lib, then take a copy of the output and Linkify
- * **that**. We then find any [URLSpan]s and add them to the markdown output.
- * Best of both worlds.
+ * Instead we use the markdown lib, then take a copy of the output and Linkify **that**. We then
+ * find any [URLSpan]s and add them to the markdown output. Best of both worlds.
  */
 fun Markdown.parseMarkdownAndPlainLinks(
   on: TextView,
@@ -62,10 +61,7 @@ fun Markdown.parseMarkdownAndPlainLinks(
   return markdown.linkifyPlainLinks(on.linkTextColors, on.highlightColor, alternateSpans)
 }
 
-/**
- * Parse Markdown and plain-text links and set on the [TextView] with proper clickable
- * spans.
- */
+/** Parse Markdown and plain-text links and set on the [TextView] with proper clickable spans. */
 fun Markdown.parseMarkdownAndSetText(
   textView: TextView,
   markwon: Markwon,
@@ -74,15 +70,12 @@ fun Markdown.parseMarkdownAndSetText(
   if (TextUtils.isEmpty(rawValue)) {
     return
   }
-  textView.setTextWithNiceLinks(
-    parseMarkdownAndPlainLinks(textView, markwon, alternateUrlSpan)
-  )
+  textView.setTextWithNiceLinks(parseMarkdownAndPlainLinks(textView, markwon, alternateUrlSpan))
 }
 
 /**
- * Work around some 'features' of TextView and URLSpans. i.e. vanilla URLSpans do not react to
- * touch so we replace them with our own [TouchableUrlSpan]
- * & [LinkTouchMovementMethod] to fix this.
+ * Work around some 'features' of TextView and URLSpans. i.e. vanilla URLSpans do not react to touch
+ * so we replace them with our own [TouchableUrlSpan] & [LinkTouchMovementMethod] to fix this.
  *
  * Setting a custom MovementMethod on a TextView also alters touch handling (see
  * TextView#fixFocusableAndClickableSettings) so we need to correct this.
@@ -96,8 +89,8 @@ fun TextView.setTextWithNiceLinks(input: CharSequence) {
 }
 
 /**
- * Parse the given input using [TouchableUrlSpan]s rather than vanilla [URLSpan]s
- * so that they respond to touch.
+ * Parse the given input using [TouchableUrlSpan]s rather than vanilla [URLSpan]s so that they
+ * respond to touch.
  */
 fun String.parseHtml(
   linkTextColor: ColorStateList,
@@ -138,9 +131,7 @@ private fun CharSequence.linkifyPlainLinks(
   val ssb = SpannableStringBuilder(this)
   for (urlSpan in urlSpans) {
     ssb.removeSpan(urlSpan)
-    alternateUrlSpan
-      ?.invoke(urlSpan.url)
-      ?.forEach { setSpan(ssb, urlSpan, plainLinks, it) }
+    alternateUrlSpan?.invoke(urlSpan.url)?.forEach { setSpan(ssb, urlSpan, plainLinks, it) }
       ?: setSpan(
         ssb,
         urlSpan,

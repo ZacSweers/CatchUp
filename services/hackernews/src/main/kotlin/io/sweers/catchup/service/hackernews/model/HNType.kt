@@ -18,7 +18,11 @@ package io.sweers.catchup.service.hackernews.model
 import java.util.Locale
 
 enum class HNType {
-  COMMENT, JOB, POLL, POLLOPT, STORY;
+  COMMENT,
+  JOB,
+  POLL,
+  POLLOPT,
+  STORY;
 
   fun tag(nullIfStory: Boolean = false): String? {
     return if (nullIfStory && this == STORY) {

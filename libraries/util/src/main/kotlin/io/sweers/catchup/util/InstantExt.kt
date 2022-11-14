@@ -17,9 +17,9 @@
 
 package io.sweers.catchup.util
 
+import java.time.OffsetDateTime
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toKotlinInstant
-import java.time.OffsetDateTime
 
 /*
  * Utilities for dealing with [Instant]
@@ -32,9 +32,7 @@ import java.time.OffsetDateTime
  */
 inline fun String.parsePossiblyOffsetInstant(): Instant {
   return if (!endsWith("Z")) {
-    OffsetDateTime.parse(this)
-      .toInstant()
-      .toKotlinInstant()
+    OffsetDateTime.parse(this).toInstant().toKotlinInstant()
   } else {
     Instant.parse(this)
   }

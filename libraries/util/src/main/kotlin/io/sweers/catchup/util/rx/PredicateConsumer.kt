@@ -18,9 +18,7 @@ package io.sweers.catchup.util.rx
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.functions.Predicate
 
-/**
- * A consumer that only calls the [accept] method if [test] returns true.
- */
+/** A consumer that only calls the [accept] method if [test] returns true. */
 abstract class PredicateConsumer<T : Any> : Consumer<T>, Predicate<T> {
   override fun accept(testValue: T) {
     if (test(testValue)) {

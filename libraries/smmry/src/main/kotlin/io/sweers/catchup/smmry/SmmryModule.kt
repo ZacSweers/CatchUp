@@ -28,24 +28,21 @@ import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.smmry.model.SmmryDao
 import io.sweers.catchup.smmry.model.SmmryDatabase
 import io.sweers.catchup.smmry.model.SmmryResponseFactory
+import javax.inject.Qualifier
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import javax.inject.Qualifier
 
 @InstallIn(FragmentComponent::class)
 @Module
 object SmmryModule {
 
-  @Qualifier
-  annotation class ForSmmry
+  @Qualifier annotation class ForSmmry
 
   @Provides
   @ForSmmry
   internal fun provideSmmryMoshi(moshi: Moshi): Moshi {
-    return moshi.newBuilder()
-      .add(SmmryResponseFactory.getInstance())
-      .build()
+    return moshi.newBuilder().add(SmmryResponseFactory.getInstance()).build()
   }
 
   @Provides
@@ -54,7 +51,8 @@ object SmmryModule {
     @ForSmmry moshi: Moshi,
     appConfig: AppConfig
   ): SmmryService {
-    return Retrofit.Builder().baseUrl(SmmryService.ENDPOINT)
+    return Retrofit.Builder()
+      .baseUrl(SmmryService.ENDPOINT)
       .delegatingCallFactory(client)
       .addConverterFactory(MoshiConverterFactory.create(moshi))
       .validateEagerly(appConfig.isDebug)
@@ -64,15 +62,10 @@ object SmmryModule {
 
   @Provides
   internal fun provideDatabase(context: Context): SmmryDatabase {
-    return Room.databaseBuilder(
-      context.applicationContext,
-      SmmryDatabase::class.java,
-      "smmry.db"
-    )
+    return Room.databaseBuilder(context.applicationContext, SmmryDatabase::class.java, "smmry.db")
       .fallbackToDestructiveMigration()
       .build()
   }
 
-  @Provides
-  internal fun provideSmmryDao(database: SmmryDatabase): SmmryDao = database.dao()
+  @Provides internal fun provideSmmryDao(database: SmmryDatabase): SmmryDao = database.dao()
 }

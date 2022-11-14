@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 @file:OptIn(ExperimentalCoroutinesApi::class)
+
 package io.sweers.catchup.ui.about
 
 import android.graphics.Bitmap
@@ -69,7 +70,9 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.groupBy
 import io.sweers.catchup.util.kotlin.sortBy
 import io.sweers.catchup.util.w
+import javax.inject.Inject
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotlin.LazyThreadSafetyMode.NONE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -85,32 +88,24 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.source
-import javax.inject.Inject
-import kotlin.LazyThreadSafetyMode.NONE
 
-/**
- * A fragment that displays oss licenses.
- */
+/** A fragment that displays oss licenses. */
 @AndroidEntryPoint
 class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scrollable {
 
-  @Inject
-  lateinit var apolloClient: ApolloClient
+  @Inject lateinit var apolloClient: ApolloClient
 
-  @Inject
-  lateinit var moshi: Moshi
+  @Inject lateinit var moshi: Moshi
 
-  @Inject
-  internal lateinit var linkManager: LinkManager
+  @Inject internal lateinit var linkManager: LinkManager
 
-  @Inject
-  internal lateinit var markdownConverter: EmojiMarkdownConverter
+  @Inject internal lateinit var markdownConverter: EmojiMarkdownConverter
 
-  private val dimenSize by lazy(NONE) {
-    resources.getDimensionPixelSize(R.dimen.avatar)
-  }
-  private val progressBar get() = binding.progress
-  private val recyclerView get() = binding.list
+  private val dimenSize by lazy(NONE) { resources.getDimensionPixelSize(R.dimen.avatar) }
+  private val progressBar
+    get() = binding.progress
+  private val recyclerView
+    get() = binding.list
 
   private lateinit var adapter: Adapter
   private lateinit var layoutManager: StickyHeadersLinearLayoutManager<Adapter>
@@ -131,10 +126,11 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     recyclerView.layoutManager = layoutManager
     var pendingRvState: Parcelable? = null
     if (savedInstanceState == null) {
-      recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
-        addDuration = 300
-        removeDuration = 300
-      }
+      recyclerView.itemAnimator =
+        FadeInUpAnimator(OvershootInterpolator(1f)).apply {
+          addDuration = 300
+          removeDuration = 300
+        }
     } else {
       pendingRvState = savedInstanceState.getParcelable("changelogState")
     }
@@ -154,75 +150,74 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     }
   }
 
-  /**
-   * I give you: the most over-engineered OSS licenses section ever.
-   */
+  /** I give you: the most over-engineered OSS licenses section ever. */
   @OptIn(FlowPreview::class)
   private suspend fun requestItems(): List<OssBaseItem> {
     // Start with a fetch of our github entries from assets
-    val githubEntries = withContext(Dispatchers.Default) {
-      val adapter = moshi.adapter<List<OssGitHubEntry>>(
-        Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java)
-      )
-      val regular = withContext(Dispatchers.IO) {
-        adapter.fromJson(resources.assets.open("licenses_github.json").source().buffer())!!
+    val githubEntries =
+      withContext(Dispatchers.Default) {
+        val adapter =
+          moshi.adapter<List<OssGitHubEntry>>(
+            Types.newParameterizedType(List::class.java, OssGitHubEntry::class.java)
+          )
+        val regular =
+          withContext(Dispatchers.IO) {
+            adapter.fromJson(resources.assets.open("licenses_github.json").source().buffer())!!
+          }
+        val generated =
+          withContext(Dispatchers.IO) {
+            adapter.fromJson(resources.assets.open("generated_licenses.json").source().buffer())!!
+          }
+        return@withContext regular + generated
       }
-      val generated = withContext(Dispatchers.IO) {
-        adapter.fromJson(resources.assets.open("generated_licenses.json").source().buffer())!!
-      }
-      return@withContext regular + generated
-    }
     // Fetch repos, send down a map of the ids to owner ids
-    val idsToOwnerIds = githubEntries.asFlow()
-      .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
-      .map {
-        val response = apolloClient
-          .newBuilder()
-          .httpFetchPolicy(CacheFirst)
-          .build()
-          .query(it)
-          .execute()
-        with(response.data!!.repository!!.onRepository) {
-          id to owner.id
+    val idsToOwnerIds =
+      githubEntries
+        .asFlow()
+        .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
+        .map {
+          val response =
+            apolloClient.newBuilder().httpFetchPolicy(CacheFirst).build().query(it).execute()
+          with(response.data!!.repository!!.onRepository) { id to owner.id }
         }
-      }
-      .distinctUntilChangedBy { it }
-      .fold(mutableMapOf()) { map: MutableMap<String, String>, (first, second) ->
-        map.apply {
-          put(first, second)
+        .distinctUntilChangedBy { it }
+        .fold(mutableMapOf()) { map: MutableMap<String, String>, (first, second) ->
+          map.apply { put(first, second) }
         }
-      }
 
     // Fetch the users by their IDs
-    val userIdToNameMap = withContext(Dispatchers.IO) {
-      val response = apolloClient
-        .newBuilder()
-        .httpFetchPolicy(CacheFirst)
-        .build()
-        .query(
-          ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct())
-        )
-        .execute()
+    val userIdToNameMap =
+      withContext(Dispatchers.IO) {
+        val response =
+          apolloClient
+            .newBuilder()
+            .httpFetchPolicy(CacheFirst)
+            .build()
+            .query(ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct()))
+            .execute()
 
-      response.data!!.nodes.filterNotNull().asFlow()
-        // Reduce into a map of the owner ID -> display name
-        .fold(mutableMapOf<String, String>()) { map, node ->
-          map.apply {
-            node.onOrganization?.run { map[id] = (name ?: login) }
-            node.onUser?.run { map[id] = (name ?: login) }
+        response.data!!
+          .nodes
+          .filterNotNull()
+          .asFlow()
+          // Reduce into a map of the owner ID -> display name
+          .fold(mutableMapOf<String, String>()) { map, node ->
+            map.apply {
+              node.onOrganization?.run { map[id] = (name ?: login) }
+              node.onUser?.run { map[id] = (name ?: login) }
+            }
           }
-        }
-    }
+      }
     // Fetch the repositories by their IDs, map down to its
     return apolloClient
       .newBuilder()
       .httpFetchPolicy(CacheFirst)
       .build()
-      .query(
-        RepositoriesByIdsQuery(idsToOwnerIds.keys.toList())
-      )
+      .query(RepositoriesByIdsQuery(idsToOwnerIds.keys.toList()))
       .execute()
-      .data!!.nodes.asSequence()
+      .data!!
+      .nodes
+      .asSequence()
       .mapNotNull { it?.onRepository }
       .asFlow()
       .map { it to userIdToNameMap.getValue(it.owner.id) }
@@ -237,9 +232,8 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
         )
       }
       .onStart {
-        moshi.adapter<List<OssItem>>(
-          Types.newParameterizedType(List::class.java, OssItem::class.java)
-        )
+        moshi
+          .adapter<List<OssItem>>(Types.newParameterizedType(List::class.java, OssItem::class.java))
           .fromJson(resources.assets.open("licenses_mixins.json").source().buffer())!!
           .forEach { emit(it) }
       }
@@ -252,30 +246,19 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
         it.copy(
           author = markdownConverter.replaceMarkdownEmojisIn(it.author),
           name = markdownConverter.replaceMarkdownEmojisIn(it.name),
-          description = it.description?.let {
-            markdownConverter.replaceMarkdownEmojisIn(it)
-          } ?: it.description
+          description = it.description?.let { markdownConverter.replaceMarkdownEmojisIn(it) }
+              ?: it.description
         )
       }
       .flowOn(Dispatchers.IO)
       .toList()
       .let {
         val collector = mutableListOf<OssBaseItem>()
-        with(it[0]) {
-          collector.add(
-            OssItemHeader(
-              name = author,
-              avatarUrl = avatarUrl
-            )
-          )
-        }
+        with(it[0]) { collector.add(OssItemHeader(name = author, avatarUrl = avatarUrl)) }
         it.fold(it[0].author) { lastAuthor, currentItem ->
           if (currentItem.author != lastAuthor) {
             collector.add(
-              OssItemHeader(
-                name = currentItem.author,
-                avatarUrl = currentItem.avatarUrl
-              )
+              OssItemHeader(name = currentItem.author, avatarUrl = currentItem.avatarUrl)
             )
           }
           collector.add(currentItem)
@@ -294,9 +277,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
   }
 
   private inner class Adapter :
-    RecyclerView.Adapter<ViewHolder>(),
-    StickyHeaders,
-    StickyHeaders.ViewSetup {
+    RecyclerView.Adapter<ViewHolder>(), StickyHeaders, StickyHeaders.ViewSetup {
 
     private val items = mutableListOf<OssBaseItem>()
     private val headerColorThresholdFun = { swatch: Swatch ->
@@ -314,7 +295,8 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     override fun isStickyHeader(position: Int) = items[position] is OssItemHeader
 
     override fun setupStickyHeaderView(stickyHeader: View) {
-      stickyHeader.animate()
+      stickyHeader
+        .animate()
         .z(stickyHeader.resources.dp2px(4f))
         .setInterpolator(UiUtil.fastOutSlowInInterpolator)
         .setDuration(200)
@@ -324,11 +306,7 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     override fun teardownStickyHeaderView(stickyHeader: View) {
       with(stickyHeader) {
         findViewById<TextView>(R.id.title).setTextColor(defaultHeaderTextColor)
-        animate()
-          .z(0f)
-          .setInterpolator(UiUtil.fastOutSlowInInterpolator)
-          .setDuration(200)
-          .start()
+        animate().z(0f).setInterpolator(UiUtil.fastOutSlowInInterpolator).setDuration(200).start()
       }
     }
 
@@ -339,70 +317,67 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
       when (val item = items[position]) {
-        is OssItemHeader -> (holder as HeaderHolder).run {
-          icon.load(item.avatarUrl) {
-            transformations(CircleCropTransformation())
-            size(dimenSize, dimenSize)
-            listener(
-              onSuccess = { _, _ ->
-                val bitmap: Bitmap? = when (val data = icon.drawable) {
-                  is BitmapDrawable -> data.bitmap
-                  else -> null
-                }
-                bitmap?.let {
-                  newScope().launch {
-                    val color = Palette.from(it)
-                      .clearFilters()
-                      .generateAsync()
-                      ?.findSwatch(headerColorThresholdFun)
-                      ?.rgb
-                      ?: defaultHeaderTextColor
-                    holder.title.setTextColor(color)
+        is OssItemHeader ->
+          (holder as HeaderHolder).run {
+            icon.load(item.avatarUrl) {
+              transformations(CircleCropTransformation())
+              size(dimenSize, dimenSize)
+              listener(
+                onSuccess = { _, _ ->
+                  val bitmap: Bitmap? =
+                    when (val data = icon.drawable) {
+                      is BitmapDrawable -> data.bitmap
+                      else -> null
+                    }
+                  bitmap?.let {
+                    newScope().launch {
+                      val color =
+                        Palette.from(it)
+                          .clearFilters()
+                          .generateAsync()
+                          ?.findSwatch(headerColorThresholdFun)
+                          ?.rgb
+                          ?: defaultHeaderTextColor
+                      holder.title.setTextColor(color)
+                    }
                   }
                 }
-              }
-            )
-          }
-          title.text = item.name
-        }
-        is OssItem -> (holder as CatchUpItemViewHolder).apply {
-          // Set the title top margin to 0dp as layout_goneMarginTop doesn't work.
-          // See https://issuetracker.google.com/issues/68768935
-          setTitleTopMargin(holder)
-          title(
-            "${item.name}${if (!item.description.isNullOrEmpty()) " — ${item.description}" else ""}"
-          )
-          score(null)
-          timestamp(null)
-          author(item.license)
-          source(null)
-          tag(null)
-          hideMark()
-          holder.container.setOnClickListener {
-            // Search up to the first sticky header position
-            // Maybe someday we should just return the groups rather than flattening
-            // but this was neat to write in kotlin
-            val accentColor = (holder.bindingAdapterPosition downTo 0)
-              .find(::isStickyHeader)
-              ?.let {
-                (
-                  recyclerView.findViewHolderForAdapterPosition(it)
-                    as HeaderHolder
-                  )
-                  .title.textColors.defaultColor
-              } ?: 0
-            val context = itemView.context
-            viewLifecycleOwner.lifecycleScope.launch {
-              linkManager.openUrl(
-                UrlMeta(
-                  item.clickUrl,
-                  accentColor,
-                  context
-                )
               )
             }
+            title.text = item.name
           }
-        }
+        is OssItem ->
+          (holder as CatchUpItemViewHolder).apply {
+            // Set the title top margin to 0dp as layout_goneMarginTop doesn't work.
+            // See https://issuetracker.google.com/issues/68768935
+            setTitleTopMargin(holder)
+            title(
+              "${item.name}${if (!item.description.isNullOrEmpty()) " — ${item.description}" else ""}"
+            )
+            score(null)
+            timestamp(null)
+            author(item.license)
+            source(null)
+            tag(null)
+            hideMark()
+            holder.container.setOnClickListener {
+              // Search up to the first sticky header position
+              // Maybe someday we should just return the groups rather than flattening
+              // but this was neat to write in kotlin
+              val accentColor =
+                (holder.bindingAdapterPosition downTo 0).find(::isStickyHeader)?.let {
+                  (recyclerView.findViewHolderForAdapterPosition(it) as HeaderHolder)
+                    .title
+                    .textColors
+                    .defaultColor
+                }
+                  ?: 0
+              val context = itemView.context
+              viewLifecycleOwner.lifecycleScope.launch {
+                linkManager.openUrl(UrlMeta(item.clickUrl, accentColor, context))
+              }
+            }
+          }
       }
     }
 
@@ -411,13 +386,11 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
       return if (viewType == 0) {
         HeaderHolder(
-          LayoutInflater.from(parent.context)
-            .inflate(layout.about_header_item, parent, false)
+          LayoutInflater.from(parent.context).inflate(layout.about_header_item, parent, false)
         )
       } else {
         CatchUpItemViewHolder(
-          LayoutInflater.from(parent.context)
-            .inflate(layout.list_item_general, parent, false)
+          LayoutInflater.from(parent.context).inflate(layout.list_item_general, parent, false)
         )
       }
     }
@@ -425,24 +398,22 @@ class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scro
     override fun getItemViewType(position: Int) = items[position].itemType()
   }
 
-  private fun setTitleTopMargin(holder: CatchUpItemViewHolder) = with(holder) {
-    with(title) {
-      val lp = layoutParams as ViewGroup.MarginLayoutParams
-      if (lp.topMargin != 0) {
-        layoutParams = lp.apply { this.topMargin = 0 }
+  private fun setTitleTopMargin(holder: CatchUpItemViewHolder) =
+    with(holder) {
+      with(title) {
+        val lp = layoutParams as ViewGroup.MarginLayoutParams
+        if (lp.topMargin != 0) {
+          layoutParams = lp.apply { this.topMargin = 0 }
+        }
       }
     }
-  }
 }
 
 @JsonClass(generateAdapter = true)
 internal data class OssGitHubEntry(val owner: String, val name: String)
 
 private class HeaderHolder(view: View) :
-  ViewHolder(
-    view
-  ),
-  TemporaryScopeHolder by temporaryScope() {
+  ViewHolder(view), TemporaryScopeHolder by temporaryScope() {
   val binding = AboutHeaderItemBinding.bind(view)
   val icon = binding.icon
   val title = binding.title
@@ -452,10 +423,7 @@ internal sealed class OssBaseItem {
   abstract fun itemType(): Int
 }
 
-internal data class OssItemHeader(
-  val avatarUrl: String,
-  val name: String
-) : OssBaseItem() {
+internal data class OssItemHeader(val avatarUrl: String, val name: String) : OssBaseItem() {
   override fun itemType() = 0
 }
 

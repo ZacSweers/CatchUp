@@ -39,30 +39,29 @@ import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaIndex
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
+import javax.inject.Inject
+import javax.inject.Qualifier
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
-import javax.inject.Inject
-import javax.inject.Qualifier
 
-@Qualifier
-private annotation class InternalApi
+@Qualifier private annotation class InternalApi
 
 private const val SERVICE_KEY = "dribbble"
 
 @ServiceKey(SERVICE_KEY)
 @ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
-class DribbbleService @Inject constructor(
-  @InternalApi private val serviceMeta: ServiceMeta,
-  private val api: DribbbleApi
-) :
+class DribbbleService
+@Inject
+constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: DribbbleApi) :
   VisualService {
 
   override fun meta() = serviceMeta
 
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
-    return api.getPopular(page, 50)
+    return api
+      .getPopular(page, 50)
       .flattenAsObservable { it }
       .map {
         CatchUpItem(
@@ -74,14 +73,15 @@ class DribbbleService @Inject constructor(
           source = null,
           tag = null,
           itemClickUrl = it.images.best(),
-          imageInfo = ImageInfo(
-            it.images.normal,
-            it.images.best(true),
-            it.animated,
-            it.htmlUrl,
-            it.images.bestSize(),
-            it.id.toString()
-          ),
+          imageInfo =
+            ImageInfo(
+              it.images.normal,
+              it.images.best(true),
+              it.animated,
+              it.htmlUrl,
+              it.images.bestSize(),
+              it.id.toString()
+            ),
           mark = createCommentMark(count = it.commentsCount.toInt())
         )
       }
@@ -104,15 +104,16 @@ abstract class DribbbleMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideDribbbleServiceMeta(): ServiceMeta = ServiceMeta(
-      SERVICE_KEY,
-      R.string.dribbble,
-      R.color.dribbbleAccent,
-      R.drawable.logo_dribbble,
-      isVisual = true,
-      pagesAreNumeric = true,
-      firstPageKey = "1"
-    )
+    internal fun provideDribbbleServiceMeta(): ServiceMeta =
+      ServiceMeta(
+        SERVICE_KEY,
+        R.string.dribbble,
+        R.color.dribbbleAccent,
+        R.drawable.logo_dribbble,
+        isVisual = true,
+        pagesAreNumeric = true,
+        firstPageKey = "1"
+      )
   }
 }
 
@@ -125,7 +126,8 @@ object DribbbleModule {
     rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): DribbbleApi {
-    return Retrofit.Builder().baseUrl(DribbbleApi.ENDPOINT)
+    return Retrofit.Builder()
+      .baseUrl(DribbbleApi.ENDPOINT)
       .delegatingCallFactory(client)
       .addCallAdapterFactory(rxJavaCallAdapterFactory)
       .addConverterFactory(DecodingConverter.newFactory(DribbbleParser::parse))

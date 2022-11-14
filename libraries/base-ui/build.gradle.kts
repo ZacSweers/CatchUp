@@ -18,30 +18,34 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
+  alias(libs.plugins.sgp.base)
+}
+
+android {
+  namespace = "catchup.ui.core"
+  buildFeatures {
+    androidResources = true
+  }
 }
 
 dependencies {
-  kapt(deps.dagger.apt.compiler)
-  compileOnly(deps.misc.javaxInject)
+  kapt(libs.dagger.apt.compiler)
+  compileOnly(libs.misc.javaxInject)
   api(project(":libraries:appconfig"))
   api(project(":libraries:util"))
-  api(deps.kotlin.coroutines)
-  api(deps.kotlin.stdlib.jdk7)
-  api(deps.autoDispose.core)
-  api(deps.autoDispose.android)
-  api(deps.autoDispose.lifecycle)
-  api(deps.autoDispose.androidxLifecycle)
-  api(deps.rx.java)
-  implementation(deps.rx.relay)
-  api(deps.android.androidx.annotations)
-  api(deps.android.androidx.activity)
-  api(deps.android.androidx.appCompat)
-  api(deps.android.androidx.core)
-  api(deps.android.androidx.design)
-  api(deps.android.androidx.fragment)
-  api(deps.android.androidx.palette)
-  api(deps.android.androidx.paletteKtx)
-}
-android {
-  namespace = "catchup.ui.core"
+  api(libs.kotlin.coroutines)
+  api(libs.autodispose.core)
+  api(libs.autodispose.android)
+  api(libs.autodispose.lifecycle)
+  api(libs.autodispose.androidxLifecycle)
+  api(libs.rx.java)
+  implementation(libs.rx.relay)
+  api(libs.androidx.annotations)
+  api(libs.androidx.activity)
+  api(libs.androidx.appCompat)
+  api(libs.androidx.core)
+  api(libs.androidx.design)
+  api(libs.androidx.fragment)
+  api(libs.androidx.palette)
+  api(libs.androidx.paletteKtx)
 }

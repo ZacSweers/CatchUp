@@ -22,15 +22,20 @@ import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.appconfig.EmptyAppConfig
 
 fun AppConfig.isM(): Boolean = sdkInt >= Build.VERSION_CODES.M
+
 fun AppConfig.isN(): Boolean = sdkInt >= Build.VERSION_CODES.N
+
 fun AppConfig.isO(): Boolean = sdkInt >= Build.VERSION_CODES.O
+
 fun AppConfig.isOMR1(): Boolean = sdkInt >= Build.VERSION_CODES.O_MR1
+
 fun AppConfig.isP(): Boolean = sdkInt >= Build.VERSION_CODES.P
 
 @PublishedApi
-internal val BUILD_APP_CONFIG = object : EmptyAppConfig {
-  override val sdkInt: Int = Build.VERSION.SDK_INT
-}
+internal val BUILD_APP_CONFIG =
+  object : EmptyAppConfig {
+    override val sdkInt: Int = Build.VERSION.SDK_INT
+  }
 
 @Suppress("DeprecatedCallableAddReplaceWith")
 @Deprecated("This should only be used when AppConfig is not available")

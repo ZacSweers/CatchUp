@@ -17,8 +17,9 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  id(deps.ksp.pluginId)
-  id(deps.anvil.pluginId)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.anvil)
+  alias(libs.plugins.sgp.base)
 }
 
 anvil {
@@ -32,16 +33,15 @@ ksp {
 dependencies {
   implementation(project(":libraries:util"))
 
-  ksp(deps.android.androidx.room.apt)
-  compileOnly(deps.misc.jsr250)
+  ksp(libs.androidx.room.apt)
+  compileOnly(libs.misc.jsr250)
 
-  api(deps.android.androidx.room.runtime)
-  api(deps.dagger.runtime)
-  api(deps.kotlin.stdlib.jdk7)
-  api(deps.moshi.core)
+  api(libs.androidx.room.runtime)
+  api(libs.dagger.runtime)
+  api(libs.moshi.core)
 
-  testImplementation(deps.test.junit)
-  testImplementation(deps.test.truth)
+  testImplementation(libs.test.junit)
+  testImplementation(libs.test.truth)
 }
 android {
   namespace = "io.sweers.catchup.gemoji"

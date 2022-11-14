@@ -23,19 +23,19 @@ import androidx.core.text.PrecomputedTextCompat
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.noties.markwon.Markwon
 import io.sweers.catchup.flowbinding.viewScope
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.coroutines.CoroutineContext
 
 /**
- * Please do not use with `markwon-recycler` as it will lead to bad item rendering (due to async nature)
+ * Please do not use with `markwon-recycler` as it will lead to bad item rendering (due to async
+ * nature)
  */
-class PrecomputedTextSetterCompat internal constructor(
-  private val context: CoroutineContext,
-  private val appConfig: AppConfig
-) : Markwon.TextSetter {
+class PrecomputedTextSetterCompat
+internal constructor(private val context: CoroutineContext, private val appConfig: AppConfig) :
+  Markwon.TextSetter {
 
   override fun setText(
     textView: TextView,
@@ -45,9 +45,8 @@ class PrecomputedTextSetterCompat internal constructor(
   ) {
     textView.viewScope().launch {
       try {
-        val precomputedTextCompat = withContext(context) {
-          precomputedText(textView, markdown, appConfig)
-        }
+        val precomputedTextCompat =
+          withContext(context) { precomputedText(textView, markdown, appConfig) }
         if (precomputedTextCompat != null) {
           applyText(textView, precomputedTextCompat, bufferType, onComplete)
         } else {
@@ -63,10 +62,11 @@ class PrecomputedTextSetterCompat internal constructor(
 
   companion object {
 
-    /**
-     * @param context for background execution of text pre-computation
-     */
-    fun create(context: CoroutineContext = Dispatchers.Default, appConfig: AppConfig): PrecomputedTextSetterCompat {
+    /** @param context for background execution of text pre-computation */
+    fun create(
+      context: CoroutineContext = Dispatchers.Default,
+      appConfig: AppConfig
+    ): PrecomputedTextSetterCompat {
       return PrecomputedTextSetterCompat(context, appConfig)
     }
 

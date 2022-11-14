@@ -18,9 +18,7 @@ package io.sweers.catchup.service.designernews.model
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-/**
- * Models a Designer News User
- */
+/** Models a Designer News User */
 @JsonClass(generateAdapter = true)
 data class User(
   @Json(name = "cover_photo_url") val coverPhotoUrl: String,
@@ -33,14 +31,6 @@ data class User(
 ) {
 
   companion object {
-    val NONE: User = User(
-      "",
-      "",
-      "",
-      0,
-      "",
-      "",
-      ""
-    )
+    val NONE: User = User("", "", "", 0, "", "", "")
   }
 }

@@ -33,11 +33,11 @@ import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.util.isAfter
 import io.sweers.catchup.util.kotlin.switchIf
 import io.sweers.catchup.util.w
-import kotlinx.datetime.Clock
-import retrofit2.HttpException
 import java.io.IOException
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
+import kotlinx.datetime.Clock
+import retrofit2.HttpException
 
 class StorageBackedService(
   private val dao: ServiceDao,
@@ -55,7 +55,8 @@ class StorageBackedService(
     if (request.multiPage) {
       // Backfill pages
 
-      // If service has deterministic numeric paging, we can use range + concatMapEager to fast track it
+      // If service has deterministic numeric paging, we can use range + concatMapEager to fast
+      // track it
       if (meta().pagesAreNumeric) {
         return Observable.range(0, request.pageId.toInt())
           .concatMapEager { getPage(it.toString(), allowNetworkFallback = false).toObservable() }
@@ -67,22 +68,24 @@ class StorageBackedService(
       }
 
       // Strategy is a bit interesting here. We start with a synthesized initial "result"
-      // in a behavior subject. We start with this in the stream, and then from there flatmap the next
-      // page for every token. If the token is not null, we send it back to the stateHandler to fetch
+      // in a behavior subject. We start with this in the stream, and then from there flatmap the
+      // next
+      // page for every token. If the token is not null, we send it back to the stateHandler to
+      // fetch
       // the next page. If that page is our final page or it was null, complete the state handler.
       //
       // Basically an RxJava way of generating an indefinite sequence. At the end, we reduce all the
       // results, continuously appending new data and keeping the last seen page token. The result
       // is the last emission has all the data we want plus the last "next page" token.
-      val stateHandler = BehaviorSubject.createDefault(
-        DataResult(emptyList(), meta().firstPageKey)
-      ).toSerialized()
+      val stateHandler =
+        BehaviorSubject.createDefault(DataResult(emptyList(), meta().firstPageKey)).toSerialized()
       return stateHandler
         .flatMapSingle { getPage(it.nextPageToken!!, allowNetworkFallback = false) }
         .doAfterNext { result ->
           val nextPage = result.nextPageToken
           if (nextPage != null) {
-            // Always request the next page if it's not null. If it's the last page, we'll complete after this
+            // Always request the next page if it's not null. If it's the last page, we'll complete
+            // after this
             stateHandler.onNext(result)
           }
           if (nextPage == null || nextPage == request.pageId) {
@@ -91,21 +94,13 @@ class StorageBackedService(
           }
         }
         .reduce { (data1), (data, nextPageToken) ->
-          DataResult(
-            data = data1 + data,
-            nextPageToken = nextPageToken,
-            wasFresh = false
-          )
+          DataResult(data = data1 + data, nextPageToken = nextPageToken, wasFresh = false)
         }
         .filter { it.data.isNotEmpty() }
         .switchIfEmpty(
           Single.defer {
             // Ultimately fall back to just trying to request the first page
-            getPage(
-              page = meta().firstPageKey,
-              isRefresh = false,
-              allowNetworkFallback = true
-            )
+            getPage(page = meta().firstPageKey, isRefresh = false, allowNetworkFallback = true)
           }
         )
     } else {
@@ -126,9 +121,7 @@ class StorageBackedService(
       if (appConfig.isDebug && useLatest && page != meta().firstPageKey) {
         // This shouldn't happen. If we have no session, we should be fetching the first page
         w(
-          IllegalStateException(
-            "Fetching first local ($page) but not first page! Received $page"
-          )
+          IllegalStateException("Fetching first local ($page) but not first page! Received $page")
         ) {
           "invalid store state"
         }
@@ -161,18 +154,16 @@ class StorageBackedService(
     }
   }
 
-  private fun fetchPageFromLocal(
-    pageId: String,
-    useLatest: Boolean
-  ): Maybe<DataResult> {
+  private fun fetchPageFromLocal(pageId: String, useLatest: Boolean): Maybe<DataResult> {
     val now = Clock.System.now()
-    val pageFetcher = with(dao) {
-      if (pageId == meta().firstPageKey && useLatest) {
-        getFirstServicePage(meta().id, page = pageId)
-      } else {
-        getServicePage(type = meta().id, page = pageId, sessionId = currentSessionId)
+    val pageFetcher =
+      with(dao) {
+        if (pageId == meta().firstPageKey && useLatest) {
+          getFirstServicePage(meta().id, page = pageId)
+        } else {
+          getServicePage(type = meta().id, page = pageId, sessionId = currentSessionId)
+        }
       }
-    }
     return pageFetcher
       .subscribeOn(Schedulers.io())
       .filter { it.expiration.isAfter(now) }
@@ -181,9 +172,13 @@ class StorageBackedService(
           currentSessionId = servicePage.sessionId
         }
         // We want to preserve the ordering that we stored before, map ID -> index
-        val idToIndex = servicePage.items.withIndex()
-          .associateBy(keySelector = { (_, value) -> value }) { (index, _) -> index }
-        dao.getItemByIds(servicePage.items.toTypedArray())
+        val idToIndex =
+          servicePage.items.withIndex().associateBy(keySelector = { (_, value) -> value }) {
+            (index, _) ->
+            index
+          }
+        dao
+          .getItemByIds(servicePage.items.toTypedArray())
           .flattenAsObservable { it }
           .toSortedList { o1, o2 ->
             idToIndex.getValue(o1.stableId()).compareTo(idToIndex.getValue(o2.stableId()))
@@ -194,28 +189,31 @@ class StorageBackedService(
   }
 
   private fun fetchPageFromNetwork(pageId: String, isRefresh: Boolean): Single<DataResult> {
-    return delegate.fetchPage(DataRequest(true, false, pageId))
+    return delegate
+      .fetchPage(DataRequest(true, false, pageId))
       .flatMap { result ->
-        val calculatedExpiration = Clock.System.now()
-          .plus(2.toDuration(DurationUnit.HOURS)) // TODO preference this
+        val calculatedExpiration =
+          Clock.System.now().plus(2.toDuration(DurationUnit.HOURS)) // TODO preference this
         if (currentSessionId == -1L || isRefresh) {
           currentSessionId = calculatedExpiration.toEpochMilliseconds()
         }
-        val putPage = dao.putPage(
-          ServicePage(
-            id = "${meta().id}$pageId",
-            type = meta().id,
-            page = pageId,
-            items = result.data.map { it.stableId() },
-            expiration = calculatedExpiration,
-            sessionId = if (pageId == meta().firstPageKey && isRefresh) {
-              calculatedExpiration.toEpochMilliseconds()
-            } else {
-              currentSessionId
-            },
-            nextPageToken = result.nextPageToken
+        val putPage =
+          dao.putPage(
+            ServicePage(
+              id = "${meta().id}$pageId",
+              type = meta().id,
+              page = pageId,
+              items = result.data.map { it.stableId() },
+              expiration = calculatedExpiration,
+              sessionId =
+                if (pageId == meta().firstPageKey && isRefresh) {
+                  calculatedExpiration.toEpochMilliseconds()
+                } else {
+                  currentSessionId
+                },
+              nextPageToken = result.nextPageToken
+            )
           )
-        )
 
         val putItems = dao.putItems(*result.data.toTypedArray())
 
@@ -228,8 +226,7 @@ class StorageBackedService(
         if (throwable is HttpException) {
           Single.error(throwable)
         } else if (pageId == meta().firstPageKey && !isRefresh && throwable is IOException) {
-          fetchPageFromLocal(pageId, true)
-            .switchIfEmpty(Single.error(throwable))
+          fetchPageFromLocal(pageId, true).switchIfEmpty(Single.error(throwable))
         } else {
           Single.error(throwable)
         }

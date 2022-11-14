@@ -33,7 +33,6 @@ import javax.inject.Inject
 /**
  * This is a helper class to manage the connection to the Custom Tabs Service and
  *
- *
  * Adapted from github.com/GoogleChrome/custom-tabs-client
  */
 @ActivityScoped
@@ -59,13 +58,16 @@ class CustomTabActivityHelper @Inject constructor() {
     packageName?.let {
       customTabsIntent.intent.`package` = it
       customTabsIntent.launchUrl(context, uri)
-    } ?: context.maybeStartActivity(Intent(Intent.ACTION_VIEW, uri))
+    }
+      ?: context.maybeStartActivity(Intent(Intent.ACTION_VIEW, uri))
   }
 
   val customTabIntent: CustomTabsIntent.Builder
-    get() = CustomTabsIntent.Builder(session).setShowTitle(true)
-      .setUrlBarHidingEnabled(true)
-      .setShareState(SHARE_STATE_ON)
+    get() =
+      CustomTabsIntent.Builder(session)
+        .setShowTitle(true)
+        .setUrlBarHidingEnabled(true)
+        .setShareState(SHARE_STATE_ON)
 
   /**
    * Binds the Activity to the Custom Tabs Service
@@ -73,25 +75,27 @@ class CustomTabActivityHelper @Inject constructor() {
    * @param activity the activity to be bound to the service
    */
   fun bindCustomTabsService(activity: Activity) {
-    client?.run { return }
+    client?.run {
+      return
+    }
 
     val packageName = CustomTabsHelper.getPackageNameToUse(activity) ?: return
-    connection = object : CustomTabsServiceConnection() {
-      override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
-        this@CustomTabActivityHelper.client = client
-        this@CustomTabActivityHelper.client?.warmup(0L)
-        connectionCallback?.onCustomTabsConnected()
-        // Initialize a session as soon as possible.
-        session
-      }
+    connection =
+      object : CustomTabsServiceConnection() {
+          override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
+            this@CustomTabActivityHelper.client = client
+            this@CustomTabActivityHelper.client?.warmup(0L)
+            connectionCallback?.onCustomTabsConnected()
+            // Initialize a session as soon as possible.
+            session
+          }
 
-      override fun onServiceDisconnected(name: ComponentName) {
-        client = null
-        connectionCallback?.onCustomTabsDisconnected()
-      }
-    }.also {
-      CustomTabsClient.bindCustomTabsService(activity, packageName, it)
-    }
+          override fun onServiceDisconnected(name: ComponentName) {
+            client = null
+            connectionCallback?.onCustomTabsDisconnected()
+          }
+        }
+        .also { CustomTabsClient.bindCustomTabsService(activity, packageName, it) }
   }
 
   /**
@@ -116,9 +120,7 @@ class CustomTabActivityHelper @Inject constructor() {
         client == null -> null
         customTabsSession == null -> client!!.newSession(null)
         else -> customTabsSession
-      }?.also {
-        customTabsSession = it
-      }
+      }?.also { customTabsSession = it }
     }
 
   /**
@@ -132,18 +134,14 @@ class CustomTabActivityHelper @Inject constructor() {
   }
 
   /**
-   * A Callback for when the service is connected or disconnected. Use those callbacks to
-   * handle UI changes when the service is connected or disconnected
+   * A Callback for when the service is connected or disconnected. Use those callbacks to handle UI
+   * changes when the service is connected or disconnected
    */
   interface ConnectionCallback {
-    /**
-     * Called when the service is connected
-     */
+    /** Called when the service is connected */
     fun onCustomTabsConnected()
 
-    /**
-     * Called when the service is disconnected
-     */
+    /** Called when the service is disconnected */
     fun onCustomTabsDisconnected()
   }
 }

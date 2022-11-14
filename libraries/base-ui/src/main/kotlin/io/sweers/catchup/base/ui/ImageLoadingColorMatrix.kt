@@ -18,9 +18,7 @@ package io.sweers.catchup.base.ui
 import android.graphics.ColorMatrix
 import android.util.Property
 
-/**
- * An extension to [ColorMatrix] which implements the Material image loading pattern
- */
+/** An extension to [ColorMatrix] which implements the Material image loading pattern */
 class ImageLoadingColorMatrix : ColorMatrix() {
   private val elements = FloatArray(20)
 
@@ -78,29 +76,34 @@ class ImageLoadingColorMatrix : ColorMatrix() {
     }
 
   companion object {
-    private val saturationFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("saturation") {
-      override operator fun get(o: ImageLoadingColorMatrix): Float = o.saturationFraction
-      override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
-        o.saturationFraction = value
+    private val saturationFloatProp: FloatProp<ImageLoadingColorMatrix> =
+      object : FloatProp<ImageLoadingColorMatrix>("saturation") {
+        override operator fun get(o: ImageLoadingColorMatrix): Float = o.saturationFraction
+        override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
+          o.saturationFraction = value
+        }
       }
-    }
 
-    private val alphaFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("alpha") {
-      override operator fun get(o: ImageLoadingColorMatrix): Float = o.alphaFraction
-      override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
-        o.alphaFraction = value
+    private val alphaFloatProp: FloatProp<ImageLoadingColorMatrix> =
+      object : FloatProp<ImageLoadingColorMatrix>("alpha") {
+        override operator fun get(o: ImageLoadingColorMatrix): Float = o.alphaFraction
+        override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
+          o.alphaFraction = value
+        }
       }
-    }
 
-    private val brightnessFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("darken") {
-      override operator fun get(o: ImageLoadingColorMatrix): Float = o.brightnessFraction
-      override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
-        o.brightnessFraction = value
+    private val brightnessFloatProp: FloatProp<ImageLoadingColorMatrix> =
+      object : FloatProp<ImageLoadingColorMatrix>("darken") {
+        override operator fun get(o: ImageLoadingColorMatrix): Float = o.brightnessFraction
+        override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
+          o.brightnessFraction = value
+        }
       }
-    }
 
-    val PROP_SATURATION: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(saturationFloatProp)
+    val PROP_SATURATION: Property<ImageLoadingColorMatrix, Float> =
+      createFloatProperty(saturationFloatProp)
     val PROP_ALPHA: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(alphaFloatProp)
-    val PROP_BRIGHTNESS: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(brightnessFloatProp)
+    val PROP_BRIGHTNESS: Property<ImageLoadingColorMatrix, Float> =
+      createFloatProperty(brightnessFloatProp)
   }
 }

@@ -32,18 +32,14 @@ data class UrlMeta(
     @ColorInt accentColor: Int,
     context: Context,
     imageViewerData: ImageViewerData? = null
-  ) : this(
-    if (url.isNullOrBlank()) null else Uri.parse(url),
-    accentColor,
-    context,
-    imageViewerData
-  )
+  ) : this(if (url.isNullOrBlank()) null else Uri.parse(url), accentColor, context, imageViewerData)
 
   fun isSupportedInMediaViewer(): Boolean {
     return uri?.toString()?.let {
       val extension = it.substring(it.lastIndexOf(".") + 1)
       extension in MEDIA_EXTENSIONS
-    } ?: false
+    }
+      ?: false
   }
 
   companion object {

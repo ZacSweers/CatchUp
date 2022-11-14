@@ -16,9 +16,9 @@
 package io.sweers.catchup.util.kotlin
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty
+import org.junit.Test
 
 class PropertyDelegationTest {
   @Test
@@ -47,16 +47,15 @@ private class C {
 }
 
 private class D {
-//  val readOnlyProp: String by C::readOnlyProp
-//  var readWriteProp: String by C::readWriteProp
+  //  val readOnlyProp: String by C::readOnlyProp
+  //  var readWriteProp: String by C::readWriteProp
 }
 
 private operator fun <T, R> KMutableProperty1<T, R>.setValue(
   ref: D,
   property: KProperty<*>,
   value: R
-) {
-}
+) {}
 
 // private operator fun <T, R> KProperty1<T, R>.getValue(ref: D, property: KProperty<*>): R {
 // }

@@ -19,10 +19,7 @@ import io.sweers.catchup.service.api.SummarizationType.TEXT
 import io.sweers.catchup.service.api.SummarizationType.URL
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-data class SummarizationInfo(
-  val value: String,
-  val type: SummarizationType
-) {
+data class SummarizationInfo(val value: String, val type: SummarizationType) {
 
   companion object {
     fun from(url: String?, text: String? = null): SummarizationInfo? {
@@ -33,9 +30,7 @@ data class SummarizationInfo(
       }
     }
 
-    /**
-     * Really shallow sanity check
-     */
+    /** Really shallow sanity check */
     private fun canSummarize(url: String, text: String? = null): Boolean {
       text?.let {
         if (it.isBlank()) {
@@ -45,25 +40,27 @@ data class SummarizationInfo(
         }
       }
 
-      if (url.endsWith(".png") ||
-        url.endsWith(".gifv") ||
-        url.endsWith(".jpg") ||
-        url.endsWith(".jpeg")
+      if (
+        url.endsWith(".png") ||
+          url.endsWith(".gifv") ||
+          url.endsWith(".jpg") ||
+          url.endsWith(".jpeg")
       ) {
         return false
       }
 
       url.toHttpUrlOrNull()?.let {
         it.host.let {
-          if ("imgur" in it ||
-            "streamable" in it ||
-            "gfycat" in it ||
-            "i.reddit" in it ||
-            "v.reddit" in it ||
-            "twitter.com" in it ||
-            "t.co" in it ||
-            "youtube" in it ||
-            "youtu.be" in it
+          if (
+            "imgur" in it ||
+              "streamable" in it ||
+              "gfycat" in it ||
+              "i.reddit" in it ||
+              "v.reddit" in it ||
+              "twitter.com" in it ||
+              "t.co" in it ||
+              "youtube" in it ||
+              "youtu.be" in it
           )
             return false
         }

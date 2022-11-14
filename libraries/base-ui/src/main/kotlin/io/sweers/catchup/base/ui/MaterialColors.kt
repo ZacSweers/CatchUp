@@ -27,9 +27,7 @@ import androidx.core.graphics.ColorUtils
 import java.util.ArrayList
 import java.util.HashSet
 
-/**
- * A utility class for common color variants used in Material themes.
- */
+/** A utility class for common color variants used in Material themes. */
 internal object MaterialColors {
 
   const val ALPHA_FULL = 1.00f
@@ -68,11 +66,7 @@ internal object MaterialColors {
    * attribute is not set in the current theme, using the `view`'s [Context].
    */
   @ColorInt
-  fun getColor(
-    view: View,
-    @AttrRes colorAttributeResId: Int,
-    @ColorInt defaultValue: Int
-  ): Int {
+  fun getColor(view: View, @AttrRes colorAttributeResId: Int, @ColorInt defaultValue: Int): Int {
     return getColor(view.context, colorAttributeResId, defaultValue)
   }
 
@@ -91,8 +85,7 @@ internal object MaterialColors {
   }
 
   /**
-   * Convenience method that wraps [MaterialColors.layer] for layering colors
-   * from theme attributes.
+   * Convenience method that wraps [MaterialColors.layer] for layering colors from theme attributes.
    */
   @ColorInt
   @JvmOverloads
@@ -108,7 +101,8 @@ internal object MaterialColors {
   }
 
   /**
-   * Calculates a color that represents the layering of the `overlayColor` (with `overlayAlpha` applied) on top of the `backgroundColor`.
+   * Calculates a color that represents the layering of the `overlayColor` (with `overlayAlpha`
+   * applied) on top of the `backgroundColor`.
    */
   @ColorInt
   fun layer(
@@ -131,10 +125,9 @@ internal object MaterialColors {
   }
 
   /**
-   * Calculates a color state list that represents the layering of the `overlayColor` on top
-   * of the `backgroundColor` for the given set of `states`. CAUTION: More specific
-   * states that have the same color value as a more generic state may be dropped, see example
-   * below:
+   * Calculates a color state list that represents the layering of the `overlayColor` on top of the
+   * `backgroundColor` for the given set of `states`. CAUTION: More specific states that have the
+   * same color value as a more generic state may be dropped, see example below:
    *
    * states:
    * ```
@@ -157,16 +150,13 @@ internal object MaterialColors {
    * ""      GREEN
    * ```
    *
-   *
    * Current result:
    * ```
    * enabled, checked RED
    * enabled          GREEN
    * ```
    *
-   *
    * Color for state {enabled, checked, selected} --> returns RED # correct
-   *
    *
    * Result if iterating top down through CSL to composite each state color:
    * ```
@@ -175,12 +165,9 @@ internal object MaterialColors {
    * enabled           GREEN
    * ```
    *
-   *
    * Color for state {enabled, checked, selected} --> returns GREEN #incorrect
    *
-   *
-   * Scenario 2
-   * Background CSL:
+   * Scenario 2 Background CSL:
    * ```
    * selected GREEN
    * checked  RED
@@ -194,7 +181,6 @@ internal object MaterialColors {
    * ```
    *
    * Color for state {enabled, checked, selected} --> returns RED # incorrect
-   *
    *
    * Result if iterating top down through CSL to composite each state color:
    * ```
@@ -218,10 +204,11 @@ internal object MaterialColors {
     // Iterates bottom to top, from least to most specific states.
     for (i in states.indices.reversed()) {
       val curState = states[i]
-      val layeredStateColor = layer(
-        backgroundColor.getColorForState(curState, defaultBackgroundColor),
-        overlayColor.getColorForState(curState, defaultOverlayColor)
-      )
+      val layeredStateColor =
+        layer(
+          backgroundColor.getColorForState(curState, defaultBackgroundColor),
+          overlayColor.getColorForState(curState, defaultOverlayColor)
+        )
 
       if (shouldAddColorForState(uniqueColors, layeredStateColor, uniqueStateSet, curState)) {
         // Add to the front of the list in original CSL order.

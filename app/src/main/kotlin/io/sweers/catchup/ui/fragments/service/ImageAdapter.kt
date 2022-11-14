@@ -60,8 +60,8 @@ import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.UiUtil
 import io.sweers.catchup.util.UiUtil.fastOutSlowInInterpolator
 import io.sweers.catchup.util.isInNightMode
-import kotlinx.coroutines.launch
 import kotlin.math.roundToLong
+import kotlinx.coroutines.launch
 
 internal class ImageAdapter(
   context: Context,
@@ -74,8 +74,7 @@ internal class ImageAdapter(
   companion object {
     const val PRELOAD_AHEAD_ITEMS = 6
 
-    @ColorInt
-    private const val INITIAL_GIF_BADGE_COLOR = 0x40ffffff
+    @ColorInt private const val INITIAL_GIF_BADGE_COLOR = 0x40ffffff
   }
 
   private val loadingPlaceholders: Array<ColorDrawable>
@@ -83,33 +82,37 @@ internal class ImageAdapter(
 
   init {
     setHasStableIds(true)
-    @ArrayRes val loadingColorArrayId = if (context.isInNightMode()) {
-      R.array.loading_placeholders_dark
-    } else {
-      R.array.loading_placeholders_light
-    }
-    loadingPlaceholders = context.resources.getIntArray(loadingColorArrayId)
-      .iterator()
-      .asSequence()
-      .map(::ColorDrawable)
-      .toList()
-      .toTypedArray()
+    @ArrayRes
+    val loadingColorArrayId =
+      if (context.isInNightMode()) {
+        R.array.loading_placeholders_dark
+      } else {
+        R.array.loading_placeholders_light
+      }
+    loadingPlaceholders =
+      context.resources
+        .getIntArray(loadingColorArrayId)
+        .iterator()
+        .asSequence()
+        .map(::ColorDrawable)
+        .toList()
+        .toTypedArray()
   }
 
   // TODO preload in Coil
-//  override fun getPreloadItems(position: Int) =
-//      data.subList(position, minOf(data.size, position + 5))
-//
-//  override fun getPreloadRequestBuilder(item: ImageItem): RequestBuilder<Drawable> {
-//    val (x, y) = item.imageInfo.bestSize ?: Pair(0, 0)
-//    return GlideApp.with(context)
-//        .asDrawable()
-//        .apply(RequestOptions()
-//            .diskCacheStrategy(DiskCacheStrategy.DATA)
-//            .fitCenter()
-//            .override(x, y))
-//        .load(item.realItem())
-//  }
+  //  override fun getPreloadItems(position: Int) =
+  //      data.subList(position, minOf(data.size, position + 5))
+  //
+  //  override fun getPreloadRequestBuilder(item: ImageItem): RequestBuilder<Drawable> {
+  //    val (x, y) = item.imageInfo.bestSize ?: Pair(0, 0)
+  //    return GlideApp.with(context)
+  //        .asDrawable()
+  //        .apply(RequestOptions()
+  //            .diskCacheStrategy(DiskCacheStrategy.DATA)
+  //            .fitCenter()
+  //            .override(x, y))
+  //        .load(item.realItem())
+  //  }
 
   override fun getItemId(position: Int): Long {
     if (getItemViewType(position) == TYPE_LOADING_MORE) {
@@ -123,51 +126,47 @@ internal class ImageAdapter(
     return when (viewType) {
       TYPE_ITEM -> {
         ImageHolder(
-          LayoutInflater.from(parent.context)
-            .inflate(R.layout.image_item, parent, false),
-          loadingPlaceholders
-        )
+            LayoutInflater.from(parent.context).inflate(R.layout.image_item, parent, false),
+            loadingPlaceholders
+          )
           .apply {
-            image.setBadgeColor(
-              INITIAL_GIF_BADGE_COLOR
-            )
+            image.setBadgeColor(INITIAL_GIF_BADGE_COLOR)
             image.foreground = UiUtil.createColorSelector(0x40808080, null)
             // play animated GIFs whilst touched
             image.setOnTouchListener { _, event ->
               // check if it's an event we care about, else bail fast
               val action = event.action
-              if (!(
-                action == MotionEvent.ACTION_DOWN ||
+              if (
+                !(action == MotionEvent.ACTION_DOWN ||
                   action == MotionEvent.ACTION_UP ||
-                  action == MotionEvent.ACTION_CANCEL
-                )
+                  action == MotionEvent.ACTION_CANCEL)
               ) {
                 return@setOnTouchListener false
               }
 
               // get the image and check if it's an animated GIF
               // TODO rework this with MovieDrawable from Coil
-//                val gif: GifDrawable = when (val drawable = image.drawable
-//                    ?: return@setOnTouchListener false) {
-//                  is GifDrawable -> drawable
-//                  is TransitionDrawable -> (0 until drawable.numberOfLayers).asSequence()
-//                      .map(drawable::getDrawable)
-//                      .filterIsInstance<GifDrawable>()
-//                      .firstOrNull()
-//                  else -> null
-//                } ?: return@setOnTouchListener false
-//                // GIF found, start/stop it on press/lift
-//                when (action) {
-//                  MotionEvent.ACTION_DOWN -> gif.start()
-//                  MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> gif.stop()
-//                }
+              //                val gif: GifDrawable = when (val drawable = image.drawable
+              //                    ?: return@setOnTouchListener false) {
+              //                  is GifDrawable -> drawable
+              //                  is TransitionDrawable -> (0 until
+              // drawable.numberOfLayers).asSequence()
+              //                      .map(drawable::getDrawable)
+              //                      .filterIsInstance<GifDrawable>()
+              //                      .firstOrNull()
+              //                  else -> null
+              //                } ?: return@setOnTouchListener false
+              //                // GIF found, start/stop it on press/lift
+              //                when (action) {
+              //                  MotionEvent.ACTION_DOWN -> gif.start()
+              //                  MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> gif.stop()
+              //                }
               false
             }
           }
       }
-      TYPE_LOADING_MORE -> LoadingMoreHolder(
-        layoutInflater.inflate(R.layout.infinite_loading, parent, false)
-      )
+      TYPE_LOADING_MORE ->
+        LoadingMoreHolder(layoutInflater.inflate(R.layout.infinite_loading, parent, false))
       else -> TODO("Unknown type")
     }
   }
@@ -181,14 +180,14 @@ internal class ImageAdapter(
           // This is the same item, no need to reset. Possible from a refresh.
           return
         }
-        // TODO This is kind of ugly but not sure what else to do. Holder can't be an inner class to avoid mem leaks
+        // TODO This is kind of ugly but not sure what else to do. Holder can't be an inner class to
+        // avoid mem leaks
         imageHolder.backingImageItem = imageItem
-        bindDelegate(imageItem, holder, clicksReceiver())
-          .also {
-            holder.backingImageItem = null
-          }
+        bindDelegate(imageItem, holder, clicksReceiver()).also { holder.backingImageItem = null }
       }
-      TYPE_LOADING_MORE -> (holder as LoadingMoreHolder).progress.visibility = if (position > 0) View.VISIBLE else View.INVISIBLE
+      TYPE_LOADING_MORE ->
+        (holder as LoadingMoreHolder).progress.visibility =
+          if (position > 0) View.VISIBLE else View.INVISIBLE
     }
   }
 
@@ -197,11 +196,9 @@ internal class ImageAdapter(
     super.onViewRecycled(holder)
     if (holder is ImageHolder) {
       // TODO can coil do this?
-//      GlideApp.with(holder.itemView).clear(holder.image)
+      //      GlideApp.with(holder.itemView).clear(holder.image)
       // reset the badge & ripple which are dynamically determined
-      holder.image.setBadgeColor(
-        INITIAL_GIF_BADGE_COLOR
-      )
+      holder.image.setBadgeColor(INITIAL_GIF_BADGE_COLOR)
       holder.image.showBadge(false)
       holder.image.foreground = UiUtil.createColorSelector(0x40808080, null)
     }
@@ -251,8 +248,7 @@ internal class ImageAdapter(
     override fun itemView(): View = itemView
 
     private fun applyPalette(view: BadgedFourThreeImageView, palette: Palette) {
-      view.foreground =
-        UiUtil.createRipple(palette, 0.25f, 0.5f, 0x40808080, true)
+      view.foreground = UiUtil.createRipple(palette, 0.25f, 0.5f, 0x40808080, true)
     }
 
     @OptIn(ExperimentalCoilApi::class)
@@ -279,11 +275,9 @@ internal class ImageAdapter(
               val scope = newScope()
               if (result is BitmapDrawable) {
                 scope.launch {
-                  Palette.from(result.bitmap)
-                    .clearFilters()
-                    .generateAsync()?.let {
-                      applyPalette(image, it)
-                    }
+                  Palette.from(result.bitmap).clearFilters().generateAsync()?.let {
+                    applyPalette(image, it)
+                  }
                 }
               } else if (result is MovieDrawable) {
                 // TODO need to extract the first frame somehow
@@ -299,17 +293,15 @@ internal class ImageAdapter(
                 }
 
                 // look at the corner to determine the gif badge color
-                val cornerSize = (
-                  56 * image.context.resources
-                    .displayMetrics.scaledDensity
-                  ).toInt()
-                val corner = Bitmap.createBitmap(
-                  bitmap,
-                  bitmap.width - cornerSize,
-                  bitmap.height - cornerSize,
-                  cornerSize,
-                  cornerSize
-                )
+                val cornerSize = (56 * image.context.resources.displayMetrics.scaledDensity).toInt()
+                val corner =
+                  Bitmap.createBitmap(
+                    bitmap,
+                    bitmap.width - cornerSize,
+                    bitmap.height - cornerSize,
+                    cornerSize,
+                    cornerSize
+                  )
                 val isDark = ColorUtils.isDark(corner)
                 corner.recycle()
                 image.setBadgeColor(if (isDark) 0xb3ffffff.toInt() else 0x40000000)
@@ -346,14 +338,8 @@ private class SaturatingTransformation(
     // Animate the drawable and suspend until the animation is completes.
     when (result) {
       is SuccessResult -> {
-        val animator = saturateDrawableAnimator(
-          result.drawable,
-          durationMillis,
-          target.view
-        )
-        animator.doOnEnd {
-          animator.cancel()
-        }
+        val animator = saturateDrawableAnimator(result.drawable, durationMillis, target.view)
+        animator.doOnEnd { animator.cancel() }
         animator.start()
 
         animator.cancel()
@@ -382,9 +368,7 @@ private fun saturateDrawableAnimator(
 
   val satAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_SATURATION, 0f, 1f)
   satAnim.duration = duration
-  satAnim.addUpdateListener {
-    current.colorFilter = ColorMatrixColorFilter(cm)
-  }
+  satAnim.addUpdateListener { current.colorFilter = ColorMatrixColorFilter(cm) }
 
   val alphaAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_ALPHA, 0f, 1f)
   alphaAnim.duration = duration / 2

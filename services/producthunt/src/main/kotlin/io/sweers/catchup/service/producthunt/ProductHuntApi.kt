@@ -21,9 +21,7 @@ import io.sweers.catchup.service.producthunt.model.Post
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-/**
- * Models the Product Hunt API. See https://api.producthunt.com/v1/docs
- */
+/** Models the Product Hunt API. See https://api.producthunt.com/v1/docs */
 interface ProductHuntApi {
 
   @GET("/v1/posts")

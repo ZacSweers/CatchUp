@@ -18,8 +18,8 @@ package io.sweers.catchup.util.collect
 import android.text.TextUtils
 
 /**
- * A List implementation that emits toString() calls as comma separated values, useful for
- * something like multi-get requests in retrofit.
+ * A List implementation that emits toString() calls as comma separated values, useful for something
+ * like multi-get requests in retrofit.
  *
  * @param <E> the element type
  */

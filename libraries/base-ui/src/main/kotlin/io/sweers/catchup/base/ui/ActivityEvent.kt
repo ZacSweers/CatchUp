@@ -18,11 +18,14 @@ package io.sweers.catchup.base.ui
 import autodispose2.lifecycle.CorrespondingEventsFunction
 import autodispose2.lifecycle.LifecycleEndedException
 
-/**
- * Activity lifecycle events.
- */
+/** Activity lifecycle events. */
 enum class ActivityEvent {
-  CREATE, START, RESUME, PAUSE, STOP, DESTROY;
+  CREATE,
+  START,
+  RESUME,
+  PAUSE,
+  STOP,
+  DESTROY;
 
   companion object {
     val LIFECYCLE = CorrespondingEventsFunction { lastEvent: ActivityEvent ->
@@ -32,9 +35,10 @@ enum class ActivityEvent {
         RESUME -> PAUSE
         PAUSE -> STOP
         STOP -> DESTROY
-        DESTROY -> throw LifecycleEndedException(
-          "Cannot bind to Activity lifecycle after it's been destroyed."
-        )
+        DESTROY ->
+          throw LifecycleEndedException(
+            "Cannot bind to Activity lifecycle after it's been destroyed."
+          )
       }
     }
   }

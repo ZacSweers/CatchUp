@@ -17,24 +17,19 @@ package io.sweers.catchup.base.ui
 
 import android.view.ViewGroup
 
-/**
- * An indirection which allows controlling the root container used for each activity.
- */
+/** An indirection which allows controlling the root container used for each activity. */
 interface ViewContainer {
 
-  /**
-   * The root [ViewGroup] into which the activity should place its contents.
-   */
+  /** The root [ViewGroup] into which the activity should place its contents. */
   fun forActivity(activity: BaseActivity): ViewGroup
 
   companion object {
-    /**
-     * An [ViewContainer] which returns the normal activity content view.
-     */
-    val DEFAULT = object : ViewContainer {
-      override fun forActivity(activity: BaseActivity): ViewGroup {
-        return activity.findViewById(android.R.id.content)
+    /** An [ViewContainer] which returns the normal activity content view. */
+    val DEFAULT =
+      object : ViewContainer {
+        override fun forActivity(activity: BaseActivity): ViewGroup {
+          return activity.findViewById(android.R.id.content)
+        }
       }
-    }
   }
 }

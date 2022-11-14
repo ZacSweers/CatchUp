@@ -31,25 +31,22 @@ import kotlin.math.floor
 /**
  * An extension to [AppCompatTextView] which aligns text to a 4dp baseline grid.
  *
- * To achieve this we expose a `lineHeightHint` allowing you to specify the desired line
- * height (alternatively a `lineHeightMultiplierHint` to use a multiplier of the text size).
- * This line height will be adjusted to be a multiple of 4dp to ensure that baselines sit on
- * the grid.
+ * To achieve this we expose a `lineHeightHint` allowing you to specify the desired line height
+ * (alternatively a `lineHeightMultiplierHint` to use a multiplier of the text size). This line
+ * height will be adjusted to be a multiple of 4dp to ensure that baselines sit on the grid.
  *
  * We also adjust spacing above and below the text to ensure that the first line's baseline sits on
  * the grid (relative to the view's top) & that this view's height is a multiple of 4dp so that
  * subsequent views start on the grid.
  */
 @SuppressLint("Recycle") // False positive
-class BaselineGridTextView @JvmOverloads constructor(
+class BaselineGridTextView
+@JvmOverloads
+constructor(
   context: Context,
   attrs: AttributeSet? = null,
   defStyleAttr: Int = android.R.attr.textViewStyle
-) : AppCompatTextView(
-  context,
-  attrs,
-  defStyleAttr
-) {
+) : AppCompatTextView(context, attrs, defStyleAttr) {
 
   private val fourDip: Float
 
@@ -76,22 +73,15 @@ class BaselineGridTextView @JvmOverloads constructor(
     private set
 
   init {
-    context.obtainStyledAttributes(
-      attrs,
-      R.styleable.BaselineGridTextView,
-      defStyleAttr,
-      0
-    ).use {
+    context.obtainStyledAttributes(attrs, R.styleable.BaselineGridTextView, defStyleAttr, 0).use {
       // first check TextAppearance for line height & font attributes
       if (it.hasValue(R.styleable.BaselineGridTextView_android_textAppearance)) {
-        val textAppearanceId = it.getResourceId(
-          R.styleable.BaselineGridTextView_android_textAppearance,
-          android.R.style.TextAppearance
-        )
-        context.obtainStyledAttributes(
-          textAppearanceId,
-          R.styleable.BaselineGridTextView
-        ).use {
+        val textAppearanceId =
+          it.getResourceId(
+            R.styleable.BaselineGridTextView_android_textAppearance,
+            android.R.style.TextAppearance
+          )
+        context.obtainStyledAttributes(textAppearanceId, R.styleable.BaselineGridTextView).use {
           parseTextAttrs(it)
         }
       }
@@ -101,11 +91,7 @@ class BaselineGridTextView @JvmOverloads constructor(
       maxLinesByHeight = it.getBoolean(R.styleable.BaselineGridTextView_maxLinesByHeight, false)
     }
 
-    fourDip = TypedValue.applyDimension(
-      TypedValue.COMPLEX_UNIT_DIP,
-      4f,
-      resources.displayMetrics
-    )
+    fourDip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, resources.displayMetrics)
     computeLineHeight()
   }
 
@@ -132,40 +118,31 @@ class BaselineGridTextView @JvmOverloads constructor(
 
   private fun parseTextAttrs(a: TypedArray) {
     if (a.hasValue(R.styleable.BaselineGridTextView_lineHeightMultiplierHint)) {
-      lineHeightMultiplierHint = a.getFloat(
-        R.styleable.BaselineGridTextView_lineHeightMultiplierHint,
-        1f
-      )
+      lineHeightMultiplierHint =
+        a.getFloat(R.styleable.BaselineGridTextView_lineHeightMultiplierHint, 1f)
     }
     if (a.hasValue(R.styleable.BaselineGridTextView_lineHeightHint)) {
-      lineHeightHint = a.getDimensionPixelSize(
-        R.styleable.BaselineGridTextView_lineHeightHint,
-        0
-      ).toFloat()
+      lineHeightHint =
+        a.getDimensionPixelSize(R.styleable.BaselineGridTextView_lineHeightHint, 0).toFloat()
     }
     if (a.hasValue(R.styleable.BaselineGridTextView_android_fontFamily)) {
       fontResId = a.getResourceId(R.styleable.BaselineGridTextView_android_fontFamily, 0)
     }
   }
 
-  /**
-   * Ensures line height is a multiple of 4dp.
-   */
+  /** Ensures line height is a multiple of 4dp. */
   private fun computeLineHeight() {
     val fm = paint.fontMetrics
     val fontHeight = abs(fm.ascent - fm.descent) + fm.leading
-    val desiredLineHeight = if (lineHeightHint > 0)
-      lineHeightHint
-    else
-      lineHeightMultiplierHint * fontHeight
+    val desiredLineHeight =
+      if (lineHeightHint > 0) lineHeightHint else lineHeightMultiplierHint * fontHeight
 
-    val baselineAlignedLineHeight = (fourDip * ceil((desiredLineHeight / fourDip).toDouble()).toFloat() + 0.5f).toInt()
+    val baselineAlignedLineHeight =
+      (fourDip * ceil((desiredLineHeight / fourDip).toDouble()).toFloat() + 0.5f).toInt()
     setLineSpacing(baselineAlignedLineHeight - fontHeight, 1f)
   }
 
-  /**
-   * Ensure that the first line of text sits on the 4dp grid.
-   */
+  /** Ensure that the first line of text sits on the 4dp grid. */
   private fun ensureBaselineOnGrid(): Int {
     val baseline = baseline.toFloat()
     val gridAlign = baseline % fourDip
@@ -175,9 +152,7 @@ class BaselineGridTextView @JvmOverloads constructor(
     return extraTopPadding
   }
 
-  /**
-   * Ensure that height is a multiple of 4dp.
-   */
+  /** Ensure that height is a multiple of 4dp. */
   private fun ensureHeightGridAligned(height: Int): Int {
     val gridOverhang = height % fourDip
     if (gridOverhang != 0f) {
@@ -187,8 +162,8 @@ class BaselineGridTextView @JvmOverloads constructor(
   }
 
   /**
-   * When measured with an exact height, text can be vertically clipped mid-line. Prevent
-   * this by setting the `maxLines` property based on the available space.
+   * When measured with an exact height, text can be vertically clipped mid-line. Prevent this by
+   * setting the `maxLines` property based on the available space.
    */
   private fun checkMaxLines(height: Int, heightMode: Int) {
     if (!maxLinesByHeight || heightMode != MeasureSpec.EXACTLY) return

@@ -19,7 +19,6 @@ interface CatchUpObjectWatcher {
   fun watch(watchedReference: Any)
 
   object None : CatchUpObjectWatcher {
-    override fun watch(watchedReference: Any) {
-    }
+    override fun watch(watchedReference: Any) {}
   }
 }

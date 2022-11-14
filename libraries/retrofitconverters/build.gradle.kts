@@ -16,14 +16,14 @@
 
 plugins {
   kotlin("jvm")
+  alias(libs.plugins.sgp.base)
 }
 
 dependencies {
-  api(deps.dagger.runtime)
-  implementation(deps.retrofit.core)
-  implementation(deps.okhttp.core)
-  implementation(deps.misc.jsoup)
-  implementation(deps.android.androidx.annotations)
-  implementation(deps.kotlin.stdlib.core)
-  implementation(deps.rx.java)
+  api(libs.dagger.runtime)
+  implementation(libs.retrofit.core)
+  implementation(libs.okhttp.core)
+  implementation(libs.misc.jsoup)
+  implementation(libs.androidx.annotations)
+  implementation(libs.rx.java)
 }

@@ -17,13 +17,11 @@ package io.sweers.catchup.service.unsplash
 
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.unsplash.model.UnsplashPhoto
+import java.util.Locale
 import retrofit2.http.GET
 import retrofit2.http.Query
-import java.util.Locale
 
-/**
- * Unsplash API - https://unsplash.com/documentation
- */
+/** Unsplash API - https://unsplash.com/documentation */
 interface UnsplashApi {
 
   @GET("/photos")
@@ -39,7 +37,9 @@ interface UnsplashApi {
   }
 
   enum class OrderBy {
-    LATEST, OLDEST, POPULAR;
+    LATEST,
+    OLDEST,
+    POPULAR;
 
     override fun toString(): String {
       return super.toString().lowercase(Locale.US)

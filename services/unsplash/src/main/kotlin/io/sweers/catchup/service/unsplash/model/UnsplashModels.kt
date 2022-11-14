@@ -49,8 +49,4 @@ data class Links(
 )
 
 @JsonClass(generateAdapter = true)
-data class User(
-  val id: String,
-  val name: String,
-  val username: String
-)
+data class User(val id: String, val name: String, val username: String)

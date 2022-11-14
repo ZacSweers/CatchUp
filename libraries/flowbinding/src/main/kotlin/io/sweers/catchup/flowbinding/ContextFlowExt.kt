@@ -26,14 +26,13 @@ import kotlinx.coroutines.flow.callbackFlow
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun Context.intentReceivers(intentFilter: IntentFilter): Flow<Intent> = callbackFlow {
-  val receiver = object : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
-      safeOffer(intent)
+  val receiver =
+    object : BroadcastReceiver() {
+      override fun onReceive(context: Context, intent: Intent) {
+        safeOffer(intent)
+      }
     }
-  }
   registerReceiver(receiver, intentFilter)
 
-  awaitClose {
-    unregisterReceiver(receiver)
-  }
+  awaitClose { unregisterReceiver(receiver) }
 }

@@ -18,9 +18,7 @@ package io.sweers.catchup.util
 import android.graphics.ColorMatrix
 import android.util.Property
 
-/**
- * An extension to [ColorMatrix] which caches the saturation value for animation purposes.
- */
+/** An extension to [ColorMatrix] which caches the saturation value for animation purposes. */
 class ObservableColorMatrix : ColorMatrix() {
   private var saturation = 1f
 
@@ -35,17 +33,16 @@ class ObservableColorMatrix : ColorMatrix() {
 
   companion object {
 
-    val SATURATION: Property<ObservableColorMatrix, Float> = object : FloatProperty<ObservableColorMatrix>(
-      "saturation"
-    ) {
+    val SATURATION: Property<ObservableColorMatrix, Float> =
+      object : FloatProperty<ObservableColorMatrix>("saturation") {
 
-      override fun setValue(target: ObservableColorMatrix, value: Float) {
-        target.setSaturation(value)
-      }
+        override fun setValue(target: ObservableColorMatrix, value: Float) {
+          target.setSaturation(value)
+        }
 
-      override fun get(cm: ObservableColorMatrix): Float {
-        return cm.getSaturation()
+        override fun get(cm: ObservableColorMatrix): Float {
+          return cm.getSaturation()
+        }
       }
-    }
   }
 }

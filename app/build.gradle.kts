@@ -13,29 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapter
+import okio.buffer
+import okio.sink
+import okio.source
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale.US
 
 plugins {
   id("com.android.application")
   kotlin("android")
   kotlin("kapt")
-  id("com.apollographql.apollo3")
-  id("licensesJsonGenerator")
-  id("com.google.devtools.ksp")
-  id("dev.zacsweers.moshix")
-//  id("com.bugsnag.android.gradle")
-//  id("com.github.triplet.play")
+  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.apollo)
+  alias(libs.plugins.licensee)
+  alias(libs.plugins.moshix)
+  alias(libs.plugins.hilt)
+//  alias(libs.plugins.bugsnag)
+//  alias(libs.plugins.playPublisher)
 }
 
-apply(plugin = "dagger.hilt.android.plugin")
-
 val useDebugSigning: Boolean = providers.gradleProperty("useDebugSigning")
-    .orElse("false")
-    .map { it.toBoolean() }
-    .get()
+  .orElse("false")
+  .map { it.toBoolean() }
+  .get()
 
 android {
   defaultConfig {
@@ -49,14 +56,18 @@ android {
       archivesName.set("catchup")
     }
 
-    buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
-        "\"${properties["catchup_github_developer_token"]}\"")
-    resValue("string", "changelog_text", "\"${getChangelog()}\"")
+    buildConfigField(
+      "String", "GITHUB_DEVELOPER_TOKEN",
+      "\"${properties["catchup_github_developer_token"]}\""
+    )
+    resValue("string", "changelog_text", "haha")
     manifestPlaceholders["BUGSNAG_API_KEY"] = "placeholder"
   }
   buildFeatures {
     buildConfig = true
     compose = true
+    resValues = true
+    viewBinding = true
   }
   signingConfigs {
     if (!useDebugSigning && rootProject.file("signing/app-release.jks").exists()) {
@@ -96,12 +107,16 @@ android {
     getByName("debug") {
       applicationIdSuffix = ".debug"
       versionNameSuffix = "-dev"
-      buildConfigField("String", "IMGUR_CLIENT_ACCESS_TOKEN",
-          "\"${project.properties["catchup_imgur_access_token"]}\"")
+      buildConfigField(
+        "String", "IMGUR_CLIENT_ACCESS_TOKEN",
+        "\"${project.properties["catchup_imgur_access_token"]}\""
+      )
     }
     getByName("release") {
-      buildConfigField("String", "BUGSNAG_KEY",
-          "\"${properties["catchup_bugsnag_key"]}\"")
+      buildConfigField(
+        "String", "BUGSNAG_KEY",
+        "\"${properties["catchup_bugsnag_key"]}\""
+      )
       manifestPlaceholders["BUGSNAG_API_KEY"] = properties["catchup_bugsnag_key"].toString()
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       proguardFiles += file("proguard-rules.pro")
@@ -124,6 +139,7 @@ android {
   }
   lint {
     disable += "Typos" // https://twitter.com/ZacSweers/status/1495491162920136706
+    disable += "MissingTranslation"
     disable += "ExtraTranslation" // wrong?
     disable += "VectorPath" // Always complains about long paths as if I could do something about it
     checkDependencies = true
@@ -141,21 +157,17 @@ android {
 kapt {
   arguments {
     arg("dagger.experimentalDaggerErrorMessages", "enabled")
+    arg("room.schemaLocation", "$projectDir/schemas")
   }
 }
 
-ksp {
-  arg("room.schemaLocation", "$projectDir/schemas")
+slack {
+  android {
+    features {
+      compose()
+    }
+  }
 }
-
-//tasks.withType<KotlinCompile>().matching { !it.name.startsWith("ksp") }.configureEach {
-//  kotlinOptions {
-//    @Suppress("SuspiciousCollectionReassignment")
-//    freeCompilerArgs += listOf(
-//        "-P", "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
-//    )
-//  }
-//}
 
 //play {
 //  track = "alpha"
@@ -165,20 +177,21 @@ ksp {
 
 apollo {
   service("github") {
-    @Suppress("UnstableApiUsage")
-    customScalarsMapping.set(mapOf(
+    customScalarsMapping.set(
+      mapOf(
         "DateTime" to "kotlinx.datetime.Instant",
         "URI" to "okhttp3.HttpUrl"
-    ))
+      )
+    )
     packageName.set("io.sweers.catchup.data.github")
     schemaFile.set(file("src/main/graphql/io/sweers/catchup/data/github/schema.json"))
   }
 }
 
-open class CutChangelogTask : DefaultTask() {
+abstract class CutChangelogTask : DefaultTask() {
 
   @get:Input
-  lateinit var versionName: String
+  abstract val versionName: Property<String>
 
   @TaskAction
   fun run() {
@@ -187,8 +200,10 @@ open class CutChangelogTask : DefaultTask() {
     val whatsNewPath = "${project.projectDir}/src/main/play/release-notes/en-US/default.txt"
     val newChangelog = getChangelog(changelog, "").let {
       if (it.length > 500) {
-        logger.log(LogLevel.WARN,
-            "Changelog length (${it.length}) exceeds 500 char max. Truncating...")
+        logger.log(
+          LogLevel.WARN,
+          "Changelog length (${it.length}) exceeds 500 char max. Truncating..."
+        )
         val warning = "\n(Truncated due to store restrictions. Full changelog in app!)"
         val warningLength = warning.length
         val remainingAmount = 500 - warningLength
@@ -212,7 +227,7 @@ open class CutChangelogTask : DefaultTask() {
     val currentContent = changelog.reader().readText()
     changelog.writer().use {
       it.apply {
-        write("\n\n## $versionName (${SimpleDateFormat("yyyy-MM-dd").format(Date())})\n")
+        write("\n\n## ${versionName.get()} (${SimpleDateFormat("yyyy-MM-dd").format(Date())})\n")
         append(currentContent)
       }
     }
@@ -237,8 +252,15 @@ open class CutChangelogTask : DefaultTask() {
   }
 }
 
+val tagProvider = providers.exec {
+  commandLine("git")
+  args("describe", "--tags")
+}.standardOutput
+  .asText
+  .map { it.trimEnd() }
+
 tasks.register("cutChangelog", CutChangelogTask::class.java) {
-  versionName = deps.build.gitTag(project)
+  versionName.set(tagProvider)
   group = "build"
   description = "Cuts the current changelog version and updates the play store changelog file"
 }
@@ -274,34 +296,47 @@ fun getChangelog(): String {
   return log.toString().trim()
 }
 
-open class UpdateVersion : DefaultTask() {
+abstract class UpdateVersion @Inject constructor(
+  providers: ProviderFactory,
+  private val execOps: ExecOperations,
+) : DefaultTask() {
 
-  @set:Option(option = "updateType",
-      description = "Configures the version update type. Can be (major|minor|patch).")
+  @get:Option(
+    option = "updateType",
+    description = "Configures the version update type. Can be (major|minor|patch)."
+  )
   @get:Input
-  lateinit var type: String
+  abstract val type: Property<String>
+
+  @get:Input
+  val latestTag = providers.exec {
+    commandLine("git")
+    args("describe", "--abbrev=0", "--tags")
+  }.standardOutput
+    .asText
+    .map { it.trim() }
 
   @TaskAction
   fun run() {
-    val workingDir = project.rootProject.projectDir
-    val latestTag = "git describe --abbrev=0 --tags".execute(workingDir, "dev")
-    if (latestTag == "dev") {
-      throw IllegalStateException("No recent tag found!")
-    }
+    val latestTag = latestTag.get().takeUnless { it.isEmpty() }
+      ?: throw IllegalStateException("No recent tag found!")
     var (major, minor, patch) = latestTag.split(".").map(String::toInt)
-    when (type) {
+    when (type.get()) {
       "major" -> {
         major++
         minor = 0
         patch = 0
       }
+
       "minor" -> {
         minor++
         patch = 0
       }
+
       "patch" -> {
         patch++
       }
+
       else -> {
         throw IllegalArgumentException("Unrecognized updateType \"$type\"")
       }
@@ -310,14 +345,30 @@ open class UpdateVersion : DefaultTask() {
     println("Updating version to $latestVersionString")
     ByteArrayOutputStream().use { os ->
       project.rootProject.exec {
-        commandLine("git",
-            "tag",
-            "-a", latestVersionString,
-            "-m", "\"Version $latestVersionString.\"")
+        commandLine(
+          "git",
+          "tag",
+          "-a", latestVersionString,
+          "-m", "\"Version $latestVersionString.\""
+        )
         standardOutput = os
         errorOutput = os
       }
-      val newTag = "git describe --abbrev=0 --tags".execute(workingDir, "dev")
+
+      val newTagStream = ByteArrayOutputStream()
+      newTagStream.use { innerOs ->
+        execOps.exec {
+          commandLine(
+            "git",
+            "describe",
+            "--abbrev=0",
+            "--tags"
+          )
+          standardOutput = innerOs
+          errorOutput = innerOs
+        }
+      }
+      val newTag = newTagStream.toString()
       if (newTag == latestTag) {
         throw AssertionError("Git tag didn't work! ${os.toString().trim()}")
       }
@@ -327,21 +378,116 @@ open class UpdateVersion : DefaultTask() {
 
 tasks.create("updateVersion", UpdateVersion::class.java) {
   group = "build"
-  description = "Updates the current version. Supports CLI option --updateType={type} where type is (major|minor|patch)"
+  description =
+    "Updates the current version. Supports CLI option --updateType={type} where type is (major|minor|patch)"
+}
+
+// {
+//        "groupId": "androidx.constraintlayout",
+//        "artifactId": "constraintlayout-core",
+//        "version": "1.1.0-alpha04",
+//        "name": "Android ConstraintLayout Core",
+//        "spdxLicenses": [
+//            {
+//                "identifier": "Apache-2.0",
+//                "name": "Apache License 2.0",
+//                "url": "https://www.apache.org/licenses/LICENSE-2.0"
+//            }
+//        ],
+//        "scm": {
+//            "url": "https://github.com/androidx/constraintlayout"
+//        }
+//    },
+abstract class GenerateLicensesAsset : DefaultTask() {
+  @get:PathSensitive(PathSensitivity.RELATIVE)
+  @get:InputDirectory
+  abstract val buildDir: DirectoryProperty
+
+  @get:OutputFile
+  abstract val jsonFile: RegularFileProperty
+
+  private val licenseeFile: File
+    get() = File(
+      buildDir.asFile.get(),
+      "reports/licensee/release/artifacts.json"
+    )
+
+  @Suppress("UNCHECKED_CAST")
+  @OptIn(ExperimentalStdlibApi::class)
+  @TaskAction
+  fun generate() {
+    val mapAdapter = Moshi.Builder().build().adapter<List<Map<String, Any>>>()
+    val githubDetailsMap = JsonReader.of(licenseeFile.source().buffer()).use {
+      mapAdapter.fromJson(it)!!
+    }
+    val githubDetails = githubDetailsMap.mapNotNull { entry ->
+      entry["scm"]?.let {
+        ((it as? Map<String, Any>)?.get("url") as? String?)?.let { url ->
+          parseScm(url)
+        }
+      }
+    }
+
+    JsonWriter.of(jsonFile.get().asFile.sink().buffer()).use { writer ->
+      writer.beginArray()
+      githubDetails
+        .sortedBy { it.toString().toLowerCase(US) }
+        .distinctBy { it.toString().toLowerCase(US) }
+        .forEach { (owner, name) ->
+          writer.beginObject()
+          writer.name("owner")
+            .value(owner)
+            .name("name")
+            .value(name)
+          writer.endObject()
+        }
+      writer.endArray()
+    }
+  }
+
+  private fun parseScm(url: String): Pair<String, String>? {
+    if ("github.com" !in url) return null
+    val (owner, name) = url.substringAfter("github.com")
+      .removePrefix("/")
+      .removePrefix(":")
+      .removeSuffix(".git")
+      .removeSuffix("/issues")
+      .substringAfter(".com/")
+      .split("/")
+    return owner to name
+  }
+}
+
+
+val generateLicenseTask = tasks.register<GenerateLicensesAsset>("generateLicensesAsset") {
+  buildDir.set(project.layout.buildDirectory)
+  jsonFile.set(project.layout.projectDirectory.file("src/main/assets/generated_licenses.json"))
+}
+generateLicenseTask.dependsOn("licenseeRelease")
+
+licensee {
+  allow("Apache-2.0")
+  allow("MIT")
+  allow("MIT-0")
+  allowUrl("https://raw.githubusercontent.com/apollographql/apollo-kotlin/main/LICENSE")
+  allowUrl("http://opensource.org/licenses/BSD-2-Clause")
+  allowUrl("https://developer.android.com/studio/terms.html")
+  allowUrl("https://jsoup.org/license")
 }
 
 dependencies {
   kapt(project(":libraries:tooling:spi-visualizer"))
+  kapt(libs.androidx.room.apt)
 
-  implementation(deps.markwon.core)
-  implementation(deps.markwon.extStrikethrough)
-  implementation(deps.markwon.extTables)
-  implementation(deps.markwon.extTasklist)
-  implementation(deps.markwon.html)
-  implementation(deps.markwon.image)
-  implementation(deps.markwon.imageCoil)
-  implementation(deps.markwon.linkify)
-//  implementation(deps.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
+  implementation(libs.markwon.core)
+  implementation(libs.markwon.extStrikethrough)
+  implementation(libs.markwon.extTables)
+  implementation(libs.markwon.extTasklist)
+  implementation(libs.markwon.html)
+  implementation(libs.markwon.image)
+  implementation(libs.markwon.imageCoil)
+  implementation(libs.markwon.linkify)
+//  implementation(libs.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
   implementation(project(":service-api"))
   implementation(project(":service-registry:service-registry"))
   implementation(project(":libraries:base-ui"))
@@ -351,149 +497,148 @@ dependencies {
   implementation(project(":libraries:smmry"))
   implementation(project(":libraries:util"))
   implementation(project(":libraries:flowbinding"))
-  implementation(deps.misc.ticktock)
+  implementation(libs.misc.ticktock)
 
   // Support libs
-  implementation(deps.android.androidx.annotations)
-  implementation(deps.android.androidx.appCompat)
-  implementation(deps.android.androidx.core)
-  implementation(deps.android.androidx.constraintLayout)
-  implementation(deps.android.androidx.compose.constraintLayout)
-  implementation(deps.android.androidx.customTabs)
-  implementation(deps.android.androidx.design)
-  implementation(deps.android.androidx.emoji)
-  implementation(deps.android.androidx.emojiAppcompat)
-  implementation(deps.android.androidx.fragment)
-  implementation(deps.android.androidx.fragmentKtx)
-  debugImplementation(deps.android.androidx.drawerLayout)
-  implementation(deps.android.androidx.preference)
-  implementation(deps.android.androidx.preferenceKtx)
-  implementation(deps.android.androidx.viewPager2)
-  implementation(deps.android.androidx.swipeRefresh)
+  implementation(libs.androidx.annotations)
+  implementation(libs.androidx.appCompat)
+  implementation(libs.androidx.core)
+  implementation(libs.androidx.constraintLayout)
+  implementation(libs.androidx.compose.constraintLayout)
+  implementation(libs.androidx.customTabs)
+  implementation(libs.androidx.design)
+  implementation(libs.androidx.emoji)
+  implementation(libs.androidx.emojiAppcompat)
+  implementation(libs.androidx.fragment)
+  implementation(libs.androidx.fragmentKtx)
+  debugImplementation(libs.androidx.drawerLayout)
+  implementation(libs.androidx.preference)
+  implementation(libs.androidx.preferenceKtx)
+  implementation(libs.androidx.viewPager2)
+  implementation(libs.androidx.swipeRefresh)
 
   // Arch components
-  implementation(deps.android.androidx.lifecycle.extensions)
-  kapt(deps.android.androidx.lifecycle.apt)
-  implementation(deps.android.androidx.room.runtime)
-  implementation(deps.android.androidx.room.rxJava3)
-  implementation(deps.android.androidx.room.ktx)
-  kapt(deps.android.androidx.room.apt)
+  implementation(libs.androidx.lifecycle.extensions)
+  kapt(libs.androidx.lifecycle.apt)
+  implementation(libs.androidx.room.runtime)
+  implementation(libs.androidx.room.rxJava3)
+  implementation(libs.androidx.room.ktx)
+  kapt(libs.androidx.room.apt)
 
   // Compose
   implementation(project(":libraries:compose-extensions"))
-  implementation(deps.android.androidx.compose.uiTooling)
-  implementation(deps.android.androidx.compose.foundation)
-  implementation(deps.android.androidx.compose.material)
+  implementation(libs.androidx.compose.uiTooling)
+  implementation(libs.androidx.compose.foundation)
+  implementation(libs.androidx.compose.material)
 
   // Kotlin
-  implementation(deps.android.androidx.coreKtx)
-  implementation(deps.kotlin.stdlib.jdk7)
-  implementation(deps.kotlin.coroutines)
-  implementation(deps.kotlin.coroutinesAndroid)
-  implementation(deps.kotlin.coroutinesRx)
-  implementation(deps.android.androidx.lifecycle.ktx)
+  implementation(libs.androidx.coreKtx)
+  implementation(libs.kotlin.coroutines)
+  implementation(libs.kotlin.coroutinesAndroid)
+  implementation(libs.kotlin.coroutinesRx)
+  implementation(libs.androidx.lifecycle.ktx)
 
   // Moshi
-  implementation(deps.moshi.core)
-  implementation(deps.moshi.shimo)
+  implementation(libs.moshi.core)
+  implementation(libs.moshi.shimo)
 
   // Firebase
-  implementation(deps.android.firebase.core)
-  implementation(deps.android.firebase.database)
+  implementation(libs.firebase.core)
+  implementation(libs.firebase.database)
 
   // Square/JW
-  implementation(deps.okhttp.core)
-  implementation(deps.misc.okio)
-  implementation(deps.retrofit.core)
-  implementation(deps.retrofit.moshi)
-  implementation(deps.retrofit.rxJava3)
-  implementation(deps.rx.android)
-  implementation(deps.rx.java)
-  implementation(deps.misc.tapTargetView)
-  implementation(deps.misc.timber)
-  implementation(deps.misc.debug.processPhoenix)
-  debugImplementation(deps.misc.debug.madge)
-  debugImplementation(deps.misc.debug.scalpel)
-  debugImplementation(deps.misc.debug.telescope)
-  debugImplementation(deps.okhttp.debug.loggingInterceptor)
-  debugImplementation(deps.retrofit.debug.mock)
+  implementation(libs.okhttp.core)
+  implementation(libs.misc.okio)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.moshi)
+  implementation(libs.retrofit.rxJava3)
+  implementation(libs.rx.android)
+  implementation(libs.rx.java)
+  implementation(libs.misc.tapTargetView)
+  implementation(libs.misc.timber)
+  implementation(libs.misc.debug.processPhoenix)
+  debugImplementation(libs.misc.debug.madge)
+  debugImplementation(libs.misc.debug.scalpel)
+  debugImplementation(libs.misc.debug.telescope)
+  debugImplementation(libs.okhttp.debug.loggingInterceptor)
+  debugImplementation(libs.retrofit.debug.mock)
 
-  releaseImplementation(deps.misc.bugsnag)
+  releaseImplementation(libs.misc.bugsnag)
 
   // Coil
-  implementation(deps.coil.base)
-  implementation(deps.coil.default)
-  implementation(deps.coil.gif)
+  implementation(libs.coil.base)
+  implementation(libs.coil.default)
+  implementation(libs.coil.gif)
 
   // Misc
-  implementation(deps.autoDispose.core)
-  implementation(deps.autoDispose.android)
-  implementation(deps.autoDispose.lifecycle)
-  implementation(deps.misc.byteunits)
-  implementation(deps.misc.flick)
-  implementation(deps.misc.gestureViews)
-  implementation(deps.misc.inboxRecyclerView)
-  implementation(deps.misc.lottie)
-  implementation(deps.misc.recyclerViewAnimators)
-  implementation(deps.rx.relay)
-  implementation(deps.rx.dogTag)
-  implementation(deps.rx.dogTagAutoDispose)
-  implementation(deps.misc.moshiLazyAdapters)
-  implementation(deps.autoDispose.androidxLifecycle)
-  implementation(deps.misc.kotpref)
-  implementation(deps.misc.kotprefEnum)
-  implementation(deps.kotlin.datetime)
+  implementation(libs.autodispose.core)
+  implementation(libs.autodispose.android)
+  implementation(libs.autodispose.lifecycle)
+  implementation(libs.misc.byteunits)
+  implementation(libs.misc.flick)
+  implementation(libs.misc.gestureViews)
+  implementation(libs.misc.inboxRecyclerView)
+  implementation(libs.misc.lottie)
+  implementation(libs.misc.recyclerViewAnimators)
+  implementation(libs.rx.relay)
+  implementation(libs.rx.dogTag)
+  implementation(libs.rx.dogTagAutoDispose)
+  implementation(libs.misc.moshiLazyAdapters)
+  implementation(libs.autodispose.androidxLifecycle)
+  implementation(libs.misc.kotpref)
+  implementation(libs.misc.kotprefEnum)
+  implementation(libs.kotlin.datetime)
 
   // Apollo
-  implementation(deps.apollo.httpcache)
-  implementation(deps.apollo.normalizedCache)
-  implementation(deps.apollo.runtime)
+  implementation(libs.apollo.httpcache)
+  implementation(libs.apollo.normalizedCache)
+  implementation(libs.apollo.runtime)
 
   // Flipper
-  debugImplementation(deps.misc.debug.flipper)
-  debugImplementation(deps.misc.debug.flipperNetwork)
-  debugImplementation(deps.misc.debug.soLoader)
+  debugImplementation(libs.misc.debug.flipper)
+  debugImplementation(libs.misc.debug.flipperNetwork)
+  debugImplementation(libs.misc.debug.soLoader)
 
   // To force a newer version that doesn't conflict ListenableFuture
-  debugImplementation(deps.misc.debug.guava)
+  debugImplementation(libs.misc.debug.guava)
 
   // Hyperion
-//  releaseImplementation(deps.hyperion.core.release)
-//  debugImplementation(deps.hyperion.core.debug)
-//  debugImplementation(deps.hyperion.plugins.appInfo)
-//  debugImplementation(deps.hyperion.plugins.attr)
-//  debugImplementation(deps.hyperion.plugins.chuck)
-//  debugImplementation(deps.hyperion.plugins.crash)
-//  debugImplementation(deps.hyperion.plugins.disk)
-//  debugImplementation(deps.hyperion.plugins.geigerCounter)
-//  debugImplementation(deps.hyperion.plugins.measurement)
-//  debugImplementation(deps.hyperion.plugins.phoenix)
-//  debugImplementation(deps.hyperion.plugins.recorder)
-//  debugImplementation(deps.hyperion.plugins.sharedPreferences)
-//  debugImplementation(deps.hyperion.plugins.timber)
+//  releaseImplementation(libs.hyperion.core.release)
+//  debugImplementation(libs.hyperion.core.debug)
+//  debugImplementation(libs.hyperion.plugins.appInfo)
+//  debugImplementation(libs.hyperion.plugins.attr)
+//  debugImplementation(libs.hyperion.plugins.chuck)
+//  debugImplementation(libs.hyperion.plugins.crash)
+//  debugImplementation(libs.hyperion.plugins.disk)
+//  debugImplementation(libs.hyperion.plugins.geigerCounter)
+//  debugImplementation(libs.hyperion.plugins.measurement)
+//  debugImplementation(libs.hyperion.plugins.phoenix)
+//  debugImplementation(libs.hyperion.plugins.recorder)
+//  debugImplementation(libs.hyperion.plugins.sharedPreferences)
+//  debugImplementation(libs.hyperion.plugins.timber)
 
   // Dagger
-  kapt(deps.dagger.hilt.apt.compiler)
-  kapt(deps.dagger.apt.compiler)
-  compileOnly(deps.misc.javaxInject)
-  implementation(deps.dagger.runtime)
-  implementation(deps.dagger.hilt.android)
+  kapt(libs.dagger.hilt.apt.compiler)
+  kapt(libs.dagger.apt.compiler)
+  compileOnly(libs.misc.javaxInject)
+  implementation(libs.dagger.runtime)
+  implementation(libs.dagger.hilt.android)
 
-  implementation(deps.misc.jsr305)
+  implementation(libs.misc.jsr305)
 
   // Test
-  testImplementation(deps.rx.relay)
-  androidTestImplementation(deps.rx.java)
-  androidTestImplementation(deps.misc.jsr305)
-  testImplementation(deps.misc.jsr305)
-  testImplementation(deps.test.junit)
-  testImplementation(deps.test.truth)
+  testImplementation(libs.rx.relay)
+  androidTestImplementation(libs.rx.java)
+  androidTestImplementation(libs.misc.jsr305)
+  testImplementation(libs.misc.jsr305)
+  testImplementation(libs.test.junit)
+  testImplementation(libs.test.truth)
 
   // LeakCanary
-  debugImplementation(deps.misc.leakCanary)
-  releaseImplementation(deps.misc.leakCanaryObjectWatcherAndroid)
+  debugImplementation(libs.misc.leakCanary)
+  releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
 
   // Chuck
-//  debugImplementation(deps.chuck.debug)
-//  releaseImplementation(deps.chuck.release)
+//  debugImplementation(libs.chuck.debug)
+//  releaseImplementation(libs.chuck.release)
 }

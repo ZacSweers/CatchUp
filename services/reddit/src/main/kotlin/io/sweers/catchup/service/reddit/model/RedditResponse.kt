@@ -17,5 +17,4 @@ package io.sweers.catchup.service.reddit.model
 
 import com.squareup.moshi.JsonClass
 
-@JsonClass(generateAdapter = true)
-data class RedditResponse(val data: RedditListing)
+@JsonClass(generateAdapter = true) data class RedditResponse(val data: RedditListing)

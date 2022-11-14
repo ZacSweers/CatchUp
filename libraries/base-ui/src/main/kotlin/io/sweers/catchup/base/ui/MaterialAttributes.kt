@@ -22,14 +22,12 @@ import androidx.annotation.AttrRes
 import androidx.annotation.DimenRes
 import androidx.annotation.Px
 
-/**
- * Utility methods to work with attributes.
- */
+/** Utility methods to work with attributes. */
 internal object MaterialAttributes {
 
   /**
-   * Returns the [TypedValue] for the provided `attributeResId` or null if the attribute
-   * is not present in the current theme.
+   * Returns the [TypedValue] for the provided `attributeResId` or null if the attribute is not
+   * present in the current theme.
    */
   fun resolve(context: Context, @AttrRes attributeResId: Int): TypedValue? {
     val typedValue = TypedValue()
@@ -50,11 +48,10 @@ internal object MaterialAttributes {
   ): Int {
     val typedValue = resolve(context, attributeResId)
     if (typedValue == null) {
-      val errorMessage = (
-        "%1\$s requires a value for the %2\$s attribute to be set in your app theme. " +
+      val errorMessage =
+        ("%1\$s requires a value for the %2\$s attribute to be set in your app theme. " +
           "You can either set the attribute in your theme or " +
-          "update your theme to inherit from Theme.MaterialComponents (or a descendant)."
-        )
+          "update your theme to inherit from Theme.MaterialComponents (or a descendant).")
       throw IllegalArgumentException(
         String.format(
           errorMessage,
@@ -67,8 +64,8 @@ internal object MaterialAttributes {
   }
 
   /**
-   * Returns the [TypedValue] for the provided `attributeResId`, using the context of
-   * the provided `componentView`.
+   * Returns the [TypedValue] for the provided `attributeResId`, using the context of the provided
+   * `componentView`.
    *
    * @throws IllegalArgumentException if the attribute is not present in the current theme.
    */
@@ -94,8 +91,8 @@ internal object MaterialAttributes {
   }
 
   /**
-   * Returns the boolean value for the provided `attributeResId` or `defaultValue` if
-   * the attribute is not a boolean or not present in the current theme.
+   * Returns the boolean value for the provided `attributeResId` or `defaultValue` if the attribute
+   * is not a boolean or not present in the current theme.
    */
   fun resolveBoolean(
     context: Context,
@@ -105,14 +102,13 @@ internal object MaterialAttributes {
     val typedValue = resolve(context, attributeResId)
     return if (typedValue != null && typedValue.type == TypedValue.TYPE_INT_BOOLEAN)
       typedValue.data != 0
-    else
-      defaultValue
+    else defaultValue
   }
 
   /**
    * Returns the pixel value of the dimension specified by `attributeResId`. Defaults to
-   * `defaultDimenResId` if `attributeResId` cannot be found or is not a dimension
-   * within the given `context`.
+   * `defaultDimenResId` if `attributeResId` cannot be found or is not a dimension within the given
+   * `context`.
    */
   @Px
   fun resolveDimension(

@@ -48,8 +48,4 @@ data class Image(
   val urls: Urls
 )
 
-@JsonClass(generateAdapter = true)
-data class Urls(
-  val full: String,
-  val thumbnail: String
-)
+@JsonClass(generateAdapter = true) data class Urls(val full: String, val thumbnail: String)

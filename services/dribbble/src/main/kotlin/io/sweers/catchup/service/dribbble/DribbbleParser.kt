@@ -20,11 +20,11 @@ import io.sweers.catchup.service.dribbble.DribbbleApi.Companion.ENDPOINT
 import io.sweers.catchup.service.dribbble.model.Images
 import io.sweers.catchup.service.dribbble.model.Shot
 import io.sweers.catchup.service.dribbble.model.User
+import java.util.regex.Pattern
 import kotlinx.datetime.Clock
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.util.regex.Pattern
 
 /**
  * Dribbble V2 API does not have read endpoints so we have to do gross things :(
@@ -36,22 +36,18 @@ internal object DribbbleParser {
   private val PATTERN_PLAYER_ID = Pattern.compile("users/(\\d+?)/", Pattern.DOTALL)
 
   fun parse(body: ResponseBody): List<Shot> {
-    val shotElements = Jsoup.parse(body.string(), ENDPOINT)
-      .select("li[id^=screenshot]")
+    val shotElements = Jsoup.parse(body.string(), ENDPOINT).select("li[id^=screenshot]")
     return shotElements.mapNotNull(::parseShot)
   }
 
   private fun parseShot(element: Element): Shot {
-    val image = element.select("img")
-      .first()!!
-    var imgUrl = image
-      .attr("src")
+    val image = element.select("img").first()!!
+    var imgUrl = image.attr("src")
     if (imgUrl.contains("_teaser.")) {
       imgUrl = imgUrl.replace("_teaser.", ".")
     }
     // API responses wrap description in a <p> tag. Do the same for consistent display.
-    var description = image
-      .attr("alt")
+    var description = image.attr("alt")
     if (!TextUtils.isEmpty(description)) {
       description = "<p>$description</p>"
     }
@@ -76,20 +72,15 @@ internal object DribbbleParser {
   }
 
   private fun parsePlayer(element: Element): User {
-    val userBlock = element.select("a.url")
-      .first()!!
-    var avatarUrl = userBlock.select("img")
-      .first()!!
-      .attr("data-src")
+    val userBlock = element.select("a.url").first()!!
+    var avatarUrl = userBlock.select("img").first()!!.attr("data-src")
     if (avatarUrl.contains("/mini/")) {
       avatarUrl = avatarUrl.replace("/mini/", "/normal/")
     }
     val matchId = PATTERN_PLAYER_ID.matcher(avatarUrl)
     var id: Long = -1L
     if (matchId.find() && matchId.groupCount() == 1) {
-      matchId.group(1)?.toLong()?.let {
-        id = it
-      }
+      matchId.group(1)?.toLong()?.let { id = it }
     }
     val slashUsername = userBlock.attr("href")
     val username = if (slashUsername.isEmpty()) null else slashUsername.substring(1)
@@ -107,8 +98,7 @@ internal object DribbbleParser {
 private fun String.parseCount(): Long {
   return when {
     endsWith("k") -> {
-      (removeSuffix("k").toFloat() * 1000)
-        .toLong()
+      (removeSuffix("k").toFloat() * 1000).toLong()
     }
     else -> {
       toLong()

@@ -23,16 +23,12 @@ internal open class SystemUiHelperImplJB(
   level: Int,
   flags: Int,
   onSystemUiVisibilityChangeListener: SystemUiHelper.OnSystemUiVisibilityChangeListener?
-) : SystemUiHelper.SystemUiHelperImpl(
-  activity,
-  level,
-  flags,
-  onSystemUiVisibilityChangeListener
-),
+) :
+  SystemUiHelper.SystemUiHelperImpl(activity, level, flags, onSystemUiVisibilityChangeListener),
   View.OnSystemUiVisibilityChangeListener {
 
-  protected val decorView: View = activity.window
-    .decorView.apply {
+  protected val decorView: View =
+    activity.window.decorView.apply {
       setOnSystemUiVisibilityChangeListener(this@SystemUiHelperImplJB)
     }
 
@@ -55,14 +51,15 @@ internal open class SystemUiHelperImplJB(
     }
 
     if (level >= SystemUiHelper.LEVEL_HIDE_STATUS_BAR) {
-      flag = flag or (
-        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-          or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          or View.SYSTEM_UI_FLAG_FULLSCREEN
-        )
+      flag =
+        flag or
+          (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_FULLSCREEN)
 
       if (level >= SystemUiHelper.LEVEL_LEAN_BACK) {
-        flag = flag or (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+        flag =
+          flag or (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
       }
     }
     return flag

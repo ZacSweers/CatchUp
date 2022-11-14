@@ -15,15 +15,15 @@
  */
 package io.sweers.catchup.service.api
 
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlin.coroutines.CoroutineContext
 
 /**
- * Represents a an entity that holds a temporary [CoroutineScope]. Can be used in delegation to manage
- * scopes and request new ones as needed via [temporaryScope].
+ * Represents a an entity that holds a temporary [CoroutineScope]. Can be used in delegation to
+ * manage scopes and request new ones as needed via [temporaryScope].
  */
 interface TemporaryScopeHolder {
   val currentScope: CoroutineScope?
@@ -40,10 +40,10 @@ internal class TemporaryScopeDelegate : TemporaryScopeHolder {
   override fun newScope(): CoroutineScope {
     currentScope?.coroutineContext?.cancel()
     return object : CoroutineScope {
-      override val coroutineContext: CoroutineContext = SupervisorJob() + Dispatchers.Main.immediate
-    }.also {
-      currentScope = it
-    }
+        override val coroutineContext: CoroutineContext =
+          SupervisorJob() + Dispatchers.Main.immediate
+      }
+      .also { currentScope = it }
   }
 
   override fun cancel() {

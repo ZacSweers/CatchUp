@@ -20,16 +20,11 @@ import io.sweers.catchup.service.dribbble.model.Shot
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-/**
- * Dribbble API - http://developer.dribbble.com/v1/
- */
+/** Dribbble API - http://developer.dribbble.com/v1/ */
 interface DribbbleApi {
 
   @GET("/shots")
-  fun getPopular(
-    @Query("page") page: Int,
-    @Query("per_page") pageSize: Int
-  ): Single<List<Shot>>
+  fun getPopular(@Query("page") page: Int, @Query("per_page") pageSize: Int): Single<List<Shot>>
 
   // list=...
   // sort=...

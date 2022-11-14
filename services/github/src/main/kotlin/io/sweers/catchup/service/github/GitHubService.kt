@@ -58,37 +58,36 @@ import io.sweers.catchup.service.github.type.LanguageOrderField
 import io.sweers.catchup.service.github.type.OrderDirection
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.nullIfBlank
+import javax.inject.Inject
+import javax.inject.Qualifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx3.rxSingle
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
-import javax.inject.Inject
-import javax.inject.Qualifier
 
-@Qualifier
-private annotation class InternalApi
+@Qualifier private annotation class InternalApi
 
 private const val SERVICE_KEY = "github"
 
 @ServiceKey(SERVICE_KEY)
 @ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
-class GitHubService @Inject constructor(
+class GitHubService
+@Inject
+constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val apolloClient: Lazy<ApolloClient>,
   private val emojiMarkdownConverter: Lazy<EmojiMarkdownConverter>,
   private val gitHubApi: Lazy<GitHubApi>
-) :
-  TextService {
+) : TextService {
 
   override fun meta() = serviceMeta
 
   override fun fetchPage(request: DataRequest): Single<DataResult> {
-    return fetchByScraping()
-      .onErrorResumeNext { t: Throwable ->
-        e(t) { "GitHub trending scraping failed." }
-        fetchByQuery(request)
-      }
+    return fetchByScraping().onErrorResumeNext { t: Throwable ->
+      e(t) { "GitHub trending scraping failed." }
+      fetchByQuery(request)
+    }
   }
 
   private fun fetchByScraping(): Single<DataResult> {
@@ -106,13 +105,14 @@ class GitHubService @Inject constructor(
             score = "★" to stars,
             tag = language,
             itemClickUrl = url,
-            mark = starsToday?.toString()?.let {
-              Mark(
-                text = "+$it",
-                icon = R.drawable.ic_star_black_24dp,
-                iconTintColor = languageColor?.let(Color::parseColor)
-              )
-            }
+            mark =
+              starsToday?.toString()?.let {
+                Mark(
+                  text = "+$it",
+                  icon = R.drawable.ic_star_black_24dp,
+                  iconTintColor = languageColor?.let(Color::parseColor)
+                )
+              }
           )
         }
       }
@@ -121,30 +121,27 @@ class GitHubService @Inject constructor(
   }
 
   private fun fetchByQuery(request: DataRequest): Single<DataResult> {
-    val query = SearchQuery(
-      createdSince = TrendingTimespan.WEEK.createdSince(),
-      minStars = 50
-    )
-      .toString()
+    val query =
+      SearchQuery(createdSince = TrendingTimespan.WEEK.createdSince(), minStars = 50).toString()
 
-    val searchQuery = rxSingle(Dispatchers.IO) {
-      apolloClient.get()
-        .newBuilder()
-        .httpFetchPolicy(NetworkOnly)
-        .build()
-        .query(
-          GitHubSearchQuery(
-            queryString = query,
-            firstCount = 50,
-            order = LanguageOrder(
-              direction = OrderDirection.DESC,
-              field = LanguageOrderField.SIZE
-            ),
-            after = Optional.presentIfNotNull(request.pageId.nullIfBlank())
+    val searchQuery =
+      rxSingle(Dispatchers.IO) {
+        apolloClient
+          .get()
+          .newBuilder()
+          .httpFetchPolicy(NetworkOnly)
+          .build()
+          .query(
+            GitHubSearchQuery(
+              queryString = query,
+              firstCount = 50,
+              order =
+                LanguageOrder(direction = OrderDirection.DESC, field = LanguageOrderField.SIZE),
+              after = Optional.presentIfNotNull(request.pageId.nullIfBlank())
+            )
           )
-        )
-        .execute()
-    }
+          .execute()
+      }
 
     return searchQuery
       .doOnSuccess {
@@ -157,9 +154,10 @@ class GitHubService @Inject constructor(
         Observable.fromIterable(search.nodes?.mapNotNull { it?.onRepository }.orEmpty())
           .map {
             with(it) {
-              val description = description
-                ?.let { " — ${emojiMarkdownConverter.get().replaceMarkdownEmojisIn(it)}" }
-                .orEmpty()
+              val description =
+                description
+                  ?.let { " — ${emojiMarkdownConverter.get().replaceMarkdownEmojisIn(it)}" }
+                  .orEmpty()
 
               CatchUpItem(
                 id = id.hashCode().toLong(),
@@ -199,14 +197,15 @@ abstract class GitHubMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideGitHubServiceMeta(): ServiceMeta = ServiceMeta(
-      SERVICE_KEY,
-      R.string.github,
-      R.color.githubAccent,
-      R.drawable.logo_github,
-      firstPageKey = "",
-      enabled = BuildConfig.GITHUB_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
-    )
+    internal fun provideGitHubServiceMeta(): ServiceMeta =
+      ServiceMeta(
+        SERVICE_KEY,
+        R.string.github,
+        R.color.githubAccent,
+        R.drawable.logo_github,
+        firstPageKey = "",
+        enabled = BuildConfig.GITHUB_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
+      )
   }
 }
 
@@ -220,7 +219,8 @@ object GitHubModule {
     rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): GitHubApi {
-    return Retrofit.Builder().baseUrl(GitHubApi.ENDPOINT)
+    return Retrofit.Builder()
+      .baseUrl(GitHubApi.ENDPOINT)
       .delegatingCallFactory(client)
       .addCallAdapterFactory(rxJavaCallAdapterFactory)
       .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))

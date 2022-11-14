@@ -18,7 +18,8 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
-  id("dev.zacsweers.moshix")
+  alias(libs.plugins.moshix)
+  alias(libs.plugins.sgp.base)
 }
 
 apply {
@@ -34,20 +35,20 @@ android {
 
 dependencies {
   kapt(project(":service-registry:service-registry-compiler"))
-  kapt(deps.crumb.compiler)
-  kapt(deps.dagger.apt.compiler)
+  kapt(libs.crumb.compiler)
+  kapt(libs.dagger.apt.compiler)
 
   implementation(project(":libraries:util"))
-  implementation(deps.misc.okio)
-  implementation(deps.moshi.core)
-  implementation(deps.retrofit.core)
-  implementation(deps.retrofit.moshi)
-  implementation(deps.retrofit.rxJava3)
-  implementation(deps.okhttp.core)
-  implementation(deps.misc.moshiLazyAdapters)
+  implementation(libs.misc.okio)
+  implementation(libs.moshi.core)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.moshi)
+  implementation(libs.retrofit.rxJava3)
+  implementation(libs.okhttp.core)
+  implementation(libs.misc.moshiLazyAdapters)
 
   api(project(":service-api"))
-  api(deps.android.androidx.annotations)
-  api(deps.dagger.runtime)
-  api(deps.rx.java)
+  api(libs.androidx.annotations)
+  api(libs.dagger.runtime)
+  api(libs.rx.java)
 }

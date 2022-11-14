@@ -30,10 +30,7 @@ interface RedditApi {
   ): Single<List<RedditResponse>>
 
   @GET("/")
-  fun frontPage(
-    @Query("limit") limit: Int,
-    @Query("after") after: String?
-  ): Single<RedditResponse>
+  fun frontPage(@Query("limit") limit: Int, @Query("after") after: String?): Single<RedditResponse>
 
   @GET("/r/{subreddit}")
   fun subreddit(
@@ -43,10 +40,7 @@ interface RedditApi {
   ): Single<RedditResponse>
 
   @GET("/top")
-  fun top(
-    @Query("after") after: String,
-    @Query("limit") limit: Int
-  ): Single<RedditResponse>
+  fun top(@Query("after") after: String, @Query("limit") limit: Int): Single<RedditResponse>
 
   companion object {
     const val HOST = "www.reddit.com"

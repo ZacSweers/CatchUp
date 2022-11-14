@@ -67,8 +67,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class OrderServicesActivity : InjectingBaseActivity() {
 
-  @Inject
-  internal lateinit var syllabus: Syllabus
+  @Inject internal lateinit var syllabus: Syllabus
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -77,9 +76,7 @@ class OrderServicesActivity : InjectingBaseActivity() {
     syllabus.bind(this)
 
     if (savedInstanceState == null) {
-      supportFragmentManager.commitNow {
-        add(R.id.fragment_container, OrderServicesFragment2())
-      }
+      supportFragmentManager.commitNow { add(R.id.fragment_container, OrderServicesFragment2()) }
     }
   }
 }
@@ -87,24 +84,22 @@ class OrderServicesActivity : InjectingBaseActivity() {
 @AndroidEntryPoint
 class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBinding>() {
 
-  @Inject
-  lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
+  @Inject lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
 
-  @Inject
-  lateinit var catchUpPreferences: CatchUpPreferences
+  @Inject lateinit var catchUpPreferences: CatchUpPreferences
 
-  @Inject
-  internal lateinit var syllabus: Syllabus
+  @Inject internal lateinit var syllabus: Syllabus
 
-  @Inject
-  internal lateinit var fontHelper: FontHelper
+  @Inject internal lateinit var fontHelper: FontHelper
 
-  @Inject
-  internal lateinit var appConfig: AppConfig
+  @Inject internal lateinit var appConfig: AppConfig
 
-  private val save get() = binding.save
-  private val toolbar get() = binding.toolbar
-  private val recyclerView get() = binding.list
+  private val save
+    get() = binding.save
+  private val toolbar
+    get() = binding.toolbar
+  private val recyclerView
+    get() = binding.list
 
   private lateinit var storedOrder: List<String>
   private var pendingChanges: List<ServiceMeta>? = null
@@ -121,7 +116,8 @@ class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBindin
       }
     }
 
-  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentOrderServicesBinding =
+  override val bindingInflater:
+    (LayoutInflater, ViewGroup?, Boolean) -> FragmentOrderServicesBinding =
     FragmentOrderServicesBinding::inflate
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -147,26 +143,26 @@ class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBindin
     val displayOrder = instanceChanges ?: storedOrder
 
     val currentItemsSorted = serviceMetas.values.sortedBy { displayOrder.indexOf(it.id) }
-    val adapter = Adapter(
-      // Use a day context since this is like the tablayout UI
-      recyclerView.context.asDayContext(),
-      currentItemsSorted
-    ) { newItemOrder ->
-      pendingChanges = if (newItemOrder != currentItemsSorted) {
-        newItemOrder
-      } else {
-        null
+    val adapter =
+      Adapter(
+        // Use a day context since this is like the tablayout UI
+        recyclerView.context.asDayContext(),
+        currentItemsSorted
+      ) { newItemOrder ->
+        pendingChanges =
+          if (newItemOrder != currentItemsSorted) {
+            newItemOrder
+          } else {
+            null
+          }
       }
-    }
     recyclerView.adapter = adapter
-    savedInstanceState?.getParcelable<Parcelable>("orderServicesState")?.let(
-      lm::onRestoreInstanceState
-    )
+    savedInstanceState
+      ?.getParcelable<Parcelable>("orderServicesState")
+      ?.let(lm::onRestoreInstanceState)
     toolbar.apply {
       setNavigationIcon(R.drawable.ic_arrow_back_black_24dp)
-      setNavigationOnClickListener {
-        onBackPressed()
-      }
+      setNavigationOnClickListener { onBackPressed() }
       title = context.getString(R.string.pref_reorder_services)
       inflateMenu(R.menu.order_services)
       menu.findItem(R.id.shuffle).setOnMenuItemClickListener {
@@ -193,19 +189,15 @@ class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBindin
       TargetRequest(
         target = {
           FabShowTapTarget(
-            delegateTarget = { TapTarget.forView(save, "", "") },
-            fab = save,
-            title = save.resources.getString(R.string.pref_reorder_services),
-            description = save.resources.getString(
-              R.string.pref_order_services_description
+              delegateTarget = { TapTarget.forView(save, "", "") },
+              fab = save,
+              title = save.resources.getString(R.string.pref_reorder_services),
+              description = save.resources.getString(R.string.pref_order_services_description)
             )
-          )
             .outerCircleColorInt(primaryColor)
             .outerCircleAlpha(0.96f)
             .titleTextColorInt(textColor)
-            .descriptionTextColorInt(
-              ColorUtils.modifyAlpha(textColor, 0.2f)
-            )
+            .descriptionTextColorInt(ColorUtils.modifyAlpha(textColor, 0.2f))
             .targetCircleColorInt(textColor)
             .transparentTarget(true)
             .drawShadow(true)
@@ -255,20 +247,21 @@ private class Adapter(
     val current = items.toList()
     items.shuffle()
     DiffUtil.calculateDiff(
-      object : Callback() {
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-          return current[oldItemPosition].id == items[newItemPosition].id
+        object : Callback() {
+          override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return current[oldItemPosition].id == items[newItemPosition].id
+          }
+
+          override fun getOldListSize() = current.size
+
+          override fun getNewListSize() = items.size
+
+          override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return current[oldItemPosition] == items[newItemPosition]
+          }
         }
-
-        override fun getOldListSize() = current.size
-
-        override fun getNewListSize() = items.size
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-          return current[oldItemPosition] == items[newItemPosition]
-        }
-      }
-    ).dispatchUpdatesTo(this)
+      )
+      .dispatchUpdatesTo(this)
     changeListener(items)
   }
 
@@ -277,11 +270,7 @@ private class Adapter(
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-    val itemView = LayoutInflater.from(context).inflate(
-      R.layout.order_services_item,
-      parent,
-      false
-    )
+    val itemView = LayoutInflater.from(context).inflate(R.layout.order_services_item, parent, false)
     return Holder(itemView)
   }
 
@@ -312,16 +301,12 @@ private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
   private val title = binding.title
   private val icon = binding.icon
   private val raise = itemView.resources.getDimensionPixelSize(R.dimen.touch_raise).toFloat()
-  private val elevationAnimator = AnimatorInflater.loadStateListAnimator(
-    itemView.context,
-    R.animator.raise
-  )
+  private val elevationAnimator =
+    AnimatorInflater.loadStateListAnimator(itemView.context, R.animator.raise)
 
   fun bind(meta: ServiceMeta) {
     title.setText(meta.name)
-    container.setBackgroundColor(
-      ContextCompat.getColor(title.context, meta.themeColor)
-    )
+    container.setBackgroundColor(ContextCompat.getColor(title.context, meta.themeColor))
     icon.setImageResource(meta.icon)
   }
 
@@ -335,12 +320,8 @@ private class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
   }
 }
 
-private class MoveCallback(
-  private val callback: (Int, Int) -> Unit
-) : ItemTouchHelper.SimpleCallback(
-  ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-  0
-) {
+private class MoveCallback(private val callback: (Int, Int) -> Unit) :
+  ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
   override fun onMove(
     recyclerView: RecyclerView,
     viewHolder: ViewHolder,
@@ -361,9 +342,7 @@ private class MoveCallback(
   override fun onSelectedChanged(viewHolder: ViewHolder?, actionState: Int) {
     super.onSelectedChanged(viewHolder, actionState)
     if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-      viewHolder?.let {
-        (it as Holder).updateSelection(true)
-      }
+      viewHolder?.let { (it as Holder).updateSelection(true) }
     }
   }
 
@@ -377,8 +356,7 @@ private class MoveCallback(
 @Module
 abstract class OrderServicesModule {
 
-  @Multibinds
-  abstract fun serviceMetas(): Map<String, ServiceMeta>
+  @Multibinds abstract fun serviceMetas(): Map<String, ServiceMeta>
 }
 
 private class FabShowTapTarget(
@@ -391,12 +369,7 @@ private class FabShowTapTarget(
   override fun bounds(): Rect {
     val location = IntArray(2)
     fab.getLocationOnScreen(location)
-    return Rect(
-      location[0],
-      location[1],
-      location[0] + fab.width,
-      location[1] + fab.height
-    )
+    return Rect(location[0], location[1], location[0] + fab.width, location[1] + fab.height)
   }
 
   override fun onReady(runnable: Runnable) {

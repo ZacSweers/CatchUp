@@ -57,40 +57,39 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.windowed
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.setLightStatusBar
+import java.util.Locale
+import javax.inject.Inject
+import kotlin.math.abs
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.ldralighieri.corbind.material.offsetChanges
-import java.util.Locale
-import javax.inject.Inject
-import kotlin.math.abs
 
 @AndroidEntryPoint
 class AboutActivity : InjectingBaseActivity() {
 
-  @Inject
-  internal lateinit var customTab: CustomTabActivityHelper
+  @Inject internal lateinit var customTab: CustomTabActivityHelper
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-//    lifecycle.addObserver(object : LifecycleObserver {
-//      @OnLifecycleEvent(Lifecycle.Event.ON_START)
-//      fun start() {
-//        customTab.bindCustomTabsService(this@AboutActivity)
-//      }
-//
-//      @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-//      fun stop() {
-//        customTab.unbindCustomTabsService(this@AboutActivity)
-//      }
-//
-//      @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-//      fun destroy() {
-//        customTab.connectionCallback = null
-//      }
-//    })
+    //    lifecycle.addObserver(object : LifecycleObserver {
+    //      @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    //      fun start() {
+    //        customTab.bindCustomTabsService(this@AboutActivity)
+    //      }
+    //
+    //      @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    //      fun stop() {
+    //        customTab.unbindCustomTabsService(this@AboutActivity)
+    //      }
+    //
+    //      @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    //      fun destroy() {
+    //        customTab.connectionCallback = null
+    //      }
+    //    })
     lifecycle()
       .doOnStart(customTab) { bindCustomTabsService(this@AboutActivity) }
       .doOnStop(customTab) { unbindCustomTabsService(this@AboutActivity) }
@@ -102,9 +101,7 @@ class AboutActivity : InjectingBaseActivity() {
     ActivityGenericContainerBinding.inflate(layoutInflater, viewGroup, true)
 
     if (savedInstanceState == null) {
-      supportFragmentManager.commitNow {
-        add(R.id.fragment_container, AboutFragment())
-      }
+      supportFragmentManager.commitNow { add(R.id.fragment_container, AboutFragment()) }
     }
   }
 }
@@ -117,22 +114,28 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
     private const val TITLE_TRANSLATION_PERCENT = 0.50F
   }
 
-  @Inject
-  internal lateinit var linkManager: LinkManager
-  @Inject
-  internal lateinit var markwon: Markwon
-  @Inject
-  internal lateinit var appConfig: AppConfig
+  @Inject internal lateinit var linkManager: LinkManager
+  @Inject internal lateinit var markwon: Markwon
+  @Inject internal lateinit var appConfig: AppConfig
 
-  private val rootLayout get() = binding.aboutFragmentRoot
-  private val appBarLayout get() = binding.appbarlayout
-  private val bannerContainer get() = binding.bannerContainer
-  private val bannerIcon get() = binding.bannerIcon
-  private val aboutText get() = binding.bannerText
-  private val title get() = binding.bannerTitle
-  private val tabLayout get() = binding.tabLayout
-  private val toolbar get() = binding.toolbar
-  private val viewPager get() = binding.viewPager
+  private val rootLayout
+    get() = binding.aboutFragmentRoot
+  private val appBarLayout
+    get() = binding.appbarlayout
+  private val bannerContainer
+    get() = binding.bannerContainer
+  private val bannerIcon
+    get() = binding.bannerIcon
+  private val aboutText
+    get() = binding.bannerText
+  private val title
+    get() = binding.bannerTitle
+  private val tabLayout
+    get() = binding.tabLayout
+  private val toolbar
+    get() = binding.toolbar
+  private val viewPager
+    get() = binding.viewPager
 
   private lateinit var compositeClickSpan: (String) -> Set<Any>
 
@@ -154,40 +157,34 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     viewPager.offscreenPageLimit = 1
-    val pagerAdapter = object : FragmentStateAdapter(childFragmentManager, lifecycle) {
-      private val screens = SparseArray<Fragment>()
+    val pagerAdapter =
+      object : FragmentStateAdapter(childFragmentManager, lifecycle) {
+        private val screens = SparseArray<Fragment>()
 
-      override fun getItemCount(): Int = 2
+        override fun getItemCount(): Int = 2
 
-      override fun createFragment(position: Int): Fragment {
-        return screens.get(position) ?: run {
-          when (position) {
-            0 -> LicensesFragment()
-            1 -> ChangelogFragment()
-            else -> TODO("Not implemented")
-          }.also {
-            screens.put(position, it)
-          }
+        override fun createFragment(position: Int): Fragment {
+          return screens.get(position)
+            ?: run {
+              when (position) {
+                0 -> LicensesFragment()
+                1 -> ChangelogFragment()
+                else -> TODO("Not implemented")
+              }.also { screens.put(position, it) }
+            }
+        }
+
+        fun getFragment(position: Int): Fragment? {
+          return screens.get(position)
         }
       }
-
-      fun getFragment(position: Int): Fragment? {
-        return screens.get(position)
-      }
-    }
 
     compositeClickSpan = { url: String ->
       setOf(
         object : TouchableUrlSpan(url, aboutText.linkTextColors, 0) {
           override fun onClick(url: String) {
             viewLifecycleOwner.lifecycleScope.launch {
-              linkManager.openUrl(
-                UrlMeta(
-                  url,
-                  aboutText.highlightColor,
-                  activity!!
-                )
-              )
+              linkManager.openUrl(UrlMeta(url, aboutText.highlightColor, activity!!))
             }
           }
         },
@@ -197,12 +194,11 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
 
     savedInstanceState?.let { state ->
       state.getParcelable<Parcelable>("collapsingToolbarState")?.let {
-        (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior
+        (appBarLayout.layoutParams as CoordinatorLayout.LayoutParams)
+          .behavior
           ?.onRestoreInstanceState(rootLayout, appBarLayout, it)
       }
-      state.getParcelable<Parcelable>("aboutAdapter")?.let {
-        pagerAdapter.restoreState(it)
-      }
+      state.getParcelable<Parcelable>("aboutAdapter")?.let { pagerAdapter.restoreState(it) }
     }
 
     with(activity as AppCompatActivity) {
@@ -216,9 +212,7 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
       }
     }
 
-    bannerIcon.setOnClickListener {
-      appBarLayout.setExpanded(false, true)
-    }
+    bannerIcon.setOnClickListener { appBarLayout.setExpanded(false, true) }
     bannerIcon.setOnLongClickListener {
       Toast.makeText(activity, R.string.icon_attribution, Toast.LENGTH_SHORT).show()
       viewLifecycleOwner.lifecycleScope.launch {
@@ -230,34 +224,38 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
     }
 
     aboutText.movementMethod = LinkTouchMovementMethod.getInstance()
-    aboutText.text = buildMarkdown {
-      text(aboutText.resources.getString(R.string.about_description))
-      newline(3)
-      text(aboutText.resources.getString(R.string.about_version, appConfig.versionName))
-      newline(2)
-      text(aboutText.resources.getString(R.string.about_by))
-      space()
-      link("https://twitter.com/ZacSweers", "Zac Sweers")
-      text(" - ")
-      link(
-        "https://github.com/ZacSweers/CatchUp",
-        aboutText.resources.getString(R.string.about_source_code)
-      )
-    }.parseMarkdownAndPlainLinks(
-      on = aboutText,
-      with = markwon,
-      alternateSpans = compositeClickSpan
-    )
+    aboutText.text =
+      buildMarkdown {
+          text(aboutText.resources.getString(R.string.about_description))
+          newline(3)
+          text(aboutText.resources.getString(R.string.about_version, appConfig.versionName))
+          newline(2)
+          text(aboutText.resources.getString(R.string.about_by))
+          space()
+          link("https://twitter.com/ZacSweers", "Zac Sweers")
+          text(" - ")
+          link(
+            "https://github.com/ZacSweers/CatchUp",
+            aboutText.resources.getString(R.string.about_source_code)
+          )
+        }
+        .parseMarkdownAndPlainLinks(
+          on = aboutText,
+          with = markwon,
+          alternateSpans = compositeClickSpan
+        )
 
     // Set up pager
     viewPager.adapter = pagerAdapter
     TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-      viewPager.setCurrentItem(tab.position, true)
-      tab.text = when (position) {
-        0 -> resources.getString(R.string.licenses)
-        else -> resources.getString(R.string.changelog)
+        viewPager.setCurrentItem(tab.position, true)
+        tab.text =
+          when (position) {
+            0 -> resources.getString(R.string.licenses)
+            else -> resources.getString(R.string.changelog)
+          }
       }
-    }.attach()
+      .attach()
 
     tabLayout.addOnTabSelectedListener(
       object : TabLayout.OnTabSelectedListener {
@@ -289,7 +287,8 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
     // TODO would be good if we could be smarter about scroll distance and tweak the offset
     // thresholds to dynamically adjust. Case and point - don't want tablayout below to cover the
     // text before it's fully faded out
-    val parallaxMultiplier = (bannerContainer.layoutParams as CollapsingToolbarLayout.LayoutParams).parallaxMultiplier
+    val parallaxMultiplier =
+      (bannerContainer.layoutParams as CollapsingToolbarLayout.LayoutParams).parallaxMultiplier
 
     val interpolator = UiUtil.fastOutSlowInInterpolator
 
@@ -298,13 +297,15 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
     @Px val translatableHeight = appBarLayout.measuredHeight - finalAppBarHeight
     @Px val titleX = title.x
     @Px val titleInset = toolbar.titleMarginStart
-    @Px val desiredTitleX = if (Locale.getDefault().layoutDirection == View.LAYOUT_DIRECTION_RTL) {
-      // I have to subtract 2x to line this up correctly
-      // I have no idea why
-      toolbar.measuredWidth - titleInset - titleInset
-    } else {
-      titleInset
-    }
+    @Px
+    val desiredTitleX =
+      if (Locale.getDefault().layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+        // I have to subtract 2x to line this up correctly
+        // I have no idea why
+        toolbar.measuredWidth - titleInset - titleInset
+      } else {
+        titleInset
+      }
     @Px val xDelta = titleX - desiredTitleX
 
     // Y values are a bit trickier - these need to figure out where they would be on the larger
@@ -330,7 +331,8 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
        * same value as before, potentially causing measure/layout/draw thrashing if your logic
        * reacting to the offset changes *is* manipulating those child views (vicious cycle).
        */
-      appBarLayout.offsetChanges()
+      appBarLayout
+        .offsetChanges()
         .windowed(2, 1) // Buffer in pairs to compare the previous, skip none
         .filter { it[1] != it[0] }
         .map {
@@ -361,7 +363,8 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
           }
           if (percentage > TITLE_TRANSLATION_PERCENT) {
             // Start translating about halfway through (to give a staggered effect next to the alpha
-            // so they have time to fade out sufficiently). From here we just set translation offsets
+            // so they have time to fade out sufficiently). From here we just set translation
+            // offsets
             // to adjust the position naturally to give the appearance of settling in to the right
             // place.
             val adjustedPercentage = (1 - percentage) * (1.0F / TITLE_TRANSLATION_PERCENT)
@@ -375,7 +378,8 @@ class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
 }
 
 private enum class ScrollDirection {
-  UP, DOWN;
+  UP,
+  DOWN;
 
   companion object {
     fun resolve(current: Int, prev: Int): ScrollDirection {

@@ -59,64 +59,42 @@ import io.sweers.catchup.base.ui.versionInfo
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.PrecomputedTextSetterCompat
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import okhttp3.OkHttpClient
-import timber.log.Timber
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
+import kotlinx.coroutines.Dispatchers
+import okhttp3.OkHttpClient
+import timber.log.Timber
 
 @InstallIn(SingletonComponent::class)
 @Module
 abstract class ApplicationModule {
 
-  @Qualifier
-  @Retention(BINARY)
-  annotation class Initializers
+  @Qualifier @Retention(BINARY) annotation class Initializers
 
-  @Qualifier
-  @Retention(BINARY)
-  annotation class AsyncInitializers
+  @Qualifier @Retention(BINARY) annotation class AsyncInitializers
 
-  @Qualifier
-  @Retention(BINARY)
-  annotation class LazyDelegate
+  @Qualifier @Retention(BINARY) annotation class LazyDelegate
 
-  /**
-   * Provides AppConfig metadata contributors.
-   */
-  @Multibinds
-  abstract fun metadataContributors(): Set<AppConfigMetadataContributor>
+  /** Provides AppConfig metadata contributors. */
+  @Multibinds abstract fun metadataContributors(): Set<AppConfigMetadataContributor>
 
-  /**
-   * Provides initializers for app startup.
-   */
-  @Initializers
-  @Multibinds
-  abstract fun initializers(): Set<() -> Unit>
+  /** Provides initializers for app startup. */
+  @Initializers @Multibinds abstract fun initializers(): Set<() -> Unit>
 
-  /**
-   * Provides initializers for app startup that can be initialized async.
-   */
-  @AsyncInitializers
-  @Multibinds
-  abstract fun asyncInitializers(): Set<() -> Unit>
+  /** Provides initializers for app startup that can be initialized async. */
+  @AsyncInitializers @Multibinds abstract fun asyncInitializers(): Set<() -> Unit>
 
-  @Multibinds
-  abstract fun timberTrees(): Set<Timber.Tree>
+  @Multibinds abstract fun timberTrees(): Set<Timber.Tree>
 
   @Binds
   @ApplicationContext
   @Singleton
   abstract fun Application.provideApplicationContext(): Context
 
-  @Binds
-  @Singleton
-  abstract fun CatchUpPreferences.provideUiPreferences(): UiPreferences
+  @Binds @Singleton abstract fun CatchUpPreferences.provideUiPreferences(): UiPreferences
 
-  @Binds
-  @Singleton
-  abstract fun CatchUpAppConfig.bindAppConfig(): AppConfig
+  @Binds @Singleton abstract fun CatchUpAppConfig.bindAppConfig(): AppConfig
 
   companion object {
 
@@ -127,7 +105,8 @@ abstract class ApplicationModule {
      */
     @Provides
     @Singleton
-    internal fun @receiver:ApplicationContext Context.provideGeneralUseContext(): Context = ContextWrapper(this)
+    internal fun @receiver:ApplicationContext Context.provideGeneralUseContext(): Context =
+      ContextWrapper(this)
 
     @Provides
     @Singleton
@@ -151,8 +130,8 @@ abstract class ApplicationModule {
             TablePlugin.create(context),
             LinkifyPlugin.create(),
             TaskListPlugin.create(context)
-//            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
-          )
+            //            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
+            )
         )
         .build()
     }
@@ -168,17 +147,11 @@ abstract class ApplicationModule {
     @Initializers
     @IntoSet
     @Provides
-    fun coilInit(imageLoader: ImageLoader): () -> Unit = {
-      Coil.setImageLoader(imageLoader)
-    }
+    fun coilInit(imageLoader: ImageLoader): () -> Unit = { Coil.setImageLoader(imageLoader) }
 
-    @Qualifier
-    @Retention(BINARY)
-    private annotation class CoilOkHttpStack
+    @Qualifier @Retention(BINARY) private annotation class CoilOkHttpStack
 
-    @Qualifier
-    @Retention(BINARY)
-    annotation class IsLowRamDevice
+    @Qualifier @Retention(BINARY) annotation class IsLowRamDevice
 
     @IsLowRamDevice
     @Provides
@@ -187,7 +160,8 @@ abstract class ApplicationModule {
       // Prefer higher quality images unless we're on a low RAM device
       return context.getSystemService<ActivityManager>()?.let {
         ActivityManagerCompat.isLowRamDevice(it)
-      } ?: true
+      }
+        ?: true
     }
 
     @ExperimentalCoilApi

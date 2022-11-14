@@ -18,27 +18,36 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
-  id(deps.anvil.pluginId)
-  id("dev.zacsweers.moshix")
-}
-
-dependencies {
-  implementation(project(":libraries:util"))
-  implementation(deps.misc.okio)
-  implementation(deps.moshi.core)
-  implementation(deps.retrofit.core)
-  implementation(deps.retrofit.moshi)
-  implementation(deps.retrofit.rxJava3)
-  implementation(deps.okhttp.core)
-  implementation(deps.misc.moshiLazyAdapters)
-  implementation(deps.kotlin.datetime)
-
-  api(project(":service-api"))
-  api(deps.android.androidx.annotations)
-  api(deps.dagger.runtime)
-  api(deps.rx.java)
+  alias(libs.plugins.moshix)
+  alias(libs.plugins.sgp.base)
 }
 
 android {
   namespace = "io.sweers.catchup.service.medium"
+  buildFeatures {
+    androidResources = true
+  }
+}
+
+slack {
+  features {
+    dagger()
+  }
+}
+
+dependencies {
+  implementation(project(":libraries:util"))
+  implementation(libs.misc.okio)
+  implementation(libs.moshi.core)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.moshi)
+  implementation(libs.retrofit.rxJava3)
+  implementation(libs.okhttp.core)
+  implementation(libs.misc.moshiLazyAdapters)
+  implementation(libs.kotlin.datetime)
+
+  api(project(":service-api"))
+  api(libs.androidx.annotations)
+  api(libs.dagger.runtime)
+  api(libs.rx.java)
 }

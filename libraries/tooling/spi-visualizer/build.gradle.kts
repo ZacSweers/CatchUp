@@ -1,12 +1,13 @@
 plugins {
   `java-library`
+  alias(libs.plugins.sgp.base)
 }
 
 dependencies {
-  annotationProcessor(deps.auto.service)
-  compileOnly(deps.auto.service)
+  annotationProcessor(libs.auto.service)
+  compileOnly(libs.auto.service)
 
-  implementation(deps.dagger.runtime)
-  implementation(deps.dagger.spi)
-  implementation(deps.build.javapoet)
+  implementation(libs.dagger.runtime)
+  implementation(libs.dagger.spi)
+  implementation(libs.javapoet)
 }

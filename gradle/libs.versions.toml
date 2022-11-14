@@ -1,0 +1,244 @@
+[versions]
+agp = "8.0.0-alpha08"
+androidx-core = "1.9.0"
+emoji = "1.2.0-alpha03"
+fragment = "1.6.0-alpha03"
+androidTestSupport = "1.1.0-rc01"
+anvil = "2.4.2"
+apollo = "3.7.0"
+autodispose = "2.1.1"
+chuck = "1.1.0"
+coil = "2.2.2"
+compose = "1.4.0-alpha02"
+composeCompiler = "1.4.0-alpha02"
+composeCompilerKotlinVersion = "1.7.21"
+corbind = "1.6.0"
+coroutines = "1.6.4"
+crumb = "0.1.0"
+dagger = "2.44.2"
+detekt = "1.22.0-RC3"
+espresso = "3.1.0-alpha1"
+flipper = "0.174.0"
+hyperion = "0.9.24"
+inspector = "0.3.0"
+jdk = "17"
+kotlin = "1.7.21"
+kotpref = "2.13.2"
+ksp = "1.7.21-1.0.8"
+ktfmt = "0.41"
+leakcanary = "2.10"
+legacySupport = "28.0.0"
+lifecycle = "2.6.0-alpha03"
+markwon = "4.6.2"
+moshi = "1.14.0"
+moshix = "0.19.0"
+okhttp = "5.0.0-alpha.10"
+preferences = "1.2.0"
+retrofit = "2.9.0"
+room = "2.5.0-beta02"
+sgp = "0.3.3"
+spotless = "6.11.0"
+# https://github.com/Tickaroo/tikxml/issues/114
+tikxml = "0.8.13"
+
+[plugins]
+anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
+agp-application = { id = "com.android.application", version.ref = "agp" }
+agp-library = { id = "com.android.library", version.ref = "agp" }
+apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
+bugsnag = { id = "com.bugsnag.android.gradle", version = "7.4.0" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.6.0" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+doctor = { id = "com.osacky.doctor", version = "0.8.1" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+licensee = { id = "app.cash.licensee", version = "1.6.0" }
+moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
+playPublisher = { id = "com.github.triplet.play", version = "3.7.0" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.2.0" }
+retry = { id = "org.gradle.test-retry", version = "1.4.1" }
+sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
+sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+versions = { id = "com.github.ben-manes.versions", version = "0.44.0" }
+
+[libraries]
+autodispose = { module = "com.uber.autodispose:autodispose", version.ref = "autodispose" }
+androidx-annotations = "androidx.annotation:annotation:1.5.0"
+androidx-activity = "androidx.activity:activity:1.7.0-alpha02"
+androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha01"
+
+androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
+androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+
+androidx-constraintLayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha04"
+androidx-customTabs = "androidx.browser:browser:1.5.0-alpha01"
+androidx-design = "com.google.android.material:material:1.8.0-alpha02"
+androidx-drawerLayout = "androidx.drawerlayout:drawerlayout:1.2.0-alpha01"
+
+androidx-emoji = { module = "androidx.emoji:emoji", version.ref = "emoji" }
+androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
+
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
+androidx-fragmentKtx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
+
+androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
+
+androidx-viewPager2 = "androidx.viewpager2:viewpager2:1.1.0-beta01"
+androidx-swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
+androidx-palette = "androidx.palette:palette:1.0.0"
+androidx-paletteKtx = "androidx.palette:palette-ktx:1.0.0"
+
+androidx-preference = { module = "androidx.preference:preference", version.ref = "preferences" }
+androidx-preferenceKtx = { module = "androidx.preference:preference-ktx", version.ref = "preferences" }
+androidx-recyclerView = "androidx.recyclerview:recyclerview:1.1.0-beta03"
+
+androidx-lifecycle-apt = { module = "androidx.lifecycle:lifecycle-compiler", version.ref = "lifecycle" }
+androidx-lifecycle-extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
+androidx-lifecycle-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+
+androidx-room-apt = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-rxJava3 = { module = "androidx.room:room-rxjava3", version.ref = "room" }
+
+androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
+androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }
+androidx-compose-materialIconsExtended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
+androidx-compose-constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha04"
+androidx-compose-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
+androidx-compose-rxjava3 = { module = "androidx.compose.runtime:runtime-rxjava3", version.ref = "compose" }
+
+firebase-core = "com.google.firebase:firebase-core:21.1.1"
+firebase-config = "com.google.firebase:firebase-config:18.0.0"
+firebase-database = "com.google.firebase:firebase-database:20.1.0"
+firebase-perf = "com.google.firebase:firebase-perf:18.0.0"
+
+anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
+anvil-compiler = { module = "com.squareup.anvil:compiler", version.ref = "anvil" }
+
+apollo-httpcache = { module = "com.apollographql.apollo3:apollo-http-cache", version.ref = "apollo" }
+apollo-normalizedCache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
+apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
+
+auto-common = "com.google.auto:auto-common:1.0"
+auto-service = "com.google.auto.service:auto-service:1.0.1"
+
+autodispose-core = { module = "com.uber.autodispose2:autodispose", version.ref = "autodispose" }
+autodispose-android = { module = "com.uber.autodispose2:autodispose-android", version.ref = "autodispose" }
+autodispose-androidxLifecycle = { module = "com.uber.autodispose2:autodispose-androidx-lifecycle", version.ref = "autodispose" }
+autodispose-lifecycle = { module = "com.uber.autodispose2:autodispose-lifecycle", version.ref = "autodispose" }
+
+coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:1.1.6"
+javapoet = "com.squareup:javapoet:1.13.0"
+
+coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
+coil-default = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
+
+corbind = { module = "ru.ldralighieri.corbind:corbind", version.ref = "corbind" }
+corbind-core = { module = "ru.ldralighieri.corbind:corbind-core", version.ref = "corbind" }
+corbind-material = { module = "ru.ldralighieri.corbind:corbind-material", version.ref = "corbind" }
+
+crumb-annotations = { module = "com.uber.crumb:crumb-annotations", version.ref = "crumb" }
+crumb-compiler = { module = "com.uber.crumb:crumb-compiler", version.ref = "crumb" }
+crumb-compilerApi = { module = "com.uber.crumb:crumb-compiler-api", version.ref = "crumb" }
+
+dagger-hilt-apt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger" }
+dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
+dagger-apt-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }
+
+gson = "com.google.gson:gson:2.9.0"
+
+kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlin-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlin-coroutinesRx = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3", version.ref = "coroutines" }
+kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
+kotlin-metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0"
+kotlin-poet = "com.squareup:kotlinpoet:1.12.0"
+
+markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
+markwon-extStrikethrough = { module = "io.noties.markwon:ext-strikethrough", version.ref = "markwon" }
+markwon-extTables = { module = "io.noties.markwon:ext-tables", version.ref = "markwon" }
+markwon-extTasklist = { module = "io.noties.markwon:ext-tasklist", version.ref = "markwon" }
+markwon-html = { module = "io.noties.markwon:html", version.ref = "markwon" }
+markwon-image = { module = "io.noties.markwon:image", version.ref = "markwon" }
+markwon-imageCoil = { module = "io.noties.markwon:image-coil", version.ref = "markwon" }
+markwon-linkify = { module = "io.noties.markwon:linkify", version.ref = "markwon" }
+markwon-syntaxHighlight = { module = "io.noties.markwon:syntax-highlight", version.ref = "markwon" }
+
+misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakcanary-object-watcher-android", version.ref = "leakcanary" }
+misc-bugsnag = "com.bugsnag:bugsnag-android:5.28.2"
+misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
+
+misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
+misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
+misc-debug-soLoader = "com.facebook.soloader:soloader:0.10.4"
+misc-debug-guava = "com.google.guava:guava:31.1-jre"
+misc-debug-madge = "com.jakewharton.madge:madge:1.1.4"
+misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
+misc-debug-scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
+misc-debug-telescope = "com.mattprecious.telescope:telescope:2.2.0"
+
+misc-flick = "me.saket:flick:1.7.0"
+misc-gestureViews = "com.alexvasilkov:gesture-views:2.2.0"
+misc-inboxRecyclerView = "me.saket:inboxrecyclerview:3.0.0"
+misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
+misc-jsoup = "org.jsoup:jsoup:1.15.3"
+misc-jsr250 = "javax.annotation:jsr250-api:1.0"
+misc-jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
+misc-kotpref = { module = "com.chibatching.kotpref:kotpref", version.ref = "kotpref" }
+misc-kotprefEnum = { module = "com.chibatching.kotpref:enum-support", version.ref = "kotpref" }
+misc-lottie = "com.airbnb.android:lottie:5.2.0"
+misc-moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
+misc-okio = "com.squareup.okio:okio:3.2.0"
+misc-recyclerViewAnimators = "jp.wasabeef:recyclerview-animators:4.0.2"
+misc-tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.3"
+misc-ticktock = "dev.zacsweers.ticktock:ticktock-android-lazyzonerules:1.2.0-2021e"
+misc-timber = "com.jakewharton.timber:timber:5.0.1"
+misc-unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"
+
+moshi-adapters = { module = "com.squareup.moshi:moshi-adapters", version.ref = "moshi" }
+moshi-core = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
+moshi-shimo = "com.jakewharton.moshi:shimo:0.1.1"
+moshi-moshix-sealed-runtime = { module = "dev.zacsweers.moshix:moshi-sealed-runtime", version.ref = "moshix" }
+
+okhttp-bom = { module = "com.squareup.okhttp3:okhttp-bom", version.ref = "okhttp" }
+okhttp-core = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+okhttp-debug-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
+okhttp-webSockets = { module = "com.squareup.okhttp3:okhttp-ws", version.ref = "okhttp" }
+
+retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-debug-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofit" }
+retrofit-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
+retrofit-rxJava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "retrofit" }
+
+rx-android = "io.reactivex.rxjava3:rxandroid:3.0.2"
+rx-dogTag = "com.uber.rxdogtag2:rxdogtag:2.0.1"
+rx-dogTagAutoDispose = "com.uber.rxdogtag2:rxdogtag-autodispose:2.0.1"
+rx-java = "io.reactivex.rxjava3:rxjava:3.1.5"
+rx-relay = "com.jakewharton.rxrelay3:rxrelay:3.0.1"
+
+tikxml-annotation = { module = "com.tickaroo.tikxml:annotation", version.ref = "tikxml" }
+tikxml-apt = { module = "com.tickaroo.tikxml:processor", version.ref = "tikxml" }
+tikxml-core = { module = "com.tickaroo.tikxml:core", version.ref = "tikxml" }
+tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", version.ref = "tikxml" }
+tikxml-retrofit = { module = "com.tickaroo.tikxml:retrofit-converter", version.ref = "tikxml" }
+
+test-android-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+test-android-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espresso" }
+test-android-espresso-web = { module = "androidx.test.espresso:espresso-web", version.ref = "espresso" }
+test-android-runner = { module = "androidx.test:runner", version.ref = "androidTestSupport" }
+test-android-rules = { module = "androidx.test:rules", version.ref = "androidTestSupport" }
+
+test-junit = "junit:junit:4.13.2"
+test-truth = "com.google.truth:truth:1.1.3"

@@ -78,12 +78,15 @@ internal class LogAdapter(context: Context) : BindableAdapter<Entry>(context) {
   companion object {
 
     @DrawableRes
-    fun backgroundForLevel(level: Int) = when (level) {
-      VERBOSE, Log.DEBUG -> R.color.debug_log_accent_debug
-      INFO -> R.color.debug_log_accent_info
-      WARN -> R.color.debug_log_accent_warn
-      ERROR, Log.ASSERT -> R.color.debug_log_accent_error
-      else -> R.color.debug_log_accent_unknown
-    }
+    fun backgroundForLevel(level: Int) =
+      when (level) {
+        VERBOSE,
+        Log.DEBUG -> R.color.debug_log_accent_debug
+        INFO -> R.color.debug_log_accent_info
+        WARN -> R.color.debug_log_accent_warn
+        ERROR,
+        Log.ASSERT -> R.color.debug_log_accent_error
+        else -> R.color.debug_log_accent_unknown
+      }
   }
 }

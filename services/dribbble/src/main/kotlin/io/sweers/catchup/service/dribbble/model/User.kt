@@ -15,9 +15,7 @@
  */
 package io.sweers.catchup.service.dribbble.model
 
-/**
- * Models a dribbble user
- */
+/** Models a dribbble user */
 data class User(
   val avatarUrl: String,
   val htmlUrl: String,

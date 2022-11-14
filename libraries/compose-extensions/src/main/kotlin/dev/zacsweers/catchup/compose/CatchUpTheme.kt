@@ -26,30 +26,25 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 
 @Composable
-fun CatchUpTheme(
-  content: @Composable () -> Unit
-) {
-  val colors = if (isSystemInDarkTheme()) {
-    darkColors(
-      primary = Color(0xff343434),
-      primaryVariant = Color(0xffc10000),
-      secondary = Color(0xffFC4D29),
-      onPrimary = Color.White
-    )
-  } else {
-    lightColors(
-      primary = Color(0xfff9f9f9),
-      primaryVariant = Color(0xff343434),
-      secondary = Color(0xffFC4D29),
-      secondaryVariant = Color(0xffc10000),
-      onPrimary = Color.Black
-    )
-  }
+fun CatchUpTheme(content: @Composable () -> Unit) {
+  val colors =
+    if (isSystemInDarkTheme()) {
+      darkColors(
+        primary = Color(0xff343434),
+        primaryVariant = Color(0xffc10000),
+        secondary = Color(0xffFC4D29),
+        onPrimary = Color.White
+      )
+    } else {
+      lightColors(
+        primary = Color(0xfff9f9f9),
+        primaryVariant = Color(0xff343434),
+        secondary = Color(0xffFC4D29),
+        secondaryVariant = Color(0xffc10000),
+        onPrimary = Color.Black
+      )
+    }
   val fontFamily = FontFamily(fonts = listOf(Font(catchup.ui.core.R.font.nunito)))
   val typography = Typography(defaultFontFamily = fontFamily)
-  MaterialTheme(
-    colors = colors,
-    typography = typography,
-    content = content
-  )
+  MaterialTheme(colors = colors, typography = typography, content = content)
 }

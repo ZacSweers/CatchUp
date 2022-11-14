@@ -16,4 +16,5 @@
 package io.sweers.catchup.service.api
 
 abstract class ServiceIndex private constructor()
+
 abstract class ServiceMetaIndex private constructor()

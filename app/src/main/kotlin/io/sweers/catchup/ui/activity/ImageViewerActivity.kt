@@ -59,15 +59,15 @@ import io.sweers.catchup.ui.immersive.SystemUiHelper
 import io.sweers.catchup.util.setContentView
 import io.sweers.catchup.util.showIf
 import io.sweers.catchup.util.toggleVisibility
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.min
+import kotlin.math.sin
 import me.saket.flick.ContentSizeProvider2
 import me.saket.flick.FlickCallbacks
 import me.saket.flick.FlickDismissLayout
 import me.saket.flick.FlickGestureListener
 import me.saket.flick.InterceptResult
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.min
-import kotlin.math.sin
 
 class ImageViewerActivity : AppCompatActivity() {
 
@@ -92,10 +92,14 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private lateinit var binding: ActivityImageViewerBinding
-  private val rootLayout get() = binding.imageviewerRoot
-  private val imageView get() = binding.image
-  private val sourceButton get() = binding.imageSource
-  private val flickDismissLayout get() = binding.imageviewerImageContainer
+  private val rootLayout
+    get() = binding.imageviewerRoot
+  private val imageView
+    get() = binding.image
+  private val sourceButton
+    get() = binding.imageSource
+  private val flickDismissLayout
+    get() = binding.imageviewerImageContainer
 
   private lateinit var systemUiHelper: SystemUiHelper
   private lateinit var activityBackgroundDrawable: Drawable
@@ -168,39 +172,40 @@ class ImageViewerActivity : AppCompatActivity() {
       isTransitionEnded = true
     }
 
-    val request = ImageRequest.Builder(this).data(url).apply {
-      cacheKey?.let(this::memoryCacheKey)
-      precision(Precision.EXACT)
-      size(ViewSizeResolver(imageView))
-      scale(Scale.FILL)
+    val request =
+      ImageRequest.Builder(this)
+        .data(url)
+        .apply {
+          cacheKey?.let(this::memoryCacheKey)
+          precision(Precision.EXACT)
+          size(ViewSizeResolver(imageView))
+          scale(Scale.FILL)
 
-      // Don't cache this to avoid pushing other bitmaps out of the cache.
-      memoryCachePolicy(CachePolicy.READ_ONLY)
+          // Don't cache this to avoid pushing other bitmaps out of the cache.
+          memoryCachePolicy(CachePolicy.READ_ONLY)
 
-      // Crossfade in the higher res version when it arrives
-      // ...hopefully
-      crossfade(true)
+          // Crossfade in the higher res version when it arrives
+          // ...hopefully
+          crossfade(true)
 
-      // Adding a 1px transparent border improves anti-aliasing
-      // when the image rotates while being dragged.
-      transformations(
-        CoilPaddingTransformation(
-          paddingPx = 1F,
-          paddingColor = Color.TRANSPARENT
-        )
-      )
+          // Adding a 1px transparent border improves anti-aliasing
+          // when the image rotates while being dragged.
+          transformations(
+            CoilPaddingTransformation(paddingPx = 1F, paddingColor = Color.TRANSPARENT)
+          )
 
-      target(
-        onStart = imageView::setImageDrawable,
-        onSuccess = {
-          if (isTransitionEnded) {
-            imageView.setImageDrawable(it)
-          } else {
-            pendingImage = it
-          }
+          target(
+            onStart = imageView::setImageDrawable,
+            onSuccess = {
+              if (isTransitionEnded) {
+                imageView.setImageDrawable(it)
+              } else {
+                pendingImage = it
+              }
+            }
+          )
         }
-      )
-    }.build()
+        .build()
     request.context.imageLoader.enqueue(request)
 
     activityBackgroundDrawable = rootLayout.background
@@ -209,9 +214,7 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun setResultAndFinish() {
-    val resultData = Intent().apply {
-      putExtra(RETURN_IMAGE_ID, id)
-    }
+    val resultData = Intent().apply { putExtra(RETURN_IMAGE_ID, id) }
     setResult(Activity.RESULT_OK, resultData)
     finishAfterTransition()
   }
@@ -223,38 +226,41 @@ class ImageViewerActivity : AppCompatActivity() {
       maxOf(dip(240), imageView.zoomedImageHeight.toInt())
     }
 
-    val callbacks = object : FlickCallbacks {
-      @SuppressLint("NewApi")
-      override fun onFlickDismiss(flickAnimationDuration: Long) {
-        window.sharedElementReturnTransition.let { originalTransition ->
-          window.sharedElementReturnTransition = TransitionSet()
-            .addTransition(originalTransition)
-            .addTransition(FlickDismissRotate(imageView, flickDismissLayout))
-            .addTarget(R.id.image)
-            .setDuration(originalTransition.duration)
-            .setInterpolator(originalTransition.interpolator)
-        }
-        if (id == null) {
-          animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, flickAnimationDuration) {
-            finish()
+    val callbacks =
+      object : FlickCallbacks {
+        @SuppressLint("NewApi")
+        override fun onFlickDismiss(flickAnimationDuration: Long) {
+          window.sharedElementReturnTransition.let { originalTransition ->
+            window.sharedElementReturnTransition =
+              TransitionSet()
+                .addTransition(originalTransition)
+                .addTransition(FlickDismissRotate(imageView, flickDismissLayout))
+                .addTarget(R.id.image)
+                .setDuration(originalTransition.duration)
+                .setInterpolator(originalTransition.interpolator)
           }
-        } else {
-          animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, flickAnimationDuration)
-          setResultAndFinish()
+          if (id == null) {
+            animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, flickAnimationDuration) {
+              finish()
+            }
+          } else {
+            animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, flickAnimationDuration)
+            setResultAndFinish()
+          }
+        }
+
+        override fun onMove(@FloatRange(from = -1.0, to = 1.0) moveRatio: Float) {
+          updateBackgroundDimmingAlpha(abs(moveRatio))
+          sourceButton.showIf(moveRatio == 0f, animate = true)
         }
       }
 
-      override fun onMove(@FloatRange(from = -1.0, to = 1.0) moveRatio: Float) {
-        updateBackgroundDimmingAlpha(abs(moveRatio))
-        sourceButton.showIf(moveRatio == 0f, animate = true)
-      }
-    }
-
-    val gestureListener = FlickGestureListener(
-      context = this,
-      contentSizeProvider = contentSizeProvider,
-      flickCallbacks = callbacks
-    )
+    val gestureListener =
+      FlickGestureListener(
+        context = this,
+        contentSizeProvider = contentSizeProvider,
+        flickCallbacks = callbacks
+      )
 
     // Block flick gestures if the image can pan further.
     gestureListener.gestureInterceptor = { scrollY ->
@@ -284,9 +290,7 @@ class ImageViewerActivity : AppCompatActivity() {
         activityBackgroundDrawable.alpha = animation.animatedValue as Int
         sourceButton.imageAlpha = animation.animatedValue as Int
       }
-      onEnd?.let {
-        addListener(onEnd = it)
-      }
+      onEnd?.let { addListener(onEnd = it) }
       start()
     }
   }
@@ -303,11 +307,8 @@ class ImageViewerActivity : AppCompatActivity() {
 }
 
 private fun Context.dip(units: Int): Int {
-  return TypedValue.applyDimension(
-    COMPLEX_UNIT_DIP,
-    units.toFloat(),
-    resources.displayMetrics
-  ).toInt()
+  return TypedValue.applyDimension(COMPLEX_UNIT_DIP, units.toFloat(), resources.displayMetrics)
+    .toInt()
 }
 
 /** Adds a solid padding around an image. */
@@ -327,11 +328,8 @@ private class CoilPaddingTransformation(
     val targetWidth = input.width + paddingPx * 2F
     val targetHeight = input.height + paddingPx * 2F
 
-    val bitmapWithPadding = createBitmap(
-      targetWidth.toInt(),
-      targetHeight.toInt(),
-      Bitmap.Config.ARGB_8888
-    )
+    val bitmapWithPadding =
+      createBitmap(targetWidth.toInt(), targetHeight.toInt(), Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmapWithPadding)
 
     val paint = Paint()
@@ -348,18 +346,18 @@ private class CoilPaddingTransformation(
  * rotation ourselves.
  *
  * - Rotation is because the [imageView]'s rotation is only relative to its parent, but in this case
- *   [FlickDismissLayout] is its parent and _it_ is the one doing the rotation. So [imageView]'s
- *   rotation is, for all intents and purposes, zero! To fix this - we manually account for the
- *   parent's rotation, and then reverse-rotate [imageView] in the return transition back the equal
- *   and opposite direction. This gives the effect of it "straightening" on the way back to the grid
- *   view it resides in on the previous activity.
+ * [FlickDismissLayout] is its parent and _it_ is the one doing the rotation. So [imageView]'s
+ * rotation is, for all intents and purposes, zero! To fix this - we manually account for the
+ * parent's rotation, and then reverse-rotate [imageView] in the return transition back the equal
+ * and opposite direction. This gives the effect of it "straightening" on the way back to the grid
+ * view it resides in on the previous activity.
  * - Scale is because when the [imageView] is rotated, it has a larger bounded box than its actual
- *   reported dimensions. This means that while it reports itself as having a scale factor of 1,
- *   the actual transition will use the bounded box size as "1", leaving the final target
- *   proportionately bigger than the actual target end size. To fix this, we manually calculate the
- *   bounded box and use it to infer the real target scale, where the width is the percentage of the
- *   bounded box width (and same for height). This seems a bit weird, but it actually offsets the
- *   default size it ends with and scales it down to what it actually should be sized at.
+ * reported dimensions. This means that while it reports itself as having a scale factor of 1, the
+ * actual transition will use the bounded box size as "1", leaving the final target proportionately
+ * bigger than the actual target end size. To fix this, we manually calculate the bounded box and
+ * use it to infer the real target scale, where the width is the percentage of the bounded box width
+ * (and same for height). This seems a bit weird, but it actually offsets the default size it ends
+ * with and scales it down to what it actually should be sized at.
  *
  * I should email Mrs. Huebner and thank her for teaching me geometry in high school.
  */

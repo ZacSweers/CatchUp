@@ -22,9 +22,7 @@ import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
-/**
- * GitHub API does not have /trending endpoints so we have to do gross things :(
- */
+/** GitHub API does not have /trending endpoints so we have to do gross things :( */
 internal object GitHubTrendingParser {
   private val NUMBER_PATTERN = "\\d+".toRegex()
   private fun String.removeCommas() = replace(",", "")
@@ -34,64 +32,66 @@ internal object GitHubTrendingParser {
     return Jsoup.parse(fullBody, ENDPOINT)
       .getElementsByClass("Box-row")
       .mapNotNull(::parseTrendingItem)
-      .ifEmpty {
-        error("List was empty! Usually this is a sign that parsing failed.")
-      }
+      .ifEmpty { error("List was empty! Usually this is a sign that parsing failed.") }
   }
 
   private fun parseTrendingItem(element: Element): TrendingItem? {
     // /creativetimofficial/material-dashboard
-    val authorAndName = element.select("h1 > a")
-      .attr("href")
-      .toString()
-      .removePrefix("/")
-      .trimEnd()
-      .split("/")
-      .let { Pair(it[0], it[1]) }
+    val authorAndName =
+      element.select("h1 > a").attr("href").toString().removePrefix("/").trimEnd().split("/").let {
+        Pair(it[0], it[1])
+      }
     val (author, repoName) = authorAndName
     val url = "$ENDPOINT/${authorAndName.first}/${authorAndName.second}"
     val description = element.select("p").text()
 
     val language = element.select("[itemprop=\"programmingLanguage\"]").text()
     // "background-color:#563d7c;"
-    val languageColor = element.select(".repo-language-color")
-      .firstOrNull()
-      ?.attr("style")
-      ?.removePrefix("background-color:")
-      ?.trimStart() // Thanks for the leading space, GitHub
-      ?.let {
-        val colorSubstring = it.removePrefix("#")
-        if (colorSubstring.length == 3) {
-          // Three digit hex, convert to 6 digits for Color.parseColor()
-          "#${colorSubstring.replace(".".toRegex(), "$0$0")}"
-        } else {
-          it
+    val languageColor =
+      element
+        .select(".repo-language-color")
+        .firstOrNull()
+        ?.attr("style")
+        ?.removePrefix("background-color:")
+        ?.trimStart() // Thanks for the leading space, GitHub
+        ?.let {
+          val colorSubstring = it.removePrefix("#")
+          if (colorSubstring.length == 3) {
+            // Three digit hex, convert to 6 digits for Color.parseColor()
+            "#${colorSubstring.replace(".".toRegex(), "$0$0")}"
+          } else {
+            it
+          }
         }
-      }
 
     // "3,441" stars, forks
-    val counts = element.select(".Link--muted.d-inline-block.mr-3")
-      .asSequence()
-      .map(Element::text)
-      .map { it.removeCommas() }
-      .map(String::toInt)
-      .toList()
+    val counts =
+      element
+        .select(".Link--muted.d-inline-block.mr-3")
+        .asSequence()
+        .map(Element::text)
+        .map { it.removeCommas() }
+        .map(String::toInt)
+        .toList()
 
     val stars = counts.getOrNull(0) ?: 0
     val forks = counts.getOrNull(1)
 
     // "691 stars today"
-    val starsToday = element.select(".f6.color-text-secondary.mt-2 > span:last-child")
-      .firstOrNull()
-      ?.text()
-      ?.removeCommas()
-      ?.let {
-        NUMBER_PATTERN.find(it)?.groups?.firstOrNull()?.value?.toInt() ?: run {
-          d { "$authorAndName didn't have today" }
-          null
+    val starsToday =
+      element
+        .select(".f6.color-text-secondary.mt-2 > span:last-child")
+        .firstOrNull()
+        ?.text()
+        ?.removeCommas()
+        ?.let {
+          NUMBER_PATTERN.find(it)?.groups?.firstOrNull()?.value?.toInt()
+            ?: run {
+              d { "$authorAndName didn't have today" }
+              null
+            }
         }
-      }
-      ?: 0
+        ?: 0
 
     return TrendingItem(
       author = author,

@@ -26,9 +26,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.use
 import io.sweers.catchup.R
 
-/**
- * An extension to [ImageView] which has a foreground drawable.
- */
+/** An extension to [ImageView] which has a foreground drawable. */
 open class ForegroundImageView(context: Context, attrs: AttributeSet) :
   AppCompatImageView(context, attrs) {
 
@@ -70,8 +68,8 @@ open class ForegroundImageView(context: Context, attrs: AttributeSet) :
   }
 
   /**
-   * Returns the drawable used as the foreground of this view. The
-   * foreground drawable, if non-null, is always drawn on top of the children.
+   * Returns the drawable used as the foreground of this view. The foreground drawable, if non-null,
+   * is always drawn on top of the children.
    *
    * @return A Drawable or null if no foreground was set.
    */

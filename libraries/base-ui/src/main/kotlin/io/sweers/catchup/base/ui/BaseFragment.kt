@@ -31,13 +31,10 @@ import io.reactivex.rxjava3.core.CompletableSource
 abstract class BaseFragment<T : ViewBinding> : Fragment(), ScopeProvider, BackpressHandler {
 
   companion object {
-    private val DAY_MODE_CONF = Configuration().apply {
-      uiMode = Configuration.UI_MODE_NIGHT_NO
-    }
+    private val DAY_MODE_CONF = Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
   }
 
-  @Suppress("LeakingThis")
-  private lateinit var lifecycleProvider: ScopeProvider
+  @Suppress("LeakingThis") private lateinit var lifecycleProvider: ScopeProvider
   protected lateinit var binding: T
   protected var dayOnlyContext: Context? = null
 
@@ -58,10 +55,7 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), ScopeProvider, Backpr
   }
 
   // TODO remove when compose fragment is separated
-  protected open fun initView(
-    inflater: LayoutInflater,
-    container: ViewGroup?
-  ): View {
+  protected open fun initView(inflater: LayoutInflater, container: ViewGroup?): View {
     binding = bindingInflater(inflater, container, false)
     return binding.root
   }

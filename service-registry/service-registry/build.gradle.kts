@@ -18,7 +18,16 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
-  id(deps.anvil.pluginId)
+  alias(libs.plugins.anvil)
+  alias(libs.plugins.sgp.base)
+}
+
+
+android {
+  namespace = "io.sweers.catchup.service.registry"
+  buildFeatures {
+    androidResources = true
+  }
 }
 
 anvil {
@@ -27,8 +36,7 @@ anvil {
 
 dependencies {
   implementation(project(":service-registry:service-registry-annotations"))
-  implementation(deps.kotlin.stdlib.jdk7)
-  kapt(deps.dagger.apt.compiler)
+  kapt(libs.dagger.apt.compiler)
 
   api(project(":services:hackernews"))
   api(project(":services:reddit"))
@@ -42,7 +50,4 @@ dependencies {
 //  api(project(":services:newsapi"))
   api(project(":services:unsplash"))
   api(project(":services:uplabs"))
-}
-android {
-  namespace = "io.sweers.catchup.service.registry"
 }

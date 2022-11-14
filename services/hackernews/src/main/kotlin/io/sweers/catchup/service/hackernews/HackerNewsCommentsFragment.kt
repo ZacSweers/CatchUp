@@ -45,14 +45,15 @@ import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Su
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.show
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import javax.inject.Inject
 
-class HackerNewsCommentsFragment @Inject constructor(
-  viewModelFactoryInstantiator: ViewModelProviderFactoryInstantiator
-) : Fragment(), ScrollableContent {
+class HackerNewsCommentsFragment
+@Inject
+constructor(viewModelFactoryInstantiator: ViewModelProviderFactoryInstantiator) :
+  Fragment(), ScrollableContent {
 
   companion object {
     const val ARG_DETAIL_KEY = "detailKey"
@@ -60,8 +61,10 @@ class HackerNewsCommentsFragment @Inject constructor(
   }
 
   private lateinit var binding: HackerNewsStoryBinding
-  private val list get() = binding.list
-  private val progress get() = binding.progress
+  private val list
+    get() = binding.list
+  private val progress
+    get() = binding.progress
 
   private val viewModel: HackerNewsCommentsViewModel by viewModels {
     viewModelFactoryInstantiator.create(this)
@@ -103,11 +106,9 @@ class HackerNewsCommentsFragment @Inject constructor(
                 onSuccess = { _, source ->
                   val bitmap = (source.drawable as BitmapDrawable).bitmap
                   viewLifecycleOwner.lifecycleScope.launch paletteLaunch@{
-                    val swatch = Palette.from(bitmap)
-                      .clearFilters()
-                      .generateAsync()
-                      ?.dominantSwatch
-                      ?: return@paletteLaunch
+                    val swatch =
+                      Palette.from(bitmap).clearFilters().generateAsync()?.dominantSwatch
+                        ?: return@paletteLaunch
                     binding.urlTextContainer.background = ColorDrawable(swatch.rgb)
                     binding.urlTitle.setTextColor(swatch.titleTextColor)
                     binding.urlUrl.setTextColor(swatch.bodyTextColor)
@@ -124,12 +125,13 @@ class HackerNewsCommentsFragment @Inject constructor(
             binding.score.text = story.score.toString()
             binding.link.text = story.title
             binding.author.text = story.by
-            binding.time.text = DateUtils.getRelativeTimeSpanString(
-              story.realTime().toEpochMilliseconds(),
-              System.currentTimeMillis(),
-              0L,
-              DateUtils.FORMAT_ABBREV_ALL
-            )
+            binding.time.text =
+              DateUtils.getRelativeTimeSpanString(
+                story.realTime().toEpochMilliseconds(),
+                System.currentTimeMillis(),
+                0L,
+                DateUtils.FORMAT_ABBREV_ALL
+              )
             val adapter = CommentsAdapter(comments)
             list.adapter = adapter
             val layoutManager = LinearLayoutManager(view.context)
@@ -147,9 +149,8 @@ class HackerNewsCommentsFragment @Inject constructor(
     return list.canScrollVertically(directionInt)
   }
 
-  private class CommentsAdapter(
-    private val comments: List<HackerNewsComment>
-  ) : RecyclerView.Adapter<CommentViewHolder>() {
+  private class CommentsAdapter(private val comments: List<HackerNewsComment>) :
+    RecyclerView.Adapter<CommentViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
       return CommentViewHolder(
         StoryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -164,24 +165,25 @@ class HackerNewsCommentsFragment @Inject constructor(
       val comment = comments[position]
       holder.binding.depth.visibility = View.GONE
       holder.binding.commentAuthor.text = comment.by
-      holder.binding.commentTimeAgo.text = DateUtils.getRelativeTimeSpanString(
-        comment.realTime().toEpochMilliseconds(),
-        System.currentTimeMillis(),
-        0L,
-        DateUtils.FORMAT_ABBREV_ALL
-      )
-      holder.binding.commentText.text = try {
-        comment.text.let {
-          @Suppress("DEPRECATION") // I don't know what I'm supposed to replace this with?
-          Html.fromHtml(it).trimEnd()
+      holder.binding.commentTimeAgo.text =
+        DateUtils.getRelativeTimeSpanString(
+          comment.realTime().toEpochMilliseconds(),
+          System.currentTimeMillis(),
+          0L,
+          DateUtils.FORMAT_ABBREV_ALL
+        )
+      holder.binding.commentText.text =
+        try {
+          comment.text.let {
+            @Suppress("DEPRECATION") // I don't know what I'm supposed to replace this with?
+            Html.fromHtml(it).trimEnd()
+          }
+        } catch (e: NullPointerException) {
+          "This kills the html: ${comment.text}"
         }
-      } catch (e: NullPointerException) {
-        "This kills the html: ${comment.text}"
-      }
     }
   }
 
-  private class CommentViewHolder(
-    val binding: StoryItemBinding
-  ) : RecyclerView.ViewHolder(binding.root)
+  private class CommentViewHolder(val binding: StoryItemBinding) :
+    RecyclerView.ViewHolder(binding.root)
 }

@@ -59,6 +59,10 @@ import io.sweers.catchup.edu.id
 import io.sweers.catchup.flowFor
 import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.SECONDS
+import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -66,17 +70,15 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.SECONDS
-import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 /**
- * An [ViewContainer] for debug builds which wraps a sliding drawer on the right that holds
- * all of the debug information and settings.
+ * An [ViewContainer] for debug builds which wraps a sliding drawer on the right that holds all of
+ * the debug information and settings.
  */
 @ActivityScoped
-internal class DebugViewContainer @Inject constructor(
+internal class DebugViewContainer
+@Inject
+constructor(
   private val bugReportLens: BugReportLens,
   private val lumberYard: LumberYard,
   private val lazyOkHttpClient: Lazy<OkHttpClient>,
@@ -91,11 +93,17 @@ internal class DebugViewContainer @Inject constructor(
   private val scalpelWireframeEnabled = debugPreferences.flowFor { ::scalpelWireframeDrawer }
 
   override fun forActivity(activity: BaseActivity): ViewGroup {
-    val viewHolder = DebugActivityFrameBinding.inflate(LayoutInflater.from(activity), activity.findViewById(android.R.id.content), false)
+    val viewHolder =
+      DebugActivityFrameBinding.inflate(
+        LayoutInflater.from(activity),
+        activity.findViewById(android.R.id.content),
+        false
+      )
     activity.setContentView(viewHolder.root)
 
     val drawerContext = ContextThemeWrapper(activity, R.style.DebugDrawer)
-    val debugView = DebugView(drawerContext, null, lazyOkHttpClient, lumberYard, debugPreferences, appConfig)
+    val debugView =
+      DebugView(drawerContext, null, lazyOkHttpClient, lumberYard, debugPreferences, appConfig)
     viewHolder.debugDrawer.addView(debugView)
 
     // Set up the contextual actions to watch views coming in and out of the content area.
@@ -104,7 +112,8 @@ internal class DebugViewContainer @Inject constructor(
     //    viewHolder.content.setOnHierarchyChangeListener(
     //        HierarchyTreeChangeListener.wrap(contextualActions));
 
-    //    viewHolder.drawerLayout.setDrawerShadow(R.drawable.debug_drawer_shadow, GravityCompat.END);
+    //    viewHolder.drawerLayout.setDrawerShadow(R.drawable.debug_drawer_shadow,
+    // GravityCompat.END);
     viewHolder.drawerLayout.addDrawerListener(
       object : DrawerLayout.SimpleDrawerListener() {
         override fun onDrawerOpened(drawerView: View) {
@@ -114,16 +123,13 @@ internal class DebugViewContainer @Inject constructor(
     )
 
     viewHolder.telescopeLayout.setPointerCount(3)
-    Completable
-      .fromAction {
+    Completable.fromAction {
         TelescopeLayout.cleanUp(activity) // Clean up any old screenshots.
       }
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .autoDispose(activity)
-      .subscribe {
-        viewHolder.telescopeLayout.setLens(bugReportLens)
-      }
+      .subscribe { viewHolder.telescopeLayout.setLens(bugReportLens) }
 
     // If you have not seen the debug drawer before, show it with a message
     syllabus.showIfNeverSeen(
@@ -131,16 +137,12 @@ internal class DebugViewContainer @Inject constructor(
       TargetRequest(
         target = {
           DrawerTapTarget(
-            delegateTarget = TapTarget.forView(
-              debugView.icon,
-              "",
-              ""
-            ),
-            drawerLayout = viewHolder.drawerLayout,
-            gravity = Gravity.END,
-            title = debugView.resources.getString(R.string.development_settings),
-            description = debugView.resources.getString(R.string.debug_drawer_welcome)
-          )
+              delegateTarget = TapTarget.forView(debugView.icon, "", ""),
+              drawerLayout = viewHolder.drawerLayout,
+              gravity = Gravity.END,
+              title = debugView.resources.getString(R.string.development_settings),
+              description = debugView.resources.getString(R.string.debug_drawer_welcome)
+            )
             .outerCircleColorInt(Color.parseColor("#EE222222"))
             .outerCircleAlpha(0.96f)
             .titleTextColorInt(Color.WHITE)
@@ -151,57 +153,52 @@ internal class DebugViewContainer @Inject constructor(
             .id("DebugDrawer")
             .apply { fontHelper.getFont()?.let(::textTypeface) }
         },
-        postDisplay = {
-          viewHolder.drawerLayout.closeDrawer(GravityCompat.END)
-        }
+        postDisplay = { viewHolder.drawerLayout.closeDrawer(GravityCompat.END) }
       )
     )
 
-    val scope = object : CoroutineScope {
-      override val coroutineContext: CoroutineContext = SupervisorJob() + Dispatchers.Main.immediate
-    }
+    val scope =
+      object : CoroutineScope {
+        override val coroutineContext: CoroutineContext =
+          SupervisorJob() + Dispatchers.Main.immediate
+      }
     setupMadge(viewHolder, scope)
     setupScalpel(viewHolder, scope)
 
     riseAndShine(activity, appConfig)
-    activity.lifecycle()
+    activity
+      .lifecycle()
       .filter { event -> event === ActivityEvent.DESTROY }
       .firstElement()
       // Why is the below all so awkward?
-      .doOnDispose {
-        scope.cancel()
-      }
+      .doOnDispose { scope.cancel() }
       .autoDispose(activity)
-      .subscribe {
-        scope.cancel()
-      }
+      .subscribe { scope.cancel() }
     return viewHolder.debugContent
   }
 
-  private fun setupMadge(viewHolder: DebugActivityFrameBinding, scope: CoroutineScope) = scope.launch {
-    pixelGridEnabled.collect { enabled ->
-      viewHolder.madgeContainer.isOverlayEnabled = enabled
+  private fun setupMadge(viewHolder: DebugActivityFrameBinding, scope: CoroutineScope) =
+    scope.launch {
+      pixelGridEnabled.collect { enabled -> viewHolder.madgeContainer.isOverlayEnabled = enabled }
+      pixelRatioEnabled.collect { enabled ->
+        viewHolder.madgeContainer.isOverlayRatioEnabled = enabled
+      }
     }
-    pixelRatioEnabled.collect { enabled ->
-      viewHolder.madgeContainer.isOverlayRatioEnabled = enabled
-    }
-  }
 
-  private fun setupScalpel(viewHolder: DebugActivityFrameBinding, scope: CoroutineScope) = scope.launch {
-    scalpelEnabled.collect { enabled ->
-      viewHolder.debugContent.isLayerInteractionEnabled = enabled
+  private fun setupScalpel(viewHolder: DebugActivityFrameBinding, scope: CoroutineScope) =
+    scope.launch {
+      scalpelEnabled.collect { enabled ->
+        viewHolder.debugContent.isLayerInteractionEnabled = enabled
+      }
+      scalpelWireframeEnabled.collect { enabled -> viewHolder.debugContent.setDrawViews(!enabled) }
     }
-    scalpelWireframeEnabled.collect { enabled ->
-      viewHolder.debugContent.setDrawViews(!enabled)
-    }
-  }
 
   companion object {
 
     /**
-     * Show the activity over the lock-screen and wake up the device. If you launched the app manually
-     * both of these conditions are already true. If you deployed from the IDE, however, this will
-     * save you from hundreds of power button presses and pattern swiping per day!
+     * Show the activity over the lock-screen and wake up the device. If you launched the app
+     * manually both of these conditions are already true. If you deployed from the IDE, however,
+     * this will save you from hundreds of power button presses and pattern swiping per day!
      */
     @SuppressLint("NewApi") // False positive
     @Suppress("DEPRECATION")
@@ -215,16 +212,16 @@ internal class DebugViewContainer @Inject constructor(
           }
         }
       } else {
-        activity.window
-          .addFlags(FLAG_SHOW_WHEN_LOCKED)
+        activity.window.addFlags(FLAG_SHOW_WHEN_LOCKED)
         activity.getSystemService<PowerManager>()?.run {
           newWakeLock(
-            FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
-            "CatchUp:wakeup!"
-          ).run {
-            acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
-            release()
-          }
+              FULL_WAKE_LOCK or ACQUIRE_CAUSES_WAKEUP or ON_AFTER_RELEASE,
+              "CatchUp:wakeup!"
+            )
+            .run {
+              acquire(TimeUnit.MILLISECONDS.convert(1, SECONDS))
+              release()
+            }
         }
       }
     }
@@ -251,36 +248,35 @@ class DrawerTapTarget(
       } else {
         // TODO Jetifier bug. Want to use RxBinding here
         Maybe.create<Unit> { e ->
-          val listener = object : MainThreadDisposable(), DrawerListener {
-            override fun onDrawerStateChanged(newState: Int) {
-              // Noop
-            }
+            val listener =
+              object : MainThreadDisposable(), DrawerListener {
+                override fun onDrawerStateChanged(newState: Int) {
+                  // Noop
+                }
 
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
-              // Noop
-            }
+                override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                  // Noop
+                }
 
-            override fun onDrawerClosed(drawerView: View) {
-              // Noop
-            }
+                override fun onDrawerClosed(drawerView: View) {
+                  // Noop
+                }
 
-            override fun onDispose() {
-              drawerLayout.removeDrawerListener(this)
-            }
+                override fun onDispose() {
+                  drawerLayout.removeDrawerListener(this)
+                }
 
-            override fun onDrawerOpened(drawerView: View) {
-              if (!isDisposed) {
-                e.onSuccess(Unit)
+                override fun onDrawerOpened(drawerView: View) {
+                  if (!isDisposed) {
+                    e.onSuccess(Unit)
+                  }
+                }
               }
-            }
+            e.setDisposable(listener)
+            drawerLayout.addDrawerListener(listener)
           }
-          e.setDisposable(listener)
-          drawerLayout.addDrawerListener(listener)
-        }
           .autoDispose(drawerLayout.scope())
-          .subscribe {
-            delegateTarget.onReady(runnable)
-          }
+          .subscribe { delegateTarget.onReady(runnable) }
 
         drawerLayout.openDrawer(gravity)
       }

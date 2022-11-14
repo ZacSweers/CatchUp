@@ -18,9 +18,7 @@ package io.sweers.catchup.base.ui
 import android.util.FloatProperty
 import android.util.Property
 
-/**
- * A delegate for creating a [Property] of `float` type.
- */
+/** A delegate for creating a [Property] of `float` type. */
 abstract class FloatProp<T>(val name: String) {
   abstract operator fun set(o: T, value: Float)
   abstract operator fun get(o: T): Float

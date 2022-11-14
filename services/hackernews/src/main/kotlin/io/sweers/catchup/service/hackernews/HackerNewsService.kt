@@ -58,20 +58,21 @@ import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFacto
 import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelKey
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import javax.inject.Inject
 import javax.inject.Qualifier
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 typealias ViewModelCreator = ViewModelAssistedFactory<out ViewModel>
 
-@Qualifier
-private annotation class InternalApi
+@Qualifier private annotation class InternalApi
 
 private const val SERVICE_KEY = "hn"
 
 @ServiceKey(SERVICE_KEY)
 @ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
-class HackerNewsService @Inject constructor(
+class HackerNewsService
+@Inject
+constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val database: dagger.Lazy<FirebaseDatabase>
 ) : TextService {
@@ -81,22 +82,20 @@ class HackerNewsService @Inject constructor(
   override fun fetchPage(request: DataRequest): Single<DataResult> {
     val page = request.pageId.toInt()
     val itemsPerPage = 25 // TODO Pref this
-    return Single
-      .create { emitter: SingleEmitter<DataSnapshot> ->
-        val listener = object : ValueEventListener {
-          override fun onDataChange(dataSnapshot: DataSnapshot) {
-            emitter.onSuccess(dataSnapshot)
+    return Single.create { emitter: SingleEmitter<DataSnapshot> ->
+        val listener =
+          object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+              emitter.onSuccess(dataSnapshot)
+            }
+
+            override fun onCancelled(firebaseError: DatabaseError) {
+              d { "${firebaseError.code}" }
+              emitter.onError(firebaseError.toException())
+            }
           }
 
-          override fun onCancelled(firebaseError: DatabaseError) {
-            d { "${firebaseError.code}" }
-            emitter.onError(firebaseError.toException())
-          }
-        }
-
-        val ref = database.get().getReference("v0/topstories").apply {
-          keepSynced(true)
-        }
+        val ref = database.get().getReference("v0/topstories").apply { keepSynced(true) }
         emitter.setCancellable { ref.removeEventListener(listener) }
         ref.addValueEventListener(listener)
       }
@@ -107,17 +106,18 @@ class HackerNewsService @Inject constructor(
       .concatMapEager { id ->
         Observable.create<DataSnapshot> { emitter ->
           val ref = database.get().getReference("v0/item/$id")
-          val listener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-              emitter.onNext(dataSnapshot)
-              emitter.onComplete()
-            }
+          val listener =
+            object : ValueEventListener {
+              override fun onDataChange(dataSnapshot: DataSnapshot) {
+                emitter.onNext(dataSnapshot)
+                emitter.onComplete()
+              }
 
-            override fun onCancelled(firebaseError: DatabaseError) {
-              d { "${firebaseError.code}" }
-              emitter.onError(firebaseError.toException())
+              override fun onCancelled(firebaseError: DatabaseError) {
+                d { "${firebaseError.code}" }
+                emitter.onError(firebaseError.toException())
+              }
             }
-          }
           emitter.setCancellable { ref.removeEventListener(listener) }
           ref.addValueEventListener(listener)
         }
@@ -137,12 +137,10 @@ class HackerNewsService @Inject constructor(
             tag = realType()?.tag(nullIfStory = true),
             itemClickUrl = url,
             summarizationInfo = SummarizationInfo.from(url),
-            mark = kids?.size?.let {
-              createCommentMark(
-                count = it,
-                clickUrl = "https://news.ycombinator.com/item?id=$id"
-              )
-            },
+            mark =
+              kids?.size?.let {
+                createCommentMark(count = it, clickUrl = "https://news.ycombinator.com/item?id=$id")
+              },
             detailKey = id.toString()
           )
         }
@@ -178,26 +176,28 @@ abstract class HackerNewsMetaModule {
     @InternalApi
     @Provides
     @Reusable
-    internal fun provideHackerNewsServiceMeta(): ServiceMeta = ServiceMeta(
-      SERVICE_KEY,
-      R.string.hn,
-      R.color.hnAccent,
-      R.drawable.logo_hn,
-      pagesAreNumeric = true,
-      firstPageKey = "0",
-      deeplinkFragment = HackerNewsCommentsFragment::class.java
-    )
+    internal fun provideHackerNewsServiceMeta(): ServiceMeta =
+      ServiceMeta(
+        SERVICE_KEY,
+        R.string.hn,
+        R.color.hnAccent,
+        R.drawable.logo_hn,
+        pagesAreNumeric = true,
+        firstPageKey = "0",
+        deeplinkFragment = HackerNewsCommentsFragment::class.java
+      )
   }
 }
 
 @ContributesTo(ServiceIndex::class)
 @Module(
-  includes = [
-    HackerNewsMetaModule::class,
-    FragmentViewModelFactoryModule::class,
-    ViewModelModule::class,
-    UrlPreviewModule::class
-  ]
+  includes =
+    [
+      HackerNewsMetaModule::class,
+      FragmentViewModelFactoryModule::class,
+      ViewModelModule::class,
+      UrlPreviewModule::class
+    ]
 )
 abstract class HackerNewsModule {
 
@@ -210,19 +210,20 @@ abstract class HackerNewsModule {
     @Provides
     internal fun provideDatabase(@ApplicationContext context: Context): FirebaseDatabase {
       val resources = context.resources
-      val app = FirebaseApp.initializeApp(
-        context,
-        FirebaseOptions.Builder()
-          .setApiKey(resources.getString(R.string.google_api_key))
-          .setApplicationId(resources.getString(R.string.google_app_id))
-          .setDatabaseUrl("https://hacker-news.firebaseio.com/")
-          .setGaTrackingId(resources.getString(R.string.ga_trackingId))
-          .setGcmSenderId(resources.getString(R.string.gcm_defaultSenderId))
-          .setStorageBucket(resources.getString(R.string.google_storage_bucket))
-          .setProjectId(resources.getString(R.string.project_id))
-          .build(),
-        "HN"
-      )
+      val app =
+        FirebaseApp.initializeApp(
+          context,
+          FirebaseOptions.Builder()
+            .setApiKey(resources.getString(R.string.google_api_key))
+            .setApplicationId(resources.getString(R.string.google_app_id))
+            .setDatabaseUrl("https://hacker-news.firebaseio.com/")
+            .setGaTrackingId(resources.getString(R.string.ga_trackingId))
+            .setGcmSenderId(resources.getString(R.string.gcm_defaultSenderId))
+            .setStorageBucket(resources.getString(R.string.google_storage_bucket))
+            .setProjectId(resources.getString(R.string.project_id))
+            .build(),
+          "HN"
+        )
       return FirebaseDatabase.getInstance(app)
     }
   }
@@ -249,13 +250,13 @@ object FragmentViewModelFactoryModule {
           override fun <T : ViewModel> create(
             key: String,
             modelClass: Class<T>,
-            arg0: SavedStateHandle // weird name because kapt doesn't preserve the names in the constructor
-          ): T {
+            arg0: SavedStateHandle // weird name because kapt doesn't preserve the names in the
+            // constructor
+            ): T {
             // TODO this is ugly extract these constants
             arg0.set("detailKey", fragment.requireArguments().getString("detailKey")!!)
             arg0.set("detailTitle", fragment.requireArguments().getString("detailTitle"))
-            @Suppress("UNCHECKED_CAST")
-            return viewModels.getValue(modelClass).create(arg0) as T
+            @Suppress("UNCHECKED_CAST") return viewModels.getValue(modelClass).create(arg0) as T
           }
         }
       }

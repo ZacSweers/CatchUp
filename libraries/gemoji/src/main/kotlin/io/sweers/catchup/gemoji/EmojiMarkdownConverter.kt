@@ -15,31 +15,24 @@
  */
 package io.sweers.catchup.gemoji
 
-/**
- * Converts a markdown emoji alias (eg, ":smile:") into an android render-able emoji.
- */
+/** Converts a markdown emoji alias (eg, ":smile:") into an android render-able emoji. */
 interface EmojiMarkdownConverter {
   fun convert(alias: String): String?
 }
 
-internal class GemojiEmojiMarkdownConverter(
-  private val gemojiDao: GemojiDao
-) : EmojiMarkdownConverter {
+internal class GemojiEmojiMarkdownConverter(private val gemojiDao: GemojiDao) :
+  EmojiMarkdownConverter {
   override fun convert(alias: String): String? {
     return gemojiDao.getEmoji(alias)
   }
 }
 
 fun Sequence<Char>.asString(): String {
-  return buildString {
-    this@asString.forEach { append(it) }
-  }
+  return buildString { this@asString.forEach { append(it) } }
 }
 
 fun Sequence<Char>.asString(capacity: Int): String {
-  return buildString(capacity) {
-    this@asString.forEach { append(it) }
-  }
+  return buildString(capacity) { this@asString.forEach { append(it) } }
 }
 
 /**

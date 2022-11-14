@@ -21,17 +21,12 @@ import android.view.View.MeasureSpec.EXACTLY
 import android.view.View.MeasureSpec.getSize
 import android.view.View.MeasureSpec.makeMeasureSpec
 
-/**
- * A extension of ForegroundImageView that is always 4:3 aspect ratio.
- */
+/** A extension of ForegroundImageView that is always 4:3 aspect ratio. */
 open class FourThreeImageView(context: Context, attrs: AttributeSet) :
   ForegroundImageView(context, attrs) {
 
   override fun onMeasure(widthSpec: Int, heightSpec: Int) {
-    val fourThreeHeight = makeMeasureSpec(
-      getSize(widthSpec) * 3 / 4,
-      EXACTLY
-    )
+    val fourThreeHeight = makeMeasureSpec(getSize(widthSpec) * 3 / 4, EXACTLY)
     super.onMeasure(widthSpec, fourThreeHeight)
   }
 }

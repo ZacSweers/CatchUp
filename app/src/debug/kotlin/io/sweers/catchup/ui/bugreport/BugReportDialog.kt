@@ -24,8 +24,7 @@ import io.sweers.catchup.databinding.BugreportViewBinding
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
 import io.sweers.catchup.ui.bugreport.BugReportView.ReportDetailsListener
 
-class BugReportDialog(context: Context) :
-  AlertDialog(context), ReportDetailsListener {
+class BugReportDialog(context: Context) : AlertDialog(context), ReportDetailsListener {
   interface ReportListener {
     fun onBugReportSubmit(report: Report)
   }

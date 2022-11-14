@@ -35,27 +35,26 @@ internal class RingBuffer<T>(val capacity: Int) : AbstractList<T>(), RandomAcces
     if (index < 0 || index >= size) {
       throw IndexOutOfBoundsException("index: $index, size: $size")
     }
-    @Suppress("UNCHECKED_CAST")
-    return buffer[startIndex.forward(index)] as T
+    @Suppress("UNCHECKED_CAST") return buffer[startIndex.forward(index)] as T
   }
 
   fun isFull() = size == capacity
 
-  override fun iterator(): Iterator<T> = object : AbstractIterator<T>() {
-    private var count = size
-    private var index = startIndex
+  override fun iterator(): Iterator<T> =
+    object : AbstractIterator<T>() {
+      private var count = size
+      private var index = startIndex
 
-    override fun computeNext() {
-      if (count == 0) {
-        done()
-      } else {
-        @Suppress("UNCHECKED_CAST")
-        setNext(buffer[index] as T)
-        index = index.forward(1)
-        count--
+      override fun computeNext() {
+        if (count == 0) {
+          done()
+        } else {
+          @Suppress("UNCHECKED_CAST") setNext(buffer[index] as T)
+          index = index.forward(1)
+          count--
+        }
       }
     }
-  }
 
   @Suppress("UNCHECKED_CAST")
   override fun <T> toArray(array: Array<T>): Array<T> {
@@ -89,7 +88,8 @@ internal class RingBuffer<T>(val capacity: Int) : AbstractList<T>(), RandomAcces
   }
 
   /**
-   * Add [element] to the buffer or fail with [IllegalStateException] if no free space available in the buffer
+   * Add [element] to the buffer or fail with [IllegalStateException] if no free space available in
+   * the buffer
    */
   fun add(element: T) {
     if (isFull()) {
@@ -101,7 +101,8 @@ internal class RingBuffer<T>(val capacity: Int) : AbstractList<T>(), RandomAcces
   }
 
   /**
-   * Removes [n] first elements from the buffer or fails with [IllegalArgumentException] if not enough elements in the buffer to remove
+   * Removes [n] first elements from the buffer or fails with [IllegalArgumentException] if not
+   * enough elements in the buffer to remove
    */
   fun removeFirst(n: Int) {
     require(n >= 0) { "n shouldn't be negative but it is $n" }
@@ -123,8 +124,7 @@ internal class RingBuffer<T>(val capacity: Int) : AbstractList<T>(), RandomAcces
     }
   }
 
-  @Suppress("NOTHING_TO_INLINE")
-  private inline fun Int.forward(n: Int): Int = (this + n) % capacity
+  @Suppress("NOTHING_TO_INLINE") private inline fun Int.forward(n: Int): Int = (this + n) % capacity
 
   // TODO: replace with Array.fill from stdlib when available in common
   private fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size) {

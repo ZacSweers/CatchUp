@@ -17,8 +17,8 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  id(deps.anvil.pluginId)
-  id("com.apollographql.apollo3")
+  alias(libs.plugins.apollo)
+  alias(libs.plugins.sgp.base)
 }
 
 android {
@@ -28,6 +28,7 @@ android {
   }
   buildFeatures {
     buildConfig = true
+    androidResources = true
   }
   namespace = "io.sweers.catchup.service.github"
 }
@@ -44,24 +45,30 @@ apollo {
   }
 }
 
+slack {
+  features {
+    dagger()
+  }
+}
+
 dependencies {
-  compileOnly(deps.misc.javaxInject)
+  compileOnly(libs.misc.javaxInject)
 
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
-  implementation(deps.misc.jsoup)
-  implementation(deps.retrofit.rxJava3)
-  implementation(deps.okhttp.core)
-  implementation(deps.kotlin.datetime)
-  implementation(deps.kotlin.coroutinesRx)
+  implementation(libs.misc.jsoup)
+  implementation(libs.retrofit.rxJava3)
+  implementation(libs.okhttp.core)
+  implementation(libs.kotlin.datetime)
+  implementation(libs.kotlin.coroutinesRx)
 
   // Apollo
-  implementation(deps.apollo.runtime)
-  implementation(deps.apollo.httpcache)
+  implementation(libs.apollo.runtime)
+  implementation(libs.apollo.httpcache)
 
   api(project(":service-api"))
-  api(deps.android.androidx.annotations)
-  api(deps.dagger.runtime)
-  api(deps.rx.java)
+  api(libs.androidx.annotations)
+  api(libs.dagger.runtime)
+  api(libs.rx.java)
 }

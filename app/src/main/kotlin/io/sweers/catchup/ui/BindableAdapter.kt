@@ -21,9 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 
-/**
- * An implementation of [BaseAdapter] which uses the bind pattern for its views.
- */
+/** An implementation of [BaseAdapter] which uses the bind pattern for its views. */
 abstract class BindableAdapter<T>(val context: Context) : BaseAdapter() {
   private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -35,14 +33,10 @@ abstract class BindableAdapter<T>(val context: Context) : BaseAdapter() {
     return view
   }
 
-  /**
-   * Create a new instance of a view for the specified position.
-   */
+  /** Create a new instance of a view for the specified position. */
   abstract fun newView(inflater: LayoutInflater, position: Int, container: ViewGroup): View
 
-  /**
-   * Bind the data for the specified `position` to the view.
-   */
+  /** Bind the data for the specified `position` to the view. */
   abstract fun bindView(item: T, position: Int, view: View)
 
   override fun getDropDownView(position: Int, convertView: View?, container: ViewGroup): View {
@@ -51,16 +45,12 @@ abstract class BindableAdapter<T>(val context: Context) : BaseAdapter() {
     return view
   }
 
-  /**
-   * Create a new instance of a drop-down view for the specified position.
-   */
+  /** Create a new instance of a drop-down view for the specified position. */
   open fun newDropDownView(inflater: LayoutInflater, position: Int, container: ViewGroup): View {
     return newView(inflater, position, container)
   }
 
-  /**
-   * Bind the data for the specified `position` to the drop-down view.
-   */
+  /** Bind the data for the specified `position` to the drop-down view. */
   private fun bindDropDownView(item: T, position: Int, view: View) {
     bindView(item, position, view)
   }

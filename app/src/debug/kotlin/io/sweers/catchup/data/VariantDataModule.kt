@@ -23,21 +23,25 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
+import javax.inject.Singleton
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
 import okhttp3.logging.HttpLoggingInterceptor.Logger
 import timber.log.Timber
-import javax.inject.Singleton
 
-private inline fun httpLoggingInterceptor(level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE, crossinline logger: (String) -> Unit): HttpLoggingInterceptor {
+private inline fun httpLoggingInterceptor(
+  level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE,
+  crossinline logger: (String) -> Unit
+): HttpLoggingInterceptor {
   return HttpLoggingInterceptor(
-    object : Logger {
-      override fun log(message: String) {
-        logger(message)
+      object : Logger {
+        override fun log(message: String) {
+          logger(message)
+        }
       }
-    }
-  ).also { it.level = level }
+    )
+    .also { it.level = level }
 }
 
 @InstallIn(SingletonComponent::class)
@@ -48,17 +52,15 @@ object VariantDataModule {
   @Provides
   @NetworkInterceptor
   @IntoSet
-  internal fun provideLoggingInterceptor(): Interceptor = httpLoggingInterceptor(BASIC) { message ->
-    Timber.tag("OkHttp")
-      .v(message)
-  }
+  internal fun provideLoggingInterceptor(): Interceptor =
+    httpLoggingInterceptor(BASIC) { message -> Timber.tag("OkHttp").v(message) }
 
-//  @Provides
-//  @Singleton
-//  @NetworkInterceptor
-//  @IntoSet
-//  internal fun provideChuckInterceptor(@ApplicationContext context: Context): Interceptor =
-//      ChuckInterceptor(context)
+  //  @Provides
+  //  @Singleton
+  //  @NetworkInterceptor
+  //  @IntoSet
+  //  internal fun provideChuckInterceptor(@ApplicationContext context: Context): Interceptor =
+  //      ChuckInterceptor(context)
 
   @Singleton
   @Provides
@@ -66,6 +68,5 @@ object VariantDataModule {
   internal fun provideMockDataInterceptor(
     @ApplicationContext context: Context,
     debugPreferences: DebugPreferences
-  ): Interceptor =
-    MockDataInterceptor(context, debugPreferences)
+  ): Interceptor = MockDataInterceptor(context, debugPreferences)
 }

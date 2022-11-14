@@ -48,10 +48,12 @@ import io.sweers.catchup.util.markdown
 import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.resolveActivity
 import io.sweers.catchup.util.show
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
-class ChangelogHelper @Inject constructor(
+class ChangelogHelper
+@Inject
+constructor(
   private val linkManager: LinkManager,
   private val markwon: Lazy<Markwon>,
   private val fontHelper: FontHelper,
@@ -83,11 +85,11 @@ class ChangelogHelper @Inject constructor(
         }
         syllabus.showIfNeverSeen("changelog_seen") {
           TapTarget.forToolbarMenuItem(
-            toolbar,
-            R.id.changes,
-            "Changes",
-            "Click here for new changes"
-          )
+              toolbar,
+              R.id.changes,
+              "Changes",
+              "Click here for new changes"
+            )
             .outerCircleColorInt(hintColor)
             .outerCircleAlpha(0.96f)
             .targetCircleColor(R.color.colorPrimary)
@@ -112,41 +114,43 @@ class ChangelogHelper @Inject constructor(
       .apply {
         val content = FragmentWhatsnewBinding.inflate(layoutInflater)
         setContentView(content.root)
-        val title = content.buildName.apply {
-          typeface = fontHelper.getFont()
-          text = appConfig.versionName
-        }
-        val changes = content.changes.also { changesTextView ->
-          changesTextView.typeface = fontHelper.getFont()
-          changesTextView.movementMethod = LinkTouchMovementMethod.getInstance()
-          changesTextView.highlightColor = highlightColor
-          changesTextView.setLinkTextColor(highlightColor)
-          changesTextView.text = changelog
-            .markdown()
-            .parseMarkdownAndPlainLinks(
-              on = changesTextView,
-              with = markwon.get(),
-              alternateSpans = { url: String ->
-                setOf(
-                  object : TouchableUrlSpan(
-                    url,
-                    ColorStateList.valueOf(highlightColor),
-                    ColorUtils.modifyAlpha(highlightColor, 0.1f)
-                  ) {
-                    override fun onClick(url: String) {
-                      val resolvedActivity = context.resolveActivity()
-                      resolvedActivity.lifecycleScope.launch {
-                        linkManager.openUrl(
-                          UrlMeta(url, highlightColor, resolvedActivity)
-                        )
-                      }
-                    }
-                  },
-                  StyleSpan(Typeface.BOLD)
+        val title =
+          content.buildName.apply {
+            typeface = fontHelper.getFont()
+            text = appConfig.versionName
+          }
+        val changes =
+          content.changes.also { changesTextView ->
+            changesTextView.typeface = fontHelper.getFont()
+            changesTextView.movementMethod = LinkTouchMovementMethod.getInstance()
+            changesTextView.highlightColor = highlightColor
+            changesTextView.setLinkTextColor(highlightColor)
+            changesTextView.text =
+              changelog
+                .markdown()
+                .parseMarkdownAndPlainLinks(
+                  on = changesTextView,
+                  with = markwon.get(),
+                  alternateSpans = { url: String ->
+                    setOf(
+                      object :
+                        TouchableUrlSpan(
+                          url,
+                          ColorStateList.valueOf(highlightColor),
+                          ColorUtils.modifyAlpha(highlightColor, 0.1f)
+                        ) {
+                        override fun onClick(url: String) {
+                          val resolvedActivity = context.resolveActivity()
+                          resolvedActivity.lifecycleScope.launch {
+                            linkManager.openUrl(UrlMeta(url, highlightColor, resolvedActivity))
+                          }
+                        }
+                      },
+                      StyleSpan(Typeface.BOLD)
+                    )
+                  }
                 )
-              }
-            )
-        }
+          }
 
         content.root.doOnLayout {
           val duration = 400L

@@ -17,31 +17,32 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  id(deps.ksp.pluginId)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.sgp.base)
 }
 
 dependencies {
-  ksp(deps.android.androidx.room.apt)
+  ksp(libs.androidx.room.apt)
 
-  implementation(deps.kotlin.coroutinesAndroid)
-  implementation(deps.kotlin.coroutinesRx)
-  implementation(deps.kotlin.datetime)
+  implementation(libs.kotlin.coroutinesAndroid)
+  implementation(libs.kotlin.coroutinesRx)
+  implementation(libs.kotlin.datetime)
 
   api(project(":service-registry:service-registry-annotations"))
   api(project(":libraries:appconfig"))
   api(project(":libraries:retrofitconverters"))
   api(project(":libraries:gemoji"))
-  api(deps.android.androidx.room.runtime)
-  api(deps.android.androidx.annotations)
-  api(deps.android.androidx.coreKtx)
-  api(deps.android.androidx.fragment)
-  api(deps.dagger.runtime)
-  api(deps.kotlin.coroutines)
-  api(deps.rx.java)
-  api(deps.okhttp.core)
-  api(deps.retrofit.core)
-  api(deps.retrofit.rxJava3)
-  api(deps.apollo.runtime)
+  api(libs.androidx.room.runtime)
+  api(libs.androidx.annotations)
+  api(libs.androidx.coreKtx)
+  api(libs.androidx.fragment)
+  api(libs.dagger.runtime)
+  api(libs.kotlin.coroutines)
+  api(libs.rx.java)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
+  api(libs.retrofit.rxJava3)
+  api(libs.apollo.runtime)
 }
 android {
   namespace = "io.sweers.catchup.service"

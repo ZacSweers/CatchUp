@@ -4,12 +4,16 @@
     "name": "lottie-android"
   },
   {
+    "owner": "alexvasilkov",
+    "name": "GestureViews"
+  },
+  {
     "owner": "androidx",
     "name": "constraintlayout"
   },
   {
     "owner": "apollographql",
-    "name": "apollo-android"
+    "name": "apollo-kotlin"
   },
   {
     "owner": "atlassian",
@@ -32,12 +36,24 @@
     "name": "coil"
   },
   {
-    "owner": "firebase",
-    "name": "firebase-android-sdk"
+    "owner": "google",
+    "name": "dagger"
   },
   {
     "owner": "google",
-    "name": "dagger"
+    "name": "error-prone"
+  },
+  {
+    "owner": "google",
+    "name": "guava"
+  },
+  {
+    "owner": "JakeWharton",
+    "name": "byteunits"
+  },
+  {
+    "owner": "JakeWharton",
+    "name": "ProcessPhoenix"
   },
   {
     "owner": "JakeWharton",
@@ -53,7 +69,15 @@
   },
   {
     "owner": "JetBrains",
+    "name": "java-annotations"
+  },
+  {
+    "owner": "JetBrains",
     "name": "kotlin"
+  },
+  {
+    "owner": "jhy",
+    "name": "jsoup"
   },
   {
     "owner": "KeepSafe",
@@ -62,6 +86,10 @@
   {
     "owner": "Kotlin",
     "name": "kotlinx-datetime"
+  },
+  {
+    "owner": "Kotlin",
+    "name": "kotlinx.atomicfu"
   },
   {
     "owner": "Kotlin",
@@ -78,6 +106,10 @@
   {
     "owner": "noties",
     "name": "Markwon"
+  },
+  {
+    "owner": "reactive-streams",
+    "name": "reactive-streams"
   },
   {
     "owner": "ReactiveX",
@@ -137,19 +169,19 @@
   },
   {
     "owner": "uber",
+    "name": "crumb"
+  },
+  {
+    "owner": "uber",
     "name": "RxDogTag"
+  },
+  {
+    "owner": "unbescape",
+    "name": "unbescape"
   },
   {
     "owner": "wasabeef",
     "name": "recyclerview-animators"
-  },
-  {
-    "owner": "willowtreeapps",
-    "name": "assertk"
-  },
-  {
-    "owner": "willowtreeapps",
-    "name": "opentest4k"
   },
   {
     "owner": "ZacSweers",

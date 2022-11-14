@@ -42,22 +42,20 @@ import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.util.sdk
-import leakcanary.AppWatcher
-import leakcanary.LeakCanary
-import shark.AndroidReferenceMatchers
-import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
+import leakcanary.AppWatcher
+import leakcanary.LeakCanary
+import shark.AndroidReferenceMatchers
+import timber.log.Timber
 
 @InstallIn(SingletonComponent::class)
 @Module
 object DebugApplicationModule {
 
-  @Qualifier
-  @Retention(BINARY)
-  private annotation class LeakCanaryEnabled
+  @Qualifier @Retention(BINARY) private annotation class LeakCanaryEnabled
 
   /**
    * Disabled on API 28 because there's a pretty vicious memory leak that constantly triggers
@@ -114,19 +112,17 @@ object DebugApplicationModule {
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
 
         override fun onActivityDestroyed(activity: Activity) {
-//        if (activity is MainActivity) {
-//          // Ignore Chuck
-//          return
-//        }
+          //        if (activity is MainActivity) {
+          //          // Ignore Chuck
+          //          return
+          //        }
           objectWatcher.watch(activity)
         }
       }
     )
   }
 
-  @Qualifier
-  @Retention(BINARY)
-  private annotation class StrictModeExecutor
+  @Qualifier @Retention(BINARY) private annotation class StrictModeExecutor
 
   @StrictModeExecutor
   @Provides
@@ -144,12 +140,7 @@ object DebugApplicationModule {
       StrictMode.ThreadPolicy.Builder()
         .detectAll()
         .apply {
-          appConfig.sdk(28) {
-            penaltyListener(
-              penaltyListenerExecutor.get(),
-              { Timber.w(it) }
-            )
-          }
+          appConfig.sdk(28) { penaltyListener(penaltyListenerExecutor.get(), { Timber.w(it) }) }
         }
         .build()
     )
@@ -164,31 +155,29 @@ object DebugApplicationModule {
               StrictMode.OnVmViolationListener {
                 when (it) {
                   is UntaggedSocketViolation -> {
-// Firebase and OkHttp don't tag sockets
+                    // Firebase and OkHttp don't tag sockets
                     return@OnVmViolationListener
                   }
                   is DiskReadViolation -> {
                     if (it.stackTrace.any { it.methodName == "onCreatePreferences" }) {
-// PreferenceFragment hits preferences directly
+                      // PreferenceFragment hits preferences directly
                       return@OnVmViolationListener
                     }
                   }
                 }
-// Note: Chuck causes a closeable leak. Possible https://github.com/square/okhttp/issues/3174
+                // Note: Chuck causes a closeable leak. Possible
+                // https://github.com/square/okhttp/issues/3174
                 Timber.w(it)
               }
             )
-          } ?: run {
-            penaltyLog()
           }
+            ?: run { penaltyLog() }
         }
         .build()
     )
   }
 
-  @Qualifier
-  @Retention(BINARY)
-  private annotation class FlipperEnabled
+  @Qualifier @Retention(BINARY) private annotation class FlipperEnabled
 
   @FlipperEnabled
   @Provides
@@ -218,9 +207,7 @@ object DebugApplicationModule {
     }
   }
 
-  @IntoSet
-  @Provides
-  fun provideDebugTree(): Timber.Tree = Timber.DebugTree()
+  @IntoSet @Provides fun provideDebugTree(): Timber.Tree = Timber.DebugTree()
 
   @IntoSet
   @Provides
@@ -234,10 +221,7 @@ object DebugApplicationModule {
         if (priority == Log.ERROR) {
           val exception = RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
           // Show this in the Flipper heads up notification
-          flipperCrashReporter.sendExceptionMessage(
-            Thread.currentThread(),
-            exception
-          )
+          flipperCrashReporter.sendExceptionMessage(Thread.currentThread(), exception)
         }
       }
     }

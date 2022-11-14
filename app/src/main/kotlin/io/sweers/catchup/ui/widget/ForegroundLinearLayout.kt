@@ -24,14 +24,11 @@ import android.view.Gravity
 import android.widget.LinearLayout
 import io.sweers.catchup.R
 
-/**
- * From AppCompat's implementation
- */
-class ForegroundLinearLayout @JvmOverloads constructor(
-  context: Context,
-  attrs: AttributeSet? = null,
-  defStyle: Int = 0
-) : LinearLayout(context, attrs, defStyle) {
+/** From AppCompat's implementation */
+class ForegroundLinearLayout
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
+  LinearLayout(context, attrs, defStyle) {
 
   private val mSelfBounds = Rect()
   private val mOverlayBounds = Rect()
@@ -42,14 +39,10 @@ class ForegroundLinearLayout @JvmOverloads constructor(
   init {
     val a = context.obtainStyledAttributes(attrs, R.styleable.ForegroundView, defStyle, 0)
 
-    mForegroundGravity = a.getInt(
-      R.styleable.ForegroundView_android_foregroundGravity,
-      mForegroundGravity
-    )
+    mForegroundGravity =
+      a.getInt(R.styleable.ForegroundView_android_foregroundGravity, mForegroundGravity)
 
-    a.getDrawable(R.styleable.ForegroundView_android_foreground)?.run {
-      foreground = this
-    }
+    a.getDrawable(R.styleable.ForegroundView_android_foreground)?.run { foreground = this }
 
     a.recycle()
   }
@@ -111,8 +104,8 @@ class ForegroundLinearLayout @JvmOverloads constructor(
   }
 
   /**
-   * Returns the drawable used as the foreground of this FrameLayout. The
-   * foreground drawable, if non-null, is always drawn on top of the children.
+   * Returns the drawable used as the foreground of this FrameLayout. The foreground drawable, if
+   * non-null, is always drawn on top of the children.
    *
    * @return A Drawable or null if no foreground was set.
    */
@@ -121,10 +114,9 @@ class ForegroundLinearLayout @JvmOverloads constructor(
   }
 
   /**
-   * Supply a Drawable that is to be rendered on top of all of the child
-   * views in the frame layout.  Any padding in the Drawable will be taken
-   * into account by ensuring that the children are inset to be placed
-   * inside of the padding area.
+   * Supply a Drawable that is to be rendered on top of all of the child views in the frame layout.
+   * Any padding in the Drawable will be taken into account by ensuring that the children are inset
+   * to be placed inside of the padding area.
    *
    * @param drawable The Drawable to be drawn on top of the children.
    */
@@ -177,12 +169,7 @@ class ForegroundLinearLayout @JvmOverloads constructor(
         val w = right - left
         val h = bottom - top
 
-        selfBounds.set(
-          paddingLeft,
-          paddingTop,
-          w - paddingRight,
-          h - paddingBottom
-        )
+        selfBounds.set(paddingLeft, paddingTop, w - paddingRight, h - paddingBottom)
 
         Gravity.apply(
           mForegroundGravity,

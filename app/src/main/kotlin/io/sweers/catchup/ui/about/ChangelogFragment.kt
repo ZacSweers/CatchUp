@@ -47,26 +47,25 @@ import io.sweers.catchup.ui.base.CatchUpItemViewHolder
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.hide
 import io.sweers.catchup.util.w
+import java.io.IOException
+import javax.inject.Inject
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx3.rxSingle
 import kotlinx.datetime.Instant
-import java.io.IOException
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Scrollable {
 
-  @Inject
-  lateinit var apolloClient: ApolloClient
-  @Inject
-  internal lateinit var linkManager: LinkManager
-  @Inject
-  internal lateinit var markdownConverter: EmojiMarkdownConverter
+  @Inject lateinit var apolloClient: ApolloClient
+  @Inject internal lateinit var linkManager: LinkManager
+  @Inject internal lateinit var markdownConverter: EmojiMarkdownConverter
 
-  private val progressBar get() = binding.progress
-  private val recyclerView get() = binding.list
+  private val progressBar
+    get() = binding.progress
+  private val recyclerView
+    get() = binding.list
 
   private lateinit var layoutManager: LinearLayoutManager
   private lateinit var adapter: ChangelogAdapter
@@ -82,10 +81,11 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
     recyclerView.layoutManager = layoutManager
     var pendingRvState: Parcelable? = null
     if (savedInstanceState == null) {
-      recyclerView.itemAnimator = FadeInUpAnimator(OvershootInterpolator(1f)).apply {
-        addDuration = 300
-        removeDuration = 300
-      }
+      recyclerView.itemAnimator =
+        FadeInUpAnimator(OvershootInterpolator(1f)).apply {
+          addDuration = 300
+          removeDuration = 300
+        }
     } else {
       pendingRvState = savedInstanceState.getParcelable("changeloglm")
     }
@@ -93,9 +93,7 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
     requestItems()
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
-      .doFinally {
-        progressBar.hide()
-      }
+      .doFinally { progressBar.hide() }
       .autoDispose(this)
       .subscribe { data: List<ChangeLogItem>?, error: Throwable? ->
         if (data != null) {
@@ -108,19 +106,16 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
           } else {
             e(error) { "Could not load changelog." }
           }
-          Snackbar.make(
-            recyclerView,
-            R.string.changelog_error,
-            Snackbar.LENGTH_SHORT
-          )
-            .show()
+          Snackbar.make(recyclerView, R.string.changelog_error, Snackbar.LENGTH_SHORT).show()
         }
       }
   }
 
   private fun requestItems(): Single<List<ChangeLogItem>> {
     return rxSingle(Dispatchers.IO) { apolloClient.query(RepoReleasesQuery()).execute() }
-      .flatMapObservable { Observable.fromIterable(it.data!!.repository!!.onRepository.releases.nodes as List<Node>) }
+      .flatMapObservable {
+        Observable.fromIterable(it.data!!.repository!!.onRepository.releases.nodes as List<Node>)
+      }
       .map {
         with(it.onRelease) {
           ChangeLogItem(
@@ -163,8 +158,7 @@ class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Sc
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatchUpItemViewHolder {
       return CatchUpItemViewHolder(
-        LayoutInflater.from(parent.context)
-          .inflate(layout.list_item_general, parent, false)
+        LayoutInflater.from(parent.context).inflate(layout.list_item_general, parent, false)
       )
     }
 

@@ -21,9 +21,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "gemoji")
 internal data class Gemoji(
-  @PrimaryKey
-  @ColumnInfo(name = "alias")
-  var alias: String,
-  @ColumnInfo(name = "emoji")
-  var emoji: String?
+  @PrimaryKey @ColumnInfo(name = "alias") var alias: String,
+  @ColumnInfo(name = "emoji") var emoji: String?
 )

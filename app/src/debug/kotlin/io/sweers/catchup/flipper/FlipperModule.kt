@@ -34,15 +34,14 @@ import dagger.multibindings.Multibinds
 import io.sweers.catchup.injection.SharedPreferencesName
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
-import okhttp3.Interceptor
 import javax.inject.Singleton
+import okhttp3.Interceptor
 
 @InstallIn(SingletonComponent::class)
 @Module
 abstract class FlipperModule {
 
-  @Multibinds
-  abstract fun provideFlipperPlugins(): Set<FlipperPlugin>
+  @Multibinds abstract fun provideFlipperPlugins(): Set<FlipperPlugin>
 
   @Binds
   @IntoSet
@@ -72,7 +71,8 @@ abstract class FlipperModule {
       return NetworkFlipperPlugin()
     }
 
-    // TODO This should go at the end of the list. We can try to differentiate these by wrapping them
+    // TODO This should go at the end of the list. We can try to differentiate these by wrapping
+    // them
     //  in a "ReadOnlyInterceptor" type that we sort at the interceptor injection site
     @IntoSet
     @NetworkInterceptor
