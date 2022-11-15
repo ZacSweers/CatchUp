@@ -190,7 +190,7 @@ misc-debug-scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.2.0"
 
 misc-flick = "me.saket:flick:1.7.0"
-misc-gestureViews = "com.alexvasilkov:gesture-views:2.2.0"
+misc-gestureViews = "com.alexvasilkov:gesture-views:2.8.3"
 misc-inboxRecyclerView = "me.saket:inboxrecyclerview:3.0.0"
 misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
 misc-jsoup = "org.jsoup:jsoup:1.15.3"
