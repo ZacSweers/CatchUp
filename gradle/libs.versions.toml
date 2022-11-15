@@ -135,7 +135,7 @@ autodispose-android = { module = "com.uber.autodispose2:autodispose-android", ve
 autodispose-androidxLifecycle = { module = "com.uber.autodispose2:autodispose-androidx-lifecycle", version.ref = "autodispose" }
 autodispose-lifecycle = { module = "com.uber.autodispose2:autodispose-lifecycle", version.ref = "autodispose" }
 
-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:1.1.6"
+coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:1.2.2"
 javapoet = "com.squareup:javapoet:1.13.0"
 
 coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
