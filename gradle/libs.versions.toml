@@ -116,9 +116,9 @@ androidx-compose-livedata = { module = "androidx.compose.runtime:runtime-livedat
 androidx-compose-rxjava3 = { module = "androidx.compose.runtime:runtime-rxjava3", version.ref = "compose" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
-firebase-config = "com.google.firebase:firebase-config:18.0.0"
+firebase-config = "com.google.firebase:firebase-config:21.2.0"
 firebase-database = "com.google.firebase:firebase-database:20.1.0"
-firebase-perf = "com.google.firebase:firebase-perf:18.0.1"
+firebase-perf = "com.google.firebase:firebase-perf:20.2.0"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
 anvil-compiler = { module = "com.squareup.anvil:compiler", version.ref = "anvil" }
