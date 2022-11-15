@@ -16,7 +16,7 @@ jobs:
         run: |
           git fetch --no-tags --prune --depth=1 origin +refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
           git checkout ${{ github.base_ref }}
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
@@ -74,7 +74,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: jakewharton/diffuse
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle.properties') }}
