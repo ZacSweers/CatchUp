@@ -39,7 +39,7 @@ room = "2.5.0-beta02"
 sgp = "0.3.3"
 spotless = "6.11.0"
 # https://github.com/Tickaroo/tikxml/issues/114
-tikxml = "0.8.13"
+tikxml = "0.8.15"
 
 [plugins]
 anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
