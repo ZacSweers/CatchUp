@@ -41,7 +41,7 @@ jobs:
 
       - name: (Fail-only) Upload the build report
         if: failure()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: error-report
           path: build-reports.zip

@@ -32,7 +32,7 @@ jobs:
       - name: Move apk
         run: mv app/build/outputs/apk/release/catchup-universal-release.apk release-${{ github.base_ref }}.apk
       - name: Upload apk
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: apks
           path: '*.apk'
@@ -59,7 +59,7 @@ jobs:
       - name: Move apks
         run: mv app/build/outputs/apk/release/catchup-universal-release.apk release-${{ github.sha }}.apk
       - name: Upload apk
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: apks
           path: '*.apk'
@@ -104,7 +104,7 @@ jobs:
         with:
           path: pr-comment.txt
       - name: Upload full diff
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: apk-diffs
           path: apk-diff-${{ github.base_ref }}-${{ github.sha }}.txt
