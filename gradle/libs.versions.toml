@@ -67,7 +67,7 @@ versions = { id = "com.github.ben-manes.versions", version = "0.44.0" }
 [libraries]
 autodispose = { module = "com.uber.autodispose:autodispose", version.ref = "autodispose" }
 androidx-annotations = "androidx.annotation:annotation:1.5.0"
-androidx-activity = "androidx.activity:activity:1.7.0-alpha02"
+androidx-activity = "androidx.activity:activity:1.7.0-SNAPSHOT"
 androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha01"
 
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
