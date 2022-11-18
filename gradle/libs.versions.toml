@@ -89,7 +89,7 @@ androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-view
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
 
 androidx-viewPager2 = "androidx.viewpager2:viewpager2:1.1.0-beta01"
-androidx-swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
+androidx-swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-SNAPSHOT"
 androidx-palette = "androidx.palette:palette:1.0.0"
 androidx-paletteKtx = "androidx.palette:palette-ktx:1.0.0"
 
