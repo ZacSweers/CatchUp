@@ -35,15 +35,16 @@ import coil.request.Disposable
 import coil.request.ImageRequest
 import coil.request.ImageResult
 import coil.util.DebugLogger
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.appconfig.AppConfigMetadataContributor
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
@@ -60,13 +61,12 @@ import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.PrecomputedTextSetterCompat
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Qualifier
-import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import timber.log.Timber
 
-@InstallIn(SingletonComponent::class)
+@ContributesTo(AppScope::class)
 @Module
 abstract class ApplicationModule {
 
@@ -89,12 +89,14 @@ abstract class ApplicationModule {
 
   @Binds
   @ApplicationContext
-  @Singleton
+  @SingleIn(AppScope::class)
   abstract fun Application.provideApplicationContext(): Context
 
-  @Binds @Singleton abstract fun CatchUpPreferences.provideUiPreferences(): UiPreferences
+  @Binds
+  @SingleIn(AppScope::class)
+  abstract fun CatchUpPreferences.provideUiPreferences(): UiPreferences
 
-  @Binds @Singleton abstract fun CatchUpAppConfig.bindAppConfig(): AppConfig
+  @Binds @SingleIn(AppScope::class) abstract fun CatchUpAppConfig.bindAppConfig(): AppConfig
 
   companion object {
 
@@ -104,16 +106,16 @@ abstract class ApplicationModule {
      * Wrapped so no one can try to cast it as an Application.
      */
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     internal fun @receiver:ApplicationContext Context.provideGeneralUseContext(): Context =
       ContextWrapper(this)
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     internal fun @receiver:ApplicationContext Context.versionInfo(): VersionInfo = versionInfo
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     internal fun markwon(
       @LazyDelegate imageLoader: ImageLoader,
       @ApplicationContext context: Context, // TODO should use themed one from activity?
@@ -155,7 +157,7 @@ abstract class ApplicationModule {
 
     @IsLowRamDevice
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun isLowRam(@ApplicationContext context: Context): Boolean {
       // Prefer higher quality images unless we're on a low RAM device
       return context.getSystemService<ActivityManager>()?.let {
@@ -167,7 +169,7 @@ abstract class ApplicationModule {
     @ExperimentalCoilApi
     @Provides
     @LazyDelegate
-    @Singleton
+    @SingleIn(AppScope::class)
     fun lazyImageLoader(imageLoader: dagger.Lazy<ImageLoader>): ImageLoader {
       return object : ImageLoader {
         override val components: ComponentRegistry
@@ -198,7 +200,7 @@ abstract class ApplicationModule {
     }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun imageLoader(
       @ApplicationContext context: Context,
       @IsLowRamDevice isLowRamDevice: Boolean,

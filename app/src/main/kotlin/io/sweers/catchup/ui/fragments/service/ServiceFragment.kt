@@ -44,14 +44,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import autodispose2.autoDispose
 import com.apollographql.apollo3.exception.ApolloException
-import dagger.hilt.android.AndroidEntryPoint
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.databinding.FragmentServiceBinding
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
@@ -132,8 +130,7 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
     }
 }
 
-@AndroidEntryPoint
-class ServiceFragment :
+class ServiceFragment @Inject constructor() :
   InjectingBaseFragment<FragmentServiceBinding>(),
   SwipeRefreshLayout.OnRefreshListener,
   Scrollable,
@@ -176,10 +173,10 @@ class ServiceFragment :
 
   @VisualViewPool @Inject lateinit var visualViewPool: RecycledViewPool
 
-  @FinalServices @Inject lateinit var services: DaggerMap<String, Provider<Service>>
+  @FinalServices @Inject lateinit var services: Map<String, Provider<Service>>
   private lateinit var service: Service
 
-  @Inject lateinit var fragmentCreators: DaggerMap<Class<out Fragment>, Provider<Fragment>>
+  @Inject lateinit var fragmentCreators: Map<Class<out Fragment>, Provider<Fragment>>
 
   @Inject lateinit var detailDisplayer: DetailDisplayer
 

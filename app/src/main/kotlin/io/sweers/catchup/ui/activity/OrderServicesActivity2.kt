@@ -68,20 +68,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chibatching.kotpref.bulk
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.FragmentComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.compose.CatchUpTheme
+import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.databinding.FragmentOrderServicesBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.flowFor
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.util.setLightStatusBar
@@ -105,7 +103,7 @@ import kotlinx.coroutines.launch
  */
 
 private class OrderServicesViewModel(
-  serviceMetasMap: DaggerMap<String, ServiceMeta>,
+  serviceMetasMap: Map<String, ServiceMeta>,
   private val catchUpPreferences: CatchUpPreferences
 ) : ViewModel() {
 
@@ -156,10 +154,10 @@ private class OrderServicesViewModel(
   }
 }
 
-@AndroidEntryPoint
-class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBinding>() {
+class OrderServicesFragment2 @Inject constructor() :
+  InjectableBaseFragment<FragmentOrderServicesBinding>() {
 
-  @Inject lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
+  @Inject lateinit var serviceMetas: Map<String, ServiceMeta>
 
   @Inject lateinit var catchUpPreferences: CatchUpPreferences
 
@@ -347,7 +345,7 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
   }
 }
 
-@InstallIn(FragmentComponent::class)
+@ContributesTo(AppScope::class)
 @Module
 abstract class OrderServicesModule2 {
 

@@ -41,7 +41,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import dagger.hilt.android.AndroidEntryPoint
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.base.ui.InjectableBaseFragment
@@ -90,8 +89,8 @@ import okio.buffer
 import okio.source
 
 /** A fragment that displays oss licenses. */
-@AndroidEntryPoint
-class LicensesFragment : InjectableBaseFragment<FragmentLicensesBinding>(), Scrollable {
+class LicensesFragment @Inject constructor() :
+  InjectableBaseFragment<FragmentLicensesBinding>(), Scrollable {
 
   @Inject lateinit var apolloClient: ApolloClient
 

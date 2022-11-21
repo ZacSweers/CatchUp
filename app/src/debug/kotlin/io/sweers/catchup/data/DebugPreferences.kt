@@ -21,10 +21,11 @@ import android.content.SharedPreferences
 import com.chibatching.kotpref.ContextProvider
 import com.chibatching.kotpref.KotprefModel
 import com.chibatching.kotpref.PreferencesProvider
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class DebugPreferences
 @Inject
 constructor(application: Application, sharedPreferences: SharedPreferences) :

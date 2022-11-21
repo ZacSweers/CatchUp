@@ -30,12 +30,12 @@ import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperPlugin
 import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin
 import com.facebook.soloader.SoLoader
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
@@ -51,7 +51,7 @@ import leakcanary.LeakCanary
 import shark.AndroidReferenceMatchers
 import timber.log.Timber
 
-@InstallIn(SingletonComponent::class)
+@ContributesTo(AppScope::class)
 @Module
 object DebugApplicationModule {
 

@@ -16,6 +16,7 @@
 package io.sweers.catchup.ui.activity
 
 import android.animation.AnimatorInflater
+import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
@@ -38,12 +39,13 @@ import com.chibatching.kotpref.bulk
 import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.FragmentComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.ActivityKey
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ColorUtils
@@ -54,7 +56,6 @@ import io.sweers.catchup.databinding.OrderServicesItemBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.util.asDayContext
@@ -64,10 +65,10 @@ import io.sweers.catchup.util.setLightStatusBar
 import java.util.Collections
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class OrderServicesActivity : InjectingBaseActivity() {
-
-  @Inject internal lateinit var syllabus: Syllabus
+@ActivityKey(OrderServicesActivity::class)
+@ContributesMultibinding(AppScope::class, boundType = Activity::class)
+class OrderServicesActivity @Inject constructor(private val syllabus: Syllabus) :
+  InjectingBaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -81,10 +82,10 @@ class OrderServicesActivity : InjectingBaseActivity() {
   }
 }
 
-@AndroidEntryPoint
-class OrderServicesFragment : InjectableBaseFragment<FragmentOrderServicesBinding>() {
+class OrderServicesFragment @Inject constructor() :
+  InjectableBaseFragment<FragmentOrderServicesBinding>() {
 
-  @Inject lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
+  @Inject lateinit var serviceMetas: Map<String, ServiceMeta>
 
   @Inject lateinit var catchUpPreferences: CatchUpPreferences
 
@@ -352,7 +353,7 @@ private class MoveCallback(private val callback: (Int, Int) -> Unit) :
   }
 }
 
-@InstallIn(FragmentComponent::class)
+@ContributesTo(AppScope::class)
 @Module
 abstract class OrderServicesModule {
 

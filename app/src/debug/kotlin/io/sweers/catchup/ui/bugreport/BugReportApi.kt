@@ -16,15 +16,15 @@
 package io.sweers.catchup.ui.bugreport
 
 import com.serjltt.moshi.adapters.Wrapped
+import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.scopes.ActivityScoped
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
@@ -39,7 +39,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-internal interface ImgurUploadApi {
+interface ImgurUploadApi {
   @Multipart
   @Headers("Authorization: Client-ID ${BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN}")
   @POST("image")
@@ -47,7 +47,7 @@ internal interface ImgurUploadApi {
   fun postImage(@Part file: MultipartBody.Part): Single<String>
 }
 
-internal interface GitHubIssueApi {
+interface GitHubIssueApi {
   @Headers(
     value =
       [
@@ -62,11 +62,11 @@ internal interface GitHubIssueApi {
 
 @JsonClass(generateAdapter = true) data class GitHubIssue(val title: String, val body: String)
 
-@InstallIn(ActivityComponent::class)
+@ContributesTo(AppScope::class)
 @Module
-internal object BugReportModule {
+object BugReportModule {
 
-  @ActivityScoped
+  @SingleIn(AppScope::class)
   @Provides
   internal fun provideImgurService(
     client: Lazy<OkHttpClient>,
@@ -86,7 +86,7 @@ internal object BugReportModule {
       .create(ImgurUploadApi::class.java)
   }
 
-  @ActivityScoped
+  @SingleIn(AppScope::class)
   @Provides
   internal fun provideGithubIssueService(
     client: Lazy<OkHttpClient>,

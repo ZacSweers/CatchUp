@@ -17,16 +17,19 @@ package io.sweers.catchup.ui.activity
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
-import dagger.hilt.android.scopes.ActivityScoped
-import io.sweers.catchup.injection.DaggerMap
+import com.squareup.anvil.annotations.ContributesBinding
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import javax.inject.Inject
 import javax.inject.Provider
 
-@ActivityScoped
+@ContributesBinding(AppScope::class)
+@SingleIn(AppScope::class)
 class MainActivityFragmentFactory
 @Inject
-constructor(private val providers: DaggerMap<Class<out Fragment>, Provider<Fragment>>) :
-  FragmentFactory() {
+constructor(
+  private val providers: @JvmSuppressWildcards Map<Class<out Fragment>, Provider<Fragment>>
+) : FragmentFactory() {
   override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
     val fragmentClass = classLoader.loadClass(className)
     return providers[fragmentClass]?.get() ?: super.instantiate(classLoader, className)

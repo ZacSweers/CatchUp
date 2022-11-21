@@ -19,13 +19,14 @@ import android.content.Context
 import android.os.Build
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.appconfig.AppConfigMetadataContributor
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.base.ui.versionInfo
 import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class CatchUpAppConfig
 @Inject
 constructor(

@@ -17,13 +17,13 @@ package io.sweers.catchup.smmry
 
 import android.content.Context
 import androidx.room.Room
+import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.FragmentComponent
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.smmry.model.SmmryDao
 import io.sweers.catchup.smmry.model.SmmryDatabase
@@ -33,7 +33,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-@InstallIn(FragmentComponent::class)
+@ContributesTo(AppScope::class)
 @Module
 object SmmryModule {
 

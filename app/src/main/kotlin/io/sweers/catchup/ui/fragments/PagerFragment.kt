@@ -47,18 +47,17 @@ import androidx.viewpager2.adapter.FragmentViewHolder
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.squareup.anvil.annotations.ContributesTo
+import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.FragmentComponent
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.databinding.FragmentPagerBinding
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
@@ -84,18 +83,19 @@ data class ServiceHandler(
   val instantiator: () -> Fragment
 )
 
-@AndroidEntryPoint
-class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
+class PagerFragment
+@Inject
+constructor(
+  private val resolvedColorCache: ColorCache,
+  private val serviceHandlers: Array<ServiceHandler>,
+  private val changelogHelper: ChangelogHelper,
+  private val catchUpPreferences: CatchUpPreferences,
+  private val appConfig: AppConfig,
+) : InjectingBaseFragment<FragmentPagerBinding>() {
 
   companion object {
     private const val SETTINGS_ACTIVITY_REQUEST = 100
   }
-
-  @Inject lateinit var resolvedColorCache: ColorCache
-  @Inject lateinit var serviceHandlers: Array<ServiceHandler>
-  @Inject lateinit var changelogHelper: ChangelogHelper
-  @Inject lateinit var catchUpPreferences: CatchUpPreferences
-  @Inject lateinit var appConfig: AppConfig
 
   private val rootLayout
     get() = binding.pagerFragmentRoot
@@ -386,14 +386,14 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
     }
   }
 
-  @InstallIn(FragmentComponent::class)
+  @ContributesTo(AppScope::class)
   @dagger.Module
   object Module {
 
     @Provides
     fun provideServiceHandlers(
       sharedPrefs: SharedPreferences,
-      serviceMetas: DaggerMap<String, ServiceMeta>,
+      serviceMetas: Map<String, ServiceMeta>,
       catchUpPreferences: CatchUpPreferences
     ): Array<ServiceHandler> {
       check(serviceMetas.isNotEmpty()) { "No services found!" }

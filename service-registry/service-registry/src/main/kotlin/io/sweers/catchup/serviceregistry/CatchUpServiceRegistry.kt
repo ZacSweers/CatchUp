@@ -29,11 +29,6 @@ import io.sweers.catchup.service.api.ServiceMetaIndex
 @MergeModules(ServiceIndex::class)
 @Module
 interface CatchUpServiceRegistry {
-  @Multibinds fun serviceIndexes(): Map<String, Service>
 }
 
-@MergeModules(ServiceMetaIndex::class)
-@Module
-interface CatchUpServiceMetaRegistry {
-  @Multibinds fun serviceMetaIndexes(): Map<String, ServiceMeta>
-}
+

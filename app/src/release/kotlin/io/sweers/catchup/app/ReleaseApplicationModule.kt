@@ -19,26 +19,28 @@ import android.app.Application
 import com.bugsnag.android.Bugsnag
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import javax.inject.Qualifier
-import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.BINARY
 import timber.log.Timber
 
-@InstallIn(SingletonComponent::class)
+@ContributesTo(AppScope::class)
 @Module
 object ReleaseApplicationModule {
 
-  @Provides @Singleton fun provideObjectWatcher(): CatchUpObjectWatcher = CatchUpObjectWatcher.None
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideObjectWatcher(): CatchUpObjectWatcher = CatchUpObjectWatcher.None
 
   @Qualifier @Retention(BINARY) private annotation class BugsnagKey
 
-  @BugsnagKey @Provides @Singleton fun provideBugsnagKey(): String = BuildConfig.BUGSNAG_KEY
+  @BugsnagKey
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideBugsnagKey(): String = BuildConfig.BUGSNAG_KEY
 
   @Initializers
   @IntoSet

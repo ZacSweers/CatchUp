@@ -17,16 +17,19 @@ package io.sweers.catchup.gemoji
 
 import android.content.Context
 import androidx.room.Room
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
-import javax.inject.Singleton
 
+@ContributesTo(AppScope::class)
 @Module
 object GemojiModule {
 
   @Provides
-  @Singleton
+  @SingleIn(AppScope::class)
   internal fun provideGemojiDatabase(@ApplicationContext context: Context): GemojiDatabase {
     return Room.databaseBuilder(context, GemojiDatabase::class.java, "gemoji.db")
       .fallbackToDestructiveMigration()
@@ -35,13 +38,13 @@ object GemojiModule {
   }
 
   @Provides
-  @Singleton
+  @SingleIn(AppScope::class)
   internal fun provideGemojiDao(gemojiDatabase: GemojiDatabase): GemojiDao {
     return gemojiDatabase.gemojiDao()
   }
 
   @Provides
-  @Singleton
+  @SingleIn(AppScope::class)
   fun provideEmojiMarkdownConverter(gemojiDao: GemojiDao): EmojiMarkdownConverter {
     return GemojiEmojiMarkdownConverter(gemojiDao)
   }

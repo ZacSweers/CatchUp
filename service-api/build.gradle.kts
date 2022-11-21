@@ -15,10 +15,20 @@
  */
 
 plugins {
+  alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
   alias(libs.plugins.ksp)
-  alias(libs.plugins.sgp.base)
+}
+
+android {
+  namespace = "io.sweers.catchup.service"
+}
+
+slack {
+  features {
+    dagger()
+  }
 }
 
 dependencies {
@@ -43,7 +53,6 @@ dependencies {
   api(libs.retrofit.core)
   api(libs.retrofit.rxJava3)
   api(libs.apollo.runtime)
-}
-android {
-  namespace = "io.sweers.catchup.service"
+  api(projects.libraries.di)
+  api(projects.libraries.di.android)
 }

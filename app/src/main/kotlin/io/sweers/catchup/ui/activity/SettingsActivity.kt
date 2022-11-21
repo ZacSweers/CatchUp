@@ -16,10 +16,11 @@
 package io.sweers.catchup.ui.activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commitNow
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
@@ -29,8 +30,11 @@ import androidx.preference.children
 import autodispose2.autoDispose
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.byteunits.BinaryByteUnit
-import dagger.hilt.android.AndroidEntryPoint
+import com.squareup.anvil.annotations.ContributesMultibinding
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.ActivityKey
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -39,7 +43,6 @@ import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BaseActivity
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.base.ui.updateNavBarColor
-import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.databinding.ActivitySettingsBinding
 import io.sweers.catchup.ui.about.AboutActivity
@@ -50,10 +53,15 @@ import io.sweers.catchup.util.setLightStatusBar
 import io.sweers.catchup.util.updateNightMode
 import java.io.File
 import javax.inject.Inject
+import javax.inject.Provider
 import okhttp3.Cache
 
-@AndroidEntryPoint
-class SettingsActivity : InjectingBaseActivity() {
+@ActivityKey(SettingsActivity::class)
+@ContributesMultibinding(AppScope::class, boundType = Activity::class)
+class SettingsActivity
+@Inject
+constructor(private val settingsFragmentProvider: Provider<SettingsFrag>) :
+  InjectingBaseActivity() {
 
   companion object {
     const val SETTINGS_RESULT_DATA = 100
@@ -77,7 +85,7 @@ class SettingsActivity : InjectingBaseActivity() {
     }
 
     if (savedInstanceState == null) {
-      supportFragmentManager.commitNow { add(R.id.container, SettingsFrag()) }
+      supportFragmentManager.commitNow { add(R.id.container, settingsFragmentProvider.get()) }
     } else if (savedInstanceState.getBoolean(ARG_FROM_RECREATE, false)) {
       resultData.putBoolean(NIGHT_MODE_UPDATED, true)
     }
@@ -104,15 +112,16 @@ class SettingsActivity : InjectingBaseActivity() {
     super.onBackPressed()
   }
 
-  @AndroidEntryPoint
-  class SettingsFrag : PreferenceFragmentCompat() {
-
-    @Inject lateinit var cache: dagger.Lazy<Cache>
-    @Inject lateinit var database: CatchUpDatabase
-    @Inject lateinit var lumberYard: LumberYard
-    @Inject lateinit var sharedPreferences: SharedPreferences
-    @Inject lateinit var catchUpPreferences: CatchUpPreferences
-    @Inject lateinit var appConfig: AppConfig
+  @FragmentKey(SettingsFrag::class)
+  @ContributesMultibinding(AppScope::class, boundType = Fragment::class)
+  class SettingsFrag
+  @Inject
+  constructor(
+    private val cache: dagger.Lazy<Cache>,
+    private val lumberYard: LumberYard,
+    private val catchUpPreferences: CatchUpPreferences,
+    private val appConfig: AppConfig,
+  ) : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
       addPreferencesFromResource(R.xml.prefs_general)

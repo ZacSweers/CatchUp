@@ -35,20 +35,19 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleEmitter
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
-import io.sweers.catchup.service.api.FragmentKey
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceException
-import io.sweers.catchup.service.api.ServiceIndex
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.service.api.ServiceMetaIndex
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
@@ -69,7 +68,7 @@ typealias ViewModelCreator = ViewModelAssistedFactory<out ViewModel>
 private const val SERVICE_KEY = "hn"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
+@ContributesMultibinding(AppScope::class, boundType = Service::class)
 class HackerNewsService
 @Inject
 constructor(
@@ -162,7 +161,7 @@ constructor(
   }
 }
 
-@ContributesTo(ServiceMetaIndex::class)
+@ContributesTo(AppScope::class)
 @Module
 abstract class HackerNewsMetaModule {
 
@@ -189,7 +188,7 @@ abstract class HackerNewsMetaModule {
   }
 }
 
-@ContributesTo(ServiceIndex::class)
+@ContributesTo(AppScope::class)
 @Module(
   includes =
     [

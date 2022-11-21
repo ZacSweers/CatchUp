@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019. Zac Sweers
+ * Copyright (C) 2021. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,14 @@
  */
 package io.sweers.catchup.service.api
 
-import androidx.fragment.app.Fragment
-import dagger.MapKey
-import kotlin.annotation.AnnotationRetention.BINARY
-import kotlin.reflect.KClass
+import com.squareup.anvil.annotations.ContributesTo
+import dagger.Module
+import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.di.AppScope
 
-@Target(
-  AnnotationTarget.FUNCTION,
-  AnnotationTarget.PROPERTY_GETTER,
-  AnnotationTarget.PROPERTY_SETTER
-)
-@Retention(value = BINARY)
-@MapKey
-annotation class FragmentKey(val value: KClass<out Fragment>)
+@ContributesTo(AppScope::class)
+@Module
+interface CatchUpServiceMultibindings {
+  @Multibinds fun serviceIndexes(): @JvmSuppressWildcards Map<String, Service>
+  @Multibinds fun serviceMetaIndexes(): @JvmSuppressWildcards Map<String, ServiceMeta>
+}

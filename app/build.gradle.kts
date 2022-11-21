@@ -34,9 +34,22 @@ plugins {
   alias(libs.plugins.apollo)
   alias(libs.plugins.licensee)
   alias(libs.plugins.moshix)
-  alias(libs.plugins.hilt)
+  alias(libs.plugins.anvil)
 //  alias(libs.plugins.bugsnag)
 //  alias(libs.plugins.playPublisher)
+}
+
+slack {
+  features {
+    dagger(enableComponents = true) {
+      alwaysEnableAnvilComponentMerging()
+    }
+  }
+  android {
+    features {
+      compose()
+    }
+  }
 }
 
 val useDebugSigning: Boolean = providers.gradleProperty("useDebugSigning")
@@ -156,19 +169,7 @@ android {
 
 kapt {
   arguments {
-    arg("dagger.experimentalDaggerErrorMessages", "enabled")
     arg("room.schemaLocation", "$projectDir/schemas")
-  }
-}
-
-slack {
-  features {
-    dagger(enableComponents = true)
-  }
-  android {
-    features {
-      compose()
-    }
   }
 }
 
@@ -385,22 +386,6 @@ tasks.create("updateVersion", UpdateVersion::class.java) {
     "Updates the current version. Supports CLI option --updateType={type} where type is (major|minor|patch)"
 }
 
-// {
-//        "groupId": "androidx.constraintlayout",
-//        "artifactId": "constraintlayout-core",
-//        "version": "1.1.0-alpha04",
-//        "name": "Android ConstraintLayout Core",
-//        "spdxLicenses": [
-//            {
-//                "identifier": "Apache-2.0",
-//                "name": "Apache License 2.0",
-//                "url": "https://www.apache.org/licenses/LICENSE-2.0"
-//            }
-//        ],
-//        "scm": {
-//            "url": "https://github.com/androidx/constraintlayout"
-//        }
-//    },
 abstract class GenerateLicensesAsset : DefaultTask() {
   @get:PathSensitive(PathSensitivity.RELATIVE)
   @get:InputDirectory
@@ -492,7 +477,6 @@ dependencies {
   implementation(libs.markwon.linkify)
 //  implementation(libs.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
   implementation(project(":service-api"))
-  implementation(project(":service-registry:service-registry"))
   implementation(project(":libraries:base-ui"))
   implementation(project(":libraries:appconfig"))
   implementation(project(":libraries:gemoji"))
@@ -597,6 +581,18 @@ dependencies {
   implementation(libs.apollo.normalizedCache)
   implementation(libs.apollo.runtime)
 
+  implementation(project(":services:reddit"))
+  implementation(project(":services:medium"))
+  implementation(project(":services:producthunt"))
+//  implementation(project(":services:imgur"))
+  implementation(project(":services:slashdot"))
+  implementation(project(":services:designernews"))
+  implementation(project(":services:dribbble"))
+  implementation(project(":services:github"))
+//  implementation(project(":services:newsapi"))
+  implementation(project(":services:unsplash"))
+  implementation(project(":services:uplabs"))
+
   // Flipper
   debugImplementation(libs.misc.debug.flipper)
   debugImplementation(libs.misc.debug.flipperNetwork)
@@ -620,11 +616,9 @@ dependencies {
 //  debugImplementation(libs.hyperion.plugins.sharedPreferences)
 //  debugImplementation(libs.hyperion.plugins.timber)
 
-  // Dagger
-  kapt(libs.dagger.hilt.apt.compiler)
-  implementation(libs.dagger.hilt.android)
-
   implementation(libs.misc.jsr305)
+  implementation(projects.libraries.di)
+  implementation(projects.libraries.di.android)
 
   // Test
   testImplementation(libs.rx.relay)

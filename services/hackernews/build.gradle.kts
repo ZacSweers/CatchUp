@@ -16,11 +16,16 @@
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 
 plugins {
+  alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
   kotlin("plugin.noarg")
   alias(libs.plugins.moshix)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.anvil)
+}
+
+anvil {
+  generateDaggerFactoriesOnly.set(true)
 }
 
 android {

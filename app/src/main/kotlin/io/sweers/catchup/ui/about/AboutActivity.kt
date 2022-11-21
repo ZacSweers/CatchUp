@@ -16,6 +16,7 @@
 package io.sweers.catchup.ui.about
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Parcelable
@@ -37,8 +38,10 @@ import autodispose2.autoDispose
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import dagger.hilt.android.AndroidEntryPoint
+import com.squareup.anvil.annotations.ContributesMultibinding
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.ActivityKey
 import io.noties.markwon.Markwon
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
@@ -66,10 +69,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.ldralighieri.corbind.material.offsetChanges
 
-@AndroidEntryPoint
-class AboutActivity : InjectingBaseActivity() {
-
-  @Inject internal lateinit var customTab: CustomTabActivityHelper
+@ActivityKey(AboutActivity::class)
+@ContributesMultibinding(AppScope::class, boundType = Activity::class)
+class AboutActivity @Inject constructor(private val customTab: CustomTabActivityHelper) :
+  InjectingBaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -106,8 +109,7 @@ class AboutActivity : InjectingBaseActivity() {
   }
 }
 
-@AndroidEntryPoint
-class AboutFragment : InjectingBaseFragment<FragmentAboutBinding>() {
+class AboutFragment @Inject constructor() : InjectingBaseFragment<FragmentAboutBinding>() {
 
   companion object {
     private const val FADE_PERCENT = 0.75F
