@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.service.unsplash
 
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -23,6 +25,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
@@ -35,8 +38,6 @@ import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.service.api.VisualService.SpanConfig
-import io.sweers.catchup.serviceregistry.annotations.Meta
-import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import javax.inject.Inject
@@ -51,6 +52,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 private const val SERVICE_KEY = "unsplash"
 
+@ServiceKey(SERVICE_KEY)
+@ContributesMultibinding(AppScope::class, boundType = Service::class)
 class UnsplashService
 @Inject
 constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: UnsplashApi) :
@@ -103,8 +106,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
   override fun marginDecoration() = true
 }
 
-@Meta
-@ServiceModule
+@ContributesTo(AppScope::class)
 @Module
 abstract class UnsplashMetaModule {
 
@@ -132,50 +134,42 @@ abstract class UnsplashMetaModule {
   }
 }
 
-@ServiceModule
+@ContributesTo(AppScope::class)
 @Module(includes = [UnsplashMetaModule::class])
-abstract class UnsplashModule {
+object UnsplashModule {
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun unsplashService(unsplashService: UnsplashService): Service
+  @Provides
+  @InternalApi
+  internal fun provideUnsplashMoshi(moshi: Moshi): Moshi {
+    return moshi.newBuilder().add(Instant::class.java, ISO8601InstantAdapter()).build()
+  }
 
-  companion object {
+  @Provides
+  @InternalApi
+  internal fun provideUnsplashOkHttpClient(client: OkHttpClient): OkHttpClient {
+    return client
+      .newBuilder()
+      .addInterceptor {
+        it.proceed(it.request().newBuilder().addHeader("Accept-Version", "v1").build())
+      }
+      .addInterceptor(AuthInterceptor("Client-ID", BuildConfig.UNSPLASH_API_KEY))
+      .build()
+  }
 
-    @Provides
-    @InternalApi
-    internal fun provideUnsplashMoshi(moshi: Moshi): Moshi {
-      return moshi.newBuilder().add(Instant::class.java, ISO8601InstantAdapter()).build()
-    }
-
-    @Provides
-    @InternalApi
-    internal fun provideUnsplashOkHttpClient(client: OkHttpClient): OkHttpClient {
-      return client
-        .newBuilder()
-        .addInterceptor {
-          it.proceed(it.request().newBuilder().addHeader("Accept-Version", "v1").build())
-        }
-        .addInterceptor(AuthInterceptor("Client-ID", BuildConfig.UNSPLASH_API_KEY))
-        .build()
-    }
-
-    @Provides
-    internal fun provideUnsplashService(
-      @InternalApi client: Lazy<OkHttpClient>,
-      @InternalApi moshi: Moshi,
-      rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
-      appConfig: AppConfig
-    ): UnsplashApi {
-      return Retrofit.Builder()
-        .baseUrl(UnsplashApi.ENDPOINT)
-        .delegatingCallFactory(client)
-        .addCallAdapterFactory(rxJavaCallAdapterFactory)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .validateEagerly(appConfig.isDebug)
-        .build()
-        .create(UnsplashApi::class.java)
-    }
+  @Provides
+  internal fun provideUnsplashService(
+    @InternalApi client: Lazy<OkHttpClient>,
+    @InternalApi moshi: Moshi,
+    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
+    appConfig: AppConfig
+  ): UnsplashApi {
+    return Retrofit.Builder()
+      .baseUrl(UnsplashApi.ENDPOINT)
+      .delegatingCallFactory(client)
+      .addCallAdapterFactory(rxJavaCallAdapterFactory)
+      .addConverterFactory(MoshiConverterFactory.create(moshi))
+      .validateEagerly(appConfig.isDebug)
+      .build()
+      .create(UnsplashApi::class.java)
   }
 }

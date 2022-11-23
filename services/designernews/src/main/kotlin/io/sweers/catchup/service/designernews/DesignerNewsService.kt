@@ -124,7 +124,7 @@ object DesignerNewsModule {
   }
 
   @Provides
-  internal fun provideDesignerNewsService(
+  internal fun provideDesignerNewsApi(
     client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
     rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,

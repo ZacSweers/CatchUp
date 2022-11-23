@@ -256,7 +256,6 @@ include(
   ":libraries:tooling:spi-visualizer",
   ":libraries:util",
   ":service-api",
-  ":service-registry:service-registry-annotations",
   ":services:designernews",
   ":services:dribbble",
   ":services:github",

@@ -73,8 +73,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import ru.ldralighieri.corbind.material.offsetChanges
 
-fun ServiceMeta.toServiceHandler() =
-  ServiceHandler(name, icon, themeColor) { ServiceFragment.newInstance(id) }
+fun ServiceMeta.toServiceHandler(factory: ServiceFragment.Factory) =
+  ServiceHandler(name, icon, themeColor) { factory.create(id) }
 
 data class ServiceHandler(
   @StringRes val name: Int,
@@ -394,7 +394,8 @@ constructor(
     fun provideServiceHandlers(
       sharedPrefs: SharedPreferences,
       serviceMetas: Map<String, ServiceMeta>,
-      catchUpPreferences: CatchUpPreferences
+      catchUpPreferences: CatchUpPreferences,
+      serviceFragmentFactory: ServiceFragment.Factory
     ): Array<ServiceHandler> {
       check(serviceMetas.isNotEmpty()) { "No services found!" }
       val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
@@ -402,7 +403,7 @@ constructor(
           .filter(ServiceMeta::enabled)
           .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }
           .sortedBy { currentOrder.indexOf(it.id) }
-          .map(ServiceMeta::toServiceHandler))
+          .map { it.toServiceHandler(serviceFragmentFactory) })
         .toTypedArray()
     }
 

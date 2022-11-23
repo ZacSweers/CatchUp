@@ -42,10 +42,4 @@ object GemojiModule {
   internal fun provideGemojiDao(gemojiDatabase: GemojiDatabase): GemojiDao {
     return gemojiDatabase.gemojiDao()
   }
-
-  @Provides
-  @SingleIn(AppScope::class)
-  fun provideEmojiMarkdownConverter(gemojiDao: GemojiDao): EmojiMarkdownConverter {
-    return GemojiEmojiMarkdownConverter(gemojiDao)
-  }
 }

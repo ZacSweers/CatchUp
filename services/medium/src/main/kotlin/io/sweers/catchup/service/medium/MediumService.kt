@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.service.medium
 
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -23,6 +25,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
@@ -37,8 +40,6 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.medium.model.MediumPost
-import io.sweers.catchup.serviceregistry.annotations.Meta
-import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
@@ -53,6 +54,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 private const val SERVICE_KEY = "medium"
 
+@ServiceKey(SERVICE_KEY)
+@ContributesMultibinding(AppScope::class, boundType = Service::class)
 class MediumService
 @Inject
 constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: MediumApi) :
@@ -101,8 +104,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
   }
 }
 
-@Meta
-@ServiceModule
+@ContributesTo(AppConfig::class)
 @Module
 abstract class MediumMetaModule {
 
@@ -127,68 +129,60 @@ abstract class MediumMetaModule {
   }
 }
 
-@ServiceModule
+@ContributesTo(AppScope::class)
 @Module(includes = [MediumMetaModule::class])
-abstract class MediumModule {
+object MediumModule {
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun mediumService(mediumService: MediumService): Service
-
-  companion object {
-
-    @Provides
-    @InternalApi
-    internal fun provideMediumOkHttpClient(client: OkHttpClient): OkHttpClient {
-      return client
-        .newBuilder()
-        .addInterceptor { chain ->
-          chain
-            .proceed(
-              chain
-                .request()
-                .newBuilder()
-                // Tack format=json to the end
-                .url(chain.request().url.newBuilder().addQueryParameter("format", "json").build())
-                .build()
-            )
-            .apply {
-              body.source().let {
-                // Medium prefixes with a while loop to prevent javascript eval attacks, so
-                // skip to the first open curly brace
-                it.skip(it.indexOf('{'.code.toByte()))
-              }
+  @Provides
+  @InternalApi
+  internal fun provideMediumOkHttpClient(client: OkHttpClient): OkHttpClient {
+    return client
+      .newBuilder()
+      .addInterceptor { chain ->
+        chain
+          .proceed(
+            chain
+              .request()
+              .newBuilder()
+              // Tack format=json to the end
+              .url(chain.request().url.newBuilder().addQueryParameter("format", "json").build())
+              .build()
+          )
+          .apply {
+            body.source().let {
+              // Medium prefixes with a while loop to prevent javascript eval attacks, so
+              // skip to the first open curly brace
+              it.skip(it.indexOf('{'.code.toByte()))
             }
-        }
-        .build()
-    }
+          }
+      }
+      .build()
+  }
 
-    @Provides
-    @InternalApi
-    internal fun provideMediumMoshi(moshi: Moshi): Moshi {
-      return moshi
-        .newBuilder()
-        .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
-        .build()
-    }
+  @Provides
+  @InternalApi
+  internal fun provideMediumMoshi(moshi: Moshi): Moshi {
+    return moshi
+      .newBuilder()
+      .add(Instant::class.java, EpochInstantJsonAdapter(MILLISECONDS))
+      .build()
+  }
 
-    @Provides
-    internal fun provideMediumService(
-      @InternalApi client: Lazy<OkHttpClient>,
-      @InternalApi moshi: Moshi,
-      rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
-      appConfig: AppConfig
-    ): MediumApi {
-      val retrofit =
-        Retrofit.Builder()
-          .baseUrl(MediumApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(appConfig.isDebug)
-          .build()
-      return retrofit.create(MediumApi::class.java)
-    }
+  @Provides
+  internal fun provideMediumService(
+    @InternalApi client: Lazy<OkHttpClient>,
+    @InternalApi moshi: Moshi,
+    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
+    appConfig: AppConfig
+  ): MediumApi {
+    val retrofit =
+      Retrofit.Builder()
+        .baseUrl(MediumApi.ENDPOINT)
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
+        .build()
+    return retrofit.create(MediumApi::class.java)
   }
 }

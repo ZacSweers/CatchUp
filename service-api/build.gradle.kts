@@ -38,7 +38,6 @@ dependencies {
   implementation(libs.kotlin.coroutinesRx)
   implementation(libs.kotlin.datetime)
 
-  api(project(":service-registry:service-registry-annotations"))
   api(project(":libraries:appconfig"))
   api(project(":libraries:retrofitconverters"))
   api(project(":libraries:gemoji"))

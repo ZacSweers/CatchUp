@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.service.slashdot
 
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import com.tickaroo.tikxml.TikXml
 import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 import dagger.Binds
@@ -24,6 +26,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
@@ -37,8 +40,6 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.TextService
-import io.sweers.catchup.serviceregistry.annotations.Meta
-import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import javax.inject.Inject
 import javax.inject.Qualifier
 import kotlinx.datetime.Instant
@@ -50,6 +51,8 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 
 private const val SERVICE_KEY = "sd"
 
+@ServiceKey(SERVICE_KEY)
+@ContributesMultibinding(AppScope::class, boundType = Service::class)
 class SlashdotService
 @Inject
 constructor(@InternalApi private val serviceMeta: ServiceMeta, private val service: SlashdotApi) :
@@ -81,8 +84,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val servi
   }
 }
 
-@Meta
-@ServiceModule
+@ContributesTo(AppScope::class)
 @Module
 abstract class SlashdotMetaModule {
 
@@ -107,54 +109,46 @@ abstract class SlashdotMetaModule {
   }
 }
 
-@ServiceModule
+@ContributesTo(AppScope::class)
 @Module(includes = [SlashdotMetaModule::class])
-abstract class SlashdotModule {
+object SlashdotModule {
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun slashdotService(slashdotService: SlashdotService): Service
+  @Provides
+  internal fun provideTikXml(): TikXml =
+    TikXml.Builder()
+      .exceptionOnUnreadXml(false)
+      .addTypeConverter(Instant::class.java, InstantTypeConverter())
+      .build()
 
-  companion object {
+  @Provides
+  @InternalApi
+  internal fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
+    return okHttpClient
+      .newBuilder()
+      .addNetworkInterceptor { chain ->
+        val originalResponse = chain.proceed(chain.request())
+        // read from cache for 30 minutes, per slashdot's preferred limit
+        val maxAge = 60 * 30
+        originalResponse.newBuilder().header("Cache-Control", "public, max-age=$maxAge").build()
+      }
+      .build()
+  }
 
-    @Provides
-    internal fun provideTikXml(): TikXml =
-      TikXml.Builder()
-        .exceptionOnUnreadXml(false)
-        .addTypeConverter(Instant::class.java, InstantTypeConverter())
+  @Provides
+  internal fun provideSlashdotApi(
+    @InternalApi client: Lazy<OkHttpClient>,
+    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
+    tikXml: TikXml,
+    appConfig: AppConfig
+  ): SlashdotApi {
+    val retrofit =
+      Retrofit.Builder()
+        .baseUrl(SlashdotApi.ENDPOINT)
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(TikXmlConverterFactory.create(tikXml))
+        .validateEagerly(appConfig.isDebug)
         .build()
-
-    @Provides
-    @InternalApi
-    internal fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
-      return okHttpClient
-        .newBuilder()
-        .addNetworkInterceptor { chain ->
-          val originalResponse = chain.proceed(chain.request())
-          // read from cache for 30 minutes, per slashdot's preferred limit
-          val maxAge = 60 * 30
-          originalResponse.newBuilder().header("Cache-Control", "public, max-age=$maxAge").build()
-        }
-        .build()
-    }
-
-    @Provides
-    internal fun provideSlashdotApi(
-      @InternalApi client: Lazy<OkHttpClient>,
-      rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
-      tikXml: TikXml,
-      appConfig: AppConfig
-    ): SlashdotApi {
-      val retrofit =
-        Retrofit.Builder()
-          .baseUrl(SlashdotApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(TikXmlConverterFactory.create(tikXml))
-          .validateEagerly(appConfig.isDebug)
-          .build()
-      return retrofit.create(SlashdotApi::class.java)
-    }
+    return retrofit.create(SlashdotApi::class.java)
   }
 }

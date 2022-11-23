@@ -73,6 +73,7 @@ constructor(
   private var activityRef: WeakReference<Activity?> = WeakReference(null)
 
   fun connect(activity: MainActivity) {
+    activityRef = WeakReference(activity)
     // Invalidate the cache when a new install/update happens or prefs changed
     val filter = IntentFilter()
     if (appConfig.sdkInt < 29) {

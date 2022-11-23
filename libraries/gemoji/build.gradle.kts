@@ -15,10 +15,10 @@
  */
 
 plugins {
+  alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
   alias(libs.plugins.ksp)
-  alias(libs.plugins.sgp.base)
 }
 
 ksp {

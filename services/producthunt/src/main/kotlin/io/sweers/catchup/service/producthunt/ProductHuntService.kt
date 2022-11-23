@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.service.producthunt
 
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -23,6 +25,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
@@ -34,8 +37,6 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
-import io.sweers.catchup.serviceregistry.annotations.Meta
-import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import javax.inject.Inject
@@ -50,6 +51,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 private const val SERVICE_KEY = "ph"
 
+@ServiceKey(SERVICE_KEY)
+@ContributesMultibinding(AppScope::class, boundType = Service::class)
 class ProductHuntService
 @Inject
 constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: ProductHuntApi) :
@@ -81,8 +84,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
   }
 }
 
-@Meta
-@ServiceModule
+@ContributesTo(AppScope::class)
 @Module
 abstract class ProductHuntMetaModule {
 
@@ -110,47 +112,39 @@ abstract class ProductHuntMetaModule {
   }
 }
 
-@ServiceModule
+@ContributesTo(AppScope::class)
 @Module(includes = [ProductHuntMetaModule::class])
-abstract class ProductHuntModule {
+object ProductHuntModule {
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun productHuntService(productHuntService: ProductHuntService): Service
+  @Provides
+  @InternalApi
+  internal fun provideProductHuntOkHttpClient(client: OkHttpClient): OkHttpClient {
+    return client
+      .newBuilder()
+      .addInterceptor(AuthInterceptor("Bearer", BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN))
+      .build()
+  }
 
-  companion object {
+  @Provides
+  @InternalApi
+  internal fun provideProductHuntMoshi(moshi: Moshi): Moshi {
+    return moshi.newBuilder().add(Instant::class.java, ISO8601InstantAdapter()).build()
+  }
 
-    @Provides
-    @InternalApi
-    internal fun provideProductHuntOkHttpClient(client: OkHttpClient): OkHttpClient {
-      return client
-        .newBuilder()
-        .addInterceptor(AuthInterceptor("Bearer", BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN))
-        .build()
-    }
-
-    @Provides
-    @InternalApi
-    internal fun provideProductHuntMoshi(moshi: Moshi): Moshi {
-      return moshi.newBuilder().add(Instant::class.java, ISO8601InstantAdapter()).build()
-    }
-
-    @Provides
-    internal fun provideProductHuntService(
-      @InternalApi client: Lazy<OkHttpClient>,
-      @InternalApi moshi: Moshi,
-      rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
-      appConfig: AppConfig
-    ): ProductHuntApi {
-      return Retrofit.Builder()
-        .baseUrl(ProductHuntApi.ENDPOINT)
-        .delegatingCallFactory(client)
-        .addCallAdapterFactory(rxJavaCallAdapterFactory)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .validateEagerly(appConfig.isDebug)
-        .build()
-        .create(ProductHuntApi::class.java)
-    }
+  @Provides
+  internal fun provideProductHuntService(
+    @InternalApi client: Lazy<OkHttpClient>,
+    @InternalApi moshi: Moshi,
+    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
+    appConfig: AppConfig
+  ): ProductHuntApi {
+    return Retrofit.Builder()
+      .baseUrl(ProductHuntApi.ENDPOINT)
+      .delegatingCallFactory(client)
+      .addCallAdapterFactory(rxJavaCallAdapterFactory)
+      .addConverterFactory(MoshiConverterFactory.create(moshi))
+      .validateEagerly(appConfig.isDebug)
+      .build()
+      .create(ProductHuntApi::class.java)
   }
 }

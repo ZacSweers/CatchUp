@@ -21,11 +21,6 @@ plugins {
   kotlin("android")
   kotlin("plugin.noarg")
   alias(libs.plugins.moshix)
-  alias(libs.plugins.anvil)
-}
-
-anvil {
-  generateDaggerFactoriesOnly.set(true)
 }
 
 android {

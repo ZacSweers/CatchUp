@@ -15,12 +15,19 @@
  */
 package io.sweers.catchup.gemoji
 
+import com.squareup.anvil.annotations.ContributesBinding
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
+import javax.inject.Inject
+
 /** Converts a markdown emoji alias (eg, ":smile:") into an android render-able emoji. */
 interface EmojiMarkdownConverter {
   fun convert(alias: String): String?
 }
 
-internal class GemojiEmojiMarkdownConverter(private val gemojiDao: GemojiDao) :
+@ContributesBinding(AppScope::class)
+@SingleIn(AppScope::class)
+class GemojiEmojiMarkdownConverter @Inject constructor(private val gemojiDao: GemojiDao) :
   EmojiMarkdownConverter {
   override fun convert(alias: String): String? {
     return gemojiDao.getEmoji(alias)
