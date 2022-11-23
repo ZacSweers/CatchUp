@@ -33,7 +33,9 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build with Gradle
-        run: ./gradlew spotlessCheck :app:assembleDebug test :app:lintRelease
+        run: |
+          ./gradlew bootstrap
+          ./gradlew spotlessCheck :app:assembleDebug test :app:lintRelease
 
       - name: (Fail-only) Bundle the build report
         if: failure()
