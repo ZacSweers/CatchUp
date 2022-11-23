@@ -7,6 +7,10 @@ import dagger.spi.model.BindingGraphPlugin
 import dagger.spi.model.DiagnosticReporter
 import javax.tools.Diagnostic
 
+private val ALLOWED_LIST = setOf(
+  "AppConfigMetadataContributor"
+)
+
 /** A [BindingGraphPlugin] that validates that all multibinds have dependencies. */
 @AutoService(BindingGraphPlugin::class)
 class MultibindsValidator : BindingGraphPlugin {
@@ -19,6 +23,10 @@ class MultibindsValidator : BindingGraphPlugin {
       .filter { it.kind().isMultibinding }
       .forEach { binding ->
         if (binding.dependencies().isEmpty()) {
+          val bindingString = binding.toString()
+          if (ALLOWED_LIST.any { it in bindingString }) {
+            return@forEach
+          }
           diagnosticReporter.reportBinding(
             Diagnostic.Kind.ERROR,
             binding,
