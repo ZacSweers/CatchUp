@@ -44,10 +44,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import autodispose2.autoDispose
 import com.apollographql.apollo3.exception.ApolloException
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import com.squareup.anvil.annotations.ContributesMultibinding
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
@@ -79,6 +79,7 @@ import io.sweers.catchup.util.show
 import io.sweers.catchup.util.w
 import java.io.IOException
 import java.security.InvalidParameterException
+import javax.inject.Inject
 import javax.inject.Provider
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.flow.Flow
@@ -132,10 +133,13 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
     }
 }
 
+private const val ARG_SERVICE_KEY = "service_key"
+
+@FragmentKey(ServiceFragment::class)
+@ContributesMultibinding(AppScope::class, boundType = Fragment::class)
 class ServiceFragment
-@AssistedInject
+@Inject
 constructor(
-  @Assisted private val serviceKey: String,
   private val linkManager: LinkManager,
   @TextViewPool private val textViewPool: RecycledViewPool,
   @VisualViewPool private val visualViewPool: RecycledViewPool,
@@ -149,10 +153,12 @@ constructor(
   Scrollable,
   DataLoadingSubject {
 
-  @AssistedFactory
-  fun interface Factory {
-    fun create(serviceKey: String): ServiceFragment
+  fun forService(serviceKey: String) = apply {
+    arguments = Bundle().apply { putString(ARG_SERVICE_KEY, serviceKey) }
   }
+
+  private val serviceKey: String
+    get() = requireArguments().getString(ARG_SERVICE_KEY)!!
 
   private val errorView
     get() = binding.errorContainer
@@ -179,11 +185,12 @@ constructor(
   private var detailDisplayed: Boolean = false
   private val defaultItemAnimator = DefaultItemAnimator()
 
-  private val service: Service =
+  private val service: Service by lazy {
     services[serviceKey]?.get()
       ?: throw IllegalArgumentException(
         "No service provided for $serviceKey! Available are ${services.keys}"
       )
+  }
 
   override fun toString() = "ServiceFragment: $serviceKey"
 

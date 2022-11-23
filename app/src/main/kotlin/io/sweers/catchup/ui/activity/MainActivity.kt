@@ -72,8 +72,6 @@ constructor(
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     syllabus.bind(this)
-    linkManager.connect(this)
-    customTab.bindCustomTabsService(this)
 
     val binding = viewContainer.inflateBinding(ActivityMainBinding::inflate)
     detailPage = binding.detailPage
@@ -86,6 +84,12 @@ constructor(
       pagerFragment =
         supportFragmentManager.findFragmentById(R.id.fragment_container) as PagerFragment
     }
+  }
+
+  override fun onStart() {
+    super.onStart()
+    linkManager.connect(this)
+    customTab.bindCustomTabsService(this)
   }
 
   override fun onStop() {

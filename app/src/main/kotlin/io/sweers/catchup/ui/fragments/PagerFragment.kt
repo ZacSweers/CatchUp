@@ -67,13 +67,14 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
 import javax.inject.Inject
+import javax.inject.Provider
 import kotlin.math.abs
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import ru.ldralighieri.corbind.material.offsetChanges
 
-fun ServiceMeta.toServiceHandler(factory: ServiceFragment.Factory) =
-  ServiceHandler(name, icon, themeColor) { factory.create(id) }
+fun ServiceMeta.toServiceHandler(factory: Provider<ServiceFragment>) =
+  ServiceHandler(name, icon, themeColor) { factory.get().forService(id) }
 
 data class ServiceHandler(
   @StringRes val name: Int,
@@ -396,7 +397,7 @@ constructor(
       sharedPrefs: SharedPreferences,
       serviceMetas: Map<String, ServiceMeta>,
       catchUpPreferences: CatchUpPreferences,
-      serviceFragmentFactory: ServiceFragment.Factory
+      serviceFragmentProvider: Provider<ServiceFragment>
     ): Array<ServiceHandler> {
       check(serviceMetas.isNotEmpty()) { "No services found!" }
       val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
@@ -404,7 +405,7 @@ constructor(
           .filter(ServiceMeta::enabled)
           .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }
           .sortedBy { currentOrder.indexOf(it.id) }
-          .map { it.toServiceHandler(serviceFragmentFactory) })
+          .map { it.toServiceHandler(serviceFragmentProvider) })
         .toTypedArray()
     }
 

@@ -32,7 +32,13 @@ abstract class InjectableBaseActivity : BaseActivity() {
   @Inject lateinit var viewContainer: ViewContainer
   @Inject lateinit var uiPreferences: UiPreferences
   @Inject override lateinit var appConfig: AppConfig
-  @Inject lateinit var fragmentFactory: FragmentFactory
+  var fragmentFactory: FragmentFactory? = null
+    @Inject
+    set(value) {
+      field = value
+      supportFragmentManager.fragmentFactory = fragmentFactory!!
+    }
+
   var objectWatcher: CatchUpObjectWatcher? = null
     @Inject
     set(value) {
@@ -48,7 +54,6 @@ abstract class InjectableBaseActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    supportFragmentManager.fragmentFactory = fragmentFactory
   }
 
   override fun getSystemServiceName(serviceClass: Class<*>): String? {
