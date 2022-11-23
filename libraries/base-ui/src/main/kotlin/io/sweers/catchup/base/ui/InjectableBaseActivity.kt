@@ -34,7 +34,8 @@ abstract class InjectableBaseActivity : BaseActivity() {
   @Inject override lateinit var appConfig: AppConfig
   @Inject lateinit var fragmentFactory: FragmentFactory
   var objectWatcher: CatchUpObjectWatcher? = null
-    @Inject set(value) {
+    @Inject
+    set(value) {
       field = value
       val callbacks =
         object : FragmentLifecycleCallbacks() {

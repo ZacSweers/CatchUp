@@ -23,7 +23,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
-import autodispose2.autoDispose
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
@@ -73,13 +72,8 @@ constructor(
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     syllabus.bind(this)
-    lifecycle()
-      .doOnStart(linkManager) { connect(this@MainActivity) }
-      .doOnStart(customTab) { bindCustomTabsService(this@MainActivity) }
-      .doOnStop(customTab) { unbindCustomTabsService(this@MainActivity) }
-      .doOnDestroy(customTab) { connectionCallback = null }
-      .autoDispose(this)
-      .subscribe()
+    linkManager.connect(this)
+    customTab.bindCustomTabsService(this)
 
     val binding = viewContainer.inflateBinding(ActivityMainBinding::inflate)
     detailPage = binding.detailPage
@@ -92,6 +86,16 @@ constructor(
       pagerFragment =
         supportFragmentManager.findFragmentById(R.id.fragment_container) as PagerFragment
     }
+  }
+
+  override fun onStop() {
+    customTab.unbindCustomTabsService(this)
+    super.onStop()
+  }
+
+  override fun onDestroy() {
+    customTab.connectionCallback = null
+    super.onDestroy()
   }
 
   @ContributesTo(AppScope::class)
