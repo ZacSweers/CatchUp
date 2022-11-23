@@ -465,6 +465,7 @@ licensee {
 
 dependencies {
   kapt(project(":libraries:tooling:spi-visualizer"))
+  kapt(project(":libraries:tooling:spi-multibinds-validator"))
   kapt(libs.androidx.room.apt)
 
   implementation(libs.markwon.core)
