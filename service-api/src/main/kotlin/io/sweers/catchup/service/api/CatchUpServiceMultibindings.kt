@@ -23,6 +23,6 @@ import dev.zacsweers.catchup.di.AppScope
 @ContributesTo(AppScope::class)
 @Module
 interface CatchUpServiceMultibindings {
-  @Multibinds fun serviceIndexes(): @JvmSuppressWildcards Map<String, Service>
-  @Multibinds fun serviceMetaIndexes(): @JvmSuppressWildcards Map<String, ServiceMeta>
+  @Multibinds fun services(): @JvmSuppressWildcards Map<String, Service>
+  @Multibinds fun serviceMetas(): @JvmSuppressWildcards Map<String, ServiceMeta>
 }
