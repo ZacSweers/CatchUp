@@ -29,10 +29,21 @@ abstract class InjectableBaseActivity : BaseActivity() {
     private const val APP_CONFIG_SERVICE_NAME = "catchup.service.appconfig"
   }
 
-  @Inject internal lateinit var viewContainer: ViewContainer
-  @Inject internal lateinit var uiPreferences: UiPreferences
+  @Inject lateinit var viewContainer: ViewContainer
+  @Inject lateinit var uiPreferences: UiPreferences
   @Inject override lateinit var appConfig: AppConfig
-  @Inject internal lateinit var fragmentFactory: FragmentFactory
+  @Inject lateinit var fragmentFactory: FragmentFactory
+  var objectWatcher: CatchUpObjectWatcher? = null
+    @Inject set(value) {
+      field = value
+      val callbacks =
+        object : FragmentLifecycleCallbacks() {
+          override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+            value!!.watch(f)
+          }
+        }
+      supportFragmentManager.registerFragmentLifecycleCallbacks(callbacks, true)
+    }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -58,17 +69,6 @@ abstract class InjectableBaseActivity : BaseActivity() {
    * called.
    */
   open fun setFragmentFactory() {}
-
-  @Inject
-  internal fun watchForLeaks(objectWatcher: CatchUpObjectWatcher) {
-    val callbacks =
-      object : FragmentLifecycleCallbacks() {
-        override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
-          objectWatcher.watch(f)
-        }
-      }
-    supportFragmentManager.registerFragmentLifecycleCallbacks(callbacks, true)
-  }
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
