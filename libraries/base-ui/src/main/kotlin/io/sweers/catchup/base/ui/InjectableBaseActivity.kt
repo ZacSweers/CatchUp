@@ -17,6 +17,7 @@ package io.sweers.catchup.base.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks
 import dev.zacsweers.catchup.appconfig.AppConfig
@@ -31,10 +32,11 @@ abstract class InjectableBaseActivity : BaseActivity() {
   @Inject protected lateinit var viewContainer: ViewContainer
   @Inject protected lateinit var uiPreferences: UiPreferences
   @Inject override lateinit var appConfig: AppConfig
+  @Inject protected lateinit var fragmentFactory: FragmentFactory
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setFragmentFactory()
+    supportFragmentManager.fragmentFactory = fragmentFactory
   }
 
   override fun getSystemServiceName(serviceClass: Class<*>): String? {

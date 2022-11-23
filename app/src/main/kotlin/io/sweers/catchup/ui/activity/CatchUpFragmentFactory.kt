@@ -25,7 +25,7 @@ import javax.inject.Provider
 
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
-class MainActivityFragmentFactory
+class CatchUpFragmentFactory
 @Inject
 constructor(
   private val providers: @JvmSuppressWildcards Map<Class<out Fragment>, Provider<Fragment>>

@@ -42,6 +42,7 @@ import com.squareup.anvil.annotations.ContributesMultibinding
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.android.ActivityKey
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.noties.markwon.Markwon
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
@@ -62,6 +63,7 @@ import io.sweers.catchup.util.parseMarkdownAndPlainLinks
 import io.sweers.catchup.util.setLightStatusBar
 import java.util.Locale
 import javax.inject.Inject
+import javax.inject.Provider
 import kotlin.math.abs
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
@@ -71,8 +73,12 @@ import ru.ldralighieri.corbind.material.offsetChanges
 
 @ActivityKey(AboutActivity::class)
 @ContributesMultibinding(AppScope::class, boundType = Activity::class)
-class AboutActivity @Inject constructor(private val customTab: CustomTabActivityHelper) :
-  InjectingBaseActivity() {
+class AboutActivity
+@Inject
+constructor(
+  private val customTab: CustomTabActivityHelper,
+  private val aboutFragmentProvider: Provider<AboutFragment>,
+) : InjectingBaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -104,21 +110,27 @@ class AboutActivity @Inject constructor(private val customTab: CustomTabActivity
     ActivityGenericContainerBinding.inflate(layoutInflater, viewGroup, true)
 
     if (savedInstanceState == null) {
-      supportFragmentManager.commitNow { add(R.id.fragment_container, AboutFragment()) }
+      supportFragmentManager.commitNow { add(R.id.fragment_container, aboutFragmentProvider.get()) }
     }
   }
 }
 
-class AboutFragment @Inject constructor() : InjectingBaseFragment<FragmentAboutBinding>() {
+@FragmentKey(AboutFragment::class)
+@ContributesMultibinding(AppScope::class, boundType = Fragment::class)
+class AboutFragment
+@Inject
+constructor(
+  private val linkManager: LinkManager,
+  private val markwon: Markwon,
+  private val appConfig: AppConfig,
+  private val licensesFragmentProvider: Provider<LicensesFragment>,
+  private val changelogFragmentProvider: Provider<ChangelogFragment>,
+) : InjectingBaseFragment<FragmentAboutBinding>() {
 
   companion object {
     private const val FADE_PERCENT = 0.75F
     private const val TITLE_TRANSLATION_PERCENT = 0.50F
   }
-
-  @Inject internal lateinit var linkManager: LinkManager
-  @Inject internal lateinit var markwon: Markwon
-  @Inject internal lateinit var appConfig: AppConfig
 
   private val rootLayout
     get() = binding.aboutFragmentRoot
@@ -169,8 +181,8 @@ class AboutFragment @Inject constructor() : InjectingBaseFragment<FragmentAboutB
           return screens.get(position)
             ?: run {
               when (position) {
-                0 -> LicensesFragment()
-                1 -> ChangelogFragment()
+                0 -> licensesFragmentProvider.get()
+                1 -> changelogFragmentProvider.get()
                 else -> TODO("Not implemented")
               }.also { screens.put(position, it) }
             }

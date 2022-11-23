@@ -20,7 +20,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
@@ -65,16 +64,11 @@ constructor(
   private val customTab: CustomTabActivityHelper,
   private val linkManager: LinkManager,
   private val syllabus: Syllabus,
-  private val fragmentFactory: FragmentFactory,
   private val pagerFragmentProvider: Provider<PagerFragment>,
 ) : InjectingBaseActivity() {
 
   internal lateinit var detailPage: ExpandablePageLayout
   internal var pagerFragment: PagerFragment? = null
-
-  override fun setFragmentFactory() {
-    supportFragmentManager.fragmentFactory = fragmentFactory
-  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

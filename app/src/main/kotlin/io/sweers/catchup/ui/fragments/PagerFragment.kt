@@ -36,7 +36,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
-import androidx.core.util.set
 import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
@@ -47,11 +46,12 @@ import androidx.viewpager2.adapter.FragmentViewHolder
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
 import dagger.Provides
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
@@ -68,7 +68,6 @@ import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
 import javax.inject.Inject
 import kotlin.math.abs
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import ru.ldralighieri.corbind.material.offsetChanges
@@ -83,6 +82,8 @@ data class ServiceHandler(
   val instantiator: () -> Fragment
 )
 
+@FragmentKey(PagerFragment::class)
+@ContributesMultibinding(AppScope::class, boundType = Fragment::class)
 class PagerFragment
 @Inject
 constructor(

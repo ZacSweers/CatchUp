@@ -64,11 +64,16 @@ import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
 import java.util.Collections
 import javax.inject.Inject
+import javax.inject.Provider
 
 @ActivityKey(OrderServicesActivity::class)
 @ContributesMultibinding(AppScope::class, boundType = Activity::class)
-class OrderServicesActivity @Inject constructor(private val syllabus: Syllabus) :
-  InjectingBaseActivity() {
+class OrderServicesActivity
+@Inject
+constructor(
+  private val syllabus: Syllabus,
+  private val orderServicesFragmentProvider: Provider<OrderServicesFragment2>
+) : InjectingBaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -77,7 +82,9 @@ class OrderServicesActivity @Inject constructor(private val syllabus: Syllabus) 
     syllabus.bind(this)
 
     if (savedInstanceState == null) {
-      supportFragmentManager.commitNow { add(R.id.fragment_container, OrderServicesFragment2()) }
+      supportFragmentManager.commitNow {
+        add(R.id.fragment_container, orderServicesFragmentProvider.get())
+      }
     }
   }
 }

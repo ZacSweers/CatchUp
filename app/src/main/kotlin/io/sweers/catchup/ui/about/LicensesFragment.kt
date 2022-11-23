@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:OptIn(ExperimentalCoroutinesApi::class)
 
 package io.sweers.catchup.ui.about
 
@@ -27,6 +26,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
@@ -38,9 +38,12 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy.CacheFirst
 import com.apollographql.apollo3.cache.http.httpFetchPolicy
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.sweers.catchup.R
 import io.sweers.catchup.R.layout
 import io.sweers.catchup.base.ui.InjectableBaseFragment
@@ -73,7 +76,6 @@ import javax.inject.Inject
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlin.LazyThreadSafetyMode.NONE
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -89,16 +91,16 @@ import okio.buffer
 import okio.source
 
 /** A fragment that displays oss licenses. */
-class LicensesFragment @Inject constructor() :
-  InjectableBaseFragment<FragmentLicensesBinding>(), Scrollable {
-
-  @Inject lateinit var apolloClient: ApolloClient
-
-  @Inject lateinit var moshi: Moshi
-
-  @Inject internal lateinit var linkManager: LinkManager
-
-  @Inject internal lateinit var markdownConverter: EmojiMarkdownConverter
+@FragmentKey(LicensesFragment::class)
+@ContributesMultibinding(AppScope::class, boundType = Fragment::class)
+class LicensesFragment
+@Inject
+constructor(
+  private val apolloClient: ApolloClient,
+  private val moshi: Moshi,
+  private val linkManager: LinkManager,
+  private val markdownConverter: EmojiMarkdownConverter,
+) : InjectableBaseFragment<FragmentLicensesBinding>(), Scrollable {
 
   private val dimenSize by lazy(NONE) { resources.getDimensionPixelSize(R.dimen.avatar) }
   private val progressBar
