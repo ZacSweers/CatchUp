@@ -7,13 +7,12 @@ import dagger.spi.model.BindingGraphPlugin
 import dagger.spi.model.DiagnosticReporter
 import javax.tools.Diagnostic
 
-/**
- * A [BindingGraphPlugin] that validates that all multibinds have dependencies.
- */
+/** A [BindingGraphPlugin] that validates that all multibinds have dependencies. */
 @AutoService(BindingGraphPlugin::class)
 class MultibindsValidator : BindingGraphPlugin {
   override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
-    bindingGraph.network()
+    bindingGraph
+      .network()
       .nodes()
       .asSequence()
       .filterIsInstance<Binding>()
