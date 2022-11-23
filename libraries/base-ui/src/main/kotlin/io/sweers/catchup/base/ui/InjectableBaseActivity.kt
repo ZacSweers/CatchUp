@@ -29,10 +29,10 @@ abstract class InjectableBaseActivity : BaseActivity() {
     private const val APP_CONFIG_SERVICE_NAME = "catchup.service.appconfig"
   }
 
-  @Inject protected lateinit var viewContainer: ViewContainer
-  @Inject protected lateinit var uiPreferences: UiPreferences
+  @Inject internal lateinit var viewContainer: ViewContainer
+  @Inject internal lateinit var uiPreferences: UiPreferences
   @Inject override lateinit var appConfig: AppConfig
-  @Inject protected lateinit var fragmentFactory: FragmentFactory
+  @Inject internal lateinit var fragmentFactory: FragmentFactory
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
