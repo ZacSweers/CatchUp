@@ -34,7 +34,7 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          mkdir ~/.gradle
+          mkdir -p ~/.gradle
           touch ~/.gradle/gradle.properties
           ./gradlew bootstrap
           ./gradlew spotlessCheck :app:assembleDebug test :app:lintRelease
