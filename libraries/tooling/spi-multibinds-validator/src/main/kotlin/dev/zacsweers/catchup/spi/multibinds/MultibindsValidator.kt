@@ -7,7 +7,7 @@ import dagger.spi.model.BindingGraphPlugin
 import dagger.spi.model.DiagnosticReporter
 import javax.tools.Diagnostic
 
-private val ALLOWED_LIST = setOf("AppConfigMetadataContributor")
+private val ALLOWED_LIST = setOf("AppConfigMetadataContributor", "okhttp3.Interceptor")
 
 /** A [BindingGraphPlugin] that validates that all multibinds have dependencies. */
 @AutoService(BindingGraphPlugin::class)

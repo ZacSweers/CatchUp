@@ -84,7 +84,7 @@
 }
 # AppConfig#sdkInt is always 21+
 -assumevalues public class dev.zacsweers.catchup.appconfig.AppConfig {
-  int getSdkInt(...) return 21..2147483647;
+  int getSdkInt(...) return 28..2147483647;
 }
 
 # Check that qualifier annotations have been discarded.
@@ -99,3 +99,7 @@
 
 # ZoneRulesProvider _does_ exist!
 -dontwarn java.time.zone.ZoneRulesProvider
+
+-dontwarn com.caverock.androidsvg.**
+-dontwarn kotlinx.serialization.**
+-dontwarn pl.droidsonroids.gif.**
