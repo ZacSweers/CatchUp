@@ -40,7 +40,7 @@ import io.sweers.catchup.base.ui.ActivityEvent.STOP
 abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<ActivityEvent> {
 
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
-  protected abstract val appConfig: AppConfig
+  abstract val appConfig: AppConfig
 
   protected inline fun <T : Any, R : Any> Observable<T>.doOnCreate(
     r: R,

@@ -15,10 +15,20 @@
  */
 
 plugins {
+  alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
   alias(libs.plugins.ksp)
-  alias(libs.plugins.sgp.base)
+}
+
+android {
+  namespace = "io.sweers.catchup.service"
+}
+
+slack {
+  features {
+    dagger()
+  }
 }
 
 dependencies {
@@ -28,7 +38,6 @@ dependencies {
   implementation(libs.kotlin.coroutinesRx)
   implementation(libs.kotlin.datetime)
 
-  api(project(":service-registry:service-registry-annotations"))
   api(project(":libraries:appconfig"))
   api(project(":libraries:retrofitconverters"))
   api(project(":libraries:gemoji"))
@@ -43,7 +52,6 @@ dependencies {
   api(libs.retrofit.core)
   api(libs.retrofit.rxJava3)
   api(libs.apollo.runtime)
-}
-android {
-  namespace = "io.sweers.catchup.service"
+  api(projects.libraries.di)
+  api(projects.libraries.di.android)
 }

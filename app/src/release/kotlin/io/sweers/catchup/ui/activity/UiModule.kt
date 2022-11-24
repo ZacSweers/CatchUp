@@ -15,20 +15,17 @@
  */
 package io.sweers.catchup.ui.activity
 
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.scopes.ActivityScoped
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.base.ui.ViewContainer
 
-@InstallIn(ActivityComponent::class)
+@ContributesTo(AppScope::class)
 @Module
 object UiModule {
-
-  @ActivityScoped
+  @SingleIn(AppScope::class)
   @Provides
-  internal fun provideViewContainer(): ViewContainer {
-    return ViewContainer.DEFAULT
-  }
+  fun provideViewContainer(): ViewContainer = ViewContainer.DEFAULT
 }

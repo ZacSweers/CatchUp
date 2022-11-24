@@ -18,7 +18,6 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("kapt")
-  alias(libs.plugins.hilt)
   alias(libs.plugins.sgp.base)
 }
 
@@ -43,7 +42,7 @@ kapt {
 
 slack {
   features {
-    dagger(enableComponents = true)
+    dagger()
     moshi(codegen = true) {
       sealed(codegen = true)
     }
@@ -51,8 +50,6 @@ slack {
 }
 
 dependencies {
-  kapt(libs.dagger.hilt.apt.compiler)
-  implementation(libs.dagger.hilt.android)
   implementation(libs.retrofit.core)
   implementation(libs.retrofit.moshi)
   implementation(project(":libraries:base-ui"))
@@ -73,4 +70,5 @@ dependencies {
   api(libs.androidx.appCompat)
   api(libs.androidx.core)
   api(libs.androidx.design)
+  api(projects.libraries.di)
 }

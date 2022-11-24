@@ -15,23 +15,25 @@
  */
 
 plugins {
+  alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
   alias(libs.plugins.ksp)
-  alias(libs.plugins.anvil)
-  alias(libs.plugins.sgp.base)
-}
-
-anvil {
-  generateDaggerFactories.set(true)
 }
 
 ksp {
   arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+slack {
+  features {
+    dagger()
+  }
+}
+
 dependencies {
   implementation(project(":libraries:util"))
+  implementation(projects.libraries.di)
 
   ksp(libs.androidx.room.apt)
   compileOnly(libs.misc.jsr250)

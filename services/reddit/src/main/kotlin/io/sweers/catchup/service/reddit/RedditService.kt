@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.service.reddit
 
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
@@ -23,6 +25,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
@@ -37,8 +40,6 @@ import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.reddit.model.RedditLink
 import io.sweers.catchup.service.reddit.model.RedditObjectFactory
-import io.sweers.catchup.serviceregistry.annotations.Meta
-import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import io.sweers.catchup.util.nullIfBlank
 import javax.inject.Inject
@@ -53,6 +54,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 private const val SERVICE_KEY = "reddit"
 
+@ServiceKey(SERVICE_KEY)
+@ContributesMultibinding(AppScope::class, boundType = Service::class)
 class RedditService
 @Inject
 constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: RedditApi) :
@@ -88,8 +91,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
   }
 }
 
-@Meta
-@ServiceModule
+@ContributesTo(AppScope::class)
 @Module
 abstract class RedditMetaModule {
 
@@ -114,68 +116,60 @@ abstract class RedditMetaModule {
   }
 }
 
-@ServiceModule
+@ContributesTo(AppScope::class)
 @Module(includes = [RedditMetaModule::class])
-abstract class RedditModule {
+object RedditModule {
 
-  @IntoMap
-  @ServiceKey(SERVICE_KEY)
-  @Binds
-  internal abstract fun redditService(redditService: RedditService): Service
+  @InternalApi
+  @Provides
+  internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
+    return upstreamMoshi
+      .newBuilder()
+      .add(RedditObjectFactory.INSTANCE)
+      .add(Instant::class.java, EpochInstantJsonAdapter())
+      .build()
+  }
 
-  companion object {
+  @InternalApi
+  @Provides
+  internal fun provideRedditOkHttpClient(client: OkHttpClient): OkHttpClient {
+    return client
+      .newBuilder()
+      .addNetworkInterceptor { chain ->
+        var request = chain.request()
+        val url = request.url
+        request =
+          request
+            .newBuilder()
+            .header("User-Agent", "CatchUp app by /u/pandanomic")
+            .url(
+              url
+                .newBuilder()
+                .encodedPath("${url.encodedPath}.json")
+                .addQueryParameter("raw_json", "1") // So tokens aren't escaped
+                .build()
+            )
+            .build()
+        chain.proceed(request)
+      }
+      .build()
+  }
 
-    @InternalApi
-    @Provides
-    internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
-      return upstreamMoshi
-        .newBuilder()
-        .add(RedditObjectFactory.INSTANCE)
-        .add(Instant::class.java, EpochInstantJsonAdapter())
+  @Provides
+  internal fun provideRedditApi(
+    @InternalApi client: Lazy<OkHttpClient>,
+    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
+    @InternalApi moshi: Moshi,
+    appConfig: AppConfig
+  ): RedditApi {
+    val retrofit =
+      Retrofit.Builder()
+        .baseUrl(RedditApi.ENDPOINT)
+        .delegatingCallFactory(client)
+        .addCallAdapterFactory(rxJavaCallAdapterFactory)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .validateEagerly(appConfig.isDebug)
         .build()
-    }
-
-    @InternalApi
-    @Provides
-    internal fun provideRedditOkHttpClient(client: OkHttpClient): OkHttpClient {
-      return client
-        .newBuilder()
-        .addNetworkInterceptor { chain ->
-          var request = chain.request()
-          val url = request.url
-          request =
-            request
-              .newBuilder()
-              .header("User-Agent", "CatchUp app by /u/pandanomic")
-              .url(
-                url
-                  .newBuilder()
-                  .encodedPath("${url.encodedPath}.json")
-                  .addQueryParameter("raw_json", "1") // So tokens aren't escaped
-                  .build()
-              )
-              .build()
-          chain.proceed(request)
-        }
-        .build()
-    }
-
-    @Provides
-    internal fun provideRedditApi(
-      @InternalApi client: Lazy<OkHttpClient>,
-      rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
-      @InternalApi moshi: Moshi,
-      appConfig: AppConfig
-    ): RedditApi {
-      val retrofit =
-        Retrofit.Builder()
-          .baseUrl(RedditApi.ENDPOINT)
-          .delegatingCallFactory(client)
-          .addCallAdapterFactory(rxJavaCallAdapterFactory)
-          .addConverterFactory(MoshiConverterFactory.create(moshi))
-          .validateEagerly(appConfig.isDebug)
-          .build()
-      return retrofit.create(RedditApi::class.java)
-    }
+    return retrofit.create(RedditApi::class.java)
   }
 }

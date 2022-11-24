@@ -15,27 +15,30 @@
  */
 package io.sweers.catchup.ui.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commitNow
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.FragmentComponent
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.ActivityKey
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.databinding.ActivitySettingsBinding
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceConfiguration.ActivityConfiguration
 import io.sweers.catchup.service.api.ServiceConfiguration.PreferencesConfiguration
 import io.sweers.catchup.service.api.ServiceMeta
@@ -43,11 +46,16 @@ import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.setLightStatusBar
 import javax.inject.Inject
+import javax.inject.Provider
 
 private const val TARGET_PREF_RESOURCE = "catchup.servicesettings.resource"
 
-@AndroidEntryPoint
-class ServiceSettingsActivity : InjectingBaseActivity() {
+@ActivityKey(ServiceSettingsActivity::class)
+@ContributesMultibinding(AppScope::class, boundType = Activity::class)
+class ServiceSettingsActivity
+@Inject
+constructor(private val serviceSettingsFragProvider: Provider<ServiceSettingsFrag>) :
+  InjectingBaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -63,7 +71,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
       supportFragmentManager.commitNow {
         add(
           R.id.container,
-          ServiceSettingsFrag().apply {
+          serviceSettingsFragProvider.get().apply {
             if (intent.extras?.containsKey(TARGET_PREF_RESOURCE) == true) {
               arguments =
                 bundleOf(TARGET_PREF_RESOURCE to intent.extras!!.getInt(TARGET_PREF_RESOURCE))
@@ -74,12 +82,14 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
     }
   }
 
-  @AndroidEntryPoint
-  class ServiceSettingsFrag : PreferenceFragmentCompat() {
-
-    @Inject lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
-
-    @Inject lateinit var catchUpPreferences: CatchUpPreferences
+  @FragmentKey(ServiceSettingsFrag::class)
+  @ContributesMultibinding(AppScope::class, boundType = Fragment::class)
+  class ServiceSettingsFrag
+  @Inject
+  constructor(
+    private val serviceMetas: Map<String, ServiceMeta>,
+    private val catchUpPreferences: CatchUpPreferences,
+  ) : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
       // Replace backing sharedPreferences with ours
@@ -162,7 +172,7 @@ class ServiceSettingsActivity : InjectingBaseActivity() {
         }
     }
 
-    @InstallIn(FragmentComponent::class)
+    @ContributesTo(AppScope::class)
     @Module
     abstract class ServiceSettingsModule {
 

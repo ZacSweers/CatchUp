@@ -16,39 +16,31 @@
 package io.sweers.catchup.data
 
 import android.content.Context
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
-import javax.inject.Singleton
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
-import okhttp3.logging.HttpLoggingInterceptor.Logger
 import timber.log.Timber
 
 private inline fun httpLoggingInterceptor(
   level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE,
   crossinline logger: (String) -> Unit
 ): HttpLoggingInterceptor {
-  return HttpLoggingInterceptor(
-      object : Logger {
-        override fun log(message: String) {
-          logger(message)
-        }
-      }
-    )
-    .also { it.level = level }
+  return HttpLoggingInterceptor { message -> logger(message) }.also { it.level = level }
 }
 
-@InstallIn(SingletonComponent::class)
+@ContributesTo(AppScope::class)
 @Module
 object VariantDataModule {
 
-  @Singleton
+  @SingleIn(AppScope::class)
   @Provides
   @NetworkInterceptor
   @IntoSet
@@ -56,13 +48,13 @@ object VariantDataModule {
     httpLoggingInterceptor(BASIC) { message -> Timber.tag("OkHttp").v(message) }
 
   //  @Provides
-  //  @Singleton
+  //  @SingleIn(AppScope::class)
   //  @NetworkInterceptor
   //  @IntoSet
   //  internal fun provideChuckInterceptor(@ApplicationContext context: Context): Interceptor =
   //      ChuckInterceptor(context)
 
-  @Singleton
+  @SingleIn(AppScope::class)
   @Provides
   @IntoSet
   internal fun provideMockDataInterceptor(

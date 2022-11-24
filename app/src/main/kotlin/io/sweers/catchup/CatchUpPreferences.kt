@@ -19,10 +19,11 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.annotation.Keep
 import com.chibatching.kotpref.KotprefModel
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.flowbinding.safeOffer
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.LazyThreadSafetyMode.NONE
 import kotlin.reflect.KProperty0
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,7 +33,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 
 @Keep
-@Singleton
+@SingleIn(AppScope::class)
 class CatchUpPreferences
 @Inject
 constructor(application: Application, sharedPreferences: SharedPreferences) :

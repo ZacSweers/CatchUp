@@ -23,10 +23,13 @@ import androidx.appcompat.app.AlertDialog
 import io.sweers.catchup.databinding.BugreportViewBinding
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
 import io.sweers.catchup.ui.bugreport.BugReportView.ReportDetailsListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-class BugReportDialog(context: Context) : AlertDialog(context), ReportDetailsListener {
+class BugReportDialog(context: Context, scope: CoroutineScope) :
+  AlertDialog(context), ReportDetailsListener {
   interface ReportListener {
-    fun onBugReportSubmit(report: Report)
+    suspend fun onBugReportSubmit(context: Context, report: Report)
   }
 
   private var listener: ReportListener? = null
@@ -39,7 +42,7 @@ class BugReportDialog(context: Context) : AlertDialog(context), ReportDetailsLis
     setView(view.root)
     setButton(Dialog.BUTTON_NEGATIVE, "Cancel", null as DialogInterface.OnClickListener?)
     setButton(Dialog.BUTTON_POSITIVE, "Submit") { _, _ ->
-      listener?.onBugReportSubmit(view.root.report)
+      scope.launch { listener?.onBugReportSubmit(context, view.root.report) }
     }
   }
 

@@ -23,17 +23,16 @@ import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetSequence.Listener
 import com.jakewharton.rxrelay3.BehaviorRelay
 import com.jakewharton.rxrelay3.PublishRelay
-import dagger.hilt.android.scopes.ActivityScoped
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread
 import io.sweers.catchup.base.ui.BaseActivity
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 /** Syllabus is a helper that orchestrates feature EDUs and hints via TapTargets. */
-@ActivityScoped
-class Syllabus
-@Inject
-constructor(private val activity: Activity, private val preferences: SharedPreferences) {
+@SingleIn(AppScope::class)
+class Syllabus @Inject constructor(private val preferences: SharedPreferences) {
 
   private val queue = PublishRelay.create<TargetRequest>()
   private var displaying = BehaviorRelay.createDefault(false)
@@ -46,7 +45,7 @@ constructor(private val activity: Activity, private val preferences: SharedPrefe
       .delay { displaying.filter { !it } }
       .observeOn(mainThread())
       .autoDispose(activity)
-      .subscribe { requests -> show(requests) }
+      .subscribe { requests -> show(activity, requests) }
   }
 
   fun showIfNeverSeen(key: String, body: () -> TapTarget) {
@@ -71,7 +70,7 @@ constructor(private val activity: Activity, private val preferences: SharedPrefe
     queue.accept(request)
   }
 
-  private fun show(requests: List<TargetRequest>) {
+  private fun show(activity: Activity, requests: List<TargetRequest>) {
     displaying.accept(true)
     var index = 0
     requests[index].preDisplay?.invoke()

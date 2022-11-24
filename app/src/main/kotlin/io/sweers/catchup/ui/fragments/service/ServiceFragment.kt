@@ -44,14 +44,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import autodispose2.autoDispose
 import com.apollographql.apollo3.exception.ApolloException
-import dagger.hilt.android.AndroidEntryPoint
+import com.squareup.anvil.annotations.ContributesMultibinding
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.databinding.FragmentServiceBinding
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DisplayableItem
@@ -132,18 +133,32 @@ abstract class DisplayableItemAdapter<T : DisplayableItem, VH : ViewHolder>(
     }
 }
 
-@AndroidEntryPoint
-class ServiceFragment :
+private const val ARG_SERVICE_KEY = "service_key"
+
+@FragmentKey(ServiceFragment::class)
+@ContributesMultibinding(AppScope::class, boundType = Fragment::class)
+class ServiceFragment
+@Inject
+constructor(
+  private val linkManager: LinkManager,
+  @TextViewPool private val textViewPool: RecycledViewPool,
+  @VisualViewPool private val visualViewPool: RecycledViewPool,
+  @FinalServices private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
+  private val fragmentCreators: @JvmSuppressWildcards Map<Class<out Fragment>, Provider<Fragment>>,
+  private val detailDisplayer: DetailDisplayer,
+  private val appConfig: AppConfig,
+) :
   InjectingBaseFragment<FragmentServiceBinding>(),
   SwipeRefreshLayout.OnRefreshListener,
   Scrollable,
   DataLoadingSubject {
 
-  companion object {
-    const val ARG_SERVICE_KEY = "serviceKey"
-    fun newInstance(serviceKey: String) =
-      ServiceFragment().apply { arguments = bundleOf(ARG_SERVICE_KEY to serviceKey) }
+  fun forService(serviceKey: String) = apply {
+    arguments = Bundle().apply { putString(ARG_SERVICE_KEY, serviceKey) }
   }
+
+  private val serviceKey: String
+    get() = requireArguments().getString(ARG_SERVICE_KEY)!!
 
   private val errorView
     get() = binding.errorContainer
@@ -170,22 +185,14 @@ class ServiceFragment :
   private var detailDisplayed: Boolean = false
   private val defaultItemAnimator = DefaultItemAnimator()
 
-  @Inject internal lateinit var linkManager: LinkManager
+  private val service: Service by lazy {
+    services[serviceKey]?.get()
+      ?: throw IllegalArgumentException(
+        "No service provided for $serviceKey! Available are ${services.keys}"
+      )
+  }
 
-  @TextViewPool @Inject lateinit var textViewPool: RecycledViewPool
-
-  @VisualViewPool @Inject lateinit var visualViewPool: RecycledViewPool
-
-  @FinalServices @Inject lateinit var services: DaggerMap<String, Provider<Service>>
-  private lateinit var service: Service
-
-  @Inject lateinit var fragmentCreators: DaggerMap<Class<out Fragment>, Provider<Fragment>>
-
-  @Inject lateinit var detailDisplayer: DetailDisplayer
-
-  @Inject lateinit var appConfig: AppConfig
-
-  override fun toString() = "ServiceFragment: ${arguments?.get(ARG_SERVICE_KEY)}"
+  override fun toString() = "ServiceFragment: $serviceKey"
 
   override fun isDataLoading(): Boolean = dataLoading
 
@@ -194,10 +201,6 @@ class ServiceFragment :
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
-    service =
-      requireArguments()[ARG_SERVICE_KEY].let {
-        services[it]?.get() ?: throw IllegalArgumentException("No service provided for $it!")
-      }
     nextPage = service.meta().firstPageKey
   }
 

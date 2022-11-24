@@ -20,29 +20,28 @@ import android.content.SharedPreferences
 import android.os.Looper
 import com.jakewharton.shimo.ObjectOrderRandomizer
 import com.serjltt.moshi.adapters.Wrapped
+import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.reactivex.rxjava3.schedulers.Schedulers
-import io.sweers.catchup.gemoji.GemojiModule
 import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.injection.SharedPreferencesName
 import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 
-@InstallIn(SingletonComponent::class)
-@Module(includes = [GithubApolloModule::class, GemojiModule::class])
+@ContributesTo(AppScope::class)
+@Module
 abstract class DataModule {
 
   @NetworkInterceptor
@@ -57,7 +56,7 @@ abstract class DataModule {
     private const val HTTP_TIMEOUT_S = 30
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     internal fun provideCache(@ApplicationContext context: Context): Cache {
       if (Looper.myLooper() == Looper.getMainLooper()) {
         throw IllegalStateException("Cache initialized on main thread.")
@@ -66,7 +65,7 @@ abstract class DataModule {
     }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     internal fun provideOkHttpClient(
       cache: Cache,
       interceptors: DaggerSet<Interceptor>,
@@ -90,7 +89,7 @@ abstract class DataModule {
     }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     internal fun provideMoshi(appConfig: AppConfig): Moshi {
       return Moshi.Builder()
         .apply {
@@ -105,20 +104,20 @@ abstract class DataModule {
     }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     internal fun provideRxJavaCallAdapterFactory(): RxJava3CallAdapterFactory {
       return RxJava3CallAdapterFactory.createWithScheduler(Schedulers.io())
     }
 
     @Provides
     @SharedPreferencesName
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideSharedPreferencesName(): String {
       return "catchup"
     }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideSharedPreferences(
       @ApplicationContext context: Context,
       @SharedPreferencesName name: String
@@ -127,13 +126,13 @@ abstract class DataModule {
     }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     internal fun provideCatchUpDatabase(@ApplicationContext context: Context): CatchUpDatabase {
       return CatchUpDatabase.getDatabase(context)
     }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase): ServiceDao {
       return catchUpDatabase.serviceDao()
     }

@@ -31,8 +31,10 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.collection.ArrayMap
 import androidx.core.util.toAndroidPair
 import androidx.lifecycle.lifecycleScope
-import dagger.hilt.android.scopes.ActivityScoped
+import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.flowFor
@@ -47,6 +49,7 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.any
 import io.sweers.catchup.util.kotlin.applyIf
 import io.sweers.catchup.util.kotlin.mergeWith
+import java.lang.ref.WeakReference
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -54,12 +57,12 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
-@ActivityScoped
+@ContributesBinding(AppScope::class)
+@SingleIn(AppScope::class)
 class LinkManager
 @Inject
 constructor(
   private val customTab: CustomTabActivityHelper,
-  private val activity: Activity,
   private val catchUpPreferences: CatchUpPreferences,
   private val appConfig: AppConfig
 ) : LinkHandler {
@@ -67,8 +70,10 @@ constructor(
   // Naive cache that tracks if we've already resolved for activities that can handle a given host
   // TODO Eventually replace this with something that's mindful of per-service prefs
   private val dumbCache = ArrayMap<String, Boolean>()
+  private var activityRef: WeakReference<Activity?> = WeakReference(null)
 
   fun connect(activity: MainActivity) {
+    activityRef = WeakReference(activity)
     // Invalidate the cache when a new install/update happens or prefs changed
     val filter = IntentFilter()
     if (appConfig.sdkInt < 29) {
@@ -100,13 +105,16 @@ constructor(
   @Suppress("MemberVisibilityCanPrivate")
   @CheckResult
   override suspend fun openUrl(meta: UrlMeta) {
+    // TODO handle this better
+    val activity =
+      activityRef.get() ?: throw IllegalStateException("No activity attached to LinkManager")
     meta.imageViewerData?.let { imageData ->
       val intent = Intent(activity, ImageViewerActivity::class.java)
       intent.putExtra(ImageViewerActivity.INTENT_ID, imageData.id)
       intent.putExtra(ImageViewerActivity.INTENT_URL, imageData.imageUrl)
       intent.putExtra(ImageViewerActivity.INTENT_ALIAS, imageData.cacheKey)
       intent.putExtra(ImageViewerActivity.INTENT_SOURCE_URL, imageData.sourceUrl)
-      val options = getActivityOptions(imageData)
+      val options = getActivityOptions(activity, imageData)
       activity.startActivityForResult(intent, 101, options.toBundle())
       return
     }
@@ -139,7 +147,7 @@ constructor(
     }
   }
 
-  private fun getActivityOptions(imageData: ImageViewerData): ActivityOptions {
+  private fun getActivityOptions(activity: Activity, imageData: ImageViewerData): ActivityOptions {
     val imagePair =
       (imageData.image to activity.getString(R.string.transition_image)).toAndroidPair()
     val decorView = activity.window.decorView

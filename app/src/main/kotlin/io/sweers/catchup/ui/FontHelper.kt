@@ -26,13 +26,14 @@ import androidx.core.provider.FontsContractCompat.FontRequestCallback
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.EmojiCompat.InitCallback
 import androidx.emoji.text.FontRequestEmojiCompatConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.e
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class FontHelper
 @Inject
 constructor(

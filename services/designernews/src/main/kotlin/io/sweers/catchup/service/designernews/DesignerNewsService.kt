@@ -25,6 +25,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
@@ -33,10 +34,8 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
 import io.sweers.catchup.service.api.Service
-import io.sweers.catchup.service.api.ServiceIndex
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.service.api.ServiceMetaIndex
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
@@ -53,7 +52,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 private const val SERVICE_KEY = "dn"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
+@ContributesMultibinding(AppScope::class, boundType = Service::class)
 class DesignerNewsService
 @Inject
 constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: DesignerNewsApi) :
@@ -89,7 +88,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
   }
 }
 
-@ContributesTo(ServiceMetaIndex::class)
+@ContributesTo(AppScope::class)
 @Module
 abstract class DesignerNewsMetaModule {
 
@@ -115,7 +114,7 @@ abstract class DesignerNewsMetaModule {
   }
 }
 
-@ContributesTo(ServiceIndex::class)
+@ContributesTo(AppScope::class)
 @Module(includes = [DesignerNewsMetaModule::class])
 object DesignerNewsModule {
   @Provides
@@ -125,7 +124,7 @@ object DesignerNewsModule {
   }
 
   @Provides
-  internal fun provideDesignerNewsService(
+  internal fun provideDesignerNewsApi(
     client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
     rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,

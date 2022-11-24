@@ -15,31 +15,30 @@
  */
 package io.sweers.catchup.ui.activity
 
+import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
-import autodispose2.autoDispose
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
+import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.scopes.ActivityScoped
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
+import dev.zacsweers.catchup.di.android.ActivityKey
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.databinding.ActivityMainBinding
 import io.sweers.catchup.edu.Syllabus
-import io.sweers.catchup.injection.DaggerMap
-import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.ScrollableContent
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
@@ -56,38 +55,30 @@ import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 
-@AndroidEntryPoint
-class MainActivity : InjectingBaseActivity() {
-
-  @Inject internal lateinit var customTab: CustomTabActivityHelper
-  @Inject internal lateinit var linkManager: LinkManager
-  @Inject internal lateinit var syllabus: Syllabus
-  @Inject internal lateinit var fragmentFactory: FragmentFactory
+@ActivityKey(MainActivity::class)
+@ContributesMultibinding(AppScope::class, boundType = Activity::class)
+class MainActivity
+@Inject
+constructor(
+  private val customTab: CustomTabActivityHelper,
+  private val linkManager: LinkManager,
+  private val syllabus: Syllabus,
+  private val pagerFragmentProvider: Provider<PagerFragment>,
+) : InjectingBaseActivity() {
 
   internal lateinit var detailPage: ExpandablePageLayout
   internal var pagerFragment: PagerFragment? = null
 
-  override fun setFragmentFactory() {
-    supportFragmentManager.fragmentFactory = fragmentFactory
-  }
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     syllabus.bind(this)
-    lifecycle()
-      .doOnStart(linkManager) { connect(this@MainActivity) }
-      .doOnStart(customTab) { bindCustomTabsService(this@MainActivity) }
-      .doOnStop(customTab) { unbindCustomTabsService(this@MainActivity) }
-      .doOnDestroy(customTab) { connectionCallback = null }
-      .autoDispose(this)
-      .subscribe()
 
     val binding = viewContainer.inflateBinding(ActivityMainBinding::inflate)
     detailPage = binding.detailPage
 
     if (savedInstanceState == null) {
       supportFragmentManager.commitNow {
-        add(R.id.fragment_container, PagerFragment().also { pagerFragment = it })
+        add(R.id.fragment_container, pagerFragmentProvider.get().also { pagerFragment = it })
       }
     } else {
       pagerFragment =
@@ -95,24 +86,41 @@ class MainActivity : InjectingBaseActivity() {
     }
   }
 
-  @InstallIn(ActivityComponent::class)
-  @dagger.Module
+  override fun onStart() {
+    super.onStart()
+    linkManager.connect(this)
+    customTab.bindCustomTabsService(this)
+  }
+
+  override fun onStop() {
+    customTab.unbindCustomTabsService(this)
+    super.onStop()
+  }
+
+  override fun onDestroy() {
+    customTab.connectionCallback = null
+    super.onDestroy()
+  }
+
+  @ContributesTo(AppScope::class)
+  @Module
   abstract class ServiceIntegrationModule {
     companion object {
-      @ActivityScoped @TextViewPool @Provides fun provideTextViewPool() = RecycledViewPool()
+      // TODO de-scope
+      @TextViewPool @Provides fun provideTextViewPool() = RecycledViewPool()
 
-      @ActivityScoped @VisualViewPool @Provides fun provideVisualViewPool() = RecycledViewPool()
+      @VisualViewPool @Provides fun provideVisualViewPool() = RecycledViewPool()
 
-      @ActivityScoped
+      @SingleIn(AppScope::class)
       @Provides
       @FinalServices
       fun provideFinalServices(
         serviceDao: ServiceDao,
-        serviceMetas: DaggerMap<String, ServiceMeta>,
+        serviceMetas: @JvmSuppressWildcards Map<String, ServiceMeta>,
         sharedPreferences: SharedPreferences,
-        services: DaggerMap<String, Provider<Service>>,
+        services: @JvmSuppressWildcards Map<String, Provider<Service>>,
         appConfig: AppConfig
-      ): Map<String, Provider<Service>> {
+      ): @JvmSuppressWildcards Map<String, Provider<Service>> {
         return services
           .filter {
             serviceMetas.getValue(it.key).enabled &&
@@ -124,25 +132,18 @@ class MainActivity : InjectingBaseActivity() {
       }
     }
 
-    @Multibinds abstract fun services(): Map<String, Service>
+    @Multibinds abstract fun services(): @JvmSuppressWildcards Map<String, Service>
 
-    @Multibinds abstract fun serviceMetas(): Map<String, ServiceMeta>
+    @Multibinds abstract fun serviceMetas(): @JvmSuppressWildcards Map<String, ServiceMeta>
 
-    @Multibinds abstract fun fragmentCreators(): DaggerMap<Class<out Fragment>, Fragment>
+    @Multibinds
+    abstract fun fragmentCreators(): @JvmSuppressWildcards Map<Class<out Fragment>, Fragment>
 
-    @ActivityScoped @Binds abstract fun provideLinkHandler(linkManager: LinkManager): LinkHandler
-
-    @ActivityScoped
+    @SingleIn(AppScope::class)
     @Binds
     abstract fun provideDetailDisplayer(
       mainActivityDetailDisplayer: MainActivityDetailDisplayer
     ): DetailDisplayer
-
-    @ActivityScoped
-    @Binds
-    abstract fun provideFragmentFactory(
-      fragmentFactory: MainActivityFragmentFactory
-    ): FragmentFactory
   }
 }
 
@@ -153,7 +154,7 @@ class MainActivity : InjectingBaseActivity() {
 @Qualifier annotation class FinalServices
 
 /** A displayer that repeatedly shows new detail views in a new ExpandablePageLayout. */
-@ActivityScoped
+// TODO do something else with this
 class MainActivityDetailDisplayer @Inject constructor(private val mainActivity: MainActivity) :
   DetailDisplayer {
 

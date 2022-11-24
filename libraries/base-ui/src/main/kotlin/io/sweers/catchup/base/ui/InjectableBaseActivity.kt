@@ -17,6 +17,7 @@ package io.sweers.catchup.base.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks
 import dev.zacsweers.catchup.appconfig.AppConfig
@@ -28,13 +29,31 @@ abstract class InjectableBaseActivity : BaseActivity() {
     private const val APP_CONFIG_SERVICE_NAME = "catchup.service.appconfig"
   }
 
-  @Inject protected lateinit var viewContainer: ViewContainer
-  @Inject protected lateinit var uiPreferences: UiPreferences
+  @Inject lateinit var viewContainer: ViewContainer
+  @Inject lateinit var uiPreferences: UiPreferences
   @Inject override lateinit var appConfig: AppConfig
+  var fragmentFactory: FragmentFactory? = null
+    @Inject
+    set(value) {
+      field = value
+      supportFragmentManager.fragmentFactory = fragmentFactory!!
+    }
+
+  var objectWatcher: CatchUpObjectWatcher? = null
+    @Inject
+    set(value) {
+      field = value
+      val callbacks =
+        object : FragmentLifecycleCallbacks() {
+          override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+            value!!.watch(f)
+          }
+        }
+      supportFragmentManager.registerFragmentLifecycleCallbacks(callbacks, true)
+    }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setFragmentFactory()
   }
 
   override fun getSystemServiceName(serviceClass: Class<*>): String? {
@@ -56,17 +75,6 @@ abstract class InjectableBaseActivity : BaseActivity() {
    * called.
    */
   open fun setFragmentFactory() {}
-
-  @Inject
-  internal fun watchForLeaks(objectWatcher: CatchUpObjectWatcher) {
-    val callbacks =
-      object : FragmentLifecycleCallbacks() {
-        override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
-          objectWatcher.watch(f)
-        }
-      }
-    supportFragmentManager.registerFragmentLifecycleCallbacks(callbacks, true)
-  }
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()

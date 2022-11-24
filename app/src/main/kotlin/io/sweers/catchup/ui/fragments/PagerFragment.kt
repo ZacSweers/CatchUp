@@ -36,7 +36,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
-import androidx.core.util.set
 import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
@@ -47,18 +46,18 @@ import androidx.viewpager2.adapter.FragmentViewHolder
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.FragmentComponent
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.base.ui.updateNavBarColor
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.databinding.FragmentPagerBinding
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
@@ -68,14 +67,14 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
 import io.sweers.catchup.util.setLightStatusBar
 import javax.inject.Inject
+import javax.inject.Provider
 import kotlin.math.abs
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import ru.ldralighieri.corbind.material.offsetChanges
 
-fun ServiceMeta.toServiceHandler() =
-  ServiceHandler(name, icon, themeColor) { ServiceFragment.newInstance(id) }
+fun ServiceMeta.toServiceHandler(factory: Provider<ServiceFragment>) =
+  ServiceHandler(name, icon, themeColor) { factory.get().forService(id) }
 
 data class ServiceHandler(
   @StringRes val name: Int,
@@ -84,18 +83,21 @@ data class ServiceHandler(
   val instantiator: () -> Fragment
 )
 
-@AndroidEntryPoint
-class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
+@FragmentKey(PagerFragment::class)
+@ContributesMultibinding(AppScope::class, boundType = Fragment::class)
+class PagerFragment
+@Inject
+constructor(
+  private val resolvedColorCache: ColorCache,
+  private val serviceHandlers: Array<ServiceHandler>,
+  private val changelogHelper: ChangelogHelper,
+  private val catchUpPreferences: CatchUpPreferences,
+  private val appConfig: AppConfig,
+) : InjectingBaseFragment<FragmentPagerBinding>() {
 
   companion object {
     private const val SETTINGS_ACTIVITY_REQUEST = 100
   }
-
-  @Inject lateinit var resolvedColorCache: ColorCache
-  @Inject lateinit var serviceHandlers: Array<ServiceHandler>
-  @Inject lateinit var changelogHelper: ChangelogHelper
-  @Inject lateinit var catchUpPreferences: CatchUpPreferences
-  @Inject lateinit var appConfig: AppConfig
 
   private val rootLayout
     get() = binding.pagerFragmentRoot
@@ -386,15 +388,16 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
     }
   }
 
-  @InstallIn(FragmentComponent::class)
+  @ContributesTo(AppScope::class)
   @dagger.Module
   object Module {
 
     @Provides
     fun provideServiceHandlers(
       sharedPrefs: SharedPreferences,
-      serviceMetas: DaggerMap<String, ServiceMeta>,
-      catchUpPreferences: CatchUpPreferences
+      serviceMetas: Map<String, ServiceMeta>,
+      catchUpPreferences: CatchUpPreferences,
+      serviceFragmentProvider: Provider<ServiceFragment>
     ): Array<ServiceHandler> {
       check(serviceMetas.isNotEmpty()) { "No services found!" }
       val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
@@ -402,7 +405,7 @@ class PagerFragment : InjectingBaseFragment<FragmentPagerBinding>() {
           .filter(ServiceMeta::enabled)
           .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }
           .sortedBy { currentOrder.indexOf(it.id) }
-          .map(ServiceMeta::toServiceHandler))
+          .map { it.toServiceHandler(serviceFragmentProvider) })
         .toTypedArray()
     }
 

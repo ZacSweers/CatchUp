@@ -24,20 +24,20 @@ import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.injection.SharedPreferencesName
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
-import javax.inject.Singleton
 import okhttp3.Interceptor
 
-@InstallIn(SingletonComponent::class)
+@ContributesTo(AppScope::class)
 @Module
 abstract class FlipperModule {
 
@@ -45,7 +45,7 @@ abstract class FlipperModule {
 
   @Binds
   @IntoSet
-  @Singleton
+  @SingleIn(AppScope::class)
   abstract fun provideNetworkFlipperPluginIntoSet(plugin: NetworkFlipperPlugin): FlipperPlugin
 
   companion object {
@@ -66,7 +66,7 @@ abstract class FlipperModule {
     }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideOkHttpInspectorPlugin(): NetworkFlipperPlugin {
       return NetworkFlipperPlugin()
     }
@@ -88,7 +88,7 @@ abstract class FlipperModule {
     }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideFlipperCrashReporterPlugin(): CrashReporterPlugin = CrashReporterPlugin.getInstance()
   }
 }

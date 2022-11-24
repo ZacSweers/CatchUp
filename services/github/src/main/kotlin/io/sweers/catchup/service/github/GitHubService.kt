@@ -32,6 +32,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
@@ -43,10 +44,8 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.Mark
 import io.sweers.catchup.service.api.Service
-import io.sweers.catchup.service.api.ServiceIndex
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.service.api.ServiceMetaIndex
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.github.GitHubApi.Language.All
@@ -71,7 +70,7 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 private const val SERVICE_KEY = "github"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
+@ContributesMultibinding(AppScope::class, boundType = Service::class)
 class GitHubService
 @Inject
 constructor(
@@ -183,7 +182,7 @@ constructor(
   }
 }
 
-@ContributesTo(ServiceMetaIndex::class)
+@ContributesTo(AppScope::class)
 @Module
 abstract class GitHubMetaModule {
 
@@ -209,7 +208,7 @@ abstract class GitHubMetaModule {
   }
 }
 
-@ContributesTo(ServiceIndex::class)
+@ContributesTo(AppScope::class)
 @Module(includes = [GitHubMetaModule::class])
 object GitHubModule {
 

@@ -25,6 +25,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
 import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
@@ -32,10 +33,8 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.ImageInfo
 import io.sweers.catchup.service.api.Service
-import io.sweers.catchup.service.api.ServiceIndex
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.service.api.ServiceMetaIndex
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
@@ -52,7 +51,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 private const val SERVICE_KEY = "uplabs"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(ServiceIndex::class, boundType = Service::class)
+@ContributesMultibinding(AppScope::class, boundType = Service::class)
 class UplabsService
 @Inject
 constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: UplabsApi) :
@@ -91,7 +90,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
   }
 }
 
-@ContributesTo(ServiceMetaIndex::class)
+@ContributesTo(AppScope::class)
 @Module
 abstract class UplabsMetaModule {
 
@@ -118,7 +117,7 @@ abstract class UplabsMetaModule {
   }
 }
 
-@ContributesTo(ServiceIndex::class)
+@ContributesTo(AppScope::class)
 @Module(includes = [UplabsMetaModule::class])
 object UplabsModule {
   @Provides

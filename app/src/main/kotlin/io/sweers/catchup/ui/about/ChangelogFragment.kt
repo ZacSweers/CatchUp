@@ -21,13 +21,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import autodispose2.autoDispose
 import com.apollographql.apollo3.ApolloClient
 import com.google.android.material.snackbar.Snackbar
-import dagger.hilt.android.AndroidEntryPoint
+import com.squareup.anvil.annotations.ContributesMultibinding
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -55,12 +58,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx3.rxSingle
 import kotlinx.datetime.Instant
 
-@AndroidEntryPoint
-class ChangelogFragment : InjectableBaseFragment<FragmentChangelogBinding>(), Scrollable {
-
-  @Inject lateinit var apolloClient: ApolloClient
-  @Inject internal lateinit var linkManager: LinkManager
-  @Inject internal lateinit var markdownConverter: EmojiMarkdownConverter
+@FragmentKey(ChangelogFragment::class)
+@ContributesMultibinding(AppScope::class, boundType = Fragment::class)
+class ChangelogFragment
+@Inject
+constructor(
+  private val apolloClient: ApolloClient,
+  private val linkManager: LinkManager,
+  private val markdownConverter: EmojiMarkdownConverter,
+) : InjectableBaseFragment<FragmentChangelogBinding>(), Scrollable {
 
   private val progressBar
     get() = binding.progress

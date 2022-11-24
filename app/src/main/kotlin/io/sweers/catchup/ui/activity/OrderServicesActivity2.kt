@@ -20,7 +20,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
@@ -63,27 +62,26 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chibatching.kotpref.bulk
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.FragmentComponent
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.compose.CatchUpTheme
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.android.FragmentKey
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.databinding.FragmentOrderServicesBinding
-import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.flowFor
-import io.sweers.catchup.injection.DaggerMap
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.util.setLightStatusBar
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -105,7 +103,7 @@ import kotlinx.coroutines.launch
  */
 
 private class OrderServicesViewModel(
-  serviceMetasMap: DaggerMap<String, ServiceMeta>,
+  serviceMetasMap: Map<String, ServiceMeta>,
   private val catchUpPreferences: CatchUpPreferences
 ) : ViewModel() {
 
@@ -156,18 +154,15 @@ private class OrderServicesViewModel(
   }
 }
 
-@AndroidEntryPoint
-class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBinding>() {
-
-  @Inject lateinit var serviceMetas: DaggerMap<String, ServiceMeta>
-
-  @Inject lateinit var catchUpPreferences: CatchUpPreferences
-
-  @Inject internal lateinit var syllabus: Syllabus
-
-  @Inject internal lateinit var fontHelper: FontHelper
-
-  @Inject internal lateinit var appConfig: AppConfig
+@FragmentKey(OrderServicesFragment2::class)
+@ContributesMultibinding(AppScope::class, boundType = Fragment::class)
+class OrderServicesFragment2
+@Inject
+constructor(
+  private val serviceMetas: Map<String, ServiceMeta>,
+  private val catchUpPreferences: CatchUpPreferences,
+  private val appConfig: AppConfig,
+) : InjectableBaseFragment<FragmentOrderServicesBinding>() {
 
   // Have to do this here because we can't set a factory separately
   @Suppress("UNCHECKED_CAST")
@@ -199,7 +194,6 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
     }
   }
 
-  @OptIn(ExperimentalAnimationApi::class)
   @Composable
   private fun ScaffoldContent(viewModel: OrderServicesViewModel) {
     val canSave: Boolean by viewModel.canSave.collectAsState()
@@ -347,7 +341,7 @@ class OrderServicesFragment2 : InjectableBaseFragment<FragmentOrderServicesBindi
   }
 }
 
-@InstallIn(FragmentComponent::class)
+@ContributesTo(AppScope::class)
 @Module
 abstract class OrderServicesModule2 {
 

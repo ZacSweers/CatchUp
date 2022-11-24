@@ -47,7 +47,7 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Debugging tooling as a first class citizen in the debug build
 - Leak Canary, Scalpel, debug drawer, Flipper, bug reporting, the works
 - AndroidX/Jetpack
-- Dagger 2 + Hilt
+- Dagger 2 + Anvil
 - One of the more interesting parts of CatchUp is that its service architecture is a Dagger-powered plugin system
 - Room
 - Firebase
@@ -55,7 +55,6 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 - Apollo GraphQL
 - Standard Square buffet of Okio/OkHttp 3/Retrofit 2/Moshi
 - Inspector
-- Anvil
 - KSP
 
 There's a lot of neat/interesting little tidbits in the CatchUp source code that I plan to write a

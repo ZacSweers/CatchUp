@@ -50,7 +50,6 @@ bugsnag = { id = "com.bugsnag.android.gradle", version = "7.4.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.6.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.8.1" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
@@ -150,8 +149,6 @@ crumb-annotations = { module = "com.uber.crumb:crumb-annotations", version.ref =
 crumb-compiler = { module = "com.uber.crumb:crumb-compiler", version.ref = "crumb" }
 crumb-compilerApi = { module = "com.uber.crumb:crumb-compiler-api", version.ref = "crumb" }
 
-dagger-hilt-apt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger" }
-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
 dagger-apt-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }

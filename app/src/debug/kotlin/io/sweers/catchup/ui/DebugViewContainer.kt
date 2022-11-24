@@ -38,9 +38,11 @@ import autodispose2.android.scope
 import autodispose2.autoDispose
 import com.getkeepsafe.taptargetview.TapTarget
 import com.mattprecious.telescope.TelescopeLayout
+import com.squareup.anvil.annotations.ContributesBinding
 import dagger.Lazy
-import dagger.hilt.android.scopes.ActivityScoped
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.reactivex.rxjava3.android.MainThreadDisposable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
@@ -75,11 +77,13 @@ import okhttp3.OkHttpClient
  * An [ViewContainer] for debug builds which wraps a sliding drawer on the right that holds all of
  * the debug information and settings.
  */
-@ActivityScoped
-internal class DebugViewContainer
+// TODO scope this better?
+@ContributesBinding(AppScope::class)
+@SingleIn(AppScope::class)
+class DebugViewContainer
 @Inject
 constructor(
-  private val bugReportLens: BugReportLens,
+  private val bugReportLensFactory: BugReportLens.Factory,
   private val lumberYard: LumberYard,
   private val lazyOkHttpClient: Lazy<OkHttpClient>,
   private val syllabus: Syllabus,
@@ -123,13 +127,14 @@ constructor(
     )
 
     viewHolder.telescopeLayout.setPointerCount(3)
+    val lens = bugReportLensFactory.create(activity)
     Completable.fromAction {
         TelescopeLayout.cleanUp(activity) // Clean up any old screenshots.
       }
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .autoDispose(activity)
-      .subscribe { viewHolder.telescopeLayout.setLens(bugReportLens) }
+      .subscribe { viewHolder.telescopeLayout.setLens(lens) }
 
     // If you have not seen the debug drawer before, show it with a message
     syllabus.showIfNeverSeen(

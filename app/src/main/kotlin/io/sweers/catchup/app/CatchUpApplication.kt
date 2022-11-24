@@ -18,7 +18,6 @@ package io.sweers.catchup.app
 import android.app.Application
 import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
-import dagger.hilt.android.HiltAndroidApp
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.ticktock.runtime.EagerZoneRulesLoading
 import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
@@ -41,7 +40,6 @@ import timber.log.Timber
 
 private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
 
-@HiltAndroidApp
 class CatchUpApplication : Application() {
 
   companion object {
@@ -56,6 +54,8 @@ class CatchUpApplication : Application() {
 
   @Inject internal lateinit var catchUpPreferences: CatchUpPreferences
   @Inject internal lateinit var appConfig: AppConfig
+
+  lateinit var appComponent: ApplicationComponent
 
   @Inject
   internal fun plantTimberTrees(trees: DaggerSet<Timber.Tree>) {
@@ -79,6 +79,8 @@ class CatchUpApplication : Application() {
   @OptIn(DelicateCoroutinesApi::class)
   override fun onCreate() {
     super.onCreate()
+    appComponent =
+      DaggerApplicationComponent.factory().create(this).apply { inject(this@CatchUpApplication) }
     GlobalScope.launch {
       // Initialize TZ data
       try {

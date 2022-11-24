@@ -18,13 +18,14 @@ package io.sweers.catchup.data
 import android.app.Application
 import android.util.Log
 import androidx.annotation.WorkerThread
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import java.io.File
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.util.ArrayDeque
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +37,7 @@ import okio.buffer
 import okio.sink
 import timber.log.Timber
 
-@Singleton
+@SingleIn(AppScope::class)
 class LumberYard @Inject constructor(private val app: Application) {
 
   private val entries = ArrayDeque<Entry>(BUFFER_SIZE + 1)

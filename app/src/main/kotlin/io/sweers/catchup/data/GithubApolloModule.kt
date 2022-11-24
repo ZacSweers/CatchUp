@@ -34,24 +34,24 @@ import com.apollographql.apollo3.network.NetworkTransport
 import com.apollographql.apollo3.network.http.DefaultHttpEngine
 import com.apollographql.apollo3.network.http.HttpEngine
 import com.apollographql.apollo3.network.http.HttpNetworkTransport
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.github.type.DateTime
 import io.sweers.catchup.data.github.type.URI
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.network.AuthInterceptor
 import javax.inject.Qualifier
-import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okio.FileSystem
 
-@InstallIn(SingletonComponent::class)
+@ContributesTo(AppScope::class)
 @Module
-internal object GithubApolloModule {
+object GithubApolloModule {
 
   private const val SERVER_URL = "https://api.github.com/graphql"
 
@@ -59,22 +59,22 @@ internal object GithubApolloModule {
 
   /** TODO this hits disk on startup -_- */
   @Provides
-  @Singleton
-  internal fun provideHttpCacheStore(@ApplicationContext context: Context): DiskLruHttpCache =
+  @SingleIn(AppScope::class)
+  fun provideHttpCacheStore(@ApplicationContext context: Context): DiskLruHttpCache =
     DiskLruHttpCache(FileSystem.SYSTEM, context.cacheDir, 1_000_000)
 
   @Provides
   @InternalApi
-  @Singleton
-  internal fun provideGitHubOkHttpClient(client: OkHttpClient): OkHttpClient =
+  @SingleIn(AppScope::class)
+  fun provideGitHubOkHttpClient(client: OkHttpClient): OkHttpClient =
     client
       .newBuilder()
       .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
       .build()
 
   @Provides
-  @Singleton
-  internal fun provideCacheKeyGenerator(): CacheKeyGenerator =
+  @SingleIn(AppScope::class)
+  fun provideCacheKeyGenerator(): CacheKeyGenerator =
     object : CacheKeyGenerator {
       private val formatter = { id: String ->
         if (id.isEmpty()) {
@@ -99,8 +99,8 @@ internal object GithubApolloModule {
     }
 
   @Provides
-  @Singleton
-  internal fun provideCacheKeyResolver(): CacheKeyResolver =
+  @SingleIn(AppScope::class)
+  fun provideCacheKeyResolver(): CacheKeyResolver =
     object : CacheKeyResolver() {
       override fun cacheKeyForField(field: CompiledField, variables: Variables): CacheKey? {
         return null
@@ -108,24 +108,24 @@ internal object GithubApolloModule {
     }
 
   @Provides
-  @Singleton
-  internal fun provideNormalizedCacheFactory(): NormalizedCacheFactory = MemoryCacheFactory()
+  @SingleIn(AppScope::class)
+  fun provideNormalizedCacheFactory(): NormalizedCacheFactory = MemoryCacheFactory()
 
   @Provides
-  @Singleton
-  internal fun provideHttpEngine(@InternalApi client: Lazy<OkHttpClient>): HttpEngine {
+  @SingleIn(AppScope::class)
+  fun provideHttpEngine(@InternalApi client: Lazy<OkHttpClient>): HttpEngine {
     return DefaultHttpEngine { client.get().newCall(it) }
   }
 
   @Provides
-  @Singleton
-  internal fun provideHttpRequestComposer(): HttpRequestComposer {
+  @SingleIn(AppScope::class)
+  fun provideHttpRequestComposer(): HttpRequestComposer {
     return DefaultHttpRequestComposer(SERVER_URL)
   }
 
   @Provides
-  @Singleton
-  internal fun provideNetworkTransport(
+  @SingleIn(AppScope::class)
+  fun provideNetworkTransport(
     httpEngine: HttpEngine,
     httpRequestComposer: HttpRequestComposer
   ): NetworkTransport {
@@ -136,8 +136,8 @@ internal object GithubApolloModule {
   }
 
   @Provides
-  @Singleton
-  internal fun provideApolloClient(
+  @SingleIn(AppScope::class)
+  fun provideApolloClient(
     networkTransport: NetworkTransport,
     cacheFactory: NormalizedCacheFactory,
     cacheKeyResolver: CacheKeyResolver,
