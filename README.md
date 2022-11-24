@@ -43,7 +43,7 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 ## Technologies
 
 - Kotlin
-- RxJava 2/AutoDispose
+- RxJava 3/AutoDispose
 - Debugging tooling as a first class citizen in the debug build
 - Leak Canary, Scalpel, debug drawer, Flipper, bug reporting, the works
 - AndroidX/Jetpack
@@ -74,10 +74,10 @@ work of others. Particularly:
 ## Development
 
 If you'd like to build CatchUp locally, you _should_ be able to just clone and build with no
-issues. The project requires JDK 11 or higher.
+issues. The project requires whatever JDK version is currently defined `libs.versions.toml`.
 
 CatchUp tends to keep up with Android Studio canaries, so you may have to use a canary version.
-Check the Android Gradle Plugin `SharedBuildVersions.agp` version in `buildSrc/build.gradle.kts`.
+Check the AGP version in `libs.versions.toml`.
 
 If you want to build with working services, some require API keys. See the
 [wiki](https://github.com/ZacSweers/CatchUp/wiki/Authentication-information) for more details on
