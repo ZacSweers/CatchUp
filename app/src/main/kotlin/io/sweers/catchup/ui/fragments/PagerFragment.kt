@@ -52,6 +52,7 @@ import dagger.Provides
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.android.FragmentKey
+import dev.zacsweers.catchup.service.ServiceFragment2
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseFragment
@@ -61,7 +62,6 @@ import io.sweers.catchup.databinding.FragmentPagerBinding
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.Scrollable
 import io.sweers.catchup.ui.activity.SettingsActivity
-import io.sweers.catchup.ui.fragments.service.ServiceFragment
 import io.sweers.catchup.util.clearLightStatusBar
 import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.resolveAttributeColor
@@ -73,8 +73,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import ru.ldralighieri.corbind.material.offsetChanges
 
-fun ServiceMeta.toServiceHandler(factory: Provider<ServiceFragment>) =
-  ServiceHandler(name, icon, themeColor) { factory.get().forService(id) }
+fun ServiceMeta.toServiceHandler(provider: Provider<ServiceFragment2>) =
+  ServiceHandler(name, icon, themeColor) { provider.get().forService(id) }
 
 data class ServiceHandler(
   @StringRes val name: Int,
@@ -397,7 +397,7 @@ constructor(
       sharedPrefs: SharedPreferences,
       serviceMetas: Map<String, ServiceMeta>,
       catchUpPreferences: CatchUpPreferences,
-      serviceFragmentProvider: Provider<ServiceFragment>
+      serviceFragmentProvider: Provider<ServiceFragment2>
     ): Array<ServiceHandler> {
       check(serviceMetas.isNotEmpty()) { "No services found!" }
       val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()

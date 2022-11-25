@@ -586,6 +586,7 @@ dependencies {
   implementation(libs.circuit.codegenAnnotations)
   implementation(libs.circuit.overlay)
   implementation(libs.androidx.compose.material.material3)
+  implementation(libs.coil.compose)
 
   // Apollo
   implementation(libs.apollo.httpcache)

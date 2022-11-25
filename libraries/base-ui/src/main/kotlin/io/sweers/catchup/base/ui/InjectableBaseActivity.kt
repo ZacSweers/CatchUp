@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.base.ui
 
-import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager

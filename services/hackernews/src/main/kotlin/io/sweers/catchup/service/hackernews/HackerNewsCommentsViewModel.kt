@@ -38,6 +38,8 @@ import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.service.hackernews.preview.UrlPreview
 import io.sweers.catchup.service.hackernews.preview.UrlPreviewResponse
 import io.sweers.catchup.util.d
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,8 +49,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 class HackerNewsCommentsViewModel
 @AssistedInject
