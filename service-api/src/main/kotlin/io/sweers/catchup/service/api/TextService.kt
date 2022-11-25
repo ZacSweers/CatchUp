@@ -32,15 +32,14 @@ interface TextService : Service {
     val context = holder.itemView().context
     val accentColor = ContextCompat.getColor(context, meta().themeColor)
     holder.tint(accentColor)
-    val (itemClickUrl, markClickUrl) = item.itemAndMarkClickUrls
     holder.bind(
       item = item,
       itemClickHandler =
-        itemClickUrl?.let { url ->
+        item.clickUrl?.let { url ->
           OnClickListener { clicksReceiver(createUrlMeta(url, context)) }
         },
       markClickHandler =
-        markClickUrl?.let { url ->
+        item.markClickUrl?.let { url ->
           OnClickListener { markClicksReceiver(createUrlMeta(url, context)) }
         },
       longClickHandler =
@@ -53,14 +52,6 @@ interface TextService : Service {
     )
   }
 }
-
-val CatchUpItem.itemAndMarkClickUrls: Pair<String?, String?>
-  get() {
-    val markClickUrl = mark?.clickUrl
-    val itemClickUrl = itemClickUrl ?: markClickUrl
-    val finalMarkClickUrl = markClickUrl?.let { if (itemClickUrl == markClickUrl) null else it }
-    return itemClickUrl to finalMarkClickUrl
-  }
 
 private fun TextService.createUrlMeta(url: String, context: Context) =
   UrlMeta(

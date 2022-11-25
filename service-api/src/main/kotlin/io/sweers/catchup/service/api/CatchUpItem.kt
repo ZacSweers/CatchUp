@@ -32,12 +32,23 @@ data class CatchUpItem(
   val tag: String? = null,
   val author: String? = null,
   val source: String? = null,
-  val itemClickUrl: String? = null,
+  internal val itemClickUrl: String? = null,
   @Embedded val summarizationInfo: SummarizationInfo? = null,
   @Embedded val imageInfo: ImageInfo? = null,
   @Embedded val mark: Mark? = null,
   val detailKey: String? = null
 ) : DisplayableItem {
+
+  val clickUrl: String?
+  val markClickUrl: String?
+
+  init {
+    val markClickUrl = mark?.clickUrl
+    val itemClickUrl = itemClickUrl ?: markClickUrl
+    val finalMarkClickUrl = markClickUrl?.let { if (itemClickUrl == markClickUrl) null else it }
+    this.clickUrl = itemClickUrl
+    this.markClickUrl = finalMarkClickUrl
+  }
 
   override fun stableId() = id
 
