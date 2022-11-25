@@ -5,6 +5,7 @@
   ],
   "packageRules": [
     {
+      "matchManagers": ["maven"],
       "description": "Disable snapshot versions",
       "allowedVersions": "!/.*-SNAPSHOT$/"
     }
