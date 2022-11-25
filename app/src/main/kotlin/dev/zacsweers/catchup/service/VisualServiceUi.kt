@@ -1,7 +1,10 @@
 package dev.zacsweers.catchup.service
 
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,9 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import io.sweers.catchup.service.api.CatchUpItem
 
 @Composable
@@ -27,26 +32,40 @@ fun VisualServiceUi(
   onRefreshChange: (Boolean) -> Unit,
   eventSink: (ServiceScreen.Event) -> Unit,
 ) {
+  val placeholders =
+    if (isSystemInDarkTheme()) {
+      PLACEHOLDERS_DARK
+    } else {
+      PLACEHOLDERS_LIGHT
+    }
   LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-    items(lazyItems) { item ->
-      SelectableItem(lazyItems, item, eventSink) { VisualItem(it, eventSink) }
+    itemsIndexed(lazyItems) { index, item ->
+      SelectableItem(lazyItems, item, eventSink) {
+        VisualItem(it, placeholders[index % placeholders.size], eventSink)
+      }
     }
     handleLoadStates(lazyItems, themeColor, onRefreshChange)
   }
 }
 
 @Composable
-fun VisualItem(item: CatchUpItem, eventSink: (ServiceScreen.Event) -> Unit) {
+fun VisualItem(item: CatchUpItem, placeholder: Drawable, eventSink: (ServiceScreen.Event) -> Unit) {
   // TODO bring this up to parity with ImageAdapter.
-  //  placeholders
   //  palette
   //  badges
   //  gif handling
   //  etc
   Box(Modifier.aspectRatio(4f / 3f)) {
+    val imageInfo = item.imageInfo!!
     AsyncImage(
+      model =
+        ImageRequest.Builder(LocalContext.current)
+          .data(imageInfo.url)
+          .placeholder(placeholder)
+          .memoryCacheKey(imageInfo.cacheKey)
+          .crossfade(true)
+          .build(),
       modifier = Modifier.fillMaxSize(),
-      model = item.imageInfo!!.url,
       contentDescription = "Image for ${item.title}",
       contentScale = ContentScale.Crop,
       alignment = Alignment.Center
@@ -92,10 +111,10 @@ fun LazyGridScope.handleLoadStates(
 }
 
 // TODO copied + modified from Paging
-private fun <T : Any> LazyGridScope.items(
+fun <T : Any> LazyGridScope.itemsIndexed(
   items: LazyPagingItems<T>,
-  key: ((item: T) -> Any)? = null,
-  itemContent: @Composable LazyGridItemScope.(value: T?) -> Unit
+  key: ((index: Int, item: T) -> Any)? = null,
+  itemContent: @Composable LazyGridItemScope.(index: Int, value: T?) -> Unit
 ) {
   items(
     count = items.itemCount,
@@ -107,11 +126,11 @@ private fun <T : Any> LazyGridScope.items(
           if (item == null) {
             PagingPlaceholderKey(index)
           } else {
-            key(item)
+            key(index, item)
           }
         }
   ) { index ->
-    itemContent(items[index])
+    itemContent(index, items[index])
   }
 }
 
@@ -136,3 +155,17 @@ private data class PagingPlaceholderKey(private val index: Int) : Parcelable {
       }
   }
 }
+
+private val PLACEHOLDERS_DARK =
+  arrayOf(
+    ColorDrawable(0xff191919.toInt()),
+    ColorDrawable(0xff212121.toInt()),
+    ColorDrawable(0xff232323.toInt()),
+  )
+
+private val PLACEHOLDERS_LIGHT =
+  arrayOf(
+    ColorDrawable(0xfff5f5f5.toInt()),
+    ColorDrawable(0xffeeeeee.toInt()),
+    ColorDrawable(0xffe0e0e0.toInt()),
+  )
