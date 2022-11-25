@@ -30,11 +30,13 @@ plugins {
   id("com.android.application")
   kotlin("android")
   kotlin("kapt")
+  kotlin("plugin.parcelize")
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.apollo)
   alias(libs.plugins.licensee)
   alias(libs.plugins.moshix)
   alias(libs.plugins.anvil)
+  alias(libs.plugins.ksp)
 //  alias(libs.plugins.bugsnag)
 //  alias(libs.plugins.playPublisher)
 }
@@ -576,6 +578,14 @@ dependencies {
   implementation(libs.misc.kotpref)
   implementation(libs.misc.kotprefEnum)
   implementation(libs.kotlin.datetime)
+
+  implementation(libs.androidx.compose.animation.graphics)
+  implementation(libs.androidx.paging.compose)
+  implementation(libs.circuit.core)
+  ksp(libs.circuit.codegen)
+  implementation(libs.circuit.codegenAnnotations)
+  implementation(libs.circuit.overlay)
+  implementation(libs.androidx.compose.material.material3)
 
   // Apollo
   implementation(libs.apollo.httpcache)

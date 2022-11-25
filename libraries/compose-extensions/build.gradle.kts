@@ -40,4 +40,6 @@ dependencies {
   api(libs.androidx.compose.uiTooling)
   api(libs.androidx.compose.foundation)
   api(libs.androidx.compose.material)
+  api(libs.androidx.compose.material.material3)
+  implementation(libs.androidx.compose.googleFonts)
 }
