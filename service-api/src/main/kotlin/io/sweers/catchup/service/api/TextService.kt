@@ -35,7 +35,7 @@ interface TextService : Service {
     holder.bind(
       item = item,
       itemClickHandler =
-        item.clickUrl?.let { url ->
+        item.itemClickUrl?.let { url ->
           OnClickListener { clicksReceiver(createUrlMeta(url, context)) }
         },
       markClickHandler =

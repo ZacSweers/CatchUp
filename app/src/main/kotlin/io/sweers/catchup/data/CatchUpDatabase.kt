@@ -25,7 +25,7 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.SummarizationType
 import kotlinx.datetime.Instant
 
-@Database(entities = [ServicePage::class, CatchUpItem::class], version = 6)
+@Database(entities = [ServicePage::class, CatchUpItem::class], version = 7)
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {
 

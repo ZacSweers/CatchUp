@@ -18,6 +18,7 @@ package io.sweers.catchup.service.api
 import androidx.annotation.Keep
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 
@@ -39,11 +40,11 @@ data class CatchUpItem(
   val detailKey: String? = null
 ) : DisplayableItem {
 
-  val clickUrl: String?
-  val markClickUrl: String?
+  @Ignore val clickUrl: String?
+  @Ignore val markClickUrl: String?
 
   init {
-    val markClickUrl = mark?.clickUrl
+    val markClickUrl = mark?._markClickUrl
     val itemClickUrl = itemClickUrl ?: markClickUrl
     val finalMarkClickUrl = markClickUrl?.let { if (itemClickUrl == markClickUrl) null else it }
     this.clickUrl = itemClickUrl
