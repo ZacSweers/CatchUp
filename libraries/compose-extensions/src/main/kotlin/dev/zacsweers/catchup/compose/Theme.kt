@@ -123,16 +123,17 @@ fun CatchUpTheme(
   content: @Composable () -> Unit
 ) {
   val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-  val colors = when {
-    dynamicColor && useDarkTheme -> {
-      dynamicDarkColorScheme(LocalContext.current)
+  val colors =
+    when {
+      dynamicColor && useDarkTheme -> {
+        dynamicDarkColorScheme(LocalContext.current)
+      }
+      dynamicColor && !useDarkTheme -> {
+        dynamicLightColorScheme(LocalContext.current)
+      }
+      useDarkTheme -> DarkColors
+      else -> LightColors
     }
-    dynamicColor && !useDarkTheme -> {
-      dynamicLightColorScheme(LocalContext.current)
-    }
-    useDarkTheme -> DarkColors
-    else -> LightColors
-  }
 
   MaterialTheme(
     colorScheme = colors,
