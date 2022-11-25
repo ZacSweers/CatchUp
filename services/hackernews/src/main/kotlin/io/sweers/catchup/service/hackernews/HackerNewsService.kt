@@ -40,6 +40,7 @@ import dev.zacsweers.catchup.di.android.FragmentKey
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleEmitter
+import io.sweers.catchup.base.ui.ViewModelAssistedFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -53,8 +54,6 @@ import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.service.hackernews.preview.UrlPreviewModule
-import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
-import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelKey
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -191,12 +190,7 @@ abstract class HackerNewsMetaModule {
 @ContributesTo(AppScope::class)
 @Module(
   includes =
-    [
-      HackerNewsMetaModule::class,
-      FragmentViewModelFactoryModule::class,
-      ViewModelModule::class,
-      UrlPreviewModule::class
-    ]
+    [HackerNewsMetaModule::class, FragmentViewModelFactoryModule::class, UrlPreviewModule::class]
 )
 abstract class HackerNewsModule {
 
@@ -226,14 +220,6 @@ abstract class HackerNewsModule {
       return FirebaseDatabase.getInstance(app)
     }
   }
-}
-
-@Module
-internal abstract class ViewModelModule {
-  @Binds
-  @IntoMap
-  @ViewModelKey(HackerNewsCommentsViewModel::class)
-  abstract fun mainViewModel(viewModel: HackerNewsCommentsViewModel.Factory): ViewModelCreator
 }
 
 // TODO generify this somewhere once something other than HN does it
