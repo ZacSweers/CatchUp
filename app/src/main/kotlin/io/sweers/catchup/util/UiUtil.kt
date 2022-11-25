@@ -80,15 +80,26 @@ object UiUtil {
     bounded: Boolean
   ): RippleDrawable {
     // try the named swatches in preference order
-    val rippleColor =
-      palette.orderedSwatches(darkAlpha, lightAlpha).firstOrNull()?.let { (swatch, alpha) ->
-        return@let ColorUtils.modifyAlpha(swatch.rgb, alpha)
-      }
-        ?: fallbackColor
+    val rippleColor = createRippleColor(palette, darkAlpha, lightAlpha, fallbackColor)
     return RippleDrawable(
       ColorStateList.valueOf(rippleColor),
       null,
       if (bounded) ColorDrawable(Color.WHITE) else null
     )
+  }
+
+  @SuppressLint("Range")
+  @ColorInt
+  inline fun createRippleColor(
+    palette: Palette,
+    @FloatRange(from = 0.0, to = 1.0) darkAlpha: Float,
+    @FloatRange(from = 0.0, to = 1.0) lightAlpha: Float,
+    @ColorInt fallbackColor: Int,
+  ): Int {
+    // try the named swatches in preference order
+    return palette.orderedSwatches(darkAlpha, lightAlpha).firstOrNull()?.let { (swatch, alpha) ->
+        return@let ColorUtils.modifyAlpha(swatch.rgb, alpha)
+      }
+        ?: fallbackColor
   }
 }
