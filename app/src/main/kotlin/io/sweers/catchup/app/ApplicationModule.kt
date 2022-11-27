@@ -19,14 +19,12 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
-import android.os.Build.VERSION
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import coil.Coil
 import coil.ComponentRegistry
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
-import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
@@ -223,15 +221,7 @@ abstract class ApplicationModule {
         allowRgb565(isLowRamDevice)
         crossfade(300)
 
-        components {
-          add(
-            if (VERSION.SDK_INT >= 28) {
-              ImageDecoderDecoder.Factory()
-            } else {
-              GifDecoder.Factory()
-            }
-          )
-        }
+        components { add(ImageDecoderDecoder.Factory()) }
 
         build()
       }
