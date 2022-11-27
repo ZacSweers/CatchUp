@@ -216,7 +216,7 @@ abstract class ApplicationModule {
           logger(DebugLogger())
         }
 
-        // Hardware bitmaps don't work with the saturation effect
+        // Hardware bitmaps don't work with the saturation effect or palette extraction
         allowHardware(false)
         allowRgb565(isLowRamDevice)
         crossfade(300)
