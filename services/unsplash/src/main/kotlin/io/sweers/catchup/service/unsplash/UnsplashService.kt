@@ -102,8 +102,6 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
         else -> 1
       }
     }
-
-  override fun marginDecoration() = true
 }
 
 @ContributesTo(AppScope::class)

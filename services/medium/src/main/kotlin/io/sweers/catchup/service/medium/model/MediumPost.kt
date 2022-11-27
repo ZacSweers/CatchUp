@@ -16,15 +16,11 @@
 package io.sweers.catchup.service.medium.model
 
 import com.squareup.moshi.JsonClass
-import io.sweers.catchup.service.api.HasStableId
 
 @JsonClass(generateAdapter = true)
-internal data class MediumPost(val collection: Collection?, val post: Post, val user: User) :
-  HasStableId {
+internal data class MediumPost(val collection: Collection?, val post: Post, val user: User) {
 
   fun constructUrl() = "https://medium.com/@${user.username}/${post.uniqueSlug}"
 
   fun constructCommentsUrl() = "${constructUrl()}#--responses"
-
-  override fun stableId(): Long = post.id.hashCode().toLong()
 }

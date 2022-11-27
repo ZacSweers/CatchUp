@@ -39,7 +39,7 @@ data class CatchUpItem(
   @Embedded val imageInfo: ImageInfo? = null,
   @Embedded val mark: Mark? = null,
   val detailKey: String? = null
-) : DisplayableItem {
+) {
 
   @Ignore val clickUrl: String?
   @Ignore val markClickUrl: String?
@@ -51,8 +51,4 @@ data class CatchUpItem(
     this.clickUrl = itemClickUrl
     this.markClickUrl = finalMarkClickUrl
   }
-
-  override fun stableId() = id
-
-  override fun realItem() = this
 }

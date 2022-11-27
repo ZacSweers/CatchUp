@@ -70,7 +70,7 @@ fun VisualServiceUi(
   LazyVerticalGrid(columns = GridCells.Fixed(spanCount)) {
     itemsIndexed(
       lazyItems,
-      key = { _, item -> item.stableId() },
+      key = { _, item -> item.id },
       span = { index -> GridItemSpan(spanConfig.spanSizeResolver?.invoke(index) ?: 1) },
     ) { index, item ->
       val clickableItemState = remember { ClickableItemState() }

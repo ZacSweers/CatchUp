@@ -51,7 +51,7 @@ fun TextServiceUi(
   LazyColumn {
     items(
       items = lazyItems,
-      key = CatchUpItem::stableId,
+      key = CatchUpItem::id,
     ) { item ->
       ClickableItem(lazyItems, item, eventSink) { TextItem(it, themeColor, eventSink) }
     }

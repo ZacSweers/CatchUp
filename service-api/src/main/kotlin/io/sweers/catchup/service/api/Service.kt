@@ -17,16 +17,10 @@ package io.sweers.catchup.service.api
 
 import io.reactivex.rxjava3.core.Single
 
-interface Service {
+sealed interface Service {
   fun meta(): ServiceMeta
+
   fun fetchPage(request: DataRequest): Single<DataResult>
-  fun bindItemView(
-    item: CatchUpItem,
-    holder: BindableCatchUpItemViewHolder,
-    clicksReceiver: (UrlMeta) -> Boolean,
-    markClicksReceiver: (UrlMeta) -> Boolean,
-    longClicksReceiver: (UrlMeta) -> Boolean
-  )
 
   fun rootService(): Service = this
 }
