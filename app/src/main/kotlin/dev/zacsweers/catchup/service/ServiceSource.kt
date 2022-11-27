@@ -7,6 +7,7 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.Service
 import kotlinx.coroutines.rx3.await
 
+// TODO DB caching
 class ServiceSource(private val service: Service) : PagingSource<String, CatchUpItem>() {
 
   override fun getRefreshKey(state: PagingState<String, CatchUpItem>): String? {

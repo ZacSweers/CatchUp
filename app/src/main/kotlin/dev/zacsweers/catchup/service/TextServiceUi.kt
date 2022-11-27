@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,8 +49,11 @@ fun TextServiceUi(
   eventSink: (ServiceScreen.Event) -> Unit,
 ) {
   LazyColumn {
-    items(lazyItems) { item ->
-      SelectableItem(lazyItems, item, eventSink) { TextItem(it, themeColor, eventSink) }
+    items(
+      items = lazyItems,
+      key = CatchUpItem::stableId,
+    ) { item ->
+      ClickableItem(lazyItems, item, eventSink) { TextItem(it, themeColor, eventSink) }
     }
     handleLoadStates(lazyItems, themeColor, onRefreshChange)
   }

@@ -1,11 +1,14 @@
 package dev.zacsweers.catchup.service
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,24 +19,37 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
+import coil.drawable.MovieDrawable
 import coil.request.ImageRequest
+import io.sweers.catchup.base.ui.ColorUtils
+import io.sweers.catchup.base.ui.generateAsync
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.VisualService
+import io.sweers.catchup.util.UiUtil
+import kotlinx.coroutines.launch
 
 @Composable
 fun VisualServiceUi(
@@ -54,10 +70,18 @@ fun VisualServiceUi(
   LazyVerticalGrid(columns = GridCells.Fixed(spanCount)) {
     itemsIndexed(
       lazyItems,
+      key = { _, item -> item.stableId() },
       span = { index -> GridItemSpan(spanConfig.spanSizeResolver?.invoke(index) ?: 1) },
     ) { index, item ->
-      SelectableItem(lazyItems, item, eventSink) {
-        VisualItem(it, placeholders[index % placeholders.size])
+      val clickableItemState = remember { ClickableItemState() }
+      ClickableItem(lazyItems, item, eventSink, clickableItemState) { clickableItem ->
+        VisualItem(
+          item = clickableItem,
+          index = index,
+          placeholder = placeholders[index % placeholders.size],
+          onEnableChanged = { clickableItemState.enabled = it },
+          onContentColorChanged = { clickableItemState.contentColor = it },
+        )
       }
     }
     handleLoadStates(lazyItems, themeColor, spanCount, onRefreshChange)
@@ -67,15 +91,21 @@ fun VisualServiceUi(
 @Composable
 fun VisualItem(
   item: CatchUpItem,
-  placeholder: Drawable,
+  index: Int,
+  placeholder: ColorDrawable,
+  onEnableChanged: (Boolean) -> Unit = {},
+  onContentColorChanged: (Color) -> Unit = {},
 ) {
   // TODO bring this up to parity with ImageAdapter.
-  //  palette
-  //  badges
   //  gif handling
+  //  saturation transformation
   //  etc
+  val displayMetrics = LocalContext.current.resources.displayMetrics.scaledDensity
   Box(Modifier.aspectRatio(4f / 3f)) {
     val imageInfo = item.imageInfo!!
+    var hasFadedIn by remember(index) { mutableStateOf(false) }
+    var badgeColor by remember(index) { mutableStateOf(Color.Unspecified) }
+    val scope = rememberCoroutineScope()
     AsyncImage(
       model =
         ImageRequest.Builder(LocalContext.current)
@@ -83,28 +113,103 @@ fun VisualItem(
           .placeholder(placeholder)
           .memoryCacheKey(imageInfo.cacheKey)
           .crossfade(true)
+          // .run {
+          // TODO transitions don't work with AsyncImage yet
+          //  https://coil-kt.github.io/coil/compose/#transitions
+          //   if (!hasFadedIn) {
+          //     transitionFactory(SaturatingTransformation.Factory)
+          //   } else {
+          //     crossfade(0)
+          //   }
+          // }
+          .listener(
+            onSuccess = { _, imageResult ->
+              hasFadedIn = true
+              val result = imageResult.drawable
+              var bitmap: Bitmap? = null
+              if (result is BitmapDrawable) {
+                bitmap = result.bitmap
+                scope.launch {
+                  Palette.from(result.bitmap).clearFilters().generateAsync()?.let {
+                    applyPalette(it, onContentColorChanged)
+                  }
+                }
+              } else if (result is MovieDrawable) {
+                // TODO need to extract the first frame somehow
+                // val image = result.firstFrame
+                if (bitmap == null || bitmap.isRecycled) {
+                  return@listener
+                }
+                scope.launch {
+                  Palette.from(bitmap).clearFilters().generateAsync()?.let {
+                    applyPalette(it, onContentColorChanged)
+                  }
+                }
+              }
+
+              bitmap?.let {
+                // look at the corner to determine the gif badge color
+                val cornerSize = (56 * displayMetrics).toInt()
+                val corner =
+                  Bitmap.createBitmap(
+                    it,
+                    it.width - cornerSize,
+                    it.height - cornerSize,
+                    cornerSize,
+                    cornerSize
+                  )
+                val isDark = ColorUtils.isDark(corner)
+                corner.recycle()
+                badgeColor = if (isDark) Color(0xb3ffffff) else Color(0x40000000)
+              }
+            },
+            onError = { _, _ -> onEnableChanged(false) },
+          )
           .build(),
       modifier = Modifier.fillMaxSize(),
       contentDescription = "Image for ${item.title}",
       contentScale = ContentScale.Crop,
-      alignment = Alignment.Center
+      alignment = Alignment.Center,
     )
-    if (imageInfo.animatable) {
-      Surface(
-        modifier = Modifier.align(Alignment.BottomEnd).padding(4.dp),
-        color = Color.LightGray.copy(alpha = 0.5f),
-        shape = RoundedCornerShape(4.dp)
-      ) {
-        Text(
-          text = "GIF",
-          fontSize = 12.sp,
-          style = MaterialTheme.typography.labelSmall,
-          fontWeight = FontWeight.ExtraBold,
-          color = Color.White
-        )
-      }
+    if (imageInfo.animatable && badgeColor != Color.Unspecified) {
+      Badge(badgeColor = badgeColor, modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp))
     }
   }
+}
+
+@Composable
+private fun Badge(
+  badgeColor: Color,
+  modifier: Modifier = Modifier,
+) {
+  Surface(
+    modifier = modifier,
+    color = badgeColor.copy(alpha = 0.5f),
+    shape = RoundedCornerShape(2.dp)
+  ) {
+    Text(
+      modifier = Modifier.padding(4.dp),
+      text = "GIF",
+      fontSize = 12.sp,
+      fontStyle = FontStyle.Normal,
+      fontWeight = FontWeight.Black,
+      color = Color.White
+    )
+  }
+}
+
+@Preview
+@Composable
+private fun PreviewBadge() {
+  Column(verticalArrangement = spacedBy(16.dp)) {
+    Badge(badgeColor = Color.White)
+    Badge(badgeColor = Color.Black)
+  }
+}
+
+private fun applyPalette(palette: Palette, onContentColorChanged: (Color) -> Unit) {
+  val color = UiUtil.createRippleColor(palette, 0.25f, 0.5f, 0x40808080)
+  onContentColorChanged(Color(color))
 }
 
 fun LazyGridScope.handleLoadStates(

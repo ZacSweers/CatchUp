@@ -159,7 +159,9 @@ constructor(
     val themeColorInt = context.getColor(service.meta().themeColor)
     val themeColor = Color(themeColorInt)
     val items: Flow<PagingData<CatchUpItem>> = remember {
-      // TODO preference this
+      // TODO
+      //  preference page size
+      //  retain pager or even the flow?
       Pager(PagingConfig(pageSize = 50)) { ServiceSource(service) }.flow
     }
     val coroutineScope = rememberCoroutineScope()

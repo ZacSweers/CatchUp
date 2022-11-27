@@ -15,16 +15,11 @@
  */
 package io.sweers.catchup.ui.fragments.service
 
-import android.animation.Animator
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.ColorMatrixColorFilter
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -33,34 +28,25 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import androidx.annotation.ArrayRes
 import androidx.annotation.ColorInt
-import androidx.core.animation.doOnEnd
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.annotation.ExperimentalCoilApi
-import coil.decode.DataSource.MEMORY_CACHE
 import coil.drawable.MovieDrawable
 import coil.load
-import coil.request.ErrorResult
-import coil.request.ImageResult
-import coil.request.SuccessResult
-import coil.transition.Transition
-import coil.transition.TransitionTarget
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ColorUtils
-import io.sweers.catchup.base.ui.ImageLoadingColorMatrix
 import io.sweers.catchup.base.ui.generateAsync
 import io.sweers.catchup.service.api.BindableCatchUpItemViewHolder
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.TemporaryScopeHolder
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.service.api.temporaryScope
+import io.sweers.catchup.ui.SaturatingTransformation
 import io.sweers.catchup.ui.base.DataLoadingSubject
 import io.sweers.catchup.ui.widget.BadgedFourThreeImageView
 import io.sweers.catchup.util.UiUtil
-import io.sweers.catchup.util.UiUtil.fastOutSlowInInterpolator
 import io.sweers.catchup.util.isInNightMode
-import kotlin.math.roundToLong
 import kotlinx.coroutines.launch
 
 internal class ImageAdapter(
@@ -316,74 +302,3 @@ internal class ImageAdapter(
     }
   }
 }
-
-/** A [Transition] that saturates and fades in the new drawable on load */
-@ExperimentalCoilApi
-private class SaturatingTransformation(
-  private val durationMillis: Long = SATURATION_ANIMATION_DURATION,
-  private val target: TransitionTarget,
-  private val result: ImageResult
-) : Transition {
-  init {
-    require(durationMillis > 0) { "durationMillis must be > 0." }
-  }
-
-  override fun transition() {
-    // Don't animate if the request was fulfilled by the memory cache.
-    if (result is SuccessResult && result.dataSource == MEMORY_CACHE) {
-      target.onSuccess(result.drawable)
-      return
-    }
-
-    // Animate the drawable and suspend until the animation is completes.
-    when (result) {
-      is SuccessResult -> {
-        val animator = saturateDrawableAnimator(result.drawable, durationMillis, target.view)
-        animator.doOnEnd { animator.cancel() }
-        animator.start()
-
-        animator.cancel()
-        target.onSuccess(result.drawable)
-      }
-      is ErrorResult -> target.onError(result.drawable)
-    }
-  }
-
-  companion object Factory : Transition.Factory {
-    override fun create(target: TransitionTarget, result: ImageResult): Transition {
-      return SaturatingTransformation(target = target, result = result)
-    }
-  }
-}
-
-private fun saturateDrawableAnimator(
-  current: Drawable,
-  duration: Long = SATURATION_ANIMATION_DURATION,
-  view: View? = null
-): Animator {
-  current.mutate()
-  view?.setHasTransientState(true)
-
-  val cm = ImageLoadingColorMatrix()
-
-  val satAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_SATURATION, 0f, 1f)
-  satAnim.duration = duration
-  satAnim.addUpdateListener { current.colorFilter = ColorMatrixColorFilter(cm) }
-
-  val alphaAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_ALPHA, 0f, 1f)
-  alphaAnim.duration = duration / 2
-
-  val darkenAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_BRIGHTNESS, 0.8f, 1f)
-  darkenAnim.duration = (duration * 0.75f).roundToLong()
-
-  return AnimatorSet().apply {
-    playTogether(satAnim, alphaAnim, darkenAnim)
-    interpolator = fastOutSlowInInterpolator
-    doOnEnd {
-      current.clearColorFilter()
-      view?.setHasTransientState(false)
-    }
-  }
-}
-
-private const val SATURATION_ANIMATION_DURATION = 2000L

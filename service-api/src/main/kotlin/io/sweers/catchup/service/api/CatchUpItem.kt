@@ -24,6 +24,7 @@ import kotlinx.datetime.Instant
 
 @Keep
 @Entity(tableName = "items")
+// @Immutable  // TODO marking this immutable crashes compose at runtime
 data class CatchUpItem(
   @PrimaryKey val id: Long,
   val title: String,
