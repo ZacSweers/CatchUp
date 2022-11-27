@@ -55,4 +55,9 @@ subprojects {
       add("compileOnly", libs.anvil.annotations)
     }
   }
+  pluginManager.withPlugin("io.gitlab.arturbosch.detekt") {
+    dependencies {
+      add("detektPlugins", libs.detekt.plugins.twitterCompose)
+    }
+  }
 }

@@ -165,6 +165,8 @@ dagger-apt-compiler = { module = "com.google.dagger:dagger-compiler", version.re
 dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }
 
+detekt-plugins-twitterCompose = "com.twitter.compose.rules:detekt:0.0.26"
+
 gson = "com.google.gson:gson:2.9.0"
 
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
