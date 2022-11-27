@@ -8,10 +8,16 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -19,6 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
@@ -70,6 +79,21 @@ fun VisualItem(item: CatchUpItem, placeholder: Drawable, eventSink: (ServiceScre
       contentScale = ContentScale.Crop,
       alignment = Alignment.Center
     )
+    if (imageInfo.animatable) {
+      Surface(
+        modifier = Modifier.align(Alignment.BottomEnd).padding(4.dp),
+        color = Color.LightGray.copy(alpha = 0.5f),
+        shape = RoundedCornerShape(4.dp)
+      ) {
+        Text(
+          text = "GIF",
+          fontSize = 12.sp,
+          style = MaterialTheme.typography.labelSmall,
+          fontWeight = FontWeight.ExtraBold,
+          color = Color.White
+        )
+      }
+    }
   }
 }
 
@@ -82,17 +106,17 @@ fun LazyGridScope.handleLoadStates(
     when {
       loadState.refresh is LoadState.Loading -> {
         onRefreshChange(true)
-        item { LoadingView(themeColor, Modifier.fillMaxSize()) }
+        item(span = { GridItemSpan(2) }) { LoadingView(themeColor, Modifier.fillMaxSize()) }
       }
       loadState.refresh is LoadState.NotLoading -> {
         onRefreshChange(false)
       }
       loadState.append is LoadState.Loading -> {
-        item { LoadingItem() }
+        item(span = { GridItemSpan(2) }) { LoadingItem() }
       }
       loadState.refresh is LoadState.Error -> {
         val e = loadState.refresh as LoadState.Error
-        item {
+        item(span = { GridItemSpan(2) }) {
           ErrorItem(
             "Error loading service: ${e.error.localizedMessage}",
             Modifier.fillMaxSize(),
@@ -102,7 +126,7 @@ fun LazyGridScope.handleLoadStates(
       }
       loadState.append is LoadState.Error -> {
         val e = loadState.append as LoadState.Error
-        item {
+        item(span = { GridItemSpan(2) }) {
           ErrorItem("Error loading service: ${e.error.localizedMessage}", onRetryClick = ::retry)
         }
       }
