@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,12 +33,14 @@ import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.VisualService
 
 @Composable
 fun VisualServiceUi(
   lazyItems: LazyPagingItems<CatchUpItem>,
   themeColor: Color,
   onRefreshChange: (Boolean) -> Unit,
+  spanConfig: VisualService.SpanConfig,
   eventSink: (ServiceScreen.Event) -> Unit,
 ) {
   val placeholders =
@@ -47,18 +49,26 @@ fun VisualServiceUi(
     } else {
       PLACEHOLDERS_LIGHT
     }
-  LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-    itemsIndexed(lazyItems) { index, item ->
+  val spanCount = spanConfig.spanCount
+  // TODO with multi-size spans we get blank spaces in the grid
+  LazyVerticalGrid(columns = GridCells.Fixed(spanCount)) {
+    itemsIndexed(
+      lazyItems,
+      span = { index -> GridItemSpan(spanConfig.spanSizeResolver?.invoke(index) ?: 1) },
+    ) { index, item ->
       SelectableItem(lazyItems, item, eventSink) {
-        VisualItem(it, placeholders[index % placeholders.size], eventSink)
+        VisualItem(it, placeholders[index % placeholders.size])
       }
     }
-    handleLoadStates(lazyItems, themeColor, onRefreshChange)
+    handleLoadStates(lazyItems, themeColor, spanCount, onRefreshChange)
   }
 }
 
 @Composable
-fun VisualItem(item: CatchUpItem, placeholder: Drawable, eventSink: (ServiceScreen.Event) -> Unit) {
+fun VisualItem(
+  item: CatchUpItem,
+  placeholder: Drawable,
+) {
   // TODO bring this up to parity with ImageAdapter.
   //  palette
   //  badges
@@ -100,23 +110,24 @@ fun VisualItem(item: CatchUpItem, placeholder: Drawable, eventSink: (ServiceScre
 fun LazyGridScope.handleLoadStates(
   lazyItems: LazyPagingItems<CatchUpItem>,
   themeColor: Color,
+  spanCount: Int,
   onRefreshChange: (Boolean) -> Unit
 ) {
   lazyItems.apply {
     when {
       loadState.refresh is LoadState.Loading -> {
         onRefreshChange(true)
-        item(span = { GridItemSpan(2) }) { LoadingView(themeColor, Modifier.fillMaxSize()) }
+        item(span = { GridItemSpan(spanCount) }) { LoadingView(themeColor, Modifier.fillMaxSize()) }
       }
       loadState.refresh is LoadState.NotLoading -> {
         onRefreshChange(false)
       }
       loadState.append is LoadState.Loading -> {
-        item(span = { GridItemSpan(2) }) { LoadingItem() }
+        item(span = { GridItemSpan(spanCount) }) { LoadingItem() }
       }
       loadState.refresh is LoadState.Error -> {
         val e = loadState.refresh as LoadState.Error
-        item(span = { GridItemSpan(2) }) {
+        item(span = { GridItemSpan(spanCount) }) {
           ErrorItem(
             "Error loading service: ${e.error.localizedMessage}",
             Modifier.fillMaxSize(),
@@ -138,10 +149,12 @@ fun LazyGridScope.handleLoadStates(
 fun <T : Any> LazyGridScope.itemsIndexed(
   items: LazyPagingItems<T>,
   key: ((index: Int, item: T) -> Any)? = null,
+  span: (LazyGridItemSpanScope.(index: Int) -> GridItemSpan)? = null,
   itemContent: @Composable LazyGridItemScope.(index: Int, value: T?) -> Unit
 ) {
   items(
     count = items.itemCount,
+    span = span,
     key =
       if (key == null) null
       else

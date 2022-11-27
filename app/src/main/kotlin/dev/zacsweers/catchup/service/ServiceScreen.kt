@@ -64,6 +64,8 @@ import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.android.FragmentKey
+import dev.zacsweers.catchup.service.ServiceScreen.State.TextState
+import dev.zacsweers.catchup.service.ServiceScreen.State.VisualState
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BaseFragment
 import io.sweers.catchup.data.LinkManager
@@ -72,6 +74,7 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.ImageViewerData
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.UrlMeta
+import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.ui.activity.FinalServices
 import javax.inject.Inject
 import javax.inject.Provider
@@ -110,12 +113,24 @@ class ServiceFragment2 @Inject constructor(private val circuitConfig: CircuitCon
 
 @Parcelize
 data class ServiceScreen(val serviceKey: String) : Screen {
-  data class State(
-    val items: Flow<PagingData<CatchUpItem>>,
-    val isVisual: Boolean,
-    val themeColor: Color,
+  sealed interface State : CircuitUiState {
+    val items: Flow<PagingData<CatchUpItem>>
+    val themeColor: Color
     val eventSink: (Event) -> Unit
-  ) : CircuitUiState
+
+    data class TextState(
+      override val items: Flow<PagingData<CatchUpItem>>,
+      override val themeColor: Color,
+      override val eventSink: (Event) -> Unit
+    ) : State
+
+    data class VisualState(
+      override val items: Flow<PagingData<CatchUpItem>>,
+      override val themeColor: Color,
+      val spanConfig: VisualService.SpanConfig,
+      override val eventSink: (Event) -> Unit
+    ) : State
+  }
 
   sealed interface Event : CircuitUiEvent {
     data class ItemClicked(val item: CatchUpItem) : Event
@@ -148,11 +163,7 @@ constructor(
       Pager(PagingConfig(pageSize = 50)) { ServiceSource(service) }.flow
     }
     val coroutineScope = rememberCoroutineScope()
-    return ServiceScreen.State(
-      items = items,
-      isVisual = service.meta().isVisual,
-      themeColor = themeColor
-    ) { event ->
+    val eventSink: (ServiceScreen.Event) -> Unit = { event ->
       when (event) {
         is ServiceScreen.Event.ItemClicked -> {
           val imageData =
@@ -179,6 +190,16 @@ constructor(
         }
       }
     }
+    return when (service.meta().isVisual) {
+      true ->
+        VisualState(
+          items = items,
+          themeColor = themeColor,
+          spanConfig = (service as VisualService).spanConfig(),
+          eventSink = eventSink
+        )
+      false -> TextState(items = items, themeColor = themeColor, eventSink = eventSink)
+    }
   }
 
   @CircuitInject(ServiceScreen::class, AppScope::class)
@@ -198,8 +219,8 @@ fun Service(state: ServiceScreen.State) {
   val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh = lazyItems::refresh)
   // TODO this isn't accounting for actual system bars ugh
   Box(Modifier.pullRefresh(pullRefreshState).systemBarsPadding()) {
-    if (state.isVisual) {
-      VisualServiceUi(lazyItems, state.themeColor, { refreshing = it }, eventSink)
+    if (state is VisualState) {
+      VisualServiceUi(lazyItems, state.themeColor, { refreshing = it }, state.spanConfig, eventSink)
     } else {
       TextServiceUi(lazyItems, state.themeColor, { refreshing = it }, eventSink)
     }

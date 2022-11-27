@@ -98,8 +98,8 @@ object UiUtil {
   ): Int {
     // try the named swatches in preference order
     return palette.orderedSwatches(darkAlpha, lightAlpha).firstOrNull()?.let { (swatch, alpha) ->
-        return@let ColorUtils.modifyAlpha(swatch.rgb, alpha)
-      }
-        ?: fallbackColor
+      return@let ColorUtils.modifyAlpha(swatch.rgb, alpha)
+    }
+      ?: fallbackColor
   }
 }

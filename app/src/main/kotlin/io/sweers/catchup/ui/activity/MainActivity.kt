@@ -116,11 +116,10 @@ constructor(
         sharedPreferences: SharedPreferences,
         services: @JvmSuppressWildcards Map<String, Provider<Service>>,
       ): @JvmSuppressWildcards Map<String, Provider<Service>> {
-        return services
-          .filter {
-            serviceMetas.getValue(it.key).enabled &&
-              sharedPreferences.getBoolean(serviceMetas.getValue(it.key).enabledPreferenceKey, true)
-          }
+        return services.filter {
+          serviceMetas.getValue(it.key).enabled &&
+            sharedPreferences.getBoolean(serviceMetas.getValue(it.key).enabledPreferenceKey, true)
+        }
       }
     }
 
