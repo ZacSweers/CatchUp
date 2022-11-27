@@ -116,6 +116,7 @@ androidx-compose-materialIconsExtended = { module = "androidx.compose.material:m
 androidx-compose-constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha04"
 androidx-compose-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
 androidx-compose-rxjava3 = { module = "androidx.compose.runtime:runtime-rxjava3", version.ref = "compose" }
+androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-config = "com.google.firebase:firebase-config:21.2.0"

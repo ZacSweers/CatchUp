@@ -17,6 +17,7 @@ package io.sweers.catchup.service.api
 
 import android.content.res.Configuration
 import android.view.View.OnClickListener
+import androidx.compose.runtime.Immutable
 import androidx.core.content.ContextCompat
 
 interface VisualService : Service {
@@ -66,6 +67,7 @@ interface VisualService : Service {
 
   fun spanConfig(): SpanConfig = SpanConfig.DEFAULT
 
+  @Immutable
   data class SpanConfig(val spanCount: Int, val spanSizeResolver: ((Int) -> Int)? = null) {
     companion object {
       val DEFAULT = SpanConfig(2, null)
