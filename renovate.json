@@ -7,7 +7,7 @@
     {
       "matchManagers": ["maven"],
       "description": "Disable snapshot versions",
-      "matchCurrentVersion": "/*.-SNAPSHOT/",
+      "matchCurrentVersion": "/.*-SNAPSHOT/",
       "enabled": "false"
     }
   ]
