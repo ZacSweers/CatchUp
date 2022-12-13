@@ -60,11 +60,7 @@ fun TextServiceUi(
 }
 
 @Composable
-fun TextItem(
-  item: CatchUpItem,
-  themeColor: Color,
-  eventSink: (ServiceScreen.Event) -> Unit = {}
-) {
+fun TextItem(item: CatchUpItem, themeColor: Color, eventSink: (ServiceScreen.Event) -> Unit = {}) {
   Row(
     modifier = Modifier.padding(16.dp),
     verticalAlignment = Alignment.CenterVertically,

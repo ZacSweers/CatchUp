@@ -27,17 +27,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.sweers.catchup.util.primaryLocale
+import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlin.time.Duration.Companion.hours
 
-//@Composable
-//fun TextServiceUi(
+// @Composable
+// fun TextServiceUi(
 //  lazyItems: LazyPagingItems<CatchUpItem>,
 //  themeColor: Color,
 //  onRefreshChange: (Boolean) -> Unit,
 //  eventSink: (ServiceScreen.Event) -> Unit,
-//) {
+// ) {
 //  LazyColumn {
 //    items(
 //      items = lazyItems,
@@ -47,7 +47,7 @@ import kotlin.time.Duration.Companion.hours
 //    }
 //    handleLoadStates(lazyItems, themeColor, onRefreshChange)
 //  }
-//}
+// }
 
 @Immutable
 data class CatchUpListItem(
@@ -217,11 +217,11 @@ private fun ItemFooter(item: CatchUpListItem) {
   }
 }
 
-//fun LazyListScope.handleLoadStates(
+// fun LazyListScope.handleLoadStates(
 //  lazyItems: LazyPagingItems<*>,
 //  themeColor: Color,
 //  onRefreshChange: (Boolean) -> Unit
-//) {
+// ) {
 //  lazyItems.apply {
 //    when {
 //      loadState.refresh is LoadState.Loading -> {
@@ -249,7 +249,7 @@ private fun ItemFooter(item: CatchUpListItem) {
 //      }
 //    }
 //  }
-//}
+// }
 
 @Preview
 @Composable
