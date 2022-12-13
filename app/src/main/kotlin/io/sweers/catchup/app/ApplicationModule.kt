@@ -55,6 +55,7 @@ import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.base.ui.versionInfo
+import io.sweers.catchup.data.UnsplashSizingInterceptor
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.PrecomputedTextSetterCompat
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
@@ -221,7 +222,10 @@ abstract class ApplicationModule {
         allowRgb565(isLowRamDevice)
         crossfade(300)
 
-        components { add(ImageDecoderDecoder.Factory()) }
+        components {
+          add(ImageDecoderDecoder.Factory())
+          add(UnsplashSizingInterceptor)
+        }
 
         build()
       }
