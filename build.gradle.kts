@@ -15,6 +15,8 @@
  */
 
 plugins {
+  alias(libs.plugins.kotlin) apply false
+  alias(libs.plugins.agp.application) apply false
   alias(libs.plugins.sgp.root)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.versions)
@@ -26,19 +28,6 @@ plugins {
   alias(libs.plugins.kotlin.noarg) apply false
   alias(libs.plugins.moshix) apply false
   alias(libs.plugins.retry) apply false
-}
-
-buildscript {
-  dependencies {
-//    classpath(platform(libs.asm.bom))
-    // AGP dependency. Must go before Kotlin's
-    classpath("com.android.tools.build:gradle:${libs.versions.agp.get()}")
-    classpath(libs.javapoet)
-    // We have to declare this here in order for kotlin-facets to be generated in iml files
-    // https://youtrack.jetbrains.com/issue/KT-36331
-    classpath(kotlin("gradle-plugin", version = libs.versions.kotlin.get()))
-//    classpath(platform(libs.coroutines.bom))
-  }
 }
 
 doctor {
