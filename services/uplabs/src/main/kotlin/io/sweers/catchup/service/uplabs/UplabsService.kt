@@ -26,7 +26,6 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -59,12 +58,11 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
-    val page = request.pageId.toInt()
+  override suspend fun fetch(request: DataRequest): DataResult {
+    val page = request.pageKey!!.toInt()
     return api
       .getPopular(page, 1)
-      .flattenAsObservable { it }
-      .map {
+      .mapIndexed { index, it ->
         CatchUpItem(
           id = it.id.hashCode().toLong(),
           title = it.name,
@@ -82,11 +80,12 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               sourceUrl = it.url,
               bestSize = null,
               imageId = it.id.toString()
-            )
+            ),
+          indexInResponse = index + request.pageOffset,
+          serviceId = meta().id,
         )
       }
-      .toList()
-      .map { DataResult(it, (page + 1).toString()) }
+      .let { DataResult(it, (page + 1).toString()) }
   }
 }
 
@@ -112,7 +111,7 @@ abstract class UplabsMetaModule {
         R.drawable.logo_uplabs,
         isVisual = true,
         pagesAreNumeric = true,
-        firstPageKey = "0"
+        firstPageKey = 0
       )
   }
 }

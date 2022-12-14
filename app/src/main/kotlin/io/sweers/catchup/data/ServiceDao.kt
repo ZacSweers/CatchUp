@@ -15,55 +15,62 @@
  */
 package io.sweers.catchup.data
 
-import androidx.annotation.Keep
+import androidx.paging.PagingSource
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
 import io.sweers.catchup.service.api.CatchUpItem
-import kotlinx.datetime.Instant
 
 @Dao
 interface ServiceDao {
+  @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertAll(items: List<CatchUpItem>)
 
-  @Query("SELECT * FROM pages WHERE type = :type AND page = 0 AND expiration > :expiration")
-  fun getFirstServicePage(type: String, expiration: Instant): Maybe<ServicePage>
+  @Query("SELECT * FROM items WHERE serviceId = :serviceId ORDER BY indexInResponse ASC")
+  fun itemsByService(serviceId: String): PagingSource<Int, CatchUpItem>
 
-  @Query("SELECT * FROM pages WHERE type = :type AND page = 0 ORDER BY expiration DESC")
-  fun getFirstServicePage(type: String): Maybe<ServicePage>
+  @Query("DELETE FROM items WHERE serviceId = :serviceId")
+  suspend fun deleteByService(serviceId: String)
 
-  @Query("SELECT * FROM pages WHERE type = :type AND page = :page ORDER BY expiration DESC")
-  fun getFirstServicePage(type: String, page: String): Maybe<ServicePage>
+  @Query("SELECT MAX(indexInResponse) + 1 FROM items WHERE serviceId = :serviceId")
+  suspend fun getNextIndexInService(serviceId: String): Int
 
-  @Query("SELECT * FROM pages WHERE type = :type AND page = :page AND sessionId = :sessionId")
-  fun getServicePage(type: String, page: String, sessionId: Long): Maybe<ServicePage>
+  @Query("SELECT * FROM op_journal WHERE serviceId = :serviceId ORDER BY timestamp DESC LIMIT 1")
+  suspend fun lastOperation(serviceId: String): OperationJournalEntry?
 
-  @Query("SELECT * FROM items WHERE id = :id") fun getItemById(id: Long): Maybe<CatchUpItem>
+  @Insert suspend fun putOperation(entry: OperationJournalEntry)
 
-  @Query("SELECT * FROM items WHERE id IN(:ids)")
-  fun getItemByIds(ids: Array<Long>): Maybe<List<CatchUpItem>>
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE) fun putPage(page: ServicePage): Completable
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE) fun putItem(item: CatchUpItem)
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun putItems(vararg item: CatchUpItem): Completable
+  @Query("DELETE FROM op_journal WHERE serviceId = :serviceId")
+  suspend fun deleteOperationsByService(serviceId: String)
 }
 
-@Keep
-@Entity(tableName = "pages")
-data class ServicePage(
-  /** Combination of the sessionId and type */
-  @PrimaryKey val id: String,
-  val type: String,
-  val expiration: Instant,
-  val page: String,
-  val sessionId: Long = -1,
-  val items: List<Long>,
-  val nextPageToken: String?
+suspend fun ServiceDao.lastUpdated(serviceId: String): Long? {
+  return lastOperation(serviceId)?.timestamp
+}
+
+@Dao
+interface RemoteKeyDao {
+  @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insert(keys: ServiceRemoteKey)
+
+  @Query("SELECT * FROM remote_keys WHERE serviceId = :serviceId")
+  suspend fun remoteKeyByItem(serviceId: String): ServiceRemoteKey
+
+  @Query("DELETE FROM remote_keys WHERE serviceId = :serviceId")
+  suspend fun deleteByService(serviceId: String)
+}
+
+@Entity(tableName = "remote_keys")
+data class ServiceRemoteKey(
+  @PrimaryKey @ColumnInfo(collate = ColumnInfo.NOCASE) val serviceId: String,
+  val nextPageKey: String?
+)
+
+@Entity(tableName = "op_journal")
+data class OperationJournalEntry(
+  @PrimaryKey val timestamp: Long,
+  val serviceId: String,
+  val operation: String,
 )

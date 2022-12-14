@@ -513,6 +513,7 @@ dependencies {
   implementation(libs.androidx.room.runtime)
   implementation(libs.androidx.room.rxJava3)
   implementation(libs.androidx.room.ktx)
+  implementation(libs.androidx.room.paging)
   kapt(libs.androidx.room.apt)
 
   // Compose

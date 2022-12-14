@@ -15,12 +15,10 @@
  */
 package io.sweers.catchup.service.api
 
-import io.reactivex.rxjava3.core.Single
-
 sealed interface Service {
   fun meta(): ServiceMeta
 
-  fun fetchPage(request: DataRequest): Single<DataResult>
+  suspend fun fetch(request: DataRequest): DataResult
 
   fun rootService(): Service = this
 }

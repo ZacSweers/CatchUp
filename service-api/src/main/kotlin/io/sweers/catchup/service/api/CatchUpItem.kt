@@ -38,7 +38,9 @@ data class CatchUpItem(
   @Embedded val summarizationInfo: SummarizationInfo? = null,
   @Embedded val imageInfo: ImageInfo? = null,
   @Embedded val mark: Mark? = null,
-  val detailKey: String? = null
+  val detailKey: String? = null,
+  val serviceId: String? = null,
+  val indexInResponse: Int? = null
 ) {
 
   @Ignore val clickUrl: String?

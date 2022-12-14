@@ -157,20 +157,20 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun loadImage() {
-    var isTransitionEnded = false
-    var pendingImage: Drawable? = null
+    //    var isTransitionEnded = false
+    //    var pendingImage: Drawable? = null
 
-    val transition: Transition? = window.sharedElementEnterTransition
-    if (transition != null) {
-      transition.addListener(
-        onEnd = {
-          isTransitionEnded = true
-          pendingImage?.let(imageView::setImageDrawable)
-        }
-      )
-    } else {
-      isTransitionEnded = true
-    }
+    //    val transition: Transition? = window.sharedElementEnterTransition
+    //    if (transition != null) {
+    //      transition.addListener(
+    //        onEnd = {
+    //          isTransitionEnded = true
+    //          pendingImage?.let(imageView::setImageDrawable)
+    //        }
+    //      )
+    //    } else {
+    //      isTransitionEnded = true
+    //    }
 
     val request =
       ImageRequest.Builder(this)
@@ -197,11 +197,12 @@ class ImageViewerActivity : AppCompatActivity() {
           target(
             onStart = imageView::setImageDrawable,
             onSuccess = {
-              if (isTransitionEnded) {
-                imageView.setImageDrawable(it)
-              } else {
-                pendingImage = it
-              }
+              imageView.setImageDrawable(it)
+              //              if (isTransitionEnded) {
+              //                imageView.setImageDrawable(it)
+              //              } else {
+              //                pendingImage = it
+              //              }
             }
           )
         }

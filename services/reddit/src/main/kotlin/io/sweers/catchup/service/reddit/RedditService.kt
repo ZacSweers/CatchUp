@@ -26,7 +26,6 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -41,7 +40,6 @@ import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.reddit.model.RedditLink
 import io.sweers.catchup.service.reddit.model.RedditObjectFactory
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
-import io.sweers.catchup.util.nullIfBlank
 import javax.inject.Inject
 import javax.inject.Qualifier
 import kotlinx.datetime.Instant
@@ -63,27 +61,30 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
+  override suspend fun fetch(request: DataRequest): DataResult {
     // We special case the front page
-    return api.frontPage(25, request.pageId.nullIfBlank()).map { redditListingRedditResponse ->
+    // TODO use limit from request
+    return api.frontPage(request.limit, request.pageKey).let { redditListingRedditResponse ->
       @Suppress("UNCHECKED_CAST")
       val data =
-        (redditListingRedditResponse.data.children as List<RedditLink>).map {
+        (redditListingRedditResponse.data.children as List<RedditLink>).mapIndexed { index, link ->
           CatchUpItem(
-            id = it.id.hashCode().toLong(),
-            title = it.title,
-            score = "+" to it.score,
-            timestamp = it.createdUtc,
-            author = "/u/" + it.author,
-            source = it.domain ?: "self",
-            tag = it.subreddit,
-            itemClickUrl = it.url,
-            summarizationInfo = SummarizationInfo.from(it.url, it.selftext),
+            id = link.id.hashCode().toLong(),
+            title = link.title,
+            score = "+" to link.score,
+            timestamp = link.createdUtc,
+            author = "/u/" + link.author,
+            source = link.domain ?: "self",
+            tag = link.subreddit,
+            itemClickUrl = link.url,
+            summarizationInfo = SummarizationInfo.from(link.url, link.selftext),
             mark =
               createCommentMark(
-                count = it.commentsCount,
-                clickUrl = "https://reddit.com/comments/${it.id}"
-              )
+                count = link.commentsCount,
+                clickUrl = "https://reddit.com/comments/${link.id}"
+              ),
+            indexInResponse = index + request.pageOffset,
+            serviceId = meta().id,
           )
         }
       DataResult(data, redditListingRedditResponse.data.after)
@@ -111,7 +112,7 @@ abstract class RedditMetaModule {
         R.string.reddit,
         R.color.redditAccent,
         R.drawable.logo_reddit,
-        firstPageKey = ""
+        firstPageKey = null
       )
   }
 }

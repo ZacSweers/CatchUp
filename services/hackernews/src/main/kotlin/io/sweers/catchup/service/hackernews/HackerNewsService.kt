@@ -58,6 +58,8 @@ import io.sweers.catchup.util.d
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Qualifier
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.rx3.asFlow
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 typealias ViewModelCreator = ViewModelAssistedFactory<out ViewModel>
@@ -77,9 +79,9 @@ constructor(
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
-    val page = request.pageId.toInt()
-    val itemsPerPage = 25 // TODO Pref this
+  override suspend fun fetch(request: DataRequest): DataResult {
+    val page = request.pageKey!!.toInt()
+    val itemsPerPage = request.limit
     return Single.create { emitter: SingleEmitter<DataSnapshot> ->
         val listener =
           object : ValueEventListener {
@@ -122,7 +124,21 @@ constructor(
       }
       .filter { it.hasChild("title") } // Some HN items are just empty junk
       .map { HackerNewsStory.create(it) }
-      .map {
+      .onErrorResumeNext { t: Throwable ->
+        if (t is IllegalArgumentException) {
+          // Firebase didn't init
+          Observable.error(
+            ServiceException(
+              "Firebase wasn't able to initialize, likely due to missing credentials."
+            )
+          )
+        } else {
+          Observable.error(t)
+        }
+      }
+      .asFlow()
+      .toList()
+      .mapIndexed { index, it ->
         val url = it.url
         with(it) {
           CatchUpItem(
@@ -139,24 +155,13 @@ constructor(
               kids?.size?.let {
                 createCommentMark(count = it, clickUrl = "https://news.ycombinator.com/item?id=$id")
               },
-            detailKey = id.toString()
+            detailKey = id.toString(),
+            indexInResponse = index + request.pageOffset,
+            serviceId = meta().id,
           )
         }
       }
-      .toList()
-      .map { DataResult(it, if (it.isEmpty()) null else (page + 1).toString()) }
-      .onErrorResumeNext { t: Throwable ->
-        if (t is IllegalArgumentException) {
-          // Firebase didn't init
-          Single.error(
-            ServiceException(
-              "Firebase wasn't able to initialize, likely due to missing credentials."
-            )
-          )
-        } else {
-          Single.error(t)
-        }
-      }
+      .let { DataResult(it, if (it.isEmpty()) null else (page + 1).toString()) }
   }
 }
 
@@ -181,7 +186,7 @@ abstract class HackerNewsMetaModule {
         R.color.hnAccent,
         R.drawable.logo_hn,
         pagesAreNumeric = true,
-        firstPageKey = "0",
+        firstPageKey = 0,
         deeplinkFragment = HackerNewsCommentsFragment::class.java
       )
   }

@@ -26,7 +26,6 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -61,12 +60,11 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
-    val page = request.pageId.toInt()
+  override suspend fun fetch(request: DataRequest): DataResult {
+    val page = request.pageKey!!.toInt()
     return api
       .getPhotos(page, 50)
-      .flattenAsObservable { it }
-      .map {
+      .mapIndexed { index, it ->
         CatchUpItem(
           id = it.id.hashCode().toLong(),
           title = "",
@@ -86,11 +84,12 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               sourceUrl = it.links.html,
               bestSize = null,
               imageId = it.id
-            )
+            ),
+          indexInResponse = index + request.pageOffset,
+          serviceId = meta().id,
         )
       }
-      .toList()
-      .map { DataResult(it, (page + 1).toString()) }
+      .let { DataResult(it, (page + 1).toString()) }
   }
 
   override fun spanConfig() =
@@ -126,7 +125,7 @@ abstract class UnsplashMetaModule {
         R.drawable.logo_unsplash,
         isVisual = true,
         pagesAreNumeric = true,
-        firstPageKey = "1",
+        firstPageKey = 1,
         enabled = BuildConfig.UNSPLASH_API_KEY.run { !isNullOrEmpty() && !equals("null") }
       )
   }

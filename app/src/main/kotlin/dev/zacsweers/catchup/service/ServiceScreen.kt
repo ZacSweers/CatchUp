@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -57,6 +58,7 @@ import com.slack.circuit.CircuitUiState
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.rememberRetained
 import com.squareup.anvil.annotations.ContributesMultibinding
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -68,7 +70,10 @@ import dev.zacsweers.catchup.service.ServiceScreen.State.TextState
 import dev.zacsweers.catchup.service.ServiceScreen.State.VisualState
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BaseFragment
+import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.LinkManager
+import io.sweers.catchup.data.RemoteKeyDao
+import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.databinding.ComposeViewBinding
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.ImageViewerData
@@ -145,7 +150,11 @@ constructor(
   @Assisted private val screen: ServiceScreen,
   private val linkManager: LinkManager,
   @FinalServices private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
+  private val catchUpDatabase: CatchUpDatabase,
+  private val serviceDao: ServiceDao,
+  private val remoteKeyDao: RemoteKeyDao,
 ) : Presenter<ServiceScreen.State> {
+  @OptIn(ExperimentalPagingApi::class)
   @Composable
   override fun present(): ServiceScreen.State {
     val service = remember {
@@ -159,12 +168,26 @@ constructor(
     val context = LocalContext.current
     val themeColorInt = context.getColor(service.meta().themeColor)
     val themeColor = Color(themeColorInt)
-    val items: Flow<PagingData<CatchUpItem>> = remember {
+    // TODO what's the right thing and scope to retain?
+    val pager = rememberRetained {
       // TODO
       //  preference page size
       //  retain pager or even the flow?
-      Pager(PagingConfig(pageSize = 50)) { ServiceSource(service) }.flow
+      Pager(
+        config = PagingConfig(pageSize = 50),
+        initialKey = service.meta().firstPageKey,
+        remoteMediator =
+          ServiceMediator(
+            serviceDao = serviceDao,
+            remoteKeyDao = remoteKeyDao,
+            catchUpDatabase = catchUpDatabase,
+            service = service,
+          )
+      ) {
+        serviceDao.itemsByService(service.meta().id)
+      }
     }
+    val items: Flow<PagingData<CatchUpItem>> = remember(pager) { pager.flow }
     val coroutineScope = rememberCoroutineScope()
     val eventSink: (ServiceScreen.Event) -> Unit = { event ->
       when (event) {
