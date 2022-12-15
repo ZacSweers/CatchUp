@@ -599,7 +599,7 @@ dependencies {
   implementation(project(":services:dribbble"))
   implementation(project(":services:github"))
   implementation(project(":services:hackernews"))
-  implementation(project(":services:medium"))
+//  implementation(project(":services:medium"))
   implementation(project(":services:producthunt"))
   implementation(project(":services:reddit"))
   implementation(project(":services:slashdot"))
