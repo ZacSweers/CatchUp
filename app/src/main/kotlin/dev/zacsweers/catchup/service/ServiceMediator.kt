@@ -59,7 +59,7 @@ class ServiceMediator(
               .d("Appending to $serviceId. Current page count: ${state.pages.size}")
             // Query DB for ServiceRemoteKey for the service.
             // ServiceRemoteKey is a wrapper object we use to keep track of page keys we
-            // receive from the Reddit API to fetch the next or previous page.
+            // receive from the service to fetch the next or previous page.
             val remoteKey =
               catchUpDatabase.withTransaction { remoteKeyDao.remoteKeyByItem(serviceId) }
 
