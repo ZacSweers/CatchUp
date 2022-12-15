@@ -463,6 +463,21 @@ licensee {
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
+  allowUrl("https://www.openssl.org/source/license-openssl-ssleay.txt")
+  allowUrl("https://github.com/facebookincubator/fbjni/blob/main/LICENSE")
+  allowUrl("https://github.com/facebook/flipper/blob/main/LICENSE")
+  allowUrl("https://github.com/facebook/soloader/blob/main/LICENSE")
+  allowUrl("https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE")
+  allowDependency("com.slack.circuit", "circuit-codegen-annotations", libs.versions.circuit.get())
+  allowDependency("com.slack.circuit", "circuit-codegen-annotations-android", libs.versions.circuit.get())
+  allowDependency("com.slack.circuit", "circuit-backstack", libs.versions.circuit.get())
+  allowDependency("com.slack.circuit", "circuit-backstack-android", libs.versions.circuit.get())
+  allowDependency("com.slack.circuit", "circuit-core", libs.versions.circuit.get())
+  allowDependency("com.slack.circuit", "circuit-core-android", libs.versions.circuit.get())
+  allowDependency("com.slack.circuit", "circuit-overlay", libs.versions.circuit.get())
+  allowDependency("com.slack.circuit", "circuit-overlay-android", libs.versions.circuit.get())
+  allowDependency("com.slack.circuit", "circuit-retained", libs.versions.circuit.get())
+  allowDependency("com.slack.circuit", "circuit-retained-android", libs.versions.circuit.get())
 }
 
 dependencies {
