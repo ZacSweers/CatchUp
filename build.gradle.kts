@@ -24,7 +24,7 @@ plugins {
   alias(libs.plugins.doctor)
   alias(libs.plugins.anvil) apply false
   alias(libs.plugins.cacheFixPlugin) apply false
-  alias(libs.plugins.detekt) apply false
+//  alias(libs.plugins.detekt) apply false
   alias(libs.plugins.kotlin.noarg) apply false
   alias(libs.plugins.moshix) apply false
   alias(libs.plugins.retry) apply false
@@ -44,9 +44,9 @@ subprojects {
       add("compileOnly", libs.anvil.annotations)
     }
   }
-  pluginManager.withPlugin("io.gitlab.arturbosch.detekt") {
-    dependencies {
-      add("detektPlugins", libs.detekt.plugins.twitterCompose)
-    }
-  }
+//  pluginManager.withPlugin("io.gitlab.arturbosch.detekt") {
+//    dependencies {
+//      add("detektPlugins", libs.detekt.plugins.twitterCompose)
+//    }
+//  }
 }
