@@ -105,7 +105,7 @@ class Syllabus @Inject constructor(private val preferences: SharedPreferences) {
 
 /**
  * @property preDisplay a hook for pre-display callbacks. Note that you may want to create a custom
- * TapTarget instead and override [TapTarget.onReady] for a more dynamic waiting.
+ *   TapTarget instead and override [TapTarget.onReady] for a more dynamic waiting.
  */
 data class TargetRequest(
   val target: () -> TapTarget,

@@ -132,7 +132,7 @@ abstract class ApplicationModule {
             LinkifyPlugin.create(),
             TaskListPlugin.create(context)
             //            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
-            )
+          )
         )
         .build()
     }
