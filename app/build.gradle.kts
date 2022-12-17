@@ -18,13 +18,13 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
-import okio.buffer
-import okio.sink
-import okio.source
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale.US
+import okio.buffer
+import okio.sink
+import okio.source
 
 plugins {
   id("com.android.application")
@@ -37,27 +37,17 @@ plugins {
   alias(libs.plugins.moshix)
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
-//  alias(libs.plugins.bugsnag)
-//  alias(libs.plugins.playPublisher)
+  //  alias(libs.plugins.bugsnag)
+  //  alias(libs.plugins.playPublisher)
 }
 
 slack {
-  features {
-    dagger(enableComponents = true) {
-      alwaysEnableAnvilComponentMerging()
-    }
-  }
-  android {
-    features {
-      compose()
-    }
-  }
+  features { dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() } }
+  android { features { compose() } }
 }
 
-val useDebugSigning: Boolean = providers.gradleProperty("useDebugSigning")
-  .orElse("false")
-  .map { it.toBoolean() }
-  .get()
+val useDebugSigning: Boolean =
+  providers.gradleProperty("useDebugSigning").orElse("false").map { it.toBoolean() }.get()
 
 android {
   defaultConfig {
@@ -67,12 +57,11 @@ android {
     versionCode = 1
     versionName = "1.0"
 
-    configure<BasePluginExtension> {
-      archivesName.set("catchup")
-    }
+    configure<BasePluginExtension> { archivesName.set("catchup") }
 
     buildConfigField(
-      "String", "GITHUB_DEVELOPER_TOKEN",
+      "String",
+      "GITHUB_DEVELOPER_TOKEN",
       "\"${properties["catchup_github_developer_token"]}\""
     )
     resValue("string", "changelog_text", "haha")
@@ -93,45 +82,44 @@ android {
         keyPassword = properties["catchup_signing_key_password"].toString()
       }
     } else {
-      create("release")//.initWith(getByName("debug"))
+      create("release") // .initWith(getByName("debug"))
     }
   }
-  packagingOptions.resources.excludes += listOf(
-    "**/*.dot",
-    "**/*.kotlin_metadata",
-    "**/*.properties",
-    "*.properties",
-    "kotlin/**",
-    "LICENSE.txt",
-    "LICENSE_OFL",
-    "LICENSE_UNICODE",
-    "META-INF/*.kotlin_module",
-    "META-INF/*.version",
-    "META-INF/androidx.*",
-    "META-INF/CHANGES",
-    "META-INF/com.uber.crumb/**",
-    "META-INF/LICENSE",
-    "META-INF/LICENSE.txt",
-    "META-INF/NOTICE",
-    "META-INF/NOTICE.txt",
-    "META-INF/README.md",
-    "META-INF/rxjava.properties",
-    "META-INF/services/javax.annotation.processing.Processor",
-  )
+  packagingOptions.resources.excludes +=
+    listOf(
+      "**/*.dot",
+      "**/*.kotlin_metadata",
+      "**/*.properties",
+      "*.properties",
+      "kotlin/**",
+      "LICENSE.txt",
+      "LICENSE_OFL",
+      "LICENSE_UNICODE",
+      "META-INF/*.kotlin_module",
+      "META-INF/*.version",
+      "META-INF/androidx.*",
+      "META-INF/CHANGES",
+      "META-INF/com.uber.crumb/**",
+      "META-INF/LICENSE",
+      "META-INF/LICENSE.txt",
+      "META-INF/NOTICE",
+      "META-INF/NOTICE.txt",
+      "META-INF/README.md",
+      "META-INF/rxjava.properties",
+      "META-INF/services/javax.annotation.processing.Processor",
+    )
   buildTypes {
     getByName("debug") {
       applicationIdSuffix = ".debug"
       versionNameSuffix = "-dev"
       buildConfigField(
-        "String", "IMGUR_CLIENT_ACCESS_TOKEN",
+        "String",
+        "IMGUR_CLIENT_ACCESS_TOKEN",
         "\"${project.properties["catchup_imgur_access_token"]}\""
       )
     }
     getByName("release") {
-      buildConfigField(
-        "String", "BUGSNAG_KEY",
-        "\"${properties["catchup_bugsnag_key"]}\""
-      )
+      buildConfigField("String", "BUGSNAG_KEY", "\"${properties["catchup_bugsnag_key"]}\"")
       manifestPlaceholders["BUGSNAG_API_KEY"] = properties["catchup_bugsnag_key"].toString()
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       proguardFiles += file("proguard-rules.pro")
@@ -169,25 +157,18 @@ android {
 //   }
 // }
 
-kapt {
-  arguments {
-    arg("room.schemaLocation", "$projectDir/schemas")
-  }
-}
+kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas") } }
 
-//play {
+// play {
 //  track = "alpha"
 //  serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
 //  serviceAccountCredentials = rootProject.file("signing/play-account.p12")
-//}
+// }
 
 apollo {
   service("github") {
     customScalarsMapping.set(
-      mapOf(
-        "DateTime" to "kotlinx.datetime.Instant",
-        "URI" to "okhttp3.HttpUrl"
-      )
+      mapOf("DateTime" to "kotlinx.datetime.Instant", "URI" to "okhttp3.HttpUrl")
     )
     packageName.set("io.sweers.catchup.data.github")
     schemaFile.set(file("src/main/graphql/io/sweers/catchup/data/github/schema.json"))
@@ -196,38 +177,36 @@ apollo {
 
 abstract class CutChangelogTask : DefaultTask() {
 
-  @get:Input
-  abstract val versionName: Property<String>
+  @get:Input abstract val versionName: Property<String>
 
   @TaskAction
   fun run() {
     val changelog = project.rootProject.file("CHANGELOG.md")
 
     val whatsNewPath = "${project.projectDir}/src/main/play/release-notes/en-US/default.txt"
-    val newChangelog = getChangelog(changelog, "").let {
-      if (it.length > 500) {
-        logger.log(
-          LogLevel.WARN,
-          "Changelog length (${it.length}) exceeds 500 char max. Truncating..."
-        )
-        val warning = "\n(Truncated due to store restrictions. Full changelog in app!)"
-        val warningLength = warning.length
-        val remainingAmount = 500 - warningLength
-        val builder = StringBuilder()
-        for (line in it.lineSequence()) {
-          if (builder.length + line.length + 1 < remainingAmount) {
-            builder.appendLine(line)
-          } else {
-            break
+    val newChangelog =
+      getChangelog(changelog, "").let {
+        if (it.length > 500) {
+          logger.log(
+            LogLevel.WARN,
+            "Changelog length (${it.length}) exceeds 500 char max. Truncating..."
+          )
+          val warning = "\n(Truncated due to store restrictions. Full changelog in app!)"
+          val warningLength = warning.length
+          val remainingAmount = 500 - warningLength
+          val builder = StringBuilder()
+          for (line in it.lineSequence()) {
+            if (builder.length + line.length + 1 < remainingAmount) {
+              builder.appendLine(line)
+            } else {
+              break
+            }
           }
-        }
-        builder.append(warning).toString()
-      } else it
-    }
-    if (newChangelog.isNotEmpty()) {
-      project.file(whatsNewPath).writer().use {
-        it.write(newChangelog)
+          builder.append(warning).toString()
+        } else it
       }
+    if (newChangelog.isNotEmpty()) {
+      project.file(whatsNewPath).writer().use { it.write(newChangelog) }
     }
 
     val currentContent = changelog.reader().readText()
@@ -258,12 +237,15 @@ abstract class CutChangelogTask : DefaultTask() {
   }
 }
 
-val tagProvider = providers.exec {
-  commandLine("git")
-  args("describe", "--tags")
-}.standardOutput
-  .asText
-  .map { it.trimEnd() }
+val tagProvider =
+  providers
+    .exec {
+      commandLine("git")
+      args("describe", "--tags")
+    }
+    .standardOutput
+    .asText
+    .map { it.trimEnd() }
 
 tasks.register("cutChangelog", CutChangelogTask::class.java) {
   versionName.set(tagProvider)
@@ -302,7 +284,9 @@ fun getChangelog(): String {
   return log.toString().trim()
 }
 
-abstract class UpdateVersion @Inject constructor(
+abstract class UpdateVersion
+@Inject
+constructor(
   providers: ProviderFactory,
   private val execOps: ExecOperations,
 ) : DefaultTask() {
@@ -315,17 +299,21 @@ abstract class UpdateVersion @Inject constructor(
   abstract val type: Property<String>
 
   @get:Input
-  val latestTag = providers.exec {
-    commandLine("git")
-    args("describe", "--abbrev=0", "--tags")
-  }.standardOutput
-    .asText
-    .map { it.trim() }
+  val latestTag =
+    providers
+      .exec {
+        commandLine("git")
+        args("describe", "--abbrev=0", "--tags")
+      }
+      .standardOutput
+      .asText
+      .map { it.trim() }
 
   @TaskAction
   fun run() {
-    val latestTag = latestTag.get().takeUnless { it.isEmpty() }
-      ?: throw IllegalStateException("No recent tag found!")
+    val latestTag =
+      latestTag.get().takeUnless { it.isEmpty() }
+        ?: throw IllegalStateException("No recent tag found!")
     var (major, minor, patch) = latestTag.split(".").map(String::toInt)
     when (type.get()) {
       "major" -> {
@@ -333,16 +321,13 @@ abstract class UpdateVersion @Inject constructor(
         minor = 0
         patch = 0
       }
-
       "minor" -> {
         minor++
         patch = 0
       }
-
       "patch" -> {
         patch++
       }
-
       else -> {
         throw IllegalArgumentException("Unrecognized updateType \"$type\"")
       }
@@ -354,8 +339,10 @@ abstract class UpdateVersion @Inject constructor(
         commandLine(
           "git",
           "tag",
-          "-a", latestVersionString,
-          "-m", "\"Version $latestVersionString.\""
+          "-a",
+          latestVersionString,
+          "-m",
+          "\"Version $latestVersionString.\""
         )
         standardOutput = os
         errorOutput = os
@@ -364,12 +351,7 @@ abstract class UpdateVersion @Inject constructor(
       val newTagStream = ByteArrayOutputStream()
       newTagStream.use { innerOs ->
         execOps.exec {
-          commandLine(
-            "git",
-            "describe",
-            "--abbrev=0",
-            "--tags"
-          )
+          commandLine("git", "describe", "--abbrev=0", "--tags")
           standardOutput = innerOs
           errorOutput = innerOs
         }
@@ -393,30 +375,24 @@ abstract class GenerateLicensesAsset : DefaultTask() {
   @get:InputDirectory
   abstract val buildDir: DirectoryProperty
 
-  @get:OutputFile
-  abstract val jsonFile: RegularFileProperty
+  @get:OutputFile abstract val jsonFile: RegularFileProperty
 
   private val licenseeFile: File
-    get() = File(
-      buildDir.asFile.get(),
-      "reports/licensee/release/artifacts.json"
-    )
+    get() = File(buildDir.asFile.get(), "reports/licensee/release/artifacts.json")
 
   @Suppress("UNCHECKED_CAST")
   @OptIn(ExperimentalStdlibApi::class)
   @TaskAction
   fun generate() {
     val mapAdapter = Moshi.Builder().build().adapter<List<Map<String, Any>>>()
-    val githubDetailsMap = JsonReader.of(licenseeFile.source().buffer()).use {
-      mapAdapter.fromJson(it)!!
-    }
-    val githubDetails = githubDetailsMap.mapNotNull { entry ->
-      entry["scm"]?.let {
-        ((it as? Map<String, Any>)?.get("url") as? String?)?.let { url ->
-          parseScm(url)
+    val githubDetailsMap =
+      JsonReader.of(licenseeFile.source().buffer()).use { mapAdapter.fromJson(it)!! }
+    val githubDetails =
+      githubDetailsMap.mapNotNull { entry ->
+        entry["scm"]?.let {
+          ((it as? Map<String, Any>)?.get("url") as? String?)?.let { url -> parseScm(url) }
         }
       }
-    }
 
     JsonWriter.of(jsonFile.get().asFile.sink().buffer()).use { writer ->
       writer.beginArray()
@@ -425,10 +401,7 @@ abstract class GenerateLicensesAsset : DefaultTask() {
         .distinctBy { it.toString().toLowerCase(US) }
         .forEach { (owner, name) ->
           writer.beginObject()
-          writer.name("owner")
-            .value(owner)
-            .name("name")
-            .value(name)
+          writer.name("owner").value(owner).name("name").value(name)
           writer.endObject()
         }
       writer.endArray()
@@ -437,23 +410,30 @@ abstract class GenerateLicensesAsset : DefaultTask() {
 
   private fun parseScm(url: String): Pair<String, String>? {
     if ("github.com" !in url) return null
-    val (owner, name) = url.substringAfter("github.com")
-      .removePrefix("/")
-      .removePrefix(":")
-      .removeSuffix(".git")
-      .removeSuffix("/issues")
-      .substringAfter(".com/")
-      .split("/")
+    val (owner, name) =
+      url
+        .substringAfter("github.com")
+        .removePrefix("/")
+        .removePrefix(":")
+        .removeSuffix(".git")
+        .removeSuffix("/issues")
+        .substringAfter(".com/")
+        .split("/")
     return owner to name
   }
 }
 
+val generateLicenseTask =
+  tasks.register<GenerateLicensesAsset>("generateLicensesAsset") {
+    buildDir.set(project.layout.buildDirectory)
+    jsonFile.set(project.layout.projectDirectory.file("src/main/assets/generated_licenses.json"))
+  }
 
-val generateLicenseTask = tasks.register<GenerateLicensesAsset>("generateLicensesAsset") {
-  buildDir.set(project.layout.buildDirectory)
-  jsonFile.set(project.layout.projectDirectory.file("src/main/assets/generated_licenses.json"))
-}
 generateLicenseTask.dependsOn("licenseeRelease")
+
+tasks.matching { it.name == "licenseeDebug" }.configureEach {
+  enabled = false
+}
 
 licensee {
   allow("Apache-2.0")
@@ -463,13 +443,12 @@ licensee {
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
-  allowUrl("https://www.openssl.org/source/license-openssl-ssleay.txt")
-  allowUrl("https://github.com/facebookincubator/fbjni/blob/main/LICENSE")
-  allowUrl("https://github.com/facebook/flipper/blob/main/LICENSE")
-  allowUrl("https://github.com/facebook/soloader/blob/main/LICENSE")
-  allowUrl("https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE")
   allowDependency("com.slack.circuit", "circuit-codegen-annotations", libs.versions.circuit.get())
-  allowDependency("com.slack.circuit", "circuit-codegen-annotations-android", libs.versions.circuit.get())
+  allowDependency(
+    "com.slack.circuit",
+    "circuit-codegen-annotations-android",
+    libs.versions.circuit.get()
+  )
   allowDependency("com.slack.circuit", "circuit-backstack", libs.versions.circuit.get())
   allowDependency("com.slack.circuit", "circuit-backstack-android", libs.versions.circuit.get())
   allowDependency("com.slack.circuit", "circuit-core", libs.versions.circuit.get())
@@ -478,6 +457,13 @@ licensee {
   allowDependency("com.slack.circuit", "circuit-overlay-android", libs.versions.circuit.get())
   allowDependency("com.slack.circuit", "circuit-retained", libs.versions.circuit.get())
   allowDependency("com.slack.circuit", "circuit-retained-android", libs.versions.circuit.get())
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask>().configureEach {
+  doFirst {
+    // TODO Temporary until https://github.com/slackhq/slack-gradle-plugin/pull/193
+    kotlinOptions.freeCompilerArgs = emptyList()
+  }
 }
 
 dependencies {
@@ -493,7 +479,7 @@ dependencies {
   implementation(libs.markwon.image)
   implementation(libs.markwon.imageCoil)
   implementation(libs.markwon.linkify)
-//  implementation(libs.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
+  //  implementation(libs.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
   implementation(project(":service-api"))
   implementation(project(":libraries:base-ui"))
   implementation(project(":libraries:appconfig"))
@@ -614,14 +600,14 @@ dependencies {
   implementation(project(":services:dribbble"))
   implementation(project(":services:github"))
   implementation(project(":services:hackernews"))
-//  implementation(project(":services:medium"))
+  //  implementation(project(":services:medium"))
   implementation(project(":services:producthunt"))
   implementation(project(":services:reddit"))
   implementation(project(":services:slashdot"))
   implementation(project(":services:unsplash"))
   implementation(project(":services:uplabs"))
-//  implementation(project(":services:imgur"))
-//  implementation(project(":services:newsapi"))
+  //  implementation(project(":services:imgur"))
+  //  implementation(project(":services:newsapi"))
 
   // Flipper
   debugImplementation(libs.misc.debug.flipper)
@@ -632,19 +618,19 @@ dependencies {
   debugImplementation(libs.misc.debug.guava)
 
   // Hyperion
-//  releaseImplementation(libs.hyperion.core.release)
-//  debugImplementation(libs.hyperion.core.debug)
-//  debugImplementation(libs.hyperion.plugins.appInfo)
-//  debugImplementation(libs.hyperion.plugins.attr)
-//  debugImplementation(libs.hyperion.plugins.chuck)
-//  debugImplementation(libs.hyperion.plugins.crash)
-//  debugImplementation(libs.hyperion.plugins.disk)
-//  debugImplementation(libs.hyperion.plugins.geigerCounter)
-//  debugImplementation(libs.hyperion.plugins.measurement)
-//  debugImplementation(libs.hyperion.plugins.phoenix)
-//  debugImplementation(libs.hyperion.plugins.recorder)
-//  debugImplementation(libs.hyperion.plugins.sharedPreferences)
-//  debugImplementation(libs.hyperion.plugins.timber)
+  //  releaseImplementation(libs.hyperion.core.release)
+  //  debugImplementation(libs.hyperion.core.debug)
+  //  debugImplementation(libs.hyperion.plugins.appInfo)
+  //  debugImplementation(libs.hyperion.plugins.attr)
+  //  debugImplementation(libs.hyperion.plugins.chuck)
+  //  debugImplementation(libs.hyperion.plugins.crash)
+  //  debugImplementation(libs.hyperion.plugins.disk)
+  //  debugImplementation(libs.hyperion.plugins.geigerCounter)
+  //  debugImplementation(libs.hyperion.plugins.measurement)
+  //  debugImplementation(libs.hyperion.plugins.phoenix)
+  //  debugImplementation(libs.hyperion.plugins.recorder)
+  //  debugImplementation(libs.hyperion.plugins.sharedPreferences)
+  //  debugImplementation(libs.hyperion.plugins.timber)
 
   implementation(libs.misc.jsr305)
   implementation(projects.libraries.di)
@@ -663,6 +649,6 @@ dependencies {
   releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
 
   // Chuck
-//  debugImplementation(libs.chuck.debug)
-//  releaseImplementation(libs.chuck.release)
+  //  debugImplementation(libs.chuck.debug)
+  //  releaseImplementation(libs.chuck.release)
 }
