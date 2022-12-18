@@ -98,6 +98,7 @@ internal open class SystemUiHelperImplJB(
     decorView.systemUiVisibility = createHideFlags()
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onSystemUiVisibilityChange(visibility: Int) {
     if (visibility and createTestFlags() != 0) {
       onSystemUiHidden()

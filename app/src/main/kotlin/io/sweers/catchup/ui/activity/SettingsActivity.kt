@@ -105,6 +105,7 @@ constructor(private val settingsFragmentProvider: Provider<SettingsFrag>) :
     outState.putBoolean(ARG_FROM_RECREATE, true)
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onBackPressed() {
     if (!resultData.isEmpty) {
       setResult(SETTINGS_RESULT_DATA, Intent().putExtras(resultData))
