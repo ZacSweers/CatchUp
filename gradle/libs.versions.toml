@@ -142,7 +142,7 @@ autodispose-lifecycle = { module = "com.uber.autodispose2:autodispose-lifecycle"
 coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:2.0.0"
 javapoet = "com.squareup:javapoet:1.13.0"
 
-androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha17"
+androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-SNAPSHOT"
 circuit-core = { module = "com.slack.circuit:circuit-core", version.ref = "circuit" }
 circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
