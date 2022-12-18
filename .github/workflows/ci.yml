@@ -37,7 +37,7 @@ jobs:
           mkdir -p ~/.gradle
           touch ~/.gradle/gradle.properties
           ./gradlew bootstrap
-          ./gradlew check
+          ./gradlew check --no-configuration-cache
 
       - name: (Fail-only) Bundle the build report
         if: failure()
