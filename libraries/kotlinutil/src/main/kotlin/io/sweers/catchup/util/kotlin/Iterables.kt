@@ -28,7 +28,7 @@ package io.sweers.catchup.util.kotlin
  * @param position position of the element to return
  * @return the element at the specified position in `iterable`
  * @throws IndexOutOfBoundsException if `position` is negative or greater than or equal to the size
- * of `iterable`
+ *   of `iterable`
  */
 operator fun <T> Iterable<T>.get(position: Int): T {
   return if (this is List<*>) {

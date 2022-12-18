@@ -261,7 +261,7 @@ include(
   ":services:github",
   ":services:hackernews",
 //    ":services:imgur",
-  ":services:medium",
+//  ":services:medium",
 //    ":services:newsapi",
   ":services:producthunt",
   ":services:reddit",
@@ -276,3 +276,6 @@ enableFeaturePreview("GROOVY_COMPILATION_AVOIDANCE")
 
 // https://docs.gradle.org/current/userguide/declaring_dependencies.html#sec:type-safe-project-accessors
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+// https://github.com/gradle/gradle/blob/9a08b2368ca049a33783781c7810a7d2f4aaeab2/subprojects/docs/src/docs/userguide/running-builds/configuration_cache.adoc#stable-configuration-cache
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")

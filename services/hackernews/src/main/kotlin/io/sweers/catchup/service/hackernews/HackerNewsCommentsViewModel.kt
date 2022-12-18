@@ -22,15 +22,21 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.squareup.anvil.annotations.ContributesTo
+import dagger.Binds
+import dagger.Module
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.multibindings.IntoMap
+import dev.zacsweers.catchup.di.AppScope
+import io.sweers.catchup.base.ui.ViewModelAssistedFactory
+import io.sweers.catchup.base.ui.ViewModelKey
 import io.sweers.catchup.service.hackernews.HackerNewsCommentsViewModel.State.Success
 import io.sweers.catchup.service.hackernews.model.HackerNewsComment
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.service.hackernews.preview.UrlPreview
 import io.sweers.catchup.service.hackernews.preview.UrlPreviewResponse
-import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
 import io.sweers.catchup.util.d
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -133,4 +139,13 @@ constructor(
     }
 
   @AssistedFactory interface Factory : ViewModelAssistedFactory<HackerNewsCommentsViewModel>
+
+  @ContributesTo(AppScope::class)
+  @Module
+  interface FactoryModule {
+    @IntoMap
+    @Binds
+    @ViewModelKey(HackerNewsCommentsViewModel::class)
+    fun Factory.bind(): ViewModelAssistedFactory<out ViewModel>
+  }
 }

@@ -18,7 +18,6 @@ package io.sweers.catchup.service.hackernews.model
 import androidx.annotation.Keep
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.Exclude
-import io.sweers.catchup.service.api.HasStableId
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.annotation.AnnotationRetention.SOURCE
@@ -47,9 +46,7 @@ data class HackerNewsStory(
   /* private, but Firebase is too dumb to read private fields */
   val type: String?,
   val url: String?
-) : HasStableId {
-
-  @Exclude override fun stableId() = id
+) {
 
   /*
    * Excluded "real" fields. Would like to expose these as the main fields, but firebase matches property names to them anyway
@@ -93,9 +90,7 @@ data class HackerNewsComment(
   /* private, but Firebase is too dumb to read private fields */
   val type: String?
 //  val url: String?
-) : HasStableId {
-
-  @Exclude override fun stableId() = id
+) {
 
   /*
    * Excluded "real" fields. Would like to expose these as the main fields, but firebase matches property names to them anyway

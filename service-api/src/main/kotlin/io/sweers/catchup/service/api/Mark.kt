@@ -28,14 +28,14 @@ data class Mark(
   val textPrefix: String? = null,
   /** By default, the icon used is a comment icon if this is null */
   @DrawableRes val icon: Int? = null,
-  val clickUrl: String? = null,
+  val _markClickUrl: String? = null,
   @ColorInt val iconTintColor: Int? = null,
   val formatTextAsCount: Boolean = false
 ) {
 
   companion object {
     fun createCommentMark(count: Int, clickUrl: String? = null): Mark {
-      return Mark(text = count.toString(), clickUrl = clickUrl, formatTextAsCount = true)
+      return Mark(text = count.toString(), _markClickUrl = clickUrl, formatTextAsCount = true)
     }
   }
 }
