@@ -53,5 +53,5 @@ data class ImageViewerData(
   val imageUrl: String,
   val cacheKey: String,
   val sourceUrl: String,
-  val image: View
+  val image: View?
 )

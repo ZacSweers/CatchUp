@@ -40,6 +40,7 @@ import dev.zacsweers.catchup.di.android.FragmentKey
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleEmitter
+import io.sweers.catchup.base.ui.ViewModelAssistedFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -53,12 +54,12 @@ import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.service.hackernews.preview.UrlPreviewModule
-import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelAssistedFactory
-import io.sweers.catchup.service.hackernews.viewmodelbits.ViewModelKey
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Qualifier
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.rx3.asFlow
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 typealias ViewModelCreator = ViewModelAssistedFactory<out ViewModel>
@@ -78,9 +79,9 @@ constructor(
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
-    val page = request.pageId.toInt()
-    val itemsPerPage = 25 // TODO Pref this
+  override suspend fun fetch(request: DataRequest): DataResult {
+    val page = request.pageKey!!.toInt()
+    val itemsPerPage = request.limit
     return Single.create { emitter: SingleEmitter<DataSnapshot> ->
         val listener =
           object : ValueEventListener {
@@ -123,7 +124,21 @@ constructor(
       }
       .filter { it.hasChild("title") } // Some HN items are just empty junk
       .map { HackerNewsStory.create(it) }
-      .map {
+      .onErrorResumeNext { t: Throwable ->
+        if (t is IllegalArgumentException) {
+          // Firebase didn't init
+          Observable.error(
+            ServiceException(
+              "Firebase wasn't able to initialize, likely due to missing credentials."
+            )
+          )
+        } else {
+          Observable.error(t)
+        }
+      }
+      .asFlow()
+      .toList()
+      .mapIndexed { index, it ->
         val url = it.url
         with(it) {
           CatchUpItem(
@@ -140,24 +155,13 @@ constructor(
               kids?.size?.let {
                 createCommentMark(count = it, clickUrl = "https://news.ycombinator.com/item?id=$id")
               },
-            detailKey = id.toString()
+            detailKey = id.toString(),
+            indexInResponse = index + request.pageOffset,
+            serviceId = meta().id,
           )
         }
       }
-      .toList()
-      .map { DataResult(it, if (it.isEmpty()) null else (page + 1).toString()) }
-      .onErrorResumeNext { t: Throwable ->
-        if (t is IllegalArgumentException) {
-          // Firebase didn't init
-          Single.error(
-            ServiceException(
-              "Firebase wasn't able to initialize, likely due to missing credentials."
-            )
-          )
-        } else {
-          Single.error(t)
-        }
-      }
+      .let { DataResult(it, if (it.isEmpty()) null else (page + 1).toString()) }
   }
 }
 
@@ -182,7 +186,7 @@ abstract class HackerNewsMetaModule {
         R.color.hnAccent,
         R.drawable.logo_hn,
         pagesAreNumeric = true,
-        firstPageKey = "0",
+        firstPageKey = 0,
         deeplinkFragment = HackerNewsCommentsFragment::class.java
       )
   }
@@ -191,12 +195,7 @@ abstract class HackerNewsMetaModule {
 @ContributesTo(AppScope::class)
 @Module(
   includes =
-    [
-      HackerNewsMetaModule::class,
-      FragmentViewModelFactoryModule::class,
-      ViewModelModule::class,
-      UrlPreviewModule::class
-    ]
+    [HackerNewsMetaModule::class, FragmentViewModelFactoryModule::class, UrlPreviewModule::class]
 )
 abstract class HackerNewsModule {
 
@@ -226,14 +225,6 @@ abstract class HackerNewsModule {
       return FirebaseDatabase.getInstance(app)
     }
   }
-}
-
-@Module
-internal abstract class ViewModelModule {
-  @Binds
-  @IntoMap
-  @ViewModelKey(HackerNewsCommentsViewModel::class)
-  abstract fun mainViewModel(viewModel: HackerNewsCommentsViewModel.Factory): ViewModelCreator
 }
 
 // TODO generify this somewhere once something other than HN does it

@@ -157,20 +157,20 @@ class ImageViewerActivity : AppCompatActivity() {
   }
 
   private fun loadImage() {
-    var isTransitionEnded = false
-    var pendingImage: Drawable? = null
+    //    var isTransitionEnded = false
+    //    var pendingImage: Drawable? = null
 
-    val transition: Transition? = window.sharedElementEnterTransition
-    if (transition != null) {
-      transition.addListener(
-        onEnd = {
-          isTransitionEnded = true
-          pendingImage?.let(imageView::setImageDrawable)
-        }
-      )
-    } else {
-      isTransitionEnded = true
-    }
+    //    val transition: Transition? = window.sharedElementEnterTransition
+    //    if (transition != null) {
+    //      transition.addListener(
+    //        onEnd = {
+    //          isTransitionEnded = true
+    //          pendingImage?.let(imageView::setImageDrawable)
+    //        }
+    //      )
+    //    } else {
+    //      isTransitionEnded = true
+    //    }
 
     val request =
       ImageRequest.Builder(this)
@@ -197,11 +197,12 @@ class ImageViewerActivity : AppCompatActivity() {
           target(
             onStart = imageView::setImageDrawable,
             onSuccess = {
-              if (isTransitionEnded) {
-                imageView.setImageDrawable(it)
-              } else {
-                pendingImage = it
-              }
+              imageView.setImageDrawable(it)
+              //              if (isTransitionEnded) {
+              //                imageView.setImageDrawable(it)
+              //              } else {
+              //                pendingImage = it
+              //              }
             }
           )
         }
@@ -344,20 +345,19 @@ private class CoilPaddingTransformation(
 /**
  * We can't rely on rotation and scale of the [imageView] alone, and have to calculate scale and
  * rotation ourselves.
- *
  * - Rotation is because the [imageView]'s rotation is only relative to its parent, but in this case
- * [FlickDismissLayout] is its parent and _it_ is the one doing the rotation. So [imageView]'s
- * rotation is, for all intents and purposes, zero! To fix this - we manually account for the
- * parent's rotation, and then reverse-rotate [imageView] in the return transition back the equal
- * and opposite direction. This gives the effect of it "straightening" on the way back to the grid
- * view it resides in on the previous activity.
+ *   [FlickDismissLayout] is its parent and _it_ is the one doing the rotation. So [imageView]'s
+ *   rotation is, for all intents and purposes, zero! To fix this - we manually account for the
+ *   parent's rotation, and then reverse-rotate [imageView] in the return transition back the equal
+ *   and opposite direction. This gives the effect of it "straightening" on the way back to the grid
+ *   view it resides in on the previous activity.
  * - Scale is because when the [imageView] is rotated, it has a larger bounded box than its actual
- * reported dimensions. This means that while it reports itself as having a scale factor of 1, the
- * actual transition will use the bounded box size as "1", leaving the final target proportionately
- * bigger than the actual target end size. To fix this, we manually calculate the bounded box and
- * use it to infer the real target scale, where the width is the percentage of the bounded box width
- * (and same for height). This seems a bit weird, but it actually offsets the default size it ends
- * with and scales it down to what it actually should be sized at.
+ *   reported dimensions. This means that while it reports itself as having a scale factor of 1, the
+ *   actual transition will use the bounded box size as "1", leaving the final target
+ *   proportionately bigger than the actual target end size. To fix this, we manually calculate the
+ *   bounded box and use it to infer the real target scale, where the width is the percentage of the
+ *   bounded box width (and same for height). This seems a bit weird, but it actually offsets the
+ *   default size it ends with and scales it down to what it actually should be sized at.
  *
  * I should email Mrs. Huebner and thank her for teaching me geometry in high school.
  */

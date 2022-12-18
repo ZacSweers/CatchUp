@@ -19,14 +19,12 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
-import android.os.Build.VERSION
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import coil.Coil
 import coil.ComponentRegistry
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
-import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
@@ -57,6 +55,7 @@ import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.base.ui.versionInfo
+import io.sweers.catchup.data.UnsplashSizingInterceptor
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.PrecomputedTextSetterCompat
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
@@ -133,7 +132,7 @@ abstract class ApplicationModule {
             LinkifyPlugin.create(),
             TaskListPlugin.create(context)
             //            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
-            )
+          )
         )
         .build()
     }
@@ -218,19 +217,14 @@ abstract class ApplicationModule {
           logger(DebugLogger())
         }
 
-        // Hardware bitmaps don't work with the saturation effect
+        // Hardware bitmaps don't work with the saturation effect or palette extraction
         allowHardware(false)
         allowRgb565(isLowRamDevice)
         crossfade(300)
 
         components {
-          add(
-            if (VERSION.SDK_INT >= 28) {
-              ImageDecoderDecoder.Factory()
-            } else {
-              GifDecoder.Factory()
-            }
-          )
+          add(ImageDecoderDecoder.Factory())
+          add(UnsplashSizingInterceptor)
         }
 
         build()

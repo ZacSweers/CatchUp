@@ -33,8 +33,6 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
@@ -56,11 +54,8 @@ import io.sweers.catchup.service.github.type.LanguageOrder
 import io.sweers.catchup.service.github.type.LanguageOrderField
 import io.sweers.catchup.service.github.type.OrderDirection
 import io.sweers.catchup.util.e
-import io.sweers.catchup.util.nullIfBlank
 import javax.inject.Inject
 import javax.inject.Qualifier
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.rx3.rxSingle
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
@@ -82,19 +77,20 @@ constructor(
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
-    return fetchByScraping().onErrorResumeNext { t: Throwable ->
+  override suspend fun fetch(request: DataRequest): DataResult {
+    return try {
+      fetchByScraping(request)
+    } catch (t: Throwable) {
       e(t) { "GitHub trending scraping failed." }
       fetchByQuery(request)
     }
   }
 
-  private fun fetchByScraping(): Single<DataResult> {
+  private suspend fun fetchByScraping(request: DataRequest): DataResult {
     return gitHubApi
       .get()
       .getTrending(language = All, since = DAILY)
-      .flattenAsObservable { it }
-      .map {
+      .mapIndexed { index, it ->
         with(it) {
           CatchUpItem(
             id = "$author/$repoName".hashCode().toLong(),
@@ -111,74 +107,72 @@ constructor(
                   icon = R.drawable.ic_star_black_24dp,
                   iconTintColor = languageColor?.let(Color::parseColor)
                 )
-              }
+              },
+            // TODO include index
+            indexInResponse = index + request.pageOffset,
+            serviceId = meta().id,
           )
         }
       }
-      .toList()
-      .map { DataResult(it, null) }
+      .let { DataResult(it, null) }
   }
 
-  private fun fetchByQuery(request: DataRequest): Single<DataResult> {
+  private suspend fun fetchByQuery(request: DataRequest): DataResult {
     val query =
       SearchQuery(createdSince = TrendingTimespan.WEEK.createdSince(), minStars = 50).toString()
 
     val searchQuery =
-      rxSingle(Dispatchers.IO) {
-        apolloClient
-          .get()
-          .newBuilder()
-          .httpFetchPolicy(NetworkOnly)
-          .build()
-          .query(
-            GitHubSearchQuery(
-              queryString = query,
-              firstCount = 50,
-              order =
-                LanguageOrder(direction = OrderDirection.DESC, field = LanguageOrderField.SIZE),
-              after = Optional.presentIfNotNull(request.pageId.nullIfBlank())
-            )
+      apolloClient
+        .get()
+        .newBuilder()
+        .httpFetchPolicy(NetworkOnly)
+        .build()
+        .query(
+          GitHubSearchQuery(
+            queryString = query,
+            firstCount = 50,
+            order = LanguageOrder(direction = OrderDirection.DESC, field = LanguageOrderField.SIZE),
+            after = Optional.presentIfNotNull(request.pageKey)
           )
-          .execute()
-      }
+        )
+        .execute()
 
-    return searchQuery
-      .doOnSuccess {
-        if (it.hasErrors()) {
-          throw ApolloException(it.errors.toString())
+    if (searchQuery.hasErrors()) {
+      throw ApolloException(searchQuery.errors.toString())
+    }
+    return searchQuery.data!!.let { (search) ->
+      search.nodes
+        ?.mapNotNull { it?.onRepository }
+        .orEmpty()
+        .mapIndexed { index, it ->
+          with(it) {
+            val description =
+              description
+                ?.let { " — ${emojiMarkdownConverter.get().replaceMarkdownEmojisIn(it)}" }
+                .orEmpty()
+
+            CatchUpItem(
+              id = id.hashCode().toLong(),
+              title = "$name$description",
+              score = "★" to stargazers.totalCount,
+              timestamp = createdAt,
+              author = owner.login,
+              tag = languages?.nodes?.firstOrNull()?.name,
+              source = licenseInfo?.name,
+              itemClickUrl = url.toString(),
+              indexInResponse = index + request.pageOffset,
+              serviceId = meta().id,
+            )
+          }
         }
-      }
-      .map { it.data!! }
-      .flatMap { (search) ->
-        Observable.fromIterable(search.nodes?.mapNotNull { it?.onRepository }.orEmpty())
-          .map {
-            with(it) {
-              val description =
-                description
-                  ?.let { " — ${emojiMarkdownConverter.get().replaceMarkdownEmojisIn(it)}" }
-                  .orEmpty()
-
-              CatchUpItem(
-                id = id.hashCode().toLong(),
-                title = "$name$description",
-                score = "★" to stargazers.totalCount,
-                timestamp = createdAt,
-                author = owner.login,
-                tag = languages?.nodes?.firstOrNull()?.name,
-                source = licenseInfo?.name,
-                itemClickUrl = url.toString()
-              )
-            }
+        .let {
+          if (search.pageInfo.hasNextPage) {
+            DataResult(it, search.pageInfo.endCursor)
+          } else {
+            DataResult(it, null)
           }
-          .toList()
-          .map {
-            if (search.pageInfo.hasNextPage) {
-              DataResult(it, search.pageInfo.endCursor)
-            } else {
-              DataResult(it, null)
-            }
-          }
-      }
+        }
+    }
   }
 }
 
@@ -202,7 +196,7 @@ abstract class GitHubMetaModule {
         R.string.github,
         R.color.githubAccent,
         R.drawable.logo_github,
-        firstPageKey = "",
+        firstPageKey = null,
         enabled = BuildConfig.GITHUB_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
       )
   }

@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.service.uplabs
 
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.uplabs.model.UplabsImage
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -24,10 +23,10 @@ import retrofit2.http.Query
 interface UplabsApi {
 
   @GET("/all.json")
-  fun getPopular(
+  suspend fun getPopular(
     @Query("days_ago") daysAgo: Int, // Default 0
     @Query("page") page: Int // Default 1
-  ): Single<List<UplabsImage>>
+  ): List<UplabsImage>
 
   companion object {
     const val HOST = "www.uplabs.com"

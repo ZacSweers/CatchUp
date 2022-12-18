@@ -82,6 +82,7 @@ dependencies {
   implementation(libs.moshi.core)
   implementation(libs.coil.default)
   implementation(libs.kotlin.datetime)
+  implementation(libs.kotlin.coroutinesRx)
 
   api(libs.androidx.design)
   api(libs.androidx.fragmentKtx)

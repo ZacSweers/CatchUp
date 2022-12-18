@@ -26,8 +26,6 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -63,11 +61,11 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
+  override suspend fun fetch(request: DataRequest): DataResult {
     return api
       .top()
-      .concatMapEager { references ->
-        Observable.fromIterable(references.post.values).map { post ->
+      .flatMap { references ->
+        references.post.values.map { post ->
           MediumPost(
             post = post,
             user = references.user[post.creatorId]
@@ -76,7 +74,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
           )
         }
       }
-      .map {
+      .mapIndexed { index, it ->
         with(it) {
           val url = constructUrl()
           CatchUpItem(
@@ -95,12 +93,13 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               createCommentMark(
                 count = post.virtuals.responsesCreatedCount,
                 clickUrl = constructCommentsUrl()
-              )
+              ),
+            indexInResponse = index + request.pageOffset,
+            serviceId = meta().id,
           )
         }
       }
-      .toList()
-      .map { DataResult(it, null) }
+      .let { DataResult(it, null) }
   }
 }
 
@@ -124,7 +123,7 @@ abstract class MediumMetaModule {
         R.string.medium,
         R.color.mediumAccent,
         R.drawable.logo_medium,
-        firstPageKey = ""
+        firstPageKey = null
       )
   }
 }

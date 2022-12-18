@@ -34,9 +34,9 @@ import io.sweers.catchup.ui.immersive.SystemUiHelper.Companion.LEVEL_LOW_PROFILE
  *
  * @param activity The Activity who's system UI should be changed
  * @param level The level of hiding. Should be either [LEVEL_LOW_PROFILE], [LEVEL_HIDE_STATUS_BAR],
- * [LEVEL_LEAN_BACK] or [LEVEL_IMMERSIVE]
+ *   [LEVEL_LEAN_BACK] or [LEVEL_IMMERSIVE]
  * @param flags Additional options. See [FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES] and
- * [FLAG_IMMERSIVE_STICKY]
+ *   [FLAG_IMMERSIVE_STICKY]
  * @param listener A listener which is called when the system visibility is changed
  */
 class SystemUiHelper(
@@ -53,7 +53,7 @@ class SystemUiHelper(
 
   /**
    * @return true if the system UI is currently showing. What this means depends on the mode this
-   * [SystemUiHelper] was instantiated with.
+   *   [SystemUiHelper] was instantiated with.
    */
   val isShowing: Boolean
     get() = impl.isShowing
