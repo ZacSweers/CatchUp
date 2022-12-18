@@ -19,7 +19,7 @@ crumb = "0.1.0"
 dagger = "2.44.2"
 detekt = "1.22.0"
 espresso = "3.5.0"
-flipper = "0.174.0"
+flipper = "0.176.0"
 hyperion = "0.9.24"
 inspector = "0.3.0"
 jdk = "17"
@@ -38,7 +38,7 @@ preferences = "1.2.0"
 retrofit = "2.9.0"
 room = "2.5.0-beta02"
 sgp = "0.3.6"
-spotless = "6.11.0"
+spotless = "6.12.0"
 # https://github.com/Tickaroo/tikxml/issues/114
 tikxml = "0.8.13"
 
@@ -57,8 +57,8 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.6.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.7.0" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.2.0" }
-retry = { id = "org.gradle.test-retry", version = "1.4.1" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.2.1" }
+retry = { id = "org.gradle.test-retry", version = "1.5.0" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
 sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
@@ -194,7 +194,7 @@ misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
 misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
-misc-debug-soLoader = "com.facebook.soloader:soloader:0.10.4"
+misc-debug-soLoader = "com.facebook.soloader:soloader:0.10.5"
 misc-debug-guava = "com.google.guava:guava:31.1-jre"
 misc-debug-madge = "com.jakewharton.madge:madge:1.1.4"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
