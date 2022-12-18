@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.service.dribbble
 
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.dribbble.model.Shot
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -24,7 +23,7 @@ import retrofit2.http.Query
 interface DribbbleApi {
 
   @GET("/shots")
-  fun getPopular(@Query("page") page: Int, @Query("per_page") pageSize: Int): Single<List<Shot>>
+  suspend fun getPopular(@Query("page") page: Int, @Query("per_page") pageSize: Int): List<Shot>
 
   // list=...
   // sort=...

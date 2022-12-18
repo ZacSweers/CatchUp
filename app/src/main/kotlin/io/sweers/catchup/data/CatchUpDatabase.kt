@@ -25,11 +25,16 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.SummarizationType
 import kotlinx.datetime.Instant
 
-@Database(entities = [ServicePage::class, CatchUpItem::class], version = 6)
+@Database(
+  entities = [ServiceRemoteKey::class, CatchUpItem::class, OperationJournalEntry::class],
+  version = 8
+)
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {
 
   abstract fun serviceDao(): ServiceDao
+
+  abstract fun remoteKeyDao(): RemoteKeyDao
 
   companion object {
 

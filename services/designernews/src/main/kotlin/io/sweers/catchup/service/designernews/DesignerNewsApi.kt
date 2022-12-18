@@ -33,7 +33,7 @@ interface DesignerNewsApi {
 
   @GET("stories")
   @Wrapped(path = ["stories"])
-  fun getTopStories(@Query("page") page: Int): Single<List<Story>>
+  suspend fun getTopStories(@Query("page") page: Int): List<Story>
 
   @GET("users/{ids}")
   @Wrapped(path = ["users"])

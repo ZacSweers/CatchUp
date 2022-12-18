@@ -17,12 +17,11 @@ package io.sweers.catchup.service.reddit.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.sweers.catchup.service.api.HasStableId
 import kotlinx.datetime.Instant
 
 sealed class RedditObject
 
-interface RedditSubmission : HasStableId {
+interface RedditSubmission {
   val author: String
   @Json(name = "author_flair_text") val authorFlairText: String?
   @Json(name = "banned_by") val bannedBy: String?
@@ -35,7 +34,6 @@ interface RedditSubmission : HasStableId {
   val score: Int
   val subreddit: String
   val ups: Int
-  override fun stableId(): Long = id.hashCode().toLong()
 }
 
 @JsonClass(generateAdapter = true)
