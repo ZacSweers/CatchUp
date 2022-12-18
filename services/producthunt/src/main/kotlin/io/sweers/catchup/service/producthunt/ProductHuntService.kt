@@ -26,7 +26,6 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -60,12 +59,11 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
-    val page = request.pageId.toInt()
+  override suspend fun fetch(request: DataRequest): DataResult {
+    val page = request.pageKey!!.toInt()
     return api
       .getPosts(page)
-      .flattenAsObservable { it }
-      .map {
+      .mapIndexed { index, it ->
         with(it) {
           CatchUpItem(
             id = id,
@@ -75,12 +73,13 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
             author = user.name,
             tag = firstTopic,
             itemClickUrl = redirectUrl,
-            mark = createCommentMark(count = commentsCount, clickUrl = discussionUrl)
+            mark = createCommentMark(count = commentsCount, clickUrl = discussionUrl),
+            indexInResponse = index + request.pageOffset,
+            serviceId = meta().id,
           )
         }
       }
-      .toList()
-      .map { DataResult(it, (page + 1).toString()) }
+      .let { DataResult(it, (page + 1).toString()) }
   }
 }
 
@@ -105,7 +104,7 @@ abstract class ProductHuntMetaModule {
         R.color.phAccent,
         R.drawable.logo_ph,
         pagesAreNumeric = true,
-        firstPageKey = "0",
+        firstPageKey = 0,
         enabled =
           BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
       )

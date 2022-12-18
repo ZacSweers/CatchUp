@@ -115,7 +115,7 @@ constructor(
       intent.putExtra(ImageViewerActivity.INTENT_ALIAS, imageData.cacheKey)
       intent.putExtra(ImageViewerActivity.INTENT_SOURCE_URL, imageData.sourceUrl)
       val options = getActivityOptions(activity, imageData)
-      activity.startActivityForResult(intent, 101, options.toBundle())
+      activity.startActivityForResult(intent, 101, options?.toBundle())
       return
     }
     if (meta.isSupportedInMediaViewer()) {
@@ -147,7 +147,8 @@ constructor(
     }
   }
 
-  private fun getActivityOptions(activity: Activity, imageData: ImageViewerData): ActivityOptions {
+  private fun getActivityOptions(activity: Activity, imageData: ImageViewerData): ActivityOptions? {
+    if (imageData.image == null) return null
     val imagePair =
       (imageData.image to activity.getString(R.string.transition_image)).toAndroidPair()
     val decorView = activity.window.decorView

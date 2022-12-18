@@ -25,7 +25,7 @@ package io.sweers.catchup.util.kotlin
  * @param position position of the element to return
  * @return the element at the specified position in `iterator`
  * @throws IndexOutOfBoundsException if `position` is negative or greater than or equal to the
- * number of elements remaining in `iterator`
+ *   number of elements remaining in `iterator`
  */
 operator fun <T> Iterator<T>.get(position: Int): T {
   val skipped = advance(position)

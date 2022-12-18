@@ -31,11 +31,20 @@ slack {
   features {
     dagger()
   }
+  android {
+    features {
+      compose()
+    }
+  }
 }
 
 dependencies {
   api(project(":libraries:appconfig"))
   api(project(":libraries:util"))
+  api(libs.androidx.compose.runtime)
+  implementation(libs.androidx.compose.uiTooling)
+  api(libs.androidx.paging.compose)
+  api(libs.androidx.compose.material.material3)
   api(libs.kotlin.coroutines)
   api(libs.autodispose.core)
   api(libs.autodispose.android)
@@ -51,4 +60,5 @@ dependencies {
   api(libs.androidx.fragment)
   api(libs.androidx.palette)
   api(libs.androidx.paletteKtx)
+  api(libs.kotlin.datetime)
 }

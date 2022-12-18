@@ -21,7 +21,6 @@ import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
-import io.sweers.catchup.service.api.HasStableId
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import kotlinx.datetime.Instant
 
@@ -39,9 +38,7 @@ data class Entry(
   @PropertyElement(name = "${SLASH_PREFIX}comments") val comments: Int = 0,
   @Element val author: Author,
   @PropertyElement(name = "${SLASH_PREFIX}department") val department: String
-) : HasStableId {
-  override fun stableId(): Long = id.hashCode().toLong()
-}
+)
 
 internal class InstantTypeConverter : TypeConverter<Instant> {
   override fun write(value: Instant): String = TODO("Unsupported")

@@ -26,8 +26,6 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -60,12 +58,11 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
-    val page = request.pageId.toInt()
+  override suspend fun fetch(request: DataRequest): DataResult {
+    val page = request.pageKey!!.toInt()
     return api
       .getTopStories(page)
-      .flatMapObservable { stories -> Observable.fromIterable(stories) }
-      .map { story ->
+      .mapIndexed { index, story ->
         with(story) {
           CatchUpItem(
             id = id.toLong(),
@@ -79,12 +76,13 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               createCommentMark(
                 count = commentCount,
                 clickUrl = href.replace("api.", "www.").replace("api/v2/", "")
-              )
+              ),
+            indexInResponse = index + request.pageOffset,
+            serviceId = meta().id,
           )
         }
       }
-      .toList()
-      .map { DataResult(it, (page + 1).toString()) }
+      .let { items -> DataResult(items, (page + 1).toString().takeUnless { items.isEmpty() }) }
   }
 }
 
@@ -109,7 +107,7 @@ abstract class DesignerNewsMetaModule {
         R.color.dnAccent,
         R.drawable.logo_dn,
         pagesAreNumeric = true,
-        firstPageKey = "1"
+        firstPageKey = 1
       )
   }
 }

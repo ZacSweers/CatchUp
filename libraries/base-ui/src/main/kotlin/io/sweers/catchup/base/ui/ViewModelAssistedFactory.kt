@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.ui.base
+package io.sweers.catchup.base.ui
 
-/** An interface for classes offering data loading state to be observed. */
-interface DataLoadingSubject {
-  fun isDataLoading(): Boolean
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 
-  interface DataLoadingCallbacks {
-    fun dataStartedLoading()
-
-    fun dataFinishedLoading()
-  }
+fun interface ViewModelAssistedFactory<T : ViewModel> {
+  fun create(savedState: SavedStateHandle): T
 }

@@ -15,4 +15,8 @@
  */
 package io.sweers.catchup.service.api
 
-data class DataRequest(val fromRefresh: Boolean, val multiPage: Boolean, val pageId: String)
+data class DataRequest(
+  val pageKey: String?,
+  val pageOffset: Int,
+  val limit: Int,
+)

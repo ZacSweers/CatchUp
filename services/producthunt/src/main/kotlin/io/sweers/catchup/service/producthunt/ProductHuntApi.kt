@@ -16,7 +16,6 @@
 package io.sweers.catchup.service.producthunt
 
 import com.serjltt.moshi.adapters.Wrapped
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.producthunt.model.Post
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -26,7 +25,7 @@ interface ProductHuntApi {
 
   @GET("/v1/posts")
   @Wrapped(path = ["posts"])
-  fun getPosts(@Query("days_ago") page: Int): Single<List<Post>>
+  suspend fun getPosts(@Query("days_ago") page: Int): List<Post>
 
   companion object {
 
