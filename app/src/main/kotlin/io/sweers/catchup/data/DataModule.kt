@@ -136,5 +136,11 @@ abstract class DataModule {
     internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase): ServiceDao {
       return catchUpDatabase.serviceDao()
     }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    internal fun provideRemoteKeyDao(catchUpDatabase: CatchUpDatabase): RemoteKeyDao {
+      return catchUpDatabase.remoteKeyDao()
+    }
   }
 }

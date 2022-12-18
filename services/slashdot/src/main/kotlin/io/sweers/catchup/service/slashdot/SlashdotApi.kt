@@ -15,12 +15,11 @@
  */
 package io.sweers.catchup.service.slashdot
 
-import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 
 interface SlashdotApi {
 
-  @GET("/Slashdot/slashdotMainatom") fun main(): Single<Feed>
+  @GET("/Slashdot/slashdotMainatom") suspend fun main(): Feed
 
   companion object {
     const val HOST = "rss.slashdot.org"

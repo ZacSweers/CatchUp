@@ -25,7 +25,6 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
@@ -57,12 +56,11 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
-    val page = request.pageId.toInt()
+  override suspend fun fetch(request: DataRequest): DataResult {
+    val page = request.pageKey!!.toInt()
     return api
       .getPopular(page, 50)
-      .flattenAsObservable { it }
-      .map {
+      .mapIndexed { index, it ->
         CatchUpItem(
           id = it.id,
           title = "",
@@ -81,11 +79,12 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               it.images.bestSize(),
               it.id.toString()
             ),
-          mark = createCommentMark(count = it.commentsCount.toInt())
+          mark = createCommentMark(count = it.commentsCount.toInt()),
+          indexInResponse = index + request.pageOffset,
+          serviceId = meta().id,
         )
       }
-      .toList()
-      .map { DataResult(it, (page + 1).toString()) }
+      .let { DataResult(it, (page + 1).toString()) }
   }
 }
 
@@ -111,7 +110,7 @@ abstract class DribbbleMetaModule {
         R.drawable.logo_dribbble,
         isVisual = true,
         pagesAreNumeric = true,
-        firstPageKey = "1"
+        firstPageKey = 1
       )
   }
 }
