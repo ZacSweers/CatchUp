@@ -91,8 +91,8 @@ object CustomTabsHelper {
 
   /**
    * Used to check whether there is a specialized handler for a given intent.
-   * @param intent The intent to check with.
-   * *
+   *
+   * @param intent The intent to check with. *
    * @return Whether there is a specialized handler for the given intent.
    */
   private fun hasSpecializedHandlerIntents(context: Context, intent: Intent): Boolean {

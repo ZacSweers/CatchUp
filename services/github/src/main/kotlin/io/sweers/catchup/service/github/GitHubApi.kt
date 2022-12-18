@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.service.github
 
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.github.model.TrendingItem
 import java.util.Locale
 import retrofit2.http.GET
@@ -26,10 +25,10 @@ import retrofit2.http.Query
 interface GitHubApi {
 
   @GET("/trending{$LANGUAGE}")
-  fun getTrending(
+  suspend fun getTrending(
     @Path(LANGUAGE) language: Language,
     @Query("since") since: Since
-  ): Single<List<TrendingItem>>
+  ): List<TrendingItem>
 
   enum class Since {
     DAILY,

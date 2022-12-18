@@ -30,7 +30,7 @@ interface RedditApi {
   ): Single<List<RedditResponse>>
 
   @GET("/")
-  fun frontPage(@Query("limit") limit: Int, @Query("after") after: String?): Single<RedditResponse>
+  suspend fun frontPage(@Query("limit") limit: Int?, @Query("after") after: String?): RedditResponse
 
   @GET("/r/{subreddit}")
   fun subreddit(

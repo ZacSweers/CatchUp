@@ -27,7 +27,6 @@ import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
@@ -60,12 +59,12 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val servi
 
   override fun meta() = serviceMeta
 
-  override fun fetchPage(request: DataRequest): Single<DataResult> {
+  override suspend fun fetch(request: DataRequest): DataResult {
     return service
       .main()
-      .map(Feed::itemList)
-      .flattenAsObservable { it }
-      .map { (title, id, _, summary, updated, section, comments, author, department) ->
+      .itemList
+      .mapIndexed { index, (title, id, _, summary, updated, section, comments, author, department)
+        ->
         CatchUpItem(
           id = id.hashCode().toLong(),
           title = title,
@@ -76,11 +75,12 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val servi
           tag = section,
           itemClickUrl = id,
           summarizationInfo = SummarizationInfo(summary.substringBefore("<p>"), NONE),
-          mark = createCommentMark(count = comments, clickUrl = "$id#comments")
+          mark = createCommentMark(count = comments, clickUrl = "$id#comments"),
+          indexInResponse = index + request.pageOffset,
+          serviceId = meta().id,
         )
       }
-      .toList()
-      .map { DataResult(it, null) }
+      .let { DataResult(it, null) }
   }
 }
 
@@ -104,7 +104,7 @@ abstract class SlashdotMetaModule {
         R.string.slashdot,
         R.color.slashdotAccent,
         R.drawable.logo_sd,
-        firstPageKey = "main"
+        firstPageKey = null
       )
   }
 }

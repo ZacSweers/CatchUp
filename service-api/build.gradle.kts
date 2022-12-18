@@ -29,11 +29,17 @@ slack {
   features {
     dagger()
   }
+  android {
+    features {
+      compose()
+    }
+  }
 }
 
 dependencies {
   ksp(libs.androidx.room.apt)
 
+  api(libs.androidx.compose.runtime)
   implementation(libs.kotlin.coroutinesAndroid)
   implementation(libs.kotlin.coroutinesRx)
   implementation(libs.kotlin.datetime)

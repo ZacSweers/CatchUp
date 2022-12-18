@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "b8fe0bdfb9355a0dd08159df65858dd6",
+    "identityHash": "459636bf391f5c6d2c09b2667c1eb4a3",
     "entities": [
       {
         "tableName": "pages",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `timestamp` INTEGER, `score` TEXT, `tag` TEXT, `author` TEXT, `source` TEXT, `itemClickUrl` TEXT, `detailKey` TEXT, `value` TEXT, `type` TEXT, `url` TEXT, `detailUrl` TEXT, `animatable` INTEGER, `sourceUrl` TEXT, `bestSize` TEXT, `imageId` TEXT, `text` TEXT, `textPrefix` TEXT, `icon` INTEGER, `clickUrl` TEXT, `iconTintColor` INTEGER, `formatTextAsCount` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `timestamp` INTEGER, `score` TEXT, `tag` TEXT, `author` TEXT, `source` TEXT, `itemClickUrl` TEXT, `detailKey` TEXT, `value` TEXT, `type` TEXT, `url` TEXT, `detailUrl` TEXT, `animatable` INTEGER, `sourceUrl` TEXT, `bestSize` TEXT, `imageId` TEXT, `text` TEXT, `textPrefix` TEXT, `icon` INTEGER, `_markClickUrl` TEXT, `iconTintColor` INTEGER, `formatTextAsCount` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -191,8 +191,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "mark.clickUrl",
-            "columnName": "clickUrl",
+            "fieldPath": "mark._markClickUrl",
+            "columnName": "_markClickUrl",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -222,7 +222,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b8fe0bdfb9355a0dd08159df65858dd6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '459636bf391f5c6d2c09b2667c1eb4a3')"
     ]
   }
 }
