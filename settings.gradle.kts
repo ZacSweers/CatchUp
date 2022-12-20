@@ -31,15 +31,15 @@ pluginManagement {
   repositories {
     // Snapshots
     if (hasProperty("catchup.config.enableSnapshots")) {
-      maven("https://oss.sonatype.org/content/repositories/snapshots") {
+      maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
         name = "snapshots-maven-central"
         mavenContent { snapshotsOnly() }
       }
-      maven("https://s01.oss.sonatype.org/content/repositories/snapshots") {
+      maven(findProperty("catchup.mavenUrls.snapshots.sonatypes01")!!) {
         name = "snapshots-maven-central-s01"
         mavenContent { snapshotsOnly() }
       }
-      maven("https://androidx.dev/snapshots/latest/artifacts/repository") {
+      maven(findProperty("catchup.mavenUrls.snapshots.androidx")!!) {
         name = "snapshots-androidx"
         mavenContent { snapshotsOnly() }
         content { includeGroupByRegex("androidx.*") }
@@ -150,15 +150,15 @@ dependencyResolutionManagement {
 
     // Snapshots
     if (hasProperty("catchup.config.enableSnapshots")) {
-      maven("https://oss.sonatype.org/content/repositories/snapshots") {
+      maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
         name = "snapshots-maven-central"
         mavenContent { snapshotsOnly() }
       }
-      maven("https://s01.oss.sonatype.org/content/repositories/snapshots") {
+      maven(findProperty("catchup.mavenUrls.snapshots.sonatypes01")!!) {
         name = "snapshots-maven-central-s01"
         mavenContent { snapshotsOnly() }
       }
-      maven("https://androidx.dev/snapshots/latest/artifacts/repository") {
+      maven(findProperty("catchup.mavenUrls.snapshots.androidx")!!) {
         name = "snapshots-androidx"
         mavenContent { snapshotsOnly() }
         content { includeGroupByRegex("androidx.*") }
