@@ -6,7 +6,7 @@
   "prHourlyLimit": 10,
   "packageRules": [
     {
-      "matchManagers": ["maven"],
+      "matchManagers": ["gradle"],
       "description": "Disable snapshot versions",
       "matchCurrentVersion": "/.*-SNAPSHOT/",
       "enabled": "false"
