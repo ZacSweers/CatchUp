@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -51,6 +52,7 @@ import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.util.UiUtil
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VisualServiceUi(
   lazyItems: LazyPagingItems<CatchUpItem>,
@@ -74,7 +76,13 @@ fun VisualServiceUi(
       span = { index -> GridItemSpan(spanConfig.spanSizeResolver?.invoke(index) ?: 1) },
     ) { index, item ->
       val clickableItemState = remember { ClickableItemState() }
-      ClickableItem(lazyItems, item, eventSink, clickableItemState) { clickableItem ->
+      ClickableItem(
+        modifier = Modifier.animateItemPlacement(),
+        lazyItems = lazyItems,
+        item = item,
+        eventSink = eventSink,
+        clickableItemState = clickableItemState
+      ) { clickableItem ->
         VisualItem(
           item = clickableItem,
           index = index,

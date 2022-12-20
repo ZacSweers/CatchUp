@@ -89,7 +89,6 @@ import kotlinx.parcelize.Parcelize
 
 private const val ARG_SERVICE_KEY = "service_key"
 
-// TODO implement caching in paging
 @FragmentKey(ServiceFragment2::class)
 @ContributesMultibinding(AppScope::class, boundType = Fragment::class)
 class ServiceFragment2 @Inject constructor(private val circuitConfig: CircuitConfig) :
