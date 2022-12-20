@@ -2,7 +2,7 @@
 agp = "8.0.0-alpha09"
 androidx-core = "1.9.0"
 emoji = "1.2.0-alpha03"
-fragment = "1.6.0-alpha03"
+fragment = "1.6.0-alpha04"
 androidTestSupport = "1.5.1"
 anvil = "2.4.3"
 apollo = "3.7.2"
