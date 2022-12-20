@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
@@ -31,11 +32,12 @@ fun ClickableItem(
   lazyItems: LazyPagingItems<CatchUpItem>,
   item: CatchUpItem?,
   eventSink: (ServiceScreen.Event) -> Unit,
+  modifier: Modifier = Modifier,
   clickableItemState: ClickableItemState = remember { ClickableItemState() },
   content: @Composable (CatchUpItem) -> Unit
 ) {
   if (item == null) {
-    ErrorItem("Item was null!", onRetryClick = lazyItems::retry)
+    ErrorItem(text = "Item was null!", modifier = modifier, onRetryClick = lazyItems::retry)
   } else {
     if (clickableItemState.enabled) {
       val interactionSource = clickableItemState.interactionSource
@@ -48,6 +50,7 @@ fun ClickableItem(
         }
       val elevation by animateDpAsState(targetElevation)
       Surface(
+        modifier = modifier,
         tonalElevation = elevation,
         shadowElevation = elevation,
         interactionSource = interactionSource,

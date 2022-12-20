@@ -1,6 +1,7 @@
 package dev.zacsweers.catchup.service
 
 import android.text.format.DateUtils
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ import io.sweers.catchup.util.primaryLocale
 import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Clock
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TextServiceUi(
   lazyItems: LazyPagingItems<CatchUpItem>,
@@ -53,7 +55,14 @@ fun TextServiceUi(
       items = lazyItems,
       key = CatchUpItem::id,
     ) { item ->
-      ClickableItem(lazyItems, item, eventSink) { TextItem(it, themeColor, eventSink) }
+      ClickableItem(
+        modifier = Modifier.animateItemPlacement(),
+        lazyItems = lazyItems,
+        item = item,
+        eventSink = eventSink
+      ) {
+        TextItem(it, themeColor, eventSink)
+      }
     }
     handleLoadStates(lazyItems, themeColor, onRefreshChange)
   }
