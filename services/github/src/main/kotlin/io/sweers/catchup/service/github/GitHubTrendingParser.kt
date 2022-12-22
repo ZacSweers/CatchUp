@@ -80,7 +80,7 @@ internal object GitHubTrendingParser {
     // "691 stars today"
     val starsToday =
       element
-        .select(".f6.color-text-secondary.mt-2 > span:last-child")
+        .select(".f6.color-fg-muted.mt-2 > span:last-child")
         .firstOrNull()
         ?.text()
         ?.removeCommas()
