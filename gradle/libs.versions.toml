@@ -8,7 +8,7 @@ anvil = "2.4.3"
 apollo = "3.7.3"
 autodispose = "2.1.1"
 chuck = "1.1.0"
-circuit = "0.4.0"
+circuit = "0.5.0"
 coil = "2.2.2"
 compose = "1.4.0-alpha03"
 composeCompiler = "1.4.0-alpha02"
@@ -145,6 +145,7 @@ javapoet = "com.squareup:javapoet:1.13.0"
 androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha17"
 circuit-core = { module = "com.slack.circuit:circuit-core", version.ref = "circuit" }
 circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
+circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegenAnnotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.0.1" }

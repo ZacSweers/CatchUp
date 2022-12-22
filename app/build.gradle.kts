@@ -431,6 +431,10 @@ val generateLicenseTask =
 
 generateLicenseTask.dependsOn("licenseeRelease")
 
+tasks.matching { it.name.startsWith("licensee") }.configureEach {
+  notCompatibleWithConfigurationCache("https://github.com/cashapp/licensee/issues/72")
+}
+
 tasks.matching { it.name == "licenseeDebug" }.configureEach {
   enabled = false
 }
@@ -443,20 +447,6 @@ licensee {
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
-  allowDependency("com.slack.circuit", "circuit-codegen-annotations", libs.versions.circuit.get())
-  allowDependency(
-    "com.slack.circuit",
-    "circuit-codegen-annotations-android",
-    libs.versions.circuit.get()
-  )
-  allowDependency("com.slack.circuit", "circuit-backstack", libs.versions.circuit.get())
-  allowDependency("com.slack.circuit", "circuit-backstack-android", libs.versions.circuit.get())
-  allowDependency("com.slack.circuit", "circuit-core", libs.versions.circuit.get())
-  allowDependency("com.slack.circuit", "circuit-core-android", libs.versions.circuit.get())
-  allowDependency("com.slack.circuit", "circuit-overlay", libs.versions.circuit.get())
-  allowDependency("com.slack.circuit", "circuit-overlay-android", libs.versions.circuit.get())
-  allowDependency("com.slack.circuit", "circuit-retained", libs.versions.circuit.get())
-  allowDependency("com.slack.circuit", "circuit-retained-android", libs.versions.circuit.get())
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask>().configureEach {
@@ -587,6 +577,7 @@ dependencies {
   ksp(libs.circuit.codegen)
   implementation(libs.circuit.codegenAnnotations)
   implementation(libs.circuit.overlay)
+  implementation(libs.circuit.retained)
   implementation(libs.androidx.compose.material.material3)
   implementation(libs.coil.compose)
 
