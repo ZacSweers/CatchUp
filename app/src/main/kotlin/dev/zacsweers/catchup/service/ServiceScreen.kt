@@ -31,6 +31,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +59,8 @@ import com.slack.circuit.CircuitUiState
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.LocalRetainedStateRegistry
+import com.slack.circuit.retained.continuityRetainedStateRegistry
 import com.slack.circuit.retained.rememberRetained
 import com.squareup.anvil.annotations.ContributesMultibinding
 import dagger.assisted.Assisted
@@ -89,7 +92,6 @@ import kotlinx.parcelize.Parcelize
 
 private const val ARG_SERVICE_KEY = "service_key"
 
-// TODO implement caching in paging
 @FragmentKey(ServiceFragment2::class)
 @ContributesMultibinding(AppScope::class, boundType = Fragment::class)
 class ServiceFragment2 @Inject constructor(private val circuitConfig: CircuitConfig) :
@@ -110,7 +112,13 @@ class ServiceFragment2 @Inject constructor(private val circuitConfig: CircuitCon
     val composeView = binding.root
     composeView.setContent {
       CatchUpTheme {
-        CircuitCompositionLocals(circuitConfig) { CircuitContent(ServiceScreen(serviceKey)) }
+        CircuitCompositionLocals(circuitConfig) {
+          CompositionLocalProvider(
+            LocalRetainedStateRegistry provides continuityRetainedStateRegistry()
+          ) {
+            CircuitContent(ServiceScreen(serviceKey))
+          }
+        }
       }
     }
   }
