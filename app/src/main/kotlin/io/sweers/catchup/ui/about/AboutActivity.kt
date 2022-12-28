@@ -28,18 +28,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.ComposeView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.text.layoutDirection
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import autodispose2.autoDispose
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.slack.circuit.CircuitCompositionLocals
+import com.slack.circuit.CircuitConfig
+import com.slack.circuit.CircuitContent
 import com.squareup.anvil.annotations.ContributesMultibinding
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.android.ActivityKey
 import dev.zacsweers.catchup.di.android.FragmentKey
@@ -48,7 +52,6 @@ import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.base.ui.InjectingBaseFragment
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.databinding.ActivityGenericContainerBinding
 import io.sweers.catchup.databinding.FragmentAboutBinding
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.Scrollable
@@ -78,6 +81,7 @@ class AboutActivity
 constructor(
   private val customTab: CustomTabActivityHelper,
   private val aboutFragmentProvider: Provider<AboutFragment>,
+  private val circuitConfig: CircuitConfig,
 ) : InjectingBaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,11 +111,17 @@ constructor(
       .subscribe()
 
     val viewGroup = viewContainer.forActivity(this)
-    ActivityGenericContainerBinding.inflate(layoutInflater, viewGroup, true)
-
-    if (savedInstanceState == null) {
-      supportFragmentManager.commitNow { add(R.id.fragment_container, aboutFragmentProvider.get()) }
+    val composeView = ComposeView(this)
+    viewGroup.addView(composeView)
+    composeView.setContent {
+      CatchUpTheme { CircuitCompositionLocals(circuitConfig) { CircuitContent(AboutScreen) } }
     }
+    //    ActivityGenericContainerBinding.inflate(layoutInflater, viewGroup, true)
+    //
+    //    if (savedInstanceState == null) {
+    //      supportFragmentManager.commitNow { add(R.id.fragment_container,
+    // aboutFragmentProvider.get()) }
+    //    }
   }
 }
 

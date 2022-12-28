@@ -580,6 +580,8 @@ dependencies {
   implementation(libs.circuit.retained)
   implementation(libs.androidx.compose.material.material3)
   implementation(libs.coil.compose)
+  implementation(libs.androidx.compose.accompanist.systemUi)
+  implementation(libs.androidx.activity.compose)
 
   // Apollo
   implementation(libs.apollo.httpcache)

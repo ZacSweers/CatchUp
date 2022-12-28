@@ -17,6 +17,8 @@ package io.sweers.catchup.app
 
 import android.app.Application
 import android.os.Looper
+import android.os.StrictMode
+import android.os.strictmode.UntaggedSocketViolation
 import androidx.appcompat.app.AppCompatDelegate
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.ticktock.runtime.EagerZoneRulesLoading
@@ -28,6 +30,7 @@ import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.flowFor
 import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.util.d
+import java.util.concurrent.Executors
 import javax.inject.Inject
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -90,6 +93,19 @@ class CatchUpApplication : Application() {
         // strangely hidden API: https://issuetracker.google.com/issues/159421054
       }
     }
+
+    StrictMode.setVmPolicy(
+      StrictMode.VmPolicy.Builder()
+        .detectAll()
+        .penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
+          if (violation is UntaggedSocketViolation) {
+            // This is a known issue with Flipper
+          } else {
+            Timber.e(violation.toString())
+          }
+        }
+        .build()
+    )
 
     GlobalScope.launch {
       catchUpPreferences

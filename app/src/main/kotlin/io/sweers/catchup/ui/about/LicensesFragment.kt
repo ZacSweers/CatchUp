@@ -72,6 +72,7 @@ import io.sweers.catchup.util.isInNightMode
 import io.sweers.catchup.util.kotlin.groupBy
 import io.sweers.catchup.util.kotlin.sortBy
 import io.sweers.catchup.util.w
+import java.util.Objects
 import javax.inject.Inject
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlin.LazyThreadSafetyMode.NONE
@@ -420,11 +421,12 @@ private class HeaderHolder(view: View) :
   val title = binding.title
 }
 
-internal sealed class OssBaseItem {
+sealed class OssBaseItem {
   abstract fun itemType(): Int
 }
 
 internal data class OssItemHeader(val avatarUrl: String, val name: String) : OssBaseItem() {
+  val id = name.hashCode().toLong()
   override fun itemType() = 0
 }
 
@@ -438,5 +440,6 @@ internal data class OssItem(
   val description: String?,
   val authorUrl: String? = null
 ) : OssBaseItem() {
+  val id = Objects.hash(author, name).toLong()
   override fun itemType() = 1
 }

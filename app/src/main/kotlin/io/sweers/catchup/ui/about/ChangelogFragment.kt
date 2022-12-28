@@ -187,7 +187,7 @@ constructor(
   }
 }
 
-private data class ChangeLogItem(
+data class ChangeLogItem(
   val name: String,
   val timestamp: Instant,
   val tag: String,

@@ -78,9 +78,9 @@ fun VisualServiceUi(
       val clickableItemState = remember { ClickableItemState() }
       ClickableItem(
         modifier = Modifier.animateItemPlacement(),
-        lazyItems = lazyItems,
         item = item,
-        eventSink = eventSink,
+        onRetry = lazyItems::retry,
+        onClick = { eventSink(ServiceScreen.Event.ItemClicked(item!!)) },
         clickableItemState = clickableItemState
       ) { clickableItem ->
         VisualItem(

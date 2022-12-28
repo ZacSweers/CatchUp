@@ -1,5 +1,7 @@
 [versions]
+accompanist = "0.28.0"
 agp = "8.0.0-alpha10"
+androidx-activity = "1.7.0-alpha02"
 androidx-core = "1.9.0"
 emoji = "1.2.0-alpha03"
 fragment = "1.6.0-alpha04"
@@ -67,7 +69,8 @@ versions = { id = "com.github.ben-manes.versions", version = "0.44.0" }
 [libraries]
 autodispose = { module = "com.uber.autodispose:autodispose", version.ref = "autodispose" }
 androidx-annotations = "androidx.annotation:annotation:1.5.0"
-androidx-activity = "androidx.activity:activity:1.7.0-alpha02"
+androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha01"
 
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
@@ -118,6 +121,7 @@ androidx-compose-constraintLayout = "androidx.constraintlayout:constraintlayout-
 androidx-compose-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
 androidx-compose-rxjava3 = { module = "androidx.compose.runtime:runtime-rxjava3", version.ref = "compose" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
+androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-config = "com.google.firebase:firebase-config:21.2.0"

@@ -29,7 +29,7 @@ data class CatchUpItem(
   @PrimaryKey val id: Long,
   val title: String,
   val description: String? = null,
-  val timestamp: Instant?,
+  val timestamp: Instant? = null,
   val score: Pair<String, Int>? = null,
   val tag: String? = null,
   val author: String? = null,
