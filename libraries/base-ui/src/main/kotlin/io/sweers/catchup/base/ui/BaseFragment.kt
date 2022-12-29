@@ -69,6 +69,7 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), ScopeProvider, Backpr
     return lifecycleProvider.requestScope()
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     if (item.itemId == android.R.id.home) {
       return onBackPressed()
