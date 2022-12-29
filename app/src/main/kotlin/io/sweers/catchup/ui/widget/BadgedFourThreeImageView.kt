@@ -176,6 +176,7 @@ class BadgedFourThreeImageView(context: Context, attrs: AttributeSet) :
       paint.colorFilter = cf
     }
 
+    @Deprecated("Deprecated in Java")
     override fun getOpacity(): Int {
       return PixelFormat.UNKNOWN
     }

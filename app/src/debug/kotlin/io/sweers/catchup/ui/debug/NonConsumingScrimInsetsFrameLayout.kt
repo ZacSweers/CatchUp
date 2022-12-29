@@ -62,6 +62,7 @@ class NonConsumingScrimInsetsFrameLayout : FrameLayout {
     setWillNotDraw(true)
   }
 
+  @Deprecated("Deprecated in Java")
   override fun fitSystemWindows(insets: Rect): Boolean {
     this.insets = Rect(insets)
     setWillNotDraw(insetForeground == null)

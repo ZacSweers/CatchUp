@@ -174,6 +174,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
     super.onDestroy()
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onBackPressed() {
     supportFragmentManager.fragments.filterIsInstance<BackpressHandler>().forEach {
       if (it.onBackPressed()) {

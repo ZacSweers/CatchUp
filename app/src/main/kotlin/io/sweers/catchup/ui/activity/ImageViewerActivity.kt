@@ -146,6 +146,7 @@ class ImageViewerActivity : AppCompatActivity() {
     }
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onBackPressed() {
     animateDimmingEnterExit(activityBackgroundDrawable.alpha, 0, 200)
     setResultAndFinish()
