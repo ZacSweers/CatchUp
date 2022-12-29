@@ -449,13 +449,6 @@ licensee {
   allowUrl("https://jsoup.org/license")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask>().configureEach {
-  doFirst {
-    // TODO Temporary until https://github.com/slackhq/slack-gradle-plugin/pull/193
-    kotlinOptions.freeCompilerArgs = emptyList()
-  }
-}
-
 dependencies {
   kapt(project(":libraries:tooling:spi-visualizer"))
   kapt(project(":libraries:tooling:spi-multibinds-validator"))
