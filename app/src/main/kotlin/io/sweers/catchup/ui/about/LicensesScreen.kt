@@ -42,6 +42,7 @@ import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.squareup.anvil.annotations.ContributesTo
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.Module
@@ -61,6 +62,7 @@ import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.kotlin.groupBy
 import io.sweers.catchup.util.kotlin.sortBy
+import java.util.Objects
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -360,4 +362,30 @@ private fun OssItemHeaderUi(item: OssItemHeader) {
 @Composable
 private fun PreviewHeaderUi() {
   OssItemHeaderUi(OssItemHeader("name", "Zac Sweers"))
+}
+
+@JsonClass(generateAdapter = true)
+internal data class OssGitHubEntry(val owner: String, val name: String)
+
+sealed class OssBaseItem {
+  abstract fun itemType(): Int
+}
+
+internal data class OssItemHeader(val avatarUrl: String, val name: String) : OssBaseItem() {
+  val id = name.hashCode().toLong()
+  override fun itemType() = 0
+}
+
+@JsonClass(generateAdapter = true)
+internal data class OssItem(
+  val avatarUrl: String,
+  val author: String,
+  val name: String,
+  val license: String?,
+  val clickUrl: String,
+  val description: String?,
+  val authorUrl: String? = null
+) : OssBaseItem() {
+  val id = Objects.hash(author, name).toLong()
+  override fun itemType() = 1
 }
