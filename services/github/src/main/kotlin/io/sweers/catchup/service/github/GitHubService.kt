@@ -98,7 +98,7 @@ constructor(
             description = description,
             timestamp = null,
             score = "★" to stars,
-            tag = language,
+            tag = language.takeUnless { it.isBlank() },
             itemClickUrl = url,
             mark =
               starsToday?.toString()?.let {

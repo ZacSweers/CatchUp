@@ -119,7 +119,7 @@ private val googleFontProvider: GoogleFont.Provider by lazy {
 @Composable
 fun CatchUpTheme(
   useDarkTheme: Boolean = isSystemInDarkTheme(),
-  isDynamicColor: Boolean = true,
+  isDynamicColor: Boolean = false,
   content: @Composable () -> Unit
 ) {
   val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

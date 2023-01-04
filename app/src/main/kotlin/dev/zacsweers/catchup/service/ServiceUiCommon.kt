@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.CatchUpItem
 
@@ -29,15 +28,15 @@ class ClickableItemState {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClickableItem(
-  lazyItems: LazyPagingItems<CatchUpItem>,
   item: CatchUpItem?,
-  eventSink: (ServiceScreen.Event) -> Unit,
+  onClick: () -> Unit,
   modifier: Modifier = Modifier,
+  onRetry: () -> Unit = {},
   clickableItemState: ClickableItemState = remember { ClickableItemState() },
   content: @Composable (CatchUpItem) -> Unit
 ) {
   if (item == null) {
-    ErrorItem(text = "Item was null!", modifier = modifier, onRetryClick = lazyItems::retry)
+    ErrorItem(text = "Item was null!", modifier = modifier, onRetryClick = onRetry)
   } else {
     if (clickableItemState.enabled) {
       val interactionSource = clickableItemState.interactionSource
@@ -49,15 +48,27 @@ fun ClickableItem(
           0.dp
         }
       val elevation by animateDpAsState(targetElevation)
-      Surface(
-        modifier = modifier,
-        tonalElevation = elevation,
-        shadowElevation = elevation,
-        interactionSource = interactionSource,
-        contentColor = clickableItemState.contentColor,
-        onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) }
-      ) {
-        content(item)
+      if (clickableItemState.contentColor == Color.Unspecified) {
+        Surface(
+          modifier = modifier,
+          tonalElevation = elevation,
+          shadowElevation = elevation,
+          interactionSource = interactionSource,
+          onClick = onClick
+        ) {
+          content(item)
+        }
+      } else {
+        Surface(
+          modifier = modifier,
+          tonalElevation = elevation,
+          shadowElevation = elevation,
+          interactionSource = interactionSource,
+          contentColor = clickableItemState.contentColor,
+          onClick = onClick
+        ) {
+          content(item)
+        }
       }
     } else {
       content(item)

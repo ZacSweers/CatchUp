@@ -69,7 +69,7 @@ object GithubApolloModule {
   fun provideGitHubOkHttpClient(client: OkHttpClient): OkHttpClient =
     client
       .newBuilder()
-      .addInterceptor(AuthInterceptor("token", BuildConfig.GITHUB_DEVELOPER_TOKEN))
+      .addInterceptor(AuthInterceptor("Bearer", BuildConfig.GITHUB_DEVELOPER_TOKEN))
       .build()
 
   @Provides

@@ -1,5 +1,7 @@
 package dev.zacsweers.catchup.service
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.text.format.DateUtils
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -57,11 +59,11 @@ fun TextServiceUi(
     ) { item ->
       ClickableItem(
         modifier = Modifier.animateItemPlacement(),
-        lazyItems = lazyItems,
         item = item,
-        eventSink = eventSink
+        onRetry = lazyItems::retry,
+        onClick = { eventSink(ServiceScreen.Event.ItemClicked(item!!)) }
       ) {
-        TextItem(it, themeColor, eventSink)
+        TextItem(it, themeColor) { eventSink(ServiceScreen.Event.MarkClicked(it)) }
       }
     }
     handleLoadStates(lazyItems, themeColor, onRefreshChange)
@@ -69,7 +71,7 @@ fun TextServiceUi(
 }
 
 @Composable
-fun TextItem(item: CatchUpItem, themeColor: Color, eventSink: (ServiceScreen.Event) -> Unit = {}) {
+fun TextItem(item: CatchUpItem, themeColor: Color, onMarkClick: () -> Unit = {}) {
   Row(
     modifier = Modifier.padding(16.dp),
     verticalAlignment = Alignment.CenterVertically,
@@ -78,13 +80,13 @@ fun TextItem(item: CatchUpItem, themeColor: Color, eventSink: (ServiceScreen.Eve
     item.mark?.let { mark ->
       Column(
         modifier =
-          Modifier.padding(start = 16.dp).clickable(
-            enabled = item.markClickUrl != null,
-            interactionSource = remember { MutableInteractionSource() },
-            indication = rememberRipple(bounded = false)
-          ) {
-            eventSink(ServiceScreen.Event.MarkClicked(item))
-          },
+          Modifier.padding(start = 16.dp)
+            .clickable(
+              enabled = item.markClickUrl != null,
+              interactionSource = remember { MutableInteractionSource() },
+              indication = rememberRipple(bounded = false),
+              onClick = onMarkClick
+            ),
         horizontalAlignment = Alignment.CenterHorizontally
       ) {
         Icon(
@@ -119,6 +121,7 @@ fun RowScope.DetailColumn(item: CatchUpItem, themeColor: Color, modifier: Modifi
       text = item.title,
       style = MaterialTheme.typography.titleMedium,
       overflow = TextOverflow.Ellipsis,
+      color = MaterialTheme.colorScheme.onSurface
     )
     // Description
     item.description?.let {
@@ -127,6 +130,7 @@ fun RowScope.DetailColumn(item: CatchUpItem, themeColor: Color, modifier: Modifi
         style = MaterialTheme.typography.bodyMedium,
         overflow = TextOverflow.Ellipsis,
         maxLines = 5,
+        color = MaterialTheme.colorScheme.onSurface
       )
     }
     // Author, source
@@ -171,6 +175,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
           Text(
             text = " • ",
             style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface
           )
         }
         val millis = timestamp.toEpochMilliseconds()
@@ -202,6 +207,7 @@ private fun ItemFooter(item: CatchUpItem) {
           Text(
             text = author,
             style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface
           )
         }
       // Source
@@ -212,11 +218,13 @@ private fun ItemFooter(item: CatchUpItem) {
             Text(
               text = " — ",
               style = MaterialTheme.typography.labelSmall,
+              color = MaterialTheme.colorScheme.onSurface
             )
           }
           Text(
             text = source,
             style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface
           )
         }
     }
@@ -260,7 +268,8 @@ fun LazyListScope.handleLoadStates(
   }
 }
 
-@Preview
+@Preview(uiMode = UI_MODE_NIGHT_NO)
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewTextItem() {
   CatchUpTheme {
@@ -277,7 +286,7 @@ fun PreviewTextItem() {
             score = "+" to 200,
             tag = "News",
             timestamp = Clock.System.now().minus(12.hours),
-            mark = Mark(text = "?")
+            mark = Mark(text = "14")
           ),
         themeColor = colorResource(R.color.colorAccent)
       )

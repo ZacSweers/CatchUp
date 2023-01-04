@@ -50,7 +50,9 @@
         android:name=".ui.about.AboutActivity"
         android:label="@string/title_activity_about"
         android:launchMode="singleTop"
+        android:exported="true"
         android:parentActivityName=".ui.activity.SettingsActivity"
+        android:configChanges="colorMode|density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
         />
 
     <activity

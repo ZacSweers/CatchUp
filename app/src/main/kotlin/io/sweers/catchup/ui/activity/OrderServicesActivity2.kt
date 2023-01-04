@@ -37,14 +37,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -194,6 +195,7 @@ constructor(
     }
   }
 
+  @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   private fun ScaffoldContent(viewModel: OrderServicesViewModel) {
     val canSave: Boolean by viewModel.canSave.collectAsState()
@@ -243,7 +245,7 @@ constructor(
                   val (x, y) = coordinates.positionInRoot()
                   // TODO show syllabus on fab
                 },
-            backgroundColor = colorResource(R.color.colorAccent),
+            containerColor = colorResource(R.color.colorAccent),
             onClick = {
               viewModel.save()
               activity?.finish()
@@ -308,7 +310,7 @@ constructor(
                   },
                 fontStyle = FontStyle.Normal,
                 // TODO what about Subhead?
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.bodyMedium,
                 color = Color.White
               )
             }
