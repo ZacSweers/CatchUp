@@ -18,8 +18,9 @@ package io.sweers.catchup.service.api
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.fragment.app.Fragment
+import androidx.compose.runtime.Immutable
 
+@Immutable
 data class ServiceMeta(
   val id: String,
   @StringRes val name: Int,
@@ -30,7 +31,7 @@ data class ServiceMeta(
   val pagesAreNumeric: Boolean = false,
   val serviceConfiguration: ServiceConfiguration? = null,
   val enabled: Boolean = true,
-  val deeplinkFragment: Class<out Fragment>? = null
+//  val deeplinkFragment: Class<out Fragment>? = null
 ) {
   val enabledPreferenceKey = "service_config_${id}_enabled"
 }
