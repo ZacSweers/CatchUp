@@ -21,7 +21,6 @@ import android.os.StrictMode
 import android.os.strictmode.UntaggedSocketViolation
 import androidx.appcompat.app.AppCompatDelegate
 import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.ticktock.runtime.EagerZoneRulesLoading
 import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.CatchUpPreferences
@@ -84,15 +83,6 @@ class CatchUpApplication : Application() {
     super.onCreate()
     appComponent =
       DaggerApplicationComponent.factory().create(this).apply { inject(this@CatchUpApplication) }
-    GlobalScope.launch {
-      // Initialize TZ data
-      try {
-        EagerZoneRulesLoading.cacheZones()
-      } catch (ignored: NoSuchMethodError) {
-        // If targeting a newer device or minSdk 26, this will fail because ZoneRulesProvider is a
-        // strangely hidden API: https://issuetracker.google.com/issues/159421054
-      }
-    }
 
     StrictMode.setVmPolicy(
       StrictMode.VmPolicy.Builder()
