@@ -1,14 +1,22 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  # Only run push on main
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+  # Always run on PRs
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}-${{ github.head_ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
-    name: JDK ${{ matrix.java_version }}
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java_version: [17]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -16,28 +24,25 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
 
-      - name: Install JDK ${{ matrix.java_version }}
+      - name: Install JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: ${{ matrix.java_version }}
+          java-version: '17'
 
-      - name: Generate cache key
-        run: ./checksum.sh checksum.txt
-
-      - uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Build with Gradle
+      - name: Bootstrap
         run: |
           mkdir -p ~/.gradle
           touch ~/.gradle/gradle.properties
           ./gradlew bootstrap
-          ./gradlew check
+
+      - name: Build and run tests
+        id: gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: check --continue --quiet
+          gradle-home-cache-cleanup: true
+          cache-read-only: false
 
       - name: (Fail-only) Bundle the build report
         if: failure()
@@ -49,7 +54,3 @@ jobs:
         with:
           name: error-report
           path: build-reports.zip
-
-#      - name: Upload alpha APK to play store (main only)
-#        run: CATCHUP_SIGNING_ENCRYPT_KEY=${{ secrets.CatchupSigningEncryptKey }} CATCHUP_P12_ENCRYPT_KEY=${{ secrets.CatchupP12EncryptKey }} ./createRelease.sh
-#        if: success() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && matrix.java_version == '11'
