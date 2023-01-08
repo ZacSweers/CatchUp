@@ -18,39 +18,35 @@ package io.sweers.catchup.ui.activity
 import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.core.content.ContextCompat
+import androidx.activity.compose.setContent
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
+import com.slack.circuit.CircuitCompositionLocals
+import com.slack.circuit.CircuitConfig
+import com.slack.circuit.NavigableCircuitContent
+import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.push
+import com.slack.circuit.rememberCircuitNavigator
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
 import dev.zacsweers.catchup.di.android.ActivityKey
-import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.databinding.ActivityMainBinding
 import io.sweers.catchup.edu.Syllabus
-import io.sweers.catchup.service.api.ScrollableContent
+import io.sweers.catchup.home.HomeScreen
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.ui.DetailDisplayer
-import io.sweers.catchup.ui.fragments.PagerFragment
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Qualifier
-import me.saket.inboxrecyclerview.InboxRecyclerView
-import me.saket.inboxrecyclerview.dimming.DimPainter
-import me.saket.inboxrecyclerview.page.ExpandablePageLayout
-import me.saket.inboxrecyclerview.page.InterceptResult
-import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 
 @ActivityKey(MainActivity::class)
 @ContributesMultibinding(AppScope::class, boundType = Activity::class)
@@ -60,26 +56,25 @@ constructor(
   private val customTab: CustomTabActivityHelper,
   private val linkManager: LinkManager,
   private val syllabus: Syllabus,
-  private val pagerFragmentProvider: Provider<PagerFragment>,
+  private val circuitConfig: CircuitConfig,
 ) : InjectingBaseActivity() {
-
-  internal lateinit var detailPage: ExpandablePageLayout
-  internal var pagerFragment: PagerFragment? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    WindowCompat.setDecorFitsSystemWindows(window, false)
     syllabus.bind(this)
 
-    val binding = viewContainer.inflateBinding(ActivityMainBinding::inflate)
-    detailPage = binding.detailPage
-
-    if (savedInstanceState == null) {
-      supportFragmentManager.commitNow {
-        add(R.id.fragment_container, pagerFragmentProvider.get().also { pagerFragment = it })
+    //    val viewGroup = viewContainer.forActivity(this)
+    //    val composeView = ComposeView(this)
+    //    viewGroup.addView(composeView)
+    setContent {
+      CatchUpTheme {
+        CircuitCompositionLocals(circuitConfig) {
+          val backstack = rememberSaveableBackStack { push(HomeScreen) }
+          val navigator = rememberCircuitNavigator(backstack)
+          NavigableCircuitContent(navigator, backstack)
+        }
       }
-    } else {
-      pagerFragment =
-        supportFragmentManager.findFragmentById(R.id.fragment_container) as PagerFragment
     }
   }
 
@@ -117,8 +112,11 @@ constructor(
         services: @JvmSuppressWildcards Map<String, Provider<Service>>,
       ): @JvmSuppressWildcards Map<String, Provider<Service>> {
         return services.filter {
-          serviceMetas.getValue(it.key).enabled &&
-            sharedPreferences.getBoolean(serviceMetas.getValue(it.key).enabledPreferenceKey, true)
+          (
+            key,
+          ) ->
+          serviceMetas.getValue(key).enabled &&
+            sharedPreferences.getBoolean(serviceMetas.getValue(key).enabledPreferenceKey, true)
         }
       }
     }
@@ -129,12 +127,6 @@ constructor(
 
     @Multibinds
     abstract fun fragmentCreators(): @JvmSuppressWildcards Map<Class<out Fragment>, Fragment>
-
-    @SingleIn(AppScope::class)
-    @Binds
-    abstract fun provideDetailDisplayer(
-      mainActivityDetailDisplayer: MainActivityDetailDisplayer
-    ): DetailDisplayer
   }
 }
 
@@ -143,64 +135,3 @@ constructor(
 @Qualifier annotation class VisualViewPool
 
 @Qualifier annotation class FinalServices
-
-/** A displayer that repeatedly shows new detail views in a new ExpandablePageLayout. */
-// TODO do something else with this
-class MainActivityDetailDisplayer @Inject constructor(private val mainActivity: MainActivity) :
-  DetailDisplayer {
-
-  private var collapser: (() -> Unit)? = null
-
-  private inline val detailPage
-    get() = mainActivity.detailPage
-
-  override val isExpandedOrExpanding
-    get() = detailPage.isExpandedOrExpanding
-
-  override fun showDetail(body: (ExpandablePageLayout, FragmentManager) -> () -> Unit) {
-    collapser?.invoke()
-    collapser = null
-    detailPage.addStateChangeCallbacks(
-      object : SimplePageStateChangeCallbacks() {
-        override fun onPageCollapsed() {
-          detailPage.removeStateChangeCallbacks(this)
-          collapser = null
-        }
-      }
-    )
-    collapser = body(detailPage, mainActivity.supportFragmentManager)
-  }
-
-  override fun bind(irv: InboxRecyclerView, useExistingFragment: Boolean) {
-    val targetFragment =
-      if (useExistingFragment) {
-        mainActivity.supportFragmentManager.findFragmentById(detailPage.id)
-      } else {
-        null
-      }
-    bind(irv, targetFragment)
-  }
-
-  override fun bind(irv: InboxRecyclerView, targetFragment: Fragment?) {
-    // TODO this is ugly, do better
-    mainActivity.pagerFragment?.appBarLayout?.let { detailPage.pushParentToolbarOnExpand(it) }
-    irv.expandablePage = detailPage
-    irv.dimPainter =
-      DimPainter.listAndPage(
-        color = ContextCompat.getColor(irv.context, R.color.colorPrimary),
-        alpha = 0.65F
-      )
-    if (targetFragment is ScrollableContent) {
-      detailPage.pullToCollapseInterceptor = { _, _, upwardPull ->
-        val directionInt = if (upwardPull) +1 else -1
-        val canScrollFurther = targetFragment.canScrollVertically(directionInt)
-        if (canScrollFurther) InterceptResult.INTERCEPTED else InterceptResult.IGNORED
-      }
-    }
-  }
-
-  override fun unbind(irv: InboxRecyclerView) {
-    detailPage.pullToCollapseInterceptor = null
-    irv.expandablePage = null
-  }
-}
