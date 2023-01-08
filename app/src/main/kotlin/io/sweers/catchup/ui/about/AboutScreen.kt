@@ -49,7 +49,7 @@ private val SCREEN_TITLES = intArrayOf(R.string.licenses, R.string.changelog)
 @CircuitInject(AboutScreen::class, AppScope::class)
 @Composable
 fun About(state: AboutScreen.State) {
-  val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+  val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   Scaffold(
     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = { CollapsingAboutHeader(state.version, scrollBehavior = scrollBehavior) }
