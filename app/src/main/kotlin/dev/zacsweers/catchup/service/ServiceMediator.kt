@@ -17,6 +17,8 @@ import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.Service
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
 
@@ -83,18 +85,22 @@ class ServiceMediator(
       // Retrofit's Coroutine CallAdapter dispatches on a worker
       // thread.
       Timber.tag("ServiceMediator").d("Fetching $serviceId with key '$loadKey'")
+      // Need to wrap in IO due to
+      // https://github.com/square/retrofit/issues/3363#issuecomment-1371767242
       val result =
-        service.fetch(
-          DataRequest(
-            pageKey = loadKey,
-            pageOffset = pageOffset,
-            limit =
-              when (loadType) {
-                REFRESH -> state.config.initialLoadSize
-                else -> state.config.pageSize
-              }
+        withContext(Dispatchers.IO) {
+          service.fetch(
+            DataRequest(
+              pageKey = loadKey,
+              pageOffset = pageOffset,
+              limit =
+                when (loadType) {
+                  REFRESH -> state.config.initialLoadSize
+                  else -> state.config.pageSize
+                }
+            )
           )
-        )
+        }
 
       Timber.tag("ServiceMediator").d("Updating DB $serviceId with key '$loadKey'")
       catchUpDatabase.withTransaction {

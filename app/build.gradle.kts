@@ -21,7 +21,7 @@ import com.squareup.moshi.adapter
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale.US
+import java.util.Locale
 import okio.buffer
 import okio.sink
 import okio.source
@@ -37,7 +37,7 @@ plugins {
   alias(libs.plugins.moshix)
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
-  //  alias(libs.plugins.bugsnag)
+  alias(libs.plugins.bugsnag)
   //  alias(libs.plugins.playPublisher)
 }
 
@@ -85,29 +85,6 @@ android {
       create("release") // .initWith(getByName("debug"))
     }
   }
-  packagingOptions.resources.excludes +=
-    listOf(
-      "**/*.dot",
-      "**/*.kotlin_metadata",
-      "**/*.properties",
-      "*.properties",
-      "kotlin/**",
-      "LICENSE.txt",
-      "LICENSE_OFL",
-      "LICENSE_UNICODE",
-      "META-INF/*.kotlin_module",
-      "META-INF/*.version",
-      "META-INF/androidx.*",
-      "META-INF/CHANGES",
-      "META-INF/com.uber.crumb/**",
-      "META-INF/LICENSE",
-      "META-INF/LICENSE.txt",
-      "META-INF/NOTICE",
-      "META-INF/NOTICE.txt",
-      "META-INF/README.md",
-      "META-INF/rxjava.properties",
-      "META-INF/services/javax.annotation.processing.Processor",
-    )
   buildTypes {
     getByName("debug") {
       applicationIdSuffix = ".debug"
@@ -150,12 +127,11 @@ android {
   namespace = "io.sweers.catchup"
 }
 
-// bugsnag {
-//   // Prevent bugsnag from wiring build UUIDs into debug builds
-//   variantFilter {
-//     setEnabled("debug" !in name.toLowerCase(Locale.US))
-//   }
-// }
+bugsnag {
+  enabled.set(false)
+  // Prevent bugsnag from wiring build UUIDs into debug builds
+  variantFilter { setEnabled("debug" !in name.lowercase(Locale.US)) }
+}
 
 kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas") } }
 
@@ -397,8 +373,8 @@ abstract class GenerateLicensesAsset : DefaultTask() {
     JsonWriter.of(jsonFile.get().asFile.sink().buffer()).use { writer ->
       writer.beginArray()
       githubDetails
-        .sortedBy { it.toString().toLowerCase(US) }
-        .distinctBy { it.toString().toLowerCase(US) }
+        .sortedBy { it.toString().lowercase(Locale.US) }
+        .distinctBy { it.toString().lowercase(Locale.US) }
         .forEach { (owner, name) ->
           writer.beginObject()
           writer.name("owner").value(owner).name("name").value(name)
@@ -431,13 +407,13 @@ val generateLicenseTask =
 
 generateLicenseTask.dependsOn("licenseeRelease")
 
-tasks.matching { it.name.startsWith("licensee") }.configureEach {
-  notCompatibleWithConfigurationCache("https://github.com/cashapp/licensee/issues/72")
-}
+tasks
+  .matching { it.name.startsWith("licensee") }
+  .configureEach {
+    notCompatibleWithConfigurationCache("https://github.com/cashapp/licensee/issues/72")
+  }
 
-tasks.matching { it.name == "licenseeDebug" }.configureEach {
-  enabled = false
-}
+tasks.matching { it.name == "licenseeDebug" }.configureEach { enabled = false }
 
 licensee {
   allow("Apache-2.0")
@@ -447,6 +423,33 @@ licensee {
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
+}
+
+androidComponents {
+  onVariants(selector().withBuildType("release")) { variant ->
+    variant.packaging.resources.excludes
+      .addAll(
+        "**/*.dot",
+        "**/*.kotlin_metadata",
+        "**/*.properties",
+        "*.properties",
+        "kotlin/**",
+        "LICENSE.txt",
+        "LICENSE_OFL",
+        "LICENSE_UNICODE",
+        "META-INF/*.kotlin_module",
+        "META-INF/*.version",
+        "META-INF/androidx.*",
+        "META-INF/CHANGES",
+        "META-INF/LICENSE",
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE",
+        "META-INF/NOTICE.txt",
+        "META-INF/README.md",
+        "META-INF/rxjava.properties",
+        "META-INF/services/javax.annotation.processing.Processor",
+      )
+  }
 }
 
 dependencies {
@@ -471,7 +474,6 @@ dependencies {
   implementation(project(":libraries:smmry"))
   implementation(project(":libraries:util"))
   implementation(project(":libraries:flowbinding"))
-  implementation(libs.misc.ticktock)
 
   // Support libs
   implementation(libs.androidx.annotations)
@@ -502,7 +504,8 @@ dependencies {
 
   // Compose
   implementation(project(":libraries:compose-extensions"))
-  implementation(libs.androidx.compose.uiTooling)
+  implementation(libs.androidx.compose.ui)
+  debugImplementation(libs.androidx.compose.uiTooling)
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material)
 

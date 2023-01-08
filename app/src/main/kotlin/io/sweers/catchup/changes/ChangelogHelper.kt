@@ -51,6 +51,7 @@ import io.sweers.catchup.util.show
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
+// TODO convert to overlay
 class ChangelogHelper
 @Inject
 constructor(
