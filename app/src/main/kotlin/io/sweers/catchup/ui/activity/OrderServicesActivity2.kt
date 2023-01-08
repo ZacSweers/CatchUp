@@ -20,12 +20,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +39,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Card
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -75,6 +80,9 @@ import dagger.Module
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.compose.CatchUpTheme
+import dev.zacsweers.catchup.compose.DraggableItem
+import dev.zacsweers.catchup.compose.dragContainer
+import dev.zacsweers.catchup.compose.rememberDragDropState
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.android.FragmentKey
 import io.sweers.catchup.CatchUpPreferences
@@ -88,7 +96,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -99,8 +106,6 @@ import kotlinx.coroutines.launch
  *
  * TODO:
  *  * Syllabus handling - requires integrating tap target on the location
- *  * Drag-and-drop - compose doesn't support this out of the box.
- *    * An intermediate solution might be to add up/down arrows
  */
 
 private class OrderServicesViewModel(
@@ -141,6 +146,11 @@ private class OrderServicesViewModel(
     val items = serviceMetas.value.toMutableList()
     items.shuffle()
     _serviceMetas.value = items
+  }
+
+  fun updateOrder(fromIndex: Int, toIndex: Int) {
+    _serviceMetas.value =
+      serviceMetas.value.toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
   }
 
   fun save() {
@@ -265,55 +275,23 @@ constructor(
 
   @Composable
   private fun ListContent(paddingValues: PaddingValues, viewModel: OrderServicesViewModel) {
-    val currentItemsSorted by viewModel.serviceMetas.collectAsState()
+    val items by viewModel.serviceMetas.collectAsState()
     Surface(Modifier.fillMaxSize().padding(paddingValues)) {
-      LazyColumn {
-        items(currentItemsSorted.size) { index ->
-          val item = currentItemsSorted[index]
-          Box(Modifier.background(colorResource(id = item.themeColor)).padding(16.dp)) {
-            ConstraintLayout(
-              modifier =
-                Modifier.fillMaxWidth() // TODO remove this...?
-                  .wrapContentHeight()
-                  .wrapContentWidth(Alignment.Start)
-            ) {
-              val (icon, spacer, text) = createRefs()
-              Image(
-                painterResource(id = item.icon),
-                stringResource(R.string.service_icon),
-                modifier =
-                  Modifier.width(40.dp).height(40.dp).constrainAs(icon) {
-                    bottom.linkTo(parent.bottom)
-                    end.linkTo(spacer.start)
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                  }
-              )
-              Spacer(
-                modifier =
-                  Modifier.width(8.dp).height(40.dp).constrainAs(spacer) {
-                    bottom.linkTo(parent.bottom)
-                    end.linkTo(text.start)
-                    start.linkTo(icon.end)
-                    top.linkTo(parent.top)
-                  }
-              )
-              val startRef: ConstrainedLayoutReference = spacer
-              Text(
-                text = stringResource(id = item.name),
-                modifier =
-                  Modifier.constrainAs(text) {
-                    bottom.linkTo(parent.bottom)
-                    end.linkTo(parent.end)
-                    start.linkTo(startRef.end)
-                    top.linkTo(parent.top)
-                  },
-                fontStyle = FontStyle.Normal,
-                // TODO what about Subhead?
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White
-              )
-            }
+      val listState = rememberLazyListState()
+      val dragDropState = rememberDragDropState(listState, viewModel::updateOrder)
+
+      LazyColumn(
+        modifier = Modifier.dragContainer(dragDropState),
+        state = listState,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+      ) {
+        itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
+          // TODO show touch response on press
+          DraggableItem(dragDropState, index) { isDragging ->
+            val elevation by animateDpAsState(if (isDragging) 4.dp else 1.dp)
+            // TODO using m2 card because wtf material3 why can't you just be normal
+            Card(elevation = elevation) { ServiceListItem(item) }
           }
         }
       }
@@ -340,6 +318,55 @@ constructor(
     }
     activity?.finish()
     return false
+  }
+}
+
+@Composable
+private fun ServiceListItem(item: ServiceMeta) {
+  Box(Modifier.background(colorResource(id = item.themeColor)).padding(16.dp)) {
+    ConstraintLayout(
+      modifier =
+        Modifier.fillMaxWidth() // TODO remove this...?
+          .wrapContentHeight()
+          .wrapContentWidth(Alignment.Start)
+    ) {
+      val (icon, spacer, text) = createRefs()
+      Image(
+        painterResource(id = item.icon),
+        stringResource(R.string.service_icon),
+        modifier =
+          Modifier.width(40.dp).height(40.dp).constrainAs(icon) {
+            bottom.linkTo(parent.bottom)
+            end.linkTo(spacer.start)
+            start.linkTo(parent.start)
+            top.linkTo(parent.top)
+          }
+      )
+      Spacer(
+        modifier =
+          Modifier.width(8.dp).height(40.dp).constrainAs(spacer) {
+            bottom.linkTo(parent.bottom)
+            end.linkTo(text.start)
+            start.linkTo(icon.end)
+            top.linkTo(parent.top)
+          }
+      )
+      val startRef: ConstrainedLayoutReference = spacer
+      Text(
+        text = stringResource(id = item.name),
+        modifier =
+          Modifier.constrainAs(text) {
+            bottom.linkTo(parent.bottom)
+            end.linkTo(parent.end)
+            start.linkTo(startRef.end)
+            top.linkTo(parent.top)
+          },
+        fontStyle = FontStyle.Normal,
+        // TODO what about Subhead?
+        style = MaterialTheme.typography.bodyMedium,
+        color = Color.White
+      )
+    }
   }
 }
 
