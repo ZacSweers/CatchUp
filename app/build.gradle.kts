@@ -38,6 +38,7 @@ plugins {
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
+  alias(libs.plugins.sqldelight)
   //  alias(libs.plugins.playPublisher)
 }
 
@@ -578,6 +579,15 @@ dependencies {
   implementation(libs.coil.compose)
   implementation(libs.androidx.compose.accompanist.systemUi)
   implementation(libs.androidx.activity.compose)
+
+  implementation(libs.androidx.datastore.preferences)
+  implementation(libs.kotlinx.immutable)
+  implementation(libs.sqldelight.android)
+  implementation(libs.sqldelight.paging)
+  implementation(libs.sqldelight.coroutines)
+  implementation(libs.sqldelight.primitiveAdapters)
+  implementation(libs.misc.composeSettings)
+  implementation(libs.misc.composeSettings.datastore)
 
   // Apollo
   implementation(libs.apollo.httpcache)
