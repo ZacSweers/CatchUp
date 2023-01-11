@@ -1,6 +1,5 @@
 package io.sweers.catchup.home
 
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.compose.animation.Animatable
@@ -31,7 +30,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,53 +53,80 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.CircuitContent
 import com.slack.circuit.CircuitUiEvent
 import com.slack.circuit.CircuitUiState
+import com.slack.circuit.Navigator
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Provides
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ServiceScreen
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.ui.activity.SettingsActivity
-import javax.inject.Inject
+import io.sweers.catchup.ui.activity.SettingsScreen
 import kotlin.math.absoluteValue
 import kotlin.math.sign
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 object HomeScreen : Screen {
-  data class State(val serviceMetas: List<ServiceMeta>, val eventSink: (Event) -> Unit = {}) :
-    CircuitUiState
+  data class State(
+    val serviceMetas: ImmutableList<ServiceMeta>,
+    val eventSink: (Event) -> Unit = {}
+  ) : CircuitUiState
   sealed interface Event : CircuitUiEvent {
     object OpenSettings : Event
   }
 }
 
-@CircuitInject(HomeScreen::class, AppScope::class)
 class HomePresenter
-@Inject
+@AssistedInject
 constructor(
-  private val serviceMetas: List<ServiceMeta>,
+  @Assisted private val navigator: Navigator,
+  private val serviceMetaMap: Map<String, ServiceMeta>,
+  private val sharedPrefs: SharedPreferences,
+  private val catchUpPreferences: CatchUpPreferences,
   // TODO bind with toolbar
   private val changelogHelper: ChangelogHelper,
 ) : Presenter<HomeScreen.State> {
+
+  @CircuitInject(HomeScreen::class, AppScope::class)
+  @AssistedFactory
+  fun interface Factory {
+    fun create(navigator: Navigator): HomePresenter
+  }
+
   @Composable
   override fun present(): HomeScreen.State {
-    // TODO this is bad in circuit
-    val context = LocalContext.current
+    val currentOrder: List<String> by
+      remember { catchUpPreferences.servicesOrder.map { it?.split(',') ?: emptyList() } }
+        .collectAsState(initial = emptyList())
+    val serviceMetas =
+      remember(currentOrder) {
+        // TODO make enabledPrefKey live
+        check(serviceMetaMap.isNotEmpty()) { "No services found!" }
+        serviceMetaMap.values
+          .filter(ServiceMeta::enabled)
+          .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }
+          .sortedBy { currentOrder.indexOf(it.id) }
+          .toImmutableList()
+      }
+
     return HomeScreen.State(
       serviceMetas = serviceMetas,
     ) { event ->
       when (event) {
         HomeScreen.Event.OpenSettings -> {
-          context.startActivity(Intent(context, SettingsActivity::class.java))
+          navigator.goTo(SettingsScreen)
         }
       }
     }
@@ -114,15 +142,15 @@ constructor(
 @CircuitInject(HomeScreen::class, AppScope::class)
 fun Home(state: HomeScreen.State) {
   val eventSink = state.eventSink
-  val pagerState = rememberPagerState()
+  val pagerState = key(state.serviceMetas) { rememberPagerState() }
   val currentServiceMeta = state.serviceMetas[pagerState.currentPage]
   val title = stringResource(currentServiceMeta.name)
   val systemUiController = rememberSystemUiController()
 
   val surfaceColor = MaterialTheme.colorScheme.surface
+  // TODO this isn't updating when serviceMeta order changes
   val colorCache = rememberColorCache(state.serviceMetas)
-  val firstColor = colorCache[0]
-  val tabLayoutColor = remember { Animatable(firstColor) }
+  val tabLayoutColor = remember(colorCache) { Animatable(colorCache[0]) }
   var isAnimatingColor by remember { mutableStateOf(false) }
   var scrimColor by remember { mutableStateOf(surfaceColor) }
 
@@ -242,32 +270,13 @@ fun Home(state: HomeScreen.State) {
         modifier = Modifier.weight(1f),
         pageCount = state.serviceMetas.size,
         beyondBoundsPageCount = 1,
-        key = { it },
+        key = { state.serviceMetas[it].id },
         state = pagerState,
         verticalAlignment = Alignment.Top
       ) { page ->
         CircuitContent(ServiceScreen(state.serviceMetas[page].id))
       }
     }
-  }
-}
-
-@ContributesTo(AppScope::class)
-@dagger.Module
-object Module {
-
-  @Provides
-  fun provideServiceHandlers(
-    sharedPrefs: SharedPreferences,
-    serviceMetas: Map<String, ServiceMeta>,
-    catchUpPreferences: CatchUpPreferences,
-  ): List<ServiceMeta> {
-    check(serviceMetas.isNotEmpty()) { "No services found!" }
-    val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
-    return serviceMetas.values
-      .filter(ServiceMeta::enabled)
-      .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }
-      .sortedBy { currentOrder.indexOf(it.id) }
   }
 }
 
@@ -282,16 +291,19 @@ value class ColorCache(private val colors: Array<Color>) {
 
 @Composable
 fun rememberColorCache(serviceMetas: List<ServiceMeta>): ColorCache {
-  val dayOnlyContext =
-    LocalContext.current.createConfigurationContext(
-      Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
-    )
-  val colors =
-    Array(serviceMetas.size) { index ->
-      val color = dayOnlyContext.getColor(serviceMetas[index].themeColor)
-      Color(color)
-    }
-  return remember { ColorCache(colors) }
+  val context = LocalContext.current
+  return remember(context, serviceMetas) {
+    val dayOnlyContext =
+      context.createConfigurationContext(
+        Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
+      )
+    val colors =
+      Array(serviceMetas.size) { index ->
+        val color = dayOnlyContext.getColor(serviceMetas[index].themeColor)
+        Color(color)
+      }
+    ColorCache(colors)
+  }
 }
 
 private val Color.isDark: Boolean
