@@ -60,7 +60,6 @@ fun TextServiceUi(
       ClickableItem(
         modifier = Modifier.animateItemPlacement(),
         item = item,
-        onRetry = lazyItems::retry,
         onClick = { eventSink(ServiceScreen.Event.ItemClicked(item!!)) }
       ) {
         TextItem(it, themeColor) { eventSink(ServiceScreen.Event.MarkClicked(it)) }
