@@ -19,6 +19,7 @@ corbind = "1.6.0"
 coroutines = "1.6.4"
 crumb = "0.1.0"
 dagger = "2.44.2"
+datastore = "1.1.0-dev01"
 detekt = "1.22.0"
 espresso = "3.5.1"
 flipper = "0.176.1"
@@ -26,7 +27,6 @@ hyperion = "0.9.24"
 inspector = "0.3.0"
 jdk = "17"
 kotlin = "1.8.0"
-kotpref = "2.13.2"
 ksp = "1.8.0-1.0.8"
 ktfmt = "0.42"
 leakcanary = "2.10"
@@ -41,6 +41,7 @@ retrofit = "2.9.0"
 room = "2.5.0-rc01"
 sgp = "0.4.1"
 spotless = "6.12.1"
+sqldelight = "2.0.0-alpha04"
 # https://github.com/Tickaroo/tikxml/issues/114
 tikxml = "0.8.13"
 
@@ -64,6 +65,7 @@ retry = { id = "org.gradle.test-retry", version = "1.5.0" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
 sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 versions = { id = "com.github.ben-manes.versions", version = "0.44.0" }
 
 [libraries]
@@ -172,6 +174,8 @@ dagger-apt-compiler = { module = "com.google.dagger:dagger-compiler", version.re
 dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }
 
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
 detekt-plugins-twitterCompose = "com.twitter.compose.rules:detekt:0.0.26"
 
 gson = "com.google.gson:gson:2.9.0"
@@ -182,6 +186,7 @@ kotlin-coroutinesRx = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3",
 kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
 kotlin-metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0"
 kotlin-poet = "com.squareup:kotlinpoet:1.12.0"
+kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
 
 markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
 markwon-extStrikethrough = { module = "io.noties.markwon:ext-strikethrough", version.ref = "markwon" }
@@ -207,6 +212,8 @@ misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
 misc-debug-scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.2.0"
 
+misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:0.15.0"
+misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.15.0"
 misc-flick = "me.saket:flick:1.7.0"
 misc-gestureViews = "com.alexvasilkov:gesture-views:2.8.3"
 misc-inboxRecyclerView = "me.saket:inboxrecyclerview:3.0.0"
@@ -214,8 +221,6 @@ misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
 misc-jsoup = "org.jsoup:jsoup:1.15.3"
 misc-jsr250 = "javax.annotation:jsr250-api:1.0"
 misc-jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
-misc-kotpref = { module = "com.chibatching.kotpref:kotpref", version.ref = "kotpref" }
-misc-kotprefEnum = { module = "com.chibatching.kotpref:enum-support", version.ref = "kotpref" }
 misc-lottie = "com.airbnb.android:lottie:5.2.0"
 misc-moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
 misc-okio = "com.squareup.okio:okio:3.3.0"
@@ -244,6 +249,11 @@ rx-dogTag = "com.uber.rxdogtag2:rxdogtag:2.0.1"
 rx-dogTagAutoDispose = "com.uber.rxdogtag2:rxdogtag-autodispose:2.0.1"
 rx-java = "io.reactivex.rxjava3:rxjava:3.1.5"
 rx-relay = "com.jakewharton.rxrelay3:rxrelay:3.0.1"
+
+sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions-jvm", version.ref = "sqldelight" }
+sqldelight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
+sqldelight-primitiveAdapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
 
 tikxml-annotation = { module = "com.tickaroo.tikxml:annotation", version.ref = "tikxml" }
 tikxml-apt = { module = "com.tickaroo.tikxml:processor", version.ref = "tikxml" }

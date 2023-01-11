@@ -10,15 +10,11 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridItemScope
-import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
-import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,7 +26,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +43,6 @@ import coil.request.ImageRequest
 import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.base.ui.generateAsync
 import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.util.UiUtil
 import kotlinx.coroutines.launch
 
@@ -58,7 +52,6 @@ fun VisualServiceUi(
   lazyItems: LazyPagingItems<CatchUpItem>,
   themeColor: Color,
   onRefreshChange: (Boolean) -> Unit,
-  spanConfig: VisualService.SpanConfig,
   eventSink: (ServiceScreen.Event) -> Unit,
 ) {
   val placeholders =
@@ -67,19 +60,19 @@ fun VisualServiceUi(
     } else {
       PLACEHOLDERS_LIGHT
     }
-  val spanCount = spanConfig.spanCount
-  // TODO with multi-size spans we get blank spaces in the grid
-  LazyVerticalGrid(columns = GridCells.Fixed(spanCount)) {
+
+  LazyVerticalStaggeredGrid(
+    columns = StaggeredGridCells.Fixed(2),
+    modifier = Modifier.fillMaxSize(),
+  ) {
     itemsIndexed(
       lazyItems,
       key = { _, item -> item.id },
-      span = { index -> GridItemSpan(spanConfig.spanSizeResolver?.invoke(index) ?: 1) },
     ) { index, item ->
       val clickableItemState = remember { ClickableItemState() }
+      clickableItemState.enabled = item != null
       ClickableItem(
-        modifier = Modifier.animateItemPlacement(),
         item = item,
-        onRetry = lazyItems::retry,
         onClick = { eventSink(ServiceScreen.Event.ItemClicked(item!!)) },
         clickableItemState = clickableItemState
       ) { clickableItem ->
@@ -87,12 +80,12 @@ fun VisualServiceUi(
           item = clickableItem,
           index = index,
           placeholder = placeholders[index % placeholders.size],
-          onEnableChanged = { clickableItemState.enabled = it },
+          onEnableChanged = { clickableItemState.enabled = it && item != null },
           onContentColorChanged = { clickableItemState.contentColor = it },
         )
       }
     }
-    handleLoadStates(lazyItems, themeColor, spanCount, onRefreshChange)
+    handleLoadStates(lazyItems, themeColor, onRefreshChange)
   }
 }
 
@@ -101,6 +94,7 @@ fun VisualItem(
   item: CatchUpItem,
   index: Int,
   placeholder: ColorDrawable,
+  modifier: Modifier = Modifier,
   onEnableChanged: (Boolean) -> Unit = {},
   onContentColorChanged: (Color) -> Unit = {},
 ) {
@@ -109,7 +103,7 @@ fun VisualItem(
   //  saturation transformation
   //  etc
   val displayMetrics = LocalContext.current.resources.displayMetrics.scaledDensity
-  Box(Modifier.aspectRatio(4f / 3f)) {
+  Box(modifier) {
     val imageInfo = item.imageInfo!!
     var hasFadedIn by remember(index) { mutableStateOf(false) }
     var badgeColor by remember(index) { mutableStateOf(Color.Unspecified) }
@@ -189,6 +183,7 @@ fun VisualItem(
 private fun Badge(
   badgeColor: Color,
   modifier: Modifier = Modifier,
+  text: String = "GIF",
 ) {
   Surface(
     modifier = modifier,
@@ -197,7 +192,7 @@ private fun Badge(
   ) {
     Text(
       modifier = Modifier.padding(4.dp),
-      text = "GIF",
+      text = text,
       fontSize = 12.sp,
       fontStyle = FontStyle.Normal,
       fontWeight = FontWeight.Black,
@@ -220,27 +215,27 @@ private fun applyPalette(palette: Palette, onContentColorChanged: (Color) -> Uni
   onContentColorChanged(Color(color))
 }
 
-fun LazyGridScope.handleLoadStates(
+@OptIn(ExperimentalFoundationApi::class)
+fun LazyStaggeredGridScope.handleLoadStates(
   lazyItems: LazyPagingItems<CatchUpItem>,
   themeColor: Color,
-  spanCount: Int,
   onRefreshChange: (Boolean) -> Unit
 ) {
   lazyItems.apply {
     when {
       loadState.refresh is LoadState.Loading -> {
         onRefreshChange(true)
-        item(span = { GridItemSpan(spanCount) }) { LoadingView(themeColor, Modifier.fillMaxSize()) }
+        item(key = "loading") { LoadingView(themeColor, Modifier.fillMaxSize()) }
       }
       loadState.refresh is LoadState.NotLoading -> {
         onRefreshChange(false)
       }
       loadState.append is LoadState.Loading -> {
-        item(span = { GridItemSpan(spanCount) }) { LoadingItem() }
+        item(key = "appendingMore") { LoadingItem() }
       }
       loadState.refresh is LoadState.Error -> {
         val e = loadState.refresh as LoadState.Error
-        item(span = { GridItemSpan(spanCount) }) {
+        item(key = "errorLoading") {
           ErrorItem(
             "Error loading service: ${e.error.localizedMessage}",
             Modifier.fillMaxSize(),
@@ -250,7 +245,7 @@ fun LazyGridScope.handleLoadStates(
       }
       loadState.append is LoadState.Error -> {
         val e = loadState.append as LoadState.Error
-        item(span = { GridItemSpan(2) }) {
+        item(key = "errorLoadingMore") {
           ErrorItem("Error loading service: ${e.error.localizedMessage}", onRetryClick = ::retry)
         }
       }
@@ -259,15 +254,14 @@ fun LazyGridScope.handleLoadStates(
 }
 
 // TODO copied + modified from Paging
-fun <T : Any> LazyGridScope.itemsIndexed(
+@OptIn(ExperimentalFoundationApi::class)
+fun <T : Any> LazyStaggeredGridScope.itemsIndexed(
   items: LazyPagingItems<T>,
   key: ((index: Int, item: T) -> Any)? = null,
-  span: (LazyGridItemSpanScope.(index: Int) -> GridItemSpan)? = null,
-  itemContent: @Composable LazyGridItemScope.(index: Int, value: T?) -> Unit
+  itemContent: @Composable LazyStaggeredGridScope.(index: Int, value: T?) -> Unit
 ) {
   items(
     count = items.itemCount,
-    span = span,
     key =
       if (key == null) null
       else

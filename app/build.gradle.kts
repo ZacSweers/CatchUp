@@ -38,6 +38,7 @@ plugins {
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
+  alias(libs.plugins.sqldelight)
   //  alias(libs.plugins.playPublisher)
 }
 
@@ -423,6 +424,8 @@ licensee {
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
+  // MIT
+  allowUrl("https://github.com/alorma/Compose-Settings/blob/main/LICENSE")
 }
 
 androidComponents {
@@ -563,8 +566,6 @@ dependencies {
   implementation(libs.rx.dogTagAutoDispose)
   implementation(libs.misc.moshiLazyAdapters)
   implementation(libs.autodispose.androidxLifecycle)
-  implementation(libs.misc.kotpref)
-  implementation(libs.misc.kotprefEnum)
   implementation(libs.kotlin.datetime)
 
   implementation(libs.androidx.compose.animation.graphics)
@@ -578,6 +579,15 @@ dependencies {
   implementation(libs.coil.compose)
   implementation(libs.androidx.compose.accompanist.systemUi)
   implementation(libs.androidx.activity.compose)
+
+  implementation(libs.androidx.datastore.preferences)
+  implementation(libs.kotlinx.immutable)
+  implementation(libs.sqldelight.android)
+  implementation(libs.sqldelight.paging)
+  implementation(libs.sqldelight.coroutines)
+  implementation(libs.sqldelight.primitiveAdapters)
+  implementation(libs.misc.composeSettings)
+  implementation(libs.misc.composeSettings.datastore)
 
   // Apollo
   implementation(libs.apollo.httpcache)

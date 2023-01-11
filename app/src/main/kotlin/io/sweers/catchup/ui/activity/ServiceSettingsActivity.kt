@@ -109,7 +109,8 @@ constructor(private val serviceSettingsFragProvider: Provider<ServiceSettingsFra
     private fun setUpGeneralSettings() {
       preferenceScreen = preferenceManager.createPreferenceScreen(requireActivity())
 
-      val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
+      //      val currentOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
+      val currentOrder = emptyList<String>()
       serviceMetas.values
         .asSequence()
         .sortedBy { currentOrder.indexOf(it.id) }

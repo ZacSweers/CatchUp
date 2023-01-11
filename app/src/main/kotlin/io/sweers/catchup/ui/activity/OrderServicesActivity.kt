@@ -35,7 +35,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.chibatching.kotpref.bulk
 import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
@@ -145,7 +144,7 @@ class OrderServicesFragment @Inject constructor() :
     }
     val lm = LinearLayoutManager(view.context)
     recyclerView.layoutManager = lm
-    storedOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
+    //    storedOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
     val instanceChanges = savedInstanceState?.getStringArrayList("pendingChanges")
     pendingChanges = instanceChanges?.map { serviceMetas[it] as ServiceMeta }
     val displayOrder = instanceChanges ?: storedOrder
@@ -183,9 +182,9 @@ class OrderServicesFragment @Inject constructor() :
 
     save.setOnClickListener {
       pendingChanges?.let { changes ->
-        catchUpPreferences.bulk {
-          servicesOrder = changes.joinToString(",", transform = ServiceMeta::id)
-        }
+        //        catchUpPreferences.bulk {
+        //          servicesOrder = changes.joinToString(",", transform = ServiceMeta::id)
+        //        }
       }
       activity?.finish()
     }

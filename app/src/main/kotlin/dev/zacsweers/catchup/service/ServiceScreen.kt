@@ -64,7 +64,6 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.ImageViewerData
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.UrlMeta
-import io.sweers.catchup.service.api.VisualService
 import io.sweers.catchup.ui.activity.FinalServices
 import javax.inject.Provider
 import kotlinx.coroutines.flow.Flow
@@ -87,7 +86,6 @@ data class ServiceScreen(val serviceKey: String) : Screen {
     data class VisualState(
       override val items: Flow<PagingData<CatchUpItem>>,
       override val themeColor: Color,
-      val spanConfig: VisualService.SpanConfig,
       override val eventSink: (Event) -> Unit
     ) : State
   }
@@ -172,13 +170,7 @@ constructor(
       }
     }
     return when (service.meta().isVisual) {
-      true ->
-        VisualState(
-          items = items,
-          themeColor = themeColor,
-          spanConfig = (service as VisualService).spanConfig(),
-          eventSink = eventSink
-        )
+      true -> VisualState(items = items, themeColor = themeColor, eventSink = eventSink)
       false -> TextState(items = items, themeColor = themeColor, eventSink = eventSink)
     }
   }
@@ -201,7 +193,7 @@ fun Service(state: ServiceScreen.State) {
   // TODO this isn't accounting for actual system bars ugh
   Box(Modifier.pullRefresh(pullRefreshState).systemBarsPadding()) {
     if (state is VisualState) {
-      VisualServiceUi(lazyItems, state.themeColor, { refreshing = it }, state.spanConfig, eventSink)
+      VisualServiceUi(lazyItems, state.themeColor, { refreshing = it }, eventSink)
     } else {
       TextServiceUi(lazyItems, state.themeColor, { refreshing = it }, eventSink)
     }

@@ -41,17 +41,9 @@
     </activity>
 
     <activity
-        android:name=".ui.activity.SettingsActivity"
-        android:label="@string/title_activity_settings"
-        android:launchMode="singleTop"
-        android:parentActivityName=".ui.activity.MainActivity"
-        />
-
-    <activity
         android:name=".ui.about.AboutActivity"
         android:label="@string/title_activity_about"
         android:launchMode="singleTop"
-        android:parentActivityName=".ui.activity.SettingsActivity"
         android:configChanges="colorMode|density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
         />
 
@@ -59,14 +51,12 @@
         android:name=".ui.activity.OrderServicesActivity"
         android:label="@string/title_activity_about"
         android:launchMode="singleTop"
-        android:parentActivityName=".ui.activity.SettingsActivity"
         />
 
     <activity
         android:name=".ui.activity.ServiceSettingsActivity"
         android:label="@string/pref_services"
         android:launchMode="singleTop"
-        android:parentActivityName=".ui.activity.SettingsActivity"
         />
 
     <activity

@@ -54,6 +54,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -73,7 +74,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.chibatching.kotpref.bulk
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
@@ -89,7 +89,6 @@ import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectableBaseFragment
 import io.sweers.catchup.databinding.FragmentOrderServicesBinding
-import io.sweers.catchup.flowFor
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.setLightStatusBar
 import javax.inject.Inject
@@ -97,9 +96,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /*
  * This is a WIP implementation of OrderServices view with Compose.
@@ -120,11 +121,12 @@ private class OrderServicesViewModel(
   val canSave: StateFlow<Boolean>
 
   init {
-    val initialOrder = catchUpPreferences.servicesOrder?.split(",") ?: emptyList()
+    // TODO this is bad, switch to collectAsState in the future
+    val initialOrder =
+      runBlocking { catchUpPreferences.servicesOrder.first() }?.split(",") ?: emptyList()
     val initialOrderedServices = serviceMetasMap.values.sortedBy { initialOrder.indexOf(it.id) }
     storedOrder =
-      catchUpPreferences
-        .flowFor { ::servicesOrder }
+      catchUpPreferences.servicesOrder
         .drop(1) // Ignore the initial value we read synchronously
         .map { it?.split(",") ?: emptyList() }
         .stateIn(viewModelScope, SharingStarted.Lazily, initialOrder)
@@ -153,9 +155,10 @@ private class OrderServicesViewModel(
       serviceMetas.value.toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
   }
 
-  fun save() {
-    catchUpPreferences.bulk {
-      servicesOrder = serviceMetas.value.joinToString(",", transform = ServiceMeta::id)
+  suspend fun save() {
+    catchUpPreferences.edit {
+      it[CatchUpPreferences.Keys.servicesOrder] =
+        serviceMetas.value.joinToString(",", transform = ServiceMeta::id)
     }
   }
 
@@ -245,6 +248,7 @@ constructor(
           exit = shrinkOut(shrinkTowards = Alignment.Center)
         ) {
           // TODO ripple color?
+          val scope = rememberCoroutineScope()
           FloatingActionButton(
             modifier =
               Modifier.indication(
@@ -257,8 +261,10 @@ constructor(
                 },
             containerColor = colorResource(R.color.colorAccent),
             onClick = {
-              viewModel.save()
-              activity?.finish()
+              scope.launch {
+                viewModel.save()
+                activity?.finish()
+              }
             },
             content = {
               Image(
@@ -300,6 +306,7 @@ constructor(
 
   override fun onBackPressed(): Boolean {
     if (viewModel.canSave.value) {
+      // TODO circuit-ify this
       AlertDialog.Builder(requireContext())
         .setTitle(R.string.pending_changes_title)
         .setMessage(R.string.pending_changes_message)
@@ -310,7 +317,7 @@ constructor(
         }
         .setNegativeButton(R.string.save) { dialog, _ ->
           dialog.dismiss()
-          viewModel.save()
+          runBlocking { viewModel.save() }
           activity?.finish()
         }
         .show()

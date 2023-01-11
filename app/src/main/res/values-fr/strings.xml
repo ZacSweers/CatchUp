@@ -49,7 +49,7 @@
   <string name="settings_error_cleaning_cache">Une erreur est survenue lors du vidage du cache</string>
   <string name="settings_reset">Prendra effet lors du prochain redémarrage de l\'application</string>
   <string name="undo">Annuler</string>
-  <string name="pref_use_dark_theme">Utiliser le thème foncé.</string>
+  <string name="pref_force_dark_theme">Forcer le thème foncé.</string>
   <string name="pref_dark_theme_enabled">Le thème foncé est activé</string>
   <string name="pref_dark_theme_disabled">Le thème foncé est désactivé, le thème clair est celui par défaut.</string>
   <string name="pref_auto_set_theme">Thème automatique</string>

@@ -13,37 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("NOTHING_TO_INLINE")
-
 package io.sweers.catchup.util
 
-import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatDelegate
 import com.jakewharton.processphoenix.ProcessPhoenix
-import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.ui.activity.LauncherActivity
-
-inline fun Activity.updateNightMode(catchUpPreferences: CatchUpPreferences) {
-  val isCurrentlyInNightMode = isInNightMode()
-  val nightMode =
-    when {
-      catchUpPreferences.daynightAuto -> AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
-      catchUpPreferences.dayNightForceNight -> AppCompatDelegate.MODE_NIGHT_YES
-      else -> AppCompatDelegate.MODE_NIGHT_NO
-    }
-  if (
-    nightMode == AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY ||
-      (isCurrentlyInNightMode && nightMode != AppCompatDelegate.MODE_NIGHT_YES) ||
-      !isCurrentlyInNightMode && nightMode == AppCompatDelegate.MODE_NIGHT_YES
-  ) {
-    AppCompatDelegate.setDefaultNightMode(nightMode)
-    recreate()
-  }
-}
 
 fun Context.resolveActivity(): ComponentActivity {
   if (this is ComponentActivity) {

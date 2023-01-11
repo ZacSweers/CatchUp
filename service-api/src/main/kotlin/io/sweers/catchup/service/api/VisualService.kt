@@ -15,16 +15,4 @@
  */
 package io.sweers.catchup.service.api
 
-import androidx.compose.runtime.Immutable
-
-interface VisualService : Service {
-
-  fun spanConfig(): SpanConfig = SpanConfig.DEFAULT
-
-  @Immutable
-  data class SpanConfig(val spanCount: Int, val spanSizeResolver: ((Int) -> Int)? = null) {
-    companion object {
-      val DEFAULT = SpanConfig(2, null)
-    }
-  }
-}
+interface VisualService : Service

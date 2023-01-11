@@ -37,7 +37,6 @@ import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
-import io.sweers.catchup.flowFor
 import io.sweers.catchup.flowbinding.intentReceivers
 import io.sweers.catchup.service.api.ImageViewerData
 import io.sweers.catchup.service.api.LinkHandler
@@ -53,6 +52,7 @@ import java.lang.ref.WeakReference
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -81,10 +81,9 @@ constructor(
     }
     filter.addAction(Intent.ACTION_PACKAGE_CHANGED)
     activity.lifecycleScope.launch {
-      activity
-        .intentReceivers(filter)
-        .mergeWith(catchUpPreferences.flowFor { ::smartlinkingGlobal })
-        .collect { dumbCache.clear() }
+      activity.intentReceivers(filter).mergeWith(catchUpPreferences.smartlinkingGlobal).collect {
+        dumbCache.clear()
+      }
     }
   }
 
@@ -133,7 +132,9 @@ constructor(
           return
         }
     val intent = Intent(Intent.ACTION_VIEW, meta.uri)
-    if (!catchUpPreferences.smartlinkingGlobal) {
+
+    // TODO this isn't great, should we make a StateFlow backed by this?
+    if (catchUpPreferences.smartlinkingGlobal.first()) {
       openCustomTab(meta.context, uri, meta.accentColor)
       return
     }

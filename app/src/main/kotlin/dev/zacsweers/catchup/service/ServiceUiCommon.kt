@@ -31,12 +31,11 @@ fun ClickableItem(
   item: CatchUpItem?,
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
-  onRetry: () -> Unit = {},
   clickableItemState: ClickableItemState = remember { ClickableItemState() },
   content: @Composable (CatchUpItem) -> Unit
 ) {
   if (item == null) {
-    ErrorItem(text = "Item was null!", modifier = modifier, onRetryClick = onRetry)
+    // Loading!
   } else {
     if (clickableItemState.enabled) {
       val interactionSource = clickableItemState.interactionSource

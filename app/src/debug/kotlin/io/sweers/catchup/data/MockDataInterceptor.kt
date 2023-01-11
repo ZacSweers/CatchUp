@@ -18,6 +18,8 @@ package io.sweers.catchup.data
 import android.content.Context
 import io.sweers.catchup.data.model.ServiceData
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -43,9 +45,8 @@ class MockDataInterceptor(
     val host = url.host
     val path = url.encodedPath
     val serviceData = SUPPORTED_ENDPOINTS[host]
-    return if (
-      debugPreferences.mockModeEnabled && serviceData != null && serviceData.supports(path)
-    ) {
+    val mockModeEnabled = runBlocking { debugPreferences.mockModeEnabled.first() }
+    return if (mockModeEnabled && serviceData != null && serviceData.supports(path)) {
       Response.Builder()
         .request(request)
         .body(
