@@ -36,13 +36,10 @@ import io.sweers.catchup.ui.logs.LogsDialog
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.isN
 import io.sweers.catchup.util.kotlin.applyOn
-import io.sweers.catchup.util.kotlin.getValue
-import io.sweers.catchup.util.kotlin.setValue
 import io.sweers.catchup.util.restartApp
 import io.sweers.catchup.util.truncateAt
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -91,18 +88,7 @@ class DebugView(
   private val okHttpCacheRequestCountView = binding.debugOkhttpCacheRequestCount
   private val okHttpCacheNetworkCountView = binding.debugOkhttpCacheNetworkCount
   private val okHttpCacheHitCountView = binding.debugOkhttpCacheHitCount
-  private var isMockMode by debugPreferences::mockModeEnabled
-  private var behavior: NetworkBehavior =
-    NetworkBehavior.create().apply {
-      setDelay(debugPreferences.networkDelay, MILLISECONDS)
-      setFailurePercent(debugPreferences.networkFailurePercent)
-      setVariancePercent(debugPreferences.networkVariancePercent)
-    }
-  private var animationSpeed by debugPreferences::animationSpeed
-  private var pixelGridEnabled by debugPreferences::pixelGridEnabled
-  private var pixelRatioEnabled by debugPreferences::pixelRatioEnabled
-  private var scalpelEnabled by debugPreferences::scalpelEnabled
-  private var scalpelWireframeEnabled by debugPreferences::scalpelWireframeDrawer
+  private var behavior: NetworkBehavior = NetworkBehavior.create()
 
   init {
     binding.debugLogsShow.setOnClickListener {
@@ -120,7 +106,12 @@ class DebugView(
     setupUserInterfaceSection()
     setupBuildSection()
     setupDeviceSection()
-    viewScope().launch { refreshOkHttpCacheStats(setup = true) }
+    viewScope().launch {
+      refreshOkHttpCacheStats(setup = true)
+      debugPreferences.networkDelay.collect { behavior.setDelay(it, MILLISECONDS) }
+      debugPreferences.networkFailurePercent.collect { behavior.setFailurePercent(it) }
+      debugPreferences.networkVariancePercent.collect { behavior.setVariancePercent(it) }
+    }
   }
 
   fun onDrawerOpened() {
@@ -143,7 +134,7 @@ class DebugView(
         .collect { selected ->
           d { "Setting network delay to ${selected}ms" }
           behavior.setDelay(selected, MILLISECONDS)
-          debugPreferences.networkDelay = selected
+          debugPreferences.edit { it[DebugPreferences.Keys.networkDelay] = selected }
         }
     }
 
@@ -161,7 +152,7 @@ class DebugView(
         .collect { selected ->
           d { "Setting network variance to $selected%" }
           behavior.setVariancePercent(selected)
-          debugPreferences.networkVariancePercent = selected
+          debugPreferences.edit { it[DebugPreferences.Keys.networkVariancePercent] = selected }
         }
     }
 
@@ -179,21 +170,27 @@ class DebugView(
         .collect { selected ->
           d { "Setting network error to $selected%" }
           behavior.setFailurePercent(selected)
-          debugPreferences.networkFailurePercent = selected
+          debugPreferences.edit { it[DebugPreferences.Keys.networkFailurePercent] = selected }
         }
     }
 
-    if (!isMockMode) {
-      // Disable network controls if we are not in mock mode.
-      applyOn(networkDelayView, networkVarianceView, networkErrorView) { isEnabled = false }
+    viewScope().launch {
+      debugPreferences.mockModeEnabled.collect { enabled ->
+        // Disable network controls if we are not in mock mode.
+        applyOn(networkDelayView, networkVarianceView, networkErrorView) { isEnabled = enabled }
+      }
     }
   }
 
   private fun setupMockBehaviorSection() {
-    enableMockModeView.isChecked = debugPreferences.mockModeEnabled
+    viewScope().launch {
+      debugPreferences.mockModeEnabled.collect { enableMockModeView.isChecked = it }
+    }
     viewScope().launch {
       enableMockModeView.clicks().collect {
-        debugPreferences.mockModeEnabled = enableMockModeView.isChecked
+        debugPreferences.edit {
+          it[DebugPreferences.Keys.mockModeEnabled] = enableMockModeView.isChecked
+        }
         context.restartApp()
       }
     }
@@ -202,52 +199,70 @@ class DebugView(
   private fun setupUserInterfaceSection() {
     val speedAdapter = AnimationSpeedAdapter(context)
     uiAnimationSpeedView.adapter = speedAdapter
-    val animationSpeedValue = animationSpeed
-    uiAnimationSpeedView.setSelection(
-      AnimationSpeedAdapter.getPositionForValue(animationSpeedValue)
-    )
+    viewScope().launch {
+      debugPreferences.animationSpeed.collect {
+        uiAnimationSpeedView.setSelection(AnimationSpeedAdapter.getPositionForValue(it))
+      }
+    }
 
     viewScope().launch {
       uiAnimationSpeedView
         .itemSelections()
         .map { speedAdapter.getItem(it) }
-        .filter { item -> item != animationSpeed }
+        .filter { item -> item != uiAnimationSpeedView.selectedItemPosition }
         .collect { selected ->
           d { "Setting animation speed to ${selected}x" }
-          animationSpeed = selected
+          debugPreferences.edit { it[DebugPreferences.Keys.animationSpeed] = selected }
           applyAnimationSpeed(selected)
         }
     }
-    // Ensure the animation speed value is always applied across app restarts.
-    post { applyAnimationSpeed(animationSpeedValue) }
 
-    val gridEnabled = pixelGridEnabled
-    uiPixelGridView.isChecked = gridEnabled
-    uiPixelRatioView.isEnabled = gridEnabled
+    viewScope().launch {
+      debugPreferences.pixelGridEnabled.collect {
+        uiPixelGridView.isChecked = it
+        uiPixelRatioView.isEnabled = it
+      }
+    }
     uiPixelGridView.setOnCheckedChangeListener { _, isChecked ->
       d { "Setting pixel grid overlay enabled to $isChecked" }
-      pixelGridEnabled = isChecked
+      viewScope().launch {
+        debugPreferences.edit { it[DebugPreferences.Keys.pixelGridEnabled] = isChecked }
+      }
       uiPixelRatioView.isEnabled = isChecked
     }
 
-    uiPixelRatioView.isChecked = pixelRatioEnabled
+    viewScope().launch {
+      debugPreferences.pixelRatioEnabled.collect { uiPixelRatioView.isChecked = it }
+    }
     uiPixelRatioView.setOnCheckedChangeListener { _, isChecked ->
       d { "Setting pixel scale overlay enabled to $isChecked" }
-      pixelRatioEnabled = isChecked
+      viewScope().launch {
+        debugPreferences.edit { it[DebugPreferences.Keys.pixelRatioEnabled] = isChecked }
+      }
     }
 
-    uiScalpelView.isChecked = scalpelEnabled
-    uiScalpelWireframeView.isEnabled = scalpelEnabled
+    viewScope().launch {
+      debugPreferences.scalpelEnabled.collect {
+        uiScalpelView.isChecked = it
+        uiScalpelWireframeView.isEnabled = it
+      }
+    }
     uiScalpelView.setOnCheckedChangeListener { _, isChecked ->
       d { "Setting scalpel interaction enabled to $isChecked" }
-      scalpelEnabled = isChecked
+      viewScope().launch {
+        debugPreferences.edit { it[DebugPreferences.Keys.scalpelEnabled] = isChecked }
+      }
       uiScalpelWireframeView.isEnabled = isChecked
     }
 
-    uiScalpelWireframeView.isChecked = scalpelWireframeEnabled
+    viewScope().launch {
+      debugPreferences.scalpelWireframeDrawer.collect { uiScalpelWireframeView.isChecked = it }
+    }
     uiScalpelWireframeView.setOnCheckedChangeListener { _, isChecked ->
       d { "Setting scalpel wireframe enabled to $isChecked" }
-      scalpelWireframeEnabled = isChecked
+      viewScope().launch {
+        debugPreferences.edit { it[DebugPreferences.Keys.scalpelWireframeDrawer] = isChecked }
+      }
     }
   }
 

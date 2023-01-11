@@ -424,6 +424,8 @@ licensee {
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
+  // MIT
+  allowUrl("https://github.com/alorma/Compose-Settings/blob/main/LICENSE")
 }
 
 androidComponents {
@@ -564,8 +566,6 @@ dependencies {
   implementation(libs.rx.dogTagAutoDispose)
   implementation(libs.misc.moshiLazyAdapters)
   implementation(libs.autodispose.androidxLifecycle)
-  implementation(libs.misc.kotpref)
-  implementation(libs.misc.kotprefEnum)
   implementation(libs.kotlin.datetime)
 
   implementation(libs.androidx.compose.animation.graphics)

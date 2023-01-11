@@ -15,40 +15,57 @@
  */
 package io.sweers.catchup.data
 
-import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
-import com.chibatching.kotpref.ContextProvider
-import com.chibatching.kotpref.KotprefModel
-import com.chibatching.kotpref.PreferencesProvider
+import androidx.datastore.preferences.core.MutablePreferences
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.preferencesDataStoreFile
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @SingleIn(AppScope::class)
-class DebugPreferences
-@Inject
-constructor(application: Application, sharedPreferences: SharedPreferences) :
-  KotprefModel(
-    contextProvider =
-      object : ContextProvider {
-        override fun getApplicationContext(): Context = application
-      },
-    preferencesProvider =
-      object : PreferencesProvider {
-        override fun get(context: Context, name: String, mode: Int): SharedPreferences {
-          return sharedPreferences
-        }
-      }
-  ) {
-  var animationSpeed by intPref(default = 1, key = "debug_animation_speed")
-  var mockModeEnabled by booleanPref(default = false, key = "debug_mock_mode_enabled")
-  var networkDelay by longPref(default = 2000L, key = "debug_network_delay")
-  var networkFailurePercent by intPref(default = 3, key = "debug_network_failure_percent")
-  var networkVariancePercent by intPref(default = 40, key = "debug_network_variance_percent")
-  var pixelGridEnabled by booleanPref(default = false, key = "debug_pixel_grid_enabled")
-  var pixelRatioEnabled by booleanPref(default = false, key = "debug_pixel_ratio_enabled")
-  var scalpelEnabled by booleanPref(default = false, key = "debug_scalpel_enabled")
-  var scalpelWireframeDrawer by booleanPref(default = false, key = "debug_scalpel_wireframe_drawer")
-  var seenDebugDrawer by booleanPref(default = false, key = "debug_seen_debug_drawer")
+class DebugPreferences @Inject constructor(@ApplicationContext context: Context) {
+  companion object {
+    private const val STORAGE_FILE_NAME = "debug_preferences"
+  }
+
+  private val datastore =
+    PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(STORAGE_FILE_NAME) }
+
+  val animationSpeed: Flow<Int> = datastore.data.map { it[Keys.animationSpeed] ?: 1 }
+  val mockModeEnabled: Flow<Boolean> = datastore.data.map { it[Keys.mockModeEnabled] ?: false }
+  val networkDelay: Flow<Long> = datastore.data.map { it[Keys.networkDelay] ?: 2000L }
+  val networkFailurePercent: Flow<Int> = datastore.data.map { it[Keys.networkFailurePercent] ?: 3 }
+  val networkVariancePercent: Flow<Int> =
+    datastore.data.map { it[Keys.networkVariancePercent] ?: 40 }
+  val pixelGridEnabled: Flow<Boolean> = datastore.data.map { it[Keys.pixelGridEnabled] ?: false }
+  val pixelRatioEnabled: Flow<Boolean> = datastore.data.map { it[Keys.pixelRatioEnabled] ?: false }
+  val scalpelEnabled: Flow<Boolean> = datastore.data.map { it[Keys.scalpelEnabled] ?: false }
+  val scalpelWireframeDrawer: Flow<Boolean> =
+    datastore.data.map { it[Keys.scalpelWireframeDrawer] ?: false }
+  val seenDebugDrawer: Flow<Boolean> = datastore.data.map { it[Keys.seenDebugDrawer] ?: false }
+
+  suspend fun edit(body: (MutablePreferences) -> Unit) {
+    datastore.edit(body)
+  }
+
+  object Keys {
+    var animationSpeed = intPreferencesKey("debug_animation_speed")
+    var mockModeEnabled = booleanPreferencesKey("debug_mock_mode_enabled")
+    var networkDelay = longPreferencesKey("debug_network_delay")
+    var networkFailurePercent = intPreferencesKey("debug_network_failure_percent")
+    var networkVariancePercent = intPreferencesKey("debug_network_variance_percent")
+    var pixelGridEnabled = booleanPreferencesKey("debug_pixel_grid_enabled")
+    var pixelRatioEnabled = booleanPreferencesKey("debug_pixel_ratio_enabled")
+    var scalpelEnabled = booleanPreferencesKey("debug_scalpel_enabled")
+    var scalpelWireframeDrawer = booleanPreferencesKey("debug_scalpel_wireframe_drawer")
+    var seenDebugDrawer = booleanPreferencesKey("debug_seen_debug_drawer")
+  }
 }

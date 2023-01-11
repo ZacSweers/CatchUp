@@ -58,7 +58,6 @@ import io.sweers.catchup.databinding.DebugActivityFrameBinding
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.TargetRequest
 import io.sweers.catchup.edu.id
-import io.sweers.catchup.flowFor
 import io.sweers.catchup.ui.bugreport.BugReportLens
 import io.sweers.catchup.ui.debug.DebugView
 import java.util.concurrent.TimeUnit
@@ -69,7 +68,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 
@@ -91,10 +89,14 @@ constructor(
   private val debugPreferences: DebugPreferences,
   private val appConfig: AppConfig
 ) : ViewContainer {
-  private val pixelGridEnabled = debugPreferences.flowFor { ::pixelGridEnabled }
-  private val pixelRatioEnabled = debugPreferences.flowFor { ::pixelRatioEnabled }
-  private val scalpelEnabled = debugPreferences.flowFor { ::scalpelEnabled }
-  private val scalpelWireframeEnabled = debugPreferences.flowFor { ::scalpelWireframeDrawer }
+  private val pixelGridEnabled
+    get() = debugPreferences.pixelGridEnabled
+  private val pixelRatioEnabled
+    get() = debugPreferences.pixelRatioEnabled
+  private val scalpelEnabled
+    get() = debugPreferences.scalpelEnabled
+  private val scalpelWireframeEnabled
+    get() = debugPreferences.scalpelWireframeDrawer
 
   override fun forActivity(activity: BaseActivity): ViewGroup {
     val viewHolder =

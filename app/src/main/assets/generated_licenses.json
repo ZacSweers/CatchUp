@@ -8,8 +8,8 @@
     "name": "GestureViews"
   },
   {
-    "owner": "androidx",
-    "name": "constraintlayout"
+    "owner": "alorma",
+    "name": "Compose-Settings"
   },
   {
     "owner": "apollographql",
@@ -28,12 +28,16 @@
     "name": "bugsnag-android"
   },
   {
-    "owner": "chibatching",
-    "name": "kotpref"
+    "owner": "cashapp",
+    "name": "sqldelight"
   },
   {
     "owner": "coil-kt",
     "name": "coil"
+  },
+  {
+    "owner": "google",
+    "name": "accompanist"
   },
   {
     "owner": "google",
@@ -69,6 +73,10 @@
   },
   {
     "owner": "JetBrains",
+    "name": "compose-jb"
+  },
+  {
+    "owner": "JetBrains",
     "name": "java-annotations"
   },
   {
@@ -90,6 +98,10 @@
   {
     "owner": "Kotlin",
     "name": "kotlinx.atomicfu"
+  },
+  {
+    "owner": "Kotlin",
+    "name": "kotlinx.collections.immutable"
   },
   {
     "owner": "Kotlin",
@@ -132,6 +144,10 @@
     "name": "moshi-lazy-adapters"
   },
   {
+    "owner": "slackhq",
+    "name": "circuit"
+  },
+  {
     "owner": "square",
     "name": "anvil"
   },
@@ -169,10 +185,6 @@
   },
   {
     "owner": "uber",
-    "name": "crumb"
-  },
-  {
-    "owner": "uber",
     "name": "RxDogTag"
   },
   {
@@ -186,9 +198,5 @@
   {
     "owner": "ZacSweers",
     "name": "MoshiX"
-  },
-  {
-    "owner": "ZacSweers",
-    "name": "ticktock"
   }
 ]
