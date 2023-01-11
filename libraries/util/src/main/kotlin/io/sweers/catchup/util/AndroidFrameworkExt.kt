@@ -41,9 +41,11 @@ import java.util.Locale
  * Android framework extension functions for things like Context, Activity, Resources, etc
  */
 
+fun Context.clearFiles() = cleanDir(applicationContext.filesDir)
+
 fun Context.clearCache() = cleanDir(applicationContext.cacheDir)
 
-private fun cleanDir(dir: File): Long {
+fun cleanDir(dir: File): Long {
   var bytesDeleted: Long = 0
   dir.listFiles()?.forEach {
     val length = it.length()
