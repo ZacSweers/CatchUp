@@ -19,6 +19,10 @@ import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
@@ -33,10 +37,12 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.circuit.IntentAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
 import dev.zacsweers.catchup.di.android.ActivityKey
+import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.edu.Syllabus
@@ -57,6 +63,7 @@ constructor(
   private val linkManager: LinkManager,
   private val syllabus: Syllabus,
   private val circuitConfig: CircuitConfig,
+  private val catchUpPreferences: CatchUpPreferences,
 ) : InjectingBaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,11 +75,20 @@ constructor(
     //    val composeView = ComposeView(this)
     //    viewGroup.addView(composeView)
     setContent {
-      CatchUpTheme {
+      val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
+      val forceNight by catchUpPreferences.dayNightForceNight.collectAsState(initial = false)
+      val useDarkTheme =
+        if (dayNightAuto) {
+          isSystemInDarkTheme()
+        } else {
+          forceNight
+        }
+      CatchUpTheme(useDarkTheme = useDarkTheme) {
         CircuitCompositionLocals(circuitConfig) {
           val backstack = rememberSaveableBackStack { push(HomeScreen) }
           val navigator = rememberCircuitNavigator(backstack)
-          NavigableCircuitContent(navigator, backstack)
+          val intentAwareNavigator = remember(navigator) { IntentAwareNavigator(this, navigator) }
+          NavigableCircuitContent(intentAwareNavigator, backstack)
         }
       }
     }

@@ -26,7 +26,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
-import io.sweers.catchup.flowFor
 import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.util.d
 import java.util.concurrent.Executors
@@ -35,6 +34,8 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import rxdogtag2.RxDogTag
 import rxdogtag2.autodispose2.AutoDisposeConfigurer
@@ -98,16 +99,20 @@ class CatchUpApplication : Application() {
     )
 
     GlobalScope.launch {
-      catchUpPreferences
-        .flowFor { ::daynightAuto }
-        .collect { autoEnabled ->
+      catchUpPreferences.dayNightAuto
+        .onStart { emit(false) }
+        .combine(catchUpPreferences.dayNightForceNight.onStart { emit(false) }) { auto, forceNight
+          ->
+          auto to forceNight
+        }
+        .collect { (auto, forceNight) ->
           d { "Updating daynight" }
           // Someday would like to add activity lifecycle callbacks to automatically call recreate
           // when resumed since this was updated
           var nightMode = AppCompatDelegate.MODE_NIGHT_NO
-          if (autoEnabled) {
+          if (auto) {
             nightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
-          } else if (catchUpPreferences.dayNight) {
+          } else if (forceNight) {
             nightMode = AppCompatDelegate.MODE_NIGHT_YES
           }
           AppCompatDelegate.setDefaultNightMode(nightMode)

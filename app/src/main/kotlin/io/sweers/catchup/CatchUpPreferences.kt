@@ -15,49 +15,92 @@
  */
 package io.sweers.catchup
 
-import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.Keep
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.chibatching.kotpref.KotprefModel
+import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
+import io.sweers.catchup.CatchUpPreferences.Keys
 import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.flowbinding.safeOffer
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import java.io.File
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
 import kotlin.reflect.KProperty0
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+
+interface CatchUpPreferences : UiPreferences {
+  val datastore: DataStore<Preferences>
+  val dayNightAuto: Flow<Boolean>
+  val dayNightForceNight: Flow<Boolean>
+  val reports: Flow<Boolean>
+  val servicesOrder: Flow<String?>
+  val servicesOrderSeen: Flow<Boolean>
+  val smartlinkingGlobal: Flow<Boolean>
+  override var themeNavigationBar: Boolean
+
+  suspend fun edit(body: (MutablePreferences) -> Unit)
+
+  object Keys {
+    val dayNightAuto = booleanPreferencesKey("dayNightAuto")
+    val dayNightForceNight = booleanPreferencesKey("forceNight")
+    val reports = booleanPreferencesKey("reports")
+    val smartlinkingGlobal = booleanPreferencesKey("smartLinkingGlobal")
+    val servicesOrderSeen = booleanPreferencesKey("servicesOrderSeen")
+    val servicesOrder = stringPreferencesKey("servicesOrder")
+  }
+
+  companion object {
+    private const val STORAGE_FILE_NAME = "CatchUpPreferences"
+    fun dataStoreFile(context: Context): File {
+      return context.preferencesDataStoreFile(STORAGE_FILE_NAME)
+    }
+  }
+}
 
 @Keep
 @SingleIn(AppScope::class)
-class CatchUpPreferences
-@Inject
-constructor(application: Application, sharedPreferences: SharedPreferences) :
-  KotprefModel(
-    contextProvider = { application },
-    preferencesProvider = { _, _, _ -> sharedPreferences }
-  ),
-  UiPreferences {
+@ContributesBinding(AppScope::class, boundType = CatchUpPreferences::class)
+class CatchUpPreferencesImpl @Inject constructor(@ApplicationContext context: Context) :
+  CatchUpPreferences, UiPreferences {
 
-  companion object {
-    const val ITEM_KEY_ABOUT = "about"
-    const val ITEM_KEY_CLEAR_CACHE = "clearCache"
-    const val SECTION_KEY_ORDER_SERVICES = "reorderServicesSection"
-    const val SECTION_KEY_SERVICES = "services"
+  // TODO hide this, only exposed for settings
+  override val datastore =
+    PreferenceDataStoreFactory.create { CatchUpPreferences.dataStoreFile(context) }
+
+  override val dayNightAuto: Flow<Boolean>
+    get() = datastore.data.mapNotNull { it[Keys.dayNightAuto] }
+  override val dayNightForceNight: Flow<Boolean>
+    get() = datastore.data.mapNotNull { it[Keys.dayNightForceNight] }
+  override val reports: Flow<Boolean>
+    get() = datastore.data.mapNotNull { it[Keys.reports] }
+  override val servicesOrder: Flow<String?>
+    get() = datastore.data.map { it[Keys.servicesOrder] }
+  override val servicesOrderSeen: Flow<Boolean>
+    get() = datastore.data.mapNotNull { it[Keys.servicesOrderSeen] }
+  override val smartlinkingGlobal: Flow<Boolean>
+    get() = datastore.data.mapNotNull { it[Keys.smartlinkingGlobal] }
+
+  override var themeNavigationBar = false
+
+  override suspend fun edit(body: (MutablePreferences) -> Unit) {
+    datastore.edit(body)
   }
-
-  var daynightAuto by booleanPref(default = true)
-  var dayNight by booleanPref(default = false)
-  var dayNightForceNight by booleanPref(default = false)
-  var reports by booleanPref(default = true)
-  var servicesOrderSeen by booleanPref(default = false)
-  var smartlinkingGlobal by booleanPref(default = true)
-  override var themeNavigationBar by booleanPref(default = false)
-  var servicesOrder by nullableStringPref(default = null)
 }
 
 fun <T, Model : KotprefModel> Model.flowFor(propertyResolver: Model.() -> KProperty0<T>): Flow<T> {
@@ -79,11 +122,6 @@ fun <T> SharedPreferences.flowFor(keyResolver: () -> String, valueResolver: () -
   return flowFor(keyResolver).map { valueResolver() }
 }
 
-fun SharedPreferences.flowFor(targetKey: String): Flow<Unit> {
-  return flowFor { targetKey }
-}
-
-@OptIn(ExperimentalCoroutinesApi::class)
 fun SharedPreferences.flowFor(keyResolver: () -> String): Flow<Unit> {
   return callbackFlow {
     val targetKey = keyResolver()
