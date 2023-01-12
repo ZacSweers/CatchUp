@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -198,9 +200,7 @@ fun Home(state: HomeScreen.State) {
     Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
   }
   Scaffold(
-    // TODO this... doesn't work. Scrolling up on any other tab than the first one resets the
-    //  current page for some reason
-    // modifier = nestedScrollModifier,
+    modifier = nestedScrollModifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,
     topBar = {
@@ -272,7 +272,10 @@ fun Home(state: HomeScreen.State) {
         beyondBoundsPageCount = 1,
         key = { state.serviceMetas[it].id },
         state = pagerState,
-        verticalAlignment = Alignment.Top
+        verticalAlignment = Alignment.Top,
+        // Explicitly defined to cover for https://issuetracker.google.com/issues/264729364
+        pageNestedScrollConnection =
+          PagerDefaults.pageNestedScrollConnection(Orientation.Horizontal)
       ) { page ->
         CircuitContent(ServiceScreen(state.serviceMetas[page].id))
       }
