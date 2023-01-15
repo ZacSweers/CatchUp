@@ -155,9 +155,7 @@ constructor(
 
       var showConfirmation by remember { mutableStateOf(false) }
 
-      BackHandler(enabled = isChanged && !showConfirmation) {
-        showConfirmation = true
-      }
+      BackHandler(enabled = isChanged && !showConfirmation) { showConfirmation = true }
 
       val scope = rememberCoroutineScope()
       return OrderServicesScreen.State(
