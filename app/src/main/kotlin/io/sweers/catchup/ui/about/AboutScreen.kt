@@ -3,6 +3,7 @@ package io.sweers.catchup.ui.about
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -18,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import com.slack.circuit.CircuitContent
@@ -52,6 +54,8 @@ private val SCREEN_TITLES = intArrayOf(R.string.licenses, R.string.changelog)
 fun About(state: AboutScreen.State) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   Scaffold(
+    contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    containerColor = Color.Transparent,
     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = { CollapsingAboutHeader(state.version, scrollBehavior = scrollBehavior) }
   ) { paddingValues ->
