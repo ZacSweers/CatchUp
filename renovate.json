@@ -6,7 +6,18 @@
   "prHourlyLimit": 10,
   "packageRules": [
     {
-      "matchManagers": ["gradle"],
+      "matchPackagePatterns": [
+        "^androidx\\.([\\w-:]+)$",
+        "^org\\.robolectric([\\w-.]*):([\\w-]+)$",
+        "^com\\.google\\.accompanist:([\\w-]+)$"
+      ],
+      "description": "Libraries allowed to use non-stable releases.",
+      "ignoreUnstable": false
+    },
+    {
+      "matchManagers": [
+        "maven"
+      ],
       "description": "Disable snapshot versions",
       "matchCurrentVersion": "/.*-SNAPSHOT/",
       "enabled": "false"
