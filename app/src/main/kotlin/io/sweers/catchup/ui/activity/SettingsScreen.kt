@@ -237,7 +237,7 @@ constructor(
             val onBackPressedDispatcher =
               LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
             IconButton(onClick = onBackPressedDispatcher::onBackPressed) {
-              Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+              Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
             }
           },
         )
