@@ -124,7 +124,7 @@ constructor(
   @Composable
   override fun present(): OrderServicesScreen.State {
     // TODO this emptyList initial value is... weird. We wanna skip that until loaded. Is there a
-    // better way to do this?
+    //  better way to do this?
     val storedOrderState by
       remember {
           catchUpPreferences.servicesOrder.map { it?.split(",").orEmpty().toImmutableList() }
