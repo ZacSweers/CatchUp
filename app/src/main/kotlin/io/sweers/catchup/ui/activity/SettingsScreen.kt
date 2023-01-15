@@ -1,7 +1,6 @@
 package io.sweers.catchup.ui.activity
 
 import android.content.Context
-import android.content.Intent
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -20,7 +19,6 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,7 +38,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -63,7 +60,6 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.zacsweers.catchup.circuit.IntentScreen
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
@@ -263,15 +259,10 @@ constructor(
         }
 
         item(key = "reorder_services") {
-          val context = LocalContext.current
           ClickablePreference(
             title = stringResource(R.string.pref_reorder_services),
           ) {
-            eventSink(
-              SettingsScreen.Event.NavToScreen(
-                IntentScreen(Intent(context, OrderServicesActivity::class.java))
-              )
-            )
+            eventSink(SettingsScreen.Event.NavToScreen(OrderServicesScreen))
           }
         }
 
@@ -343,8 +334,8 @@ private fun ComposableHeaderItem(text: String, displayDivider: Boolean) {
         modifier = Modifier.padding(16.dp),
         text = text,
         color = colorResource(R.color.colorAccent),
-        style = MaterialTheme.typography.titleSmall,
-        fontWeight = FontWeight.Black
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold,
       )
       if (displayDivider) {
         Divider()

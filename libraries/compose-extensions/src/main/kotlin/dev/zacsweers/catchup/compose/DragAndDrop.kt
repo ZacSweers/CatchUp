@@ -21,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.CoroutineScope
@@ -150,14 +152,20 @@ internal constructor(
     get() = this.offset + this.size
 }
 
-fun Modifier.dragContainer(dragDropState: DragDropState): Modifier {
+fun Modifier.dragContainer(
+  dragDropState: DragDropState,
+  hapticFeedback: HapticFeedback? = null,
+): Modifier {
   return pointerInput(dragDropState) {
     detectDragGesturesAfterLongPress(
       onDrag = { change, offset ->
         change.consume()
         dragDropState.onDrag(offset = offset)
       },
-      onDragStart = { offset -> dragDropState.onDragStart(offset) },
+      onDragStart = { offset ->
+        hapticFeedback?.performHapticFeedback(HapticFeedbackType.LongPress)
+        dragDropState.onDragStart(offset)
+      },
       onDragEnd = { dragDropState.onDragInterrupted() },
       onDragCancel = { dragDropState.onDragInterrupted() }
     )
