@@ -62,6 +62,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -85,6 +86,7 @@ import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.ServiceMeta
+import io.sweers.catchup.util.asDayContext
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -242,8 +244,9 @@ fun OrderServices(state: OrderServicesScreen.State) {
             onClick = { eventSink(OrderServicesScreen.Event.BackPress) },
             content = {
               Image(
-                painterResource(id = R.drawable.ic_arrow_back_black_24dp),
-                stringResource(id = R.string.back)
+                painter = painterResource(id = R.drawable.ic_arrow_back_black_24dp),
+                contentDescription = stringResource(id = R.string.back),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
               )
             }
           )
@@ -253,8 +256,9 @@ fun OrderServices(state: OrderServicesScreen.State) {
             onClick = { eventSink(OrderServicesScreen.Event.Shuffle) },
             content = {
               Image(
-                painterResource(R.drawable.ic_shuffle_black_24dp),
-                stringResource(R.string.shuffle)
+                painter = painterResource(R.drawable.ic_shuffle_black_24dp),
+                contentDescription = stringResource(R.string.shuffle),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
               )
             }
           )
@@ -330,8 +334,9 @@ private fun ListContent(
 
 @Composable
 private fun ServiceListItem(item: ServiceMeta) {
+  val themeColor = LocalContext.current.asDayContext().getColor(item.themeColor)
   Row(
-    modifier = Modifier.fillMaxWidth().background(colorResource(item.themeColor)).padding(16.dp),
+    modifier = Modifier.fillMaxWidth().background(Color(themeColor)).padding(16.dp),
     horizontalArrangement = spacedBy(16.dp),
     verticalAlignment = Alignment.CenterVertically,
   ) {
