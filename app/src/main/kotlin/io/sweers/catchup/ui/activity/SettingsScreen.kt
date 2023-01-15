@@ -247,7 +247,7 @@ constructor(
         modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding)
       ) {
         stickyHeader(key = "general_header") {
-          ComposableHeaderItem("General", displayDivider = false)
+          ComposableHeaderItem(stringResource(R.string.general), displayDivider = false)
         }
         item(key = "smart_linking") {
           BooleanPreference(
@@ -261,6 +261,7 @@ constructor(
         item(key = "reorder_services") {
           ClickablePreference(
             title = stringResource(R.string.pref_reorder_services),
+            subtitle = stringResource(R.string.pref_order_services_description)
           ) {
             eventSink(SettingsScreen.Event.NavToScreen(OrderServicesScreen))
           }
@@ -276,7 +277,7 @@ constructor(
         }
 
         stickyHeader(key = "theming_header") {
-          ComposableHeaderItem("Theming", displayDivider = true)
+          ComposableHeaderItem(stringResource(R.string.prefs_theme), displayDivider = true)
         }
         item(key = "auto_theme") {
           BooleanPreference(
@@ -307,7 +308,7 @@ constructor(
 
         item(key = "about") {
           ClickablePreference(
-            title = "About",
+            title = stringResource(R.string.about),
           ) {
             eventSink(SettingsScreen.Event.NavToScreen(AboutScreen))
           }

@@ -16,6 +16,5 @@
   -->
 
 <resources>
-  <bool name="isInNightMode">true</bool>
   <bool name="isInDayMode">false</bool>
 </resources>

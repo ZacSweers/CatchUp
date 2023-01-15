@@ -2,6 +2,7 @@ package io.sweers.catchup.ui.about
 
 import android.graphics.drawable.AdaptiveIconDrawable
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.DecayAnimationSpec
@@ -211,7 +212,8 @@ fun CollapsingAboutHeader(
 
         // TODO kinda gross but shrug
         val icon =
-          (LocalContext.current.getDrawable(R.mipmap.ic_launcher) as AdaptiveIconDrawable)
+          (AppCompatResources.getDrawable(LocalContext.current, R.mipmap.ic_launcher)
+              as AdaptiveIconDrawable)
             .toBitmap()
         Image(
           bitmap = icon.asImageBitmap(),

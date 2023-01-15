@@ -31,9 +31,7 @@
   <string name="prefs_theme">Thème</string>
   <string name="pref_smart_linking_title">Activer "Smart linking"</string>
   <string name="pref_smart_linking_summary">"Smart linking" permet d\'ouvrir les liens dans l\'application dédiée si disponible, sinon dans un onglet personnalisé Chrome ou dans un navigateur.</string>
-  <string name="pref_theme_navbar">Colorer la barre de navigation.</string>
   <string name="title_activity_settings">Paramètres</string>
-  <string name="title_activity_about">À propos</string>
   <string name="summarizing">Synthèse en cours…</string>
   <string name="clear_cache_success">%s vidé</string>
   <string name="connection_issue">Erreur de connexion</string>
@@ -48,7 +46,6 @@
   <string name="licenses_error">Impossible de charger les licences open source.</string>
   <string name="settings_error_cleaning_cache">Une erreur est survenue lors du vidage du cache</string>
   <string name="settings_reset">Prendra effet lors du prochain redémarrage de l\'application</string>
-  <string name="undo">Annuler</string>
   <string name="pref_force_dark_theme">Forcer le thème foncé.</string>
   <string name="pref_dark_theme_enabled">Le thème foncé est activé</string>
   <string name="pref_dark_theme_disabled">Le thème foncé est désactivé, le thème clair est celui par défaut.</string>
