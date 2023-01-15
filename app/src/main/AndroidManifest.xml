@@ -48,12 +48,6 @@
         />
 
     <activity
-        android:name=".ui.activity.OrderServicesActivity"
-        android:label="@string/title_activity_about"
-        android:launchMode="singleTop"
-        />
-
-    <activity
         android:name=".ui.activity.ServiceSettingsActivity"
         android:label="@string/pref_services"
         android:launchMode="singleTop"
