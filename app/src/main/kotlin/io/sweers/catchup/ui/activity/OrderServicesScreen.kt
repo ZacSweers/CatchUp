@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.ui.activity
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
@@ -153,6 +154,10 @@ constructor(
       }
 
       var showConfirmation by remember { mutableStateOf(false) }
+
+      BackHandler(enabled = isChanged && !showConfirmation) {
+        showConfirmation = true
+      }
 
       val scope = rememberCoroutineScope()
       return OrderServicesScreen.State(
