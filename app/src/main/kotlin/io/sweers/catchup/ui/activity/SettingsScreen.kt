@@ -334,8 +334,8 @@ private fun ComposableHeaderItem(text: String, displayDivider: Boolean) {
         modifier = Modifier.padding(16.dp),
         text = text,
         color = colorResource(R.color.colorAccent),
-        style = MaterialTheme.typography.titleSmall,
-        fontWeight = FontWeight.Black
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold,
       )
       if (displayDivider) {
         Divider()
