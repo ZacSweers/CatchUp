@@ -578,6 +578,7 @@ dependencies {
   implementation(libs.androidx.compose.material.material3)
   implementation(libs.coil.compose)
   implementation(libs.androidx.compose.accompanist.systemUi)
+  implementation(libs.androidx.compose.accompanist.placeholder)
   implementation(libs.androidx.activity.compose)
 
   implementation(libs.androidx.datastore.preferences)

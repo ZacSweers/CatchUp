@@ -2,7 +2,6 @@ package dev.zacsweers.catchup.service
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ColorDrawable
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -69,20 +68,20 @@ fun VisualServiceUi(
       lazyItems,
       key = { _, item -> item.id },
     ) { index, item ->
-      val clickableItemState = remember { ClickableItemState() }
-      clickableItemState.enabled = item != null
-      ClickableItem(
-        item = item,
-        onClick = { eventSink(ServiceScreen.Event.ItemClicked(item!!)) },
-        clickableItemState = clickableItemState
-      ) { clickableItem ->
-        VisualItem(
-          item = clickableItem,
-          index = index,
-          placeholder = placeholders[index % placeholders.size],
-          onEnableChanged = { clickableItemState.enabled = it && item != null },
-          onContentColorChanged = { clickableItemState.contentColor = it },
-        )
+      Surface(color = placeholders[index % placeholders.size]) {
+        if (item != null) {
+          val clickableItemState = rememberClickableItemState()
+          ClickableItem(
+            onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
+          ) {
+            VisualItem(
+              item = item,
+              index = index,
+              onEnableChanged = { clickableItemState.enabled = it },
+              onContentColorChanged = { clickableItemState.contentColor = it },
+            )
+          }
+        }
       }
     }
     handleLoadStates(lazyItems, themeColor, onRefreshChange)
@@ -93,7 +92,6 @@ fun VisualServiceUi(
 fun VisualItem(
   item: CatchUpItem,
   index: Int,
-  placeholder: ColorDrawable,
   modifier: Modifier = Modifier,
   onEnableChanged: (Boolean) -> Unit = {},
   onContentColorChanged: (Color) -> Unit = {},
@@ -112,7 +110,6 @@ fun VisualItem(
       model =
         ImageRequest.Builder(LocalContext.current)
           .data(imageInfo.url)
-          .placeholder(placeholder)
           .memoryCacheKey(imageInfo.cacheKey)
           .crossfade(true)
           // .run {
@@ -302,14 +299,14 @@ private data class PagingPlaceholderKey(private val index: Int) : Parcelable {
 
 private val PLACEHOLDERS_DARK =
   arrayOf(
-    ColorDrawable(0xff191919.toInt()),
-    ColorDrawable(0xff212121.toInt()),
-    ColorDrawable(0xff232323.toInt()),
+    Color(0xff191919),
+    Color(0xff212121),
+    Color(0xff232323),
   )
 
 private val PLACEHOLDERS_LIGHT =
   arrayOf(
-    ColorDrawable(0xfff5f5f5.toInt()),
-    ColorDrawable(0xffeeeeee.toInt()),
-    ColorDrawable(0xffe0e0e0.toInt()),
+    Color(0xfff5f5f5),
+    Color(0xffeeeeee),
+    Color(0xffe0e0e0),
   )

@@ -1,5 +1,5 @@
 [versions]
-accompanist = "0.28.0"
+accompanist = "0.29.0-alpha"
 agp = "8.0.0-alpha11"
 androidx-activity = "1.7.0-alpha03"
 androidx-core = "1.9.0"
@@ -125,6 +125,7 @@ androidx-compose-livedata = { module = "androidx.compose.runtime:runtime-livedat
 androidx-compose-rxjava3 = { module = "androidx.compose.runtime:runtime-rxjava3", version.ref = "compose" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+androidx-compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material3", version.ref = "accompanist" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-config = "com.google.firebase:firebase-config:21.2.0"

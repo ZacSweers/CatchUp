@@ -289,12 +289,11 @@ internal fun Licenses(state: LicensesScreen.State) {
               ClickableItem(
                 modifier = Modifier.animateItemPlacement(),
                 onClick = { sink(LicensesScreen.Event.Click(catchUpItem.clickUrl!!)) },
-                item = catchUpItem,
               ) {
                 Row {
                   Spacer(Modifier.width(50.dp))
                   // TODO extract color and make it shared state
-                  TextItem(it, colorResource(R.color.colorAccent))
+                  TextItem(catchUpItem, colorResource(R.color.colorAccent))
                 }
               }
             }
