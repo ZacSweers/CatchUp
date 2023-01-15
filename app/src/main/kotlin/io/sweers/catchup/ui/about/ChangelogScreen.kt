@@ -111,9 +111,8 @@ fun Changelog(state: ChangelogScreen.State) {
         ClickableItem(
           modifier = Modifier.animateItemPlacement(),
           onClick = { sink(ChangelogScreen.Event.Click(item.clickUrl!!)) },
-          item = item,
         ) {
-          TextItem(it, colorResource(R.color.colorAccent))
+          TextItem(item, colorResource(R.color.colorAccent))
         }
       }
     }

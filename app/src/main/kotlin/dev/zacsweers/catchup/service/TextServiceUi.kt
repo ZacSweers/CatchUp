@@ -35,6 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material3.fade
+import com.google.accompanist.placeholder.material3.placeholder
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.CatchUpItem
@@ -57,12 +60,15 @@ fun TextServiceUi(
       items = lazyItems,
       key = CatchUpItem::id,
     ) { item ->
-      ClickableItem(
-        modifier = Modifier.animateItemPlacement(),
-        item = item,
-        onClick = { eventSink(ServiceScreen.Event.ItemClicked(item!!)) }
-      ) {
-        TextItem(it, themeColor) { eventSink(ServiceScreen.Event.MarkClicked(it)) }
+      if (item == null) {
+        PlaceholderItem(themeColor)
+      } else {
+        ClickableItem(
+          modifier = Modifier.animateItemPlacement(),
+          onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) }
+        ) {
+          TextItem(item, themeColor) { eventSink(ServiceScreen.Event.MarkClicked(item)) }
+        }
       }
     }
     handleLoadStates(lazyItems, themeColor, onRefreshChange)
@@ -70,12 +76,32 @@ fun TextServiceUi(
 }
 
 @Composable
-fun TextItem(item: CatchUpItem, themeColor: Color, onMarkClick: () -> Unit = {}) {
+fun PlaceholderItem(themeColor: Color) {
+  return TextItem(
+    CatchUpItem(
+      id = -1L,
+      title = "Placeholder with some text",
+      description = "Placeholder with some longer text to fill the lines up",
+      author = "Placeholder",
+      tag = "Placeholder",
+    ),
+    themeColor,
+    showPlaceholder = true,
+  )
+}
+
+@Composable
+fun TextItem(
+  item: CatchUpItem,
+  themeColor: Color,
+  showPlaceholder: Boolean = false,
+  onMarkClick: () -> Unit = {}
+) {
   Row(
     modifier = Modifier.padding(16.dp),
     verticalAlignment = Alignment.CenterVertically,
   ) {
-    DetailColumn(item, themeColor)
+    DetailColumn(item, themeColor, showPlaceholder = showPlaceholder)
     item.mark?.let { mark ->
       Column(
         modifier =
@@ -100,6 +126,11 @@ fun TextItem(item: CatchUpItem, themeColor: Color, onMarkClick: () -> Unit = {})
               text.toLong().format()
             } else text
           Text(
+            modifier =
+              Modifier.placeholder(
+                visible = showPlaceholder,
+                highlight = PlaceholderHighlight.fade(),
+              ),
             text = "${mark.textPrefix.orEmpty()}$finalText",
             style = MaterialTheme.typography.labelSmall,
             color = themeColor
@@ -111,12 +142,22 @@ fun TextItem(item: CatchUpItem, themeColor: Color, onMarkClick: () -> Unit = {})
 }
 
 @Composable
-fun RowScope.DetailColumn(item: CatchUpItem, themeColor: Color, modifier: Modifier = Modifier) {
+fun RowScope.DetailColumn(
+  item: CatchUpItem,
+  themeColor: Color,
+  modifier: Modifier = Modifier,
+  showPlaceholder: Boolean = false,
+) {
   Column(modifier = modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
     // Score, tag, timestamp
-    ItemHeader(item, themeColor)
+    ItemHeader(item, themeColor, showPlaceholder)
     // Title
     Text(
+      modifier =
+        Modifier.placeholder(
+          visible = showPlaceholder,
+          highlight = PlaceholderHighlight.fade(),
+        ),
       text = item.title,
       style = MaterialTheme.typography.titleMedium,
       overflow = TextOverflow.Ellipsis,
@@ -133,16 +174,21 @@ fun RowScope.DetailColumn(item: CatchUpItem, themeColor: Color, modifier: Modifi
       )
     }
     // Author, source
-    ItemFooter(item)
+    ItemFooter(item, showPlaceholder = showPlaceholder)
   }
 }
 
 @Composable
-private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
+private fun ItemHeader(item: CatchUpItem, themeColor: Color, showPlaceholder: Boolean) {
   if (item.score != null || item.tag != null || item.timestamp != null) {
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
       item.score?.let { score ->
         Text(
+          modifier =
+            Modifier.placeholder(
+              visible = showPlaceholder,
+              highlight = PlaceholderHighlight.fade(),
+            ),
           text = "${score.first} ${score.second.toLong().format()}",
           fontWeight = FontWeight.Bold,
           style = MaterialTheme.typography.labelSmall,
@@ -160,6 +206,11 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
         }
         val primaryLocale = LocalContext.current.primaryLocale
         Text(
+          modifier =
+            Modifier.placeholder(
+              visible = showPlaceholder,
+              highlight = PlaceholderHighlight.fade(),
+            ),
           text =
             tag.replaceFirstChar {
               if (it.isLowerCase()) it.titlecase(primaryLocale) else it.toString()
@@ -179,6 +230,11 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
         }
         val millis = timestamp.toEpochMilliseconds()
         Text(
+          modifier =
+            Modifier.placeholder(
+              visible = showPlaceholder,
+              highlight = PlaceholderHighlight.fade(),
+            ),
           text =
             DateUtils.getRelativeTimeSpanString(
                 millis,
@@ -196,7 +252,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
 }
 
 @Composable
-private fun ItemFooter(item: CatchUpItem) {
+private fun ItemFooter(item: CatchUpItem, showPlaceholder: Boolean = false) {
   if (item.author != null || item.source != null) {
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
       // Author
@@ -204,6 +260,11 @@ private fun ItemFooter(item: CatchUpItem) {
         ?.takeUnless { it.isBlank() }
         ?.let { author ->
           Text(
+            modifier =
+              Modifier.placeholder(
+                visible = showPlaceholder,
+                highlight = PlaceholderHighlight.fade(),
+              ),
             text = author,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface
@@ -221,6 +282,11 @@ private fun ItemFooter(item: CatchUpItem) {
             )
           }
           Text(
+            modifier =
+              Modifier.placeholder(
+                visible = showPlaceholder,
+                highlight = PlaceholderHighlight.fade(),
+              ),
             text = source,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface
@@ -287,7 +353,7 @@ fun PreviewTextItem() {
             timestamp = Clock.System.now().minus(12.hours),
             mark = Mark(text = "14")
           ),
-        themeColor = colorResource(R.color.colorAccent)
+        themeColor = colorResource(R.color.colorAccent),
       )
     }
   }

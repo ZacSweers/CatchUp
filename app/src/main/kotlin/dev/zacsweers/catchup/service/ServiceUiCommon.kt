@@ -16,7 +16,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import io.sweers.catchup.R
-import io.sweers.catchup.service.api.CatchUpItem
+
+@Composable
+fun rememberClickableItemState(enabled: Boolean = true, contentColor: Color = Color.Unspecified) =
+  remember {
+    ClickableItemState().apply {
+      this.enabled = enabled
+      this.contentColor = contentColor
+    }
+  }
 
 @Stable
 class ClickableItemState {
@@ -28,49 +36,42 @@ class ClickableItemState {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClickableItem(
-  item: CatchUpItem?,
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
-  clickableItemState: ClickableItemState = remember { ClickableItemState() },
-  content: @Composable (CatchUpItem) -> Unit
+  clickableItemState: ClickableItemState = rememberClickableItemState(),
+  content: @Composable () -> Unit
 ) {
-  if (item == null) {
-    // Loading!
-  } else {
-    if (clickableItemState.enabled) {
-      val interactionSource = clickableItemState.interactionSource
-      val isPressed by interactionSource.collectIsPressedAsState()
-      val targetElevation =
-        if (isPressed) {
-          dimensionResource(R.dimen.touch_raise)
-        } else {
-          0.dp
-        }
-      val elevation by animateDpAsState(targetElevation)
-      if (clickableItemState.contentColor == Color.Unspecified) {
-        Surface(
-          modifier = modifier,
-          tonalElevation = elevation,
-          shadowElevation = elevation,
-          interactionSource = interactionSource,
-          onClick = onClick
-        ) {
-          content(item)
-        }
+  if (clickableItemState.enabled) {
+    val interactionSource = clickableItemState.interactionSource
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val targetElevation =
+      if (isPressed) {
+        dimensionResource(R.dimen.touch_raise)
       } else {
-        Surface(
-          modifier = modifier,
-          tonalElevation = elevation,
-          shadowElevation = elevation,
-          interactionSource = interactionSource,
-          contentColor = clickableItemState.contentColor,
-          onClick = onClick
-        ) {
-          content(item)
-        }
+        0.dp
       }
+    val elevation by animateDpAsState(targetElevation)
+    if (clickableItemState.contentColor == Color.Unspecified) {
+      Surface(
+        modifier = modifier,
+        tonalElevation = elevation,
+        shadowElevation = elevation,
+        interactionSource = interactionSource,
+        onClick = onClick,
+        content = content
+      )
     } else {
-      content(item)
+      Surface(
+        modifier = modifier,
+        tonalElevation = elevation,
+        shadowElevation = elevation,
+        interactionSource = interactionSource,
+        contentColor = clickableItemState.contentColor,
+        onClick = onClick,
+        content = content
+      )
     }
+  } else {
+    content()
   }
 }
