@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import androidx.core.content.getSystemService
@@ -34,10 +35,10 @@ fun AppConfig.isP(): Boolean = sdkInt >= Build.VERSION_CODES.P
 @PublishedApi
 internal val BUILD_APP_CONFIG =
   object : EmptyAppConfig {
+    @SuppressLint("AnnotateVersionCheck") // False positive
     override val sdkInt: Int = Build.VERSION.SDK_INT
   }
 
-@Suppress("DeprecatedCallableAddReplaceWith")
 @Deprecated("This should only be used when AppConfig is not available")
 inline fun <T> Context.sdk(level: Int, func: () -> T): T? {
   // Try to dig one out of services

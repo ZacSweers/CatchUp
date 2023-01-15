@@ -18,5 +18,4 @@
 <resources>
   <color name="colorPrimary">@color/colorPrimaryAlt</color>
   <color name="colorPrimaryDark">@color/colorPrimaryDarkAlt</color>
-  <color name="headerBackground">#424242</color>
 </resources>

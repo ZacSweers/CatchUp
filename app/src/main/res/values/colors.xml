@@ -22,20 +22,4 @@
   <color name="colorPrimaryDarkAlt">#282828</color>
 
   <color name="colorAccent">#ffFC4D29</color>
-  <color name="headerBackground">#eeeeee</color>
-
-  <color name="tab_text_default">#b3ffffff</color>
-  <color name="tab_text_selected">#ffffffff</color>
-  <color name="no_color">#00000000</color>
-
-  <array name="loading_placeholders_dark">
-    <item>#ff191919</item>
-    <item>#ff212121</item>
-    <item>#ff232323</item>
-  </array>
-  <array name="loading_placeholders_light">
-    <item>#fff5f5f5</item>
-    <item>#ffeeeeee</item>
-    <item>#ffe0e0e0</item>
-  </array>
 </resources>

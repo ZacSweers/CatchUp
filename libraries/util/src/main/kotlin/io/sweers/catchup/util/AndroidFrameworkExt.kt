@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("NOTHING_TO_INLINE")
-
 package io.sweers.catchup.util
 
 import android.annotation.SuppressLint
@@ -22,16 +20,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.content.res.Resources
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
-import androidx.annotation.AttrRes
 import androidx.annotation.CheckResult
-import androidx.annotation.ColorInt
-import androidx.annotation.UiThread
-import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import java.io.File
 import java.io.IOException
@@ -91,49 +83,13 @@ private fun Context.maybeStartActivity(inputIntent: Intent, chooser: Boolean): B
 private fun Context.hasHandler(intent: Intent) =
   packageManager.queryIntentActivities(intent, 0).isNotEmpty()
 
-private val typedValue = TypedValue()
-
-@ColorInt
-@UiThread
-fun Context.resolveAttributeColor(@AttrRes resId: Int): Int {
-  theme.resolveAttribute(resId, typedValue, true)
-  if (typedValue.type in TypedValue.TYPE_FIRST_COLOR_INT..TypedValue.TYPE_LAST_COLOR_INT) {
-    return typedValue.data
-  }
-  val colorRes =
-    if (typedValue.resourceId != 0) {
-      typedValue.resourceId
-    } else {
-      typedValue.data
-    }
-  return ContextCompat.getColor(this, colorRes)
-}
-
 fun Context.isInNightMode(): Boolean {
-  val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-  return when (currentNightMode) {
+  return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
     Configuration.UI_MODE_NIGHT_NO -> false // Night mode is not active, we're in day time
     Configuration.UI_MODE_NIGHT_YES -> true // Night mode is active, we're at night!
     else -> false // We don't know what mode we're in, assume notnight
   }
 }
-
-/**
- * Determine if the navigation bar will be on the bottom of the screen, based on logic in
- * PhoneWindowManager.
- */
-fun Context.isNavBarOnBottom(): Boolean {
-  val res = resources
-  val cfg = resources.configuration
-  val dm = res.displayMetrics
-  val canMove = dm.widthPixels != dm.heightPixels && cfg.smallestScreenWidthDp < 600
-  return !canMove || dm.widthPixels < dm.heightPixels
-}
-
-inline fun Context.dp2px(dipValue: Float) = resources.dp2px(dipValue)
-
-inline fun Resources.dp2px(dipValue: Float) =
-  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, displayMetrics)
 
 @Suppress("DEPRECATION")
 val Context.primaryLocale: Locale
