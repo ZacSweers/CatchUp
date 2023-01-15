@@ -30,6 +30,7 @@ import com.slack.circuit.CircuitCompositionLocals
 import com.slack.circuit.CircuitConfig
 import com.slack.circuit.NavigableCircuitContent
 import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.push
 import com.slack.circuit.rememberCircuitNavigator
 import com.squareup.anvil.annotations.ContributesMultibinding
@@ -85,10 +86,12 @@ constructor(
         }
       CatchUpTheme(useDarkTheme = useDarkTheme) {
         CircuitCompositionLocals(circuitConfig) {
-          val backstack = rememberSaveableBackStack { push(HomeScreen) }
-          val navigator = rememberCircuitNavigator(backstack)
-          val intentAwareNavigator = remember(navigator) { IntentAwareNavigator(this, navigator) }
-          NavigableCircuitContent(intentAwareNavigator, backstack)
+          ContentWithOverlays {
+            val backstack = rememberSaveableBackStack { push(HomeScreen) }
+            val navigator = rememberCircuitNavigator(backstack)
+            val intentAwareNavigator = remember(navigator) { IntentAwareNavigator(this, navigator) }
+            NavigableCircuitContent(intentAwareNavigator, backstack)
+          }
         }
       }
     }
