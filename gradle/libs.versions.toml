@@ -248,7 +248,7 @@ retrofit-rxJava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.
 rx-android = "io.reactivex.rxjava3:rxandroid:3.0.2"
 rx-dogTag = "com.uber.rxdogtag2:rxdogtag:2.0.1"
 rx-dogTagAutoDispose = "com.uber.rxdogtag2:rxdogtag-autodispose:2.0.1"
-rx-java = "io.reactivex.rxjava3:rxjava:3.1.5"
+rx-java = "io.reactivex.rxjava3:rxjava:3.1.6"
 rx-relay = "com.jakewharton.rxrelay3:rxrelay:3.0.1"
 
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
