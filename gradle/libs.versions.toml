@@ -128,9 +128,9 @@ androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accom
 androidx-compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material3", version.ref = "accompanist" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
-firebase-config = "com.google.firebase:firebase-config:21.2.0"
+firebase-config = "com.google.firebase:firebase-config:21.2.1"
 firebase-database = "com.google.firebase:firebase-database:20.1.0"
-firebase-perf = "com.google.firebase:firebase-perf:20.3.0"
+firebase-perf = "com.google.firebase:firebase-perf:20.3.1"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
 anvil-compiler = { module = "com.squareup.anvil:compiler", version.ref = "anvil" }
