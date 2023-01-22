@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.toggleable
@@ -344,7 +344,7 @@ constructor(
 
     CatchUpTheme(useDarkTheme = true) {
       Surface(Modifier.fillMaxHeight()) {
-        LazyColumn(verticalArrangement = spacedBy(8.dp), modifier = Modifier.statusBarsPadding()) {
+        LazyColumn(verticalArrangement = spacedBy(8.dp), modifier = Modifier.systemBarsPadding()) {
           item(key = "header") {
             Row(
               Modifier.fillMaxWidth().padding(12.dp),
