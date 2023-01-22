@@ -9,8 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
@@ -21,6 +19,7 @@ import com.slack.circuit.CircuitContent
 import com.slack.circuit.Navigator
 import com.slack.circuit.onNavEvent
 import com.squareup.anvil.annotations.ContributesBinding
+import dev.zacsweers.catchup.compose.rememberConditionalSystemUiColors
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.base.ui.DefaultRootContent
@@ -61,23 +60,16 @@ constructor(
 
       // Update system bar icon colors when drawer is open/closed
       val systemUiController = rememberSystemUiController()
-      var storedStatusBarDarkContent by remember {
-        mutableStateOf(systemUiController.statusBarDarkContentEnabled)
-      }
-      var storedNavBarDarkContent by remember {
-        mutableStateOf(systemUiController.navigationBarDarkContentEnabled)
-      }
+      val conditionalSystemUiColors = rememberConditionalSystemUiColors(systemUiController)
       LaunchedEffect(systemUiController) {
         snapshotFlow { drawerState.currentValue }
           .collect { value ->
             when (value) {
               DrawerValue.Closed -> {
-                systemUiController.statusBarDarkContentEnabled = storedStatusBarDarkContent
-                systemUiController.navigationBarDarkContentEnabled = storedNavBarDarkContent
+                conditionalSystemUiColors.restore()
               }
               DrawerValue.Open -> {
-                storedStatusBarDarkContent = systemUiController.statusBarDarkContentEnabled
-                storedNavBarDarkContent = systemUiController.navigationBarDarkContentEnabled
+                conditionalSystemUiColors.save()
                 systemUiController.systemBarsDarkContentEnabled = false
               }
             }
