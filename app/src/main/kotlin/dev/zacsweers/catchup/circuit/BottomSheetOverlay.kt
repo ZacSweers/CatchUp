@@ -48,10 +48,7 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
     ModalBottomSheetLayout(
       modifier = Modifier.fillMaxSize(),
       sheetContent = {
-        // If this all looks dumb, it's because it is.
-        // https://github.com/google/accompanist/issues/910
-        Box(Modifier.padding(32.dp)) {
-          @Suppress("MagicNumber") Box(Modifier.fillMaxSize(0.51f))
+        Box(Modifier.padding(16.dp)) {
           // Delay setting the result until we've finished dismissing
           val coroutineScope = rememberCoroutineScope()
           content(model) { result ->
