@@ -18,6 +18,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.CircuitContent
+import com.slack.circuit.Navigator
+import com.slack.circuit.onNavEvent
 import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
@@ -34,7 +36,7 @@ constructor(
   private val debugPreferences: DebugPreferences,
 ) : RootContent {
   @Composable
-  override fun Content(content: @Composable () -> Unit) {
+  override fun Content(navigator: Navigator, content: @Composable () -> Unit) {
     val original = LocalLayoutDirection.current
     // This is how to get the drawer on the right and... guh
     val inverted =
@@ -87,7 +89,7 @@ constructor(
             ModalDrawerSheet(
               windowInsets = WindowInsets(0, 0, 0, 0),
             ) {
-              CircuitContent(DebugSettingsScreen)
+              CircuitContent(screen = DebugSettingsScreen, onNavEvent = navigator::onNavEvent)
             }
           }
         },

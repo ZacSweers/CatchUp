@@ -87,11 +87,11 @@ constructor(
       CatchUpTheme(useDarkTheme = useDarkTheme) {
         CircuitCompositionLocals(circuitConfig) {
           ContentWithOverlays {
-            rootContent.Content {
-              val backstack = rememberSaveableBackStack { push(HomeScreen) }
-              val navigator = rememberCircuitNavigator(backstack)
-              val intentAwareNavigator =
-                remember(navigator) { IntentAwareNavigator(this, navigator) }
+            val backstack = rememberSaveableBackStack { push(HomeScreen) }
+            val navigator = rememberCircuitNavigator(backstack)
+            val intentAwareNavigator =
+              remember(navigator) { IntentAwareNavigator(this, navigator) }
+            rootContent.Content(intentAwareNavigator) {
               NavigableCircuitContent(intentAwareNavigator, backstack)
             }
           }
