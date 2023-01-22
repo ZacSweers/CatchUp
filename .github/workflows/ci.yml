@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p ~/.gradle
           touch ~/.gradle/gradle.properties
-          ./gradlew bootstrap
+          ./gradlew bootstrap --stacktrace
 
       - name: Build and run tests
         id: gradle
