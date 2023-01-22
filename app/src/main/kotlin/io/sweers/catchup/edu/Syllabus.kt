@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 /** Syllabus is a helper that orchestrates feature EDUs and hints via TapTargets. */
+// TODO compose/coroutines-ify this
 @SingleIn(AppScope::class)
 class Syllabus @Inject constructor(private val preferences: SharedPreferences) {
 

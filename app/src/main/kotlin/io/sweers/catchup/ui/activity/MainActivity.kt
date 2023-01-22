@@ -89,8 +89,7 @@ constructor(
           ContentWithOverlays {
             val backstack = rememberSaveableBackStack { push(HomeScreen) }
             val navigator = rememberCircuitNavigator(backstack)
-            val intentAwareNavigator =
-              remember(navigator) { IntentAwareNavigator(this, navigator) }
+            val intentAwareNavigator = remember(navigator) { IntentAwareNavigator(this, navigator) }
             rootContent.Content(intentAwareNavigator) {
               NavigableCircuitContent(intentAwareNavigator, backstack)
             }

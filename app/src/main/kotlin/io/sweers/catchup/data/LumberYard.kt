@@ -130,15 +130,16 @@ class LumberYard @Inject constructor(private val app: Application) {
     }
 
     val displayLevel
-      get() = when (level) {
-        Log.VERBOSE -> "V"
-        Log.DEBUG -> "D"
-        Log.INFO -> "I"
-        Log.WARN -> "W"
-        Log.ERROR -> "E"
-        Log.ASSERT -> "A"
-        else -> "?"
-      }
+      get() =
+        when (level) {
+          Log.VERBOSE -> "V"
+          Log.DEBUG -> "D"
+          Log.INFO -> "I"
+          Log.WARN -> "W"
+          Log.ERROR -> "E"
+          Log.ASSERT -> "A"
+          else -> "?"
+        }
   }
 
   companion object {

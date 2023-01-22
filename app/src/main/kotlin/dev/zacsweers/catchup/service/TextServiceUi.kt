@@ -314,6 +314,7 @@ fun LazyListScope.handleLoadStates(
         item { LoadingItem() }
       }
       loadState.refresh is LoadState.Error -> {
+        onRefreshChange(false)
         val e = loadState.refresh as LoadState.Error
         item {
           ErrorItem(

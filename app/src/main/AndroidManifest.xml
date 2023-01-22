@@ -41,12 +41,6 @@
     </activity>
 
     <activity
-        android:name=".ui.activity.ServiceSettingsActivity"
-        android:label="@string/pref_services"
-        android:launchMode="singleTop"
-        />
-
-    <activity
         android:name=".ui.activity.LauncherActivity"
         android:theme="@style/CatchUp.Launcher"/>
 
