@@ -31,6 +31,7 @@
       android:supportsRtl="true"
       android:theme="@style/CatchUp"
       android:appComponentFactory="io.sweers.catchup.di.CatchUpAppComponentFactory"
+      android:enableOnBackInvokedCallback="true"
       tools:replace="android:appComponentFactory"
       tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
     <activity
