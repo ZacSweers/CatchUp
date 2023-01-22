@@ -48,7 +48,6 @@ import androidx.datastore.preferences.core.Preferences
 import com.alorma.compose.settings.storage.base.SettingValueState
 import com.alorma.compose.settings.storage.base.getValue
 import com.alorma.compose.settings.storage.base.setValue
-import com.alorma.compose.settings.storage.datastore.rememberPreferenceDataStoreBooleanSettingState
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.byteunits.BinaryByteUnit
 import com.slack.circuit.CircuitUiState
@@ -190,14 +189,7 @@ class SettingsUi
 constructor(
   // TODO this is unfortunate but sorta how the settings library used here works
   private val catchUpPreferences: CatchUpPreferences,
-) : Ui<SettingsScreen.State> {
-  @Composable
-  private fun rememberBooleanSettingState(key: Preferences.Key<Boolean>, defaultValue: Boolean) =
-    rememberPreferenceDataStoreBooleanSettingState(
-      key = key.name,
-      dataStore = catchUpPreferences.datastore,
-      defaultValue = defaultValue,
-    )
+) : Ui<SettingsScreen.State>, BaseSettingsUi by RealBaseSettingsUi(catchUpPreferences.datastore) {
 
   @Composable
   private fun BooleanPreference(

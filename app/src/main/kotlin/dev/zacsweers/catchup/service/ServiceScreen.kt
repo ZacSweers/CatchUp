@@ -7,7 +7,6 @@ import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -240,12 +239,10 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: () -> U
 
 @Composable
 fun LoadingView(themeColor: Color, modifier: Modifier = Modifier) {
-  Column(
+  Box(
     modifier = modifier,
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    CircularProgressIndicator(color = themeColor)
+    CircularProgressIndicator(color = themeColor, modifier = Modifier.align(Alignment.Center))
   }
 }
 

@@ -15,16 +15,12 @@
  */
 package io.sweers.catchup.base.ui
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
-import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.annotation.CheckResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
-import androidx.viewbinding.ViewBinding
 import autodispose2.lifecycle.CorrespondingEventsFunction
 import autodispose2.lifecycle.LifecycleScopeProvider
 import com.jakewharton.rxrelay3.BehaviorRelay
@@ -41,82 +37,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleScopeProvider<Activi
 
   private val lifecycleRelay = BehaviorRelay.create<ActivityEvent>()
   abstract val appConfig: AppConfig
-
-  protected inline fun <T : Any, R : Any> Observable<T>.doOnCreate(
-    r: R,
-    crossinline action: R.() -> Unit
-  ): Observable<T> = apply {
-    doOnNext {
-      if (it == CREATE) {
-        r.action()
-      }
-    }
-  }
-
-  protected inline fun <T : Any, R : Any> Observable<T>.doOnStart(
-    r: R,
-    crossinline action: R.() -> Unit
-  ): Observable<T> = apply {
-    doOnNext {
-      if (it == START) {
-        r.action()
-      }
-    }
-  }
-
-  protected inline fun <T : Any, R : Any> Observable<T>.doOnResume(
-    r: R,
-    crossinline action: R.() -> Unit
-  ): Observable<T> = apply {
-    doOnNext {
-      if (it == RESUME) {
-        r.action()
-      }
-    }
-  }
-
-  protected inline fun <T : Any, R : Any> Observable<T>.doOnPause(
-    r: R,
-    crossinline action: R.() -> Unit
-  ): Observable<T> = apply {
-    doOnNext {
-      if (it == PAUSE) {
-        r.action()
-      }
-    }
-  }
-
-  protected inline fun <T : Any, R : Any> Observable<T>.doOnStop(
-    r: R,
-    crossinline action: R.() -> Unit
-  ): Observable<T> = apply {
-    doOnNext {
-      if (it == STOP) {
-        r.action()
-      }
-    }
-  }
-
-  protected inline fun <T : Any, R : Any> Observable<T>.doOnDestroy(
-    r: R,
-    crossinline action: R.() -> Unit
-  ): Observable<T> = apply {
-    doOnNext {
-      if (it == DESTROY) {
-        r.action()
-      }
-    }
-  }
-
-  @SuppressLint("AutoDispose")
-  protected inline fun <T : Any> T.doOnDestroy(crossinline action: T.() -> Unit): T = apply {
-    lifecycle().doOnDestroy(this) { action() }.subscribe()
-  }
-
-  @CheckResult
-  protected inline fun <T : ViewBinding> ViewContainer.inflateBinding(
-    inflate: (LayoutInflater, ViewGroup, Boolean) -> T
-  ): T = inflate(layoutInflater, forActivity(this@BaseActivity), true)
 
   @CheckResult
   override fun lifecycle(): Observable<ActivityEvent> {

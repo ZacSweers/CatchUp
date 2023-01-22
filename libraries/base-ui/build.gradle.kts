@@ -41,6 +41,7 @@ slack {
 dependencies {
   api(project(":libraries:appconfig"))
   api(project(":libraries:util"))
+  api(project(":libraries:di"))
   api(libs.androidx.compose.runtime)
   implementation(libs.androidx.compose.uiTooling)
   api(libs.androidx.paging.compose)
@@ -61,4 +62,5 @@ dependencies {
   api(libs.androidx.palette)
   api(libs.androidx.paletteKtx)
   api(libs.kotlin.datetime)
+  api(libs.circuit.core)
 }

@@ -44,6 +44,7 @@ import io.sweers.catchup.base.ui.generateAsync
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.util.UiUtil
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -218,6 +219,8 @@ fun LazyStaggeredGridScope.handleLoadStates(
   themeColor: Color,
   onRefreshChange: (Boolean) -> Unit
 ) {
+  // TODO set span count in 1.4.0-alpha05
+  //  https://android-review.googlesource.com/c/platform/frameworks/support/+/2319885
   lazyItems.apply {
     when {
       loadState.refresh is LoadState.Loading -> {
@@ -231,7 +234,9 @@ fun LazyStaggeredGridScope.handleLoadStates(
         item(key = "appendingMore") { LoadingItem() }
       }
       loadState.refresh is LoadState.Error -> {
+        onRefreshChange(false)
         val e = loadState.refresh as LoadState.Error
+        Timber.e(e.error)
         item(key = "errorLoading") {
           ErrorItem(
             "Error loading service: ${e.error.localizedMessage}",
@@ -242,6 +247,7 @@ fun LazyStaggeredGridScope.handleLoadStates(
       }
       loadState.append is LoadState.Error -> {
         val e = loadState.append as LoadState.Error
+        Timber.e(e.error)
         item(key = "errorLoadingMore") {
           ErrorItem("Error loading service: ${e.error.localizedMessage}", onRetryClick = ::retry)
         }

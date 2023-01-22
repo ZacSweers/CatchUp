@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.slack.circuit.CircuitCompositionLocals
 import com.slack.circuit.CircuitConfig
 import com.slack.circuit.NavigableCircuitContent
@@ -38,13 +37,15 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.circuit.IntentAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
 import dev.zacsweers.catchup.di.android.ActivityKey
 import io.sweers.catchup.CatchUpPreferences
-import io.sweers.catchup.base.ui.InjectingBaseActivity
+import io.sweers.catchup.base.ui.BaseActivity
+import io.sweers.catchup.base.ui.RootContent
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.home.HomeScreen
@@ -65,16 +66,15 @@ constructor(
   private val syllabus: Syllabus,
   private val circuitConfig: CircuitConfig,
   private val catchUpPreferences: CatchUpPreferences,
-) : InjectingBaseActivity() {
+  private val rootContent: RootContent,
+  override val appConfig: AppConfig,
+) : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     WindowCompat.setDecorFitsSystemWindows(window, false)
     syllabus.bind(this)
 
-    //    val viewGroup = viewContainer.forActivity(this)
-    //    val composeView = ComposeView(this)
-    //    viewGroup.addView(composeView)
     setContent {
       val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
       val forceNight by catchUpPreferences.dayNightForceNight.collectAsState(initial = false)
@@ -90,7 +90,9 @@ constructor(
             val backstack = rememberSaveableBackStack { push(HomeScreen) }
             val navigator = rememberCircuitNavigator(backstack)
             val intentAwareNavigator = remember(navigator) { IntentAwareNavigator(this, navigator) }
-            NavigableCircuitContent(intentAwareNavigator, backstack)
+            rootContent.Content(intentAwareNavigator) {
+              NavigableCircuitContent(intentAwareNavigator, backstack)
+            }
           }
         }
       }
@@ -118,9 +120,6 @@ constructor(
   abstract class ServiceIntegrationModule {
     companion object {
       // TODO de-scope
-      @TextViewPool @Provides fun provideTextViewPool() = RecycledViewPool()
-
-      @VisualViewPool @Provides fun provideVisualViewPool() = RecycledViewPool()
 
       @SingleIn(AppScope::class)
       @Provides
@@ -130,10 +129,7 @@ constructor(
         sharedPreferences: SharedPreferences,
         services: @JvmSuppressWildcards Map<String, Provider<Service>>,
       ): @JvmSuppressWildcards Map<String, Provider<Service>> {
-        return services.filter {
-          (
-            key,
-          ) ->
+        return services.filter { (key, _) ->
           serviceMetas.getValue(key).enabled &&
             sharedPreferences.getBoolean(serviceMetas.getValue(key).enabledPreferenceKey, true)
         }
@@ -148,9 +144,5 @@ constructor(
     abstract fun fragmentCreators(): @JvmSuppressWildcards Map<Class<out Fragment>, Fragment>
   }
 }
-
-@Qualifier annotation class TextViewPool
-
-@Qualifier annotation class VisualViewPool
 
 @Qualifier annotation class FinalServices

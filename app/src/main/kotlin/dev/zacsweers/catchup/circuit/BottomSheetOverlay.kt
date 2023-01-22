@@ -2,9 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package dev.zacsweers.catchup.circuit
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -48,18 +46,13 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
     ModalBottomSheetLayout(
       modifier = Modifier.fillMaxSize(),
       sheetContent = {
-        // If this all looks dumb, it's because it is.
-        // https://github.com/google/accompanist/issues/910
-        Box(Modifier.padding(32.dp)) {
-          @Suppress("MagicNumber") Box(Modifier.fillMaxSize(0.51f))
-          // Delay setting the result until we've finished dismissing
-          val coroutineScope = rememberCoroutineScope()
-          content(model) { result ->
-            // This is the OverlayNavigator.finish() callback
-            coroutineScope.launch {
-              sheetState.hide()
-              navigator.finish(result)
-            }
+        // Delay setting the result until we've finished dismissing
+        val coroutineScope = rememberCoroutineScope()
+        content(model) { result ->
+          // This is the OverlayNavigator.finish() callback
+          coroutineScope.launch {
+            sheetState.hide()
+            navigator.finish(result)
           }
         }
       },

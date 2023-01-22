@@ -28,13 +28,13 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '19'
 
       - name: Bootstrap
         run: |
           mkdir -p ~/.gradle
           touch ~/.gradle/gradle.properties
-          ./gradlew bootstrap
+          ./gradlew bootstrap --stacktrace
 
       - name: Build and run tests
         id: gradle

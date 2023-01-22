@@ -123,22 +123,23 @@ class LumberYard @Inject constructor(private val app: Application) {
       return String.format(
         "%22s %s %s",
         tag ?: "CATCHUP",
-        displayLevel(),
+        displayLevel,
         // Indent newlines to match the original indentation.
         message.replace("\\n".toRegex(), "\n                         ")
       )
     }
 
-    fun displayLevel() =
-      when (level) {
-        Log.VERBOSE -> "V"
-        Log.DEBUG -> "D"
-        Log.INFO -> "I"
-        Log.WARN -> "W"
-        Log.ERROR -> "E"
-        Log.ASSERT -> "A"
-        else -> "?"
-      }
+    val displayLevel
+      get() =
+        when (level) {
+          Log.VERBOSE -> "V"
+          Log.DEBUG -> "D"
+          Log.INFO -> "I"
+          Log.WARN -> "W"
+          Log.ERROR -> "E"
+          Log.ASSERT -> "A"
+          else -> "?"
+        }
   }
 
   companion object {

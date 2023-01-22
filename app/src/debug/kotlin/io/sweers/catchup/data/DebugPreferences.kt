@@ -36,7 +36,7 @@ class DebugPreferences @Inject constructor(@ApplicationContext context: Context)
     private const val STORAGE_FILE_NAME = "debug_preferences"
   }
 
-  private val datastore =
+  internal val datastore =
     PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(STORAGE_FILE_NAME) }
 
   val animationSpeed: Flow<Int> = datastore.data.map { it[Keys.animationSpeed] ?: 1 }
