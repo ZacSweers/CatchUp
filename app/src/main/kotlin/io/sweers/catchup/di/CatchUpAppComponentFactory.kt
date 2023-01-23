@@ -20,8 +20,10 @@ import android.app.Application
 import android.content.Intent
 import androidx.annotation.Keep
 import androidx.core.app.AppComponentFactory
+import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.app.CatchUpApplication
 import javax.inject.Provider
+import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 
 @Keep
 class CatchUpAppComponentFactory : AppComponentFactory() {
@@ -54,5 +56,12 @@ class CatchUpAppComponentFactory : AppComponentFactory() {
   // AppComponentFactory can be created multiple times
   companion object {
     private lateinit var applicationRef: CatchUpApplication
+
+    // Enable coroutines debug mode in debug builds
+    init {
+      if (BuildConfig.DEBUG) {
+        System.setProperty(DEBUG_PROPERTY_NAME, "on")
+      }
+    }
   }
 }
