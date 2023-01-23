@@ -426,6 +426,8 @@ licensee {
   allowUrl("https://jsoup.org/license")
   // MIT
   allowUrl("https://github.com/alorma/Compose-Settings/blob/main/LICENSE")
+  // Apache v2
+  allowUrl("https://github.com/Mr-Pine/Zoomables/blob/master/LICENSE")
 }
 
 androidComponents {

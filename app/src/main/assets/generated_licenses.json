@@ -1,5 +1,9 @@
 [
   {
+    "owner": "aakira",
+    "name": "Napier"
+  },
+  {
     "owner": "airbnb",
     "name": "lottie-android"
   },
@@ -26,6 +30,10 @@
   {
     "owner": "bugsnag",
     "name": "bugsnag-android"
+  },
+  {
+    "owner": "cashapp",
+    "name": "multiplatform-paging"
   },
   {
     "owner": "cashapp",
@@ -114,6 +122,10 @@
   {
     "owner": "material-components",
     "name": "material-components-android"
+  },
+  {
+    "owner": "Mr-Pine",
+    "name": "Zoomables"
   },
   {
     "owner": "noties",
