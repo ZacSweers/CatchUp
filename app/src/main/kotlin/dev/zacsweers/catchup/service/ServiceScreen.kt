@@ -45,6 +45,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.slack.circuit.CircuitUiEvent
 import com.slack.circuit.CircuitUiState
+import com.slack.circuit.Navigator
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -61,10 +62,10 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.RemoteKeyDao
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.ImageViewerData
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.FinalServices
+import io.sweers.catchup.ui.activity.ImageViewerScreen
 import javax.inject.Provider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -101,6 +102,7 @@ class ServicePresenter
 @AssistedInject
 constructor(
   @Assisted private val screen: ServiceScreen,
+  @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,
   @FinalServices private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
   private val catchUpDatabase: CatchUpDatabase,
@@ -145,22 +147,20 @@ constructor(
     val eventSink: (ServiceScreen.Event) -> Unit = { event ->
       when (event) {
         is ServiceScreen.Event.ItemClicked -> {
-          val imageData =
-            if (service.meta().isVisual) {
-              val info = event.item.imageInfo!!
-              ImageViewerData(
-                id = info.imageId,
-                imageUrl = info.detailUrl,
-                cacheKey = info.cacheKey,
-                sourceUrl = info.sourceUrl,
-                image = null
-              )
+          if (service.meta().isVisual) {
+            val info = event.item.imageInfo!!
+            navigator.goTo(
+              ImageViewerScreen(info.imageId, info.detailUrl, info.cacheKey, info.sourceUrl)
+            )
+          } else {
+            val url = event.item.clickUrl
+            val meta = UrlMeta(url, themeColorInt, context, null)
+            if (meta.isSupportedInMediaViewer()) {
+              val uriUrl = meta.uri.toString()
+              navigator.goTo(ImageViewerScreen(uriUrl, uriUrl, null, uriUrl))
             } else {
-              null
+              coroutineScope.launch { linkManager.openUrl(meta) }
             }
-          val url = event.item.clickUrl
-          coroutineScope.launch {
-            linkManager.openUrl(UrlMeta(url, themeColorInt, context, imageData))
           }
         }
         is ServiceScreen.Event.MarkClicked -> {
@@ -178,7 +178,7 @@ constructor(
   @CircuitInject(ServiceScreen::class, AppScope::class)
   @AssistedFactory
   fun interface Factory {
-    fun create(screen: ServiceScreen): ServicePresenter
+    fun create(screen: ServiceScreen, navigator: Navigator): ServicePresenter
   }
 }
 
