@@ -172,8 +172,7 @@ class ImageViewerAwareNavDecoration : NavDecoration {
           (arg.first as SaveableBackStack.Record).screen is ImageViewerScreen
       ) {
         // TODO why on earth does this crash if I use the empty decoration? Even crossfades
-        //        NavigatorDefaults.EmptyDecoration
-        NavigatorDefaults.DefaultDecoration
+        NavigatorDefaults.EmptyDecoration
       } else {
         NavigatorDefaults.DefaultDecoration
       }
