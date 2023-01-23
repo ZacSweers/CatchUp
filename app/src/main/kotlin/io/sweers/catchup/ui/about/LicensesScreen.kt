@@ -41,6 +41,7 @@ import com.slack.circuit.CircuitUiState
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.squareup.anvil.annotations.ContributesBinding
 import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -98,16 +99,14 @@ object LicensesModule {
 class LicensesPresenter
 @Inject
 constructor(
-  private val apolloClient: ApolloClient,
   private val linkManager: LinkManager,
-  private val markdownConverter: EmojiMarkdownConverter,
-  private val moshi: Moshi,
-  private val assets: AssetManager
+  private val licensesRepository: LicensesRepository,
 ) : Presenter<LicensesScreen.State> {
   @Composable
   override fun present(): LicensesScreen.State {
     // TODO use paging?
-    val items by produceState<List<OssBaseItem>?>(null) { value = requestItems() }
+    val items by
+      produceState<List<OssBaseItem>?>(null) { value = licensesRepository.requestItems() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     return LicensesScreen.State(items) { event ->
@@ -118,28 +117,128 @@ constructor(
       }
     }
   }
+}
 
-  private fun stubData(): List<OssBaseItem> {
-    return buildList {
-      repeat(15) { index ->
-        add(
-          OssItem(
-            "https://example.com/image.png",
-            "ZacSweers",
-            "MoshiX-$index",
-            "Apache v2",
-            "https://github.com/ZacSweers/MoshiX",
-            "Extra serialization tools for Moshi",
-            "https://github.com/ZacSweers"
-          )
-        )
+private fun OssItem.toCatchUpItem(): CatchUpItem {
+  return CatchUpItem(
+    id = hashCode().toLong(),
+    title = "${name}${if (!description.isNullOrEmpty()) " — $description" else ""}",
+    author = license,
+    itemClickUrl = clickUrl,
+  )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@CircuitInject(LicensesScreen::class, AppScope::class)
+@Composable
+internal fun Licenses(state: LicensesScreen.State) {
+  val sink = state.eventSink
+  LazyColumn {
+    val items = state.items
+    if (items == null) {
+      item {
+        Box(Modifier.fillMaxSize()) { CircularProgressIndicator(Modifier.align(Alignment.Center)) }
+      }
+    } else {
+      for (ossItem in items) {
+        when (ossItem) {
+          is OssItemHeader -> stickyHeader(ossItem.id) { OssItemHeaderUi(ossItem) }
+          is OssItem ->
+            item(ossItem.id) {
+              val catchUpItem = ossItem.toCatchUpItem()
+              ClickableItem(
+                modifier = Modifier.animateItemPlacement(),
+                onClick = { sink(LicensesScreen.Event.Click(catchUpItem.clickUrl!!)) },
+              ) {
+                Row {
+                  Spacer(Modifier.width(50.dp))
+                  // TODO extract color and make it shared state
+                  TextItem(catchUpItem, colorResource(R.color.colorAccent))
+                }
+              }
+            }
+        }
       }
     }
   }
+}
 
+@Composable
+private fun OssItemHeaderUi(item: OssItemHeader) {
+  Surface {
+    Row(
+      modifier = Modifier.fillMaxWidth().padding(8.dp),
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      val size = 40.dp
+      val sizePx = with(LocalDensity.current) { size.toPx() }.toInt()
+      val painter =
+        rememberAsyncImagePainter(
+          ImageRequest.Builder(LocalContext.current)
+            .data(item.avatarUrl)
+            .size(sizePx)
+            .transformations(CircleCropTransformation())
+            .build()
+        )
+      Image(
+        painter = painter,
+        contentDescription = item.name,
+        modifier = Modifier.size(size),
+      )
+
+      Spacer(modifier = Modifier.width(16.dp))
+
+      Text(
+        text = item.name,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold,
+      )
+    }
+    // icon.load(item.avatarUrl) {
+    //                onSuccess = { _, _ ->
+    //                  val bitmap: Bitmap? =
+    //                    when (val data = icon.drawable) {
+    //                      is BitmapDrawable -> data.bitmap
+    //                      else -> null
+    //                    }
+    //                  bitmap?.let {
+    //                    newScope().launch {
+    //                      val color =
+    //                        Palette.from(it)
+    //                          .clearFilters()
+    //                          .generateAsync()
+    //                          ?.findSwatch(headerColorThresholdFun)
+    //                          ?.rgb
+    //                          ?: defaultHeaderTextColor
+    //                      holder.title.setTextColor(color)
+    //                    }
+    //                  }
+
+  }
+}
+
+@Preview
+@Composable
+private fun PreviewHeaderUi() {
+  OssItemHeaderUi(OssItemHeader("name", "Zac Sweers"))
+}
+
+interface LicensesRepository {
+  suspend fun requestItems(): List<OssBaseItem>
+}
+
+@ContributesBinding(AppScope::class)
+class LicensesRepositoryImpl
+@Inject
+constructor(
+  private val apolloClient: ApolloClient,
+  private val markdownConverter: EmojiMarkdownConverter,
+  private val moshi: Moshi,
+  private val assets: AssetManager
+) : LicensesRepository {
   /** I give you: the most over-engineered OSS licenses section ever. */
   @OptIn(FlowPreview::class)
-  private suspend fun requestItems(): List<OssBaseItem> {
+  override suspend fun requestItems(): List<OssBaseItem> {
     // Start with a fetch of our github entries from assets
     val githubEntries =
       withContext(Dispatchers.Default) {
@@ -257,110 +356,6 @@ constructor(
         }
       }
   }
-}
-
-private fun OssItem.toCatchUpItem(): CatchUpItem {
-  return CatchUpItem(
-    id = hashCode().toLong(),
-    title = "${name}${if (!description.isNullOrEmpty()) " — $description" else ""}",
-    author = license,
-    itemClickUrl = clickUrl,
-  )
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@CircuitInject(LicensesScreen::class, AppScope::class)
-@Composable
-internal fun Licenses(state: LicensesScreen.State) {
-  val sink = state.eventSink
-  LazyColumn {
-    val items = state.items
-    if (items == null) {
-      item {
-        Box(Modifier.fillMaxSize()) { CircularProgressIndicator(Modifier.align(Alignment.Center)) }
-      }
-    } else {
-      for (ossItem in items) {
-        when (ossItem) {
-          is OssItemHeader -> stickyHeader(ossItem.id) { OssItemHeaderUi(ossItem) }
-          is OssItem ->
-            item(ossItem.id) {
-              val catchUpItem = ossItem.toCatchUpItem()
-              ClickableItem(
-                modifier = Modifier.animateItemPlacement(),
-                onClick = { sink(LicensesScreen.Event.Click(catchUpItem.clickUrl!!)) },
-              ) {
-                Row {
-                  Spacer(Modifier.width(50.dp))
-                  // TODO extract color and make it shared state
-                  TextItem(catchUpItem, colorResource(R.color.colorAccent))
-                }
-              }
-            }
-        }
-      }
-    }
-  }
-}
-
-@Composable
-private fun OssItemHeaderUi(item: OssItemHeader) {
-  Surface {
-    Row(
-      modifier = Modifier.fillMaxWidth().padding(8.dp),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      val size = 40.dp
-      val sizePx = with(LocalDensity.current) { size.toPx() }.toInt()
-      val painter =
-        rememberAsyncImagePainter(
-          ImageRequest.Builder(LocalContext.current)
-            .data(item.avatarUrl)
-            .size(sizePx)
-            .transformations(CircleCropTransformation())
-            .build()
-        )
-      Image(
-        painter = painter,
-        contentDescription = item.name,
-        modifier = Modifier.size(size),
-      )
-
-      Spacer(modifier = Modifier.width(16.dp))
-
-      Text(
-        text = item.name,
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold,
-      )
-    }
-    // icon.load(item.avatarUrl) {
-    //                onSuccess = { _, _ ->
-    //                  val bitmap: Bitmap? =
-    //                    when (val data = icon.drawable) {
-    //                      is BitmapDrawable -> data.bitmap
-    //                      else -> null
-    //                    }
-    //                  bitmap?.let {
-    //                    newScope().launch {
-    //                      val color =
-    //                        Palette.from(it)
-    //                          .clearFilters()
-    //                          .generateAsync()
-    //                          ?.findSwatch(headerColorThresholdFun)
-    //                          ?.rgb
-    //                          ?: defaultHeaderTextColor
-    //                      holder.title.setTextColor(color)
-    //                    }
-    //                  }
-
-  }
-}
-
-@Preview
-@Composable
-private fun PreviewHeaderUi() {
-  OssItemHeaderUi(OssItemHeader("name", "Zac Sweers"))
 }
 
 @JsonClass(generateAdapter = true)

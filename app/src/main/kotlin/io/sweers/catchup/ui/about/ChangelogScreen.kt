@@ -17,6 +17,7 @@ import com.slack.circuit.CircuitUiState
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ClickableItem
 import dev.zacsweers.catchup.service.TextItem
@@ -43,14 +44,14 @@ object ChangelogScreen : Screen {
 class ChangelogPresenter
 @Inject
 constructor(
-  private val apolloClient: ApolloClient,
   private val linkManager: LinkManager,
-  private val markdownConverter: EmojiMarkdownConverter,
+  private val changelogRepository: ChangelogRepository,
 ) : Presenter<ChangelogScreen.State> {
   @Composable
   override fun present(): ChangelogScreen.State {
     // TODO use paging?
-    val items by produceState<List<CatchUpItem>?>(null) { value = requestItems() }
+    val items by
+      produceState<List<CatchUpItem>?>(null) { value = changelogRepository.requestItems() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     return ChangelogScreen.State(items) { event ->
@@ -60,36 +61,6 @@ constructor(
         }
       }
     }
-  }
-
-  private fun stubData(): List<CatchUpItem> {
-    return buildList { repeat(15) { index -> add(CatchUpItem(index.toLong(), "0.1.0")) } }
-  }
-
-  private suspend fun requestItems(): List<CatchUpItem> {
-    return apolloClient
-      .query(RepoReleasesQuery())
-      .execute()
-      .let {
-        @Suppress("UNCHECKED_CAST")
-        it.data!!.repository!!.onRepository.releases.nodes as List<RepoReleasesQuery.Node>
-      }
-      .mapIndexed { index, node ->
-        with(node.onRelease) {
-          CatchUpItem(
-            id = tag!!.target.abbreviatedOid.hashCode().toLong(),
-            title = markdownConverter.replaceMarkdownEmojisIn(name!!),
-            timestamp = publishedAt!!,
-            tag = tag.name,
-            source = tag.target.abbreviatedOid, // sha
-            itemClickUrl = url.toString(),
-            // TODO revisit when we have expandable items and markdown support
-            //  description = markdownConverter.replaceMarkdownEmojisIn(description!!),
-            serviceId = "changelog",
-            indexInResponse = index,
-          )
-        }
-      }
   }
 }
 
@@ -116,5 +87,43 @@ fun Changelog(state: ChangelogScreen.State) {
         }
       }
     }
+  }
+}
+
+interface ChangelogRepository {
+  suspend fun requestItems(): List<CatchUpItem>
+}
+
+@ContributesBinding(AppScope::class)
+class ChangelogRepositoryImpl
+@Inject
+constructor(
+  private val apolloClient: ApolloClient,
+  private val markdownConverter: EmojiMarkdownConverter,
+) : ChangelogRepository {
+  override suspend fun requestItems(): List<CatchUpItem> {
+    return apolloClient
+      .query(RepoReleasesQuery())
+      .execute()
+      .let {
+        @Suppress("UNCHECKED_CAST")
+        it.data!!.repository!!.onRepository.releases.nodes as List<RepoReleasesQuery.Node>
+      }
+      .mapIndexed { index, node ->
+        with(node.onRelease) {
+          CatchUpItem(
+            id = tag!!.target.abbreviatedOid.hashCode().toLong(),
+            title = markdownConverter.replaceMarkdownEmojisIn(name!!),
+            timestamp = publishedAt!!,
+            tag = tag.name,
+            source = tag.target.abbreviatedOid, // sha
+            itemClickUrl = url.toString(),
+            // TODO revisit when we have expandable items and markdown support
+            //  description = markdownConverter.replaceMarkdownEmojisIn(description!!),
+            serviceId = "changelog",
+            indexInResponse = index,
+          )
+        }
+      }
   }
 }

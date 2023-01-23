@@ -29,7 +29,6 @@ data class ServiceMeta(
   val isVisual: Boolean = false,
   val firstPageKey: Int?,
   val pagesAreNumeric: Boolean = false,
-  val serviceConfiguration: ServiceConfiguration? = null,
   val enabled: Boolean = true,
 //  val deeplinkFragment: Class<out Fragment>? = null
 ) {
