@@ -134,7 +134,7 @@ bugsnag {
   variantFilter { setEnabled("debug" !in name.lowercase(Locale.US)) }
 }
 
-kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas") } }
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 
 // play {
 //  track = "alpha"
@@ -458,7 +458,6 @@ androidComponents {
 dependencies {
   kapt(project(":libraries:tooling:spi-visualizer"))
   kapt(project(":libraries:tooling:spi-multibinds-validator"))
-  kapt(libs.androidx.room.apt)
 
   implementation(libs.markwon.core)
   implementation(libs.markwon.extStrikethrough)
@@ -498,12 +497,11 @@ dependencies {
 
   // Arch components
   implementation(libs.androidx.lifecycle.extensions)
-  kapt(libs.androidx.lifecycle.apt)
   implementation(libs.androidx.room.runtime)
   implementation(libs.androidx.room.rxJava3)
   implementation(libs.androidx.room.ktx)
   implementation(libs.androidx.room.paging)
-  kapt(libs.androidx.room.apt)
+  ksp(libs.androidx.room.apt)
 
   // Compose
   implementation(project(":libraries:compose-extensions"))
