@@ -72,7 +72,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
@@ -111,7 +110,6 @@ constructor(
 
     LaunchedEffect(view) {
       catchUpPreferences.reports
-        .onStart { emit(true) }
         .distinctUntilChanged()
         .drop(1) // Drop the initial true emission
         .collect {

@@ -89,7 +89,6 @@ import io.sweers.catchup.R
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.asDayContext
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
@@ -126,13 +125,7 @@ constructor(
 
   @Composable
   override fun present(): OrderServicesScreen.State {
-    // TODO this emptyList initial value is... weird. We wanna skip that until loaded. Is there a
-    //  better way to do this?
-    val storedOrderState by
-      remember {
-          catchUpPreferences.servicesOrder.map { it?.split(",").orEmpty().toImmutableList() }
-        }
-        .collectAsState(null)
+    val storedOrderState by remember { catchUpPreferences.servicesOrder }.collectAsState(null)
 
     return storedOrderState?.let { storedOrder ->
       val initialOrderedServices =
