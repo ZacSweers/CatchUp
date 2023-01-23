@@ -8,7 +8,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,6 +35,7 @@ import coil.transform.CircleCropTransformation
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy
 import com.apollographql.apollo3.cache.http.httpFetchPolicy
+import com.apollographql.apollo3.exception.ApolloException
 import com.slack.circuit.CircuitUiEvent
 import com.slack.circuit.CircuitUiState
 import com.slack.circuit.Presenter
@@ -50,6 +50,7 @@ import dagger.Module
 import dagger.Provides
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ClickableItem
+import dev.zacsweers.catchup.service.ErrorItem
 import dev.zacsweers.catchup.service.TextItem
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
@@ -65,6 +66,9 @@ import io.sweers.catchup.util.kotlin.groupBy
 import io.sweers.catchup.util.kotlin.sortBy
 import java.util.Objects
 import javax.inject.Inject
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.asFlow
@@ -80,10 +84,12 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import okio.buffer
 import okio.source
+import timber.log.Timber
 
 @Parcelize
 object LicensesScreen : Screen {
-  data class State(val items: List<OssBaseItem>?, val eventSink: (Event) -> Unit) : CircuitUiState
+  data class State(val items: ImmutableList<OssBaseItem>?, val eventSink: (Event) -> Unit) :
+    CircuitUiState
   sealed interface Event : CircuitUiEvent {
     data class Click(val url: String) : Event
   }
@@ -106,7 +112,7 @@ constructor(
   override fun present(): LicensesScreen.State {
     // TODO use paging?
     val items by
-      produceState<List<OssBaseItem>?>(null) { value = licensesRepository.requestItems() }
+      produceState<ImmutableList<OssBaseItem>?>(null) { value = licensesRepository.requestItems() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     return LicensesScreen.State(items) { event ->
@@ -137,7 +143,19 @@ internal fun Licenses(state: LicensesScreen.State) {
     val items = state.items
     if (items == null) {
       item {
-        Box(Modifier.fillMaxSize()) { CircularProgressIndicator(Modifier.align(Alignment.Center)) }
+        Box(Modifier.fillParentMaxSize()) {
+          CircularProgressIndicator(Modifier.align(Alignment.Center))
+        }
+      }
+    } else if (items.isEmpty()) {
+      item {
+        Box(Modifier.fillParentMaxSize()) {
+          ErrorItem(
+            text = "Could not load OSS licenses.",
+            modifier = Modifier.align(Alignment.Center),
+            onRetryClick = null,
+          )
+        }
       }
     } else {
       for (ossItem in items) {
@@ -224,7 +242,7 @@ private fun PreviewHeaderUi() {
 }
 
 interface LicensesRepository {
-  suspend fun requestItems(): List<OssBaseItem>
+  suspend fun requestItems(): ImmutableList<OssBaseItem>
 }
 
 @ContributesBinding(AppScope::class)
@@ -236,9 +254,18 @@ constructor(
   private val moshi: Moshi,
   private val assets: AssetManager
 ) : LicensesRepository {
+  override suspend fun requestItems(): ImmutableList<OssBaseItem> {
+    return try {
+      requestItemsInner()
+    } catch (e: ApolloException) {
+      Timber.tag("LicensesRepository").e(e, "Failed to fetch OSS licenses")
+      persistentListOf()
+    }
+  }
+
   /** I give you: the most over-engineered OSS licenses section ever. */
   @OptIn(FlowPreview::class)
-  override suspend fun requestItems(): List<OssBaseItem> {
+  private suspend fun requestItemsInner(): ImmutableList<OssBaseItem> {
     // Start with a fetch of our github entries from assets
     val githubEntries =
       withContext(Dispatchers.Default) {
@@ -355,6 +382,7 @@ constructor(
           }
         }
       }
+      .toImmutableList()
   }
 }
 
