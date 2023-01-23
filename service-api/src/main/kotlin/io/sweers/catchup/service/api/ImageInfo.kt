@@ -25,6 +25,5 @@ data class ImageInfo(
   val bestSize: Pair<Int, Int>?,
   val imageId: String
 ) {
-  @Transient @Ignore
-  val cacheKey: String = imageId
+  @Transient @Ignore val cacheKey: String = imageId
 }
