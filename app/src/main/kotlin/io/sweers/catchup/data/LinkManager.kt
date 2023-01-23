@@ -24,7 +24,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
@@ -56,6 +55,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
@@ -102,7 +102,6 @@ constructor(
   }
 
   @Suppress("MemberVisibilityCanPrivate")
-  @CheckResult
   override suspend fun openUrl(meta: UrlMeta) {
     // TODO handle this better
     val activity =
@@ -134,12 +133,14 @@ constructor(
     val intent = Intent(Intent.ACTION_VIEW, meta.uri)
 
     // TODO this isn't great, should we make a StateFlow backed by this?
-    if (catchUpPreferences.smartlinkingGlobal.first()) {
+    if (!catchUpPreferences.smartlinkingGlobal.first()) {
+      Timber.tag("LinkManager").d("Smartlinking disabled, skipping query")
       openCustomTab(meta.context, uri, meta.accentColor)
       return
     }
 
     if (!dumbCache.containsKey(uri.host)) {
+      Timber.tag("LinkManager").d("Smartlinking enabled, querying")
       queryAndOpen(meta.context, uri, intent, meta.accentColor)
     } else if (dumbCache[uri.host] == true) {
       meta.context.startActivity(intent)
