@@ -42,4 +42,5 @@ dependencies {
   api(libs.androidx.compose.material)
   api(libs.androidx.compose.material.material3)
   implementation(libs.androidx.compose.googleFonts)
+  implementation(libs.androidx.compose.accompanist.systemUi)
 }

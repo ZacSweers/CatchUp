@@ -8,7 +8,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,11 +35,13 @@ import coil.transform.CircleCropTransformation
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy
 import com.apollographql.apollo3.cache.http.httpFetchPolicy
+import com.apollographql.apollo3.exception.ApolloException
 import com.slack.circuit.CircuitUiEvent
 import com.slack.circuit.CircuitUiState
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.squareup.anvil.annotations.ContributesBinding
 import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -49,6 +50,7 @@ import dagger.Module
 import dagger.Provides
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ClickableItem
+import dev.zacsweers.catchup.service.ErrorItem
 import dev.zacsweers.catchup.service.TextItem
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
@@ -64,6 +66,9 @@ import io.sweers.catchup.util.kotlin.groupBy
 import io.sweers.catchup.util.kotlin.sortBy
 import java.util.Objects
 import javax.inject.Inject
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.asFlow
@@ -79,10 +84,12 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import okio.buffer
 import okio.source
+import timber.log.Timber
 
 @Parcelize
 object LicensesScreen : Screen {
-  data class State(val items: List<OssBaseItem>?, val eventSink: (Event) -> Unit) : CircuitUiState
+  data class State(val items: ImmutableList<OssBaseItem>?, val eventSink: (Event) -> Unit) :
+    CircuitUiState
   sealed interface Event : CircuitUiEvent {
     data class Click(val url: String) : Event
   }
@@ -98,16 +105,14 @@ object LicensesModule {
 class LicensesPresenter
 @Inject
 constructor(
-  private val apolloClient: ApolloClient,
   private val linkManager: LinkManager,
-  private val markdownConverter: EmojiMarkdownConverter,
-  private val moshi: Moshi,
-  private val assets: AssetManager
+  private val licensesRepository: LicensesRepository,
 ) : Presenter<LicensesScreen.State> {
   @Composable
   override fun present(): LicensesScreen.State {
     // TODO use paging?
-    val items by produceState<List<OssBaseItem>?>(null) { value = requestItems() }
+    val items by
+      produceState<ImmutableList<OssBaseItem>?>(null) { value = licensesRepository.requestItems() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     return LicensesScreen.State(items) { event ->
@@ -118,28 +123,149 @@ constructor(
       }
     }
   }
+}
 
-  private fun stubData(): List<OssBaseItem> {
-    return buildList {
-      repeat(15) { index ->
-        add(
-          OssItem(
-            "https://example.com/image.png",
-            "ZacSweers",
-            "MoshiX-$index",
-            "Apache v2",
-            "https://github.com/ZacSweers/MoshiX",
-            "Extra serialization tools for Moshi",
-            "https://github.com/ZacSweers"
-          )
-        )
+private fun OssItem.toCatchUpItem(): CatchUpItem {
+  return CatchUpItem(
+    id = hashCode().toLong(),
+    title = "${name}${if (!description.isNullOrEmpty()) " — $description" else ""}",
+    author = license,
+    itemClickUrl = clickUrl,
+  )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@CircuitInject(LicensesScreen::class, AppScope::class)
+@Composable
+internal fun Licenses(state: LicensesScreen.State) {
+  val sink = state.eventSink
+  LazyColumn {
+    val items = state.items
+    if (items == null) {
+      item {
+        Box(Modifier.fillParentMaxSize()) {
+          CircularProgressIndicator(Modifier.align(Alignment.Center))
+        }
       }
+    } else if (items.isEmpty()) {
+      item {
+        Box(Modifier.fillParentMaxSize()) {
+          ErrorItem(
+            text = "Could not load OSS licenses.",
+            modifier = Modifier.align(Alignment.Center),
+            onRetryClick = null,
+          )
+        }
+      }
+    } else {
+      for (ossItem in items) {
+        when (ossItem) {
+          is OssItemHeader -> stickyHeader(ossItem.id) { OssItemHeaderUi(ossItem) }
+          is OssItem ->
+            item(ossItem.id) {
+              val catchUpItem = ossItem.toCatchUpItem()
+              ClickableItem(
+                modifier = Modifier.animateItemPlacement(),
+                onClick = { sink(LicensesScreen.Event.Click(catchUpItem.clickUrl!!)) },
+              ) {
+                Row {
+                  Spacer(Modifier.width(50.dp))
+                  // TODO extract color and make it shared state
+                  TextItem(catchUpItem, colorResource(R.color.colorAccent))
+                }
+              }
+            }
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun OssItemHeaderUi(item: OssItemHeader) {
+  Surface {
+    Row(
+      modifier = Modifier.fillMaxWidth().padding(8.dp),
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      val size = 40.dp
+      val sizePx = with(LocalDensity.current) { size.toPx() }.toInt()
+      val painter =
+        rememberAsyncImagePainter(
+          ImageRequest.Builder(LocalContext.current)
+            .data(item.avatarUrl)
+            .size(sizePx)
+            .transformations(CircleCropTransformation())
+            .build()
+        )
+      Image(
+        painter = painter,
+        contentDescription = item.name,
+        modifier = Modifier.size(size),
+      )
+
+      Spacer(modifier = Modifier.width(16.dp))
+
+      Text(
+        text = item.name,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold,
+      )
+    }
+    // icon.load(item.avatarUrl) {
+    //                onSuccess = { _, _ ->
+    //                  val bitmap: Bitmap? =
+    //                    when (val data = icon.drawable) {
+    //                      is BitmapDrawable -> data.bitmap
+    //                      else -> null
+    //                    }
+    //                  bitmap?.let {
+    //                    newScope().launch {
+    //                      val color =
+    //                        Palette.from(it)
+    //                          .clearFilters()
+    //                          .generateAsync()
+    //                          ?.findSwatch(headerColorThresholdFun)
+    //                          ?.rgb
+    //                          ?: defaultHeaderTextColor
+    //                      holder.title.setTextColor(color)
+    //                    }
+    //                  }
+
+  }
+}
+
+@Preview
+@Composable
+private fun PreviewHeaderUi() {
+  OssItemHeaderUi(OssItemHeader("name", "Zac Sweers"))
+}
+
+interface LicensesRepository {
+  suspend fun requestItems(): ImmutableList<OssBaseItem>
+}
+
+@ContributesBinding(AppScope::class)
+class LicensesRepositoryImpl
+@Inject
+constructor(
+  private val apolloClient: ApolloClient,
+  private val markdownConverter: EmojiMarkdownConverter,
+  private val moshi: Moshi,
+  private val assets: AssetManager
+) : LicensesRepository {
+  override suspend fun requestItems(): ImmutableList<OssBaseItem> {
+    return try {
+      requestItemsInner()
+    } catch (e: ApolloException) {
+      Timber.tag("LicensesRepository").e(e, "Failed to fetch OSS licenses")
+      persistentListOf()
     }
   }
 
   /** I give you: the most over-engineered OSS licenses section ever. */
   @OptIn(FlowPreview::class)
-  private suspend fun requestItems(): List<OssBaseItem> {
+  private suspend fun requestItemsInner(): ImmutableList<OssBaseItem> {
     // Start with a fetch of our github entries from assets
     val githubEntries =
       withContext(Dispatchers.Default) {
@@ -256,111 +382,8 @@ constructor(
           }
         }
       }
+      .toImmutableList()
   }
-}
-
-private fun OssItem.toCatchUpItem(): CatchUpItem {
-  return CatchUpItem(
-    id = hashCode().toLong(),
-    title = "${name}${if (!description.isNullOrEmpty()) " — $description" else ""}",
-    author = license,
-    itemClickUrl = clickUrl,
-  )
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@CircuitInject(LicensesScreen::class, AppScope::class)
-@Composable
-internal fun Licenses(state: LicensesScreen.State) {
-  val sink = state.eventSink
-  LazyColumn {
-    val items = state.items
-    if (items == null) {
-      item {
-        Box(Modifier.fillMaxSize()) { CircularProgressIndicator(Modifier.align(Alignment.Center)) }
-      }
-    } else {
-      for (ossItem in items) {
-        when (ossItem) {
-          is OssItemHeader -> stickyHeader(ossItem.id) { OssItemHeaderUi(ossItem) }
-          is OssItem ->
-            item(ossItem.id) {
-              val catchUpItem = ossItem.toCatchUpItem()
-              ClickableItem(
-                modifier = Modifier.animateItemPlacement(),
-                onClick = { sink(LicensesScreen.Event.Click(catchUpItem.clickUrl!!)) },
-              ) {
-                Row {
-                  Spacer(Modifier.width(50.dp))
-                  // TODO extract color and make it shared state
-                  TextItem(catchUpItem, colorResource(R.color.colorAccent))
-                }
-              }
-            }
-        }
-      }
-    }
-  }
-}
-
-@Composable
-private fun OssItemHeaderUi(item: OssItemHeader) {
-  Surface {
-    Row(
-      modifier = Modifier.fillMaxWidth().padding(8.dp),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      val size = 40.dp
-      val sizePx = with(LocalDensity.current) { size.toPx() }.toInt()
-      val painter =
-        rememberAsyncImagePainter(
-          ImageRequest.Builder(LocalContext.current)
-            .data(item.avatarUrl)
-            .size(sizePx)
-            .transformations(CircleCropTransformation())
-            .build()
-        )
-      Image(
-        painter = painter,
-        contentDescription = item.name,
-        modifier = Modifier.size(size),
-      )
-
-      Spacer(modifier = Modifier.width(16.dp))
-
-      Text(
-        text = item.name,
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold,
-      )
-    }
-    // icon.load(item.avatarUrl) {
-    //                onSuccess = { _, _ ->
-    //                  val bitmap: Bitmap? =
-    //                    when (val data = icon.drawable) {
-    //                      is BitmapDrawable -> data.bitmap
-    //                      else -> null
-    //                    }
-    //                  bitmap?.let {
-    //                    newScope().launch {
-    //                      val color =
-    //                        Palette.from(it)
-    //                          .clearFilters()
-    //                          .generateAsync()
-    //                          ?.findSwatch(headerColorThresholdFun)
-    //                          ?.rgb
-    //                          ?: defaultHeaderTextColor
-    //                      holder.title.setTextColor(color)
-    //                    }
-    //                  }
-
-  }
-}
-
-@Preview
-@Composable
-private fun PreviewHeaderUi() {
-  OssItemHeaderUi(OssItemHeader("name", "Zac Sweers"))
 }
 
 @JsonClass(generateAdapter = true)

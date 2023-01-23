@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.service.api
 
+import androidx.room.Ignore
+
 data class ImageInfo(
   val url: String,
   val detailUrl: String,
@@ -23,5 +25,5 @@ data class ImageInfo(
   val bestSize: Pair<Int, Int>?,
   val imageId: String
 ) {
-  @Transient val cacheKey: String = imageId
+  @Transient @Ignore val cacheKey: String = imageId
 }

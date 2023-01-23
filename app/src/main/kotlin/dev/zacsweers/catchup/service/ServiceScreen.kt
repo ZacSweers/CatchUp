@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
@@ -208,7 +209,7 @@ fun Service(state: ServiceScreen.State) {
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
-fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: () -> Unit) {
+fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> Unit)?) {
   Column(
     modifier = modifier.padding(16.dp),
     verticalArrangement = spacedBy(16.dp),
@@ -225,15 +226,15 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: () -> U
       painter = rememberAnimatedVectorPainter(animatedImageVector = image, atEnd = atEnd),
       contentDescription = "No connection",
       modifier =
-        Modifier.size(64.dp).clickable(
+        Modifier.size(72.dp).clickable(
           interactionSource = remember { MutableInteractionSource() },
           indication = rememberRipple(bounded = false)
         ) {
           atEnd = !atEnd
         }
     )
-    Text(text)
-    ElevatedButton(onClick = onRetryClick) { Text("Retry") }
+    Text(text, textAlign = TextAlign.Center)
+    onRetryClick?.let { ElevatedButton(onClick = it) { Text("Retry") } }
   }
 }
 

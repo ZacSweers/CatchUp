@@ -29,23 +29,22 @@ import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.CatchUpPreferences.Keys
-import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import java.io.File
 import javax.inject.Inject
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 
-interface CatchUpPreferences : UiPreferences {
+interface CatchUpPreferences {
   val datastore: DataStore<Preferences>
   val dayNightAuto: Flow<Boolean>
   val dayNightForceNight: Flow<Boolean>
   val reports: Flow<Boolean>
-  val servicesOrder: Flow<String?>
+  val servicesOrder: Flow<ImmutableList<String>>
   val servicesOrderSeen: Flow<Boolean>
   val smartlinkingGlobal: Flow<Boolean>
-  override var themeNavigationBar: Boolean
 
   suspend fun edit(body: (MutablePreferences) -> Unit)
 
@@ -70,27 +69,24 @@ interface CatchUpPreferences : UiPreferences {
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class, boundType = CatchUpPreferences::class)
 class CatchUpPreferencesImpl @Inject constructor(@ApplicationContext context: Context) :
-  CatchUpPreferences, UiPreferences {
+  CatchUpPreferences {
 
   // TODO hide this, only exposed for settings
   override val datastore =
     PreferenceDataStoreFactory.create { CatchUpPreferences.dataStoreFile(context) }
 
-  // TODO inline default values here
   override val dayNightAuto: Flow<Boolean>
-    get() = datastore.data.mapNotNull { it[Keys.dayNightAuto] }
+    get() = datastore.data.map { it[Keys.dayNightAuto] ?: true }
   override val dayNightForceNight: Flow<Boolean>
-    get() = datastore.data.mapNotNull { it[Keys.dayNightForceNight] }
+    get() = datastore.data.map { it[Keys.dayNightForceNight] ?: false }
   override val reports: Flow<Boolean>
-    get() = datastore.data.mapNotNull { it[Keys.reports] }
-  override val servicesOrder: Flow<String?>
-    get() = datastore.data.map { it[Keys.servicesOrder] }
+    get() = datastore.data.map { it[Keys.reports] ?: true }
+  override val servicesOrder: Flow<ImmutableList<String>>
+    get() = datastore.data.map { it[Keys.servicesOrder]?.split(',').orEmpty().toImmutableList() }
   override val servicesOrderSeen: Flow<Boolean>
-    get() = datastore.data.mapNotNull { it[Keys.servicesOrderSeen] }
+    get() = datastore.data.map { it[Keys.servicesOrderSeen] ?: false }
   override val smartlinkingGlobal: Flow<Boolean>
-    get() = datastore.data.mapNotNull { it[Keys.smartlinkingGlobal] }
-
-  override var themeNavigationBar = false
+    get() = datastore.data.map { it[Keys.smartlinkingGlobal] ?: true }
 
   override suspend fun edit(body: (MutablePreferences) -> Unit) {
     datastore.edit(body)

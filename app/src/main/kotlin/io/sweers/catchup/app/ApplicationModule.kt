@@ -51,8 +51,6 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
-import io.sweers.catchup.CatchUpPreferences
-import io.sweers.catchup.base.ui.UiPreferences
 import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.base.ui.versionInfo
 import io.sweers.catchup.data.UnsplashSizingInterceptor
@@ -90,10 +88,6 @@ abstract class ApplicationModule {
   @ApplicationContext
   @SingleIn(AppScope::class)
   abstract fun Application.provideApplicationContext(): Context
-
-  @Binds
-  @SingleIn(AppScope::class)
-  abstract fun CatchUpPreferences.provideUiPreferences(): UiPreferences
 
   @Binds @SingleIn(AppScope::class) abstract fun CatchUpAppConfig.bindAppConfig(): AppConfig
 

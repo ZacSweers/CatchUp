@@ -71,11 +71,11 @@ import io.sweers.catchup.ui.activity.SettingsScreen
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
@@ -109,9 +109,8 @@ constructor(
 
   @Composable
   override fun present(): HomeScreen.State {
-    val currentOrder: List<String> by
-      remember { catchUpPreferences.servicesOrder.map { it?.split(',') ?: emptyList() } }
-        .collectAsState(initial = emptyList())
+    val currentOrder by
+      remember { catchUpPreferences.servicesOrder }.collectAsState(initial = persistentListOf())
     val serviceMetas =
       remember(currentOrder) {
         // TODO make enabledPrefKey live

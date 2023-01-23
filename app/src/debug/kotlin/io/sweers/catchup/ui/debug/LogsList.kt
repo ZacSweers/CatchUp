@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,13 +35,18 @@ import kotlinx.collections.immutable.ImmutableList
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LogsList(entries: ImmutableList<LumberYard.Entry>, onShare: () -> Unit) {
-  LazyColumn(modifier = Modifier.padding(16.dp)) {
+  LazyColumn(
+    modifier = Modifier.systemBarsPadding(),
+    contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+  ) {
     stickyHeader(key = "header") {
-      Row {
-        Text("Logs", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.weight(1f))
-        IconButton(onClick = onShare) {
-          Icon(Icons.Filled.Share, contentDescription = "Share logs")
+      Surface {
+        Row {
+          Text("Logs", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+          Spacer(Modifier.weight(1f))
+          IconButton(onClick = onShare) {
+            Icon(Icons.Filled.Share, contentDescription = "Share logs")
+          }
         }
       }
     }
