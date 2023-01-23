@@ -68,7 +68,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import io.sweers.catchup.R
 import io.sweers.catchup.util.UiUtil
@@ -96,10 +95,6 @@ fun CollapsingAboutHeader(
   pinnedHeight: Dp = 56.0.dp,
   debugUi: Boolean = false,
 ) {
-  val sysUiController = rememberSystemUiController()
-  sysUiController.setStatusBarColor(MaterialTheme.colorScheme.surface)
-  sysUiController.setNavigationBarColor(MaterialTheme.colorScheme.surface)
-
   val pinnedHeightPx: Float
   val maxHeightPx: Float
   LocalDensity.current.run {
