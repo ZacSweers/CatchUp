@@ -39,7 +39,7 @@ okhttp = "5.0.0-alpha.11"
 preferences = "1.2.0"
 retrofit = "2.9.0"
 room = "2.5.0"
-sgp = "0.4.2"
+sgp = "0.5.1"
 spotless = "6.13.0"
 sqldelight = "2.0.0-alpha05"
 # https://github.com/Tickaroo/tikxml/issues/114
@@ -50,7 +50,7 @@ anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
 agp-application = { id = "com.android.application", version.ref = "agp" }
 agp-library = { id = "com.android.library", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
-bugsnag = { id = "com.bugsnag.android.gradle", version = "7.4.0" }
+bugsnag = { id = "com.bugsnag.android.gradle", version = "7.3.1" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.6.2" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.8.1" }
@@ -147,7 +147,7 @@ autodispose-android = { module = "com.uber.autodispose2:autodispose-android", ve
 autodispose-androidxLifecycle = { module = "com.uber.autodispose2:autodispose-androidx-lifecycle", version.ref = "autodispose" }
 autodispose-lifecycle = { module = "com.uber.autodispose2:autodispose-lifecycle", version.ref = "autodispose" }
 
-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:2.0.0"
+google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.0"
 javapoet = "com.squareup:javapoet:1.13.0"
 
 androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha17"
