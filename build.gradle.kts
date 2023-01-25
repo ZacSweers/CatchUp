@@ -28,6 +28,7 @@ plugins {
   alias(libs.plugins.kotlin.noarg) apply false
   alias(libs.plugins.moshix) apply false
   alias(libs.plugins.retry) apply false
+  alias(libs.plugins.bugsnag) apply false
 }
 
 doctor {

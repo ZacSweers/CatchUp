@@ -128,12 +128,6 @@ android {
   namespace = "io.sweers.catchup"
 }
 
-bugsnag {
-  enabled.set(false)
-  // Prevent bugsnag from wiring build UUIDs into debug builds
-  variantFilter { setEnabled("debug" !in name.lowercase(Locale.US)) }
-}
-
 ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 
 // play {
