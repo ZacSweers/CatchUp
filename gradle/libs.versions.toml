@@ -147,7 +147,7 @@ autodispose-android = { module = "com.uber.autodispose2:autodispose-android", ve
 autodispose-androidxLifecycle = { module = "com.uber.autodispose2:autodispose-androidx-lifecycle", version.ref = "autodispose" }
 autodispose-lifecycle = { module = "com.uber.autodispose2:autodispose-lifecycle", version.ref = "autodispose" }
 
-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs:2.0.0"
+google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.0"
 javapoet = "com.squareup:javapoet:1.13.0"
 
 androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha17"
