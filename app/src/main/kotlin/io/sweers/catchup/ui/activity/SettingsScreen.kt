@@ -2,6 +2,7 @@ package io.sweers.catchup.ui.activity
 
 import android.content.Context
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -30,7 +32,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,6 +60,8 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dev.zacsweers.catchup.compose.DisableableContent
+import dev.zacsweers.catchup.compose.LocalEnabled
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
@@ -196,8 +199,6 @@ constructor(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    // TODO implement this
-    dependentKeys: Set<Preferences.Key<Boolean>> = emptySet()
     // TODO icon
     ) {
     val state =
@@ -278,16 +279,23 @@ constructor(
           )
         }
         item(key = "force_night") {
-          // TODO would rather make the force night option disabled, but dunno how to do that
           val autoEnabled by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
-          if (!autoEnabled) {
+          DisableableContent(enabled = !autoEnabled) {
+            val forceNightValue by
+              catchUpPreferences.dayNightForceNight.collectAsState(initial = false)
             BooleanPreference(
-              modifier = Modifier.animateItemPlacement(),
               key = CatchUpPreferences.Keys.dayNightForceNight,
+              modifier = Modifier.animateContentSize(), // Because the summary changes
               defaultValue = false,
               title = stringResource(R.string.pref_force_dark_theme),
-              // TODO this is dynamic with pref_dark_theme_enabled/disabled
-              //  subtitle = stringResource(R.string.pref_auto_set_theme_summary),
+              subtitle =
+                if (!LocalEnabled.current) {
+                  stringResource(R.string.pref_dark_theme_disabled_auto)
+                } else if (forceNightValue) {
+                  stringResource(R.string.pref_dark_theme_enabled)
+                } else {
+                  stringResource(R.string.pref_dark_theme_disabled)
+                },
             )
           }
         }
@@ -374,6 +382,7 @@ private fun CheckboxPref(
         .toggleable(
           value = storageValue,
           role = Role.Checkbox,
+          enabled = LocalEnabled.current,
           onValueChange = { update(!storageValue) }
         ),
   ) {
@@ -382,7 +391,7 @@ private fun CheckboxPref(
       subtitle,
       icon,
     ) {
-      Switch(checked = storageValue, onCheckedChange = update)
+      Switch(checked = storageValue, onCheckedChange = update, enabled = LocalEnabled.current)
     }
   }
 }
@@ -407,15 +416,19 @@ private fun SimplePrefItem(
       modifier = Modifier.weight(1f),
       verticalArrangement = spacedBy(4.dp),
     ) {
-      Text(text = title, style = MaterialTheme.typography.titleMedium)
+      Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        // TODO why do I have to do all this manually? Why doesn't this use LocalContentAlpha
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = LocalContentAlpha.current)
+      )
       subtitle?.let {
-        CompositionLocalProvider(LocalContentAlpha provides 0.5f) {
-          Text(
-            text = it,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
-        }
+        val alpha = if (LocalEnabled.current) ContentAlpha.medium else ContentAlpha.disabled
+        Text(
+          text = it,
+          style = MaterialTheme.typography.bodyMedium,
+          color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
+        )
       }
     }
     action()
