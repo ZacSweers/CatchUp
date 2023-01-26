@@ -156,7 +156,7 @@ circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = 
 circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegenAnnotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
-androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-alpha04" }
+androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-alpha05" }
 
 coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
 coil-default = { module = "io.coil-kt:coil", version.ref = "coil" }
