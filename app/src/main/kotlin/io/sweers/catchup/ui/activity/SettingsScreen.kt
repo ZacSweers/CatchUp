@@ -199,8 +199,6 @@ constructor(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    // TODO implement this
-    dependentKeys: Set<Preferences.Key<Boolean>> = emptySet(),
     // TODO icon
     ) {
     val state =
