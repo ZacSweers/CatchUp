@@ -255,7 +255,7 @@ fun ImageViewer(state: ImageViewerScreen.State) {
           exit = fadeOut(),
         ) {
           BackPressNavButton(
-            Modifier.align(Alignment.TopStart).statusBarsPadding(),
+            Modifier.align(Alignment.TopStart).padding(16.dp).statusBarsPadding(),
             NavButtonType.CLOSE,
           )
         }
