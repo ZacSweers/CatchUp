@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -219,25 +220,25 @@ fun LazyStaggeredGridScope.handleLoadStates(
   themeColor: Color,
   onRefreshChange: (Boolean) -> Unit
 ) {
-  // TODO set span count in 1.4.0-alpha05
-  //  https://android-review.googlesource.com/c/platform/frameworks/support/+/2319885
   lazyItems.apply {
     when {
       loadState.refresh is LoadState.Loading -> {
         onRefreshChange(true)
-        item(key = "loading") { LoadingView(themeColor, Modifier.fillMaxSize()) }
+        item(key = "loading", span = StaggeredGridItemSpan.FullLine) {
+          LoadingView(themeColor, Modifier.fillMaxSize())
+        }
       }
       loadState.refresh is LoadState.NotLoading -> {
         onRefreshChange(false)
       }
       loadState.append is LoadState.Loading -> {
-        item(key = "appendingMore") { LoadingItem() }
+        item(key = "appendingMore", span = StaggeredGridItemSpan.FullLine) { LoadingItem() }
       }
       loadState.refresh is LoadState.Error -> {
         onRefreshChange(false)
         val e = loadState.refresh as LoadState.Error
         Timber.e(e.error)
-        item(key = "errorLoading") {
+        item(key = "errorLoading", span = StaggeredGridItemSpan.FullLine) {
           ErrorItem(
             "Error loading service: ${e.error.localizedMessage}",
             Modifier.fillMaxSize(),
@@ -248,7 +249,7 @@ fun LazyStaggeredGridScope.handleLoadStates(
       loadState.append is LoadState.Error -> {
         val e = loadState.append as LoadState.Error
         Timber.e(e.error)
-        item(key = "errorLoadingMore") {
+        item(key = "errorLoadingMore", span = StaggeredGridItemSpan.FullLine) {
           ErrorItem("Error loading service: ${e.error.localizedMessage}", onRetryClick = ::retry)
         }
       }
