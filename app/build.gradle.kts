@@ -550,8 +550,6 @@ dependencies {
   implementation(libs.autodispose.android)
   implementation(libs.autodispose.lifecycle)
   implementation(libs.misc.byteunits)
-  implementation(libs.misc.flick)
-  implementation(libs.misc.gestureViews)
   implementation(libs.misc.inboxRecyclerView)
   implementation(libs.misc.lottie)
   implementation(libs.misc.recyclerViewAnimators)

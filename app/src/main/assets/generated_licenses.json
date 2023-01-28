@@ -8,10 +8,6 @@
     "name": "lottie-android"
   },
   {
-    "owner": "alexvasilkov",
-    "name": "GestureViews"
-  },
-  {
     "owner": "alorma",
     "name": "Compose-Settings"
   },
@@ -142,10 +138,6 @@
   {
     "owner": "ReactiveX",
     "name": "RxJava"
-  },
-  {
-    "owner": "saket",
-    "name": "flick"
   },
   {
     "owner": "saket",
