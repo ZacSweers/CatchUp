@@ -1,6 +1,5 @@
 package io.sweers.catchup.ui.activity
 
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
@@ -17,10 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,7 +41,6 @@ import coil.size.Scale
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.CircuitUiEvent
 import com.slack.circuit.CircuitUiState
-import com.slack.circuit.Navigator
 import com.slack.circuit.NavigatorDefaults
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
@@ -64,6 +58,8 @@ import dev.zacsweers.catchup.circuit.BottomSheetOverlay
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.BackPressNavButton
+import io.sweers.catchup.base.ui.NavButtonType
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.UrlMeta
 import kotlinx.coroutines.launch
@@ -95,17 +91,13 @@ data class ImageViewerScreen(
 
 class ImageViewerPresenter
 @AssistedInject
-constructor(
-  @Assisted private val screen: ImageViewerScreen,
-  @Assisted private val navigator: Navigator,
-  private val linkManager: LinkManager
-) : Presenter<ImageViewerScreen.State> {
+constructor(@Assisted private val screen: ImageViewerScreen, private val linkManager: LinkManager) :
+  Presenter<ImageViewerScreen.State> {
   @CircuitInject(ImageViewerScreen::class, AppScope::class)
   @AssistedFactory
   fun interface Factory {
     fun create(
       screen: ImageViewerScreen,
-      navigator: Navigator,
     ): ImageViewerPresenter
   }
 
@@ -257,19 +249,15 @@ fun ImageViewer(state: ImageViewerScreen.State) {
         )
 
         // TODO pick color based on if image is underneath it or not. Similar to badges
-        val onBackPressedDispatcher =
-          LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
         AnimatedVisibility(
           showChrome,
           enter = fadeIn(),
           exit = fadeOut(),
         ) {
-          IconButton(
-            modifier = Modifier.align(Alignment.TopStart).padding(16.dp).statusBarsPadding(),
-            onClick = onBackPressedDispatcher::onBackPressed
-          ) {
-            Icon(Icons.Filled.Close, contentDescription = "Close")
-          }
+          BackPressNavButton(
+            Modifier.align(Alignment.TopStart).statusBarsPadding(),
+            NavButtonType.CLOSE,
+          )
         }
       }
     }

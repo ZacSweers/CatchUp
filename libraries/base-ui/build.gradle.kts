@@ -53,6 +53,7 @@ dependencies {
   api(libs.autodispose.androidxLifecycle)
   api(libs.rx.java)
   implementation(libs.rx.relay)
+  implementation(libs.androidx.activity.compose)
   api(libs.androidx.annotations)
   api(libs.androidx.activity)
   api(libs.androidx.appCompat)
