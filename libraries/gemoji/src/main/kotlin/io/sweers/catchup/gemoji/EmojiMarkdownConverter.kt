@@ -63,12 +63,12 @@ fun EmojiMarkdownConverter.replaceMarkdownEmojisIn(markdown: Sequence<Char>): Se
   val aliasBuilder = StringBuilder(MAX_ALIAS_LENGTH)
   var startAlias = false
   return sequence {
-    markdown.forEach { char ->
+    for (char in markdown) {
       if (startAlias || aliasBuilder.isNotEmpty()) {
         if (startAlias && char == ':') {
           // Double ::, so emit a colon and keep startAlias set
           yield(':')
-          return@forEach
+          continue
         }
         startAlias = false
         when (char) {
