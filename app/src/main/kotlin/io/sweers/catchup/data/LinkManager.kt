@@ -40,7 +40,6 @@ import io.sweers.catchup.flowbinding.intentReceivers
 import io.sweers.catchup.service.api.ImageViewerData
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.UrlMeta
-import io.sweers.catchup.ui.activity.ImageViewerActivity
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.isInNightMode
@@ -104,26 +103,6 @@ constructor(
   @Suppress("MemberVisibilityCanPrivate")
   override suspend fun openUrl(meta: UrlMeta) {
     // TODO handle this better
-    val activity =
-      activityRef.get() ?: throw IllegalStateException("No activity attached to LinkManager")
-    meta.imageViewerData?.let { imageData ->
-      val intent = Intent(activity, ImageViewerActivity::class.java)
-      intent.putExtra(ImageViewerActivity.INTENT_ID, imageData.id)
-      intent.putExtra(ImageViewerActivity.INTENT_URL, imageData.imageUrl)
-      intent.putExtra(ImageViewerActivity.INTENT_ALIAS, imageData.cacheKey)
-      intent.putExtra(ImageViewerActivity.INTENT_SOURCE_URL, imageData.sourceUrl)
-      val options = getActivityOptions(activity, imageData)
-      activity.startActivityForResult(intent, 101, options?.toBundle())
-      return
-    }
-    if (meta.isSupportedInMediaViewer()) {
-      val intent = Intent(activity, ImageViewerActivity::class.java)
-      val url = meta.uri.toString()
-      intent.putExtra(ImageViewerActivity.INTENT_URL, url)
-      intent.putExtra(ImageViewerActivity.INTENT_SOURCE_URL, url)
-      activity.startActivityForResult(intent, 102)
-      return
-    }
     val uri =
       meta.uri
         ?: run {

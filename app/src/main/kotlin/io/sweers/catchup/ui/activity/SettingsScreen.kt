@@ -1,7 +1,6 @@
 package io.sweers.catchup.ui.activity
 
 import android.content.Context
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -19,12 +18,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -65,6 +60,7 @@ import dev.zacsweers.catchup.compose.LocalEnabled
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.BackPressNavButton
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.about.AboutScreen
 import io.sweers.catchup.util.clearCache
@@ -224,13 +220,7 @@ constructor(
       topBar = {
         TopAppBar(
           title = { Text(stringResource(R.string.title_activity_settings)) },
-          navigationIcon = {
-            val onBackPressedDispatcher =
-              LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
-            IconButton(onClick = onBackPressedDispatcher::onBackPressed) {
-              Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
-            }
-          },
+          navigationIcon = { BackPressNavButton() },
         )
       },
     ) { innerPadding ->

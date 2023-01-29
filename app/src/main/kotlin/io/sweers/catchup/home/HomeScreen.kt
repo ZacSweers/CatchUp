@@ -55,10 +55,12 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.CircuitContent
 import com.slack.circuit.CircuitUiEvent
 import com.slack.circuit.CircuitUiState
+import com.slack.circuit.NavEvent
 import com.slack.circuit.Navigator
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.onNavEvent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -87,6 +89,7 @@ object HomeScreen : Screen {
   ) : CircuitUiState
   sealed interface Event : CircuitUiEvent {
     object OpenSettings : Event
+    data class NestedNavEvent(val navEvent: NavEvent) : Event
   }
 }
 
@@ -128,6 +131,9 @@ constructor(
       when (event) {
         HomeScreen.Event.OpenSettings -> {
           navigator.goTo(SettingsScreen)
+        }
+        is HomeScreen.Event.NestedNavEvent -> {
+          navigator.onNavEvent(event.navEvent)
         }
       }
     }
@@ -276,7 +282,10 @@ fun Home(state: HomeScreen.State) {
         pageNestedScrollConnection =
           PagerDefaults.pageNestedScrollConnection(Orientation.Horizontal)
       ) { page ->
-        CircuitContent(ServiceScreen(state.serviceMetas[page].id))
+        CircuitContent(
+          screen = ServiceScreen(state.serviceMetas[page].id),
+          onNavEvent = { eventSink(HomeScreen.Event.NestedNavEvent(it)) }
+        )
       }
     }
   }

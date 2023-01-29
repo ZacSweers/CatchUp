@@ -1,11 +1,11 @@
 [
   {
-    "owner": "airbnb",
-    "name": "lottie-android"
+    "owner": "aakira",
+    "name": "Napier"
   },
   {
-    "owner": "alexvasilkov",
-    "name": "GestureViews"
+    "owner": "airbnb",
+    "name": "lottie-android"
   },
   {
     "owner": "alorma",
@@ -26,6 +26,10 @@
   {
     "owner": "bugsnag",
     "name": "bugsnag-android"
+  },
+  {
+    "owner": "cashapp",
+    "name": "multiplatform-paging"
   },
   {
     "owner": "cashapp",
@@ -116,6 +120,10 @@
     "name": "material-components-android"
   },
   {
+    "owner": "Mr-Pine",
+    "name": "Zoomables"
+  },
+  {
     "owner": "noties",
     "name": "Markwon"
   },
@@ -130,10 +138,6 @@
   {
     "owner": "ReactiveX",
     "name": "RxJava"
-  },
-  {
-    "owner": "saket",
-    "name": "flick"
   },
   {
     "owner": "saket",

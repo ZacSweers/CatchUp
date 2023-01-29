@@ -40,6 +40,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -86,6 +87,7 @@ import dev.zacsweers.catchup.compose.rememberDragDropState
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.BackPressNavButton
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.asDayContext
 import kotlinx.collections.immutable.toImmutableList
@@ -235,26 +237,14 @@ fun OrderServices(state: OrderServicesScreen.State) {
     topBar = {
       TopAppBar(
         title = { Text(stringResource(id = R.string.pref_reorder_services)) },
-        navigationIcon = {
-          IconButton(
-            onClick = { eventSink(OrderServicesScreen.Event.BackPress) },
-            content = {
-              Image(
-                painter = painterResource(id = R.drawable.ic_arrow_back_black_24dp),
-                contentDescription = stringResource(id = R.string.back),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
-              )
-            }
-          )
-        },
+        navigationIcon = { BackPressNavButton() },
         actions = {
           IconButton(
             onClick = { eventSink(OrderServicesScreen.Event.Shuffle) },
             content = {
-              Image(
+              Icon(
                 painter = painterResource(R.drawable.ic_shuffle_black_24dp),
                 contentDescription = stringResource(R.string.shuffle),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
               )
             }
           )

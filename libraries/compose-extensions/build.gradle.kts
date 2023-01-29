@@ -41,6 +41,7 @@ dependencies {
   api(libs.androidx.compose.foundation)
   api(libs.androidx.compose.material)
   api(libs.androidx.compose.material.material3)
+  api(libs.zoomables)
   implementation(libs.androidx.compose.googleFonts)
   implementation(libs.androidx.compose.accompanist.systemUi)
 }

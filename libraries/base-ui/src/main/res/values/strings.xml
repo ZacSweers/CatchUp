@@ -17,4 +17,6 @@
 
 <resources>
   <string name="unknown_issue">Unknown issue</string>
+  <string name="back">Back</string>
+  <string name="close">Close</string>
 </resources>

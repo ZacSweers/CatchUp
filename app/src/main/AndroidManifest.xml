@@ -58,10 +58,6 @@
       </intent-filter>
     </activity-alias>
 
-    <activity
-        android:name=".ui.activity.ImageViewerActivity"
-        android:theme="@style/CatchUp.TransparentFullscreen"/>
-
     <meta-data
         android:name="preloaded_fonts"
         android:resource="@array/preloaded_fonts"/>

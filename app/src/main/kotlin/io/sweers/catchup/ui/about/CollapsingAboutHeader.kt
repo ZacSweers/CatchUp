@@ -1,7 +1,6 @@
 package io.sweers.catchup.ui.about
 
 import android.graphics.drawable.AdaptiveIconDrawable
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationState
@@ -22,11 +21,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,7 +39,6 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -70,6 +64,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import io.sweers.catchup.R
+import io.sweers.catchup.base.ui.BackPressNavButton
 import io.sweers.catchup.util.UiUtil
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -299,19 +294,7 @@ fun CollapsingAboutHeader(
         )
         Spacer(Modifier.height(48.dp))
       }
-      val onBackPressedDispatcher =
-        LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
-      IconButton(
-        modifier = Modifier.align(Alignment.TopStart).padding(16.dp),
-        onClick = onBackPressedDispatcher::onBackPressed,
-      ) {
-        Image(
-          imageVector = Icons.Default.ArrowBack,
-          contentDescription = stringResource(R.string.back),
-          // TODO why is needed and not documented in compose samples
-          colorFilter = ColorFilter.tint(LocalContentColor.current),
-        )
-      }
+      BackPressNavButton(Modifier.align(Alignment.TopStart).padding(16.dp))
       if (debugUi) {
         Text(
           text =

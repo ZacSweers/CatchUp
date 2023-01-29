@@ -80,6 +80,7 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
             val result = pendingResult ?: onDismiss?.invoke() ?: error("no result!")
             navigator.finish(result)
           } else if (newValue == ModalBottomSheetValue.Expanded) {
+            // TODO only if expanded runs under the status bar
             // TODO set status bar colors
             conditionalSystemUiColors.save()
             // TODO don't do this in dark mode?

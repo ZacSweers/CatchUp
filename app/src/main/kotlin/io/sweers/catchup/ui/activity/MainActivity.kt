@@ -91,7 +91,11 @@ constructor(
             val navigator = rememberCircuitNavigator(backstack)
             val intentAwareNavigator = remember(navigator) { IntentAwareNavigator(this, navigator) }
             rootContent.Content(intentAwareNavigator) {
-              NavigableCircuitContent(intentAwareNavigator, backstack)
+              NavigableCircuitContent(
+                intentAwareNavigator,
+                backstack,
+                decoration = ImageViewerAwareNavDecoration()
+              )
             }
           }
         }
