@@ -18,11 +18,10 @@ plugins {
   alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
-  alias(libs.plugins.ksp)
 }
 
-ksp {
-  arg("room.schemaLocation", "$projectDir/schemas")
+android {
+  namespace = "io.sweers.catchup.gemoji"
 }
 
 slack {
@@ -34,17 +33,17 @@ slack {
 dependencies {
   implementation(project(":libraries:util"))
   implementation(projects.libraries.di)
+  api(projects.libraries.gemoji.db) // api() because dagger :|
+  implementation(libs.sqldelight.driver.android)
+  implementation(libs.sqldelight.coroutines)
+  implementation(libs.androidx.sqlite)
 
-  ksp(libs.androidx.room.apt)
   compileOnly(libs.misc.jsr250)
 
-  api(libs.androidx.room.runtime)
   api(libs.dagger.runtime)
   api(libs.moshi.core)
 
+  testImplementation(libs.kotlin.coroutines.test)
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
-}
-android {
-  namespace = "io.sweers.catchup.gemoji"
 }

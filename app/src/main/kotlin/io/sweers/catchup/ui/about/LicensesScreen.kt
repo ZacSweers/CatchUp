@@ -128,7 +128,8 @@ constructor(
 private fun OssItem.toCatchUpItem(): CatchUpItem {
   return CatchUpItem(
     id = hashCode().toLong(),
-    title = "${name}${if (!description.isNullOrEmpty()) " — $description" else ""}",
+    title = name,
+    description = description,
     author = license,
     itemClickUrl = clickUrl,
   )

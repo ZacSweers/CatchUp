@@ -15,22 +15,41 @@
  */
 package io.sweers.catchup.gemoji
 
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToOne
 import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
+import dev.zacsweers.catchup.gemoji.db.GemojiDatabase
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 
 /** Converts a markdown emoji alias (eg, ":smile:") into an android render-able emoji. */
 interface EmojiMarkdownConverter {
-  fun convert(alias: String): String?
+  suspend fun convert(alias: String): String?
 }
 
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
-class GemojiEmojiMarkdownConverter @Inject constructor(private val gemojiDao: GemojiDao) :
+class GemojiEmojiMarkdownConverter @Inject constructor(private val gemojiDatabase: GemojiDatabase) :
   EmojiMarkdownConverter {
-  override fun convert(alias: String): String? {
-    return gemojiDao.getEmoji(alias)
+  override suspend fun convert(alias: String): String? {
+    println("Converting $alias")
+    return withContext(Dispatchers.IO) {
+      gemojiDatabase.gemojiQueries
+        .getEmoji(alias)
+        .asFlow()
+        .mapToOne(Dispatchers.IO) // TODO double?
+        .first()
+        .emoji
+        .also { println("Converted $alias to $it") }
+    }
   }
 }
 
@@ -45,8 +64,8 @@ fun Sequence<Char>.asString(capacity: Int): String {
 /**
  * Returns a [String] that replaces occurrences of markdown emojis with android render-able emojis.
  */
-fun EmojiMarkdownConverter.replaceMarkdownEmojisIn(markdown: String): String {
-  return replaceMarkdownEmojisIn(markdown.asSequence()).asString(markdown.length)
+suspend fun EmojiMarkdownConverter.replaceMarkdownEmojisIn(markdown: String): String {
+  return replaceMarkdownEmojisIn(markdown.asSequence())
 }
 
 /**
@@ -59,59 +78,69 @@ private const val MAX_ALIAS_LENGTH = "south_georgia_south_sandwich_islands".leng
  * Returns a [Sequence<Char>][Sequence] that replaces occurrences of markdown emojis with android
  * render-able emojis.
  */
-fun EmojiMarkdownConverter.replaceMarkdownEmojisIn(markdown: Sequence<Char>): Sequence<Char> {
+private suspend fun EmojiMarkdownConverter.replaceMarkdownEmojisIn(
+  markdown: Sequence<Char>
+): String {
   val aliasBuilder = StringBuilder(MAX_ALIAS_LENGTH)
   var startAlias = false
-  return sequence {
-    for (char in markdown) {
-      if (startAlias || aliasBuilder.isNotEmpty()) {
-        if (startAlias && char == ':') {
-          // Double ::, so emit a colon and keep startAlias set
-          yield(':')
-          continue
-        }
-        startAlias = false
-        when (char) {
-          ' ' -> {
-            // Aliases can't have spaces, so bomb out and restart
-            yield(':')
-            yieldAll(aliasBuilder.asSequence())
-            yield(' ')
-            aliasBuilder.setLength(0)
+  return flow {
+      for (char in markdown) {
+        if (startAlias || aliasBuilder.isNotEmpty()) {
+          if (startAlias && char == ':') {
+            // Double ::, so emit a colon and keep startAlias set
+            emit(':')
+            continue
           }
-          ':' -> {
-            val potentialAlias = aliasBuilder.toString()
-            val potentialEmoji = convert(potentialAlias)
-            // If we find an emoji append it and reset alias start, if we don't find an emoji
-            // append between the potential start and this index *and* consider this index the new
-            // potential start.
-            if (potentialEmoji != null) {
-              yieldAll(potentialEmoji.asSequence())
-            } else {
-              yield(':')
-              yieldAll(potentialAlias.asSequence())
-              // Start a new alias from this colon as we didn't have a match with the existing close
-              startAlias = true
+          startAlias = false
+          when (char) {
+            ' ' -> {
+              // Aliases can't have spaces, so bomb out and restart
+              emit(':')
+              emitAll(aliasBuilder.asSequence().asFlow())
+              emit(' ')
+              aliasBuilder.setLength(0)
             }
-            aliasBuilder.setLength(0)
+            ':' -> {
+              val potentialAlias = aliasBuilder.toString()
+              val potentialEmoji = convert(potentialAlias)
+              // If we find an emoji append it and reset alias start, if we don't find an emoji
+              // append between the potential start and this index *and* consider this index the new
+              // potential start.
+              if (potentialEmoji != null) {
+                emitAll(potentialEmoji.asSequence().asFlow())
+              } else {
+                emit(':')
+                emitAll(potentialAlias.asSequence().asFlow())
+                // Start a new alias from this colon as we didn't have a match with the existing
+                // close
+                startAlias = true
+              }
+              aliasBuilder.setLength(0)
+            }
+            else -> aliasBuilder.append(char)
           }
-          else -> aliasBuilder.append(char)
-        }
-      } else {
-        if (char == ':') {
-          startAlias = true
         } else {
-          yield(char)
+          if (char == ':') {
+            startAlias = true
+          } else {
+            emit(char)
+          }
         }
       }
-    }
 
-    // If we started an alias but ran out of characters, flush it
-    if (startAlias) {
-      yield(':')
-    } else if (aliasBuilder.isNotEmpty()) {
-      yield(':')
-      yieldAll(aliasBuilder.asSequence())
+      // If we started an alias but ran out of characters, flush it
+      if (startAlias) {
+        emit(':')
+      } else if (aliasBuilder.isNotEmpty()) {
+        emit(':')
+        emitAll(aliasBuilder.asSequence().asFlow())
+      }
     }
-  }
+    .collectToString()
+}
+
+private suspend fun <T> Flow<T>.collectToString(): String {
+  val builder = StringBuilder(MAX_ALIAS_LENGTH)
+  collect(builder::append)
+  return builder.toString()
 }

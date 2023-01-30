@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -170,7 +171,7 @@ fun RowScope.DetailColumn(
         style = MaterialTheme.typography.bodyMedium,
         overflow = TextOverflow.Ellipsis,
         maxLines = 5,
-        color = MaterialTheme.colorScheme.onSurface
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
       )
     }
     // Author, source
@@ -225,7 +226,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color, showPlaceholder: Bo
           Text(
             text = " • ",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
           )
         }
         val millis = timestamp.toEpochMilliseconds()
@@ -244,7 +245,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color, showPlaceholder: Bo
               )
               .toString(),
           style = MaterialTheme.typography.labelSmall,
-          color = MaterialTheme.colorScheme.onSurface
+          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
         )
       }
     }
@@ -253,6 +254,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color, showPlaceholder: Bo
 
 @Composable
 private fun ItemFooter(item: CatchUpItem, showPlaceholder: Boolean = false) {
+  val textColor = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
   if (item.author != null || item.source != null) {
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
       // Author
@@ -267,7 +269,7 @@ private fun ItemFooter(item: CatchUpItem, showPlaceholder: Boolean = false) {
               ),
             text = author,
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface
+            color = textColor
           )
         }
       // Source
@@ -275,11 +277,7 @@ private fun ItemFooter(item: CatchUpItem, showPlaceholder: Boolean = false) {
         ?.takeUnless { it.isBlank() }
         ?.let { source ->
           if (item.author != null) {
-            Text(
-              text = " — ",
-              style = MaterialTheme.typography.labelSmall,
-              color = MaterialTheme.colorScheme.onSurface
-            )
+            Text(text = " — ", style = MaterialTheme.typography.labelSmall, color = textColor)
           }
           Text(
             modifier =
@@ -289,7 +287,7 @@ private fun ItemFooter(item: CatchUpItem, showPlaceholder: Boolean = false) {
               ),
             text = source,
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface
+            color = textColor
           )
         }
     }

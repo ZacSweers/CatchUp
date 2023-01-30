@@ -111,6 +111,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-rxJava3 = { module = "androidx.room:room-rxjava3", version.ref = "room" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
+androidx-sqlite = "androidx.sqlite:sqlite-framework:2.3.0"
 
 androidx-compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
@@ -126,6 +127,8 @@ androidx-compose-rxjava3 = { module = "androidx.compose.runtime:runtime-rxjava3"
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material3", version.ref = "accompanist" }
+androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha17"
+androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-alpha05" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-config = "com.google.firebase:firebase-config:21.2.1"
@@ -150,13 +153,13 @@ autodispose-lifecycle = { module = "com.uber.autodispose2:autodispose-lifecycle"
 google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.0"
 javapoet = "com.squareup:javapoet:1.13.0"
 
-androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha17"
 circuit-core = { module = "com.slack.circuit:circuit-core", version.ref = "circuit" }
 circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
 circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegenAnnotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
-androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-alpha05" }
+
+clikt = "com.github.ajalt.clikt:clikt:3.5.1"
 
 coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
 coil-default = { module = "io.coil-kt:coil", version.ref = "coil" }
@@ -182,6 +185,7 @@ detekt-plugins-twitterCompose = "com.twitter.compose.rules:detekt:0.0.26"
 gson = "com.google.gson:gson:2.9.0"
 
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutinesRx = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3", version.ref = "coroutines" }
 kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
@@ -249,7 +253,8 @@ rx-dogTagAutoDispose = "com.uber.rxdogtag2:rxdogtag-autodispose:2.0.1"
 rx-java = "io.reactivex.rxjava3:rxjava:3.1.6"
 rx-relay = "com.jakewharton.rxrelay3:rxrelay:3.0.1"
 
-sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions-jvm", version.ref = "sqldelight" }
 sqldelight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
 sqldelight-primitiveAdapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }

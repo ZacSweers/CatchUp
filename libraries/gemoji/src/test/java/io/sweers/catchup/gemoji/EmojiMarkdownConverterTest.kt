@@ -16,8 +16,11 @@
 package io.sweers.catchup.gemoji
 
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class EmojiMarkdownConverterTest {
 
   companion object {
@@ -27,35 +30,35 @@ class EmojiMarkdownConverterTest {
 
   private val converter =
     object : EmojiMarkdownConverter {
-      override fun convert(alias: String) = if (alias == "emoji") replaced else null
+      override suspend fun convert(alias: String) = if (alias == "emoji") replaced else null
     }
 
   @Test
-  fun testEmpty() {
+  fun testEmpty() = runTest {
     val converted = converter.replaceMarkdownEmojisIn("")
     assertThat(converted).isEmpty()
   }
 
   @Test
-  fun testSimpleReplace() {
+  fun testSimpleReplace() = runTest {
     val converted = convert(emoji)
     assertThat(converted).isEqualTo(replaced)
   }
 
   @Test
-  fun testSimpleNoReplace() {
+  fun testSimpleNoReplace() = runTest {
     val converted = convert("emoji")
     assertThat(converted).isEqualTo("emoji")
   }
 
   @Test
-  fun testReplaceOnceWithOtherText() {
+  fun testReplaceOnceWithOtherText() = runTest {
     val converted = convert("other text $emoji")
     assertThat(converted).isEqualTo("other text $replaced")
   }
 
   @Test
-  fun testReplaceOnceWithExtraColons() {
+  fun testReplaceOnceWithExtraColons() = runTest {
     var converted = convert(":$emoji")
     assertThat(converted).isEqualTo(":$replaced")
 
@@ -76,7 +79,7 @@ class EmojiMarkdownConverterTest {
   }
 
   @Test
-  fun testReplaceMultipleTimes() {
+  fun testReplaceMultipleTimes() = runTest {
     var converted = convert("$emoji$emoji")
     assertThat(converted).isEqualTo("$replaced$replaced")
 
@@ -96,5 +99,5 @@ class EmojiMarkdownConverterTest {
     assertThat(converted).isEqualTo("$replaced:notEmoji:$replaced:")
   }
 
-  private fun convert(markdown: String) = converter.replaceMarkdownEmojisIn(markdown)
+  private suspend fun convert(markdown: String) = converter.replaceMarkdownEmojisIn(markdown)
 }

@@ -16,12 +16,16 @@
 package io.sweers.catchup.gemoji
 
 import android.content.Context
-import androidx.room.Room
+import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.db.SupportSQLiteOpenHelper
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
+import dev.zacsweers.catchup.gemoji.db.GemojiDatabase
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 
 @ContributesTo(AppScope::class)
@@ -31,15 +35,36 @@ object GemojiModule {
   @Provides
   @SingleIn(AppScope::class)
   internal fun provideGemojiDatabase(@ApplicationContext context: Context): GemojiDatabase {
-    return Room.databaseBuilder(context, GemojiDatabase::class.java, "gemoji.db")
-      .fallbackToDestructiveMigration()
-      .createFromAsset("databases/gemoji.db")
-      .build()
-  }
+    val delegate =
+      FrameworkSQLiteOpenHelperFactory()
+        .create(
+          SupportSQLiteOpenHelper.Configuration.builder(context)
+            .name("gemoji.db")
+            .callback(
+              object : SupportSQLiteOpenHelper.Callback(GemojiDatabase.Schema.version) {
+                override fun onCreate(db: SupportSQLiteDatabase) {
+                  // Do nothing
+                }
 
-  @Provides
-  @SingleIn(AppScope::class)
-  internal fun provideGemojiDao(gemojiDatabase: GemojiDatabase): GemojiDao {
-    return gemojiDatabase.gemojiDao()
+                override fun onUpgrade(
+                  db: SupportSQLiteDatabase,
+                  oldVersion: Int,
+                  newVersion: Int
+                ) {
+                  // Do nothing
+                }
+              }
+            )
+            .build()
+        )
+    val assetAssistedOpenHelper =
+      SQLiteCopyOpenHelper(
+        context = context,
+        copyFromAssetPath = "databases/gemoji.db",
+        databaseVersion = GemojiDatabase.Schema.version,
+        delegate = delegate
+      )
+
+    return GemojiDatabase(AndroidSqliteDriver(assetAssistedOpenHelper))
   }
 }

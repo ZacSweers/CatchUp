@@ -153,7 +153,8 @@ constructor(
 
             CatchUpItem(
               id = id.hashCode().toLong(),
-              title = "$name$description",
+              title = "${owner.login} / $name",
+              description = description,
               score = "★" to stargazers.totalCount,
               timestamp = createdAt,
               author = owner.login,
