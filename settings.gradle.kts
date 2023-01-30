@@ -247,6 +247,8 @@ include(
   ":libraries:di",
   ":libraries:di:android",
   ":libraries:gemoji",
+  ":libraries:gemoji:db",
+  ":libraries:gemoji:generator",
   ":libraries:flowbinding",
   ":libraries:kotlinutil",
   ":libraries:newark",
