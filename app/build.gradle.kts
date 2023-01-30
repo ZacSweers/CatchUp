@@ -575,7 +575,7 @@ dependencies {
 
   implementation(libs.androidx.datastore.preferences)
   implementation(libs.kotlinx.immutable)
-  implementation(libs.sqldelight.android)
+  implementation(libs.sqldelight.driver.android)
   implementation(libs.sqldelight.paging)
   implementation(libs.sqldelight.coroutines)
   implementation(libs.sqldelight.primitiveAdapters)
