@@ -1,5 +1,6 @@
 plugins {
   kotlin("jvm")
+  alias(libs.plugins.sgp.base)
   alias(libs.plugins.sqldelight)
 }
 
