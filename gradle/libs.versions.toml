@@ -194,6 +194,8 @@ kotlin-metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0"
 kotlin-poet = "com.squareup:kotlinpoet:1.12.0"
 kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
 
+lints-compose = "com.slack.lint.compose:compose-lint-checks:1.0.0-SNAPSHOT"
+
 markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
 markwon-extStrikethrough = { module = "io.noties.markwon:ext-strikethrough", version.ref = "markwon" }
 markwon-extTables = { module = "io.noties.markwon:ext-tables", version.ref = "markwon" }
@@ -278,3 +280,6 @@ test-junit = "junit:junit:4.13.2"
 test-truth = "com.google.truth:truth:1.1.3"
 
 zoomables = "de.mr-pine.utils:zoomables:1.1.2"
+
+[bundles]
+common-lint = ["lints-compose"]
