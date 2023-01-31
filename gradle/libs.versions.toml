@@ -66,7 +66,7 @@ sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
 sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
-versions = { id = "com.github.ben-manes.versions", version = "0.44.0" }
+versions = { id = "com.github.ben-manes.versions", version = "0.45.0" }
 
 [libraries]
 autodispose = { module = "com.uber.autodispose:autodispose", version.ref = "autodispose" }
