@@ -95,11 +95,12 @@ fun PlaceholderItem(themeColor: Color) {
 fun TextItem(
   item: CatchUpItem,
   themeColor: Color,
+  modifier: Modifier = Modifier,
   showPlaceholder: Boolean = false,
   onMarkClick: () -> Unit = {}
 ) {
   Row(
-    modifier = Modifier.padding(16.dp),
+    modifier = modifier.padding(16.dp),
     verticalAlignment = Alignment.CenterVertically,
   ) {
     DetailColumn(item, themeColor, showPlaceholder = showPlaceholder)

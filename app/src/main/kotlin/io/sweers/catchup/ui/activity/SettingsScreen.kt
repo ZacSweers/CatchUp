@@ -337,8 +337,8 @@ private fun ComposableHeaderItem(text: String, displayDivider: Boolean) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ClickablePreference(
-  modifier: Modifier = Modifier,
   title: String,
+  modifier: Modifier = Modifier,
   subtitle: String? = null,
   icon: @Composable (() -> Unit)? = null,
   onClick: () -> Unit,
@@ -354,9 +354,9 @@ private fun ClickablePreference(
 
 @Composable
 private fun CheckboxPref(
-  modifier: Modifier = Modifier,
   state: SettingValueState<Boolean>,
   title: String,
+  modifier: Modifier = Modifier,
   subtitle: String? = null,
   icon: @Composable (() -> Unit)? = null,
   onCheckedChange: (Boolean) -> Unit = {},

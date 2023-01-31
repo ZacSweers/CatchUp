@@ -71,9 +71,14 @@ sealed class ClickEvent(val item: CatchUpListItem) {
 }
 
 @Composable
-fun TextItem(item: CatchUpListItem, themeColor: Color, onClick: (ClickEvent) -> Unit = {}) {
+fun TextItem(
+  item: CatchUpListItem,
+  themeColor: Color,
+  modifier: Modifier = Modifier,
+  onClick: (ClickEvent) -> Unit = {}
+) {
   Row(
-    modifier = Modifier.padding(16.dp),
+    modifier = modifier.padding(16.dp),
     verticalAlignment = Alignment.CenterVertically,
   ) {
     DetailColumn(item, themeColor)

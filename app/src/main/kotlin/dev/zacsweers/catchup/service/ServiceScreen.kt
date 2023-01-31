@@ -209,7 +209,7 @@ fun Service(state: ServiceScreen.State, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
-fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> Unit)?) {
+fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> Unit)? = null) {
   Column(
     modifier = modifier.padding(16.dp),
     verticalArrangement = spacedBy(16.dp),
@@ -248,10 +248,10 @@ fun LoadingView(themeColor: Color, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LoadingItem() {
+fun LoadingItem(modifier: Modifier = Modifier) {
   CircularProgressIndicator(
     modifier =
-      Modifier.fillMaxWidth().padding(16.dp).wrapContentWidth(Alignment.CenterHorizontally),
+      modifier.fillMaxWidth().padding(16.dp).wrapContentWidth(Alignment.CenterHorizontally),
     color = MaterialTheme.colorScheme.outline
   )
 }

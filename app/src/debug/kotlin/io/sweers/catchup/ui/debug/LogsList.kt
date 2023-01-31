@@ -31,12 +31,16 @@ import androidx.compose.ui.unit.sp
 import io.sweers.catchup.data.LumberYard
 import kotlinx.collections.immutable.ImmutableList
 
-/** A simple list UI for showing debugging logs and sharnig them. */
+/** A simple list UI for showing debugging logs and sharing them. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LogsList(entries: ImmutableList<LumberYard.Entry>, onShare: () -> Unit) {
+fun LogsList(
+  entries: ImmutableList<LumberYard.Entry>,
+  modifier: Modifier = Modifier,
+  onShare: () -> Unit
+) {
   LazyColumn(
-    modifier = Modifier.systemBarsPadding(),
+    modifier = modifier.systemBarsPadding(),
     contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
   ) {
     stickyHeader(key = "header") {
@@ -55,8 +59,8 @@ fun LogsList(entries: ImmutableList<LumberYard.Entry>, onShare: () -> Unit) {
 }
 
 @Composable
-fun LogEntry(entry: LumberYard.Entry) {
-  Column(modifier = Modifier.fillMaxWidth()) {
+fun LogEntry(entry: LumberYard.Entry, modifier: Modifier = Modifier) {
+  Column(modifier = modifier.fillMaxWidth()) {
     Row {
       Text(
         entry.displayLevel,

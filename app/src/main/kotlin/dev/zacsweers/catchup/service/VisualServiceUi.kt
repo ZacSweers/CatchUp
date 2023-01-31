@@ -54,6 +54,7 @@ fun VisualServiceUi(
   themeColor: Color,
   onRefreshChange: (Boolean) -> Unit,
   eventSink: (ServiceScreen.Event) -> Unit,
+  modifier: Modifier = Modifier
 ) {
   val placeholders =
     if (isSystemInDarkTheme()) {
@@ -64,7 +65,7 @@ fun VisualServiceUi(
 
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Fixed(2),
-    modifier = Modifier.fillMaxSize(),
+    modifier = modifier.fillMaxSize(),
   ) {
     itemsIndexed(
       lazyItems,

@@ -481,14 +481,18 @@ sealed interface DebugItem {
 
       @OptIn(ExperimentalMaterial3Api::class)
       @Composable
-      fun Content(state: SettingValueState<T>, onSelection: (T) -> Unit) {
+      fun Content(
+        state: SettingValueState<T>,
+        modifier: Modifier = Modifier,
+        onSelection: (T) -> Unit,
+      ) {
         var storageValue by state
         val update: (T) -> Unit = { newValue ->
           storageValue = newValue
           onSelection(storageValue)
         }
         Row(
-          modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+          modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp),
           verticalAlignment = Alignment.CenterVertically
         ) {
           DebugLabelText(title, modifier = Modifier.weight(1f))
@@ -538,9 +542,12 @@ sealed interface DebugItem {
       val onClickScreen: Screen,
     ) : Element {
       @Composable
-      fun Content(onClick: (Screen) -> Unit) {
+      fun Content(
+        modifier: Modifier = Modifier,
+        onClick: (Screen) -> Unit,
+      ) {
         Button(
-          modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+          modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp),
           onClick = { onClick(onClickScreen) }
         ) {
           Text(text)
@@ -554,7 +561,11 @@ sealed interface DebugItem {
       val defaultValue: Boolean,
     ) : Element {
       @Composable
-      fun Content(state: SettingValueState<Boolean>, onCheckedChange: (Boolean) -> Unit) {
+      fun Content(
+        state: SettingValueState<Boolean>,
+        modifier: Modifier = Modifier,
+        onCheckedChange: (Boolean) -> Unit,
+      ) {
         var storageValue by state
         val update: (Boolean) -> Unit = { boolean ->
           storageValue = boolean
@@ -562,7 +573,8 @@ sealed interface DebugItem {
         }
         Row(
           modifier =
-            Modifier.toggleable(
+            modifier
+              .toggleable(
                 value = storageValue,
                 role = Role.Checkbox,
                 onValueChange = { update(!storageValue) }
@@ -581,9 +593,9 @@ sealed interface DebugItem {
       val value: String, // Are any of these live?
     ) : Element {
       @Composable
-      fun Content() {
+      fun Content(modifier: Modifier = Modifier) {
         Row(
-          modifier = Modifier.padding(horizontal = 12.dp),
+          modifier = modifier.padding(horizontal = 12.dp),
           verticalAlignment = Alignment.CenterVertically
         ) {
           DebugLabelText(title)
