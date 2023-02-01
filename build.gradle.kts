@@ -31,6 +31,13 @@ plugins {
   alias(libs.plugins.bugsnag) apply false
 }
 
+buildscript {
+  dependencies {
+    // Necessary for sqldelight's DB migration verification task
+    classpath("org.xerial:sqlite-jdbc:3.40.0.0")
+  }
+}
+
 doctor {
   // G1 is faster now
   warnWhenNotUsingParallelGC.set(false)
