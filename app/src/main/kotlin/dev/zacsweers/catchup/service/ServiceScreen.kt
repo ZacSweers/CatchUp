@@ -185,13 +185,13 @@ constructor(
 @OptIn(ExperimentalMaterialApi::class)
 @CircuitInject(ServiceScreen::class, AppScope::class)
 @Composable
-fun Service(state: ServiceScreen.State) {
+fun Service(state: ServiceScreen.State, modifier: Modifier = Modifier) {
   val eventSink = state.eventSink
   val lazyItems: LazyPagingItems<CatchUpItem> = state.items.collectAsLazyPagingItems()
   var refreshing by remember { mutableStateOf(false) }
   val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh = lazyItems::refresh)
   // TODO this isn't accounting for actual system bars ugh
-  Box(Modifier.pullRefresh(pullRefreshState).systemBarsPadding()) {
+  Box(modifier.pullRefresh(pullRefreshState).systemBarsPadding()) {
     if (state is VisualState) {
       VisualServiceUi(lazyItems, state.themeColor, { refreshing = it }, eventSink)
     } else {

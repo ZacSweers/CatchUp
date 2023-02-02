@@ -51,12 +51,12 @@ private val SCREEN_TITLES = intArrayOf(R.string.licenses, R.string.changelog)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @CircuitInject(AboutScreen::class, AppScope::class)
 @Composable
-fun About(state: AboutScreen.State) {
+fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   Scaffold(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,
-    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = { CollapsingAboutHeader(state.version, scrollBehavior = scrollBehavior) }
   ) { paddingValues ->
     Column(Modifier.padding(paddingValues)) {

@@ -206,7 +206,7 @@ constructor(
 @CircuitInject(OrderServicesScreen::class, AppScope::class)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun OrderServices(state: OrderServicesScreen.State) {
+fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifier) {
   val eventSink = state.eventSink
   if (state.showConfirmation) {
     val overlayHost = LocalOverlayHost.current
@@ -234,6 +234,7 @@ fun OrderServices(state: OrderServicesScreen.State) {
     }
   }
   Scaffold(
+    modifier = modifier,
     topBar = {
       TopAppBar(
         title = { Text(stringResource(id = R.string.pref_reorder_services)) },

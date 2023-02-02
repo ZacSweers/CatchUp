@@ -212,9 +212,10 @@ constructor(
 
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
-  override fun Content(state: SettingsScreen.State) {
+  override fun Content(state: SettingsScreen.State, modifier: Modifier) {
     val eventSink = state.eventSink
     Scaffold(
+      modifier = modifier,
       contentWindowInsets = WindowInsets(0, 0, 0, 0),
       containerColor = Color.Transparent,
       topBar = {
