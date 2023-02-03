@@ -138,9 +138,9 @@ private fun OssItem.toCatchUpItem(): CatchUpItem {
 @OptIn(ExperimentalFoundationApi::class)
 @CircuitInject(LicensesScreen::class, AppScope::class)
 @Composable
-internal fun Licenses(state: LicensesScreen.State) {
+internal fun Licenses(state: LicensesScreen.State, modifier: Modifier = Modifier) {
   val sink = state.eventSink
-  LazyColumn {
+  LazyColumn(modifier = modifier) {
     val items = state.items
     if (items == null) {
       item {

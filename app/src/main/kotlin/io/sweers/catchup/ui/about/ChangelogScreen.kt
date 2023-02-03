@@ -76,9 +76,9 @@ constructor(
 @OptIn(ExperimentalFoundationApi::class)
 @CircuitInject(ChangelogScreen::class, AppScope::class)
 @Composable
-fun Changelog(state: ChangelogScreen.State) {
+fun Changelog(state: ChangelogScreen.State, modifier: Modifier = Modifier) {
   val sink = state.eventSink
-  LazyColumn {
+  LazyColumn(modifier = modifier) {
     val items = state.items
     if (items == null) {
       item {

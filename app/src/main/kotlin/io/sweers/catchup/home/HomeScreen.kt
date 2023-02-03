@@ -147,7 +147,7 @@ constructor(
 )
 @Composable
 @CircuitInject(HomeScreen::class, AppScope::class)
-fun Home(state: HomeScreen.State) {
+fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
   val eventSink = state.eventSink
   val pagerState = key(state.serviceMetas) { rememberPagerState() }
   val currentServiceMeta = state.serviceMetas[pagerState.currentPage]
@@ -202,7 +202,7 @@ fun Home(state: HomeScreen.State) {
   }
 
   val nestedScrollModifier = remember {
-    Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
   }
   Scaffold(
     modifier = nestedScrollModifier,

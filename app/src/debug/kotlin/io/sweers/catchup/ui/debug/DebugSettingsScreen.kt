@@ -317,7 +317,7 @@ constructor(
 ) :
   Ui<DebugSettingsScreen.State>, BaseSettingsUi by RealBaseSettingsUi(debugPreferences.datastore) {
   @Composable
-  override fun Content(state: DebugSettingsScreen.State) {
+  override fun Content(state: DebugSettingsScreen.State, modifier: Modifier) {
     val eventSink = state.eventSink
 
     if (state.logsToShow.isNotEmpty()) {
@@ -343,7 +343,7 @@ constructor(
     }
 
     CatchUpTheme(useDarkTheme = true) {
-      Surface(Modifier.fillMaxHeight()) {
+      Surface(modifier.fillMaxHeight()) {
         LazyColumn(verticalArrangement = spacedBy(8.dp), modifier = Modifier.systemBarsPadding()) {
           item(key = "header") {
             Row(

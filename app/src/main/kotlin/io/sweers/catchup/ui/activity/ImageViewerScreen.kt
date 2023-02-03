@@ -129,7 +129,7 @@ constructor(@Assisted private val screen: ImageViewerScreen, private val linkMan
 
 @CircuitInject(ImageViewerScreen::class, AppScope::class)
 @Composable
-fun ImageViewer(state: ImageViewerScreen.State) {
+fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
   val sink = state.eventSink
   var showChrome by remember { mutableStateOf(true) }
   val systemUiController = rememberSystemUiController()
@@ -156,7 +156,7 @@ fun ImageViewer(state: ImageViewerScreen.State) {
           )
       )
     Surface(
-      Modifier.fillMaxSize().animateContentSize(),
+      modifier.fillMaxSize().animateContentSize(),
       color = Color.Black.copy(alpha = backgroundAlpha),
       contentColor = Color.White
     ) {
