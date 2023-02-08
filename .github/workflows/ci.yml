@@ -55,7 +55,7 @@ jobs:
           mkdir tmp
           gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
 
-      - name: Run sarif upload if any sources changed
+      - name: Filter sarif
         if: always() && github.event_name == 'pull_request'
         run: |
           ./.github/workflows/sarif-filter.main.kts --sarif-file app/build/reports/lint-results-debug.sarif --modified-files tmp/changed_files.txt --output-file tmp/modified_sarif.sarif
