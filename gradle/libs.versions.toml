@@ -74,7 +74,7 @@ autodispose = { module = "com.uber.autodispose:autodispose", version.ref = "auto
 androidx-annotations = "androidx.annotation:annotation:1.6.0-beta01"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha01"
+androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha02"
 
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
