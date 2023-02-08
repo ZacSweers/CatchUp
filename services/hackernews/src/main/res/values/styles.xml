@@ -16,7 +16,7 @@
   </style>
 
   <style name="TextAppearance.Comment.None">
-    <item name="android:textColor">?android:textColorPrimary</item>
+    <item name="android:textColor">?android:textColorTertiary</item>
   </style>
 
   <style name="TextAppearance.CommentTimestamp" parent="@style/TextAppearance.MaterialComponents.Caption">
