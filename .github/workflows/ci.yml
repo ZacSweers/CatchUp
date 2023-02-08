@@ -26,6 +26,19 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
 
+      - name: Get changed source files
+        if: always() && github.event_name == 'pull_request'
+        id: changed-files
+        uses: tj-actions/changed-files@v35
+
+      - name: Run sarif upload if any sources changed
+        if: steps.changed-files-excluded.outputs.any_changed == 'true'
+        run: |
+          # ./.github/workflows/sarif-parser.main.kts --sarif-file app/build/reports/lint-results-debug.sarif --modified-files changed_files.txt --output-file modified_sarif.sarif
+          echo "One or more source files has changed."
+          echo "List all the files that have changed: '${{ steps.changed-files-excluded.outputs.all_changed_files }}'"
+
+
       - name: Install JDK
         uses: actions/setup-java@v3
         with:
@@ -37,21 +50,6 @@ jobs:
           mkdir -p ~/.gradle
           touch ~/.gradle/gradle.properties
           ./gradlew bootstrap --stacktrace
-
-      - name: Get changed source files
-        if: always() && github.event_name == 'pull_request'
-        id: changed-files
-        uses: tj-actions/changed-files@v35
-        with:
-          files: |
-            **/src/**/*.{kt,kts,java,xml,gradle}
-
-      - name: Run sarif upload if any sources changed
-        if: steps.changed-files-excluded.outputs.any_changed == 'true'
-        run: |
-          # ./.github/workflows/sarif-parser.main.kts --sarif-file app/build/reports/lint-results-debug.sarif --modified-files changed_files.txt --output-file modified_sarif.sarif
-          echo "One or more source files has changed."
-          echo "List all the files that have changed: '${{ steps.changed-files-excluded.outputs.all_changed_files }}'"
 
       - name: Build and run tests
         id: gradle
