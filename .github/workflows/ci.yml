@@ -44,13 +44,15 @@ jobs:
           gradle-home-cache-cleanup: true
           cache-read-only: false
 
-      - name: (Fail-only) Bundle the build report
-        if: failure()
-        run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
+      - name: Upload lint sarif
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif-file: app/build/reports/lint-results-debug.sarif
 
-      - name: (Fail-only) Upload the build report
+      - name: (Fail-only) Upload build reports
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: error-report
-          path: build-reports.zip
+          name: reports
+          path: |
+            **/build/reports/*
