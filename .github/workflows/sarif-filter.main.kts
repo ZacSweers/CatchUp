@@ -23,6 +23,11 @@ class SarifCleaner :
   private val outputFile: File by option("--output-file").file().required()
 
   override fun run() {
+    if (outputFile.exists()) {
+      outputFile.delete()
+    }
+    outputFile.parentFile?.mkdirs()
+
     echo("Parsing sarif file: $sarifFile")
     val modifiedFiles = modifiedFiles.readLines().toSet()
     val jsonValue =
@@ -42,6 +47,10 @@ class SarifCleaner :
       }
 
     echo("Found ${results.size} result(s), filtered to ${filteredResults.size} result(s)")
+    if (filteredResults.isEmpty()) {
+      echo("No results to write, exiting")
+      return
+    }
 
     // Now put the filtered results back into the original json
     jsonValue["runs"] = listOf(runs[0].toMutableMap().apply { this["results"] = filteredResults })
@@ -49,10 +58,6 @@ class SarifCleaner :
     // Finally, change all .0 doubles to Ints because that's what the sarif spec says
     fixInts(jsonValue)
 
-    if (outputFile.exists()) {
-      outputFile.delete()
-    }
-    outputFile.parentFile?.mkdirs()
     outputFile.createNewFile()
     echo("Writing ${filteredResults.size} result(s) to $outputFile")
     JsonWriter.of(outputFile.sink().buffer()).use { writer ->
