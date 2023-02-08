@@ -47,10 +47,6 @@ class SarifCleaner :
       }
 
     echo("Found ${results.size} result(s), filtered to ${filteredResults.size} result(s)")
-    if (filteredResults.isEmpty()) {
-      echo("No results to write, exiting")
-      return
-    }
 
     // Now put the filtered results back into the original json
     jsonValue["runs"] = listOf(runs[0].toMutableMap().apply { this["results"] = filteredResults })

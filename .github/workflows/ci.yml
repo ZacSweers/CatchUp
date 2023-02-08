@@ -60,7 +60,6 @@ jobs:
         run: |
           ./.github/workflows/sarif-filter.main.kts --sarif-file app/build/reports/lint-results-release.sarif --modified-files tmp/changed_files.txt --output-file tmp/modified_sarif.sarif
 
-      # Will no-op if no matched files were found in the sarif
       - name: Upload lint sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
