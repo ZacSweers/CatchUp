@@ -36,7 +36,7 @@ jobs:
         run: |
           # ./.github/workflows/sarif-parser.main.kts --sarif-file app/build/reports/lint-results-debug.sarif --modified-files changed_files.txt --output-file modified_sarif.sarif
           echo "One or more source files has changed."
-          echo "List all the files that have changed: '${{ steps.changed-files-excluded.outputs.all_changed_files }}'"
+          echo "List all the files that have changed: '${{ steps.changed-files.outputs.all_changed_files }}'"
 
 
       - name: Install JDK
