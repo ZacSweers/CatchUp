@@ -9,6 +9,8 @@ on:
       - '*.md'
   # Always run on PRs
   pull_request:
+    branches:
+      - main
 
 concurrency:
   group: ci-${{ github.ref }}-${{ github.head_ref }}
@@ -40,17 +42,33 @@ jobs:
         id: gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: check --continue --quiet
+          arguments: check :app:assembleRelease :app:lintRelease --continue --quiet
           gradle-home-cache-cleanup: true
           cache-read-only: false
 
-      - name: (Fail-only) Bundle the build report
-        if: failure()
-        run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
+      # TODO sorting/filtering on matching source files?
+      - name: Get changed files
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir tmp
+          gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
 
-      - name: (Fail-only) Upload the build report
+      - name: Filter sarif
+        if: always() && github.event_name == 'pull_request'
+        run: |
+          ./.github/workflows/sarif-filter.main.kts --sarif-file app/build/reports/lint-results-release.sarif --modified-files tmp/changed_files.txt --output-file tmp/modified_sarif.sarif
+
+      - name: Upload lint sarif
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: tmp/modified_sarif.sarif
+
+      - name: (Fail-only) Upload build reports
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: error-report
-          path: build-reports.zip
+          name: reports
+          path: |
+            **/build/reports/*
