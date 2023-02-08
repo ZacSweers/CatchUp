@@ -30,6 +30,15 @@ jobs:
         if: always() && github.event_name == 'pull_request'
         id: changed-files
         uses: tj-actions/changed-files@v35
+        with:
+          output_dir: "tmp"
+          separator: ","
+
+      - name: Upload changed files
+        uses: actions/upload-artifact@v3
+        with:
+          name: changed
+          path: "tmp"
 
       - name: Run sarif upload if any sources changed
         if: steps.changed-files.outputs.any_changed == 'true'
@@ -37,7 +46,6 @@ jobs:
           # ./.github/workflows/sarif-parser.main.kts --sarif-file app/build/reports/lint-results-debug.sarif --modified-files changed_files.txt --output-file modified_sarif.sarif
           echo "One or more source files has changed."
           echo "List all the files that have changed: '${{ steps.changed-files.outputs.all_changed_files }}'"
-
 
       - name: Install JDK
         uses: actions/setup-java@v3
