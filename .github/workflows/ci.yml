@@ -22,38 +22,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
-
-      - name: Get changed files
-        id: changed-files
-        if: always() && github.event_name == 'pull_request'
-        uses: tj-actions/changed-files@v35
-        with:
-          output_dir: "tmp"
-          separator: ","
-
-      - name: Upload changed files
-        uses: actions/upload-artifact@v3
-        with:
-          name: changed
-          path: "tmp"
-
-      - name: List all changed files
-        run: |
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            echo "$file was changed"
-          done
-
-#      - name: Run sarif upload if any sources changed
-#        if: steps.changed-files.outputs.any_changed == 'true'
-#        run: |
-#          # ./.github/workflows/sarif-parser.main.kts --sarif-file app/build/reports/lint-results-debug.sarif --modified-files changed_files.txt --output-file modified_sarif.sarif
-#          echo "One or more source files has changed."
-#          echo "List all the files that have changed: '${{ steps.changed-files.outputs.all_changed_files }}'"
 
       - name: Install JDK
         uses: actions/setup-java@v3
@@ -75,11 +46,24 @@ jobs:
           gradle-home-cache-cleanup: true
           cache-read-only: false
 
+      # TODO sorting/filtering on matching source files?
+      - name: Get changed files
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir tmp
+          gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
+
+      - name: Run sarif upload if any sources changed
+        if: always() && github.event_name == 'pull_request'
+        run: |
+          ./.github/workflows/sarif-filter.main.kts --sarif-file app/build/reports/lint-results-debug.sarif --modified-files tmp/changed_files.txt --output-file tmp/modified_sarif.sarif
+
       - name: Upload lint sarif
-        if: steps.changed-files-excluded.outputs.any_changed == 'true'
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: app/build/reports/lint-results-debug.sarif
+          sarif_file: tmp/modified_sarif.sarif
 
       - name: (Fail-only) Upload build reports
         if: failure()
