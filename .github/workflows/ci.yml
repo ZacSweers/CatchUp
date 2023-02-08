@@ -42,7 +42,7 @@ jobs:
         id: gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: check --continue --quiet
+          arguments: check :app:assembleRelease :app:lintRelease --continue --quiet
           gradle-home-cache-cleanup: true
           cache-read-only: false
 
@@ -58,7 +58,7 @@ jobs:
       - name: Filter sarif
         if: always() && github.event_name == 'pull_request'
         run: |
-          ./.github/workflows/sarif-filter.main.kts --sarif-file app/build/reports/lint-results-debug.sarif --modified-files tmp/changed_files.txt --output-file tmp/modified_sarif.sarif
+          ./.github/workflows/sarif-filter.main.kts --sarif-file app/build/reports/lint-results-release.sarif --modified-files tmp/changed_files.txt --output-file tmp/modified_sarif.sarif
 
       # Will no-op if no matched files were found in the sarif
       - name: Upload lint sarif
