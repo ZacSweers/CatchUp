@@ -44,6 +44,7 @@ spotless = "6.14.1"
 sqldelight = "2.0.0-alpha05"
 # https://github.com/Tickaroo/tikxml/issues/114
 tikxml = "0.8.13"
+xerial = "3.40.1.0"
 
 [plugins]
 anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
@@ -258,6 +259,8 @@ sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions-jvm", version.ref = "sqldelight" }
 sqldelight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
 sqldelight-primitiveAdapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
+
+sqlite-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "xerial" }
 
 tikxml-annotation = { module = "com.tickaroo.tikxml:annotation", version.ref = "tikxml" }
 tikxml-apt = { module = "com.tickaroo.tikxml:processor", version.ref = "tikxml" }

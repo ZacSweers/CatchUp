@@ -34,7 +34,7 @@ plugins {
 buildscript {
   dependencies {
     // Necessary for sqldelight's DB migration verification task
-    classpath("org.xerial:sqlite-jdbc:3.40.1.0")
+    classpath(libs.sqlite.xerial)
   }
 }
 

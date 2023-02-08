@@ -83,7 +83,7 @@ android {
         keyPassword = properties["catchup_signing_key_password"].toString()
       }
     } else {
-      create("release") // .initWith(getByName("debug"))
+      create("release").initWith(getByName("debug"))
     }
   }
   buildTypes {
