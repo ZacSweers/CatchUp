@@ -123,6 +123,7 @@ android {
     disable += "MissingTranslation"
     disable += "ExtraTranslation" // wrong?
     disable += "VectorPath" // Always complains about long paths as if I could do something about it
+    error += "ComposeUnstableCollections"
     checkDependencies = true
   }
   namespace = "io.sweers.catchup"
