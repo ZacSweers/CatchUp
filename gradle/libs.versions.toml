@@ -12,7 +12,7 @@ autodispose = "2.1.1"
 chuck = "1.1.0"
 circuit = "0.6.0"
 coil = "2.2.2"
-compose = "1.4.0-alpha05"
+compose = "1.4.0-beta01"
 composeCompiler = "1.4.0"
 composeCompilerKotlinVersion = "1.8.0"
 corbind = "1.7.0"
@@ -71,18 +71,18 @@ versions = { id = "com.github.ben-manes.versions", version = "0.45.0" }
 
 [libraries]
 autodispose = { module = "com.uber.autodispose:autodispose", version.ref = "autodispose" }
-androidx-annotations = "androidx.annotation:annotation:1.6.0-beta01"
+androidx-annotations = "androidx.annotation:annotation:1.6.0-rc01"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha01"
+androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha02"
 
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
 androidx-constraintLayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha07"
-androidx-customTabs = "androidx.browser:browser:1.5.0-rc01"
+androidx-customTabs = "androidx.browser:browser:1.5.0"
 androidx-design = "com.google.android.material:material:1.8.0"
-androidx-drawerLayout = "androidx.drawerlayout:drawerlayout:1.2.0-alpha01"
+androidx-drawerLayout = "androidx.drawerlayout:drawerlayout:1.2.0-beta01"
 
 androidx-emoji = { module = "androidx.emoji:emoji", version.ref = "emoji" }
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
@@ -128,8 +128,8 @@ androidx-compose-rxjava3 = { module = "androidx.compose.runtime:runtime-rxjava3"
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material3", version.ref = "accompanist" }
-androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha17"
-androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-alpha05" }
+androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha18"
+androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-alpha06" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-config = "com.google.firebase:firebase-config:21.2.1"
