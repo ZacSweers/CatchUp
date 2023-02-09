@@ -206,7 +206,7 @@ markwon-syntaxHighlight = { module = "io.noties.markwon:syntax-highlight", versi
 
 misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakcanary-object-watcher-android", version.ref = "leakcanary" }
-misc-bugsnag = "com.bugsnag:bugsnag-android:5.28.3"
+misc-bugsnag = "com.bugsnag:bugsnag-android:5.28.4"
 misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
