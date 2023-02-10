@@ -55,8 +55,9 @@ fun TextServiceUi(
   themeColor: Color,
   onRefreshChange: (Boolean) -> Unit,
   eventSink: (ServiceScreen.Event) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-  LazyColumn {
+  LazyColumn(modifier = modifier) {
     items(
       items = lazyItems,
       key = CatchUpItem::id,
