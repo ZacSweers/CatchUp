@@ -167,6 +167,7 @@ private fun items(
       )
       add(DebugItem.Header("Logs"))
       add(DebugItem.Element.ButtonElement("Show logs", LogsModal))
+      add(DebugItem.Element.ButtonElement("Theme Screen", ThemeScreen))
       add(
         DebugItem.Element.ButtonElement(
           "Leak Analysis",
