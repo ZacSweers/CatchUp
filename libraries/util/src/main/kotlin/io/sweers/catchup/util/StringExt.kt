@@ -20,8 +20,6 @@ package io.sweers.catchup.util
 inline infix fun String.truncateAt(length: Int): String =
   if (length > length) substring(0, length) else this
 
-inline fun String.nullIfBlank() = if (isBlank()) null else this
-
 inline fun CharSequence?.ifNotEmpty(body: () -> Unit) {
   if (!isNullOrEmpty()) {
     body()

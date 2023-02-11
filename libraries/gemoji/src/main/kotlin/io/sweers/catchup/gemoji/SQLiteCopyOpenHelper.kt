@@ -37,7 +37,7 @@ internal class SQLiteCopyOpenHelper(
   override val writableDatabase: SupportSQLiteDatabase
     get() {
       if (!verified) {
-        verifyDatabaseFile(true)
+        verifyDatabaseFile()
         verified = true
       }
       return delegate.writableDatabase
@@ -46,7 +46,7 @@ internal class SQLiteCopyOpenHelper(
   override val readableDatabase: SupportSQLiteDatabase
     get() {
       if (!verified) {
-        verifyDatabaseFile(false)
+        verifyDatabaseFile()
         verified = true
       }
       return delegate.readableDatabase
@@ -58,7 +58,7 @@ internal class SQLiteCopyOpenHelper(
     verified = false
   }
 
-  private fun verifyDatabaseFile(writable: Boolean) {
+  private fun verifyDatabaseFile() {
     val name = checkNotNull(databaseName)
     val databaseFile = context.getDatabasePath(name)
     val copyLock = ProcessLock(name, context.filesDir, true)
@@ -69,7 +69,7 @@ internal class SQLiteCopyOpenHelper(
       if (!databaseFile.exists()) {
         try {
           // No database file found, copy and be done.
-          copyDatabaseFile(databaseFile, writable)
+          copyDatabaseFile(databaseFile)
           return
         } catch (e: IOException) {
           throw RuntimeException("Unable to copy database file.", e)
@@ -94,23 +94,21 @@ internal class SQLiteCopyOpenHelper(
       }
       if (context.deleteDatabase(name)) {
         try {
-          copyDatabaseFile(databaseFile, writable)
+          copyDatabaseFile(databaseFile)
         } catch (e: IOException) {
           // We are more forgiving copying a database on a destructive migration since
           // there is already a database file that can be opened.
           Timber.w(e, "Unable to copy database file.")
         }
       } else {
-        Timber.w(
-          "Failed to delete database file (" + name + ") for " + "a copy destructive migration."
-        )
+        Timber.w("Failed to delete database file ($name) for a copy destructive migration.")
       }
     } finally {
       copyLock.unlock()
     }
   }
 
-  private fun copyDatabaseFile(destinationFile: File, writable: Boolean) {
+  private fun copyDatabaseFile(destinationFile: File) {
     val input: ReadableByteChannel = Channels.newChannel(context.assets.open(copyFromAssetPath))
 
     // An intermediate file is used so that we never end up with a half-copied database file

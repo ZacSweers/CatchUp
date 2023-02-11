@@ -15,7 +15,6 @@
  */
 package io.sweers.catchup.util.kotlin
 
-import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
@@ -45,58 +44,3 @@ suspend fun <T> Flow<T>.any(predicate: suspend (T) -> Boolean): Boolean {
 }
 
 fun <T> Flow<T>.mergeWith(other: Flow<T>): Flow<T> = merge(this, other)
-
-fun <T> Flow<T>.windowed(
-  size: Int,
-  step: Int = 1,
-  partialWindows: Boolean = false,
-  reuseBuffer: Boolean = false
-): Flow<List<T>> = flow {
-  require(size > 0 && step > 0) {
-    if (size != step) {
-      "Both size $size and step $step must be greater than zero."
-    } else {
-      "size $size must be greater than zero."
-    }
-  }
-  val gap = step - size
-  if (gap >= 0) {
-    var buffer = ArrayList<T>(size)
-    val skip = AtomicInteger(0)
-    // TODO if you just use an int here the kotlin compiler blows up
-    //    var skip = 0
-    collect { e ->
-      if (skip.get() > 0) {
-        //        skip -= 1
-        skip.decrementAndGet()
-        return@collect
-      }
-      buffer.add(e)
-      if (buffer.size == size) {
-        emit(buffer)
-        if (reuseBuffer) buffer.clear() else buffer = ArrayList(size)
-        skip.set(gap)
-        //        skip = gap
-      }
-    }
-    if (buffer.isNotEmpty()) {
-      if (partialWindows || buffer.size == size) emit(buffer)
-    }
-  } else {
-    val buffer = RingBuffer<T>(size)
-    collect { e ->
-      buffer.add(e)
-      if (buffer.isFull()) {
-        emit(if (reuseBuffer) buffer else ArrayList(buffer))
-        buffer.removeFirst(step)
-      }
-    }
-    if (partialWindows) {
-      while (buffer.size > step) {
-        emit(if (reuseBuffer) buffer else ArrayList(buffer))
-        buffer.removeFirst(step)
-      }
-      if (buffer.isNotEmpty()) emit(buffer)
-    }
-  }
-}

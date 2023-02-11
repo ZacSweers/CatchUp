@@ -80,6 +80,7 @@ private fun Context.maybeStartActivity(inputIntent: Intent, chooser: Boolean): B
 }
 
 /** Queries on-device packages for a handler for the supplied [Intent]. */
+@Suppress("DEPRECATION")
 private fun Context.hasHandler(intent: Intent) =
   packageManager.queryIntentActivities(intent, 0).isNotEmpty()
 

@@ -62,8 +62,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.colorResource
@@ -269,13 +267,13 @@ fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifie
         FloatingActionButton(
           modifier =
             Modifier.indication(
-                MutableInteractionSource(),
-                indication = rememberRipple(color = Color.White)
-              )
-              .onGloballyPositioned { coordinates ->
-                val (x, y) = coordinates.positionInRoot()
-                // TODO show syllabus on fab
-              },
+              MutableInteractionSource(),
+              indication = rememberRipple(color = Color.White)
+            ),
+          // TODO show syllabus on fab
+          //              .onGloballyPositioned { coordinates ->
+          //                val (x, y) = coordinates.positionInRoot()
+          //              },
           containerColor = colorResource(R.color.colorAccent),
           onClick = { scope.launch { eventSink(OrderServicesScreen.Event.Save) } },
           content = {

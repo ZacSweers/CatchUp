@@ -30,7 +30,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
-import autodispose2.autoDispose
 import com.mattprecious.telescope.Lens
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -40,13 +39,14 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.sweers.catchup.R
-import io.sweers.catchup.base.ui.BaseActivity
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
 import io.sweers.catchup.ui.bugreport.BugReportView.Report
 import io.sweers.catchup.util.buildMarkdown
 import java.io.File
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -184,82 +184,86 @@ constructor(
           .map { "\n\n!${buildMarkdown { link(it, "Screenshot") }}" }
       } else Single.just("\n\nNo screenshot provided")
 
-    screenshotStringStream
-      .map { screenshotText ->
-        body.append(screenshotText)
-        val screenshotMarkdown = buildMarkdown {
-          newline(2)
-          h4("Logs")
-          if (report.includeLogs && logs != null) {
-            codeBlock(logs.readText())
-          } else {
-            text("No logs provided")
-          }
-        }
-        body.append(screenshotMarkdown)
-        body.toString()
-      }
-      .flatMap { bodyText -> gitHubIssueApi.createIssue(GitHubIssue(report.title, bodyText)) }
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
-      .doOnSubscribe { notificationManager.notify(notificationId, notificationBuilder.build()) }
-      .doOnDispose {
-        NotificationCompat.Builder(context, channelId)
-          .apply {
-            setSmallIcon(R.drawable.ic_error_black_24dp)
-            color = ContextCompat.getColor(context, R.color.colorAccent)
-            setContentTitle("Upload canceled")
-            setContentInfo("Probably because the activity was killed ¯\\_(ツ)_/¯")
-            setAutoCancel(true)
-          }
-          .let { notificationManager.notify(notificationId, it.build()) }
-      }
-      // TODO change to coroutines
-      .autoDispose(context as BaseActivity)
-      .subscribe { issueUrl: String?, error: Throwable? ->
-        issueUrl?.let {
-          NotificationCompat.Builder(context, channelId)
-            .apply {
-              setSmallIcon(R.drawable.ic_check_black_24dp)
-              color = ContextCompat.getColor(context, R.color.colorAccent)
-              setContentTitle("Bug report successfully uploaded")
-              setContentText(it)
-              val uri = it.toUri()
-              val resultIntent = Intent(Intent.ACTION_VIEW, uri)
-              setContentIntent(
-                PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE)
-              )
-              setAutoCancel(true)
-
-              val shareIntent = Intent(Intent.ACTION_SEND, uri)
-              shareIntent.setDataAndType(null, "text/plain")
-              shareIntent.putExtra(Intent.EXTRA_TEXT, it)
-              shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-              addAction(
-                NotificationCompat.Action(
-                  R.drawable.ic_share_black_24dp,
-                  "Share link",
-                  PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE)
-                )
-              )
+    // TODO change to coroutines
+    val disposable =
+      screenshotStringStream
+        .map { screenshotText ->
+          body.append(screenshotText)
+          val screenshotMarkdown = buildMarkdown {
+            newline(2)
+            h4("Logs")
+            if (report.includeLogs && logs != null) {
+              codeBlock(logs.readText())
+            } else {
+              text("No logs provided")
             }
-            .let { notificationManager.notify(notificationId, it.build()) }
+          }
+          body.append(screenshotMarkdown)
+          body.toString()
         }
-        error?.let {
+        .flatMap { bodyText -> gitHubIssueApi.createIssue(GitHubIssue(report.title, bodyText)) }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnSubscribe { notificationManager.notify(notificationId, notificationBuilder.build()) }
+        .doOnDispose {
           NotificationCompat.Builder(context, channelId)
             .apply {
               setSmallIcon(R.drawable.ic_error_black_24dp)
               color = ContextCompat.getColor(context, R.color.colorAccent)
-              setContentTitle("Upload failed")
-              setContentInfo(
-                "Bug report upload failed. Please try again. If problem persists, take consolation in knowing you got farther than I did."
-              )
+              setContentTitle("Upload canceled")
+              setContentInfo("Probably because the activity was killed ¯\\_(ツ)_/¯")
               setAutoCancel(true)
             }
             .let { notificationManager.notify(notificationId, it.build()) }
         }
-      }
+        .subscribe { issueUrl: String?, error: Throwable? ->
+          issueUrl?.let {
+            NotificationCompat.Builder(context, channelId)
+              .apply {
+                setSmallIcon(R.drawable.ic_check_black_24dp)
+                color = ContextCompat.getColor(context, R.color.colorAccent)
+                setContentTitle("Bug report successfully uploaded")
+                setContentText(it)
+                val uri = it.toUri()
+                val resultIntent = Intent(Intent.ACTION_VIEW, uri)
+                setContentIntent(
+                  PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE)
+                )
+                setAutoCancel(true)
+
+                val shareIntent = Intent(Intent.ACTION_SEND, uri)
+                shareIntent.setDataAndType(null, "text/plain")
+                shareIntent.putExtra(Intent.EXTRA_TEXT, it)
+                shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+                addAction(
+                  NotificationCompat.Action(
+                    R.drawable.ic_share_black_24dp,
+                    "Share link",
+                    PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE)
+                  )
+                )
+              }
+              .let { notificationManager.notify(notificationId, it.build()) }
+          }
+          error?.let {
+            NotificationCompat.Builder(context, channelId)
+              .apply {
+                setSmallIcon(R.drawable.ic_error_black_24dp)
+                color = ContextCompat.getColor(context, R.color.colorAccent)
+                setContentTitle("Upload failed")
+                setContentInfo(
+                  "Bug report upload failed. Please try again. If problem persists, take consolation in knowing you got farther than I did."
+                )
+                setAutoCancel(true)
+              }
+              .let { notificationManager.notify(notificationId, it.build()) }
+          }
+        }
+
+    activity.lifecycleScope.launch {
+      suspendCancellableCoroutine { it.invokeOnCancellation { disposable.dispose() } }
+    }
   }
 
   private fun getDensityString(displayMetrics: DisplayMetrics) =
