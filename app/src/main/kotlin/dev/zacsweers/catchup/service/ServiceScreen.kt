@@ -49,10 +49,12 @@ import com.slack.circuit.Navigator
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.retained.rememberRetained
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dev.zacsweers.catchup.circuit.FullScreenOverlay
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ServiceScreen.State.TextState
 import dev.zacsweers.catchup.service.ServiceScreen.State.VisualState
@@ -144,22 +146,27 @@ constructor(
     }
     val items: Flow<PagingData<CatchUpItem>> = remember(pager) { pager.flow }
     val coroutineScope = rememberCoroutineScope()
+    val overlayHost = LocalOverlayHost.current
     val eventSink: (ServiceScreen.Event) -> Unit = { event ->
       when (event) {
         is ServiceScreen.Event.ItemClicked -> {
-          if (service.meta().isVisual) {
-            val info = event.item.imageInfo!!
-            navigator.goTo(
-              ImageViewerScreen(info.imageId, info.detailUrl, info.cacheKey, info.sourceUrl)
-            )
-          } else {
-            val url = event.item.clickUrl
-            val meta = UrlMeta(url, themeColorInt, context, null)
-            if (meta.isSupportedInMediaViewer()) {
-              val uriUrl = meta.uri.toString()
-              navigator.goTo(ImageViewerScreen(uriUrl, uriUrl, null, uriUrl))
+          coroutineScope.launch {
+            if (service.meta().isVisual) {
+              val info = event.item.imageInfo!!
+              overlayHost.show(
+                FullScreenOverlay(
+                  ImageViewerScreen(info.imageId, info.detailUrl, info.cacheKey, info.sourceUrl)
+                )
+              )
             } else {
-              coroutineScope.launch { linkManager.openUrl(meta) }
+              val url = event.item.clickUrl
+              val meta = UrlMeta(url, themeColorInt, context, null)
+              if (meta.isSupportedInMediaViewer()) {
+                val uriUrl = meta.uri.toString()
+                overlayHost.show(FullScreenOverlay(ImageViewerScreen(uriUrl, uriUrl, null, uriUrl)))
+              } else {
+                linkManager.openUrl(meta)
+              }
             }
           }
         }

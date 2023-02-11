@@ -23,9 +23,18 @@ enum class NavButtonType(val icon: ImageVector, @StringRes val contentDescriptio
 @Composable
 fun BackPressNavButton(modifier: Modifier = Modifier, type: NavButtonType = NavButtonType.BACK) {
   val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
+  NavButton(modifier, type, onBackPressedDispatcher::onBackPressed)
+}
+
+@Composable
+fun NavButton(
+  modifier: Modifier = Modifier,
+  type: NavButtonType = NavButtonType.BACK,
+  onBackPress: () -> Unit
+) {
   IconButton(
     modifier = modifier,
-    onClick = onBackPressedDispatcher::onBackPressed,
+    onClick = onBackPress,
   ) {
     Icon(
       type.icon,

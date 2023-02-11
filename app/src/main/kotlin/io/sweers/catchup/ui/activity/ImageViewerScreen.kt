@@ -41,6 +41,7 @@ import coil.size.Scale
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.CircuitUiEvent
 import com.slack.circuit.CircuitUiState
+import com.slack.circuit.Navigator
 import com.slack.circuit.NavigatorDefaults
 import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
@@ -58,7 +59,7 @@ import dev.zacsweers.catchup.circuit.BottomSheetOverlay
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.R
-import io.sweers.catchup.base.ui.BackPressNavButton
+import io.sweers.catchup.base.ui.NavButton
 import io.sweers.catchup.base.ui.NavButtonType
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.UrlMeta
@@ -81,6 +82,7 @@ data class ImageViewerScreen(
   ) : CircuitUiState
 
   sealed interface Event : CircuitUiEvent {
+    object Close : Event
     object NoOp : Event // Weird but necessary because of the reuse in bottom sheet
     object ShareImage : Event
     object CopyImage : Event
@@ -91,13 +93,17 @@ data class ImageViewerScreen(
 
 class ImageViewerPresenter
 @AssistedInject
-constructor(@Assisted private val screen: ImageViewerScreen, private val linkManager: LinkManager) :
-  Presenter<ImageViewerScreen.State> {
+constructor(
+  @Assisted private val screen: ImageViewerScreen,
+  @Assisted private val navigator: Navigator,
+  private val linkManager: LinkManager
+) : Presenter<ImageViewerScreen.State> {
   @CircuitInject(ImageViewerScreen::class, AppScope::class)
   @AssistedFactory
   fun interface Factory {
     fun create(
       screen: ImageViewerScreen,
+      navigator: Navigator,
     ): ImageViewerPresenter
   }
 
@@ -115,6 +121,7 @@ constructor(@Assisted private val screen: ImageViewerScreen, private val linkMan
       // TODO finish implementing these. Also why is copying an image on android so terrible in
       //  2023.
       when (event) {
+        ImageViewerScreen.Event.Close -> navigator.pop()
         ImageViewerScreen.Event.CopyImage -> {}
         is ImageViewerScreen.Event.OpenInBrowser -> {
           scope.launch { linkManager.openUrl(UrlMeta(event.url, accentColor, context)) }
@@ -254,10 +261,12 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
           enter = fadeIn(),
           exit = fadeOut(),
         ) {
-          BackPressNavButton(
+          NavButton(
             Modifier.align(Alignment.TopStart).padding(16.dp).statusBarsPadding(),
             NavButtonType.CLOSE,
-          )
+          ) {
+            sink(ImageViewerScreen.Event.Close)
+          }
         }
       }
     }
