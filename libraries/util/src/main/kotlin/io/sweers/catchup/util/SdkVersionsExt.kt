@@ -22,16 +22,6 @@ import androidx.core.content.getSystemService
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.appconfig.EmptyAppConfig
 
-fun AppConfig.isM(): Boolean = sdkInt >= Build.VERSION_CODES.M
-
-fun AppConfig.isN(): Boolean = sdkInt >= Build.VERSION_CODES.N
-
-fun AppConfig.isO(): Boolean = sdkInt >= Build.VERSION_CODES.O
-
-fun AppConfig.isOMR1(): Boolean = sdkInt >= Build.VERSION_CODES.O_MR1
-
-fun AppConfig.isP(): Boolean = sdkInt >= Build.VERSION_CODES.P
-
 @PublishedApi
 internal val BUILD_APP_CONFIG =
   object : EmptyAppConfig {

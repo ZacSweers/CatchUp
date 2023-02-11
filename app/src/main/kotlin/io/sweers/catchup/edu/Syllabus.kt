@@ -17,7 +17,7 @@ package io.sweers.catchup.edu
 
 import android.app.Activity
 import android.content.SharedPreferences
-import autodispose2.autoDispose
+import androidx.lifecycle.lifecycleScope
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetSequence.Listener
@@ -29,6 +29,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread
 import io.sweers.catchup.base.ui.BaseActivity
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 /** Syllabus is a helper that orchestrates feature EDUs and hints via TapTargets. */
 // TODO compose/coroutines-ify this
@@ -39,14 +41,17 @@ class Syllabus @Inject constructor(private val preferences: SharedPreferences) {
   private var displaying = BehaviorRelay.createDefault(false)
 
   fun bind(activity: BaseActivity) {
-    // TODO would be nice to handle starting mid-sequence for state restoration someday
+    // TODO coroutines-ify this
     // Debounced buffer
-    queue
-      .buffer(queue.debounce(1, SECONDS))
-      .delay { displaying.filter { !it } }
-      .observeOn(mainThread())
-      .autoDispose(activity)
-      .subscribe { requests -> show(activity, requests) }
+    val disposable =
+      queue
+        .buffer(queue.debounce(1, SECONDS))
+        .delay { displaying.filter { !it } }
+        .observeOn(mainThread())
+        .subscribe { requests -> show(activity, requests) }
+    activity.lifecycleScope.launch {
+      suspendCancellableCoroutine { it.invokeOnCancellation { disposable.dispose() } }
+    }
   }
 
   fun showIfNeverSeen(key: String, body: () -> TapTarget) {

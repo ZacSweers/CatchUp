@@ -37,7 +37,3 @@ inline fun String.parsePossiblyOffsetInstant(): Instant {
     Instant.parse(this)
   }
 }
-
-fun Instant.isAfter(otherInstant: Instant): Boolean {
-  return compareTo(otherInstant) > 0
-}

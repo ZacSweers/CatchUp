@@ -13,55 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("NOTHING_TO_INLINE")
-
 package io.sweers.catchup.util.kotlin
-
-inline fun <T, R> T.letIf(condition: Boolean, block: (T) -> R): R? = let {
-  if (condition) {
-    block(it)
-  } else null
-}
-
-inline fun <T, R> T.runIf(condition: Boolean, block: T.() -> R): R? = run {
-  if (condition) {
-    block()
-  } else null
-}
 
 inline fun <T> T.applyIf(condition: Boolean, block: T.() -> T): T = apply {
   if (condition) {
     block()
   }
 }
-
-inline fun <T> T.alsoIf(condition: Boolean, block: (T) -> T): T = also {
-  if (condition) {
-    block(it)
-  }
-}
-
-inline fun <T> T.switch(block: T.() -> T): T = run { block() }
-
-inline fun <T> T.switchIf(condition: Boolean, block: T.() -> T): T = switch {
-  if (condition) {
-    block()
-  } else this
-}
-
-/** Applies a [block] on a set of [args]. */
-inline fun <T> applyOn(vararg args: T, crossinline block: T.() -> Unit) {
-  args.asSequence().forEach { block(it) }
-}
-
-inline fun <T, R : T> Collection<R>.castUp() = this as Collection<T>
-
-@Suppress("UNCHECKED_CAST") inline fun <R, T : R> Collection<R>.castDown() = this as Collection<T>
-
-inline fun <T, R : T> List<R>.castUp() = this as List<T>
-
-@Suppress("UNCHECKED_CAST") inline fun <R, T : R> List<R>.castDown() = this as List<T>
-
-inline fun <T, R : T> Set<R>.castUp() = this as Set<T>
-
-@Suppress("UNCHECKED_CAST") inline fun <R, T : R> Set<R>.castDown() = this as Set<T>

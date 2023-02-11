@@ -106,11 +106,6 @@ android {
     }
   }
   splits {
-    density {
-      isEnable = true
-      reset()
-      include("mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi")
-    }
     abi {
       isEnable = true
       reset()

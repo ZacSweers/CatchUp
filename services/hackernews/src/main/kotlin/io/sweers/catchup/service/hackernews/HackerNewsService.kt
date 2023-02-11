@@ -243,13 +243,13 @@ object FragmentViewModelFactoryModule {
           override fun <T : ViewModel> create(
             key: String,
             modelClass: Class<T>,
-            arg0: SavedStateHandle // weird name because kapt doesn't preserve the names in the
+            handle: SavedStateHandle // weird name because kapt doesn't preserve the names in the
             // constructor
             ): T {
             // TODO this is ugly extract these constants
-            arg0.set("detailKey", fragment.requireArguments().getString("detailKey")!!)
-            arg0.set("detailTitle", fragment.requireArguments().getString("detailTitle"))
-            @Suppress("UNCHECKED_CAST") return viewModels.getValue(modelClass).create(arg0) as T
+            handle["detailKey"] = fragment.requireArguments().getString("detailKey")!!
+            handle["detailTitle"] = fragment.requireArguments().getString("detailTitle")
+            @Suppress("UNCHECKED_CAST") return viewModels.getValue(modelClass).create(handle) as T
           }
         }
       }

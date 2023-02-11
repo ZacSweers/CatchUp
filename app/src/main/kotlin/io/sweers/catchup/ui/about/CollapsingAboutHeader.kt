@@ -192,8 +192,9 @@ fun CollapsingAboutHeader(
           // We want to accelerate fading to be the first [FADE_PERCENT]% of the translation,
           // so adjust accordingly below and use the new calculated collapsedFraction for our
           // interpolation
-          val adjustedPercentage = 1 - (collapsedFraction * (1.0F / FADE_PERCENT))
-          val interpolation = UiUtil.fastOutSlowInInterpolator.getInterpolation(adjustedPercentage)
+          val localAdjustedPercentage = 1 - (collapsedFraction * (1.0F / FADE_PERCENT))
+          val interpolation =
+            UiUtil.fastOutSlowInInterpolator.getInterpolation(localAdjustedPercentage)
           bannerAlpha = interpolation
           aboutTextAlpha = interpolation
         }
@@ -201,10 +202,12 @@ fun CollapsingAboutHeader(
         Spacer(Modifier.height(48.dp))
 
         // TODO kinda gross but shrug
+        val context = LocalContext.current
         val icon =
-          (AppCompatResources.getDrawable(LocalContext.current, R.mipmap.ic_launcher)
-              as AdaptiveIconDrawable)
-            .toBitmap()
+          remember(context) {
+            (AppCompatResources.getDrawable(context, R.mipmap.ic_launcher) as AdaptiveIconDrawable)
+              .toBitmap()
+          }
         Image(
           bitmap = icon.asImageBitmap(),
           contentDescription = "CatchUp icon",

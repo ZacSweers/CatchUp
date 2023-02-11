@@ -23,8 +23,6 @@ import android.text.TextUtils
  *
  * @param <E> the element type
  */
-class CommaJoinerList<E> constructor(delegate: List<E>) : List<E> by delegate {
+class CommaJoinerList<E>(delegate: List<E>) : List<E> by delegate {
   override fun toString(): String = TextUtils.join(",", this)
 }
-
-fun <T> List<T>.toCommaJoinerList() = CommaJoinerList(this)

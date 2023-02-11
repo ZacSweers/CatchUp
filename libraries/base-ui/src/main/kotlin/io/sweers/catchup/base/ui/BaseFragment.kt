@@ -15,11 +15,9 @@
  */
 package io.sweers.catchup.base.ui
 
-import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -36,12 +34,6 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), ScopeProvider, Backpr
 
   @Suppress("LeakingThis") private lateinit var lifecycleProvider: ScopeProvider
   protected lateinit var binding: T
-  protected var dayOnlyContext: Context? = null
-
-  override fun onAttach(context: Context) {
-    super.onAttach(context)
-    dayOnlyContext = context.createConfigurationContext(DAY_MODE_CONF)
-  }
 
   protected abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> T
 
@@ -60,21 +52,8 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), ScopeProvider, Backpr
     return binding.root
   }
 
-  override fun onDestroyView() {
-    dayOnlyContext = null
-    super.onDestroyView()
-  }
-
   override fun requestScope(): CompletableSource {
     return lifecycleProvider.requestScope()
-  }
-
-  @Deprecated("Deprecated in Java")
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    if (item.itemId == android.R.id.home) {
-      return onBackPressed()
-    }
-    return super.onOptionsItemSelected(item)
   }
 
   override fun onBackPressed(): Boolean {
