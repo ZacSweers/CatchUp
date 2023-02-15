@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.ui.activity
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -289,6 +290,7 @@ fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifie
   )
 }
 
+@SuppressLint("ComposeMutableParameters") // https://github.com/slackhq/compose-lints/issues/48
 @Composable
 private fun ListContent(
   services: SnapshotStateList<ServiceMeta>,

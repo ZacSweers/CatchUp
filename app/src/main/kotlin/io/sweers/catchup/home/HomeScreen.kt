@@ -301,7 +301,7 @@ value class ColorCache(private val colors: Array<Color>) {
 }
 
 @Composable
-fun rememberColorCache(serviceMetas: List<ServiceMeta>): ColorCache {
+fun rememberColorCache(serviceMetas: ImmutableList<ServiceMeta>): ColorCache {
   val context = LocalContext.current
   return remember(context, serviceMetas) {
     val dayOnlyContext =
