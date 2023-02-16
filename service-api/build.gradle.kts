@@ -21,43 +21,37 @@ plugins {
   alias(libs.plugins.ksp)
 }
 
-android {
-  namespace = "io.sweers.catchup.service"
-}
+android { namespace = "io.sweers.catchup.service" }
 
 slack {
   features {
+    compose()
     dagger()
-  }
-  android {
-    features {
-      compose()
-    }
   }
 }
 
 dependencies {
   ksp(libs.androidx.room.apt)
 
-  api(libs.androidx.compose.runtime)
-  implementation(libs.kotlin.coroutinesAndroid)
-  implementation(libs.kotlin.coroutinesRx)
-  implementation(libs.kotlin.datetime)
-
   api(project(":libraries:appconfig"))
-  api(project(":libraries:retrofitconverters"))
   api(project(":libraries:gemoji"))
-  api(libs.androidx.room.runtime)
+  api(project(":libraries:retrofitconverters"))
   api(libs.androidx.annotations)
+  api(libs.androidx.compose.runtime)
   api(libs.androidx.coreKtx)
   api(libs.androidx.fragment)
+  api(libs.androidx.room.runtime)
+  api(libs.apollo.runtime)
   api(libs.dagger.runtime)
   api(libs.kotlin.coroutines)
-  api(libs.rx.java)
   api(libs.okhttp.core)
   api(libs.retrofit.core)
   api(libs.retrofit.rxJava3)
-  api(libs.apollo.runtime)
+  api(libs.rx.java)
   api(projects.libraries.di)
   api(projects.libraries.di.android)
+
+  implementation(libs.kotlin.coroutinesAndroid)
+  implementation(libs.kotlin.coroutinesRx)
+  implementation(libs.kotlin.datetime)
 }

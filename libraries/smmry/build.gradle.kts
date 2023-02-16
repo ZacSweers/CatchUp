@@ -50,25 +50,26 @@ slack {
 }
 
 dependencies {
-  implementation(libs.retrofit.core)
-  implementation(libs.retrofit.moshi)
-  implementation(project(":libraries:base-ui"))
-  implementation(project(":libraries:retrofitconverters"))
-  implementation(project(":libraries:util"))
-  implementation(libs.misc.lottie)
-  implementation(libs.moshi.adapters)
-  implementation(libs.moshi.core)
-  implementation(libs.moshi.moshix.sealed.runtime)
-  implementation(libs.androidx.room.runtime)
-  implementation(libs.androidx.room.ktx)
-  kapt(libs.androidx.room.apt)
-  implementation(libs.androidx.lifecycle.ktx)
-  implementation(libs.kotlin.coroutines)
-
   api(project(":service-api"))
   api(libs.androidx.annotations)
   api(libs.androidx.appCompat)
   api(libs.androidx.core)
   api(libs.androidx.design)
   api(projects.libraries.di)
+
+  implementation(project(":libraries:base-ui"))
+  implementation(project(":libraries:retrofitconverters"))
+  implementation(project(":libraries:util"))
+  implementation(libs.androidx.lifecycle.ktx)
+  implementation(libs.androidx.room.ktx)
+  implementation(libs.androidx.room.runtime)
+  implementation(libs.kotlin.coroutines)
+  implementation(libs.misc.lottie)
+  implementation(libs.moshi.adapters)
+  implementation(libs.moshi.core)
+  implementation(libs.moshi.moshix.sealed.runtime)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.moshi)
+
+  kapt(libs.androidx.room.apt)
 }
