@@ -21,18 +21,12 @@ plugins {
   alias(libs.plugins.ksp)
 }
 
-android {
-  namespace = "io.sweers.catchup.service"
-}
+android { namespace = "io.sweers.catchup.service" }
 
 slack {
   features {
+    compose()
     dagger()
-  }
-  android {
-    features {
-      compose()
-    }
   }
 }
 

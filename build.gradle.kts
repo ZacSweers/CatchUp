@@ -24,11 +24,12 @@ plugins {
   alias(libs.plugins.doctor)
   alias(libs.plugins.anvil) apply false
   alias(libs.plugins.cacheFixPlugin) apply false
-//  alias(libs.plugins.detekt) apply false
+  //  alias(libs.plugins.detekt) apply false
   alias(libs.plugins.kotlin.noarg) apply false
   alias(libs.plugins.moshix) apply false
   alias(libs.plugins.retry) apply false
   alias(libs.plugins.bugsnag) apply false
+  alias(libs.plugins.sortDependencies) apply false
 }
 
 buildscript {
@@ -41,20 +42,16 @@ buildscript {
 doctor {
   // G1 is faster now
   warnWhenNotUsingParallelGC.set(false)
-  javaHome {
-    ensureJavaHomeMatches.set(false)
-  }
+  javaHome { ensureJavaHomeMatches.set(false) }
 }
 
 subprojects {
   pluginManager.withPlugin("com.squareup.anvil") {
-    dependencies {
-      add("compileOnly", libs.anvil.annotations)
-    }
+    dependencies { add("compileOnly", libs.anvil.annotations) }
   }
-//  pluginManager.withPlugin("io.gitlab.arturbosch.detekt") {
-//    dependencies {
-//      add("detektPlugins", libs.detekt.plugins.twitterCompose)
-//    }
-//  }
+  //  pluginManager.withPlugin("io.gitlab.arturbosch.detekt") {
+  //    dependencies {
+  //      add("detektPlugins", libs.detekt.plugins.twitterCompose)
+  //    }
+  //  }
 }

@@ -43,8 +43,10 @@ plugins {
 }
 
 slack {
-  features { dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() } }
-  android { features { compose() } }
+  features {
+    compose()
+    dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
+  }
 }
 
 val useDebugSigning: Boolean =
@@ -422,28 +424,27 @@ licensee {
 
 androidComponents {
   onVariants(selector().withBuildType("release")) { variant ->
-    variant.packaging.resources.excludes
-      .addAll(
-        "**/*.dot",
-        "**/*.kotlin_metadata",
-        "**/*.properties",
-        "*.properties",
-        "kotlin/**",
-        "LICENSE.txt",
-        "LICENSE_OFL",
-        "LICENSE_UNICODE",
-        "META-INF/*.kotlin_module",
-        "META-INF/*.version",
-        "META-INF/androidx.*",
-        "META-INF/CHANGES",
-        "META-INF/LICENSE",
-        "META-INF/LICENSE.txt",
-        "META-INF/NOTICE",
-        "META-INF/NOTICE.txt",
-        "META-INF/README.md",
-        "META-INF/rxjava.properties",
-        "META-INF/services/javax.annotation.processing.Processor",
-      )
+    variant.packaging.resources.excludes.addAll(
+      "**/*.dot",
+      "**/*.kotlin_metadata",
+      "**/*.properties",
+      "*.properties",
+      "kotlin/**",
+      "LICENSE.txt",
+      "LICENSE_OFL",
+      "LICENSE_UNICODE",
+      "META-INF/*.kotlin_module",
+      "META-INF/*.version",
+      "META-INF/androidx.*",
+      "META-INF/CHANGES",
+      "META-INF/LICENSE",
+      "META-INF/LICENSE.txt",
+      "META-INF/NOTICE",
+      "META-INF/NOTICE.txt",
+      "META-INF/README.md",
+      "META-INF/rxjava.properties",
+      "META-INF/services/javax.annotation.processing.Processor",
+    )
   }
 }
 

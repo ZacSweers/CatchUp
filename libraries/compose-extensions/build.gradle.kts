@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
  * Copyright (c) 2020 Zac Sweers
  *
@@ -22,17 +20,9 @@ plugins {
   alias(libs.plugins.sgp.base)
 }
 
-android {
-  namespace = "dev.zacsweers.catchup.compose"
-}
+android { namespace = "dev.zacsweers.catchup.compose" }
 
-slack {
-  android {
-    features {
-      compose()
-    }
-  }
-}
+slack { features { compose() } }
 
 dependencies {
   api(project(":libraries:base-ui"))
