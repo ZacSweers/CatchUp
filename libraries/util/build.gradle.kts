@@ -34,23 +34,21 @@ redacted {
 }
 
 dependencies {
+  api(project(":libraries:appconfig"))
   api(libs.androidx.annotations)
+  api(libs.androidx.coreKtx)
+  api(libs.dagger.runtime)
+  api(libs.misc.timber)
+  api(libs.moshi.core)
+  api(libs.okhttp.core)
+  api(libs.rx.java)
 
   implementation(libs.androidx.appCompat)
   implementation(libs.androidx.core)
   implementation(libs.androidx.design)
-  implementation(libs.rx.android)
   implementation(libs.kotlin.datetime)
-
-  api(project(":libraries:appconfig"))
-  api(libs.androidx.coreKtx)
-  api(libs.dagger.runtime)
-  api(libs.moshi.core)
-  api(libs.misc.timber)
-  api(libs.okhttp.core)
-  api(libs.rx.java)
-
   implementation(libs.misc.unbescape)
+  implementation(libs.rx.android)
 
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)

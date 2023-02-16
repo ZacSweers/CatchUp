@@ -36,20 +36,20 @@ slack {
 }
 
 dependencies {
-  kapt(libs.tikxml.apt)
+  api(project(":service-api"))
+  api(libs.androidx.annotations)
+  api(libs.dagger.runtime)
+  api(libs.rx.java)
+  api(libs.tikxml.htmlEscape)
 
   implementation(project(":libraries:util"))
+  implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
   implementation(libs.retrofit.core)
   implementation(libs.retrofit.rxJava3)
   implementation(libs.tikxml.annotation)
   implementation(libs.tikxml.core)
   implementation(libs.tikxml.retrofit)
-  implementation(libs.kotlin.datetime)
 
-  api(project(":service-api"))
-  api(libs.androidx.annotations)
-  api(libs.dagger.runtime)
-  api(libs.rx.java)
-  api(libs.tikxml.htmlEscape)
+  kapt(libs.tikxml.apt)
 }

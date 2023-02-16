@@ -21,15 +21,14 @@ plugins {
 }
 
 dependencies {
-  api(libs.kotlin.coroutines)
-  api(libs.corbind)
-  api(libs.corbind.core)
-  api(libs.corbind.material)
-
   api(libs.androidx.annotations)
   api(libs.androidx.appCompat)
   api(libs.androidx.core)
   api(libs.androidx.design)
+  api(libs.corbind)
+  api(libs.corbind.core)
+  api(libs.corbind.material)
+  api(libs.kotlin.coroutines)
 }
 android {
   namespace = "io.sweers.catchup.flowbinding"

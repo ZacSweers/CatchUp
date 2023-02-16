@@ -4,10 +4,11 @@ plugins {
 }
 
 dependencies {
-  annotationProcessor(libs.auto.service)
-  compileOnly(libs.auto.service)
-
   implementation(libs.dagger.runtime)
   implementation(libs.dagger.spi)
   implementation(libs.javapoet)
+
+  compileOnly(libs.auto.service)
+
+  annotationProcessor(libs.auto.service)
 }

@@ -35,17 +35,17 @@ slack {
 }
 
 dependencies {
-  implementation(project(":libraries:util"))
-  implementation(libs.misc.okio)
-  implementation(libs.moshi.core)
-  implementation(libs.retrofit.core)
-  implementation(libs.retrofit.moshi)
-  implementation(libs.retrofit.rxJava3)
-  implementation(libs.okhttp.core)
-  implementation(libs.kotlin.datetime)
-
   api(project(":service-api"))
   api(libs.androidx.annotations)
   api(libs.dagger.runtime)
   api(libs.rx.java)
+
+  implementation(project(":libraries:util"))
+  implementation(libs.kotlin.datetime)
+  implementation(libs.misc.okio)
+  implementation(libs.moshi.core)
+  implementation(libs.okhttp.core)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.moshi)
+  implementation(libs.retrofit.rxJava3)
 }
