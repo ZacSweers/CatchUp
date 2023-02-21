@@ -69,7 +69,7 @@ sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
 sortDependencies = { id = "com.squareup.sort-dependencies", version.ref = "sortDependencies" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
-versions = { id = "com.github.ben-manes.versions", version = "0.45.0" }
+versions = { id = "com.github.ben-manes.versions", version = "0.46.0" }
 
 [libraries]
 autodispose = { module = "com.uber.autodispose:autodispose", version.ref = "autodispose" }
