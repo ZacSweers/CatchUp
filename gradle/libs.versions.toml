@@ -2,7 +2,7 @@
 accompanist = "0.29.1-alpha"
 agp = "8.1.0-alpha06"
 androidx-activity = "1.7.0-alpha04"
-androidx-core = "1.10.0-alpha02"
+androidx-core = "1.10.0-beta01"
 emoji = "1.2.0-alpha03"
 fragment = "1.6.0-alpha06"
 androidTestSupport = "1.5.2"
