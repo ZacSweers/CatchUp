@@ -2,9 +2,9 @@
 accompanist = "0.29.1-alpha"
 agp = "8.1.0-alpha06"
 androidx-activity = "1.7.0-alpha04"
-androidx-core = "1.10.0-alpha02"
+androidx-core = "1.10.0-beta01"
 emoji = "1.2.0-alpha03"
-fragment = "1.6.0-alpha05"
+fragment = "1.6.0-alpha06"
 androidTestSupport = "1.5.2"
 anvil = "2.4.4"
 apollo = "3.7.4"
@@ -31,7 +31,7 @@ ksp = "1.8.10-1.0.9"
 ktfmt = "0.43"
 leakcanary = "2.10"
 legacySupport = "28.0.0"
-lifecycle = "2.6.0-beta01"
+lifecycle = "2.6.0-rc01"
 markwon = "4.6.2"
 moshi = "1.14.0"
 moshix = "0.21.0"
@@ -45,7 +45,7 @@ spotless = "6.15.0"
 sqldelight = "2.0.0-alpha05"
 # https://github.com/Tickaroo/tikxml/issues/114
 tikxml = "0.8.13"
-xerial = "3.40.1.0"
+xerial = "3.41.0.0"
 
 [plugins]
 anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
@@ -73,7 +73,7 @@ versions = { id = "com.github.ben-manes.versions", version = "0.46.0" }
 
 [libraries]
 autodispose = { module = "com.uber.autodispose:autodispose", version.ref = "autodispose" }
-androidx-annotations = "androidx.annotation:annotation:1.6.0-rc01"
+androidx-annotations = "androidx.annotation:annotation:1.6.0"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha02"
@@ -222,8 +222,8 @@ misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
 misc-debug-scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.2.0"
 
-misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:0.21.0"
-misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.21.0"
+misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:0.22.0"
+misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.22.0"
 misc-inboxRecyclerView = "me.saket:inboxrecyclerview:3.0.0"
 misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
 misc-jsoup = "org.jsoup:jsoup:1.15.4"
