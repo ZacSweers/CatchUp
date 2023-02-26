@@ -460,7 +460,6 @@ dependencies {
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:kotlinutil"))
-  implementation(project(":libraries:smmry"))
   implementation(project(":libraries:util"))
   //  implementation(libs.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
   implementation(project(":service-api"))
