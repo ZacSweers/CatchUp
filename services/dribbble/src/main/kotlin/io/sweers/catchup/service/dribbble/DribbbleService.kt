@@ -21,7 +21,6 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
@@ -101,7 +100,6 @@ abstract class DribbbleMetaModule {
 
     @InternalApi
     @Provides
-    @Reusable
     internal fun provideDribbbleServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,

@@ -28,7 +28,6 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.di.AppScope
 import io.reactivex.rxjava3.core.Observable
@@ -168,7 +167,6 @@ abstract class HackerNewsMetaModule {
 
     @InternalApi
     @Provides
-    @Reusable
     internal fun provideHackerNewsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,

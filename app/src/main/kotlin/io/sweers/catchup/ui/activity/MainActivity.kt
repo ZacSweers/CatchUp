@@ -20,6 +20,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -48,6 +49,7 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
+import timber.log.Timber
 
 @ActivityKey(MainActivity::class)
 @ContributesMultibinding(AppScope::class, boundType = Activity::class)
@@ -75,6 +77,11 @@ constructor(
         } else {
           forceNight
         }
+      SideEffect {
+        Timber.d(
+          "Setting theme to $useDarkTheme. dayNightAuto: $dayNightAuto, forceNight: $forceNight"
+        )
+      }
       CatchUpTheme(useDarkTheme = useDarkTheme) {
         CircuitCompositionLocals(circuitConfig) {
           ContentWithOverlays {
