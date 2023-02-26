@@ -15,173 +15,97 @@
  */
 package io.sweers.catchup.changes
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.Typeface
-import android.text.style.StyleSpan
-import androidx.annotation.ColorInt
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
-import androidx.core.view.doOnLayout
-import androidx.lifecycle.lifecycleScope
-import com.getkeepsafe.taptargetview.TapTarget
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import dagger.Lazy
+import android.graphics.drawable.AdaptiveIconDrawable
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toBitmap
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.noties.markwon.Markwon
+import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.di.SingleIn
+import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
-import io.sweers.catchup.base.ui.ColorUtils
-import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.databinding.FragmentWhatsnewBinding
-import io.sweers.catchup.edu.Syllabus
-import io.sweers.catchup.edu.id
-import io.sweers.catchup.service.api.UrlMeta
-import io.sweers.catchup.ui.FontHelper
-import io.sweers.catchup.util.LinkTouchMovementMethod
-import io.sweers.catchup.util.TouchableUrlSpan
-import io.sweers.catchup.util.UiUtil
-import io.sweers.catchup.util.ifNotEmpty
-import io.sweers.catchup.util.markdown
-import io.sweers.catchup.util.parseMarkdownAndPlainLinks
-import io.sweers.catchup.util.resolveActivity
-import io.sweers.catchup.util.show
 import javax.inject.Inject
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 
-// TODO convert to overlay
+@SingleIn(AppScope::class)
 class ChangelogHelper
 @Inject
 constructor(
-  private val linkManager: LinkManager,
-  private val markwon: Lazy<Markwon>,
-  private val fontHelper: FontHelper,
-  private val syllabus: Syllabus,
-  private val sharedPreferences: SharedPreferences,
+  // TODO datastore this
+  private val catchUpPreferences: CatchUpPreferences,
   private val appConfig: AppConfig
 ) {
 
-  fun bindWith(toolbar: Toolbar, @ColorInt hintColor: Int, linkColor: () -> Int) {
-    val changelog = toolbar.resources.getString(R.string.changelog_text)
-    val lastVersion = sharedPreferences.getString("last_version", null)
+  fun changelogAvailable(context: Context): Flow<Boolean> = flow {
+    val lastVersion = catchUpPreferences.lastVersion.first()
     // Check if version name changed and if there's a changelog
     if (lastVersion != appConfig.versionName) {
       // Write the new version in
-      sharedPreferences.edit().putString("last_version", appConfig.versionName).apply()
+      catchUpPreferences.edit { it[CatchUpPreferences.Keys.lastVersion] = appConfig.versionName }
       if (lastVersion == null) {
         // This was the first load it seems, so ignore it
-        return
-      }
-      changelog.ifNotEmpty {
-        toolbar.inflateMenu(R.menu.changes)
-        with(toolbar.menu) {
-          findItem(R.id.changes).let { item ->
-            item.setOnMenuItemClickListener {
-              removeItem(R.id.changes)
-              showChangelog(changelog, toolbar.context, linkColor())
-            }
-          }
-        }
-        syllabus.showIfNeverSeen("changelog_seen") {
-          TapTarget.forToolbarMenuItem(
-              toolbar,
-              R.id.changes,
-              "Changes",
-              "Click here for new changes"
-            )
-            .outerCircleColorInt(hintColor)
-            .outerCircleAlpha(0.96f)
-            .targetCircleColor(R.color.colorPrimary)
-            .titleTextColorInt(Color.WHITE)
-            .descriptionTextColorInt(Color.parseColor("#33FFFFFF"))
-            .drawShadow(true)
-            .id("changelog")
-            .apply { fontHelper.getFont()?.let(::textTypeface) }
-        }
+        emit(false)
+      } else if (context.getString(R.string.changelog_text).isNotEmpty()) {
+        emit(true)
       }
     }
+    emit(false)
   }
 
-  @SuppressLint("InflateParams")
-  private fun showChangelog(
-    changelog: String,
-    context: Context,
-    @ColorInt highlightColor: Int
-  ): Boolean {
-    // TODO Make this a custom fragment instead, which should make the animation less jarring
-    BottomSheetDialog(context)
-      .apply {
-        val content = FragmentWhatsnewBinding.inflate(layoutInflater)
-        setContentView(content.root)
-        val title =
-          content.buildName.apply {
-            typeface = fontHelper.getFont()
-            text = appConfig.versionName
-          }
-        val changes =
-          content.changes.also { changesTextView ->
-            changesTextView.typeface = fontHelper.getFont()
-            changesTextView.movementMethod = LinkTouchMovementMethod.getInstance()
-            changesTextView.highlightColor = highlightColor
-            changesTextView.setLinkTextColor(highlightColor)
-            changesTextView.text =
-              changelog
-                .markdown()
-                .parseMarkdownAndPlainLinks(
-                  on = changesTextView,
-                  with = markwon.get(),
-                  alternateSpans = { url: String ->
-                    setOf(
-                      object :
-                        TouchableUrlSpan(
-                          url,
-                          ColorStateList.valueOf(highlightColor),
-                          ColorUtils.modifyAlpha(highlightColor, 0.1f)
-                        ) {
-                        override fun onClick(url: String) {
-                          val resolvedActivity = context.resolveActivity()
-                          resolvedActivity.lifecycleScope.launch {
-                            linkManager.openUrl(UrlMeta(url, highlightColor, resolvedActivity))
-                          }
-                        }
-                      },
-                      StyleSpan(Typeface.BOLD)
-                    )
-                  }
-                )
-          }
-
-        content.root.doOnLayout {
-          val duration = 400L
-          val height = content.root.bottom
-          title.translationY = (height - title.y) * 0.25f
-          title.alpha = 0f
-          title.show()
-          changes.translationY = (height - changes.y) * 0.25f
-          changes.alpha = 0f
-          changes.show()
-          val interpolator = UiUtil.fastOutSlowInInterpolator
-          ViewCompat.animate(title)
-            .alpha(1f)
-            .withLayer()
-            .translationY(0f)
-            .setInterpolator(interpolator)
-            .setDuration(duration)
-            .setStartDelay(50)
-            .start()
-          ViewCompat.animate(changes)
-            .alpha(1f)
-            .withLayer()
-            .translationY(0f)
-            .setInterpolator(interpolator)
-            .setStartDelay(100)
-            .setDuration(duration)
-            .start()
+  @Composable
+  fun Content(modifier: Modifier = Modifier) {
+    Column(modifier.padding(16.dp).systemBarsPadding().verticalScroll(rememberScrollState())) {
+      // TODO kinda gross but shrug
+      val context = LocalContext.current
+      val icon =
+        remember(context) {
+          (AppCompatResources.getDrawable(context, R.mipmap.ic_launcher) as AdaptiveIconDrawable)
+            .toBitmap()
         }
-      }
-      .show()
-    return true
+      Image(
+        bitmap = icon.asImageBitmap(),
+        contentDescription = "CatchUp icon",
+        modifier = Modifier.size(56.dp).align(Alignment.CenterHorizontally)
+      )
+      Text(
+        appConfig.versionName,
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.headlineSmall,
+        fontWeight = FontWeight.SemiBold
+      )
+      Spacer(Modifier.height(16.dp))
+      // TODO parse markdown, make it clickable
+      Text(
+        stringResource(R.string.changelog_text),
+        modifier = Modifier.fillMaxWidth(),
+        style = MaterialTheme.typography.bodySmall,
+        fontWeight = FontWeight.SemiBold,
+      )
+    }
   }
 }

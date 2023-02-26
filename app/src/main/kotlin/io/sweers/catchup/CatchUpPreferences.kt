@@ -45,6 +45,7 @@ interface CatchUpPreferences {
   val servicesOrder: Flow<ImmutableList<String>>
   val servicesOrderSeen: Flow<Boolean>
   val smartlinkingGlobal: Flow<Boolean>
+  val lastVersion: Flow<String?>
 
   suspend fun edit(body: (MutablePreferences) -> Unit)
 
@@ -55,6 +56,7 @@ interface CatchUpPreferences {
     val smartlinkingGlobal = booleanPreferencesKey("smartLinkingGlobal")
     val servicesOrderSeen = booleanPreferencesKey("servicesOrderSeen")
     val servicesOrder = stringPreferencesKey("servicesOrder")
+    val lastVersion = stringPreferencesKey("lastVersion")
   }
 
   companion object {
@@ -87,6 +89,8 @@ class CatchUpPreferencesImpl @Inject constructor(@ApplicationContext context: Co
     get() = datastore.data.map { it[Keys.servicesOrderSeen] ?: false }
   override val smartlinkingGlobal: Flow<Boolean>
     get() = datastore.data.map { it[Keys.smartlinkingGlobal] ?: true }
+  override val lastVersion: Flow<String?>
+    get() = datastore.data.map { it[Keys.lastVersion] }
 
   override suspend fun edit(body: (MutablePreferences) -> Unit) {
     datastore.edit(body)
