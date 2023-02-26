@@ -19,6 +19,7 @@ import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,7 +44,6 @@ import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
 import dev.zacsweers.catchup.di.android.ActivityKey
 import io.sweers.catchup.CatchUpPreferences
-import io.sweers.catchup.base.ui.BaseActivity
 import io.sweers.catchup.base.ui.RootContent
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.edu.Syllabus
@@ -66,8 +66,8 @@ constructor(
   private val circuitConfig: CircuitConfig,
   private val catchUpPreferences: CatchUpPreferences,
   private val rootContent: RootContent,
-  override val appConfig: AppConfig,
-) : BaseActivity() {
+  private val appConfig: AppConfig,
+) : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -116,6 +116,17 @@ constructor(
   override fun onDestroy() {
     customTab.connectionCallback = null
     super.onDestroy()
+  }
+
+  @Deprecated("Deprecated in Java")
+  override fun onBackPressed() {
+    if (appConfig.sdkInt == 29 && isTaskRoot) {
+      // https://twitter.com/Piwai/status/1169274622614704129
+      // https://issuetracker.google.com/issues/139738913
+      finishAfterTransition()
+    } else {
+      super.onBackPressed()
+    }
   }
 
   @ContributesTo(AppScope::class)

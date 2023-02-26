@@ -26,7 +26,7 @@ import com.jakewharton.rxrelay3.PublishRelay
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread
-import io.sweers.catchup.base.ui.BaseActivity
+import io.sweers.catchup.ui.activity.MainActivity
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -40,7 +40,7 @@ class Syllabus @Inject constructor(private val preferences: SharedPreferences) {
   private val queue = PublishRelay.create<TargetRequest>()
   private var displaying = BehaviorRelay.createDefault(false)
 
-  fun bind(activity: BaseActivity) {
+  fun bind(activity: MainActivity) {
     // TODO coroutines-ify this
     // Debounced buffer
     val disposable =
