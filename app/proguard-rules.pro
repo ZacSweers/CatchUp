@@ -1,9 +1,7 @@
 # This is a configuration file for ProGuard.
 # http://proguard.sourceforge.net/index.html#manual/usage.html
 -allowaccessmodification
--dontpreverify
 -dontusemixedcaseclassnames
--dontskipnonpubliclibraryclasses
 -verbose
 
 # For native methods, see http://proguard.sourceforge.net/manual/examples.html#native
@@ -82,7 +80,7 @@
 -assumevalues class * implements dev.zacsweers.catchup.appconfig.AppConfig {
   boolean isDebug(...) return false;
 }
-# AppConfig#sdkInt is always 21+
+# AppConfig#sdkInt is always 28+
 -assumevalues public class dev.zacsweers.catchup.appconfig.AppConfig {
   int getSdkInt(...) return 28..2147483647;
 }
