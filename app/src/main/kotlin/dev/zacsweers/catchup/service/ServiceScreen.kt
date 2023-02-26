@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.ExperimentalPagingApi
@@ -240,7 +241,7 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> 
         }
     )
     Text(text, textAlign = TextAlign.Center)
-    onRetryClick?.let { ElevatedButton(onClick = it) { Text("Retry") } }
+    onRetryClick?.let { ElevatedButton(onClick = it) { Text(stringResource(R.string.retry)) } }
   }
 }
 

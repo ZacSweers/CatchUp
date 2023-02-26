@@ -14,17 +14,13 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
-
-  <style name="None" />
+<resources>
 
   <!-- Base application theme. -->
   <style name="Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
-    <item name="toolbarStyle">@style/Widget.Catchup.Toolbar</item>
-    <item name="android:textViewStyle">@style/CatchUp.TextView</item>
 
     <!-- Let's be real, no one wants this by default -->
     <item name="android:splitMotionEvents">false</item>
@@ -36,54 +32,6 @@
     <item name="android:windowBackground">@drawable/preview_window</item>
     <item name="android:windowLightStatusBar">@bool/isInDayMode</item>
     <item name="android:windowLightNavigationBar">@bool/isInDayMode</item>
-  </style>
-
-  <style name="CatchUp.TextView" parent="android:Widget.TextView">
-    <item name="android:textAppearance">@style/CatchUp.TextAppearance</item>
-  </style>
-
-  <style name="CatchUp.TextAppearance" parent="TextAppearance.AppCompat">
-    <!-- Defaults for anything unstyled, but appcompat text styles won't catch this -->
-    <item name="android:fontFamily">@font/nunito</item>
-    <item name="fontFamily">@font/nunito</item>
-  </style>
-
-  <style name="Catchup.Toolbar" parent="ThemeOverlay.MaterialComponents.ActionBar">
-    <!-- Force icons and title text to be all the same color -->
-    <item name="colorControlNormal">?android:attr/textColorPrimary</item>
-    <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
-  </style>
-
-  <style name="Widget.Catchup.Toolbar" parent="Widget.MaterialComponents.Toolbar">
-    <item name="titleTextAppearance">@style/TextAppearance.Widget.Catchup.Toolbar.Title</item>
-  </style>
-
-  <style name="TextAppearance.Widget.Catchup.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-    <item name="android:fontFamily">@font/nunito</item>
-    <item name="fontFamily">@font/nunito</item>
-  </style>
-
-  <style name="CatchUp.TabLayout.Colored" parent="Widget.MaterialComponents.TabLayout.Colored">
-    <item name="materialThemeOverlay">@style/ThemeOverlay.CatchUp.WhiteOnPrimary</item>
-  </style>
-  <style name="ThemeOverlay.CatchUp.WhiteOnPrimary" parent="ThemeOverlay.MaterialComponents">
-    <item name="colorOnPrimary">#FFFFFF</item>
-  </style>
-
-  <style name="CatchUp.TabLayout" parent="Widget.MaterialComponents.TabLayout">
-    <item name="materialThemeOverlay">@style/ThemeOverlay.CatchUp.WhitePrimary</item>
-  </style>
-
-  <style name="ThemeOverlay.CatchUp.WhitePrimary" parent="ThemeOverlay.MaterialComponents">
-    <item name="colorPrimary">#FFFFFF</item>
-  </style>
-
-  <style name="CatchUp.TabLayout.Inverted" parent="Widget.MaterialComponents.TabLayout">
-    <item name="materialThemeOverlay">@style/ThemeOverlay.CatchUp.TextColorPrimary</item>
-  </style>
-
-  <style name="ThemeOverlay.CatchUp.TextColorPrimary" parent="ThemeOverlay.MaterialComponents">
-    <item name="colorPrimary">?android:textColorPrimary</item>
   </style>
 
 </resources>
