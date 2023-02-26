@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.exception.ApolloException
 import com.slack.circuit.CircuitUiEvent
@@ -90,7 +91,7 @@ fun Changelog(state: ChangelogScreen.State, modifier: Modifier = Modifier) {
       item {
         Box(Modifier.fillParentMaxSize()) {
           ErrorItem(
-            text = "Could not load changelog.",
+            text = stringResource(R.string.changelog_error),
             modifier = Modifier.align(Alignment.Center),
             onRetryClick = null,
           )
