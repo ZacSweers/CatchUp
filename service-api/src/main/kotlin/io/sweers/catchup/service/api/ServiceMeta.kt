@@ -30,7 +30,6 @@ data class ServiceMeta(
   val firstPageKey: Int?,
   val pagesAreNumeric: Boolean = false,
   val enabled: Boolean = true,
-//  val deeplinkFragment: Class<out Fragment>? = null
 ) {
   val enabledPreferenceKey = "service_config_${id}_enabled"
 }

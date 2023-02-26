@@ -177,37 +177,34 @@ abstract class HackerNewsMetaModule {
         R.drawable.logo_hn,
         pagesAreNumeric = true,
         firstPageKey = 0,
-        //        deeplinkFragment = HackerNewsCommentsFragment::class.java
+        enabled = false // HN is broken for some reason
       )
   }
 }
 
 @ContributesTo(AppScope::class)
 @Module
-abstract class HackerNewsModule {
-
-  companion object {
-    @Provides
-    internal fun provideDatabase(@ApplicationContext context: Context): FirebaseDatabase {
-      val app =
-        FirebaseApp.getApps(context).firstOrNull()
-          ?: run {
-            val resources = context.resources
-            FirebaseApp.initializeApp(
-              context,
-              FirebaseOptions.Builder()
-                .setApiKey(resources.getString(R.string.google_api_key))
-                .setApplicationId(resources.getString(R.string.google_app_id))
-                .setDatabaseUrl("https://hacker-news.firebaseio.com/")
-                .setGaTrackingId(resources.getString(R.string.ga_trackingId))
-                .setGcmSenderId(resources.getString(R.string.gcm_defaultSenderId))
-                .setStorageBucket(resources.getString(R.string.google_storage_bucket))
-                .setProjectId(resources.getString(R.string.project_id))
-                .build(),
-              "HN"
-            )
-          }
-      return FirebaseDatabase.getInstance(app)
-    }
+object HackerNewsModule {
+  @Provides
+  internal fun provideDatabase(@ApplicationContext context: Context): FirebaseDatabase {
+    val app =
+      FirebaseApp.getApps(context).firstOrNull()
+        ?: run {
+          val resources = context.resources
+          FirebaseApp.initializeApp(
+            context,
+            FirebaseOptions.Builder()
+              .setApiKey(resources.getString(R.string.google_api_key))
+              .setApplicationId(resources.getString(R.string.google_app_id))
+              .setDatabaseUrl("https://hacker-news.firebaseio.com/")
+              .setGaTrackingId(resources.getString(R.string.ga_trackingId))
+              .setGcmSenderId(resources.getString(R.string.gcm_defaultSenderId))
+              .setStorageBucket(resources.getString(R.string.google_storage_bucket))
+              .setProjectId(resources.getString(R.string.project_id))
+              .build(),
+            "HN"
+          )
+        }
+    return FirebaseDatabase.getInstance(app)
   }
 }
