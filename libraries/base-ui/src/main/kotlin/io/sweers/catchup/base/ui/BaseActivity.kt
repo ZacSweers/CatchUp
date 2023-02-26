@@ -33,11 +33,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
   @Deprecated("Deprecated in Java")
   override fun onBackPressed() {
-    supportFragmentManager.fragments.filterIsInstance<BackpressHandler>().forEach {
-      if (it.onBackPressed()) {
-        return
-      }
-    }
     if (appConfig.sdkInt == 29 && isTaskRoot) {
       // https://twitter.com/Piwai/status/1169274622614704129
       // https://issuetracker.google.com/issues/139738913

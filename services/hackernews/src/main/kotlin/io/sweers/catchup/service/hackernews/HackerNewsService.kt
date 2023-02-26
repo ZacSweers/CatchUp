@@ -16,11 +16,6 @@
 package io.sweers.catchup.service.hackernews
 
 import android.content.Context
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import catchup.service.hackernews.R
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
@@ -36,11 +31,9 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.android.FragmentKey
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleEmitter
-import io.sweers.catchup.base.ui.ViewModelAssistedFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -53,7 +46,6 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
-import io.sweers.catchup.service.hackernews.preview.UrlPreviewModule
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -61,8 +53,6 @@ import javax.inject.Qualifier
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.rx3.asFlow
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-
-typealias ViewModelCreator = ViewModelAssistedFactory<out ViewModel>
 
 @Qualifier private annotation class InternalApi
 
@@ -193,16 +183,8 @@ abstract class HackerNewsMetaModule {
 }
 
 @ContributesTo(AppScope::class)
-@Module(
-  includes =
-    [HackerNewsMetaModule::class, FragmentViewModelFactoryModule::class, UrlPreviewModule::class]
-)
+@Module
 abstract class HackerNewsModule {
-
-  @Binds
-  @IntoMap
-  @FragmentKey(HackerNewsCommentsFragment::class)
-  internal abstract fun bindHnFragment(mainFragment: HackerNewsCommentsFragment): Fragment
 
   companion object {
     @Provides
@@ -227,42 +209,5 @@ abstract class HackerNewsModule {
           }
       return FirebaseDatabase.getInstance(app)
     }
-  }
-}
-
-// TODO generify this somewhere once something other than HN does it
-@Module
-object FragmentViewModelFactoryModule {
-  @Provides
-  fun viewModelFactory(
-    viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, ViewModelCreator>
-  ): ViewModelProviderFactoryInstantiator {
-    return object : ViewModelProviderFactoryInstantiator {
-      override fun create(fragment: Fragment): ViewModelProvider.Factory {
-        return object : AbstractSavedStateViewModelFactory(fragment, null) {
-          override fun <T : ViewModel> create(
-            key: String,
-            modelClass: Class<T>,
-            handle: SavedStateHandle // weird name because kapt doesn't preserve the names in the
-            // constructor
-            ): T {
-            // TODO this is ugly extract these constants
-            handle["detailKey"] = fragment.requireArguments().getString("detailKey")!!
-            handle["detailTitle"] = fragment.requireArguments().getString("detailTitle")
-            @Suppress("UNCHECKED_CAST") return viewModels.getValue(modelClass).create(handle) as T
-          }
-        }
-      }
-    }
-  }
-
-  // This exists to avoid the static fragment dependency for dagger. We don't place fragments
-  // directly on the DI graph, but rather route them all through a fragment factory that only
-  // produces new instances. Instead we defer initialization to the fragment consuming the
-  // ViewModelProvider.Factory to pass itself in a deferred fashion.
-  //
-  // I initially named this ViewModelProviderFactoryFactory, and repent for my sins.
-  interface ViewModelProviderFactoryInstantiator {
-    fun create(fragment: Fragment): ViewModelProvider.Factory
   }
 }
