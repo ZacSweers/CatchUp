@@ -23,7 +23,6 @@ import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
-import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Module
@@ -32,7 +31,6 @@ import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
-import io.sweers.catchup.injection.SharedPreferencesName
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Interceptor
@@ -49,16 +47,6 @@ abstract class FlipperModule {
   abstract fun provideNetworkFlipperPluginIntoSet(plugin: NetworkFlipperPlugin): FlipperPlugin
 
   companion object {
-
-    @IntoSet
-    @Provides
-    fun provideSharedPreferencesPlugin(
-      @ApplicationContext context: Context,
-      @SharedPreferencesName preferencesName: String
-    ): FlipperPlugin {
-      return SharedPreferencesFlipperPlugin(context, preferencesName)
-    }
-
     @IntoSet
     @Provides
     fun provideViewInspectorPlugin(@ApplicationContext context: Context): FlipperPlugin {

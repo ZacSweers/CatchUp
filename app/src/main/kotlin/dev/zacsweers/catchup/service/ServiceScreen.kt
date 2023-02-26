@@ -66,7 +66,6 @@ import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.UrlMeta
-import io.sweers.catchup.ui.activity.FinalServices
 import io.sweers.catchup.ui.activity.ImageViewerScreen
 import javax.inject.Provider
 import kotlinx.coroutines.flow.Flow
@@ -106,7 +105,7 @@ constructor(
   @Assisted private val screen: ServiceScreen,
   @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,
-  @FinalServices private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
+  private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
   private val catchUpDatabase: CatchUpDatabase,
   private val serviceDao: ServiceDao,
   private val remoteKeyDao: RemoteKeyDao,

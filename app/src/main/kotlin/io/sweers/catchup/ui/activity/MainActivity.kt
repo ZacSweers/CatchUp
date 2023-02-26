@@ -16,7 +16,6 @@
 package io.sweers.catchup.ui.activity
 
 import android.app.Activity
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -35,25 +34,20 @@ import com.slack.circuit.rememberCircuitNavigator
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
-import dagger.Provides
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.circuit.IntentAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
 import dev.zacsweers.catchup.di.android.ActivityKey
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.RootContent
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.home.HomeScreen
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Qualifier
 
 @ActivityKey(MainActivity::class)
 @ContributesMultibinding(AppScope::class, boundType = Activity::class)
@@ -62,7 +56,6 @@ class MainActivity
 constructor(
   private val customTab: CustomTabActivityHelper,
   private val linkManager: LinkManager,
-  private val syllabus: Syllabus,
   private val circuitConfig: CircuitConfig,
   private val catchUpPreferences: CatchUpPreferences,
   private val rootContent: RootContent,
@@ -72,7 +65,6 @@ constructor(
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     WindowCompat.setDecorFitsSystemWindows(window, false)
-    syllabus.bind(this)
 
     setContent {
       val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
@@ -132,28 +124,8 @@ constructor(
   @ContributesTo(AppScope::class)
   @Module
   abstract class ServiceIntegrationModule {
-    companion object {
-      // TODO de-scope
-
-      @SingleIn(AppScope::class)
-      @Provides
-      @FinalServices
-      fun provideFinalServices(
-        serviceMetas: @JvmSuppressWildcards Map<String, ServiceMeta>,
-        sharedPreferences: SharedPreferences,
-        services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-      ): @JvmSuppressWildcards Map<String, Provider<Service>> {
-        return services.filter { (key, _) ->
-          serviceMetas.getValue(key).enabled &&
-            sharedPreferences.getBoolean(serviceMetas.getValue(key).enabledPreferenceKey, true)
-        }
-      }
-    }
-
     @Multibinds abstract fun services(): @JvmSuppressWildcards Map<String, Service>
 
     @Multibinds abstract fun serviceMetas(): @JvmSuppressWildcards Map<String, ServiceMeta>
   }
 }
-
-@Qualifier annotation class FinalServices

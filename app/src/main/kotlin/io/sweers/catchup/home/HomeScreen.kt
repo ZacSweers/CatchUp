@@ -1,6 +1,5 @@
 package io.sweers.catchup.home
 
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
@@ -36,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.CircuitContent
 import com.slack.circuit.CircuitUiEvent
@@ -82,6 +83,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
@@ -104,7 +107,6 @@ class HomePresenter
 constructor(
   @Assisted private val navigator: Navigator,
   private val serviceMetaMap: Map<String, ServiceMeta>,
-  private val sharedPrefs: SharedPreferences,
   private val catchUpPreferences: CatchUpPreferences,
   private val changelogHelper: ChangelogHelper,
 ) : Presenter<HomeScreen.State> {
@@ -119,15 +121,20 @@ constructor(
   override fun present(): HomeScreen.State {
     val currentOrder by
       remember { catchUpPreferences.servicesOrder }.collectAsState(initial = persistentListOf())
-    val serviceMetas =
-      remember(currentOrder) {
-        // TODO make enabledPrefKey live
+    val serviceMetas by
+      produceState(initialValue = persistentListOf(), currentOrder) {
+        // TODO make enabledPrefKey live?
         check(serviceMetaMap.isNotEmpty()) { "No services found!" }
-        serviceMetaMap.values
-          .filter(ServiceMeta::enabled)
-          .filter { sharedPrefs.getBoolean(it.enabledPreferenceKey, true) }
-          .sortedBy { currentOrder.indexOf(it.id) }
-          .toImmutableList()
+        value =
+          serviceMetaMap.values
+            .filter(ServiceMeta::enabled)
+            .filter { serviceMeta ->
+              catchUpPreferences.datastore.data
+                .map { it[booleanPreferencesKey(serviceMeta.enabledPreferenceKey)] ?: true }
+                .first()
+            }
+            .sortedBy { currentOrder.indexOf(it.id) }
+            .toImmutableList()
       }
     val context = LocalContext.current
     val changelogAvailable by changelogHelper.changelogAvailable(context).collectAsState(false)
@@ -169,6 +176,7 @@ constructor(
 @Composable
 @CircuitInject(HomeScreen::class, AppScope::class)
 fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
+  if (state.serviceMetas.isEmpty()) return // Not loaded yet
   val eventSink = state.eventSink
   val pagerState = key(state.serviceMetas) { rememberPagerState() }
   val currentServiceMeta = state.serviceMetas[pagerState.currentPage]
@@ -247,7 +255,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
             }
           }
           IconButton(
-            onClick = { eventSink(HomeScreen.Event.ShowChangelog) },
+            onClick = { eventSink(HomeScreen.Event.OpenSettings) },
           ) {
             Icon(
               imageVector = Icons.Default.Settings,
