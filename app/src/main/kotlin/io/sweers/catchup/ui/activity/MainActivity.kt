@@ -85,6 +85,7 @@ constructor(
               NavigableCircuitContent(
                 intentAwareNavigator,
                 backstack,
+                enableBackHandler = true,
                 decoration = ImageViewerAwareNavDecoration()
               )
             }
