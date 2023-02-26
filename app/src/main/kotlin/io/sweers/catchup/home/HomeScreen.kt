@@ -61,12 +61,16 @@ import com.slack.circuit.Presenter
 import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.onNavEvent
+import com.slack.circuit.overlay.LocalOverlayHost
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dev.zacsweers.catchup.circuit.BottomSheetOverlay
+import dev.zacsweers.catchup.compose.rememberStableCoroutineScope
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ServiceScreen
 import io.sweers.catchup.CatchUpPreferences
+import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.activity.SettingsScreen
@@ -85,10 +89,12 @@ import kotlinx.parcelize.Parcelize
 object HomeScreen : Screen {
   data class State(
     val serviceMetas: ImmutableList<ServiceMeta>,
+    val changelogAvailable: Boolean,
     val eventSink: (Event) -> Unit = {}
   ) : CircuitUiState
   sealed interface Event : CircuitUiEvent {
     object OpenSettings : Event
+    object ShowChangelog : Event
     data class NestedNavEvent(val navEvent: NavEvent) : Event
   }
 }
@@ -100,7 +106,6 @@ constructor(
   private val serviceMetaMap: Map<String, ServiceMeta>,
   private val sharedPrefs: SharedPreferences,
   private val catchUpPreferences: CatchUpPreferences,
-  // TODO bind with toolbar
   private val changelogHelper: ChangelogHelper,
 ) : Presenter<HomeScreen.State> {
 
@@ -124,9 +129,14 @@ constructor(
           .sortedBy { currentOrder.indexOf(it.id) }
           .toImmutableList()
       }
+    val context = LocalContext.current
+    val changelogAvailable by changelogHelper.changelogAvailable(context).collectAsState(false)
 
+    val scope = rememberStableCoroutineScope()
+    val overlayHost = LocalOverlayHost.current
     return HomeScreen.State(
       serviceMetas = serviceMetas,
+      changelogAvailable = changelogAvailable,
     ) { event ->
       when (event) {
         HomeScreen.Event.OpenSettings -> {
@@ -134,6 +144,17 @@ constructor(
         }
         is HomeScreen.Event.NestedNavEvent -> {
           navigator.onNavEvent(event.navEvent)
+        }
+        HomeScreen.Event.ShowChangelog -> {
+          scope.launch {
+            overlayHost.show(
+              BottomSheetOverlay(
+                model = Unit,
+                content = { _, _ -> changelogHelper.Content() },
+                onDismiss = { Unit }
+              )
+            )
+          }
         }
       }
     }
@@ -214,8 +235,19 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
         scrollBehavior = scrollBehavior,
         colors = topAppBarColors(scrolledContainerColor = scrimColor),
         actions = {
+          // TODO wire with Syllabus
+          if (state.changelogAvailable) {
+            IconButton(
+              onClick = { eventSink(HomeScreen.Event.ShowChangelog) },
+            ) {
+              Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.tips_and_updates),
+                contentDescription = stringResource(R.string.changes),
+              )
+            }
+          }
           IconButton(
-            onClick = { eventSink(HomeScreen.Event.OpenSettings) },
+            onClick = { eventSink(HomeScreen.Event.ShowChangelog) },
           ) {
             Icon(
               imageVector = Icons.Default.Settings,
