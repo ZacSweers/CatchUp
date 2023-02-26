@@ -162,7 +162,7 @@ circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref 
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegenAnnotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
 
-clikt = "com.github.ajalt.clikt:clikt:3.5.1"
+clikt = "com.github.ajalt.clikt:clikt:3.5.2"
 
 coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
 coil-default = { module = "io.coil-kt:coil", version.ref = "coil" }
