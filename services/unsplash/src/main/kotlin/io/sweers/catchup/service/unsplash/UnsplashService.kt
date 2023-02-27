@@ -22,7 +22,6 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
@@ -105,7 +104,6 @@ abstract class UnsplashMetaModule {
 
     @InternalApi
     @Provides
-    @Reusable
     internal fun provideUnsplashServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,

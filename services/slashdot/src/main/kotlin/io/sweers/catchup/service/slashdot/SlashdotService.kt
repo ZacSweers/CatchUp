@@ -23,7 +23,6 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
@@ -96,7 +95,6 @@ abstract class SlashdotMetaModule {
   companion object {
 
     @Provides
-    @Reusable
     @InternalApi
     internal fun provideSlashdotServiceMeta(): ServiceMeta =
       ServiceMeta(
