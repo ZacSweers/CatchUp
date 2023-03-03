@@ -5,10 +5,10 @@ package dev.zacsweers.catchup.circuit
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,7 +25,7 @@ import com.slack.circuit.overlay.OverlayNavigator
 import dev.zacsweers.catchup.compose.rememberConditionalSystemUiColors
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 class BottomSheetOverlay<Model : Any, Result : Any>(
   private val model: Model,
   private val dismissOnTapOutside: Boolean = true,
@@ -36,10 +36,9 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
   override fun Content(navigator: OverlayNavigator<Result>) {
     var hasShown by remember { mutableStateOf(false) }
     val sheetState =
-      rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
+      rememberSheetState(
         confirmValueChange = { newValue ->
-          if (hasShown && newValue == ModalBottomSheetValue.Hidden) {
+          if (hasShown && newValue == SheetValue.Hidden) {
             dismissOnTapOutside
           } else {
             true
@@ -48,9 +47,9 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
       )
 
     var pendingResult by remember { mutableStateOf<Result?>(null) }
-    ModalBottomSheetLayout(
+    ModalBottomSheet(
       modifier = Modifier.fillMaxSize(),
-      sheetContent = {
+      content = {
         val coroutineScope = rememberCoroutineScope()
         BackHandler(enabled = sheetState.isVisible) { coroutineScope.launch { sheetState.hide() } }
         // Delay setting the result until we've finished dismissing
@@ -63,23 +62,26 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
         }
       },
       sheetState = sheetState,
-      sheetShape = RoundedCornerShape(32.dp)
-    ) {
-      // Nothing here, left to the existing content
-    }
+      shape = RoundedCornerShape(32.dp),
+      onDismissRequest = {
+        // Only possible if dismissOnTapOutside is false
+        check(dismissOnTapOutside)
+        navigator.finish(onDismiss!!.invoke())
+      },
+    )
 
     val systemUiController = rememberSystemUiController()
     val conditionalSystemUiColors = rememberConditionalSystemUiColors(systemUiController)
     LaunchedEffect(model, onDismiss) {
       snapshotFlow { sheetState.currentValue }
         .collect { newValue ->
-          if (hasShown && newValue == ModalBottomSheetValue.Hidden) {
+          if (hasShown && newValue == SheetValue.Hidden) {
             conditionalSystemUiColors.restore()
             // This is apparently as close as we can get to an "onDismiss" callback, which
             // unfortunately has no animation
             val result = pendingResult ?: onDismiss?.invoke() ?: error("no result!")
             navigator.finish(result)
-          } else if (newValue == ModalBottomSheetValue.Expanded) {
+          } else if (newValue == SheetValue.Expanded) {
             // TODO only if expanded runs under the status bar
             // TODO set status bar colors
             conditionalSystemUiColors.save()
