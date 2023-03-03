@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS gemoji (alias TEXT NOT NULL, emoji TEXT, PRIMARY KEY(alias));
+
+insert:
+INSERT INTO gemoji(alias, emoji)
+VALUES (?, ?);
