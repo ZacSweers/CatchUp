@@ -125,6 +125,8 @@ fun Summarizer(state: SummarizerScreen.State, modifier: Modifier = Modifier) {
             }
           }
           is SummarizerScreen.State.Success -> {
+            // TODO show a blinking cursor? Typewriter effect could be cool but probably only cool
+            //  once
             Text(
               state.summary,
               textAlign = TextAlign.Justify,
