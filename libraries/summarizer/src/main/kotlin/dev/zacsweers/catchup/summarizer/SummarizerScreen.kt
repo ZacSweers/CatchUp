@@ -101,10 +101,10 @@ fun Summarizer(state: SummarizerScreen.State, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
       ) {
         Text(state.title, style = MaterialTheme.typography.displaySmall)
+        Spacer(Modifier.height(24.dp))
         when (state) {
           is SummarizerScreen.State.Loading -> {
             // accompanist loading?
-            Spacer(Modifier.height(24.dp))
             CircularProgressIndicator()
             Spacer(Modifier.height(16.dp))
             Text("Summarizing...", fontStyle = FontStyle.Italic)
