@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 9,
-    "identityHash": "4d3edaed60c598c9705ef4fcedbc0ae7",
+    "version": 10,
+    "identityHash": "3d7653937285631c01e989c0bf441ca2",
     "entities": [
       {
         "tableName": "remote_keys",
@@ -32,7 +32,7 @@
       },
       {
         "tableName": "items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `timestamp` INTEGER, `score` TEXT, `tag` TEXT, `author` TEXT, `source` TEXT, `itemClickUrl` TEXT, `detailKey` TEXT, `serviceId` TEXT, `indexInResponse` INTEGER, `contentType` TEXT, `url` TEXT, `detailUrl` TEXT, `animatable` INTEGER, `sourceUrl` TEXT, `bestSize` TEXT, `aspectRatio` REAL, `imageId` TEXT, `blurHash` TEXT, `text` TEXT, `textPrefix` TEXT, `icon` INTEGER, `_markClickUrl` TEXT, `iconTintColor` INTEGER, `formatTextAsCount` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `timestamp` INTEGER, `score` TEXT, `tag` TEXT, `author` TEXT, `source` TEXT, `itemClickUrl` TEXT, `detailKey` TEXT, `serviceId` TEXT, `indexInResponse` INTEGER, `contentType` TEXT, `url` TEXT, `detailUrl` TEXT, `animatable` INTEGER, `sourceUrl` TEXT, `bestSize` TEXT, `aspectRatio` REAL, `imageId` TEXT, `color` TEXT, `blurHash` TEXT, `text` TEXT, `textPrefix` TEXT, `icon` INTEGER, `_markClickUrl` TEXT, `iconTintColor` INTEGER, `formatTextAsCount` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -155,6 +155,12 @@
             "notNull": false
           },
           {
+            "fieldPath": "imageInfo.color",
+            "columnName": "color",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "imageInfo.blurHash",
             "columnName": "blurHash",
             "affinity": "TEXT",
@@ -242,7 +248,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4d3edaed60c598c9705ef4fcedbc0ae7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3d7653937285631c01e989c0bf441ca2')"
     ]
   }
 }

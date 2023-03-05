@@ -27,8 +27,11 @@ fun rememberClickableItemState(
   contentColor: Color = Color.Unspecified
 ): ClickableItemState {
   val colorToUse =
-    if (contentColor == Color.Unspecified) contentColorFor(MaterialTheme.colorScheme.surface)
-    else contentColor
+    if (contentColor == Color.Unspecified) {
+      contentColorFor(MaterialTheme.colorScheme.surface)
+    } else {
+      contentColor
+    }
   return remember {
     ClickableItemState().apply {
       this.enabled = enabled

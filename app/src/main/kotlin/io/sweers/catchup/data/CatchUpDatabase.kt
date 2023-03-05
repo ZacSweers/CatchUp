@@ -27,7 +27,7 @@ import kotlinx.datetime.Instant
 
 @Database(
   entities = [ServiceRemoteKey::class, CatchUpItem::class, OperationJournalEntry::class],
-  version = 9
+  version = 10
 )
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {

@@ -25,7 +25,10 @@ data class ImageInfo(
   val animatable: Boolean,
   val sourceUrl: String,
   val bestSize: Pair<Int, Int>?,
-  val imageId: String
+  val aspectRatio: Float,
+  val imageId: String,
+  val color: String? = null,
+  val blurHash: String? = null,
 ) {
   @Transient @Ignore val cacheKey: String = imageId
 }

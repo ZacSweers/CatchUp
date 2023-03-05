@@ -23,12 +23,16 @@ import kotlinx.datetime.Instant
 data class UnsplashPhoto(
   val id: String,
   @Json(name = "created_at") val createdAt: Instant,
+  // Hex color
   val color: String,
   val description: String?,
   val urls: Urls,
   val links: Links,
   val likes: Int,
-  val user: User
+  val user: User,
+  @Json(name = "blur_hash") val blurHash: String,
+  val height: Int,
+  val width: Int,
 )
 
 @JsonClass(generateAdapter = true)
