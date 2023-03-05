@@ -82,7 +82,10 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               animatable = false,
               sourceUrl = it.links.html,
               bestSize = null,
-              imageId = it.id
+              aspectRatio = it.width.toFloat() / it.height.toFloat(),
+              imageId = it.id,
+              blurHash = it.blurHash,
+              color = it.color,
             ),
           indexInResponse = index + request.pageOffset,
           serviceId = meta().id,
