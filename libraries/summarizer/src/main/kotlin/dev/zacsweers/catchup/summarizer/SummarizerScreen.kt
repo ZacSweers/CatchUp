@@ -51,7 +51,7 @@ data class SummarizerScreen(val title: String, val url: String) : Screen {
   }
 }
 
-fun SummarizerResult.toState(title: String, url: String): SummarizerScreen.State {
+private fun SummarizerResult.toState(title: String, url: String): SummarizerScreen.State {
   return when (this) {
     is SummarizerResult.Success -> SummarizerScreen.State.Success(title, summary)
     is SummarizerResult.NotFound ->
@@ -90,7 +90,7 @@ constructor(
 fun Summarizer(state: SummarizerScreen.State, modifier: Modifier = Modifier) {
   val sysUi = rememberSystemUiController()
   sysUi.setSystemBarsColor(MaterialTheme.colorScheme.surface)
-  // TODO restore
+  // TODO restore sysui color on back press?
   Surface(modifier.fillMaxSize()) {
     Box(Modifier.systemBarsPadding()) {
       Column(
