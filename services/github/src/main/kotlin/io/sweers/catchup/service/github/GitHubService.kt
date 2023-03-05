@@ -37,6 +37,7 @@ import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.Mark
@@ -110,6 +111,7 @@ constructor(
             // TODO include index
             indexInResponse = index + request.pageOffset,
             serviceId = meta().id,
+            contentType = ContentType.OTHER, // Not summarizable
           )
         }
       }
@@ -162,6 +164,7 @@ constructor(
               itemClickUrl = url.toString(),
               indexInResponse = index + request.pageOffset,
               serviceId = meta().id,
+              contentType = ContentType.OTHER, // Not summarizable
             )
           }
         }

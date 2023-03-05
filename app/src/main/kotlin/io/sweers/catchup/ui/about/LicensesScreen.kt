@@ -61,6 +61,7 @@ import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.kotlin.groupBy
@@ -133,6 +134,8 @@ private fun OssItem.toCatchUpItem(): CatchUpItem {
     description = description,
     author = license,
     itemClickUrl = clickUrl,
+    // Not summarizable
+    contentType = ContentType.OTHER,
   )
 }
 

@@ -16,6 +16,7 @@
 package io.sweers.catchup.service.api
 
 import androidx.annotation.Keep
+import androidx.compose.runtime.Immutable
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -24,7 +25,7 @@ import kotlinx.datetime.Instant
 
 @Keep
 @Entity(tableName = "items")
-// @Immutable  // TODO marking this immutable crashes compose at runtime
+@Immutable
 data class CatchUpItem(
   @PrimaryKey val id: Long,
   val title: String,
@@ -35,12 +36,12 @@ data class CatchUpItem(
   val author: String? = null,
   val source: String? = null,
   internal val itemClickUrl: String? = null,
-  @Embedded val summarizationInfo: SummarizationInfo? = null,
   @Embedded val imageInfo: ImageInfo? = null,
   @Embedded val mark: Mark? = null,
   val detailKey: String? = null,
   val serviceId: String? = null,
-  val indexInResponse: Int? = null
+  val indexInResponse: Int? = null,
+  val contentType: ContentType? = null, // Null indicates unset, try to infer it
 ) {
 
   @Ignore val clickUrl: String?
@@ -54,3 +55,6 @@ data class CatchUpItem(
     this.markClickUrl = finalMarkClickUrl
   }
 }
+
+val CatchUpItem.canBeSummarized: Boolean
+  get() = contentType == ContentType.HTML

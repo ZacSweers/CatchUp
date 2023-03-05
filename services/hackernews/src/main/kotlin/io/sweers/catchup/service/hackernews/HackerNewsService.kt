@@ -42,7 +42,6 @@ import io.sweers.catchup.service.api.ServiceException
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
-import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.util.d
@@ -139,7 +138,6 @@ constructor(
             source = url?.let { it.toHttpUrlOrNull()!!.host },
             tag = realType()?.tag(nullIfStory = true),
             itemClickUrl = url,
-            summarizationInfo = SummarizationInfo.from(url),
             mark =
               kids?.size?.let {
                 createCommentMark(count = it, clickUrl = "https://news.ycombinator.com/item?id=$id")

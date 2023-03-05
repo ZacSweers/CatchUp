@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS summarizations (url TEXT NOT NULL, summary TEXT, PRIMARY KEY(url));
+
+insert:
+INSERT INTO summarizations(url, summary)
+VALUES (?, ?);
+
+getSummarization:
+SELECT summary FROM summarizations WHERE url = ?;

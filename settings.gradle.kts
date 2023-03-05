@@ -253,6 +253,7 @@ include(
   ":libraries:kotlinutil",
   ":libraries:newark",
   ":libraries:retrofitconverters",
+  ":libraries:summarizer",
   ":libraries:tooling:spi-multibinds-validator",
   ":libraries:tooling:spi-visualizer",
   ":libraries:util",

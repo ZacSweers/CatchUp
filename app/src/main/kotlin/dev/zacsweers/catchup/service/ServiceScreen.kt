@@ -1,7 +1,5 @@
 package dev.zacsweers.catchup.service
 
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -61,12 +59,12 @@ import dev.zacsweers.catchup.circuit.FullScreenOverlay
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ServiceScreen.State.TextState
 import dev.zacsweers.catchup.service.ServiceScreen.State.VisualState
+import dev.zacsweers.catchup.summarizer.SummarizerScreen
 import io.sweers.catchup.R
-import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.RemoteKeyDao
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.ImageViewerScreen
@@ -110,9 +108,8 @@ constructor(
   @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,
   private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-  private val catchUpDatabase: CatchUpDatabase,
   private val serviceDao: ServiceDao,
-  private val remoteKeyDao: RemoteKeyDao,
+  private val serviceMediatorFactory: ServiceMediator.Factory
 ) : Presenter<ServiceScreen.State> {
   @OptIn(ExperimentalPagingApi::class)
   @Composable
@@ -136,13 +133,7 @@ constructor(
       Pager(
         config = PagingConfig(pageSize = 50),
         initialKey = service.meta().firstPageKey,
-        remoteMediator =
-          ServiceMediator(
-            serviceDao = serviceDao,
-            remoteKeyDao = remoteKeyDao,
-            catchUpDatabase = catchUpDatabase,
-            service = service,
-          )
+        remoteMediator = serviceMediatorFactory.create(service = service)
       ) {
         serviceDao.itemsByService(service.meta().id)
       }
@@ -162,23 +153,25 @@ constructor(
                 )
               )
             } else {
-              val url = event.item.clickUrl
-              val meta = UrlMeta(url, themeColorInt, context, null)
-              if (meta.isSupportedInMediaViewer()) {
-                val uriUrl = meta.uri.toString()
-                overlayHost.show(FullScreenOverlay(ImageViewerScreen(uriUrl, uriUrl, null, uriUrl)))
+              val url = event.item.clickUrl!!
+              if (event.item.contentType == ContentType.IMAGE) {
+                overlayHost.show(FullScreenOverlay(ImageViewerScreen(url, url, null, url)))
               } else {
+                val meta = UrlMeta(url, themeColorInt, context)
                 linkManager.openUrl(meta)
               }
             }
           }
         }
         is ServiceScreen.Event.ItemLongClicked -> {
-          Toast.makeText(context, "Long clicked ${event.item.title}", LENGTH_SHORT).show()
+          val url = event.item.clickUrl!!
+          coroutineScope.launch {
+            overlayHost.show(FullScreenOverlay(SummarizerScreen(event.item.title, url)))
+          }
         }
         is ServiceScreen.Event.MarkClicked -> {
           val url = event.item.markClickUrl
-          coroutineScope.launch { linkManager.openUrl(UrlMeta(url, themeColorInt, context, null)) }
+          coroutineScope.launch { linkManager.openUrl(UrlMeta(url, themeColorInt, context)) }
         }
       }
     }
@@ -246,7 +239,7 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> 
           atEnd = !atEnd
         }
     )
-    Text(text, textAlign = TextAlign.Center)
+    Text(text, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurface)
     onRetryClick?.let { ElevatedButton(onClick = it) { Text(stringResource(R.string.retry)) } }
   }
 }

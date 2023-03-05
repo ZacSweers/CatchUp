@@ -28,6 +28,7 @@ import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
@@ -35,8 +36,6 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
-import io.sweers.catchup.service.api.SummarizationInfo
-import io.sweers.catchup.service.api.SummarizationType.NONE
 import io.sweers.catchup.service.api.TextService
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -62,8 +61,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val servi
     return service
       .main()
       .itemList
-      .mapIndexed { index, (title, id, _, summary, updated, section, comments, author, department)
-        ->
+      .mapIndexed { index, (title, id, _, _, updated, section, comments, author, department) ->
         CatchUpItem(
           id = id.hashCode().toLong(),
           title = title,
@@ -73,10 +71,10 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val servi
           source = department,
           tag = section,
           itemClickUrl = id,
-          summarizationInfo = SummarizationInfo(summary.substringBefore("<p>"), NONE),
           mark = createCommentMark(count = comments, clickUrl = "$id#comments"),
           indexInResponse = index + request.pageOffset,
           serviceId = meta().id,
+          contentType = ContentType.HTML,
         )
       }
       .let { DataResult(it, null) }

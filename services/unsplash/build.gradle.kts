@@ -18,7 +18,6 @@ plugins {
   alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
-  alias(libs.plugins.moshix)
 }
 
 android {
@@ -36,6 +35,7 @@ android {
 slack {
   features {
     dagger()
+    moshi(codegen = true)
   }
 }
 

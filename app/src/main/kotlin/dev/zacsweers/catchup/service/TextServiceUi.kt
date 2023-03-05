@@ -40,6 +40,7 @@ import dev.zacsweers.catchup.compose.CatchUpTheme
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.Mark
+import io.sweers.catchup.service.api.canBeSummarized
 import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.primaryLocale
 import kotlin.time.Duration.Companion.hours
@@ -62,10 +63,16 @@ fun TextServiceUi(
       if (item == null) {
         PlaceholderItem(themeColor)
       } else {
+        val onLongClick =
+          if (item.canBeSummarized) {
+            { eventSink(ServiceScreen.Event.ItemLongClicked(item)) }
+          } else {
+            null
+          }
         ClickableItem(
           modifier = Modifier.animateItemPlacement(),
           onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
-          onLongClick = { eventSink(ServiceScreen.Event.ItemLongClicked(item)) }
+          onLongClick = onLongClick
         ) {
           TextItem(item, themeColor) { eventSink(ServiceScreen.Event.MarkClicked(item)) }
         }

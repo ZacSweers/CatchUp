@@ -15,8 +15,10 @@
  */
 package io.sweers.catchup.service.api
 
+import androidx.compose.runtime.Immutable
 import androidx.room.Ignore
 
+@Immutable
 data class ImageInfo(
   val url: String,
   val detailUrl: String,
