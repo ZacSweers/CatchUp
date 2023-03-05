@@ -27,6 +27,7 @@ import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
@@ -34,7 +35,6 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
-import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.reddit.model.RedditLink
 import io.sweers.catchup.service.reddit.model.RedditObjectFactory
@@ -76,7 +76,6 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
             source = link.domain ?: "self",
             tag = link.subreddit,
             itemClickUrl = link.url,
-            summarizationInfo = SummarizationInfo.from(link.url, link.selftext),
             mark =
               createCommentMark(
                 count = link.commentsCount,
@@ -84,6 +83,8 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               ),
             indexInResponse = index + request.pageOffset,
             serviceId = meta().id,
+            // If it's a selftext, mark it as HTML for summarizing.
+            contentType = if (link.isSelf) ContentType.HTML else null,
           )
         }
       DataResult(data, redditListingRedditResponse.data.after)
