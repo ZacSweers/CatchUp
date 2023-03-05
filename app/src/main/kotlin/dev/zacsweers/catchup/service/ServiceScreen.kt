@@ -110,9 +110,8 @@ constructor(
   @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,
   private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-  private val catchUpDatabase: CatchUpDatabase,
   private val serviceDao: ServiceDao,
-  private val remoteKeyDao: RemoteKeyDao,
+  private val serviceMediatorFactory: ServiceMediator.Factory
 ) : Presenter<ServiceScreen.State> {
   @OptIn(ExperimentalPagingApi::class)
   @Composable
@@ -136,13 +135,7 @@ constructor(
       Pager(
         config = PagingConfig(pageSize = 50),
         initialKey = service.meta().firstPageKey,
-        remoteMediator =
-          ServiceMediator(
-            serviceDao = serviceDao,
-            remoteKeyDao = remoteKeyDao,
-            catchUpDatabase = catchUpDatabase,
-            service = service,
-          )
+        remoteMediator = serviceMediatorFactory.create(service = service)
       ) {
         serviceDao.itemsByService(service.meta().id)
       }
