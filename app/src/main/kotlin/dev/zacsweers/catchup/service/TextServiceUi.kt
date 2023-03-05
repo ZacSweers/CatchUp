@@ -64,7 +64,7 @@ fun TextServiceUi(
       } else {
         ClickableItem(
           modifier = Modifier.animateItemPlacement(),
-          onClick = { eventSink(ServiceScreen.Event.ItemLongClicked(item)) },
+          onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
           onLongClick = { eventSink(ServiceScreen.Event.ItemLongClicked(item)) }
         ) {
           TextItem(item, themeColor) { eventSink(ServiceScreen.Event.MarkClicked(item)) }

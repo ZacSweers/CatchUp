@@ -1,5 +1,7 @@
 package dev.zacsweers.catchup.service
 
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -172,7 +174,7 @@ constructor(
           }
         }
         is ServiceScreen.Event.ItemLongClicked -> {
-          // TODO
+          Toast.makeText(context, "Long clicked ${event.item.title}", LENGTH_SHORT).show()
         }
         is ServiceScreen.Event.MarkClicked -> {
           val url = event.item.markClickUrl
