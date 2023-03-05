@@ -1,16 +1,20 @@
 package dev.zacsweers.catchup.service
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -21,14 +25,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,11 +49,14 @@ import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import coil.drawable.MovieDrawable
 import coil.request.ImageRequest
+import io.sweers.catchup.base.ui.BlurHashDecoder
 import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.base.ui.generateAsync
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.util.UiUtil
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -64,7 +76,7 @@ fun VisualServiceUi(
     }
 
   LazyVerticalStaggeredGrid(
-    columns = StaggeredGridCells.Fixed(2),
+    columns = StaggeredGridCells.Fixed(columnSpan()),
     modifier = modifier.fillMaxSize(),
   ) {
     itemsIndexed(
@@ -73,7 +85,12 @@ fun VisualServiceUi(
     ) { index, item ->
       Surface(color = placeholders[index % placeholders.size]) {
         if (item != null) {
-          val clickableItemState = rememberClickableItemState()
+          val clickableItemState =
+            rememberClickableItemState(
+              contentColor =
+                item.imageInfo?.color?.let { Color(android.graphics.Color.parseColor(it)) }
+                  ?: Color.Unspecified,
+            )
           ClickableItem(
             onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
           ) {
@@ -103,12 +120,38 @@ fun VisualItem(
   //  gif handling
   //  saturation transformation
   //  etc
-  val displayMetrics = LocalContext.current.resources.displayMetrics.scaledDensity
   Box(modifier) {
+    val displayMetrics = LocalContext.current.resources.displayMetrics
+    val scaledDensity = displayMetrics.scaledDensity
     val imageInfo = item.imageInfo!!
+
+    // Compute in-grid image size
+    val imageWidth = displayMetrics.widthPixels / columnSpan()
+    val imageWidthDp = LocalDensity.current.run { imageWidth.toDp() }
+    val imageHeight = (imageWidth / imageInfo.aspectRatio).toInt()
+    val imageHeightDp = LocalDensity.current.run { imageHeight.toDp() }
+
+    val scope = rememberCoroutineScope()
+    val blurHash = imageInfo.blurHash
+    if (blurHash != null) {
+      val blurHashBitmap by
+        produceState<ImageBitmap?>(null) {
+          value =
+            withContext(IO) {
+              BlurHashDecoder.decode(blurHash, imageWidth, imageHeight)?.asImageBitmap()
+            }
+        }
+      blurHashBitmap?.let {
+        Image(
+          bitmap = it,
+          contentDescription = "Loading image for ${item.title}",
+          contentScale = ContentScale.Crop,
+          modifier = Modifier.size(imageWidthDp, imageHeightDp),
+        )
+      }
+    }
     var hasFadedIn by remember(index) { mutableStateOf(false) }
     var badgeColor by remember(index) { mutableStateOf(Color.Unspecified) }
-    val scope = rememberCoroutineScope()
     AsyncImage(
       model =
         ImageRequest.Builder(LocalContext.current)
@@ -151,7 +194,7 @@ fun VisualItem(
 
               bitmap?.let {
                 // look at the corner to determine the gif badge color
-                val cornerSize = (56 * displayMetrics).toInt()
+                val cornerSize = (56 * scaledDensity).toInt()
                 val corner =
                   Bitmap.createBitmap(
                     it,
@@ -168,8 +211,8 @@ fun VisualItem(
             onError = { _, _ -> onEnableChanged(false) },
           )
           .build(),
-      modifier = Modifier.fillMaxSize(),
-      contentDescription = "Image for ${item.title}",
+      modifier = Modifier.size(imageWidthDp, imageHeightDp),
+      contentDescription = "Image for ${item.title}. Description: ${item.description}",
       contentScale = ContentScale.Crop,
       alignment = Alignment.Center,
     )
@@ -318,3 +361,12 @@ private val PLACEHOLDERS_LIGHT =
     Color(0xffeeeeee),
     Color(0xffe0e0e0),
   )
+
+@Composable
+private fun columnSpan(): Int {
+  return if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+    3
+  } else {
+    2
+  }
+}
