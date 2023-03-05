@@ -79,6 +79,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               animatable = it.animated,
               sourceUrl = it.url,
               bestSize = null,
+              aspectRatio = 4 / 3f,
               imageId = it.id.toString()
             ),
           indexInResponse = index + request.pageOffset,

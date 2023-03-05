@@ -72,12 +72,13 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
           itemClickUrl = it.images.best(),
           imageInfo =
             ImageInfo(
-              it.images.normal,
-              it.images.best(true),
-              it.animated,
-              it.htmlUrl,
-              it.images.bestSize(),
-              it.id.toString()
+              url = it.images.normal,
+              detailUrl = it.images.best(true),
+              animatable = it.animated,
+              sourceUrl = it.htmlUrl,
+              bestSize = it.images.bestSize(),
+              aspectRatio = 4 / 3f,
+              imageId = it.id.toString(),
             ),
           mark = createCommentMark(count = it.commentsCount.toInt()),
           indexInResponse = index + request.pageOffset,
