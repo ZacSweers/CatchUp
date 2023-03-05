@@ -17,7 +17,6 @@
 plugins {
   id("com.android.library")
   kotlin("android")
-  alias(libs.plugins.moshix)
   alias(libs.plugins.sgp.base)
 }
 
@@ -31,6 +30,7 @@ android {
 slack {
   features {
     compose()
+    moshi(codegen = true)
   }
 }
 

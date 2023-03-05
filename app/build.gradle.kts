@@ -34,7 +34,6 @@ plugins {
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.apollo)
   alias(libs.plugins.licensee)
-  alias(libs.plugins.moshix)
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
@@ -46,6 +45,7 @@ slack {
   features {
     compose()
     dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
+    moshi(codegen = true)
   }
 }
 
