@@ -17,7 +17,6 @@ package io.sweers.catchup.service.api
 
 import android.content.Context
 import android.net.Uri
-import android.view.View
 import androidx.annotation.ColorInt
 import androidx.compose.runtime.Immutable
 
@@ -33,17 +32,4 @@ data class UrlMeta(
     @ColorInt accentColor: Int,
     context: Context,
   ) : this(if (url.isNullOrBlank()) null else Uri.parse(url), accentColor, context)
-
-  fun isSupportedInMediaViewer(): Boolean {
-    return uri?.toString()?.let {
-      val extension = it.substring(it.lastIndexOf(".") + 1)
-      extension in MEDIA_EXTENSIONS
-    }
-      ?: false
-  }
-
-  companion object {
-    // videos? idk if I want to write a video player :|
-    private val MEDIA_EXTENSIONS = setOf("gif", "jpg", "jpeg", "png", "raw", "webp")
-  }
 }

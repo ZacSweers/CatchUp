@@ -22,11 +22,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import kotlinx.datetime.Instant
 
 @Database(
   entities = [ServiceRemoteKey::class, CatchUpItem::class, OperationJournalEntry::class],
-  version = 8
+  version = 9
 )
 @TypeConverters(CatchUpConverters::class)
 abstract class CatchUpDatabase : RoomDatabase() {
@@ -54,6 +55,11 @@ abstract class CatchUpDatabase : RoomDatabase() {
 }
 
 internal class CatchUpConverters {
+
+  // ContentType
+  @TypeConverter fun toContentType(contentType: String) = ContentType.valueOf(contentType)
+
+  @TypeConverter fun fromContentType(contentType: ContentType) = contentType.name
 
   // Instant
   @TypeConverter
