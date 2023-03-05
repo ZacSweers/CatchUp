@@ -7,6 +7,7 @@ import java.io.IOException
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
@@ -15,6 +16,9 @@ class ContentTypeChecker @Inject constructor(private val okHttpClient: dagger.La
   suspend fun contentType(url: String): ContentType? {
     // Fast-path basic media checks
     if (url.hasMediaExtension) {
+      return ContentType.IMAGE
+    }
+    if (url.isMediaUrl) {
       return ContentType.IMAGE
     }
     val response =
@@ -56,4 +60,15 @@ private val MEDIA_EXTENSIONS =
 private val String.hasMediaExtension: Boolean
   get() {
     return substring(lastIndexOf(".") + 1) in MEDIA_EXTENSIONS
+  }
+
+private val KNOWN_DOMAINS =
+  setOf(
+    "i.imgur.com",
+    "i.redd.it",
+  )
+
+private val String.isMediaUrl: Boolean
+  get() {
+    return toHttpUrlOrNull()?.host?.let { it in KNOWN_DOMAINS } ?: false
   }
