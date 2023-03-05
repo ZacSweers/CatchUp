@@ -6,6 +6,9 @@ import androidx.paging.LoadType.REFRESH
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.OperationJournalEntry
 import io.sweers.catchup.data.RemoteKeyDao
@@ -23,12 +26,20 @@ import retrofit2.HttpException
 import timber.log.Timber
 
 @OptIn(ExperimentalPagingApi::class)
-class ServiceMediator(
+class ServiceMediator
+@AssistedInject
+constructor(
+  @Assisted private val service: Service,
   private val catchUpDatabase: CatchUpDatabase,
   private val serviceDao: ServiceDao,
   private val remoteKeyDao: RemoteKeyDao,
-  private val service: Service,
 ) : RemoteMediator<Int, CatchUpItem>() {
+
+  @AssistedFactory
+  fun interface Factory {
+    fun create(service: Service): ServiceMediator
+  }
+
   private val serviceId: String = service.meta().id
 
   override suspend fun load(
