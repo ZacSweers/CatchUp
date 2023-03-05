@@ -30,6 +30,7 @@ android {
 
 slack {
   features {
+    moshi(codegen = true)
     dagger()
   }
 }
