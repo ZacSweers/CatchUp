@@ -1,10 +1,12 @@
 package dev.zacsweers.catchup.summarizer
 
+import androidx.annotation.Keep
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import retrofit2.http.Body
 import retrofit2.http.POST
 
+@Keep // https://issuetracker.google.com/issues/271675881
 interface ChatGptApi {
   @POST("/v1/chat/completions")
   suspend fun completion(@Body request: CompletionRequest): CompletionResponse
