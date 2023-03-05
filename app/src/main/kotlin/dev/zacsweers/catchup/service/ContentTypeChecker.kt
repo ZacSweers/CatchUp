@@ -1,20 +1,22 @@
 package dev.zacsweers.catchup.service
 
-import com.squareup.anvil.annotations.ContributesTo
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.service.api.ContentType
 import java.io.IOException
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import javax.inject.Inject
 
-@ContributesTo(AppScope::class)
 @SingleIn(AppScope::class)
 class ContentTypeChecker @Inject constructor(private val okHttpClient: OkHttpClient) {
   suspend fun contentType(url: String): ContentType? {
+    // Fast-path basic media checks
+    if (url.hasMediaExtension) {
+      return ContentType.IMAGE
+    }
     val response =
       withContext(IO) {
         try {
@@ -40,3 +42,18 @@ private fun String?.contentType(): ContentType? {
     else -> ContentType.OTHER
   }
 }
+
+private val MEDIA_EXTENSIONS =
+  setOf(
+    "apng",
+    "avif",
+    "gif",
+    "jpeg",
+    "png",
+    "webp",
+  )
+
+private val String.hasMediaExtension: Boolean
+  get() {
+    return substring(lastIndexOf(".") + 1) in MEDIA_EXTENSIONS
+  }
