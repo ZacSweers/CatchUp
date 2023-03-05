@@ -19,20 +19,20 @@ import android.content.Context
 import android.net.Uri
 import android.view.View
 import androidx.annotation.ColorInt
+import androidx.compose.runtime.Immutable
 
+@Immutable
 data class UrlMeta(
   val uri: Uri?,
   @ColorInt val accentColor: Int,
   val context: Context,
-  val imageViewerData: ImageViewerData? = null
 ) {
 
   constructor(
     url: String?,
     @ColorInt accentColor: Int,
     context: Context,
-    imageViewerData: ImageViewerData? = null
-  ) : this(if (url.isNullOrBlank()) null else Uri.parse(url), accentColor, context, imageViewerData)
+  ) : this(if (url.isNullOrBlank()) null else Uri.parse(url), accentColor, context)
 
   fun isSupportedInMediaViewer(): Boolean {
     return uri?.toString()?.let {
@@ -47,11 +47,3 @@ data class UrlMeta(
     private val MEDIA_EXTENSIONS = setOf("gif", "jpg", "jpeg", "png", "raw", "webp")
   }
 }
-
-data class ImageViewerData(
-  val id: String,
-  val imageUrl: String,
-  val cacheKey: String,
-  val sourceUrl: String,
-  val image: View?
-)

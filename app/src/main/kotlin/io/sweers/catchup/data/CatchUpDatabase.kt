@@ -22,7 +22,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.SummarizationType
 import kotlinx.datetime.Instant
 
 @Database(
@@ -55,13 +54,6 @@ abstract class CatchUpDatabase : RoomDatabase() {
 }
 
 internal class CatchUpConverters {
-
-  // SummarizationType
-  @TypeConverter
-  fun toSummarizationType(summarizationType: String) = SummarizationType.valueOf(summarizationType)
-
-  @TypeConverter
-  fun fromSummarizationType(summarizationType: SummarizationType) = summarizationType.name
 
   // Instant
   @TypeConverter

@@ -35,7 +35,6 @@ data class CatchUpItem(
   val author: String? = null,
   val source: String? = null,
   internal val itemClickUrl: String? = null,
-  @Embedded val summarizationInfo: SummarizationInfo? = null,
   @Embedded val imageInfo: ImageInfo? = null,
   @Embedded val mark: Mark? = null,
   val detailKey: String? = null,
