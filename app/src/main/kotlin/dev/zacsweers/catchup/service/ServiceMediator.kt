@@ -9,6 +9,7 @@ import androidx.room.withTransaction
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import io.reactivex.rxjava3.core.Flowable
 import io.sweers.catchup.data.CatchUpDatabase
 import io.sweers.catchup.data.OperationJournalEntry
 import io.sweers.catchup.data.RemoteKeyDao
@@ -16,11 +17,13 @@ import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.data.ServiceRemoteKey
 import io.sweers.catchup.data.lastUpdated
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.Service
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.rx3.rxSingle
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
@@ -33,6 +36,7 @@ constructor(
   private val catchUpDatabase: CatchUpDatabase,
   private val serviceDao: ServiceDao,
   private val remoteKeyDao: RemoteKeyDao,
+  private val contentTypeChecker: ContentTypeChecker
 ) : RemoteMediator<Int, CatchUpItem>() {
 
   @AssistedFactory
@@ -100,16 +104,42 @@ constructor(
       // https://github.com/square/retrofit/issues/3363#issuecomment-1371767242
       val result =
         withContext(Dispatchers.IO) {
-          service.fetch(
-            DataRequest(
-              pageKey = loadKey,
-              pageOffset = pageOffset,
-              limit =
-                when (loadType) {
-                  REFRESH -> state.config.initialLoadSize
-                  else -> state.config.pageSize
-                }
+          val initialResult =
+            service.fetch(
+              DataRequest(
+                pageKey = loadKey,
+                pageOffset = pageOffset,
+                limit =
+                  when (loadType) {
+                    REFRESH -> state.config.initialLoadSize
+                    else -> state.config.pageSize
+                  }
+              )
             )
+          val items = initialResult.items
+          // Remap items with content types if they're not set.
+          // Using RxJava's concatMapEager here because there's no alternative in Flow.
+          initialResult.copy(
+            items =
+              Flowable.fromIterable(items)
+                .concatMapEager { item ->
+                  item.clickUrl?.let { clickUrl ->
+                    if (item.contentType == null) {
+                      return@concatMapEager Flowable.just(
+                        item.copy(
+                          contentType =
+                            rxSingle(Dispatchers.IO) {
+                                contentTypeChecker.contentType(clickUrl) ?: ContentType.OTHER
+                              }
+                              .blockingGet()
+                        )
+                      )
+                    }
+                  }
+                  Flowable.just(item)
+                }
+                .toList()
+                .blockingGet()
           )
         }
 
