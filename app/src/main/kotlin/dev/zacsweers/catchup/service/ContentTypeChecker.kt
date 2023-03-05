@@ -11,7 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 @SingleIn(AppScope::class)
-class ContentTypeChecker @Inject constructor(private val okHttpClient: OkHttpClient) {
+class ContentTypeChecker @Inject constructor(private val okHttpClient: dagger.Lazy<OkHttpClient>) {
   suspend fun contentType(url: String): ContentType? {
     // Fast-path basic media checks
     if (url.hasMediaExtension) {
@@ -20,7 +20,7 @@ class ContentTypeChecker @Inject constructor(private val okHttpClient: OkHttpCli
     val response =
       withContext(IO) {
         try {
-          okHttpClient.newCall(Request.Builder().url(url).head().build()).execute()
+          okHttpClient.get().newCall(Request.Builder().url(url).head().build()).execute()
         } catch (e: IOException) {
           return@withContext null
         }
