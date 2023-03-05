@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Surface
@@ -209,7 +208,7 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
                           Unit,
                           onDismiss = { ImageViewerScreen.Event.NoOp }
                         ) { _, navigator ->
-                          Column(modifier = Modifier.navigationBarsPadding()) {
+                          Column {
                             // TODO icons?
                             Text(
                               modifier =

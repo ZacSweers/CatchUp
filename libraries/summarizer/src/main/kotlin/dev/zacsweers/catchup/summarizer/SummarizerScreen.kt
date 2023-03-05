@@ -90,7 +90,6 @@ constructor(
 fun Summarizer(state: SummarizerScreen.State, modifier: Modifier = Modifier) {
   val sysUi = rememberSystemUiController()
   sysUi.setSystemBarsColor(MaterialTheme.colorScheme.surface)
-  // TODO restore sysui color on back press?
   Surface(modifier.fillMaxSize()) {
     Box(Modifier.systemBarsPadding()) {
       Column(

@@ -26,6 +26,7 @@ class ConditionalSystemUiColors(
   }
 }
 
+// TODO if dark mode changes during this, it will restore the wrong colors. What do we do?
 @Composable
 fun rememberConditionalSystemUiColors(
   systemUiController: SystemUiController = rememberSystemUiController()
