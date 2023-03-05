@@ -310,7 +310,8 @@ private fun ListContent(
       itemsIndexed(services, key = { _, item -> item.id }) { index, item ->
         // TODO show touch response on press
         DraggableItem(dragDropState, index) { isDragging ->
-          val elevation by animateDpAsState(if (isDragging) 4.dp else 1.dp)
+          val elevation by
+            animateDpAsState(if (isDragging) 4.dp else 1.dp, label = "Item Elevation")
           // TODO using m2 card because wtf material3 why can't you just be normal
           Card(elevation = elevation) { ServiceListItem(item) }
         }
