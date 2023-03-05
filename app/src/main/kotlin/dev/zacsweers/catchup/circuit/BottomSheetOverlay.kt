@@ -19,10 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.overlay.Overlay
 import com.slack.circuit.overlay.OverlayNavigator
-import dev.zacsweers.catchup.compose.rememberConditionalSystemUiColors
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,31 +68,21 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
       },
     )
 
-    val systemUiController = rememberSystemUiController()
-    val conditionalSystemUiColors = rememberConditionalSystemUiColors(systemUiController)
     LaunchedEffect(model, onDismiss) {
       snapshotFlow { sheetState.currentValue }
         .collect { newValue ->
           if (hasShown && newValue == SheetValue.Hidden) {
-            conditionalSystemUiColors.restore()
             // This is apparently as close as we can get to an "onDismiss" callback, which
             // unfortunately has no animation
             val result = pendingResult ?: onDismiss?.invoke() ?: error("no result!")
             navigator.finish(result)
-          } else if (newValue == SheetValue.Expanded) {
-            // TODO only if expanded runs under the status bar
-            // TODO set status bar colors
-            conditionalSystemUiColors.save()
-            // TODO don't do this in dark mode?
-            systemUiController.statusBarDarkContentEnabled = true
-          } else {
-            conditionalSystemUiColors.restore()
           }
         }
     }
     LaunchedEffect(model, onDismiss) {
-      sheetState.show()
+      // TODO why doesn't this ever hit if it's after show()
       hasShown = true
+      sheetState.show()
     }
   }
 }
