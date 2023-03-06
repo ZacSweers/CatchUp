@@ -244,6 +244,7 @@ include(
   ":libraries:base-ui",
   ":libraries:appconfig",
   ":libraries:compose-extensions",
+  ":libraries:compose-extensions:pull-refresh",
   ":libraries:di",
   ":libraries:di:android",
   ":libraries:gemoji",

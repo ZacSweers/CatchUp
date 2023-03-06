@@ -456,6 +456,7 @@ dependencies {
   implementation(project(":libraries:base-ui"))
   // Compose
   implementation(project(":libraries:compose-extensions"))
+  implementation(project(":libraries:compose-extensions:pull-refresh"))
   implementation(project(":libraries:flowbinding"))
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:gemoji"))
@@ -483,7 +484,6 @@ dependencies {
   implementation(libs.androidx.compose.animation.graphics)
   implementation(libs.androidx.compose.constraintLayout)
   implementation(libs.androidx.compose.foundation)
-  implementation(libs.androidx.compose.material)
   implementation(libs.androidx.compose.material.material3)
   implementation(libs.androidx.compose.ui)
   implementation(libs.androidx.constraintLayout)
