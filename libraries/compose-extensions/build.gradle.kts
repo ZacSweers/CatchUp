@@ -28,7 +28,6 @@ dependencies {
   api(project(":libraries:base-ui"))
   api(libs.androidx.annotations)
   api(libs.androidx.compose.foundation)
-  api(libs.androidx.compose.material)
   api(libs.androidx.compose.material.material3)
   api(libs.androidx.compose.uiTooling)
   api(libs.zoomables)
