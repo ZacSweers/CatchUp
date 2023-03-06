@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +36,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import dev.zacsweers.catchup.compose.CatchUpTheme
+import dev.zacsweers.catchup.compose.ContentAlphas
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.Mark
@@ -165,7 +165,7 @@ fun RowScope.DetailColumn(
         style = MaterialTheme.typography.bodyMedium,
         overflow = TextOverflow.Ellipsis,
         maxLines = 5,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
       )
     }
     // Author, source
@@ -210,7 +210,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
           Text(
             text = " • ",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
           )
         }
         val millis = timestamp.toEpochMilliseconds()
@@ -224,7 +224,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
               )
               .toString(),
           style = MaterialTheme.typography.labelSmall,
-          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
+          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
         )
       }
     }
@@ -233,7 +233,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
 
 @Composable
 private fun ItemFooter(item: CatchUpItem) {
-  val textColor = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
+  val textColor = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
   if (item.author != null || item.source != null) {
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
       // Author

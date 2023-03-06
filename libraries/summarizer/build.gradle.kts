@@ -51,6 +51,7 @@ dependencies {
   implementation(libs.retrofit.moshi)
   implementation(libs.sqldelight.driver.android)
   implementation(libs.androidx.compose.accompanist.systemUi)
+  implementation(libs.androidx.lifecycle.viewmodel.ktx)
   implementation(projects.libraries.di)
   implementation(projects.libraries.util)
   implementation(projects.libraries.retrofitconverters)

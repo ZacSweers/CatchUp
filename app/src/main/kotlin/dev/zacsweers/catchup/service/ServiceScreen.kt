@@ -15,10 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
@@ -57,6 +53,9 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.circuit.FullScreenOverlay
 import dev.zacsweers.catchup.di.AppScope
+import dev.zacsweers.catchup.pullrefresh.PullRefreshIndicator
+import dev.zacsweers.catchup.pullrefresh.pullRefresh
+import dev.zacsweers.catchup.pullrefresh.rememberPullRefreshState
 import dev.zacsweers.catchup.service.ServiceScreen.State.TextState
 import dev.zacsweers.catchup.service.ServiceScreen.State.VisualState
 import dev.zacsweers.catchup.summarizer.SummarizerScreen
@@ -188,7 +187,6 @@ constructor(
   }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @CircuitInject(ServiceScreen::class, AppScope::class)
 @Composable
 fun Service(state: ServiceScreen.State, modifier: Modifier = Modifier) {

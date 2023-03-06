@@ -37,8 +37,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -312,8 +313,7 @@ private fun ListContent(
         DraggableItem(dragDropState, index) { isDragging ->
           val elevation by
             animateDpAsState(if (isDragging) 4.dp else 1.dp, label = "Item Elevation")
-          // TODO using m2 card because wtf material3 why can't you just be normal
-          Card(elevation = elevation) { ServiceListItem(item) }
+          Card(elevation = CardDefaults.cardElevation(elevation)) { ServiceListItem(item) }
         }
       }
     }
