@@ -15,11 +15,10 @@ fun DisableableContent(
 ) {
   val currentContentColor = LocalContentColor.current
   CompositionLocalProvider(
-    // Magic value lifted from
-    // https://developer.android.com/jetpack/compose/designsystems/material2-material3#emphasis-and
-    LocalContentColor provides
-      if (enabled) currentContentColor else currentContentColor.copy(alpha = 0.38f),
     LocalEnabled provides enabled,
+    LocalContentColor provides
+      if (enabled) currentContentColor
+      else currentContentColor.copy(alpha = ContentAlphas.Disabled),
   ) {
     content()
   }
