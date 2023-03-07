@@ -52,7 +52,7 @@ anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
 agp-application = { id = "com.android.application", version.ref = "agp" }
 agp-library = { id = "com.android.library", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
-bugsnag = { id = "com.bugsnag.android.gradle", version = "7.3.1" }
+bugsnag = { id = "com.bugsnag.android.gradle", version = "8.0.0-beta01" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.8.1" }
