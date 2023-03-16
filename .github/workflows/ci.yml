@@ -36,15 +36,18 @@ jobs:
         run: |
           mkdir -p ~/.gradle
           touch ~/.gradle/gradle.properties
-          ./gradlew bootstrap --stacktrace
+
+      - name: Bootstrap
+        id: gradle-bootstrap
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: bootstrap --stacktrace
 
       - name: Build and run tests
         id: gradle
         uses: gradle/gradle-build-action@v2
         with:
           arguments: check :app:assembleRelease :app:lintRelease --continue --quiet
-          gradle-home-cache-cleanup: true
-          cache-read-only: false
 
       # TODO sorting/filtering on matching source files?
       - name: Get changed files

@@ -1,7 +1,5 @@
 package dev.zacsweers.catchup.compose
 
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -17,10 +15,10 @@ fun DisableableContent(
 ) {
   val currentContentColor = LocalContentColor.current
   CompositionLocalProvider(
-    LocalContentAlpha provides if (enabled) 1f else ContentAlpha.disabled,
-    LocalContentColor provides
-      if (enabled) currentContentColor else currentContentColor.copy(alpha = ContentAlpha.disabled),
     LocalEnabled provides enabled,
+    LocalContentColor provides
+      if (enabled) currentContentColor
+      else currentContentColor.copy(alpha = ContentAlphas.Disabled),
   ) {
     content()
   }

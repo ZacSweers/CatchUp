@@ -16,19 +16,16 @@
 package io.sweers.catchup.data
 
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.view.View
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.collection.ArrayMap
-import androidx.core.util.toAndroidPair
 import androidx.lifecycle.lifecycleScope
 import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.appconfig.AppConfig
@@ -37,7 +34,6 @@ import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.flowbinding.intentReceivers
-import io.sweers.catchup.service.api.ImageViewerData
 import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.MainActivity
@@ -125,23 +121,6 @@ constructor(
       meta.context.startActivity(intent)
     } else {
       openCustomTab(meta.context, uri, meta.accentColor)
-    }
-  }
-
-  private fun getActivityOptions(activity: Activity, imageData: ImageViewerData): ActivityOptions? {
-    if (imageData.image == null) return null
-    val imagePair =
-      (imageData.image to activity.getString(R.string.transition_image)).toAndroidPair()
-    val decorView = activity.window.decorView
-    val statusBackground: View = decorView.findViewById(android.R.id.statusBarBackground)
-    val navBackground: View? = decorView.findViewById(android.R.id.navigationBarBackground)
-    val statusPair = Pair(statusBackground, statusBackground.transitionName).toAndroidPair()
-
-    return if (navBackground == null) {
-      ActivityOptions.makeSceneTransitionAnimation(activity, imagePair, statusPair)
-    } else {
-      val navPair = Pair(navBackground, navBackground.transitionName).toAndroidPair()
-      ActivityOptions.makeSceneTransitionAnimation(activity, imagePair, statusPair, navPair)
     }
   }
 

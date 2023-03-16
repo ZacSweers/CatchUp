@@ -34,7 +34,6 @@ plugins {
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.apollo)
   alias(libs.plugins.licensee)
-  alias(libs.plugins.moshix)
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
@@ -43,8 +42,11 @@ plugins {
 }
 
 slack {
-  features { dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() } }
-  android { features { compose() } }
+  features {
+    compose()
+    dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
+    moshi(codegen = true)
+  }
 }
 
 val useDebugSigning: Boolean =
@@ -118,6 +120,7 @@ android {
     disable += "MissingTranslation"
     disable += "ExtraTranslation" // wrong?
     disable += "VectorPath" // Always complains about long paths as if I could do something about it
+    error += "ComposeUnstableCollections"
     checkDependencies = true
   }
   namespace = "io.sweers.catchup"
@@ -421,168 +424,47 @@ licensee {
 
 androidComponents {
   onVariants(selector().withBuildType("release")) { variant ->
-    variant.packaging.resources.excludes
-      .addAll(
-        "**/*.dot",
-        "**/*.kotlin_metadata",
-        "**/*.properties",
-        "*.properties",
-        "kotlin/**",
-        "LICENSE.txt",
-        "LICENSE_OFL",
-        "LICENSE_UNICODE",
-        "META-INF/*.kotlin_module",
-        "META-INF/*.version",
-        "META-INF/androidx.*",
-        "META-INF/CHANGES",
-        "META-INF/LICENSE",
-        "META-INF/LICENSE.txt",
-        "META-INF/NOTICE",
-        "META-INF/NOTICE.txt",
-        "META-INF/README.md",
-        "META-INF/rxjava.properties",
-        "META-INF/services/javax.annotation.processing.Processor",
-      )
+    variant.packaging.resources.excludes.addAll(
+      "**/*.dot",
+      "**/*.kotlin_metadata",
+      "**/*.properties",
+      "*.properties",
+      "kotlin/**",
+      "LICENSE.txt",
+      "LICENSE_OFL",
+      "LICENSE_UNICODE",
+      "META-INF/*.kotlin_module",
+      "META-INF/*.version",
+      "META-INF/androidx.*",
+      "META-INF/CHANGES",
+      "META-INF/LICENSE",
+      "META-INF/LICENSE.txt",
+      "META-INF/NOTICE",
+      "META-INF/NOTICE.txt",
+      "META-INF/README.md",
+      "META-INF/rxjava.properties",
+      "META-INF/services/javax.annotation.processing.Processor",
+    )
   }
 }
 
 dependencies {
-  kapt(project(":libraries:tooling:spi-visualizer"))
-  kapt(project(":libraries:tooling:spi-multibinds-validator"))
-
-  implementation(libs.markwon.core)
-  implementation(libs.markwon.extStrikethrough)
-  implementation(libs.markwon.extTables)
-  implementation(libs.markwon.extTasklist)
-  implementation(libs.markwon.html)
-  implementation(libs.markwon.image)
-  implementation(libs.markwon.imageCoil)
-  implementation(libs.markwon.linkify)
-  //  implementation(libs.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
-  implementation(project(":service-api"))
-  implementation(project(":libraries:base-ui"))
-  implementation(project(":libraries:appconfig"))
-  implementation(project(":libraries:gemoji"))
-  implementation(project(":libraries:kotlinutil"))
-  implementation(project(":libraries:smmry"))
-  implementation(project(":libraries:util"))
-  implementation(project(":libraries:flowbinding"))
-
-  // Support libs
-  implementation(libs.androidx.annotations)
-  implementation(libs.androidx.appCompat)
-  implementation(libs.androidx.core)
-  implementation(libs.androidx.constraintLayout)
-  implementation(libs.androidx.compose.constraintLayout)
-  implementation(libs.androidx.customTabs)
-  implementation(libs.androidx.design)
-  implementation(libs.androidx.emoji)
-  implementation(libs.androidx.emojiAppcompat)
-  implementation(libs.androidx.fragment)
-  implementation(libs.androidx.fragmentKtx)
-  debugImplementation(libs.androidx.drawerLayout)
-  implementation(libs.androidx.preference)
-  implementation(libs.androidx.preferenceKtx)
-  implementation(libs.androidx.viewPager2)
-  implementation(libs.androidx.swipeRefresh)
-
-  // Arch components
-  implementation(libs.androidx.lifecycle.extensions)
-  implementation(libs.androidx.room.runtime)
-  implementation(libs.androidx.room.rxJava3)
-  implementation(libs.androidx.room.ktx)
-  implementation(libs.androidx.room.paging)
   ksp(libs.androidx.room.apt)
+  ksp(libs.circuit.codegen)
 
+  implementation(project(":libraries:appconfig"))
+  implementation(project(":libraries:base-ui"))
   // Compose
   implementation(project(":libraries:compose-extensions"))
-  implementation(libs.androidx.compose.ui)
-  debugImplementation(libs.androidx.compose.uiTooling)
-  implementation(libs.androidx.compose.foundation)
-  implementation(libs.androidx.compose.material)
-
-  // Kotlin
-  implementation(libs.androidx.coreKtx)
-  implementation(libs.kotlin.coroutines)
-  implementation(libs.kotlin.coroutinesAndroid)
-  implementation(libs.kotlin.coroutinesRx)
-  implementation(libs.androidx.lifecycle.ktx)
-
-  // Moshi
-  implementation(libs.moshi.core)
-  implementation(libs.moshi.shimo)
-
-  // Firebase
-  implementation(libs.firebase.core)
-  implementation(libs.firebase.database)
-
-  // Square/JW
-  implementation(libs.okhttp.core)
-  implementation(libs.misc.okio)
-  implementation(libs.retrofit.core)
-  implementation(libs.retrofit.moshi)
-  implementation(libs.retrofit.rxJava3)
-  implementation(libs.rx.android)
-  implementation(libs.rx.java)
-  implementation(libs.misc.tapTargetView)
-  implementation(libs.misc.timber)
-  implementation(libs.misc.debug.processPhoenix)
-  debugImplementation(libs.misc.debug.madge)
-  debugImplementation(libs.misc.debug.scalpel)
-  debugImplementation(libs.misc.debug.telescope)
-  debugImplementation(libs.okhttp.debug.loggingInterceptor)
-  debugImplementation(libs.retrofit.debug.mock)
-
-  releaseImplementation(libs.misc.bugsnag)
-
-  // Coil
-  implementation(libs.coil.base)
-  implementation(libs.coil.default)
-  implementation(libs.coil.gif)
-
-  // Misc
-  implementation(libs.autodispose.core)
-  implementation(libs.autodispose.android)
-  implementation(libs.autodispose.lifecycle)
-  implementation(libs.misc.byteunits)
-  implementation(libs.misc.inboxRecyclerView)
-  implementation(libs.misc.lottie)
-  implementation(libs.misc.recyclerViewAnimators)
-  implementation(libs.rx.relay)
-  implementation(libs.rx.dogTag)
-  implementation(libs.rx.dogTagAutoDispose)
-  implementation(libs.misc.moshiLazyAdapters)
-  implementation(libs.autodispose.androidxLifecycle)
-  implementation(libs.kotlin.datetime)
-
-  implementation(libs.androidx.compose.animation.graphics)
-  implementation(libs.androidx.paging.compose)
-  implementation(libs.circuit.core)
-  ksp(libs.circuit.codegen)
-  implementation(libs.circuit.codegenAnnotations)
-  implementation(libs.circuit.overlay)
-  implementation(libs.circuit.retained)
-  implementation(libs.androidx.compose.material.material3)
-  implementation(libs.coil.compose)
-  implementation(libs.androidx.compose.accompanist.systemUi)
-  implementation(libs.androidx.compose.accompanist.placeholder)
-  implementation(libs.androidx.activity.compose)
-
-  implementation(libs.androidx.datastore.preferences)
-  implementation(libs.kotlinx.immutable)
-  implementation(libs.sqldelight.driver.android)
-  implementation(libs.sqldelight.paging)
-  implementation(libs.sqldelight.coroutines)
-  implementation(libs.sqldelight.primitiveAdapters)
-  implementation(libs.misc.composeSettings)
-  implementation(libs.misc.composeSettings.datastore)
-
-  // Apollo
-  implementation(libs.apollo.httpcache)
-  implementation(libs.apollo.normalizedCache)
-  implementation(libs.apollo.runtime)
-
+  implementation(project(":libraries:compose-extensions:pull-refresh"))
+  implementation(project(":libraries:flowbinding"))
   implementation(project(":libraries:gemoji"))
+  implementation(project(":libraries:gemoji"))
+  implementation(project(":libraries:kotlinutil"))
+  implementation(project(":libraries:summarizer"))
+  implementation(project(":libraries:util"))
+  //  implementation(libs.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
+  implementation(project(":service-api"))
   implementation(project(":services:designernews"))
   implementation(project(":services:dribbble"))
   implementation(project(":services:github"))
@@ -593,17 +475,79 @@ dependencies {
   implementation(project(":services:slashdot"))
   implementation(project(":services:unsplash"))
   implementation(project(":services:uplabs"))
-  //  implementation(project(":services:imgur"))
-  //  implementation(project(":services:newsapi"))
-
-  // Flipper
-  debugImplementation(libs.misc.debug.flipper)
-  debugImplementation(libs.misc.debug.flipperNetwork)
-  debugImplementation(libs.misc.debug.soLoader)
-
-  // To force a newer version that doesn't conflict ListenableFuture
-  debugImplementation(libs.misc.debug.guava)
-
+  implementation(libs.androidx.activity.compose)
+  // Support libs
+  implementation(libs.androidx.annotations)
+  implementation(libs.androidx.appCompat)
+  implementation(libs.androidx.compose.accompanist.placeholder)
+  implementation(libs.androidx.compose.accompanist.systemUi)
+  implementation(libs.androidx.compose.animation.graphics)
+  implementation(libs.androidx.compose.constraintLayout)
+  implementation(libs.androidx.compose.foundation)
+  implementation(libs.androidx.compose.material.material3)
+  implementation(libs.androidx.compose.ui)
+  implementation(libs.androidx.constraintLayout)
+  implementation(libs.androidx.core)
+  // Kotlin
+  implementation(libs.androidx.coreKtx)
+  implementation(libs.androidx.customTabs)
+  implementation(libs.androidx.datastore.preferences)
+  implementation(libs.androidx.design)
+  implementation(libs.androidx.emoji)
+  implementation(libs.androidx.emojiAppcompat)
+  implementation(libs.androidx.fragment)
+  implementation(libs.androidx.fragmentKtx)
+  // Arch components
+  implementation(libs.androidx.lifecycle.extensions)
+  implementation(libs.androidx.lifecycle.ktx)
+  implementation(libs.androidx.paging.compose)
+  implementation(libs.androidx.preference)
+  implementation(libs.androidx.preferenceKtx)
+  implementation(libs.androidx.room.ktx)
+  implementation(libs.androidx.room.paging)
+  implementation(libs.androidx.room.runtime)
+  implementation(libs.androidx.room.rxJava3)
+  implementation(libs.androidx.swipeRefresh)
+  implementation(libs.androidx.viewPager2)
+  // Apollo
+  implementation(libs.apollo.httpcache)
+  implementation(libs.apollo.normalizedCache)
+  implementation(libs.apollo.runtime)
+  implementation(libs.autodispose.android)
+  implementation(libs.autodispose.androidxLifecycle)
+  // Misc
+  implementation(libs.autodispose.core)
+  implementation(libs.autodispose.lifecycle)
+  implementation(libs.circuit.codegenAnnotations)
+  implementation(libs.circuit.core)
+  implementation(libs.circuit.overlay)
+  implementation(libs.circuit.retained)
+  // Coil
+  implementation(libs.coil.base)
+  implementation(libs.coil.compose)
+  implementation(libs.coil.default)
+  implementation(libs.coil.gif)
+  // Firebase
+  implementation(libs.firebase.core)
+  implementation(libs.firebase.database)
+  implementation(libs.kotlin.coroutines)
+  implementation(libs.kotlin.coroutinesAndroid)
+  implementation(libs.kotlin.coroutinesRx)
+  implementation(libs.kotlin.datetime)
+  implementation(libs.kotlinx.immutable)
+  implementation(libs.markwon.core)
+  implementation(libs.markwon.extStrikethrough)
+  implementation(libs.markwon.extTables)
+  implementation(libs.markwon.extTasklist)
+  implementation(libs.markwon.html)
+  implementation(libs.markwon.image)
+  implementation(libs.markwon.imageCoil)
+  implementation(libs.markwon.linkify)
+  implementation(libs.misc.byteunits)
+  implementation(libs.misc.composeSettings)
+  implementation(libs.misc.composeSettings.datastore)
+  implementation(libs.misc.debug.processPhoenix)
+  implementation(libs.misc.inboxRecyclerView)
   // Hyperion
   //  releaseImplementation(libs.hyperion.core.release)
   //  debugImplementation(libs.hyperion.core.debug)
@@ -616,26 +560,64 @@ dependencies {
   //  debugImplementation(libs.hyperion.plugins.measurement)
   //  debugImplementation(libs.hyperion.plugins.phoenix)
   //  debugImplementation(libs.hyperion.plugins.recorder)
-  //  debugImplementation(libs.hyperion.plugins.sharedPreferences)
   //  debugImplementation(libs.hyperion.plugins.timber)
-
   implementation(libs.misc.jsr305)
+  implementation(libs.misc.lottie)
+  implementation(libs.misc.moshiLazyAdapters)
+  implementation(libs.misc.okio)
+  implementation(libs.misc.recyclerViewAnimators)
+  implementation(libs.misc.tapTargetView)
+  implementation(libs.misc.timber)
+  // Moshi
+  implementation(libs.moshi.core)
+  implementation(libs.moshi.shimo)
+  // Square/JW
+  implementation(libs.okhttp.core)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.moshi)
+  implementation(libs.retrofit.rxJava3)
+  implementation(libs.rx.android)
+  implementation(libs.rx.dogTag)
+  implementation(libs.rx.dogTagAutoDispose)
+  implementation(libs.rx.java)
+  implementation(libs.rx.relay)
+  implementation(libs.sqldelight.coroutines)
+  implementation(libs.sqldelight.driver.android)
+  implementation(libs.sqldelight.paging)
+  implementation(libs.sqldelight.primitiveAdapters)
   implementation(projects.libraries.di)
   implementation(projects.libraries.di.android)
 
+  releaseImplementation(libs.misc.bugsnag)
+  releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
+
+  debugImplementation(libs.androidx.compose.uiTooling)
+  debugImplementation(libs.androidx.drawerLayout)
+  //  implementation(project(":services:imgur"))
+  //  implementation(project(":services:newsapi"))
+  // Flipper
+  debugImplementation(libs.misc.debug.flipper)
+  debugImplementation(libs.misc.debug.flipperNetwork)
+  // To force a newer version that doesn't conflict ListenableFuture
+  debugImplementation(libs.misc.debug.guava)
+  debugImplementation(libs.misc.debug.madge)
+  debugImplementation(libs.misc.debug.scalpel)
+  debugImplementation(libs.misc.debug.soLoader)
+  debugImplementation(libs.misc.debug.telescope)
+  // LeakCanary
+  debugImplementation(libs.misc.leakCanary)
+  debugImplementation(libs.okhttp.debug.loggingInterceptor)
+  debugImplementation(libs.retrofit.debug.mock)
+
+  kapt(project(":libraries:tooling:spi-multibinds-validator"))
+  kapt(project(":libraries:tooling:spi-visualizer"))
+
+  testImplementation(libs.misc.jsr305)
   // Test
   testImplementation(libs.rx.relay)
-  androidTestImplementation(libs.rx.java)
-  androidTestImplementation(libs.misc.jsr305)
-  testImplementation(libs.misc.jsr305)
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
 
-  // LeakCanary
-  debugImplementation(libs.misc.leakCanary)
-  releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
-
-  // Chuck
-  //  debugImplementation(libs.chuck.debug)
-  //  releaseImplementation(libs.chuck.release)
+  androidTestImplementation(libs.misc.jsr305)
+  androidTestImplementation(libs.rx.java)
 }

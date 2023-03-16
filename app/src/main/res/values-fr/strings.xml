@@ -17,8 +17,6 @@
 <resources>
   <string name="app_name" translatable="false">CatchUp</string>
   <string name="retry">Réessayer</string>
-  <string name="pref_services">Services</string>
-  <string name="pref_services_summary">Configurer les préférences des services</string>
   <string name="pref_clear_cache">Vider le cache</string>
   <string name="pref_clear_cache_summary">Vide le cache courant</string>
   <string name="about">À propos</string>
@@ -32,11 +30,7 @@
   <string name="pref_smart_linking_title">Activer "Smart linking"</string>
   <string name="pref_smart_linking_summary">"Smart linking" permet d\'ouvrir les liens dans l\'application dédiée si disponible, sinon dans un onglet personnalisé Chrome ou dans un navigateur.</string>
   <string name="title_activity_settings">Paramètres</string>
-  <string name="summarizing">Synthèse en cours…</string>
   <string name="clear_cache_success">%s vidé</string>
-  <string name="connection_issue">Erreur de connexion</string>
-  <string name="api_issue">Erreur de l\'API</string>
-  <string name="unknown_issue">Erreur inconnue</string>
   <string name="about_description">Une application pour rester à jour sur divers sujets.</string>
   <string name="about_version">Version %1s</string>
   <string name="about_by">Par</string>

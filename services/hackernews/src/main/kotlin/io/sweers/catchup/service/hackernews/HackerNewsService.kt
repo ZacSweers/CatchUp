@@ -16,11 +16,6 @@
 package io.sweers.catchup.service.hackernews
 
 import android.content.Context
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import catchup.service.hackernews.R
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
@@ -33,14 +28,11 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.android.FragmentKey
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleEmitter
-import io.sweers.catchup.base.ui.ViewModelAssistedFactory
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -50,10 +42,8 @@ import io.sweers.catchup.service.api.ServiceException
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
-import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
-import io.sweers.catchup.service.hackernews.preview.UrlPreviewModule
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -61,8 +51,6 @@ import javax.inject.Qualifier
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.rx3.asFlow
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-
-typealias ViewModelCreator = ViewModelAssistedFactory<out ViewModel>
 
 @Qualifier private annotation class InternalApi
 
@@ -150,7 +138,6 @@ constructor(
             source = url?.let { it.toHttpUrlOrNull()!!.host },
             tag = realType()?.tag(nullIfStory = true),
             itemClickUrl = url,
-            summarizationInfo = SummarizationInfo.from(url),
             mark =
               kids?.size?.let {
                 createCommentMark(count = it, clickUrl = "https://news.ycombinator.com/item?id=$id")
@@ -178,7 +165,6 @@ abstract class HackerNewsMetaModule {
 
     @InternalApi
     @Provides
-    @Reusable
     internal fun provideHackerNewsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
@@ -187,82 +173,34 @@ abstract class HackerNewsMetaModule {
         R.drawable.logo_hn,
         pagesAreNumeric = true,
         firstPageKey = 0,
-        //        deeplinkFragment = HackerNewsCommentsFragment::class.java
+        enabled = false // HN is broken for some reason
       )
   }
 }
 
 @ContributesTo(AppScope::class)
-@Module(
-  includes =
-    [HackerNewsMetaModule::class, FragmentViewModelFactoryModule::class, UrlPreviewModule::class]
-)
-abstract class HackerNewsModule {
-
-  @Binds
-  @IntoMap
-  @FragmentKey(HackerNewsCommentsFragment::class)
-  internal abstract fun bindHnFragment(mainFragment: HackerNewsCommentsFragment): Fragment
-
-  companion object {
-    @Provides
-    internal fun provideDatabase(@ApplicationContext context: Context): FirebaseDatabase {
-      val app =
-        FirebaseApp.getApps(context).firstOrNull()
-          ?: run {
-            val resources = context.resources
-            FirebaseApp.initializeApp(
-              context,
-              FirebaseOptions.Builder()
-                .setApiKey(resources.getString(R.string.google_api_key))
-                .setApplicationId(resources.getString(R.string.google_app_id))
-                .setDatabaseUrl("https://hacker-news.firebaseio.com/")
-                .setGaTrackingId(resources.getString(R.string.ga_trackingId))
-                .setGcmSenderId(resources.getString(R.string.gcm_defaultSenderId))
-                .setStorageBucket(resources.getString(R.string.google_storage_bucket))
-                .setProjectId(resources.getString(R.string.project_id))
-                .build(),
-              "HN"
-            )
-          }
-      return FirebaseDatabase.getInstance(app)
-    }
-  }
-}
-
-// TODO generify this somewhere once something other than HN does it
 @Module
-object FragmentViewModelFactoryModule {
+object HackerNewsModule {
   @Provides
-  fun viewModelFactory(
-    viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, ViewModelCreator>
-  ): ViewModelProviderFactoryInstantiator {
-    return object : ViewModelProviderFactoryInstantiator {
-      override fun create(fragment: Fragment): ViewModelProvider.Factory {
-        return object : AbstractSavedStateViewModelFactory(fragment, null) {
-          override fun <T : ViewModel> create(
-            key: String,
-            modelClass: Class<T>,
-            handle: SavedStateHandle // weird name because kapt doesn't preserve the names in the
-            // constructor
-            ): T {
-            // TODO this is ugly extract these constants
-            handle["detailKey"] = fragment.requireArguments().getString("detailKey")!!
-            handle["detailTitle"] = fragment.requireArguments().getString("detailTitle")
-            @Suppress("UNCHECKED_CAST") return viewModels.getValue(modelClass).create(handle) as T
-          }
+  internal fun provideDatabase(@ApplicationContext context: Context): FirebaseDatabase {
+    val app =
+      FirebaseApp.getApps(context).firstOrNull()
+        ?: run {
+          val resources = context.resources
+          FirebaseApp.initializeApp(
+            context,
+            FirebaseOptions.Builder()
+              .setApiKey(resources.getString(R.string.google_api_key))
+              .setApplicationId(resources.getString(R.string.google_app_id))
+              .setDatabaseUrl("https://hacker-news.firebaseio.com/")
+              .setGaTrackingId(resources.getString(R.string.ga_trackingId))
+              .setGcmSenderId(resources.getString(R.string.gcm_defaultSenderId))
+              .setStorageBucket(resources.getString(R.string.google_storage_bucket))
+              .setProjectId(resources.getString(R.string.project_id))
+              .build(),
+            "HN"
+          )
         }
-      }
-    }
-  }
-
-  // This exists to avoid the static fragment dependency for dagger. We don't place fragments
-  // directly on the DI graph, but rather route them all through a fragment factory that only
-  // produces new instances. Instead we defer initialization to the fragment consuming the
-  // ViewModelProvider.Factory to pass itself in a deferred fashion.
-  //
-  // I initially named this ViewModelProviderFactoryFactory, and repent for my sins.
-  interface ViewModelProviderFactoryInstantiator {
-    fun create(fragment: Fragment): ViewModelProvider.Factory
+    return FirebaseDatabase.getInstance(app)
   }
 }

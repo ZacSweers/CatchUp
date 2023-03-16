@@ -5,9 +5,10 @@ plugins {
 }
 
 dependencies {
-  kapt(libs.auto.service)
-  compileOnly(libs.auto.service)
-
   implementation(libs.dagger.runtime)
   implementation(libs.dagger.spi)
+
+  compileOnly(libs.auto.service)
+
+  kapt(libs.auto.service)
 }

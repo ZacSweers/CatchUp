@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,13 +35,12 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material3.fade
-import com.google.accompanist.placeholder.material3.placeholder
 import dev.zacsweers.catchup.compose.CatchUpTheme
+import dev.zacsweers.catchup.compose.ContentAlphas
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.Mark
+import io.sweers.catchup.service.api.canBeSummarized
 import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.primaryLocale
 import kotlin.time.Duration.Companion.hours
@@ -55,8 +53,9 @@ fun TextServiceUi(
   themeColor: Color,
   onRefreshChange: (Boolean) -> Unit,
   eventSink: (ServiceScreen.Event) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-  LazyColumn {
+  LazyColumn(modifier = modifier) {
     items(
       items = lazyItems,
       key = CatchUpItem::id,
@@ -64,9 +63,16 @@ fun TextServiceUi(
       if (item == null) {
         PlaceholderItem(themeColor)
       } else {
+        val onLongClick =
+          if (item.canBeSummarized) {
+            { eventSink(ServiceScreen.Event.ItemLongClicked(item)) }
+          } else {
+            null
+          }
         ClickableItem(
           modifier = Modifier.animateItemPlacement(),
-          onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) }
+          onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
+          onLongClick = onLongClick
         ) {
           TextItem(item, themeColor) { eventSink(ServiceScreen.Event.MarkClicked(item)) }
         }
@@ -87,7 +93,6 @@ fun PlaceholderItem(themeColor: Color) {
       tag = "Placeholder",
     ),
     themeColor,
-    showPlaceholder = true,
   )
 }
 
@@ -95,14 +100,14 @@ fun PlaceholderItem(themeColor: Color) {
 fun TextItem(
   item: CatchUpItem,
   themeColor: Color,
-  showPlaceholder: Boolean = false,
+  modifier: Modifier = Modifier,
   onMarkClick: () -> Unit = {}
 ) {
   Row(
-    modifier = Modifier.padding(16.dp),
+    modifier = modifier.padding(16.dp),
     verticalAlignment = Alignment.CenterVertically,
   ) {
-    DetailColumn(item, themeColor, showPlaceholder = showPlaceholder)
+    DetailColumn(item, themeColor)
     item.mark?.let { mark ->
       Column(
         modifier =
@@ -127,11 +132,6 @@ fun TextItem(
               text.toLong().format()
             } else text
           Text(
-            modifier =
-              Modifier.placeholder(
-                visible = showPlaceholder,
-                highlight = PlaceholderHighlight.fade(),
-              ),
             text = "${mark.textPrefix.orEmpty()}$finalText",
             style = MaterialTheme.typography.labelSmall,
             color = themeColor
@@ -147,18 +147,12 @@ fun RowScope.DetailColumn(
   item: CatchUpItem,
   themeColor: Color,
   modifier: Modifier = Modifier,
-  showPlaceholder: Boolean = false,
 ) {
   Column(modifier = modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
     // Score, tag, timestamp
-    ItemHeader(item, themeColor, showPlaceholder)
+    ItemHeader(item, themeColor)
     // Title
     Text(
-      modifier =
-        Modifier.placeholder(
-          visible = showPlaceholder,
-          highlight = PlaceholderHighlight.fade(),
-        ),
       text = item.title,
       style = MaterialTheme.typography.titleMedium,
       overflow = TextOverflow.Ellipsis,
@@ -171,25 +165,20 @@ fun RowScope.DetailColumn(
         style = MaterialTheme.typography.bodyMedium,
         overflow = TextOverflow.Ellipsis,
         maxLines = 5,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
       )
     }
     // Author, source
-    ItemFooter(item, showPlaceholder = showPlaceholder)
+    ItemFooter(item)
   }
 }
 
 @Composable
-private fun ItemHeader(item: CatchUpItem, themeColor: Color, showPlaceholder: Boolean) {
+private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
   if (item.score != null || item.tag != null || item.timestamp != null) {
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
       item.score?.let { score ->
         Text(
-          modifier =
-            Modifier.placeholder(
-              visible = showPlaceholder,
-              highlight = PlaceholderHighlight.fade(),
-            ),
           text = "${score.first} ${score.second.toLong().format()}",
           fontWeight = FontWeight.Bold,
           style = MaterialTheme.typography.labelSmall,
@@ -207,11 +196,6 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color, showPlaceholder: Bo
         }
         val primaryLocale = LocalContext.current.primaryLocale
         Text(
-          modifier =
-            Modifier.placeholder(
-              visible = showPlaceholder,
-              highlight = PlaceholderHighlight.fade(),
-            ),
           text =
             tag.replaceFirstChar {
               if (it.isLowerCase()) it.titlecase(primaryLocale) else it.toString()
@@ -226,16 +210,11 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color, showPlaceholder: Bo
           Text(
             text = " • ",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
           )
         }
         val millis = timestamp.toEpochMilliseconds()
         Text(
-          modifier =
-            Modifier.placeholder(
-              visible = showPlaceholder,
-              highlight = PlaceholderHighlight.fade(),
-            ),
           text =
             DateUtils.getRelativeTimeSpanString(
                 millis,
@@ -245,7 +224,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color, showPlaceholder: Bo
               )
               .toString(),
           style = MaterialTheme.typography.labelSmall,
-          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
+          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
         )
       }
     }
@@ -253,24 +232,15 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color, showPlaceholder: Bo
 }
 
 @Composable
-private fun ItemFooter(item: CatchUpItem, showPlaceholder: Boolean = false) {
-  val textColor = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
+private fun ItemFooter(item: CatchUpItem) {
+  val textColor = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
   if (item.author != null || item.source != null) {
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
       // Author
       item.author
         ?.takeUnless { it.isBlank() }
         ?.let { author ->
-          Text(
-            modifier =
-              Modifier.placeholder(
-                visible = showPlaceholder,
-                highlight = PlaceholderHighlight.fade(),
-              ),
-            text = author,
-            style = MaterialTheme.typography.labelSmall,
-            color = textColor
-          )
+          Text(text = author, style = MaterialTheme.typography.labelSmall, color = textColor)
         }
       // Source
       item.source
@@ -279,16 +249,7 @@ private fun ItemFooter(item: CatchUpItem, showPlaceholder: Boolean = false) {
           if (item.author != null) {
             Text(text = " — ", style = MaterialTheme.typography.labelSmall, color = textColor)
           }
-          Text(
-            modifier =
-              Modifier.placeholder(
-                visible = showPlaceholder,
-                highlight = PlaceholderHighlight.fade(),
-              ),
-            text = source,
-            style = MaterialTheme.typography.labelSmall,
-            color = textColor
-          )
+          Text(text = source, style = MaterialTheme.typography.labelSmall, color = textColor)
         }
     }
   }

@@ -22,12 +22,12 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
@@ -79,6 +79,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               ),
             indexInResponse = index + request.pageOffset,
             serviceId = meta().id,
+            contentType = ContentType.HTML,
           )
         }
       }
@@ -99,7 +100,6 @@ abstract class DesignerNewsMetaModule {
 
     @InternalApi
     @Provides
-    @Reusable
     internal fun provideDesignerNewsMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,

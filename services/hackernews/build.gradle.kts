@@ -20,7 +20,6 @@ plugins {
   id("com.android.library")
   kotlin("android")
   kotlin("plugin.noarg")
-  alias(libs.plugins.moshix)
 }
 
 android {
@@ -35,6 +34,7 @@ android {
 slack {
   features {
     dagger()
+    moshi(codegen = true)
   }
 }
 
@@ -68,25 +68,24 @@ noArg {
 
 dependencies {
   api(project(":service-api"))
-  implementation(project(":libraries:util"))
-  implementation(project(":libraries:base-ui"))
+  api(libs.androidx.annotations)
+  api(libs.androidx.design)
+  api(libs.androidx.fragmentKtx)
+  api(libs.dagger.runtime)
+  api(libs.rx.java)
 
-  implementation(libs.androidx.swipeRefresh)
+  implementation(project(":libraries:base-ui"))
+  implementation(project(":libraries:util"))
+  implementation(libs.androidx.constraintLayout)
   implementation(libs.androidx.lifecycle.viewmodel.core)
   implementation(libs.androidx.lifecycle.viewmodel.ktx)
   implementation(libs.androidx.lifecycle.viewmodel.savedState)
-  implementation(libs.androidx.constraintLayout)
+  implementation(libs.androidx.swipeRefresh)
+  implementation(libs.coil.default)
   implementation(libs.firebase.database)
+  implementation(libs.kotlin.coroutinesRx)
+  implementation(libs.kotlin.datetime)
+  implementation(libs.moshi.core)
   implementation(libs.retrofit.core)
   implementation(libs.retrofit.moshi)
-  implementation(libs.moshi.core)
-  implementation(libs.coil.default)
-  implementation(libs.kotlin.datetime)
-  implementation(libs.kotlin.coroutinesRx)
-
-  api(libs.androidx.design)
-  api(libs.androidx.fragmentKtx)
-  api(libs.androidx.annotations)
-  api(libs.dagger.runtime)
-  api(libs.rx.java)
 }

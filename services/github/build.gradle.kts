@@ -52,23 +52,22 @@ slack {
 }
 
 dependencies {
-  compileOnly(libs.misc.javaxInject)
-
-  implementation(project(":libraries:gemoji"))
-  implementation(project(":libraries:retrofitconverters"))
-  implementation(project(":libraries:util"))
-  implementation(libs.misc.jsoup)
-  implementation(libs.retrofit.rxJava3)
-  implementation(libs.okhttp.core)
-  implementation(libs.kotlin.datetime)
-  implementation(libs.kotlin.coroutinesRx)
-
-  // Apollo
-  implementation(libs.apollo.runtime)
-  implementation(libs.apollo.httpcache)
-
   api(project(":service-api"))
   api(libs.androidx.annotations)
   api(libs.dagger.runtime)
   api(libs.rx.java)
+
+  implementation(project(":libraries:gemoji"))
+  implementation(project(":libraries:retrofitconverters"))
+  implementation(project(":libraries:util"))
+  implementation(libs.apollo.httpcache)
+  // Apollo
+  implementation(libs.apollo.runtime)
+  implementation(libs.kotlin.coroutinesRx)
+  implementation(libs.kotlin.datetime)
+  implementation(libs.misc.jsoup)
+  implementation(libs.okhttp.core)
+  implementation(libs.retrofit.rxJava3)
+
+  compileOnly(libs.misc.javaxInject)
 }

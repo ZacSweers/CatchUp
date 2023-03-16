@@ -16,15 +16,15 @@
 package io.sweers.catchup.ui.activity
 
 import android.app.Activity
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.core.view.WindowCompat
-import androidx.fragment.app.Fragment
 import com.slack.circuit.CircuitCompositionLocals
 import com.slack.circuit.CircuitConfig
 import com.slack.circuit.NavigableCircuitContent
@@ -35,26 +35,21 @@ import com.slack.circuit.rememberCircuitNavigator
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
-import dagger.Provides
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.circuit.IntentAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
 import dev.zacsweers.catchup.di.android.ActivityKey
 import io.sweers.catchup.CatchUpPreferences
-import io.sweers.catchup.base.ui.BaseActivity
 import io.sweers.catchup.base.ui.RootContent
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.home.HomeScreen
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Qualifier
+import timber.log.Timber
 
 @ActivityKey(MainActivity::class)
 @ContributesMultibinding(AppScope::class, boundType = Activity::class)
@@ -63,17 +58,15 @@ class MainActivity
 constructor(
   private val customTab: CustomTabActivityHelper,
   private val linkManager: LinkManager,
-  private val syllabus: Syllabus,
   private val circuitConfig: CircuitConfig,
   private val catchUpPreferences: CatchUpPreferences,
   private val rootContent: RootContent,
-  override val appConfig: AppConfig,
-) : BaseActivity() {
+  private val appConfig: AppConfig,
+) : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     WindowCompat.setDecorFitsSystemWindows(window, false)
-    syllabus.bind(this)
 
     setContent {
       val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
@@ -84,6 +77,11 @@ constructor(
         } else {
           forceNight
         }
+      SideEffect {
+        Timber.d(
+          "Setting theme to $useDarkTheme. dayNightAuto: $dayNightAuto, forceNight: $forceNight"
+        )
+      }
       CatchUpTheme(useDarkTheme = useDarkTheme) {
         CircuitCompositionLocals(circuitConfig) {
           ContentWithOverlays {
@@ -94,6 +92,7 @@ constructor(
               NavigableCircuitContent(
                 intentAwareNavigator,
                 backstack,
+                enableBackHandler = true,
                 decoration = ImageViewerAwareNavDecoration()
               )
             }
@@ -119,34 +118,22 @@ constructor(
     super.onDestroy()
   }
 
+  @Deprecated("Deprecated in Java")
+  override fun onBackPressed() {
+    if (appConfig.sdkInt == 29 && isTaskRoot) {
+      // https://twitter.com/Piwai/status/1169274622614704129
+      // https://issuetracker.google.com/issues/139738913
+      finishAfterTransition()
+    } else {
+      super.onBackPressed()
+    }
+  }
+
   @ContributesTo(AppScope::class)
   @Module
   abstract class ServiceIntegrationModule {
-    companion object {
-      // TODO de-scope
-
-      @SingleIn(AppScope::class)
-      @Provides
-      @FinalServices
-      fun provideFinalServices(
-        serviceMetas: @JvmSuppressWildcards Map<String, ServiceMeta>,
-        sharedPreferences: SharedPreferences,
-        services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-      ): @JvmSuppressWildcards Map<String, Provider<Service>> {
-        return services.filter { (key, _) ->
-          serviceMetas.getValue(key).enabled &&
-            sharedPreferences.getBoolean(serviceMetas.getValue(key).enabledPreferenceKey, true)
-        }
-      }
-    }
-
     @Multibinds abstract fun services(): @JvmSuppressWildcards Map<String, Service>
 
     @Multibinds abstract fun serviceMetas(): @JvmSuppressWildcards Map<String, ServiceMeta>
-
-    @Multibinds
-    abstract fun fragmentCreators(): @JvmSuppressWildcards Map<Class<out Fragment>, Fragment>
   }
 }
-
-@Qualifier annotation class FinalServices

@@ -15,12 +15,14 @@
  */
 package io.sweers.catchup.service.reddit.model
 
+import androidx.annotation.Keep
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.datetime.Instant
 
-sealed class RedditObject
+@Keep sealed class RedditObject
 
+@Keep
 interface RedditSubmission {
   val author: String
   @Json(name = "author_flair_text") val authorFlairText: String?
@@ -36,6 +38,7 @@ interface RedditSubmission {
   val ups: Int
 }
 
+@Keep
 @JsonClass(generateAdapter = true)
 data class RedditComment(
   val body: String,
@@ -67,6 +70,7 @@ data class RedditComment(
   override val ups: Int
 ) : RedditObject(), RedditSubmission
 
+@Keep
 @JsonClass(generateAdapter = true)
 data class RedditLink(
   val clicked: Boolean,
@@ -99,6 +103,7 @@ data class RedditLink(
   override val ups: Int
 ) : RedditObject(), RedditSubmission
 
+@Keep
 @JsonClass(generateAdapter = true)
 data class RedditListing(
   val after: String,

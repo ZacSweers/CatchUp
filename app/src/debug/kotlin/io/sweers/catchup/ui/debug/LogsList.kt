@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -31,14 +30,15 @@ import androidx.compose.ui.unit.sp
 import io.sweers.catchup.data.LumberYard
 import kotlinx.collections.immutable.ImmutableList
 
-/** A simple list UI for showing debugging logs and sharnig them. */
+/** A simple list UI for showing debugging logs and sharing them. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LogsList(entries: ImmutableList<LumberYard.Entry>, onShare: () -> Unit) {
-  LazyColumn(
-    modifier = Modifier.systemBarsPadding(),
-    contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
-  ) {
+fun LogsList(
+  entries: ImmutableList<LumberYard.Entry>,
+  modifier: Modifier = Modifier,
+  onShare: () -> Unit
+) {
+  LazyColumn(modifier = modifier, contentPadding = PaddingValues(start = 16.dp, end = 16.dp)) {
     stickyHeader(key = "header") {
       Surface {
         Row {
@@ -55,8 +55,8 @@ fun LogsList(entries: ImmutableList<LumberYard.Entry>, onShare: () -> Unit) {
 }
 
 @Composable
-fun LogEntry(entry: LumberYard.Entry) {
-  Column(modifier = Modifier.fillMaxWidth()) {
+fun LogEntry(entry: LumberYard.Entry, modifier: Modifier = Modifier) {
+  Column(modifier = modifier.fillMaxWidth()) {
     Row {
       Text(
         entry.displayLevel,

@@ -19,4 +19,10 @@
   <issue id="all">
     <ignore path="*/generated/*" />
   </issue>
+
+  <issue id="ComposeCompositionLocalUsage">
+      <option name="allowed-composition-locals" value="LocalEnabled" />
+  </issue>
+
+  <issue id="ComposeM2Api" severity="error" />
 </lint>

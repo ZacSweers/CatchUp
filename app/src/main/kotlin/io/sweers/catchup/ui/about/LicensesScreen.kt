@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,6 +61,7 @@ import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.kotlin.groupBy
@@ -132,6 +134,8 @@ private fun OssItem.toCatchUpItem(): CatchUpItem {
     description = description,
     author = license,
     itemClickUrl = clickUrl,
+    // Not summarizable
+    contentType = ContentType.OTHER,
   )
 }
 
@@ -152,7 +156,7 @@ internal fun Licenses(state: LicensesScreen.State, modifier: Modifier = Modifier
       item {
         Box(Modifier.fillParentMaxSize()) {
           ErrorItem(
-            text = "Could not load OSS licenses.",
+            text = stringResource(R.string.licenses_error),
             modifier = Modifier.align(Alignment.Center),
             onRetryClick = null,
           )

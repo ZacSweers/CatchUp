@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.exception.ApolloException
 import com.slack.circuit.CircuitUiEvent
@@ -31,6 +32,7 @@ import io.sweers.catchup.data.github.RepoReleasesQuery
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.UrlMeta
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
@@ -90,7 +92,7 @@ fun Changelog(state: ChangelogScreen.State, modifier: Modifier = Modifier) {
       item {
         Box(Modifier.fillParentMaxSize()) {
           ErrorItem(
-            text = "Could not load changelog.",
+            text = stringResource(R.string.changelog_error),
             modifier = Modifier.align(Alignment.Center),
             onRetryClick = null,
           )
@@ -154,6 +156,8 @@ constructor(
             //  description = markdownConverter.replaceMarkdownEmojisIn(description!!),
             serviceId = "changelog",
             indexInResponse = index,
+            // Not summarizable
+            contentType = ContentType.OTHER,
           )
         }
       }

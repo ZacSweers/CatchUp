@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.flowbinding
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -23,6 +24,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
+@SuppressLint("UnspecifiedRegisterReceiverFlag")
 fun Context.intentReceivers(intentFilter: IntentFilter): Flow<Intent> = callbackFlow {
   val receiver =
     object : BroadcastReceiver() {
