@@ -62,7 +62,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.6.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.8.1" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.3.0" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.3.1" }
 retry = { id = "org.gradle.test-retry", version = "1.5.2" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
 sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
