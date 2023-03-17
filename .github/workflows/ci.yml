@@ -47,6 +47,7 @@ jobs:
         run: |
           mkdir tmp
           gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
+          cat tmp/changed_files.txt
 
       - name: Compute affected projects
         id: gradle-affected-projects
