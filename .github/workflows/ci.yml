@@ -44,6 +44,8 @@ jobs:
           arguments: bootstrap --stacktrace
 
       - name: Get changed files
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           mkdir tmp
           gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
