@@ -62,7 +62,7 @@ jobs:
         id: gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: check :app:assembleRelease globalCiLint globalCiUnitTest --continue --quiet -Pslack.avoidance.affectedProjectsFile=${{ github.workspace }}/build/skippy/affected_projects.txt
+          arguments: check :app:assembleRelease globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=${{ github.workspace }}/build/skippy/affected_projects.txt
 
       - name: Filter sarif
         if: always() && github.event_name == 'pull_request'
