@@ -43,11 +43,20 @@ jobs:
         with:
           arguments: bootstrap --stacktrace
 
+      - name: Get changed files
+        run: gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
+
+      - name: Compute affected projects
+        id: gradle-bootstrap
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: computeAffectedProjects --changed-files tmp/changed_files.txt -Pslack.debug=true --stacktrace
+
       - name: Build and run tests
         id: gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: check :app:assembleRelease :app:lintRelease --continue --quiet
+          arguments: check :app:assembleRelease globalCiLint globalCiUnitTest --continue --quiet -Pslack.avoidance.affectedProjectsFile=${{ github.workspace }}/build/skippy/affected_projects.txt
 
       # TODO sorting/filtering on matching source files?
       - name: Get changed files
