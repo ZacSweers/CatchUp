@@ -44,7 +44,9 @@ jobs:
           arguments: bootstrap --stacktrace
 
       - name: Get changed files
-        run: gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
+        run: |
+          mkdir tmp
+          gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
 
       - name: Compute affected projects
         id: gradle-affected-projects
