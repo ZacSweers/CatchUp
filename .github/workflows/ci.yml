@@ -32,7 +32,7 @@ jobs:
           distribution: 'zulu'
           java-version: '19'
 
-      - name: Bootstrap
+      - name: Prepare Gradle Home
         run: |
           mkdir -p ~/.gradle
           touch ~/.gradle/gradle.properties
@@ -44,14 +44,15 @@ jobs:
           arguments: bootstrap --stacktrace
 
       - name: Get changed files
+        if: always() && github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir tmp
           gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
-          cat tmp/changed_files.txt
 
       - name: Compute affected projects
+        if: always() && github.event_name == 'pull_request'
         id: gradle-affected-projects
         uses: gradle/gradle-build-action@v2
         with:
@@ -62,15 +63,6 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: check :app:assembleRelease globalCiLint globalCiUnitTest --continue --quiet -Pslack.avoidance.affectedProjectsFile=${{ github.workspace }}/build/skippy/affected_projects.txt
-
-      # TODO sorting/filtering on matching source files?
-      - name: Get changed files
-        if: always() && github.event_name == 'pull_request'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir tmp
-          gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
 
       - name: Filter sarif
         if: always() && github.event_name == 'pull_request'
