@@ -47,7 +47,7 @@ jobs:
         run: gh pr view ${{ github.event.number }} --json files -q '.files[].path' > tmp/changed_files.txt
 
       - name: Compute affected projects
-        id: gradle-bootstrap
+        id: gradle-affected-projects
         uses: gradle/gradle-build-action@v2
         with:
           arguments: computeAffectedProjects --changed-files tmp/changed_files.txt -Pslack.debug=true --stacktrace
