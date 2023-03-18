@@ -98,7 +98,7 @@ tasks.named<ComputeAffectedProjectsTask>("computeAffectedProjects") {
     // buildSrc
     "buildSrc/**",
     // CatchUp-specific
-    "**/.github/workflows/**",
+    ".github/workflows/**",
     "spotless/**",
     "scripts/github/schema.json",
     "config/lint/lint.xml"
