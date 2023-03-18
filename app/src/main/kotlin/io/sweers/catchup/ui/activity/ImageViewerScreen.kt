@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,12 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Precision
 import coil.size.Scale
@@ -52,10 +51,9 @@ import com.slack.circuit.screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import de.mr_pine.zoomables.ZoomableImage
-import de.mr_pine.zoomables.rememberZoomableState
 import dev.zacsweers.catchup.circuit.BottomSheetOverlay
 import dev.zacsweers.catchup.compose.CatchUpTheme
+import dev.zacsweers.catchup.compose.rememberStableCoroutineScope
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.NavButton
@@ -64,6 +62,11 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.UrlMeta
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import me.saket.telephoto.zoomable.ZoomableContentLocation
+import me.saket.telephoto.zoomable.ZoomableViewport
+import me.saket.telephoto.zoomable.ZoomableViewportState
+import me.saket.telephoto.zoomable.graphicsLayer
+import me.saket.telephoto.zoomable.rememberZoomableViewportState
 
 @Parcelize
 data class ImageViewerScreen(
@@ -159,7 +162,8 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
           tween(
             durationMillis = 200,
             easing = LinearEasing,
-          )
+          ),
+        label = "backgroundAlpha"
       )
     Surface(
       modifier.fillMaxSize().animateContentSize(),
@@ -168,17 +172,6 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
     ) {
       Box(Modifier.fillMaxSize()) {
         // Image + scrim
-        val painter =
-          rememberAsyncImagePainter(
-            ImageRequest.Builder(LocalContext.current)
-              .data(state.url)
-              .apply {
-                state.alias?.let(this::placeholderMemoryCacheKey)
-                precision(Precision.EXACT)
-                scale(Scale.FIT)
-              }
-              .build()
-          )
 
         // TODO
         //  flick dismiss
@@ -186,69 +179,61 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
         //  if zooming too far out, animate back to 100%
         //  if rotated, rotate back after letting go
         val overlayHost = LocalOverlayHost.current
-        val scope = rememberCoroutineScope()
-        ZoomableImage(
-          coroutineScope = scope,
-          zoomableState = rememberZoomableState(),
-          painter = painter,
-          contentDescription = "The image",
-          modifier =
-            Modifier.fillMaxSize().pointerInput(Unit) {
-              detectTapGestures(
-                onTap = { showChrome = !showChrome },
-                onLongPress = {
-                  scope.launch {
-                    val result =
-                      overlayHost.show(
-                        BottomSheetOverlay<Unit, ImageViewerScreen.Event>(
-                          Unit,
-                          onDismiss = { ImageViewerScreen.Event.NoOp }
-                        ) { _, navigator ->
-                          Column {
-                            // TODO icons?
-                            Text(
-                              modifier =
-                                Modifier.fillMaxWidth()
-                                  .clickable {
-                                    navigator.finish(ImageViewerScreen.Event.ShareImage)
-                                  }
-                                  .padding(16.dp),
-                              text = "Share"
-                            )
-                            Text(
-                              modifier =
-                                Modifier.fillMaxWidth()
-                                  .clickable { navigator.finish(ImageViewerScreen.Event.SaveImage) }
-                                  .padding(16.dp),
-                              text = "Save"
-                            )
-                            Text(
-                              modifier =
-                                Modifier.fillMaxWidth()
-                                  .clickable { navigator.finish(ImageViewerScreen.Event.CopyImage) }
-                                  .padding(16.dp),
-                              text = "Copy"
-                            )
-                            Text(
-                              modifier =
-                                Modifier.fillMaxWidth()
-                                  .clickable {
-                                    navigator.finish(
-                                      ImageViewerScreen.Event.OpenInBrowser(state.url)
-                                    )
-                                  }
-                                  .padding(16.dp),
-                              text = "Open in Browser"
-                            )
-                          }
-                        }
+        val scope = rememberStableCoroutineScope()
+        val viewportState = rememberZoomableViewportState()
+        ZoomableViewport(
+          state = viewportState,
+          onClick = { showChrome = !showChrome },
+          onLongClick = {
+            scope.launch {
+              val result =
+                overlayHost.show(
+                  BottomSheetOverlay<Unit, ImageViewerScreen.Event>(
+                    Unit,
+                    onDismiss = { ImageViewerScreen.Event.NoOp }
+                  ) { _, navigator ->
+                    Column {
+                      // TODO icons?
+                      Text(
+                        modifier =
+                          Modifier.fillMaxWidth()
+                            .clickable { navigator.finish(ImageViewerScreen.Event.ShareImage) }
+                            .padding(16.dp),
+                        text = "Share"
                       )
-                    sink(result)
+                      Text(
+                        modifier =
+                          Modifier.fillMaxWidth()
+                            .clickable { navigator.finish(ImageViewerScreen.Event.SaveImage) }
+                            .padding(16.dp),
+                        text = "Save"
+                      )
+                      Text(
+                        modifier =
+                          Modifier.fillMaxWidth()
+                            .clickable { navigator.finish(ImageViewerScreen.Event.CopyImage) }
+                            .padding(16.dp),
+                        text = "Copy"
+                      )
+                      Text(
+                        modifier =
+                          Modifier.fillMaxWidth()
+                            .clickable {
+                              navigator.finish(ImageViewerScreen.Event.OpenInBrowser(state.url))
+                            }
+                            .padding(16.dp),
+                        text = "Open in Browser"
+                      )
+                    }
                   }
-                }
-              )
-            },
-        )
+                )
+              sink(result)
+            }
+          },
+          contentScale = ContentScale.Inside,
+        ) {
+          NormalSizedRemoteImage(state.url, state.alias, viewportState)
+        }
 
         // TODO pick color based on if image is underneath it or not. Similar to badges
         AnimatedVisibility(
@@ -266,6 +251,31 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
       }
     }
   }
+}
+
+@Composable
+private fun NormalSizedRemoteImage(
+  url: String,
+  alias: String?,
+  viewportState: ZoomableViewportState,
+  modifier: Modifier = Modifier
+) {
+  AsyncImage(
+    modifier = modifier.graphicsLayer(viewportState.contentTransformation).fillMaxSize(),
+    model =
+      ImageRequest.Builder(LocalContext.current)
+        .data(url)
+        .precision(Precision.EXACT)
+        .scale(Scale.FIT)
+        .apply { alias?.let(this::placeholderMemoryCacheKey) }
+        .build(),
+    contentDescription = "The image",
+    onState = {
+      viewportState.setContentLocation(
+        ZoomableContentLocation.fitInsideAndCenterAligned(it.painter?.intrinsicSize)
+      )
+    }
+  )
 }
 
 // TODO

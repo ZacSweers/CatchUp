@@ -120,10 +120,6 @@
     "name": "material-components-android"
   },
   {
-    "owner": "Mr-Pine",
-    "name": "Zoomables"
-  },
-  {
     "owner": "noties",
     "name": "Markwon"
   },
@@ -142,6 +138,10 @@
   {
     "owner": "saket",
     "name": "InboxRecyclerView"
+  },
+  {
+    "owner": "saket",
+    "name": "telephoto"
   },
   {
     "owner": "serj-lotutovici",
@@ -198,9 +198,5 @@
   {
     "owner": "wasabeef",
     "name": "recyclerview-animators"
-  },
-  {
-    "owner": "ZacSweers",
-    "name": "MoshiX"
   }
 ]
