@@ -19,14 +19,15 @@ import kotlinx.datetime.Instant
 
 /** Models a dibbble shot */
 data class Shot(
-  val animated: Boolean,
   val commentsCount: Long,
   val createdAt: Instant,
   val description: String?,
   val htmlUrl: String,
   val id: Long,
   val title: String,
-  val images: Images,
+  val imageUrl: String,
+  val imageAlt: String,
+  val videoUrl: String?,
   val likesCount: Long,
   val user: User,
   val viewsCount: Long

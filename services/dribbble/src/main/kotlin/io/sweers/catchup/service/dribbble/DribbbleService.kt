@@ -69,14 +69,14 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
           author = "/u/" + it.user.name,
           source = null,
           tag = null,
-          itemClickUrl = it.images.best(),
+          itemClickUrl = it.imageUrl,
           imageInfo =
             ImageInfo(
-              url = it.images.normal,
-              detailUrl = it.images.best(true),
-              animatable = it.animated,
+              url = it.imageUrl,
+              detailUrl = it.imageUrl,
+              animatable = false, // TODO these are videos
               sourceUrl = it.htmlUrl,
-              bestSize = it.images.bestSize(),
+              bestSize = null,
               aspectRatio = 4 / 3f,
               imageId = it.id.toString(),
             ),

@@ -20,7 +20,7 @@ data class User(
   val avatarUrl: String,
   val htmlUrl: String,
   val id: Long,
-  val name: String,
+  val name: String?,
   val pro: Boolean?,
   val username: String?
 )
