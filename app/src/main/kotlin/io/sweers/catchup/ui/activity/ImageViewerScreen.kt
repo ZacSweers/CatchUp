@@ -175,11 +175,7 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
               .apply {
                 state.alias?.let(this::placeholderMemoryCacheKey)
                 precision(Precision.EXACT)
-                scale(Scale.FILL)
-
-                // Crossfade in the higher res version when it arrives
-                // ...hopefully
-                crossfade(true)
+                scale(Scale.FIT)
               }
               .build()
           )
