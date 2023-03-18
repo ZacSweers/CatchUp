@@ -157,7 +157,6 @@ fun VisualItem(
         ImageRequest.Builder(LocalContext.current)
           .data(imageInfo.url)
           .memoryCacheKey(imageInfo.cacheKey)
-          .crossfade(true)
           // .run {
           // TODO transitions don't work with AsyncImage yet
           //  https://coil-kt.github.io/coil/compose/#transitions
