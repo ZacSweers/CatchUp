@@ -71,6 +71,7 @@ import javax.inject.Provider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @Parcelize
 data class ServiceScreen(val serviceKey: String) : Screen {
@@ -148,13 +149,36 @@ constructor(
               val info = event.item.imageInfo!!
               overlayHost.show(
                 FullScreenOverlay(
-                  ImageViewerScreen(info.imageId, info.detailUrl, info.cacheKey, info.sourceUrl)
+                  ImageViewerScreen(
+                    info.imageId,
+                    info.detailUrl,
+                    isBitmap = !info.animatable,
+                    info.cacheKey,
+                    info.sourceUrl
+                  )
                 )
               )
             } else {
               val url = event.item.clickUrl!!
               if (event.item.contentType == ContentType.IMAGE) {
-                overlayHost.show(FullScreenOverlay(ImageViewerScreen(url, url, null, url)))
+                // TODO generalize this
+                val bestGuessIsBitmap =
+                  url.toHttpUrl().pathSegments.last().let { path ->
+                    path.endsWith(".jpg", ignoreCase = true) ||
+                      path.endsWith(".png", ignoreCase = true) ||
+                      path.endsWith(".gif", ignoreCase = true)
+                  }
+                overlayHost.show(
+                  FullScreenOverlay(
+                    ImageViewerScreen(
+                      id = url,
+                      url = url,
+                      isBitmap = bestGuessIsBitmap,
+                      alias = null,
+                      sourceUrl = url
+                    )
+                  )
+                )
               } else {
                 val meta = UrlMeta(url, themeColorInt, context)
                 linkManager.openUrl(meta)
