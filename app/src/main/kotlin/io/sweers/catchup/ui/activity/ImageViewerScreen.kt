@@ -47,6 +47,7 @@ import com.slack.circuit.backstack.NavDecoration
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
+import com.slack.circuit.overlay.OverlayHost
 import com.slack.circuit.screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -60,6 +61,7 @@ import io.sweers.catchup.base.ui.NavButton
 import io.sweers.catchup.base.ui.NavButtonType
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.UrlMeta
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import me.saket.telephoto.zoomable.ZoomableContentLocation
@@ -184,52 +186,7 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
         ZoomableViewport(
           state = viewportState,
           onClick = { showChrome = !showChrome },
-          onLongClick = {
-            scope.launch {
-              val result =
-                overlayHost.show(
-                  BottomSheetOverlay<Unit, ImageViewerScreen.Event>(
-                    Unit,
-                    onDismiss = { ImageViewerScreen.Event.NoOp }
-                  ) { _, navigator ->
-                    Column {
-                      // TODO icons?
-                      Text(
-                        modifier =
-                          Modifier.fillMaxWidth()
-                            .clickable { navigator.finish(ImageViewerScreen.Event.ShareImage) }
-                            .padding(16.dp),
-                        text = "Share"
-                      )
-                      Text(
-                        modifier =
-                          Modifier.fillMaxWidth()
-                            .clickable { navigator.finish(ImageViewerScreen.Event.SaveImage) }
-                            .padding(16.dp),
-                        text = "Save"
-                      )
-                      Text(
-                        modifier =
-                          Modifier.fillMaxWidth()
-                            .clickable { navigator.finish(ImageViewerScreen.Event.CopyImage) }
-                            .padding(16.dp),
-                        text = "Copy"
-                      )
-                      Text(
-                        modifier =
-                          Modifier.fillMaxWidth()
-                            .clickable {
-                              navigator.finish(ImageViewerScreen.Event.OpenInBrowser(state.url))
-                            }
-                            .padding(16.dp),
-                        text = "Open in Browser"
-                      )
-                    }
-                  }
-                )
-              sink(result)
-            }
-          },
+          onLongClick = { launchShareSheet(scope, overlayHost, state, sink) },
           contentScale = ContentScale.Inside,
         ) {
           NormalSizedRemoteImage(state.url, state.alias, viewportState)
@@ -252,6 +209,55 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
     }
   }
 }
+
+private fun launchShareSheet(
+  scope: CoroutineScope,
+  overlayHost: OverlayHost,
+  state: ImageViewerScreen.State,
+  sink: (ImageViewerScreen.Event) -> Unit,
+) =
+  scope.launch {
+    val result =
+      overlayHost.show(
+        BottomSheetOverlay<Unit, ImageViewerScreen.Event>(
+          Unit,
+          onDismiss = { ImageViewerScreen.Event.NoOp }
+        ) { _, navigator ->
+          Column {
+            // TODO icons?
+            Text(
+              modifier =
+                Modifier.fillMaxWidth()
+                  .clickable { navigator.finish(ImageViewerScreen.Event.ShareImage) }
+                  .padding(16.dp),
+              text = "Share"
+            )
+            Text(
+              modifier =
+                Modifier.fillMaxWidth()
+                  .clickable { navigator.finish(ImageViewerScreen.Event.SaveImage) }
+                  .padding(16.dp),
+              text = "Save"
+            )
+            Text(
+              modifier =
+                Modifier.fillMaxWidth()
+                  .clickable { navigator.finish(ImageViewerScreen.Event.CopyImage) }
+                  .padding(16.dp),
+              text = "Copy"
+            )
+            Text(
+              modifier =
+                Modifier.fillMaxWidth()
+                  .clickable { navigator.finish(ImageViewerScreen.Event.OpenInBrowser(state.url)) }
+                  .padding(16.dp),
+              text = "Open in Browser"
+            )
+          }
+        }
+      )
+    sink(result)
+  }
 
 @Composable
 private fun NormalSizedRemoteImage(
