@@ -17,13 +17,11 @@ import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.data.ServiceRemoteKey
 import io.sweers.catchup.data.lastUpdated
 import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.Service
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.rx3.rxSingle
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
@@ -126,13 +124,7 @@ constructor(
                   item.clickUrl?.let { clickUrl ->
                     if (item.contentType == null) {
                       return@concatMapEager Flowable.just(
-                        item.copy(
-                          contentType =
-                            rxSingle(Dispatchers.IO) {
-                                contentTypeChecker.contentType(clickUrl) ?: ContentType.OTHER
-                              }
-                              .blockingGet()
-                        )
+                        item.copy(contentType = contentTypeChecker.contentType(clickUrl))
                       )
                     }
                   }
