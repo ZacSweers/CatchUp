@@ -3,7 +3,6 @@ package io.sweers.catchup.ui.activity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -72,6 +71,7 @@ import io.sweers.catchup.base.ui.NavButton
 import io.sweers.catchup.base.ui.NavButtonType
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.UrlMeta
+import io.sweers.catchup.ui.activity.FlickToDismissState.FlickGestureState.Dismissed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -203,15 +203,7 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
 
   CatchUpTheme(useDarkTheme = true) {
     val backgroundAlpha: Float by
-      animateFloatAsState(
-        targetValue = 1f,
-        animationSpec =
-          tween(
-            durationMillis = 200,
-            easing = LinearEasing,
-          ),
-        label = "backgroundAlpha"
-      )
+      animateFloatAsState(targetValue = 1f, animationSpec = tween(), label = "backgroundAlpha")
     Surface(
       modifier.fillMaxSize().animateContentSize(),
       color = Color.Black.copy(alpha = backgroundAlpha),
@@ -220,48 +212,53 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
       Box(Modifier.fillMaxSize()) {
         // Image + scrim
 
-        // TODO
-        //  flick dismiss?
-        val overlayHost = LocalOverlayHost.current
-        val scope = rememberStableCoroutineScope()
-        val viewportState = rememberZoomableViewportState(maxZoomFactor = 2f)
-        ZoomableViewport(
-          state = viewportState,
-          onClick = { showChrome = !showChrome },
-          onLongClick = { launchShareSheet(scope, overlayHost, state, sink) },
-          contentScale = ContentScale.Inside,
-        ) {
-          if (state.isBitmap) {
-            Crossfade(targetState = imageSource, label = "Crossfade subsampled image") { source ->
-              if (source == null) {
-                if (state.alias == null) {
-                  // TODO show a loading indicator?
-                  Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+        val dismissState = rememberFlickToDismissState()
+        if (dismissState.gestureState is Dismissed) {
+          sink(ImageViewerScreen.Event.Close)
+        }
+        // TODO bind scrim with flick. animate scrim out after flick finishes? Or with flick?
+        FlickToDismiss(state = dismissState) {
+          val overlayHost = LocalOverlayHost.current
+          val scope = rememberStableCoroutineScope()
+          val viewportState = rememberZoomableViewportState(maxZoomFactor = 2f)
+          ZoomableViewport(
+            state = viewportState,
+            onClick = { showChrome = !showChrome },
+            onLongClick = { launchShareSheet(scope, overlayHost, state, sink) },
+            contentScale = ContentScale.Inside,
+          ) {
+            if (state.isBitmap) {
+              Crossfade(targetState = imageSource, label = "Crossfade subsampled image") { source ->
+                if (source == null) {
+                  if (state.alias == null) {
+                    // TODO show a loading indicator?
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                      CircularProgressIndicator()
+                    }
+                    return@Crossfade
+                  } else {
+                    PlaceholderImage(
+                      context.imageLoader.memoryCache!![MemoryCache.Key(state.alias)]!!
+                        .bitmap
+                        .asImageBitmap(),
+                      modifier = Modifier.fillMaxSize(),
+                    )
                   }
-                  return@Crossfade
                 } else {
-                  PlaceholderImage(
-                    context.imageLoader.memoryCache!![MemoryCache.Key(state.alias)]!!
-                      .bitmap
-                      .asImageBitmap(),
+                  SubSamplingImage(
                     modifier = Modifier.fillMaxSize(),
+                    state =
+                      rememberSubSamplingImageState(
+                        imageSource = source,
+                        viewportState = viewportState,
+                      ),
+                    contentDescription = null,
                   )
                 }
-              } else {
-                SubSamplingImage(
-                  modifier = Modifier.fillMaxSize(),
-                  state =
-                    rememberSubSamplingImageState(
-                      imageSource = source,
-                      viewportState = viewportState,
-                    ),
-                  contentDescription = null,
-                )
               }
+            } else {
+              NormalSizedRemoteImage(state.url, state.alias, viewportState)
             }
-          } else {
-            NormalSizedRemoteImage(state.url, state.alias, viewportState)
           }
         }
 
