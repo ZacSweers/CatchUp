@@ -1,3 +1,4 @@
+import slack.gradle.avoidance.AffectedProjectsDefaults
 import slack.gradle.avoidance.ComputeAffectedProjectsTask
 
 /*
@@ -60,44 +61,15 @@ subprojects {
 
 tasks.named<ComputeAffectedProjectsTask>("computeAffectedProjects") {
   // Glob patterns of files to include in computing
-  // TODO make a way to build-upon defaults?
+  includePatterns.addAll(AffectedProjectsDefaults.DEFAULT_INCLUDE_PATTERNS)
   includePatterns.addAll(
-    "**/*.kt",
-    "*.gradle",
-    "**/*.gradle",
-    "*.gradle.kts",
-    "**/*.gradle.kts",
-    "**/*.java",
-    "**/AndroidManifest.xml",
-    "**/res/**",
-    "**/src/*/resources/**",
-    "gradle.properties",
-    "**/gradle.properties",
-    // CatchUp-specific
     "**/schemas/**",
     "app/proguard-rules.pro",
     "**/src/**/graphql/**",
   )
   // Glob patterns of files that, if changed, should result in not skipping anything in the build
-  // TODO make a way to build-upon defaults?
+  neverSkipPatterns.addAll(AffectedProjectsDefaults.DEFAULT_NEVER_SKIP_PATTERNS)
   neverSkipPatterns.addAll(
-    // root build.gradle.kts and settings.gradle.kts files
-    "*.gradle.kts",
-    "*.gradle",
-    // root gradle.properties file
-    "gradle.properties",
-    // Version catalogs
-    "**/*.versions.toml",
-    // Gradle wrapper files
-    "**/gradle/wrapper/**",
-    "gradle/wrapper/**",
-    "gradlew",
-    "gradlew.bat",
-    "**/gradlew",
-    "**/gradlew.bat",
-    // buildSrc
-    "buildSrc/**",
-    // CatchUp-specific
     ".github/workflows/**",
     "spotless/**",
     "scripts/github/schema.json",
