@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +53,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dev.zacsweers.catchup.compose.ContentAlphas
 import dev.zacsweers.catchup.compose.DisableableContent
 import dev.zacsweers.catchup.compose.LocalEnabled
 import dev.zacsweers.catchup.di.AppScope
@@ -407,18 +406,20 @@ private fun SimplePrefItem(
       modifier = Modifier.weight(1f),
       verticalArrangement = spacedBy(4.dp),
     ) {
+      val titleAlpha = if (LocalEnabled.current) ContentAlphas.High else ContentAlphas.Disabled
       Text(
         text = title,
         style = MaterialTheme.typography.titleMedium,
-        // TODO why do I have to do all this manually? Why doesn't this use LocalContentAlpha
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = LocalContentAlpha.current)
+        // TODO why do I have to do all this manually? Why doesn't this respect LocalContentAlpha
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = titleAlpha)
       )
       subtitle?.let {
-        val alpha = if (LocalEnabled.current) ContentAlpha.medium else ContentAlpha.disabled
+        val subtitleAlpha =
+          if (LocalEnabled.current) ContentAlphas.Medium else ContentAlphas.Disabled
         Text(
           text = it,
           style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
+          color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = subtitleAlpha),
         )
       }
     }

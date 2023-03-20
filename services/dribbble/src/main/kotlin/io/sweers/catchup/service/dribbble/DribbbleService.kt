@@ -21,13 +21,13 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.ImageInfo
@@ -69,19 +69,21 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
           author = "/u/" + it.user.name,
           source = null,
           tag = null,
-          itemClickUrl = it.images.best(),
+          itemClickUrl = it.imageUrl,
           imageInfo =
             ImageInfo(
-              it.images.normal,
-              it.images.best(true),
-              it.animated,
-              it.htmlUrl,
-              it.images.bestSize(),
-              it.id.toString()
+              url = it.imageUrl,
+              detailUrl = it.imageUrl,
+              animatable = false, // TODO these are videos
+              sourceUrl = it.htmlUrl,
+              bestSize = null,
+              aspectRatio = 4 / 3f,
+              imageId = it.id.toString(),
             ),
           mark = createCommentMark(count = it.commentsCount.toInt()),
           indexInResponse = index + request.pageOffset,
           serviceId = meta().id,
+          contentType = ContentType.IMAGE,
         )
       }
       .let { DataResult(it, (page + 1).toString()) }
@@ -101,7 +103,6 @@ abstract class DribbbleMetaModule {
 
     @InternalApi
     @Provides
-    @Reusable
     internal fun provideDribbbleServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,

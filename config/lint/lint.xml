@@ -23,4 +23,6 @@
   <issue id="ComposeCompositionLocalUsage">
       <option name="allowed-composition-locals" value="LocalEnabled" />
   </issue>
+
+  <issue id="ComposeM2Api" severity="error" />
 </lint>

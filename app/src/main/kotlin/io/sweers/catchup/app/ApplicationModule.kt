@@ -53,6 +53,7 @@ import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
 import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.base.ui.versionInfo
+import io.sweers.catchup.data.DribbbleSizingInterceptor
 import io.sweers.catchup.data.UnsplashSizingInterceptor
 import io.sweers.catchup.util.LinkTouchMovementMethod
 import io.sweers.catchup.util.PrecomputedTextSetterCompat
@@ -219,6 +220,7 @@ abstract class ApplicationModule {
         components {
           add(ImageDecoderDecoder.Factory())
           add(UnsplashSizingInterceptor)
+          add(DribbbleSizingInterceptor)
         }
 
         build()

@@ -227,7 +227,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise") version "3.12.3"
+  id("com.gradle.enterprise") version "3.12.5"
 }
 
 gradleEnterprise {
@@ -244,6 +244,7 @@ include(
   ":libraries:base-ui",
   ":libraries:appconfig",
   ":libraries:compose-extensions",
+  ":libraries:compose-extensions:pull-refresh",
   ":libraries:di",
   ":libraries:di:android",
   ":libraries:gemoji",
@@ -253,6 +254,7 @@ include(
   ":libraries:kotlinutil",
   ":libraries:newark",
   ":libraries:retrofitconverters",
+  ":libraries:summarizer",
   ":libraries:tooling:spi-multibinds-validator",
   ":libraries:tooling:spi-visualizer",
   ":libraries:util",

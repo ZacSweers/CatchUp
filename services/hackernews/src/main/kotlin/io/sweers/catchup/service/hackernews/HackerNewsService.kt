@@ -28,7 +28,6 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.di.AppScope
 import io.reactivex.rxjava3.core.Observable
@@ -43,7 +42,6 @@ import io.sweers.catchup.service.api.ServiceException
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
-import io.sweers.catchup.service.api.SummarizationInfo
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.util.d
@@ -140,7 +138,6 @@ constructor(
             source = url?.let { it.toHttpUrlOrNull()!!.host },
             tag = realType()?.tag(nullIfStory = true),
             itemClickUrl = url,
-            summarizationInfo = SummarizationInfo.from(url),
             mark =
               kids?.size?.let {
                 createCommentMark(count = it, clickUrl = "https://news.ycombinator.com/item?id=$id")
@@ -168,7 +165,6 @@ abstract class HackerNewsMetaModule {
 
     @InternalApi
     @Provides
-    @Reusable
     internal fun provideHackerNewsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,

@@ -32,6 +32,7 @@ import io.sweers.catchup.data.github.RepoReleasesQuery
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.UrlMeta
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
@@ -155,6 +156,8 @@ constructor(
             //  description = markdownConverter.replaceMarkdownEmojisIn(description!!),
             serviceId = "changelog",
             indexInResponse = index,
+            // Not summarizable
+            contentType = ContentType.OTHER,
           )
         }
       }

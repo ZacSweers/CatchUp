@@ -15,15 +15,20 @@
  */
 package io.sweers.catchup.service.api
 
+import androidx.compose.runtime.Immutable
 import androidx.room.Ignore
 
+@Immutable
 data class ImageInfo(
   val url: String,
   val detailUrl: String,
   val animatable: Boolean,
   val sourceUrl: String,
   val bestSize: Pair<Int, Int>?,
-  val imageId: String
+  val aspectRatio: Float,
+  val imageId: String,
+  val color: String? = null,
+  val blurHash: String? = null,
 ) {
   @Transient @Ignore val cacheKey: String = imageId
 }

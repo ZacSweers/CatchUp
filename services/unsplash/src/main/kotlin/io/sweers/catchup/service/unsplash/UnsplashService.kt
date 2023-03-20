@@ -22,12 +22,12 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import io.sweers.catchup.service.api.CatchUpItem
+import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
 import io.sweers.catchup.service.api.ImageInfo
@@ -82,10 +82,14 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               animatable = false,
               sourceUrl = it.links.html,
               bestSize = null,
-              imageId = it.id
+              aspectRatio = it.width.toFloat() / it.height.toFloat(),
+              imageId = it.id,
+              blurHash = it.blurHash,
+              color = it.color,
             ),
           indexInResponse = index + request.pageOffset,
           serviceId = meta().id,
+          contentType = ContentType.IMAGE,
         )
       }
       .let { DataResult(it, (page + 1).toString()) }
@@ -105,7 +109,6 @@ abstract class UnsplashMetaModule {
 
     @InternalApi
     @Provides
-    @Reusable
     internal fun provideUnsplashServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,

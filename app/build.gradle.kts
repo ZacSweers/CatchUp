@@ -34,7 +34,6 @@ plugins {
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.apollo)
   alias(libs.plugins.licensee)
-  alias(libs.plugins.moshix)
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
@@ -46,6 +45,7 @@ slack {
   features {
     compose()
     dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
+    moshi(codegen = true)
   }
 }
 
@@ -456,10 +456,12 @@ dependencies {
   implementation(project(":libraries:base-ui"))
   // Compose
   implementation(project(":libraries:compose-extensions"))
+  implementation(project(":libraries:compose-extensions:pull-refresh"))
   implementation(project(":libraries:flowbinding"))
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:kotlinutil"))
+  implementation(project(":libraries:summarizer"))
   implementation(project(":libraries:util"))
   //  implementation(libs.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
   implementation(project(":service-api"))
@@ -482,7 +484,6 @@ dependencies {
   implementation(libs.androidx.compose.animation.graphics)
   implementation(libs.androidx.compose.constraintLayout)
   implementation(libs.androidx.compose.foundation)
-  implementation(libs.androidx.compose.material)
   implementation(libs.androidx.compose.material.material3)
   implementation(libs.androidx.compose.ui)
   implementation(libs.androidx.constraintLayout)

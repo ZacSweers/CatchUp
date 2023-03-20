@@ -23,6 +23,6 @@ interface SlashdotApi {
 
   companion object {
     const val HOST = "rss.slashdot.org"
-    const val ENDPOINT = "http://$HOST"
+    const val ENDPOINT = "https://$HOST"
   }
 }

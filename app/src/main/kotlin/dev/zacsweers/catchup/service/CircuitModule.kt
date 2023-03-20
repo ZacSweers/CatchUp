@@ -1,7 +1,14 @@
 package dev.zacsweers.catchup.service
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import com.slack.circuit.CircuitConfig
+import com.slack.circuit.LocalCircuitConfig
+import com.slack.circuit.Navigator
 import com.slack.circuit.Presenter
+import com.slack.circuit.Screen
 import com.slack.circuit.Ui
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
@@ -30,6 +37,30 @@ interface CircuitModule {
           for (factory in uiFactories) {
             addUiFactory(factory)
           }
+        }
+        .setOnUnavailableContent { screen, modifier ->
+          val navigator =
+            object : Navigator {
+              override fun goTo(screen: Screen) {}
+
+              override fun pop(): Screen? {
+                return null
+              }
+
+              override fun resetRoot(newRoot: Screen): List<Screen> {
+                return emptyList()
+              }
+            }
+          BasicText(
+            """
+              Route not available: ${screen.javaClass.name}.
+              Presenter: ${LocalCircuitConfig.current?.presenter(screen, navigator)?.javaClass}
+              UI: ${LocalCircuitConfig.current?.ui(screen)?.javaClass}
+              """
+              .trimIndent(),
+            modifier.background(Color.Red),
+            style = TextStyle(color = Color.Yellow)
+          )
         }
         .build()
     }

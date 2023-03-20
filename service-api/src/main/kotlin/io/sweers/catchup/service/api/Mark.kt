@@ -17,12 +17,14 @@ package io.sweers.catchup.service.api
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Immutable
 
 /**
  * A mark is a mark on the side of a catchup text item that can indicate some extra information,
  * such as a comment or delta or something that makes the reason for this item being here relevant
  * or important.
  */
+@Immutable
 data class Mark(
   val text: String? = null,
   val textPrefix: String? = null,
