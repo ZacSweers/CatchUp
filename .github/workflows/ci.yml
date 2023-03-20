@@ -58,6 +58,15 @@ jobs:
         with:
           arguments: computeAffectedProjects --changed-files tmp/changed_files.txt -Pslack.debug=true --stacktrace
 
+      - name: Print affected projects
+        run: |
+          path=build/skippy/affected_projects.txt
+          if [ -e "$path" ] then
+            cat "$path"
+          else
+            echo "No file found, all projects are affected"
+          fi
+
       - name: Upload skippy diagnostics
         uses: actions/upload-artifact@v3
         with:
@@ -68,7 +77,7 @@ jobs:
         id: gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: check :app:assembleRelease globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=${{ github.workspace }}/build/skippy/affected_projects.txt
+          arguments: check :app:assembleRelease globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
 
       - name: Filter sarif
         if: always() && github.event_name == 'pull_request'
