@@ -60,8 +60,8 @@ jobs:
 
       - name: Print affected projects
         run: |
-          path=build/skippy/affected_projects.txt
-          if [ -e "$path" ] then
+          path="build/skippy/affected_projects.txt"
+          if [[ -e "$path" ]]; then
             cat "$path"
           else
             echo "No file found, all projects are affected"
