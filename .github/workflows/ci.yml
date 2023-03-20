@@ -58,6 +58,12 @@ jobs:
         with:
           arguments: computeAffectedProjects --changed-files tmp/changed_files.txt -Pslack.debug=true --stacktrace
 
+      - name: Upload skippy diagnostics
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: build/skippy/**
+
       - name: Build and run tests
         id: gradle
         uses: gradle/gradle-build-action@v2
