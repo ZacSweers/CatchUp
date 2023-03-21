@@ -64,7 +64,8 @@ jobs:
           if [[ -e "$path" ]]; then
             cat "$path"
             # Copy focus file to root of project
-            echo "build/skippy/focus.settings.gradle" > .focus
+            # Necessary to omit the newline because the focus plugin reads the whole file text!
+            echo -n "build/skippy/focus.settings.gradle" > .focus
             # Check if app is affected
             if grep -q ":app" "$path"; then
               echo "App is affected"
