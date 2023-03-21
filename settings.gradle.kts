@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.dropbox.focus.FocusExtension
 
 pluginManagement {
   // Non-delegate APIs are annoyingly not public so we have to use withGroovyBuilder
@@ -228,7 +229,10 @@ dependencyResolutionManagement {
 
 plugins {
   id("com.gradle.enterprise") version "3.12.5"
+  id("com.dropbox.focus") version "0.5.1"
 }
+
+configure<FocusExtension> { allSettingsFileName.set("settings-all.gradle.kts") }
 
 gradleEnterprise {
   buildScan {
@@ -237,42 +241,9 @@ gradleEnterprise {
   }
 }
 
-rootProject.name = "Catchup"
+rootProject.name = "CatchUp"
 
-include(
-  ":app",
-  ":libraries:base-ui",
-  ":libraries:appconfig",
-  ":libraries:compose-extensions",
-  ":libraries:compose-extensions:pull-refresh",
-  ":libraries:di",
-  ":libraries:di:android",
-  ":libraries:gemoji",
-  ":libraries:gemoji:db",
-  ":libraries:gemoji:generator",
-  ":libraries:flowbinding",
-  ":libraries:kotlinutil",
-  ":libraries:newark",
-  ":libraries:retrofitconverters",
-  ":libraries:summarizer",
-  ":libraries:tooling:spi-multibinds-validator",
-  ":libraries:tooling:spi-visualizer",
-  ":libraries:util",
-  ":service-api",
-  ":services:designernews",
-  ":services:dribbble",
-  ":services:github",
-  ":services:hackernews",
-//    ":services:imgur",
-//  ":services:medium",
-//    ":services:newsapi",
-  ":services:producthunt",
-  ":services:reddit",
-  ":services:slashdot",
-  ":services:unsplash",
-  ":services:uplabs",
-  ":platform",
-)
+include(":platform")
 
 // https://docs.gradle.org/5.6/userguide/groovy_plugin.html#sec:groovy_compilation_avoidance
 enableFeaturePreview("GROOVY_COMPILATION_AVOIDANCE")

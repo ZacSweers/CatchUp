@@ -63,6 +63,8 @@ jobs:
           path="build/skippy/affected_projects.txt"
           if [[ -e "$path" ]]; then
             cat "$path"
+            # Copy focus file to root of project
+            echo "build/skippy/focus.settings.gradle" > .focus
             # Check if app is affected
             if grep -q ":app" "$path"; then
               echo "App is affected"
