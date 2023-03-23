@@ -4,7 +4,7 @@ agp = "8.1.0-alpha09"
 androidx-activity = "1.7.0-alpha04"
 androidx-core = "1.10.0-beta01"
 emoji = "1.2.0-alpha03"
-fragment = "1.6.0-alpha07"
+fragment = "1.6.0-alpha08"
 androidTestSupport = "1.6.0-alpha01"
 anvil = "2.4.4-1.8.20-RC"
 apollo = "3.7.5"
@@ -12,7 +12,7 @@ autodispose = "2.1.1"
 chuck = "1.1.0"
 circuit = "0.7.0"
 coil = "2.2.2"
-compose = "1.4.0-rc01"
+compose = "1.4.0"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 composeCompiler = "1.4.4-dev-k1.8.20-RC-88d9f3a8232"
@@ -21,10 +21,10 @@ corbind = "1.7.0"
 coroutines = "1.6.4"
 crumb = "0.1.0"
 dagger = "2.45"
-datastore = "1.1.0-alpha01"
+datastore = "1.1.0-alpha02"
 detekt = "1.22.0"
 espresso = "3.5.1"
-flipper = "0.186.0"
+flipper = "0.187.0"
 hyperion = "0.9.24"
 inspector = "0.3.0"
 jdk = "19"
@@ -42,12 +42,12 @@ preferences = "1.2.0"
 retrofit = "2.9.0"
 room = "2.5.0"
 sortDependencies = "0.2"
-sgp = "0.7.1"
+sgp = "0.7.3"
 spotless = "6.17.0"
 sqldelight = "2.0.0-alpha05"
 # https://github.com/Tickaroo/tikxml/issues/114
 tikxml = "0.8.13"
-xerial = "3.41.0.0"
+xerial = "3.41.0.1"
 
 [plugins]
 anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
@@ -86,7 +86,7 @@ androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-
 androidx-constraintLayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha08"
 androidx-customTabs = "androidx.browser:browser:1.5.0"
 androidx-design = "com.google.android.material:material:1.8.0"
-androidx-drawerLayout = "androidx.drawerlayout:drawerlayout:1.2.0-rc01"
+androidx-drawerLayout = "androidx.drawerlayout:drawerlayout:1.2.0"
 
 androidx-emoji = { module = "androidx.emoji:emoji", version.ref = "emoji" }
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
@@ -133,7 +133,7 @@ androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", versio
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material3", version.ref = "accompanist" }
 androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha18"
-androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-alpha08" }
+androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-beta01" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-config = "com.google.firebase:firebase-config:21.2.1"
