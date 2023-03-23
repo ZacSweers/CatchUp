@@ -96,8 +96,17 @@ jobs:
         run: |
           ./.github/workflows/sarif-filter.main.kts --sarif-file app/build/reports/lint-results-release.sarif --modified-files tmp/changed_files.txt --output-file tmp/modified_sarif.sarif
 
+      - name: Check if output sarif exists
+        id: check_file
+        run: |
+          if [[ -f tmp/modified_sarif.sarif ]]; then
+            echo "::set-output name=modified_sarif_exists::true"
+          else
+            echo "::set-output name=modified_sarif_exists::false"
+          fi
+
       - name: Upload lint sarif
-        if: always() && github.event_name == 'pull_request'
+        if: steps.check_file.outputs.modified_sarif_exists == 'true'
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: tmp/modified_sarif.sarif
