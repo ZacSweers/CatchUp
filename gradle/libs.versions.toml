@@ -133,7 +133,7 @@ androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", versio
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material3", version.ref = "accompanist" }
 androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha18"
-androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-alpha08" }
+androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-beta01" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-config = "com.google.firebase:firebase-config:21.2.1"
