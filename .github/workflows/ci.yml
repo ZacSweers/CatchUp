@@ -100,9 +100,9 @@ jobs:
         id: check_file
         run: |
           if [[ -f tmp/modified_sarif.sarif ]]; then
-            echo "::set-output name=modified_sarif_exists::true"
+            echo "modified_sarif_exists=true" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=modified_sarif_exists::false"
+            echo "modified_sarif_exists=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Upload lint sarif
