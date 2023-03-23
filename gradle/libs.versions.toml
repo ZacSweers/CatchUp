@@ -12,7 +12,7 @@ autodispose = "2.1.1"
 chuck = "1.1.0"
 circuit = "0.7.0"
 coil = "2.2.2"
-compose = "1.4.0-rc01"
+compose = "1.4.0"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 composeCompiler = "1.4.4-dev-k1.8.20-RC-88d9f3a8232"
