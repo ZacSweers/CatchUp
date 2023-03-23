@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.30.0"
-agp = "8.1.0-alpha09"
+agp = "8.1.0-alpha10"
 androidx-activity = "1.7.0-alpha04"
 androidx-core = "1.10.0-beta01"
 emoji = "1.2.0-alpha03"
@@ -42,12 +42,12 @@ preferences = "1.2.0"
 retrofit = "2.9.0"
 room = "2.6.0-alpha01"
 sortDependencies = "0.2"
-sgp = "0.7.3"
+sgp = "0.7.4"
 spotless = "6.17.0"
 sqldelight = "2.0.0-alpha05"
 # https://github.com/Tickaroo/tikxml/issues/114
 tikxml = "0.8.13"
-xerial = "3.41.0.1"
+xerial = "3.41.2.0"
 
 [plugins]
 anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
@@ -212,7 +212,7 @@ markwon-syntaxHighlight = { module = "io.noties.markwon:syntax-highlight", versi
 
 misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakcanary-object-watcher-android", version.ref = "leakcanary" }
-misc-bugsnag = "com.bugsnag:bugsnag-android:5.28.4"
+misc-bugsnag = "com.bugsnag:bugsnag-android:5.29.0"
 misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
