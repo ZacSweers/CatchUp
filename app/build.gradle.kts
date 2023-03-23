@@ -126,7 +126,10 @@ android {
   namespace = "io.sweers.catchup"
 }
 
-ksp { arg("room.schemaLocation", "$projectDir/schemas") }
+ksp {
+  arg("room.schemaLocation", "$projectDir/schemas")
+  arg("room.generateKotlin", "true")
+}
 
 // play {
 //  track = "alpha"
