@@ -116,7 +116,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-rxJava3 = { module = "androidx.room:room-rxjava3", version.ref = "room" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
-androidx-sqlite = "androidx.sqlite:sqlite-framework:2.3.0"
+androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-alpha01"
 
 androidx-compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
