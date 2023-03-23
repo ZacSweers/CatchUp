@@ -79,8 +79,6 @@ issues. The project requires whatever JDK version is currently defined `libs.ver
 CatchUp tends to keep up with Android Studio canaries, so you may have to use a canary version.
 Check the AGP version in `libs.versions.toml`.
 
-
-
 If you want to build with working services, some require API keys. See the
 [wiki](https://github.com/ZacSweers/CatchUp/wiki/Authentication-information) for more details on
 which services require keys.
