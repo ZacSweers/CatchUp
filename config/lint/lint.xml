@@ -25,4 +25,6 @@
   </issue>
 
   <issue id="ComposeM2Api" severity="error" />
+
+  <issue id="GradleDependency" severity="ignore" />
 </lint>
