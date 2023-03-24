@@ -42,7 +42,7 @@ preferences = "1.2.0"
 retrofit = "2.9.0"
 room = "2.6.0-alpha01"
 sortDependencies = "0.2"
-sgp = "0.7.4"
+sgp = "0.7.5"
 spotless = "6.17.0"
 sqldelight = "2.0.0-alpha05"
 # https://github.com/Tickaroo/tikxml/issues/114
