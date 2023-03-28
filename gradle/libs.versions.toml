@@ -47,7 +47,7 @@ spotless = "6.17.0"
 sqldelight = "2.0.0-alpha05"
 # https://github.com/Tickaroo/tikxml/issues/114
 tikxml = "0.8.13"
-xerial = "3.41.2.0"
+xerial = "3.41.2.1"
 
 [plugins]
 anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
