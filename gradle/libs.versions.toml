@@ -155,7 +155,7 @@ autodispose-android = { module = "com.uber.autodispose2:autodispose-android", ve
 autodispose-androidxLifecycle = { module = "com.uber.autodispose2:autodispose-androidx-lifecycle", version.ref = "autodispose" }
 autodispose-lifecycle = { module = "com.uber.autodispose2:autodispose-lifecycle", version.ref = "autodispose" }
 
-google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.2"
+google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.3"
 javapoet = "com.squareup:javapoet:1.13.0"
 
 circuit-core = { module = "com.slack.circuit:circuit-core", version.ref = "circuit" }
