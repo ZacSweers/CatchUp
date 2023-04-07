@@ -12,7 +12,7 @@ autodispose = "2.1.1"
 chuck = "1.1.0"
 circuit = "0.7.0"
 coil = "2.3.0"
-compose = "1.4.0"
+compose = "1.4.1"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 composeCompiler = "1.4.4-dev-k1.8.20-RC2-c004ecb8ba1"
@@ -21,10 +21,10 @@ corbind = "1.7.0"
 coroutines = "1.6.4"
 crumb = "0.1.0"
 dagger = "2.45"
-datastore = "1.1.0-alpha03"
+datastore = "1.1.0-alpha04"
 detekt = "1.22.0"
 espresso = "3.5.1"
-flipper = "0.187.1"
+flipper = "0.189.0"
 hyperion = "0.9.24"
 inspector = "0.3.0"
 jdk = "19"
@@ -122,7 +122,7 @@ androidx-compose-animation-graphics = { module = "androidx.compose.animation:ani
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.4.0"
+androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.4.1"
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }
 androidx-compose-materialIconsExtended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
@@ -133,7 +133,7 @@ androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", versio
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material3", version.ref = "accompanist" }
 androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha18"
-androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-beta01" }
+androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-beta02" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-config = "com.google.firebase:firebase-config:21.3.0"
