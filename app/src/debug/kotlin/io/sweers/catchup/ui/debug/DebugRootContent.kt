@@ -15,9 +15,9 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.slack.circuit.CircuitContent
-import com.slack.circuit.Navigator
-import com.slack.circuit.onNavEvent
+import com.slack.circuit.foundation.CircuitContent
+import com.slack.circuit.foundation.onNavEvent
+import com.slack.circuit.runtime.Navigator
 import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.compose.rememberConditionalSystemUiColors
 import dev.zacsweers.catchup.di.AppScope
