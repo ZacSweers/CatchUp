@@ -1,7 +1,7 @@
 package io.sweers.catchup.base.ui
 
 import androidx.compose.runtime.Composable
-import com.slack.circuit.Navigator
+import com.slack.circuit.runtime.Navigator
 import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn

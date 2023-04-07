@@ -44,7 +44,7 @@ dependencies {
   implementation(libs.androidx.compose.ui)
   ksp(libs.circuit.codegen)
   implementation(libs.circuit.codegenAnnotations)
-  implementation(libs.circuit.core)
+  implementation(libs.circuit.foundation)
   implementation(libs.circuit.overlay)
   implementation(libs.circuit.retained)
   implementation(libs.retrofit.core)

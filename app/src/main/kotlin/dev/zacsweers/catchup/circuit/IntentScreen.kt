@@ -3,8 +3,8 @@ package dev.zacsweers.catchup.circuit
 import android.app.Activity
 import android.content.Intent
 import androidx.compose.runtime.Stable
-import com.slack.circuit.Navigator
-import com.slack.circuit.Screen
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
 import io.sweers.catchup.util.maybeStartChooser
 import kotlinx.parcelize.Parcelize
 

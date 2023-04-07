@@ -51,7 +51,7 @@ dependencies {
   api(libs.autodispose.androidxLifecycle)
   api(libs.autodispose.core)
   api(libs.autodispose.lifecycle)
-  api(libs.circuit.core)
+  api(libs.circuit.foundation)
   api(libs.kotlin.coroutines)
   api(libs.kotlin.datetime)
   api(libs.rx.java)
