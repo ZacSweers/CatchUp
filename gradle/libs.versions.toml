@@ -1,7 +1,7 @@
 [versions]
 accompanist = "0.31.0-alpha"
 agp = "8.1.0-beta01"
-androidx-activity = "1.7.0"
+androidx-activity = "1.8.0-alpha03"
 androidx-core = "1.11.0-alpha02"
 emoji = "1.2.0-alpha03"
 fragment = "1.6.0-alpha09"
@@ -29,7 +29,7 @@ hyperion = "0.9.24"
 inspector = "0.3.0"
 jdk = "19"
 kotlin = "1.8.20"
-ksp = "1.8.20-1.0.10"
+ksp = "1.8.20-1.0.11"
 ktfmt = "0.43"
 leakcanary = "2.10"
 legacySupport = "28.0.0"
@@ -122,7 +122,7 @@ androidx-compose-animation-graphics = { module = "androidx.compose.animation:ani
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.4.1"
+androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.4.2"
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }
 androidx-compose-materialIconsExtended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
@@ -133,11 +133,11 @@ androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", versio
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material3", version.ref = "accompanist" }
 androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha18"
-androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-beta02" }
+androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-rc01" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-config = "com.google.firebase:firebase-config:21.3.0"
-firebase-database = "com.google.firebase:firebase-database:20.1.0"
+firebase-database = "com.google.firebase:firebase-database:20.2.0"
 firebase-perf = "com.google.firebase:firebase-perf:20.3.1"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
@@ -224,8 +224,8 @@ misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
 misc-debug-scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.2.0"
 
-misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:0.25.0"
-misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.25.0"
+misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:0.26.0"
+misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.26.0"
 misc-inboxRecyclerView = "me.saket:inboxrecyclerview:3.0.0"
 misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
 misc-jsoup = "org.jsoup:jsoup:1.15.4"
@@ -283,7 +283,7 @@ test-android-rules = { module = "androidx.test:rules", version.ref = "androidTes
 test-junit = "junit:junit:4.13.2"
 test-truth = "com.google.truth:truth:1.1.3"
 
-zoomables = "de.mr-pine.utils:zoomables:1.3.0"
+zoomables = "de.mr-pine.utils:zoomables:1.4.0"
 
 [bundles]
 common-lint = ["lints-compose"]
