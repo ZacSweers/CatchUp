@@ -1,7 +1,7 @@
 [versions]
 accompanist = "0.31.0-alpha"
 agp = "8.1.0-beta01"
-androidx-activity = "1.8.0-alpha03"
+androidx-activity = "1.7.1"
 androidx-core = "1.11.0-alpha02"
 emoji = "1.2.0-alpha03"
 fragment = "1.6.0-beta01"

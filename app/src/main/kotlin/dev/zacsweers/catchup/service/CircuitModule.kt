@@ -14,6 +14,7 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.circuit.DefaultCircuitNavDecoration
 import dev.zacsweers.catchup.di.AppScope
 
 @ContributesTo(AppScope::class)
@@ -30,14 +31,9 @@ interface CircuitModule {
       uiFactories: @JvmSuppressWildcards Set<Ui.Factory>,
     ): CircuitConfig {
       return CircuitConfig.Builder()
-        .apply {
-          for (factory in presenterFactories) {
-            addPresenterFactory(factory)
-          }
-          for (factory in uiFactories) {
-            addUiFactory(factory)
-          }
-        }
+        .addPresenterFactories(presenterFactories)
+        .addUiFactories(uiFactories)
+        .setDefaultNavDecoration(DefaultCircuitNavDecoration)
         .setOnUnavailableContent { screen, modifier ->
           val navigator =
             object : Navigator {

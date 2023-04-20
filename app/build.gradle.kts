@@ -44,6 +44,7 @@ plugins {
 slack {
   features {
     compose()
+    @Suppress("OPT_IN_USAGE")
     dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
     moshi(codegen = true)
   }
