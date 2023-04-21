@@ -269,8 +269,7 @@ sqldelight-primitiveAdapters = { module = "app.cash.sqldelight:primitive-adapter
 
 sqlite-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "xerial" }
 
-telephoto-zoomableViewport = { module = "me.saket.telephoto:zoomable-viewport", version.ref = "telephoto" }
-telephoto-subSamplingImage = { module = "me.saket.telephoto:subsamplingimage", version.ref = "telephoto" }
+telephoto-zoomableImageCoil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
 
 tikxml-annotation = { module = "com.tickaroo.tikxml:annotation", version.ref = "tikxml" }
 tikxml-apt = { module = "com.tickaroo.tikxml:processor", version.ref = "tikxml" }

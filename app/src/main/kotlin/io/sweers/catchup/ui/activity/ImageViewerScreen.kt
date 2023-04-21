@@ -1,13 +1,11 @@
 package io.sweers.catchup.ui.activity
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,37 +13,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.AsyncImage
-import coil.imageLoader
-import coil.memory.MemoryCache
-import coil.request.CachePolicy
 import coil.request.ImageRequest
-import coil.request.SuccessResult
-import coil.size.Precision
-import coil.size.Scale
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.backstack.NavDecoration
 import com.slack.circuit.backstack.SaveableBackStack
@@ -75,14 +60,9 @@ import io.sweers.catchup.ui.activity.FlickToDismissState.FlickGestureState.Dismi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
-import me.saket.telephoto.subsamplingimage.ImageSource
-import me.saket.telephoto.subsamplingimage.SubSamplingImage
-import me.saket.telephoto.subsamplingimage.rememberSubSamplingImageState
-import me.saket.telephoto.zoomable.ZoomableContentLocation
-import me.saket.telephoto.zoomable.ZoomableViewport
-import me.saket.telephoto.zoomable.ZoomableViewportState
-import me.saket.telephoto.zoomable.graphicsLayer
-import me.saket.telephoto.zoomable.rememberZoomableViewportState
+import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
+import me.saket.telephoto.zoomable.rememberZoomableImageState
+import me.saket.telephoto.zoomable.rememberZoomableState
 
 @Parcelize
 data class ImageViewerScreen(
@@ -155,7 +135,6 @@ constructor(
   }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @CircuitInject(ImageViewerScreen::class, AppScope::class)
 @Composable
 fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
@@ -174,32 +153,6 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
       systemUiController.systemBarsBehavior = originalSystemBarsBehavior
     }
   }
-
-  val context = LocalContext.current
-  val imageSource: ImageSource? by
-    produceState<ImageSource?>(null) {
-      if (state.isBitmap) {
-        val url = state.url
-        val result =
-          context.imageLoader.execute(
-            ImageRequest.Builder(context)
-              .data(url)
-              // In-memory caching will be handled by SubSamplingImage.
-              .memoryCachePolicy(CachePolicy.DISABLED)
-              .build()
-          )
-        if (result is SuccessResult) {
-          value =
-            ImageSource.stream { context ->
-              val diskCache = context.imageLoader.diskCache!!
-              diskCache.fileSystem.source(diskCache[result.diskCacheKey!!]!!.data)
-            }
-        } else {
-          // TODO: handle errors here.
-          error("Failed to load image: $url. Result: $result")
-        }
-      }
-    }
 
   CatchUpTheme(useDarkTheme = true) {
     val backgroundAlpha: Float by
@@ -220,46 +173,21 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
         FlickToDismiss(state = dismissState) {
           val overlayHost = LocalOverlayHost.current
           val scope = rememberStableCoroutineScope()
-          val viewportState = rememberZoomableViewportState(maxZoomFactor = 2f)
-          ZoomableViewport(
-            state = viewportState,
+          val zoomableState = rememberZoomableState(maxZoomFactor = 2f)
+          val imageState = rememberZoomableImageState(zoomableState)
+          // TODO loading loading indicator if there's no memory cached alias
+          ZoomableAsyncImage(
+            model =
+              ImageRequest.Builder(LocalContext.current)
+                .data(state.url)
+                .apply { state.alias?.let(::placeholderMemoryCacheKey) }
+                .build(),
+            contentDescription = "TODO",
+            modifier = Modifier.fillMaxSize(),
+            state = imageState,
             onClick = { showChrome = !showChrome },
             onLongClick = { launchShareSheet(scope, overlayHost, state, sink) },
-            contentScale = ContentScale.Inside,
-          ) {
-            if (state.isBitmap) {
-              Crossfade(targetState = imageSource, label = "Crossfade subsampled image") { source ->
-                if (source == null) {
-                  if (state.alias == null) {
-                    // TODO show a loading indicator?
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                      CircularProgressIndicator()
-                    }
-                    return@Crossfade
-                  } else {
-                    PlaceholderImage(
-                      context.imageLoader.memoryCache!![MemoryCache.Key(state.alias)]!!
-                        .bitmap
-                        .asImageBitmap(),
-                      modifier = Modifier.fillMaxSize(),
-                    )
-                  }
-                } else {
-                  SubSamplingImage(
-                    modifier = Modifier.fillMaxSize(),
-                    state =
-                      rememberSubSamplingImageState(
-                        imageSource = source,
-                        viewportState = viewportState,
-                      ),
-                    contentDescription = null,
-                  )
-                }
-              }
-            } else {
-              NormalSizedRemoteImage(state.url, state.alias, viewportState)
-            }
-          }
+          )
         }
 
         // TODO pick color based on if image is underneath it or not. Similar to badges
@@ -328,40 +256,6 @@ private fun launchShareSheet(
       )
     sink(result)
   }
-
-@Composable
-private fun NormalSizedRemoteImage(
-  url: String,
-  alias: String?,
-  viewportState: ZoomableViewportState,
-  modifier: Modifier = Modifier
-) {
-  AsyncImage(
-    modifier = modifier.graphicsLayer(viewportState.contentTransformation).fillMaxSize(),
-    model =
-      ImageRequest.Builder(LocalContext.current)
-        .data(url)
-        .precision(Precision.EXACT)
-        .scale(Scale.FIT)
-        .apply { alias?.let(this::placeholderMemoryCacheKey) }
-        .build(),
-    contentDescription = "The image",
-    onState = {
-      viewportState.setContentLocation(
-        ZoomableContentLocation.fitInsideAndCenterAligned(it.painter?.intrinsicSize)
-      )
-    }
-  )
-}
-
-@Composable
-private fun PlaceholderImage(bitmap: ImageBitmap, modifier: Modifier = Modifier) {
-  Image(
-    bitmap = bitmap,
-    modifier = modifier,
-    contentDescription = "The image",
-  )
-}
 
 // TODO
 //  generalize this when there's a factory pattern for it in Circuit
