@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,9 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -120,8 +124,13 @@ fun TextItem(
             ),
         horizontalAlignment = Alignment.CenterHorizontally
       ) {
+        val icon =
+          when (mark.markType) {
+            Mark.MarkType.COMMENT -> ImageVector.vectorResource(R.drawable.ic_comment_black_24dp)
+            Mark.MarkType.STAR -> Icons.Filled.Star
+          }
         Icon(
-          painter = painterResource(mark.icon ?: R.drawable.ic_comment_black_24dp),
+          painter = rememberVectorPainter(icon),
           contentDescription = null,
           modifier = Modifier.size(24.dp),
           tint = themeColor

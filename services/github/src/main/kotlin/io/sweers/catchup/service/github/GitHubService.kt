@@ -104,7 +104,7 @@ constructor(
               starsToday?.toString()?.let {
                 Mark(
                   text = "+$it",
-                  icon = R.drawable.ic_star_black_24dp,
+                  markType = Mark.MarkType.STAR,
                   iconTintColor = languageColor?.let(Color::parseColor)
                 )
               },

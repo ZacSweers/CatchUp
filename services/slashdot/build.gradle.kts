@@ -31,6 +31,7 @@ android {
 slack {
   features {
     // Because of tikxml
+    @Suppress("OPT_IN_USAGE")
     dagger(enableComponents = true)
   }
 }

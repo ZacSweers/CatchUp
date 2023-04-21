@@ -44,6 +44,7 @@ plugins {
 slack {
   features {
     compose()
+    @Suppress("OPT_IN_USAGE")
     dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
     moshi(codegen = true)
   }
@@ -519,7 +520,7 @@ dependencies {
   implementation(libs.autodispose.core)
   implementation(libs.autodispose.lifecycle)
   implementation(libs.circuit.codegenAnnotations)
-  implementation(libs.circuit.core)
+  implementation(libs.circuit.foundation)
   implementation(libs.circuit.overlay)
   implementation(libs.circuit.retained)
   // Coil

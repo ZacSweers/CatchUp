@@ -4,16 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import com.slack.circuit.CircuitConfig
-import com.slack.circuit.LocalCircuitConfig
-import com.slack.circuit.Navigator
-import com.slack.circuit.Presenter
-import com.slack.circuit.Screen
-import com.slack.circuit.Ui
+import com.slack.circuit.foundation.CircuitConfig
+import com.slack.circuit.foundation.LocalCircuitConfig
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.ui.Ui
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.circuit.DefaultCircuitNavDecoration
 import dev.zacsweers.catchup.di.AppScope
 
 @ContributesTo(AppScope::class)
@@ -30,14 +31,9 @@ interface CircuitModule {
       uiFactories: @JvmSuppressWildcards Set<Ui.Factory>,
     ): CircuitConfig {
       return CircuitConfig.Builder()
-        .apply {
-          for (factory in presenterFactories) {
-            addPresenterFactory(factory)
-          }
-          for (factory in uiFactories) {
-            addUiFactory(factory)
-          }
-        }
+        .addPresenterFactories(presenterFactories)
+        .addUiFactories(uiFactories)
+        .setDefaultNavDecoration(DefaultCircuitNavDecoration)
         .setOnUnavailableContent { screen, modifier ->
           val navigator =
             object : Navigator {
