@@ -588,6 +588,7 @@ dependencies {
   implementation(libs.sqldelight.primitiveAdapters)
   implementation(projects.libraries.di)
   implementation(projects.libraries.di.android)
+  implementation(libs.telephoto.zoomableImageCoil)
 
   releaseImplementation(libs.misc.bugsnag)
   releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)

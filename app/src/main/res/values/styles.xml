@@ -24,6 +24,9 @@
 
     <!-- Let's be real, no one wants this by default -->
     <item name="android:splitMotionEvents">false</item>
+
+    <!-- Don't want the image viewer to jump when we toggle sysui bars visibility. -->
+    <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
   </style>
 
   <style name="CatchUp" parent="Base" />

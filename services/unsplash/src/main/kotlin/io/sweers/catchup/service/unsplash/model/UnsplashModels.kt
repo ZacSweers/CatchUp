@@ -30,7 +30,7 @@ data class UnsplashPhoto(
   val links: Links,
   val likes: Int,
   val user: User,
-  @Json(name = "blur_hash") val blurHash: String,
+  @Json(name = "blur_hash") val blurHash: String? = null,
   val height: Int,
   val width: Int,
 )
