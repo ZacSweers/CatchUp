@@ -45,9 +45,6 @@ jobs:
       - name: Bootstrap
         run: ./gradlew bootstrap --stacktrace
 
-      # Due to https://github.com/actions/runner-images/issues/7506#issuecomment-1533097084
-      - run: echo "y" | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-
       - name: Get changed files
         if: always() && github.event_name == 'pull_request'
         env:
@@ -90,6 +87,9 @@ jobs:
         with:
           name: reports
           path: build/skippy/**
+
+      # Due to https://github.com/actions/runner-images/issues/7506#issuecomment-1533097084
+      - run: echo "y" | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
 
       - name: Build and run tests
         run: ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
