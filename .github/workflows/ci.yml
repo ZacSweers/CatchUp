@@ -43,7 +43,7 @@ jobs:
           touch ~/.gradle/gradle.properties
 
       - name: Bootstrap
-        run: ./gradlw bootstrap --stacktrace
+        run: ./gradlew bootstrap --stacktrace
 
       - name: Get changed files
         if: always() && github.event_name == 'pull_request'
