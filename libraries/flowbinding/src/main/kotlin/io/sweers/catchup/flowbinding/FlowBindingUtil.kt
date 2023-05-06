@@ -15,10 +15,10 @@
  */
 package io.sweers.catchup.flowbinding
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(DelicateCoroutinesApi::class)
 fun <E> SendChannel<E>.safeOffer(value: E) =
   !isClosedForSend &&
     try {
