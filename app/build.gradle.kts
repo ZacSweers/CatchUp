@@ -129,6 +129,11 @@ android {
 
 ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 
+bugsnag {
+  enabled.set(false) // Reenable whenever this matters
+  overwrite.set(true)
+}
+
 // play {
 //  track = "alpha"
 //  serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
