@@ -60,6 +60,7 @@ import io.sweers.catchup.ui.activity.FlickToDismissState.FlickGestureState.Dismi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import me.saket.telephoto.zoomable.ZoomSpec
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import me.saket.telephoto.zoomable.rememberZoomableImageState
 import me.saket.telephoto.zoomable.rememberZoomableState
@@ -173,7 +174,7 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
         FlickToDismiss(state = dismissState) {
           val overlayHost = LocalOverlayHost.current
           val scope = rememberStableCoroutineScope()
-          val zoomableState = rememberZoomableState(maxZoomFactor = 2f)
+          val zoomableState = rememberZoomableState(ZoomSpec(maxZoomFactor = 2f))
           val imageState = rememberZoomableImageState(zoomableState)
           // TODO loading loading indicator if there's no memory cached alias
           ZoomableAsyncImage(

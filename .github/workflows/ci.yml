@@ -32,16 +32,18 @@ jobs:
           distribution: 'zulu'
           java-version: '19'
 
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
+          cache-read-only: false
+
       - name: Prepare Gradle Home
         run: |
           mkdir -p ~/.gradle
           touch ~/.gradle/gradle.properties
 
       - name: Bootstrap
-        id: gradle-bootstrap
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: bootstrap --stacktrace
+        run: ./gradlw bootstrap --stacktrace
 
       - name: Get changed files
         if: always() && github.event_name == 'pull_request'
@@ -65,7 +67,8 @@ jobs:
             cat "$path"
             # Copy focus file to root of project
             # Necessary to omit the newline because the focus plugin reads the whole file text!
-            echo -n "build/skippy/focus.settings.gradle" > .focus
+            # TODO changing settings breaks caching https://issuetracker.google.com/issues/279997228
+            # echo -n "build/skippy/focus.settings.gradle" > .focus
             # Check if app is affected
             if grep -q ":app" "$path"; then
               echo "App is affected"
@@ -86,10 +89,7 @@ jobs:
           path: build/skippy/**
 
       - name: Build and run tests
-        id: gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
+        run: ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
 
       - name: Filter sarif
         if: always() && github.event_name == 'pull_request'
