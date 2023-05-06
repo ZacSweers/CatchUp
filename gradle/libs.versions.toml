@@ -43,7 +43,7 @@ preferences = "1.2.0"
 retrofit = "2.9.0"
 room = "2.6.0-alpha01"
 sortDependencies = "0.2"
-sgp = "0.9.0"
+sgp = "0.9.3"
 spotless = "6.18.0"
 sqldelight = "2.0.0-alpha05"
 telephoto = "1.0.0-alpha02"
@@ -86,7 +86,7 @@ androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
 androidx-constraintLayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha09"
-androidx-customTabs = "androidx.browser:browser:1.5.0"
+androidx-customTabs = "androidx.browser:browser:1.6.0-alpha01"
 androidx-design = "com.google.android.material:material:1.9.0"
 androidx-drawerLayout = "androidx.drawerlayout:drawerlayout:1.2.0"
 
@@ -124,7 +124,7 @@ androidx-compose-animation-graphics = { module = "androidx.compose.animation:ani
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.4.2"
+androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.4.3"
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }
 androidx-compose-materialIconsExtended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
