@@ -87,7 +87,7 @@ androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-
 
 androidx-constraintLayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha09"
 androidx-customTabs = "androidx.browser:browser:1.6.0-alpha01"
-androidx-design = "com.google.android.material:material:1.8.0"
+androidx-design = "com.google.android.material:material:1.9.0"
 androidx-drawerLayout = "androidx.drawerlayout:drawerlayout:1.2.0"
 
 androidx-emoji = { module = "androidx.emoji:emoji", version.ref = "emoji" }
