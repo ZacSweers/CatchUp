@@ -406,12 +406,6 @@ val generateLicenseTask =
 
 generateLicenseTask.dependsOn("licenseeRelease")
 
-tasks
-  .matching { it.name.startsWith("licensee") }
-  .configureEach {
-    notCompatibleWithConfigurationCache("https://github.com/cashapp/licensee/issues/72")
-  }
-
 tasks.matching { it.name == "licenseeDebug" }.configureEach { enabled = false }
 
 licensee {
