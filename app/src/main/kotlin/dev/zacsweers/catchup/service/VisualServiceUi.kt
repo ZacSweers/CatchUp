@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import coil.drawable.MovieDrawable
@@ -79,10 +80,14 @@ fun VisualServiceUi(
     columns = StaggeredGridCells.Fixed(columnSpan()),
     modifier = modifier.fillMaxSize(),
   ) {
-    itemsIndexed(
-      lazyItems,
-      key = { _, item -> item.id },
-    ) { index, item ->
+    items(
+      count = lazyItems.itemCount,
+      // Here we use the new itemKey extension on LazyPagingItems to
+      // handle placeholders automatically, ensuring you only need to provide
+      // keys for real items
+      key = lazyItems.itemKey { it.id },
+    ) { index ->
+      val item = lazyItems[index]
       Surface(color = placeholders[index % placeholders.size]) {
         if (item != null) {
           val clickableItemState =
@@ -297,31 +302,6 @@ fun LazyStaggeredGridScope.handleLoadStates(
         }
       }
     }
-  }
-}
-
-// TODO copied + modified from Paging
-@OptIn(ExperimentalFoundationApi::class)
-fun <T : Any> LazyStaggeredGridScope.itemsIndexed(
-  items: LazyPagingItems<T>,
-  key: ((index: Int, item: T) -> Any)? = null,
-  itemContent: @Composable LazyStaggeredGridScope.(index: Int, value: T?) -> Unit
-) {
-  items(
-    count = items.itemCount,
-    key =
-      if (key == null) null
-      else
-        { index ->
-          val item = items.peek(index)
-          if (item == null) {
-            PagingPlaceholderKey(index)
-          } else {
-            key(index, item)
-          }
-        }
-  ) { index ->
-    itemContent(index, items[index])
   }
 }
 
