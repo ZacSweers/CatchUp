@@ -63,7 +63,7 @@ doctor = { id = "com.osacky.doctor", version = "0.8.1" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-licensee = { id = "app.cash.licensee", version = "1.6.0" }
+licensee = { id = "app.cash.licensee", version = "1.7.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.8.2" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.4.0" }
@@ -134,7 +134,7 @@ androidx-compose-rxjava3 = { module = "androidx.compose.runtime:runtime-rxjava3"
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material3", version.ref = "accompanist" }
-androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha18"
+androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha19"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.0-rc01" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"

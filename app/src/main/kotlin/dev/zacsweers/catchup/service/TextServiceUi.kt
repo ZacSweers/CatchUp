@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import androidx.paging.compose.items
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.compose.ContentAlphas
@@ -61,9 +62,13 @@ fun TextServiceUi(
 ) {
   LazyColumn(modifier = modifier) {
     items(
-      items = lazyItems,
-      key = CatchUpItem::id,
-    ) { item ->
+      count = lazyItems.itemCount,
+      // Here we use the new itemKey extension on LazyPagingItems to
+      // handle placeholders automatically, ensuring you only need to provide
+      // keys for real items
+      key = lazyItems.itemKey { it.id },
+    ) { index ->
+      val item = lazyItems[index]
       if (item == null) {
         PlaceholderItem(themeColor)
       } else {
