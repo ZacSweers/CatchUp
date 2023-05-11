@@ -60,7 +60,7 @@ fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
     topBar = { CollapsingAboutHeader(state.version, scrollBehavior = scrollBehavior) }
   ) { paddingValues ->
     Column(Modifier.padding(paddingValues)) {
-      val pagerState = rememberPagerState()
+      val pagerState = rememberPagerState { 2 }
       TabRow(
         // Our selected tab is our current page
         selectedTabIndex = pagerState.currentPage,
@@ -82,7 +82,6 @@ fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
 
       HorizontalPager(
         modifier = Modifier.weight(1f),
-        pageCount = 2,
         key = { it },
         state = pagerState,
         verticalAlignment = Alignment.Top,

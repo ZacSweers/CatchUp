@@ -42,10 +42,6 @@ buildscript {
   }
 }
 
-doctor {
-  javaHome { ensureJavaHomeMatches.set(false) }
-}
-
 subprojects {
   pluginManager.withPlugin("com.squareup.anvil") {
     dependencies { add("compileOnly", libs.anvil.annotations) }

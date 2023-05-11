@@ -178,7 +178,7 @@ constructor(
 fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
   if (state.serviceMetas.isEmpty()) return // Not loaded yet
   val eventSink = state.eventSink
-  val pagerState = key(state.serviceMetas) { rememberPagerState() }
+  val pagerState = key(state.serviceMetas) { rememberPagerState { state.serviceMetas.size } }
   val currentServiceMeta = state.serviceMetas[pagerState.currentPage]
   val title = stringResource(currentServiceMeta.name)
   val systemUiController = rememberSystemUiController()
@@ -314,7 +314,6 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
       }
       HorizontalPager(
         modifier = Modifier.weight(1f),
-        pageCount = state.serviceMetas.size,
         beyondBoundsPageCount = 1,
         key = { state.serviceMetas[it].id },
         state = pagerState,

@@ -412,14 +412,11 @@ licensee {
   allow("Apache-2.0")
   allow("MIT")
   allow("MIT-0")
-  allowUrl("https://raw.githubusercontent.com/apollographql/apollo-kotlin/main/LICENSE")
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
   // MIT
   allowUrl("https://github.com/alorma/Compose-Settings/blob/main/LICENSE")
-  // Apache v2
-  allowUrl("https://github.com/Mr-Pine/Zoomables/blob/master/LICENSE")
 }
 
 androidComponents {
