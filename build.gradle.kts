@@ -43,8 +43,6 @@ buildscript {
 }
 
 doctor {
-  // G1 is faster now
-  warnWhenNotUsingParallelGC.set(false)
   javaHome { ensureJavaHomeMatches.set(false) }
 }
 
