@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.31.1-alpha"
-agp = "8.2.0-alpha01"
+agp = "8.2.0-alpha03"
 androidx-activity = "1.7.1"
 androidx-core = "1.11.0-alpha02"
 emoji = "1.2.0-alpha03"
@@ -65,7 +65,7 @@ kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.7.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
-playPublisher = { id = "com.github.triplet.play", version = "3.8.2" }
+playPublisher = { id = "com.github.triplet.play", version = "3.8.3" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.4.0" }
 retry = { id = "org.gradle.test-retry", version = "1.5.2" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
@@ -226,8 +226,8 @@ misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
 misc-debug-scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.2.0"
 
-misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:0.26.0"
-misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.26.0"
+misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:0.27.0"
+misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.27.0"
 misc-inboxRecyclerView = "me.saket:inboxrecyclerview:3.0.0"
 misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
 misc-jsoup = "org.jsoup:jsoup:1.16.1"
