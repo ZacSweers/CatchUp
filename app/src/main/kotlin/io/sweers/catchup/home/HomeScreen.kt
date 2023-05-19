@@ -1,6 +1,7 @@
 package io.sweers.catchup.home
 
 import android.content.res.Configuration
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -312,6 +313,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
           )
         }
       }
+      var contentComposed by remember { mutableStateOf(false) }
       HorizontalPager(
         modifier = Modifier.weight(1f),
         beyondBoundsPageCount = 1,
@@ -322,11 +324,13 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
         pageNestedScrollConnection =
           PagerDefaults.pageNestedScrollConnection(Orientation.Horizontal)
       ) { page ->
+        contentComposed = true
         CircuitContent(
           screen = ServiceScreen(state.serviceMetas[page].id),
           onNavEvent = { eventSink(HomeScreen.Event.NestedNavEvent(it)) }
         )
       }
+      ReportDrawnWhen { contentComposed }
     }
   }
 }
