@@ -1,5 +1,6 @@
 include(
   ":app",
+  ":benchmark",
   ":libraries:base-ui",
   ":libraries:appconfig",
   ":libraries:compose-extensions",

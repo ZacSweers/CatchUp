@@ -38,6 +38,7 @@ plugins {
   alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
   alias(libs.plugins.sqldelight)
+  alias(libs.plugins.baselineprofile)
   //  alias(libs.plugins.playPublisher)
 }
 
@@ -99,13 +100,19 @@ android {
         "\"${project.properties["catchup_imgur_access_token"]}\""
       )
     }
-    getByName("release") {
+    val releaseBuildType = getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY", "\"${properties["catchup_bugsnag_key"]}\"")
       manifestPlaceholders["BUGSNAG_API_KEY"] = properties["catchup_bugsnag_key"].toString()
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       proguardFiles += file("proguard-rules.pro")
       isMinifyEnabled = true
       isShrinkResources = true
+    }
+    create("benchmark") {
+      initWith(releaseBuildType)
+      signingConfig = signingConfigs.getByName("debug")
+      matchingFallbacks += listOf("release")
+      isDebuggable = false
     }
   }
   splits {
@@ -449,6 +456,9 @@ dependencies {
   ksp(libs.androidx.room.apt)
   ksp(libs.circuit.codegen)
 
+  baselineProfile(projects.benchmark)
+
+  implementation(libs.androidx.profileinstaller)
   implementation(project(":libraries:appconfig"))
   implementation(project(":libraries:base-ui"))
   // Compose
@@ -607,8 +617,8 @@ dependencies {
   debugImplementation(libs.okhttp.debug.loggingInterceptor)
   debugImplementation(libs.retrofit.debug.mock)
 
-  kapt(project(":libraries:tooling:spi-multibinds-validator"))
-  kapt(project(":libraries:tooling:spi-visualizer"))
+  kaptDebug(project(":libraries:tooling:spi-multibinds-validator"))
+  kaptDebug(project(":libraries:tooling:spi-visualizer"))
 
   testImplementation(libs.misc.jsr305)
   // Test
