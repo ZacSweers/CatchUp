@@ -51,17 +51,6 @@ subprojects {
       generateProguardRules.set(false)
     }
   }
-
-  // TODO remove after kotlinpoet 1.14.0 is out with https://github.com/square/kotlinpoet/pull/1568
-  configurations.configureEach {
-    resolutionStrategy {
-      eachDependency {
-        if (requested.group == "com.squareup" && requested.name.contains("kotlinpoet")) {
-          useVersion("1.12.0")
-        }
-      }
-    }
-  }
 }
 
 tasks.named<ComputeAffectedProjectsTask>("computeAffectedProjects") {
