@@ -1,6 +1,3 @@
-import slack.gradle.avoidance.AffectedProjectsDefaults
-import slack.gradle.avoidance.ComputeAffectedProjectsTask
-
 /*
  * Copyright (c) 2018 Zac Sweers
  *
@@ -16,6 +13,9 @@ import slack.gradle.avoidance.ComputeAffectedProjectsTask
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import dev.zacsweers.moshix.ir.gradle.MoshiPluginExtension
+import slack.gradle.avoidance.AffectedProjectsDefaults
+import slack.gradle.avoidance.ComputeAffectedProjectsTask
 
 plugins {
   alias(libs.plugins.kotlin) apply false
@@ -46,11 +46,22 @@ subprojects {
   pluginManager.withPlugin("com.squareup.anvil") {
     dependencies { add("compileOnly", libs.anvil.annotations) }
   }
-  //  pluginManager.withPlugin("io.gitlab.arturbosch.detekt") {
-  //    dependencies {
-  //      add("detektPlugins", libs.detekt.plugins.twitterCompose)
-  //    }
-  //  }
+  pluginManager.withPlugin("dev.zacsweers.moshix") {
+    configure<MoshiPluginExtension> {
+      generateProguardRules.set(false)
+    }
+  }
+
+  // TODO remove after kotlinpoet 1.14.0 is out with https://github.com/square/kotlinpoet/pull/1568
+  configurations.configureEach {
+    resolutionStrategy {
+      eachDependency {
+        if (requested.group == "com.squareup" && requested.name.contains("kotlinpoet")) {
+          useVersion("1.12.0")
+        }
+      }
+    }
+  }
 }
 
 tasks.named<ComputeAffectedProjectsTask>("computeAffectedProjects") {
