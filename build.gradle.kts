@@ -33,6 +33,7 @@ plugins {
   alias(libs.plugins.retry) apply false
   alias(libs.plugins.bugsnag) apply false
   alias(libs.plugins.sortDependencies) apply false
+  alias(libs.plugins.dependencyAnalysis)
 }
 
 buildscript {
