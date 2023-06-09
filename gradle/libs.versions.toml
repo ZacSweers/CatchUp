@@ -221,7 +221,7 @@ misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
 misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.10.5"
-misc-debug-guava = "com.google.guava:guava:32.0.0-jre"
+misc-debug-guava = "com.google.guava:guava:32.0.1-jre"
 misc-debug-madge = "com.jakewharton.madge:madge:1.1.4"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
 misc-debug-scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
