@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.google.devtools.ksp.gradle.KspTaskJvm
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
@@ -25,6 +26,7 @@ import java.util.Locale
 import okio.buffer
 import okio.sink
 import okio.source
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.android.application")
@@ -418,6 +420,8 @@ licensee {
   // MIT
   allowUrl("https://github.com/alorma/Compose-Settings/blob/main/LICENSE")
 }
+
+// This is a comment to commit something
 
 androidComponents {
   onVariants(selector().withBuildType("release")) { variant ->
