@@ -17,6 +17,7 @@ package io.sweers.catchup.ui.activity
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -61,8 +62,18 @@ constructor(
   private val circuitConfig: CircuitConfig,
   private val catchUpPreferences: CatchUpPreferences,
   private val rootContent: RootContent,
-  private val appConfig: AppConfig,
+  appConfig: AppConfig,
 ) : AppCompatActivity() {
+
+  init {
+    if (appConfig.sdkInt == 29 && isTaskRoot) {
+      onBackPressedDispatcher.addCallback {
+        // https://twitter.com/Piwai/status/1169274622614704129
+        // https://issuetracker.google.com/issues/139738913
+        finishAfterTransition()
+      }
+    }
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -115,19 +126,6 @@ constructor(
   override fun onDestroy() {
     customTab.connectionCallback = null
     super.onDestroy()
-  }
-
-  // I'm not sure what the right way to do the below in a non-deprecated way is.
-  // The new backpress handling APIs + androidx compats are a mess to understand.
-  @Deprecated("Deprecated in Java")
-  override fun onBackPressed() {
-    if (appConfig.sdkInt == 29 && isTaskRoot) {
-      // https://twitter.com/Piwai/status/1169274622614704129
-      // https://issuetracker.google.com/issues/139738913
-      finishAfterTransition()
-    } else {
-      @Suppress("DEPRECATION") super.onBackPressed()
-    }
   }
 
   @ContributesTo(AppScope::class)
