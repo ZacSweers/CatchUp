@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
-import androidx.paging.compose.items
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.compose.ContentAlphas
 import io.sweers.catchup.R
