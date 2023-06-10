@@ -18,13 +18,13 @@ package io.sweers.catchup.ui.activity
 import android.app.Activity
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.core.view.WindowCompat
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.CircuitConfig
@@ -66,7 +66,7 @@ constructor(
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    WindowCompat.setDecorFitsSystemWindows(window, false)
+    enableEdgeToEdge()
 
     setContent {
       val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
@@ -117,6 +117,8 @@ constructor(
     super.onDestroy()
   }
 
+  // I'm not sure what the right way to do the below in a non-deprecated way is.
+  // The new backpress handling APIs + androidx compats are a mess to understand.
   @Deprecated("Deprecated in Java")
   override fun onBackPressed() {
     if (appConfig.sdkInt == 29 && isTaskRoot) {
@@ -124,7 +126,7 @@ constructor(
       // https://issuetracker.google.com/issues/139738913
       finishAfterTransition()
     } else {
-      super.onBackPressed()
+      @Suppress("DEPRECATION") super.onBackPressed()
     }
   }
 

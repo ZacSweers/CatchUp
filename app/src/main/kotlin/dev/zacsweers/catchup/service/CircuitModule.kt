@@ -47,11 +47,12 @@ interface CircuitModule {
                 return emptyList()
               }
             }
+          val config = LocalCircuitConfig.current
           BasicText(
             """
               Route not available: ${screen.javaClass.name}.
-              Presenter: ${LocalCircuitConfig.current?.presenter(screen, navigator)?.javaClass}
-              UI: ${LocalCircuitConfig.current?.ui(screen)?.javaClass}
+              Presenter: ${config?.presenter(screen, navigator)?.javaClass}
+              UI: ${config?.ui(screen)?.javaClass}
               """
               .trimIndent(),
             modifier.background(Color.Red),
