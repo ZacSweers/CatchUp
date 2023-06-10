@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package dev.zacsweers.catchup.benchmark
 
-import androidx.benchmark.macro.ExperimentalStableBaselineProfilesApi
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import org.junit.Rule
 import org.junit.Test
@@ -10,10 +9,9 @@ import org.junit.Test
 class BaselineProfileGenerator {
   @get:Rule val baselineProfileRule = BaselineProfileRule()
 
-  @OptIn(ExperimentalStableBaselineProfilesApi::class)
   @Test
   fun startupBaselineProfile() =
-    baselineProfileRule.collectStableBaselineProfile(
+    baselineProfileRule.collectBaselineProfile(
       packageName = "io.sweers.catchup",
       // Iteration values recommended by AndroidX folks
       maxIterations = 15,
