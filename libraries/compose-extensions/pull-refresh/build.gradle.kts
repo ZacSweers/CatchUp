@@ -7,7 +7,7 @@ plugins {
 slack { features { compose() } }
 
 dependencies {
-  implementation(libs.androidx.compose.material.material3)
   implementation(libs.androidx.compose.material)
+  implementation(libs.androidx.compose.material.material3)
   implementation(projects.libraries.composeExtensions)
 }

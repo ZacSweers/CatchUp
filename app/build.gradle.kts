@@ -456,7 +456,6 @@ dependencies {
   implementation(project(":libraries:compose-extensions:pull-refresh"))
   implementation(project(":libraries:flowbinding"))
   implementation(project(":libraries:gemoji"))
-  implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:summarizer"))
   implementation(project(":libraries:util"))
@@ -582,9 +581,9 @@ dependencies {
   implementation(libs.sqldelight.driver.android)
   implementation(libs.sqldelight.paging)
   implementation(libs.sqldelight.primitiveAdapters)
+  implementation(libs.telephoto.zoomableImageCoil)
   implementation(projects.libraries.di)
   implementation(projects.libraries.di.android)
-  implementation(libs.telephoto.zoomableImageCoil)
 
   releaseImplementation(libs.misc.bugsnag)
   releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
