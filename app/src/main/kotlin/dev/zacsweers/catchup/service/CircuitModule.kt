@@ -53,6 +53,8 @@ interface CircuitModule {
               Route not available: ${screen.javaClass.name}.
               Presenter: ${config?.presenter(screen, navigator)?.javaClass}
               UI: ${config?.ui(screen)?.javaClass}
+              All presenterFactories: ${config?.newBuilder()?.presenterFactories}
+              All uiFactories: ${config?.newBuilder()?.uiFactories}
               """
               .trimIndent(),
             modifier.background(Color.Red),
