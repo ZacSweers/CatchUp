@@ -24,7 +24,7 @@ dagger = "2.46.1"
 datastore = "1.1.0-alpha04"
 detekt = "1.23.0"
 espresso = "3.5.1"
-flipper = "0.194.0"
+flipper = "0.195.0"
 hyperion = "0.9.24"
 inspector = "0.3.0"
 jdk = "19"
@@ -150,7 +150,7 @@ apollo-httpcache = { module = "com.apollographql.apollo3:apollo-http-cache", ver
 apollo-normalizedCache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
 apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
 
-auto-common = "com.google.auto:auto-common:1.2.1"
+auto-common = "com.google.auto:auto-common:1.2.2"
 auto-service = "com.google.auto.service:auto-service:1.1.1"
 
 autodispose-core = { module = "com.uber.autodispose2:autodispose", version.ref = "autodispose" }
