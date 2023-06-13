@@ -150,7 +150,7 @@ apollo-httpcache = { module = "com.apollographql.apollo3:apollo-http-cache", ver
 apollo-normalizedCache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
 apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
 
-auto-common = "com.google.auto:auto-common:1.2.1"
+auto-common = "com.google.auto:auto-common:1.2.2"
 auto-service = "com.google.auto.service:auto-service:1.1.0"
 
 autodispose-core = { module = "com.uber.autodispose2:autodispose", version.ref = "autodispose" }
