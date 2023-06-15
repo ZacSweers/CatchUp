@@ -141,7 +141,7 @@ androidx-compose-material-material3 = { module = "androidx.compose.material3:mat
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-config = "com.google.firebase:firebase-config:21.4.0"
 firebase-database = "com.google.firebase:firebase-database:20.2.2"
-firebase-perf = "com.google.firebase:firebase-perf:20.3.2"
+firebase-perf = "com.google.firebase:firebase-perf:20.3.3"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
 anvil-compiler = { module = "com.squareup.anvil:compiler", version.ref = "anvil" }
