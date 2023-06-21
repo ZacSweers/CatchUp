@@ -95,7 +95,9 @@ data class ServiceScreen(val serviceKey: String) : Screen {
 
   sealed interface Event : CircuitUiEvent {
     data class ItemClicked(val item: CatchUpItem) : Event
+
     data class ItemLongClicked(val item: CatchUpItem) : Event
+
     data class MarkClicked(val item: CatchUpItem) : Event
   }
 }

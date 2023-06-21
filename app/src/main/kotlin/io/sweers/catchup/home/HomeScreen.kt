@@ -95,9 +95,12 @@ object HomeScreen : Screen {
     val changelogAvailable: Boolean,
     val eventSink: (Event) -> Unit = {}
   ) : CircuitUiState
+
   sealed interface Event : CircuitUiEvent {
     object OpenSettings : Event
+
     object ShowChangelog : Event
+
     data class NestedNavEvent(val navEvent: NavEvent) : Event
   }
 }

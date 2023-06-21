@@ -71,6 +71,7 @@ class ProcessLock(name: String, lockDir: File, private val processLock: Boolean)
     private const val TAG = "SupportSQLiteLock"
     // in-process lock map
     private val threadLocksMap: MutableMap<String, Lock> = HashMap()
+
     private fun getThreadLock(key: String): Lock =
       synchronized(threadLocksMap) {
         return threadLocksMap.getOrPut(key) { ReentrantLock() }

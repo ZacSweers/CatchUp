@@ -86,6 +86,7 @@ data class FlickToDismissState(
 ) {
   val offset: Float
     get() = offsetState.value
+
   val offsetState = mutableStateOf(0f)
 
   /** Distance dragged as a ratio of the content's height. */
@@ -150,7 +151,9 @@ data class FlickToDismissState(
 
   sealed interface FlickGestureState {
     object Idle : FlickGestureState
+
     object Dragging : FlickGestureState
+
     object Dismissed : FlickGestureState
   }
 }

@@ -78,9 +78,11 @@ import okhttp3.Cache
 @Parcelize
 object SettingsScreen : Screen {
   data class State(val eventSink: (Event) -> Unit) : CircuitUiState
+
   sealed interface Event {
     // TODO does this make sense or should the presenter decide?
     data class NavToScreen(val screen: Screen) : Event
+
     object ClearCache : Event
   }
 }

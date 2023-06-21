@@ -168,10 +168,13 @@ abstract class ApplicationModule {
       return object : ImageLoader {
         override val components: ComponentRegistry
           get() = imageLoader.get().components
+
         override val defaults: DefaultRequestOptions
           get() = imageLoader.get().defaults
+
         override val diskCache: DiskCache?
           get() = imageLoader.get().diskCache
+
         override val memoryCache: MemoryCache?
           get() = imageLoader.get().memoryCache
 

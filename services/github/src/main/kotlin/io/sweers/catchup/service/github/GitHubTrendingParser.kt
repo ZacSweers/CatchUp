@@ -25,6 +25,7 @@ import org.jsoup.nodes.Element
 /** GitHub API does not have /trending endpoints so we have to do gross things :( */
 internal object GitHubTrendingParser {
   private val NUMBER_PATTERN = "\\d+".toRegex()
+
   private fun String.removeCommas() = replace(",", "")
 
   internal fun parse(body: ResponseBody): List<TrendingItem> {

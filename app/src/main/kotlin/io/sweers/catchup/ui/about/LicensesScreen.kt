@@ -93,6 +93,7 @@ import timber.log.Timber
 object LicensesScreen : Screen {
   data class State(val items: ImmutableList<OssBaseItem>?, val eventSink: (Event) -> Unit) :
     CircuitUiState
+
   sealed interface Event : CircuitUiEvent {
     data class Click(val url: String) : Event
   }
@@ -401,6 +402,7 @@ sealed class OssBaseItem {
 
 internal data class OssItemHeader(val avatarUrl: String, val name: String) : OssBaseItem() {
   val id = name.hashCode().toLong()
+
   override fun itemType() = 0
 }
 
@@ -415,5 +417,6 @@ internal data class OssItem(
   val authorUrl: String? = null
 ) : OssBaseItem() {
   val id = Objects.hash(author, name).toLong()
+
   override fun itemType() = 1
 }

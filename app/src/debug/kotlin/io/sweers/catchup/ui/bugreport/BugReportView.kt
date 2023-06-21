@@ -33,12 +33,16 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
   private lateinit var binding: BugreportViewBinding
   private val usernameView
     get() = binding.username
+
   private val titleView
     get() = binding.title
+
   private val descriptionView
     get() = binding.description
+
   private val screenshotView
     get() = binding.screenshot
+
   private val logsView
     get() = binding.logs
 
