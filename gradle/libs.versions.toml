@@ -1,5 +1,5 @@
 [versions]
-accompanist = "0.31.3-beta"
+accompanist = "0.31.4-beta"
 agp = "8.2.0-alpha09"
 androidx-activity = "1.8.0-alpha05"
 androidx-core = "1.12.0-alpha05"
@@ -41,7 +41,7 @@ moshix = "0.22.1-1.9.0-Beta"
 okhttp = "5.0.0-alpha.11"
 preferences = "1.2.0"
 retrofit = "2.9.0"
-room = "2.6.0-alpha01"
+room = "2.6.0-alpha02"
 sortDependencies = "0.3"
 sgp = "0.9.10-1.9.0-Beta"
 spotless = "6.19.0"
@@ -119,7 +119,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-rxJava3 = { module = "androidx.room:room-rxjava3", version.ref = "room" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
-androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-alpha01"
+androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-alpha02"
 
 androidx-compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
@@ -135,7 +135,7 @@ androidx-compose-rxjava3 = { module = "androidx.compose.runtime:runtime-rxjava3"
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material3", version.ref = "accompanist" }
-androidx-paging-compose = "androidx.paging:paging-compose:3.2.0-beta01"
+androidx-paging-compose = "androidx.paging:paging-compose:3.2.0-rc01"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version = "1.1.1" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
