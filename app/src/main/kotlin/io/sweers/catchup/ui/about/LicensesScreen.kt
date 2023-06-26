@@ -271,7 +271,7 @@ constructor(
   }
 
   /** I give you: the most over-engineered OSS licenses section ever. */
-  @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+  @OptIn(ExperimentalCoroutinesApi::class)
   private suspend fun requestItemsInner(): ImmutableList<OssBaseItem> {
     // Start with a fetch of our github entries from assets
     val githubEntries =
