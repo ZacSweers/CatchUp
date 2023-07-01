@@ -29,7 +29,8 @@ hyperion = "0.9.24"
 inspector = "0.3.0"
 jdk = "20"
 kotlin = "1.9.0-RC"
-kotlinxMetadata = "0.6.2"
+kotlinx-metadata = "0.6.2"
+kotlinx-serialization = "1.5.1"
 ksp = "1.9.0-RC-1.0.11"
 ktfmt = "0.44"
 leakcanary = "2.12"
@@ -63,6 +64,7 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.8.1" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.7.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
@@ -197,9 +199,10 @@ kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-te
 kotlin-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutinesRx = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3", version.ref = "coroutines" }
 kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
-kotlin-metadata = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinxMetadata" }
+kotlin-metadata = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadata" }
 kotlin-poet = "com.squareup:kotlinpoet:1.13.2"
 kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 
 lints-compose = "com.slack.lint.compose:compose-lint-checks:1.2.0"
 
@@ -256,6 +259,7 @@ retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "ret
 retrofit-debug-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofit" }
 retrofit-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 retrofit-rxJava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "retrofit" }
+retrofit-kotlinxSerialization = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0"
 
 rx-android = "io.reactivex.rxjava3:rxandroid:3.0.2"
 rx-dogTag = "com.uber.rxdogtag2:rxdogtag:2.0.2"
@@ -273,11 +277,7 @@ sqlite-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "xerial" }
 
 telephoto-zoomableImageCoil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
 
-tikxml-annotation = { module = "com.tickaroo.tikxml:annotation", version.ref = "tikxml" }
-tikxml-apt = { module = "com.tickaroo.tikxml:processor", version.ref = "tikxml" }
-tikxml-core = { module = "com.tickaroo.tikxml:core", version.ref = "tikxml" }
 tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", version.ref = "tikxml" }
-tikxml-retrofit = { module = "com.tickaroo.tikxml:retrofit-converter", version.ref = "tikxml" }
 
 test-android-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 test-android-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espresso" }
@@ -287,6 +287,9 @@ test-android-rules = { module = "androidx.test:rules", version.ref = "androidTes
 
 test-junit = "junit:junit:4.13.2"
 test-truth = "com.google.truth:truth:1.1.5"
+
+xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.86.0"
+xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.86.0"
 
 [bundles]
 common-lint = ["lints-compose"]

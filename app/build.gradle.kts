@@ -387,7 +387,7 @@ abstract class GenerateLicensesAsset : DefaultTask() {
 
   private fun parseScm(url: String): Pair<String, String>? {
     if ("github.com" !in url) return null
-    val (owner, name) =
+    val parts =
       url
         .substringAfter("github.com")
         .removePrefix("/")
@@ -395,7 +395,11 @@ abstract class GenerateLicensesAsset : DefaultTask() {
         .removeSuffix(".git")
         .removeSuffix("/issues")
         .substringAfter(".com/")
+        .trim()
+        .removeSuffix("/")
         .split("/")
+    val owner = parts.getOrNull(0) ?: return null
+    val name = parts.getOrNull(1) ?: return null
     return owner to name
   }
 }
@@ -592,6 +596,9 @@ dependencies {
   implementation(libs.sqldelight.paging)
   implementation(libs.sqldelight.primitiveAdapters)
   implementation(libs.telephoto.zoomableImageCoil)
+  // For dagger's visibility
+  implementation(libs.xmlutil.core)
+  implementation(libs.xmlutil.serialization)
   implementation(projects.libraries.di)
   implementation(projects.libraries.di.android)
 

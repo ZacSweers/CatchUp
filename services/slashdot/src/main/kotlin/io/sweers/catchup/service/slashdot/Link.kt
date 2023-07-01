@@ -16,7 +16,6 @@
 package io.sweers.catchup.service.slashdot
 
 import kotlinx.serialization.Serializable
-import nl.adaptivity.xmlutil.serialization.XmlElement
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
-@Serializable @XmlSerialName("author") data class Author(@XmlElement val name: String)
+@Serializable @XmlSerialName("link") data class Link(val href: String)
