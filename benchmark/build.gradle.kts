@@ -19,23 +19,12 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 android {
-  compileSdk = 33 // TODO add in SGP
+  compileSdk = 34 // TODO add in SGP
   namespace = "io.sweers.catchup.benchmark"
   defaultConfig {
     minSdk = 28 // TODO add in SGP
-    targetSdk = 33
+    targetSdk = 34
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-  }
-
-  buildTypes {
-    // This benchmark buildType is used for benchmarking, and should function like your
-    // release build (for example, with minification on). It"s signed with a debug key
-    // for easy local/CI testing.
-    create("benchmark") {
-      isDebuggable = true
-      signingConfig = getByName("debug").signingConfig
-      matchingFallbacks += listOf("release")
-    }
   }
 
   testOptions.managedDevices.devices {
@@ -47,8 +36,6 @@ android {
   }
 
   targetProjectPath = ":app"
-  experimentalProperties["android.experimental.self-instrumenting"] = true
-  experimentalProperties["android.experimental.art-profile-r8-rewriting"] = true
   experimentalProperties["android.experimental.r8.dex-startup-optimization"] = true
   experimentalProperties["android.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules"] = "baselineprofile"
 }
