@@ -12,13 +12,13 @@ autodispose = "2.1.1"
 chuck = "1.1.0"
 circuit = "0.10.0"
 coil = "2.4.0"
-compose = "1.5.0-beta02"
+compose = "1.5.0-beta03"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.4.7-dev-k1.9.0-Beta-bb7dc8b44eb"
 compose-compiler-kotlinVersion = "1.9.0-Beta"
 corbind = "1.8.0"
-coroutines = "1.7.1"
+coroutines = "1.7.2"
 crumb = "0.1.0"
 dagger = "2.46.1"
 datastore = "1.1.0-alpha04"
@@ -45,7 +45,7 @@ room = "2.6.0-alpha02"
 sortDependencies = "0.3"
 sgp = "0.9.16"
 spotless = "6.19.0"
-sqldelight = "2.0.0-rc01"
+sqldelight = "2.0.0-rc02"
 telephoto = "1.0.0-alpha02"
 # https://github.com/Tickaroo/tikxml/issues/114
 tikxml = "0.8.13"
@@ -57,7 +57,7 @@ agp-application = { id = "com.android.application", version.ref = "agp" }
 agp-library = { id = "com.android.library", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.0.1" }
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.1" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.2" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.20.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.8.1" }
