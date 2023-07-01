@@ -39,9 +39,9 @@ dependencies {
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
   implementation(libs.retrofit.core)
+  implementation(libs.retrofit.kotlinxSerialization)
   implementation(libs.xmlutil.core)
   implementation(libs.xmlutil.serialization)
-  implementation(libs.retrofit.kotlinxSerialization)
 
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)

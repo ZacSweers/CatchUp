@@ -596,12 +596,11 @@ dependencies {
   implementation(libs.sqldelight.paging)
   implementation(libs.sqldelight.primitiveAdapters)
   implementation(libs.telephoto.zoomableImageCoil)
-  implementation(projects.libraries.di)
-  implementation(projects.libraries.di.android)
-
   // For dagger's visibility
   implementation(libs.xmlutil.core)
   implementation(libs.xmlutil.serialization)
+  implementation(projects.libraries.di)
+  implementation(projects.libraries.di.android)
 
   releaseImplementation(libs.misc.bugsnag)
   releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
