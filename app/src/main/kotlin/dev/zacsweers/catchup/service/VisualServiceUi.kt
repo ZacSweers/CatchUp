@@ -127,7 +127,6 @@ fun VisualItem(
   //  etc
   Box(modifier) {
     val displayMetrics = LocalContext.current.resources.displayMetrics
-    val scaledDensity = displayMetrics.scaledDensity
     val imageInfo = item.imageInfo!!
 
     // Compute in-grid image size
@@ -157,6 +156,7 @@ fun VisualItem(
     }
     var hasFadedIn by remember(index) { mutableStateOf(false) }
     var badgeColor by remember(index) { mutableStateOf(Color.Unspecified) }
+    val density = LocalDensity.current
     AsyncImage(
       model =
         ImageRequest.Builder(LocalContext.current)
@@ -198,7 +198,7 @@ fun VisualItem(
 
               bitmap?.let {
                 // look at the corner to determine the gif badge color
-                val cornerSize = (56 * scaledDensity).toInt()
+                val cornerSize = density.run { 56.sp.toPx() }.toInt()
                 val corner =
                   Bitmap.createBitmap(
                     it,

@@ -40,9 +40,12 @@ androidComponents {
 }
 
 dependencies {
+  ksp(libs.circuit.codegen)
+
+  implementation(libs.androidx.compose.accompanist.systemUi)
   implementation(libs.androidx.compose.material.material3)
   implementation(libs.androidx.compose.ui)
-  ksp(libs.circuit.codegen)
+  implementation(libs.androidx.lifecycle.viewmodel.ktx)
   implementation(libs.circuit.codegenAnnotations)
   implementation(libs.circuit.foundation)
   implementation(libs.circuit.overlay)
@@ -50,10 +53,8 @@ dependencies {
   implementation(libs.retrofit.core)
   implementation(libs.retrofit.moshi)
   implementation(libs.sqldelight.driver.android)
-  implementation(libs.androidx.compose.accompanist.systemUi)
-  implementation(libs.androidx.lifecycle.viewmodel.ktx)
-  implementation(projects.libraries.di)
-  implementation(projects.libraries.util)
-  implementation(projects.libraries.retrofitconverters)
   implementation(projects.libraries.composeExtensions)
+  implementation(projects.libraries.di)
+  implementation(projects.libraries.retrofitconverters)
+  implementation(projects.libraries.util)
 }

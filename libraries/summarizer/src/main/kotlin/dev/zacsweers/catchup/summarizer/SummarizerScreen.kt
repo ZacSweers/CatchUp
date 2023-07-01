@@ -43,7 +43,9 @@ data class SummarizerScreen(val title: String, val url: String) : Screen {
     val title: String
 
     data class Loading(override val title: String) : State
+
     data class Error(override val title: String, val url: String, val message: String) : State
+
     data class Success(
       override val title: String,
       val summary: String,

@@ -46,6 +46,7 @@ import timber.log.Timber
 object ChangelogScreen : Screen {
   data class State(val items: ImmutableList<CatchUpItem>?, val eventSink: (Event) -> Unit) :
     CircuitUiState
+
   sealed interface Event : CircuitUiEvent {
     data class Click(val url: String) : Event
   }

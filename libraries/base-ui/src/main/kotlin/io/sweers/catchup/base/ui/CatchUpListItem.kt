@@ -67,6 +67,7 @@ data class CatchUpListItem(
 
 sealed class ClickEvent(val item: CatchUpListItem) {
   class Item(item: CatchUpListItem) : ClickEvent(item)
+
   class Mark(item: CatchUpListItem) : ClickEvent(item)
 }
 

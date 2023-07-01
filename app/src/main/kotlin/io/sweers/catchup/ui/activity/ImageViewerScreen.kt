@@ -84,10 +84,15 @@ data class ImageViewerScreen(
 
   sealed interface Event : CircuitUiEvent {
     object Close : Event
+
     object NoOp : Event // Weird but necessary because of the reuse in bottom sheet
+
     object ShareImage : Event
+
     object CopyImage : Event
+
     object SaveImage : Event
+
     data class OpenInBrowser(val url: String) : Event
   }
 }

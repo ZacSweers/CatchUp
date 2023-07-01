@@ -1,12 +1,10 @@
 package io.sweers.catchup.ui.about
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -85,9 +83,6 @@ fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
         key = { it },
         state = pagerState,
         verticalAlignment = Alignment.Top,
-        // Explicitly defined to cover for https://issuetracker.google.com/issues/264729364
-        pageNestedScrollConnection =
-          PagerDefaults.pageNestedScrollConnection(Orientation.Horizontal)
       ) { page ->
         CircuitContent(SCREENS[page])
       }

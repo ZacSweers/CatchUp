@@ -228,9 +228,12 @@ object DebugSettingsScreen : Screen {
     val logsToShow: ImmutableList<LumberYard.Entry>,
     val eventSink: (Event) -> Unit,
   ) : CircuitUiState
+
   sealed interface Event {
     data class NavigateTo(val screen: Screen) : Event
+
     data class ToggleLogs(val show: Boolean) : Event
+
     object ShareLogs : Event
   }
 }
@@ -464,6 +467,7 @@ constructor(
 @Immutable
 sealed interface DebugItem {
   data class Header(val title: String) : DebugItem
+
   sealed interface Element : DebugItem {
     data class SpinnerElement<T>(
       val title: String,
@@ -475,7 +479,9 @@ sealed interface DebugItem {
     ) : Element {
       sealed interface ValueType<T> {
         object STRING : ValueType<String>
+
         object INT : ValueType<Int>
+
         object LONG : ValueType<Long>
       }
 
@@ -588,6 +594,7 @@ sealed interface DebugItem {
         }
       }
     }
+
     data class ValueElement(
       val title: String,
       val value: String, // Are any of these live?

@@ -73,7 +73,6 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapConcat
@@ -93,6 +92,7 @@ import timber.log.Timber
 object LicensesScreen : Screen {
   data class State(val items: ImmutableList<OssBaseItem>?, val eventSink: (Event) -> Unit) :
     CircuitUiState
+
   sealed interface Event : CircuitUiEvent {
     data class Click(val url: String) : Event
   }
@@ -270,7 +270,7 @@ constructor(
   }
 
   /** I give you: the most over-engineered OSS licenses section ever. */
-  @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+  @OptIn(ExperimentalCoroutinesApi::class)
   private suspend fun requestItemsInner(): ImmutableList<OssBaseItem> {
     // Start with a fetch of our github entries from assets
     val githubEntries =
@@ -401,6 +401,7 @@ sealed class OssBaseItem {
 
 internal data class OssItemHeader(val avatarUrl: String, val name: String) : OssBaseItem() {
   val id = name.hashCode().toLong()
+
   override fun itemType() = 0
 }
 
@@ -415,5 +416,6 @@ internal data class OssItem(
   val authorUrl: String? = null
 ) : OssBaseItem() {
   val id = Objects.hash(author, name).toLong()
+
   override fun itemType() = 1
 }

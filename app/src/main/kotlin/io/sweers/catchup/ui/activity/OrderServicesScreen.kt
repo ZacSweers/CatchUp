@@ -102,11 +102,16 @@ object OrderServicesScreen : Screen {
     val showConfirmation: Boolean = false,
     val eventSink: (Event) -> Unit = {},
   ) : CircuitUiState
+
   sealed interface Event {
     object Shuffle : Event
+
     data class Reorder(val from: Int, val to: Int) : Event
+
     object BackPress : Event
+
     object Save : Event
+
     data class DismissConfirmation(val save: Boolean, val pop: Boolean) : Event
   }
 }
@@ -266,10 +271,11 @@ fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifie
         exit = scaleOut(),
       ) {
         val scope = rememberCoroutineScope()
+        val interactionSource = remember { MutableInteractionSource() }
         FloatingActionButton(
           modifier =
             Modifier.indication(
-              MutableInteractionSource(),
+              interactionSource,
               indication = rememberRipple(color = Color.White)
             ),
           // TODO show syllabus on fab

@@ -61,6 +61,7 @@ interface CatchUpPreferences {
 
   companion object {
     private const val STORAGE_FILE_NAME = "CatchUpPreferences"
+
     fun dataStoreFile(context: Context): File {
       return context.preferencesDataStoreFile(STORAGE_FILE_NAME)
     }
@@ -79,16 +80,22 @@ class CatchUpPreferencesImpl @Inject constructor(@ApplicationContext context: Co
 
   override val dayNightAuto: Flow<Boolean>
     get() = datastore.data.map { it[Keys.dayNightAuto] ?: true }
+
   override val dayNightForceNight: Flow<Boolean>
     get() = datastore.data.map { it[Keys.dayNightForceNight] ?: false }
+
   override val reports: Flow<Boolean>
     get() = datastore.data.map { it[Keys.reports] ?: true }
+
   override val servicesOrder: Flow<ImmutableList<String>>
     get() = datastore.data.map { it[Keys.servicesOrder]?.split(',').orEmpty().toImmutableList() }
+
   override val servicesOrderSeen: Flow<Boolean>
     get() = datastore.data.map { it[Keys.servicesOrderSeen] ?: false }
+
   override val smartlinkingGlobal: Flow<Boolean>
     get() = datastore.data.map { it[Keys.smartlinkingGlobal] ?: true }
+
   override val lastVersion: Flow<String?>
     get() = datastore.data.map { it[Keys.lastVersion] }
 

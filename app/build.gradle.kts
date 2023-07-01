@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.google.devtools.ksp.gradle.KspTaskJvm
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
@@ -25,6 +26,7 @@ import java.util.Locale
 import okio.buffer
 import okio.sink
 import okio.source
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.android.application")
@@ -426,6 +428,14 @@ licensee {
   allowUrl("https://github.com/alorma/Compose-Settings/blob/main/LICENSE")
 }
 
+// Workaround for https://youtrack.jetbrains.com/issue/KT-59220
+afterEvaluate {
+  val kspTask = tasks.named<KspTaskJvm>("kspDebugKotlin")
+  tasks.named<KotlinCompile>("kaptGenerateStubsDebugKotlin").configure {
+    source(kspTask.flatMap { it.destination })
+  }
+}
+
 androidComponents {
   onVariants(selector().withBuildType("release")) { variant ->
     variant.packaging.resources.excludes.addAll(
@@ -465,7 +475,6 @@ dependencies {
   implementation(project(":libraries:compose-extensions"))
   implementation(project(":libraries:compose-extensions:pull-refresh"))
   implementation(project(":libraries:flowbinding"))
-  implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:summarizer"))
@@ -592,9 +601,9 @@ dependencies {
   implementation(libs.sqldelight.driver.android)
   implementation(libs.sqldelight.paging)
   implementation(libs.sqldelight.primitiveAdapters)
+  implementation(libs.telephoto.zoomableImageCoil)
   implementation(projects.libraries.di)
   implementation(projects.libraries.di.android)
-  implementation(libs.telephoto.zoomableImageCoil)
 
   releaseImplementation(libs.misc.bugsnag)
   releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)

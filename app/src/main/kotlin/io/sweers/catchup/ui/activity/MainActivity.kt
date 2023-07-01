@@ -17,14 +17,15 @@ package io.sweers.catchup.ui.activity
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.core.view.WindowCompat
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.CircuitConfig
@@ -61,12 +62,22 @@ constructor(
   private val circuitConfig: CircuitConfig,
   private val catchUpPreferences: CatchUpPreferences,
   private val rootContent: RootContent,
-  private val appConfig: AppConfig,
+  appConfig: AppConfig,
 ) : AppCompatActivity() {
+
+  init {
+    if (appConfig.sdkInt == 29 && isTaskRoot) {
+      onBackPressedDispatcher.addCallback {
+        // https://twitter.com/Piwai/status/1169274622614704129
+        // https://issuetracker.google.com/issues/139738913
+        finishAfterTransition()
+      }
+    }
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    WindowCompat.setDecorFitsSystemWindows(window, false)
+    enableEdgeToEdge()
 
     setContent {
       val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
@@ -115,17 +126,6 @@ constructor(
   override fun onDestroy() {
     customTab.connectionCallback = null
     super.onDestroy()
-  }
-
-  @Deprecated("Deprecated in Java")
-  override fun onBackPressed() {
-    if (appConfig.sdkInt == 29 && isTaskRoot) {
-      // https://twitter.com/Piwai/status/1169274622614704129
-      // https://issuetracker.google.com/issues/139738913
-      finishAfterTransition()
-    } else {
-      super.onBackPressed()
-    }
   }
 
   @ContributesTo(AppScope::class)

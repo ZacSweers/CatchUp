@@ -5,7 +5,6 @@ import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -96,9 +94,12 @@ object HomeScreen : Screen {
     val changelogAvailable: Boolean,
     val eventSink: (Event) -> Unit = {}
   ) : CircuitUiState
+
   sealed interface Event : CircuitUiEvent {
     object OpenSettings : Event
+
     object ShowChangelog : Event
+
     data class NestedNavEvent(val navEvent: NavEvent) : Event
   }
 }
@@ -320,9 +321,6 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
         key = { state.serviceMetas[it].id },
         state = pagerState,
         verticalAlignment = Alignment.Top,
-        // Explicitly defined to cover for https://issuetracker.google.com/issues/264729364
-        pageNestedScrollConnection =
-          PagerDefaults.pageNestedScrollConnection(Orientation.Horizontal)
       ) { page ->
         contentComposed = true
         CircuitContent(

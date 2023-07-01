@@ -228,7 +228,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise") version "3.13.3"
+  id("com.gradle.enterprise") version "3.13.4"
   id("com.dropbox.focus") version "0.5.1"
 }
 
@@ -242,6 +242,21 @@ gradleEnterprise {
 }
 
 rootProject.name = "CatchUp"
+
+inline fun configureIncludedBuild(key: String, body: (path: String) -> Unit) {
+  System.getProperty("slack.include-build.$key")?.let(body)
+}
+
+// See comments on systemProp.slack.include-build.sgp property in gradle.properties
+configureIncludedBuild("sgp") { path ->
+  includeBuild(path) {
+    dependencySubstitution {
+      substitute(module("com.slack.gradle:sgp")).using(project(":slack-plugin"))
+      substitute(module("com.slack.gradle:sgp-agp-handler-api"))
+        .using(project(":agp-handlers:agp-handler-api"))
+    }
+  }
+}
 
 include(":platform")
 

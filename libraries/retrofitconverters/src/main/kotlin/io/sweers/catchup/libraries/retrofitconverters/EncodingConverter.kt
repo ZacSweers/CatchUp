@@ -33,6 +33,7 @@ class EncodingConverter<T : Any> private constructor(private val convertBody: (T
     fun <T : Any> newFactory(encoder: (T) -> RequestBody): Converter.Factory {
       return object : Converter.Factory() {
         private val converter by lazy { EncodingConverter(encoder) }
+
         override fun requestBodyConverter(
           type: Type,
           parameterAnnotations: Array<out Annotation>,

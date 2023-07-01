@@ -72,6 +72,7 @@ internal constructor(
 
   internal var previousIndexOfDraggedItem by mutableStateOf<Int?>(null)
     private set
+
   internal var previousItemOffset = Animatable(0f)
     private set
 

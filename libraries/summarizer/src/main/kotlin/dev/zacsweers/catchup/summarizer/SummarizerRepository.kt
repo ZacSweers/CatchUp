@@ -14,7 +14,9 @@ interface SummarizerRepository {
 
 sealed interface SummarizerResult {
   data class Success(val summary: String) : SummarizerResult
+
   object NotFound : SummarizerResult
+
   data class Error(val message: String) : SummarizerResult
 }
 
