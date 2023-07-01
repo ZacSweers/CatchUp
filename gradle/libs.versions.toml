@@ -1,24 +1,24 @@
 [versions]
 accompanist = "0.31.4-beta"
-agp = "8.2.0-alpha09"
+agp = "8.2.0-alpha10"
 androidx-activity = "1.8.0-alpha06"
 androidx-core = "1.12.0-alpha05"
 emoji = "1.2.0-alpha03"
 fragment = "1.7.0-alpha01"
-androidTestSupport = "1.6.0-alpha02"
+androidTestSupport = "1.6.0-alpha03"
 anvil = "2.4.6"
 apollo = "3.8.2"
 autodispose = "2.1.1"
 chuck = "1.1.0"
-circuit = "0.9.1"
+circuit = "0.10.0"
 coil = "2.4.0"
-compose = "1.5.0-beta02"
+compose = "1.5.0-beta03"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.4.7-dev-k1.9.0-Beta-bb7dc8b44eb"
 compose-compiler-kotlinVersion = "1.9.0-Beta"
 corbind = "1.8.0"
-coroutines = "1.7.1"
+coroutines = "1.7.2"
 crumb = "0.1.0"
 dagger = "2.46.1"
 datastore = "1.1.0-alpha04"
@@ -32,7 +32,7 @@ kotlin = "1.9.0-RC"
 kotlinxMetadata = "0.6.2"
 ksp = "1.9.0-RC-1.0.11"
 ktfmt = "0.44"
-leakcanary = "2.11"
+leakcanary = "2.12"
 legacySupport = "28.0.0"
 lifecycle = "2.6.1"
 markwon = "4.6.2"
@@ -57,7 +57,7 @@ agp-application = { id = "com.android.application", version.ref = "agp" }
 agp-library = { id = "com.android.library", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.0.1" }
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.1" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.2" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.20.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.8.1" }
@@ -66,7 +66,7 @@ kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.7.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
-playPublisher = { id = "com.github.triplet.play", version = "3.8.3" }
+playPublisher = { id = "com.github.triplet.play", version = "3.8.4" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.4.0" }
 retry = { id = "org.gradle.test-retry", version = "1.5.3" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
