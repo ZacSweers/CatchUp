@@ -15,10 +15,9 @@
  */
 package io.sweers.catchup.service.slashdot
 
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
-import com.tickaroo.tikxml.TikXml
-import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 import dagger.Binds
 import dagger.Lazy
 import dagger.Module
@@ -39,7 +38,8 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
 import javax.inject.Inject
 import javax.inject.Qualifier
-import kotlinx.datetime.Instant
+import nl.adaptivity.xmlutil.serialization.XML
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
@@ -60,7 +60,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val servi
   override suspend fun fetch(request: DataRequest): DataResult {
     return service
       .main()
-      .itemList
+      .entries
       .mapIndexed { index, (title, id, _, _, updated, section, comments, author, department) ->
         CatchUpItem(
           id = id.hashCode().toLong(),
@@ -109,12 +109,7 @@ abstract class SlashdotMetaModule {
 @Module(includes = [SlashdotMetaModule::class])
 object SlashdotModule {
 
-  @Provides
-  internal fun provideTikXml(): TikXml =
-    TikXml.Builder()
-      .exceptionOnUnreadXml(false)
-      .addTypeConverter(Instant::class.java, InstantTypeConverter())
-      .build()
+  @Provides internal fun provideXml(): XML = XML { defaultPolicy { ignoreUnknownChildren() } }
 
   @Provides
   @InternalApi
@@ -134,15 +129,16 @@ object SlashdotModule {
   internal fun provideSlashdotApi(
     @InternalApi client: Lazy<OkHttpClient>,
     rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
-    tikXml: TikXml,
+    xml: XML,
     appConfig: AppConfig
   ): SlashdotApi {
+    val contentType = "application/xml".toMediaType()
     val retrofit =
       Retrofit.Builder()
         .baseUrl(SlashdotApi.ENDPOINT)
         .delegatingCallFactory(client)
         .addCallAdapterFactory(rxJavaCallAdapterFactory)
-        .addConverterFactory(TikXmlConverterFactory.create(tikXml))
+        .addConverterFactory(xml.asConverterFactory(contentType))
         .validateEagerly(appConfig.isDebug)
         .build()
     return retrofit.create(SlashdotApi::class.java)

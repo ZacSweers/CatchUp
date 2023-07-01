@@ -595,6 +595,10 @@ dependencies {
   implementation(projects.libraries.di)
   implementation(projects.libraries.di.android)
 
+  // For dagger's visibility
+  implementation(libs.xmlutil.core)
+  implementation(libs.xmlutil.serialization)
+
   releaseImplementation(libs.misc.bugsnag)
   releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
 
