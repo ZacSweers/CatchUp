@@ -37,7 +37,7 @@ android {
 
   targetProjectPath = ":app"
   experimentalProperties["android.experimental.r8.dex-startup-optimization"] = true
-  experimentalProperties["android.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules"] = "baselineprofile"
+  experimentalProperties["android.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules"] = "baselineProfile"
 }
 
 baselineProfile {
