@@ -42,7 +42,6 @@ import nl.adaptivity.xmlutil.serialization.XML
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 
 @Qualifier private annotation class InternalApi
 
@@ -128,7 +127,6 @@ object SlashdotModule {
   @Provides
   internal fun provideSlashdotApi(
     @InternalApi client: Lazy<OkHttpClient>,
-    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     xml: XML,
     appConfig: AppConfig
   ): SlashdotApi {
@@ -137,7 +135,6 @@ object SlashdotModule {
       Retrofit.Builder()
         .baseUrl(SlashdotApi.ENDPOINT)
         .delegatingCallFactory(client)
-        .addCallAdapterFactory(rxJavaCallAdapterFactory)
         .addConverterFactory(xml.asConverterFactory(contentType))
         .validateEagerly(appConfig.isDebug)
         .build()

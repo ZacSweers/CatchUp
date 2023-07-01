@@ -39,7 +39,6 @@ dependencies {
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
   implementation(libs.retrofit.core)
-  implementation(libs.retrofit.rxJava3)
   implementation(libs.xmlutil.core)
   implementation(libs.xmlutil.serialization)
   implementation(libs.retrofit.kotlinxSerialization)
