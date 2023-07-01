@@ -271,10 +271,11 @@ fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifie
         exit = scaleOut(),
       ) {
         val scope = rememberCoroutineScope()
+        val interactionSource = remember { MutableInteractionSource() }
         FloatingActionButton(
           modifier =
             Modifier.indication(
-              MutableInteractionSource(),
+              interactionSource,
               indication = rememberRipple(color = Color.White)
             ),
           // TODO show syllabus on fab
