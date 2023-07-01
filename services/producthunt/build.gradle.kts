@@ -18,6 +18,7 @@ plugins {
   alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
+  alias(libs.plugins.apollo)
 }
 
 android {
@@ -30,6 +31,18 @@ android {
     androidResources = true
   }
   namespace = "io.sweers.catchup.service.producthunt"
+}
+
+apollo {
+  // https://api.producthunt.com/v2/api/graphql
+  service("producthunt") {
+    customScalarsMapping.set(mapOf(
+      "DateTime" to "kotlinx.datetime.Instant",
+//      "URI" to "okhttp3.HttpUrl"
+    ))
+    packageName.set("io.sweers.catchup.service.producthunt")
+    schemaFile.set(file("src/main/graphql/io/sweers/catchup/service/producthunt/schema.graphqls"))
+  }
 }
 
 slack {
@@ -46,6 +59,7 @@ dependencies {
   api(libs.rx.java)
 
   implementation(project(":libraries:util"))
+  implementation(libs.apollo.httpcache)
   implementation(libs.kotlin.datetime)
   implementation(libs.misc.moshiLazyAdapters)
   implementation(libs.misc.okio)

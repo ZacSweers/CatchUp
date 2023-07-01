@@ -35,7 +35,6 @@ android {
 
 apollo {
   service("github") {
-    @Suppress("UnstableApiUsage")
     customScalarsMapping.set(mapOf(
         "DateTime" to "kotlinx.datetime.Instant",
         "URI" to "okhttp3.HttpUrl"

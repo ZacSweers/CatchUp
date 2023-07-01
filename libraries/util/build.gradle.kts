@@ -37,6 +37,7 @@ dependencies {
   api(project(":libraries:appconfig"))
   api(libs.androidx.annotations)
   api(libs.androidx.coreKtx)
+  api(libs.apollo.runtime)
   api(libs.dagger.runtime)
   api(libs.misc.timber)
   api(libs.moshi.core)

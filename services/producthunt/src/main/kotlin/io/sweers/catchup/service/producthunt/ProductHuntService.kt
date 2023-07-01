@@ -15,17 +15,26 @@
  */
 package io.sweers.catchup.service.producthunt
 
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
+import com.apollographql.apollo3.api.http.DefaultHttpRequestComposer
+import com.apollographql.apollo3.api.http.HttpRequestComposer
+import com.apollographql.apollo3.cache.http.HttpFetchPolicy
+import com.apollographql.apollo3.cache.http.httpFetchPolicy
+import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo3.network.NetworkTransport
+import com.apollographql.apollo3.network.http.DefaultHttpEngine
+import com.apollographql.apollo3.network.http.HttpEngine
+import com.apollographql.apollo3.network.http.HttpNetworkTransport
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
-import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
-import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
+import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.DataRequest
@@ -36,15 +45,12 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
-import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
+import io.sweers.catchup.service.producthunt.type.DateTime
+import io.sweers.catchup.util.apollo.ISO8601InstantApolloAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import javax.inject.Inject
 import javax.inject.Qualifier
-import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 @Qualifier private annotation class InternalApi
 
@@ -54,33 +60,50 @@ private const val SERVICE_KEY = "ph"
 @ContributesMultibinding(AppScope::class, boundType = Service::class)
 class ProductHuntService
 @Inject
-constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: ProductHuntApi) :
-  TextService {
+constructor(
+  @InternalApi private val serviceMeta: ServiceMeta,
+  @InternalApi private val apolloClient: Lazy<ApolloClient>,
+) : TextService {
 
   override fun meta() = serviceMeta
 
   override suspend fun fetch(request: DataRequest): DataResult {
-    val page = request.pageKey!!.toInt()
-    return api
-      .getPosts(page)
-      .mapIndexed { index, it ->
-        with(it) {
+    val postsQuery =
+      apolloClient
+        .get()
+        .query(PostsQuery(first = 50, after = Optional.presentIfNotNull(request.pageKey)))
+        .execute()
+
+    if (postsQuery.hasErrors()) {
+      throw ApolloException(postsQuery.errors.toString())
+    }
+
+    return postsQuery.data
+      ?.posts
+      ?.edges
+      ?.map { it.node }
+      .orEmpty()
+      .mapIndexed { index, node ->
+        with(node) {
           CatchUpItem(
-            id = id,
+            id = id.toLong(),
             title = name,
             score = "▲" to votesCount,
             timestamp = createdAt,
-            author = user.username,
-            tag = firstTopic,
-            itemClickUrl = redirectUrl,
-            mark = createCommentMark(count = commentsCount, clickUrl = discussionUrl),
+            author = null, // Always redacted now in their API
+            tag = topics.edges.firstOrNull()?.node?.name,
+            itemClickUrl = website,
+            mark = createCommentMark(count = commentsCount, clickUrl = url),
             indexInResponse = index + request.pageOffset,
             serviceId = meta().id,
             contentType = ContentType.HTML,
           )
         }
       }
-      .let { DataResult(it, (page + 1).toString()) }
+      .let {
+        val last = postsQuery.data?.posts?.edges?.last()?.node?.id
+        DataResult(it, last)
+      }
   }
 }
 
@@ -115,6 +138,8 @@ abstract class ProductHuntMetaModule {
 @Module(includes = [ProductHuntMetaModule::class])
 object ProductHuntModule {
 
+  private const val SERVER_URL = "https://api.producthunt.com/v2/api/graphql"
+
   @Provides
   @InternalApi
   internal fun provideProductHuntOkHttpClient(client: OkHttpClient): OkHttpClient {
@@ -124,26 +149,44 @@ object ProductHuntModule {
       .build()
   }
 
-  @Provides
   @InternalApi
-  internal fun provideProductHuntMoshi(moshi: Moshi): Moshi {
-    return moshi.newBuilder().add(Instant::class.java, ISO8601InstantAdapter()).build()
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideHttpEngine(@InternalApi client: Lazy<OkHttpClient>): HttpEngine {
+    return DefaultHttpEngine { client.get().newCall(it) }
   }
 
+  @InternalApi
   @Provides
-  internal fun provideProductHuntService(
-    @InternalApi client: Lazy<OkHttpClient>,
-    @InternalApi moshi: Moshi,
-    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
-    appConfig: AppConfig
-  ): ProductHuntApi {
-    return Retrofit.Builder()
-      .baseUrl(ProductHuntApi.ENDPOINT)
-      .delegatingCallFactory(client)
-      .addCallAdapterFactory(rxJavaCallAdapterFactory)
-      .addConverterFactory(MoshiConverterFactory.create(moshi))
-      .validateEagerly(appConfig.isDebug)
+  @SingleIn(AppScope::class)
+  fun provideHttpRequestComposer(): HttpRequestComposer {
+    return DefaultHttpRequestComposer(SERVER_URL)
+  }
+
+  @InternalApi
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideNetworkTransport(
+    httpEngine: HttpEngine,
+    httpRequestComposer: HttpRequestComposer
+  ): NetworkTransport {
+    return HttpNetworkTransport.Builder()
+      .httpRequestComposer(httpRequestComposer)
+      .httpEngine(httpEngine)
       .build()
-      .create(ProductHuntApi::class.java)
+  }
+
+  @InternalApi
+  @Provides
+  internal fun provideProductHuntClient(
+    @InternalApi networkTransport: NetworkTransport,
+    apolloClient: ApolloClient,
+  ): ApolloClient {
+    return apolloClient
+      .newBuilder()
+      .httpFetchPolicy(HttpFetchPolicy.NetworkOnly)
+      .addCustomScalarAdapter(DateTime.type, ISO8601InstantApolloAdapter)
+      .networkTransport(networkTransport)
+      .build()
   }
 }
