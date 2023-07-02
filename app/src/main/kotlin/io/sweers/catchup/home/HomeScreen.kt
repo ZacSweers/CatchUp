@@ -28,6 +28,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -65,6 +66,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.circuit.BottomSheetOverlay
+import dev.zacsweers.catchup.compose.LocalScrollToTop
+import dev.zacsweers.catchup.compose.MutableScrollToTop
 import dev.zacsweers.catchup.compose.rememberStableCoroutineScope
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ServiceScreen
@@ -271,6 +274,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
     Column(
       modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding)
     ) {
+      val scrollToTop = remember { MutableScrollToTop() }
       ScrollableTabRow(
         // Our selected tab is our current page
         selectedTabIndex = pagerState.settledPage,
@@ -299,8 +303,12 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
             },
             selected = pagerState.currentPage == index,
             onClick = {
-              if (index != pagerState.currentPage) {
-                coroutineScope.launch {
+              coroutineScope.launch {
+                if (index == pagerState.currentPage) {
+                  println("Scrolling to top")
+                  scrollToTop.emit()
+                } else {
+                  println("Animating color")
                   isAnimatingColor = true
                   awaitAll(
                     async { pagerState.animateScrollToPage(index) },
@@ -313,17 +321,20 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
           )
         }
       }
-      HorizontalPager(
-        modifier = Modifier.weight(1f),
-        beyondBoundsPageCount = 1,
-        key = { state.serviceMetas[it].id },
-        state = pagerState,
-        verticalAlignment = Alignment.Top,
-      ) { page ->
-        CircuitContent(
-          screen = ServiceScreen(state.serviceMetas[page].id),
-          onNavEvent = { eventSink(HomeScreen.Event.NestedNavEvent(it)) }
-        )
+
+      CompositionLocalProvider(LocalScrollToTop provides scrollToTop) {
+        HorizontalPager(
+          modifier = Modifier.weight(1f),
+          beyondBoundsPageCount = 1,
+          key = { state.serviceMetas[it].id },
+          state = pagerState,
+          verticalAlignment = Alignment.Top,
+        ) { page ->
+          CircuitContent(
+            screen = ServiceScreen(state.serviceMetas[page].id),
+            onNavEvent = { eventSink(HomeScreen.Event.NestedNavEvent(it)) }
+          )
+        }
       }
     }
   }
