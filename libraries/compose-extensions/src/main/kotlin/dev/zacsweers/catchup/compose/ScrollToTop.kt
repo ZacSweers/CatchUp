@@ -2,13 +2,12 @@ package dev.zacsweers.catchup.compose
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.runtime.remember
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.Flow
@@ -37,8 +36,9 @@ class MutableScrollToTop : ScrollToTop {
  */
 val LocalScrollToTop = compositionLocalOf<ScrollToTop?> { null }
 
-fun Modifier.scrollToTop(state: LazyListState) =
-  scrollToTop(
+@Composable
+fun ScrollToTopHandler(state: LazyListState, animateLimit: Int = 25) {
+  val wrapper = remember {
     object : StateWrapper {
       override val firstVisibleItemIndex: Int
         get() = state.firstVisibleItemIndex
@@ -51,10 +51,13 @@ fun Modifier.scrollToTop(state: LazyListState) =
         state.animateScrollToItem(index)
       }
     }
-  )
+  }
+  ScrollToTopHandler(wrapper, animateLimit)
+}
 
-fun Modifier.scrollToTop(state: LazyStaggeredGridState) =
-  scrollToTop(
+@Composable
+fun ScrollToTopHandler(state: LazyStaggeredGridState, animateLimit: Int = 50) {
+  val wrapper = remember {
     object : StateWrapper {
       override val firstVisibleItemIndex: Int
         get() = state.firstVisibleItemIndex
@@ -67,32 +70,29 @@ fun Modifier.scrollToTop(state: LazyStaggeredGridState) =
         state.animateScrollToItem(index)
       }
     }
-  )
+  }
+  ScrollToTopHandler(wrapper, animateLimit)
+}
 
-private fun Modifier.scrollToTop(state: StateWrapper) =
-  composed(
-    inspectorInfo =
-      debugInspectorInfo {
-        name = "scrollToTop"
-        value = state
-      }
-  ) {
-    val scrollToTop = LocalScrollToTop.current
-    if (scrollToTop != null) {
-      LaunchedEffect(Unit) {
-        scrollToTop.scrollToTopFlow.collect {
-          // If more than 50 items down, just jump without animation
-          if (state.firstVisibleItemIndex > 50) {
-            state.scrollToItem(0)
-          } else {
-            state.animateScrollToItem(0)
-          }
+@Composable
+private fun ScrollToTopHandler(state: StateWrapper, animateLimit: Int) {
+  val scrollToTop = LocalScrollToTop.current
+  if (scrollToTop != null) {
+    LaunchedEffect(Unit) {
+      scrollToTop.scrollToTopFlow.collect {
+        // If more than animateLimit items down, just jump without animation because scroll to takes
+        // too long
+        if (state.firstVisibleItemIndex > animateLimit) {
+          state.scrollToItem(0)
+        } else {
+          state.animateScrollToItem(0)
         }
       }
     }
-    Modifier
   }
+}
 
+// Because the different Lazy*States don't share a common interface
 @Stable
 private interface StateWrapper {
   val firstVisibleItemIndex: Int

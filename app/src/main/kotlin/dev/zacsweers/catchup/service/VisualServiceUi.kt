@@ -51,7 +51,7 @@ import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import coil.drawable.MovieDrawable
 import coil.request.ImageRequest
-import dev.zacsweers.catchup.compose.scrollToTop
+import dev.zacsweers.catchup.compose.ScrollToTopHandler
 import io.sweers.catchup.base.ui.BlurHashDecoder
 import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.base.ui.generateAsync
@@ -79,10 +79,11 @@ fun VisualServiceUi(
     }
 
   val state = rememberLazyStaggeredGridState()
+  ScrollToTopHandler(state)
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Fixed(columnSpan()),
     state = state,
-    modifier = modifier.fillMaxSize().scrollToTop(state),
+    modifier = modifier.fillMaxSize(),
   ) {
     items(
       count = lazyItems.itemCount,

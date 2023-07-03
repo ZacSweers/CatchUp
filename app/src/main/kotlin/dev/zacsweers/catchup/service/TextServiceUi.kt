@@ -42,7 +42,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.compose.ContentAlphas
-import dev.zacsweers.catchup.compose.scrollToTop
+import dev.zacsweers.catchup.compose.ScrollToTopHandler
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.Mark
@@ -62,8 +62,9 @@ fun TextServiceUi(
   modifier: Modifier = Modifier,
 ) {
   val state = rememberLazyListState()
+  ScrollToTopHandler(state)
   LazyColumn(
-    modifier = modifier.scrollToTop(state),
+    modifier = modifier,
     state = state,
   ) {
     items(
