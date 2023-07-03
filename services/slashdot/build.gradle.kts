@@ -30,18 +30,26 @@ slack { features { dagger() } }
 
 dependencies {
   api(project(":service-api"))
-  api(libs.androidx.annotations)
   api(libs.dagger.runtime)
-  api(libs.rx.java)
-  api(libs.tikxml.htmlEscape)
+  api(libs.kotlin.datetime)
+  api(libs.kotlinx.serialization.core)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
+  api(projects.libraries.appconfig)
+  api(projects.libraries.di)
 
   implementation(project(":libraries:util"))
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
-  implementation(libs.retrofit.core)
   implementation(libs.retrofit.kotlinxSerialization)
+  implementation(libs.tikxml.htmlEscape)
+  // These are loaded at runtime via kotlinx-serialization
+  // TODO what else should DAGP do here?
+  // dependency-rake=ignore
   implementation(libs.xmlutil.core)
+  // dependency-rake=ignore
   implementation(libs.xmlutil.serialization)
+  implementation(projects.libraries.retrofitconverters)
 
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
