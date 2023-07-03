@@ -3,13 +3,11 @@ package dev.zacsweers.catchup.compose
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.platform.debugInspectorInfo
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.Flow
@@ -46,22 +44,15 @@ fun Modifier.scrollToTop(state: LazyListState) =
         value = state
       }
   ) {
-    SideEffect { println("scrollToTop") }
     val scrollToTop = LocalScrollToTop.current
     if (scrollToTop != null) {
-      SideEffect { println("scrollToTop is present") }
       LaunchedEffect(Unit) {
         scrollToTop.scrollToTopFlow.collect {
-          println("scrollToTop clicked")
-          try {
-            // If more than 50 items down, just jump without animation
-            if (state.firstVisibleItemIndex > 50) {
-              state.scrollToItem(0)
-            } else {
-              state.animateScrollToItem(0)
-            }
-          } catch (e: CancellationException) {
-            println("Scroll cancelled!")
+          // If more than 50 items down, just jump without animation
+          if (state.firstVisibleItemIndex > 50) {
+            state.scrollToItem(0)
+          } else {
+            state.animateScrollToItem(0)
           }
         }
       }

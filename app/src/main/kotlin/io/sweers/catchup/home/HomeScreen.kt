@@ -305,10 +305,8 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
             onClick = {
               coroutineScope.launch {
                 if (index == pagerState.currentPage) {
-                  println("Scrolling to top")
                   scrollToTop.emit()
                 } else {
-                  println("Animating color")
                   isAnimatingColor = true
                   awaitAll(
                     async { pagerState.animateScrollToPage(index) },
