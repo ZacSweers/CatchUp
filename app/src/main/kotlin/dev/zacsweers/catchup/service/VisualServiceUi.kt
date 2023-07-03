@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -50,6 +51,7 @@ import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import coil.drawable.MovieDrawable
 import coil.request.ImageRequest
+import dev.zacsweers.catchup.compose.ScrollToTopHandler
 import io.sweers.catchup.base.ui.BlurHashDecoder
 import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.base.ui.generateAsync
@@ -76,8 +78,11 @@ fun VisualServiceUi(
       PLACEHOLDERS_LIGHT
     }
 
+  val state = rememberLazyStaggeredGridState()
+  ScrollToTopHandler(state)
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Fixed(columnSpan()),
+    state = state,
     modifier = modifier.fillMaxSize(),
   ) {
     items(

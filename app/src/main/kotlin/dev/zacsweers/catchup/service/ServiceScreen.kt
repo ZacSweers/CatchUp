@@ -102,7 +102,6 @@ data class ServiceScreen(val serviceKey: String) : Screen {
   }
 }
 
-// TODO implement on scroll to top callbacks
 class ServicePresenter
 @AssistedInject
 constructor(
