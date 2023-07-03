@@ -38,6 +38,7 @@ dependencies {
   api(project(":libraries:retrofitconverters"))
   api(libs.androidx.annotations)
   api(libs.androidx.compose.runtime)
+  api(libs.androidx.compose.ui)
   api(libs.androidx.coreKtx)
   api(libs.androidx.fragment)
   api(libs.androidx.room.runtime)

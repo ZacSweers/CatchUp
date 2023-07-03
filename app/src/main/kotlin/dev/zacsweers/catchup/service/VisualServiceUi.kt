@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -62,7 +61,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VisualServiceUi(
   lazyItems: LazyPagingItems<CatchUpItem>,
@@ -267,7 +265,6 @@ private fun applyPalette(palette: Palette, onContentColorChanged: (Color) -> Uni
   onContentColorChanged(Color(color))
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 fun LazyStaggeredGridScope.handleLoadStates(
   lazyItems: LazyPagingItems<CatchUpItem>,
   themeColor: Color,

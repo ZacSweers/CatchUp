@@ -41,6 +41,7 @@ interface CatchUpPreferences {
   val datastore: DataStore<Preferences>
   val dayNightAuto: Flow<Boolean>
   val dayNightForceNight: Flow<Boolean>
+  val dynamicTheme: Flow<Boolean>
   val reports: Flow<Boolean>
   val servicesOrder: Flow<ImmutableList<String>>
   val servicesOrderSeen: Flow<Boolean>
@@ -52,6 +53,7 @@ interface CatchUpPreferences {
   object Keys {
     val dayNightAuto = booleanPreferencesKey("dayNightAuto")
     val dayNightForceNight = booleanPreferencesKey("forceNight")
+    val dynamicTheme = booleanPreferencesKey("dynamicTheme")
     val reports = booleanPreferencesKey("reports")
     val smartlinkingGlobal = booleanPreferencesKey("smartLinkingGlobal")
     val servicesOrderSeen = booleanPreferencesKey("servicesOrderSeen")
@@ -83,6 +85,9 @@ class CatchUpPreferencesImpl @Inject constructor(@ApplicationContext context: Co
 
   override val dayNightForceNight: Flow<Boolean>
     get() = datastore.data.map { it[Keys.dayNightForceNight] ?: false }
+
+  override val dynamicTheme: Flow<Boolean>
+    get() = datastore.data.map { it[Keys.dynamicTheme] ?: false }
 
   override val reports: Flow<Boolean>
     get() = datastore.data.map { it[Keys.reports] ?: true }
