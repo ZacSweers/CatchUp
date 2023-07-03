@@ -16,7 +16,9 @@
 package io.sweers.catchup.ui.activity
 
 import android.app.Activity
+import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -77,11 +79,12 @@ constructor(
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    enableEdgeToEdge()
+    enableEdgeToEdge(navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT))
 
     setContent {
       val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
       val forceNight by catchUpPreferences.dayNightForceNight.collectAsState(initial = false)
+      val useDynamicTheme by catchUpPreferences.dynamicTheme.collectAsState(initial = false)
       val useDarkTheme =
         if (dayNightAuto) {
           isSystemInDarkTheme()
@@ -90,10 +93,10 @@ constructor(
         }
       SideEffect {
         Timber.d(
-          "Setting theme to $useDarkTheme. dayNightAuto: $dayNightAuto, forceNight: $forceNight"
+          "Setting theme to $useDarkTheme. dayNightAuto: $dayNightAuto, forceNight: $forceNight, dynamic: $useDynamicTheme"
         )
       }
-      CatchUpTheme(useDarkTheme = useDarkTheme) {
+      CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
         CircuitCompositionLocals(circuitConfig) {
           ContentWithOverlays {
             val backstack = rememberSaveableBackStack { push(HomeScreen) }

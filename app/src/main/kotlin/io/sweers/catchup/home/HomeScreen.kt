@@ -1,6 +1,7 @@
 package io.sweers.catchup.home
 
 import android.content.res.Configuration
+import androidx.annotation.ColorRes
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -66,6 +67,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.circuit.BottomSheetOverlay
+import dev.zacsweers.catchup.compose.LocalDynamicTheme
 import dev.zacsweers.catchup.compose.LocalScrollToTop
 import dev.zacsweers.catchup.compose.MutableScrollToTop
 import dev.zacsweers.catchup.compose.rememberStableCoroutineScope
@@ -74,6 +76,7 @@ import dev.zacsweers.catchup.service.ServiceScreen
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
+import io.sweers.catchup.service.api.LocalServiceThemeColor
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.activity.SettingsScreen
 import kotlin.math.absoluteValue
@@ -81,6 +84,7 @@ import kotlin.math.sign
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.filterNot
@@ -187,52 +191,58 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
   val title = stringResource(currentServiceMeta.name)
   val systemUiController = rememberSystemUiController()
 
-  val surfaceColor = MaterialTheme.colorScheme.surface
+  val dynamicTheme = LocalDynamicTheme.current
   // TODO this isn't updating when serviceMeta order changes
-  val colorCache = rememberColorCache(state.serviceMetas)
-  val tabLayoutColor = remember(colorCache) { Animatable(colorCache[0]) }
+  val colorCache = rememberColorCache(state.serviceMetas, dayOnly = false)
+  val dayOnlyColorCache = rememberColorCache(state.serviceMetas, dayOnly = !dynamicTheme)
+  val tabLayoutColor = remember(dayOnlyColorCache) { Animatable(dayOnlyColorCache[0]) }
   var isAnimatingColor by remember { mutableStateOf(false) }
+  val surfaceColor = MaterialTheme.colorScheme.surface
   var scrimColor by remember { mutableStateOf(surfaceColor) }
 
   val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-  LaunchedEffect(scrollBehavior) {
-    snapshotFlow { scrollBehavior.state.collapsedFraction }
-      .collect { fraction ->
-        scrimColor =
-          lerp(surfaceColor, tabLayoutColor.value, scrollBehavior.state.collapsedFraction)
-        if (fraction == 1.0f) {
-          systemUiController.statusBarDarkContentEnabled = !scrimColor.isDark
-        } else {
-          systemUiController.statusBarDarkContentEnabled = !surfaceColor.isDark
-        }
-      }
-  }
-
-  LaunchedEffect(pagerState) {
-    snapshotFlow { pagerState.currentPageOffsetFraction }
-      .filterNot { isAnimatingColor }
-      .collect { offset ->
-        val position = pagerState.currentPage
-        val settledPosition = pagerState.settledPage
-        val nextPosition = position + offset.sign.toInt()
-        val pageDiff = position - settledPosition
-        val targetPage =
-          if (pageDiff != 0) {
-            position
+  if (!dynamicTheme) {
+    // Set the status bar color to match the top app bar when it's collapsed
+    LaunchedEffect(scrollBehavior) {
+      snapshotFlow { scrollBehavior.state.collapsedFraction }
+        .collect { fraction ->
+          scrimColor = lerp(surfaceColor, tabLayoutColor.value, fraction)
+          if (fraction == 1.0f) {
+            systemUiController.statusBarDarkContentEnabled = !scrimColor.isDark
           } else {
-            position + offset.sign.toInt()
+            systemUiController.statusBarDarkContentEnabled = !surfaceColor.isDark
           }
+        }
+    }
 
-        // Coerce because HorizontalPager sometimes jumps multiple pages and it makes the rest of
-        // this code sad
-        // https://issuetracker.google.com/issues/264602921
-        val adjustedOffset =
-          (((nextPosition - position) * offset.absoluteValue + position) - settledPosition)
-            .absoluteValue
-            .coerceIn(0f, 1f)
-        val color = lerp(colorCache[settledPosition], colorCache[targetPage], adjustedOffset)
-        tabLayoutColor.animateTo(color, tween(0))
-      }
+    // Transition the color from one
+    LaunchedEffect(pagerState) {
+      snapshotFlow { pagerState.currentPageOffsetFraction }
+        .filterNot { isAnimatingColor }
+        .collect { offset ->
+          val position = pagerState.currentPage
+          val settledPosition = pagerState.settledPage
+          val nextPosition = position + offset.sign.toInt()
+          val pageDiff = position - settledPosition
+          val targetPage =
+            if (pageDiff != 0) {
+              position
+            } else {
+              position + offset.sign.toInt()
+            }
+
+          // Coerce because HorizontalPager sometimes jumps multiple pages and it makes the rest of
+          // this code sad
+          // https://issuetracker.google.com/issues/264602921
+          val adjustedOffset =
+            (((nextPosition - position) * offset.absoluteValue + position) - settledPosition)
+              .absoluteValue
+              .coerceIn(0f, 1f)
+          val color =
+            lerp(dayOnlyColorCache[settledPosition], dayOnlyColorCache[targetPage], adjustedOffset)
+          tabLayoutColor.animateTo(color, tween(0))
+        }
+    }
   }
 
   val nestedScrollModifier = remember {
@@ -275,18 +285,22 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
       modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding)
     ) {
       val scrollToTop = remember { MutableScrollToTop() }
+      val contentColor =
+        if (dynamicTheme) MaterialTheme.colorScheme.onPrimaryContainer else Color.White
+      val containerColor =
+        if (dynamicTheme) MaterialTheme.colorScheme.primaryContainer else tabLayoutColor.value
       ScrollableTabRow(
         // Our selected tab is our current page
         selectedTabIndex = pagerState.settledPage,
-        contentColor = Color.White,
-        containerColor = tabLayoutColor.value,
+        contentColor = contentColor,
+        containerColor = containerColor,
         // Good lord M3's default values for this are ugly
         edgePadding = 0.dp,
         divider = {},
         indicator = { tabPositions ->
           TabRowDefaults.Indicator(
             Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-            color = Color.White
+            color = contentColor
           )
         },
       ) {
@@ -298,7 +312,6 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
               Icon(
                 imageVector = ImageVector.vectorResource(serviceMeta.icon),
                 contentDescription = stringResource(serviceMeta.name),
-                tint = Color.White,
               )
             },
             selected = pagerState.currentPage == index,
@@ -308,10 +321,13 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
                   scrollToTop.emit()
                 } else {
                   isAnimatingColor = true
-                  awaitAll(
-                    async { pagerState.animateScrollToPage(index) },
-                    async { tabLayoutColor.animateTo(colorCache[index]) },
-                  )
+                  val tabLayoutDeferred =
+                    if (!dynamicTheme) {
+                      async { tabLayoutColor.animateTo(dayOnlyColorCache[index]) }
+                    } else {
+                      CompletableDeferred(Unit)
+                    }
+                  awaitAll(async { pagerState.animateScrollToPage(index) }, tabLayoutDeferred)
                   isAnimatingColor = false
                 }
               }
@@ -328,7 +344,8 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.Top,
       ) { page ->
         CompositionLocalProvider(
-          LocalScrollToTop provides scrollToTop.takeIf { pagerState.currentPage == page }
+          LocalScrollToTop provides scrollToTop.takeIf { pagerState.currentPage == page },
+          LocalServiceThemeColor provides colorCache[page],
         ) {
           CircuitContent(
             screen = ServiceScreen(state.serviceMetas[page].id),
@@ -350,17 +367,33 @@ value class ColorCache(private val colors: Array<Color>) {
 }
 
 @Composable
-fun rememberColorCache(serviceMetas: ImmutableList<ServiceMeta>): ColorCache {
+fun rememberColorCache(
+  serviceMetas: ImmutableList<ServiceMeta>,
+  dayOnly: Boolean,
+): ColorCache {
   val context = LocalContext.current
+  val primaryColor = MaterialTheme.colorScheme.primary
+  val dynamicTheme = LocalDynamicTheme.current
   return remember(context, serviceMetas) {
-    val dayOnlyContext =
-      context.createConfigurationContext(
-        Configuration().apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
-      )
+    val contextToUse =
+      if (dayOnly) {
+        val config =
+          Configuration(context.resources.configuration).apply {
+            uiMode =
+              uiMode and Configuration.UI_MODE_NIGHT_MASK.inv() or Configuration.UI_MODE_NIGHT_NO
+          }
+        context.createConfigurationContext(config)
+      } else {
+        context
+      }
     val colors =
       Array(serviceMetas.size) { index ->
-        val color = dayOnlyContext.getColor(serviceMetas[index].themeColor)
-        Color(color)
+        @ColorRes val colorRes = serviceMetas[index].themeColor
+        if (dynamicTheme) {
+          primaryColor
+        } else {
+          Color(contextToUse.getColor(colorRes))
+        }
       }
     ColorCache(colors)
   }

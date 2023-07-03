@@ -427,9 +427,13 @@ licensee {
 
 // Workaround for https://youtrack.jetbrains.com/issue/KT-59220
 afterEvaluate {
-  val kspTask = tasks.named<KspTaskJvm>("kspDebugKotlin")
+  val kspDebugTask = tasks.named<KspTaskJvm>("kspDebugKotlin")
   tasks.named<KotlinCompile>("kaptGenerateStubsDebugKotlin").configure {
-    source(kspTask.flatMap { it.destination })
+    source(kspDebugTask.flatMap { it.destination })
+  }
+  val kspReleaseTask = tasks.named<KspTaskJvm>("kspReleaseKotlin")
+  tasks.named<KotlinCompile>("kaptGenerateStubsReleaseKotlin").configure {
+    source(kspReleaseTask.flatMap { it.destination })
   }
 }
 

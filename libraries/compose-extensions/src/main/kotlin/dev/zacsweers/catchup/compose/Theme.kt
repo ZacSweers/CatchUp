@@ -11,17 +11,16 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
-import androidx.core.view.WindowCompat
 import catchup.ui.core.R
 
 private val LightColors =
@@ -90,7 +89,6 @@ private val DarkColors =
     scrim = md_theme_dark_scrim,
   )
 
-@OptIn(ExperimentalTextApi::class)
 private val FONT_FAMILY by lazy {
   getGoogleFontFamily(
     name = "Nunito",
@@ -104,7 +102,6 @@ private val FONT_FAMILY by lazy {
   )
 }
 
-@OptIn(ExperimentalTextApi::class)
 private fun getGoogleFontFamily(
   name: String,
   provider: GoogleFont.Provider = googleFontProvider,
@@ -113,7 +110,6 @@ private fun getGoogleFontFamily(
   return FontFamily(weights.map { Font(GoogleFont(name), provider, it) })
 }
 
-@OptIn(ExperimentalTextApi::class)
 private val googleFontProvider: GoogleFont.Provider by lazy {
   GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
@@ -126,7 +122,7 @@ private val googleFontProvider: GoogleFont.Provider by lazy {
 @Composable
 fun CatchUpTheme(
   useDarkTheme: Boolean = isSystemInDarkTheme(),
-  isDynamicColor: Boolean = false,
+  isDynamicColor: Boolean = LocalDynamicTheme.current,
   content: @Composable () -> Unit
 ) {
   val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
@@ -149,15 +145,7 @@ fun CatchUpTheme(
 
       window.statusBarColor = Color.Transparent.toArgb()
       window.navigationBarColor = Color.Transparent.toArgb()
-
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        window.isNavigationBarContrastEnforced = false
-      }
-
-      val windowsInsetsController = WindowCompat.getInsetsController(window, view)
-
-      windowsInsetsController.isAppearanceLightStatusBars = !useDarkTheme
-      windowsInsetsController.isAppearanceLightNavigationBars = !useDarkTheme
+      window.isNavigationBarContrastEnforced = false
     }
   }
 
@@ -180,7 +168,8 @@ fun CatchUpTheme(
         labelLarge = MaterialTheme.typography.labelLarge.copy(fontFamily = FONT_FAMILY),
         labelMedium = MaterialTheme.typography.labelMedium.copy(fontFamily = FONT_FAMILY),
         labelSmall = MaterialTheme.typography.labelSmall.copy(fontFamily = FONT_FAMILY),
-      ),
-    content = content,
-  )
+      )
+  ) {
+    CompositionLocalProvider(LocalDynamicTheme provides dynamicColor) { content() }
+  }
 }

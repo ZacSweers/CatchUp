@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.activity
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -209,7 +208,7 @@ constructor(
 }
 
 @CircuitInject(OrderServicesScreen::class, AppScope::class)
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifier) {
   val eventSink = state.eventSink

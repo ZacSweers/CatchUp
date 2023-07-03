@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -262,6 +261,17 @@ constructor(
         stickyHeader(key = "theming_header") {
           ComposableHeaderItem(stringResource(R.string.prefs_theme), displayDivider = true)
         }
+
+        item(key = "dynamic_theme") {
+          BooleanPreference(
+            key = CatchUpPreferences.Keys.dynamicTheme,
+            modifier = Modifier.animateContentSize(),
+            defaultValue = false,
+            title = stringResource(R.string.pref_dynamic_theme_title),
+            subtitle = stringResource(R.string.pref_dynamic_theme_summary),
+          )
+        }
+
         item(key = "auto_theme") {
           BooleanPreference(
             key = CatchUpPreferences.Keys.dayNightAuto,
@@ -324,7 +334,7 @@ private fun ComposableHeaderItem(text: String, displayDivider: Boolean) {
       Text(
         modifier = Modifier.padding(16.dp),
         text = text,
-        color = colorResource(R.color.colorAccent),
+        color = MaterialTheme.colorScheme.primary,
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Bold,
       )
@@ -335,7 +345,6 @@ private fun ComposableHeaderItem(text: String, displayDivider: Boolean) {
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ClickablePreference(
   title: String,

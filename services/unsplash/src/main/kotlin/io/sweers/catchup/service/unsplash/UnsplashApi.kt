@@ -15,12 +15,14 @@
  */
 package io.sweers.catchup.service.unsplash
 
+import androidx.annotation.Keep
 import io.sweers.catchup.service.unsplash.model.UnsplashPhoto
 import java.util.Locale
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 /** Unsplash API - https://unsplash.com/documentation */
+@Keep
 interface UnsplashApi {
 
   @GET("/photos")

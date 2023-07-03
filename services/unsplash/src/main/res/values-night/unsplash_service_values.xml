@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2018 Zac Sweers
   ~
@@ -15,16 +15,6 @@
   ~ limitations under the License.
   -->
 
-<lint>
-  <issue id="all">
-    <ignore path="*/generated/*" />
-  </issue>
-
-  <issue id="ComposeCompositionLocalUsage">
-      <option name="allowed-composition-locals" value="LocalEnabled,LocalScrollToTop,LocalDynamicTheme,LocalServiceThemeColor" />
-  </issue>
-
-  <issue id="ComposeM2Api" severity="error" />
-
-  <issue id="GradleDependency" severity="ignore" />
-</lint>
+<resources>
+  <color name="unsplashAccent">#ffffffff</color>
+</resources>
