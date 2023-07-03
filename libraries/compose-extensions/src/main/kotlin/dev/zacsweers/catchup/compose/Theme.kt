@@ -146,15 +146,7 @@ fun CatchUpTheme(
 
       window.statusBarColor = Color.Transparent.toArgb()
       window.navigationBarColor = Color.Transparent.toArgb()
-
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        window.isNavigationBarContrastEnforced = false
-      }
-
-      val windowsInsetsController = WindowCompat.getInsetsController(window, view)
-
-      windowsInsetsController.isAppearanceLightStatusBars = !useDarkTheme
-      windowsInsetsController.isAppearanceLightNavigationBars = !useDarkTheme
+      window.isNavigationBarContrastEnforced = false
     }
   }
 
