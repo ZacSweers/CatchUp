@@ -32,15 +32,16 @@ slack {
 
 dependencies {
   api(libs.dagger.runtime)
-  api(libs.moshi.core)
+  api(projects.libraries.di)
   api(projects.libraries.gemoji.db)
 
   implementation(project(":libraries:util"))
+  implementation(libs.androidx.annotations)
   implementation(libs.androidx.sqlite)
+  implementation(libs.kotlin.coroutines)
+  implementation(libs.misc.timber)
   implementation(libs.sqldelight.coroutines)
-  // api() because dagger :|
   implementation(libs.sqldelight.driver.android)
-  implementation(projects.libraries.di)
 
   compileOnly(libs.misc.jsr250)
 
