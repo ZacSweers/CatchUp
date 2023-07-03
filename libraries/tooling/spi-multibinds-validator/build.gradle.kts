@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-  implementation(libs.dagger.runtime)
+  implementation(libs.misc.debug.guava)
   implementation(libs.dagger.spi)
 
   compileOnly(libs.auto.service)
