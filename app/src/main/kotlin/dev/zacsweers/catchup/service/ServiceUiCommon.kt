@@ -56,11 +56,11 @@ fun ClickableItem(
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
   onLongClick: (() -> Unit)? = null,
-  clickableItemState: ClickableItemState = rememberClickableItemState(),
+  state: ClickableItemState = rememberClickableItemState(),
   content: @Composable () -> Unit
 ) {
-  if (clickableItemState.enabled) {
-    val interactionSource = clickableItemState.interactionSource
+  if (state.enabled) {
+    val interactionSource = state.interactionSource
     val isPressed by interactionSource.collectIsPressedAsState()
     val targetElevation =
       if (isPressed) {
@@ -87,7 +87,7 @@ fun ClickableItem(
           )
           .zIndex(elevation.value),
       shadowElevation = elevation,
-      contentColor = clickableItemState.contentColor,
+      contentColor = state.contentColor,
       content = content
     )
   } else {

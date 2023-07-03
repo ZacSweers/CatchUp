@@ -23,9 +23,13 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -74,41 +78,45 @@ fun VisualServiceUi(
   eventSink: (ServiceScreen.Event) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val state = rememberLazyStaggeredGridState()
-  ScrollToTopHandler(state)
-  LazyVerticalStaggeredGrid(
-    columns = StaggeredGridCells.Fixed(columnSpan()),
-    state = state,
-    modifier = modifier.fillMaxSize(),
-  ) {
-    items(
-      count = lazyItems.itemCount,
-      // Here we use the new itemKey extension on LazyPagingItems to
-      // handle placeholders automatically, ensuring you only need to provide
-      // keys for real items
-      key = lazyItems.itemKey { it.id },
-    ) { index ->
-      val item = lazyItems[index]
-      if (item != null) {
-        val clickableItemState =
-          rememberClickableItemState(
-            contentColor =
-              item.imageInfo?.color?.let { Color(android.graphics.Color.parseColor(it)) }
-                ?: Color.Unspecified,
-          )
-        ClickableItem(
-          onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
-        ) {
-          VisualItem(
-            item = item,
-            index = index,
-            onEnableChanged = { clickableItemState.enabled = it },
-            onContentColorChanged = { clickableItemState.contentColor = it },
-          )
+  val delegateRippleTheme = LocalRippleTheme.current
+  CompositionLocalProvider(LocalRippleTheme provides ImageItemRippleTheme(delegateRippleTheme)) {
+    val state = rememberLazyStaggeredGridState()
+    ScrollToTopHandler(state)
+    LazyVerticalStaggeredGrid(
+      columns = StaggeredGridCells.Fixed(columnSpan()),
+      state = state,
+      modifier = modifier.fillMaxSize(),
+    ) {
+      items(
+        count = lazyItems.itemCount,
+        // Here we use the new itemKey extension on LazyPagingItems to
+        // handle placeholders automatically, ensuring you only need to provide
+        // keys for real items
+        key = lazyItems.itemKey { it.id },
+      ) { index ->
+        val item = lazyItems[index]
+        if (item != null) {
+          val clickableItemState =
+            rememberClickableItemState(
+              contentColor =
+                item.imageInfo?.color?.let { Color(android.graphics.Color.parseColor(it)) }
+                  ?: Color.Unspecified,
+            )
+          ClickableItem(
+            onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
+            state = clickableItemState,
+          ) {
+            VisualItem(
+              item = item,
+              index = index,
+              onEnableChanged = { clickableItemState.enabled = it },
+              onContentColorChanged = { clickableItemState.contentColor = it },
+            )
+          }
         }
       }
+      handleLoadStates(lazyItems, themeColor, onRefreshChange)
     }
-    handleLoadStates(lazyItems, themeColor, onRefreshChange)
   }
 }
 
@@ -199,9 +207,7 @@ fun VisualItem(
               if (result is BitmapDrawable) {
                 bitmap = result.bitmap
                 scope.launch {
-                  println("PALETTE GENERATE")
                   Palette.from(result.bitmap).clearFilters().generateAsync()?.let {
-                    println("PALETTE SUCCESS")
                     applyPalette(it, onContentColorChanged)
                   }
                 }
@@ -277,6 +283,25 @@ private fun PreviewBadge() {
     Badge(badgeColor = Color.White)
     Badge(badgeColor = Color.Black)
   }
+}
+
+private class ImageItemRippleTheme(
+  private val delegate: RippleTheme,
+) : RippleTheme {
+  companion object {
+    val opaqueRippleAlpha =
+      RippleAlpha(
+        draggedAlpha = 0.16f,
+        focusedAlpha = 0.12f,
+        hoveredAlpha = 0.08f,
+        // Changed from M3's nearly-imperceptible default of 0.12f
+        pressedAlpha = 0.40f,
+      )
+  }
+
+  @Composable override fun defaultColor(): Color = delegate.defaultColor()
+
+  @Composable override fun rippleAlpha(): RippleAlpha = opaqueRippleAlpha
 }
 
 private fun applyPalette(palette: Palette, onContentColorChanged: (Color) -> Unit) {
