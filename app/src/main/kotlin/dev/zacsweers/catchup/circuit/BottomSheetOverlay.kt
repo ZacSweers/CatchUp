@@ -46,7 +46,6 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
 
     var pendingResult by remember { mutableStateOf<Result?>(null) }
     ModalBottomSheet(
-      modifier = Modifier.fillMaxSize(),
       content = {
         val coroutineScope = rememberCoroutineScope()
         BackHandler(enabled = sheetState.isVisible) {
