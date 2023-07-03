@@ -322,14 +322,16 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
         }
       }
 
-      CompositionLocalProvider(LocalScrollToTop provides scrollToTop) {
-        HorizontalPager(
-          modifier = Modifier.weight(1f),
-          beyondBoundsPageCount = 1,
-          key = { state.serviceMetas[it].id },
-          state = pagerState,
-          verticalAlignment = Alignment.Top,
-        ) { page ->
+      HorizontalPager(
+        modifier = Modifier.weight(1f),
+        beyondBoundsPageCount = 1,
+        key = { state.serviceMetas[it].id },
+        state = pagerState,
+        verticalAlignment = Alignment.Top,
+      ) { page ->
+        CompositionLocalProvider(
+          LocalScrollToTop provides scrollToTop.takeIf { pagerState.currentPage == page }
+        ) {
           CircuitContent(
             screen = ServiceScreen(state.serviceMetas[page].id),
             onNavEvent = { eventSink(HomeScreen.Event.NestedNavEvent(it)) }
