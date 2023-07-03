@@ -3,9 +3,12 @@ package dev.zacsweers.catchup.service
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -31,9 +34,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -69,13 +74,6 @@ fun VisualServiceUi(
   eventSink: (ServiceScreen.Event) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val placeholders =
-    if (isSystemInDarkTheme()) {
-      PLACEHOLDERS_DARK
-    } else {
-      PLACEHOLDERS_LIGHT
-    }
-
   val state = rememberLazyStaggeredGridState()
   ScrollToTopHandler(state)
   LazyVerticalStaggeredGrid(
@@ -91,24 +89,22 @@ fun VisualServiceUi(
       key = lazyItems.itemKey { it.id },
     ) { index ->
       val item = lazyItems[index]
-      Surface(color = placeholders[index % placeholders.size]) {
-        if (item != null) {
-          val clickableItemState =
-            rememberClickableItemState(
-              contentColor =
-                item.imageInfo?.color?.let { Color(android.graphics.Color.parseColor(it)) }
-                  ?: Color.Unspecified,
-            )
-          ClickableItem(
-            onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
-          ) {
-            VisualItem(
-              item = item,
-              index = index,
-              onEnableChanged = { clickableItemState.enabled = it },
-              onContentColorChanged = { clickableItemState.contentColor = it },
-            )
-          }
+      if (item != null) {
+        val clickableItemState =
+          rememberClickableItemState(
+            contentColor =
+              item.imageInfo?.color?.let { Color(android.graphics.Color.parseColor(it)) }
+                ?: Color.Unspecified,
+          )
+        ClickableItem(
+          onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
+        ) {
+          VisualItem(
+            item = item,
+            index = index,
+            onEnableChanged = { clickableItemState.enabled = it },
+            onContentColorChanged = { clickableItemState.contentColor = it },
+          )
         }
       }
     }
@@ -139,6 +135,15 @@ fun VisualItem(
     val imageHeightDp = LocalDensity.current.run { imageHeight.toDp() }
 
     val scope = rememberCoroutineScope()
+
+    val placeholders =
+      if (isSystemInDarkTheme()) {
+        PLACEHOLDERS_DARK
+      } else {
+        PLACEHOLDERS_LIGHT
+      }
+    val placeholderColor = placeholders[index % placeholders.size]
+
     val blurHash = imageInfo.blurHash
     if (blurHash != null) {
       val blurHashBitmap by
@@ -148,13 +153,18 @@ fun VisualItem(
               BlurHashDecoder.decode(blurHash, imageWidth, imageHeight)?.asImageBitmap()
             }
         }
-      blurHashBitmap?.let {
-        Image(
-          bitmap = it,
-          contentDescription = "Loading image for ${item.title}",
-          contentScale = ContentScale.Crop,
-          modifier = Modifier.size(imageWidthDp, imageHeightDp),
-        )
+
+      Crossfade(blurHashBitmap != null, label = "Crossfade blurhash") { loaded ->
+        if (loaded) {
+          Image(
+            bitmap = blurHashBitmap!!,
+            contentDescription = "Loading image for ${item.title}",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.size(imageWidthDp, imageHeightDp),
+          )
+        } else {
+          Box(modifier = Modifier.background(placeholderColor).size(imageWidthDp, imageHeightDp)) {}
+        }
       }
     }
     var hasFadedIn by remember(index) { mutableStateOf(false) }
@@ -165,6 +175,13 @@ fun VisualItem(
         ImageRequest.Builder(LocalContext.current)
           .data(imageInfo.url)
           .memoryCacheKey(imageInfo.cacheKey)
+          .let {
+            if (blurHash == null) {
+              it.placeholder(ColorDrawable(placeholderColor.toArgb()))
+            } else {
+              it
+            }
+          }
           // .run {
           // TODO transitions don't work with AsyncImage yet
           //  https://coil-kt.github.io/coil/compose/#transitions
@@ -182,7 +199,9 @@ fun VisualItem(
               if (result is BitmapDrawable) {
                 bitmap = result.bitmap
                 scope.launch {
+                  println("PALETTE GENERATE")
                   Palette.from(result.bitmap).clearFilters().generateAsync()?.let {
+                    println("PALETTE SUCCESS")
                     applyPalette(it, onContentColorChanged)
                   }
                 }
