@@ -17,8 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import io.sweers.catchup.R
 
 @Composable
@@ -66,15 +69,23 @@ fun ClickableItem(
         0.dp
       }
     val elevation by animateDpAsState(targetElevation, label = "Animated elevation")
+    val haptics = LocalHapticFeedback.current
     Surface(
       modifier =
-        modifier.combinedClickable(
-          interactionSource = interactionSource,
-          indication = LocalIndication.current,
-          onClick = onClick,
-          onLongClick = onLongClick
-        ),
-      tonalElevation = elevation,
+        modifier
+          .combinedClickable(
+            interactionSource = interactionSource,
+            indication = LocalIndication.current,
+            onClick = onClick,
+            onLongClick =
+              onLongClick?.let { longClickFunction ->
+                {
+                  haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                  longClickFunction()
+                }
+              }
+          )
+          .zIndex(elevation.value),
       shadowElevation = elevation,
       contentColor = clickableItemState.contentColor,
       content = content
