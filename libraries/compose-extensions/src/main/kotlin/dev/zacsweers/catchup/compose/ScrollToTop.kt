@@ -1,6 +1,7 @@
 package dev.zacsweers.catchup.compose
 
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -37,6 +38,38 @@ class MutableScrollToTop : ScrollToTop {
 val LocalScrollToTop = compositionLocalOf<ScrollToTop?> { null }
 
 fun Modifier.scrollToTop(state: LazyListState) =
+  scrollToTop(
+    object : StateWrapper {
+      override val firstVisibleItemIndex: Int
+        get() = state.firstVisibleItemIndex
+
+      override suspend fun scrollToItem(index: Int) {
+        state.scrollToItem(index)
+      }
+
+      override suspend fun animateScrollToItem(index: Int) {
+        state.animateScrollToItem(index)
+      }
+    }
+  )
+
+fun Modifier.scrollToTop(state: LazyStaggeredGridState) =
+  scrollToTop(
+    object : StateWrapper {
+      override val firstVisibleItemIndex: Int
+        get() = state.firstVisibleItemIndex
+
+      override suspend fun scrollToItem(index: Int) {
+        state.scrollToItem(index)
+      }
+
+      override suspend fun animateScrollToItem(index: Int) {
+        state.animateScrollToItem(index)
+      }
+    }
+  )
+
+private fun Modifier.scrollToTop(state: StateWrapper) =
   composed(
     inspectorInfo =
       debugInspectorInfo {
@@ -59,3 +92,12 @@ fun Modifier.scrollToTop(state: LazyListState) =
     }
     Modifier
   }
+
+@Stable
+private interface StateWrapper {
+  val firstVisibleItemIndex: Int
+
+  suspend fun scrollToItem(index: Int)
+
+  suspend fun animateScrollToItem(index: Int)
+}
