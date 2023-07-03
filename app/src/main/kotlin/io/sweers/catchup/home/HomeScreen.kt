@@ -207,7 +207,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
       snapshotFlow { scrollBehavior.state.collapsedFraction }
         .collect { fraction ->
           scrimColor =
-            lerp(surfaceColor, tabLayoutColor.value, scrollBehavior.state.collapsedFraction)
+            lerp(surfaceColor, tabLayoutColor.value, fraction)
           if (fraction == 1.0f) {
             systemUiController.statusBarDarkContentEnabled = !scrimColor.isDark
           } else {
