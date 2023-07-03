@@ -43,13 +43,15 @@ buildscript {
   }
 }
 
+val useK2 = findProperty("kotlin.experimental.tryK2")?.toString().toBoolean()
+
 subprojects {
   pluginManager.withPlugin("com.squareup.anvil") {
     dependencies { add("compileOnly", libs.anvil.annotations) }
   }
-  pluginManager.withPlugin("dev.zacsweers.moshix") {
-    configure<MoshiPluginExtension> {
-      generateProguardRules.set(false)
+  if (useK2) {
+    pluginManager.withPlugin("dev.zacsweers.moshix") {
+      configure<MoshiPluginExtension> { generateProguardRules.set(false) }
     }
   }
 
