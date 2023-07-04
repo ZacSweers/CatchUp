@@ -42,6 +42,7 @@ dependencies {
   implementation(libs.misc.timber)
   implementation(libs.sqldelight.coroutines)
   implementation(libs.sqldelight.driver.android)
+  implementation(libs.sqldelight.runtime)
 
   compileOnly(libs.misc.jsr250)
 

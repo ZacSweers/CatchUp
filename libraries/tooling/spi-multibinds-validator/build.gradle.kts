@@ -5,8 +5,8 @@ plugins {
 }
 
 dependencies {
-  implementation(libs.misc.debug.guava)
   implementation(libs.dagger.spi)
+  implementation(libs.misc.debug.guava)
 
   compileOnly(libs.auto.service)
 
