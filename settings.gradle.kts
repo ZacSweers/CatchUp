@@ -258,6 +258,15 @@ configureIncludedBuild("sgp") { path ->
   }
 }
 
+// See comments on systemProp.slack.include-build.dagp property in gradle.properties
+configureIncludedBuild("dagp") { path ->
+  includeBuild(path) {
+    dependencySubstitution {
+      substitute(module("com.autonomousapps:dependency-analysis-gradle-plugin")).using(project(":"))
+    }
+  }
+}
+
 include(":platform")
 
 // https://docs.gradle.org/5.6/userguide/groovy_plugin.html#sec:groovy_compilation_avoidance
