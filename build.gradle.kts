@@ -88,6 +88,7 @@ tasks.named<ComputeAffectedProjectsTask>("computeAffectedProjects") {
 dependencyAnalysis {
   this.dependencies {
     bundle("compose-ui") {
+      primary("androidx.compose.ui:ui")
       includeGroup("androidx.compose.ui")
     }
   }
