@@ -90,6 +90,7 @@ dependencyAnalysis {
     bundle("compose-ui") {
       primary("androidx.compose.ui:ui")
       includeGroup("androidx.compose.ui")
+      // TODO exclude ui-tooling
     }
   }
 }
