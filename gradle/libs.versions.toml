@@ -129,6 +129,7 @@ androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", versio
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.4.3"
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+androidx-compose-material-ripple = { module = "androidx.compose.material:material-ripple", version.ref = "compose" }
 androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }
 androidx-compose-materialIconsExtended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
 androidx-compose-constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha10"
@@ -163,9 +164,13 @@ autodispose-lifecycle = { module = "com.uber.autodispose2:autodispose-lifecycle"
 google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.3"
 javapoet = "com.squareup:javapoet:1.13.0"
 
+circuit-backstack = { module = "com.slack.circuit:circuit-backstack", version.ref = "circuit" }
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
 circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
 circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
+circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
+circuit-runtime-presenter = { module = "com.slack.circuit:circuit-runtime-presenter", version.ref = "circuit" }
+circuit-runtime-ui = { module = "com.slack.circuit:circuit-runtime-ui", version.ref = "circuit" }
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegenAnnotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
 
@@ -231,6 +236,7 @@ misc-debug-scalpel = "com.jakewharton.scalpel:scalpel:1.1.2"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.2.0"
 
 misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:0.27.0"
+misc-composeSettings-base = "com.github.alorma:compose-settings-storage-base:0.27.0"
 misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.27.0"
 misc-inboxRecyclerView = "me.saket:inboxrecyclerview:3.0.0"
 misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
@@ -272,6 +278,7 @@ sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions-jvm", version.ref = "sqldelight" }
 sqldelight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
 sqldelight-primitiveAdapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
 
 sqlite-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "xerial" }
 

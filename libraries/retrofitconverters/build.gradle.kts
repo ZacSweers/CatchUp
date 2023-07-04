@@ -21,10 +21,8 @@ plugins {
 
 dependencies {
   api(libs.dagger.runtime)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
 
-  implementation(libs.androidx.annotations)
-  implementation(libs.misc.jsoup)
   implementation(libs.okhttp.core)
-  implementation(libs.retrofit.core)
-  implementation(libs.rx.java)
 }
