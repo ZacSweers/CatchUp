@@ -84,3 +84,11 @@ tasks.named<ComputeAffectedProjectsTask>("computeAffectedProjects") {
     "config/lint/lint.xml"
   )
 }
+
+dependencyAnalysis {
+  this.dependencies {
+    bundle("compose-ui") {
+      includeGroup("androidx.compose.ui")
+    }
+  }
+}
