@@ -19,6 +19,7 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import androidx.compose.animation.core.AnimationConstants
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import coil.Coil
@@ -168,10 +169,13 @@ abstract class ApplicationModule {
       return object : ImageLoader {
         override val components: ComponentRegistry
           get() = imageLoader.get().components
+
         override val defaults: DefaultRequestOptions
           get() = imageLoader.get().defaults
+
         override val diskCache: DiskCache?
           get() = imageLoader.get().diskCache
+
         override val memoryCache: MemoryCache?
           get() = imageLoader.get().memoryCache
 
@@ -215,7 +219,7 @@ abstract class ApplicationModule {
         // Hardware bitmaps don't work with the saturation effect or palette extraction
         allowHardware(false)
         allowRgb565(isLowRamDevice)
-        crossfade(300)
+        crossfade(AnimationConstants.DefaultDurationMillis)
 
         components {
           add(ImageDecoderDecoder.Factory())

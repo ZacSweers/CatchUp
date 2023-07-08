@@ -15,14 +15,9 @@
  */
 package io.sweers.catchup.service.slashdot
 
-import com.tickaroo.tikxml.annotation.Element
-import com.tickaroo.tikxml.annotation.PropertyElement
-import com.tickaroo.tikxml.annotation.Xml
+import kotlinx.serialization.Serializable
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
-@Xml
-data class Feed(
-  @Element val itemList: List<Entry>,
-  @PropertyElement val title: String? = null,
-  @PropertyElement val language: String? = null,
-  @PropertyElement val updated: String? = null
-)
+@Serializable
+@XmlSerialName("feed", "http://www.w3.org/2005/Atom")
+data class Feed(val entries: List<Entry>)

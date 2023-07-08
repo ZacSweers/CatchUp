@@ -25,6 +25,7 @@ import org.jsoup.nodes.Element
 /** GitHub API does not have /trending endpoints so we have to do gross things :( */
 internal object GitHubTrendingParser {
   private val NUMBER_PATTERN = "\\d+".toRegex()
+
   private fun String.removeCommas() = replace(",", "")
 
   internal fun parse(body: ResponseBody): List<TrendingItem> {
@@ -37,8 +38,9 @@ internal object GitHubTrendingParser {
 
   private fun parseTrendingItem(element: Element): TrendingItem? {
     // /creativetimofficial/material-dashboard
+    // TODO fix IOOB, size 1
     val authorAndName =
-      element.select("h1 > a").attr("href").toString().removePrefix("/").trimEnd().split("/").let {
+      element.select("h1 > a").attr("href").removePrefix("/").trimEnd().split("/").let {
         Pair(it[0], it[1])
       }
     val (author, repoName) = authorAndName

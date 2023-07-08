@@ -18,38 +18,34 @@ plugins {
   alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  alias(libs.plugins.kotlin.serialization)
 }
 
 android {
   namespace = "io.sweers.catchup.service.slashdot"
-  buildFeatures {
-    androidResources = true
-  }
+  buildFeatures { androidResources = true }
 }
 
-slack {
-  features {
-    // Because of tikxml
-    dagger(enableComponents = true)
-  }
-}
+slack { features { dagger() } }
 
 dependencies {
   api(project(":service-api"))
-  api(libs.androidx.annotations)
   api(libs.dagger.runtime)
-  api(libs.rx.java)
-  api(libs.tikxml.htmlEscape)
+  api(libs.kotlin.datetime)
+  api(libs.kotlinx.serialization.core)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
+  api(libs.xmlutil.serialization)
+  api(projects.libraries.appconfig)
+  api(projects.libraries.di)
 
   implementation(project(":libraries:util"))
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
-  implementation(libs.retrofit.core)
-  implementation(libs.retrofit.rxJava3)
-  implementation(libs.tikxml.annotation)
-  implementation(libs.tikxml.core)
-  implementation(libs.tikxml.retrofit)
+  implementation(libs.retrofit.kotlinxSerialization)
+  implementation(libs.tikxml.htmlEscape)
+  implementation(projects.libraries.retrofitconverters)
 
-  kapt(libs.tikxml.apt)
+  testImplementation(libs.test.junit)
+  testImplementation(libs.test.truth)
 }

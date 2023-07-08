@@ -1,12 +1,10 @@
 package io.sweers.catchup.ui.about
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -22,11 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import com.slack.circuit.CircuitContent
-import com.slack.circuit.CircuitUiState
-import com.slack.circuit.Presenter
-import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.foundation.CircuitContent
+import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.R
@@ -60,7 +58,7 @@ fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
     topBar = { CollapsingAboutHeader(state.version, scrollBehavior = scrollBehavior) }
   ) { paddingValues ->
     Column(Modifier.padding(paddingValues)) {
-      val pagerState = rememberPagerState()
+      val pagerState = rememberPagerState { 2 }
       TabRow(
         // Our selected tab is our current page
         selectedTabIndex = pagerState.currentPage,
@@ -82,13 +80,9 @@ fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
 
       HorizontalPager(
         modifier = Modifier.weight(1f),
-        pageCount = 2,
         key = { it },
         state = pagerState,
         verticalAlignment = Alignment.Top,
-        // Explicitly defined to cover for https://issuetracker.google.com/issues/264729364
-        pageNestedScrollConnection =
-          PagerDefaults.pageNestedScrollConnection(Orientation.Horizontal)
       ) { page ->
         CircuitContent(SCREENS[page])
       }

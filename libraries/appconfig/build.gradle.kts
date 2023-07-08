@@ -18,10 +18,3 @@ plugins {
   kotlin("jvm")
   alias(libs.plugins.sgp.base)
 }
-
-dependencies {
-  api(libs.kotlin.coroutines)
-
-  testImplementation(libs.test.junit)
-  testImplementation(libs.test.truth)
-}

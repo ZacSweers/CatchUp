@@ -16,22 +16,25 @@
 package io.sweers.catchup.ui.activity
 
 import android.app.Activity
+import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.core.view.WindowCompat
-import com.slack.circuit.CircuitCompositionLocals
-import com.slack.circuit.CircuitConfig
-import com.slack.circuit.NavigableCircuitContent
 import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.CircuitCompositionLocals
+import com.slack.circuit.foundation.CircuitConfig
+import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.push
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
-import com.slack.circuit.push
-import com.slack.circuit.rememberCircuitNavigator
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
@@ -61,16 +64,27 @@ constructor(
   private val circuitConfig: CircuitConfig,
   private val catchUpPreferences: CatchUpPreferences,
   private val rootContent: RootContent,
-  private val appConfig: AppConfig,
+  appConfig: AppConfig,
 ) : AppCompatActivity() {
+
+  init {
+    if (appConfig.sdkInt == 29 && isTaskRoot) {
+      onBackPressedDispatcher.addCallback {
+        // https://twitter.com/Piwai/status/1169274622614704129
+        // https://issuetracker.google.com/issues/139738913
+        finishAfterTransition()
+      }
+    }
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    WindowCompat.setDecorFitsSystemWindows(window, false)
+    enableEdgeToEdge(navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT))
 
     setContent {
       val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
       val forceNight by catchUpPreferences.dayNightForceNight.collectAsState(initial = false)
+      val useDynamicTheme by catchUpPreferences.dynamicTheme.collectAsState(initial = false)
       val useDarkTheme =
         if (dayNightAuto) {
           isSystemInDarkTheme()
@@ -79,10 +93,10 @@ constructor(
         }
       SideEffect {
         Timber.d(
-          "Setting theme to $useDarkTheme. dayNightAuto: $dayNightAuto, forceNight: $forceNight"
+          "Setting theme to $useDarkTheme. dayNightAuto: $dayNightAuto, forceNight: $forceNight, dynamic: $useDynamicTheme"
         )
       }
-      CatchUpTheme(useDarkTheme = useDarkTheme) {
+      CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
         CircuitCompositionLocals(circuitConfig) {
           ContentWithOverlays {
             val backstack = rememberSaveableBackStack { push(HomeScreen) }
@@ -92,8 +106,7 @@ constructor(
               NavigableCircuitContent(
                 intentAwareNavigator,
                 backstack,
-                enableBackHandler = true,
-                decoration = ImageViewerAwareNavDecoration()
+                //                decoration = ImageViewerAwareNavDecoration()
               )
             }
           }
@@ -116,17 +129,6 @@ constructor(
   override fun onDestroy() {
     customTab.connectionCallback = null
     super.onDestroy()
-  }
-
-  @Deprecated("Deprecated in Java")
-  override fun onBackPressed() {
-    if (appConfig.sdkInt == 29 && isTaskRoot) {
-      // https://twitter.com/Piwai/status/1169274622614704129
-      // https://issuetracker.google.com/issues/139738913
-      finishAfterTransition()
-    } else {
-      super.onBackPressed()
-    }
   }
 
   @ContributesTo(AppScope::class)

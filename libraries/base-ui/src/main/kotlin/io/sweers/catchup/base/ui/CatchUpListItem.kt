@@ -67,6 +67,7 @@ data class CatchUpListItem(
 
 sealed class ClickEvent(val item: CatchUpListItem) {
   class Item(item: CatchUpListItem) : ClickEvent(item)
+
   class Mark(item: CatchUpListItem) : ClickEvent(item)
 }
 
@@ -272,7 +273,7 @@ fun PreviewTextItem() {
           score = "+ 200",
           tag = "News",
           timestamp = Clock.System.now().minus(12.hours),
-          mark = CatchUpListItem.Mark(clickable = false, text = "?") { TODO() }
+          mark = null
         ),
       themeColor = Color.Green
     )

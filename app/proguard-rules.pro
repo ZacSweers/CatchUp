@@ -86,7 +86,8 @@
 }
 
 # Check that qualifier annotations have been discarded.
--checkdiscard @javax.inject.Qualifier class *
+# TODO this no longer works due to a firebase update and their reflection use
+#-checkdiscard @javax.inject.Qualifier class *
 
 # Coroutines debug agent bits
 -dontwarn java.lang.instrument.ClassFileTransformer
@@ -148,3 +149,6 @@
 # kept. Suspend functions are wrapped in continuations where the type argument
 # is used.
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
+# Temporary until Circuit's navigation animation updates
+-dontwarn androidx.compose.animation.AnimatedContentScope

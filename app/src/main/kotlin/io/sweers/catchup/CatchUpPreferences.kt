@@ -41,6 +41,7 @@ interface CatchUpPreferences {
   val datastore: DataStore<Preferences>
   val dayNightAuto: Flow<Boolean>
   val dayNightForceNight: Flow<Boolean>
+  val dynamicTheme: Flow<Boolean>
   val reports: Flow<Boolean>
   val servicesOrder: Flow<ImmutableList<String>>
   val servicesOrderSeen: Flow<Boolean>
@@ -52,6 +53,7 @@ interface CatchUpPreferences {
   object Keys {
     val dayNightAuto = booleanPreferencesKey("dayNightAuto")
     val dayNightForceNight = booleanPreferencesKey("forceNight")
+    val dynamicTheme = booleanPreferencesKey("dynamicTheme")
     val reports = booleanPreferencesKey("reports")
     val smartlinkingGlobal = booleanPreferencesKey("smartLinkingGlobal")
     val servicesOrderSeen = booleanPreferencesKey("servicesOrderSeen")
@@ -61,6 +63,7 @@ interface CatchUpPreferences {
 
   companion object {
     private const val STORAGE_FILE_NAME = "CatchUpPreferences"
+
     fun dataStoreFile(context: Context): File {
       return context.preferencesDataStoreFile(STORAGE_FILE_NAME)
     }
@@ -79,16 +82,25 @@ class CatchUpPreferencesImpl @Inject constructor(@ApplicationContext context: Co
 
   override val dayNightAuto: Flow<Boolean>
     get() = datastore.data.map { it[Keys.dayNightAuto] ?: true }
+
   override val dayNightForceNight: Flow<Boolean>
     get() = datastore.data.map { it[Keys.dayNightForceNight] ?: false }
+
+  override val dynamicTheme: Flow<Boolean>
+    get() = datastore.data.map { it[Keys.dynamicTheme] ?: false }
+
   override val reports: Flow<Boolean>
     get() = datastore.data.map { it[Keys.reports] ?: true }
+
   override val servicesOrder: Flow<ImmutableList<String>>
     get() = datastore.data.map { it[Keys.servicesOrder]?.split(',').orEmpty().toImmutableList() }
+
   override val servicesOrderSeen: Flow<Boolean>
     get() = datastore.data.map { it[Keys.servicesOrderSeen] ?: false }
+
   override val smartlinkingGlobal: Flow<Boolean>
     get() = datastore.data.map { it[Keys.smartlinkingGlobal] ?: true }
+
   override val lastVersion: Flow<String?>
     get() = datastore.data.map { it[Keys.lastVersion] }
 

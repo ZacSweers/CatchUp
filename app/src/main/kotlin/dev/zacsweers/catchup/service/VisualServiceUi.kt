@@ -3,10 +3,12 @@ package dev.zacsweers.catchup.service
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -19,10 +21,15 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -31,9 +38,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -45,10 +54,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import coil.drawable.MovieDrawable
 import coil.request.ImageRequest
+import dev.zacsweers.catchup.compose.ScrollToTopHandler
 import io.sweers.catchup.base.ui.BlurHashDecoder
 import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.base.ui.generateAsync
@@ -59,7 +70,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VisualServiceUi(
   lazyItems: LazyPagingItems<CatchUpItem>,
@@ -68,22 +78,23 @@ fun VisualServiceUi(
   eventSink: (ServiceScreen.Event) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val placeholders =
-    if (isSystemInDarkTheme()) {
-      PLACEHOLDERS_DARK
-    } else {
-      PLACEHOLDERS_LIGHT
-    }
-
-  LazyVerticalStaggeredGrid(
-    columns = StaggeredGridCells.Fixed(columnSpan()),
-    modifier = modifier.fillMaxSize(),
-  ) {
-    itemsIndexed(
-      lazyItems,
-      key = { _, item -> item.id },
-    ) { index, item ->
-      Surface(color = placeholders[index % placeholders.size]) {
+  val delegateRippleTheme = LocalRippleTheme.current
+  CompositionLocalProvider(LocalRippleTheme provides ImageItemRippleTheme(delegateRippleTheme)) {
+    val state = rememberLazyStaggeredGridState()
+    ScrollToTopHandler(state)
+    LazyVerticalStaggeredGrid(
+      columns = StaggeredGridCells.Fixed(columnSpan()),
+      state = state,
+      modifier = modifier.fillMaxSize(),
+    ) {
+      items(
+        count = lazyItems.itemCount,
+        // Here we use the new itemKey extension on LazyPagingItems to
+        // handle placeholders automatically, ensuring you only need to provide
+        // keys for real items
+        key = lazyItems.itemKey { it.id },
+      ) { index ->
+        val item = lazyItems[index]
         if (item != null) {
           val clickableItemState =
             rememberClickableItemState(
@@ -93,6 +104,7 @@ fun VisualServiceUi(
             )
           ClickableItem(
             onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
+            state = clickableItemState,
           ) {
             VisualItem(
               item = item,
@@ -103,8 +115,8 @@ fun VisualServiceUi(
           }
         }
       }
+      handleLoadStates(lazyItems, themeColor, onRefreshChange)
     }
-    handleLoadStates(lazyItems, themeColor, onRefreshChange)
   }
 }
 
@@ -122,7 +134,6 @@ fun VisualItem(
   //  etc
   Box(modifier) {
     val displayMetrics = LocalContext.current.resources.displayMetrics
-    val scaledDensity = displayMetrics.scaledDensity
     val imageInfo = item.imageInfo!!
 
     // Compute in-grid image size
@@ -132,6 +143,15 @@ fun VisualItem(
     val imageHeightDp = LocalDensity.current.run { imageHeight.toDp() }
 
     val scope = rememberCoroutineScope()
+
+    val placeholders =
+      if (isSystemInDarkTheme()) {
+        PLACEHOLDERS_DARK
+      } else {
+        PLACEHOLDERS_LIGHT
+      }
+    val placeholderColor = placeholders[index % placeholders.size]
+
     val blurHash = imageInfo.blurHash
     if (blurHash != null) {
       val blurHashBitmap by
@@ -141,22 +161,35 @@ fun VisualItem(
               BlurHashDecoder.decode(blurHash, imageWidth, imageHeight)?.asImageBitmap()
             }
         }
-      blurHashBitmap?.let {
-        Image(
-          bitmap = it,
-          contentDescription = "Loading image for ${item.title}",
-          contentScale = ContentScale.Crop,
-          modifier = Modifier.size(imageWidthDp, imageHeightDp),
-        )
+
+      Crossfade(blurHashBitmap != null, label = "Crossfade blurhash") { loaded ->
+        if (loaded) {
+          Image(
+            bitmap = blurHashBitmap!!,
+            contentDescription = "Loading image for ${item.title}",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.size(imageWidthDp, imageHeightDp),
+          )
+        } else {
+          Box(modifier = Modifier.background(placeholderColor).size(imageWidthDp, imageHeightDp)) {}
+        }
       }
     }
     var hasFadedIn by remember(index) { mutableStateOf(false) }
     var badgeColor by remember(index) { mutableStateOf(Color.Unspecified) }
+    val density = LocalDensity.current
     AsyncImage(
       model =
         ImageRequest.Builder(LocalContext.current)
           .data(imageInfo.url)
           .memoryCacheKey(imageInfo.cacheKey)
+          .let {
+            if (blurHash == null) {
+              it.placeholder(ColorDrawable(placeholderColor.toArgb()))
+            } else {
+              it
+            }
+          }
           // .run {
           // TODO transitions don't work with AsyncImage yet
           //  https://coil-kt.github.io/coil/compose/#transitions
@@ -193,7 +226,7 @@ fun VisualItem(
 
               bitmap?.let {
                 // look at the corner to determine the gif badge color
-                val cornerSize = (56 * scaledDensity).toInt()
+                val cornerSize = density.run { 56.sp.toPx() }.toInt()
                 val corner =
                   Bitmap.createBitmap(
                     it,
@@ -252,12 +285,30 @@ private fun PreviewBadge() {
   }
 }
 
+private class ImageItemRippleTheme(
+  private val delegate: RippleTheme,
+) : RippleTheme {
+  companion object {
+    val opaqueRippleAlpha =
+      RippleAlpha(
+        draggedAlpha = 0.16f,
+        focusedAlpha = 0.12f,
+        hoveredAlpha = 0.08f,
+        // Changed from M3's nearly-imperceptible default of 0.12f
+        pressedAlpha = 0.40f,
+      )
+  }
+
+  @Composable override fun defaultColor(): Color = delegate.defaultColor()
+
+  @Composable override fun rippleAlpha(): RippleAlpha = opaqueRippleAlpha
+}
+
 private fun applyPalette(palette: Palette, onContentColorChanged: (Color) -> Unit) {
   val color = UiUtil.createRippleColor(palette, 0.25f, 0.5f, 0x40808080)
   onContentColorChanged(Color(color))
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 fun LazyStaggeredGridScope.handleLoadStates(
   lazyItems: LazyPagingItems<CatchUpItem>,
   themeColor: Color,
@@ -297,31 +348,6 @@ fun LazyStaggeredGridScope.handleLoadStates(
         }
       }
     }
-  }
-}
-
-// TODO copied + modified from Paging
-@OptIn(ExperimentalFoundationApi::class)
-fun <T : Any> LazyStaggeredGridScope.itemsIndexed(
-  items: LazyPagingItems<T>,
-  key: ((index: Int, item: T) -> Any)? = null,
-  itemContent: @Composable LazyStaggeredGridScope.(index: Int, value: T?) -> Unit
-) {
-  items(
-    count = items.itemCount,
-    key =
-      if (key == null) null
-      else
-        { index ->
-          val item = items.peek(index)
-          if (item == null) {
-            PagingPlaceholderKey(index)
-          } else {
-            key(index, item)
-          }
-        }
-  ) { index ->
-    itemContent(index, items[index])
   }
 }
 

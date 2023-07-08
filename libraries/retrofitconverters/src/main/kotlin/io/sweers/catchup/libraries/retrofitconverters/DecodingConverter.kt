@@ -35,6 +35,7 @@ class DecodingConverter<T> private constructor(private val convertBody: (Respons
     fun <T> newFactory(decoder: (ResponseBody) -> T): Converter.Factory {
       return object : Converter.Factory() {
         private val converter by lazy { DecodingConverter(decoder) }
+
         override fun responseBodyConverter(
           type: Type,
           annotations: Array<Annotation>,

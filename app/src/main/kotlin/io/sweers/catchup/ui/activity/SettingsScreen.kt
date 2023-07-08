@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -44,12 +43,12 @@ import com.alorma.compose.settings.storage.base.getValue
 import com.alorma.compose.settings.storage.base.setValue
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.byteunits.BinaryByteUnit
-import com.slack.circuit.CircuitUiState
-import com.slack.circuit.Navigator
-import com.slack.circuit.Presenter
-import com.slack.circuit.Screen
-import com.slack.circuit.Ui
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.ui.Ui
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -78,9 +77,11 @@ import okhttp3.Cache
 @Parcelize
 object SettingsScreen : Screen {
   data class State(val eventSink: (Event) -> Unit) : CircuitUiState
+
   sealed interface Event {
     // TODO does this make sense or should the presenter decide?
     data class NavToScreen(val screen: Screen) : Event
+
     object ClearCache : Event
   }
 }
@@ -260,6 +261,17 @@ constructor(
         stickyHeader(key = "theming_header") {
           ComposableHeaderItem(stringResource(R.string.prefs_theme), displayDivider = true)
         }
+
+        item(key = "dynamic_theme") {
+          BooleanPreference(
+            key = CatchUpPreferences.Keys.dynamicTheme,
+            modifier = Modifier.animateContentSize(),
+            defaultValue = false,
+            title = stringResource(R.string.pref_dynamic_theme_title),
+            subtitle = stringResource(R.string.pref_dynamic_theme_summary),
+          )
+        }
+
         item(key = "auto_theme") {
           BooleanPreference(
             key = CatchUpPreferences.Keys.dayNightAuto,
@@ -322,7 +334,7 @@ private fun ComposableHeaderItem(text: String, displayDivider: Boolean) {
       Text(
         modifier = Modifier.padding(16.dp),
         text = text,
-        color = colorResource(R.color.colorAccent),
+        color = MaterialTheme.colorScheme.primary,
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Bold,
       )
@@ -333,7 +345,6 @@ private fun ComposableHeaderItem(text: String, displayDivider: Boolean) {
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ClickablePreference(
   title: String,

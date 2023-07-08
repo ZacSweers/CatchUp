@@ -12,16 +12,8 @@
     "name": "Compose-Settings"
   },
   {
-    "owner": "apollographql",
-    "name": "apollo-kotlin"
-  },
-  {
     "owner": "atlassian",
     "name": "commonmark-java"
-  },
-  {
-    "owner": "benasher44",
-    "name": "uuid"
   },
   {
     "owner": "bugsnag",
@@ -29,7 +21,7 @@
   },
   {
     "owner": "cashapp",
-    "name": "multiplatform-paging"
+    "name": "molecule"
   },
   {
     "owner": "cashapp",
@@ -38,6 +30,10 @@
   {
     "owner": "coil-kt",
     "name": "coil"
+  },
+  {
+    "owner": "firebase",
+    "name": "firebase-android-sdk"
   },
   {
     "owner": "google",
@@ -54,10 +50,6 @@
   {
     "owner": "google",
     "name": "guava"
-  },
-  {
-    "owner": "JakeWharton",
-    "name": "byteunits"
   },
   {
     "owner": "JakeWharton",
@@ -97,19 +89,11 @@
   },
   {
     "owner": "Kotlin",
-    "name": "kotlinx-datetime"
-  },
-  {
-    "owner": "Kotlin",
-    "name": "kotlinx.atomicfu"
-  },
-  {
-    "owner": "Kotlin",
-    "name": "kotlinx.collections.immutable"
-  },
-  {
-    "owner": "Kotlin",
     "name": "kotlinx.coroutines"
+  },
+  {
+    "owner": "Kotlin",
+    "name": "kotlinx.serialization"
   },
   {
     "owner": "LDRAlighieri",
@@ -120,12 +104,12 @@
     "name": "material-components-android"
   },
   {
-    "owner": "Mr-Pine",
-    "name": "Zoomables"
-  },
-  {
     "owner": "noties",
     "name": "Markwon"
+  },
+  {
+    "owner": "pdvrieze",
+    "name": "xmlutil"
   },
   {
     "owner": "reactive-streams",
@@ -144,16 +128,16 @@
     "name": "InboxRecyclerView"
   },
   {
+    "owner": "saket",
+    "name": "telephoto"
+  },
+  {
     "owner": "serj-lotutovici",
     "name": "moshi-lazy-adapters"
   },
   {
     "owner": "slackhq",
     "name": "circuit"
-  },
-  {
-    "owner": "square",
-    "name": "anvil"
   },
   {
     "owner": "square",
@@ -165,15 +149,7 @@
   },
   {
     "owner": "square",
-    "name": "moshi"
-  },
-  {
-    "owner": "square",
     "name": "okhttp"
-  },
-  {
-    "owner": "square",
-    "name": "okio"
   },
   {
     "owner": "square",
@@ -198,9 +174,5 @@
   {
     "owner": "wasabeef",
     "name": "recyclerview-animators"
-  },
-  {
-    "owner": "ZacSweers",
-    "name": "MoshiX"
   }
 ]

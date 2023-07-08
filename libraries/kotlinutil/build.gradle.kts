@@ -21,7 +21,4 @@ plugins {
 
 dependencies {
   api(libs.kotlin.coroutines)
-
-  testImplementation(libs.test.junit)
-  testImplementation(libs.test.truth)
 }

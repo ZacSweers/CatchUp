@@ -41,7 +41,7 @@ object GemojiModule {
           SupportSQLiteOpenHelper.Configuration.builder(context)
             .name("gemoji.db")
             .callback(
-              object : SupportSQLiteOpenHelper.Callback(GemojiDatabase.Schema.version) {
+              object : SupportSQLiteOpenHelper.Callback(GemojiDatabase.Schema.version.toInt()) {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                   // Do nothing
                 }
@@ -61,7 +61,7 @@ object GemojiModule {
       SQLiteCopyOpenHelper(
         context = context,
         copyFromAssetPath = "databases/gemoji.db",
-        databaseVersion = GemojiDatabase.Schema.version,
+        databaseVersion = GemojiDatabase.Schema.version.toInt(),
         delegate = delegate
       )
 
