@@ -23,6 +23,7 @@ crumb = "0.1.0"
 dagger = "2.46.1"
 datastore = "1.1.0-alpha04"
 detekt = "1.23.0"
+eithernet = "1.4.1"
 espresso = "3.5.1"
 flipper = "0.201.0"
 hyperion = "0.9.24"
@@ -196,6 +197,8 @@ dagger-spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 detekt-plugins-twitterCompose = "com.twitter.compose.rules:detekt:0.0.26"
+
+eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 
 gson = "com.google.gson:gson:2.9.0"
 
