@@ -1,5 +1,6 @@
 include(
   ":app",
+  ":libraries:auth",
   ":libraries:base-ui",
   ":libraries:appconfig",
   ":libraries:compose-extensions",
