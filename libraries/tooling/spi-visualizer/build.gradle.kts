@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-  implementation(libs.dagger.runtime)
   implementation(libs.dagger.spi)
   implementation(libs.javapoet)
+  implementation(libs.misc.debug.guava)
 
   compileOnly(libs.auto.service)
 

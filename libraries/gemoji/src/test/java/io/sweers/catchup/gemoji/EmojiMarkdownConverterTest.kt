@@ -16,11 +16,9 @@
 package io.sweers.catchup.gemoji
 
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class EmojiMarkdownConverterTest {
 
   companion object {

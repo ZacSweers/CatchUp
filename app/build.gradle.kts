@@ -129,7 +129,10 @@ android {
   namespace = "io.sweers.catchup"
 }
 
-ksp { arg("room.schemaLocation", "$projectDir/schemas") }
+ksp {
+  arg("room.schemaLocation", "$projectDir/schemas")
+  arg("room.generateKotlin", "true")
+}
 
 bugsnag {
   enabled.set(false) // Reenable whenever this matters
@@ -427,9 +430,13 @@ licensee {
 
 // Workaround for https://youtrack.jetbrains.com/issue/KT-59220
 afterEvaluate {
-  val kspTask = tasks.named<KspTaskJvm>("kspDebugKotlin")
+  val kspDebugTask = tasks.named<KspTaskJvm>("kspDebugKotlin")
   tasks.named<KotlinCompile>("kaptGenerateStubsDebugKotlin").configure {
-    source(kspTask.flatMap { it.destination })
+    source(kspDebugTask.flatMap { it.destination })
+  }
+  val kspReleaseTask = tasks.named<KspTaskJvm>("kspReleaseKotlin")
+  tasks.named<KotlinCompile>("kaptGenerateStubsReleaseKotlin").configure {
+    source(kspReleaseTask.flatMap { it.destination })
   }
 }
 
@@ -465,7 +472,6 @@ dependencies {
 
   implementation(project(":libraries:appconfig"))
   implementation(project(":libraries:base-ui"))
-  // Compose
   implementation(project(":libraries:compose-extensions"))
   implementation(project(":libraries:compose-extensions:pull-refresh"))
   implementation(project(":libraries:flowbinding"))
@@ -473,76 +479,62 @@ dependencies {
   implementation(project(":libraries:kotlinutil"))
   implementation(project(":libraries:summarizer"))
   implementation(project(":libraries:util"))
-  //  implementation(libs.markwon.syntaxHighlight) // https://github.com/noties/Markwon/issues/148
   implementation(project(":service-api"))
   implementation(project(":services:designernews"))
   implementation(project(":services:dribbble"))
   implementation(project(":services:github"))
   implementation(project(":services:hackernews"))
-  //  implementation(project(":services:medium"))
   implementation(project(":services:producthunt"))
   implementation(project(":services:reddit"))
   implementation(project(":services:slashdot"))
   implementation(project(":services:unsplash"))
   implementation(project(":services:uplabs"))
+  implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
-  // Support libs
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.appCompat)
-  implementation(libs.androidx.compose.accompanist.placeholder)
   implementation(libs.androidx.compose.accompanist.systemUi)
   implementation(libs.androidx.compose.animation.graphics)
-  implementation(libs.androidx.compose.constraintLayout)
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material.material3)
+  implementation(libs.androidx.compose.material.ripple)
+  implementation(libs.androidx.compose.materialIcons)
+  implementation(libs.androidx.compose.runtime)
   implementation(libs.androidx.compose.ui)
-  implementation(libs.androidx.constraintLayout)
   implementation(libs.androidx.core)
-  // Kotlin
   implementation(libs.androidx.coreKtx)
   implementation(libs.androidx.customTabs)
   implementation(libs.androidx.datastore.preferences)
   implementation(libs.androidx.design)
-  implementation(libs.androidx.emoji)
   implementation(libs.androidx.emojiAppcompat)
-  implementation(libs.androidx.fragment)
-  implementation(libs.androidx.fragmentKtx)
-  // Arch components
   implementation(libs.androidx.lifecycle.extensions)
   implementation(libs.androidx.lifecycle.ktx)
   implementation(libs.androidx.paging.compose)
+  implementation(libs.androidx.palette)
   implementation(libs.androidx.preference)
   implementation(libs.androidx.preferenceKtx)
   implementation(libs.androidx.room.ktx)
   implementation(libs.androidx.room.paging)
   implementation(libs.androidx.room.runtime)
-  implementation(libs.androidx.room.rxJava3)
-  implementation(libs.androidx.swipeRefresh)
-  implementation(libs.androidx.viewPager2)
-  // Apollo
   implementation(libs.apollo.httpcache)
   implementation(libs.apollo.normalizedCache)
   implementation(libs.apollo.runtime)
-  implementation(libs.autodispose.android)
-  implementation(libs.autodispose.androidxLifecycle)
-  // Misc
-  implementation(libs.autodispose.core)
-  implementation(libs.autodispose.lifecycle)
+  implementation(libs.circuit.backstack)
   implementation(libs.circuit.codegenAnnotations)
   implementation(libs.circuit.foundation)
   implementation(libs.circuit.overlay)
   implementation(libs.circuit.retained)
-  // Coil
+  implementation(libs.circuit.runtime)
+  implementation(libs.circuit.runtime.presenter)
+  implementation(libs.circuit.runtime.ui)
   implementation(libs.coil.base)
   implementation(libs.coil.compose)
   implementation(libs.coil.default)
   implementation(libs.coil.gif)
-  // Firebase
   implementation(libs.firebase.core)
   implementation(libs.firebase.database)
   implementation(libs.kotlin.coroutines)
   implementation(libs.kotlin.coroutinesAndroid)
-  implementation(libs.kotlin.coroutinesRx)
   implementation(libs.kotlin.datetime)
   implementation(libs.kotlinx.immutable)
   implementation(libs.markwon.core)
@@ -554,81 +546,49 @@ dependencies {
   implementation(libs.markwon.imageCoil)
   implementation(libs.markwon.linkify)
   implementation(libs.misc.byteunits)
-  implementation(libs.misc.composeSettings)
+  implementation(libs.misc.composeSettings.base)
   implementation(libs.misc.composeSettings.datastore)
   implementation(libs.misc.debug.processPhoenix)
-  implementation(libs.misc.inboxRecyclerView)
-  // Hyperion
-  //  releaseImplementation(libs.hyperion.core.release)
-  //  debugImplementation(libs.hyperion.core.debug)
-  //  debugImplementation(libs.hyperion.plugins.appInfo)
-  //  debugImplementation(libs.hyperion.plugins.attr)
-  //  debugImplementation(libs.hyperion.plugins.chuck)
-  //  debugImplementation(libs.hyperion.plugins.crash)
-  //  debugImplementation(libs.hyperion.plugins.disk)
-  //  debugImplementation(libs.hyperion.plugins.geigerCounter)
-  //  debugImplementation(libs.hyperion.plugins.measurement)
-  //  debugImplementation(libs.hyperion.plugins.phoenix)
-  //  debugImplementation(libs.hyperion.plugins.recorder)
-  //  debugImplementation(libs.hyperion.plugins.timber)
-  implementation(libs.misc.jsr305)
   implementation(libs.misc.lottie)
   implementation(libs.misc.moshiLazyAdapters)
   implementation(libs.misc.okio)
-  implementation(libs.misc.recyclerViewAnimators)
   implementation(libs.misc.tapTargetView)
   implementation(libs.misc.timber)
-  // Moshi
   implementation(libs.moshi.core)
   implementation(libs.moshi.shimo)
-  // Square/JW
   implementation(libs.okhttp.core)
   implementation(libs.retrofit.core)
-  implementation(libs.retrofit.moshi)
   implementation(libs.retrofit.rxJava3)
   implementation(libs.rx.android)
   implementation(libs.rx.dogTag)
   implementation(libs.rx.dogTagAutoDispose)
   implementation(libs.rx.java)
-  implementation(libs.rx.relay)
-  implementation(libs.sqldelight.coroutines)
-  implementation(libs.sqldelight.driver.android)
-  implementation(libs.sqldelight.paging)
-  implementation(libs.sqldelight.primitiveAdapters)
   implementation(libs.telephoto.zoomableImageCoil)
-  // For dagger's visibility
-  implementation(libs.xmlutil.core)
   implementation(libs.xmlutil.serialization)
   implementation(projects.libraries.di)
   implementation(projects.libraries.di.android)
+  implementation(projects.libraries.gemoji.db)
 
   releaseImplementation(libs.misc.bugsnag)
   releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
 
   debugImplementation(libs.androidx.compose.uiTooling)
-  debugImplementation(libs.androidx.drawerLayout)
-  //  implementation(project(":services:imgur"))
-  //  implementation(project(":services:newsapi"))
-  // Flipper
+  debugImplementation(libs.corbind)
   debugImplementation(libs.misc.debug.flipper)
   debugImplementation(libs.misc.debug.flipperNetwork)
-  // To force a newer version that doesn't conflict ListenableFuture
   debugImplementation(libs.misc.debug.guava)
-  debugImplementation(libs.misc.debug.madge)
-  debugImplementation(libs.misc.debug.scalpel)
   debugImplementation(libs.misc.debug.soLoader)
   debugImplementation(libs.misc.debug.telescope)
-  // LeakCanary
   debugImplementation(libs.misc.leakCanary)
   debugImplementation(libs.okhttp.debug.loggingInterceptor)
-  debugImplementation(libs.retrofit.debug.mock)
+  debugImplementation(libs.retrofit.moshi)
+  debugImplementation(projects.libraries.retrofitconverters)
 
   kapt(project(":libraries:tooling:spi-multibinds-validator"))
   kapt(project(":libraries:tooling:spi-visualizer"))
 
-  testImplementation(libs.misc.jsr305)
-  // Test
-  testImplementation(libs.rx.relay)
+  testImplementation(libs.misc.debug.flipper)
+  testImplementation(libs.misc.debug.flipperNetwork)
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
 

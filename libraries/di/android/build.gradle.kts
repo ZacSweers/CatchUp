@@ -9,7 +9,3 @@ slack {
     daggerRuntimeOnly()
   }
 }
-
-dependencies {
-  api(libs.androidx.fragment)
-}
