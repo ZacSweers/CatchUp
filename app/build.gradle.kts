@@ -129,7 +129,10 @@ android {
   namespace = "io.sweers.catchup"
 }
 
-ksp { arg("room.schemaLocation", "$projectDir/schemas") }
+ksp {
+  arg("room.schemaLocation", "$projectDir/schemas")
+  arg("room.generateKotlin", "true")
+}
 
 bugsnag {
   enabled.set(false) // Reenable whenever this matters

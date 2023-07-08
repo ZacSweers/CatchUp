@@ -30,6 +30,10 @@ slack {
   }
 }
 
+ksp {
+  arg("room.generateKotlin", "true")
+}
+
 dependencies {
   ksp(libs.androidx.room.apt)
 
