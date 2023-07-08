@@ -23,8 +23,10 @@ plugins {
 
 android {
   defaultConfig {
-    buildConfigField("String", "PRODUCT_HUNT_DEVELOPER_TOKEN",
-        "\"${project.properties["catchup_product_hunt_developer_token"]}\"")
+    buildConfigField("String", "PRODUCT_HUNT_CLIENT_ID",
+        "\"${project.properties["catchup_product_hunt_client_id"]}\"")
+    buildConfigField("String", "PRODUCT_HUNT_CLIENT_SECRET",
+        "\"${project.properties["catchup_product_hunt_client_secret"]}\"")
   }
   buildFeatures {
     buildConfig = true
@@ -60,9 +62,10 @@ dependencies {
   api(libs.moshi.core)
   api(libs.okhttp.core)
   api(libs.retrofit.core)
-  api(libs.retrofit.rxJava3)
+  api(libs.androidx.datastore.preferences)
   api(projects.libraries.appconfig)
   api(projects.libraries.di)
+  api(projects.libraries.auth)
 
   implementation(project(":libraries:util"))
   implementation(libs.apollo.httpcache)

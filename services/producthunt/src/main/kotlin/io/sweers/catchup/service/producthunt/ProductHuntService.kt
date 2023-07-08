@@ -15,6 +15,8 @@
  */
 package io.sweers.catchup.service.producthunt
 
+import android.content.Context
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.api.http.DefaultHttpRequestComposer
@@ -28,11 +30,17 @@ import com.apollographql.apollo3.network.http.HttpEngine
 import com.apollographql.apollo3.network.http.HttpNetworkTransport
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
+import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import dev.zacsweers.catchup.auth.AuthInterceptor
+import dev.zacsweers.catchup.auth.TokenManager
+import dev.zacsweers.catchup.auth.TokenManager.AuthType
+import dev.zacsweers.catchup.auth.TokenManager.Credentials
+import dev.zacsweers.catchup.auth.TokenStorage
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.service.api.CatchUpItem
@@ -47,10 +55,11 @@ import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.producthunt.type.DateTime
 import io.sweers.catchup.util.apollo.ISO8601InstantApolloAdapter
-import io.sweers.catchup.util.network.AuthInterceptor
+import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Qualifier
 import okhttp3.OkHttpClient
+import okio.Path.Companion.toOkioPath
 
 @Qualifier private annotation class InternalApi
 
@@ -71,7 +80,12 @@ constructor(
     val postsQuery =
       apolloClient
         .get()
-        .query(PostsQuery(first = 50, after = Optional.presentIfNotNull(request.pageKey)))
+        .query(
+          PostsQuery(
+            first = 50,
+            after = Optional.presentIfNotNull(request.pageKey.takeUnless { it == "0" })
+          )
+        )
         .execute()
 
     if (postsQuery.hasErrors()) {
@@ -88,8 +102,9 @@ constructor(
           CatchUpItem(
             id = id.toLong(),
             title = name,
+            description = tagline,
             score = "▲" to votesCount,
-            timestamp = createdAt,
+            timestamp = featuredAt,
             author = null, // Always redacted now in their API
             tag = topics.edges.firstOrNull()?.node?.name,
             itemClickUrl = website,
@@ -107,6 +122,17 @@ constructor(
   }
 }
 
+private val META =
+  ServiceMeta(
+    SERVICE_KEY,
+    R.string.ph,
+    R.color.phAccent,
+    R.drawable.logo_ph,
+    pagesAreNumeric = true,
+    firstPageKey = 0,
+    enabled = BuildConfig.PRODUCT_HUNT_CLIENT_ID.run { !isNullOrEmpty() && !equals("null") }
+  )
+
 @ContributesTo(AppScope::class)
 @Module
 abstract class ProductHuntMetaModule {
@@ -118,19 +144,7 @@ abstract class ProductHuntMetaModule {
 
   companion object {
 
-    @InternalApi
-    @Provides
-    internal fun provideProductHuntServiceMeta(): ServiceMeta =
-      ServiceMeta(
-        SERVICE_KEY,
-        R.string.ph,
-        R.color.phAccent,
-        R.drawable.logo_ph,
-        pagesAreNumeric = true,
-        firstPageKey = 0,
-        enabled =
-          BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
-      )
+    @InternalApi @Provides internal fun provideProductHuntServiceMeta(): ServiceMeta = META
   }
 }
 
@@ -139,14 +153,50 @@ abstract class ProductHuntMetaModule {
 object ProductHuntModule {
 
   private const val SERVER_URL = "https://api.producthunt.com/v2/api/graphql"
+  private const val AUTH_SERVER = "https://api.producthunt.com"
 
   @Provides
   @InternalApi
-  internal fun provideProductHuntOkHttpClient(client: OkHttpClient): OkHttpClient {
-    return client
-      .newBuilder()
-      .addInterceptor(AuthInterceptor("Bearer", BuildConfig.PRODUCT_HUNT_DEVELOPER_TOKEN))
-      .build()
+  fun provideProductHuntTokenStorage(@ApplicationContext context: Context): TokenStorage {
+    return TokenStorage.create { prefix ->
+      context.preferencesDataStoreFile("${prefix}${META.id}").toOkioPath()
+    }
+  }
+
+  @Provides
+  @InternalApi
+  fun provideProductHuntTokenManager(
+    client: OkHttpClient,
+    moshi: Moshi,
+    @InternalApi tokenStorage: TokenStorage,
+  ): TokenManager {
+    return TokenManager.create(
+      tokenStorage,
+      AUTH_SERVER,
+      "/v2/oauth/token",
+      client,
+      moshi,
+      Credentials(
+        BuildConfig.PRODUCT_HUNT_CLIENT_ID,
+        BuildConfig.PRODUCT_HUNT_CLIENT_SECRET,
+        authType = AuthType.JSON,
+      )
+    )
+  }
+
+  @Provides
+  @InternalApi
+  fun provideProductHuntAuthInterceptor(
+    @InternalApi tokenManager: TokenManager,
+  ): AuthInterceptor = AuthInterceptor(tokenManager)
+
+  @Provides
+  @InternalApi
+  fun provideProductHuntOkHttpClient(
+    client: OkHttpClient,
+    @InternalApi authInterceptor: AuthInterceptor,
+  ): OkHttpClient {
+    return client.newBuilder().addInterceptor(authInterceptor).build()
   }
 
   @InternalApi
@@ -167,8 +217,8 @@ object ProductHuntModule {
   @Provides
   @SingleIn(AppScope::class)
   fun provideNetworkTransport(
-    httpEngine: HttpEngine,
-    httpRequestComposer: HttpRequestComposer
+    @InternalApi httpEngine: HttpEngine,
+    @InternalApi httpRequestComposer: HttpRequestComposer
   ): NetworkTransport {
     return HttpNetworkTransport.Builder()
       .httpRequestComposer(httpRequestComposer)
@@ -178,7 +228,7 @@ object ProductHuntModule {
 
   @InternalApi
   @Provides
-  internal fun provideProductHuntClient(
+  fun provideProductHuntClient(
     @InternalApi networkTransport: NetworkTransport,
     apolloClient: ApolloClient,
   ): ApolloClient {
@@ -190,3 +240,21 @@ object ProductHuntModule {
       .build()
   }
 }
+
+
+// TODO what about rate limiting errors?
+//  {
+//   "data": null,
+//   "errors": [
+//     {
+//       "error": "rate_limit_reached",
+//       "error_description": "Sorry. You have exceeded the API rate limit, please try again
+// later.",
+//       "details": {
+//         "limit": 25,
+//         "remaining": -75,
+//         "reset_in": 761
+//       }
+//     }
+//   ]
+//  }
