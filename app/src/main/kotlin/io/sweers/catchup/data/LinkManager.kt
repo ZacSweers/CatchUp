@@ -124,7 +124,6 @@ constructor(
     }
   }
 
-  @Suppress("DEPRECATION")
   private suspend fun queryAndOpen(
     context: Context,
     uri: Uri,
