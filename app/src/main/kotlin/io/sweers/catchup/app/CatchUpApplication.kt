@@ -18,6 +18,7 @@ package io.sweers.catchup.app
 import android.app.Application
 import android.os.Looper
 import android.os.StrictMode
+import android.os.strictmode.DiskReadViolation
 import android.os.strictmode.UntaggedSocketViolation
 import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
@@ -86,6 +87,11 @@ class CatchUpApplication : Application() {
         .penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
           if (violation is UntaggedSocketViolation) {
             // This is a known issue with Flipper
+          } else if (
+            violation is DiskReadViolation &&
+              violation.stackTraceToString().contains("CustomTabsConnection")
+          ) {
+            // This is a known issue with Chrome Custom Tabs
           } else {
             Timber.e(violation.toString())
           }
