@@ -1,0 +1,32 @@
+query Posts($first: Int!, $after: String) {
+    posts(first: $first, after: $after) {
+        totalCount
+        edges {
+            node {
+                id
+                name
+                description
+                votesCount
+                tagline
+                createdAt
+                featuredAt
+                slug
+                url
+                commentsCount
+                website
+                votesCount
+                thumbnail {
+                    url
+                }
+                topics {
+                    totalCount
+                    edges {
+                        node {
+                            name
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

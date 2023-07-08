@@ -1,0 +1,2206 @@
+"""
+A collection of posts.
+"""
+type Collection implements TopicableInterface {
+  """
+  Cover image for the collection.
+  """
+  coverImage(height: Int, width: Int): String
+
+  """
+  Identifies the date and time when collection was created.
+  """
+  createdAt: DateTime!
+
+  """
+  Description of the collection in plain text.
+  """
+  description: String
+
+  """
+  Identifies the date and time when collection was featured.
+  """
+  featuredAt: DateTime
+
+  """
+  Number of users following the collection.
+  """
+  followersCount: Int!
+
+  """
+  ID of the collection.
+  """
+  id: ID!
+
+  """
+  Whether the viewer is following the collection or not.
+  """
+  isFollowing: Boolean!
+
+  """
+  Name of the collection.
+  """
+  name: String!
+
+  """
+  Lookup posts which are part of the collection.
+  """
+  posts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): PostConnection!
+
+  """
+  Tagline of the collection.
+  """
+  tagline: String!
+
+  """
+  Look up topics that are associated with the object.
+  """
+  topics(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): TopicConnection!
+
+  """
+  Public URL of the goal.
+  """
+  url: String!
+
+  """
+  User who created the collection.
+  """
+  user: User!
+
+  """
+  ID of User who created the collection.
+  """
+  userId: ID!
+}
+
+"""
+The connection type for Collection.
+"""
+type CollectionConnection {
+  """
+  A list of edges.
+  """
+  edges: [CollectionEdge!]!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of objects returned from this query
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type CollectionEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Collection!
+}
+
+enum CollectionsOrder {
+  """
+  Returns Collections in descending order of featured date.
+  """
+  FEATURED_AT
+
+  """
+  Returns Collections in descending order of followers count.
+  """
+  FOLLOWERS_COUNT
+
+  """
+  Returns Collections in descending order of creation date.
+  """
+  NEWEST
+}
+
+"""
+A comment posted by a User.
+"""
+type Comment implements VotableInterface {
+  """
+  Body of the comment.
+  """
+  body: String!
+
+  """
+  Identifies the date and time when comment was created.
+  """
+  createdAt: DateTime!
+
+  """
+  ID of the comment.
+  """
+  id: ID!
+
+  """
+  Whether the Viewer has voted for the object or not.
+  """
+  isVoted: Boolean!
+
+  """
+  Comment on which this comment was posted(null in case of top level comments).
+  """
+  parent: Comment
+
+  """
+  ID of Comment on which this comment was posted(null in case of top level comments).
+  """
+  parentId: ID
+
+  """
+  Lookup comments that were posted on the comment itself.
+  """
+  replies(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Define order for the Comments.
+    """
+    order: CommentsOrder = NEWEST
+  ): CommentConnection!
+
+  """
+  Public URL of the comment.
+  """
+  url: String!
+
+  """
+  User who posted the comment.
+  """
+  user: User!
+
+  """
+  ID of User who posted the comment.
+  """
+  userId: ID!
+  votes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Select Votes which were created after the given date and time.
+    """
+    createdAfter: DateTime
+
+    """
+    Select Votes which were created before the given date and time.
+    """
+    createdBefore: DateTime
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): VoteConnection!
+
+  """
+  Number of votes that the object has currently.
+  """
+  votesCount: Int!
+}
+
+"""
+The connection type for Comment.
+"""
+type CommentConnection {
+  """
+  A list of edges.
+  """
+  edges: [CommentEdge!]!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of objects returned from this query
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type CommentEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Comment!
+}
+
+enum CommentsOrder {
+  """
+  Returns Comments in descending order of creation date.
+  """
+  NEWEST
+
+  """
+  Returns Comments in descending order of votes count.
+  """
+  VOTES_COUNT
+}
+
+"""
+An ISO-8601 encoded UTC date string.
+"""
+scalar DateTime
+
+type Error {
+  """
+  Field for which the error occurred.
+  """
+  field: String!
+
+  """
+  Error message.
+  """
+  message: String!
+}
+
+"""
+A goal created by maker.
+"""
+type Goal {
+  """
+  Number of cheers on the Goal.
+  """
+  cheerCount: Int!
+
+  """
+  Identifies the date and time when goal was marked as completed.
+  """
+  completedAt: DateTime
+
+  """
+  Identifies the date and time when goal was created.
+  """
+  createdAt: DateTime!
+
+  """
+  Whether the goal is user's current goal or not.
+  """
+  current: Boolean!
+
+  """
+  Identifies the date and time until the goal is user's current goal.
+  """
+  currentUntil: DateTime
+
+  """
+  Identifies the date and time when goal is due.
+  """
+  dueAt: DateTime
+
+  """
+  Total time spent in focus mode in seconds, starts at 0
+  """
+  focusedDuration: Int!
+
+  """
+  Maker group to which the goal belongs to.
+  """
+  group: MakerGroup!
+
+  """
+  ID of Maker group to which the goal belongs to.
+  """
+  groupId: ID!
+
+  """
+  ID of the goal.
+  """
+  id: ID!
+
+  """
+  Whether the Viewer has cheered the goal or not.
+  """
+  isCheered: Boolean!
+
+  """
+  Maker project to which the goal belongs to.
+  """
+  project: MakerProject
+
+  """
+  ID of Maker project to which the goal belongs to.
+  """
+  projectId: ID
+
+  """
+  Title of the goal in plain text
+  """
+  title: String!
+
+  """
+  Public URL of the goal.
+  """
+  url: String!
+
+  """
+  User who created the goal.
+  """
+  user: User!
+
+  """
+  ID of User who created the goal.
+  """
+  userId: ID!
+}
+
+"""
+Autogenerated input type of GoalCheer
+"""
+input GoalCheerInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  ID of the Goal to cheer.
+  """
+  goalId: ID!
+}
+
+"""
+Autogenerated return type of GoalCheer
+"""
+type GoalCheerPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  errors: [Error!]!
+  node: Goal
+}
+
+"""
+Autogenerated input type of GoalCheerUndo
+"""
+input GoalCheerUndoInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  ID of the Goal to cheer.
+  """
+  goalId: ID!
+}
+
+"""
+Autogenerated return type of GoalCheerUndo
+"""
+type GoalCheerUndoPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  errors: [Error!]!
+  node: Goal
+}
+
+"""
+The connection type for Goal.
+"""
+type GoalConnection {
+  """
+  A list of edges.
+  """
+  edges: [GoalEdge!]!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of objects returned from this query
+  """
+  totalCount: Int!
+}
+
+"""
+Autogenerated input type of GoalCreate
+"""
+input GoalCreateInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  Set the date and time when the Goal is due in future. Pass null to make Goal never due.
+  """
+  dueAt: DateTime
+
+  """
+  ID of the MakerGroup(space) to set on the Goal. Viewer should be accepted member of the MakerGroup.
+  """
+  groupId: ID
+
+  """
+  ID of the MakerProject to set on the Goal. Pass null to remove MakerProject
+  from Goal. MakerProject should be created by Viewer.
+  """
+  projectId: ID
+
+  """
+  Set the title of the Goal. Accepts a non empty string. Maximum length is 80 characters.
+  """
+  title: String!
+}
+
+"""
+Autogenerated return type of GoalCreate
+"""
+type GoalCreatePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  errors: [Error!]!
+  node: Goal
+}
+
+"""
+An edge in a connection.
+"""
+type GoalEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Goal!
+}
+
+"""
+Autogenerated input type of GoalMarkAsComplete
+"""
+input GoalMarkAsCompleteInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  ID of the goal to mark complete.
+  """
+  goalId: ID!
+}
+
+"""
+Autogenerated return type of GoalMarkAsComplete
+"""
+type GoalMarkAsCompletePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  errors: [Error!]!
+  node: Goal
+}
+
+"""
+Autogenerated input type of GoalMarkAsIncomplete
+"""
+input GoalMarkAsIncompleteInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  ID of the Goal to mark complete.
+  """
+  goalId: ID!
+}
+
+"""
+Autogenerated return type of GoalMarkAsIncomplete
+"""
+type GoalMarkAsIncompletePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  errors: [Error!]!
+  node: Goal
+}
+
+"""
+Autogenerated input type of GoalUpdate
+"""
+input GoalUpdateInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  Set the date and time when the Goal is due in future. Pass null to make the Goal never due.
+  """
+  dueAt: DateTime
+
+  """
+  ID of the Goal to update.
+  """
+  goalId: ID!
+
+  """
+  ID of the MakerGroup(space) to set on the Goal. Cannot be null. Viewer should be accepted member of the MakerGroup.
+  """
+  groupId: ID
+
+  """
+  ID of the MakerProject to set on the Goal. Pass null to remove MakerProject
+  from Goal. MakerProject should be created by Viewer.
+  """
+  projectId: ID
+
+  """
+  Set the title of the Goal. Accepts a non empty string. Maximum length is 80 characters.
+  """
+  title: String
+}
+
+"""
+Autogenerated return type of GoalUpdate
+"""
+type GoalUpdatePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  errors: [Error!]!
+  node: Goal
+}
+
+enum GoalsOrder {
+  """
+  Returns Goals in descending order of completion date.
+  """
+  COMPLETED_AT
+
+  """
+  Returns Goals in ascending order of due date.
+  """
+  DUE_AT
+
+  """
+  Returns Goals in descending order of creation date.
+  """
+  NEWEST
+}
+
+"""
+A group of makers, also known as Spaces on PH.
+"""
+type MakerGroup {
+  """
+  Description of the MakerGroup.
+  """
+  description: String!
+
+  """
+  Number of goals that have been created in the MakerGroup.
+  """
+  goalsCount: Int!
+
+  """
+  ID of the MakerGroup.
+  """
+  id: ID!
+
+  """
+  Whether Viewer is member of the MakerGroup or not.
+  """
+  isMember: Boolean!
+
+  """
+  Number of users who are part of the MakerGroup.
+  """
+  membersCount: Int!
+
+  """
+  Name of the MakerGroup.
+  """
+  name: String!
+
+  """
+  Tagline of the MakerGroup.
+  """
+  tagline: String!
+
+  """
+  URL of the MakerGroup.
+  """
+  url: String!
+}
+
+"""
+The connection type for MakerGroup.
+"""
+type MakerGroupConnection {
+  """
+  A list of edges.
+  """
+  edges: [MakerGroupEdge!]!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of objects returned from this query
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type MakerGroupEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: MakerGroup!
+}
+
+enum MakerGroupsOrder {
+  """
+  Returns MakerGroups in descending order of goals count.
+  """
+  GOALS_COUNT
+
+  """
+  Returns MakerGroups in descending order of last active date.
+  """
+  LAST_ACTIVE
+
+  """
+  Returns MakerGroups in descending order of members count.
+  """
+  MEMBERS_COUNT
+
+  """
+  Returns MakerGroups in descending order of creation date.
+  """
+  NEWEST
+}
+
+"""
+A maker project.
+"""
+type MakerProject {
+  """
+  ID of the MakerProject.
+  """
+  id: ID!
+
+  """
+  Image of the MakerProject.
+  """
+  image(height: Int, width: Int): String
+
+  """
+  Whether the MakerProject owner is looking for other makers or not.
+  """
+  lookingForOtherMakers: Boolean!
+
+  """
+  ID of the MakerProject.
+  """
+  name: String!
+
+  """
+  Tagline of the MakerProject.
+  """
+  tagline: String!
+
+  """
+  URL of the MakerProject.
+  """
+  url: String!
+}
+
+"""
+The connection type for MakerProject.
+"""
+type MakerProjectConnection {
+  """
+  A list of edges.
+  """
+  edges: [MakerProjectEdge!]!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of objects returned from this query
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type MakerProjectEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: MakerProject!
+}
+
+"""
+A media object.
+"""
+type Media {
+  """
+  Type of media object.
+  """
+  type: String!
+
+  """
+  Public URL for the media object. Incase of videos this URL represents thumbnail generated from video.
+  """
+  url(
+    """
+    Set height of the image to given value.
+    """
+    height: Int
+
+    """
+    Set width of the image to given value.
+    """
+    width: Int
+  ): String!
+
+  """
+  Video URL of the media object.
+  """
+  videoUrl: String
+}
+
+type Mutation {
+  """
+  Cheer a Goal as Viewer. Returns the cheered Goal
+  """
+  goalCheer(input: GoalCheerInput!): GoalCheerPayload!
+
+  """
+  Cheer a Goal as Viewer. Returns the cheered Goal
+  """
+  goalCheerUndo(input: GoalCheerUndoInput!): GoalCheerUndoPayload!
+
+  """
+  Create a Goal for Viewer. Returns the created Goal.
+  """
+  goalCreate(input: GoalCreateInput!): GoalCreatePayload!
+
+  """
+  Marks a Goal as complete. Returns the updated Goal
+  """
+  goalMarkAsComplete(input: GoalMarkAsCompleteInput!): GoalMarkAsCompletePayload!
+
+  """
+  Marks a Goal as incomplete. Returns the updated Goal.
+  """
+  goalMarkAsIncomplete(input: GoalMarkAsIncompleteInput!): GoalMarkAsIncompletePayload!
+
+  """
+  Update a Goal's `due_at`, `title`, `project` or `group` fields. Returns the updated Goal.
+  """
+  goalUpdate(input: GoalUpdateInput!): GoalUpdatePayload!
+
+  """
+  Follow a User as Viewer. Returns the followed User.
+  """
+  userFollow(input: UserFollowInput!): UserFollowPayload!
+
+  """
+  Stop following a User as Viewer. Returns the un-followed User.
+  """
+  userFollowUndo(input: UserFollowUndoInput!): UserFollowUndoPayload!
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: String
+
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: String
+}
+
+"""
+A post.
+"""
+type Post implements TopicableInterface & VotableInterface {
+  """
+  Lookup collections which the Post is part of.
+  """
+  collections(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): CollectionConnection!
+
+  """
+  Lookup comments on the Post.
+  """
+  comments(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Define order for the Comments.
+    """
+    order: CommentsOrder = NEWEST
+  ): CommentConnection!
+
+  """
+  Number of comments made on the Post.
+  """
+  commentsCount: Int!
+
+  """
+  Identifies the date and time when the Post was created.
+  """
+  createdAt: DateTime!
+
+  """
+  Description of the Post in plain text.
+  """
+  description: String
+
+  """
+  Identifies the date and time when the Post was featured.
+  """
+  featuredAt: DateTime
+
+  """
+  ID of the Post.
+  """
+  id: ID!
+
+  """
+  Whether the viewer has added the Post to one of their collections.
+  """
+  isCollected: Boolean!
+
+  """
+  Whether the Viewer has voted for the object or not.
+  """
+  isVoted: Boolean!
+
+  """
+  Users who are marked as makers of the Post.
+  """
+  makers: [User!]!
+
+  """
+  Media items for the Post.
+  """
+  media: [Media!]!
+
+  """
+  Name of the Post.
+  """
+  name: String!
+
+  """
+  Aggregate review rating for the Post.
+  """
+  reviewsRating: Float!
+
+  """
+  URL friendly slug of the Post.
+  """
+  slug: String!
+
+  """
+  Tagline of the Post.
+  """
+  tagline: String!
+
+  """
+  Thumbnail media object of the Post.
+  """
+  thumbnail: Media
+
+  """
+  Look up topics that are associated with the object.
+  """
+  topics(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): TopicConnection!
+
+  """
+  URL of the Post on Product Hunt.
+  """
+  url: String!
+
+  """
+  User who created the Post.
+  """
+  user: User!
+
+  """
+  ID of User who created the Post.
+  """
+  userId: ID!
+  votes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Select Votes which were created after the given date and time.
+    """
+    createdAfter: DateTime
+
+    """
+    Select Votes which were created before the given date and time.
+    """
+    createdBefore: DateTime
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): VoteConnection!
+
+  """
+  Number of votes that the object has currently.
+  """
+  votesCount: Int!
+
+  """
+  URL that redirects to the Post's website.
+  """
+  website: String!
+}
+
+"""
+The connection type for Post.
+"""
+type PostConnection {
+  """
+  A list of edges.
+  """
+  edges: [PostEdge!]!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of objects returned from this query
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type PostEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Post!
+}
+
+enum PostsOrder {
+  """
+  Returns Posts in descending order of featured date.
+  """
+  FEATURED_AT
+
+  """
+  Returns Posts in descending order of creation date.
+  """
+  NEWEST
+
+  """
+  Returns Posts in descending order of ranking.
+  """
+  RANKING
+
+  """
+  Returns Posts in descending order of votes count.
+  """
+  VOTES
+}
+
+"""
+The query root for Product Hunt API V2 schema
+"""
+type Query {
+  """
+  Look up a Collection(only published).
+  """
+  collection(
+    """
+    ID for the object.
+    """
+    id: ID
+
+    """
+    URL friendly slug for the object.
+    """
+    slug: String
+  ): Collection
+
+  """
+  Look up Collections by various parameters.
+  """
+  collections(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Select Collections that have been featured or not featured depending on given value.
+    """
+    featured: Boolean
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Define order for the Collections.
+    """
+    order: CollectionsOrder = FOLLOWERS_COUNT
+
+    """
+    Select Collections that have the Post with the given ID.
+    """
+    postId: ID
+
+    """
+    Select Collections that are created by User with the given ID.
+    """
+    userId: ID
+  ): CollectionConnection!
+
+  """
+  Look up a Comment.
+  """
+  comment(
+    """
+    ID for the object.
+    """
+    id: ID!
+  ): Comment
+
+  """
+  Look up a Goal.
+  """
+  goal(
+    """
+    ID for the object.
+    """
+    id: ID!
+  ): Goal
+
+  """
+  Look up Goals by various parameters.
+  """
+  goals(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Select Goals that have been completed or not completed depending on given value.
+    """
+    completed: Boolean
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Select Goals that are created in the MakerGroup(Space) with given ID.
+    """
+    makerGroupId: ID
+
+    """
+    Select Goals that are created in the MakerProject with given ID.
+    """
+    makerProjectId: ID
+
+    """
+    Define order for the Goals.
+    """
+    order: GoalsOrder = NEWEST
+
+    """
+    Select Goals that are created by User with the given ID.
+    """
+    userId: ID
+  ): GoalConnection!
+
+  """
+  Look up a MakerGroup.
+  """
+  makerGroup(
+    """
+    ID for the object.
+    """
+    id: ID!
+  ): MakerGroup
+
+  """
+  Look up MakerGroups by various parameters.
+  """
+  makerGroups(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Define order for the MakerGroups.
+    """
+    order: MakerGroupsOrder = NEWEST
+
+    """
+    Select MakerGroups that the User with the given ID is accepted member of.
+    """
+    userId: ID
+  ): MakerGroupConnection!
+
+  """
+  Look up a Post.
+  """
+  post(
+    """
+    ID for the object.
+    """
+    id: ID
+
+    """
+    URL friendly slug for the object.
+    """
+    slug: String
+  ): Post
+
+  """
+  Look up Posts by various parameters.
+  """
+  posts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Select Posts that have been featured or not featured depending on given value.
+    """
+    featured: Boolean
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Define order for the Posts.
+    """
+    order: PostsOrder = RANKING
+
+    """
+    Select Posts which were posted after the given date and time.
+    """
+    postedAfter: DateTime
+
+    """
+    Select Posts which were posted before the given date and time.
+    """
+    postedBefore: DateTime
+
+    """
+    Select Posts that have the given slug as one of their topics.
+    """
+    topic: String
+
+    """
+    Select Posts that have the given twitter url.
+    """
+    twitterUrl: String
+  ): PostConnection!
+
+  """
+  Look up a Topic.
+  """
+  topic(
+    """
+    ID for the object.
+    """
+    id: ID
+
+    """
+    URL friendly slug for the object.
+    """
+    slug: String
+  ): Topic
+
+  """
+  Look up Topics by various parameters.
+  """
+  topics(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Select Topics that are followed by User with the given ID.
+    """
+    followedByUserId: ID
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Define order for the Topics.
+    """
+    order: TopicsOrder = NEWEST
+
+    """
+    Select Topics whose name or aliases match the given string
+    """
+    query: String
+  ): TopicConnection!
+
+  """
+  Look up a User.
+  """
+  user(
+    """
+    ID for the user.
+    """
+    id: ID
+
+    """
+    Username for the user.
+    """
+    username: String
+  ): User
+
+  """
+  Top level scope for currently authenticated user. Includes `goals`, `makerGroups`, `makerProjects` & `user` fields.
+  """
+  viewer: Viewer
+}
+
+"""
+A topic.
+"""
+type Topic {
+  """
+  Identifies the date and time when topic was created.
+  """
+  createdAt: DateTime!
+
+  """
+  Description of the topic.
+  """
+  description: String!
+
+  """
+  Number of users who are following the topic.
+  """
+  followersCount: Int!
+
+  """
+  ID of the topic.
+  """
+  id: ID!
+
+  """
+  Image of the topic.
+  """
+  image(height: Int, width: Int): String
+
+  """
+  Whether the viewer is following the topic or not.
+  """
+  isFollowing: Boolean!
+
+  """
+  Name of the topic.
+  """
+  name: String!
+
+  """
+  Number of posts that are part of the topic.
+  """
+  postsCount: Int!
+
+  """
+  URL friendly slug of the topic.
+  """
+  slug: String!
+
+  """
+  Public URL of the topic.
+  """
+  url: String!
+}
+
+"""
+The connection type for Topic.
+"""
+type TopicConnection {
+  """
+  A list of edges.
+  """
+  edges: [TopicEdge!]!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of objects returned from this query
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type TopicEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Topic!
+}
+
+"""
+An object that can have topics associated with it.
+"""
+interface TopicableInterface {
+  """
+  ID of the object.
+  """
+  id: ID!
+
+  """
+  Look up topics that are associated with the object.
+  """
+  topics(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): TopicConnection!
+}
+
+enum TopicsOrder {
+  """
+  Returns Topics in descending order of followers count.
+  """
+  FOLLOWERS_COUNT
+
+  """
+  Returns Topics in descending order of creation date.
+  """
+  NEWEST
+}
+
+"""
+A user.
+"""
+type User {
+  """
+  Cover image of the user.
+  """
+  coverImage(height: Int, width: Int): String
+
+  """
+  Identifies the date and time when user was created.
+  """
+  createdAt: DateTime!
+
+  """
+  Look up collections that the user is following.
+  """
+  followedCollections(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): CollectionConnection!
+
+  """
+  Look up other users who are following the user.
+  """
+  followers(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): UserConnection!
+
+  """
+  Look up other users who are being followed by the user.
+  """
+  following(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): UserConnection!
+
+  """
+  Headline text of the user.
+  """
+  headline: String
+
+  """
+  ID of the user.
+  """
+  id: ID!
+
+  """
+  Whether the viewer is following the user or not.
+  """
+  isFollowing: Boolean!
+
+  """
+  Whether the user is an accepted maker or not.
+  """
+  isMaker: Boolean!
+
+  """
+  Whether the user is same as the viewer of the API.
+  """
+  isViewer: Boolean!
+
+  """
+  Look up posts that the user has made.
+  """
+  madePosts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): PostConnection!
+
+  """
+  Name of the user.
+  """
+  name: String!
+
+  """
+  Profile image of the user.
+  """
+  profileImage(size: Int): String
+
+  """
+  Look up posts that the user has submitted.
+  """
+  submittedPosts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): PostConnection!
+
+  """
+  Twitter username of the user.
+  """
+  twitterUsername: String
+
+  """
+  Public URL of the user's profile
+  """
+  url: String!
+
+  """
+  Username of the user.
+  """
+  username: String!
+
+  """
+  Look up posts that the user has voted for.
+  """
+  votedPosts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): PostConnection!
+
+  """
+  URL for the user's website
+  """
+  websiteUrl: String
+}
+
+"""
+The connection type for User.
+"""
+type UserConnection {
+  """
+  A list of edges.
+  """
+  edges: [UserEdge!]!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of objects returned from this query
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type UserEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: User!
+}
+
+"""
+Autogenerated input type of UserFollow
+"""
+input UserFollowInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  ID of the User to follow.
+  """
+  userId: ID!
+}
+
+"""
+Autogenerated return type of UserFollow
+"""
+type UserFollowPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  errors: [Error!]!
+  node: User
+}
+
+"""
+Autogenerated input type of UserFollowUndo
+"""
+input UserFollowUndoInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  ID of the User to stop following.
+  """
+  userId: ID!
+}
+
+"""
+Autogenerated return type of UserFollowUndo
+"""
+type UserFollowUndoPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  errors: [Error!]!
+  node: User
+}
+
+"""
+Top level scope for the user in whose context the API is running.
+"""
+type Viewer {
+  """
+  Look up goals of the viewer.
+  """
+  goals(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Select Goals which are set as current or not current depending on given value.
+    """
+    current: Boolean
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Define order for the Goals.
+    """
+    order: GoalsOrder = NEWEST
+  ): GoalConnection!
+
+  """
+  Look up maker groups the viewer is accepted member of.
+  """
+  makerGroups(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Define order for the MakerGroups.
+    """
+    order: MakerGroupsOrder = NEWEST
+  ): MakerGroupConnection!
+
+  """
+  Look up maker projects the viewer is a maintainer(either created or maintained by) of.
+  """
+  makerProjects(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): MakerProjectConnection!
+
+  """
+  User who is the viewer of the API.
+  """
+  user: User!
+}
+
+"""
+An object which users can vote for.
+"""
+interface VotableInterface {
+  """
+  ID of the object
+  """
+  id: ID!
+
+  """
+  Whether the Viewer has voted for the object or not.
+  """
+  isVoted: Boolean!
+  votes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Select Votes which were created after the given date and time.
+    """
+    createdAfter: DateTime
+
+    """
+    Select Votes which were created before the given date and time.
+    """
+    createdBefore: DateTime
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): VoteConnection!
+
+  """
+  Number of votes that the object has currently.
+  """
+  votesCount: Int!
+}
+
+"""
+A vote.
+"""
+type Vote {
+  """
+  Identifies the date and time when Vote was created.
+  """
+  createdAt: DateTime!
+
+  """
+  ID of the Vote.
+  """
+  id: ID!
+
+  """
+  User who created the Vote.
+  """
+  user: User!
+
+  """
+  ID of User who created the Vote.
+  """
+  userId: ID!
+}
+
+"""
+The connection type for Vote.
+"""
+type VoteConnection {
+  """
+  A list of edges.
+  """
+  edges: [VoteEdge!]!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Total number of objects returned from this query
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type VoteEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Vote!
+}

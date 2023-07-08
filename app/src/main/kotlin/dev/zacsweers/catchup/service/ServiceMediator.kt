@@ -6,6 +6,7 @@ import androidx.paging.LoadType.REFRESH
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.apollographql.apollo3.exception.ApolloException
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -157,6 +158,9 @@ constructor(
     } catch (e: IOException) {
       MediatorResult.Error(e)
     } catch (e: HttpException) {
+      MediatorResult.Error(e)
+    } catch (e: ApolloException) {
+      // Annoying that this is a separate exception type.
       MediatorResult.Error(e)
     }
   }
