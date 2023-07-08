@@ -27,9 +27,9 @@ dependencies {
   api(libs.retrofit.core)
   api(libs.retrofit.moshi)
   api(projects.libraries.retrofitconverters)
-  implementation(libs.androidx.datastore.preferences)
-  implementation(libs.kotlin.datetime)
 
-  implementation(libs.okhttp.core)
+  implementation(libs.androidx.datastore.preferences)
   implementation(libs.eithernet)
+  implementation(libs.kotlin.datetime)
+  implementation(libs.okhttp.core)
 }
