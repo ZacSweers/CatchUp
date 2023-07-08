@@ -24,5 +24,6 @@ import dev.zacsweers.catchup.di.AppScope
 @Module
 interface CatchUpServiceMultibindings {
   @Multibinds fun services(): @JvmSuppressWildcards Map<String, Service>
+
   @Multibinds fun serviceMetas(): @JvmSuppressWildcards Map<String, ServiceMeta>
 }

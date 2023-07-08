@@ -82,7 +82,12 @@ constructor(
       fetchByScraping(request)
     } catch (t: Throwable) {
       e(t) { "GitHub trending scraping failed." }
-      fetchByQuery(request)
+      try {
+        fetchByQuery(request)
+      } catch (t: Throwable) {
+        e(t) { "GitHub trending query failed." }
+        DataResult(emptyList(), null)
+      }
     }
   }
 
@@ -104,7 +109,7 @@ constructor(
               starsToday?.toString()?.let {
                 Mark(
                   text = "+$it",
-                  icon = R.drawable.ic_star_black_24dp,
+                  markType = Mark.MarkType.STAR,
                   iconTintColor = languageColor?.let(Color::parseColor)
                 )
               },

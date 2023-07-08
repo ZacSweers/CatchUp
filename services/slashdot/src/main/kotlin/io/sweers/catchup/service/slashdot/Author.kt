@@ -15,7 +15,8 @@
  */
 package io.sweers.catchup.service.slashdot
 
-import com.tickaroo.tikxml.annotation.PropertyElement
-import com.tickaroo.tikxml.annotation.Xml
+import kotlinx.serialization.Serializable
+import nl.adaptivity.xmlutil.serialization.XmlElement
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
-@Xml data class Author(@PropertyElement val name: String)
+@Serializable @XmlSerialName("author") data class Author(@XmlElement val name: String)

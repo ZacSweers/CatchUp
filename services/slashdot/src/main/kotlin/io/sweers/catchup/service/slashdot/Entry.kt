@@ -15,33 +15,81 @@
  */
 package io.sweers.catchup.service.slashdot
 
-import androidx.annotation.Keep
-import com.tickaroo.tikxml.TypeConverter
-import com.tickaroo.tikxml.annotation.Element
-import com.tickaroo.tikxml.annotation.PropertyElement
-import com.tickaroo.tikxml.annotation.Xml
-import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
+import com.tickaroo.tikxml.converter.htmlescape.StringEscapeUtils
 import io.sweers.catchup.util.parsePossiblyOffsetInstant
 import kotlinx.datetime.Instant
+import kotlinx.datetime.serializers.InstantIso8601Serializer
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import nl.adaptivity.xmlutil.serialization.XmlElement
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
-private const val SLASH_PREFIX = "slash:"
+private const val SLASH_PREFIX = "slash"
 
-@Keep
-@Xml
+@Serializable
+@XmlSerialName("entry")
 data class Entry(
-  @PropertyElement(converter = HtmlEscapeStringConverter::class) val title: String,
-  @PropertyElement val id: String,
-  @PropertyElement val link: String,
-  @PropertyElement(converter = HtmlEscapeStringConverter::class) val summary: String,
-  @PropertyElement(converter = InstantTypeConverter::class) val updated: Instant,
-  @PropertyElement(name = "${SLASH_PREFIX}section") val section: String,
-  @PropertyElement(name = "${SLASH_PREFIX}comments") val comments: Int = 0,
-  @Element val author: Author,
-  @PropertyElement(name = "${SLASH_PREFIX}department") val department: String
+  @XmlElement @Serializable(HtmlEscapeStringSerializer::class) val title: String,
+  @XmlElement val id: String,
+  val link: Link,
+  @XmlElement @Serializable(HtmlEscapeStringSerializer::class) val summary: String,
+  @XmlElement @Serializable(InstantSerializer::class) val updated: Instant,
+  @XmlElement
+  @XmlSerialName(
+    "section",
+    namespace = "http://purl.org/rss/1.0/modules/slash/",
+    prefix = SLASH_PREFIX
+  )
+  val section: String,
+  @XmlElement
+  @XmlSerialName(
+    "comments",
+    namespace = "http://purl.org/rss/1.0/modules/slash/",
+    prefix = SLASH_PREFIX
+  )
+  val comments: Int = 0,
+  val author: Author,
+  @XmlElement
+  @XmlSerialName(
+    "department",
+    namespace = "http://purl.org/rss/1.0/modules/slash/",
+    prefix = SLASH_PREFIX
+  )
+  val department: String
 )
 
-internal class InstantTypeConverter : TypeConverter<Instant> {
-  override fun write(value: Instant): String = TODO("Unsupported")
+/** Nearly identical to [InstantIso8601Serializer] but handles possibly offset instants. */
+internal object InstantSerializer : KSerializer<Instant> {
+  override val descriptor: SerialDescriptor =
+    PrimitiveSerialDescriptor("Instant", PrimitiveKind.STRING)
 
-  override fun read(value: String) = value.parsePossiblyOffsetInstant()
+  override fun deserialize(decoder: Decoder): Instant =
+    decoder.decodeString().parsePossiblyOffsetInstant()
+
+  override fun serialize(encoder: Encoder, value: Instant) {
+    encoder.encodeString(value.toString())
+  }
+}
+
+/**
+ * A String TypeConverter that escapes and unescapes HTML characters directly from string. This one
+ * uses apache 3 StringEscapeUtils borrowed from tikxml.
+ */
+object HtmlEscapeStringSerializer : KSerializer<String> {
+
+  override val descriptor: SerialDescriptor =
+    PrimitiveSerialDescriptor("EscapedString", PrimitiveKind.STRING)
+
+  override fun deserialize(decoder: Decoder): String {
+    return StringEscapeUtils.unescapeHtml4(decoder.decodeString())
+  }
+
+  override fun serialize(encoder: Encoder, value: String) {
+    encoder.encodeString(StringEscapeUtils.escapeHtml4(value))
+  }
 }

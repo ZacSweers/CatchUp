@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,18 +28,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.items
+import androidx.paging.compose.itemKey
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.compose.ContentAlphas
+import dev.zacsweers.catchup.compose.ScrollToTopHandler
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.Mark
@@ -55,11 +61,20 @@ fun TextServiceUi(
   eventSink: (ServiceScreen.Event) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  LazyColumn(modifier = modifier) {
+  val state = rememberLazyListState()
+  ScrollToTopHandler(state)
+  LazyColumn(
+    modifier = modifier,
+    state = state,
+  ) {
     items(
-      items = lazyItems,
-      key = CatchUpItem::id,
-    ) { item ->
+      count = lazyItems.itemCount,
+      // Here we use the new itemKey extension on LazyPagingItems to
+      // handle placeholders automatically, ensuring you only need to provide
+      // keys for real items
+      key = lazyItems.itemKey { it.id },
+    ) { index ->
+      val item = lazyItems[index]
       if (item == null) {
         PlaceholderItem(themeColor)
       } else {
@@ -120,8 +135,13 @@ fun TextItem(
             ),
         horizontalAlignment = Alignment.CenterHorizontally
       ) {
+        val icon =
+          when (mark.markType) {
+            Mark.MarkType.COMMENT -> ImageVector.vectorResource(R.drawable.ic_comment_black_24dp)
+            Mark.MarkType.STAR -> Icons.Filled.Star
+          }
         Icon(
-          painter = painterResource(mark.icon ?: R.drawable.ic_comment_black_24dp),
+          painter = rememberVectorPainter(icon),
           contentDescription = null,
           modifier = Modifier.size(24.dp),
           tint = themeColor

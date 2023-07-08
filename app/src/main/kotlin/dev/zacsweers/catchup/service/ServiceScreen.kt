@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -40,14 +40,14 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.slack.circuit.CircuitUiEvent
-import com.slack.circuit.CircuitUiState
-import com.slack.circuit.Navigator
-import com.slack.circuit.Presenter
-import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.retained.rememberRetained
+import com.slack.circuit.runtime.CircuitUiEvent
+import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -64,6 +64,7 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.ContentType
+import io.sweers.catchup.service.api.LocalServiceThemeColor
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.ImageViewerScreen
@@ -71,6 +72,7 @@ import javax.inject.Provider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @Parcelize
 data class ServiceScreen(val serviceKey: String) : Screen {
@@ -94,12 +96,13 @@ data class ServiceScreen(val serviceKey: String) : Screen {
 
   sealed interface Event : CircuitUiEvent {
     data class ItemClicked(val item: CatchUpItem) : Event
+
     data class ItemLongClicked(val item: CatchUpItem) : Event
+
     data class MarkClicked(val item: CatchUpItem) : Event
   }
 }
 
-// TODO implement on scroll to top callbacks
 class ServicePresenter
 @AssistedInject
 constructor(
@@ -122,8 +125,7 @@ constructor(
 
     // TODO this is a bad pattern in circuit
     val context = LocalContext.current
-    val themeColorInt = context.getColor(service.meta().themeColor)
-    val themeColor = Color(themeColorInt)
+    val themeColor = LocalServiceThemeColor.current
     // TODO what's the right thing and scope to retain?
     val pager = rememberRetained {
       // TODO
@@ -148,15 +150,38 @@ constructor(
               val info = event.item.imageInfo!!
               overlayHost.show(
                 FullScreenOverlay(
-                  ImageViewerScreen(info.imageId, info.detailUrl, info.cacheKey, info.sourceUrl)
+                  ImageViewerScreen(
+                    info.imageId,
+                    info.detailUrl,
+                    isBitmap = !info.animatable,
+                    info.cacheKey,
+                    info.sourceUrl
+                  )
                 )
               )
             } else {
               val url = event.item.clickUrl!!
               if (event.item.contentType == ContentType.IMAGE) {
-                overlayHost.show(FullScreenOverlay(ImageViewerScreen(url, url, null, url)))
+                // TODO generalize this
+                val bestGuessIsBitmap =
+                  url.toHttpUrl().pathSegments.last().let { path ->
+                    path.endsWith(".jpg", ignoreCase = true) ||
+                      path.endsWith(".png", ignoreCase = true) ||
+                      path.endsWith(".gif", ignoreCase = true)
+                  }
+                overlayHost.show(
+                  FullScreenOverlay(
+                    ImageViewerScreen(
+                      id = url,
+                      url = url,
+                      isBitmap = bestGuessIsBitmap,
+                      alias = null,
+                      sourceUrl = url
+                    )
+                  )
+                )
               } else {
-                val meta = UrlMeta(url, themeColorInt, context)
+                val meta = UrlMeta(url, themeColor.toArgb(), context)
                 linkManager.openUrl(meta)
               }
             }
@@ -170,7 +195,7 @@ constructor(
         }
         is ServiceScreen.Event.MarkClicked -> {
           val url = event.item.markClickUrl
-          coroutineScope.launch { linkManager.openUrl(UrlMeta(url, themeColorInt, context)) }
+          coroutineScope.launch { linkManager.openUrl(UrlMeta(url, themeColor.toArgb(), context)) }
         }
       }
     }
@@ -194,8 +219,7 @@ fun Service(state: ServiceScreen.State, modifier: Modifier = Modifier) {
   val lazyItems: LazyPagingItems<CatchUpItem> = state.items.collectAsLazyPagingItems()
   var refreshing by remember { mutableStateOf(false) }
   val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh = lazyItems::refresh)
-  // TODO this isn't accounting for actual system bars ugh
-  Box(modifier.pullRefresh(pullRefreshState).systemBarsPadding()) {
+  Box(modifier.pullRefresh(pullRefreshState)) {
     if (state is VisualState) {
       VisualServiceUi(lazyItems, state.themeColor, { refreshing = it }, eventSink)
     } else {

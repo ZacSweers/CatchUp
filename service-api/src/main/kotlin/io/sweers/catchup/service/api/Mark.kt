@@ -16,7 +16,6 @@
 package io.sweers.catchup.service.api
 
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
 
 /**
@@ -29,11 +28,16 @@ data class Mark(
   val text: String? = null,
   val textPrefix: String? = null,
   /** By default, the icon used is a comment icon if this is null */
-  @DrawableRes val icon: Int? = null,
+  val markType: MarkType = MarkType.COMMENT,
   val _markClickUrl: String? = null,
   @ColorInt val iconTintColor: Int? = null,
   val formatTextAsCount: Boolean = false
 ) {
+
+  enum class MarkType {
+    COMMENT,
+    STAR,
+  }
 
   companion object {
     fun createCommentMark(count: Int, clickUrl: String? = null): Mark {

@@ -16,11 +16,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.exception.ApolloException
-import com.slack.circuit.CircuitUiEvent
-import com.slack.circuit.CircuitUiState
-import com.slack.circuit.Presenter
-import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.runtime.CircuitUiEvent
+import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ClickableItem
@@ -46,6 +46,7 @@ import timber.log.Timber
 object ChangelogScreen : Screen {
   data class State(val items: ImmutableList<CatchUpItem>?, val eventSink: (Event) -> Unit) :
     CircuitUiState
+
   sealed interface Event : CircuitUiEvent {
     data class Click(val url: String) : Event
   }

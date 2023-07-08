@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.activity
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -70,12 +69,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.slack.circuit.CircuitUiState
-import com.slack.circuit.Navigator
-import com.slack.circuit.Presenter
-import com.slack.circuit.Screen
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
+import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -102,11 +101,16 @@ object OrderServicesScreen : Screen {
     val showConfirmation: Boolean = false,
     val eventSink: (Event) -> Unit = {},
   ) : CircuitUiState
+
   sealed interface Event {
     object Shuffle : Event
+
     data class Reorder(val from: Int, val to: Int) : Event
+
     object BackPress : Event
+
     object Save : Event
+
     data class DismissConfirmation(val save: Boolean, val pop: Boolean) : Event
   }
 }
@@ -204,7 +208,7 @@ constructor(
 }
 
 @CircuitInject(OrderServicesScreen::class, AppScope::class)
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifier) {
   val eventSink = state.eventSink
@@ -266,10 +270,11 @@ fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifie
         exit = scaleOut(),
       ) {
         val scope = rememberCoroutineScope()
+        val interactionSource = remember { MutableInteractionSource() }
         FloatingActionButton(
           modifier =
             Modifier.indication(
-              MutableInteractionSource(),
+              interactionSource,
               indication = rememberRipple(color = Color.White)
             ),
           // TODO show syllabus on fab
