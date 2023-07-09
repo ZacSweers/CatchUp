@@ -10,7 +10,7 @@ anvil = "2.4.6"
 apollo = "3.8.2"
 autodispose = "2.1.1"
 chuck = "1.1.0"
-circuit = "0.10.0"
+circuit = "0.10.1"
 coil = "2.4.0"
 compose = "1.6.0-alpha01"
 # Pre-release versions for testing Kotlin previews can be found here
