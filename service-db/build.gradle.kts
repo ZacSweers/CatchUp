@@ -41,9 +41,9 @@ dependencies {
   api(libs.androidx.annotations)
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
-  api(libs.sqldelight.runtime)
   api(libs.sqldelight.paging)
   api(libs.sqldelight.primitiveAdapters)
+  api(libs.sqldelight.runtime)
 
   implementation(libs.androidx.annotations)
   implementation(libs.kotlin.datetime)
