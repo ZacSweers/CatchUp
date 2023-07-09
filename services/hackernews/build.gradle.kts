@@ -72,7 +72,6 @@ dependencies {
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(projects.libraries.di)
-  api(projects.libraries.kotlinutil)
 
   implementation(project(":libraries:base-ui"))
   implementation(project(":libraries:util"))
@@ -81,4 +80,5 @@ dependencies {
   implementation(libs.kotlin.coroutines)
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
+  implementation(projects.libraries.kotlinutil)
 }

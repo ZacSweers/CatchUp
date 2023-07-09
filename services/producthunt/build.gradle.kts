@@ -56,22 +56,18 @@ slack {
 
 dependencies {
   api(project(":service-api"))
-  api(libs.androidx.datastore.preferences)
+  api(libs.apollo.runtime)
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
-  api(libs.misc.moshiLazyAdapters)
   api(libs.moshi.core)
   api(libs.okhttp.core)
-  api(libs.retrofit.core)
-  api(projects.libraries.appconfig)
   api(projects.libraries.auth)
   api(projects.libraries.di)
 
   implementation(project(":libraries:util"))
+  implementation(libs.androidx.datastore.preferences)
   implementation(libs.apollo.httpcache)
   implementation(libs.kotlin.datetime)
-  implementation(libs.misc.timber)
+  implementation(libs.misc.okio)
   implementation(libs.okhttp.core)
-  implementation(libs.retrofit.moshi)
-  implementation(projects.libraries.retrofitconverters)
 }

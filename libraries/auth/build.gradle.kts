@@ -22,14 +22,14 @@ plugins {
 
 dependencies {
   api(libs.androidx.annotations)
-  api(libs.dagger.runtime)
+  api(libs.misc.okio)
   api(libs.okhttp.core)
-  api(libs.retrofit.core)
-  api(libs.retrofit.moshi)
-  api(projects.libraries.retrofitconverters)
 
-  implementation(libs.androidx.datastore.preferences)
+  implementation(libs.androidx.datastore.preferences.core)
   implementation(libs.eithernet)
+  implementation(libs.kotlin.coroutines)
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
+  implementation(libs.retrofit.core)
+  implementation(libs.retrofit.moshi)
 }

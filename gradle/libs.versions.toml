@@ -118,6 +118,7 @@ firebase-database = "com.google.firebase:firebase-database:20.2.2"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
 
+apollo-api = { module = "com.apollographql.apollo3:apollo-api", version.ref = "apollo" }
 apollo-httpcache = { module = "com.apollographql.apollo3:apollo-http-cache", version.ref = "apollo" }
 apollo-normalizedCache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
 apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
@@ -151,6 +152,7 @@ dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }
 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 
