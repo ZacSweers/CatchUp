@@ -38,7 +38,6 @@ internal object GitHubTrendingParser {
 
   private fun parseTrendingItem(element: Element): TrendingItem? {
     // /creativetimofficial/material-dashboard
-    // TODO fix IOOB, size 1
     val authorAndName =
       element.select("h1 > a").attr("href").removePrefix("/").trimEnd().split("/").let {
         Pair(it[0], it[1])

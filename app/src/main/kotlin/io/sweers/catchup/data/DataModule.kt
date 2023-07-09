@@ -106,23 +106,5 @@ abstract class DataModule {
     internal fun provideRxJavaCallAdapterFactory(): RxJava3CallAdapterFactory {
       return RxJava3CallAdapterFactory.createWithScheduler(Schedulers.io())
     }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    internal fun provideCatchUpDatabase(@ApplicationContext context: Context): CatchUpDatabase {
-      return CatchUpDatabase.getDatabase(context)
-    }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    internal fun provideServiceDao(catchUpDatabase: CatchUpDatabase): ServiceDao {
-      return catchUpDatabase.serviceDao()
-    }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    internal fun provideRemoteKeyDao(catchUpDatabase: CatchUpDatabase): RemoteKeyDao {
-      return catchUpDatabase.remoteKeyDao()
-    }
   }
 }

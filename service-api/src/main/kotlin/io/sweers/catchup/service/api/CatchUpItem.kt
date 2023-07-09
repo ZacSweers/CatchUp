@@ -17,17 +17,12 @@ package io.sweers.catchup.service.api
 
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 
 @Keep
-@Entity(tableName = "items")
 @Immutable
 data class CatchUpItem(
-  @PrimaryKey val id: Long,
+  val id: Long,
   val title: String,
   val description: String? = null,
   val timestamp: Instant? = null,
@@ -36,16 +31,16 @@ data class CatchUpItem(
   val author: String? = null,
   val source: String? = null,
   /* internal */ val itemClickUrl: String? = null,
-  @Embedded val imageInfo: ImageInfo? = null,
-  @Embedded val mark: Mark? = null,
+  val imageInfo: ImageInfo? = null,
+  val mark: Mark? = null,
   val detailKey: String? = null,
   val serviceId: String? = null,
   val indexInResponse: Int? = null,
   val contentType: ContentType? = null, // Null indicates unset, try to infer it
 ) {
 
-  @Ignore val clickUrl: String?
-  @Ignore val markClickUrl: String?
+  val clickUrl: String?
+  val markClickUrl: String?
 
   init {
     val markClickUrl = mark?._markClickUrl
