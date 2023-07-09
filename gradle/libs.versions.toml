@@ -49,7 +49,6 @@ sgp = "0.9.17-1.9.0"
 spotless = "6.19.0"
 sqldelight = "2.0.0-rc02"
 telephoto = "1.0.0-alpha02"
-# https://github.com/Tickaroo/tikxml/issues/114
 tikxml = "0.8.15"
 xerial = "3.42.0.0"
 
