@@ -42,7 +42,6 @@ import javax.inject.Qualifier
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 @Qualifier private annotation class InternalApi
@@ -125,7 +124,6 @@ object DesignerNewsModule {
   internal fun provideDesignerNewsApi(
     client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
-    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): DesignerNewsApi {
 
@@ -133,7 +131,6 @@ object DesignerNewsModule {
       Retrofit.Builder()
         .baseUrl(DesignerNewsApi.ENDPOINT)
         .delegatingCallFactory(client)
-        .addCallAdapterFactory(rxJavaCallAdapterFactory)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .validateEagerly(appConfig.isDebug)
         .build()

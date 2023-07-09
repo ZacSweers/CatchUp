@@ -42,7 +42,6 @@ import javax.inject.Qualifier
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 @Qualifier private annotation class InternalApi
@@ -130,13 +129,11 @@ object UplabsModule {
   internal fun provideUplabsService(
     client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
-    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): UplabsApi {
     return Retrofit.Builder()
       .baseUrl(UplabsApi.ENDPOINT)
       .delegatingCallFactory(client)
-      .addCallAdapterFactory(rxJavaCallAdapterFactory)
       .addConverterFactory(MoshiConverterFactory.create(moshi))
       .validateEagerly(appConfig.isDebug)
       .build()

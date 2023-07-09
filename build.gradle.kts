@@ -22,7 +22,6 @@ plugins {
   alias(libs.plugins.agp.application) apply false
   alias(libs.plugins.sgp.root)
   alias(libs.plugins.sgp.base)
-  alias(libs.plugins.versions)
   alias(libs.plugins.spotless)
   alias(libs.plugins.doctor)
   alias(libs.plugins.anvil) apply false

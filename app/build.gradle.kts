@@ -414,7 +414,7 @@ tasks.matching { it.name == "licenseeDebug" }.configureEach { enabled = false }
 licensee {
   allow("Apache-2.0")
   allow("MIT")
-  allow("MIT-0")
+  allow("CC0-1.0")
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
@@ -454,8 +454,6 @@ androidComponents {
       "META-INF/NOTICE",
       "META-INF/NOTICE.txt",
       "META-INF/README.md",
-      "META-INF/rxjava.properties",
-      "META-INF/services/javax.annotation.processing.Processor",
     )
   }
 }
@@ -549,11 +547,6 @@ dependencies {
   implementation(libs.moshi.shimo)
   implementation(libs.okhttp.core)
   implementation(libs.retrofit.core)
-  implementation(libs.retrofit.rxJava3)
-  implementation(libs.rx.android)
-  implementation(libs.rx.dogTag)
-  implementation(libs.rx.dogTagAutoDispose)
-  implementation(libs.rx.java)
   implementation(libs.sqldelight.driver.android)
   implementation(libs.telephoto.zoomableImageCoil)
   implementation(libs.xmlutil.serialization)
@@ -585,5 +578,4 @@ dependencies {
   testImplementation(libs.test.truth)
 
   androidTestImplementation(libs.misc.jsr305)
-  androidTestImplementation(libs.rx.java)
 }

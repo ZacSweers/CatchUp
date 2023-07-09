@@ -61,6 +61,7 @@ class CatchUpAppComponentFactory : AppComponentFactory() {
     init {
       if (BuildConfig.DEBUG) {
         System.setProperty(DEBUG_PROPERTY_NAME, "on")
+        System.setProperty("kotlinx.coroutines.stacktrace.recovery", "true")
       }
     }
   }

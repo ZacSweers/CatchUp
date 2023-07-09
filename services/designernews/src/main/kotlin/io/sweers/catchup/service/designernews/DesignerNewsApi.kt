@@ -16,7 +16,6 @@
 package io.sweers.catchup.service.designernews
 
 import com.serjltt.moshi.adapters.Wrapped
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.service.designernews.model.Story
 import io.sweers.catchup.service.designernews.model.User
 import io.sweers.catchup.util.collect.CommaJoinerList
@@ -37,7 +36,7 @@ interface DesignerNewsApi {
 
   @GET("users/{ids}")
   @Wrapped(path = ["users"])
-  fun getUsers(@Path("ids") ids: CommaJoinerList<String>): Single<List<User>>
+  suspend fun getUsers(@Path("ids") ids: CommaJoinerList<String>): List<User>
 
   companion object {
 
