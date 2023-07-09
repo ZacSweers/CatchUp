@@ -19,6 +19,7 @@ include(
   ":libraries:tooling:spi-visualizer",
   ":libraries:util",
   ":service-api",
+  ":service-db",
   ":services:designernews",
   ":services:dribbble",
   ":services:github",

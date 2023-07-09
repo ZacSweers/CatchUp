@@ -16,7 +16,6 @@
 package io.sweers.catchup.service.api
 
 import androidx.compose.runtime.Immutable
-import androidx.room.Ignore
 
 @Immutable
 data class ImageInfo(
@@ -30,5 +29,5 @@ data class ImageInfo(
   val color: String? = null,
   val blurHash: String? = null,
 ) {
-  @Transient @Ignore val cacheKey: String = imageId
+  @Transient val cacheKey: String = imageId
 }

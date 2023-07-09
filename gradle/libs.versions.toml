@@ -43,7 +43,6 @@ moshix = "0.23.0"
 okhttp = "5.0.0-alpha.11"
 preferences = "1.2.0"
 retrofit = "2.9.0"
-room = "2.6.0-alpha02"
 sortDependencies = "0.3"
 sgp = "0.9.17-1.9.0"
 spotless = "6.19.0"
@@ -116,11 +115,6 @@ androidx-lifecycle-apt = { module = "androidx.lifecycle:lifecycle-compiler", ver
 androidx-lifecycle-extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
 androidx-lifecycle-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
-androidx-room-apt = { module = "androidx.room:room-compiler", version.ref = "room" }
-androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
-androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-androidx-room-rxJava3 = { module = "androidx.room:room-rxjava3", version.ref = "room" }
-androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-alpha02"
 
 androidx-compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose" }

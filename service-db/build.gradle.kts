@@ -18,29 +18,33 @@ plugins {
   alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
+  alias(libs.plugins.sqldelight)
 }
 
-android { namespace = "io.sweers.catchup.service" }
+android { namespace = "io.sweers.catchup.service.db" }
 
 slack {
   features {
-    compose()
     dagger()
   }
 }
 
+sqldelight {
+  databases {
+    create("CatchUpDatabase") {
+      packageName.set("dev.zacsweers.catchup.service")
+    }
+  }
+}
+
 dependencies {
-  api(project(":libraries:appconfig"))
-  api(project(":libraries:gemoji"))
-  api(project(":libraries:retrofitconverters"))
   api(libs.androidx.annotations)
-  api(libs.androidx.compose.runtime)
-  api(libs.androidx.compose.ui)
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
-  api(projects.libraries.di)
+  api(libs.sqldelight.runtime)
+  api(libs.sqldelight.paging)
+  api(libs.sqldelight.primitiveAdapters)
 
   implementation(libs.androidx.annotations)
-  implementation(libs.kotlin.coroutinesAndroid)
   implementation(libs.kotlin.datetime)
 }

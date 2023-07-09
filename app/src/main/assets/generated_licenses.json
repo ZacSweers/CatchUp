@@ -1,9 +1,5 @@
 [
   {
-    "owner": "aakira",
-    "name": "Napier"
-  },
-  {
     "owner": "airbnb",
     "name": "lottie-android"
   },
@@ -57,10 +53,6 @@
   },
   {
     "owner": "JakeWharton",
-    "name": "RxRelay"
-  },
-  {
-    "owner": "JakeWharton",
     "name": "shimo"
   },
   {
@@ -96,10 +88,6 @@
     "name": "kotlinx.serialization"
   },
   {
-    "owner": "LDRAlighieri",
-    "name": "Corbind"
-  },
-  {
     "owner": "material-components",
     "name": "material-components-android"
   },
@@ -122,10 +110,6 @@
   {
     "owner": "ReactiveX",
     "name": "RxJava"
-  },
-  {
-    "owner": "saket",
-    "name": "InboxRecyclerView"
   },
   {
     "owner": "saket",
@@ -161,18 +145,10 @@
   },
   {
     "owner": "uber",
-    "name": "AutoDispose"
-  },
-  {
-    "owner": "uber",
     "name": "RxDogTag"
   },
   {
     "owner": "unbescape",
     "name": "unbescape"
-  },
-  {
-    "owner": "wasabeef",
-    "name": "recyclerview-animators"
   }
 ]

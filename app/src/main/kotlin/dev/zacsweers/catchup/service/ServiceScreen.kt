@@ -40,6 +40,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.map
+import app.cash.sqldelight.paging3.QueryPagingSource
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.retained.rememberRetained
@@ -61,7 +63,6 @@ import dev.zacsweers.catchup.service.ServiceScreen.State.VisualState
 import dev.zacsweers.catchup.summarizer.SummarizerScreen
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.LocalServiceThemeColor
@@ -69,7 +70,9 @@ import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.ImageViewerScreen
 import javax.inject.Provider
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -110,7 +113,7 @@ constructor(
   @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,
   private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-  private val serviceDao: ServiceDao,
+  private val catchUpDatabase: CatchUpDatabase,
   private val serviceMediatorFactory: ServiceMediator.Factory
 ) : Presenter<ServiceScreen.State> {
   @OptIn(ExperimentalPagingApi::class)
@@ -136,10 +139,18 @@ constructor(
         initialKey = service.meta().firstPageKey,
         remoteMediator = serviceMediatorFactory.create(service = service)
       ) {
-        serviceDao.itemsByService(service.meta().id)
+        QueryPagingSource(
+          countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
+          transacter = catchUpDatabase.serviceQueries,
+          context = Dispatchers.IO,
+          queryProvider = { limit, offset ->
+            catchUpDatabase.serviceQueries.itemsByService(service.meta().id, limit, offset)
+          },
+        )
       }
     }
-    val items: Flow<PagingData<CatchUpItem>> = remember(pager) { pager.flow }
+    val items: Flow<PagingData<CatchUpItem>> =
+      remember(pager) { pager.flow.map { data -> data.map { it.toCatchUpItem() } } }
     val coroutineScope = rememberCoroutineScope()
     val overlayHost = LocalOverlayHost.current
     val eventSink: (ServiceScreen.Event) -> Unit = { event ->

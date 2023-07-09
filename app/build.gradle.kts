@@ -39,7 +39,6 @@ plugins {
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
-  alias(libs.plugins.sqldelight)
   //  alias(libs.plugins.playPublisher)
 }
 
@@ -127,11 +126,6 @@ android {
     checkDependencies = true
   }
   namespace = "io.sweers.catchup"
-}
-
-ksp {
-  arg("room.schemaLocation", "$projectDir/schemas")
-  arg("room.generateKotlin", "true")
 }
 
 bugsnag {
@@ -467,7 +461,6 @@ androidComponents {
 }
 
 dependencies {
-  ksp(libs.androidx.room.apt)
   ksp(libs.circuit.codegen)
 
   implementation(project(":libraries:appconfig"))
@@ -480,6 +473,7 @@ dependencies {
   implementation(project(":libraries:summarizer"))
   implementation(project(":libraries:util"))
   implementation(project(":service-api"))
+  implementation(project(":service-db"))
   implementation(project(":services:designernews"))
   implementation(project(":services:dribbble"))
   implementation(project(":services:github"))
@@ -489,6 +483,7 @@ dependencies {
   implementation(project(":services:slashdot"))
   implementation(project(":services:unsplash"))
   implementation(project(":services:uplabs"))
+  implementation(libs.sqldelight.driver.android)
   implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.annotations)
@@ -513,9 +508,6 @@ dependencies {
   implementation(libs.androidx.palette)
   implementation(libs.androidx.preference)
   implementation(libs.androidx.preferenceKtx)
-  implementation(libs.androidx.room.ktx)
-  implementation(libs.androidx.room.paging)
-  implementation(libs.androidx.room.runtime)
   implementation(libs.apollo.httpcache)
   implementation(libs.apollo.normalizedCache)
   implementation(libs.apollo.runtime)

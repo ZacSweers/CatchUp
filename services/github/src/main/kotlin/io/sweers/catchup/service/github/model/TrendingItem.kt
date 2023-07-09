@@ -16,8 +16,8 @@
 package io.sweers.catchup.service.github.model
 
 data class TrendingItem(
-  val author: String,
-  val repoName: String,
+  val author: String?,
+  val repoName: String?,
   val url: String,
   val description: String,
   val stars: Int,
