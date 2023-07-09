@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.data
+package io.sweers.catchup.util.apollo
 
 import com.apollographql.apollo3.api.Adapter
 import com.apollographql.apollo3.api.CustomScalarAdapters
 import com.apollographql.apollo3.api.json.JsonReader
 import com.apollographql.apollo3.api.json.JsonReader.Token.STRING
 import com.apollographql.apollo3.api.json.JsonWriter
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import io.sweers.catchup.util.parsePossiblyOffsetInstant
+import kotlinx.datetime.Instant
 
-/** An Apollo adapter for converting between URI types to HttpUrl. */
-object HttpUrlApolloAdapter : Adapter<HttpUrl> {
-  override fun fromJson(reader: JsonReader, customScalarAdapters: CustomScalarAdapters): HttpUrl {
+/** A CustomTypeAdapter for apollo that can convert ISO style date strings to Instant. */
+object ISO8601InstantApolloAdapter : Adapter<Instant> {
+  override fun fromJson(reader: JsonReader, customScalarAdapters: CustomScalarAdapters): Instant {
     return when (reader.peek()) {
-      STRING -> reader.nextString()!!.toHttpUrl()
+      STRING -> reader.nextString()!!.parsePossiblyOffsetInstant()
       else -> throw IllegalArgumentException("Value wasn't a string!")
     }
   }
@@ -35,7 +35,7 @@ object HttpUrlApolloAdapter : Adapter<HttpUrl> {
   override fun toJson(
     writer: JsonWriter,
     customScalarAdapters: CustomScalarAdapters,
-    value: HttpUrl
+    value: Instant
   ) {
     writer.value(value.toString())
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Zac Sweers
+ * Copyright (c) 2023 Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,40 +15,21 @@
  */
 
 plugins {
-  id("com.android.library")
-  kotlin("android")
-  alias(libs.plugins.redacted)
+  kotlin("jvm")
   alias(libs.plugins.sgp.base)
-}
-
-android {
-  namespace = "io.sweers.catchup.util"
-  buildFeatures {
-    androidResources = true
-    viewBinding = true
-  }
-}
-
-redacted {
-  redactedAnnotation.set("io.sweers.catchup.util.network.Redacted")
+  alias(libs.plugins.moshix)
 }
 
 dependencies {
-  api(project(":libraries:appconfig"))
   api(libs.androidx.annotations)
-  api(libs.androidx.coreKtx)
-  api(libs.apollo.runtime)
   api(libs.dagger.runtime)
-  api(libs.kotlin.datetime)
-  api(libs.moshi.core)
   api(libs.okhttp.core)
+  api(libs.retrofit.core)
+  api(libs.retrofit.moshi)
+  api(projects.libraries.retrofitconverters)
 
-  implementation(libs.androidx.annotations)
-  implementation(libs.androidx.core)
+  implementation(libs.androidx.datastore.preferences)
+  implementation(libs.eithernet)
   implementation(libs.kotlin.datetime)
-  implementation(libs.misc.timber)
-  implementation(libs.misc.unbescape)
-
-  testImplementation(libs.test.junit)
-  testImplementation(libs.test.truth)
+  implementation(libs.okhttp.core)
 }
