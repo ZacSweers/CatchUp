@@ -58,7 +58,6 @@ import javax.inject.Inject
 import javax.inject.Qualifier
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 
 @Qualifier private annotation class InternalApi
 
@@ -214,15 +213,10 @@ abstract class GitHubMetaModule {
 object GitHubModule {
 
   @Provides
-  internal fun provideGitHubService(
-    client: Lazy<OkHttpClient>,
-    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
-    appConfig: AppConfig
-  ): GitHubApi {
+  internal fun provideGitHubService(client: Lazy<OkHttpClient>, appConfig: AppConfig): GitHubApi {
     return Retrofit.Builder()
       .baseUrl(GitHubApi.ENDPOINT)
       .delegatingCallFactory(client)
-      .addCallAdapterFactory(rxJavaCallAdapterFactory)
       .addConverterFactory(DecodingConverter.newFactory(GitHubTrendingParser::parse))
       .validateEagerly(appConfig.isDebug)
       .build()

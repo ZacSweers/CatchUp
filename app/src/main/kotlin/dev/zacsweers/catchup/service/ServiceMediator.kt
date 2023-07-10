@@ -9,7 +9,6 @@ import com.apollographql.apollo3.exception.ApolloException
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.reactivex.rxjava3.core.Flowable
 import io.sweers.catchup.data.lastUpdated
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.Service
@@ -17,6 +16,9 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
@@ -113,22 +115,20 @@ constructor(
             )
           val items = initialResult.items
           // Remap items with content types if they're not set.
-          // Using RxJava's concatMapEager here because there's no alternative in Flow.
+          // TODO concatMapEager?
           initialResult.copy(
             items =
-              Flowable.fromIterable(items)
-                .concatMapEager { item ->
+              items
+                .asFlow()
+                .map { item ->
                   item.clickUrl?.let { clickUrl ->
                     if (item.contentType == null) {
-                      return@concatMapEager Flowable.just(
-                        item.copy(contentType = contentTypeChecker.contentType(clickUrl))
-                      )
+                      return@map item.copy(contentType = contentTypeChecker.contentType(clickUrl))
                     }
                   }
-                  Flowable.just(item)
+                  item
                 }
                 .toList()
-                .blockingGet()
           )
         }
 

@@ -78,8 +78,7 @@ dependencies {
   implementation(libs.androidx.annotations)
   implementation(libs.firebase.database)
   implementation(libs.kotlin.coroutines)
-  implementation(libs.kotlin.coroutinesRx)
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
-  implementation(libs.rx.java)
+  implementation(projects.libraries.kotlinutil)
 }

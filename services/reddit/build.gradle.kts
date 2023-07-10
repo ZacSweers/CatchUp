@@ -42,8 +42,6 @@ dependencies {
   api(libs.moshi.core)
   api(libs.okhttp.core)
   api(libs.retrofit.core)
-  api(libs.retrofit.rxJava3)
-  api(libs.rx.java)
   api(projects.libraries.appconfig)
   api(projects.libraries.di)
 

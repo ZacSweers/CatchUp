@@ -27,7 +27,6 @@ import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
-import io.reactivex.rxjava3.schedulers.Schedulers
 import io.sweers.catchup.injection.DaggerSet
 import io.sweers.catchup.util.data.adapters.UnescapeJsonAdapter
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
@@ -36,7 +35,6 @@ import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 
 @ContributesTo(AppScope::class)
 @Module
@@ -99,12 +97,6 @@ abstract class DataModule {
         .add(Wrapped.ADAPTER_FACTORY)
         .add(UnescapeJsonAdapter.FACTORY)
         .build()
-    }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    internal fun provideRxJavaCallAdapterFactory(): RxJava3CallAdapterFactory {
-      return RxJava3CallAdapterFactory.createWithScheduler(Schedulers.io())
     }
   }
 }

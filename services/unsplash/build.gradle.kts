@@ -46,7 +46,6 @@ dependencies {
   api(libs.kotlin.datetime)
   api(libs.okhttp.core)
   api(libs.retrofit.core)
-  api(libs.retrofit.rxJava3)
   api(projects.libraries.appconfig)
   api(projects.libraries.di)
 

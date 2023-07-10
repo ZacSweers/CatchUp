@@ -100,18 +100,6 @@
     "name": "xmlutil"
   },
   {
-    "owner": "reactive-streams",
-    "name": "reactive-streams"
-  },
-  {
-    "owner": "ReactiveX",
-    "name": "RxAndroid"
-  },
-  {
-    "owner": "ReactiveX",
-    "name": "RxJava"
-  },
-  {
     "owner": "saket",
     "name": "telephoto"
   },
@@ -142,10 +130,6 @@
   {
     "owner": "Tickaroo",
     "name": "tikxml"
-  },
-  {
-    "owner": "uber",
-    "name": "RxDogTag"
   },
   {
     "owner": "unbescape",

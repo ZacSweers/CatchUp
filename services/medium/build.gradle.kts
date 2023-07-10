@@ -40,7 +40,6 @@ dependencies {
   implementation(libs.moshi.core)
   implementation(libs.retrofit.core)
   implementation(libs.retrofit.moshi)
-  implementation(libs.retrofit.rxJava3)
   implementation(libs.okhttp.core)
   implementation(libs.misc.moshiLazyAdapters)
   implementation(libs.kotlin.datetime)
@@ -48,5 +47,4 @@ dependencies {
   api(project(":service-api"))
   api(libs.androidx.annotations)
   api(libs.dagger.runtime)
-  api(libs.rx.java)
 }

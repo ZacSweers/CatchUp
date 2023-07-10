@@ -43,7 +43,7 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 ## Technologies
 
 - Kotlin
-- RxJava 3/AutoDispose
+- Kotlin Coroutines
 - Debugging tooling as a first class citizen in the debug build
 - Leak Canary, Scalpel, debug drawer, Flipper, bug reporting, the works
 - AndroidX/Jetpack

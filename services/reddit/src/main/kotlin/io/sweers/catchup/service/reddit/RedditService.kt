@@ -44,7 +44,6 @@ import javax.inject.Qualifier
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 @Qualifier private annotation class InternalApi
@@ -62,7 +61,6 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 
   override suspend fun fetch(request: DataRequest): DataResult {
     // We special case the front page
-    // TODO use limit from request
     return api.frontPage(request.limit, request.pageKey).let { redditListingRedditResponse ->
       @Suppress("UNCHECKED_CAST")
       val data =
@@ -158,7 +156,6 @@ object RedditModule {
   @Provides
   internal fun provideRedditApi(
     @InternalApi client: Lazy<OkHttpClient>,
-    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     @InternalApi moshi: Moshi,
     appConfig: AppConfig
   ): RedditApi {
@@ -166,7 +163,6 @@ object RedditModule {
       Retrofit.Builder()
         .baseUrl(RedditApi.ENDPOINT)
         .delegatingCallFactory(client)
-        .addCallAdapterFactory(rxJavaCallAdapterFactory)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .validateEagerly(appConfig.isDebug)
         .build()

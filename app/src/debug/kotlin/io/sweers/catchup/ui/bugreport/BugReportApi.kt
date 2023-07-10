@@ -25,13 +25,11 @@ import dagger.Provides
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
-import io.reactivex.rxjava3.core.Single
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Headers
@@ -44,7 +42,7 @@ interface ImgurUploadApi {
   @Headers("Authorization: Client-ID ${BuildConfig.IMGUR_CLIENT_ACCESS_TOKEN}")
   @POST("image")
   @Wrapped(path = ["data", "link"])
-  fun postImage(@Part file: MultipartBody.Part): Single<String>
+  suspend fun postImage(@Part file: MultipartBody.Part): String
 }
 
 interface GitHubIssueApi {
@@ -57,7 +55,7 @@ interface GitHubIssueApi {
   )
   @POST("repos/zacsweers/catchup/issues")
   @Wrapped(path = ["html_url"])
-  fun createIssue(@Body issue: GitHubIssue): Single<String>
+  suspend fun createIssue(@Body issue: GitHubIssue): String
 }
 
 @JsonClass(generateAdapter = true) data class GitHubIssue(val title: String, val body: String)
@@ -71,13 +69,11 @@ object BugReportModule {
   internal fun provideImgurService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
-    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): ImgurUploadApi {
     return Retrofit.Builder()
       .baseUrl("https://api.imgur.com/3/")
       .delegatingCallFactory(client)
-      .addCallAdapterFactory(rxJavaCallAdapterFactory)
       .addConverterFactory(
         MoshiConverterFactory.create(moshi.newBuilder().add(Wrapped.ADAPTER_FACTORY).build())
       )
@@ -91,13 +87,11 @@ object BugReportModule {
   internal fun provideGithubIssueService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
-    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): GitHubIssueApi {
     return Retrofit.Builder()
       .baseUrl("https://api.github.com/")
       .delegatingCallFactory(client)
-      .addCallAdapterFactory(rxJavaCallAdapterFactory)
       .addConverterFactory(MoshiConverterFactory.create(moshi))
       .validateEagerly(appConfig.isDebug)
       .build()

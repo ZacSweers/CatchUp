@@ -41,7 +41,6 @@ import javax.inject.Inject
 import javax.inject.Qualifier
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 
 @Qualifier private annotation class InternalApi
 
@@ -122,13 +121,11 @@ object DribbbleModule {
   @Provides
   internal fun provideDribbbleService(
     client: Lazy<OkHttpClient>,
-    rxJavaCallAdapterFactory: RxJava3CallAdapterFactory,
     appConfig: AppConfig
   ): DribbbleApi {
     return Retrofit.Builder()
       .baseUrl(DribbbleApi.ENDPOINT)
       .delegatingCallFactory(client)
-      .addCallAdapterFactory(rxJavaCallAdapterFactory)
       .addConverterFactory(DecodingConverter.newFactory(DribbbleParser::parse))
       .validateEagerly(appConfig.isDebug)
       .build()

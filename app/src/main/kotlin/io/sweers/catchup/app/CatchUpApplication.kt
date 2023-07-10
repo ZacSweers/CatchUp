@@ -16,13 +16,10 @@
 package io.sweers.catchup.app
 
 import android.app.Application
-import android.os.Looper
 import android.os.StrictMode
 import android.os.strictmode.DiskReadViolation
 import android.os.strictmode.UntaggedSocketViolation
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
@@ -34,23 +31,11 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import rxdogtag2.RxDogTag
-import rxdogtag2.autodispose2.AutoDisposeConfigurer
 import timber.log.Timber
 
 private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
 
 class CatchUpApplication : Application() {
-
-  companion object {
-
-    init {
-      RxAndroidPlugins.setInitMainThreadSchedulerHandler {
-        AndroidSchedulers.from(Looper.getMainLooper(), true)
-      }
-      RxDogTag.builder().configureWith(AutoDisposeConfigurer::configure).install()
-    }
-  }
 
   @Inject internal lateinit var catchUpPreferences: CatchUpPreferences
   @Inject internal lateinit var appConfig: AppConfig
