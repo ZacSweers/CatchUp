@@ -213,7 +213,6 @@ constructor(
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
   override fun Content(state: SettingsScreen.State, modifier: Modifier) {
-    val eventSink = state.eventSink
     Scaffold(
       modifier = modifier,
       contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -245,7 +244,7 @@ constructor(
             title = stringResource(R.string.pref_reorder_services),
             subtitle = stringResource(R.string.pref_order_services_description)
           ) {
-            eventSink(SettingsScreen.Event.NavToScreen(OrderServicesScreen))
+            state.eventSink(SettingsScreen.Event.NavToScreen(OrderServicesScreen))
           }
         }
 
@@ -254,7 +253,7 @@ constructor(
             title = stringResource(R.string.pref_clear_cache),
             subtitle = stringResource(R.string.pref_clear_cache_summary),
           ) {
-            eventSink(SettingsScreen.Event.ClearCache)
+            state.eventSink(SettingsScreen.Event.ClearCache)
           }
         }
 
@@ -310,7 +309,7 @@ constructor(
           ClickablePreference(
             title = stringResource(R.string.about),
           ) {
-            eventSink(SettingsScreen.Event.NavToScreen(AboutScreen))
+            state.eventSink(SettingsScreen.Event.NavToScreen(AboutScreen))
           }
         }
 

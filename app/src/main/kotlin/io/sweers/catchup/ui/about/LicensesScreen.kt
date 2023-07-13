@@ -144,7 +144,6 @@ private fun OssItem.toCatchUpItem(): CatchUpItem {
 @CircuitInject(LicensesScreen::class, AppScope::class)
 @Composable
 internal fun Licenses(state: LicensesScreen.State, modifier: Modifier = Modifier) {
-  val sink = state.eventSink
   LazyColumn(modifier = modifier) {
     val items = state.items
     if (items == null) {
@@ -172,7 +171,7 @@ internal fun Licenses(state: LicensesScreen.State, modifier: Modifier = Modifier
               val catchUpItem = ossItem.toCatchUpItem()
               ClickableItem(
                 modifier = Modifier.animateItemPlacement(),
-                onClick = { sink(LicensesScreen.Event.Click(catchUpItem.clickUrl!!)) },
+                onClick = { state.eventSink(LicensesScreen.Event.Click(catchUpItem.clickUrl!!)) },
               ) {
                 Row {
                   Spacer(Modifier.width(50.dp))
