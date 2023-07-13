@@ -226,15 +226,14 @@ constructor(
 @CircuitInject(ServiceScreen::class, AppScope::class)
 @Composable
 fun Service(state: ServiceScreen.State, modifier: Modifier = Modifier) {
-  val eventSink = state.eventSink
   val lazyItems: LazyPagingItems<CatchUpItem> = state.items.collectAsLazyPagingItems()
   var refreshing by remember { mutableStateOf(false) }
   val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh = lazyItems::refresh)
   Box(modifier.pullRefresh(pullRefreshState)) {
     if (state is VisualState) {
-      VisualServiceUi(lazyItems, state.themeColor, { refreshing = it }, eventSink)
+      VisualServiceUi(lazyItems, state.themeColor, { refreshing = it }, state.eventSink)
     } else {
-      TextServiceUi(lazyItems, state.themeColor, { refreshing = it }, eventSink)
+      TextServiceUi(lazyItems, state.themeColor, { refreshing = it }, state.eventSink)
     }
 
     PullRefreshIndicator(

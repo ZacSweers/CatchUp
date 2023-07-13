@@ -60,6 +60,7 @@ import com.alorma.compose.settings.storage.base.getValue
 import com.alorma.compose.settings.storage.base.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
+import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -229,12 +230,12 @@ object DebugSettingsScreen : Screen {
     val eventSink: (Event) -> Unit,
   ) : CircuitUiState
 
-  sealed interface Event {
+  sealed interface Event : CircuitUiEvent {
     data class NavigateTo(val screen: Screen) : Event
 
     data class ToggleLogs(val show: Boolean) : Event
 
-    object ShareLogs : Event
+    data object ShareLogs : Event
   }
 }
 
@@ -321,8 +322,6 @@ constructor(
   Ui<DebugSettingsScreen.State>, BaseSettingsUi by RealBaseSettingsUi(debugPreferences.datastore) {
   @Composable
   override fun Content(state: DebugSettingsScreen.State, modifier: Modifier) {
-    val eventSink = state.eventSink
-
     if (state.logsToShow.isNotEmpty()) {
       val overlayHost = LocalOverlayHost.current
       LaunchedEffect(overlayHost) {
@@ -336,10 +335,10 @@ constructor(
           )
         when (result) {
           LogsShareResult.SHARE -> {
-            eventSink(DebugSettingsScreen.Event.ShareLogs)
+            state.eventSink(DebugSettingsScreen.Event.ShareLogs)
           }
           LogsShareResult.DISMISS -> {
-            eventSink(DebugSettingsScreen.Event.ToggleLogs(show = false))
+            state.eventSink(DebugSettingsScreen.Event.ToggleLogs(show = false))
           }
         }
       }
@@ -382,7 +381,7 @@ constructor(
                   val scope = rememberCoroutineScope()
                   DebugElementContent(
                     item,
-                    { screen -> eventSink(DebugSettingsScreen.Event.NavigateTo(screen)) }
+                    { screen -> state.eventSink(DebugSettingsScreen.Event.NavigateTo(screen)) }
                   ) { key, value ->
                     scope.launch {
                       debugPreferences.edit { prefs ->

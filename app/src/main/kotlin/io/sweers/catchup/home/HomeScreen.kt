@@ -102,9 +102,9 @@ object HomeScreen : Screen {
   ) : CircuitUiState
 
   sealed interface Event : CircuitUiEvent {
-    object OpenSettings : Event
+    data object OpenSettings : Event
 
-    object ShowChangelog : Event
+    data object ShowChangelog : Event
 
     data class NestedNavEvent(val navEvent: NavEvent) : Event
   }
@@ -185,7 +185,6 @@ constructor(
 @CircuitInject(HomeScreen::class, AppScope::class)
 fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
   if (state.serviceMetas.isEmpty()) return // Not loaded yet
-  val eventSink = state.eventSink
   val pagerState = key(state.serviceMetas) { rememberPagerState { state.serviceMetas.size } }
   val currentServiceMeta = state.serviceMetas[pagerState.currentPage]
   val title = stringResource(currentServiceMeta.name)
@@ -261,7 +260,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
           // TODO wire with Syllabus
           if (state.changelogAvailable) {
             IconButton(
-              onClick = { eventSink(HomeScreen.Event.ShowChangelog) },
+              onClick = { state.eventSink(HomeScreen.Event.ShowChangelog) },
             ) {
               Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.tips_and_updates),
@@ -270,7 +269,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
             }
           }
           IconButton(
-            onClick = { eventSink(HomeScreen.Event.OpenSettings) },
+            onClick = { state.eventSink(HomeScreen.Event.OpenSettings) },
           ) {
             Icon(
               imageVector = Icons.Default.Settings,
@@ -349,7 +348,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
         ) {
           CircuitContent(
             screen = ServiceScreen(state.serviceMetas[page].id),
-            onNavEvent = { eventSink(HomeScreen.Event.NestedNavEvent(it)) }
+            onNavEvent = { state.eventSink(HomeScreen.Event.NestedNavEvent(it)) }
           )
         }
       }
