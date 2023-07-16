@@ -41,7 +41,6 @@ import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.base.ui.CatchUpObjectWatcher
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.DaggerSet
-import io.sweers.catchup.util.sdk
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Qualifier
@@ -134,45 +133,37 @@ object DebugApplicationModule {
   @SuppressLint("NewApi") // False positive
   fun strictModeInit(
     @StrictModeExecutor penaltyListenerExecutor: dagger.Lazy<ExecutorService>,
-    appConfig: AppConfig
   ): () -> Unit = {
     StrictMode.setThreadPolicy(
       StrictMode.ThreadPolicy.Builder()
         .detectAll()
-        .apply {
-          appConfig.sdk(28) { penaltyListener(penaltyListenerExecutor.get(), { Timber.w(it) }) }
-        }
+        .penaltyListener(penaltyListenerExecutor.get()) { Timber.w(it) }
         .build()
     )
     StrictMode.setVmPolicy(
       VmPolicy.Builder()
         .detectAll()
         .penaltyLog()
-        .apply {
-          appConfig.sdk(28) {
-            penaltyListener(
-              penaltyListenerExecutor.get(),
-              StrictMode.OnVmViolationListener {
-                when (it) {
-                  is UntaggedSocketViolation -> {
-                    // Firebase and OkHttp don't tag sockets
-                    return@OnVmViolationListener
-                  }
-                  is DiskReadViolation -> {
-                    if (it.stackTrace.any { it.methodName == "onCreatePreferences" }) {
-                      // PreferenceFragment hits preferences directly
-                      return@OnVmViolationListener
-                    }
-                  }
-                }
-                // Note: Chuck causes a closeable leak. Possible
-                // https://github.com/square/okhttp/issues/3174
-                Timber.w(it)
+        .penaltyListener(
+          penaltyListenerExecutor.get(),
+          StrictMode.OnVmViolationListener {
+            when (it) {
+              is UntaggedSocketViolation -> {
+                // Firebase and OkHttp don't tag sockets
+                return@OnVmViolationListener
               }
-            )
+              is DiskReadViolation -> {
+                if (it.stackTrace.any { it.methodName == "onCreatePreferences" }) {
+                  // PreferenceFragment hits preferences directly
+                  return@OnVmViolationListener
+                }
+              }
+            }
+            // Note: Chuck causes a closeable leak. Possible
+            // https://github.com/square/okhttp/issues/3174
+            Timber.w(it)
           }
-            ?: run { penaltyLog() }
-        }
+        )
         .build()
     )
   }

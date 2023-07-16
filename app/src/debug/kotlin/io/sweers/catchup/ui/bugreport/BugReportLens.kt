@@ -150,13 +150,11 @@ constructor(
     val notificationManager =
       context.getSystemService<NotificationManager>()
         ?: throw IllegalStateException("No notificationmanager?")
-    if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
-      val channels = notificationManager.notificationChannels
-      if (channels.none { it.id == channelId }) {
-        NotificationChannel(channelId, "Bug reports", NotificationManager.IMPORTANCE_HIGH)
-          .apply { description = "This is the channel for uploading bug reports. Debug only." }
-          .let { notificationManager.createNotificationChannel(it) }
-      }
+    val channels = notificationManager.notificationChannels
+    if (channels.none { it.id == channelId }) {
+      NotificationChannel(channelId, "Bug reports", NotificationManager.IMPORTANCE_HIGH)
+        .apply { description = "This is the channel for uploading bug reports. Debug only." }
+        .let { notificationManager.createNotificationChannel(it) }
     }
 
     val notificationId = context.getString(R.string.app_name).hashCode()

@@ -80,6 +80,7 @@ constructor(
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge(navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT))
+    linkManager.connect(this)
 
     setContent {
       val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
@@ -117,7 +118,6 @@ constructor(
 
   override fun onStart() {
     super.onStart()
-    linkManager.connect(this)
     customTab.bindCustomTabsService(this)
   }
 
@@ -127,6 +127,7 @@ constructor(
   }
 
   override fun onDestroy() {
+    linkManager.disconnect()
     customTab.connectionCallback = null
     super.onDestroy()
   }

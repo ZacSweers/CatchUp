@@ -21,6 +21,7 @@ import android.os.Build
 import androidx.core.content.getSystemService
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.appconfig.EmptyAppConfig
+import dev.zacsweers.catchup.appconfig.sdk
 
 @PublishedApi
 internal val BUILD_APP_CONFIG =
@@ -34,14 +35,4 @@ inline fun <T> Context.sdk(level: Int, func: () -> T): T? {
   // Try to dig one out of services
   val config = getSystemService<AppConfig>() ?: BUILD_APP_CONFIG
   return config.sdk(level, func)
-}
-
-// Not totally safe to use yet
-// https://issuetracker.google.com/issues/64550633
-inline fun <T> AppConfig.sdk(level: Int, func: () -> T): T? {
-  return if (sdkInt >= level) {
-    func()
-  } else {
-    null
-  }
 }
