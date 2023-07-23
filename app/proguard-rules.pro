@@ -152,3 +152,6 @@
 
 # Temporary until Circuit's navigation animation updates
 -dontwarn androidx.compose.animation.AnimatedContentScope
+
+# Missing rules
+-dontwarn androidx.window.extensions.area.ExtensionWindowAreaPresentation
