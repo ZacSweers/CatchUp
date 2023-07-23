@@ -24,7 +24,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,6 +67,9 @@ fun TextServiceUi(
 ) {
   val state = rememberLazyListState()
   ScrollToTopHandler(state)
+
+  // Only animate items in on first load
+  var animatePlacement by remember { mutableStateOf(true) }
   LazyColumn(
     modifier = modifier,
     state = state,
@@ -84,8 +91,15 @@ fun TextServiceUi(
           } else {
             null
           }
+        val itemModifier =
+          if (animatePlacement) {
+            LaunchedEffect(Unit) { animatePlacement = false }
+            Modifier.animateItemPlacement()
+          } else {
+            Modifier
+          }
         ClickableItem(
-          modifier = Modifier.animateItemPlacement(),
+          modifier = itemModifier,
           onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
           onLongClick = onLongClick
         ) {
