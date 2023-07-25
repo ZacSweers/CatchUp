@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.31.5-beta"
-agp = "8.2.0-alpha13"
+agp = "8.2.0-alpha14"
 androidx-activity = "1.8.0-alpha06"
 androidx-core = "1.12.0-alpha05"
 compose-material3 = "1.2.0-alpha03"
