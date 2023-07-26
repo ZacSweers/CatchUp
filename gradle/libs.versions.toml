@@ -12,7 +12,7 @@ apollo = "3.8.2"
 autodispose = "2.1.1"
 circuit = "0.11.0"
 coil = "2.4.0"
-compose = "1.6.0-alpha01"
+compose = "1.6.0-alpha02"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.5.0"
