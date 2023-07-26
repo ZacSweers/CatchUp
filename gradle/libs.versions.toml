@@ -114,7 +114,7 @@ androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accom
 androidx-paging-compose = "androidx.paging:paging-compose:3.2.0-rc01"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-material-material3-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
-androidx-window = { module = "androidx.window:window", version = "1.2.0-alpha03" }
+androidx-window = { module = "androidx.window:window", version = "1.2.0-beta01" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-database = "com.google.firebase:firebase-database:20.2.2"
