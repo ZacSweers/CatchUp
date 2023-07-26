@@ -82,7 +82,7 @@ androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha02"
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
-androidx-customTabs = "androidx.browser:browser:1.6.0-beta01"
+androidx-customTabs = "androidx.browser:browser:1.6.0-rc01"
 androidx-design = "com.google.android.material:material:1.9.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
