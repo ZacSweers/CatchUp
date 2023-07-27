@@ -1,2 +1,0 @@
--- Never actually used but necessary for versioning
-DROP TABLE IF EXISTS gemoji;

@@ -16,8 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -214,7 +213,6 @@ constructor(
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
   override fun Content(state: SettingsScreen.State, modifier: Modifier) {
-    val eventSink = state.eventSink
     Scaffold(
       modifier = modifier,
       contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -246,7 +244,7 @@ constructor(
             title = stringResource(R.string.pref_reorder_services),
             subtitle = stringResource(R.string.pref_order_services_description)
           ) {
-            eventSink(SettingsScreen.Event.NavToScreen(OrderServicesScreen))
+            state.eventSink(SettingsScreen.Event.NavToScreen(OrderServicesScreen))
           }
         }
 
@@ -255,13 +253,24 @@ constructor(
             title = stringResource(R.string.pref_clear_cache),
             subtitle = stringResource(R.string.pref_clear_cache_summary),
           ) {
-            eventSink(SettingsScreen.Event.ClearCache)
+            state.eventSink(SettingsScreen.Event.ClearCache)
           }
         }
 
         stickyHeader(key = "theming_header") {
           ComposableHeaderItem(stringResource(R.string.prefs_theme), displayDivider = true)
         }
+
+        item(key = "dynamic_theme") {
+          BooleanPreference(
+            key = CatchUpPreferences.Keys.dynamicTheme,
+            modifier = Modifier.animateContentSize(),
+            defaultValue = false,
+            title = stringResource(R.string.pref_dynamic_theme_title),
+            subtitle = stringResource(R.string.pref_dynamic_theme_summary),
+          )
+        }
+
         item(key = "auto_theme") {
           BooleanPreference(
             key = CatchUpPreferences.Keys.dayNightAuto,
@@ -300,7 +309,7 @@ constructor(
           ClickablePreference(
             title = stringResource(R.string.about),
           ) {
-            eventSink(SettingsScreen.Event.NavToScreen(AboutScreen))
+            state.eventSink(SettingsScreen.Event.NavToScreen(AboutScreen))
           }
         }
 
@@ -324,18 +333,17 @@ private fun ComposableHeaderItem(text: String, displayDivider: Boolean) {
       Text(
         modifier = Modifier.padding(16.dp),
         text = text,
-        color = colorResource(R.color.colorAccent),
+        color = MaterialTheme.colorScheme.primary,
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Bold,
       )
       if (displayDivider) {
-        Divider()
+        HorizontalDivider()
       }
     }
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ClickablePreference(
   title: String,

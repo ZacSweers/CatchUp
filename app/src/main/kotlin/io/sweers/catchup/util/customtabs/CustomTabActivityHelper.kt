@@ -63,12 +63,11 @@ class CustomTabActivityHelper @Inject constructor() {
       ?: context.maybeStartActivity(Intent(Intent.ACTION_VIEW, uri))
   }
 
-  val customTabIntent: CustomTabsIntent.Builder
-    get() =
-      CustomTabsIntent.Builder(session)
-        .setShowTitle(true)
-        .setUrlBarHidingEnabled(true)
-        .setShareState(SHARE_STATE_ON)
+  fun newCustomTabIntentBuilder(): CustomTabsIntent.Builder =
+    CustomTabsIntent.Builder(session)
+      .setShowTitle(true)
+      .setUrlBarHidingEnabled(true)
+      .setShareState(SHARE_STATE_ON)
 
   /**
    * Binds the Activity to the Custom Tabs Service

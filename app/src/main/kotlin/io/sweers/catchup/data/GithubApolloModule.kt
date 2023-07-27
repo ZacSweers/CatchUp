@@ -43,6 +43,8 @@ import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.BuildConfig
 import io.sweers.catchup.data.github.type.DateTime
 import io.sweers.catchup.data.github.type.URI
+import io.sweers.catchup.util.apollo.HttpUrlApolloAdapter
+import io.sweers.catchup.util.apollo.ISO8601InstantApolloAdapter
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.network.AuthInterceptor
 import javax.inject.Qualifier

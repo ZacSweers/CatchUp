@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 import dev.zacsweers.moshix.ir.gradle.MoshiPluginExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import slack.gradle.avoidance.AffectedProjectsDefaults
 import slack.gradle.avoidance.ComputeAffectedProjectsTask
 
@@ -22,9 +24,9 @@ plugins {
   alias(libs.plugins.agp.application) apply false
   alias(libs.plugins.sgp.root)
   alias(libs.plugins.sgp.base)
-  alias(libs.plugins.versions)
   alias(libs.plugins.spotless)
   alias(libs.plugins.doctor)
+  alias(libs.plugins.ksp) apply false
   alias(libs.plugins.anvil) apply false
   alias(libs.plugins.cacheFixPlugin) apply false
   //  alias(libs.plugins.detekt) apply false
@@ -43,14 +45,11 @@ buildscript {
   }
 }
 
+val useK2 = findProperty("kotlin.experimental.tryK2")?.toString().toBoolean()
+
 subprojects {
   pluginManager.withPlugin("com.squareup.anvil") {
     dependencies { add("compileOnly", libs.anvil.annotations) }
-  }
-  pluginManager.withPlugin("dev.zacsweers.moshix") {
-    configure<MoshiPluginExtension> {
-      generateProguardRules.set(false)
-    }
   }
 
   // TODO remove after kotlinpoet 1.14.0 is out with https://github.com/square/kotlinpoet/pull/1568
@@ -81,4 +80,14 @@ tasks.named<ComputeAffectedProjectsTask>("computeAffectedProjects") {
     "scripts/github/schema.json",
     "config/lint/lint.xml"
   )
+}
+
+dependencyAnalysis {
+  this.dependencies {
+    bundle("compose-ui") {
+      primary("androidx.compose.ui:ui")
+      includeGroup("androidx.compose.ui")
+      // TODO exclude ui-tooling
+    }
+  }
 }

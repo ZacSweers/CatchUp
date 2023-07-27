@@ -18,7 +18,6 @@ package io.sweers.catchup.ui.activity
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -72,6 +71,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
+import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -103,14 +103,14 @@ object OrderServicesScreen : Screen {
     val eventSink: (Event) -> Unit = {},
   ) : CircuitUiState
 
-  sealed interface Event {
-    object Shuffle : Event
+  sealed interface Event : CircuitUiEvent {
+    data object Shuffle : Event
 
     data class Reorder(val from: Int, val to: Int) : Event
 
-    object BackPress : Event
+    data object BackPress : Event
 
-    object Save : Event
+    data object Save : Event
 
     data class DismissConfirmation(val save: Boolean, val pop: Boolean) : Event
   }
@@ -209,10 +209,9 @@ constructor(
 }
 
 @CircuitInject(OrderServicesScreen::class, AppScope::class)
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifier) {
-  val eventSink = state.eventSink
   if (state.showConfirmation) {
     val overlayHost = LocalOverlayHost.current
     LaunchedEffect(Unit) {
@@ -227,13 +226,13 @@ fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifie
         )
       when (result) {
         DialogResult.Cancel -> {
-          eventSink(OrderServicesScreen.Event.DismissConfirmation(save = false, pop = true))
+          state.eventSink(OrderServicesScreen.Event.DismissConfirmation(save = false, pop = true))
         }
         DialogResult.Confirm -> {
-          eventSink(OrderServicesScreen.Event.DismissConfirmation(save = true, pop = false))
+          state.eventSink(OrderServicesScreen.Event.DismissConfirmation(save = true, pop = false))
         }
         DialogResult.Dismiss -> {
-          eventSink(OrderServicesScreen.Event.DismissConfirmation(save = false, pop = false))
+          state.eventSink(OrderServicesScreen.Event.DismissConfirmation(save = false, pop = false))
         }
       }
     }
@@ -246,7 +245,7 @@ fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifie
         navigationIcon = { BackPressNavButton() },
         actions = {
           IconButton(
-            onClick = { eventSink(OrderServicesScreen.Event.Shuffle) },
+            onClick = { state.eventSink(OrderServicesScreen.Event.Shuffle) },
             content = {
               Icon(
                 painter = painterResource(R.drawable.ic_shuffle_black_24dp),
@@ -279,11 +278,11 @@ fun OrderServices(state: OrderServicesScreen.State, modifier: Modifier = Modifie
               indication = rememberRipple(color = Color.White)
             ),
           // TODO show syllabus on fab
-          //              .onGloballyPositioned { coordinates ->
-          //                val (x, y) = coordinates.positionInRoot()
-          //              },
+          //  .onGloballyPositioned { coordinates ->
+          //    val (x, y) = coordinates.positionInRoot()
+          //  },
           containerColor = colorResource(R.color.colorAccent),
-          onClick = { scope.launch { eventSink(OrderServicesScreen.Event.Save) } },
+          onClick = { scope.launch { state.eventSink(OrderServicesScreen.Event.Save) } },
           content = {
             Image(
               painterResource(R.drawable.ic_save_black_24dp),

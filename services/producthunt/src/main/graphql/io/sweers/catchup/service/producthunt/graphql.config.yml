@@ -1,0 +1,9 @@
+schema: ./schema.graphqls
+extensions:
+  endpoints:
+    Testing GraphQL Endpoint:
+      url: https://api.producthunt.com/v2/api/graphql
+      headers:
+        user-agent: JS GraphQL
+        Authorization: Bearer replaceme
+      introspect: true

@@ -34,7 +34,6 @@ android {
 slack {
   features {
     dagger()
-    moshi(codegen = true)
   }
 }
 
@@ -69,23 +68,16 @@ noArg {
 dependencies {
   api(project(":service-api"))
   api(libs.androidx.annotations)
-  api(libs.androidx.design)
-  api(libs.androidx.fragmentKtx)
   api(libs.dagger.runtime)
-  api(libs.rx.java)
+  api(libs.kotlin.datetime)
+  api(projects.libraries.di)
 
   implementation(project(":libraries:base-ui"))
   implementation(project(":libraries:util"))
-  implementation(libs.androidx.constraintLayout)
-  implementation(libs.androidx.lifecycle.viewmodel.core)
-  implementation(libs.androidx.lifecycle.viewmodel.ktx)
-  implementation(libs.androidx.lifecycle.viewmodel.savedState)
-  implementation(libs.androidx.swipeRefresh)
-  implementation(libs.coil.default)
+  implementation(libs.androidx.annotations)
   implementation(libs.firebase.database)
-  implementation(libs.kotlin.coroutinesRx)
+  implementation(libs.kotlin.coroutines)
   implementation(libs.kotlin.datetime)
-  implementation(libs.moshi.core)
-  implementation(libs.retrofit.core)
-  implementation(libs.retrofit.moshi)
+  implementation(libs.okhttp.core)
+  implementation(projects.libraries.kotlinutil)
 }

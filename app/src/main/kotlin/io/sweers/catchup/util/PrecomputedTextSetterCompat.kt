@@ -16,11 +16,9 @@
 package io.sweers.catchup.util
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.text.Spanned
 import android.widget.TextView
 import androidx.core.text.PrecomputedTextCompat
-import dev.zacsweers.catchup.appconfig.AppConfig
 import io.noties.markwon.Markwon
 import io.sweers.catchup.flowbinding.viewScope
 import kotlin.coroutines.CoroutineContext
@@ -33,8 +31,7 @@ import timber.log.Timber
  * Please do not use with `markwon-recycler` as it will lead to bad item rendering (due to async
  * nature)
  */
-class PrecomputedTextSetterCompat
-internal constructor(private val context: CoroutineContext, private val appConfig: AppConfig) :
+class PrecomputedTextSetterCompat internal constructor(private val context: CoroutineContext) :
   Markwon.TextSetter {
 
   override fun setText(
@@ -45,8 +42,7 @@ internal constructor(private val context: CoroutineContext, private val appConfi
   ) {
     textView.viewScope().launch {
       try {
-        val precomputedTextCompat =
-          withContext(context) { precomputedText(textView, markdown, appConfig) }
+        val precomputedTextCompat = withContext(context) { precomputedText(textView, markdown) }
         if (precomputedTextCompat != null) {
           applyText(textView, precomputedTextCompat, bufferType, onComplete)
         } else {
@@ -65,37 +61,19 @@ internal constructor(private val context: CoroutineContext, private val appConfi
     /** @param context for background execution of text pre-computation */
     fun create(
       context: CoroutineContext = Dispatchers.Default,
-      appConfig: AppConfig
     ): PrecomputedTextSetterCompat {
-      return PrecomputedTextSetterCompat(context, appConfig)
+      return PrecomputedTextSetterCompat(context)
     }
 
     @SuppressLint("NewApi") // False positive
     private fun precomputedText(
       textView: TextView,
       spanned: Spanned,
-      appConfig: AppConfig
     ): PrecomputedTextCompat? {
-      val params: PrecomputedTextCompat.Params
 
-      if (appConfig.sdkInt >= Build.VERSION_CODES.P) {
-        // use native parameters on P
-        params = PrecomputedTextCompat.Params(textView.textMetricsParams)
-      } else {
-        val builder = PrecomputedTextCompat.Params.Builder(textView.paint)
-
-        // please note that text-direction initialization is omitted
-        // by default it will be determined by the first locale-specific character
-
-        if (appConfig.sdkInt >= Build.VERSION_CODES.M) {
-          // another miss on API surface, this can easily be done by the compat class itself
-          builder
-            .setBreakStrategy(textView.breakStrategy)
-            .setHyphenationFrequency(textView.hyphenationFrequency)
-        }
-
-        params = builder.build()
-      }
+      // use native parameters on P
+      val params: PrecomputedTextCompat.Params =
+        PrecomputedTextCompat.Params(textView.textMetricsParams)
 
       return PrecomputedTextCompat.create(spanned, params)
     }

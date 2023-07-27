@@ -43,13 +43,13 @@ libraries, patterns, API quirks, and more. It's been a very fun project to spike
 ## Technologies
 
 - Kotlin
-- RxJava 3/AutoDispose
+- Kotlin Coroutines
 - Debugging tooling as a first class citizen in the debug build
 - Leak Canary, Scalpel, debug drawer, Flipper, bug reporting, the works
 - AndroidX/Jetpack
 - Dagger 2 + Anvil
 - One of the more interesting parts of CatchUp is that its service architecture is a Dagger-powered plugin system
-- Room
+- SqlDelight
 - Firebase
 - Coil
 - Apollo GraphQL

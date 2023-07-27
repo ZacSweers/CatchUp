@@ -83,15 +83,15 @@ data class ImageViewerScreen(
   ) : CircuitUiState
 
   sealed interface Event : CircuitUiEvent {
-    object Close : Event
+    data object Close : Event
 
-    object NoOp : Event // Weird but necessary because of the reuse in bottom sheet
+    data object NoOp : Event // Weird but necessary because of the reuse in bottom sheet
 
-    object ShareImage : Event
+    data object ShareImage : Event
 
-    object CopyImage : Event
+    data object CopyImage : Event
 
-    object SaveImage : Event
+    data object SaveImage : Event
 
     data class OpenInBrowser(val url: String) : Event
   }
@@ -144,7 +144,6 @@ constructor(
 @CircuitInject(ImageViewerScreen::class, AppScope::class)
 @Composable
 fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
-  val sink = state.eventSink
   var showChrome by remember { mutableStateOf(true) }
   val systemUiController = rememberSystemUiController()
   systemUiController.isSystemBarsVisible = showChrome
@@ -173,7 +172,7 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
 
         val dismissState = rememberFlickToDismissState()
         if (dismissState.gestureState is Dismissed) {
-          sink(ImageViewerScreen.Event.Close)
+          state.eventSink(ImageViewerScreen.Event.Close)
         }
         // TODO bind scrim with flick. animate scrim out after flick finishes? Or with flick?
         FlickToDismiss(state = dismissState) {
@@ -192,7 +191,7 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxSize(),
             state = imageState,
             onClick = { showChrome = !showChrome },
-            onLongClick = { launchShareSheet(scope, overlayHost, state, sink) },
+            onLongClick = { launchShareSheet(scope, overlayHost, state) },
           )
         }
 
@@ -206,7 +205,7 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
             Modifier.align(Alignment.TopStart).padding(16.dp).statusBarsPadding(),
             NavButtonType.CLOSE,
           ) {
-            sink(ImageViewerScreen.Event.Close)
+            state.eventSink(ImageViewerScreen.Event.Close)
           }
         }
       }
@@ -218,7 +217,6 @@ private fun launchShareSheet(
   scope: CoroutineScope,
   overlayHost: OverlayHost,
   state: ImageViewerScreen.State,
-  sink: (ImageViewerScreen.Event) -> Unit,
 ) =
   scope.launch {
     val result =
@@ -260,7 +258,7 @@ private fun launchShareSheet(
           }
         }
       )
-    sink(result)
+    state.eventSink(result)
   }
 
 // TODO

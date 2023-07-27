@@ -35,7 +35,6 @@ android {
 
 apollo {
   service("github") {
-    @Suppress("UnstableApiUsage")
     customScalarsMapping.set(mapOf(
         "DateTime" to "kotlinx.datetime.Instant",
         "URI" to "okhttp3.HttpUrl"
@@ -53,9 +52,13 @@ slack {
 
 dependencies {
   api(project(":service-api"))
-  api(libs.androidx.annotations)
+  api(libs.apollo.runtime)
   api(libs.dagger.runtime)
-  api(libs.rx.java)
+  api(libs.kotlin.datetime)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
+  api(projects.libraries.appconfig)
+  api(projects.libraries.di)
 
   implementation(project(":libraries:gemoji"))
   implementation(project(":libraries:retrofitconverters"))
@@ -63,11 +66,10 @@ dependencies {
   implementation(libs.apollo.httpcache)
   // Apollo
   implementation(libs.apollo.runtime)
-  implementation(libs.kotlin.coroutinesRx)
   implementation(libs.kotlin.datetime)
   implementation(libs.misc.jsoup)
+  implementation(libs.misc.timber)
   implementation(libs.okhttp.core)
-  implementation(libs.retrofit.rxJava3)
 
   compileOnly(libs.misc.javaxInject)
 }

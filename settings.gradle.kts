@@ -228,7 +228,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise") version "3.13.4"
+  id("com.gradle.enterprise") version "3.14.1"
   id("com.dropbox.focus") version "0.5.1"
 }
 
@@ -254,6 +254,15 @@ configureIncludedBuild("sgp") { path ->
       substitute(module("com.slack.gradle:sgp")).using(project(":slack-plugin"))
       substitute(module("com.slack.gradle:sgp-agp-handler-api"))
         .using(project(":agp-handlers:agp-handler-api"))
+    }
+  }
+}
+
+// See comments on systemProp.slack.include-build.dagp property in gradle.properties
+configureIncludedBuild("dagp") { path ->
+  includeBuild(path) {
+    dependencySubstitution {
+      substitute(module("com.autonomousapps:dependency-analysis-gradle-plugin")).using(project(":"))
     }
   }
 }

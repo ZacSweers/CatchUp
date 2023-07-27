@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS gemoji (alias TEXT NOT NULL, emoji TEXT, PRIMARY KEY(alias));
+
+getEmoji:
+SELECT emoji FROM gemoji WHERE alias = ?;

@@ -80,7 +80,6 @@ constructor(
 @CircuitInject(ChangelogScreen::class, AppScope::class)
 @Composable
 fun Changelog(state: ChangelogScreen.State, modifier: Modifier = Modifier) {
-  val sink = state.eventSink
   LazyColumn(modifier = modifier) {
     val items = state.items
     if (items == null) {
@@ -107,7 +106,7 @@ fun Changelog(state: ChangelogScreen.State, modifier: Modifier = Modifier) {
         val item = items[index]
         ClickableItem(
           modifier = Modifier.animateItemPlacement(),
-          onClick = { sink(ChangelogScreen.Event.Click(item.clickUrl!!)) },
+          onClick = { state.eventSink(ChangelogScreen.Event.Click(item.clickUrl!!)) },
         ) {
           TextItem(item, colorResource(R.color.colorAccent))
         }

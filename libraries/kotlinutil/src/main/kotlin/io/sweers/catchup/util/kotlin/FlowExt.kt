@@ -15,11 +15,23 @@
  */
 package io.sweers.catchup.util.kotlin
 
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.merge
+
+@OptIn(DelicateCoroutinesApi::class)
+fun <E> SendChannel<E>.safeOffer(value: E) =
+  !isClosedForSend &&
+    try {
+      trySend(value).isSuccess
+    } catch (t: Throwable) {
+      // Ignore all
+      false
+    }
 
 suspend fun <V, K> Flow<V>.groupBy(selector: (V) -> K): Flow<Pair<K, List<V>>> = flow {
   val map = mutableMapOf<K, MutableList<V>>()

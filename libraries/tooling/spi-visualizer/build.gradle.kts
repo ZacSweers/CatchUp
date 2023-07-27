@@ -1,14 +1,15 @@
 plugins {
   `java-library`
   alias(libs.plugins.sgp.base)
+  alias(libs.plugins.ksp)
 }
 
 dependencies {
-  implementation(libs.dagger.runtime)
+  ksp(libs.autoService.ksp)
+
   implementation(libs.dagger.spi)
   implementation(libs.javapoet)
+  implementation(libs.misc.debug.guava)
 
-  compileOnly(libs.auto.service)
-
-  annotationProcessor(libs.auto.service)
+  compileOnly(libs.autoService.annotations)
 }

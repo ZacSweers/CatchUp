@@ -35,9 +35,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.appconfig.AppConfig
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener
@@ -45,8 +42,6 @@ import io.sweers.catchup.ui.bugreport.BugReportView.Report
 import io.sweers.catchup.util.buildMarkdown
 import java.io.File
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -77,20 +72,22 @@ constructor(
   }
 
   override suspend fun onBugReportSubmit(context: Context, report: Report) {
-    if (report.includeLogs) {
-      try {
-        val logs = withContext(Dispatchers.IO) { lumberYard.save() }
-        submitReport(context, report, logs)
-      } catch (e: Exception) {
-        Toast.makeText(context, "Couldn't attach the logs.", Toast.LENGTH_SHORT).show()
+    withContext(Dispatchers.IO) {
+      if (report.includeLogs) {
+        try {
+          val logs = lumberYard.save()
+          submitReport(context, report, logs)
+        } catch (e: Exception) {
+          Toast.makeText(context, "Couldn't attach the logs.", Toast.LENGTH_SHORT).show()
+          submitReport(context, report, null)
+        }
+      } else {
         submitReport(context, report, null)
       }
-    } else {
-      submitReport(context, report, null)
     }
   }
 
-  private fun submitReport(
+  private suspend fun submitReport(
     context: Context,
     report: Report,
     logs: File?,
@@ -143,18 +140,21 @@ constructor(
   }
 
   @SuppressLint("NewApi") // False positive
-  private fun uploadIssue(context: Context, report: Report, body: StringBuilder, logs: File?) {
+  private suspend fun uploadIssue(
+    context: Context,
+    report: Report,
+    body: StringBuilder,
+    logs: File?
+  ) {
     val channelId = "bugreports"
     val notificationManager =
       context.getSystemService<NotificationManager>()
         ?: throw IllegalStateException("No notificationmanager?")
-    if (appConfig.sdkInt >= Build.VERSION_CODES.O) {
-      val channels = notificationManager.notificationChannels
-      if (channels.none { it.id == channelId }) {
-        NotificationChannel(channelId, "Bug reports", NotificationManager.IMPORTANCE_HIGH)
-          .apply { description = "This is the channel for uploading bug reports. Debug only." }
-          .let { notificationManager.createNotificationChannel(it) }
-      }
+    val channels = notificationManager.notificationChannels
+    if (channels.none { it.id == channelId }) {
+      NotificationChannel(channelId, "Bug reports", NotificationManager.IMPORTANCE_HIGH)
+        .apply { description = "This is the channel for uploading bug reports. Debug only." }
+        .let { notificationManager.createNotificationChannel(it) }
     }
 
     val notificationId = context.getString(R.string.app_name).hashCode()
@@ -171,7 +171,7 @@ constructor(
       }
 
     val finalScreenshot = screenshot
-    val screenshotStringStream =
+    val screenshotText =
       if (report.includeScreenshot && finalScreenshot != null) {
         imgurUploadApi
           .postImage(
@@ -181,88 +181,86 @@ constructor(
               finalScreenshot.asRequestBody("image/*".toMediaTypeOrNull())
             )
           )
-          .map { "\n\n!${buildMarkdown { link(it, "Screenshot") }}" }
-      } else Single.just("\n\nNo screenshot provided")
+          .let { "\n\n!${buildMarkdown { link(it, "Screenshot") }}" }
+      } else {
+        "\n\nNo screenshot provided"
+      }
 
-    // TODO change to coroutines
-    val disposable =
-      screenshotStringStream
-        .map { screenshotText ->
-          body.append(screenshotText)
-          val screenshotMarkdown = buildMarkdown {
-            newline(2)
-            h4("Logs")
-            if (report.includeLogs && logs != null) {
-              codeBlock(logs.readText())
-            } else {
-              text("No logs provided")
-            }
-          }
-          body.append(screenshotMarkdown)
-          body.toString()
-        }
-        .flatMap { bodyText -> gitHubIssueApi.createIssue(GitHubIssue(report.title, bodyText)) }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnSubscribe { notificationManager.notify(notificationId, notificationBuilder.build()) }
-        .doOnDispose {
-          NotificationCompat.Builder(context, channelId)
-            .apply {
-              setSmallIcon(R.drawable.ic_error_black_24dp)
-              color = ContextCompat.getColor(context, R.color.colorAccent)
-              setContentTitle("Upload canceled")
-              setContentInfo("Probably because the activity was killed ¯\\_(ツ)_/¯")
-              setAutoCancel(true)
-            }
-            .let { notificationManager.notify(notificationId, it.build()) }
-        }
-        .subscribe { issueUrl: String?, error: Throwable? ->
-          issueUrl?.let {
-            NotificationCompat.Builder(context, channelId)
-              .apply {
-                setSmallIcon(R.drawable.ic_check_black_24dp)
-                color = ContextCompat.getColor(context, R.color.colorAccent)
-                setContentTitle("Bug report successfully uploaded")
-                setContentText(it)
-                val uri = it.toUri()
-                val resultIntent = Intent(Intent.ACTION_VIEW, uri)
-                setContentIntent(
-                  PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE)
-                )
-                setAutoCancel(true)
-
-                val shareIntent = Intent(Intent.ACTION_SEND, uri)
-                shareIntent.setDataAndType(null, "text/plain")
-                shareIntent.putExtra(Intent.EXTRA_TEXT, it)
-                shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-                addAction(
-                  NotificationCompat.Action(
-                    R.drawable.ic_share_black_24dp,
-                    "Share link",
-                    PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE)
-                  )
-                )
-              }
-              .let { notificationManager.notify(notificationId, it.build()) }
-          }
-          error?.let {
-            NotificationCompat.Builder(context, channelId)
-              .apply {
-                setSmallIcon(R.drawable.ic_error_black_24dp)
-                color = ContextCompat.getColor(context, R.color.colorAccent)
-                setContentTitle("Upload failed")
-                setContentInfo(
-                  "Bug report upload failed. Please try again. If problem persists, take consolation in knowing you got farther than I did."
-                )
-                setAutoCancel(true)
-              }
-              .let { notificationManager.notify(notificationId, it.build()) }
+    val bodyText =
+      with(body) {
+        append(screenshotText)
+        val screenshotMarkdown = buildMarkdown {
+          newline(2)
+          h4("Logs")
+          if (report.includeLogs && logs != null) {
+            codeBlock(logs.readText())
+          } else {
+            text("No logs provided")
           }
         }
+        append(screenshotMarkdown)
+        toString()
+      }
 
-    activity.lifecycleScope.launch {
-      suspendCancellableCoroutine { it.invokeOnCancellation { disposable.dispose() } }
+    try {
+      withContext(Dispatchers.Main) {
+        notificationManager.notify(notificationId, notificationBuilder.build())
+      }
+      // TODO change to eithernet
+      val issueUrl = gitHubIssueApi.createIssue(GitHubIssue(report.title, bodyText))
+      NotificationCompat.Builder(context, channelId)
+        .apply {
+          setSmallIcon(R.drawable.ic_check_black_24dp)
+          color = ContextCompat.getColor(context, R.color.colorAccent)
+          setContentTitle("Bug report successfully uploaded")
+          setContentText(issueUrl)
+          val uri = issueUrl.toUri()
+          val resultIntent = Intent(Intent.ACTION_VIEW, uri)
+          setContentIntent(
+            PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE)
+          )
+          setAutoCancel(true)
+
+          val shareIntent = Intent(Intent.ACTION_SEND, uri)
+          shareIntent.setDataAndType(null, "text/plain")
+          shareIntent.putExtra(Intent.EXTRA_TEXT, issueUrl)
+          shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+          addAction(
+            NotificationCompat.Action(
+              R.drawable.ic_share_black_24dp,
+              "Share link",
+              PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE)
+            )
+          )
+        }
+        .let { notificationManager.notify(notificationId, it.build()) }
+    } catch (e: Exception) {
+      withContext(Dispatchers.Main) {
+        NotificationCompat.Builder(context, channelId)
+          .apply {
+            setSmallIcon(R.drawable.ic_error_black_24dp)
+            color = ContextCompat.getColor(context, R.color.colorAccent)
+            setContentTitle("Upload failed")
+            setContentInfo(
+              "Bug report upload failed. Please try again. If problem persists, take consolation in knowing you got farther than I did."
+            )
+            setAutoCancel(true)
+          }
+          .let { notificationManager.notify(notificationId, it.build()) }
+      }
+    } finally {
+      withContext(Dispatchers.Main) {
+        NotificationCompat.Builder(context, channelId)
+          .apply {
+            setSmallIcon(R.drawable.ic_error_black_24dp)
+            color = ContextCompat.getColor(context, R.color.colorAccent)
+            setContentTitle("Upload canceled")
+            setContentInfo("Probably because the activity was killed ¯\\_(ツ)_/¯")
+            setAutoCancel(true)
+          }
+          .let { notificationManager.notify(notificationId, it.build()) }
+      }
     }
   }
 

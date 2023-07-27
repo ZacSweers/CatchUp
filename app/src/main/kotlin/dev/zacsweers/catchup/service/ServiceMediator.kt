@@ -5,23 +5,20 @@ import androidx.paging.LoadType
 import androidx.paging.LoadType.REFRESH
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import androidx.room.withTransaction
+import com.apollographql.apollo3.exception.ApolloException
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.reactivex.rxjava3.core.Flowable
-import io.sweers.catchup.data.CatchUpDatabase
-import io.sweers.catchup.data.OperationJournalEntry
-import io.sweers.catchup.data.RemoteKeyDao
-import io.sweers.catchup.data.ServiceDao
-import io.sweers.catchup.data.ServiceRemoteKey
 import io.sweers.catchup.data.lastUpdated
-import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.Service
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
@@ -32,10 +29,8 @@ class ServiceMediator
 constructor(
   @Assisted private val service: Service,
   private val catchUpDatabase: CatchUpDatabase,
-  private val serviceDao: ServiceDao,
-  private val remoteKeyDao: RemoteKeyDao,
   private val contentTypeChecker: ContentTypeChecker
-) : RemoteMediator<Int, CatchUpItem>() {
+) : RemoteMediator<Int, CatchUpDbItem>() {
 
   @AssistedFactory
   fun interface Factory {
@@ -46,7 +41,7 @@ constructor(
 
   override suspend fun load(
     loadType: LoadType,
-    state: PagingState<Int, CatchUpItem>
+    state: PagingState<Int, CatchUpDbItem>
   ): MediatorResult {
     Timber.tag("ServiceMediator").d("Loading $serviceId ($loadType)")
     return try {
@@ -76,7 +71,11 @@ constructor(
             // ServiceRemoteKey is a wrapper object we use to keep track of page keys we
             // receive from the service to fetch the next or previous page.
             val remoteKey =
-              catchUpDatabase.withTransaction { remoteKeyDao.remoteKeyByItem(serviceId) }
+              withContext(IO) {
+                catchUpDatabase.transactionWithResult {
+                  catchUpDatabase.serviceQueries.remoteKeyByItem(serviceId).executeAsOne()
+                }
+              }
 
             // We must explicitly check if the page key is null when appending, since the
             // Reddit API informs the end of the list by returning null for page key, but
@@ -116,39 +115,43 @@ constructor(
             )
           val items = initialResult.items
           // Remap items with content types if they're not set.
-          // Using RxJava's concatMapEager here because there's no alternative in Flow.
+          // TODO concatMapEager?
           initialResult.copy(
             items =
-              Flowable.fromIterable(items)
-                .concatMapEager { item ->
+              items
+                .asFlow()
+                .map { item ->
                   item.clickUrl?.let { clickUrl ->
                     if (item.contentType == null) {
-                      return@concatMapEager Flowable.just(
-                        item.copy(contentType = contentTypeChecker.contentType(clickUrl))
-                      )
+                      return@map item.copy(contentType = contentTypeChecker.contentType(clickUrl))
                     }
                   }
-                  Flowable.just(item)
+                  item
                 }
                 .toList()
-                .blockingGet()
           )
         }
 
       Timber.tag("ServiceMediator").d("Updating DB $serviceId with key '$loadKey'")
-      catchUpDatabase.withTransaction {
-        if (loadType == REFRESH) {
-          Timber.tag("ServiceMediator").d("Clearing DB $serviceId")
-          serviceDao.deleteByService(serviceId)
-          serviceDao.deleteOperationsByService(serviceId)
-          remoteKeyDao.deleteByService(serviceId)
-        }
+      withContext(IO) {
+        catchUpDatabase.transaction {
+          if (loadType == REFRESH) {
+            Timber.tag("ServiceMediator").d("Clearing DB $serviceId")
+            catchUpDatabase.serviceQueries.deleteItemByService(serviceId)
+            catchUpDatabase.serviceQueries.deleteOperationsByService(serviceId)
+            catchUpDatabase.serviceQueries.deleteRemoteKeyByService(serviceId)
+          }
 
-        remoteKeyDao.insert(ServiceRemoteKey(serviceId, result.nextPageKey))
-        serviceDao.insertAll(result.items)
-        serviceDao.putOperation(
-          OperationJournalEntry(System.currentTimeMillis(), serviceId, "insert")
-        )
+          catchUpDatabase.serviceQueries.insertRemoteKey(serviceId, result.nextPageKey)
+          for (item in result.items) {
+            catchUpDatabase.serviceQueries.insert(item.toCatchUpDbItem())
+          }
+          catchUpDatabase.serviceQueries.putOperation(
+            System.currentTimeMillis(),
+            serviceId,
+            "insert"
+          )
+        }
       }
 
       MediatorResult.Success(
@@ -158,12 +161,18 @@ constructor(
       MediatorResult.Error(e)
     } catch (e: HttpException) {
       MediatorResult.Error(e)
+    } catch (e: ApolloException) {
+      // Annoying that this is a separate exception type.
+      MediatorResult.Error(e)
     }
   }
 
   override suspend fun initialize(): InitializeAction {
     val cacheTimeout = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
-    val lastUpdate = catchUpDatabase.withTransaction { serviceDao.lastUpdated(serviceId) }
+    val lastUpdate =
+      withContext(IO) {
+        catchUpDatabase.transactionWithResult { catchUpDatabase.lastUpdated(serviceId) }
+      }
     return if (lastUpdate != null && (System.currentTimeMillis() - lastUpdate >= cacheTimeout)) {
       // Cached data is up-to-date, so there is no need to re-fetch
       // from the network.

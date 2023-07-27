@@ -35,15 +35,16 @@ slack {
 
 dependencies {
   api(project(":service-api"))
-  api(libs.androidx.annotations)
   api(libs.dagger.runtime)
-  api(libs.rx.java)
+  api(libs.kotlin.datetime)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
+  api(projects.libraries.appconfig)
+  api(projects.libraries.di)
 
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
   implementation(libs.kotlin.datetime)
   implementation(libs.misc.jsoup)
   implementation(libs.okhttp.core)
-  implementation(libs.retrofit.core)
-  implementation(libs.retrofit.rxJava3)
 }

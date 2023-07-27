@@ -18,18 +18,33 @@ plugins {
   alias(libs.plugins.sgp.base)
   id("com.android.library")
   kotlin("android")
+  alias(libs.plugins.apollo)
 }
 
 android {
   defaultConfig {
-    buildConfigField("String", "PRODUCT_HUNT_DEVELOPER_TOKEN",
-        "\"${project.properties["catchup_product_hunt_developer_token"]}\"")
+    buildConfigField("String", "PRODUCT_HUNT_CLIENT_ID",
+        "\"${project.properties["catchup_product_hunt_client_id"]}\"")
+    buildConfigField("String", "PRODUCT_HUNT_CLIENT_SECRET",
+        "\"${project.properties["catchup_product_hunt_client_secret"]}\"")
   }
   buildFeatures {
     buildConfig = true
     androidResources = true
   }
   namespace = "io.sweers.catchup.service.producthunt"
+}
+
+apollo {
+  // https://api.producthunt.com/v2/api/graphql
+  service("producthunt") {
+    customScalarsMapping.set(mapOf(
+      "DateTime" to "kotlinx.datetime.Instant",
+//      "URI" to "okhttp3.HttpUrl"
+    ))
+    packageName.set("io.sweers.catchup.service.producthunt")
+    schemaFile.set(file("src/main/graphql/io/sweers/catchup/service/producthunt/schema.graphqls"))
+  }
 }
 
 slack {
@@ -41,17 +56,18 @@ slack {
 
 dependencies {
   api(project(":service-api"))
-  api(libs.androidx.annotations)
+  api(libs.apollo.runtime)
   api(libs.dagger.runtime)
-  api(libs.rx.java)
+  api(libs.kotlin.datetime)
+  api(libs.moshi.core)
+  api(libs.okhttp.core)
+  api(projects.libraries.auth)
+  api(projects.libraries.di)
 
   implementation(project(":libraries:util"))
+  implementation(libs.androidx.datastore.preferences)
+  implementation(libs.apollo.httpcache)
   implementation(libs.kotlin.datetime)
-  implementation(libs.misc.moshiLazyAdapters)
   implementation(libs.misc.okio)
-  implementation(libs.moshi.core)
   implementation(libs.okhttp.core)
-  implementation(libs.retrofit.core)
-  implementation(libs.retrofit.moshi)
-  implementation(libs.retrofit.rxJava3)
 }

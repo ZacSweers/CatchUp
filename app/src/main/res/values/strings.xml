@@ -46,6 +46,8 @@
   <string name="pref_dark_theme_enabled">Dark theme is enabled</string>
   <string name="pref_dark_theme_disabled">Dark theme is disabled, light theme is the default.</string>
   <string name="pref_dark_theme_disabled_auto">Dark theme is disabled because auto-theme is enabled.</string>
+  <string name="pref_dynamic_theme_title">Dynamic Theme</string>
+  <string name="pref_dynamic_theme_summary">Enables dynamic Material You theming.</string>
   <string name="pref_auto_set_theme">Automatically set theme</string>
   <string name="pref_auto_set_theme_summary">Sets the theme automatically via depending on the time of day (via DayNight).</string>
   <string name="changes">Changelog</string>

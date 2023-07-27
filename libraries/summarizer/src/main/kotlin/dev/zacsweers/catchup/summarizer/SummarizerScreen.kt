@@ -134,7 +134,7 @@ fun Summarizer(state: SummarizerScreen.State, modifier: Modifier = Modifier) {
               style = MaterialTheme.typography.bodyLarge
             )
             Spacer(Modifier.height(24.dp))
-            Text("Powered by ChatGPT", style = MaterialTheme.typography.labelMedium)
+            Text("Generated with ChatGPT", style = MaterialTheme.typography.labelMedium)
           }
         }
       }

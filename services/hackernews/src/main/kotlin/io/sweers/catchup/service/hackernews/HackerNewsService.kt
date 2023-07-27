@@ -30,9 +30,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.di.AppScope
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.core.SingleEmitter
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
@@ -46,10 +43,23 @@ import io.sweers.catchup.service.api.TextService
 import io.sweers.catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import io.sweers.catchup.util.kotlin.safeOffer
 import javax.inject.Inject
 import javax.inject.Qualifier
+import kotlin.coroutines.resume
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.rx3.asFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 @Qualifier private annotation class InternalApi
@@ -67,64 +77,62 @@ constructor(
 
   override fun meta() = serviceMeta
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   override suspend fun fetch(request: DataRequest): DataResult {
     val page = request.pageKey!!.toInt()
     val itemsPerPage = request.limit
-    return Single.create { emitter: SingleEmitter<DataSnapshot> ->
+    return callbackFlow {
         val listener =
           object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-              emitter.onSuccess(dataSnapshot)
+              safeOffer(dataSnapshot)
             }
 
             override fun onCancelled(firebaseError: DatabaseError) {
               d { "${firebaseError.code}" }
-              emitter.onError(firebaseError.toException())
+              cancel("Firebase error", firebaseError.toException())
             }
           }
 
         val ref = database.get().getReference("v0/topstories").apply { keepSynced(true) }
-        emitter.setCancellable { ref.removeEventListener(listener) }
         ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
       }
-      .flattenAsObservable { it.children }
-      .skip(((page + 1) * itemsPerPage - itemsPerPage).toLong())
-      .take(itemsPerPage.toLong())
+      .flatMapConcat { it.children.asFlow() }
+      .drop((page + 1) * itemsPerPage - itemsPerPage)
+      .take(itemsPerPage)
       .map { d -> d.value as Long }
-      .concatMapEager { id ->
-        Observable.create<DataSnapshot> { emitter ->
+      // TODO concatMapEager?
+      .map { id ->
+        suspendCancellableCoroutine { cont ->
           val ref = database.get().getReference("v0/item/$id")
           val listener =
             object : ValueEventListener {
               override fun onDataChange(dataSnapshot: DataSnapshot) {
-                emitter.onNext(dataSnapshot)
-                emitter.onComplete()
+                cont.resume(dataSnapshot)
               }
 
               override fun onCancelled(firebaseError: DatabaseError) {
                 d { "${firebaseError.code}" }
-                emitter.onError(firebaseError.toException())
+                cont.cancel(firebaseError.toException())
               }
             }
-          emitter.setCancellable { ref.removeEventListener(listener) }
+          cont.invokeOnCancellation { ref.removeEventListener(listener) }
           ref.addValueEventListener(listener)
         }
       }
       .filter { it.hasChild("title") } // Some HN items are just empty junk
       .map { HackerNewsStory.create(it) }
-      .onErrorResumeNext { t: Throwable ->
+      .catch { t ->
         if (t is IllegalArgumentException) {
           // Firebase didn't init
-          Observable.error(
-            ServiceException(
-              "Firebase wasn't able to initialize, likely due to missing credentials."
-            )
+          throw ServiceException(
+            "Firebase wasn't able to initialize, likely due to missing credentials."
           )
         } else {
-          Observable.error(t)
+          throw t
         }
       }
-      .asFlow()
       .toList()
       .mapIndexed { index, it ->
         val url = it.url

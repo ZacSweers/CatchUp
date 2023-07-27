@@ -19,6 +19,7 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import androidx.compose.animation.core.AnimationConstants
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import coil.Coil
@@ -113,10 +114,9 @@ abstract class ApplicationModule {
     internal fun markwon(
       @LazyDelegate imageLoader: ImageLoader,
       @ApplicationContext context: Context, // TODO should use themed one from activity?
-      appConfig: AppConfig
     ): Markwon {
       return Markwon.builder(context)
-        .textSetter(PrecomputedTextSetterCompat.create(appConfig = appConfig))
+        .textSetter(PrecomputedTextSetterCompat.create())
         .usePlugins(
           listOf(
             MovementMethodPlugin.create(LinkTouchMovementMethod()),
@@ -218,7 +218,7 @@ abstract class ApplicationModule {
         // Hardware bitmaps don't work with the saturation effect or palette extraction
         allowHardware(false)
         allowRgb565(isLowRamDevice)
-        crossfade(300)
+        crossfade(AnimationConstants.DefaultDurationMillis)
 
         components {
           add(ImageDecoderDecoder.Factory())

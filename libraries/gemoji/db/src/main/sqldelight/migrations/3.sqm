@@ -1,0 +1,3 @@
+-- Never actually used but necessary for versioning
+DROP TABLE IF EXISTS gemoji;
+CREATE TABLE gemoji (alias TEXT NOT NULL, emoji TEXT, PRIMARY KEY(alias));

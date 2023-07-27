@@ -15,6 +15,8 @@
  */
 package dev.zacsweers.catchup.appconfig
 
+import androidx.annotation.ChecksSdkIntAtLeast
+
 interface AppConfig {
   val isDebug: Boolean
   val applicationId: String
@@ -59,4 +61,19 @@ fun <T> AppConfig.requireMetadata(key: Any): T {
 @Suppress("UNCHECKED_CAST")
 fun <T> AppConfig.readMetadata(key: Any): T? {
   return metadata[key] as T?
+}
+
+@ChecksSdkIntAtLeast(parameter = 1) // Parameter 1 because the receiver is parameter 0
+fun AppConfig.isSdkAtLeast(version: Int): Boolean {
+  return sdkInt >= version
+}
+
+// Parameter 1 because the receiver is parameter 0
+@ChecksSdkIntAtLeast(parameter = 1, lambda = 2)
+inline fun <T> AppConfig.sdk(level: Int, func: () -> T): T? {
+  return if (sdkInt >= level) {
+    func()
+  } else {
+    null
+  }
 }
