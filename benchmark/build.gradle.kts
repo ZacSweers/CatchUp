@@ -11,11 +11,12 @@ plugins {
 // TODO fix these in SGP
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(19))
+    languageVersion.set(JavaLanguageVersion.of(libs.versions.jdk.get().toInt()))
   }
 }
+
 tasks.withType<JavaCompile>().configureEach {
-  options.release.set(11)
+  options.release.set(libs.versions.jvmTarget.get().toInt())
 }
 
 android {
@@ -37,7 +38,6 @@ android {
 
   targetProjectPath = ":app"
   experimentalProperties["android.experimental.r8.dex-startup-optimization"] = true
-  experimentalProperties["android.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules"] = "baselineProfile"
 }
 
 baselineProfile {

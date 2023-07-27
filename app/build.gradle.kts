@@ -102,19 +102,13 @@ android {
         "\"${project.properties["catchup_imgur_access_token"]}\""
       )
     }
-    val releaseBuildType = getByName("release") {
+    getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY", "\"${properties["catchup_bugsnag_key"]}\"")
       manifestPlaceholders["BUGSNAG_API_KEY"] = properties["catchup_bugsnag_key"].toString()
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       proguardFiles += file("proguard-rules.pro")
       isMinifyEnabled = true
       isShrinkResources = true
-    }
-    create("benchmark") {
-      initWith(releaseBuildType)
-      signingConfig = signingConfigs.getByName("debug")
-      matchingFallbacks += listOf("release")
-      isDebuggable = false
     }
   }
   splits {

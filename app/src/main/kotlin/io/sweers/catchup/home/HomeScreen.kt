@@ -1,8 +1,8 @@
 package io.sweers.catchup.home
 
 import android.content.res.Configuration
-import androidx.annotation.ColorRes
 import androidx.activity.compose.ReportDrawnWhen
+import androidx.annotation.ColorRes
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi

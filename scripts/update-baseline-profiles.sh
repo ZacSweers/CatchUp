@@ -7,4 +7,4 @@ if [[ "${CI:-}" == "true" ]]; then
   gpu_arg="-Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect"
 fi
 
-./gradlew cleanManagedDevices --unused-only && ./gradlew generateReleaseBaselineProfile $gpu_arg
+./gradlew cleanManagedDevices && ./gradlew generateReleaseBaselineProfile $gpu_arg
