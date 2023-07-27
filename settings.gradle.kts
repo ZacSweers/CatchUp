@@ -53,12 +53,6 @@ pluginManagement {
     }
 
     // Maven central
-    // Specifically Google's maven central mirror:
-    // https://maven-central.storage.googleapis.com/index.html
-    maven("https://maven-central.storage-download.googleapis.com/maven2/") {
-      name = "Maven Central (GCP Mirror)"
-    }
-    // Google's mirror is sometimes slow to index new releases, so check central just in case!
     mavenCentral()
 
     // Google/Firebase/GMS/Androidx libraries
@@ -171,13 +165,6 @@ dependencyResolutionManagement {
       mavenLocal()
     }
 
-    // Maven central
-    // Specifically Google's maven central mirror:
-    // https://maven-central.storage.googleapis.com/index.html
-    maven("https://maven-central.storage-download.googleapis.com/maven2/") {
-      name = "Maven Central (GCP Mirror)"
-    }
-    // Google's mirror is sometimes slow to index new releases, so check central just in case!
     mavenCentral()
 
     // Google/Firebase/GMS/Androidx libraries
