@@ -460,10 +460,17 @@ androidComponents {
   }
 }
 
+baselineProfile {
+  // TODO enable this only when cutting a new release?
+//  automaticGenerationDuringBuild = true
+  mergeIntoMain = true
+  saveInSrc = true
+  dexLayoutOptimization = true
+  from(projects.benchmark.dependencyProject)
+}
+
 dependencies {
   ksp(libs.circuit.codegen)
-
-  baselineProfile(projects.benchmark)
 
   implementation(libs.androidx.profileinstaller)
   implementation(project(":libraries:appconfig"))
