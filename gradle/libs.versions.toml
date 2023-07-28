@@ -124,7 +124,7 @@ androidx-window = { module = "androidx.window:window", version = "1.2.0-beta01" 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.3.1"
 androidx-test-espresso-core = "androidx.test.espresso:espresso-core:3.5.1"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.1.5"
-androidx-test-monitor = "androidx.test:monitor:1.6.1"
+androidx-test-monitor = "androidx.test:monitor:1.7.0-alpha01"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0-alpha03"
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
