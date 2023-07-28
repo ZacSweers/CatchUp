@@ -472,7 +472,6 @@ baselineProfile {
 dependencies {
   ksp(libs.circuit.codegen)
 
-  implementation(libs.androidx.profileinstaller)
   implementation(project(":libraries:appconfig"))
   implementation(project(":libraries:base-ui"))
   implementation(project(":libraries:compose-extensions"))
@@ -518,6 +517,7 @@ dependencies {
   implementation(libs.androidx.palette)
   implementation(libs.androidx.preference)
   implementation(libs.androidx.preferenceKtx)
+  implementation(libs.androidx.profileinstaller)
   implementation(libs.androidx.window)
   implementation(libs.apollo.httpcache)
   implementation(libs.apollo.normalizedCache)
