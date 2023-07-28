@@ -61,7 +61,7 @@ class MainActivity
 constructor(
   private val customTab: CustomTabActivityHelper,
   private val linkManager: LinkManager,
-  private val circuitConfig: Circuit,
+  private val circuit: Circuit,
   private val catchUpPreferences: CatchUpPreferences,
   private val rootContent: RootContent,
   appConfig: AppConfig,
@@ -98,7 +98,7 @@ constructor(
         )
       }
       CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
-        CircuitCompositionLocals(circuitConfig) {
+        CircuitCompositionLocals(circuit) {
           ContentWithOverlays {
             val backstack = rememberSaveableBackStack { push(HomeScreen) }
             val navigator = rememberCircuitNavigator(backstack)
