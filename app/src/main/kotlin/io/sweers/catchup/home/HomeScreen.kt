@@ -1,6 +1,7 @@
 package io.sweers.catchup.home
 
 import android.content.res.Configuration
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.annotation.ColorRes
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
@@ -334,6 +335,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
           )
         }
       }
+      var contentComposed by remember { mutableStateOf(false) }
 
       HorizontalPager(
         modifier = Modifier.weight(1f),
@@ -342,6 +344,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
         state = pagerState,
         verticalAlignment = Alignment.Top,
       ) { page ->
+        contentComposed = true
         CompositionLocalProvider(
           LocalScrollToTop provides scrollToTop.takeIf { pagerState.currentPage == page },
           LocalServiceThemeColor provides colorCache[page],
@@ -352,6 +355,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
           )
         }
       }
+      ReportDrawnWhen { contentComposed }
     }
   }
 }

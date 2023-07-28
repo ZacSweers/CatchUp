@@ -1,3 +1,4 @@
 **/schemas/**/*.json linguist-generated=true
 scripts/gemoji.json linguist-generated=true
 **/schema.json linguist-generated=true
+**/generated/baselineProfiles/** linguist-generated=true
