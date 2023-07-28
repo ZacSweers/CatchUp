@@ -66,18 +66,18 @@ noArg {
 }
 
 dependencies {
-  api(project(":service-api"))
   api(libs.androidx.annotations)
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(projects.libraries.di)
+  api(projects.serviceApi)
 
-  implementation(project(":libraries:base-ui"))
-  implementation(project(":libraries:util"))
   implementation(libs.androidx.annotations)
   implementation(libs.firebase.database)
   implementation(libs.kotlin.coroutines)
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
+  implementation(projects.libraries.baseUi)
   implementation(projects.libraries.kotlinutil)
+  implementation(projects.libraries.util)
 }

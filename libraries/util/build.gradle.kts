@@ -34,7 +34,6 @@ redacted {
 }
 
 dependencies {
-  api(project(":libraries:appconfig"))
   api(libs.androidx.annotations)
   api(libs.androidx.coreKtx)
   api(libs.apollo.api)
@@ -42,6 +41,7 @@ dependencies {
   api(libs.kotlin.datetime)
   api(libs.moshi.core)
   api(libs.okhttp.core)
+  api(projects.libraries.appconfig)
 
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.core)

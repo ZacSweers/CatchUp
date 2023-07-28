@@ -35,7 +35,6 @@ dependencies {
   api(projects.libraries.di)
   api(projects.libraries.gemoji.db)
 
-  implementation(project(":libraries:util"))
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.sqlite)
   implementation(libs.kotlin.coroutines)
@@ -43,6 +42,7 @@ dependencies {
   implementation(libs.sqldelight.coroutines)
   implementation(libs.sqldelight.driver.android)
   implementation(libs.sqldelight.runtime)
+  implementation(projects.libraries.util)
 
   compileOnly(libs.misc.jsr250)
 

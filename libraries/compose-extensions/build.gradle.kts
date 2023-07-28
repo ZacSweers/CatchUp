@@ -25,13 +25,13 @@ android { namespace = "dev.zacsweers.catchup.compose" }
 slack { features { compose() } }
 
 dependencies {
-  api(project(":libraries:base-ui"))
   api(libs.androidx.compose.accompanist.systemUi)
   api(libs.androidx.compose.foundation)
   api(libs.androidx.compose.runtime)
   api(libs.androidx.compose.ui)
   api(libs.androidx.compose.uiTooling)
   api(libs.kotlin.coroutines)
+  api(projects.libraries.baseUi)
 
   implementation(libs.androidx.compose.googleFonts)
   implementation(libs.androidx.compose.material.material3)

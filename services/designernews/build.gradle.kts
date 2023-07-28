@@ -35,7 +35,6 @@ slack {
 }
 
 dependencies {
-  api(project(":service-api"))
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.misc.moshiLazyAdapters)
@@ -44,10 +43,11 @@ dependencies {
   api(libs.retrofit.core)
   api(projects.libraries.appconfig)
   api(projects.libraries.di)
+  api(projects.serviceApi)
 
-  implementation(project(":libraries:util"))
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
   implementation(libs.retrofit.moshi)
   implementation(projects.libraries.retrofitconverters)
+  implementation(projects.libraries.util)
 }

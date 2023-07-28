@@ -30,15 +30,15 @@ slack {
 }
 
 dependencies {
-  api(project(":libraries:appconfig"))
-  api(project(":libraries:gemoji"))
-  api(project(":libraries:retrofitconverters"))
   api(libs.androidx.annotations)
   api(libs.androidx.compose.runtime)
   api(libs.androidx.compose.ui)
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
+  api(projects.libraries.appconfig)
   api(projects.libraries.di)
+  api(projects.libraries.gemoji)
+  api(projects.libraries.retrofitconverters)
 
   implementation(libs.androidx.annotations)
   implementation(libs.kotlin.coroutinesAndroid)

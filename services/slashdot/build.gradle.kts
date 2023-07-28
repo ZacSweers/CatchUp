@@ -29,7 +29,6 @@ android {
 slack { features { dagger() } }
 
 dependencies {
-  api(project(":service-api"))
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.kotlinx.serialization.core)
@@ -38,13 +37,14 @@ dependencies {
   api(libs.xmlutil.serialization)
   api(projects.libraries.appconfig)
   api(projects.libraries.di)
+  api(projects.serviceApi)
 
-  implementation(project(":libraries:util"))
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
   implementation(libs.retrofit.kotlinxSerialization)
   implementation(libs.tikxml.htmlEscape)
   implementation(projects.libraries.retrofitconverters)
+  implementation(projects.libraries.util)
 
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
