@@ -4,8 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import com.slack.circuit.foundation.CircuitConfig
-import com.slack.circuit.foundation.LocalCircuitConfig
+import com.slack.circuit.foundation.Circuit
+import com.slack.circuit.foundation.LocalCircuit
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
@@ -29,8 +29,8 @@ interface CircuitModule {
     fun provideCircuit(
       presenterFactories: @JvmSuppressWildcards Set<Presenter.Factory>,
       uiFactories: @JvmSuppressWildcards Set<Ui.Factory>,
-    ): CircuitConfig {
-      return CircuitConfig.Builder()
+    ): Circuit {
+      return Circuit.Builder()
         .addPresenterFactories(presenterFactories)
         .addUiFactories(uiFactories)
         .setDefaultNavDecoration(DefaultCircuitNavDecoration)
@@ -47,7 +47,7 @@ interface CircuitModule {
                 return emptyList()
               }
             }
-          val config = LocalCircuitConfig.current
+          val config = LocalCircuit.current
           BasicText(
             """
               Route not available: ${screen.javaClass.name}.
