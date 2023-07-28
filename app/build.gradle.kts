@@ -39,6 +39,8 @@ plugins {
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
+  alias(libs.plugins.sqldelight)
+  alias(libs.plugins.baselineprofile)
   //  alias(libs.plugins.playPublisher)
 }
 
@@ -111,7 +113,7 @@ android {
   }
   splits {
     abi {
-      isEnable = true
+      isEnable = false // For baseline profile gen - https://issuetracker.google.com/285398001
       reset()
       include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
       isUniversalApk = true
@@ -458,6 +460,15 @@ androidComponents {
   }
 }
 
+baselineProfile {
+  // TODO enable this only when cutting a new release?
+//  automaticGenerationDuringBuild = true
+  mergeIntoMain = true
+  saveInSrc = true
+  dexLayoutOptimization = true
+  from(projects.benchmark.dependencyProject)
+}
+
 dependencies {
   ksp(libs.circuit.codegen)
 
@@ -506,6 +517,7 @@ dependencies {
   implementation(libs.androidx.palette)
   implementation(libs.androidx.preference)
   implementation(libs.androidx.preferenceKtx)
+  implementation(libs.androidx.profileinstaller)
   implementation(libs.androidx.window)
   implementation(libs.apollo.httpcache)
   implementation(libs.apollo.normalizedCache)
@@ -575,8 +587,8 @@ dependencies {
   debugImplementation(libs.retrofit.moshi)
   debugImplementation(projects.libraries.retrofitconverters)
 
-  kapt(project(":libraries:tooling:spi-multibinds-validator"))
-  kapt(project(":libraries:tooling:spi-visualizer"))
+  kaptDebug(project(":libraries:tooling:spi-multibinds-validator"))
+  kaptDebug(project(":libraries:tooling:spi-visualizer"))
 
   testImplementation(libs.misc.debug.flipper)
   testImplementation(libs.misc.debug.flipperNetwork)
