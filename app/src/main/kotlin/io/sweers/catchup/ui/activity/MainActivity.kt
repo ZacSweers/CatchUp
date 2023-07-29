@@ -29,8 +29,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.CircuitConfig
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
@@ -61,7 +61,7 @@ class MainActivity
 constructor(
   private val customTab: CustomTabActivityHelper,
   private val linkManager: LinkManager,
-  private val circuitConfig: CircuitConfig,
+  private val circuit: Circuit,
   private val catchUpPreferences: CatchUpPreferences,
   private val rootContent: RootContent,
   appConfig: AppConfig,
@@ -98,7 +98,7 @@ constructor(
         )
       }
       CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
-        CircuitCompositionLocals(circuitConfig) {
+        CircuitCompositionLocals(circuit) {
           ContentWithOverlays {
             val backstack = rememberSaveableBackStack { push(HomeScreen) }
             val navigator = rememberCircuitNavigator(backstack)
