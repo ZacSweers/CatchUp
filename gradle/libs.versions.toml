@@ -153,7 +153,7 @@ circuit-runtime-ui = { module = "com.slack.circuit:circuit-runtime-ui", version.
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegenAnnotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
 
-clikt = "com.github.ajalt.clikt:clikt:4.1.0"
+clikt = "com.github.ajalt.clikt:clikt:4.2.0"
 
 coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
 coil-default = { module = "io.coil-kt:coil", version.ref = "coil" }
