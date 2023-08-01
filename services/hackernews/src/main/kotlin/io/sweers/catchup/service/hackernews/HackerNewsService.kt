@@ -94,7 +94,7 @@ constructor(
             }
           }
 
-        val ref = database.get().getReference("v0/topstories").apply { keepSynced(true) }
+        val ref = database.get().getReference("/v0/topstories").apply { keepSynced(true) }
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }
       }
@@ -105,7 +105,7 @@ constructor(
       // TODO concatMapEager?
       .map { id ->
         suspendCancellableCoroutine { cont ->
-          val ref = database.get().getReference("v0/item/$id")
+          val ref = database.get().getReference("/v0/item/$id")
           val listener =
             object : ValueEventListener {
               override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -181,7 +181,7 @@ abstract class HackerNewsMetaModule {
         R.drawable.logo_hn,
         pagesAreNumeric = true,
         firstPageKey = 0,
-        enabled = false // HN is broken for some reason
+        enabled = true // HN is broken for some reason
       )
   }
 }
@@ -200,7 +200,7 @@ object HackerNewsModule {
             FirebaseOptions.Builder()
               .setApiKey(resources.getString(R.string.google_api_key))
               .setApplicationId(resources.getString(R.string.google_app_id))
-              .setDatabaseUrl("https://hacker-news.firebaseio.com/")
+              .setDatabaseUrl("https://hacker-news.firebaseio.com")
               .setGaTrackingId(resources.getString(R.string.ga_trackingId))
               .setGcmSenderId(resources.getString(R.string.gcm_defaultSenderId))
               .setStorageBucket(resources.getString(R.string.google_storage_bucket))
@@ -209,6 +209,7 @@ object HackerNewsModule {
             "HN"
           )
         }
+
     return FirebaseDatabase.getInstance(app)
   }
 }
