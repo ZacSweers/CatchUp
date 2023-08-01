@@ -3,6 +3,7 @@
 package dev.zacsweers.catchup.circuit
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -66,6 +67,8 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
       },
       sheetState = sheetState,
       shape = RoundedCornerShape(32.dp),
+      // Go edge-to-edge
+      windowInsets = WindowInsets(0, 0, 0, 0),
       onDismissRequest = {
         // Only possible if dismissOnTapOutside is false
         check(dismissOnTapOutside)
