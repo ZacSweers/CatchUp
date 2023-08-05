@@ -217,26 +217,6 @@ private fun OssItemHeaderUi(item: OssItemHeader) {
         fontWeight = FontWeight.Bold,
       )
     }
-    // icon.load(item.avatarUrl) {
-    //                onSuccess = { _, _ ->
-    //                  val bitmap: Bitmap? =
-    //                    when (val data = icon.drawable) {
-    //                      is BitmapDrawable -> data.bitmap
-    //                      else -> null
-    //                    }
-    //                  bitmap?.let {
-    //                    newScope().launch {
-    //                      val color =
-    //                        Palette.from(it)
-    //                          .clearFilters()
-    //                          .generateAsync()
-    //                          ?.findSwatch(headerColorThresholdFun)
-    //                          ?.rgb
-    //                          ?: defaultHeaderTextColor
-    //                      holder.title.setTextColor(color)
-    //                    }
-    //                  }
-
   }
 }
 
