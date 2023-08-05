@@ -1,14 +1,19 @@
 package io.sweers.catchup.ui.about
 
 import android.graphics.Color
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +31,7 @@ import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ClickableItem
 import dev.zacsweers.catchup.service.ErrorItem
 import dev.zacsweers.catchup.service.TextItem
+import dev.zacsweers.catchup.service.rememberClickableItemState
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
@@ -80,6 +86,7 @@ constructor(
 @CircuitInject(ChangelogScreen::class, AppScope::class)
 @Composable
 fun Changelog(state: ChangelogScreen.State, modifier: Modifier = Modifier) {
+  var expandedItemIndex by remember { mutableIntStateOf(-1) }
   LazyColumn(modifier = modifier) {
     val items = state.items
     if (items == null) {
@@ -104,11 +111,21 @@ fun Changelog(state: ChangelogScreen.State, modifier: Modifier = Modifier) {
         key = { items[it].id },
       ) { index ->
         val item = items[index]
+        val clickableItemState = rememberClickableItemState()
+        clickableItemState.focused = expandedItemIndex == index
         ClickableItem(
           modifier = Modifier.animateItemPlacement(),
+          state = clickableItemState,
           onClick = { state.eventSink(ChangelogScreen.Event.Click(item.clickUrl!!)) },
+          onLongClick = { expandedItemIndex = if (expandedItemIndex == index) -1 else index }
         ) {
-          TextItem(item, colorResource(R.color.colorAccent))
+          Column(Modifier.animateContentSize()) {
+            TextItem(
+              item,
+              colorResource(R.color.colorAccent),
+              showDescription = expandedItemIndex == index
+            )
+          }
         }
       }
     }
@@ -152,8 +169,8 @@ constructor(
             tag = tag.name,
             source = tag.target.abbreviatedOid, // sha
             itemClickUrl = url.toString(),
-            // TODO revisit when we have expandable items and markdown support
-            //  description = markdownConverter.replaceMarkdownEmojisIn(description!!),
+            // TODO render markdown at some point?
+            description = markdownConverter.replaceMarkdownEmojisIn(description!!),
             serviceId = "changelog",
             indexInResponse = index,
             // Not summarizable
