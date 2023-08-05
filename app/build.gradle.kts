@@ -41,6 +41,7 @@ plugins {
   alias(libs.plugins.bugsnag)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.baselineprofile)
+  alias(libs.plugins.moshix)
   //  alias(libs.plugins.playPublisher)
 }
 
