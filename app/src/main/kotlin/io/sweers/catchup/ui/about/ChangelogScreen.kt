@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -27,6 +28,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
 import com.squareup.anvil.annotations.ContributesBinding
+import dev.zacsweers.catchup.compose.LocalDynamicTheme
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ClickableItem
 import dev.zacsweers.catchup.service.ErrorItem
@@ -87,6 +89,12 @@ constructor(
 @Composable
 fun Changelog(state: ChangelogScreen.State, modifier: Modifier = Modifier) {
   var expandedItemIndex by remember { mutableIntStateOf(-1) }
+  val themeColor =
+    if (LocalDynamicTheme.current) {
+      MaterialTheme.colorScheme.primary
+    } else {
+      colorResource(R.color.colorAccent)
+    }
   LazyColumn(modifier = modifier) {
     val items = state.items
     if (items == null) {
@@ -120,11 +128,7 @@ fun Changelog(state: ChangelogScreen.State, modifier: Modifier = Modifier) {
           onLongClick = { expandedItemIndex = if (expandedItemIndex == index) -1 else index }
         ) {
           Column(Modifier.animateContentSize()) {
-            TextItem(
-              item,
-              colorResource(R.color.colorAccent),
-              showDescription = expandedItemIndex == index
-            )
+            TextItem(item, themeColor, showDescription = expandedItemIndex == index)
           }
         }
       }
