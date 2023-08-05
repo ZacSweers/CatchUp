@@ -107,7 +107,7 @@ constructor(
               NavigableCircuitContent(
                 intentAwareNavigator,
                 backstack,
-                //                decoration = ImageViewerAwareNavDecoration()
+                // decoration = ImageViewerAwareNavDecoration()
               )
             }
           }

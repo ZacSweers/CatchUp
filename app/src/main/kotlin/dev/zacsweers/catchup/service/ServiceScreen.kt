@@ -1,5 +1,7 @@
 package dev.zacsweers.catchup.service
 
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -54,10 +56,14 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.circuit.FullScreenOverlay
+import dev.zacsweers.catchup.circuit.IntentScreen
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.pullrefresh.PullRefreshIndicator
 import dev.zacsweers.catchup.pullrefresh.pullRefresh
 import dev.zacsweers.catchup.pullrefresh.rememberPullRefreshState
+import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Action.FAVORITE
+import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE
+import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Action.SUMMARIZE
 import dev.zacsweers.catchup.service.ServiceScreen.State.TextState
 import dev.zacsweers.catchup.service.ServiceScreen.State.VisualState
 import dev.zacsweers.catchup.summarizer.SummarizerScreen
@@ -100,7 +106,13 @@ data class ServiceScreen(val serviceKey: String) : Screen {
   sealed interface Event : CircuitUiEvent {
     data class ItemClicked(val item: CatchUpItem) : Event
 
-    data class ItemLongClicked(val item: CatchUpItem) : Event
+    data class ItemActionClicked(val item: CatchUpItem, val action: Action) : Event {
+      enum class Action {
+        FAVORITE,
+        SHARE,
+        SUMMARIZE
+      }
+    }
 
     data class MarkClicked(val item: CatchUpItem) : Event
   }
@@ -198,10 +210,26 @@ constructor(
             }
           }
         }
-        is ServiceScreen.Event.ItemLongClicked -> {
+        is ServiceScreen.Event.ItemActionClicked -> {
           val url = event.item.clickUrl!!
-          coroutineScope.launch {
-            overlayHost.show(FullScreenOverlay(SummarizerScreen(event.item.title, url)))
+          when (event.action) {
+            FAVORITE -> {
+              Toast.makeText(context, "Not implemented", Toast.LENGTH_SHORT).show()
+            }
+            SHARE -> {
+              val shareIntent =
+                Intent().apply {
+                  action = Intent.ACTION_SEND
+                  putExtra(Intent.EXTRA_TEXT, url)
+                  type = "text/plain"
+                }
+              navigator.goTo(IntentScreen(shareIntent, isChooser = true))
+            }
+            SUMMARIZE -> {
+              coroutineScope.launch {
+                overlayHost.show(FullScreenOverlay(SummarizerScreen(event.item.title, url)))
+              }
+            }
           }
         }
         is ServiceScreen.Event.MarkClicked -> {

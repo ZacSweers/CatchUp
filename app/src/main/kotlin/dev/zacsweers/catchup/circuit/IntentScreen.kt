@@ -10,6 +10,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize data class IntentScreen(val intent: Intent, val isChooser: Boolean = false) : Screen
 
+// TODO this leaks the activity after destroy somehow
 @Stable
 class IntentAwareNavigator(private val activity: Activity, private val delegate: Navigator) :
   Navigator by delegate {

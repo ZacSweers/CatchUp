@@ -48,6 +48,7 @@ class ClickableItemState {
   val interactionSource = MutableInteractionSource()
   var enabled by mutableStateOf(true)
   var contentColor by mutableStateOf(Color.Unspecified)
+  var focused by mutableStateOf(true)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -63,7 +64,7 @@ fun ClickableItem(
     val interactionSource = state.interactionSource
     val isPressed by interactionSource.collectIsPressedAsState()
     val targetElevation =
-      if (isPressed) {
+      if (isPressed || state.focused) {
         dimensionResource(R.dimen.touch_raise)
       } else {
         0.dp

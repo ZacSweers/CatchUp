@@ -3,6 +3,7 @@ package dev.zacsweers.catchup.service
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.text.format.DateUtils
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,15 +12,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,6 +53,10 @@ import androidx.paging.compose.itemKey
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.compose.ContentAlphas
 import dev.zacsweers.catchup.compose.ScrollToTopHandler
+import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked
+import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Action.FAVORITE
+import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE
+import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Action.SUMMARIZE
 import io.sweers.catchup.R
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.Mark
@@ -70,6 +80,7 @@ fun TextServiceUi(
 
   // Only animate items in on first load
   var animatePlacement by remember { mutableStateOf(true) }
+  var expandedItemIndex by remember { mutableStateOf(-1) }
   LazyColumn(
     modifier = modifier,
     state = state,
@@ -85,12 +96,13 @@ fun TextServiceUi(
       if (item == null) {
         PlaceholderItem(themeColor)
       } else {
-        val onLongClick =
-          if (item.canBeSummarized) {
-            { eventSink(ServiceScreen.Event.ItemLongClicked(item)) }
-          } else {
-            null
-          }
+        // TODO adapt this
+        //        val onLongClick =
+        //          if (item.canBeSummarized) {
+        //            { eventSink(ServiceScreen.Event.ItemLongClicked(item)) }
+        //          } else {
+        //            null
+        //          }
         val itemModifier =
           if (animatePlacement) {
             LaunchedEffect(Unit) { animatePlacement = false }
@@ -98,12 +110,51 @@ fun TextServiceUi(
           } else {
             Modifier
           }
+        val clickableItemState = rememberClickableItemState()
+        clickableItemState.focused = expandedItemIndex == index
         ClickableItem(
           modifier = itemModifier,
+          state = clickableItemState,
           onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
-          onLongClick = onLongClick
+          onLongClick = { expandedItemIndex = if (expandedItemIndex == index) -1 else index }
         ) {
-          TextItem(item, themeColor) { eventSink(ServiceScreen.Event.MarkClicked(item)) }
+          Column(Modifier.animateContentSize()) {
+            TextItem(item, themeColor) { eventSink(ServiceScreen.Event.MarkClicked(item)) }
+            if (index == expandedItemIndex) {
+              Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+              ) {
+                IconButton(onClick = { eventSink(ItemActionClicked(item, FAVORITE)) }) {
+                  Icon(
+                    imageVector = Icons.Filled.FavoriteBorder,
+                    contentDescription = "Favorite",
+                    tint = themeColor,
+                    modifier = Modifier.size(24.dp)
+                  )
+                }
+                IconButton(onClick = { eventSink(ItemActionClicked(item, SHARE)) }) {
+                  Icon(
+                    imageVector = Icons.Filled.Share,
+                    contentDescription = "Share",
+                    tint = themeColor,
+                    modifier = Modifier.size(24.dp)
+                  )
+                }
+                IconButton(
+                  enabled = item.canBeSummarized,
+                  onClick = { eventSink(ItemActionClicked(item, SUMMARIZE)) }
+                ) {
+                  Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = "Summarize",
+                    tint = themeColor,
+                    modifier = Modifier.size(24.dp)
+                  )
+                }
+              }
+            }
+          }
         }
       }
     }
