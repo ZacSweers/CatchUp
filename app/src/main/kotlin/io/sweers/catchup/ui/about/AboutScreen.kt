@@ -52,7 +52,6 @@ private val SCREEN_TITLES = intArrayOf(R.string.licenses, R.string.changelog)
 fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   Scaffold(
-    contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,
     modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = { CollapsingAboutHeader(state.version, scrollBehavior = scrollBehavior) }
