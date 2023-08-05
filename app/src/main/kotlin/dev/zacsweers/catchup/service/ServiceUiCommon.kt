@@ -48,7 +48,7 @@ class ClickableItemState {
   val interactionSource = MutableInteractionSource()
   var enabled by mutableStateOf(true)
   var contentColor by mutableStateOf(Color.Unspecified)
-  var focused by mutableStateOf(true)
+  var focused by mutableStateOf(false)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
