@@ -11,6 +11,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import catchup.ui.core.R
@@ -39,7 +40,13 @@ fun NavButton(
     Icon(
       type.icon,
       modifier = Modifier.size(24.dp),
-      contentDescription = stringResource(type.contentDescription)
+      // Hardcoded in previews because lol compose tooling
+      contentDescription =
+        if (LocalInspectionMode.current) {
+          "Close"
+        } else {
+          stringResource(type.contentDescription)
+        }
     )
   }
 }
