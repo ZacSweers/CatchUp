@@ -72,7 +72,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 
 [libraries]
-androidx-annotations = "androidx.annotation:annotation:1.7.0-alpha03"
+androidx-annotations = "androidx.annotation:annotation:1.7.0-beta01"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha03"
@@ -82,7 +82,7 @@ androidx-benchmark-macro-junit = { module = "androidx.benchmark:benchmark-macro-
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
-androidx-customTabs = "androidx.browser:browser:1.6.0-rc01"
+androidx-customTabs = "androidx.browser:browser:1.6.0"
 androidx-design = "com.google.android.material:material:1.9.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
@@ -94,18 +94,18 @@ androidx-palette = "androidx.palette:palette:1.0.0"
 androidx-paletteKtx = "androidx.palette:palette-ktx:1.0.0"
 
 androidx-preference = { module = "androidx.preference:preference", version.ref = "preferences" }
-androidx-preferenceKtx = { module = "androidx.preference:preference-ktx", version = "1.2.0" }
+androidx-preferenceKtx = { module = "androidx.preference:preference-ktx", version = "1.2.1" }
 
 androidx-lifecycle-extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
 androidx-lifecycle-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
-androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-alpha02"
+androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-alpha03"
 
 androidx-compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.4.3"
+androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.5.0"
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 androidx-compose-material-ripple = { module = "androidx.compose.material:material-ripple", version.ref = "compose" }
 androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }
@@ -184,7 +184,7 @@ markwon-linkify = { module = "io.noties.markwon:linkify", version.ref = "markwon
 
 misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakcanary-object-watcher-android", version.ref = "leakcanary" }
-misc-bugsnag = "com.bugsnag:bugsnag-android:5.31.0"
+misc-bugsnag = "com.bugsnag:bugsnag-android:5.31.1"
 misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
