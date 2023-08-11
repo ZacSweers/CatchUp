@@ -74,7 +74,7 @@ private fun Context.maybeStartActivity(inputIntent: Intent, chooser: Boolean): B
     startActivity(intent)
     true
   } else {
-    Toast.makeText(this, R.string.no_intent_handler, LENGTH_LONG).show()
+    Toast.makeText(this, R.string.catchup_util_no_intent_handler, LENGTH_LONG).show()
     false
   }
 }

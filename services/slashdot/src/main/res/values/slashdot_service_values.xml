@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <string name="slashdot">Slashdot</string>
-  <color name="slashdotAccent">#ff026664</color>
+  <string name="catchup_service_sd_name">Slashdot</string>
+  <color name="catchup_service_sd_accent">#ff026664</color>
 </resources>

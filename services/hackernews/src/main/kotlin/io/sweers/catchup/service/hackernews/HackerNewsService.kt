@@ -176,9 +176,9 @@ abstract class HackerNewsMetaModule {
     internal fun provideHackerNewsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.hn,
-        R.color.hnAccent,
-        R.drawable.logo_hn,
+        R.string.catchup_service_hn_name,
+        R.color.catchup_service_hn_accent,
+        R.drawable.catchup_service_hn_logo,
         pagesAreNumeric = true,
         firstPageKey = 0,
         enabled = false // HN is broken for some reason

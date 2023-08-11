@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <string name="back">Back</string>
-  <string name="close">Close</string>
+  <string name="catchup_baseui_back">Back</string>
+  <string name="catchup_baseui_close">Close</string>
 </resources>

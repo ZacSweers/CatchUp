@@ -111,9 +111,9 @@ abstract class UnsplashMetaModule {
     internal fun provideUnsplashServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.unsplash,
-        R.color.unsplashAccent,
-        R.drawable.logo_unsplash,
+        R.string.catchup_service_unsplash_name,
+        R.color.catchup_service_unsplash_accent,
+        R.drawable.catchup_service_unsplash_logo,
         isVisual = true,
         pagesAreNumeric = true,
         firstPageKey = 1,

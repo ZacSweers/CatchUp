@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <string name="ph">Product Hunt</string>
-  <color name="phAccent">#ffDA552F</color>
+  <string name="catchup_service_ph_name">Product Hunt</string>
+  <color name="catchup_service_ph_accent">#ffDA552F</color>
 </resources>

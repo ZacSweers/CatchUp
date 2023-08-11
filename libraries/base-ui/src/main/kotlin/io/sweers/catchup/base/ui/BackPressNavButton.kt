@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import catchup.ui.core.R
 
 enum class NavButtonType(val icon: ImageVector, @StringRes val contentDescription: Int) {
-  BACK(Icons.Filled.ArrowBack, R.string.back),
-  CLOSE(Icons.Filled.Close, R.string.close)
+  BACK(Icons.Filled.ArrowBack, R.string.catchup_baseui_back),
+  CLOSE(Icons.Filled.Close, R.string.catchup_baseui_close)
 }
 
 @Composable

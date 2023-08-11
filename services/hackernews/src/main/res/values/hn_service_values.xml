@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <string name="hn">Hacker News</string>
-  <color name="hnAccent">#ffF0652F</color>
+  <string name="catchup_service_hn_name">Hacker News</string>
+  <color name="catchup_service_hn_accent">#ffF0652F</color>
 </resources>

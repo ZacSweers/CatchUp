@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <string name="reddit">reddit</string>
-  <color name="redditAccent">#336699</color>
+  <string name="catchup_service_reddit_name">reddit</string>
+  <color name="catchup_service_reddit_accent">#336699</color>
 </resources>

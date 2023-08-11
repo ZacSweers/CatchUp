@@ -22,13 +22,17 @@ plugins {
 
 android {
   namespace = "catchup.ui.core"
-  buildFeatures { androidResources = true }
 }
 
 slack {
   features {
     compose()
     dagger()
+  }
+  android {
+    features {
+      resources("catchup_baseui_")
+    }
   }
 }
 
