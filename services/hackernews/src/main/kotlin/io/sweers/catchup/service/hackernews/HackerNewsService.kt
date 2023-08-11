@@ -181,7 +181,7 @@ abstract class HackerNewsMetaModule {
         R.drawable.logo_hn,
         pagesAreNumeric = true,
         firstPageKey = 0,
-        enabled = true // HN is broken for some reason
+        enabled = false // HN is broken for some reason
       )
   }
 }
