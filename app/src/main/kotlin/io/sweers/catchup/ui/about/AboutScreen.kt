@@ -25,9 +25,12 @@ import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
+import com.squareup.anvil.annotations.ContributesMultibinding
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.multibindings.StringKey
+import dev.zacsweers.catchup.DeepLinkable
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.R
@@ -40,6 +43,14 @@ import timber.log.Timber
 @Parcelize
 data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenComponent.DEFAULT) :
   Screen {
+
+  @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+  @StringKey("about")
+  object DeepLinker : DeepLinkable {
+    override fun createScreen(queryParams: Map<String, String?>) =
+      AboutScreen(AboutScreenComponent.componentFor(queryParams["tab"]))
+  }
+
   data class State(
     val initialPage: Int,
     val version: String,

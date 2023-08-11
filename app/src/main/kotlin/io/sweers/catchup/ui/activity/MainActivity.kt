@@ -16,7 +16,6 @@
 package io.sweers.catchup.ui.activity
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.SystemBarStyle
@@ -36,23 +35,23 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
-import com.slack.circuit.runtime.Screen
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.DeepLinkHandler
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.circuit.IntentAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.android.ActivityKey
+import dev.zacsweers.catchup.parse
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.RootContent
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.home.HomeScreen
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.ui.about.AboutScreen
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import javax.inject.Inject
 import timber.log.Timber
@@ -67,6 +66,7 @@ constructor(
   private val circuit: Circuit,
   private val catchUpPreferences: CatchUpPreferences,
   private val rootContent: RootContent,
+  private val deepLinkHandler: DeepLinkHandler,
   appConfig: AppConfig,
 ) : AppCompatActivity() {
 
@@ -105,7 +105,7 @@ constructor(
           ContentWithOverlays {
             val backstack = rememberSaveableBackStack {
               push(HomeScreen)
-              intent?.parseRoute()?.forEach(::push)
+              intent?.let(deepLinkHandler::parse)?.forEach(::push)
             }
             val navigator = rememberCircuitNavigator(backstack)
             val intentAwareNavigator = remember(navigator) { IntentAwareNavigator(this, navigator) }
@@ -136,31 +136,6 @@ constructor(
     linkManager.disconnect()
     customTab.connectionCallback = null
     super.onDestroy()
-  }
-
-  companion object {
-    private fun routeFor(segment: String, queryParams: Map<String, String?>): Screen {
-      return when (segment) {
-        "settings" -> SettingsScreen
-        "about" -> AboutScreen(AboutScreen.AboutScreenComponent.componentFor(queryParams["tab"]))
-        else -> throw IllegalArgumentException("Unknown path segment $segment")
-      }
-    }
-
-    private fun Intent.parseRoute(): List<Screen> {
-      // -a android.intent.action.VIEW -d "catchup://home/settings/about/?tab=changelog"
-      // io.sweers.catchup
-      return if (action == Intent.ACTION_VIEW) {
-        data
-          ?.let { uri ->
-            val queryParams = uri.queryParameterNames.associateWith { uri.getQueryParameter(it) }
-            uri.pathSegments.mapNotNull { segment -> routeFor(segment, queryParams) }
-          }
-          .orEmpty()
-      } else {
-        emptyList()
-      }
-    }
   }
 
   @ContributesTo(AppScope::class)

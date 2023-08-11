@@ -49,9 +49,12 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
+import com.squareup.anvil.annotations.ContributesMultibinding
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.multibindings.StringKey
+import dev.zacsweers.catchup.DeepLinkable
 import dev.zacsweers.catchup.compose.ContentAlphas
 import dev.zacsweers.catchup.compose.DisableableContent
 import dev.zacsweers.catchup.compose.LocalEnabled
@@ -74,8 +77,12 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import okhttp3.Cache
 
+@ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+@StringKey("settings")
 @Parcelize
-object SettingsScreen : Screen {
+object SettingsScreen : Screen, DeepLinkable {
+  override fun createScreen(queryParams: Map<String, String?>): Screen = SettingsScreen
+
   data class State(val eventSink: (Event) -> Unit) : CircuitUiState
 
   sealed interface Event {
