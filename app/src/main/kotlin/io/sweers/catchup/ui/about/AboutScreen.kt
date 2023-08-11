@@ -1,8 +1,8 @@
 package io.sweers.catchup.ui.about
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -13,7 +13,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,26 +25,63 @@ import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.R
-import javax.inject.Inject
+import java.util.Locale
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import timber.log.Timber
 
 @Parcelize
-object AboutScreen : Screen {
-  data class State(val version: String) : CircuitUiState
+data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenComponent.DEFAULT) :
+  Screen {
+  data class State(
+    val initialPage: Int,
+    val version: String,
+  ) : CircuitUiState
+
+  enum class AboutScreenComponent(
+    val screen: Screen,
+    @StringRes val titleRes: Int,
+  ) {
+    Licenses(LicensesScreen, R.string.licenses),
+    Changelog(ChangelogScreen, R.string.changelog);
+
+    companion object {
+      internal val DEFAULT = Licenses
+
+      fun componentFor(path: String?): AboutScreenComponent {
+        return when (path?.lowercase(Locale.US)) {
+          "licenses" -> Licenses
+          "changelog" -> Changelog
+          else -> {
+            Timber.d("Unknown path $path, defaulting to $DEFAULT")
+            DEFAULT
+          }
+        }
+      }
+    }
+  }
 }
 
-@CircuitInject(AboutScreen::class, AppScope::class)
-class AboutPresenter @Inject constructor(private val appConfig: AppConfig) :
+class AboutPresenter
+@AssistedInject
+constructor(@Assisted val screen: AboutScreen, private val appConfig: AppConfig) :
   Presenter<AboutScreen.State> {
-  @Composable override fun present() = AboutScreen.State(appConfig.versionName)
-}
+  @Composable
+  override fun present() = AboutScreen.State(screen.selectedTab.ordinal, appConfig.versionName)
 
-private val SCREENS = listOf(LicensesScreen, ChangelogScreen)
-private val SCREEN_TITLES = intArrayOf(R.string.licenses, R.string.changelog)
+  @CircuitInject(AboutScreen::class, AppScope::class)
+  @AssistedFactory
+  interface Factory {
+    fun create(screen: AboutScreen): AboutPresenter
+  }
+}
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @CircuitInject(AboutScreen::class, AppScope::class)
@@ -52,20 +89,22 @@ private val SCREEN_TITLES = intArrayOf(R.string.licenses, R.string.changelog)
 fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   Scaffold(
-    contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,
     modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = { CollapsingAboutHeader(state.version, scrollBehavior = scrollBehavior) }
   ) { paddingValues ->
     Column(Modifier.padding(paddingValues)) {
-      val pagerState = rememberPagerState { 2 }
+      val components = remember { AboutScreen.AboutScreenComponent.entries.toImmutableList() }
+      val pagerState = rememberPagerState(initialPage = state.initialPage) { 2 }
       TabRow(
         // Our selected tab is our current page
         selectedTabIndex = pagerState.currentPage,
       ) {
         // Add tabs for all of our pages
         val coroutinesScope = rememberCoroutineScope()
-        SCREEN_TITLES.forEachIndexed { index, titleRes ->
+        components.forEach { component ->
+          val index = component.ordinal
+          val titleRes = component.titleRes
           Tab(
             text = { Text(stringResource(titleRes)) },
             selected = pagerState.currentPage == index,
@@ -84,7 +123,7 @@ fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
         state = pagerState,
         verticalAlignment = Alignment.Top,
       ) { page ->
-        CircuitContent(SCREENS[page])
+        CircuitContent(components[page].screen)
       }
     }
   }

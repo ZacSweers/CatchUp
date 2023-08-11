@@ -309,7 +309,7 @@ constructor(
           ClickablePreference(
             title = stringResource(R.string.about),
           ) {
-            state.eventSink(SettingsScreen.Event.NavToScreen(AboutScreen))
+            state.eventSink(SettingsScreen.Event.NavToScreen(AboutScreen()))
           }
         }
 

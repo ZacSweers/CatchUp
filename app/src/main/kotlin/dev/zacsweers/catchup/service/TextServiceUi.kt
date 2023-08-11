@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -80,7 +81,7 @@ fun TextServiceUi(
 
   // Only animate items in on first load
   var animatePlacement by remember { mutableStateOf(true) }
-  var expandedItemIndex by remember { mutableStateOf(-1) }
+  var expandedItemIndex by remember { mutableIntStateOf(-1) }
   LazyColumn(
     modifier = modifier,
     state = state,
@@ -181,13 +182,14 @@ fun TextItem(
   item: CatchUpItem,
   themeColor: Color,
   modifier: Modifier = Modifier,
+  showDescription: Boolean = true,
   onMarkClick: () -> Unit = {}
 ) {
   Row(
     modifier = modifier.padding(16.dp),
     verticalAlignment = Alignment.CenterVertically,
   ) {
-    DetailColumn(item, themeColor)
+    DetailColumn(item, themeColor, showDescription = showDescription)
     item.mark?.let { mark ->
       Column(
         modifier =
@@ -232,6 +234,7 @@ fun RowScope.DetailColumn(
   item: CatchUpItem,
   themeColor: Color,
   modifier: Modifier = Modifier,
+  showDescription: Boolean = true,
 ) {
   Column(modifier = modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
     // Score, tag, timestamp
@@ -244,15 +247,17 @@ fun RowScope.DetailColumn(
       color = MaterialTheme.colorScheme.onSurface
     )
     // Description
-    item.description?.let {
-      Text(
-        text = it,
-        style = MaterialTheme.typography.bodyMedium,
-        overflow = TextOverflow.Ellipsis,
-        maxLines = 5,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
-      )
-    }
+    item.description
+      ?.takeIf { showDescription }
+      ?.let {
+        Text(
+          text = it,
+          style = MaterialTheme.typography.bodyMedium,
+          overflow = TextOverflow.Ellipsis,
+          maxLines = 5,
+          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
+        )
+      }
     // Author, source
     ItemFooter(item)
   }
