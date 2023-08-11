@@ -296,7 +296,8 @@ fun CollapsingAboutHeader(
               .then(titleDebugBackgroundTop)
               .then(heightModifier),
           // Hardcoded in previews because lol compose tooling
-          text = if (isInPreview) "CatchUp" else stringResource(R.string.app_name),
+//          text = if (isInPreview) "CatchUp" else stringResource(R.string.app_name),
+          text = stringResource(R.string.app_name),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.headlineSmall,
           fontWeight = FontWeight.SemiBold,
