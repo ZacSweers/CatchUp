@@ -247,15 +247,17 @@ fun RowScope.DetailColumn(
       color = MaterialTheme.colorScheme.onSurface
     )
     // Description
-    item.description?.takeIf { showDescription }?.let {
-      Text(
-        text = it,
-        style = MaterialTheme.typography.bodyMedium,
-        overflow = TextOverflow.Ellipsis,
-        maxLines = 5,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
-      )
-    }
+    item.description
+      ?.takeIf { showDescription }
+      ?.let {
+        Text(
+          text = it,
+          style = MaterialTheme.typography.bodyMedium,
+          overflow = TextOverflow.Ellipsis,
+          maxLines = 5,
+          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
+        )
+      }
     // Author, source
     ItemFooter(item)
   }
