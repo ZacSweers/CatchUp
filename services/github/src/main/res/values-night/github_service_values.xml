@@ -16,5 +16,5 @@
   -->
 
 <resources>
-  <color name="githubAccent">@android:color/white</color>
+  <color name="catchup_service_github_accent">@android:color/white</color>
 </resources>

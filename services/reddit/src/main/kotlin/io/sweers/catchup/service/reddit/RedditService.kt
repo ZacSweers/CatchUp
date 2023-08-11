@@ -106,9 +106,9 @@ abstract class RedditMetaModule {
     internal fun provideRedditServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.reddit,
-        R.color.redditAccent,
-        R.drawable.logo_reddit,
+        R.string.catchup_service_reddit_name,
+        R.color.catchup_service_reddit_accent,
+        R.drawable.catchup_service_reddit_logo,
         firstPageKey = null
       )
   }

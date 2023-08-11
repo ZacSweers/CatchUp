@@ -16,5 +16,5 @@
   -->
 
 <resources>
-  <color name="unsplashAccent">#ffffffff</color>
+  <color name="catchup_service_unsplash_accent">#ffffffff</color>
 </resources>

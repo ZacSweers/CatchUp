@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <string name="uplabs">Uplabs</string>
-  <color name="uplabsAccent">#461ab6</color>
+  <string name="catchup_service_uplabs_name">Uplabs</string>
+  <color name="catchup_service_uplabs_accent">#461ab6</color>
 </resources>

@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <string name="dribbble">Dribbble</string>
-  <color name="dribbbleAccent">#ffEA4C89</color>
+  <string name="catchup_service_dribbble_name">Dribbble</string>
+  <color name="catchup_service_dribbble_accent">#ffEA4C89</color>
 </resources>

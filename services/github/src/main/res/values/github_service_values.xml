@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <string name="github">GitHub</string>
-  <color name="githubAccent">#181717</color>
+  <string name="catchup_service_github_name">GitHub</string>
+  <color name="catchup_service_github_accent">#181717</color>
 </resources>

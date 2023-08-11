@@ -17,6 +17,6 @@
 
 <resources>
   <array name="preloaded_fonts" translatable="false">
-    <item>@font/nunito</item>
+    <item>@font/catchup_baseui_nunito</item>
   </array>
 </resources>

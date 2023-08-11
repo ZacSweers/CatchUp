@@ -22,15 +22,17 @@ plugins {
 
 android {
   namespace = "io.sweers.catchup.service.reddit"
-  buildFeatures {
-    androidResources = true
-  }
 }
 
 slack {
   features {
     dagger()
     moshi(codegen = true)
+  }
+  android {
+    features {
+      resources("catchup_service_reddit_")
+    }
   }
 }
 

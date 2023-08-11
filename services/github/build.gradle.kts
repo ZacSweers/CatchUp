@@ -28,7 +28,6 @@ android {
   }
   buildFeatures {
     buildConfig = true
-    androidResources = true
   }
   namespace = "io.sweers.catchup.service.github"
 }
@@ -47,6 +46,11 @@ apollo {
 slack {
   features {
     dagger()
+  }
+  android {
+    features {
+      resources("catchup_service_github_")
+    }
   }
 }
 

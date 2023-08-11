@@ -16,5 +16,5 @@
   -->
 
 <resources>
-  <bool name="isInDayMode">true</bool>
+  <bool name="catchup_util_isInDayMode">true</bool>
 </resources>

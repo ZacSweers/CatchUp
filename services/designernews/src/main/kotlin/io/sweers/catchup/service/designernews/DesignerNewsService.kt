@@ -102,9 +102,9 @@ abstract class DesignerNewsMetaModule {
     internal fun provideDesignerNewsMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.dn,
-        R.color.dnAccent,
-        R.drawable.logo_dn,
+        R.string.catchup_service_dn_name,
+        R.color.catchup_service_dn_accent,
+        R.drawable.catchup_service_dn_logo,
         pagesAreNumeric = true,
         firstPageKey = 1
       )

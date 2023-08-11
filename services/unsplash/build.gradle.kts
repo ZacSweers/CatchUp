@@ -27,7 +27,6 @@ android {
   }
   buildFeatures {
     buildConfig = true
-    androidResources = true
   }
   namespace = "io.sweers.catchup.service.unsplash"
 }
@@ -37,6 +36,7 @@ slack {
     dagger()
     moshi(codegen = true)
   }
+  android { features { resources("catchup_service_unsplash_") } }
 }
 
 dependencies {
