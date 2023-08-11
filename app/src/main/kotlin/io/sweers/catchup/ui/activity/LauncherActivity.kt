@@ -23,7 +23,9 @@ class LauncherActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    startActivity(Intent(this, MainActivity::class.java))
+    val newIntent =
+      Intent(intent).apply { setClass(this@LauncherActivity, MainActivity::class.java) }
+    startActivity(newIntent)
     finish()
   }
 }
