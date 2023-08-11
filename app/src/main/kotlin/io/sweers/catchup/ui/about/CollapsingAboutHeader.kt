@@ -25,8 +25,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +49,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.layout.positionInWindow
@@ -224,19 +221,15 @@ fun CollapsingAboutHeader(
 
         val isInPreview = LocalInspectionMode.current
         val context = LocalContext.current
+        // TODO kinda gross but shrug
         val icon =
-          if (isInPreview) {
-            rememberVectorPainter(Icons.Filled.Build)
-          } else {
-            // TODO kinda gross but shrug
-            remember(context) {
-              val imageBitmap =
-                (AppCompatResources.getDrawable(context, R.mipmap.ic_launcher)
-                    as AdaptiveIconDrawable)
-                  .toBitmap()
-                  .asImageBitmap()
-              BitmapPainter(imageBitmap)
-            }
+          remember(context) {
+            val imageBitmap =
+              (AppCompatResources.getDrawable(context, R.mipmap.ic_launcher)
+                  as AdaptiveIconDrawable)
+                .toBitmap()
+                .asImageBitmap()
+            BitmapPainter(imageBitmap)
           }
         Image(
           painter = icon,
@@ -295,8 +288,6 @@ fun CollapsingAboutHeader(
               }
               .then(titleDebugBackgroundTop)
               .then(heightModifier),
-          // Hardcoded in previews because lol compose tooling
-//          text = if (isInPreview) "CatchUp" else stringResource(R.string.app_name),
           text = stringResource(R.string.app_name),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.headlineSmall,
