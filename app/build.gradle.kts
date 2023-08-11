@@ -102,6 +102,7 @@ android {
         "IMGUR_CLIENT_ACCESS_TOKEN",
         "\"${project.properties["catchup_imgur_access_token"]}\""
       )
+      signingConfig = signingConfigs.getByName("debug")
     }
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY", "\"${properties["catchup_bugsnag_key"]}\"")
