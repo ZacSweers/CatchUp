@@ -22,9 +22,6 @@ plugins {
 
 android {
   namespace = "io.sweers.catchup.service.uplabs"
-  buildFeatures {
-    androidResources = true
-  }
 }
 
 slack {
@@ -32,6 +29,7 @@ slack {
     dagger()
     moshi(codegen = true)
   }
+  android { features { resources("catchup_service_uplabs_") } }
 }
 
 dependencies {

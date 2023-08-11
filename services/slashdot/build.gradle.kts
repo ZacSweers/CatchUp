@@ -21,12 +21,12 @@ plugins {
   alias(libs.plugins.kotlin.serialization)
 }
 
-android {
-  namespace = "io.sweers.catchup.service.slashdot"
-  buildFeatures { androidResources = true }
-}
+android { namespace = "io.sweers.catchup.service.slashdot" }
 
-slack { features { dagger() } }
+slack {
+  features { dagger() }
+  android { features { resources("catchup_service_sd_") } }
+}
 
 dependencies {
   api(libs.dagger.runtime)

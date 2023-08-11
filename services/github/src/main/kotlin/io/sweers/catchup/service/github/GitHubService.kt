@@ -199,9 +199,9 @@ abstract class GitHubMetaModule {
     internal fun provideGitHubServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.github,
-        R.color.githubAccent,
-        R.drawable.logo_github,
+        R.string.catchup_service_github_name,
+        R.color.catchup_service_github_accent,
+        R.drawable.catchup_service_github_logo,
         firstPageKey = null,
         enabled = BuildConfig.GITHUB_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
       )

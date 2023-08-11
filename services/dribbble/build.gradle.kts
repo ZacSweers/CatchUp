@@ -22,14 +22,16 @@ plugins {
 
 android {
   namespace = "io.sweers.catchup.service.dribbble"
-  buildFeatures {
-    androidResources = true
-  }
 }
 
 slack {
   features {
     dagger()
+  }
+  android {
+    features {
+      resources("catchup_service_dribbble_")
+    }
   }
 }
 

@@ -21,9 +21,9 @@
     app:fontProviderAuthority="com.google.android.gms.fonts"
     app:fontProviderPackage="com.google.android.gms"
     app:fontProviderQuery="Nunito"
-    app:fontProviderCerts="@array/com_google_android_gms_fonts_certs"
+    app:fontProviderCerts="@array/catchup_baseui_com_google_android_gms_fonts_certs"
     android:fontProviderAuthority="com.google.android.gms.fonts"
     android:fontProviderPackage="com.google.android.gms"
     android:fontProviderQuery="Nunito"
-    android:fontProviderCerts="@array/com_google_android_gms_fonts_certs"
+    android:fontProviderCerts="@array/catchup_baseui_com_google_android_gms_fonts_certs"
     tools:ignore="FontValidationWarning"/>

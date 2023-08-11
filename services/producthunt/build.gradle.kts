@@ -30,7 +30,6 @@ android {
   }
   buildFeatures {
     buildConfig = true
-    androidResources = true
   }
   namespace = "io.sweers.catchup.service.producthunt"
 }
@@ -51,6 +50,11 @@ slack {
   features {
     dagger()
     moshi(codegen = true)
+  }
+  android {
+    features {
+      resources("catchup_service_ph_")
+    }
   }
 }
 

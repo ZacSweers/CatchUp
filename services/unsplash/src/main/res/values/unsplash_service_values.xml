@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <string name="unsplash">Unsplash</string>
-  <color name="unsplashAccent">#ff000000</color>
+  <string name="catchup_service_unsplash_name">Unsplash</string>
+  <color name="catchup_service_unsplash_accent">#ff000000</color>
 </resources>

@@ -125,9 +125,9 @@ constructor(
 private val META =
   ServiceMeta(
     SERVICE_KEY,
-    R.string.ph,
-    R.color.phAccent,
-    R.drawable.logo_ph,
+    R.string.catchup_service_ph_name,
+    R.color.catchup_service_ph_accent,
+    R.drawable.catchup_service_ph_logo,
     pagesAreNumeric = true,
     firstPageKey = 0,
     enabled = BuildConfig.PRODUCT_HUNT_CLIENT_ID.run { !isNullOrEmpty() && !equals("null") }

@@ -25,7 +25,6 @@ plugins {
 android {
   namespace = "catchup.service.hackernews"
   buildFeatures {
-    androidResources = true
     resValues = true
     viewBinding = true
   }
@@ -34,6 +33,11 @@ android {
 slack {
   features {
     dagger()
+  }
+  android {
+    features {
+      resources("catchup_service_hn_")
+    }
   }
 }
 

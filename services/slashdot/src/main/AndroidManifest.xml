@@ -20,6 +20,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
   <application
-      android:networkSecurityConfig="@xml/slashdot_network_security_config"
+      android:networkSecurityConfig="@xml/catchup_service_sd_network_security_config"
       />
 </manifest>

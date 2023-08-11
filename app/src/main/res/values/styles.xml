@@ -33,8 +33,8 @@
 
   <style name="CatchUp.Launcher" parent="@style/CatchUp">
     <item name="android:windowBackground">@drawable/preview_window</item>
-    <item name="android:windowLightStatusBar">@bool/isInDayMode</item>
-    <item name="android:windowLightNavigationBar">@bool/isInDayMode</item>
+    <item name="android:windowLightStatusBar">@bool/catchup_util_isInDayMode</item>
+    <item name="android:windowLightNavigationBar">@bool/catchup_util_isInDayMode</item>
   </style>
 
 </resources>

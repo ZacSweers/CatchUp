@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <string name="dn">Designer News</string>
-  <color name="dnAccent">#ff2D72D9</color>
+  <string name="catchup_service_dn_name">Designer News</string>
+  <color name="catchup_service_dn_accent">#ff2D72D9</color>
 </resources>

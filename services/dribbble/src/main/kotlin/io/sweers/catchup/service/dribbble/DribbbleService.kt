@@ -105,9 +105,9 @@ abstract class DribbbleMetaModule {
     internal fun provideDribbbleServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.dribbble,
-        R.color.dribbbleAccent,
-        R.drawable.logo_dribbble,
+        R.string.catchup_service_dribbble_name,
+        R.color.catchup_service_dribbble_accent,
+        R.drawable.catchup_service_dribbble_logo,
         isVisual = true,
         pagesAreNumeric = true,
         firstPageKey = 1

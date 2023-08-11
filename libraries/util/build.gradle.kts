@@ -24,13 +24,20 @@ plugins {
 android {
   namespace = "io.sweers.catchup.util"
   buildFeatures {
-    androidResources = true
     viewBinding = true
   }
 }
 
 redacted {
   redactedAnnotation.set("io.sweers.catchup.util.network.Redacted")
+}
+
+slack {
+  android {
+    features {
+      resources("catchup_util_")
+    }
+  }
 }
 
 dependencies {

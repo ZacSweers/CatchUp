@@ -106,9 +106,9 @@ abstract class UplabsMetaModule {
     internal fun provideUplabsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.uplabs,
-        R.color.uplabsAccent,
-        R.drawable.logo_uplabs,
+        R.string.catchup_service_uplabs_name,
+        R.color.catchup_service_uplabs_accent,
+        R.drawable.catchup_service_uplabs_logo,
         isVisual = true,
         pagesAreNumeric = true,
         firstPageKey = 0

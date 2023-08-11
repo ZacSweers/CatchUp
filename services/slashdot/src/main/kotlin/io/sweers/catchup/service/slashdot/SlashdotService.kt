@@ -96,9 +96,9 @@ abstract class SlashdotMetaModule {
     internal fun provideSlashdotServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.slashdot,
-        R.color.slashdotAccent,
-        R.drawable.logo_sd,
+        R.string.catchup_service_sd_name,
+        R.color.catchup_service_sd_accent,
+        R.drawable.catchup_service_sd_logo,
         firstPageKey = null
       )
   }
