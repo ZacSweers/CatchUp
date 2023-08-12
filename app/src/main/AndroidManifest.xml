@@ -17,6 +17,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+  <uses-permission android:name="android.permission.INTERNET" />
+
   <application
       android:name=".app.CatchUpApplication"
       android:allowBackup="false"
@@ -96,7 +98,5 @@
       <action android:name="android.support.customtabs.action.CustomTabsService" />
     </intent>
   </queries>
-
-  <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
