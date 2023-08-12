@@ -11,8 +11,31 @@ import okhttp3.HttpUrl
  *
  * For object screens, they can simply implement this and return themselves as an instance.
  *
+ * ## Configuration
+ *
+ * ```kotlin
+ * @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+ * @StringKey("home") // The segment/route
+ * @Parcelize
+ * object HomeScreen : Screen, DeepLinkable {
+ *   override fun createScreen(queryParams: ImmutableMap<String, List<String?>): Screen = HomeScreen
+ * }
+ * ```
+ *
  * For class screens (e.g. `data class`), they can define a nested object that implements this and
  * creates the instance to return.
+ *
+ * ```kotlin
+ * @Parcelize
+ * data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenComponent.DEFAULT) : Screen {
+ *   @ContributesMultibinding(AppScope::class)
+ *   @StringKey("about")
+ *   object DeepLinker : DeepLinkable {
+ *     override fun createScreen(queryParams: ImmutableMap<String, List<String?>) =
+ *       AboutScreen(AboutScreenComponent.componentFor(queryParams["tab"]))
+ *   }
+ * }
+ * ```
  *
  * ## Contributing to DI
  *

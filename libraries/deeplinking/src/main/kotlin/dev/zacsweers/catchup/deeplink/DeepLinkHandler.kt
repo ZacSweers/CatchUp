@@ -15,6 +15,11 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import timber.log.Timber
 
+/**
+ * A simple handler for deep links.
+ *
+ * @see parse for primary documentation.
+ */
 interface DeepLinkHandler {
   /**
    * Parses an [HttpUrl] into a list of [Screen]s that can be used as a backstack.
