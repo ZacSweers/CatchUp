@@ -35,15 +35,8 @@
     <activity
         android:name=".ui.activity.MainActivity"
         android:configChanges="colorMode|density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
-        android:exported="true"
-        android:launchMode="singleTask">
-
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <data android:scheme="catchup" />
-      </intent-filter>
-    </activity>
+        android:exported="false"
+        android:launchMode="singleTask" />
 
     <activity
         android:name=".ui.activity.LauncherActivity"
