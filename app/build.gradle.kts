@@ -498,6 +498,7 @@ dependencies {
   implementation(libs.androidx.preference)
   implementation(libs.androidx.preferenceKtx)
   implementation(libs.androidx.profileinstaller)
+  implementation(libs.androidx.splashscreen)
   implementation(libs.androidx.window)
   implementation(libs.apollo.httpcache)
   implementation(libs.apollo.normalizedCache)

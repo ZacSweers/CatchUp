@@ -17,7 +17,7 @@
 <resources>
 
   <!-- Base application theme. -->
-  <style name="Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+  <style name="Theme.CatchUp.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
@@ -29,12 +29,12 @@
     <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
   </style>
 
-  <style name="CatchUp" parent="Base" />
+  <style name="Theme.CatchUp" parent="Theme.CatchUp.Base" />
 
-  <style name="CatchUp.Launcher" parent="@style/CatchUp">
-    <item name="android:windowBackground">@drawable/preview_window</item>
-    <item name="android:windowLightStatusBar">@bool/catchup_util_isInDayMode</item>
-    <item name="android:windowLightNavigationBar">@bool/catchup_util_isInDayMode</item>
+  <style name="Theme.CatchUp.Starting" parent="@style/Theme.SplashScreen">
+    <item name="windowSplashScreenBackground">@color/colorPrimary</item>
+    <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+    <item name="postSplashScreenTheme">@style/Theme.CatchUp</item>
   </style>
 
 </resources>

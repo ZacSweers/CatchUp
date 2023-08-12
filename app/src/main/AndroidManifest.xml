@@ -29,26 +29,14 @@
       android:label="@string/app_name"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:supportsRtl="true"
-      android:theme="@style/CatchUp"
+      android:theme="@style/Theme.CatchUp.Starting"
       tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
       tools:replace="android:appComponentFactory">
     <activity
         android:name=".ui.activity.MainActivity"
         android:configChanges="colorMode|density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
-        android:exported="false"
-        android:launchMode="singleTask" />
-
-    <activity
-        android:name=".ui.activity.LauncherActivity"
-        android:theme="@style/CatchUp.Launcher" />
-
-    <!-- This activity alias lets us change the main entry point without breaking launcher
-         shortcuts. DO NOT change its android:name attribute. -->
-    <activity-alias
-        android:name=".Launcher"
         android:exported="true"
-        android:label="@string/app_name"
-        android:targetActivity=".ui.activity.LauncherActivity">
+        android:launchMode="singleTask">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
@@ -59,7 +47,7 @@
         <category android:name="android.intent.category.DEFAULT" />
         <data android:scheme="catchup" />
       </intent-filter>
-    </activity-alias>
+    </activity>
 
     <meta-data
         android:name="preloaded_fonts"

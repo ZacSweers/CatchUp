@@ -3,6 +3,7 @@ package io.sweers.catchup.ui.about
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -103,7 +104,8 @@ fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
   Scaffold(
     containerColor = Color.Transparent,
     modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-    topBar = { CollapsingAboutHeader(state.version, scrollBehavior = scrollBehavior) }
+    topBar = { CollapsingAboutHeader(state.version, scrollBehavior = scrollBehavior) },
+    contentWindowInsets = WindowInsets(0, 0, 0, 0)
   ) { paddingValues ->
     Column(Modifier.padding(paddingValues)) {
       val components = remember { AboutScreen.AboutScreenComponent.entries.toImmutableList() }
