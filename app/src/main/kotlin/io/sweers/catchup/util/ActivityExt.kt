@@ -20,7 +20,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import com.jakewharton.processphoenix.ProcessPhoenix
-import io.sweers.catchup.ui.activity.LauncherActivity
+import io.sweers.catchup.ui.activity.MainActivity
 
 fun Context.resolveActivity(): ComponentActivity {
   if (this is ComponentActivity) {
@@ -33,5 +33,5 @@ fun Context.resolveActivity(): ComponentActivity {
 }
 
 fun Context.restartApp() {
-  ProcessPhoenix.triggerRebirth(this, Intent(this, LauncherActivity::class.java))
+  ProcessPhoenix.triggerRebirth(this, Intent(this, MainActivity::class.java))
 }

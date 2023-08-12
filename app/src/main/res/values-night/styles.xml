@@ -16,7 +16,7 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-  <style name="CatchUp" parent="Base">
+  <style name="Theme.CatchUp" parent="Theme.CatchUp.Base">
     <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
   </style>
 
