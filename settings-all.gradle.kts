@@ -6,6 +6,7 @@ include(
   ":libraries:appconfig",
   ":libraries:compose-extensions",
   ":libraries:compose-extensions:pull-refresh",
+  ":libraries:deeplinking",
   ":libraries:di",
   ":libraries:di:android",
   ":libraries:gemoji",

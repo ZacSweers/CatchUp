@@ -30,11 +30,12 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
-import dev.zacsweers.catchup.DeepLinkable
 import dev.zacsweers.catchup.appconfig.AppConfig
+import dev.zacsweers.catchup.deeplink.DeepLinkable
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.R
 import java.util.Locale
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -47,8 +48,8 @@ data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenCompon
   @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
   @StringKey("about")
   object DeepLinker : DeepLinkable {
-    override fun createScreen(queryParams: Map<String, String?>) =
-      AboutScreen(AboutScreenComponent.componentFor(queryParams["tab"]))
+    override fun createScreen(queryParams: ImmutableMap<String, List<String?>>) =
+      AboutScreen(AboutScreenComponent.componentFor(queryParams["tab"]?.first()))
   }
 
   data class State(

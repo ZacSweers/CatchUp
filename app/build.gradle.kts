@@ -552,6 +552,7 @@ dependencies {
   implementation(projects.libraries.baseUi)
   implementation(projects.libraries.composeExtensions)
   implementation(projects.libraries.composeExtensions.pullRefresh)
+  implementation(projects.libraries.deeplinking)
   implementation(projects.libraries.di)
   implementation(projects.libraries.di.android)
   implementation(projects.libraries.flowbinding)

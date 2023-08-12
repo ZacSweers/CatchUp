@@ -39,13 +39,13 @@ import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.multibindings.Multibinds
-import dev.zacsweers.catchup.DeepLinkHandler
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.circuit.IntentAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
+import dev.zacsweers.catchup.deeplink.DeepLinkHandler
+import dev.zacsweers.catchup.deeplink.parse
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.android.ActivityKey
-import dev.zacsweers.catchup.parse
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.RootContent
 import io.sweers.catchup.data.LinkManager
@@ -104,8 +104,10 @@ constructor(
         CircuitCompositionLocals(circuit) {
           ContentWithOverlays {
             val backstack = rememberSaveableBackStack {
-              push(HomeScreen)
-              intent?.let(deepLinkHandler::parse)?.forEach(::push)
+              val stack = intent?.let(deepLinkHandler::parse) ?: listOf(HomeScreen)
+              for (screen in stack) {
+                push(screen)
+              }
             }
             val navigator = rememberCircuitNavigator(backstack)
             val intentAwareNavigator = remember(navigator) { IntentAwareNavigator(this, navigator) }
