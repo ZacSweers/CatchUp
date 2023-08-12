@@ -49,12 +49,15 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
+import com.squareup.anvil.annotations.ContributesMultibinding
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.multibindings.StringKey
 import dev.zacsweers.catchup.compose.ContentAlphas
 import dev.zacsweers.catchup.compose.DisableableContent
 import dev.zacsweers.catchup.compose.LocalEnabled
+import dev.zacsweers.catchup.deeplink.DeepLinkable
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
@@ -66,6 +69,7 @@ import io.sweers.catchup.util.clearFiles
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.restartApp
 import javax.inject.Inject
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -74,8 +78,13 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import okhttp3.Cache
 
+@ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+@StringKey("settings")
 @Parcelize
-object SettingsScreen : Screen {
+object SettingsScreen : Screen, DeepLinkable {
+  override fun createScreen(queryParams: ImmutableMap<String, List<String?>>): Screen =
+    SettingsScreen
+
   data class State(val eventSink: (Event) -> Unit) : CircuitUiState
 
   sealed interface Event {

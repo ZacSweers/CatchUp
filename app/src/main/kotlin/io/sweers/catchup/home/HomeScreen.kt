@@ -64,14 +64,17 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
+import com.squareup.anvil.annotations.ContributesMultibinding
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.multibindings.StringKey
 import dev.zacsweers.catchup.circuit.BottomSheetOverlay
 import dev.zacsweers.catchup.compose.LocalDynamicTheme
 import dev.zacsweers.catchup.compose.LocalScrollToTop
 import dev.zacsweers.catchup.compose.MutableScrollToTop
 import dev.zacsweers.catchup.compose.rememberStableCoroutineScope
+import dev.zacsweers.catchup.deeplink.DeepLinkable
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.service.ServiceScreen
 import io.sweers.catchup.CatchUpPreferences
@@ -83,6 +86,7 @@ import io.sweers.catchup.ui.activity.SettingsScreen
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CompletableDeferred
@@ -94,8 +98,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
+@ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+@StringKey("home")
 @Parcelize
-object HomeScreen : Screen {
+object HomeScreen : Screen, DeepLinkable {
+  override fun createScreen(queryParams: ImmutableMap<String, List<String?>>): Screen = HomeScreen
+
   data class State(
     val serviceMetas: ImmutableList<ServiceMeta>,
     val changelogAvailable: Boolean,
