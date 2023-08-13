@@ -10,32 +10,46 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import kotlinx.parcelize.Parcelize
 
-@Parcelize data class IntentScreen(val intent: Intent, val options: Bundle? = null) : Screen
+interface AndroidScreen : Screen
+
+@Parcelize
+data class IntentScreen(val intent: Intent, val options: Bundle? = null) : AndroidScreen {
+  fun launch(activity: Activity) {
+    activity.startActivity(intent, options)
+  }
+}
 
 @Stable
 class AndroidSupportNavigator(
   private val delegate: Navigator,
-  private val handler: IntentHandler,
+  private val launcher: IntentLauncher,
 ) : Navigator by delegate {
   override fun goTo(screen: Screen) {
     when (screen) {
-      is IntentScreen -> handler.handle(screen.intent, screen.options)
+      is AndroidScreen -> launcher.launch(screen)
       else -> delegate.goTo(screen)
     }
   }
 }
 
-fun interface IntentHandler {
-  fun handle(intent: Intent, options: Bundle?)
+fun interface IntentLauncher {
+  fun launch(screen: AndroidScreen)
 }
 
 @Composable
 fun rememberIntentAwareNavigator(delegate: Navigator, activity: Activity): Navigator {
-  val starter = remember(activity) { IntentHandler(activity::startActivity) }
+  val starter =
+    remember(activity) {
+      IntentLauncher { screen ->
+        when (screen) {
+          is IntentScreen -> screen.launch(activity)
+        }
+      }
+    }
   return rememberIntentAwareNavigator(delegate, starter)
 }
 
 @Composable
-fun rememberIntentAwareNavigator(delegate: Navigator, starter: IntentHandler): Navigator {
-  return remember(delegate) { AndroidSupportNavigator(delegate, starter) }
+fun rememberIntentAwareNavigator(delegate: Navigator, launcher: IntentLauncher): Navigator {
+  return remember(delegate) { AndroidSupportNavigator(delegate, launcher) }
 }
