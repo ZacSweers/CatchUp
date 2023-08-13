@@ -35,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -107,6 +108,7 @@ object HomeScreen : Screen, DeepLinkable {
   data class State(
     val serviceMetas: ImmutableList<ServiceMeta>,
     val changelogAvailable: Boolean,
+    val selectedIndex: Int,
     val eventSink: (Event) -> Unit = {}
   ) : CircuitUiState
 
@@ -116,6 +118,8 @@ object HomeScreen : Screen, DeepLinkable {
     data object ShowChangelog : Event
 
     data class NestedNavEvent(val navEvent: NavEvent) : Event
+
+    data class Selected(val index: Int) : Event
   }
 }
 
@@ -138,6 +142,7 @@ constructor(
   override fun present(): HomeScreen.State {
     val currentOrder by
       remember { catchUpPreferences.servicesOrder }.collectAsState(initial = persistentListOf())
+    var selectedIndex by remember(currentOrder) { mutableIntStateOf(-1) }
     val serviceMetas by
       produceState(initialValue = persistentListOf(), currentOrder) {
         // TODO make enabledPrefKey live?
@@ -161,6 +166,7 @@ constructor(
     return HomeScreen.State(
       serviceMetas = serviceMetas,
       changelogAvailable = changelogAvailable,
+      selectedIndex = selectedIndex,
     ) { event ->
       when (event) {
         HomeScreen.Event.OpenSettings -> {
@@ -168,6 +174,9 @@ constructor(
         }
         is HomeScreen.Event.NestedNavEvent -> {
           navigator.onNavEvent(event.navEvent)
+        }
+        is HomeScreen.Event.Selected -> {
+          selectedIndex = event.index
         }
         HomeScreen.Event.ShowChangelog -> {
           scope.launch {
