@@ -40,7 +40,7 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.circuit.rememberIntentAwareNavigator
+import dev.zacsweers.catchup.circuit.rememberAndroidScreenAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.deeplink.DeepLinkHandler
 import dev.zacsweers.catchup.deeplink.parse
@@ -111,7 +111,8 @@ constructor(
               }
             }
             val navigator = rememberCircuitNavigator(backstack)
-            val intentAwareNavigator = rememberIntentAwareNavigator(navigator, this@MainActivity)
+            val intentAwareNavigator =
+              rememberAndroidScreenAwareNavigator(navigator, this@MainActivity)
             rootContent.Content(intentAwareNavigator) {
               NavigableCircuitContent(
                 intentAwareNavigator,
