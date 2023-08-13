@@ -369,7 +369,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
 }
 
 @JvmInline
-value class ColorCache(private val colors: Array<Color>) {
+private value class ColorCache(private val colors: Array<Color>) {
   operator fun get(index: Int): Color = colors[index]
 
   operator fun set(index: Int, color: Color) {
@@ -378,7 +378,7 @@ value class ColorCache(private val colors: Array<Color>) {
 }
 
 @Composable
-fun rememberColorCache(
+private fun rememberColorCache(
   serviceMetas: ImmutableList<ServiceMeta>,
   dayOnly: Boolean,
 ): ColorCache {
