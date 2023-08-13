@@ -287,7 +287,7 @@ constructor(
             sendIntent.type = "text/plain"
             sendIntent.putExtra(Intent.EXTRA_STREAM, file.toUri())
             sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            navigator.goTo(IntentScreen(sendIntent, isChooser = true))
+            navigator.goTo(IntentScreen(Intent.createChooser(sendIntent, "Share logs")))
           }
         }
       }
