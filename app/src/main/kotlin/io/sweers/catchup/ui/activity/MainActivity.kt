@@ -27,7 +27,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
@@ -41,7 +40,7 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.circuit.IntentAwareNavigator
+import dev.zacsweers.catchup.circuit.rememberAndroidScreenAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.deeplink.DeepLinkHandler
 import dev.zacsweers.catchup.deeplink.parse
@@ -112,7 +111,8 @@ constructor(
               }
             }
             val navigator = rememberCircuitNavigator(backstack)
-            val intentAwareNavigator = remember(navigator) { IntentAwareNavigator(this, navigator) }
+            val intentAwareNavigator =
+              rememberAndroidScreenAwareNavigator(navigator, this@MainActivity)
             rootContent.Content(intentAwareNavigator) {
               NavigableCircuitContent(
                 intentAwareNavigator,

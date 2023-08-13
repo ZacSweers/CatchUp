@@ -46,7 +46,6 @@ import androidx.paging.map
 import app.cash.sqldelight.paging3.QueryPagingSource
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -142,7 +141,8 @@ constructor(
     val context = LocalContext.current
     val themeColor = LocalServiceThemeColor.current
     // TODO what's the right thing and scope to retain?
-    val pager = rememberRetained {
+    // TODO this leaks the activity after destroy if using rememberRetained
+    val pager = remember {
       // TODO
       //  preference page size
       //  retain pager or even the flow?
@@ -223,7 +223,7 @@ constructor(
                   putExtra(Intent.EXTRA_TEXT, url)
                   type = "text/plain"
                 }
-              navigator.goTo(IntentScreen(shareIntent, isChooser = true))
+              navigator.goTo(IntentScreen(Intent.createChooser(shareIntent, "Share")))
             }
             SUMMARIZE -> {
               coroutineScope.launch {
