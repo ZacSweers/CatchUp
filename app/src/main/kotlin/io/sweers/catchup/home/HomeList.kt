@@ -31,6 +31,9 @@ import io.sweers.catchup.home.HomeScreen.Event.Selected
 
 @Composable
 fun HomeList(state: HomeScreen.State, modifier: Modifier = Modifier) {
+  // TODO
+  //  set status bar colors
+  //  todo try to navigate to screens in home scree
   Surface(modifier = modifier.fillMaxHeight()) {
     LazyColumn(modifier = Modifier.systemBarsPadding().padding(16.dp)) {
       // Title
@@ -40,7 +43,6 @@ fun HomeList(state: HomeScreen.State, modifier: Modifier = Modifier) {
           text = stringResource(id = R.string.app_name),
           style = MaterialTheme.typography.displayLarge,
           fontWeight = FontWeight.Black,
-          color = MaterialTheme.colorScheme.primary,
           modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
         )
       }

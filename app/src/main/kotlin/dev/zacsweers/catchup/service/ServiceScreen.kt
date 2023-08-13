@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -56,6 +57,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.circuit.FullScreenOverlay
 import dev.zacsweers.catchup.circuit.IntentScreen
+import dev.zacsweers.catchup.compose.dynamicAwareColor
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.pullrefresh.PullRefreshIndicator
 import dev.zacsweers.catchup.pullrefresh.pullRefresh
@@ -70,7 +72,6 @@ import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.ContentType
-import io.sweers.catchup.service.api.LocalServiceThemeColor
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.ImageViewerScreen
@@ -139,7 +140,11 @@ constructor(
 
     // TODO this is a bad pattern in circuit
     val context = LocalContext.current
-    val themeColor = LocalServiceThemeColor.current
+    val themeColor =
+      dynamicAwareColor(
+        regularColor = { colorResource(service.meta().themeColor) },
+        dynamicColor = { MaterialTheme.colorScheme.primary }
+      )
     // TODO what's the right thing and scope to retain?
     // TODO this leaks the activity after destroy if using rememberRetained
     val pager = remember {

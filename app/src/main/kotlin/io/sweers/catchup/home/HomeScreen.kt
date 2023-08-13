@@ -81,7 +81,6 @@ import dev.zacsweers.catchup.service.ServiceScreen
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
-import io.sweers.catchup.service.api.LocalServiceThemeColor
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.activity.SettingsScreen
 import kotlin.math.absoluteValue
@@ -177,6 +176,7 @@ constructor(
         }
         is HomeScreen.Event.Selected -> {
           selectedIndex = event.index
+          navigator.goTo(ServiceScreen(serviceMetas[event.index].id))
         }
         HomeScreen.Event.ShowChangelog -> {
           scope.launch {
@@ -209,8 +209,6 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
   val systemUiController = rememberSystemUiController()
 
   val dynamicTheme = LocalDynamicTheme.current
-  // TODO this isn't updating when serviceMeta order changes
-  val colorCache = rememberColorCache(state.serviceMetas, dayOnly = false)
   val dayOnlyColorCache = rememberColorCache(state.serviceMetas, dayOnly = !dynamicTheme)
   val tabLayoutColor = remember(dayOnlyColorCache) { Animatable(dayOnlyColorCache[0]) }
   var isAnimatingColor by remember { mutableStateOf(false) }
@@ -363,8 +361,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
       ) { page ->
         contentComposed = true
         CompositionLocalProvider(
-          LocalScrollToTop provides scrollToTop.takeIf { pagerState.currentPage == page },
-          LocalServiceThemeColor provides colorCache[page],
+          LocalScrollToTop provides scrollToTop.takeIf { pagerState.currentPage == page }
         ) {
           CircuitContent(
             screen = ServiceScreen(state.serviceMetas[page].id),
@@ -391,6 +388,7 @@ private fun rememberColorCache(
   serviceMetas: ImmutableList<ServiceMeta>,
   dayOnly: Boolean,
 ): ColorCache {
+  // TODO consolidate this with dynamicAwareColor
   val context = LocalContext.current
   val primaryColor = MaterialTheme.colorScheme.primary
   val dynamicTheme = LocalDynamicTheme.current
