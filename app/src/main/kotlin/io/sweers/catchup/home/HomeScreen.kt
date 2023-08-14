@@ -53,6 +53,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.window.layout.FoldingFeature
@@ -202,6 +203,7 @@ constructor(
   }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @CircuitInject(HomeScreen::class, AppScope::class)
 fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
@@ -226,14 +228,27 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
             // TODO
             //  should probably just synthesize putting the settings in the list
             //  crossfade?
-            val screen =
-              if (state.selectedIndex == state.serviceMetas.size) {
-                // TODO this doesn't reaaaaaaally work because it wants to navigate on its own
-                SettingsScreen
-              } else {
-                ServiceScreen(state.serviceMetas[state.selectedIndex].id)
+            if (state.selectedIndex == state.serviceMetas.size) {
+              // TODO this doesn't reaaaaaaally work because it wants to navigate on its own
+              CircuitContent(SettingsScreen)
+            } else {
+              // Embed the content in a scaffold for padding and such
+              val meta = state.serviceMetas[state.selectedIndex]
+              val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+              Scaffold(
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                containerColor = Color.Transparent,
+                topBar = {
+                  TopAppBar(
+                    title = { Text(stringResource(meta.name), fontWeight = FontWeight.Black) },
+                    scrollBehavior = scrollBehavior
+                  )
+                },
+              ) { innerPadding ->
+                CircuitContent(ServiceScreen(meta.id), modifier = Modifier.padding(innerPadding))
               }
-            CircuitContent(screen)
+            }
           }
         }
       },
