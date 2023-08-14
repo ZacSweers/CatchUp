@@ -91,9 +91,9 @@ private fun HomeListItemEntry(
   modifier: Modifier = Modifier,
   onClick: () -> Unit = {},
 ) {
+  // TODO animate this on changes?
   val color =
     if (isSelected) {
-      //      MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
       serviceTint.copy(alpha = 0.2f)
     } else {
       Color.Unspecified
