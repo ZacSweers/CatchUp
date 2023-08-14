@@ -1,8 +1,5 @@
 package io.sweers.catchup.home
 
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,18 +8,21 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,10 +34,9 @@ import io.sweers.catchup.home.HomeScreen.Event.Selected
 @Composable
 fun HomeList(state: HomeScreen.State, modifier: Modifier = Modifier) {
   Surface(modifier = modifier.fillMaxHeight()) {
-    LazyColumn(modifier = Modifier.systemBarsPadding().padding(16.dp)) {
-      // Title
+    LazyColumn(modifier = Modifier.statusBarsPadding().padding(16.dp)) {
+      // Title & changelog
       item {
-        // TODO changelog present icon?
         Box(modifier = Modifier.fillMaxWidth()) {
           Text(
             text = stringResource(id = R.string.app_name),
@@ -45,8 +44,10 @@ fun HomeList(state: HomeScreen.State, modifier: Modifier = Modifier) {
             fontWeight = FontWeight.Black,
             modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
           )
-          if (true) {
-            ChangelogButton(Modifier.align(Alignment.TopEnd)) { state.eventSink(HomeScreen.Event.ShowChangelog) }
+          if (state.changelogAvailable) {
+            ChangelogButton(Modifier.align(Alignment.TopEnd)) {
+              state.eventSink(HomeScreen.Event.ShowChangelog)
+            }
           }
         }
       }
@@ -54,25 +55,37 @@ fun HomeList(state: HomeScreen.State, modifier: Modifier = Modifier) {
       for ((index, meta) in state.serviceMetas.withIndex()) {
         item {
           HomeListItemEntry(
-            icon = meta.icon,
-            title = meta.name,
-            serviceTint = meta.themeColor,
+            icon = painterResource(meta.icon),
+            title = stringResource(meta.name),
+            serviceTint = colorResource(meta.themeColor),
             description = "",
             isSelected = state.selectedIndex == index,
             onClick = { state.eventSink(Selected(index)) }
           )
         }
       }
-      // TODO settings
+      item {
+        // This is "bonus" index, one beyond service metas
+        // TODO merge this with service metas instead?
+        val index = state.serviceMetas.size
+        HomeListItemEntry(
+          icon = rememberVectorPainter(Icons.Filled.Settings),
+          title = stringResource(R.string.title_activity_settings),
+          serviceTint = MaterialTheme.colorScheme.primary,
+          description = "Miscellaneous CatchUp settings",
+          isSelected = state.selectedIndex == index,
+          onClick = { state.eventSink(Selected(index)) }
+        )
+      }
     }
   }
 }
 
 @Composable
 private fun HomeListItemEntry(
-  @DrawableRes icon: Int,
-  @ColorRes serviceTint: Int,
-  @StringRes title: Int,
+  icon: Painter,
+  serviceTint: Color,
+  title: String,
   description: String,
   isSelected: Boolean,
   modifier: Modifier = Modifier,
@@ -80,7 +93,8 @@ private fun HomeListItemEntry(
 ) {
   val color =
     if (isSelected) {
-      MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+      //      MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+      serviceTint.copy(alpha = 0.2f)
     } else {
       Color.Unspecified
     }
@@ -93,25 +107,24 @@ private fun HomeListItemEntry(
     // A row with an icon followed by two lines of text
     Row(verticalAlignment = Alignment.CenterVertically) {
       Icon(
-        painter = painterResource(icon),
+        painter = icon,
         contentDescription = null,
         modifier = Modifier.padding(16.dp).size(48.dp),
-        tint = colorResource(serviceTint)
+        tint = serviceTint
       )
       Column(
         modifier = Modifier.align(Alignment.CenterVertically),
-        verticalArrangement = spacedBy(8.dp)
+        verticalArrangement = spacedBy(4.dp)
       ) {
         Text(
-          text = stringResource(title),
+          text = title,
           style = MaterialTheme.typography.titleLarge,
           fontWeight = FontWeight.Black
         )
         if (description.isNotBlank()) {
           Text(
             text = description,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 4.dp)
+            style = MaterialTheme.typography.bodyMedium,
           )
         }
       }

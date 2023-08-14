@@ -223,7 +223,16 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
         Box {
           // TODO temporary until https://github.com/slackhq/circuit/pull/799
           key(state.selectedIndex) {
-            CircuitContent(ServiceScreen(state.serviceMetas[state.selectedIndex].id))
+            // TODO
+            //  should probably just synthesize putting the settings in the list
+            //  crossfade?
+            val screen =
+              if (state.selectedIndex == state.serviceMetas.size) {
+                SettingsScreen
+              } else {
+                ServiceScreen(state.serviceMetas[state.selectedIndex].id)
+              }
+            CircuitContent(screen)
           }
         }
       },
