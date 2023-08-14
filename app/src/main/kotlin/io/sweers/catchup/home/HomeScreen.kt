@@ -224,6 +224,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
       first = {
         Box {
           HomeList(state)
+          // TODO only do this in landscape?
           VerticalDivider(Modifier.align(Alignment.CenterEnd), thickness = 0.5.dp)
         }
       },
