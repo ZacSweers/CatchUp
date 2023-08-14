@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.zacsweers.catchup.compose.dynamicAwareColor
 import io.sweers.catchup.R
 import io.sweers.catchup.home.HomeScreen.Event.Selected
 
@@ -91,10 +92,15 @@ private fun HomeListItemEntry(
   modifier: Modifier = Modifier,
   onClick: () -> Unit = {},
 ) {
+  val tintColor =
+    dynamicAwareColor(
+      regularColor = { serviceTint },
+      dynamicColor = { MaterialTheme.colorScheme.primary }
+    )
   // TODO animate this on changes?
   val color =
     if (isSelected) {
-      serviceTint.copy(alpha = 0.2f)
+      tintColor.copy(alpha = 0.2f)
     } else {
       Color.Unspecified
     }
@@ -110,7 +116,7 @@ private fun HomeListItemEntry(
         painter = icon,
         contentDescription = null,
         modifier = Modifier.padding(16.dp).size(48.dp),
-        tint = serviceTint
+        tint = tintColor
       )
       Column(
         modifier = Modifier.align(Alignment.CenterVertically),
