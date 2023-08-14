@@ -1,6 +1,5 @@
 package dev.zacsweers.catchup.service
 
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
@@ -42,7 +41,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
@@ -58,6 +56,7 @@ import coil.compose.AsyncImage
 import coil.drawable.MovieDrawable
 import coil.request.ImageRequest
 import dev.zacsweers.catchup.compose.ScrollToTopHandler
+import dev.zacsweers.catchup.compose.columnCount
 import io.sweers.catchup.base.ui.BlurHashDecoder
 import io.sweers.catchup.base.ui.ColorUtils
 import io.sweers.catchup.base.ui.generateAsync
@@ -81,9 +80,9 @@ fun VisualServiceUi(
     val state = rememberLazyStaggeredGridState()
     ScrollToTopHandler(state)
     LazyVerticalStaggeredGrid(
-      columns = StaggeredGridCells.Fixed(columnSpan()),
+      columns = StaggeredGridCells.Fixed(columnCount(2)),
       state = state,
-      modifier = modifier.fillMaxSize(),
+      modifier = modifier,
     ) {
       items(
         count = lazyItems.itemCount,
@@ -135,7 +134,7 @@ fun VisualItem(
     val imageInfo = item.imageInfo!!
 
     // Compute in-grid image size
-    val imageWidth = displayMetrics.widthPixels / columnSpan()
+    val imageWidth = displayMetrics.widthPixels / columnCount(2)
     val imageWidthDp = LocalDensity.current.run { imageWidth.toDp() }
     val imageHeight = (imageWidth / imageInfo.aspectRatio).toInt()
     val imageHeightDp = LocalDensity.current.run { imageHeight.toDp() }
@@ -384,12 +383,3 @@ private val PLACEHOLDERS_LIGHT =
     Color(0xffeeeeee),
     Color(0xffe0e0e0),
   )
-
-@Composable
-private fun columnSpan(): Int {
-  return if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-    3
-  } else {
-    2
-  }
-}
