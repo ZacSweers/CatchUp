@@ -6,6 +6,7 @@ import androidx.annotation.ColorRes
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
@@ -54,6 +55,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.window.layout.FoldingFeature
+import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
+import com.google.accompanist.adaptive.TwoPane
+import com.google.accompanist.adaptive.VerticalTwoPaneStrategy
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
@@ -71,6 +76,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
 import dev.zacsweers.catchup.circuit.BottomSheetOverlay
+import dev.zacsweers.catchup.compose.LocalDisplayFeatures
 import dev.zacsweers.catchup.compose.LocalDynamicTheme
 import dev.zacsweers.catchup.compose.LocalScrollToTop
 import dev.zacsweers.catchup.compose.MutableScrollToTop
@@ -92,6 +98,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -141,7 +148,7 @@ constructor(
   override fun present(): HomeScreen.State {
     val currentOrder by
       remember { catchUpPreferences.servicesOrder }.collectAsState(initial = persistentListOf())
-    var selectedIndex by remember(currentOrder) { mutableIntStateOf(-1) }
+    var selectedIndex by remember(currentOrder) { mutableIntStateOf(0) }
     val serviceMetas by
       produceState(initialValue = persistentListOf(), currentOrder) {
         // TODO make enabledPrefKey live?
@@ -176,7 +183,8 @@ constructor(
         }
         is HomeScreen.Event.Selected -> {
           selectedIndex = event.index
-          navigator.goTo(ServiceScreen(serviceMetas[event.index].id))
+          // TODO only do this if we make a TwoPane nav-aware
+          //  navigator.goTo(ServiceScreen(serviceMetas[event.index].id))
         }
         HomeScreen.Event.ShowChangelog -> {
           scope.launch {
@@ -194,16 +202,66 @@ constructor(
   }
 }
 
+@Composable
+@CircuitInject(HomeScreen::class, AppScope::class)
+fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
+  if (state.serviceMetas.isEmpty()) return // Not loaded yet
+
+  // TODO movable for current content? How can we better save the state of the current detail
+  val displayFeatures = LocalDisplayFeatures.current
+  val foldingFeature =
+    remember(displayFeatures) { displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull() }
+
+  if (foldingFeature != null) {
+    // TODO
+    //  in vertical, switch the order so the content's on top
+    //  try a PaneledCircuitContent where it's just a row of the backstack?
+    TwoPane(
+      first = { HomeList(state) },
+      second = {
+        // Box is to prevent it from flashing the background between changes
+        Box {
+          // TODO temporary until https://github.com/slackhq/circuit/pull/799
+          key(state.selectedIndex) {
+            CircuitContent(ServiceScreen(state.serviceMetas[state.selectedIndex].id))
+          }
+        }
+      },
+      strategy = { density, layoutDirection, layoutCoordinates ->
+        // Split vertically if the height is larger than the width
+        if (layoutCoordinates.size.height >= layoutCoordinates.size.width) {
+            VerticalTwoPaneStrategy(splitFraction = 0.5f)
+          } else {
+            HorizontalTwoPaneStrategy(splitFraction = 0.5f)
+          }
+          .calculateSplitResult(density, layoutDirection, layoutCoordinates)
+      },
+      displayFeatures = displayFeatures,
+      modifier = modifier,
+    )
+  } else {
+    HomePager(state, modifier)
+  }
+}
+
 @OptIn(
   ExperimentalMaterial3Api::class,
   ExperimentalFoundationApi::class,
   ExperimentalLayoutApi::class
 )
 @Composable
-@CircuitInject(HomeScreen::class, AppScope::class)
-fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
+fun HomePager(state: HomeScreen.State, modifier: Modifier = Modifier) {
   if (state.serviceMetas.isEmpty()) return // Not loaded yet
-  val pagerState = key(state.serviceMetas) { rememberPagerState { state.serviceMetas.size } }
+
+  val pagerState =
+    key(state.serviceMetas) { rememberPagerState(state.selectedIndex) { state.serviceMetas.size } }
+
+  LaunchedEffect(pagerState) {
+    snapshotFlow { pagerState.settledPage }
+      .distinctUntilChanged()
+      .collect { state.eventSink(HomeScreen.Event.Selected(it)) }
+  }
+
   val currentServiceMeta = state.serviceMetas[pagerState.currentPage]
   val title = stringResource(currentServiceMeta.name)
   val systemUiController = rememberSystemUiController()

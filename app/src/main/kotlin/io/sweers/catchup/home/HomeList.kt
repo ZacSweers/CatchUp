@@ -33,7 +33,7 @@ import io.sweers.catchup.home.HomeScreen.Event.Selected
 fun HomeList(state: HomeScreen.State, modifier: Modifier = Modifier) {
   // TODO
   //  set status bar colors
-  //  todo try to navigate to screens in home scree
+  //  settings
   Surface(modifier = modifier.fillMaxHeight()) {
     LazyColumn(modifier = Modifier.systemBarsPadding().padding(16.dp)) {
       // Title
