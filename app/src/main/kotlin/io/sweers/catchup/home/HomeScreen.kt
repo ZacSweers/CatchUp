@@ -228,6 +228,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
             //  crossfade?
             val screen =
               if (state.selectedIndex == state.serviceMetas.size) {
+                // TODO this doesn't reaaaaaaally work because it wants to navigate on its own
                 SettingsScreen
               } else {
                 ServiceScreen(state.serviceMetas[state.selectedIndex].id)
