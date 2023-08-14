@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -30,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -219,7 +221,12 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
     //  in vertical, switch the order so the content's on top
     //  try a PaneledCircuitContent where it's just a row of the backstack?
     TwoPane(
-      first = { HomeList(state) },
+      first = {
+        Box {
+          HomeList(state)
+          VerticalDivider(Modifier.align(Alignment.CenterEnd), thickness = 0.5.dp)
+        }
+      },
       second = {
         // Box is to prevent it from flashing the background between changes
         Box {
