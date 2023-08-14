@@ -333,14 +333,7 @@ fun HomePager(state: HomeScreen.State, modifier: Modifier = Modifier) {
         actions = {
           // TODO wire with Syllabus
           if (state.changelogAvailable) {
-            IconButton(
-              onClick = { state.eventSink(HomeScreen.Event.ShowChangelog) },
-            ) {
-              Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.tips_and_updates),
-                contentDescription = stringResource(R.string.changes),
-              )
-            }
+            ChangelogButton { state.eventSink(HomeScreen.Event.ShowChangelog) }
           }
           IconButton(
             onClick = { state.eventSink(HomeScreen.Event.OpenSettings) },
@@ -477,3 +470,16 @@ private fun rememberColorCache(
 
 private val Color.isDark: Boolean
   get() = luminance() <= 0.5f
+
+@Composable
+internal fun ChangelogButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+  IconButton(
+    onClick = onClick,
+    modifier = modifier,
+  ) {
+    Icon(
+      imageVector = ImageVector.vectorResource(R.drawable.baseline_redeem_24),
+      contentDescription = stringResource(R.string.changes),
+    )
+  }
+}

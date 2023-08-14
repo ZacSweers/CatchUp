@@ -4,6 +4,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement.spacedBy
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -31,20 +33,22 @@ import io.sweers.catchup.home.HomeScreen.Event.Selected
 
 @Composable
 fun HomeList(state: HomeScreen.State, modifier: Modifier = Modifier) {
-  // TODO
-  //  set status bar colors
-  //  settings
   Surface(modifier = modifier.fillMaxHeight()) {
     LazyColumn(modifier = Modifier.systemBarsPadding().padding(16.dp)) {
       // Title
       item {
         // TODO changelog present icon?
-        Text(
-          text = stringResource(id = R.string.app_name),
-          style = MaterialTheme.typography.displayLarge,
-          fontWeight = FontWeight.Black,
-          modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
-        )
+        Box(modifier = Modifier.fillMaxWidth()) {
+          Text(
+            text = stringResource(id = R.string.app_name),
+            style = MaterialTheme.typography.displayLarge,
+            fontWeight = FontWeight.Black,
+            modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
+          )
+          if (true) {
+            ChangelogButton(Modifier.align(Alignment.TopEnd)) { state.eventSink(HomeScreen.Event.ShowChangelog) }
+          }
+        }
       }
       // Services
       for ((index, meta) in state.serviceMetas.withIndex()) {

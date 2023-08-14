@@ -85,8 +85,8 @@ constructor(
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
-    super.onCreate(savedInstanceState)
     enableEdgeToEdge(navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT))
+    super.onCreate(savedInstanceState)
     linkManager.connect(this)
 
     setContent {
