@@ -56,6 +56,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.window.layout.FoldingFeature
@@ -225,7 +226,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
         Box {
           HomeList(state)
           // TODO only do this in landscape?
-          VerticalDivider(Modifier.align(Alignment.CenterEnd), thickness = 0.5.dp)
+          VerticalDivider(Modifier.align(Alignment.CenterEnd), thickness = Dp.Hairline)
         }
       },
       second = {
