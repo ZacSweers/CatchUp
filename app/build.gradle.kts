@@ -476,6 +476,7 @@ dependencies {
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.appCompat)
+  implementation(libs.androidx.compose.accompanist.adaptive)
   implementation(libs.androidx.compose.accompanist.systemUi)
   implementation(libs.androidx.compose.animation.graphics)
   implementation(libs.androidx.compose.foundation)

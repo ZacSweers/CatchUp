@@ -6,12 +6,14 @@ import androidx.annotation.ColorRes
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -29,12 +31,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -51,8 +55,13 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.window.layout.FoldingFeature
+import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
+import com.google.accompanist.adaptive.TwoPane
+import com.google.accompanist.adaptive.VerticalTwoPaneStrategy
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
@@ -70,6 +79,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
 import dev.zacsweers.catchup.circuit.BottomSheetOverlay
+import dev.zacsweers.catchup.compose.LocalDisplayFeatures
 import dev.zacsweers.catchup.compose.LocalDynamicTheme
 import dev.zacsweers.catchup.compose.LocalScrollToTop
 import dev.zacsweers.catchup.compose.MutableScrollToTop
@@ -80,7 +90,6 @@ import dev.zacsweers.catchup.service.ServiceScreen
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
-import io.sweers.catchup.service.api.LocalServiceThemeColor
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.activity.SettingsScreen
 import kotlin.math.absoluteValue
@@ -92,6 +101,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -107,6 +117,7 @@ object HomeScreen : Screen, DeepLinkable {
   data class State(
     val serviceMetas: ImmutableList<ServiceMeta>,
     val changelogAvailable: Boolean,
+    val selectedIndex: Int,
     val eventSink: (Event) -> Unit = {}
   ) : CircuitUiState
 
@@ -116,6 +127,8 @@ object HomeScreen : Screen, DeepLinkable {
     data object ShowChangelog : Event
 
     data class NestedNavEvent(val navEvent: NavEvent) : Event
+
+    data class Selected(val index: Int) : Event
   }
 }
 
@@ -138,6 +151,7 @@ constructor(
   override fun present(): HomeScreen.State {
     val currentOrder by
       remember { catchUpPreferences.servicesOrder }.collectAsState(initial = persistentListOf())
+    var selectedIndex by remember(currentOrder) { mutableIntStateOf(0) }
     val serviceMetas by
       produceState(initialValue = persistentListOf(), currentOrder) {
         // TODO make enabledPrefKey live?
@@ -161,6 +175,7 @@ constructor(
     return HomeScreen.State(
       serviceMetas = serviceMetas,
       changelogAvailable = changelogAvailable,
+      selectedIndex = selectedIndex,
     ) { event ->
       when (event) {
         HomeScreen.Event.OpenSettings -> {
@@ -168,6 +183,11 @@ constructor(
         }
         is HomeScreen.Event.NestedNavEvent -> {
           navigator.onNavEvent(event.navEvent)
+        }
+        is HomeScreen.Event.Selected -> {
+          selectedIndex = event.index
+          // TODO only do this if we make a TwoPane nav-aware
+          //  navigator.goTo(ServiceScreen(serviceMetas[event.index].id))
         }
         HomeScreen.Event.ShowChangelog -> {
           scope.launch {
@@ -185,23 +205,101 @@ constructor(
   }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@CircuitInject(HomeScreen::class, AppScope::class)
+fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
+  if (state.serviceMetas.isEmpty()) return // Not loaded yet
+
+  // TODO movable for current content? How can we better save the state of the current detail
+  val displayFeatures = LocalDisplayFeatures.current
+  val foldingFeature =
+    remember(displayFeatures) { displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull() }
+
+  if (foldingFeature != null) {
+    // TODO
+    //  in vertical, switch the order so the content's on top
+    //  try a PaneledCircuitContent where it's just a row of the backstack?
+    TwoPane(
+      first = {
+        Box {
+          HomeList(state)
+          // TODO only do this in landscape?
+          VerticalDivider(Modifier.align(Alignment.CenterEnd), thickness = 0.5.dp)
+        }
+      },
+      second = {
+        // Box is to prevent it from flashing the background between changes
+        Box {
+          // TODO temporary until https://github.com/slackhq/circuit/pull/799
+          key(state.selectedIndex) {
+            // TODO
+            //  should probably just synthesize putting the settings in the list
+            //  crossfade?
+            if (state.selectedIndex == state.serviceMetas.size) {
+              // TODO this doesn't reaaaaaaally work because it wants to navigate on its own
+              CircuitContent(SettingsScreen)
+            } else {
+              // Embed the content in a scaffold for padding and such
+              val meta = state.serviceMetas[state.selectedIndex]
+              val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+              Scaffold(
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                containerColor = Color.Transparent,
+                topBar = {
+                  TopAppBar(
+                    title = { Text(stringResource(meta.name), fontWeight = FontWeight.Black) },
+                    scrollBehavior = scrollBehavior
+                  )
+                },
+              ) { innerPadding ->
+                CircuitContent(ServiceScreen(meta.id), modifier = Modifier.padding(innerPadding))
+              }
+            }
+          }
+        }
+      },
+      strategy = { density, layoutDirection, layoutCoordinates ->
+        // Split vertically if the height is larger than the width
+        if (layoutCoordinates.size.height >= layoutCoordinates.size.width) {
+            VerticalTwoPaneStrategy(splitFraction = 0.5f)
+          } else {
+            HorizontalTwoPaneStrategy(splitFraction = 0.5f)
+          }
+          .calculateSplitResult(density, layoutDirection, layoutCoordinates)
+      },
+      displayFeatures = displayFeatures,
+      modifier = modifier,
+    )
+  } else {
+    HomePager(state, modifier)
+  }
+}
+
 @OptIn(
   ExperimentalMaterial3Api::class,
   ExperimentalFoundationApi::class,
   ExperimentalLayoutApi::class
 )
 @Composable
-@CircuitInject(HomeScreen::class, AppScope::class)
-fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
+fun HomePager(state: HomeScreen.State, modifier: Modifier = Modifier) {
   if (state.serviceMetas.isEmpty()) return // Not loaded yet
-  val pagerState = key(state.serviceMetas) { rememberPagerState { state.serviceMetas.size } }
+
+  val pagerState =
+    key(state.serviceMetas) { rememberPagerState(state.selectedIndex) { state.serviceMetas.size } }
+
+  LaunchedEffect(pagerState) {
+    snapshotFlow { pagerState.settledPage }
+      .distinctUntilChanged()
+      .collect { state.eventSink(HomeScreen.Event.Selected(it)) }
+  }
+
   val currentServiceMeta = state.serviceMetas[pagerState.currentPage]
   val title = stringResource(currentServiceMeta.name)
   val systemUiController = rememberSystemUiController()
 
   val dynamicTheme = LocalDynamicTheme.current
-  // TODO this isn't updating when serviceMeta order changes
-  val colorCache = rememberColorCache(state.serviceMetas, dayOnly = false)
   val dayOnlyColorCache = rememberColorCache(state.serviceMetas, dayOnly = !dynamicTheme)
   val tabLayoutColor = remember(dayOnlyColorCache) { Animatable(dayOnlyColorCache[0]) }
   var isAnimatingColor by remember { mutableStateOf(false) }
@@ -268,14 +366,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
         actions = {
           // TODO wire with Syllabus
           if (state.changelogAvailable) {
-            IconButton(
-              onClick = { state.eventSink(HomeScreen.Event.ShowChangelog) },
-            ) {
-              Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.tips_and_updates),
-                contentDescription = stringResource(R.string.changes),
-              )
-            }
+            ChangelogButton { state.eventSink(HomeScreen.Event.ShowChangelog) }
           }
           IconButton(
             onClick = { state.eventSink(HomeScreen.Event.OpenSettings) },
@@ -354,8 +445,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
       ) { page ->
         contentComposed = true
         CompositionLocalProvider(
-          LocalScrollToTop provides scrollToTop.takeIf { pagerState.currentPage == page },
-          LocalServiceThemeColor provides colorCache[page],
+          LocalScrollToTop provides scrollToTop.takeIf { pagerState.currentPage == page }
         ) {
           CircuitContent(
             screen = ServiceScreen(state.serviceMetas[page].id),
@@ -369,7 +459,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
 }
 
 @JvmInline
-value class ColorCache(private val colors: Array<Color>) {
+private value class ColorCache(private val colors: Array<Color>) {
   operator fun get(index: Int): Color = colors[index]
 
   operator fun set(index: Int, color: Color) {
@@ -378,10 +468,11 @@ value class ColorCache(private val colors: Array<Color>) {
 }
 
 @Composable
-fun rememberColorCache(
+private fun rememberColorCache(
   serviceMetas: ImmutableList<ServiceMeta>,
   dayOnly: Boolean,
 ): ColorCache {
+  // TODO consolidate this with dynamicAwareColor
   val context = LocalContext.current
   val primaryColor = MaterialTheme.colorScheme.primary
   val dynamicTheme = LocalDynamicTheme.current
@@ -412,3 +503,16 @@ fun rememberColorCache(
 
 private val Color.isDark: Boolean
   get() = luminance() <= 0.5f
+
+@Composable
+internal fun ChangelogButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+  IconButton(
+    onClick = onClick,
+    modifier = modifier,
+  ) {
+    Icon(
+      imageVector = ImageVector.vectorResource(R.drawable.baseline_redeem_24),
+      contentDescription = stringResource(R.string.changes),
+    )
+  }
+}

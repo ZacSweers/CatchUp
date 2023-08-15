@@ -24,10 +24,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.google.accompanist.adaptive.calculateDisplayFeatures
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -42,6 +44,7 @@ import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
 import dev.zacsweers.catchup.circuit.rememberAndroidScreenAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
+import dev.zacsweers.catchup.compose.LocalDisplayFeatures
 import dev.zacsweers.catchup.deeplink.DeepLinkHandler
 import dev.zacsweers.catchup.deeplink.parse
 import dev.zacsweers.catchup.di.AppScope
@@ -82,8 +85,8 @@ constructor(
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
-    super.onCreate(savedInstanceState)
     enableEdgeToEdge(navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT))
+    super.onCreate(savedInstanceState)
     linkManager.connect(this)
 
     setContent {
@@ -101,24 +104,27 @@ constructor(
           "Setting theme to $useDarkTheme. dayNightAuto: $dayNightAuto, forceNight: $forceNight, dynamic: $useDynamicTheme"
         )
       }
-      CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
-        CircuitCompositionLocals(circuit) {
-          ContentWithOverlays {
-            val backstack = rememberSaveableBackStack {
-              val stack = intent?.let(deepLinkHandler::parse) ?: listOf(HomeScreen)
-              for (screen in stack) {
-                push(screen)
+      val displayFeatures = calculateDisplayFeatures(this)
+      CompositionLocalProvider(LocalDisplayFeatures provides displayFeatures) {
+        CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
+          CircuitCompositionLocals(circuit) {
+            ContentWithOverlays {
+              val backstack = rememberSaveableBackStack {
+                val stack = intent?.let(deepLinkHandler::parse) ?: listOf(HomeScreen)
+                for (screen in stack) {
+                  push(screen)
+                }
               }
-            }
-            val navigator = rememberCircuitNavigator(backstack)
-            val intentAwareNavigator =
-              rememberAndroidScreenAwareNavigator(navigator, this@MainActivity)
-            rootContent.Content(intentAwareNavigator) {
-              NavigableCircuitContent(
-                intentAwareNavigator,
-                backstack,
-                // decoration = ImageViewerAwareNavDecoration()
-              )
+              val navigator = rememberCircuitNavigator(backstack)
+              val intentAwareNavigator =
+                rememberAndroidScreenAwareNavigator(navigator, this@MainActivity)
+              rootContent.Content(intentAwareNavigator) {
+                NavigableCircuitContent(
+                  intentAwareNavigator,
+                  backstack,
+                  // decoration = ImageViewerAwareNavDecoration()
+                )
+              }
             }
           }
         }
