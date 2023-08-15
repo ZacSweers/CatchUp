@@ -7,26 +7,35 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.file
+import com.github.ajalt.clikt.parameters.types.path
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import java.io.File
 import okio.buffer
 import okio.sink
 import okio.source
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
+import kotlin.io.path.createParentDirectories
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.exists
+import kotlin.io.path.readLines
 
 @Suppress("UNCHECKED_CAST")
 class SarifCleaner :
   CliktCommand(help = "Filters a sarif file to only include results for modified files") {
 
-  private val sarifFile: File by option("--sarif-file").file().required()
-  private val modifiedFiles: File by option("--modified-files").file().required()
-  private val outputFile: File by option("--output-file").file().required()
+  private val sarifFile by option("--sarif-file").path().required()
+  private val modifiedFiles by option("--modified-files").path().required()
+  private val outputFile by option("--output-file").path().required()
 
   override fun run() {
-    if (outputFile.exists()) {
-      outputFile.delete()
+    if (!sarifFile.exists()) {
+      // Nothing to do, probably a build failure
+      return
     }
-    outputFile.parentFile?.mkdirs()
+    outputFile.deleteIfExists()
+    outputFile.createParentDirectories()
 
     echo("Parsing sarif file: $sarifFile")
     val modifiedFiles = modifiedFiles.readLines().toSet()
@@ -54,7 +63,7 @@ class SarifCleaner :
     // Finally, change all .0 doubles to Ints because that's what the sarif spec says
     fixInts(jsonValue)
 
-    outputFile.createNewFile()
+    outputFile.createFile()
     echo("Writing ${filteredResults.size} result(s) to $outputFile")
     JsonWriter.of(outputFile.sink().buffer()).use { writer ->
       writer.indent = "  "
