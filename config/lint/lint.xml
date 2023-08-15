@@ -21,7 +21,7 @@
   </issue>
 
   <issue id="ComposeCompositionLocalUsage">
-      <option name="allowed-composition-locals" value="LocalEnabled,LocalScrollToTop,LocalDynamicTheme,LocalServiceThemeColor" />
+      <option name="allowed-composition-locals" value="LocalEnabled,LocalScrollToTop,LocalDynamicTheme,LocalServiceThemeColor,LocalDisplayFeatures" />
   </issue>
 
   <issue id="ComposeM2Api" severity="error" />
