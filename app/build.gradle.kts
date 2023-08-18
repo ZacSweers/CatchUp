@@ -549,6 +549,7 @@ dependencies {
   implementation(libs.sqldelight.runtime)
   implementation(libs.telephoto.zoomableImageCoil)
   implementation(libs.xmlutil.serialization)
+  implementation(libs.collapsingToolbar)
   implementation(projects.libraries.appconfig)
   implementation(projects.libraries.auth)
   implementation(projects.libraries.baseUi)

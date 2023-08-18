@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -12,14 +13,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
@@ -100,44 +99,44 @@ constructor(@Assisted val screen: AboutScreen, private val appConfig: AppConfig)
 @CircuitInject(AboutScreen::class, AppScope::class)
 @Composable
 fun About(state: AboutScreen.State, modifier: Modifier = Modifier) {
-  val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-  Scaffold(
-    containerColor = Color.Transparent,
-    modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-    topBar = { CollapsingAboutHeader(state.version, scrollBehavior = scrollBehavior) },
-    contentWindowInsets = WindowInsets(0, 0, 0, 0)
-  ) { paddingValues ->
-    Column(Modifier.padding(paddingValues)) {
-      val components = remember { AboutScreen.AboutScreenComponent.entries.toImmutableList() }
-      val pagerState = rememberPagerState(initialPage = state.initialPage) { 2 }
-      TabRow(
-        // Our selected tab is our current page
-        selectedTabIndex = pagerState.currentPage,
-      ) {
-        // Add tabs for all of our pages
-        val coroutinesScope = rememberCoroutineScope()
-        components.forEach { component ->
-          val index = component.ordinal
-          val titleRes = component.titleRes
-          Tab(
-            text = { Text(stringResource(titleRes)) },
-            selected = pagerState.currentPage == index,
-            onClick = {
-              if (index != pagerState.currentPage) {
-                coroutinesScope.launch { pagerState.animateScrollToPage(index) }
-              }
-            },
-          )
+  Scaffold(containerColor = Color.Transparent, contentWindowInsets = WindowInsets(0, 0, 0, 0)) {
+    paddingValues ->
+    CollapsingAboutHeader(
+      versionName = state.version,
+      modifier = modifier.padding(paddingValues).fillMaxSize(),
+    ) {
+      Column {
+        val components = remember { AboutScreen.AboutScreenComponent.entries.toImmutableList() }
+        val pagerState = rememberPagerState(initialPage = state.initialPage) { 2 }
+        TabRow(
+          // Our selected tab is our current page
+          selectedTabIndex = pagerState.currentPage,
+        ) {
+          // Add tabs for all of our pages
+          val coroutinesScope = rememberCoroutineScope()
+          components.forEach { component ->
+            val index = component.ordinal
+            val titleRes = component.titleRes
+            Tab(
+              text = { Text(stringResource(titleRes)) },
+              selected = pagerState.currentPage == index,
+              onClick = {
+                if (index != pagerState.currentPage) {
+                  coroutinesScope.launch { pagerState.animateScrollToPage(index) }
+                }
+              },
+            )
+          }
         }
-      }
 
-      HorizontalPager(
-        modifier = Modifier.weight(1f),
-        key = { it },
-        state = pagerState,
-        verticalAlignment = Alignment.Top,
-      ) { page ->
-        CircuitContent(components[page].screen)
+        HorizontalPager(
+          modifier = Modifier.weight(1f),
+          key = { it },
+          state = pagerState,
+          verticalAlignment = Alignment.Top,
+        ) { page ->
+          CircuitContent(components[page].screen)
+        }
       }
     }
   }
