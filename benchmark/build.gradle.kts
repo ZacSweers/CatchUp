@@ -43,9 +43,9 @@ baselineProfile {
 }
 
 dependencies {
+  implementation(libs.androidx.benchmark.macro.junit)
   implementation(libs.androidx.compose.runtime)
+  implementation(libs.androidx.profileinstaller)
   implementation(libs.androidx.test.ext.junit)
   implementation(libs.androidx.test.uiautomator)
-  implementation(libs.androidx.benchmark.macro.junit)
-  implementation(libs.androidx.profileinstaller)
 }
