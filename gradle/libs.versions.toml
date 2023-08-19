@@ -44,6 +44,7 @@ sqldelight = "2.0.0"
 telephoto = "1.0.0-alpha02"
 tikxml = "0.8.15"
 xerial = "3.42.0.0"
+collapsingToolbar = "2.3.5"
 
 [plugins]
 anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
@@ -234,6 +235,8 @@ sqlite-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "xerial" }
 telephoto-zoomableImageCoil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
 
 tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", version.ref = "tikxml" }
+
+collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "collapsingToolbar" }
 
 test-junit = "junit:junit:4.13.2"
 test-truth = "com.google.truth:truth:1.1.5"
