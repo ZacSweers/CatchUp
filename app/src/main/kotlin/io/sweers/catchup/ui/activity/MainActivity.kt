@@ -28,10 +28,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.accompanist.adaptive.calculateDisplayFeatures
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -103,6 +106,15 @@ constructor(
         } else {
           forceNight
         }
+
+      // Update the system UI content colors anytime our dark theme changes
+      var systemUiSet by remember(useDarkTheme) { mutableStateOf(false) }
+      if (!systemUiSet) {
+        val systemUiController = rememberSystemUiController()
+        systemUiController.systemBarsDarkContentEnabled = !useDarkTheme
+        systemUiSet = true
+      }
+
       val context = LocalContext.current
       val contextToUse =
         remember(context, dayNightAuto, forceNight, useDarkTheme) {
@@ -120,6 +132,7 @@ constructor(
           "Setting theme to $useDarkTheme. dayNightAuto: $dayNightAuto, forceNight: $forceNight, dynamic: $useDynamicTheme"
         )
       }
+
       val displayFeatures = calculateDisplayFeatures(this)
       CompositionLocalProvider(
         LocalDisplayFeatures provides displayFeatures,
