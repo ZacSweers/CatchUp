@@ -37,12 +37,12 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
+import com.slack.circuitx.android.rememberAndroidScreenAwareNavigator
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.circuit.rememberAndroidScreenAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.compose.LocalDisplayFeatures
 import dev.zacsweers.catchup.deeplink.DeepLinkHandler
@@ -56,8 +56,8 @@ import io.sweers.catchup.home.HomeScreen
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
-import javax.inject.Inject
 import timber.log.Timber
+import javax.inject.Inject
 
 @ActivityKey(MainActivity::class)
 @ContributesMultibinding(AppScope::class, boundType = Activity::class)

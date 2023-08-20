@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -72,12 +71,12 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuitx.overlays.BottomSheetOverlay
 import com.squareup.anvil.annotations.ContributesMultibinding
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
-import dev.zacsweers.catchup.circuit.BottomSheetOverlay
 import dev.zacsweers.catchup.compose.LocalDisplayFeatures
 import dev.zacsweers.catchup.compose.LocalDynamicTheme
 import dev.zacsweers.catchup.compose.LocalScrollToTop
@@ -92,8 +91,6 @@ import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.activity.SettingsScreen
 import io.sweers.catchup.util.asDayContext
-import kotlin.math.absoluteValue
-import kotlin.math.sign
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
@@ -107,6 +104,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
 @StringKey("home")

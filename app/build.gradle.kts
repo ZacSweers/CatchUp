@@ -512,6 +512,8 @@ dependencies {
   implementation(libs.circuit.runtime)
   implementation(libs.circuit.runtime.presenter)
   implementation(libs.circuit.runtime.ui)
+  implementation(libs.circuitx.android)
+  implementation(libs.circuitx.overlays)
   implementation(libs.coil.base)
   implementation(libs.coil.compose)
   implementation(libs.coil.default)
