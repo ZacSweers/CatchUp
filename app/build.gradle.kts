@@ -492,6 +492,7 @@ dependencies {
   implementation(libs.androidx.datastore.preferences)
   implementation(libs.androidx.design)
   implementation(libs.androidx.emojiAppcompat)
+  implementation(libs.androidx.fragment)
   implementation(libs.androidx.lifecycle.extensions)
   implementation(libs.androidx.lifecycle.ktx)
   implementation(libs.androidx.paging.compose)

@@ -28,6 +28,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.accompanist.adaptive.calculateDisplayFeatures
 import com.slack.circuit.backstack.rememberSaveableBackStack
@@ -56,8 +58,10 @@ import io.sweers.catchup.home.HomeScreen
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
-import timber.log.Timber
+import io.sweers.catchup.util.toDayContext
+import io.sweers.catchup.util.toNightContext
 import javax.inject.Inject
+import timber.log.Timber
 
 @ActivityKey(MainActivity::class)
 @ContributesMultibinding(AppScope::class, boundType = Activity::class)
@@ -99,13 +103,30 @@ constructor(
         } else {
           forceNight
         }
+      val context = LocalContext.current
+      val contextToUse =
+        remember(context, dayNightAuto, forceNight, useDarkTheme) {
+          // If we're not respecting dayNight or we're forcing night, use the dark theme
+          if (!dayNightAuto && !useDarkTheme) {
+            context.toDayContext()
+          } else if (useDarkTheme) {
+            context.toNightContext()
+          } else {
+            context
+          }
+        }
       SideEffect {
         Timber.d(
           "Setting theme to $useDarkTheme. dayNightAuto: $dayNightAuto, forceNight: $forceNight, dynamic: $useDynamicTheme"
         )
       }
       val displayFeatures = calculateDisplayFeatures(this)
-      CompositionLocalProvider(LocalDisplayFeatures provides displayFeatures) {
+      CompositionLocalProvider(
+        LocalDisplayFeatures provides displayFeatures,
+        // Override LocalContext to one that's set to our daynight modes, as many compose APIs use
+        // LocalContext under the hood
+        LocalContext provides contextToUse,
+      ) {
         CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
           CircuitCompositionLocals(circuit) {
             ContentWithOverlays {

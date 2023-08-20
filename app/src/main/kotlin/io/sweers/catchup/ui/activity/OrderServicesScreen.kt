@@ -89,7 +89,7 @@ import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BackPressNavButton
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.util.asDayContext
+import io.sweers.catchup.util.toDayContext
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -327,7 +327,7 @@ private fun ListContent(
 
 @Composable
 private fun ServiceListItem(item: ServiceMeta) {
-  val themeColor = LocalContext.current.asDayContext().getColor(item.themeColor)
+  val themeColor = LocalContext.current.toDayContext().getColor(item.themeColor)
   Row(
     modifier = Modifier.fillMaxWidth().background(Color(themeColor)).padding(16.dp),
     horizontalArrangement = spacedBy(16.dp),

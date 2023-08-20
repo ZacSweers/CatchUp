@@ -75,13 +75,13 @@ import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.ImageViewerScreen
+import javax.inject.Provider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import javax.inject.Provider
 
 @Parcelize
 data class ServiceScreen(val serviceKey: String) : Screen {

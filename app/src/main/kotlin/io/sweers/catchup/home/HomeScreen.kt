@@ -90,7 +90,9 @@ import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.activity.SettingsScreen
-import io.sweers.catchup.util.asDayContext
+import io.sweers.catchup.util.toDayContext
+import kotlin.math.absoluteValue
+import kotlin.math.sign
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
@@ -104,8 +106,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
-import kotlin.math.absoluteValue
-import kotlin.math.sign
 
 @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
 @StringKey("home")
@@ -478,7 +478,7 @@ private fun rememberColorCache(
   return remember(context, serviceMetas) {
     val contextToUse =
       if (dayOnly) {
-        context.asDayContext()
+        context.toDayContext()
       } else {
         context
       }
