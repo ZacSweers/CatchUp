@@ -20,8 +20,11 @@ import android.content.res.Configuration
 
 fun Context.asDayContext(): Context {
   return if (isInNightMode()) {
-    createConfigurationContext(
-      Configuration(resources.configuration).apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
-    )
+    val config =
+      Configuration(resources.configuration).apply {
+        uiMode =
+          uiMode and Configuration.UI_MODE_NIGHT_MASK.inv() or Configuration.UI_MODE_NIGHT_NO
+      }
+    createConfigurationContext(config)
   } else this
 }

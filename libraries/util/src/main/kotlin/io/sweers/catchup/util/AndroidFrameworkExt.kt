@@ -88,7 +88,7 @@ fun Context.isInNightMode(): Boolean {
   return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
     Configuration.UI_MODE_NIGHT_NO -> false // Night mode is not active, we're in day time
     Configuration.UI_MODE_NIGHT_YES -> true // Night mode is active, we're at night!
-    else -> false // We don't know what mode we're in, assume notnight
+    else -> false // We don't know what mode we're in, assume not night
   }
 }
 

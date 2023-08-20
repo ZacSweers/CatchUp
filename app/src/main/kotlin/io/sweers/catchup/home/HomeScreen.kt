@@ -1,6 +1,5 @@
 package io.sweers.catchup.home
 
-import android.content.res.Configuration
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.annotation.ColorRes
 import androidx.compose.animation.Animatable
@@ -62,7 +61,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.window.layout.FoldingFeature
 import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.google.accompanist.adaptive.TwoPane
-import com.google.accompanist.adaptive.VerticalTwoPaneStrategy
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
@@ -93,6 +91,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.activity.SettingsScreen
+import io.sweers.catchup.util.asDayContext
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlinx.collections.immutable.ImmutableList
@@ -219,16 +218,16 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
 
   if (foldingFeature != null) {
     // TODO
-    //  in vertical, switch the order so the content's on top
     //  try a PaneledCircuitContent where it's just a row of the backstack?
+
     TwoPane(
       first = {
         Box {
           HomeList(state)
-          // TODO only do this in landscape?
           VerticalDivider(Modifier.align(Alignment.CenterEnd), thickness = Dp.Hairline)
         }
       },
+      // TODO animate content changes, ideally same as nav decoration
       second = {
         // Box is to prevent it from flashing the background between changes
         Box {
@@ -264,7 +263,7 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
       strategy = { density, layoutDirection, layoutCoordinates ->
         // Split vertically if the height is larger than the width
         if (layoutCoordinates.size.height >= layoutCoordinates.size.width) {
-            VerticalTwoPaneStrategy(splitFraction = 0.5f)
+            HorizontalTwoPaneStrategy(splitFraction = 0.4f)
           } else {
             HorizontalTwoPaneStrategy(splitFraction = 0.5f)
           }
@@ -480,12 +479,7 @@ private fun rememberColorCache(
   return remember(context, serviceMetas) {
     val contextToUse =
       if (dayOnly) {
-        val config =
-          Configuration(context.resources.configuration).apply {
-            uiMode =
-              uiMode and Configuration.UI_MODE_NIGHT_MASK.inv() or Configuration.UI_MODE_NIGHT_NO
-          }
-        context.createConfigurationContext(config)
+        context.asDayContext()
       } else {
         context
       }
