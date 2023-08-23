@@ -100,7 +100,7 @@ androidx-preferenceKtx = { module = "androidx.preference:preference-ktx", versio
 androidx-lifecycle-extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
 androidx-lifecycle-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
-androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-alpha03"
+androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-beta01"
 
 androidx-compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
