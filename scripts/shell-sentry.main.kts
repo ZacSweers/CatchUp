@@ -49,7 +49,19 @@ class AiClient(private val accessToken: String) {
 
   suspend fun analyze(content: String): AnalysisResult? {
     return try {
-      val response = api.analyze(content)
+      val contentTokens = content.split(" ").size
+      val truncatedContent =
+        if (contentTokens > ChatGptApi.remainingTokens) {
+          println("Truncating content due to token limit")
+          val tokensToRemove = contentTokens - ChatGptApi.remainingTokens
+          val split = content.split(" ")
+          // Split in reverse as we want to focus on the end of the content and travel up
+          split.asReversed().subList(tokensToRemove, split.size).reversed().joinToString(" ")
+        } else {
+          content
+        }
+      val prompt = "${ChatGptApi.ANALYSIS_PROMPT}\n\n$truncatedContent"
+      val response = api.analyze(prompt)
       val rawJson = response.choices.first().message.content.trim()
       val parsed =
         moshi.adapter(ChoiceAnalysis::class.java).fromJson(rawJson)
@@ -72,12 +84,13 @@ class AiClient(private val accessToken: String) {
     @POST("/v1/chat/completions")
     suspend fun completion(@Body request: CompletionRequest): CompletionResponse
 
-    suspend fun analyze(content: String) =
-      completion(
-        CompletionRequest(messages = listOf(Message(content = "$ANALYSIS_PROMPT\n\n$content")))
-      )
+    suspend fun analyze(content: String): CompletionResponse {
+      return completion(CompletionRequest(messages = listOf(Message(content = content))))
+    }
 
     companion object {
+      private const val MAX_TOKENS = 4096
+
       val ANALYSIS_PROMPT =
         """
           Given the following console output, please provide a diagnosis in a raw JSON object format:
@@ -88,6 +101,9 @@ class AiClient(private val accessToken: String) {
           - "confidence": An integer value between 1-100 representing your confidence about the accuracy of your error identification.
         """
           .trimIndent()
+
+      private val promptTokens = ANALYSIS_PROMPT.split(" ").size
+      val remainingTokens = MAX_TOKENS - promptTokens - 100 // 100 for buffer
     }
   }
 
