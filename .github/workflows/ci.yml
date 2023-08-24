@@ -89,7 +89,9 @@ jobs:
           path: build/skippy/**
 
       - name: Build and run tests
-        run: ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
+        env:
+          OPEN_AI_KEY: ${{ secrets.OPEN_AI_KEY }}
+        run: ./scripts/shell_sentry.sh ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
 
       - name: Filter sarif
         if: always() && github.event_name == 'pull_request'
