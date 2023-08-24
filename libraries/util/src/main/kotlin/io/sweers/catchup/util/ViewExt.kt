@@ -18,10 +18,28 @@ package io.sweers.catchup.util
 import android.content.Context
 import android.content.res.Configuration
 
-fun Context.asDayContext(): Context {
+fun Context.toDayContext(): Context {
   return if (isInNightMode()) {
-    createConfigurationContext(
-      Configuration(resources.configuration).apply { uiMode = Configuration.UI_MODE_NIGHT_NO }
-    )
-  } else this
+    copy(isInNightMode = false)
+  } else {
+    this
+  }
+}
+
+fun Context.toNightContext(): Context {
+  return if (isInNightMode()) {
+    this
+  } else {
+    copy(isInNightMode = true)
+  }
+}
+
+private fun Context.copy(isInNightMode: Boolean): Context {
+  val config =
+    Configuration(resources.configuration).apply {
+      val uiModeFlag =
+        if (isInNightMode) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
+      uiMode = uiModeFlag or (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv())
+    }
+  return createConfigurationContext(config)
 }

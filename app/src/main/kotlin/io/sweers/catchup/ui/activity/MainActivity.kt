@@ -28,8 +28,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.accompanist.adaptive.calculateDisplayFeatures
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -37,12 +42,12 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
+import com.slack.circuitx.android.rememberAndroidScreenAwareNavigator
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.multibindings.Multibinds
 import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.circuit.rememberAndroidScreenAwareNavigator
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.compose.LocalDisplayFeatures
 import dev.zacsweers.catchup.deeplink.DeepLinkHandler
@@ -56,6 +61,8 @@ import io.sweers.catchup.home.HomeScreen
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
+import io.sweers.catchup.util.toDayContext
+import io.sweers.catchup.util.toNightContext
 import javax.inject.Inject
 import timber.log.Timber
 
@@ -99,13 +106,40 @@ constructor(
         } else {
           forceNight
         }
+
+      // Update the system UI content colors anytime our dark theme changes
+      var systemUiSet by remember(useDarkTheme) { mutableStateOf(false) }
+      if (!systemUiSet) {
+        val systemUiController = rememberSystemUiController()
+        systemUiController.systemBarsDarkContentEnabled = !useDarkTheme
+        systemUiSet = true
+      }
+
+      val context = LocalContext.current
+      val contextToUse =
+        remember(context, dayNightAuto, forceNight, useDarkTheme) {
+          // If we're not respecting dayNight or we're forcing night, use the dark theme
+          if (!dayNightAuto && !useDarkTheme) {
+            context.toDayContext()
+          } else if (useDarkTheme) {
+            context.toNightContext()
+          } else {
+            context
+          }
+        }
       SideEffect {
         Timber.d(
           "Setting theme to $useDarkTheme. dayNightAuto: $dayNightAuto, forceNight: $forceNight, dynamic: $useDynamicTheme"
         )
       }
+
       val displayFeatures = calculateDisplayFeatures(this)
-      CompositionLocalProvider(LocalDisplayFeatures provides displayFeatures) {
+      CompositionLocalProvider(
+        LocalDisplayFeatures provides displayFeatures,
+        // Override LocalContext to one that's set to our daynight modes, as many compose APIs use
+        // LocalContext under the hood
+        LocalContext provides contextToUse,
+      ) {
         CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
           CircuitCompositionLocals(circuit) {
             ContentWithOverlays {

@@ -8,12 +8,12 @@ compose-material3 = "1.2.0-alpha06"
 emoji = "1.2.0-alpha03"
 anvil = "2.4.7"
 apollo = "3.8.2"
-circuit = "0.12.1"
+circuit = "0.13.0-beta01"
 coil = "2.4.0"
 compose = "1.6.0-alpha04"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
-compose-compiler = "1.5.0"
+compose-compiler = "1.5.1"
 compose-compiler-kotlinVersion = "1.9.0"
 corbind = "1.8.0"
 coroutines = "1.7.3"
@@ -87,6 +87,8 @@ androidx-customTabs = "androidx.browser:browser:1.6.0"
 androidx-design = "com.google.android.material:material:1.9.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
+# Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
+androidx-fragment = "androidx.fragment:fragment:1.7.0-alpha02"
 
 androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
@@ -103,6 +105,8 @@ androidx-lifecycle-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", 
 androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-beta01"
 
 androidx-compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose" }
+# Here to trigger renovate updates
+androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
@@ -149,6 +153,8 @@ circuit-runtime-presenter = { module = "com.slack.circuit:circuit-runtime-presen
 circuit-runtime-ui = { module = "com.slack.circuit:circuit-runtime-ui", version.ref = "circuit" }
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegenAnnotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
+circuitx-android = { module = "com.slack.circuit:circuitx-android", version.ref = "circuit" }
+circuitx-overlays = { module = "com.slack.circuit:circuitx-overlays", version.ref = "circuit" }
 
 clikt = "com.github.ajalt.clikt:clikt:4.2.0"
 

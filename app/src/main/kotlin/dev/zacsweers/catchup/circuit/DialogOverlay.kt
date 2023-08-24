@@ -8,11 +8,11 @@ import com.slack.circuit.overlay.Overlay
 import com.slack.circuit.overlay.OverlayNavigator
 
 sealed interface DialogResult {
-  object Confirm : DialogResult
+  data object Confirm : DialogResult
 
-  object Cancel : DialogResult
+  data object Cancel : DialogResult
 
-  object Dismiss : DialogResult
+  data object Dismiss : DialogResult
 }
 
 class DialogOverlay(

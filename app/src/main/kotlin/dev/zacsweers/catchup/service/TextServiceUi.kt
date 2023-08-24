@@ -41,7 +41,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -97,13 +99,6 @@ fun TextServiceUi(
       if (item == null) {
         PlaceholderItem(themeColor)
       } else {
-        // TODO adapt this
-        //        val onLongClick =
-        //          if (item.canBeSummarized) {
-        //            { eventSink(ServiceScreen.Event.ItemLongClicked(item)) }
-        //          } else {
-        //            null
-        //          }
         val itemModifier =
           if (animatePlacement) {
             LaunchedEffect(Unit) { animatePlacement = false }
@@ -113,11 +108,15 @@ fun TextServiceUi(
           }
         val clickableItemState = rememberClickableItemState()
         clickableItemState.focused = expandedItemIndex == index
+        val haptic = LocalHapticFeedback.current
         ClickableItem(
           modifier = itemModifier,
           state = clickableItemState,
           onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
-          onLongClick = { expandedItemIndex = if (expandedItemIndex == index) -1 else index }
+          onLongClick = {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            expandedItemIndex = if (expandedItemIndex == index) -1 else index
+          }
         ) {
           Column(Modifier.animateContentSize()) {
             TextItem(item, themeColor) { eventSink(ServiceScreen.Event.MarkClicked(item)) }

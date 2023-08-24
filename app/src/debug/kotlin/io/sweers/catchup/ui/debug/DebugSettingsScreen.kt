@@ -66,6 +66,8 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuitx.android.IntentScreen
+import com.slack.circuitx.overlays.BottomSheetOverlay
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Lazy
 import dagger.Module
@@ -74,8 +76,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.circuit.BottomSheetOverlay
-import dev.zacsweers.catchup.circuit.IntentScreen
 import dev.zacsweers.catchup.compose.CatchUpTheme
 import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.R

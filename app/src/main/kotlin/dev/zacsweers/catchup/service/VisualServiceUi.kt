@@ -106,6 +106,8 @@ fun VisualServiceUi(
             VisualItem(
               item = item,
               index = index,
+              // TODO what's the right way to make this work...?
+              //              modifier = Modifier.heightIn(max = 150.dp),
               onEnableChanged = { clickableItemState.enabled = it },
               onContentColorChanged = { clickableItemState.contentColor = it },
             )

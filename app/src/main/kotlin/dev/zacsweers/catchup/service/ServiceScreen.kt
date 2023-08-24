@@ -52,11 +52,11 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuitx.android.IntentScreen
+import com.slack.circuitx.overlays.showFullScreenOverlay
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.zacsweers.catchup.circuit.FullScreenOverlay
-import dev.zacsweers.catchup.circuit.IntentScreen
 import dev.zacsweers.catchup.compose.dynamicAwareColor
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.pullrefresh.PullRefreshIndicator
@@ -176,15 +176,13 @@ constructor(
           coroutineScope.launch {
             if (service.meta().isVisual) {
               val info = event.item.imageInfo!!
-              overlayHost.show(
-                FullScreenOverlay(
-                  ImageViewerScreen(
-                    info.imageId,
-                    info.detailUrl,
-                    isBitmap = !info.animatable,
-                    info.cacheKey,
-                    info.sourceUrl
-                  )
+              overlayHost.showFullScreenOverlay(
+                ImageViewerScreen(
+                  info.imageId,
+                  info.detailUrl,
+                  isBitmap = !info.animatable,
+                  info.cacheKey,
+                  info.sourceUrl
                 )
               )
             } else {
@@ -197,15 +195,13 @@ constructor(
                       path.endsWith(".png", ignoreCase = true) ||
                       path.endsWith(".gif", ignoreCase = true)
                   }
-                overlayHost.show(
-                  FullScreenOverlay(
-                    ImageViewerScreen(
-                      id = url,
-                      url = url,
-                      isBitmap = bestGuessIsBitmap,
-                      alias = null,
-                      sourceUrl = url
-                    )
+                overlayHost.showFullScreenOverlay(
+                  ImageViewerScreen(
+                    id = url,
+                    url = url,
+                    isBitmap = bestGuessIsBitmap,
+                    alias = null,
+                    sourceUrl = url
                   )
                 )
               } else {
@@ -232,7 +228,7 @@ constructor(
             }
             SUMMARIZE -> {
               coroutineScope.launch {
-                overlayHost.show(FullScreenOverlay(SummarizerScreen(event.item.title, url)))
+                overlayHost.showFullScreenOverlay(SummarizerScreen(event.item.title, url))
               }
             }
           }
