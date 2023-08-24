@@ -223,8 +223,16 @@ configure<FocusExtension> { allSettingsFileName.set("settings-all.gradle.kts") }
 
 gradleEnterprise {
   buildScan {
+    publishAlways()
     termsOfServiceAgree = "yes"
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
+
+    tag(if (System.getenv("CI").isNullOrBlank()) "Local" else "CI")
+    obfuscation {
+      username { "redacted" }
+      hostname { "redacted" }
+      ipAddresses { addresses -> addresses.map { _ -> "0.0.0.0" } }
+    }
   }
 }
 
