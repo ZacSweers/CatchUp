@@ -1,6 +1,6 @@
 #!/usr/bin/env kotlin
 @file:DependsOn("com.github.ajalt.clikt:clikt-jvm:4.2.0")
-@file:DependsOn("com.slack.cli:kotlin-cli-util:2.2.0")
+@file:DependsOn("com.slack.cli:kotlin-cli-util:2.2.1")
 @file:DependsOn("com.squareup.retrofit2:retrofit:2.9.0")
 @file:DependsOn("com.squareup.retrofit2:converter-moshi:2.9.0")
 @file:DependsOn("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
