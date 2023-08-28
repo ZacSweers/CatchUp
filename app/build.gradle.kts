@@ -40,7 +40,7 @@ plugins {
   alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
   alias(libs.plugins.sqldelight)
-  alias(libs.plugins.baselineprofile)
+  alias(libs.plugins.baselineprofile) apply false
   alias(libs.plugins.moshix)
   //  alias(libs.plugins.playPublisher)
 }
@@ -461,13 +461,13 @@ androidComponents {
   }
 }
 
-baselineProfile {
-  // TODO enable this only when cutting a new release?
-//  automaticGenerationDuringBuild = true
-  saveInSrc = true
-  dexLayoutOptimization = true
-  from(projects.benchmark.dependencyProject)
-}
+//baselineProfile {
+//  // TODO enable this only when cutting a new release?
+////  automaticGenerationDuringBuild = true
+//  saveInSrc = true
+//  dexLayoutOptimization = true
+//  from(projects.benchmark.dependencyProject)
+//}
 
 dependencies {
   ksp(libs.circuit.codegen)
