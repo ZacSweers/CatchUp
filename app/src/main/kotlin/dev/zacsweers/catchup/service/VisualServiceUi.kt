@@ -100,7 +100,9 @@ fun VisualServiceUi(
                   ?: Color.Unspecified,
             )
           ClickableItem(
-            onClick = { eventSink(ServiceScreen.Event.ItemClicked(item)) },
+            onClick = {
+              eventSink(ServiceScreen.Event.ItemClicked(item, clickableItemState.contentColor))
+            },
             state = clickableItemState,
           ) {
             VisualItem(

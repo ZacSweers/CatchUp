@@ -72,6 +72,7 @@ data class ImageViewerScreen(
   val isBitmap: Boolean,
   val alias: String?,
   val sourceUrl: String,
+  @ColorInt val backgroundColor: Int = Color.Unspecified.toArgb()
 ) : Screen {
   data class State(
     val id: String,
@@ -79,6 +80,7 @@ data class ImageViewerScreen(
     val alias: String?,
     val sourceUrl: String,
     val isBitmap: Boolean,
+    val backgroundColor: Color,
     val eventSink: (Event) -> Unit,
   ) : CircuitUiState
 
@@ -124,6 +126,7 @@ constructor(
       alias = screen.alias,
       isBitmap = screen.isBitmap,
       sourceUrl = screen.sourceUrl,
+      backgroundColor = Color(screen.backgroundColor),
     ) { event ->
       // TODO finish implementing these. Also why is copying an image on android so terrible in
       //  2023.

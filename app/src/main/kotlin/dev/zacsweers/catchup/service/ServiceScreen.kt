@@ -104,7 +104,7 @@ data class ServiceScreen(val serviceKey: String) : Screen {
   }
 
   sealed interface Event : CircuitUiEvent {
-    data class ItemClicked(val item: CatchUpItem) : Event
+    data class ItemClicked(val item: CatchUpItem, val colorHint: Color = Color.Unspecified) : Event
 
     data class ItemActionClicked(val item: CatchUpItem, val action: Action) : Event {
       enum class Action {
@@ -182,7 +182,8 @@ constructor(
                   info.detailUrl,
                   isBitmap = !info.animatable,
                   info.cacheKey,
-                  info.sourceUrl
+                  info.sourceUrl,
+                  event.colorHint.toArgb(),
                 )
               )
             } else {
@@ -201,7 +202,8 @@ constructor(
                     url = url,
                     isBitmap = bestGuessIsBitmap,
                     alias = null,
-                    sourceUrl = url
+                    sourceUrl = url,
+                    backgroundColor = event.colorHint.toArgb(),
                   )
                 )
               } else {
