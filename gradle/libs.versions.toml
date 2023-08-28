@@ -41,7 +41,7 @@ sortDependencies = "0.4"
 sgp = "0.10.5"
 spotless = "6.20.0"
 sqldelight = "2.0.0"
-telephoto = "1.0.0-alpha02"
+telephoto = "0.6.0-SNAPSHOT"
 tikxml = "0.8.15"
 xerial = "3.42.0.1"
 collapsingToolbar = "2.3.5"
@@ -108,6 +108,7 @@ androidx-compose-animation-graphics = { module = "androidx.compose.animation:ani
 # Here to trigger renovate updates
 androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.5.0"
@@ -238,6 +239,7 @@ sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sq
 
 sqlite-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "xerial" }
 
+telephoto-flick = { module = "me.saket.telephoto:flick", version.ref = "telephoto" }
 telephoto-zoomableImageCoil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
 
 tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", version.ref = "tikxml" }
