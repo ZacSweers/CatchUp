@@ -37,12 +37,18 @@ internal object GitHubTrendingParser {
   }
 
   private fun parseTrendingItem(element: Element): TrendingItem? {
+    // TODO this is unreliable and fails often
     // /creativetimofficial/material-dashboard
     val authorAndName =
-      element.select("h1 > a").attr("href").removePrefix("/").trimEnd().split("/").let {
-        // TODO this is unreliable and fails often
-        Pair(it[0], it[1])
-      }
+      element
+        .select("h1 > a")
+        .attr("href")
+        .removePrefix("/")
+        .trimEnd()
+        .split("/")
+        .takeUnless { it.size != 2 }
+        ?.let { Pair(it[0], it[1]) }
+        ?: ("" to "")
     val (author, repoName) = authorAndName
     val url = "$ENDPOINT/${authorAndName.first}/${authorAndName.second}"
     val description = element.select("p").text()
