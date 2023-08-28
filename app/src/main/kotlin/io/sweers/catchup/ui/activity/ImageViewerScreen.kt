@@ -155,10 +155,12 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
     // Set BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE so the UI doesn't jump when it hides
     systemUiController.systemBarsBehavior =
       WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    val originalIsDarkContent = systemUiController.systemBarsDarkContentEnabled
+    systemUiController.systemBarsDarkContentEnabled = false
     onDispose {
-      // TODO this is too late for some reason
       systemUiController.isSystemBarsVisible = true
       systemUiController.systemBarsBehavior = originalSystemBarsBehavior
+      systemUiController.systemBarsDarkContentEnabled = originalIsDarkContent
     }
   }
 
