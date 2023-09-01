@@ -1,6 +1,6 @@
 package dev.zacsweers.catchup.deeplink
 
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 import com.squareup.anvil.annotations.ContributesMultibinding
 import dagger.multibindings.StringKey
 import kotlinx.collections.immutable.ImmutableMap

@@ -8,13 +8,13 @@ compose-material3 = "1.2.0-alpha06"
 emoji = "1.2.0-alpha03"
 anvil = "2.4.7"
 apollo = "3.8.2"
-circuit = "0.13.0-beta01"
+circuit = "0.14.0"
 coil = "2.4.0"
 compose = "1.6.0-alpha04"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
-compose-compiler = "1.5.2"
-compose-compiler-kotlinVersion = "1.9.0"
+compose-compiler = "1.5.3"
+compose-compiler-kotlinVersion = "1.9.10"
 corbind = "1.8.0"
 coroutines = "1.7.3"
 dagger = "2.48"
@@ -53,7 +53,7 @@ agp-library = { id = "com.android.library", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark"}
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.0.1" }
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.3" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.4" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.21.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.8.1" }
