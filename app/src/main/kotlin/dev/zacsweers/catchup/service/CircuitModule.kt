@@ -7,8 +7,8 @@ import androidx.compose.ui.text.TextStyle
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.LocalCircuit
 import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
