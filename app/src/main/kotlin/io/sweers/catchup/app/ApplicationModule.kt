@@ -107,7 +107,8 @@ abstract class ApplicationModule {
 
     @Provides
     @SingleIn(AppScope::class)
-    internal fun versionInfo(@ApplicationContext appContext: Context): VersionInfo = appContext.versionInfo
+    internal fun versionInfo(@ApplicationContext appContext: Context): VersionInfo =
+      appContext.versionInfo
 
     @Provides
     @SingleIn(AppScope::class)
