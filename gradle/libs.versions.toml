@@ -3,7 +3,7 @@ accompanist = "0.33.0-alpha"
 agp = "8.3.0-alpha01"
 androidx-activity = "1.8.0-alpha07"
 androidx-core = "1.12.0-rc01"
-benchmark = "1.2.0-beta04"
+benchmark = "1.2.0-beta05"
 compose-material3 = "1.2.0-alpha06"
 emoji = "1.2.0-alpha03"
 anvil = "2.4.7"
@@ -21,7 +21,7 @@ dagger = "2.48"
 datastore = "1.1.0-alpha04"
 detekt = "1.23.1"
 eithernet = "1.5.0"
-flipper = "0.213.0"
+flipper = "0.215.0"
 jdk = "20"
 jvmTarget = "11"
 kotlin = "1.9.10"
@@ -39,11 +39,11 @@ preferences = "1.2.1"
 retrofit = "2.9.0"
 sortDependencies = "0.4"
 sgp = "0.10.6"
-spotless = "6.20.0"
+spotless = "6.21.0"
 sqldelight = "2.0.0"
 telephoto = "1.0.0-alpha02"
 tikxml = "0.8.15"
-xerial = "3.42.0.1"
+xerial = "3.43.0.0"
 collapsingToolbar = "2.3.5"
 
 [plugins]
@@ -176,7 +176,7 @@ eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
-kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
+kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.1"
 kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 
