@@ -89,9 +89,9 @@ abstract class ApplicationModule {
   @Binds
   @ApplicationContext
   @SingleIn(AppScope::class)
-  abstract fun Application.provideApplicationContext(): Context
+  abstract fun provideApplicationContext(real: Application): Context
 
-  @Binds @SingleIn(AppScope::class) abstract fun CatchUpAppConfig.bindAppConfig(): AppConfig
+  @Binds @SingleIn(AppScope::class) abstract fun bindAppConfig(real: CatchUpAppConfig): AppConfig
 
   companion object {
 

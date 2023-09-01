@@ -190,7 +190,7 @@ abstract class GitHubMetaModule {
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  internal abstract fun @receiver:InternalApi ServiceMeta.githubServiceMeta(): ServiceMeta
+  internal abstract fun githubServiceMeta(@InternalApi real: ServiceMeta): ServiceMeta
 
   companion object {
 
