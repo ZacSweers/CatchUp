@@ -176,7 +176,7 @@ eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
-kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
+kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.1"
 kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 
