@@ -2,7 +2,7 @@ package dev.zacsweers.catchup.deeplink
 
 import android.content.Intent
 import android.net.Uri
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn

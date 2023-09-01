@@ -1,6 +1,6 @@
 package io.sweers.catchup.home
 
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.BindsOptionalOf
 import dagger.Module
