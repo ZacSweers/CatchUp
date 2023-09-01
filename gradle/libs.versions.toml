@@ -53,7 +53,7 @@ agp-library = { id = "com.android.library", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark"}
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.0.1" }
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.3" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.4" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.21.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.8.1" }
