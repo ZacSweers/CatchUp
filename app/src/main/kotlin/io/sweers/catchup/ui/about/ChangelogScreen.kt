@@ -25,8 +25,8 @@ import com.apollographql.apollo3.exception.ApolloException
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.screen.Screen
 import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.compose.LocalDynamicTheme
 import dev.zacsweers.catchup.di.AppScope
