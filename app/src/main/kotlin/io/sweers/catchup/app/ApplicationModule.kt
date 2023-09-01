@@ -102,12 +102,12 @@ abstract class ApplicationModule {
      */
     @Provides
     @SingleIn(AppScope::class)
-    internal fun @receiver:ApplicationContext Context.provideGeneralUseContext(): Context =
-      ContextWrapper(this)
+    internal fun provideGeneralUseContext(@ApplicationContext appContext: Context): Context =
+      ContextWrapper(appContext)
 
     @Provides
     @SingleIn(AppScope::class)
-    internal fun @receiver:ApplicationContext Context.versionInfo(): VersionInfo = versionInfo
+    internal fun versionInfo(@ApplicationContext appContext: Context): VersionInfo = appContext.versionInfo
 
     @Provides
     @SingleIn(AppScope::class)
