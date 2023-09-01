@@ -41,6 +41,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -53,7 +54,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -61,10 +61,14 @@ import androidx.window.layout.FoldingFeature
 import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.google.accompanist.adaptive.TwoPane
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
+import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.onNavEvent
+import com.slack.circuit.foundation.push
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
@@ -77,10 +81,12 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
+import dev.zacsweers.catchup.circuit.ScaffoldScreen
 import dev.zacsweers.catchup.compose.LocalDisplayFeatures
 import dev.zacsweers.catchup.compose.LocalDynamicTheme
 import dev.zacsweers.catchup.compose.LocalScrollToTop
 import dev.zacsweers.catchup.compose.MutableScrollToTop
+import dev.zacsweers.catchup.compose.composableResources
 import dev.zacsweers.catchup.compose.rememberStableCoroutineScope
 import dev.zacsweers.catchup.deeplink.DeepLinkable
 import dev.zacsweers.catchup.di.AppScope
@@ -215,9 +221,46 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
   val foldingFeature =
     remember(displayFeatures) { displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull() }
 
+  // TODO
+  //  if foldable - twopane it
+  //  if wide tablet - panel it. Maybe? or just
+  //  if not - pager it
   if (foldingFeature != null) {
-    // TODO
-    //  try a PaneledCircuitContent where it's just a row of the backstack?
+
+    val resources = composableResources()
+    val currentRootScreen by remember { mutableStateOf<Screen>(SettingsScreen) }
+    var selectedIndex by remember { mutableIntStateOf(state.selectedIndex) }
+    selectedIndex = state.selectedIndex
+
+    // TODO hoist the backstack _up_ to the home screen? Only really matters for settings
+    val backstack = rememberSaveableBackStack { push(currentRootScreen) }
+    // TODO route nav events?
+    val navigator = rememberCircuitNavigator(backstack)
+
+    // TODO what about this
+    LaunchedEffect(Unit) {
+      snapshotFlow { selectedIndex }
+        .distinctUntilChanged()
+        .collect { index ->
+          val newScreen =
+            if (index == state.serviceMetas.size) {
+              // TODO should probably just synthesize putting the settings in the list
+              SettingsScreen
+            } else {
+              // Embed the content in a scaffold for padding and such
+              val meta = state.serviceMetas[index]
+              val title = resources.getString(meta.name)
+              ScaffoldScreen(title, ServiceScreen(meta.id))
+            }
+          println("Reset root to $newScreen")
+          navigator.goTo(newScreen)
+        }
+    }
+
+    val secondPaneContent: @Composable () -> Unit = {
+      NavigableCircuitContent(navigator, backstack)
+    }
+    val currentSecondPaneContent by rememberUpdatedState(secondPaneContent)
 
     TwoPane(
       first = {
@@ -226,38 +269,9 @@ fun Home(state: HomeScreen.State, modifier: Modifier = Modifier) {
           VerticalDivider(Modifier.align(Alignment.CenterEnd), thickness = Dp.Hairline)
         }
       },
-      // TODO animate content changes, ideally same as nav decoration
       second = {
         // Box is to prevent it from flashing the background between changes
-        Box {
-          // TODO temporary until https://github.com/slackhq/circuit/pull/799
-          key(state.selectedIndex) {
-            // TODO
-            //  should probably just synthesize putting the settings in the list
-            //  crossfade?
-            if (state.selectedIndex == state.serviceMetas.size) {
-              // TODO this doesn't reaaaaaaally work because it wants to navigate on its own
-              CircuitContent(SettingsScreen)
-            } else {
-              // Embed the content in a scaffold for padding and such
-              val meta = state.serviceMetas[state.selectedIndex]
-              val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-              Scaffold(
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                containerColor = Color.Transparent,
-                topBar = {
-                  TopAppBar(
-                    title = { Text(stringResource(meta.name), fontWeight = FontWeight.Black) },
-                    scrollBehavior = scrollBehavior
-                  )
-                },
-              ) { innerPadding ->
-                CircuitContent(ServiceScreen(meta.id), modifier = Modifier.padding(innerPadding))
-              }
-            }
-          }
-        }
+        Box { currentSecondPaneContent() }
       },
       strategy = { density, layoutDirection, layoutCoordinates ->
         // Split vertically if the height is larger than the width
