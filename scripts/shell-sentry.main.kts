@@ -50,18 +50,17 @@ class AiClient(private val accessToken: String) {
 
   suspend fun analyze(content: String): AnalysisResult? {
     return try {
-      val contentTokens = content.split(" ").size
-      val truncatedContent =
-        if (contentTokens > ChatGptApi.remainingTokens) {
-          println("Truncating content due to token limit")
-          val tokensToRemove = contentTokens - ChatGptApi.remainingTokens
-          val split = content.split(" ")
-          // Split in reverse as we want to focus on the end of the content and travel up
-          split.asReversed().subList(tokensToRemove, split.size).reversed().joinToString(" ")
-        } else {
-          content
-        }
-      val prompt = "${ChatGptApi.ANALYSIS_PROMPT}\n\n$truncatedContent"
+      val approxMaxChars = ChatGptApi.remainingTokens * ChatGptApi.AVG_TOKEN
+      val start = if (content.length > approxMaxChars) {
+        println("-- Truncating content due to token limit (max: ${ChatGptApi.remainingTokens}, content: ~${content.length / ChatGptApi.AVG_TOKEN}))")
+        println("-- Truncating to last $approxMaxChars chars (~${(approxMaxChars / content.length.toFloat()) * 100}%)}")
+        content.length - approxMaxChars
+      } else {
+        println("-- Not truncating content")
+        0
+      }
+      val analyzableContent = content.substring(start)
+      val prompt = "${ChatGptApi.ANALYSIS_PROMPT}\n\n$analyzableContent"
       val response = api.analyze(prompt)
       val rawJson = response.choices.first().message.content.trim()
       val parsed =
@@ -77,11 +76,13 @@ class AiClient(private val accessToken: String) {
       }
     } catch (t: Throwable) {
       if (t is HttpException) {
-        System.err.println("""
+        System.err.println(
+          """
           HTTP Error: ${t.code()}
           Message: ${t.message()}
           ${t.response()?.errorBody()?.string()}
-        """.trimIndent())
+        """.trimIndent()
+        )
       } else {
         System.err.println(t.stackTraceToString())
       }
@@ -95,6 +96,7 @@ class AiClient(private val accessToken: String) {
 
     companion object {
       private const val MAX_TOKENS = 4096
+      const val AVG_TOKEN = 4
 
       val ANALYSIS_PROMPT =
         """
@@ -107,15 +109,17 @@ class AiClient(private val accessToken: String) {
         """
           .trimIndent()
 
-      private val promptTokens = ANALYSIS_PROMPT.split(" ").size
-      val remainingTokens = MAX_TOKENS - promptTokens - 100 // 100 for buffer
+      private val promptTokens = ANALYSIS_PROMPT.length / AVG_TOKEN
+
+      // Because these are all sorta fuzzy guesses, we want to leave some buffer
+      private const val TOKEN_BUFFER = 700
+      val remainingTokens = MAX_TOKENS - promptTokens - TOKEN_BUFFER
     }
   }
 
 
-  private suspend fun ChatGptApi.analyze(content: String): CompletionResponse {
-    return completion(CompletionRequest(messages = listOf(Message(content = content))))
-  }
+  private suspend fun ChatGptApi.analyze(content: String) =
+    completion(CompletionRequest(messages = listOf(Message(content = content))))
 
   @JsonClass(generateAdapter = false)
   data class CompletionRequest(val model: String = "gpt-3.5-turbo", val messages: List<Message>)
@@ -164,7 +168,7 @@ class AiExtension(private val aiClient: AiClient) : ShellSentryExtension {
     isAfterRetry: Boolean,
     consoleOutput: Path
   ): AnalysisResult? {
-    println("AIExtension: Checking")
+    println("-- AIExtension: Checking")
     return runBlocking { aiClient.analyze(consoleOutput.readText()) }
   }
 }
