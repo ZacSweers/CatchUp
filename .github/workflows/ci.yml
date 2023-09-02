@@ -92,6 +92,7 @@ jobs:
         timeout-minutes: 30
         env:
           OPEN_AI_KEY: ${{ secrets.OPEN_AI_KEY }}
+        # TODO the check task undoes what Skippy provides, better to split it
         run: ./scripts/shell_sentry.sh ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
 
       - name: Filter sarif
