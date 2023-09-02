@@ -15,6 +15,7 @@
  */
 package io.sweers.catchup.service.api
 
+import androidx.annotation.ColorInt
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import kotlinx.datetime.Instant
@@ -28,6 +29,7 @@ data class CatchUpItem(
   val timestamp: Instant? = null,
   val score: Pair<String, Int>? = null,
   val tag: String? = null,
+  @ColorInt val tagHintColor: Int? = null,
   val author: String? = null,
   val source: String? = null,
   /* internal */ val itemClickUrl: String? = null,

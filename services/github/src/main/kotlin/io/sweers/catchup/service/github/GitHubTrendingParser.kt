@@ -30,9 +30,7 @@ internal object GitHubTrendingParser {
 
   internal fun parse(body: ResponseBody): List<TrendingItem> {
     val fullBody = body.string()
-    return Jsoup.parse(fullBody, ENDPOINT)
-      .getElementsByClass("Box-row")
-      .map(::parseTrendingItem)
+    return Jsoup.parse(fullBody, ENDPOINT).getElementsByClass("Box-row").map(::parseTrendingItem)
   }
 
   private fun parseTrendingItem(element: Element): TrendingItem {

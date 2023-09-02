@@ -1,0 +1,53 @@
+-- Delete old tables
+DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS catchUpDbItem;
+DROP TABLE IF EXISTS remoteKeys;
+DROP TABLE IF EXISTS opJournal;
+
+CREATE TABLE IF NOT EXISTS catchUpDbItem (
+  id INTEGER NOT NULL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  timestamp INTEGER AS Instant,
+  scoreChar TEXT,
+  score INTEGER AS Int,
+  tag TEXT,
+  tagHintColor INTEGER AS Int,
+  author TEXT,
+  source TEXT,
+  itemClickUrl TEXT,
+  detailKey TEXT,
+  serviceId TEXT,
+  indexInResponse INTEGER AS Int,
+  contentType TEXT,
+--   Image info
+  imageUrl TEXT,
+  imageDetailUrl TEXT,
+  imageAnimatable INTEGER AS Boolean,
+  imageSourceUrl TEXT,
+  imageBestSizeX INTEGER AS Int,
+  imageBestSizeY INTEGER AS Int,
+  imageAspectRatio REAL AS Float,
+  imageImageId TEXT,
+  imageColor TEXT,
+  imageBlurHash TEXT,
+--   Mark info
+  markText TEXT,
+  markTextPrefix TEXT,
+  -- By default, the icon used is a comment icon if this is null
+  markType TEXT,
+  markClickUrl TEXT,
+  markIconTintColor INTEGER AS Int,
+  markFormatTextAsCount INTEGER AS Boolean
+);
+
+CREATE TABLE IF NOT EXISTS remoteKeys (
+  serviceId TEXT NOT NULL PRIMARY KEY COLLATE NOCASE,
+  nextPageKey TEXT
+);
+
+CREATE TABLE IF NOT EXISTS opJournal (
+  timestamp INTEGER NOT NULL PRIMARY KEY,
+  serviceId TEXT NOT NULL,
+  operation TEXT NOT NULL
+);

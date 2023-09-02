@@ -44,6 +44,7 @@ object CatchUpDatabaseModule {
         IntColumnAdapter,
         IntColumnAdapter,
         IntColumnAdapter,
+        IntColumnAdapter,
         FloatColumnAdapter,
         IntColumnAdapter,
       )

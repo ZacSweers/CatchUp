@@ -17,9 +17,7 @@ package io.sweers.catchup.service.github
 
 import android.graphics.Color
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.ApolloRequest
 import com.apollographql.apollo3.api.Optional
-import com.apollographql.apollo3.api.Query
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.http.httpFetchPolicy
 import com.apollographql.apollo3.exception.ApolloException
@@ -40,7 +38,6 @@ import io.sweers.catchup.service.api.CatchUpItem
 import io.sweers.catchup.service.api.ContentType
 import io.sweers.catchup.service.api.DataRequest
 import io.sweers.catchup.service.api.DataResult
-import io.sweers.catchup.service.api.Mark
 import io.sweers.catchup.service.api.Service
 import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
@@ -103,15 +100,9 @@ constructor(
             timestamp = null,
             score = "★" to stars,
             tag = language.takeUnless { it.isBlank() },
+            tagHintColor = languageColor?.let(Color::parseColor),
             itemClickUrl = url,
-            mark =
-              starsToday?.toString()?.let {
-                Mark(
-                  text = "+$it",
-                  markType = Mark.MarkType.STAR,
-                  iconTintColor = languageColor?.let(Color::parseColor)
-                )
-              },
+            source = starsToday?.toString()?.let { "$it stars today" },
             // TODO include index
             indexInResponse = index + request.pageOffset,
             serviceId = meta().id,
