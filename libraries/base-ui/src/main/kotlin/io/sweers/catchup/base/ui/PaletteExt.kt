@@ -41,6 +41,7 @@ inline fun Palette.orderedSwatches(
   )
 }
 
+@Suppress("unused")
 inline fun Palette.findSwatch(predicate: (Swatch) -> Boolean): Swatch? {
   return listOfNotNull(
       darkVibrantSwatch,
@@ -56,9 +57,12 @@ inline fun Palette.findSwatch(predicate: (Swatch) -> Boolean): Swatch? {
 suspend fun Palette.Builder.generateAsync(): Palette? =
   withContext(Dispatchers.Default) { generate() }
 
+@Suppress("unused")
 val Swatch.hue: Float
   get() = hsl[0]
+@Suppress("unused")
 val Swatch.saturation: Float
   get() = hsl[1]
+@Suppress("unused")
 val Swatch.luminosity: Float
   get() = hsl[2]

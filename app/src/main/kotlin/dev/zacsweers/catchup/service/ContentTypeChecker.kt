@@ -18,30 +18,6 @@ class ContentTypeChecker @Inject constructor() {
     }
 
     return ContentType.OTHER
-    // TODO the below is too slow to use tbh, need a better alternative
-    //    val response =
-    //      withContext(IO) {
-    //        try {
-    //          okHttpClient.get().newCall(Request.Builder().url(url).head().build()).execute()
-    //        } catch (e: IOException) {
-    //          return@withContext null
-    //        }
-    //      }
-    //        ?: return null
-    //    return if (response.isSuccessful) {
-    //      response.header("Content-Type")?.contentType()
-    //    } else {
-    //      null
-    //    }
-  }
-}
-
-private fun String?.contentType(): ContentType? {
-  return when {
-    this == null -> null
-    startsWith("image/") -> ContentType.IMAGE
-    startsWith("text/html") -> ContentType.HTML
-    else -> ContentType.OTHER
   }
 }
 

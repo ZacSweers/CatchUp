@@ -54,11 +54,12 @@ interface EmptyAppConfig : AppConfig {
     get() = throw NotImplementedError()
 }
 
+@Suppress("unused")
 fun <T> AppConfig.requireMetadata(key: Any): T {
   return requireNotNull(readMetadata(key))
 }
 
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "unused")
 fun <T> AppConfig.readMetadata(key: Any): T? {
   return metadata[key] as T?
 }

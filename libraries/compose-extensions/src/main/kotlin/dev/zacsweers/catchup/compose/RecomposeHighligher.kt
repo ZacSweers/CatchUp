@@ -36,7 +36,9 @@ import kotlinx.coroutines.delay
  * A [Modifier] that draws a border around elements that are recomposing. The border increases in
  * size and interpolates from red to green as more recompositions occur before a timeout.
  */
-@Stable fun Modifier.recomposeHighlighter(): Modifier = this.then(recomposeModifier)
+@Suppress("unused")
+@Stable
+fun Modifier.recomposeHighlighter(): Modifier = this.then(recomposeModifier)
 
 // Use a single instance + @Stable to ensure that recompositions can enable skipping optimizations
 // Modifier.composed will still remember unique data per call site.

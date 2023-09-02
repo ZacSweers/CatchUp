@@ -15,7 +15,8 @@
  */
 package io.sweers.catchup.util.kotlin
 
-inline fun <T> T.applyIf(condition: Boolean, block: T.() -> T): T = apply {
+@Suppress("unused")
+inline fun <T> T.fluentIf(condition: Boolean, block: T.() -> T): T = apply {
   if (condition) {
     block()
   }

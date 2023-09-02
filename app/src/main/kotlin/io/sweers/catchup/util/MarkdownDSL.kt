@@ -75,6 +75,7 @@ abstract class MarkerElementWithText(name: String) : MarkerElement(name) {
   }
 }
 
+@Suppress("unused")
 class Document : MarkdownElement() {
   operator fun String.unaryPlus() = text(this)
 

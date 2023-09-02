@@ -20,8 +20,8 @@ import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
 
 // https://github.com/google/error-prone/issues/512
-internal enum class TrendingTimespan
-constructor(
+@Suppress("unused")
+internal enum class TrendingTimespan(
   private val contextualReference: String,
   duration: Int,
   private val durationUnit: TemporalUnit

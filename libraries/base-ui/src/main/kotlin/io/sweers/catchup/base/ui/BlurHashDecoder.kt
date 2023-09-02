@@ -24,6 +24,7 @@ object BlurHashDecoder {
    * Clear calculations stored in memory cache. The cache is not big, but will increase when many
    * image sizes are used, if the app needs memory it is recommended to clear it.
    */
+  @Suppress("unused")
   fun clearCache() {
     cacheCosinesX.clear()
     cacheCosinesY.clear()

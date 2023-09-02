@@ -28,9 +28,7 @@ import java.util.ArrayDeque
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.BufferedSink
 import okio.buffer
@@ -62,8 +60,6 @@ class LumberYard @Inject constructor(private val app: Application) {
   }
 
   fun bufferedLogs() = entries.toList()
-
-  fun logs(): Flow<Entry> = sharedFlow.asSharedFlow()
 
   /** Save the current logs to disk. */
   suspend fun save(): File = suspendCancellableCoroutine { continuation ->

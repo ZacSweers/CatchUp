@@ -45,11 +45,6 @@ class DebugPreferences @Inject constructor(@ApplicationContext context: Context)
   val networkFailurePercent: Flow<Int> = datastore.data.map { it[Keys.networkFailurePercent] ?: 3 }
   val networkVariancePercent: Flow<Int> =
     datastore.data.map { it[Keys.networkVariancePercent] ?: 40 }
-  val pixelGridEnabled: Flow<Boolean> = datastore.data.map { it[Keys.pixelGridEnabled] ?: false }
-  val pixelRatioEnabled: Flow<Boolean> = datastore.data.map { it[Keys.pixelRatioEnabled] ?: false }
-  val scalpelEnabled: Flow<Boolean> = datastore.data.map { it[Keys.scalpelEnabled] ?: false }
-  val scalpelWireframeDrawer: Flow<Boolean> =
-    datastore.data.map { it[Keys.scalpelWireframeDrawer] ?: false }
   val seenDebugDrawer: Flow<Boolean> = datastore.data.map { it[Keys.seenDebugDrawer] ?: false }
 
   suspend fun edit(body: (MutablePreferences) -> Unit) {
@@ -62,10 +57,6 @@ class DebugPreferences @Inject constructor(@ApplicationContext context: Context)
     var networkDelay = longPreferencesKey("debug_network_delay")
     var networkFailurePercent = intPreferencesKey("debug_network_failure_percent")
     var networkVariancePercent = intPreferencesKey("debug_network_variance_percent")
-    var pixelGridEnabled = booleanPreferencesKey("debug_pixel_grid_enabled")
-    var pixelRatioEnabled = booleanPreferencesKey("debug_pixel_ratio_enabled")
-    var scalpelEnabled = booleanPreferencesKey("debug_scalpel_enabled")
-    var scalpelWireframeDrawer = booleanPreferencesKey("debug_scalpel_wireframe_drawer")
     var seenDebugDrawer = booleanPreferencesKey("debug_seen_debug_drawer")
   }
 }

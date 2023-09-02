@@ -53,14 +53,6 @@ class GemojiEmojiMarkdownConverter @Inject constructor(private val gemojiDatabas
   }
 }
 
-fun Sequence<Char>.asString(): String {
-  return buildString { this@asString.forEach { append(it) } }
-}
-
-fun Sequence<Char>.asString(capacity: Int): String {
-  return buildString(capacity) { this@asString.forEach { append(it) } }
-}
-
 /**
  * Returns a [String] that replaces occurrences of markdown emojis with android render-able emojis.
  */

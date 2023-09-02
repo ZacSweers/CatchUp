@@ -8,11 +8,3 @@ import androidx.compose.ui.Modifier
 @OptIn(ExperimentalMaterialApi::class)
 fun Modifier.pullRefresh(state: PullRefreshState, enabled: Boolean = true) =
   androidXPullRefresh(state.delegate, enabled)
-
-/** @see androidXPullRefresh */
-@OptIn(ExperimentalMaterialApi::class)
-fun Modifier.pullRefresh(
-  onPull: (pullDelta: Float) -> Float,
-  onRelease: suspend (flingVelocity: Float) -> Float,
-  enabled: Boolean = true
-) = androidXPullRefresh(onPull = onPull, onRelease = onRelease, enabled = enabled)

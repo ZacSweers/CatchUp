@@ -16,15 +16,11 @@
 package io.sweers.catchup.util
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.view.LayoutInflater
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
-import androidx.annotation.CheckResult
-import androidx.viewbinding.ViewBinding
 import java.io.File
 import java.io.IOException
 import java.util.Locale
@@ -59,12 +55,6 @@ fun cleanDir(dir: File): Long {
  */
 fun Context.maybeStartActivity(intent: Intent): Boolean = maybeStartActivity(intent, false)
 
-/**
- * Attempt to launch Android's chooser for the supplied [Intent]. Queries on-device packages before
- * launching and will display a simple message if none are available to handle it.
- */
-fun Context.maybeStartChooser(intent: Intent): Boolean = maybeStartActivity(intent, true)
-
 private fun Context.maybeStartActivity(inputIntent: Intent, chooser: Boolean): Boolean {
   var intent = inputIntent
   return if (hasHandler(intent)) {
@@ -80,7 +70,6 @@ private fun Context.maybeStartActivity(inputIntent: Intent, chooser: Boolean): B
 }
 
 /** Queries on-device packages for a handler for the supplied [Intent]. */
-@Suppress("DEPRECATION")
 private fun Context.hasHandler(intent: Intent) =
   packageManager.queryIntentActivities(intent, 0).isNotEmpty()
 
@@ -98,7 +87,3 @@ val Context.primaryLocale: Locale
   get() {
     return sdk(24) { resources.configuration.locales[0] } ?: resources.configuration.locale
   }
-
-@CheckResult
-fun <T : ViewBinding> Activity.setContentView(inflate: (LayoutInflater) -> T): T =
-  inflate(layoutInflater).also { setContentView(it.root) }

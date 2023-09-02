@@ -120,7 +120,7 @@ abstract class ApplicationModule {
         .textSetter(PrecomputedTextSetterCompat.create())
         .usePlugins(
           listOf(
-            MovementMethodPlugin.create(LinkTouchMovementMethod()),
+            MovementMethodPlugin.create(LinkTouchMovementMethod.getInstance()),
             ImagesPlugin.create(),
             StrikethroughPlugin.create(),
             CoilImagesPlugin.create(context, imageLoader),
@@ -145,8 +145,6 @@ abstract class ApplicationModule {
     @IntoSet
     @Provides
     fun coilInit(imageLoader: ImageLoader): () -> Unit = { Coil.setImageLoader(imageLoader) }
-
-    @Qualifier @Retention(BINARY) private annotation class CoilOkHttpStack
 
     @Qualifier @Retention(BINARY) annotation class IsLowRamDevice
 

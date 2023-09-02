@@ -30,16 +30,6 @@ private constructor(
     private val endpoints = mutableSetOf<String>()
     private var fileType = "json" // Default
 
-    fun addEndpoint(endpoint: String): Builder {
-      endpoints.add(endpoint)
-      return this
-    }
-
-    fun fileType(fileType: String): Builder {
-      this.fileType = fileType
-      return this
-    }
-
     fun build(): ServiceData {
       return ServiceData(prefix, fileType, endpoints)
     }

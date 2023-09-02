@@ -19,8 +19,6 @@ import android.content.Context
 import android.util.TypedValue
 import android.view.View
 import androidx.annotation.AttrRes
-import androidx.annotation.DimenRes
-import androidx.annotation.Px
 
 /** Utility methods to work with attributes. */
 internal object MaterialAttributes {
@@ -75,52 +73,5 @@ internal object MaterialAttributes {
       attributeResId,
       componentView.javaClass.canonicalName
     )
-  }
-
-  /**
-   * Returns the boolean value for the provided `attributeResId`.
-   *
-   * @throws IllegalArgumentException if the attribute is not present in the current theme.
-   */
-  fun resolveBooleanOrThrow(
-    context: Context,
-    @AttrRes attributeResId: Int,
-    errorMessageComponent: String
-  ): Boolean {
-    return resolveOrThrow(context, attributeResId, errorMessageComponent) != 0
-  }
-
-  /**
-   * Returns the boolean value for the provided `attributeResId` or `defaultValue` if the attribute
-   * is not a boolean or not present in the current theme.
-   */
-  fun resolveBoolean(
-    context: Context,
-    @AttrRes attributeResId: Int,
-    defaultValue: Boolean
-  ): Boolean {
-    val typedValue = resolve(context, attributeResId)
-    return if (typedValue != null && typedValue.type == TypedValue.TYPE_INT_BOOLEAN)
-      typedValue.data != 0
-    else defaultValue
-  }
-
-  /**
-   * Returns the pixel value of the dimension specified by `attributeResId`. Defaults to
-   * `defaultDimenResId` if `attributeResId` cannot be found or is not a dimension within the given
-   * `context`.
-   */
-  @Px
-  fun resolveDimension(
-    context: Context,
-    @AttrRes attributeResId: Int,
-    @DimenRes defaultDimenResId: Int
-  ): Int {
-    val dimensionValue = resolve(context, attributeResId)
-    return if (dimensionValue == null || dimensionValue.type != TypedValue.TYPE_DIMENSION) {
-      context.resources.getDimension(defaultDimenResId).toInt()
-    } else {
-      dimensionValue.getDimension(context.resources.displayMetrics).toInt()
-    }
   }
 }

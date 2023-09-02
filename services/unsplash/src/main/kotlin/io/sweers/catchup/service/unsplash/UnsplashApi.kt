@@ -37,6 +37,7 @@ interface UnsplashApi {
     const val ENDPOINT = "https://$HOST"
   }
 
+  @Suppress("unused")
   enum class OrderBy {
     LATEST,
     OLDEST,

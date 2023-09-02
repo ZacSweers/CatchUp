@@ -27,6 +27,7 @@ import kotlinx.datetime.Instant
 
 @Retention(SOURCE) @Target(CLASS) annotation class NoArg
 
+@Suppress("unused")
 @Keep
 @NoArg
 data class HackerNewsStory(
@@ -71,6 +72,7 @@ data class HackerNewsStory(
 
 // DataSnapshot { key = 20516882, value = {parent=20516063, by=frou_dh, id=20516882, text=stuff,
 // time=1563986039, type=comment} }
+@Suppress("unused")
 @Keep
 @NoArg
 data class HackerNewsComment(

@@ -31,6 +31,7 @@ interface RedditApi {
   @GET("/")
   suspend fun frontPage(@Query("limit") limit: Int?, @Query("after") after: String?): RedditResponse
 
+  @Suppress("unused")
   @GET("/r/{subreddit}")
   suspend fun subreddit(
     @Path("subreddit") subreddit: String,

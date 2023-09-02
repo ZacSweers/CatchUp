@@ -49,6 +49,7 @@ fun arcLerp(start: Offset, stop: Offset, fraction: Float): Offset {
 }
 
 /** @see arcLerp */
+@Suppress("unused")
 fun arcLerp(start: IntOffset, stop: IntOffset, fraction: Float): IntOffset {
   // Ensure fraction is within [0, 1]
   val clampedFraction = fraction.coerceIn(0f, 1f)

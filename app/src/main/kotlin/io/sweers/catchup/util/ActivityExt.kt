@@ -16,21 +16,9 @@
 package io.sweers.catchup.util
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
-import androidx.activity.ComponentActivity
 import com.jakewharton.processphoenix.ProcessPhoenix
 import io.sweers.catchup.ui.activity.MainActivity
-
-fun Context.resolveActivity(): ComponentActivity {
-  if (this is ComponentActivity) {
-    return this
-  }
-  if (this is ContextWrapper) {
-    return baseContext.resolveActivity()
-  }
-  throw UnsupportedOperationException("Given context was not an activity! Is a $this")
-}
 
 fun Context.restartApp() {
   ProcessPhoenix.triggerRebirth(this, Intent(this, MainActivity::class.java))

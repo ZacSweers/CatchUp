@@ -30,6 +30,7 @@ interface GitHubApi {
     @Query("since") since: Since
   ): List<TrendingItem>
 
+  @Suppress("unused")
   enum class Since {
     DAILY,
     WEEKLY,
@@ -40,6 +41,7 @@ interface GitHubApi {
     }
   }
 
+  @Suppress("unused")
   sealed class Language {
     object All : Language() {
       override fun toString(): String {

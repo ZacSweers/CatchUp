@@ -127,6 +127,7 @@ class CustomTabActivityHelper @Inject constructor() {
    * @return true if call to mayLaunchUrl was accepted
    * @see {@link CustomTabsSession.mayLaunchUrl
    */
+  @Suppress("unused")
   fun mayLaunchUrl(uri: Uri, extras: Bundle, otherLikelyBundles: List<Bundle>): Boolean {
     client ?: return false
     val session = session ?: return false
