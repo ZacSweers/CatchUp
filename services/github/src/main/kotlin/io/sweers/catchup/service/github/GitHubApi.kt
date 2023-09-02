@@ -59,7 +59,7 @@ interface GitHubApi {
   companion object {
 
     private const val LANGUAGE = "language"
-    const val HOST = "github.com"
+    private const val HOST = "github.com"
     const val ENDPOINT = "https://$HOST"
   }
 }

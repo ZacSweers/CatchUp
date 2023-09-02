@@ -43,7 +43,7 @@ interface RedditApi {
   suspend fun top(@Query("after") after: String, @Query("limit") limit: Int): RedditResponse
 
   companion object {
-    const val HOST = "www.reddit.com"
+    private const val HOST = "www.reddit.com"
     const val ENDPOINT = "https://$HOST"
   }
 }

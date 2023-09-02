@@ -33,7 +33,7 @@ interface UnsplashApi {
   ): List<UnsplashPhoto>
 
   companion object {
-    const val HOST = "api.unsplash.com"
+    private const val HOST = "api.unsplash.com"
     const val ENDPOINT = "https://$HOST"
   }
 

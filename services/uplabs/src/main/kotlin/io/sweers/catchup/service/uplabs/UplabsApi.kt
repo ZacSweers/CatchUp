@@ -19,7 +19,7 @@ import io.sweers.catchup.service.uplabs.model.UplabsImage
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-/** Uplabds API - https://www.uplabs.com/all.json ¯\_(ツ)_/¯ */
+/** Uplabs API - https://www.uplabs.com/all.json ¯\_(ツ)_/¯ */
 interface UplabsApi {
 
   @GET("/all.json")
@@ -29,7 +29,7 @@ interface UplabsApi {
   ): List<UplabsImage>
 
   companion object {
-    const val HOST = "www.uplabs.com"
+    private const val HOST = "www.uplabs.com"
     const val ENDPOINT = "https://$HOST"
   }
 }

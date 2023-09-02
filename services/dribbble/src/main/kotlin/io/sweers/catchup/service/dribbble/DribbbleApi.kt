@@ -31,7 +31,7 @@ interface DribbbleApi {
 
   companion object {
 
-    const val HOST = "dribbble.com"
+    private const val HOST = "dribbble.com"
     const val ENDPOINT = "https://$HOST"
   }
 }

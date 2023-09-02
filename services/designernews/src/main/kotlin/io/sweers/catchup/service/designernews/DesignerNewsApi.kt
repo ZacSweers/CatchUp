@@ -33,7 +33,7 @@ interface DesignerNewsApi {
 
   companion object {
 
-    const val HOST = "www.designernews.co/api/v2/"
+    private const val HOST = "www.designernews.co/api/v2/"
     const val ENDPOINT = "https://$HOST"
   }
 }

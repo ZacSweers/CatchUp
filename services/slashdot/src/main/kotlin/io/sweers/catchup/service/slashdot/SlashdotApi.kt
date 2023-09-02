@@ -22,7 +22,7 @@ interface SlashdotApi {
   @GET("/Slashdot/slashdotMainatom") suspend fun main(): Feed
 
   companion object {
-    const val HOST = "rss.slashdot.org"
+    private const val HOST = "rss.slashdot.org"
     const val ENDPOINT = "https://$HOST"
   }
 }

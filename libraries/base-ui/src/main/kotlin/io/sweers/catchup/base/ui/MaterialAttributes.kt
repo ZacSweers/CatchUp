@@ -39,7 +39,7 @@ internal object MaterialAttributes {
    *
    * @throws IllegalArgumentException if the attribute is not present in the current theme.
    */
-  fun resolveOrThrow(
+  private fun resolveOrThrow(
     context: Context,
     @AttrRes attributeResId: Int,
     errorMessageComponent: String?

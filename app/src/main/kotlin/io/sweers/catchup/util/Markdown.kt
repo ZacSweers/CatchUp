@@ -20,7 +20,7 @@ package io.sweers.catchup.util
  */
 
 @JvmInline
-value class Markdown(val rawValue: String) {
+value class Markdown(private val rawValue: String) {
   override fun toString(): String = rawValue
 }
 
