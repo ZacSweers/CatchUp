@@ -30,18 +30,14 @@ internal object GitHubTrendingParser {
 
   internal fun parse(body: ResponseBody): List<TrendingItem> {
     val fullBody = body.string()
-    return Jsoup.parse(fullBody, ENDPOINT)
-      .getElementsByClass("Box-row")
-      .mapNotNull(::parseTrendingItem)
-      .ifEmpty { error("List was empty! Usually this is a sign that parsing failed.") }
+    return Jsoup.parse(fullBody, ENDPOINT).getElementsByClass("Box-row").map(::parseTrendingItem)
   }
 
-  private fun parseTrendingItem(element: Element): TrendingItem? {
-    // TODO this is unreliable and fails often
+  private fun parseTrendingItem(element: Element): TrendingItem {
     // /creativetimofficial/material-dashboard
     val authorAndName =
       element
-        .select("h1 > a")
+        .select("h2 > a")
         .attr("href")
         .removePrefix("/")
         .trimEnd()

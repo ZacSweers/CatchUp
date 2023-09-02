@@ -210,7 +210,7 @@ fun TextItem(
           painter = rememberVectorPainter(icon),
           contentDescription = null,
           modifier = Modifier.size(24.dp),
-          tint = themeColor
+          tint = mark.iconTintColor?.let(::Color) ?: themeColor
         )
         mark.text?.let { text ->
           val finalText =
@@ -280,7 +280,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
             text = " • ",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.labelSmall,
-            color = themeColor
+            color = item.tagHintColor?.let(::Color) ?: themeColor
           )
         }
         val primaryLocale = LocalContext.current.primaryLocale
