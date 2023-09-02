@@ -84,10 +84,6 @@ class AiClient(private val accessToken: String) {
     @POST("/v1/chat/completions")
     suspend fun completion(@Body request: CompletionRequest): CompletionResponse
 
-    suspend fun analyze(content: String): CompletionResponse {
-      return completion(CompletionRequest(messages = listOf(Message(content = content))))
-    }
-
     companion object {
       private const val MAX_TOKENS = 4096
 
@@ -105,6 +101,11 @@ class AiClient(private val accessToken: String) {
       private val promptTokens = ANALYSIS_PROMPT.split(" ").size
       val remainingTokens = MAX_TOKENS - promptTokens - 100 // 100 for buffer
     }
+  }
+
+
+  private suspend fun ChatGptApi.analyze(content: String): CompletionResponse {
+    return completion(CompletionRequest(messages = listOf(Message(content = content))))
   }
 
   @JsonClass(generateAdapter = false)
