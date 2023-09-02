@@ -15,6 +15,7 @@ import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
@@ -75,7 +76,15 @@ class AiClient(private val accessToken: String) {
         GuessedIssue(message)
       }
     } catch (t: Throwable) {
-      t.printStackTrace()
+      if (t is HttpException) {
+        System.err.println("""
+          HTTP Error: ${t.code()}
+          Message: ${t.message()}
+          ${t.response()?.errorBody()?.string()}
+        """.trimIndent())
+      } else {
+        System.err.println(t.stackTraceToString())
+      }
       null
     }
   }
