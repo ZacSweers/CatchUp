@@ -154,6 +154,7 @@ class AiExtension(private val aiClient: AiClient) : ShellSentryExtension {
     isAfterRetry: Boolean,
     consoleOutput: Path
   ): AnalysisResult? {
+    println("AIExtension: Checking")
     return runBlocking { aiClient.analyze(consoleOutput.readText()) }
   }
 }
