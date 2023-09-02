@@ -89,6 +89,7 @@ jobs:
           path: build/skippy/**
 
       - name: Build and run tests
+        timeout-minutes: 30
         env:
           OPEN_AI_KEY: ${{ secrets.OPEN_AI_KEY }}
         run: ./scripts/shell_sentry.sh ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
