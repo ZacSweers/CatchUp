@@ -98,8 +98,8 @@ constructor(
         with(it) {
           CatchUpItem(
             id = "$author/$repoName".hashCode().toLong(),
-            title = "$author / $repoName",
-            description = description,
+            title = "$author/$repoName",
+            description = description.trim().takeUnless { it.isBlank() },
             timestamp = null,
             score = "★" to stars,
             tag = language.takeUnless { it.isBlank() },
@@ -222,8 +222,4 @@ object GitHubModule {
       .build()
       .create(GitHubApi::class.java)
   }
-}
-
-private fun <D : Query.Data> Query<D>.toApolloRequest(): ApolloRequest<D> {
-  return ApolloRequest.Builder(this).build()
 }
