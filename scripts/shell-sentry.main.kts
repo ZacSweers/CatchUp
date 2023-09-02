@@ -1,12 +1,18 @@
 #!/usr/bin/env kotlin
 @file:DependsOn("com.github.ajalt.clikt:clikt-jvm:4.2.0")
+@file:DependsOn("com.github.ajalt.mordant:mordant:2.1.0")
 @file:DependsOn("com.slack.cli:kotlin-cli-util:2.2.1")
 @file:DependsOn("com.squareup.retrofit2:retrofit:2.9.0")
 @file:DependsOn("com.squareup.retrofit2:converter-moshi:2.9.0")
 @file:DependsOn("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
 @file:DependsOn("com.squareup.moshi:moshi:1.15.0")
 @file:DependsOn("com.squareup.moshi:moshi-kotlin:1.15.0")
+// // To silence this stupid log https://www.slf4j.org/codes.html#StaticLoggerBinder
+@file:DependsOn("org.slf4j:slf4j-nop:2.0.7")
 
+import com.github.ajalt.mordant.rendering.Whitespace
+import com.github.ajalt.mordant.table.table
+import com.github.ajalt.mordant.terminal.Terminal
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -26,6 +32,8 @@ import slack.cli.shellsentry.NoStacktraceThrowable
 import slack.cli.shellsentry.RetrySignal
 import slack.cli.shellsentry.ShellSentry
 import slack.cli.shellsentry.ShellSentryExtension
+import kotlin.io.path.createTempFile
+import kotlin.io.path.writeText
 
 class GuessedIssue(message: String) : NoStacktraceThrowable(message)
 
@@ -60,6 +68,10 @@ class AiClient(private val accessToken: String) {
         0
       }
       val analyzableContent = content.substring(start)
+      createTempFile().apply {
+        writeText(analyzableContent)
+        println("Analyzable content written to file://${toAbsolutePath()}")
+      }
       val prompt = "${ChatGptApi.ANALYSIS_PROMPT}\n\n$analyzableContent"
       val response = api.analyze(prompt)
       val rawJson = response.choices.first().message.content.trim()
@@ -169,7 +181,29 @@ class AiExtension(private val aiClient: AiClient) : ShellSentryExtension {
     consoleOutput: Path
   ): AnalysisResult? {
     println("-- AIExtension: Checking")
-    return runBlocking { aiClient.analyze(consoleOutput.readText()) }
+    val result = runBlocking { aiClient.analyze(consoleOutput.readText()) } ?: return null
+
+    println("\n")
+    val t = Terminal()
+    t.println(table {
+      captionTop("Analysis Result")
+      body { row("Message", result.message) }
+      body {
+        row("Explanation", result.explanation) {
+          this.whitespace = Whitespace.PRE_WRAP
+        }
+      }
+      body {
+        row(
+          "Retry?",
+          "${result.retrySignal != RetrySignal.Ack && result.retrySignal != RetrySignal.Unknown}"
+        )
+      }
+      body { row("Confidence", "${result.confidence}%") }
+    })
+    println("\n")
+
+    return result
   }
 }
 
