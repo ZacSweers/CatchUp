@@ -36,9 +36,6 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
-import io.sweers.catchup.service.uplabs.R.color
-import io.sweers.catchup.service.uplabs.R.drawable
-import io.sweers.catchup.service.uplabs.R.string
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -109,9 +106,9 @@ abstract class UplabsMetaModule {
     internal fun provideUplabsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        string.catchup_service_uplabs_name,
-        color.catchup_service_uplabs_accent,
-        drawable.catchup_service_uplabs_logo,
+        R.string.catchup_service_uplabs_name,
+        R.color.catchup_service_uplabs_accent,
+        R.drawable.catchup_service_uplabs_logo,
         isVisual = true,
         pagesAreNumeric = true,
         firstPageKey = 0
