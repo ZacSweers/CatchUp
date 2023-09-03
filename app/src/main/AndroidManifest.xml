@@ -22,7 +22,7 @@
   <application
       android:name="catchup.app.CatchUpApplication"
       android:allowBackup="false"
-      android:appComponentFactory="catchup.di.CatchUpAppComponentFactory"
+      android:appComponentFactory="catchup.app.di.CatchUpAppComponentFactory"
       android:colorMode="wideColorGamut"
       android:enableOnBackInvokedCallback="true"
       android:icon="@mipmap/ic_launcher"
