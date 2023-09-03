@@ -66,7 +66,7 @@ configure<LibraryAndroidComponentsExtension> {
 }
 
 noArg {
-  annotation("io.sweers.catchup.service.hackernews.model.NoArg")
+  annotation("catchup.service.hackernews.model.NoArg")
 }
 
 dependencies {
@@ -81,7 +81,6 @@ dependencies {
   implementation(libs.kotlin.coroutines)
   implementation(libs.kotlin.datetime)
   implementation(libs.okhttp.core)
-  implementation(projects.libraries.baseUi)
   implementation(projects.libraries.kotlinutil)
   implementation(projects.libraries.util)
 }

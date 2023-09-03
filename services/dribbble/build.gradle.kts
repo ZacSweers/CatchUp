@@ -21,7 +21,7 @@ plugins {
 }
 
 android {
-  namespace = "io.sweers.catchup.service.dribbble"
+  namespace = "catchup.service.dribbble"
 }
 
 slack {
@@ -48,5 +48,4 @@ dependencies {
   implementation(libs.misc.jsoup)
   implementation(libs.okhttp.core)
   implementation(projects.libraries.retrofitconverters)
-  implementation(projects.libraries.util)
 }

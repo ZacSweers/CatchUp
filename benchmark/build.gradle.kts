@@ -12,7 +12,7 @@ plugins {
 val mvdName = "pixel6Api31"
 
 android {
-  namespace = "io.sweers.catchup.benchmark"
+  namespace = "catchup.benchmark"
   defaultConfig {
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

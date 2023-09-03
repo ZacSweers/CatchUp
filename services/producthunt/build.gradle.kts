@@ -31,7 +31,7 @@ android {
   buildFeatures {
     buildConfig = true
   }
-  namespace = "io.sweers.catchup.service.producthunt"
+  namespace = "catchup.service.producthunt"
 }
 
 apollo {
@@ -41,8 +41,8 @@ apollo {
       "DateTime" to "kotlinx.datetime.Instant",
 //      "URI" to "okhttp3.HttpUrl"
     ))
-    packageName.set("io.sweers.catchup.service.producthunt")
-    schemaFile.set(file("src/main/graphql/io/sweers/catchup/service/producthunt/schema.graphqls"))
+    packageName.set("catchup.service.producthunt")
+    schemaFile.set(file("src/main/graphql/catchup/service/producthunt/schema.graphqls"))
   }
 }
 
@@ -59,6 +59,7 @@ slack {
 }
 
 dependencies {
+  api(libs.apollo.api)
   api(libs.apollo.runtime)
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
@@ -66,6 +67,7 @@ dependencies {
   api(libs.okhttp.core)
   api(projects.libraries.auth)
   api(projects.libraries.di)
+  api(projects.libraries.util)
   api(projects.serviceApi)
 
   implementation(libs.androidx.datastore.preferences)
@@ -73,5 +75,4 @@ dependencies {
   implementation(libs.kotlin.datetime)
   implementation(libs.misc.okio)
   implementation(libs.okhttp.core)
-  implementation(projects.libraries.util)
 }

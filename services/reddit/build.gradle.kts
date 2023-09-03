@@ -21,7 +21,7 @@ plugins {
 }
 
 android {
-  namespace = "io.sweers.catchup.service.reddit"
+  namespace = "catchup.service.reddit"
 }
 
 slack {

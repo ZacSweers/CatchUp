@@ -18,14 +18,14 @@ slack {
 }
 
 android {
-  namespace = "dev.zacsweers.catchup.summarizer"
+  namespace = "catchup.summarizer"
   buildFeatures { buildConfig = true }
 }
 
 sqldelight {
   databases {
     create("SummarizationsDatabase") {
-      packageName.set("dev.zacsweers.catchup.summarizer")
+      packageName.set("catchup.summarizer")
     }
   }
 }

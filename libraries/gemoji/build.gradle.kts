@@ -21,7 +21,7 @@ plugins {
 }
 
 android {
-  namespace = "io.sweers.catchup.gemoji"
+  namespace = "catchup.gemoji"
 }
 
 slack {

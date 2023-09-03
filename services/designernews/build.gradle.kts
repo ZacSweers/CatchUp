@@ -21,7 +21,7 @@ plugins {
 }
 
 android {
-  namespace = "io.sweers.catchup.service.designernews"
+  namespace = "catchup.service.designernews"
 }
 
 slack {

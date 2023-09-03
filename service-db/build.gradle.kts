@@ -21,7 +21,7 @@ plugins {
   alias(libs.plugins.sqldelight)
 }
 
-android { namespace = "io.sweers.catchup.service.db" }
+android { namespace = "catchup.service.db" }
 
 slack {
   features {
@@ -32,7 +32,7 @@ slack {
 sqldelight {
   databases {
     create("CatchUpDatabase") {
-      packageName.set("dev.zacsweers.catchup.service")
+      packageName.set("catchup.service.db")
     }
   }
 }
