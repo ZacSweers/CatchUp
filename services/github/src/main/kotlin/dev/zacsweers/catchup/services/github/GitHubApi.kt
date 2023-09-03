@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.github
+package dev.zacsweers.catchup.services.github
 
-import io.sweers.catchup.service.github.model.TrendingItem
+import dev.zacsweers.catchup.services.github.model.TrendingItem
 import java.util.Locale
 import retrofit2.http.GET
 import retrofit2.http.Path

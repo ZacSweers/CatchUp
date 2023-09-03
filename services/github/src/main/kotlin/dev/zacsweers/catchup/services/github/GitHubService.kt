@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.github
+package dev.zacsweers.catchup.services.github
 
 import android.graphics.Color
 import com.apollographql.apollo3.ApolloClient
@@ -43,13 +43,13 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
-import io.sweers.catchup.service.github.GitHubApi.Language.All
-import io.sweers.catchup.service.github.GitHubApi.Since.DAILY
-import io.sweers.catchup.service.github.model.SearchQuery
-import io.sweers.catchup.service.github.model.TrendingTimespan
-import io.sweers.catchup.service.github.type.LanguageOrder
-import io.sweers.catchup.service.github.type.LanguageOrderField
-import io.sweers.catchup.service.github.type.OrderDirection
+import dev.zacsweers.catchup.services.github.GitHubApi.Language.All
+import dev.zacsweers.catchup.services.github.GitHubApi.Since.DAILY
+import dev.zacsweers.catchup.services.github.model.SearchQuery
+import dev.zacsweers.catchup.services.github.model.TrendingTimespan
+import dev.zacsweers.catchup.services.github.type.LanguageOrder
+import dev.zacsweers.catchup.services.github.type.LanguageOrderField
+import dev.zacsweers.catchup.services.github.type.OrderDirection
 import io.sweers.catchup.util.e
 import javax.inject.Inject
 import javax.inject.Qualifier

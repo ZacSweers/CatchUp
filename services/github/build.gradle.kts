@@ -29,7 +29,7 @@ android {
   buildFeatures {
     buildConfig = true
   }
-  namespace = "io.sweers.catchup.service.github"
+  namespace = "dev.zacsweers.catchup.services.github"
 }
 
 apollo {
@@ -38,8 +38,8 @@ apollo {
         "DateTime" to "kotlinx.datetime.Instant",
         "URI" to "okhttp3.HttpUrl"
     ))
-    packageName.set("io.sweers.catchup.service.github")
-    schemaFile.set(file("src/main/graphql/io/sweers/catchup/service/github/schema.json"))
+    packageName.set("dev.zacsweers.catchup.services..github")
+    schemaFile.set(file("src/main/graphql/dev/zacsweers/catchup/service/github/schema.json"))
   }
 }
 

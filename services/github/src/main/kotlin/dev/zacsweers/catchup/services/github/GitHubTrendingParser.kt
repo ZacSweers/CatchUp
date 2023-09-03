@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.github
+package dev.zacsweers.catchup.services.github
 
-import io.sweers.catchup.service.github.GitHubApi.Companion.ENDPOINT
-import io.sweers.catchup.service.github.model.TrendingItem
+import dev.zacsweers.catchup.services.github.GitHubApi.Companion.ENDPOINT
+import dev.zacsweers.catchup.services.github.model.TrendingItem
 import io.sweers.catchup.util.d
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -30,7 +30,8 @@ internal object GitHubTrendingParser {
 
   internal fun parse(body: ResponseBody): List<TrendingItem> {
     val fullBody = body.string()
-    return Jsoup.parse(fullBody, ENDPOINT).getElementsByClass("Box-row").map(::parseTrendingItem)
+    return Jsoup.parse(fullBody, ENDPOINT).getElementsByClass("Box-row").map(
+      GitHubTrendingParser::parseTrendingItem)
   }
 
   private fun parseTrendingItem(element: Element): TrendingItem {
