@@ -23,7 +23,7 @@ plugins {
 }
 
 android {
-  namespace = "catchup.service.hackernews"
+  namespace = "dev.zacsweers.catchup.services.hackernews"
   buildFeatures {
     resValues = true
     viewBinding = true

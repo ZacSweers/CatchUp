@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.hackernews
+package dev.zacsweers.catchup.services.hackernews
 
 import android.content.Context
-import catchup.service.hackernews.R
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.database.DataSnapshot
@@ -40,7 +39,7 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
-import io.sweers.catchup.service.hackernews.model.HackerNewsStory
+import dev.zacsweers.catchup.services.hackernews.model.HackerNewsStory
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.kotlin.safeOffer
