@@ -13,27 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.designernews
+package catchup.service.designernews.model
 
-import com.serjltt.moshi.adapters.Wrapped
-import io.sweers.catchup.service.designernews.model.Story
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.squareup.moshi.JsonClass
 
-/**
- * Models the Designer News API.
- *
- * v2 docs: https://github.com/DesignerNews/dn_api_v2
- */
-interface DesignerNewsApi {
-
-  @GET("stories")
-  @Wrapped(path = ["stories"])
-  suspend fun getTopStories(@Query("page") page: Int): List<Story>
-
-  companion object {
-
-    private const val HOST = "www.designernews.co/api/v2/"
-    const val ENDPOINT = "https://$HOST"
-  }
-}
+@JsonClass(generateAdapter = true)
+data class Links(
+  val user: String,
+  val comments: List<String>,
+  val upvotes: List<String>,
+  val downvotes: List<String>
+)

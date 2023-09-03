@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.designernews.model
+package catchup.service.designernews.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.datetime.Instant
 
-/** Models a Designer News User */
+/** Models a Designer News story */
 @JsonClass(generateAdapter = true)
-data class User(
-  @Json(name = "cover_photo_url") val coverPhotoUrl: String,
-  @Json(name = "display_name") val displayName: String,
-  @Json(name = "first_name") val firstName: String,
-  val id: Long,
-  val job: String,
-  @Json(name = "last_name") val lastName: String,
-  @Json(name = "portrait_url") val portraitUrl: String
-) {
-
-  companion object {
-    val NONE: User = User("", "", "", 0, "", "", "")
-  }
-}
+data class Story(
+  val badge: String?,
+  val comment: String?,
+  @Json(name = "comment_count") val commentCount: Int,
+  @Json(name = "comment_html") val commentHtml: String?,
+  @Json(name = "created_at") val createdAt: Instant,
+  val hostname: String?,
+  val id: String,
+  val href: String,
+  val title: String,
+  val url: String?,
+  val links: Links,
+  @Json(name = "vote_count") val voteCount: Int,
+  @Json(name = "twitter_handles") val twitterHandles: List<String>
+)
