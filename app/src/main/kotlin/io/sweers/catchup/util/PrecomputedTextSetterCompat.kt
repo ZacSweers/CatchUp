@@ -20,7 +20,7 @@ import android.text.Spanned
 import android.widget.TextView
 import androidx.core.text.PrecomputedTextCompat
 import io.noties.markwon.Markwon
-import io.sweers.catchup.flowbinding.viewScope
+import catchup.flowbinding.viewScope
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -29,10 +29,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
-import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
-import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
+import catchup.di.AppScope
+import catchup.di.SingleIn
+import catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Interceptor
 
 @ContributesTo(AppScope::class)

@@ -17,7 +17,7 @@ package io.sweers.catchup.data
 
 import android.content.Context
 import io.sweers.catchup.data.model.ServiceData
-import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.injection.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl

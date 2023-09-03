@@ -34,7 +34,7 @@ import com.mattprecious.telescope.Lens
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.zacsweers.catchup.appconfig.AppConfig
+import catchup.appconfig.AppConfig
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.bugreport.BugReportDialog.ReportListener

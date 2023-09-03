@@ -30,9 +30,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
-import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.deeplink.DeepLinkable
-import dev.zacsweers.catchup.di.AppScope
+import catchup.appconfig.AppConfig
+import catchup.deeplink.DeepLinkable
+import catchup.di.AppScope
 import io.sweers.catchup.R
 import java.util.Locale
 import kotlinx.collections.immutable.ImmutableMap

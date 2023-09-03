@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.core.graphics.drawable.toBitmap
 import io.sweers.catchup.R
-import io.sweers.catchup.base.ui.BackPressNavButton
+import catchup.base.ui.BackPressNavButton
 import kotlin.math.roundToInt
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy

@@ -22,14 +22,14 @@ plugins {
 }
 
 android {
-  namespace = "io.sweers.catchup.util"
+  namespace = "catchup.util"
   buildFeatures {
     viewBinding = true
   }
 }
 
 redacted {
-  redactedAnnotation.set("io.sweers.catchup.util.network.Redacted")
+  redactedAnnotation.set("catchup.util.network.Redacted")
 }
 
 slack {

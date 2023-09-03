@@ -22,11 +22,11 @@ import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
+import catchup.appconfig.AppConfig
+import catchup.di.AppScope
+import catchup.di.SingleIn
 import io.sweers.catchup.BuildConfig
-import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
+import catchup.libraries.retrofitconverters.delegatingCallFactory
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

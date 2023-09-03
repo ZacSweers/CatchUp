@@ -19,7 +19,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import io.sweers.catchup.databinding.BugreportViewBinding
-import io.sweers.catchup.flowbinding.viewScope
+import catchup.flowbinding.viewScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop

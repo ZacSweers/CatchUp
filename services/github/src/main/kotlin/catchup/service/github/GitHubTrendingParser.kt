@@ -17,7 +17,7 @@ package catchup.service.github
 
 import catchup.service.github.GitHubApi.Companion.ENDPOINT
 import catchup.service.github.model.TrendingItem
-import io.sweers.catchup.util.d
+import catchup.util.d
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element

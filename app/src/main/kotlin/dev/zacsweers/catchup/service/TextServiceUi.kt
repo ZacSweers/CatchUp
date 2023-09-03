@@ -53,9 +53,9 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
-import dev.zacsweers.catchup.compose.CatchUpTheme
-import dev.zacsweers.catchup.compose.ContentAlphas
-import dev.zacsweers.catchup.compose.ScrollToTopHandler
+import catchup.compose.CatchUpTheme
+import catchup.compose.ContentAlphas
+import catchup.compose.ScrollToTopHandler
 import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked
 import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Action.FAVORITE
 import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE
@@ -64,8 +64,9 @@ import io.sweers.catchup.R
 import catchup.service.api.CatchUpItem
 import catchup.service.api.Mark
 import catchup.service.api.canBeSummarized
-import io.sweers.catchup.util.kotlin.format
-import io.sweers.catchup.util.primaryLocale
+import catchup.util.kotlin.format
+import catchup.util.primaryLocale
+import io.sweers.catchup.R.color
 import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Clock
 
@@ -402,7 +403,7 @@ fun PreviewTextItem() {
             timestamp = Clock.System.now().minus(12.hours),
             mark = Mark(text = "14")
           ),
-        themeColor = colorResource(R.color.colorAccent),
+        themeColor = colorResource(color.colorAccent),
       )
     }
   }

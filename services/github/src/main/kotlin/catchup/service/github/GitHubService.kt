@@ -29,12 +29,12 @@ import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.di.AppScope
-import io.sweers.catchup.gemoji.EmojiMarkdownConverter
-import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
-import io.sweers.catchup.libraries.retrofitconverters.DecodingConverter
-import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
+import catchup.appconfig.AppConfig
+import catchup.di.AppScope
+import catchup.gemoji.EmojiMarkdownConverter
+import catchup.gemoji.replaceMarkdownEmojisIn
+import catchup.libraries.retrofitconverters.DecodingConverter
+import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ContentType
 import catchup.service.api.DataRequest
@@ -51,7 +51,7 @@ import catchup.service.github.model.TrendingTimespan
 import dev.zacsweers.catchup.service.github.type.LanguageOrder
 import dev.zacsweers.catchup.service.github.type.LanguageOrderField
 import dev.zacsweers.catchup.service.github.type.OrderDirection
-import io.sweers.catchup.util.e
+import catchup.util.e
 import javax.inject.Inject
 import javax.inject.Qualifier
 import okhttp3.OkHttpClient

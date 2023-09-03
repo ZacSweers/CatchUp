@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.Preferences.Key
 import com.alorma.compose.settings.storage.base.SettingValueState
 import com.alorma.compose.settings.storage.base.getValue
 import com.alorma.compose.settings.storage.base.setValue
@@ -75,9 +76,9 @@ import dagger.Provides
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.compose.CatchUpTheme
-import dev.zacsweers.catchup.di.AppScope
+import catchup.appconfig.AppConfig
+import catchup.compose.CatchUpTheme
+import catchup.di.AppScope
 import io.sweers.catchup.R
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
@@ -85,7 +86,12 @@ import io.sweers.catchup.home.DrawerScreen
 import io.sweers.catchup.ui.activity.BaseSettingsUi
 import io.sweers.catchup.ui.activity.RealBaseSettingsUi
 import io.sweers.catchup.ui.debug.DebugItem.Element.SpinnerElement.ValueType
-import io.sweers.catchup.util.truncateAt
+import catchup.util.truncateAt
+import io.sweers.catchup.R.mipmap
+import io.sweers.catchup.R.string
+import io.sweers.catchup.ui.debug.DebugItem.Element
+import io.sweers.catchup.ui.debug.DebugItem.Header
+import io.sweers.catchup.ui.debug.DebugSettingsScreen.Event.NavigateTo
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -354,13 +360,13 @@ constructor(
               horizontalArrangement = Arrangement.End
             ) {
               Text(
-                stringResource(R.string.development_settings),
+                stringResource(string.development_settings),
                 style = MaterialTheme.typography.headlineSmall,
               )
               Spacer(Modifier.width(16.dp))
               // TODO kinda gross but shrug
               val icon =
-                (AppCompatResources.getDrawable(LocalContext.current, R.mipmap.ic_launcher)
+                (AppCompatResources.getDrawable(LocalContext.current, mipmap.ic_launcher)
                     as AdaptiveIconDrawable)
                   .toBitmap()
               Image(
@@ -373,20 +379,20 @@ constructor(
 
           state.items.forEachIndexed { index, item ->
             when (item) {
-              is DebugItem.Header -> {
+              is Header -> {
                 item(index) { DebugSectionHeader(item.title) }
               }
-              is DebugItem.Element -> {
+              is Element -> {
                 item(index) {
                   val scope = rememberCoroutineScope()
                   DebugElementContent(
                     item,
-                    { screen -> state.eventSink(DebugSettingsScreen.Event.NavigateTo(screen)) }
+                    { screen -> state.eventSink(NavigateTo(screen)) }
                   ) { key, value ->
                     scope.launch {
                       debugPreferences.edit { prefs ->
                         @Suppress("UNCHECKED_CAST")
-                        prefs[key as Preferences.Key<Any?>] = value
+                        prefs[key as Key<Any?>] = value
                       }
                     }
                   }

@@ -19,11 +19,11 @@ import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.onNavEvent
 import com.slack.circuit.runtime.Navigator
 import com.squareup.anvil.annotations.ContributesBinding
-import dev.zacsweers.catchup.compose.rememberConditionalSystemUiColors
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
-import io.sweers.catchup.base.ui.DefaultRootContent
-import io.sweers.catchup.base.ui.RootContent
+import catchup.compose.rememberConditionalSystemUiColors
+import catchup.di.AppScope
+import catchup.di.SingleIn
+import catchup.base.ui.DefaultRootContent
+import catchup.base.ui.RootContent
 import io.sweers.catchup.data.DebugPreferences
 import javax.inject.Inject
 

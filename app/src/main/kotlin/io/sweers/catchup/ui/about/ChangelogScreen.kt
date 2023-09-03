@@ -28,8 +28,8 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.squareup.anvil.annotations.ContributesBinding
-import dev.zacsweers.catchup.compose.LocalDynamicTheme
-import dev.zacsweers.catchup.di.AppScope
+import catchup.compose.LocalDynamicTheme
+import catchup.di.AppScope
 import dev.zacsweers.catchup.service.ClickableItem
 import dev.zacsweers.catchup.service.ErrorItem
 import dev.zacsweers.catchup.service.TextItem
@@ -37,8 +37,8 @@ import dev.zacsweers.catchup.service.rememberClickableItemState
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
-import io.sweers.catchup.gemoji.EmojiMarkdownConverter
-import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
+import catchup.gemoji.EmojiMarkdownConverter
+import catchup.gemoji.replaceMarkdownEmojisIn
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ContentType
 import catchup.service.api.UrlMeta

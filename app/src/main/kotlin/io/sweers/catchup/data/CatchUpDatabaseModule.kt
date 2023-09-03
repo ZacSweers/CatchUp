@@ -23,11 +23,11 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
+import catchup.di.AppScope
+import catchup.di.SingleIn
 import dev.zacsweers.catchup.service.CatchUpDatabase
 import dev.zacsweers.catchup.service.CatchUpDbItem
-import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.injection.qualifiers.ApplicationContext
 import kotlinx.datetime.Instant
 
 @ContributesTo(AppScope::class)

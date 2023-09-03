@@ -4,7 +4,7 @@ import android.app.Activity
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.multibindings.Multibinds
-import dev.zacsweers.catchup.di.AppScope
+import catchup.di.AppScope
 
 @ContributesTo(AppScope::class)
 @Module

@@ -55,11 +55,11 @@ import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import coil.drawable.MovieDrawable
 import coil.request.ImageRequest
-import dev.zacsweers.catchup.compose.ScrollToTopHandler
-import dev.zacsweers.catchup.compose.columnCount
-import io.sweers.catchup.base.ui.BlurHashDecoder
-import io.sweers.catchup.base.ui.ColorUtils
-import io.sweers.catchup.base.ui.generateAsync
+import catchup.compose.ScrollToTopHandler
+import catchup.compose.columnCount
+import catchup.base.ui.BlurHashDecoder
+import catchup.base.ui.ColorUtils
+import catchup.base.ui.generateAsync
 import catchup.service.api.CatchUpItem
 import io.sweers.catchup.util.UiUtil
 import kotlinx.coroutines.Dispatchers.IO

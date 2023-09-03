@@ -4,7 +4,7 @@ import com.slack.circuit.runtime.screen.Screen
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.BindsOptionalOf
 import dagger.Module
-import dev.zacsweers.catchup.di.AppScope
+import catchup.di.AppScope
 
 @ContributesTo(AppScope::class)
 @Module

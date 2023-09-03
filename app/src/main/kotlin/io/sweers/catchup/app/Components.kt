@@ -5,8 +5,8 @@ import android.app.Application
 import com.squareup.anvil.annotations.MergeComponent
 import dagger.BindsInstance
 import dagger.Component
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
+import catchup.di.AppScope
+import catchup.di.SingleIn
 import javax.inject.Provider
 
 @MergeComponent(AppScope::class)

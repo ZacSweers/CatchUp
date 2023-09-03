@@ -26,10 +26,10 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.squareup.anvil.annotations.ContributesBinding
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
+import catchup.di.AppScope
+import catchup.di.SingleIn
 import io.sweers.catchup.CatchUpPreferences.Keys
-import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.injection.qualifiers.ApplicationContext
 import java.io.File
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList

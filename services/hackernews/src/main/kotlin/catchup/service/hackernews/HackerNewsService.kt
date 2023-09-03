@@ -28,7 +28,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import dev.zacsweers.catchup.di.AppScope
+import catchup.di.AppScope
 import catchup.service.api.CatchUpItem
 import catchup.service.api.DataRequest
 import catchup.service.api.DataResult
@@ -43,9 +43,9 @@ import catchup.service.hackernews.R.string
 import catchup.service.api.ServiceMetaKey
 import catchup.service.api.TextService
 import catchup.service.hackernews.model.HackerNewsStory
-import io.sweers.catchup.util.d
-import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
-import io.sweers.catchup.util.kotlin.safeOffer
+import catchup.util.d
+import catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.kotlin.safeOffer
 import javax.inject.Inject
 import javax.inject.Qualifier
 import kotlin.coroutines.resume

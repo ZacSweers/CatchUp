@@ -16,7 +16,7 @@
 package catchup.service.slashdot
 
 import com.tickaroo.tikxml.converter.htmlescape.StringEscapeUtils
-import io.sweers.catchup.util.parsePossiblyOffsetInstant
+import catchup.util.parsePossiblyOffsetInstant
 import kotlinx.datetime.Instant
 import kotlinx.datetime.serializers.InstantIso8601Serializer
 import kotlinx.serialization.KSerializer

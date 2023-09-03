@@ -34,11 +34,11 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
-import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.di.AppScope
+import catchup.appconfig.AppConfig
+import catchup.di.AppScope
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
-import io.sweers.catchup.base.ui.CatchUpObjectWatcher
+import catchup.base.ui.CatchUpObjectWatcher
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.injection.DaggerSet
 import java.util.concurrent.ExecutorService

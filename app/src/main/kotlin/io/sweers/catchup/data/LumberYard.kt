@@ -18,8 +18,8 @@ package io.sweers.catchup.data
 import android.app.Application
 import android.util.Log
 import androidx.annotation.WorkerThread
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
+import catchup.di.AppScope
+import catchup.di.SingleIn
 import java.io.File
 import java.io.IOException
 import java.time.LocalDateTime

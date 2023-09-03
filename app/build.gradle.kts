@@ -59,7 +59,7 @@ val useDebugSigning: Boolean =
 
 android {
   defaultConfig {
-    applicationId = "io.sweers.catchup"
+    applicationId = "dev.zacsweers.catchup"
 
     // These are for debug only. Release versioning is set by CatchUpPlugin
     versionCode = 1

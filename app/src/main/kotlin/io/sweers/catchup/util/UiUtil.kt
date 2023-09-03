@@ -21,8 +21,8 @@ import android.annotation.SuppressLint
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.palette.graphics.Palette
-import io.sweers.catchup.base.ui.ColorUtils
-import io.sweers.catchup.base.ui.orderedSwatches
+import catchup.base.ui.ColorUtils
+import catchup.base.ui.orderedSwatches
 
 object UiUtil {
 

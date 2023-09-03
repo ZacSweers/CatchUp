@@ -20,10 +20,10 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
-import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
-import io.sweers.catchup.util.injection.qualifiers.NetworkInterceptor
+import catchup.di.AppScope
+import catchup.di.SingleIn
+import catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.injection.qualifiers.NetworkInterceptor
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC

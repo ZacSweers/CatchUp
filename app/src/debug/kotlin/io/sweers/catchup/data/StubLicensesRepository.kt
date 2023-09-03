@@ -1,7 +1,7 @@
 package io.sweers.catchup.data
 
 import com.squareup.anvil.annotations.ContributesBinding
-import dev.zacsweers.catchup.di.AppScope
+import catchup.di.AppScope
 import io.sweers.catchup.ui.about.LicensesRepository
 import io.sweers.catchup.ui.about.LicensesRepositoryImpl
 import io.sweers.catchup.ui.about.OssBaseItem

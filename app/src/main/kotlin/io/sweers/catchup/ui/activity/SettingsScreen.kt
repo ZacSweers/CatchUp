@@ -54,19 +54,21 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
-import dev.zacsweers.catchup.compose.ContentAlphas
-import dev.zacsweers.catchup.compose.DisableableContent
-import dev.zacsweers.catchup.compose.LocalEnabled
-import dev.zacsweers.catchup.deeplink.DeepLinkable
-import dev.zacsweers.catchup.di.AppScope
+import catchup.compose.ContentAlphas
+import catchup.compose.DisableableContent
+import catchup.compose.LocalEnabled
+import catchup.deeplink.DeepLinkable
+import catchup.di.AppScope
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
-import io.sweers.catchup.base.ui.BackPressNavButton
+import catchup.base.ui.BackPressNavButton
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.ui.about.AboutScreen
-import io.sweers.catchup.util.clearCache
-import io.sweers.catchup.util.clearFiles
-import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.clearCache
+import catchup.util.clearFiles
+import catchup.util.injection.qualifiers.ApplicationContext
+import io.sweers.catchup.CatchUpPreferences.Keys
+import io.sweers.catchup.R.string
 import io.sweers.catchup.util.restartApp
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableMap
@@ -294,17 +296,17 @@ constructor(
             val forceNightValue by
               catchUpPreferences.dayNightForceNight.collectAsState(initial = false)
             BooleanPreference(
-              key = CatchUpPreferences.Keys.dayNightForceNight,
+              key = Keys.dayNightForceNight,
               modifier = Modifier.animateContentSize(), // Because the summary changes
               defaultValue = false,
-              title = stringResource(R.string.pref_force_dark_theme),
+              title = stringResource(string.pref_force_dark_theme),
               subtitle =
                 if (!LocalEnabled.current) {
-                  stringResource(R.string.pref_dark_theme_disabled_auto)
+                  stringResource(string.pref_dark_theme_disabled_auto)
                 } else if (forceNightValue) {
-                  stringResource(R.string.pref_dark_theme_enabled)
+                  stringResource(string.pref_dark_theme_enabled)
                 } else {
-                  stringResource(R.string.pref_dark_theme_disabled)
+                  stringResource(string.pref_dark_theme_disabled)
                 },
             )
           }

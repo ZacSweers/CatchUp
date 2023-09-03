@@ -24,9 +24,9 @@ import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.di.AppScope
-import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
+import catchup.appconfig.AppConfig
+import catchup.di.AppScope
+import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ContentType
 import catchup.service.api.DataRequest

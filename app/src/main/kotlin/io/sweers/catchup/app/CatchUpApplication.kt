@@ -19,12 +19,12 @@ import android.app.Application
 import android.os.StrictMode
 import android.os.strictmode.DiskReadViolation
 import android.os.strictmode.UntaggedSocketViolation
-import dev.zacsweers.catchup.appconfig.AppConfig
+import catchup.appconfig.AppConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.app.ApplicationModule.AsyncInitializers
 import io.sweers.catchup.app.ApplicationModule.Initializers
 import io.sweers.catchup.injection.DaggerSet
-import io.sweers.catchup.util.d
+import catchup.util.d
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import kotlinx.coroutines.DelicateCoroutinesApi

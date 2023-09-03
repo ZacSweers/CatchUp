@@ -24,9 +24,9 @@ import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.di.AppScope
-import io.sweers.catchup.libraries.retrofitconverters.delegatingCallFactory
+import catchup.appconfig.AppConfig
+import catchup.di.AppScope
+import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ContentType
 import catchup.service.api.DataRequest
@@ -37,7 +37,7 @@ import catchup.service.api.ServiceKey
 import catchup.service.api.ServiceMeta
 import catchup.service.api.ServiceMetaKey
 import catchup.service.api.VisualService
-import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
+import catchup.util.data.adapters.ISO8601InstantAdapter
 import javax.inject.Inject
 import javax.inject.Qualifier
 import kotlinx.datetime.Instant

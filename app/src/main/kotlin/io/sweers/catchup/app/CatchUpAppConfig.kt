@@ -17,13 +17,13 @@ package io.sweers.catchup.app
 
 import android.content.Context
 import android.os.Build
-import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.appconfig.AppConfigMetadataContributor
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
-import io.sweers.catchup.base.ui.versionInfo
+import catchup.appconfig.AppConfig
+import catchup.appconfig.AppConfigMetadataContributor
+import catchup.di.AppScope
+import catchup.di.SingleIn
+import catchup.base.ui.versionInfo
 import io.sweers.catchup.injection.DaggerSet
-import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @SingleIn(AppScope::class)

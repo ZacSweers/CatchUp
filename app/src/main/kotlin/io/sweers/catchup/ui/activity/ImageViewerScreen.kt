@@ -48,15 +48,18 @@ import com.slack.circuitx.overlays.BottomSheetOverlay
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.zacsweers.catchup.compose.CatchUpTheme
-import dev.zacsweers.catchup.compose.rememberStableCoroutineScope
-import dev.zacsweers.catchup.di.AppScope
+import catchup.compose.CatchUpTheme
+import catchup.compose.rememberStableCoroutineScope
+import catchup.di.AppScope
 import io.sweers.catchup.R
-import io.sweers.catchup.base.ui.NavButton
-import io.sweers.catchup.base.ui.NavButtonType
+import catchup.base.ui.NavButton
+import catchup.base.ui.NavButtonType
 import io.sweers.catchup.data.LinkManager
 import catchup.service.api.UrlMeta
+import coil.request.ImageRequest.Builder
+import catchup.base.ui.NavButtonType.CLOSE
 import io.sweers.catchup.ui.activity.FlickToDismissState.FlickGestureState.Dismissed
+import io.sweers.catchup.ui.activity.ImageViewerScreen.Event.Close
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -173,7 +176,7 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
 
         val dismissState = rememberFlickToDismissState()
         if (dismissState.gestureState is Dismissed) {
-          state.eventSink(ImageViewerScreen.Event.Close)
+          state.eventSink(Close)
         }
         // TODO bind scrim with flick. animate scrim out after flick finishes? Or with flick?
         FlickToDismiss(state = dismissState) {
@@ -184,7 +187,7 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
           // TODO loading loading indicator if there's no memory cached alias
           ZoomableAsyncImage(
             model =
-              ImageRequest.Builder(LocalContext.current)
+              Builder(LocalContext.current)
                 .data(state.url)
                 .apply { state.alias?.let(::placeholderMemoryCacheKey) }
                 .build(),
@@ -204,9 +207,9 @@ fun ImageViewer(state: ImageViewerScreen.State, modifier: Modifier = Modifier) {
         ) {
           NavButton(
             Modifier.align(Alignment.TopStart).padding(16.dp).statusBarsPadding(),
-            NavButtonType.CLOSE,
+            CLOSE,
           ) {
-            state.eventSink(ImageViewerScreen.Event.Close)
+            state.eventSink(Close)
           }
         }
       }

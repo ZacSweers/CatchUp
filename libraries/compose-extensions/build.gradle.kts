@@ -20,7 +20,7 @@ plugins {
   alias(libs.plugins.sgp.base)
 }
 
-android { namespace = "dev.zacsweers.catchup.compose" }
+android { namespace = "catchup.compose" }
 
 slack { features { compose() } }
 

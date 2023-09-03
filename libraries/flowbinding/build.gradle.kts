@@ -21,7 +21,7 @@ plugins {
 }
 
 android {
-  namespace = "io.sweers.catchup.flowbinding"
+  namespace = "catchup.flowbinding"
 }
 
 dependencies {

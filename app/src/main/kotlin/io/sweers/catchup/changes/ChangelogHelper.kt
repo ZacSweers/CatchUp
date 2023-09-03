@@ -40,9 +40,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
-import dev.zacsweers.catchup.appconfig.AppConfig
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
+import catchup.appconfig.AppConfig
+import catchup.di.AppScope
+import catchup.di.SingleIn
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import javax.inject.Inject

@@ -26,9 +26,9 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsIntent.SHARE_STATE_ON
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
-import dev.zacsweers.catchup.di.AppScope
-import dev.zacsweers.catchup.di.SingleIn
-import io.sweers.catchup.util.maybeStartActivity
+import catchup.di.AppScope
+import catchup.di.SingleIn
+import catchup.util.maybeStartActivity
 import javax.inject.Inject
 
 /**
