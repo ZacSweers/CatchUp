@@ -21,7 +21,7 @@ plugins {
 }
 
 android {
-  namespace = "io.sweers.catchup.service.dribbble"
+  namespace = "catchup.services.dribbble"
 }
 
 slack {

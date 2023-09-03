@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.dribbble
+package catchup.services.dribbble
 
-import io.sweers.catchup.service.dribbble.DribbbleApi.Companion.ENDPOINT
-import io.sweers.catchup.service.dribbble.model.Shot
-import io.sweers.catchup.service.dribbble.model.User
+import catchup.services.dribbble.DribbbleApi.Companion.ENDPOINT
+import catchup.services.dribbble.model.Shot
+import catchup.services.dribbble.model.User
 import kotlinx.datetime.Clock
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -34,7 +34,7 @@ internal object DribbbleParser {
 
   fun parse(body: ResponseBody): List<Shot> {
     val shotElements = Jsoup.parse(body.string(), ENDPOINT).select("li[id^=screenshot]")
-    return shotElements.mapNotNull(::parseShot)
+    return shotElements.mapNotNull(DribbbleParser::parseShot)
   }
 
   private val HttpUrl.path: String

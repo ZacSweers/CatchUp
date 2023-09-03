@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.dribbble.model
+package catchup.services.dribbble
 
-import kotlinx.datetime.Instant
+import catchup.services.dribbble.model.Shot
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-/** Models a dibbble shot */
-data class Shot(
-  val commentsCount: Long,
-  val createdAt: Instant,
-  val description: String?,
-  val htmlUrl: String,
-  val id: Long,
-  val title: String,
-  val imageUrl: String,
-  val imageAlt: String,
-  val videoUrl: String?,
-  val likesCount: Long,
-  val user: User,
-  val viewsCount: Long
-)
+/** Dribbble API - http://developer.dribbble.com/v1/ */
+interface DribbbleApi {
+
+  @GET("/shots")
+  suspend fun getPopular(@Query("page") page: Int, @Query("per_page") pageSize: Int): List<Shot>
+
+  // list=...
+  // sort=...
+  // timeframe=...
+
+  companion object {
+
+    private const val HOST = "dribbble.com"
+    const val ENDPOINT = "https://$HOST"
+  }
+}
