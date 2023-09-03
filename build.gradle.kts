@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import dev.zacsweers.moshix.ir.gradle.MoshiPluginExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import slack.gradle.avoidance.AffectedProjectsDefaults
 import slack.gradle.avoidance.ComputeAffectedProjectsTask
 

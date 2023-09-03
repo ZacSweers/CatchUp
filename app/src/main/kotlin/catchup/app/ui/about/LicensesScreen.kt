@@ -37,6 +37,7 @@ import catchup.app.data.github.RepositoryByNameAndOwnerQuery
 import catchup.app.service.ClickableItem
 import catchup.app.service.ErrorItem
 import catchup.app.service.TextItem
+import catchup.app.service.UrlMeta
 import catchup.app.ui.about.LicensesScreen.Event.Click
 import catchup.app.ui.about.LicensesScreen.State
 import catchup.di.AppScope
@@ -44,7 +45,6 @@ import catchup.gemoji.EmojiMarkdownConverter
 import catchup.gemoji.replaceMarkdownEmojisIn
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ContentType
-import catchup.service.api.UrlMeta
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.kotlin.groupBy
 import catchup.util.kotlin.sortBy

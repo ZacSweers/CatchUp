@@ -31,6 +31,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
 import catchup.app.data.LinkManager
+import catchup.app.service.UrlMeta
 import catchup.app.ui.activity.FlickToDismissState.FlickGestureState.Dismissed
 import catchup.app.ui.activity.ImageViewerScreen.Event
 import catchup.app.ui.activity.ImageViewerScreen.Event.Close
@@ -45,7 +46,6 @@ import catchup.base.ui.NavButtonType.CLOSE
 import catchup.compose.CatchUpTheme
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
-import catchup.service.api.UrlMeta
 import coil.request.ImageRequest.Builder
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.backstack.NavDecoration

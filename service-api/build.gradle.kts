@@ -13,11 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-  alias(libs.plugins.sgp.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.kotlin.multiplatform)
+  alias(libs.plugins.sgp.base)
+}
+
+kotlin {
+  // region KMP Targets
+  androidTarget()
+  jvm()
+  // endregion
+
+  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+
+  sourceSets {
+    commonMain {
+      dependencies {
+        api(libs.androidx.annotations)
+        api(libs.compose.runtime)
+        api(libs.dagger.runtime)
+        api(libs.kotlin.datetime)
+        api(projects.libraries.di)
+
+        implementation(libs.androidx.annotations)
+        implementation(libs.kotlin.coroutinesAndroid)
+        implementation(libs.kotlin.datetime)
+      }
+    }
+    with(getByName("androidMain")) {
+      dependencies {
+        api(libs.androidx.compose.runtime)
+      }
+    }
+  }
 }
 
 android { namespace = "catchup.service.api" }
@@ -29,14 +60,3 @@ slack {
   }
 }
 
-dependencies {
-  api(libs.androidx.annotations)
-  api(libs.androidx.compose.runtime)
-  api(libs.dagger.runtime)
-  api(libs.kotlin.datetime)
-  api(projects.libraries.di)
-
-  implementation(libs.androidx.annotations)
-  implementation(libs.kotlin.coroutinesAndroid)
-  implementation(libs.kotlin.datetime)
-}

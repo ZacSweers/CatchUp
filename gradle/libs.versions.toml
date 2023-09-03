@@ -15,6 +15,9 @@ compose = "1.6.0-alpha04"
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.5.3"
 compose-compiler-kotlinVersion = "1.9.10"
+compose-jb = "1.5.0"
+compose-jb-compiler = "1.5.1"
+compose-jb-kotlinVersion = "1.9.0"
 corbind = "1.8.0"
 coroutines = "1.7.3"
 dagger = "2.48"
@@ -132,6 +135,15 @@ androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.3.1"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.1.5"
 androidx-test-monitor = "androidx.test:monitor:1.7.0-alpha01"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0-alpha04"
+
+compose-compilerJb = { module = "org.jetbrains.compose.compiler:compiler", version.ref = "compose-jb-compiler" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-jb" }
+compose-runtime-saveable = { module = "org.jetbrains.compose.runtime:runtime-saveable", version.ref = "compose-jb" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-jb" }
+compose-uiUtil = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "compose-jb" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-jb" }
+compose-material-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-jb" }
+compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-database = "com.google.firebase:firebase-database:20.2.2"
