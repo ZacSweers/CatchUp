@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.uplabs
+package dev.zacsweers.catchup.services.uplabs
 
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
@@ -36,6 +36,9 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
+import io.sweers.catchup.service.uplabs.R.color
+import io.sweers.catchup.service.uplabs.R.drawable
+import io.sweers.catchup.service.uplabs.R.string
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -106,9 +109,9 @@ abstract class UplabsMetaModule {
     internal fun provideUplabsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.catchup_service_uplabs_name,
-        R.color.catchup_service_uplabs_accent,
-        R.drawable.catchup_service_uplabs_logo,
+        string.catchup_service_uplabs_name,
+        color.catchup_service_uplabs_accent,
+        drawable.catchup_service_uplabs_logo,
         isVisual = true,
         pagesAreNumeric = true,
         firstPageKey = 0

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.uplabs
+package dev.zacsweers.catchup.services.uplabs
 
-import io.sweers.catchup.service.uplabs.model.UplabsImage
+import dev.zacsweers.catchup.services.uplabs.model.UplabsImage
 import retrofit2.http.GET
 import retrofit2.http.Query
 

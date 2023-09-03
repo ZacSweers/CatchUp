@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.uplabs.model
+package dev.zacsweers.catchup.services.uplabs.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
