@@ -1,7 +1,17 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
-  alias(libs.plugins.kotlin.jvm)
+  alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.sqldelight)
+}
+
+kotlin {
+  // region KMP Targets
+  jvm()
+  // endregion
+
+  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
 }
 
 sqldelight {
