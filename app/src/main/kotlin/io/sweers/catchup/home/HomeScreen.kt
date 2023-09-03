@@ -88,7 +88,7 @@ import dev.zacsweers.catchup.service.ServiceScreen
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.changes.ChangelogHelper
-import io.sweers.catchup.service.api.ServiceMeta
+import catchup.service.api.ServiceMeta
 import io.sweers.catchup.ui.activity.SettingsScreen
 import io.sweers.catchup.util.toDayContext
 import kotlin.math.absoluteValue

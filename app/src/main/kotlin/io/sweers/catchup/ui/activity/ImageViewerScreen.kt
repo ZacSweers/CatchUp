@@ -55,7 +55,7 @@ import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.NavButton
 import io.sweers.catchup.base.ui.NavButtonType
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.service.api.UrlMeta
+import catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.FlickToDismissState.FlickGestureState.Dismissed
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope

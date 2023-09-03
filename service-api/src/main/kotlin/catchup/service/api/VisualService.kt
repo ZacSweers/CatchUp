@@ -13,10 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.api
+package catchup.service.api
 
-data class DataRequest(
-  val pageKey: String?,
-  val pageOffset: Int,
-  val limit: Int,
-)
+interface VisualService : Service

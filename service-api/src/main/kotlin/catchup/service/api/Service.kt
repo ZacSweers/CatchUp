@@ -13,6 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.api
+package catchup.service.api
 
-interface VisualService : Service
+sealed interface Service {
+  fun meta(): ServiceMeta
+
+  suspend fun fetch(request: DataRequest): DataResult
+
+  fun rootService(): Service = this
+}

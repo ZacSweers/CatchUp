@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019. Zac Sweers
+ * Copyright (C) 2021. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.api
+package catchup.service.api
 
-interface TextService : Service
+import com.squareup.anvil.annotations.ContributesTo
+import dagger.Module
+import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.di.AppScope
+
+@ContributesTo(AppScope::class)
+@Module
+interface CatchUpServiceMultibindings {
+  @Multibinds fun services(): @JvmSuppressWildcards Map<String, Service>
+
+  @Multibinds fun serviceMetas(): @JvmSuppressWildcards Map<String, ServiceMeta>
+}

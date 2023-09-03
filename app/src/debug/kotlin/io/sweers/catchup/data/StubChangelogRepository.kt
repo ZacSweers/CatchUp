@@ -2,7 +2,7 @@ package io.sweers.catchup.data
 
 import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.di.AppScope
-import io.sweers.catchup.service.api.CatchUpItem
+import catchup.service.api.CatchUpItem
 import io.sweers.catchup.ui.about.ChangelogRepository
 import io.sweers.catchup.ui.about.ChangelogRepositoryImpl
 import javax.inject.Inject

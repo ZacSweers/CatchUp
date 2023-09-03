@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.api
+package catchup.service.api
 
 import androidx.annotation.ColorInt
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
+import catchup.service.api.ContentType.HTML
 import kotlinx.datetime.Instant
 
 @Keep
@@ -54,4 +55,4 @@ data class CatchUpItem(
 }
 
 val CatchUpItem.canBeSummarized: Boolean
-  get() = contentType == ContentType.HTML
+  get() = contentType == HTML

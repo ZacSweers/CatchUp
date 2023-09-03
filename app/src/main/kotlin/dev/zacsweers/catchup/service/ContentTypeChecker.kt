@@ -2,7 +2,7 @@ package dev.zacsweers.catchup.service
 
 import dev.zacsweers.catchup.di.AppScope
 import dev.zacsweers.catchup.di.SingleIn
-import io.sweers.catchup.service.api.ContentType
+import catchup.service.api.ContentType
 import javax.inject.Inject
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 

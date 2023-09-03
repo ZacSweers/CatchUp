@@ -1,10 +1,10 @@
 package dev.zacsweers.catchup.service
 
-import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.ContentType
-import io.sweers.catchup.service.api.ImageInfo
-import io.sweers.catchup.service.api.Mark
-import io.sweers.catchup.service.api.Mark.MarkType
+import catchup.service.api.CatchUpItem
+import catchup.service.api.ContentType
+import catchup.service.api.ImageInfo
+import catchup.service.api.Mark
+import catchup.service.api.Mark.MarkType
 
 fun CatchUpItem.toCatchUpDbItem(): CatchUpDbItem {
   return CatchUpDbItem(

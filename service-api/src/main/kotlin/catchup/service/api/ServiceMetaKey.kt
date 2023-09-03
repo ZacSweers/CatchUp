@@ -13,23 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.api
+package catchup.service.api
 
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import androidx.compose.runtime.Immutable
+import dagger.MapKey
 
-@Immutable
-data class ServiceMeta(
-  val id: String,
-  @StringRes val name: Int,
-  @ColorRes val themeColor: Int,
-  @DrawableRes val icon: Int,
-  val isVisual: Boolean = false,
-  val firstPageKey: Int?,
-  val pagesAreNumeric: Boolean = false,
-  val enabled: Boolean = true,
-) {
-  val enabledPreferenceKey = "service_config_${id}_enabled"
-}
+@MapKey annotation class ServiceMetaKey(val value: String)

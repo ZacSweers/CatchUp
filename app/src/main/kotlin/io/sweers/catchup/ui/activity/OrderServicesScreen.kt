@@ -88,7 +88,7 @@ import dev.zacsweers.catchup.di.AppScope
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.BackPressNavButton
-import io.sweers.catchup.service.api.ServiceMeta
+import catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.toDayContext
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch

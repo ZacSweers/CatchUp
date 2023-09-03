@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.api
+package catchup.service.api
 
 import androidx.annotation.ColorInt
 import androidx.compose.runtime.Immutable
+import catchup.service.api.Mark.MarkType.COMMENT
 
 /**
  * A mark is a mark on the side of a catchup text item that can indicate some extra information,
@@ -28,7 +29,7 @@ data class Mark(
   val text: String? = null,
   val textPrefix: String? = null,
   /** By default, the icon used is a comment icon if this is null */
-  val markType: MarkType = MarkType.COMMENT,
+  val markType: MarkType = COMMENT,
   val _markClickUrl: String? = null,
   @ColorInt val iconTintColor: Int? = null,
   val formatTextAsCount: Boolean = false

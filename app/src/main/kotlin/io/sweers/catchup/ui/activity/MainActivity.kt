@@ -57,8 +57,8 @@ import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.base.ui.RootContent
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.home.HomeScreen
-import io.sweers.catchup.service.api.Service
-import io.sweers.catchup.service.api.ServiceMeta
+import catchup.service.api.Service
+import catchup.service.api.ServiceMeta
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.toDayContext
 import io.sweers.catchup.util.toNightContext

@@ -13,23 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.api
+package catchup.service.api
 
-import android.content.Context
-import android.net.Uri
-import androidx.annotation.ColorInt
-import androidx.compose.runtime.Immutable
-
-@Immutable
-data class UrlMeta(
-  val uri: Uri?,
-  @ColorInt val accentColor: Int,
-  val context: Context,
-) {
-
-  constructor(
-    url: String?,
-    @ColorInt accentColor: Int,
-    context: Context,
-  ) : this(if (url.isNullOrBlank()) null else Uri.parse(url), accentColor, context)
-}
+data class DataRequest(
+  val pageKey: String?,
+  val pageOffset: Int,
+  val limit: Int,
+)

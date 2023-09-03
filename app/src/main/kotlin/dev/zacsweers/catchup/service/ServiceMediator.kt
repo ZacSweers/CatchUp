@@ -10,8 +10,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import io.sweers.catchup.data.lastUpdated
-import io.sweers.catchup.service.api.DataRequest
-import io.sweers.catchup.service.api.Service
+import catchup.service.api.DataRequest
+import catchup.service.api.Service
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers

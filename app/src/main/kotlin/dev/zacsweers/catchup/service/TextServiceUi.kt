@@ -61,9 +61,9 @@ import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Actio
 import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE
 import dev.zacsweers.catchup.service.ServiceScreen.Event.ItemActionClicked.Action.SUMMARIZE
 import io.sweers.catchup.R
-import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.Mark
-import io.sweers.catchup.service.api.canBeSummarized
+import catchup.service.api.CatchUpItem
+import catchup.service.api.Mark
+import catchup.service.api.canBeSummarized
 import io.sweers.catchup.util.kotlin.format
 import io.sweers.catchup.util.primaryLocale
 import kotlin.time.Duration.Companion.hours

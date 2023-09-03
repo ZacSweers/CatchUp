@@ -39,9 +39,9 @@ import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.data.github.RepoReleasesQuery
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
-import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.ContentType
-import io.sweers.catchup.service.api.UrlMeta
+import catchup.service.api.CatchUpItem
+import catchup.service.api.ContentType
+import catchup.service.api.UrlMeta
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

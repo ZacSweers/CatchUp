@@ -70,10 +70,10 @@ import dev.zacsweers.catchup.service.ServiceScreen.State.VisualState
 import dev.zacsweers.catchup.summarizer.SummarizerScreen
 import io.sweers.catchup.R
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.ContentType
-import io.sweers.catchup.service.api.Service
-import io.sweers.catchup.service.api.UrlMeta
+import catchup.service.api.CatchUpItem
+import catchup.service.api.ContentType
+import catchup.service.api.Service
+import catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.ImageViewerScreen
 import javax.inject.Provider
 import kotlinx.coroutines.Dispatchers

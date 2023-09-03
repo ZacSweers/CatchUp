@@ -41,8 +41,8 @@ import dev.zacsweers.catchup.di.SingleIn
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.flowbinding.intentReceivers
-import io.sweers.catchup.service.api.LinkHandler
-import io.sweers.catchup.service.api.UrlMeta
+import catchup.service.api.LinkHandler
+import catchup.service.api.UrlMeta
 import io.sweers.catchup.ui.activity.MainActivity
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import io.sweers.catchup.util.isInNightMode

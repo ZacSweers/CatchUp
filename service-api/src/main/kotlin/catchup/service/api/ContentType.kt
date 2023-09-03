@@ -1,4 +1,4 @@
-package io.sweers.catchup.service.api
+package catchup.service.api
 
 /** Represents the content type of a [CatchUpItem]. */
 enum class ContentType {

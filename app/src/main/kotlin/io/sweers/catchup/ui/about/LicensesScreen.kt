@@ -60,9 +60,9 @@ import io.sweers.catchup.data.github.RepositoriesByIdsQuery
 import io.sweers.catchup.data.github.RepositoryByNameAndOwnerQuery
 import io.sweers.catchup.gemoji.EmojiMarkdownConverter
 import io.sweers.catchup.gemoji.replaceMarkdownEmojisIn
-import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.ContentType
-import io.sweers.catchup.service.api.UrlMeta
+import catchup.service.api.CatchUpItem
+import catchup.service.api.ContentType
+import catchup.service.api.UrlMeta
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
 import io.sweers.catchup.util.kotlin.groupBy
 import io.sweers.catchup.util.kotlin.sortBy

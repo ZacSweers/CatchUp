@@ -29,16 +29,19 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import dev.zacsweers.catchup.di.AppScope
-import io.sweers.catchup.service.api.CatchUpItem
-import io.sweers.catchup.service.api.DataRequest
-import io.sweers.catchup.service.api.DataResult
-import io.sweers.catchup.service.api.Mark.Companion.createCommentMark
-import io.sweers.catchup.service.api.Service
-import io.sweers.catchup.service.api.ServiceException
-import io.sweers.catchup.service.api.ServiceKey
-import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.service.api.ServiceMetaKey
-import io.sweers.catchup.service.api.TextService
+import catchup.service.api.CatchUpItem
+import catchup.service.api.DataRequest
+import catchup.service.api.DataResult
+import catchup.service.api.Mark.Companion.createCommentMark
+import catchup.service.api.Service
+import catchup.service.api.ServiceException
+import catchup.service.api.ServiceKey
+import catchup.service.api.ServiceMeta
+import catchup.service.hackernews.R.color
+import catchup.service.hackernews.R.drawable
+import catchup.service.hackernews.R.string
+import catchup.service.api.ServiceMetaKey
+import catchup.service.api.TextService
 import catchup.service.hackernews.model.HackerNewsStory
 import io.sweers.catchup.util.d
 import io.sweers.catchup.util.injection.qualifiers.ApplicationContext
@@ -175,9 +178,9 @@ abstract class HackerNewsMetaModule {
     internal fun provideHackerNewsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.catchup_service_hn_name,
-        R.color.catchup_service_hn_accent,
-        R.drawable.catchup_service_hn_logo,
+        string.catchup_service_hn_name,
+        color.catchup_service_hn_accent,
+        drawable.catchup_service_hn_logo,
         pagesAreNumeric = true,
         firstPageKey = 0,
         enabled = false // HN is broken for some reason

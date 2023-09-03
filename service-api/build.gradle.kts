@@ -20,7 +20,7 @@ plugins {
   kotlin("android")
 }
 
-android { namespace = "io.sweers.catchup.service" }
+android { namespace = "catchup.service.api" }
 
 slack {
   features {
