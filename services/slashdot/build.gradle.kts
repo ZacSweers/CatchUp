@@ -21,7 +21,7 @@ plugins {
   alias(libs.plugins.kotlin.serialization)
 }
 
-android { namespace = "dev.zacsweers.catchup.services.slashdot" }
+android { namespace = "catchup.service.slashdot" }
 
 slack {
   features { dagger() }

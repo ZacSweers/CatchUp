@@ -28,7 +28,7 @@ android {
   buildFeatures {
     buildConfig = true
   }
-  namespace = "dev.zacsweers.catchup.services.unsplash"
+  namespace = "catchup.service.unsplash"
 }
 
 slack {
