@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.producthunt
+package dev.zacsweers.catchup.services.producthunt
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStoreFile
@@ -144,7 +144,8 @@ abstract class ProductHuntMetaModule {
 
   companion object {
 
-    @InternalApi @Provides internal fun provideProductHuntServiceMeta(): ServiceMeta = META
+    @InternalApi
+    @Provides internal fun provideProductHuntServiceMeta(): ServiceMeta = META
   }
 }
 

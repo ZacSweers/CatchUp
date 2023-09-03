@@ -31,7 +31,7 @@ android {
   buildFeatures {
     buildConfig = true
   }
-  namespace = "io.sweers.catchup.service.producthunt"
+  namespace = "dev.zacsweers.catchup.services.producthunt"
 }
 
 apollo {
@@ -41,8 +41,8 @@ apollo {
       "DateTime" to "kotlinx.datetime.Instant",
 //      "URI" to "okhttp3.HttpUrl"
     ))
-    packageName.set("io.sweers.catchup.service.producthunt")
-    schemaFile.set(file("src/main/graphql/io/sweers/catchup/service/producthunt/schema.graphqls"))
+    packageName.set("dev.zacsweers.catchup.services.producthunt")
+    schemaFile.set(file("src/main/graphql/dev/zacsweers/catchup/service/producthunt/schema.graphqls"))
   }
 }
 
