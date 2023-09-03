@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.slashdot
+package dev.zacsweers.catchup.services.slashdot
 
 import com.tickaroo.tikxml.converter.htmlescape.StringEscapeUtils
 import io.sweers.catchup.util.parsePossiblyOffsetInstant

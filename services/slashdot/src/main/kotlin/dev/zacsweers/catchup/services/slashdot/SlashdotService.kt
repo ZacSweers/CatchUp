@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.slashdot
+package dev.zacsweers.catchup.services.slashdot
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.squareup.anvil.annotations.ContributesMultibinding
@@ -36,6 +36,9 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
+import io.sweers.catchup.service.slashdot.R.color
+import io.sweers.catchup.service.slashdot.R.drawable
+import io.sweers.catchup.service.slashdot.R.string
 import javax.inject.Inject
 import javax.inject.Qualifier
 import nl.adaptivity.xmlutil.serialization.XML
@@ -96,9 +99,9 @@ abstract class SlashdotMetaModule {
     internal fun provideSlashdotServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.catchup_service_sd_name,
-        R.color.catchup_service_sd_accent,
-        R.drawable.catchup_service_sd_logo,
+        string.catchup_service_sd_name,
+        color.catchup_service_sd_accent,
+        drawable.catchup_service_sd_logo,
         firstPageKey = null
       )
   }

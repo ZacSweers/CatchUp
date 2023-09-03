@@ -1,4 +1,4 @@
-package io.sweers.catchup.service.slashdot
+package dev.zacsweers.catchup.services.slashdot
 
 import com.google.common.truth.Truth.assertThat
 import kotlinx.serialization.decodeFromString

@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.slashdot
+package dev.zacsweers.catchup.services.slashdot
 
-import kotlinx.serialization.Serializable
-import nl.adaptivity.xmlutil.serialization.XmlSerialName
+import retrofit2.http.GET
 
-@Serializable
-@XmlSerialName("feed", "http://www.w3.org/2005/Atom")
-data class Feed(val entries: List<Entry>)
+interface SlashdotApi {
+
+  @GET("/Slashdot/slashdotMainatom") suspend fun main(): Feed
+
+  companion object {
+    private const val HOST = "rss.slashdot.org"
+    const val ENDPOINT = "https://$HOST"
+  }
+}
