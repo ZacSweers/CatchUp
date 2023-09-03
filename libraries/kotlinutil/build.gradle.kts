@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-
 /*
  * Copyright (c) 2018 Zac Sweers
  *
@@ -15,6 +13,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
   alias(libs.plugins.kotlin.multiplatform)

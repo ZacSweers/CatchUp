@@ -13,12 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-  alias(libs.plugins.kotlin.jvm)
+  alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sgp.base)
 }
 
-dependencies {
-  api(libs.dagger.runtime)
+kotlin {
+  // region KMP Targets
+  jvm()
+  // endregion
+
+  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+
+  sourceSets {
+    commonMain {
+      dependencies {
+        api(libs.dagger.runtime)
+      }
+    }
+  }
 }
