@@ -20,8 +20,14 @@ import slack.gradle.avoidance.AffectedProjectsDefaults
 import slack.gradle.avoidance.ComputeAffectedProjectsTask
 
 plugins {
-  alias(libs.plugins.kotlin) apply false
-  alias(libs.plugins.agp.application) apply false
+  alias(libs.plugins.kotlin.jvm) apply false
+  alias(libs.plugins.kotlin.android) apply false
+  alias(libs.plugins.kotlin.multiplatform) apply false
+  alias(libs.plugins.kotlin.kapt) apply false
+  alias(libs.plugins.kotlin.parcelize) apply false
+  alias(libs.plugins.android.application) apply false
+  alias(libs.plugins.android.library) apply false
+  alias(libs.plugins.android.test) apply false
   alias(libs.plugins.sgp.root)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.spotless)

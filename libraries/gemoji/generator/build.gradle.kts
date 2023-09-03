@@ -1,5 +1,5 @@
 plugins {
-  kotlin("jvm")
+  alias(libs.plugins.kotlin.jvm)
   application
   alias(libs.plugins.moshix)
   alias(libs.plugins.sqldelight)
