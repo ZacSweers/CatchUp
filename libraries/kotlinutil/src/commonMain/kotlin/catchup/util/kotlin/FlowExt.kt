@@ -18,7 +18,6 @@ package catchup.util.kotlin
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.merge
