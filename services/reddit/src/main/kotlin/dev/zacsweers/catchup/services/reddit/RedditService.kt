@@ -36,9 +36,6 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
-import io.sweers.catchup.service.reddit.R.color
-import io.sweers.catchup.service.reddit.R.drawable
-import io.sweers.catchup.service.reddit.R.string
 import dev.zacsweers.catchup.services.reddit.model.RedditLink
 import dev.zacsweers.catchup.services.reddit.model.RedditObjectFactory
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
@@ -109,9 +106,9 @@ abstract class RedditMetaModule {
     internal fun provideRedditServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        string.catchup_service_reddit_name,
-        color.catchup_service_reddit_accent,
-        drawable.catchup_service_reddit_logo,
+        R.string.catchup_service_reddit_name,
+        R.color.catchup_service_reddit_accent,
+        R.drawable.catchup_service_reddit_logo,
         firstPageKey = null
       )
   }
