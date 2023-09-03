@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.reddit.model
+package dev.zacsweers.catchup.services.reddit.model
 
 import androidx.annotation.Keep
 import com.squareup.moshi.Json

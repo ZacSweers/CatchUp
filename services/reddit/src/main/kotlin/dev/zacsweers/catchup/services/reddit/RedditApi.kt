@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.reddit
+package dev.zacsweers.catchup.services.reddit
 
-import io.sweers.catchup.service.reddit.model.RedditResponse
+import dev.zacsweers.catchup.services.reddit.model.RedditResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

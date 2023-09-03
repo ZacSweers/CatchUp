@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.reddit
+package dev.zacsweers.catchup.services.reddit
 
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
@@ -36,8 +36,11 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.TextService
-import io.sweers.catchup.service.reddit.model.RedditLink
-import io.sweers.catchup.service.reddit.model.RedditObjectFactory
+import io.sweers.catchup.service.reddit.R.color
+import io.sweers.catchup.service.reddit.R.drawable
+import io.sweers.catchup.service.reddit.R.string
+import dev.zacsweers.catchup.services.reddit.model.RedditLink
+import dev.zacsweers.catchup.services.reddit.model.RedditObjectFactory
 import io.sweers.catchup.util.data.adapters.EpochInstantJsonAdapter
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -106,9 +109,9 @@ abstract class RedditMetaModule {
     internal fun provideRedditServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.catchup_service_reddit_name,
-        R.color.catchup_service_reddit_accent,
-        R.drawable.catchup_service_reddit_logo,
+        string.catchup_service_reddit_name,
+        color.catchup_service_reddit_accent,
+        drawable.catchup_service_reddit_logo,
         firstPageKey = null
       )
   }

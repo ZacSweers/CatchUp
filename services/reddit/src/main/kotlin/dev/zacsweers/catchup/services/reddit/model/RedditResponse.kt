@@ -13,16 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.reddit.model
+package dev.zacsweers.catchup.services.reddit.model
 
-import com.squareup.moshi.Json
+import androidx.annotation.Keep
 import com.squareup.moshi.JsonClass
 
-/** A subset of reddit types used by CatchUp. */
-@Suppress("unused")
-@JsonClass(generateAdapter = false)
-internal enum class RedditKind(val derivedClass: Class<out RedditObject>) {
-  @Json(name = "t1") T1(RedditComment::class.java),
-  @Json(name = "t3") T3(RedditLink::class.java),
-  @Json(name = "Listing") LISTING(RedditListing::class.java)
-}
+@Keep @JsonClass(generateAdapter = true) data class RedditResponse(val data: RedditListing)
