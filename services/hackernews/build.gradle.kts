@@ -19,7 +19,7 @@ plugins {
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
-  kotlin("plugin.noarg")
+  alias(libs.plugins.kotlin.noarg)
 }
 
 android {
