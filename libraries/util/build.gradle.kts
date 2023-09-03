@@ -41,20 +41,18 @@ slack {
 }
 
 dependencies {
-  api(libs.androidx.annotations)
   api(libs.androidx.coreKtx)
   api(libs.apollo.api)
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.moshi.core)
   api(libs.okhttp.core)
-  api(projects.libraries.appconfig)
 
-  implementation(libs.androidx.annotations)
   implementation(libs.androidx.core)
   implementation(libs.kotlin.datetime)
   implementation(libs.misc.timber)
   implementation(libs.misc.unbescape)
+  implementation(projects.libraries.appconfig)
 
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)

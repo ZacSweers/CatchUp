@@ -48,5 +48,4 @@ dependencies {
   implementation(libs.misc.jsoup)
   implementation(libs.okhttp.core)
   implementation(projects.libraries.retrofitconverters)
-  implementation(projects.libraries.util)
 }

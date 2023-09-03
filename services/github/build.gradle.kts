@@ -55,6 +55,7 @@ slack {
 }
 
 dependencies {
+  api(libs.apollo.api)
   api(libs.apollo.runtime)
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
@@ -62,6 +63,7 @@ dependencies {
   api(libs.retrofit.core)
   api(projects.libraries.appconfig)
   api(projects.libraries.di)
+  api(projects.libraries.gemoji)
   api(projects.serviceApi)
 
   implementation(libs.apollo.httpcache)
@@ -71,7 +73,6 @@ dependencies {
   implementation(libs.misc.jsoup)
   implementation(libs.misc.timber)
   implementation(libs.okhttp.core)
-  implementation(projects.libraries.gemoji)
   implementation(projects.libraries.retrofitconverters)
   implementation(projects.libraries.util)
 

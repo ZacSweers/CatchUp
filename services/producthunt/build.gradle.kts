@@ -59,6 +59,7 @@ slack {
 }
 
 dependencies {
+  api(libs.apollo.api)
   api(libs.apollo.runtime)
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
@@ -66,6 +67,7 @@ dependencies {
   api(libs.okhttp.core)
   api(projects.libraries.auth)
   api(projects.libraries.di)
+  api(projects.libraries.util)
   api(projects.serviceApi)
 
   implementation(libs.androidx.datastore.preferences)
@@ -73,5 +75,4 @@ dependencies {
   implementation(libs.kotlin.datetime)
   implementation(libs.misc.okio)
   implementation(libs.okhttp.core)
-  implementation(projects.libraries.util)
 }

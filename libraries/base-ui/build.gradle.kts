@@ -40,16 +40,11 @@ dependencies {
   api(libs.androidx.annotations)
   api(libs.androidx.compose.runtime)
   api(libs.androidx.compose.ui)
-  api(libs.androidx.lifecycle.viewmodel.core)
-  api(libs.androidx.lifecycle.viewmodel.savedState)
   api(libs.androidx.palette)
   api(libs.androidx.paletteKtx)
   api(libs.circuit.runtime)
   api(libs.kotlin.coroutines)
-  api(libs.kotlin.datetime)
-  api(projects.libraries.appconfig)
   api(projects.libraries.di)
-  api(projects.libraries.util)
 
   implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
@@ -61,4 +56,6 @@ dependencies {
   implementation(libs.androidx.compose.uiTooling)
   implementation(libs.androidx.core)
   implementation(libs.kotlin.coroutines)
+  implementation(projects.libraries.appconfig)
+  implementation(projects.libraries.util)
 }
