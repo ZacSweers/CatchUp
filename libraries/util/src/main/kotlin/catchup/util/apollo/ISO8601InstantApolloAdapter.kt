@@ -15,12 +15,12 @@
  */
 package catchup.util.apollo
 
+import catchup.util.parsePossiblyOffsetInstant
 import com.apollographql.apollo3.api.Adapter
 import com.apollographql.apollo3.api.CustomScalarAdapters
 import com.apollographql.apollo3.api.json.JsonReader
 import com.apollographql.apollo3.api.json.JsonReader.Token.STRING
 import com.apollographql.apollo3.api.json.JsonWriter
-import catchup.util.parsePossiblyOffsetInstant
 import kotlinx.datetime.Instant
 
 /** A CustomTypeAdapter for apollo that can convert ISO style date strings to Instant. */

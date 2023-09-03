@@ -17,10 +17,10 @@ package catchup.gemoji
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOne
-import com.squareup.anvil.annotations.ContributesBinding
 import catchup.di.AppScope
 import catchup.di.SingleIn
-import dev.zacsweers.catchup.gemoji.db.GemojiDatabase
+import catchup.gemoji.db.GemojiDatabase
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

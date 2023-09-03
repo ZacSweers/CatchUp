@@ -17,6 +17,26 @@ package catchup.service.producthunt
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStoreFile
+import catchup.auth.AuthInterceptor
+import catchup.auth.TokenManager
+import catchup.auth.TokenManager.AuthType
+import catchup.auth.TokenManager.Credentials
+import catchup.auth.TokenStorage
+import catchup.di.AppScope
+import catchup.di.SingleIn
+import catchup.service.api.CatchUpItem
+import catchup.service.api.ContentType
+import catchup.service.api.DataRequest
+import catchup.service.api.DataResult
+import catchup.service.api.Mark.Companion.createCommentMark
+import catchup.service.api.Service
+import catchup.service.api.ServiceKey
+import catchup.service.api.ServiceMeta
+import catchup.service.api.ServiceMetaKey
+import catchup.service.api.TextService
+import catchup.service.producthunt.type.DateTime
+import catchup.util.apollo.ISO8601InstantApolloAdapter
+import catchup.util.injection.qualifiers.ApplicationContext
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.api.http.DefaultHttpRequestComposer
@@ -36,26 +56,6 @@ import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import catchup.auth.AuthInterceptor
-import catchup.auth.TokenManager
-import catchup.auth.TokenManager.AuthType
-import catchup.auth.TokenManager.Credentials
-import catchup.auth.TokenStorage
-import catchup.di.AppScope
-import catchup.di.SingleIn
-import catchup.service.api.CatchUpItem
-import catchup.service.api.ContentType
-import catchup.service.api.DataRequest
-import catchup.service.api.DataResult
-import catchup.service.api.Mark.Companion.createCommentMark
-import catchup.service.api.Service
-import catchup.service.api.ServiceKey
-import catchup.service.api.ServiceMeta
-import catchup.service.api.ServiceMetaKey
-import catchup.service.api.TextService
-import io.sweers.catchup.service.producthunt.type.DateTime
-import catchup.util.apollo.ISO8601InstantApolloAdapter
-import catchup.util.injection.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Qualifier
 import okhttp3.OkHttpClient
@@ -144,8 +144,7 @@ abstract class ProductHuntMetaModule {
 
   companion object {
 
-    @InternalApi
-    @Provides internal fun provideProductHuntServiceMeta(): ServiceMeta = META
+    @InternalApi @Provides internal fun provideProductHuntServiceMeta(): ServiceMeta = META
   }
 }
 

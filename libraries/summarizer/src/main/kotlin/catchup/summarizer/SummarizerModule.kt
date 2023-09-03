@@ -2,17 +2,17 @@ package catchup.summarizer
 
 import android.content.Context
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import com.squareup.anvil.annotations.ContributesTo
-import com.squareup.moshi.Moshi
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
 import catchup.appconfig.AppConfig
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.network.AuthInterceptor
+import com.squareup.anvil.annotations.ContributesTo
+import com.squareup.moshi.Moshi
+import dagger.Lazy
+import dagger.Module
+import dagger.Provides
 import javax.inject.Qualifier
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

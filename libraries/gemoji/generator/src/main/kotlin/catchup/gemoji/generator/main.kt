@@ -8,7 +8,7 @@ import com.github.ajalt.clikt.parameters.types.file
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
-import dev.zacsweers.catchup.gemoji.db.mutable.GemojiDatabase
+import catchup.gemoji.db.mutable.GemojiDatabase
 
 private class GemojiGenerator : CliktCommand() {
 

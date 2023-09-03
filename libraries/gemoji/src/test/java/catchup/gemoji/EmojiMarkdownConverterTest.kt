@@ -15,8 +15,6 @@
  */
 package catchup.gemoji
 
-import catchup.gemoji.EmojiMarkdownConverter
-import catchup.gemoji.replaceMarkdownEmojisIn
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

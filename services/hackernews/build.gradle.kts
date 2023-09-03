@@ -66,7 +66,7 @@ configure<LibraryAndroidComponentsExtension> {
 }
 
 noArg {
-  annotation("io.sweers.catchup.service.hackernews.model.NoArg")
+  annotation("catchup.service.hackernews.model.NoArg")
 }
 
 dependencies {

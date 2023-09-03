@@ -1,11 +1,11 @@
 package catchup.summarizer
 
+import catchup.di.AppScope
+import catchup.di.SingleIn
 import catchup.summarizer.SummarizerResult.Error
 import catchup.summarizer.SummarizerResult.NotFound
 import catchup.summarizer.SummarizerResult.Success
 import com.squareup.anvil.annotations.ContributesBinding
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
@@ -46,9 +46,7 @@ constructor(private val database: SummarizationsDatabase, private val chatGptApi
         try {
           chatGptApi.summarize(url)
         } catch (e: HttpException) {
-          return@withContext Error(
-            e.response()?.errorBody()?.string() ?: e.message()
-          )
+          return@withContext Error(e.response()?.errorBody()?.string() ?: e.message())
         }
 
       val text = response.choices.first().message.content.trim()

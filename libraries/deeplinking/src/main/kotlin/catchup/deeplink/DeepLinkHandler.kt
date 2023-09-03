@@ -2,10 +2,10 @@ package catchup.deeplink
 
 import android.content.Intent
 import android.net.Uri
-import com.slack.circuit.runtime.screen.Screen
-import com.squareup.anvil.annotations.ContributesBinding
 import catchup.di.AppScope
 import catchup.di.SingleIn
+import com.slack.circuit.runtime.screen.Screen
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap

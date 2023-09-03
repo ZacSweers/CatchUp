@@ -15,10 +15,10 @@
  */
 package catchup.service.api
 
+import catchup.di.AppScope
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.multibindings.Multibinds
-import catchup.di.AppScope
 
 @ContributesTo(AppScope::class)
 @Module

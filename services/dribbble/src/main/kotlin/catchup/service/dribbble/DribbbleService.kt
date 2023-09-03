@@ -15,13 +15,6 @@
  */
 package catchup.service.dribbble
 
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Binds
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoMap
 import catchup.appconfig.AppConfig
 import catchup.di.AppScope
 import catchup.libraries.retrofitconverters.DecodingConverter
@@ -37,6 +30,13 @@ import catchup.service.api.ServiceKey
 import catchup.service.api.ServiceMeta
 import catchup.service.api.ServiceMetaKey
 import catchup.service.api.VisualService
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
+import dagger.Binds
+import dagger.Lazy
+import dagger.Module
+import dagger.Provides
+import dagger.multibindings.IntoMap
 import javax.inject.Inject
 import javax.inject.Qualifier
 import okhttp3.OkHttpClient

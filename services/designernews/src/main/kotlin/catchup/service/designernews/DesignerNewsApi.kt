@@ -15,8 +15,8 @@
  */
 package catchup.service.designernews
 
-import com.serjltt.moshi.adapters.Wrapped
 import catchup.service.designernews.model.Story
+import com.serjltt.moshi.adapters.Wrapped
 import retrofit2.http.GET
 import retrofit2.http.Query
 

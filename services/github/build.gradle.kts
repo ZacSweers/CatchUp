@@ -39,7 +39,7 @@ apollo {
         "URI" to "okhttp3.HttpUrl"
     ))
     packageName.set("catchup.service.github")
-    schemaFile.set(file("src/main/graphql/dev/zacsweers/catchup/service/github/schema.json"))
+    schemaFile.set(file("src/main/graphql/catchup/service/github/schema.json"))
   }
 }
 

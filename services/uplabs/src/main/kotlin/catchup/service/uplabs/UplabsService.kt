@@ -15,15 +15,6 @@
  */
 package catchup.service.uplabs
 
-import catchup.service.uplabs.UplabsApi.Companion
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
-import com.squareup.moshi.Moshi
-import dagger.Binds
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoMap
 import catchup.appconfig.AppConfig
 import catchup.di.AppScope
 import catchup.libraries.retrofitconverters.delegatingCallFactory
@@ -38,6 +29,14 @@ import catchup.service.api.ServiceMeta
 import catchup.service.api.ServiceMetaKey
 import catchup.service.api.VisualService
 import catchup.util.data.adapters.ISO8601InstantAdapter
+import com.squareup.anvil.annotations.ContributesMultibinding
+import com.squareup.anvil.annotations.ContributesTo
+import com.squareup.moshi.Moshi
+import dagger.Binds
+import dagger.Lazy
+import dagger.Module
+import dagger.Provides
+import dagger.multibindings.IntoMap
 import javax.inject.Inject
 import javax.inject.Qualifier
 import kotlinx.datetime.Instant

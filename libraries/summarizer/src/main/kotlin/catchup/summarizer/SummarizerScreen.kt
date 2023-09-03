@@ -24,6 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import catchup.base.ui.BackPressNavButton
+import catchup.base.ui.NavButtonType.CLOSE
+import catchup.di.AppScope
 import catchup.summarizer.SummarizerResult.Error
 import catchup.summarizer.SummarizerResult.NotFound
 import catchup.summarizer.SummarizerResult.Success
@@ -37,10 +40,6 @@ import com.slack.circuit.runtime.screen.Screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import catchup.di.AppScope
-import catchup.base.ui.BackPressNavButton
-import catchup.base.ui.NavButtonType
-import catchup.base.ui.NavButtonType.CLOSE
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -62,8 +61,7 @@ data class SummarizerScreen(val title: String, val url: String) : Screen {
 private fun SummarizerResult.toState(title: String, url: String): State {
   return when (this) {
     is Success -> State.Success(title, summary)
-    is NotFound ->
-      State.Error(title, url, "Unable to summarize this.")
+    is NotFound -> State.Error(title, url, "Unable to summarize this.")
     is Error -> State.Error(title, url, message)
   }
 }
@@ -145,10 +143,7 @@ fun Summarizer(state: State, modifier: Modifier = Modifier) {
         }
       }
 
-      BackPressNavButton(
-        Modifier.align(Alignment.TopStart).padding(16.dp),
-        type = CLOSE
-      )
+      BackPressNavButton(Modifier.align(Alignment.TopStart).padding(16.dp), type = CLOSE)
     }
   }
 }

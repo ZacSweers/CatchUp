@@ -21,7 +21,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
-import io.sweers.catchup.util.R.string
 import java.io.File
 import java.io.IOException
 import java.util.Locale
@@ -65,7 +64,7 @@ private fun Context.maybeStartActivity(inputIntent: Intent, chooser: Boolean): B
     startActivity(intent)
     true
   } else {
-    Toast.makeText(this, string.catchup_util_no_intent_handler, LENGTH_LONG).show()
+    Toast.makeText(this, R.string.catchup_util_no_intent_handler, LENGTH_LONG).show()
     false
   }
 }

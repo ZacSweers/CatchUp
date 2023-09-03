@@ -16,6 +16,21 @@
 package catchup.service.hackernews
 
 import android.content.Context
+import catchup.di.AppScope
+import catchup.service.api.CatchUpItem
+import catchup.service.api.DataRequest
+import catchup.service.api.DataResult
+import catchup.service.api.Mark.Companion.createCommentMark
+import catchup.service.api.Service
+import catchup.service.api.ServiceException
+import catchup.service.api.ServiceKey
+import catchup.service.api.ServiceMeta
+import catchup.service.api.ServiceMetaKey
+import catchup.service.api.TextService
+import catchup.service.hackernews.model.HackerNewsStory
+import catchup.util.d
+import catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.kotlin.safeOffer
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.database.DataSnapshot
@@ -28,24 +43,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import catchup.di.AppScope
-import catchup.service.api.CatchUpItem
-import catchup.service.api.DataRequest
-import catchup.service.api.DataResult
-import catchup.service.api.Mark.Companion.createCommentMark
-import catchup.service.api.Service
-import catchup.service.api.ServiceException
-import catchup.service.api.ServiceKey
-import catchup.service.api.ServiceMeta
-import catchup.service.hackernews.R.color
-import catchup.service.hackernews.R.drawable
-import catchup.service.hackernews.R.string
-import catchup.service.api.ServiceMetaKey
-import catchup.service.api.TextService
-import catchup.service.hackernews.model.HackerNewsStory
-import catchup.util.d
-import catchup.util.injection.qualifiers.ApplicationContext
-import catchup.util.kotlin.safeOffer
 import javax.inject.Inject
 import javax.inject.Qualifier
 import kotlin.coroutines.resume
@@ -178,9 +175,9 @@ abstract class HackerNewsMetaModule {
     internal fun provideHackerNewsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        string.catchup_service_hn_name,
-        color.catchup_service_hn_accent,
-        drawable.catchup_service_hn_logo,
+        R.string.catchup_service_hn_name,
+        R.color.catchup_service_hn_accent,
+        R.drawable.catchup_service_hn_logo,
         pagesAreNumeric = true,
         firstPageKey = 0,
         enabled = false // HN is broken for some reason

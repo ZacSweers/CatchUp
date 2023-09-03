@@ -128,7 +128,7 @@ android {
     error += "ComposeUnstableCollections"
     checkDependencies = true
   }
-  namespace = "io.sweers.catchup"
+  namespace = "dev.zacsweers.catchup"
 }
 
 bugsnag {
@@ -147,8 +147,8 @@ apollo {
     customScalarsMapping.set(
       mapOf("DateTime" to "kotlinx.datetime.Instant", "URI" to "okhttp3.HttpUrl")
     )
-    packageName.set("io.sweers.catchup.data.github")
-    schemaFile.set(file("src/main/graphql/io/sweers/catchup/data/github/schema.json"))
+    packageName.set("catchup.app.data.github")
+    schemaFile.set(file("src/main/graphql/catchup/app/data/github/schema.json"))
   }
 }
 
@@ -489,6 +489,7 @@ dependencies {
   implementation(libs.androidx.core)
   implementation(libs.androidx.coreKtx)
   implementation(libs.androidx.customTabs)
+  implementation(libs.androidx.datastore.preferences)
   implementation(libs.androidx.datastore.preferences.core)
   implementation(libs.androidx.design)
   implementation(libs.androidx.emojiAppcompat)

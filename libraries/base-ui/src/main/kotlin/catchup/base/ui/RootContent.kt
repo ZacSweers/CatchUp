@@ -1,10 +1,10 @@
 package catchup.base.ui
 
 import androidx.compose.runtime.Composable
-import com.slack.circuit.runtime.Navigator
-import com.squareup.anvil.annotations.ContributesBinding
 import catchup.di.AppScope
 import catchup.di.SingleIn
+import com.slack.circuit.runtime.Navigator
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 
 interface RootContent {

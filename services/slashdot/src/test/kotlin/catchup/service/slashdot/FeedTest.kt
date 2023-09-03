@@ -1,7 +1,5 @@
 package catchup.service.slashdot
 
-import catchup.service.slashdot.Feed
-import catchup.service.slashdot.SlashdotModule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.serialization.decodeFromString
 import org.junit.Test

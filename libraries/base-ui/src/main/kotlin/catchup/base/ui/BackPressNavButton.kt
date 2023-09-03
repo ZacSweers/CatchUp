@@ -29,11 +29,7 @@ fun BackPressNavButton(modifier: Modifier = Modifier, type: NavButtonType = BACK
 }
 
 @Composable
-fun NavButton(
-  modifier: Modifier = Modifier,
-  type: NavButtonType = BACK,
-  onBackPress: () -> Unit
-) {
+fun NavButton(modifier: Modifier = Modifier, type: NavButtonType = BACK, onBackPress: () -> Unit) {
   IconButton(
     modifier = modifier,
     onClick = onBackPress,

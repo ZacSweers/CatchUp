@@ -1,12 +1,12 @@
 package catchup.auth
 
+import catchup.auth.TokenManager.AuthType.FORM_URL_ENCODED
+import catchup.auth.TokenManager.AuthType.JSON
+import catchup.auth.TokenManager.Credentials
 import com.slack.eithernet.ApiResult
 import com.slack.eithernet.ApiResultCallAdapterFactory
 import com.slack.eithernet.ApiResultConverterFactory
 import com.squareup.moshi.Moshi
-import catchup.auth.TokenManager.AuthType.FORM_URL_ENCODED
-import catchup.auth.TokenManager.AuthType.JSON
-import catchup.auth.TokenManager.Credentials
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

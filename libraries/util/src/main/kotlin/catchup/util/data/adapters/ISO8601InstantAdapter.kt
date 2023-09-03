@@ -15,10 +15,10 @@
  */
 package catchup.util.data.adapters
 
+import catchup.util.parsePossiblyOffsetInstant
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import catchup.util.parsePossiblyOffsetInstant
 import java.io.IOException
 import kotlinx.datetime.Instant
 

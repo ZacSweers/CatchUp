@@ -15,8 +15,8 @@
  */
 package catchup.util
 
-import com.google.common.truth.Truth.assertThat
 import catchup.util.network.AuthInterceptor
+import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
 import org.junit.Test
 
