@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.unsplash
+package dev.zacsweers.catchup.services.unsplash
 
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
@@ -36,6 +36,9 @@ import io.sweers.catchup.service.api.ServiceKey
 import io.sweers.catchup.service.api.ServiceMeta
 import io.sweers.catchup.service.api.ServiceMetaKey
 import io.sweers.catchup.service.api.VisualService
+import io.sweers.catchup.service.unsplash.R.color
+import io.sweers.catchup.service.unsplash.R.drawable
+import io.sweers.catchup.service.unsplash.R.string
 import io.sweers.catchup.util.data.adapters.ISO8601InstantAdapter
 import io.sweers.catchup.util.network.AuthInterceptor
 import javax.inject.Inject
@@ -111,9 +114,9 @@ abstract class UnsplashMetaModule {
     internal fun provideUnsplashServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
-        R.string.catchup_service_unsplash_name,
-        R.color.catchup_service_unsplash_accent,
-        R.drawable.catchup_service_unsplash_logo,
+        string.catchup_service_unsplash_name,
+        color.catchup_service_unsplash_accent,
+        drawable.catchup_service_unsplash_logo,
         isVisual = true,
         pagesAreNumeric = true,
         firstPageKey = 1,

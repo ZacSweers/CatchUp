@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.service.unsplash
+package dev.zacsweers.catchup.services.unsplash
 
 import androidx.annotation.Keep
-import io.sweers.catchup.service.unsplash.model.UnsplashPhoto
+import dev.zacsweers.catchup.services.unsplash.UnsplashApi.OrderBy.LATEST
+import dev.zacsweers.catchup.services.unsplash.model.UnsplashPhoto
 import java.util.Locale
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -29,7 +30,7 @@ interface UnsplashApi {
   suspend fun getPhotos(
     @Query("page") page: Int = 1, // Default 1
     @Query("per_page") pageSize: Int = 25, // Default 10
-    @Query("order_by") orderBy: OrderBy = OrderBy.LATEST // latest
+    @Query("order_by") orderBy: OrderBy = LATEST // latest
   ): List<UnsplashPhoto>
 
   companion object {
