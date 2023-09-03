@@ -34,6 +34,8 @@ import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.unit.Density
 import androidx.window.layout.WindowMetricsCalculator
 import catchup.app.CatchUpPreferences
+import catchup.app.service.LinkHandler
+import catchup.app.service.UrlMeta
 import catchup.app.ui.activity.MainActivity
 import catchup.app.util.customtabs.CustomTabActivityHelper
 import catchup.appconfig.AppConfig
@@ -41,8 +43,6 @@ import catchup.appconfig.isSdkAtLeast
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import catchup.flowbinding.intentReceivers
-import catchup.service.api.LinkHandler
-import catchup.service.api.UrlMeta
 import catchup.util.isInNightMode
 import catchup.util.kotlin.any
 import catchup.util.kotlin.mergeWith

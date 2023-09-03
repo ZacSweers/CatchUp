@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package catchup.service.api
+package catchup.app.service
 
 interface LinkHandler {
   suspend fun openUrl(meta: UrlMeta)

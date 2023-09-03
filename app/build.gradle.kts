@@ -29,10 +29,10 @@ import okio.source
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("com.android.application")
-  kotlin("android")
-  kotlin("kapt")
-  kotlin("plugin.parcelize")
+  alias(libs.plugins.android.application)
+  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.kotlin.kapt)
+  alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.apollo)
   alias(libs.plugins.licensee)

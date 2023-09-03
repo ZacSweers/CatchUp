@@ -25,6 +25,7 @@ import catchup.app.data.github.RepoReleasesQuery
 import catchup.app.service.ClickableItem
 import catchup.app.service.ErrorItem
 import catchup.app.service.TextItem
+import catchup.app.service.UrlMeta
 import catchup.app.service.rememberClickableItemState
 import catchup.app.ui.about.ChangelogScreen.Event.Click
 import catchup.app.ui.about.ChangelogScreen.State
@@ -34,7 +35,6 @@ import catchup.gemoji.EmojiMarkdownConverter
 import catchup.gemoji.replaceMarkdownEmojisIn
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ContentType
-import catchup.service.api.UrlMeta
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.exception.ApolloException
 import com.slack.circuit.codegen.annotations.CircuitInject
