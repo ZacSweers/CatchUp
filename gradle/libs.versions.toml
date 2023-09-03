@@ -33,7 +33,7 @@ leakcanary = "2.12"
 lifecycle = "2.7.0-alpha01"
 markwon = "4.6.2"
 moshi = "1.15.0"
-moshix = "0.24.0"
+moshix = "0.24.1"
 okhttp = "5.0.0-alpha.11"
 preferences = "1.2.1"
 retrofit = "2.9.0"
@@ -236,7 +236,7 @@ retrofit-kotlinxSerialization = "com.jakewharton.retrofit:retrofit2-kotlinx-seri
 
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
-sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions-jvm", version.ref = "sqldelight" }
+sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
 sqldelight-primitiveAdapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
