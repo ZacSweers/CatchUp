@@ -13,12 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.sgp.base)
   alias(libs.plugins.sqldelight)
+}
+
+kotlin {
+  // region KMP Targets
+  androidTarget()
+  jvm()
+  // endregion
+
+  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+
+  sourceSets {
+    commonMain {
+      dependencies {
+        api(libs.kotlin.datetime)
+        api(libs.sqldelight.runtime)
+
+        implementation(libs.kotlin.datetime)
+      }
+    }
+  }
 }
 
 android { namespace = "catchup.service.db" }
@@ -35,11 +56,4 @@ sqldelight {
       packageName.set("catchup.service.db")
     }
   }
-}
-
-dependencies {
-  api(libs.kotlin.datetime)
-  api(libs.sqldelight.runtime)
-
-  implementation(libs.kotlin.datetime)
 }
