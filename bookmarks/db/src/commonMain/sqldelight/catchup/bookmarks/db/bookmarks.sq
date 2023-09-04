@@ -6,19 +6,24 @@ CREATE TABLE IF NOT EXISTS bookmark (
   timestamp INTEGER AS Instant NOT NULL
 );
 
-insertBookmark:
+addBookmark:
 INSERT OR REPLACE INTO bookmark (id, timestamp) VALUES (?, ?);
 
-bookmarks:
+bookmarkIds:
+SELECT * FROM bookmark ORDER BY timestamp;
+
+removeBookmark:
+DELETE FROM bookmark WHERE id = ?;
+
+bookmarkedItemsCount:
+SELECT count(*) FROM bookmark;
+
+bookmarkedItems:
 SELECT c.*
 FROM catchUpDbItem AS c
 JOIN (
     SELECT id
     FROM bookmark
     ORDER BY timestamp
--- Used for PagingSource<Int, CatchUpItem>
     LIMIT :limit OFFSET :offset
 ) AS b ON c.id = b.id;
-
-deleteBookmark:
-DELETE FROM bookmark WHERE id = ?;

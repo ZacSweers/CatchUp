@@ -1,6 +1,7 @@
 include(
   ":app",
   ":benchmark",
+  ":bookmarks",
   ":bookmarks:db",
   ":libraries:auth",
   ":libraries:base-ui",

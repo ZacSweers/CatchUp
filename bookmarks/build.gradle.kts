@@ -19,7 +19,6 @@ plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.android.library)
   alias(libs.plugins.sgp.base)
-  alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -35,27 +34,18 @@ kotlin {
       dependencies {
         api(libs.kotlin.datetime)
         api(libs.sqldelight.runtime)
-        api(projects.serviceDb)
+        api(libs.sqldelight.coroutines)
+        implementation(projects.bookmarks.db)
+        implementation(projects.serviceApi)
       }
     }
   }
 }
 
-android { namespace = "catchup.bookmarks.db" }
+android { namespace = "catchup.bookmarks" }
 
 slack {
   features {
     dagger()
-  }
-}
-
-sqldelight {
-  databases {
-    create("CatchUpDatabase") {
-      packageName.set("catchup.bookmarks.db")
-      dependency(projects.serviceDb)
-      schemaOutputDirectory.set(layout.projectDirectory.dir("src/commonMain/sqldelight/databases"))
-      migrationOutputDirectory.set(layout.projectDirectory.dir("src/commonMain/sqldelight/migrations"))
-    }
   }
 }

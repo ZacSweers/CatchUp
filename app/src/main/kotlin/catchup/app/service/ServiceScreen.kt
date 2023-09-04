@@ -65,6 +65,7 @@ import catchup.pullrefresh.rememberPullRefreshState
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ContentType
 import catchup.service.api.Service
+import catchup.service.api.toCatchUpItem
 import catchup.service.db.CatchUpDatabase
 import catchup.summarizer.SummarizerScreen
 import com.slack.circuit.codegen.annotations.CircuitInject

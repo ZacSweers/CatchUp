@@ -41,6 +41,7 @@ kotlin {
         implementation(libs.androidx.annotations)
         implementation(libs.kotlin.coroutinesAndroid)
         implementation(libs.kotlin.datetime)
+        implementation(projects.serviceDb)
       }
     }
     with(getByName("androidMain")) {
