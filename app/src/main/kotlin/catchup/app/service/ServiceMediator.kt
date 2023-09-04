@@ -6,10 +6,10 @@ import androidx.paging.LoadType.REFRESH
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import catchup.app.data.lastUpdated
-import catchup.service.db.CatchUpDbItem
 import catchup.service.api.DataRequest
 import catchup.service.api.Service
 import catchup.service.db.CatchUpDatabase
+import catchup.service.db.CatchUpDbItem
 import com.apollographql.apollo3.exception.ApolloException
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

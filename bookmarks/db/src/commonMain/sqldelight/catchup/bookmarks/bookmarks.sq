@@ -1,0 +1,24 @@
+import kotlinx.datetime.Instant;
+
+-- TODO capture service tint color?
+CREATE TABLE IF NOT EXISTS bookmark (
+  id INTEGER NOT NULL PRIMARY KEY,
+  timestamp INTEGER AS Instant NOT NULL
+);
+
+insertBookmark:
+INSERT OR REPLACE INTO bookmark (id, timestamp) VALUES (?, ?);
+
+bookmarks:
+SELECT c.*
+FROM catchUpDbItem AS c
+JOIN (
+    SELECT id
+    FROM bookmark
+    ORDER BY timestamp
+-- Used for PagingSource<Int, CatchUpItem>
+    LIMIT :limit OFFSET :offset
+) AS b ON c.id = b.id;
+
+deleteBookmark:
+DELETE FROM bookmark WHERE id = ?;

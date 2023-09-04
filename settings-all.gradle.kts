@@ -1,6 +1,7 @@
 include(
   ":app",
   ":benchmark",
+  ":bookmarks:db",
   ":libraries:auth",
   ":libraries:base-ui",
   ":libraries:appconfig",
@@ -14,7 +15,6 @@ include(
   ":libraries:gemoji:generator",
   ":libraries:flowbinding",
   ":libraries:kotlinutil",
-  ":libraries:newark",
   ":libraries:retrofitconverters",
   ":libraries:summarizer",
   ":libraries:tooling:spi-multibinds-validator",
