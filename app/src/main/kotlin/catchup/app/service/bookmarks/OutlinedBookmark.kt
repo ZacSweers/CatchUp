@@ -1,4 +1,4 @@
-package catchup.app.service
+package catchup.app.service.bookmarks
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.materialIcon

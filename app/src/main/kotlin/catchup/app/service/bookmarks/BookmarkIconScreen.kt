@@ -1,4 +1,4 @@
-package catchup.app.service
+package catchup.app.service.bookmarks
 
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.Icons.Outlined
@@ -7,6 +7,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import catchup.app.service.TextActionItem
+import catchup.app.service.bookmarks.BookmarkIconScreen.State
 import catchup.bookmarks.BookmarkRepository
 import catchup.di.AppScope
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -29,13 +31,13 @@ class BookmarkIconPresenter
 constructor(
   @Assisted private val screen: BookmarkIconScreen,
   private val bookmarkRepository: BookmarkRepository,
-) : Presenter<BookmarkIconScreen.State> {
+) : Presenter<State> {
   private val themeColor = Color(screen.themeColor)
 
   @Composable
-  override fun present(): BookmarkIconScreen.State {
+  override fun present(): State {
     val isBookmarked by bookmarkRepository.isBookmarked(screen.id).collectAsState(false)
-    return BookmarkIconScreen.State(isBookmarked, themeColor) {
+    return State(isBookmarked, themeColor) {
       if (isBookmarked) {
         bookmarkRepository.removeBookmark(screen.id)
       } else {
@@ -53,7 +55,7 @@ constructor(
 
 @CircuitInject(BookmarkIconScreen::class, AppScope::class)
 @Composable
-fun BookmarkIcon(state: BookmarkIconScreen.State, modifier: Modifier = Modifier) {
+fun BookmarkIcon(state: State, modifier: Modifier = Modifier) {
   val icon =
     if (state.isBookmarked) {
       Filled.Bookmark

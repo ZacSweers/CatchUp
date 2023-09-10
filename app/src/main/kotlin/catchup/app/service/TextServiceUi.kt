@@ -58,6 +58,7 @@ import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SUMMARIZE
 import catchup.app.service.ServiceScreen.Event.ItemClicked
 import catchup.app.service.ServiceScreen.Event.MarkClicked
+import catchup.app.service.bookmarks.BookmarkIconScreen
 import catchup.compose.CatchUpTheme
 import catchup.compose.ContentAlphas
 import catchup.compose.ScrollToTopHandler
