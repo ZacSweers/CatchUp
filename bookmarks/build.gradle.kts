@@ -40,6 +40,9 @@ kotlin {
         implementation(projects.serviceApi)
       }
     }
+    val jvmMain by getting
+    val androidMain by getting
+    androidMain.dependsOn(jvmMain)
   }
 }
 
