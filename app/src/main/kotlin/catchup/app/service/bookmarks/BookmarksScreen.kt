@@ -1,5 +1,6 @@
 package catchup.app.service.bookmarks
 
+import androidx.annotation.ColorInt
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.ExperimentalPagingApi
@@ -50,6 +52,7 @@ import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
 import catchup.service.api.CatchUpItem
+import catchup.service.api.ServiceMeta
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
@@ -60,6 +63,7 @@ import dagger.multibindings.StringKey
 import dev.zacsweers.catchup.R.string
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -70,11 +74,14 @@ import kotlinx.parcelize.Parcelize
 object BookmarksScreen : Screen, DeepLinkable {
   override fun createScreen(queryParams: ImmutableMap<String, List<String?>>) = BookmarksScreen
 
-  data class State(val items: LazyPagingItems<CatchUpItem>, val eventSink: (Event) -> Unit) :
-    CircuitUiState
+  data class State(
+    val items: LazyPagingItems<CatchUpItem>,
+    val serviceMetaMap: ImmutableMap<String, ServiceMeta>,
+    val eventSink: (Event) -> Unit,
+  ) : CircuitUiState
 
   sealed interface Event : CircuitUiEvent {
-    data class Click(val url: String) : Event
+    data class Click(val url: String, @ColorInt val themeColor: Int) : Event
 
     data class Remove(val id: Long) : Event
   }
@@ -87,6 +94,7 @@ class BookmarksPresenter
 constructor(
   private val bookmarksRepository: BookmarkRepository,
   private val linkManager: LinkManager,
+  private val serviceMetaMap: Map<String, ServiceMeta>,
 ) : Presenter<BookmarksScreen.State> {
   @Composable
   override fun present(): BookmarksScreen.State {
@@ -102,9 +110,10 @@ constructor(
         .flow
     }
     val lazyItems = itemsFlow.collectAsLazyPagingItems()
+    val metaMap = remember { serviceMetaMap.toImmutableMap() }
     val scope = rememberStableCoroutineScope()
     val context = LocalContext.current
-    return BookmarksScreen.State(lazyItems) { event ->
+    return BookmarksScreen.State(lazyItems, metaMap) { event ->
       when (event) {
         is Remove -> {
           bookmarksRepository.removeBookmark(event.id)
@@ -113,7 +122,7 @@ constructor(
         }
         is Click -> {
           scope.launch {
-            val meta = UrlMeta(event.url, Color.Unspecified.toArgb(), context)
+            val meta = UrlMeta(event.url, event.themeColor, context)
             linkManager.openUrl(meta)
           }
         }
@@ -160,6 +169,9 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
                 true
               }
             )
+          val themeColorRes =
+            remember(item.serviceId) { state.serviceMetaMap[item.serviceId]?.themeColor }
+          val themeColor = themeColorRes?.let { colorResource(it) } ?: Color.Unspecified
           SwipeToDismiss(
             modifier = Modifier.animateItemPlacement(),
             state = dismissState,
@@ -188,14 +200,14 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
               if (clickUrl != null) {
                 ClickableItem(
                   modifier = Modifier.animateItemPlacement(),
-                  onClick = { state.eventSink(Click(clickUrl)) },
+                  onClick = { state.eventSink(Click(clickUrl, themeColor.toArgb())) },
                 ) {
-                  TextItem(item, Color.Unspecified)
+                  TextItem(item, themeColor)
                 }
               } else {
                 TextItem(
                   item,
-                  Color.Unspecified,
+                  themeColor,
                   modifier = Modifier.animateItemPlacement(),
                 )
               }

@@ -1,6 +1,5 @@
 import kotlinx.datetime.Instant;
 
--- TODO capture service tint color?
 CREATE TABLE IF NOT EXISTS bookmark (
   id INTEGER NOT NULL PRIMARY KEY,
   timestamp INTEGER AS Instant NOT NULL
