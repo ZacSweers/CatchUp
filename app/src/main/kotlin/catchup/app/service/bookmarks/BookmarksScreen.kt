@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.DismissDirection.EndToStart
 import androidx.compose.material3.DismissDirection.StartToEnd
 import androidx.compose.material3.DismissValue.Default
+import androidx.compose.material3.DismissValue.DismissedToStart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
@@ -67,6 +70,11 @@ import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+
+/*
+ * TODO
+ *  - Empty state
+ */
 
 @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
 @StringKey("bookmarks")
@@ -162,20 +170,28 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
           val dismissState =
             rememberDismissState(
               confirmValueChange = {
-                if (it != Default) {
+                if (it == DismissedToStart) {
                   state.eventSink(Remove(item.id))
                   // TODO offer an undo option
                 }
-                true
+                it == DismissedToStart
               }
             )
-          val themeColorRes =
-            remember(item.serviceId) { state.serviceMetaMap[item.serviceId]?.themeColor }
+          val serviceMeta = remember(item.serviceId) { state.serviceMetaMap[item.serviceId] }
+          val themeColorRes = remember(serviceMeta) { serviceMeta?.themeColor }
           val themeColor = themeColorRes?.let { colorResource(it) } ?: Color.Unspecified
+          // When swiping from start to end, we don't dismiss and instead use this to indicate
+          // metadata about the bookmark, like the service it's from.
           SwipeToDismiss(
             modifier = Modifier.animateItemPlacement(),
             state = dismissState,
             background = {
+              val color =
+                when (dismissState.dismissDirection) {
+                  StartToEnd -> themeColor
+                  EndToStart -> MaterialTheme.colorScheme.error
+                  null -> Color.Unspecified
+                }
               val alignment =
                 when (dismissState.dismissDirection) {
                   StartToEnd -> Alignment.CenterStart
@@ -183,15 +199,31 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
                   null -> Alignment.CenterStart
                 }
               Box(
-                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.error),
+                modifier = Modifier.fillMaxSize().background(color),
                 contentAlignment = alignment,
               ) {
-                Icon(
-                  imageVector = Icons.Default.Delete,
-                  contentDescription = "Delete",
-                  modifier = Modifier.padding(32.dp).size(32.dp),
-                  tint = MaterialTheme.colorScheme.onError
-                )
+                when (dismissState.dismissDirection) {
+                  StartToEnd -> {
+                    serviceMeta?.let {
+                      Icon(
+                        imageVector = ImageVector.vectorResource(it.icon),
+                        contentDescription = stringResource(it.name),
+                        modifier = Modifier.padding(32.dp).size(32.dp),
+                        tint = Color.White,
+                      )
+                    }
+                  }
+                  EndToStart ->
+                    Icon(
+                      imageVector = Icons.Default.Delete,
+                      contentDescription = "Delete",
+                      modifier = Modifier.padding(32.dp).size(32.dp),
+                      tint = MaterialTheme.colorScheme.onError
+                    )
+                  null -> {
+                    // Do nothing
+                  }
+                }
               }
             },
             dismissContent = {
