@@ -34,9 +34,10 @@ kotlin {
     commonMain {
       dependencies {
         api(libs.kotlin.datetime)
-        api(libs.sqldelight.runtime)
         api(libs.sqldelight.coroutines)
+        api(libs.sqldelight.runtime)
         api(projects.bookmarks.db)
+
         implementation(projects.serviceApi)
       }
     }
