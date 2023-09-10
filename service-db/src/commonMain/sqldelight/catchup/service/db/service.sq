@@ -112,11 +112,6 @@ ORDER BY indexInResponse ASC
 -- Used for PagingSource<Int, CatchUpItem>
 LIMIT ? OFFSET ?;
 
-itemsByIds:
-SELECT *
-FROM catchUpDbItem
-WHERE id IN ?;
-
 deleteItemsByService:
 DELETE FROM catchUpDbItem WHERE serviceId = ?;
 

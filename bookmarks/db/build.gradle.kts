@@ -51,8 +51,9 @@ slack {
 
 sqldelight {
   databases {
-    create("BookmarksDatabase") {
+    create("CatchUpDatabase") {
       packageName.set("catchup.bookmarks.db")
+      dependency(projects.serviceDb)
       schemaOutputDirectory.set(layout.projectDirectory.dir("src/commonMain/sqldelight/databases"))
       migrationOutputDirectory.set(layout.projectDirectory.dir("src/commonMain/sqldelight/migrations"))
     }

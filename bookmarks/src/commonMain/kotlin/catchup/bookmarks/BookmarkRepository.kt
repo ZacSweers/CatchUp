@@ -6,10 +6,9 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlCursor
 import catchup.bookmarks.db.Bookmark
-import catchup.bookmarks.db.BookmarksDatabase
+import catchup.bookmarks.db.CatchUpDatabase
 import catchup.service.api.CatchUpItem
 import catchup.service.api.toCatchUpItem
-import catchup.service.db.CatchUpDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -28,15 +27,13 @@ interface BookmarkRepository {
 
   // Exposed to create a PagingSource
   fun bookmarksCountQuery(): Query<Long>
+
   fun bookmarksTransacter(): Transacter
 
   fun bookmarksQuery(limit: Long, offset: Long): Query<CatchUpItem>
 }
 
-internal class BookmarkRepositoryImpl(
-  private val bookmarksDb: BookmarksDatabase,
-  private val catchupDb: CatchUpDatabase
-) : BookmarkRepository {
+internal class BookmarkRepositoryImpl(private val database: CatchUpDatabase) : BookmarkRepository {
   private val scope = CoroutineScope(Dispatchers.IO)
 
   // Maintain an in-memory cache of all the bookmarks
@@ -45,7 +42,7 @@ internal class BookmarkRepositoryImpl(
   init {
     scope.launch {
       val idsFlow =
-        bookmarksDb.transactionWithResult { bookmarksDb.bookmarksQueries.bookmarkIds().asFlow() }
+        database.transactionWithResult { database.bookmarksQueries.bookmarkIds().asFlow() }
       idsFlow.collect { query ->
         // Preserve order
         bookmarks.emit(query.executeAsList().mapTo(LinkedHashSet(), Bookmark::id))
@@ -54,23 +51,21 @@ internal class BookmarkRepositoryImpl(
   }
 
   override fun addBookmark(id: Long, timestamp: Instant) {
-    scope.launch { bookmarksDb.transaction { bookmarksDb.bookmarksQueries.addBookmark(id, timestamp) } }
+    scope.launch { database.transaction { database.bookmarksQueries.addBookmark(id, timestamp) } }
   }
 
   override fun removeBookmark(id: Long) {
-    scope.launch { bookmarksDb.transaction { bookmarksDb.bookmarksQueries.removeBookmark(id) } }
+    scope.launch { database.transaction { database.bookmarksQueries.removeBookmark(id) } }
   }
 
   override fun isBookmarked(id: Long) = bookmarks.map { id in it }
 
-  override fun bookmarksCountQuery() = bookmarksDb.bookmarksQueries.bookmarkedItemsCount()
+  override fun bookmarksCountQuery() = database.bookmarksQueries.bookmarkedItemsCount()
 
-  override fun bookmarksTransacter(): Transacter = bookmarksDb.bookmarksQueries
+  override fun bookmarksTransacter(): Transacter = database.bookmarksQueries
 
   override fun bookmarksQuery(limit: Long, offset: Long): Query<CatchUpItem> {
-    val bookmarkIds = bookmarksDb.bookmarksQueries.bookmarkedItems(limit, offset)
-    return catchupDb.serviceQueries.itemsByIds(bookmarkIds.executeAsList())
-      .map { it.toCatchUpItem() }
+    return database.bookmarksQueries.bookmarkedItems(limit, offset).map { it.toCatchUpItem() }
   }
 }
 
@@ -87,15 +82,14 @@ private class MappedQuery(private val original: Query<Any>, private val newMappe
         QueryResult.AsyncValue { delegate.value?.let(newMapper) } as QueryResult<R>
       }
       is QueryResult.Value -> {
-        val mappedValue = delegate.value?.let {
-          if (it is List<*>) {
-            it.map {
-              it?.let(newMapper)
+        val mappedValue =
+          delegate.value?.let {
+            if (it is List<*>) {
+              it.map { it?.let(newMapper) }
+            } else {
+              newMapper(it)
             }
-          } else {
-            newMapper(it)
           }
-        }
         @Suppress("UNCHECKED_CAST")
         QueryResult.Value(mappedValue) as QueryResult<R>
       }
