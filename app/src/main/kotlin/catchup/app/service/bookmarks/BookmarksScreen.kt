@@ -1,10 +1,8 @@
 package catchup.app.service.bookmarks
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,22 +26,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import app.cash.sqldelight.paging3.QueryPagingSource
+import catchup.app.data.LinkManager
 import catchup.app.service.ClickableItem
 import catchup.app.service.PlaceholderItem
 import catchup.app.service.TextItem
+import catchup.app.service.UrlMeta
+import catchup.app.service.bookmarks.BookmarksScreen.Event.Click
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Remove
 import catchup.base.ui.BackPressNavButton
 import catchup.bookmarks.BookmarkRepository
+import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
 import catchup.service.api.CatchUpItem
@@ -58,7 +61,7 @@ import dev.zacsweers.catchup.R.string
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
@@ -67,36 +70,53 @@ import kotlinx.parcelize.Parcelize
 object BookmarksScreen : Screen, DeepLinkable {
   override fun createScreen(queryParams: ImmutableMap<String, List<String?>>) = BookmarksScreen
 
-  data class State(val items: Flow<PagingData<CatchUpItem>>, val eventSink: (Event) -> Unit) :
+  data class State(val items: LazyPagingItems<CatchUpItem>, val eventSink: (Event) -> Unit) :
     CircuitUiState
 
   sealed interface Event : CircuitUiEvent {
+    data class Click(val url: String) : Event
+
     data class Remove(val id: Long) : Event
   }
 }
 
 @CircuitInject(BookmarksScreen::class, AppScope::class)
 @OptIn(ExperimentalPagingApi::class)
-class BookmarksPresenter @Inject constructor(private val bookmarksRepository: BookmarkRepository) :
-  Presenter<BookmarksScreen.State> {
+class BookmarksPresenter
+@Inject
+constructor(
+  private val bookmarksRepository: BookmarkRepository,
+  private val linkManager: LinkManager,
+) : Presenter<BookmarksScreen.State> {
   @Composable
   override fun present(): BookmarksScreen.State {
-    val pager = remember {
-      // TODO
-      //  retain pager or even the flow?
+    val itemsFlow = remember {
       Pager(config = PagingConfig(pageSize = 50), initialKey = 0, remoteMediator = null) {
-        QueryPagingSource(
-          countQuery = bookmarksRepository.bookmarksCountQuery(),
-          transacter = bookmarksRepository.bookmarksTransacter(),
-          context = Dispatchers.IO,
-          queryProvider = { limit, offset -> bookmarksRepository.bookmarksQuery(limit, offset) },
-        )
-      }
+          QueryPagingSource(
+            countQuery = bookmarksRepository.bookmarksCountQuery(),
+            transacter = bookmarksRepository.bookmarksTransacter(),
+            context = Dispatchers.IO,
+            queryProvider = { limit, offset -> bookmarksRepository.bookmarksQuery(limit, offset) },
+          )
+        }
+        .flow
     }
-    val items: Flow<PagingData<CatchUpItem>> = remember(pager) { pager.flow }
-    return BookmarksScreen.State(items) { event ->
+    val lazyItems = itemsFlow.collectAsLazyPagingItems()
+    val scope = rememberStableCoroutineScope()
+    val context = LocalContext.current
+    return BookmarksScreen.State(lazyItems) { event ->
       when (event) {
-        is Remove -> bookmarksRepository.removeBookmark(event.id)
+        is Remove -> {
+          bookmarksRepository.removeBookmark(event.id)
+          // TODO this is a jarring animation to do immediately
+          lazyItems.refresh()
+        }
+        is Click -> {
+          scope.launch {
+            val meta = UrlMeta(event.url, Color.Unspecified.toArgb(), context)
+            linkManager.openUrl(meta)
+          }
+        }
       }
     }
   }
@@ -106,7 +126,6 @@ class BookmarksPresenter @Inject constructor(private val bookmarksRepository: Bo
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
-  val lazyItems: LazyPagingItems<CatchUpItem> = state.items.collectAsLazyPagingItems()
   Scaffold(
     modifier = modifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -118,16 +137,16 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
       )
     },
   ) {
-    // TODO empty state
-    LazyColumn(modifier = Modifier.padding(it)) {
+    // TODO empty state, but if I do an if/else check on itemCount the swipe dismiss throws an ISE
+    LazyColumn(Modifier.padding(it)) {
       items(
-        count = lazyItems.itemCount,
+        count = state.items.itemCount,
         // Here we use the new itemKey extension on LazyPagingItems to
         // handle placeholders automatically, ensuring you only need to provide
         // keys for real items
-        key = lazyItems.itemKey { it.id },
+        key = state.items.itemKey { it.id },
       ) { index ->
-        val item = lazyItems[index]
+        val item = state.items[index]
         if (item == null) {
           PlaceholderItem(Color.Unspecified)
         } else {
@@ -136,14 +155,13 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
               confirmValueChange = {
                 if (it != Default) {
                   state.eventSink(Remove(item.id))
-                  // TODO this is a jarring animation to do immediately
                   // TODO offer an undo option
-                  lazyItems.refresh()
                 }
                 true
               }
             )
           SwipeToDismiss(
+            modifier = Modifier.animateItemPlacement(),
             state = dismissState,
             background = {
               val alignment =
@@ -166,11 +184,20 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
             },
             dismissContent = {
               // TODO where's the elevation on press/drag?
-              ClickableItem(
-                modifier = Modifier.animateItemPlacement(),
-                onClick = { /* TODO */},
-              ) {
-                Column(Modifier.animateContentSize()) { TextItem(item, Color.Unspecified) }
+              val clickUrl = item.clickUrl
+              if (clickUrl != null) {
+                ClickableItem(
+                  modifier = Modifier.animateItemPlacement(),
+                  onClick = { state.eventSink(Click(clickUrl)) },
+                ) {
+                  TextItem(item, Color.Unspecified)
+                }
+              } else {
+                TextItem(
+                  item,
+                  Color.Unspecified,
+                  modifier = Modifier.animateItemPlacement(),
+                )
               }
             }
           )
