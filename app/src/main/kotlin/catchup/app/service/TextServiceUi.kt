@@ -19,13 +19,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -55,7 +54,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import catchup.app.service.ServiceScreen.Event
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked
-import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.FAVORITE
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SUMMARIZE
 import catchup.app.service.ServiceScreen.Event.ItemClicked
@@ -68,6 +66,7 @@ import catchup.service.api.Mark
 import catchup.service.api.canBeSummarized
 import catchup.util.kotlin.format
 import catchup.util.primaryLocale
+import com.slack.circuit.foundation.CircuitContent
 import dev.zacsweers.catchup.R
 import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Clock
@@ -128,32 +127,19 @@ fun TextServiceUi(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
               ) {
-                IconButton(onClick = { eventSink(ItemActionClicked(item, FAVORITE)) }) {
-                  Icon(
-                    imageVector = Icons.Filled.FavoriteBorder,
-                    contentDescription = "Favorite",
-                    tint = themeColor,
-                    modifier = Modifier.size(24.dp)
-                  )
+                val bookmarkIconScreen =
+                  remember(item.id) { BookmarkIconScreen(item.id, themeColor.toArgb()) }
+                CircuitContent(bookmarkIconScreen)
+                TextActionItem(Icons.Filled.Share, themeColor, "Share") {
+                  eventSink(ItemActionClicked(item, SHARE))
                 }
-                IconButton(onClick = { eventSink(ItemActionClicked(item, SHARE)) }) {
-                  Icon(
-                    imageVector = Icons.Filled.Share,
-                    contentDescription = "Share",
-                    tint = themeColor,
-                    modifier = Modifier.size(24.dp)
-                  )
-                }
-                IconButton(
+                TextActionItem(
+                  Icons.Filled.Info,
+                  themeColor,
+                  "Summarize",
                   enabled = item.canBeSummarized,
-                  onClick = { eventSink(ItemActionClicked(item, SUMMARIZE)) }
                 ) {
-                  Icon(
-                    imageVector = Icons.Filled.Info,
-                    contentDescription = "Summarize",
-                    tint = themeColor,
-                    modifier = Modifier.size(24.dp)
-                  )
+                  eventSink(ItemActionClicked(item, SUMMARIZE))
                 }
               }
             }

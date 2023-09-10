@@ -38,8 +38,10 @@ internal class BookmarkRepositoryImpl(private val database: CatchUpDatabase) : B
 
   init {
     scope.launch {
-      database.bookmarksQueries.bookmarkIds().asFlow().collect { query ->
-        // Preserve
+      val idsFlow =
+        database.transactionWithResult { database.bookmarksQueries.bookmarkIds().asFlow() }
+      idsFlow.collect { query ->
+        // Preserve order
         bookmarks.emit(query.executeAsList().mapTo(LinkedHashSet(), Bookmark::id))
       }
     }

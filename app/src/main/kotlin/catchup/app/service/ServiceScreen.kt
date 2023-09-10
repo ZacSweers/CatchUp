@@ -1,7 +1,6 @@
 package catchup.app.service
 
 import android.content.Intent
-import android.widget.Toast
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -48,7 +47,6 @@ import app.cash.sqldelight.paging3.QueryPagingSource
 import catchup.app.data.LinkManager
 import catchup.app.service.ServiceScreen.Event
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked
-import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.FAVORITE
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SUMMARIZE
 import catchup.app.service.ServiceScreen.Event.ItemClicked
@@ -114,7 +112,6 @@ data class ServiceScreen(val serviceKey: String) : Screen {
 
     data class ItemActionClicked(val item: CatchUpItem, val action: Action) : Event {
       enum class Action {
-        FAVORITE,
         SHARE,
         SUMMARIZE
       }
@@ -220,9 +217,6 @@ constructor(
         is ItemActionClicked -> {
           val url = event.item.clickUrl!!
           when (event.action) {
-            FAVORITE -> {
-              Toast.makeText(context, "Not implemented", Toast.LENGTH_SHORT).show()
-            }
             SHARE -> {
               val shareIntent =
                 Intent().apply {
