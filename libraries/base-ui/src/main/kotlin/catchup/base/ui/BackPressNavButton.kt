@@ -4,7 +4,7 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,7 +18,7 @@ import catchup.base.ui.NavButtonType.BACK
 import catchup.ui.core.R
 
 enum class NavButtonType(val icon: ImageVector, @StringRes val contentDescription: Int) {
-  BACK(Icons.Filled.ArrowBack, R.string.catchup_baseui_back),
+  BACK(Icons.AutoMirrored.Filled.ArrowBack, R.string.catchup_baseui_back),
   CLOSE(Icons.Filled.Close, R.string.catchup_baseui_close)
 }
 
