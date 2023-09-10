@@ -21,7 +21,7 @@ import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import catchup.bookmarks.db.Bookmark
-import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
+import catchup.bookmarks.db.BookmarksDatabase
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import catchup.service.db.CatchUpDatabase
@@ -39,37 +39,29 @@ object CatchUpDatabaseModule {
   @SingleIn(AppScope::class)
   fun provideCatchUpDatabase(
     @ApplicationContext context: Context,
-    itemAdapter: CatchUpDbItem.Adapter
   ): CatchUpDatabase =
     CatchUpDatabase(
       AndroidSqliteDriver(CatchUpDatabase.Schema, context, "catchUpItems.db"),
-      itemAdapter,
-    )
-
-  @Provides
-  @SingleIn(AppScope::class)
-  fun provideCatchUpDbItemAdapter(): CatchUpDbItem.Adapter =
-    CatchUpDbItem.Adapter(
-      InstantColumnAdapter,
-      IntColumnAdapter,
-      IntColumnAdapter,
-      IntColumnAdapter,
-      IntColumnAdapter,
-      IntColumnAdapter,
-      FloatColumnAdapter,
-      IntColumnAdapter,
+      CatchUpDbItem.Adapter(
+        InstantColumnAdapter,
+        IntColumnAdapter,
+        IntColumnAdapter,
+        IntColumnAdapter,
+        IntColumnAdapter,
+        IntColumnAdapter,
+        FloatColumnAdapter,
+        IntColumnAdapter,
+      ),
     )
 
   @Provides
   @SingleIn(AppScope::class)
   fun provideBookmarksDatabase(
     @ApplicationContext context: Context,
-    itemAdapter: CatchUpDbItem.Adapter
   ): BookmarksDatabase =
     BookmarksDatabase(
       AndroidSqliteDriver(BookmarksDatabase.Schema, context, "bookmarks.db"),
       Bookmark.Adapter(InstantColumnAdapter),
-      itemAdapter,
     )
 }
 

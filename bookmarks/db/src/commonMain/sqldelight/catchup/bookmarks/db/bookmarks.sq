@@ -19,11 +19,7 @@ bookmarkedItemsCount:
 SELECT count(*) FROM bookmark;
 
 bookmarkedItems:
-SELECT c.*
-FROM catchUpDbItem AS c
-JOIN (
-    SELECT id
-    FROM bookmark
-    ORDER BY timestamp
-    LIMIT :limit OFFSET :offset
-) AS b ON c.id = b.id;
+SELECT id
+FROM bookmark
+ORDER BY bookmark.timestamp
+LIMIT :limit OFFSET :offset;
