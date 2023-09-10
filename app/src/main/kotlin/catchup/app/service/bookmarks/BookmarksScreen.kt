@@ -125,8 +125,6 @@ constructor(
       when (event) {
         is Remove -> {
           bookmarksRepository.removeBookmark(event.id)
-          // TODO this is a jarring animation to do immediately
-          lazyItems.refresh()
         }
         is Click -> {
           scope.launch {
@@ -153,9 +151,9 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
         navigationIcon = { BackPressNavButton() },
       )
     },
-  ) {
+  ) { innerPadding ->
     // TODO empty state, but if I do an if/else check on itemCount the swipe dismiss throws an ISE
-    LazyColumn(Modifier.padding(it)) {
+    LazyColumn(Modifier.padding(innerPadding)) {
       items(
         count = state.items.itemCount,
         // Here we use the new itemKey extension on LazyPagingItems to
@@ -167,16 +165,14 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
         if (item == null) {
           PlaceholderItem(Color.Unspecified)
         } else {
-          val dismissState =
-            rememberDismissState(
-              confirmValueChange = {
-                if (it == DismissedToStart) {
-                  state.eventSink(Remove(item.id))
-                  // TODO offer an undo option
-                }
-                it == DismissedToStart
-              }
-            )
+          val dismissState = rememberDismissState(confirmValueChange = { it == DismissedToStart })
+
+          if (dismissState.currentValue == DismissedToStart) {
+            // TODO offer an undo option after a pause?
+            // TODO no exit animation yet https://issuetracker.google.com/issues/150812265#comment30
+            state.eventSink(Remove(item.id))
+          }
+
           val serviceMeta = remember(item.serviceId) { state.serviceMetaMap[item.serviceId] }
           val themeColorRes = remember(serviceMeta) { serviceMeta?.themeColor }
           val themeColor = themeColorRes?.let { colorResource(it) } ?: Color.Unspecified
@@ -227,7 +223,6 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
               }
             },
             dismissContent = {
-              // TODO where's the elevation on press/drag?
               val clickUrl = item.clickUrl
               if (clickUrl != null) {
                 ClickableItem(
