@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,6 +40,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -70,10 +70,12 @@ import catchup.app.service.ServiceScreen
 import catchup.app.service.bookmarks.Bookmark
 import catchup.app.service.bookmarks.BookmarksScreen
 import catchup.app.ui.activity.SettingsScreen
+import catchup.bookmarks.BookmarkRepository
 import catchup.compose.LocalDisplayFeatures
 import catchup.compose.LocalDynamicTheme
 import catchup.compose.LocalScrollToTop
 import catchup.compose.MutableScrollToTop
+import catchup.compose.Wigglable
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
@@ -125,6 +127,7 @@ object HomeScreen : Screen, DeepLinkable {
     val serviceMetas: ImmutableList<ServiceMeta>,
     val changelogAvailable: Boolean,
     val selectedIndex: Int,
+    val bookmarksCount: Long,
     val eventSink: (Event) -> Unit = {}
   ) : CircuitUiState
 
@@ -148,6 +151,7 @@ constructor(
   private val serviceMetaMap: Map<String, ServiceMeta>,
   private val catchUpPreferences: CatchUpPreferences,
   private val changelogHelper: ChangelogHelper,
+  private val bookmarkRepository: BookmarkRepository
 ) : Presenter<State> {
 
   @CircuitInject(HomeScreen::class, AppScope::class)
@@ -179,12 +183,16 @@ constructor(
     val context = LocalContext.current
     val changelogAvailable by changelogHelper.changelogAvailable(context).collectAsState(false)
 
+    val countFlow = remember { bookmarkRepository.bookmarksCountFlow() }
+    val bookmarksCount by countFlow.collectAsState(0L)
+
     val scope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
     return State(
       serviceMetas = serviceMetas,
       changelogAvailable = changelogAvailable,
       selectedIndex = selectedIndex,
+      bookmarksCount = bookmarksCount
     ) { event ->
       when (event) {
         OpenSettings -> {
@@ -292,7 +300,6 @@ fun Home(state: State, modifier: Modifier = Modifier) {
 @OptIn(
   ExperimentalMaterial3Api::class,
   ExperimentalFoundationApi::class,
-  ExperimentalLayoutApi::class
 )
 @Composable
 fun HomePager(state: State, modifier: Modifier = Modifier) {
@@ -366,6 +373,8 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
   val nestedScrollModifier = remember {
     modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
   }
+  val serviceMetas by rememberUpdatedState(state.serviceMetas)
+  val eventSink by rememberUpdatedState(state.eventSink)
   Scaffold(
     modifier = nestedScrollModifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -378,18 +387,24 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         actions = {
           // TODO wire with Syllabus
           if (state.changelogAvailable) {
-            ChangelogButton { state.eventSink(ShowChangelog) }
+            ChangelogButton { eventSink(ShowChangelog) }
+          }
+
+          if (state.bookmarksCount > 0) {
+            // TODO only wiggle on increment?
+            Wigglable(state.bookmarksCount) {
+              IconButton(
+                onClick = { eventSink(OpenBookmarks) },
+              ) {
+                Icon(
+                  imageVector = Icons.Filled.Bookmark,
+                  contentDescription = "Bookmarks",
+                )
+              }
+            }
           }
           IconButton(
-            onClick = { state.eventSink(OpenBookmarks) },
-          ) {
-            Icon(
-              imageVector = Icons.Filled.Bookmark,
-              contentDescription = "Bookmarks",
-            )
-          }
-          IconButton(
-            onClick = { state.eventSink(OpenSettings) },
+            onClick = { eventSink(OpenSettings) },
           ) {
             Icon(
               imageVector = Icons.Default.Settings,
@@ -425,7 +440,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
       ) {
         // Add tabs for all of our pages
         val coroutineScope = rememberCoroutineScope()
-        state.serviceMetas.forEachIndexed { index, serviceMeta ->
+        serviceMetas.forEachIndexed { index, serviceMeta ->
           Tab(
             icon = {
               Icon(
@@ -459,7 +474,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
       HorizontalPager(
         modifier = Modifier.weight(1f),
         beyondBoundsPageCount = 1,
-        key = { state.serviceMetas[it].id },
+        key = { serviceMetas[it].id },
         state = pagerState,
         verticalAlignment = Alignment.Top,
       ) { page ->
@@ -468,8 +483,8 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
           LocalScrollToTop provides scrollToTop.takeIf { pagerState.currentPage == page }
         ) {
           CircuitContent(
-            screen = ServiceScreen(state.serviceMetas[page].id),
-            onNavEvent = { state.eventSink(NestedNavEvent(it)) }
+            screen = ServiceScreen(serviceMetas[page].id),
+            onNavEvent = { eventSink(NestedNavEvent(it)) }
           )
         }
       }

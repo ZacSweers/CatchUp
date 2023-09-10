@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock.System
@@ -24,6 +25,8 @@ interface BookmarkRepository {
   fun removeBookmark(id: Long)
 
   fun isBookmarked(id: Long): Flow<Boolean>
+
+  fun bookmarksCountFlow(): Flow<Long>
 
   // Exposed to create a PagingSource
   fun bookmarksCountQuery(): Query<Long>
@@ -59,6 +62,10 @@ internal class BookmarkRepositoryImpl(private val database: CatchUpDatabase) : B
   }
 
   override fun isBookmarked(id: Long) = bookmarks.map { id in it }
+
+  override fun bookmarksCountFlow(): Flow<Long> {
+    return bookmarksCountQuery().asFlow().map { it.executeAsOne() }.flowOn(Dispatchers.IO)
+  }
 
   override fun bookmarksCountQuery() = database.bookmarksQueries.bookmarkedItemsCount()
 
