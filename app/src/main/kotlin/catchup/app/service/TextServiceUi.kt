@@ -29,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -126,7 +127,9 @@ fun TextServiceUi(
             if (index == expandedItemIndex) {
               Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(bottom = 8.dp)
               ) {
                 val bookmarkIconScreen =
                   remember(item.id) { BookmarkIconScreen(item.id, themeColor.toArgb()) }
@@ -182,13 +185,14 @@ fun TextItem(
     item.mark?.let { mark ->
       Column(
         modifier =
-          Modifier.padding(start = 16.dp)
-            .clickable(
-              enabled = item.markClickUrl != null,
-              interactionSource = remember { MutableInteractionSource() },
-              indication = rememberRipple(bounded = false),
-              onClick = onMarkClick
-            ),
+        Modifier
+          .padding(start = 16.dp)
+          .clickable(
+            enabled = item.markClickUrl != null,
+            interactionSource = remember { MutableInteractionSource() },
+            indication = rememberRipple(bounded = false),
+            onClick = onMarkClick
+          ),
         horizontalAlignment = Alignment.CenterHorizontally
       ) {
         val icon =

@@ -61,11 +61,14 @@ import androidx.window.layout.FoldingFeature
 import catchup.app.CatchUpPreferences
 import catchup.app.changes.ChangelogHelper
 import catchup.app.home.HomeScreen.Event.NestedNavEvent
+import catchup.app.home.HomeScreen.Event.OpenBookmarks
 import catchup.app.home.HomeScreen.Event.OpenSettings
 import catchup.app.home.HomeScreen.Event.Selected
 import catchup.app.home.HomeScreen.Event.ShowChangelog
 import catchup.app.home.HomeScreen.State
 import catchup.app.service.ServiceScreen
+import catchup.app.service.bookmarks.Bookmark
+import catchup.app.service.bookmarks.BookmarksScreen
 import catchup.app.ui.activity.SettingsScreen
 import catchup.compose.LocalDisplayFeatures
 import catchup.compose.LocalDynamicTheme
@@ -128,6 +131,8 @@ object HomeScreen : Screen, DeepLinkable {
   sealed interface Event : CircuitUiEvent {
     data object OpenSettings : Event
 
+    data object OpenBookmarks : Event
+
     data object ShowChangelog : Event
 
     data class NestedNavEvent(val navEvent: NavEvent) : Event
@@ -154,23 +159,23 @@ constructor(
   @Composable
   override fun present(): State {
     val currentOrder by
-      remember { catchUpPreferences.servicesOrder }.collectAsState(initial = persistentListOf())
+    remember { catchUpPreferences.servicesOrder }.collectAsState(initial = persistentListOf())
     var selectedIndex by remember(currentOrder) { mutableIntStateOf(0) }
     val serviceMetas by
-      produceState(initialValue = persistentListOf(), currentOrder) {
-        // TODO make enabledPrefKey live?
-        check(serviceMetaMap.isNotEmpty()) { "No services found!" }
-        value =
-          serviceMetaMap.values
-            .filter(ServiceMeta::enabled)
-            .filter { serviceMeta ->
-              catchUpPreferences.datastore.data
-                .map { it[booleanPreferencesKey(serviceMeta.enabledPreferenceKey)] ?: true }
-                .first()
-            }
-            .sortedBy { currentOrder.indexOf(it.id) }
-            .toImmutableList()
-      }
+    produceState(initialValue = persistentListOf(), currentOrder) {
+      // TODO make enabledPrefKey live?
+      check(serviceMetaMap.isNotEmpty()) { "No services found!" }
+      value =
+        serviceMetaMap.values
+          .filter(ServiceMeta::enabled)
+          .filter { serviceMeta ->
+            catchUpPreferences.datastore.data
+              .map { it[booleanPreferencesKey(serviceMeta.enabledPreferenceKey)] ?: true }
+              .first()
+          }
+          .sortedBy { currentOrder.indexOf(it.id) }
+          .toImmutableList()
+    }
     val context = LocalContext.current
     val changelogAvailable by changelogHelper.changelogAvailable(context).collectAsState(false)
 
@@ -185,14 +190,21 @@ constructor(
         OpenSettings -> {
           navigator.goTo(SettingsScreen)
         }
+
+        OpenBookmarks -> {
+          navigator.goTo(BookmarksScreen)
+        }
+
         is NestedNavEvent -> {
           navigator.onNavEvent(event.navEvent)
         }
+
         is Selected -> {
           selectedIndex = event.index
           // TODO only do this if we make a TwoPane nav-aware
           //  navigator.goTo(ServiceScreen(serviceMetas[event.index].id))
         }
+
         ShowChangelog -> {
           scope.launch {
             overlayHost.show(
@@ -267,10 +279,10 @@ fun Home(state: State, modifier: Modifier = Modifier) {
       strategy = { density, layoutDirection, layoutCoordinates ->
         // Split vertically if the height is larger than the width
         if (layoutCoordinates.size.height >= layoutCoordinates.size.width) {
-            HorizontalTwoPaneStrategy(splitFraction = 0.4f)
-          } else {
-            HorizontalTwoPaneStrategy(splitFraction = 0.5f)
-          }
+          HorizontalTwoPaneStrategy(splitFraction = 0.4f)
+        } else {
+          HorizontalTwoPaneStrategy(splitFraction = 0.5f)
+        }
           .calculateSplitResult(density, layoutDirection, layoutCoordinates)
       },
       displayFeatures = displayFeatures,
@@ -373,6 +385,14 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
             ChangelogButton { state.eventSink(ShowChangelog) }
           }
           IconButton(
+            onClick = { state.eventSink(OpenBookmarks) },
+          ) {
+            Icon(
+              imageVector = Icons.Filled.Bookmark,
+              contentDescription = "Bookmarks",
+            )
+          }
+          IconButton(
             onClick = { state.eventSink(OpenSettings) },
           ) {
             Icon(
@@ -385,7 +405,10 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
     },
   ) { innerPadding ->
     Column(
-      modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding)
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+        .consumeWindowInsets(innerPadding)
     ) {
       val scrollToTop = remember { MutableScrollToTop() }
       val contentColor =
