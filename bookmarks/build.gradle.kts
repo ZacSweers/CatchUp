@@ -40,7 +40,11 @@ kotlin {
         implementation(projects.serviceApi)
       }
     }
-    val jvmMain by getting
+    val jvmMain by getting {
+      dependencies {
+        implementation(libs.anvil.annotations)
+      }
+    }
     val androidMain by getting
     androidMain.dependsOn(jvmMain)
   }
