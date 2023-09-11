@@ -18,11 +18,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 fun <T> Wigglable(
   target: T,
   modifier: Modifier = Modifier,
+  shouldWiggle: (old: T, new: T) -> Boolean = { old, new -> old != new },
   content: @Composable BoxScope.() -> Unit
 ) {
   var triggerWiggle by remember { mutableStateOf(false) }
 
-  LaunchedEffect(target) { triggerWiggle = true }
+  val previous = previous(target, target)
+  LaunchedEffect(target) { triggerWiggle = shouldWiggle(previous, target) }
 
   val angle by
     animateFloatAsState(

@@ -391,8 +391,10 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
           }
 
           if (state.bookmarksCount > 0) {
-            // TODO only wiggle on increment?
-            Wigglable(state.bookmarksCount) {
+            Wigglable(
+              state.bookmarksCount,
+              shouldWiggle = { old, new -> new > old },
+            ) {
               IconButton(
                 onClick = { eventSink(OpenBookmarks) },
               ) {
