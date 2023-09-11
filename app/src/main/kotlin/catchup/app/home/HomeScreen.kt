@@ -3,7 +3,10 @@ package catchup.app.home
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.annotation.ColorRes
 import androidx.compose.animation.Animatable
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -390,7 +393,11 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
             ChangelogButton { eventSink(ShowChangelog) }
           }
 
-          if (state.bookmarksCount > 0) {
+          AnimatedVisibility(
+            state.bookmarksCount > 0,
+            enter = fadeIn(),
+            exit = fadeOut(),
+          ) {
             Wigglable(
               state.bookmarksCount,
               shouldWiggle = { old, new -> new > old },
