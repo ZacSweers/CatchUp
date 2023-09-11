@@ -74,7 +74,7 @@ import kotlinx.parcelize.Parcelize
 
 /*
  * TODO
- *  - Empty state
+ *  - Export bookmarks
  */
 
 @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
