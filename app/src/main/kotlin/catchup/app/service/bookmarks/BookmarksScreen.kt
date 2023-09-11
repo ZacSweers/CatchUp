@@ -153,95 +153,106 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
       )
     },
   ) { innerPadding ->
-    // TODO empty state, but if I do an if/else check on itemCount the swipe dismiss throws an ISE
-    LazyColumn(Modifier.padding(innerPadding).fillMaxHeight()) {
-      items(
-        count = state.items.itemCount,
-        // Here we use the new itemKey extension on LazyPagingItems to
-        // handle placeholders automatically, ensuring you only need to provide
-        // keys for real items
-        key = state.items.itemKey { it.id },
-      ) { index ->
-        val item = state.items[index]
-        if (item == null) {
-          PlaceholderItem(Color.Unspecified)
-        } else {
-          val dismissState = rememberDismissState(confirmValueChange = { it == DismissedToStart })
+    if (state.items.itemCount == 0) {
+      Box(Modifier.padding(innerPadding).fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("No bookmarks", color = MaterialTheme.colorScheme.onBackground)
+      }
+    } else {
+      BookmarksList(state, Modifier.padding(innerPadding))
+    }
+  }
+}
 
-          if (dismissState.currentValue == DismissedToStart) {
-            // TODO offer an undo option after a pause?
-            // TODO no exit animation yet https://issuetracker.google.com/issues/150812265#comment30
-            state.eventSink(Remove(item.id))
-          }
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
+  LazyColumn(modifier.fillMaxHeight()) {
+    items(
+      count = state.items.itemCount,
+      // Here we use the new itemKey extension on LazyPagingItems to
+      // handle placeholders automatically, ensuring you only need to provide
+      // keys for real items
+      key = state.items.itemKey { it.id },
+    ) { index ->
+      val item = state.items[index]
+      if (item == null) {
+        PlaceholderItem(Color.Unspecified)
+      } else {
+        val dismissState = rememberDismissState(confirmValueChange = { it == DismissedToStart })
 
-          val serviceMeta = remember(item.serviceId) { state.serviceMetaMap[item.serviceId] }
-          val themeColorRes = remember(serviceMeta) { serviceMeta?.themeColor }
-          val themeColor = themeColorRes?.let { colorResource(it) } ?: Color.Unspecified
-          // When swiping from start to end, we don't dismiss and instead use this to indicate
-          // metadata about the bookmark, like the service it's from.
-          SwipeToDismiss(
-            modifier = Modifier.animateItemPlacement(),
-            state = dismissState,
-            background = {
-              val color =
-                when (dismissState.dismissDirection) {
-                  StartToEnd -> themeColor
-                  EndToStart -> MaterialTheme.colorScheme.error
-                  null -> Color.Unspecified
-                }
-              val alignment =
-                when (dismissState.dismissDirection) {
-                  StartToEnd -> Alignment.CenterStart
-                  EndToStart -> Alignment.CenterEnd
-                  null -> Alignment.CenterStart
-                }
-              Box(
-                modifier = Modifier.fillMaxSize().background(color),
-                contentAlignment = alignment,
-              ) {
-                when (dismissState.dismissDirection) {
-                  StartToEnd -> {
-                    serviceMeta?.let {
-                      Icon(
-                        imageVector = ImageVector.vectorResource(it.icon),
-                        contentDescription = stringResource(it.name),
-                        modifier = Modifier.padding(32.dp).size(32.dp),
-                        tint = Color.White,
-                      )
-                    }
-                  }
-                  EndToStart ->
-                    Icon(
-                      imageVector = Icons.Default.Delete,
-                      contentDescription = "Delete",
-                      modifier = Modifier.padding(32.dp).size(32.dp),
-                      tint = MaterialTheme.colorScheme.onError
-                    )
-                  null -> {
-                    // Do nothing
-                  }
-                }
+        if (dismissState.currentValue == DismissedToStart) {
+          // TODO offer an undo option after a pause?
+          // TODO no exit animation yet https://issuetracker.google.com/issues/150812265#comment30
+          state.eventSink(Remove(item.id))
+        }
+
+        val serviceMeta = remember(item.serviceId) { state.serviceMetaMap[item.serviceId] }
+        val themeColorRes = remember(serviceMeta) { serviceMeta?.themeColor }
+        val themeColor = themeColorRes?.let { colorResource(it) } ?: Color.Unspecified
+        // When swiping from start to end, we don't dismiss and instead use this to indicate
+        // metadata about the bookmark, like the service it's from.
+        SwipeToDismiss(
+          modifier = Modifier.animateItemPlacement(),
+          state = dismissState,
+          background = {
+            val color =
+              when (dismissState.dismissDirection) {
+                StartToEnd -> themeColor
+                EndToStart -> MaterialTheme.colorScheme.error
+                null -> Color.Unspecified
               }
-            },
-            dismissContent = {
-              val clickUrl = item.clickUrl
-              if (clickUrl != null) {
-                ClickableItem(
-                  modifier = Modifier.animateItemPlacement(),
-                  onClick = { state.eventSink(Click(clickUrl, themeColor.toArgb())) },
-                ) {
-                  TextItem(item, themeColor)
+            val alignment =
+              when (dismissState.dismissDirection) {
+                StartToEnd -> Alignment.CenterStart
+                EndToStart -> Alignment.CenterEnd
+                null -> Alignment.CenterStart
+              }
+            Box(
+              modifier = Modifier.fillMaxSize().background(color),
+              contentAlignment = alignment,
+            ) {
+              when (dismissState.dismissDirection) {
+                StartToEnd -> {
+                  serviceMeta?.let {
+                    Icon(
+                      imageVector = ImageVector.vectorResource(it.icon),
+                      contentDescription = stringResource(it.name),
+                      modifier = Modifier.padding(32.dp).size(32.dp),
+                      tint = Color.White,
+                    )
+                  }
                 }
-              } else {
-                TextItem(
-                  item,
-                  themeColor,
-                  modifier = Modifier.animateItemPlacement(),
-                )
+                EndToStart ->
+                  Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    modifier = Modifier.padding(32.dp).size(32.dp),
+                    tint = MaterialTheme.colorScheme.onError
+                  )
+                null -> {
+                  // Do nothing
+                }
               }
             }
-          )
-        }
+          },
+          dismissContent = {
+            val clickUrl = item.clickUrl
+            if (clickUrl != null) {
+              ClickableItem(
+                modifier = Modifier.animateItemPlacement(),
+                onClick = { state.eventSink(Click(clickUrl, themeColor.toArgb())) },
+              ) {
+                TextItem(item, themeColor)
+              }
+            } else {
+              TextItem(
+                item,
+                themeColor,
+                modifier = Modifier.animateItemPlacement(),
+              )
+            }
+          }
+        )
       }
     }
   }
