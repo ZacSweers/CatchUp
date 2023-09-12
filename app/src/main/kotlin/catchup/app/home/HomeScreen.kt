@@ -120,6 +120,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
+// TODO generalize metas to allow dynamic ones, like settings/bookmarks
 @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
 @StringKey("home")
 @Parcelize
