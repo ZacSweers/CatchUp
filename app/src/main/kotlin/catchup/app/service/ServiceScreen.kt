@@ -221,7 +221,7 @@ constructor(
               val shareIntent =
                 Intent().apply {
                   action = Intent.ACTION_SEND
-                  putExtra(Intent.EXTRA_TEXT, url)
+                  putExtra(Intent.EXTRA_TEXT, "${event.item.title}\n\n${event.item.clickUrl}")
                   type = "text/plain"
                 }
               navigator.goTo(IntentScreen(Intent.createChooser(shareIntent, "Share")))

@@ -1,5 +1,7 @@
 package catchup.app.service.bookmarks
 
+import android.content.Context
+import android.content.Intent
 import androidx.annotation.ColorInt
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -12,12 +14,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DismissDirection.EndToStart
 import androidx.compose.material3.DismissDirection.StartToEnd
 import androidx.compose.material3.DismissValue.Default
 import androidx.compose.material3.DismissValue.DismissedToStart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismiss
@@ -50,6 +54,7 @@ import catchup.app.service.TextItem
 import catchup.app.service.UrlMeta
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Click
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Remove
+import catchup.app.service.bookmarks.BookmarksScreen.Event.Share
 import catchup.base.ui.BackPressNavButton
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.rememberStableCoroutineScope
@@ -57,26 +62,29 @@ import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ServiceMeta
+import catchup.util.share.createFileShareIntent
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuitx.android.IntentScreen
 import com.squareup.anvil.annotations.ContributesMultibinding
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
 import dev.zacsweers.catchup.R.string
-import javax.inject.Inject
+import java.nio.file.Path
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.createTempFile
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
-
-/*
- * TODO
- *  - Export bookmarks
- *  - Share individual items on longpress
- */
 
 @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
 @StringKey("bookmarks")
@@ -94,18 +102,27 @@ object BookmarksScreen : Screen, DeepLinkable {
     data class Click(val url: String, @ColorInt val themeColor: Int) : Event
 
     data class Remove(val id: Long) : Event
+
+    data object Share : Event
   }
 }
 
-@CircuitInject(BookmarksScreen::class, AppScope::class)
 @OptIn(ExperimentalPagingApi::class)
 class BookmarksPresenter
-@Inject
+@AssistedInject
 constructor(
+  @Assisted private val navigator: Navigator,
   private val bookmarksRepository: BookmarkRepository,
   private val linkManager: LinkManager,
   private val serviceMetaMap: Map<String, ServiceMeta>,
 ) : Presenter<BookmarksScreen.State> {
+
+  @CircuitInject(BookmarksScreen::class, AppScope::class)
+  @AssistedFactory
+  fun interface Factory {
+    fun create(navigator: Navigator): BookmarksPresenter
+  }
+
   @Composable
   override fun present(): BookmarksScreen.State {
     val itemsFlow = remember {
@@ -126,9 +143,7 @@ constructor(
     return BookmarksScreen.State(lazyItems, metaMap) { event ->
       when (event) {
         is Remove -> {
-          scope.launch {
-            bookmarksRepository.removeBookmark(event.id)
-          }
+          scope.launch { bookmarksRepository.removeBookmark(event.id) }
         }
         is Click -> {
           scope.launch {
@@ -136,13 +151,44 @@ constructor(
             linkManager.openUrl(meta)
           }
         }
+        Share -> scope.launch { shareAll(context, metaMap) }
       }
     }
+  }
+
+  private suspend fun shareAll(
+    context: Context,
+    serviceMetaMap: ImmutableMap<String, ServiceMeta>,
+  ) {
+    val intent =
+      withContext(Dispatchers.IO) {
+        val items = bookmarksRepository.bookmarksQuery(Long.MAX_VALUE, 0).executeAsList()
+        val path = writeItemsToPath(context, items, serviceMetaMap)
+        createFileShareIntent(context, path.toFile(), "text/csv")
+      }
+    val chooser = Intent.createChooser(intent, "Share bookmarks")
+    navigator.goTo(IntentScreen(chooser))
+  }
+
+  private fun writeItemsToPath(
+    context: Context,
+    items: List<CatchUpItem>,
+    serviceMetaMap: ImmutableMap<String, ServiceMeta>,
+  ): Path {
+    val path = createTempFile(context.cacheDir.toPath(), "bookmarks", ".csv")
+    path.bufferedWriter().use { writer ->
+      writer.appendLine("Title,URL,Service")
+      items.forEach { item ->
+        val service = serviceMetaMap[item.serviceId]?.name ?: item.serviceId
+        writer.appendLine("${item.title},${item.clickUrl},$service")
+      }
+    }
+    return path
   }
 }
 
 @CircuitInject(BookmarksScreen::class, AppScope::class)
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
   Scaffold(
@@ -153,6 +199,14 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
       TopAppBar(
         title = { Text(stringResource(string.title_bookmarks)) },
         navigationIcon = { BackPressNavButton() },
+        actions = {
+          IconButton({ state.eventSink(Share) }) {
+            Icon(
+              imageVector = Icons.Default.Share,
+              contentDescription = "Share",
+            )
+          }
+        },
       )
     },
   ) { innerPadding ->
