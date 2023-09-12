@@ -40,18 +40,9 @@ internal class BookmarkRepositoryImpl(private val database: CatchUpDatabase) : B
   private val scope = CoroutineScope(Dispatchers.IO)
 
   // Maintain an in-memory cache of all the bookmarks
-  private val bookmarks = MutableStateFlow(LinkedHashSet<Long>())
-
-  init {
-    scope.launch {
-      val idsFlow =
-        database.transactionWithResult { database.bookmarksQueries.bookmarkIds().asFlow() }
-      idsFlow.collect { query ->
-        // Preserve order
-        bookmarks.emit(query.executeAsList().mapTo(LinkedHashSet(), Bookmark::id))
-      }
-    }
-  }
+private val bookmarks = database.transactionWithResult { database.bookmarksQueries.bookmarkIds().asFlow() }
+  .map { it.executeAsList().mapTo(LinkedHashSet(), Bookmark::id) }
+  .stateIn(scope, SharingStarted.Eagerly, LinkedHashSet<Long>())
 
   override fun addBookmark(id: Long, timestamp: Instant) {
     scope.launch { database.transaction { database.bookmarksQueries.addBookmark(id, timestamp) } }
