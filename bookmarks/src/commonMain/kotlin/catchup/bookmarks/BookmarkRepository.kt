@@ -13,8 +13,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock.System
 import kotlinx.datetime.Instant
@@ -42,7 +44,7 @@ internal class BookmarkRepositoryImpl(private val database: CatchUpDatabase) : B
   // Maintain an in-memory cache of all the bookmarks
 private val bookmarks = database.transactionWithResult { database.bookmarksQueries.bookmarkIds().asFlow() }
   .map { it.executeAsList().mapTo(LinkedHashSet(), Bookmark::id) }
-  .stateIn(scope, SharingStarted.Eagerly, LinkedHashSet<Long>())
+  .stateIn(scope, SharingStarted.Eagerly, emptySet())
 
   override fun addBookmark(id: Long, timestamp: Instant) {
     scope.launch { database.transaction { database.bookmarksQueries.addBookmark(id, timestamp) } }
