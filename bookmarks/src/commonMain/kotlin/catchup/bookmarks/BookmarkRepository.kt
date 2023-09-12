@@ -18,13 +18,14 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock.System
 import kotlinx.datetime.Instant
 
 interface BookmarkRepository {
-  fun addBookmark(id: Long, timestamp: Instant = System.now())
+  suspend fun addBookmark(id: Long, timestamp: Instant = System.now())
 
-  fun removeBookmark(id: Long)
+  suspend fun removeBookmark(id: Long)
 
   fun isBookmarked(id: Long): Flow<Boolean>
 
@@ -38,20 +39,22 @@ interface BookmarkRepository {
   fun bookmarksQuery(limit: Long, offset: Long): Query<CatchUpItem>
 }
 
-internal class BookmarkRepositoryImpl(private val database: CatchUpDatabase) : BookmarkRepository {
-  private val scope = CoroutineScope(Dispatchers.IO)
+internal class BookmarkRepositoryImpl(
+  private val database: CatchUpDatabase,
+  scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+) : BookmarkRepository {
 
   // Maintain an in-memory cache of all the bookmarks
 private val bookmarks = database.transactionWithResult { database.bookmarksQueries.bookmarkIds().asFlow() }
   .map { it.executeAsList().mapTo(LinkedHashSet(), Bookmark::id) }
   .stateIn(scope, SharingStarted.Eagerly, emptySet())
 
-  override fun addBookmark(id: Long, timestamp: Instant) {
-    scope.launch { database.transaction { database.bookmarksQueries.addBookmark(id, timestamp) } }
+  override suspend fun addBookmark(id: Long, timestamp: Instant) {
+    withContext(Dispatchers.IO) { database.transaction { database.bookmarksQueries.addBookmark(id, timestamp) } }
   }
 
-  override fun removeBookmark(id: Long) {
-    scope.launch { database.transaction { database.bookmarksQueries.removeBookmark(id) } }
+  override suspend fun removeBookmark(id: Long) {
+    withContext(Dispatchers.IO) { database.transaction { database.bookmarksQueries.removeBookmark(id) } }
   }
 
   override fun isBookmarked(id: Long) = bookmarks.map { id in it }

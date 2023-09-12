@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import catchup.app.service.TextActionItem
 import catchup.app.service.bookmarks.BookmarkIconScreen.State
 import catchup.bookmarks.BookmarkRepository
+import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiState
@@ -18,6 +19,7 @@ import com.slack.circuit.runtime.screen.Screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -37,11 +39,14 @@ constructor(
   @Composable
   override fun present(): State {
     val isBookmarked by bookmarkRepository.isBookmarked(screen.id).collectAsState(false)
+    val scope = rememberStableCoroutineScope()
     return State(isBookmarked, themeColor) {
-      if (isBookmarked) {
-        bookmarkRepository.removeBookmark(screen.id)
-      } else {
-        bookmarkRepository.addBookmark(screen.id)
+      scope.launch {
+        if (isBookmarked) {
+          bookmarkRepository.removeBookmark(screen.id)
+        } else {
+          bookmarkRepository.addBookmark(screen.id)
+        }
       }
     }
   }
