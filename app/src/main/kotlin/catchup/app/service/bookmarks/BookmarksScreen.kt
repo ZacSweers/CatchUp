@@ -126,7 +126,9 @@ constructor(
     return BookmarksScreen.State(lazyItems, metaMap) { event ->
       when (event) {
         is Remove -> {
-          bookmarksRepository.removeBookmark(event.id)
+          scope.launch {
+            bookmarksRepository.removeBookmark(event.id)
+          }
         }
         is Click -> {
           scope.launch {
