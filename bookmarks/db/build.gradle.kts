@@ -35,12 +35,13 @@ kotlin {
       dependencies {
         api(libs.kotlin.datetime)
         api(libs.sqldelight.runtime)
+        api(projects.serviceDb)
       }
     }
   }
 }
 
-android { namespace = "catchup.service.db" }
+android { namespace = "catchup.bookmarks.db" }
 
 slack {
   features {
@@ -51,7 +52,10 @@ slack {
 sqldelight {
   databases {
     create("CatchUpDatabase") {
-      packageName.set("catchup.service.db")
+      packageName.set("catchup.bookmarks.db")
+      dependency(projects.serviceDb)
+      schemaOutputDirectory.set(layout.projectDirectory.dir("src/commonMain/sqldelight/databases"))
+      migrationOutputDirectory.set(layout.projectDirectory.dir("src/commonMain/sqldelight/migrations"))
     }
   }
 }

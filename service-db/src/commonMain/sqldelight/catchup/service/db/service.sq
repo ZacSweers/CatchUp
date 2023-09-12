@@ -112,7 +112,7 @@ ORDER BY indexInResponse ASC
 -- Used for PagingSource<Int, CatchUpItem>
 LIMIT ? OFFSET ?;
 
-deleteItemByService:
+deleteItemsByService:
 DELETE FROM catchUpDbItem WHERE serviceId = ?;
 
 getNextIndexInService:

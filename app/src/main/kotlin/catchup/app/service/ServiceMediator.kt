@@ -6,10 +6,11 @@ import androidx.paging.LoadType.REFRESH
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import catchup.app.data.lastUpdated
-import catchup.service.CatchUpDbItem
 import catchup.service.api.DataRequest
 import catchup.service.api.Service
+import catchup.service.api.toCatchUpDbItem
 import catchup.service.db.CatchUpDatabase
+import catchup.service.db.CatchUpDbItem
 import com.apollographql.apollo3.exception.ApolloException
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -139,7 +140,7 @@ constructor(
         catchUpDatabase.transaction {
           if (loadType == REFRESH) {
             Timber.tag("ServiceMediator").d("Clearing DB $serviceId")
-            catchUpDatabase.serviceQueries.deleteItemByService(serviceId)
+            catchUpDatabase.serviceQueries.deleteItemsByService(serviceId)
             catchUpDatabase.serviceQueries.deleteOperationsByService(serviceId)
             catchUpDatabase.serviceQueries.deleteRemoteKeyByService(serviceId)
           }

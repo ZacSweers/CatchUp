@@ -1,0 +1,25 @@
+import kotlinx.datetime.Instant;
+
+CREATE TABLE IF NOT EXISTS bookmark (
+  id INTEGER NOT NULL PRIMARY KEY,
+  timestamp INTEGER AS Instant NOT NULL
+);
+
+addBookmark:
+INSERT OR REPLACE INTO bookmark (id, timestamp) VALUES (?, ?);
+
+bookmarkIds:
+SELECT * FROM bookmark ORDER BY timestamp;
+
+removeBookmark:
+DELETE FROM bookmark WHERE id = ?;
+
+bookmarkedItemsCount:
+SELECT count(*) FROM bookmark;
+
+bookmarkedItems:
+SELECT c.*
+FROM catchUpDbItem AS c
+INNER JOIN bookmark ON c.id = bookmark.id
+ORDER BY bookmark.timestamp
+LIMIT :limit OFFSET :offset;
