@@ -264,7 +264,7 @@ collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "coll
 test-junit = "junit:junit:4.13.2"
 test-truth = "com.google.truth:truth:1.1.5"
 
-xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.86.1"
+xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.86.2"
 xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.86.1"
 
 [bundles]
