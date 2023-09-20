@@ -19,7 +19,7 @@ plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.android.library)
   alias(libs.plugins.sgp.base)
-  alias(libs.plugins.sqldelight)
+  alias(libs.plugins.anvil)
 }
 
 kotlin {
@@ -34,24 +34,27 @@ kotlin {
     commonMain {
       dependencies {
         api(libs.kotlin.datetime)
+        api(libs.sqldelight.coroutines)
         api(libs.sqldelight.runtime)
+        api(projects.bookmarks.db)
+
+        implementation(projects.serviceApi)
       }
     }
+    val jvmMain by getting {
+      dependencies {
+        implementation(libs.anvil.annotations)
+      }
+    }
+    val androidMain by getting
+    androidMain.dependsOn(jvmMain)
   }
 }
 
-android { namespace = "catchup.service.db" }
+android { namespace = "catchup.bookmarks" }
 
 slack {
   features {
     dagger()
-  }
-}
-
-sqldelight {
-  databases {
-    create("CatchUpDatabase") {
-      packageName.set("catchup.service.db")
-    }
   }
 }
