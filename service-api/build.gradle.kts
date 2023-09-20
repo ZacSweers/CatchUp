@@ -27,12 +27,13 @@ kotlin {
   jvm()
   // endregion
 
-  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+  applyDefaultHierarchyTemplate()
 
   sourceSets {
     commonMain {
       dependencies {
         api(libs.androidx.annotations)
+        api(libs.anvil.annotations)
         api(libs.compose.runtime)
         api(libs.dagger.runtime)
         api(libs.kotlin.datetime)

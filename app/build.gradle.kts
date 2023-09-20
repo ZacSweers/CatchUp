@@ -417,7 +417,6 @@ tasks.matching { it.name == "licenseeDebug" }.configureEach { enabled = false }
 licensee {
   allow("Apache-2.0")
   allow("MIT")
-  allow("CC0-1.0")
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
