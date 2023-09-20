@@ -13,8 +13,8 @@ coil = "2.4.0"
 compose = "1.6.0-alpha05"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
-compose-compiler = "1.5.3"
-compose-compiler-kotlinVersion = "1.9.10"
+compose-compiler = "1.5.4-dev-k1.9.20-Beta-692cbee7ddd"
+compose-compiler-kotlinVersion = "1.9.20-Beta"
 compose-jb = "1.5.1"
 compose-jb-compiler = "1.5.2"
 compose-jb-kotlinVersion = "1.9.0"
@@ -27,16 +27,16 @@ eithernet = "1.5.0"
 flipper = "0.220.0"
 jdk = "20"
 jvmTarget = "11"
-kotlin = "1.9.10"
+kotlin = "1.9.20-Beta"
 kotlinx-metadata = "0.7.0"
 kotlinx-serialization = "1.6.0"
-ksp = "1.9.10-1.0.13"
+ksp = "1.9.20-Beta-1.0.13"
 ktfmt = "0.44"
 leakcanary = "2.12"
 lifecycle = "2.7.0-alpha02"
 markwon = "4.6.2"
 moshi = "1.15.0"
-moshix = "0.24.3"
+moshix = "0.25.0-alpha01"
 okhttp = "5.0.0-alpha.11"
 preferences = "1.2.1"
 retrofit = "2.9.0"
@@ -72,7 +72,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.7.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.8.4" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.6.1" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.7.0-alpha01" }
 retry = { id = "org.gradle.test-retry", version = "1.5.5" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
 sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
