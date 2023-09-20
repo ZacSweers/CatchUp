@@ -1,11 +1,7 @@
-package catchup.app.service
+package catchup.service.api
 
-import catchup.service.CatchUpDbItem
-import catchup.service.api.CatchUpItem
-import catchup.service.api.ContentType
-import catchup.service.api.ImageInfo
-import catchup.service.api.Mark
 import catchup.service.api.Mark.MarkType
+import catchup.service.db.CatchUpDbItem
 
 fun CatchUpItem.toCatchUpDbItem(): CatchUpDbItem {
   return CatchUpDbItem(
