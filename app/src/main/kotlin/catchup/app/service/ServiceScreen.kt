@@ -68,6 +68,7 @@ import catchup.service.db.CatchUpDatabase
 import catchup.summarizer.SummarizerScreen
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -219,7 +220,7 @@ constructor(
     val rememberedSink by rememberUpdatedState(eventSink)
 
     val itemsFlow =
-      remember(service.meta()) {
+      rememberRetained(service.meta()) {
         // TODO
         //  preference page size
         //  retain pager or even the flow?
