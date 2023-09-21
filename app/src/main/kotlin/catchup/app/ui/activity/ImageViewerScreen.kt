@@ -41,7 +41,6 @@ import androidx.compose.ui.zIndex
 import androidx.core.view.WindowInsetsControllerCompat
 import catchup.app.data.LinkManager
 import catchup.app.service.UrlMeta
-import catchup.app.ui.activity.FlickToDismissState.FlickGestureState.Dismissed
 import catchup.app.ui.activity.ImageViewerScreen.Event
 import catchup.app.ui.activity.ImageViewerScreen.Event.Close
 import catchup.app.ui.activity.ImageViewerScreen.Event.CopyImage
@@ -75,14 +74,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.R
 import kotlinx.collections.immutable.ImmutableList
-import dev.zacsweers.catchup.compose.CatchUpTheme
-import dev.zacsweers.catchup.compose.rememberStableCoroutineScope
-import dev.zacsweers.catchup.di.AppScope
-import io.sweers.catchup.R
-import io.sweers.catchup.base.ui.NavButton
-import io.sweers.catchup.base.ui.NavButtonType
-import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.service.api.UrlMeta
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
