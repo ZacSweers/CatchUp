@@ -57,6 +57,8 @@ import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
+import com.slack.circuit.retained.LocalRetainedStateRegistry
+import com.slack.circuit.retained.continuityRetainedStateRegistry
 import com.slack.circuitx.android.rememberAndroidScreenAwareNavigator
 import com.slack.circuitx.gesturenavigation.GestureNavigationDecoration
 import com.squareup.anvil.annotations.ContributesMultibinding
@@ -136,6 +138,7 @@ constructor(
       val displayFeatures = calculateDisplayFeatures(this)
       CompositionLocalProvider(
         LocalDisplayFeatures provides displayFeatures,
+        LocalRetainedStateRegistry provides continuityRetainedStateRegistry(),
         // Override LocalContext to one that's set to our daynight modes, as many compose APIs use
         // LocalContext under the hood
         LocalContext provides contextToUse,
@@ -156,10 +159,11 @@ constructor(
                 NavigableCircuitContent(
                   intentAwareNavigator,
                   backstack,
-                  decoration = GestureNavigationDecoration(
-                    // Pop the back stack once the user has gone 'back'
-                    navigator::pop
-                  )
+                  decoration =
+                    GestureNavigationDecoration(
+                      // Pop the back stack once the user has gone 'back'
+                      navigator::pop
+                    )
                 )
               }
             }
