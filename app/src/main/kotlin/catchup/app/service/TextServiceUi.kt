@@ -68,6 +68,7 @@ import catchup.service.api.canBeSummarized
 import catchup.util.kotlin.format
 import catchup.util.primaryLocale
 import com.slack.circuit.foundation.CircuitContent
+import com.slack.circuit.retained.rememberRetained
 import dev.zacsweers.catchup.R
 import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Clock
@@ -85,8 +86,8 @@ fun TextServiceUi(
   ScrollToTopHandler(state)
 
   // Only animate items in on first load
-  var animatePlacement by remember { mutableStateOf(true) }
-  var expandedItemIndex by remember { mutableIntStateOf(-1) }
+  var animatePlacement by rememberRetained { mutableStateOf(true) }
+  var expandedItemIndex by rememberRetained { mutableIntStateOf(-1) }
   LazyColumn(
     modifier = modifier,
     state = state,

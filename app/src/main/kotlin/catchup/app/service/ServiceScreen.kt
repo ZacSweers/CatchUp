@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.map
@@ -81,7 +81,6 @@ import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.R
 import javax.inject.Provider
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -90,18 +89,18 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 @Parcelize
 data class ServiceScreen(val serviceKey: String) : Screen {
   sealed interface State : CircuitUiState {
-    val items: Flow<PagingData<CatchUpItem>>
+    val items: LazyPagingItems<CatchUpItem>
     val themeColor: Color
     val eventSink: (Event) -> Unit
 
     data class TextState(
-      override val items: Flow<PagingData<CatchUpItem>>,
+      override val items: LazyPagingItems<CatchUpItem>,
       override val themeColor: Color,
       override val eventSink: (Event) -> Unit
     ) : State
 
     data class VisualState(
-      override val items: Flow<PagingData<CatchUpItem>>,
+      override val items: LazyPagingItems<CatchUpItem>,
       override val themeColor: Color,
       override val eventSink: (Event) -> Unit
     ) : State
@@ -148,29 +147,7 @@ constructor(
         regularColor = { colorResource(service.meta().themeColor) },
         dynamicColor = { MaterialTheme.colorScheme.primary }
       )
-    // TODO what's the right thing and scope to retain?
-    // TODO this leaks the activity after destroy if using rememberRetained
-    val pager = remember {
-      // TODO
-      //  preference page size
-      //  retain pager or even the flow?
-      Pager(
-        config = PagingConfig(pageSize = 50),
-        initialKey = service.meta().firstPageKey,
-        remoteMediator = serviceMediatorFactory.create(service = service)
-      ) {
-        QueryPagingSource(
-          countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
-          transacter = catchUpDatabase.serviceQueries,
-          context = Dispatchers.IO,
-          queryProvider = { limit, offset ->
-            catchUpDatabase.serviceQueries.itemsByService(service.meta().id, limit, offset)
-          },
-        )
-      }
-    }
-    val items: Flow<PagingData<CatchUpItem>> =
-      remember(pager) { pager.flow.map { data -> data.map { it.toCatchUpItem() } } }
+
     val coroutineScope = rememberCoroutineScope()
     val overlayHost = LocalOverlayHost.current
     val eventSink: (Event) -> Unit = { event ->
@@ -239,9 +216,34 @@ constructor(
         }
       }
     }
+    val rememberedSink by rememberUpdatedState(eventSink)
+
+    val itemsFlow =
+      remember(service.meta()) {
+        // TODO
+        //  preference page size
+        //  retain pager or even the flow?
+        Pager(
+            config = PagingConfig(pageSize = 50),
+            initialKey = service.meta().firstPageKey,
+            remoteMediator = serviceMediatorFactory.create(service = service)
+          ) {
+            QueryPagingSource(
+              countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
+              transacter = catchUpDatabase.serviceQueries,
+              context = Dispatchers.IO,
+              queryProvider = { limit, offset ->
+                catchUpDatabase.serviceQueries.itemsByService(service.meta().id, limit, offset)
+              },
+            )
+          }
+          .flow
+          .map { data -> data.map { it.toCatchUpItem() } }
+      }
+    val items = itemsFlow.collectAsLazyPagingItems()
     return when (service.meta().isVisual) {
-      true -> VisualState(items = items, themeColor = themeColor, eventSink = eventSink)
-      false -> TextState(items = items, themeColor = themeColor, eventSink = eventSink)
+      true -> VisualState(items = items, themeColor = themeColor, eventSink = rememberedSink)
+      false -> TextState(items = items, themeColor = themeColor, eventSink = rememberedSink)
     }
   }
 
@@ -255,14 +257,13 @@ constructor(
 @CircuitInject(ServiceScreen::class, AppScope::class)
 @Composable
 fun Service(state: State, modifier: Modifier = Modifier) {
-  val lazyItems: LazyPagingItems<CatchUpItem> = state.items.collectAsLazyPagingItems()
   var refreshing by remember { mutableStateOf(false) }
-  val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh = lazyItems::refresh)
+  val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh = state.items::refresh)
   Box(modifier.pullRefresh(pullRefreshState)) {
     if (state is VisualState) {
-      VisualServiceUi(lazyItems, state.themeColor, { refreshing = it }, state.eventSink)
+      VisualServiceUi(state.items, state.themeColor, { refreshing = it }, state.eventSink)
     } else {
-      TextServiceUi(lazyItems, state.themeColor, { refreshing = it }, state.eventSink)
+      TextServiceUi(state.items, state.themeColor, { refreshing = it }, state.eventSink)
     }
 
     PullRefreshIndicator(
