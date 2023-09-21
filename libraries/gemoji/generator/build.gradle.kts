@@ -1,19 +1,19 @@
 plugins {
-  kotlin("jvm")
-  `application`
+  alias(libs.plugins.kotlin.jvm)
+  application
   alias(libs.plugins.moshix)
   alias(libs.plugins.sqldelight)
 }
 
 application {
-  mainClass.set("dev.zacsweers.catchup.gemoji.generator.MainKt")
+  mainClass.set("catchup.gemoji.generator.MainKt")
 }
 
 sqldelight {
   databases {
     create("GemojiDatabase") {
       // Must be set before dependencies
-      packageName.set("dev.zacsweers.catchup.gemoji.db.mutable")
+      packageName.set("catchup.gemoji.db.mutable")
       dependency(projects.libraries.gemoji.db)
       schemaOutputDirectory.set(layout.projectDirectory.dir("src/main/sqldelight/databases"))
       migrationOutputDirectory.set(layout.projectDirectory.dir("src/main/sqldelight/migrations"))

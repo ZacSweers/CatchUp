@@ -20,9 +20,9 @@
   <uses-permission android:name="android.permission.INTERNET" />
 
   <application
-      android:name=".app.CatchUpApplication"
+      android:name="catchup.app.CatchUpApplication"
       android:allowBackup="false"
-      android:appComponentFactory="io.sweers.catchup.di.CatchUpAppComponentFactory"
+      android:appComponentFactory="catchup.app.di.CatchUpAppComponentFactory"
       android:colorMode="wideColorGamut"
       android:enableOnBackInvokedCallback="true"
       android:icon="@mipmap/ic_launcher"
@@ -33,7 +33,7 @@
       tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
       tools:replace="android:appComponentFactory">
     <activity
-        android:name=".ui.activity.MainActivity"
+        android:name="catchup.app.ui.activity.MainActivity"
         android:configChanges="colorMode|density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
         android:exported="true"
         android:launchMode="singleTask">

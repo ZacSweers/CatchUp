@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.sweers.catchup.util
+package catchup.util
 
+import catchup.util.kotlin.format
+import catchup.util.kotlin.shorten
 import com.google.common.truth.Truth.assertThat
-import io.sweers.catchup.util.kotlin.format
-import io.sweers.catchup.util.kotlin.shorten
 import java.util.Locale
 import org.junit.After
 import org.junit.Before

@@ -15,13 +15,13 @@
  */
 
 plugins {
-  id("com.android.library")
-  kotlin("android")
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.sgp.base)
 }
 
 android {
-  namespace = "io.sweers.catchup.flowbinding"
+  namespace = "catchup.flowbinding"
 }
 
 dependencies {

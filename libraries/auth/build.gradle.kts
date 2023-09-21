@@ -13,23 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-  kotlin("jvm")
+  alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.moshix)
+  // TODO https://github.com/slackhq/slack-gradle-plugin/issues/559
+  id("com.android.lint")
 }
 
-dependencies {
-  api(libs.androidx.annotations)
-  api(libs.misc.okio)
-  api(libs.okhttp.core)
+kotlin {
+  // region KMP Targets
+  jvm()
+  // endregion
 
-  implementation(libs.androidx.datastore.preferences.core)
-  implementation(libs.eithernet)
-  implementation(libs.kotlin.coroutines)
-  implementation(libs.kotlin.datetime)
-  implementation(libs.okhttp.core)
-  implementation(libs.retrofit.core)
-  implementation(libs.retrofit.moshi)
+  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+
+  sourceSets {
+    commonMain {
+      dependencies {
+        api(libs.androidx.annotations)
+        api(libs.dagger.runtime)
+        api(libs.misc.okio)
+        api(libs.okhttp.core)
+
+        implementation(libs.androidx.datastore.preferences.core)
+        implementation(libs.eithernet)
+        implementation(libs.kotlin.coroutines)
+        implementation(libs.kotlin.datetime)
+        implementation(libs.okhttp.core)
+        implementation(libs.retrofit.core)
+        implementation(libs.retrofit.moshi)
+}
+    }
+  }
 }

@@ -2,9 +2,9 @@ import com.android.build.api.variant.BuildConfigField
 
 plugins {
   alias(libs.plugins.sgp.base)
-  id("com.android.library")
-  kotlin("android")
-  kotlin("plugin.parcelize")
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
 }
@@ -18,14 +18,14 @@ slack {
 }
 
 android {
-  namespace = "dev.zacsweers.catchup.summarizer"
+  namespace = "catchup.summarizer"
   buildFeatures { buildConfig = true }
 }
 
 sqldelight {
   databases {
     create("SummarizationsDatabase") {
-      packageName.set("dev.zacsweers.catchup.summarizer")
+      packageName.set("catchup.summarizer")
     }
   }
 }

@@ -13,12 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-  kotlin("jvm")
+  alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sgp.base)
+  // TODO https://github.com/slackhq/slack-gradle-plugin/issues/559
+  id("com.android.lint")
 }
 
-dependencies {
-  api(libs.kotlin.coroutines)
+kotlin {
+  // region KMP Targets
+  jvm()
+  // endregion
+
+  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+
+  sourceSets {
+    commonMain {
+      dependencies {
+        api(libs.kotlin.coroutines)
+      }
+    }
+  }
 }

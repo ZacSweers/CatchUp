@@ -16,8 +16,8 @@
 
 plugins {
   alias(libs.plugins.sgp.base)
-  id("com.android.library")
-  kotlin("android")
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -28,7 +28,7 @@ android {
   buildFeatures {
     buildConfig = true
   }
-  namespace = "io.sweers.catchup.service.unsplash"
+  namespace = "catchup.service.unsplash"
 }
 
 slack {

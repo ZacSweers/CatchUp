@@ -29,10 +29,10 @@ import okio.source
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("com.android.application")
-  kotlin("android")
-  kotlin("kapt")
-  kotlin("plugin.parcelize")
+  alias(libs.plugins.android.application)
+  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.kotlin.kapt)
+  alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.apollo)
   alias(libs.plugins.licensee)
@@ -59,7 +59,7 @@ val useDebugSigning: Boolean =
 
 android {
   defaultConfig {
-    applicationId = "io.sweers.catchup"
+    applicationId = "dev.zacsweers.catchup"
 
     // These are for debug only. Release versioning is set by CatchUpPlugin
     versionCode = 1
@@ -128,7 +128,7 @@ android {
     error += "ComposeUnstableCollections"
     checkDependencies = true
   }
-  namespace = "io.sweers.catchup"
+  namespace = "dev.zacsweers.catchup"
 }
 
 bugsnag {
@@ -147,8 +147,8 @@ apollo {
     customScalarsMapping.set(
       mapOf("DateTime" to "kotlinx.datetime.Instant", "URI" to "okhttp3.HttpUrl")
     )
-    packageName.set("io.sweers.catchup.data.github")
-    schemaFile.set(file("src/main/graphql/io/sweers/catchup/data/github/schema.json"))
+    packageName.set("catchup.app.data.github")
+    schemaFile.set(file("src/main/graphql/catchup/app/data/github/schema.json"))
   }
 }
 
@@ -491,9 +491,9 @@ dependencies {
   implementation(libs.androidx.coreKtx)
   implementation(libs.androidx.customTabs)
   implementation(libs.androidx.datastore.preferences)
+  implementation(libs.androidx.datastore.preferences.core)
   implementation(libs.androidx.design)
   implementation(libs.androidx.emojiAppcompat)
-  implementation(libs.androidx.fragment)
   implementation(libs.androidx.lifecycle.extensions)
   implementation(libs.androidx.lifecycle.ktx)
   implementation(libs.androidx.paging.compose)
@@ -503,6 +503,7 @@ dependencies {
   implementation(libs.androidx.profileinstaller)
   implementation(libs.androidx.splashscreen)
   implementation(libs.androidx.window)
+  implementation(libs.apollo.api)
   implementation(libs.apollo.httpcache)
   implementation(libs.apollo.normalizedCache)
   implementation(libs.apollo.runtime)
@@ -513,8 +514,10 @@ dependencies {
   implementation(libs.circuit.retained)
   implementation(libs.circuit.runtime)
   implementation(libs.circuit.runtime.presenter)
+  implementation(libs.circuit.runtime.screen)
   implementation(libs.circuit.runtime.ui)
   implementation(libs.circuitx.android)
+  implementation(libs.circuitx.gestureNav)
   implementation(libs.circuitx.overlays)
   implementation(libs.coil.base)
   implementation(libs.coil.compose)
@@ -539,7 +542,6 @@ dependencies {
   implementation(libs.misc.composeSettings.base)
   implementation(libs.misc.composeSettings.datastore)
   implementation(libs.misc.debug.processPhoenix)
-  implementation(libs.misc.lottie)
   implementation(libs.misc.moshiLazyAdapters)
   implementation(libs.misc.okio)
   implementation(libs.misc.tapTargetView)
@@ -555,6 +557,7 @@ dependencies {
   implementation(libs.telephoto.flick)
   implementation(libs.telephoto.zoomableImageCoil)
   implementation(libs.xmlutil.serialization)
+  implementation(projects.bookmarks)
   implementation(projects.libraries.appconfig)
   implementation(projects.libraries.auth)
   implementation(projects.libraries.baseUi)
