@@ -8,7 +8,7 @@ compose-material3 = "1.2.0-alpha08"
 emoji = "1.2.0-alpha03"
 anvil = "2.4.8"
 apollo = "3.8.2"
-circuit = "0.14.0"
+circuit = "0.14.1"
 coil = "2.4.0"
 compose = "1.6.0-alpha06"
 # Pre-release versions for testing Kotlin previews can be found here
@@ -172,6 +172,7 @@ circuit-runtime-ui = { module = "com.slack.circuit:circuit-runtime-ui", version.
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegenAnnotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
 circuitx-android = { module = "com.slack.circuit:circuitx-android", version.ref = "circuit" }
+circuitx-gestureNav = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
 circuitx-overlays = { module = "com.slack.circuit:circuitx-overlays", version.ref = "circuit" }
 
 clikt = "com.github.ajalt.clikt:clikt:4.2.0"

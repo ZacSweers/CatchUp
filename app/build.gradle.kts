@@ -516,6 +516,7 @@ dependencies {
   implementation(libs.circuit.runtime.screen)
   implementation(libs.circuit.runtime.ui)
   implementation(libs.circuitx.android)
+  implementation(libs.circuitx.gestureNav)
   implementation(libs.circuitx.overlays)
   implementation(libs.coil.base)
   implementation(libs.coil.compose)
