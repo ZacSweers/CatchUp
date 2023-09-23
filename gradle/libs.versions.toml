@@ -24,7 +24,7 @@ dagger = "2.48"
 datastore = "1.1.0-alpha05"
 detekt = "1.23.1"
 eithernet = "1.5.0"
-flipper = "0.220.0"
+flipper = "0.221.0"
 jdk = "20"
 jvmTarget = "11"
 kotlin = "1.9.10"
@@ -41,10 +41,10 @@ okhttp = "5.0.0-alpha.11"
 preferences = "1.2.1"
 retrofit = "2.9.0"
 sortDependencies = "0.4"
-sgp = "0.10.7"
+sgp = "0.10.8"
 spotless = "6.21.0"
 sqldelight = "2.0.0"
-telephoto = "1.0.0-alpha02"
+telephoto = "0.6.1"
 tikxml = "0.8.15"
 xerial = "3.43.0.0"
 collapsingToolbar = "2.3.5"
@@ -125,7 +125,7 @@ androidx-compose-materialIcons = { module = "androidx.compose.material:material-
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-accompanist-adaptive = { module = "com.google.accompanist:accompanist-adaptive", version.ref = "accompanist" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
-androidx-paging-compose = "androidx.paging:paging-compose:3.3.0-alpha01"
+androidx-paging-compose = "androidx.paging:paging-compose:3.3.0-alpha02"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-material-material3-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
 androidx-window = { module = "androidx.window:window", version = "1.2.0-beta03" }
