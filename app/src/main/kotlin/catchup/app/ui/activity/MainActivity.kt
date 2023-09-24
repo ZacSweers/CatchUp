@@ -161,6 +161,7 @@ constructor(
                   backstack,
                   decoration =
                     GestureNavigationDecoration(
+                      circuit.defaultNavDecoration,
                       // Pop the back stack once the user has gone 'back'
                       navigator::pop
                     )
