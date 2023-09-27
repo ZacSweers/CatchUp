@@ -417,12 +417,19 @@ tasks.matching { it.name == "licenseeDebug" }.configureEach { enabled = false }
 licensee {
   allow("Apache-2.0")
   allow("MIT")
-  allow("CC0-1.0")
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
   // MIT
   allowUrl("https://github.com/alorma/Compose-Settings/blob/main/LICENSE")
+  // MIT
+  allowUrl("https://raw.githubusercontent.com/apollographql/apollo-kotlin/main/LICENSE")
+  // MIT
+  allowUrl("https://github.com/facebook/flipper/blob/main/LICENSE")
+  allowUrl("https://github.com/facebook/soloader/blob/main/LICENSE")
+  allowUrl("https://github.com/facebookincubator/fbjni/blob/main/LICENSE")
+  allowUrl("https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE")
+  allowUrl("https://www.openssl.org/source/license-openssl-ssleay.txt")
 }
 
 // Workaround for https://youtrack.jetbrains.com/issue/KT-59220
