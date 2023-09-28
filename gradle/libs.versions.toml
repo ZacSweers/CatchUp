@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.33.0-alpha"
-agp = "8.3.0-alpha05"
+agp = "8.3.0-alpha06"
 androidx-activity = "1.8.0-rc01"
 androidx-core = "1.12.0"
 benchmark = "1.2.0-rc01"
