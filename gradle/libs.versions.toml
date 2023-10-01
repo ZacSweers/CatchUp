@@ -3,6 +3,8 @@ accompanist = "0.33.0-alpha"
 agp = "8.3.0-alpha06"
 androidx-activity = "1.8.0-rc01"
 androidx-core = "1.12.0"
+androidx-sqlite = "2.4.0-rc01"
+appcompat = "1.7.0-alpha03"
 benchmark = "1.2.0-rc01"
 compose-material3 = "1.2.0-alpha08"
 emoji = "1.2.0-alpha03"
@@ -84,9 +86,12 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 androidx-annotations = "androidx.annotation:annotation:1.7.0"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha03"
+androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-appCompat-resources = { module = "androidx.appcompat:appcompat-resources", version.ref = "appcompat" }
 
 androidx-benchmark-macro-junit = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
+
+androidx-collection = "androidx.collection:collection:1.3.0-rc01"
 
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
@@ -98,6 +103,7 @@ androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.r
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
 androidx-fragment = "androidx.fragment:fragment:1.7.0-alpha05"
 
+androidx-lifecycle = { module = "androidx.lifecycle:lifecycle", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
 
@@ -110,11 +116,13 @@ androidx-preferenceKtx = { module = "androidx.preference:preference-ktx", versio
 androidx-lifecycle-extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
 androidx-lifecycle-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
-androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-rc01"
+androidx-sqlite-framework = { module = "androidx.sqlite:sqlite-framework", version.ref = "androidx-sqlite" }
+androidx-sqlite = { module = "androidx.sqlite:sqlite", version.ref = "androidx-sqlite" }
 
 androidx-compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose" }
 # Here to trigger renovate updates
 androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
+androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
@@ -125,6 +133,7 @@ androidx-compose-materialIcons = { module = "androidx.compose.material:material-
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-accompanist-adaptive = { module = "com.google.accompanist:accompanist-adaptive", version.ref = "accompanist" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha12"
 androidx-paging-compose = "androidx.paging:paging-compose:3.3.0-alpha02"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-material-material3-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
@@ -153,6 +162,7 @@ anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "
 apollo-api = { module = "com.apollographql.apollo3:apollo-api", version.ref = "apollo" }
 apollo-httpcache = { module = "com.apollographql.apollo3:apollo-http-cache", version.ref = "apollo" }
 apollo-normalizedCache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
+apollo-normalizedCache-api = { module = "com.apollographql.apollo3:apollo-normalized-cache-api", version.ref = "apollo" }
 apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
 
 autoService-annotations = "com.google.auto.service:auto-service:1.1.1"
@@ -181,16 +191,22 @@ coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
 coil-default = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coil-compose-base = { module = "io.coil-kt:coil-compose-base", version.ref = "coil" }
 
 corbind = { module = "ru.ldralighieri.corbind:corbind", version.ref = "corbind" }
 dagger-apt-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }
 
+androidx-datastore-core = { module = "androidx.datastore:datastore-core", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
+
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.22.0"
+
+javaxInject = "javax.inject:javax.inject:1"
 
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
@@ -211,6 +227,8 @@ markwon-imageCoil = { module = "io.noties.markwon:image-coil", version.ref = "ma
 markwon-linkify = { module = "io.noties.markwon:linkify", version.ref = "markwon" }
 
 misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+misc-leakCanary-object = { module = "com.squareup.leakcanary:leakcanary-object", version.ref = "leakcanary" }
+misc-leakCanary-shark = { module = "com.squareup.leakcanary:shark", version.ref = "leakcanary" }
 misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakcanary-object-watcher-android", version.ref = "leakcanary" }
 misc-bugsnag = "com.bugsnag:bugsnag-android:5.31.1"
 misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
@@ -256,6 +274,8 @@ sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sq
 
 sqlite-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "xerial" }
 
+telephoto-zoomable = { module = "me.saket.telephoto:zoomable", version.ref = "telephoto" }
+telephoto-zoomableImage = { module = "me.saket.telephoto:zoomable-image", version.ref = "telephoto" }
 telephoto-zoomableImageCoil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
 
 tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", version.ref = "tikxml" }
