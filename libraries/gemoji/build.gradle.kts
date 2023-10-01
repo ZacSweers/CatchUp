@@ -16,12 +16,12 @@
 
 plugins {
   alias(libs.plugins.sgp.base)
-  id("com.android.library")
-  kotlin("android")
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.android)
 }
 
 android {
-  namespace = "io.sweers.catchup.gemoji"
+  namespace = "catchup.gemoji"
 }
 
 slack {
@@ -37,6 +37,7 @@ dependencies {
 
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.sqlite)
+  implementation(libs.androidx.sqlite.framework)
   implementation(libs.kotlin.coroutines)
   implementation(libs.misc.timber)
   implementation(libs.sqldelight.coroutines)

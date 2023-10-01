@@ -3,8 +3,8 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
-  id("com.android.test")
-  kotlin("android")
+  alias(libs.plugins.android.test)
+  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.baselineprofile) apply false
 }
@@ -12,7 +12,7 @@ plugins {
 val mvdName = "pixel6Api31"
 
 android {
-  namespace = "io.sweers.catchup.benchmark"
+  namespace = "catchup.benchmark"
   defaultConfig {
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

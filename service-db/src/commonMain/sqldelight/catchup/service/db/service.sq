@@ -1,0 +1,129 @@
+import kotlinx.datetime.Instant;
+import kotlin.Boolean;
+import kotlin.Float;
+import kotlin.Int;
+
+-- Delete old tables db
+DROP TABLE IF EXISTS items;
+
+CREATE TABLE IF NOT EXISTS catchUpDbItem (
+  id INTEGER NOT NULL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  timestamp INTEGER AS Instant,
+  scoreChar TEXT,
+  score INTEGER AS Int,
+  tag TEXT,
+  tagHintColor INTEGER AS Int,
+  author TEXT,
+  source TEXT,
+  itemClickUrl TEXT,
+  detailKey TEXT,
+  serviceId TEXT,
+  indexInResponse INTEGER AS Int,
+  contentType TEXT,
+--   Image info
+  imageUrl TEXT,
+  imageDetailUrl TEXT,
+  imageAnimatable INTEGER AS Boolean,
+  imageSourceUrl TEXT,
+  imageBestSizeX INTEGER AS Int,
+  imageBestSizeY INTEGER AS Int,
+  imageAspectRatio REAL AS Float,
+  imageImageId TEXT,
+  imageColor TEXT,
+  imageBlurHash TEXT,
+--   Mark info
+  markText TEXT,
+  markTextPrefix TEXT,
+  -- By default, the icon used is a comment icon if this is null
+  markType TEXT,
+  markClickUrl TEXT,
+  markIconTintColor INTEGER AS Int,
+  markFormatTextAsCount INTEGER AS Boolean
+);
+
+CREATE TABLE IF NOT EXISTS remoteKeys (
+  serviceId TEXT NOT NULL PRIMARY KEY COLLATE NOCASE,
+  nextPageKey TEXT
+);
+
+CREATE TABLE IF NOT EXISTS opJournal (
+  timestamp INTEGER NOT NULL PRIMARY KEY,
+  serviceId TEXT NOT NULL,
+  operation TEXT NOT NULL
+);
+
+-- Remote key queries
+insertRemoteKey:
+INSERT OR REPLACE INTO remoteKeys (serviceId, nextPageKey) VALUES (?, ?);
+
+remoteKeyByItem:
+SELECT * FROM remoteKeys WHERE serviceId = ?;
+
+deleteRemoteKeyByService:
+DELETE FROM remoteKeys WHERE serviceId = ?;
+
+-- service queries
+-- TODO there's gotta be an easier way?
+insert:
+INSERT OR REPLACE INTO catchUpDbItem (
+  id,
+  title,
+  description,
+  timestamp,
+  scoreChar,
+  score,
+  tag,
+  tagHintColor,
+  author,
+  source,
+  itemClickUrl,
+  detailKey,
+  serviceId,
+  indexInResponse,
+  contentType,
+  imageUrl,
+  imageDetailUrl,
+  imageAnimatable,
+  imageSourceUrl,
+  imageBestSizeX,
+  imageBestSizeY,
+  imageAspectRatio,
+  imageImageId,
+  imageColor,
+  imageBlurHash,
+  markText,
+  markTextPrefix,
+  markType,
+  markClickUrl,
+  markIconTintColor,
+  markFormatTextAsCount
+) VALUES ?;
+
+countItems:
+SELECT count(*) AS Int FROM catchUpDbItem WHERE serviceId = ?;
+
+itemsByService:
+SELECT *
+FROM catchUpDbItem
+WHERE catchUpDbItem.serviceId=?
+ORDER BY indexInResponse ASC
+-- Used for PagingSource<Int, CatchUpItem>
+LIMIT ? OFFSET ?;
+
+deleteItemsByService:
+DELETE FROM catchUpDbItem WHERE serviceId = ?;
+
+getNextIndexInService:
+SELECT MAX(indexInResponse) + 1 FROM catchUpDbItem WHERE serviceId = ?;
+
+-- Operations queries
+lastOperation:
+SELECT * FROM opJournal WHERE serviceId = ? ORDER BY timestamp DESC LIMIT 1;
+
+putOperation:
+INSERT INTO opJournal (timestamp, serviceId, operation) VALUES (?, ?, ?);
+
+deleteOperationsByService:
+DELETE FROM opJournal WHERE serviceId = ?;

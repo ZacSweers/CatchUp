@@ -2,9 +2,9 @@ import com.android.build.api.variant.BuildConfigField
 
 plugins {
   alias(libs.plugins.sgp.base)
-  id("com.android.library")
-  kotlin("android")
-  kotlin("plugin.parcelize")
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
 }
@@ -18,14 +18,14 @@ slack {
 }
 
 android {
-  namespace = "dev.zacsweers.catchup.summarizer"
+  namespace = "catchup.summarizer"
   buildFeatures { buildConfig = true }
 }
 
 sqldelight {
   databases {
     create("SummarizationsDatabase") {
-      packageName.set("dev.zacsweers.catchup.summarizer")
+      packageName.set("catchup.summarizer")
     }
   }
 }
@@ -47,6 +47,7 @@ dependencies {
   api(libs.circuit.codegenAnnotations)
   api(libs.circuit.runtime)
   api(libs.circuit.runtime.presenter)
+  api(libs.circuit.runtime.screen)
   api(libs.circuit.runtime.ui)
   api(libs.okhttp.core)
   api(libs.retrofit.core)
@@ -56,9 +57,11 @@ dependencies {
 
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.compose.accompanist.systemUi)
+  implementation(libs.androidx.compose.animation)
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material.material3)
   implementation(libs.androidx.compose.ui)
+  implementation(libs.androidx.sqlite)
   implementation(libs.kotlin.coroutines)
   implementation(libs.retrofit.moshi)
   implementation(libs.sqldelight.driver.android)

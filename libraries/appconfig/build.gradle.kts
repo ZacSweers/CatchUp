@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 /*
  * Copyright (c) 2019 Zac Sweers
  *
@@ -15,10 +17,24 @@
  */
 
 plugins {
-  kotlin("jvm")
+  alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sgp.base)
+  // TODO https://github.com/slackhq/slack-gradle-plugin/issues/559
+  id("com.android.lint")
 }
 
-dependencies {
-  implementation(libs.androidx.annotations)
+kotlin {
+  // region KMP Targets
+  jvm()
+  // endregion
+
+  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+
+  sourceSets {
+    commonMain {
+      dependencies {
+        implementation(libs.androidx.annotations)
+      }
+    }
+  }
 }

@@ -16,12 +16,12 @@
 
 plugins {
   alias(libs.plugins.sgp.base)
-  id("com.android.library")
-  kotlin("android")
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.serialization)
 }
 
-android { namespace = "io.sweers.catchup.service.slashdot" }
+android { namespace = "catchup.service.slashdot" }
 
 slack {
   features { dagger() }

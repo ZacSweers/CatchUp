@@ -1,7 +1,7 @@
 plugins {
   alias(libs.plugins.sgp.base)
-  id("com.android.library")
-  kotlin("android")
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.android)
 }
 
 slack {
@@ -11,7 +11,7 @@ slack {
 }
 
 dependencies {
-  api(libs.circuit.runtime)
+  api(libs.circuit.runtime.screen)
   api(libs.kotlinx.immutable)
   api(libs.okhttp.core)
   api(projects.libraries.di)

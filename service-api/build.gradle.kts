@@ -13,34 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sgp.base)
-  id("com.android.library")
-  kotlin("android")
 }
 
-android { namespace = "io.sweers.catchup.service" }
+kotlin {
+  // region KMP Targets
+  androidTarget()
+  jvm()
+  // endregion
+
+  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+
+  sourceSets {
+    commonMain {
+      dependencies {
+        api(libs.androidx.annotations)
+        api(libs.compose.runtime)
+        api(libs.dagger.runtime)
+        api(libs.kotlin.datetime)
+        api(projects.libraries.di)
+
+        implementation(libs.androidx.annotations)
+        implementation(libs.kotlin.coroutinesAndroid)
+        implementation(libs.kotlin.datetime)
+        implementation(projects.serviceDb)
+      }
+    }
+    with(getByName("androidMain")) {
+      dependencies {
+        api(libs.androidx.compose.runtime)
+      }
+    }
+  }
+}
+
+android { namespace = "catchup.service.api" }
 
 slack {
   features {
     compose()
     dagger()
   }
-}
-
-dependencies {
-  api(libs.androidx.annotations)
-  api(libs.androidx.compose.runtime)
-  api(libs.androidx.compose.ui)
-  api(libs.dagger.runtime)
-  api(libs.kotlin.datetime)
-  api(projects.libraries.appconfig)
-  api(projects.libraries.di)
-  api(projects.libraries.gemoji)
-  api(projects.libraries.retrofitconverters)
-
-  implementation(libs.androidx.annotations)
-  implementation(libs.kotlin.coroutinesAndroid)
-  implementation(libs.kotlin.datetime)
 }

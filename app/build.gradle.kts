@@ -29,10 +29,10 @@ import okio.source
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("com.android.application")
-  kotlin("android")
-  kotlin("kapt")
-  kotlin("plugin.parcelize")
+  alias(libs.plugins.android.application)
+  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.kotlin.kapt)
+  alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.apollo)
   alias(libs.plugins.licensee)
@@ -59,7 +59,7 @@ val useDebugSigning: Boolean =
 
 android {
   defaultConfig {
-    applicationId = "io.sweers.catchup"
+    applicationId = "dev.zacsweers.catchup"
 
     // These are for debug only. Release versioning is set by CatchUpPlugin
     versionCode = 1
@@ -128,7 +128,7 @@ android {
     error += "ComposeUnstableCollections"
     checkDependencies = true
   }
-  namespace = "io.sweers.catchup"
+  namespace = "dev.zacsweers.catchup"
 }
 
 bugsnag {
@@ -147,8 +147,8 @@ apollo {
     customScalarsMapping.set(
       mapOf("DateTime" to "kotlinx.datetime.Instant", "URI" to "okhttp3.HttpUrl")
     )
-    packageName.set("io.sweers.catchup.data.github")
-    schemaFile.set(file("src/main/graphql/io/sweers/catchup/data/github/schema.json"))
+    packageName.set("catchup.app.data.github")
+    schemaFile.set(file("src/main/graphql/catchup/app/data/github/schema.json"))
   }
 }
 
@@ -417,12 +417,19 @@ tasks.matching { it.name == "licenseeDebug" }.configureEach { enabled = false }
 licensee {
   allow("Apache-2.0")
   allow("MIT")
-  allow("CC0-1.0")
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
   // MIT
   allowUrl("https://github.com/alorma/Compose-Settings/blob/main/LICENSE")
+  // MIT
+  allowUrl("https://raw.githubusercontent.com/apollographql/apollo-kotlin/main/LICENSE")
+  // MIT
+  allowUrl("https://github.com/facebook/flipper/blob/main/LICENSE")
+  allowUrl("https://github.com/facebook/soloader/blob/main/LICENSE")
+  allowUrl("https://github.com/facebookincubator/fbjni/blob/main/LICENSE")
+  allowUrl("https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE")
+  allowUrl("https://www.openssl.org/source/license-openssl-ssleay.txt")
 }
 
 // Workaround for https://youtrack.jetbrains.com/issue/KT-59220
@@ -476,6 +483,8 @@ dependencies {
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.appCompat)
+  implementation(libs.androidx.appCompat.resources)
+  implementation(libs.androidx.collection)
   implementation(libs.androidx.compose.accompanist.adaptive)
   implementation(libs.androidx.compose.accompanist.systemUi)
   implementation(libs.androidx.compose.animation.graphics)
@@ -489,10 +498,11 @@ dependencies {
   implementation(libs.androidx.core)
   implementation(libs.androidx.coreKtx)
   implementation(libs.androidx.customTabs)
+  implementation(libs.androidx.datastore.core)
   implementation(libs.androidx.datastore.preferences)
+  implementation(libs.androidx.datastore.preferences.core)
   implementation(libs.androidx.design)
   implementation(libs.androidx.emojiAppcompat)
-  implementation(libs.androidx.fragment)
   implementation(libs.androidx.lifecycle.extensions)
   implementation(libs.androidx.lifecycle.ktx)
   implementation(libs.androidx.paging.compose)
@@ -501,9 +511,12 @@ dependencies {
   implementation(libs.androidx.preferenceKtx)
   implementation(libs.androidx.profileinstaller)
   implementation(libs.androidx.splashscreen)
+  implementation(libs.androidx.sqlite)
   implementation(libs.androidx.window)
+  implementation(libs.apollo.api)
   implementation(libs.apollo.httpcache)
   implementation(libs.apollo.normalizedCache)
+  implementation(libs.apollo.normalizedCache.api)
   implementation(libs.apollo.runtime)
   implementation(libs.circuit.backstack)
   implementation(libs.circuit.codegenAnnotations)
@@ -512,14 +525,18 @@ dependencies {
   implementation(libs.circuit.retained)
   implementation(libs.circuit.runtime)
   implementation(libs.circuit.runtime.presenter)
+  implementation(libs.circuit.runtime.screen)
   implementation(libs.circuit.runtime.ui)
   implementation(libs.circuitx.android)
+  implementation(libs.circuitx.gestureNav)
   implementation(libs.circuitx.overlays)
   implementation(libs.coil.base)
   implementation(libs.coil.compose)
+  implementation(libs.coil.compose.base)
   implementation(libs.coil.default)
   implementation(libs.coil.gif)
   implementation(libs.collapsingToolbar)
+  implementation(libs.errorProneAnnotations)
   implementation(libs.firebase.core)
   implementation(libs.firebase.database)
   implementation(libs.kotlin.coroutines)
@@ -538,7 +555,6 @@ dependencies {
   implementation(libs.misc.composeSettings.base)
   implementation(libs.misc.composeSettings.datastore)
   implementation(libs.misc.debug.processPhoenix)
-  implementation(libs.misc.lottie)
   implementation(libs.misc.moshiLazyAdapters)
   implementation(libs.misc.okio)
   implementation(libs.misc.tapTargetView)
@@ -551,8 +567,12 @@ dependencies {
   implementation(libs.sqldelight.paging)
   implementation(libs.sqldelight.primitiveAdapters)
   implementation(libs.sqldelight.runtime)
+  implementation(libs.telephoto.zoomable)
+  implementation(libs.telephoto.zoomableImage)
   implementation(libs.telephoto.zoomableImageCoil)
   implementation(libs.xmlutil.serialization)
+  implementation(projects.bookmarks)
+  implementation(projects.bookmarks.db)
   implementation(projects.libraries.appconfig)
   implementation(projects.libraries.auth)
   implementation(projects.libraries.baseUi)
@@ -590,6 +610,8 @@ dependencies {
   debugImplementation(libs.misc.debug.soLoader)
   debugImplementation(libs.misc.debug.telescope)
   debugImplementation(libs.misc.leakCanary)
+  debugImplementation(libs.misc.leakCanary.shark)
+  debugImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
   debugImplementation(libs.okhttp.debug.loggingInterceptor)
   debugImplementation(libs.retrofit.moshi)
   debugImplementation(projects.libraries.retrofitconverters)

@@ -1,7 +1,7 @@
 plugins {
   alias(libs.plugins.sgp.base)
-  id("com.android.library")
-  kotlin("android")
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.android)
 }
 
 slack { features { compose() } }

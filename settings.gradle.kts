@@ -215,7 +215,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise") version "3.14.1"
+  id("com.gradle.enterprise") version "3.15"
   id("com.dropbox.focus") version "0.5.1"
 }
 
@@ -249,6 +249,10 @@ configureIncludedBuild("sgp") { path ->
       substitute(module("com.slack.gradle:sgp")).using(project(":slack-plugin"))
       substitute(module("com.slack.gradle:sgp-agp-handler-api"))
         .using(project(":agp-handlers:agp-handler-api"))
+      substitute(module("com.slack.gradle:sgp-agp-handler-80"))
+        .using(project(":agp-handlers:agp-handler-80"))
+      substitute(module("com.slack.gradle:sgp-agp-handler-83"))
+        .using(project(":agp-handlers:agp-handler-83"))
     }
   }
 }

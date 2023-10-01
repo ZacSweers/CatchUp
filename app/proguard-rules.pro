@@ -77,11 +77,11 @@
 -checkdiscard class kotlinx.coroutines.internal.FastServiceLoader
 
 # In release builds, isDebug() is always false
--assumevalues class * implements dev.zacsweers.catchup.appconfig.AppConfig {
+-assumevalues class * implements catchup.appconfig.AppConfig {
   boolean isDebug(...) return false;
 }
 # AppConfig#sdkInt is always 28+
--assumevalues public class dev.zacsweers.catchup.appconfig.AppConfig {
+-assumevalues public class catchup.appconfig.AppConfig {
   int getSdkInt(...) return 28..2147483647;
 }
 
