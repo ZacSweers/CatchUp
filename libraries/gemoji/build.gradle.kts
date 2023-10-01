@@ -36,6 +36,7 @@ dependencies {
   api(projects.libraries.gemoji.db)
 
   implementation(libs.androidx.annotations)
+  implementation(libs.androidx.sqlite)
   implementation(libs.androidx.sqlite.framework)
   implementation(libs.kotlin.coroutines)
   implementation(libs.misc.timber)

@@ -51,7 +51,6 @@ dependencies {
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material.material3)
-  implementation(libs.androidx.compose.material.ripple)
   implementation(libs.androidx.compose.materialIcons)
   implementation(libs.androidx.compose.uiTooling)
   implementation(libs.androidx.core)
