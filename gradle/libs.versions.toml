@@ -103,7 +103,6 @@ androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.r
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
 androidx-fragment = "androidx.fragment:fragment:1.7.0-alpha05"
 
-androidx-lifecycle = { module = "androidx.lifecycle:lifecycle", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
 
