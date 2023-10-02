@@ -184,7 +184,7 @@ circuitx-android = { module = "com.slack.circuit:circuitx-android", version.ref 
 circuitx-gestureNav = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
 circuitx-overlays = { module = "com.slack.circuit:circuitx-overlays", version.ref = "circuit" }
 
-clikt = "com.github.ajalt.clikt:clikt:4.2.0"
+clikt = "com.github.ajalt.clikt:clikt:4.2.1"
 
 coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
 coil-default = { module = "io.coil-kt:coil", version.ref = "coil" }
