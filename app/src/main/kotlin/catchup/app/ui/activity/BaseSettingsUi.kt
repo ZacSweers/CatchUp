@@ -2,7 +2,6 @@ package catchup.app.ui.activity
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import catchup.compose.rememberStableCoroutineScope
