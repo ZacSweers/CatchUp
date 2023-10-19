@@ -154,7 +154,7 @@ compose-material-material = { module = "org.jetbrains.compose.material:material"
 compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
-firebase-database = "com.google.firebase:firebase-database:20.2.2"
+firebase-database = "com.google.firebase:firebase-database:20.3.0"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
 
