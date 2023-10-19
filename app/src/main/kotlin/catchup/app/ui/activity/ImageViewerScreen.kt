@@ -153,7 +153,8 @@ constructor(
 @Composable
 fun ImageViewer(state: State, modifier: Modifier = Modifier) {
   var showChrome by remember { mutableStateOf(true) }
-  val systemUiController = rememberSystemUiController()
+  // There's no alternative for this yet
+  @Suppress("DEPRECATION") val systemUiController = rememberSystemUiController()
   systemUiController.isSystemBarsVisible = showChrome
   DisposableEffect(systemUiController) {
     val originalSystemBarsBehavior = systemUiController.systemBarsBehavior

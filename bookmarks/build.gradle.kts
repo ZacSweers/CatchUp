@@ -28,7 +28,7 @@ kotlin {
   jvm()
   // endregion
 
-  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+  applyDefaultHierarchyTemplate()
 
   sourceSets {
     commonMain {
@@ -46,8 +46,11 @@ kotlin {
         implementation(libs.anvil.annotations)
       }
     }
-    val androidMain by getting
-    androidMain.dependsOn(jvmMain)
+    val androidMain by getting {
+      dependencies {
+        implementation(libs.anvil.annotations)
+      }
+    }
   }
 }
 

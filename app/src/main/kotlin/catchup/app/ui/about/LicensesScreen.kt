@@ -351,8 +351,8 @@ constructor(
         it.copy(
           author = markdownConverter.replaceMarkdownEmojisIn(it.author),
           name = markdownConverter.replaceMarkdownEmojisIn(it.name),
-          description = it.description?.let { markdownConverter.replaceMarkdownEmojisIn(it) }
-              ?: it.description
+          description =
+            it.description?.let { markdownConverter.replaceMarkdownEmojisIn(it) } ?: it.description
         )
       }
       .flowOn(Dispatchers.IO)

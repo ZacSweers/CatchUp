@@ -2,7 +2,7 @@
 accompanist = "0.33.2-alpha"
 agp = "8.3.0-alpha08"
 androidx-activity = "1.8.0"
-androidx-core = "1.12.0"
+androidx-core = "1.13.0-alpha01"
 androidx-sqlite = "2.4.0"
 appcompat = "1.7.0-alpha03"
 benchmark = "1.2.0"
@@ -15,30 +15,30 @@ coil = "2.4.0"
 compose = "1.6.0-alpha08"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
-compose-compiler = "1.5.3"
-compose-compiler-kotlinVersion = "1.9.10"
-compose-jb = "1.5.3"
-compose-jb-compiler = "1.5.2"
-compose-jb-kotlinVersion = "1.9.0"
-corbind = "1.8.0"
+compose-compiler = "1.5.4-dev-k1.9.20-RC-1edce5fd625"
+compose-compiler-kotlinVersion = "1.9.20-RC"
+compose-jb = "1.5.10-rc01"
+compose-jb-compiler = "1.5.2.1-rc01"
+compose-jb-kotlinVersion = "1.9.20-RC"
+corbind = "1.9.0"
 coroutines = "1.7.3"
 dagger = "2.48.1"
 datastore = "1.1.0-alpha05"
 detekt = "1.23.1"
 eithernet = "1.6.0"
-flipper = "0.223.0"
+flipper = "0.229.0"
 jdk = "20"
 jvmTarget = "11"
-kotlin = "1.9.10"
+kotlin = "1.9.20-RC"
 kotlinx-metadata = "0.7.0"
 kotlinx-serialization = "1.6.0"
-ksp = "1.9.10-1.0.13"
-ktfmt = "0.44"
+ksp = "1.9.20-RC-1.0.13"
+ktfmt = "0.46"
 leakcanary = "2.12"
 lifecycle = "2.7.0-alpha03"
 markwon = "4.6.2"
 moshi = "1.15.0"
-moshix = "0.24.3"
+moshix = "0.25.0-alpha01"
 okhttp = "5.0.0-alpha.11"
 preferences = "1.2.1"
 retrofit = "2.9.0"
@@ -60,7 +60,7 @@ apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark"}
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.1.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.8.1" }
-dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.24.0" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.25.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.8.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -74,7 +74,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.8.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.8.4" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.6.1" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.7.0-alpha01" }
 retry = { id = "org.gradle.test-retry", version = "1.5.6" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
 sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
@@ -97,7 +97,7 @@ androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
 androidx-customTabs = "androidx.browser:browser:1.7.0-beta01"
-androidx-design = "com.google.android.material:material:1.9.0"
+androidx-design = "com.google.android.material:material:1.10.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
@@ -154,7 +154,7 @@ compose-material-material = { module = "org.jetbrains.compose.material:material"
 compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
-firebase-database = "com.google.firebase:firebase-database:20.2.2"
+firebase-database = "com.google.firebase:firebase-database:20.3.0"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
 
@@ -203,7 +203,7 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 
-errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.22.0"
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.23.0"
 
 javaxInject = "javax.inject:javax.inject:1"
 
@@ -257,6 +257,8 @@ moshi-shimo = "com.jakewharton.moshi:shimo:0.1.1"
 okhttp-bom = { module = "com.squareup.okhttp3:okhttp-bom", version.ref = "okhttp" }
 okhttp-core = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 okhttp-debug-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
+
+renovateTrigger-ktfmt = { module = "com.facebook:ktfmt", version.ref = "ktfmt" }
 
 retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-debug-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofit" }
