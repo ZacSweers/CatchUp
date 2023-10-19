@@ -97,7 +97,7 @@ androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
 androidx-customTabs = "androidx.browser:browser:1.7.0-beta01"
-androidx-design = "com.google.android.material:material:1.9.0"
+androidx-design = "com.google.android.material:material:1.10.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
