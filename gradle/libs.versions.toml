@@ -125,7 +125,7 @@ androidx-compose-animation = { module = "androidx.compose.animation:animation", 
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.5.2"
+androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.5.4"
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 androidx-compose-material-ripple = { module = "androidx.compose.material:material-ripple", version.ref = "compose" }
 androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }
