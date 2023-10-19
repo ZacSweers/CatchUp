@@ -72,6 +72,7 @@ import catchup.app.service.ServiceScreen
 import catchup.app.service.bookmarks.Bookmark
 import catchup.app.service.bookmarks.BookmarksScreen
 import catchup.app.ui.activity.SettingsScreen
+import catchup.base.ui.rememberSystemBarColorController
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.LocalDisplayFeatures
 import catchup.compose.LocalDynamicTheme
@@ -85,7 +86,6 @@ import catchup.service.api.ServiceMeta
 import catchup.util.toDayContext
 import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.google.accompanist.adaptive.TwoPane
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
@@ -319,7 +319,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
 
   val currentServiceMeta = state.serviceMetas[pagerState.currentPage]
   val title = stringResource(currentServiceMeta.name)
-  val systemUiController = rememberSystemUiController()
+  val systemUiController = rememberSystemBarColorController()
 
   val dynamicTheme = LocalDynamicTheme.current
   val dayOnlyColorCache = rememberColorCache(state.serviceMetas, dayOnly = !dynamicTheme)

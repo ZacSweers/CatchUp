@@ -202,8 +202,7 @@ constructor(
           }
         }
       }
-    }
-      ?: State(services = null)
+    } ?: State(services = null)
   }
 
   private suspend fun save(newOrder: List<ServiceMeta>) {

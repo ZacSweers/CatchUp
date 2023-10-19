@@ -45,8 +45,7 @@ internal object GitHubTrendingParser {
         .trimEnd()
         .split("/")
         .takeUnless { it.size != 2 }
-        ?.let { Pair(it[0], it[1]) }
-        ?: ("" to "")
+        ?.let { Pair(it[0], it[1]) } ?: ("" to "")
     val (author, repoName) = authorAndName
     val url = "$ENDPOINT/${authorAndName.first}/${authorAndName.second}"
     val description = element.select("p").text()
@@ -96,8 +95,7 @@ internal object GitHubTrendingParser {
               d { "$authorAndName didn't have today" }
               null
             }
-        }
-        ?: 0
+        } ?: 0
 
     return TrendingItem(
       author = author,

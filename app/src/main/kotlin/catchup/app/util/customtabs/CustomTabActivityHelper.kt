@@ -59,8 +59,7 @@ class CustomTabActivityHelper @Inject constructor() {
     packageName?.let {
       customTabsIntent.intent.`package` = it
       customTabsIntent.launchUrl(context, uri)
-    }
-      ?: context.maybeStartActivity(Intent(Intent.ACTION_VIEW, uri))
+    } ?: context.maybeStartActivity(Intent(Intent.ACTION_VIEW, uri))
   }
 
   fun newCustomTabIntentBuilder(): CustomTabsIntent.Builder =
