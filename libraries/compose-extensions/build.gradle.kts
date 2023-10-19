@@ -33,6 +33,7 @@ dependencies {
   api(libs.androidx.window)
   api(libs.kotlin.coroutines)
 
+  implementation(libs.androidx.compose.animation)
   implementation(libs.androidx.compose.googleFonts)
   implementation(libs.androidx.compose.material.material3)
   implementation(projects.libraries.baseUi)

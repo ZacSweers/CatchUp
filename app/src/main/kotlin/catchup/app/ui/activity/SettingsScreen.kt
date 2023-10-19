@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,6 +49,7 @@ import catchup.base.ui.BackPressNavButton
 import catchup.compose.ContentAlphas
 import catchup.compose.DisableableContent
 import catchup.compose.LocalEnabled
+import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
 import catchup.util.clearCache
@@ -137,7 +137,7 @@ constructor(
         }
     }
 
-    val scope = rememberCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     return State { event ->
       when (event) {
         ClearCache -> {

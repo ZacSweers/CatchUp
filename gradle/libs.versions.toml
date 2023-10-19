@@ -1,30 +1,32 @@
 [versions]
-accompanist = "0.33.0-alpha"
-agp = "8.3.0-alpha05"
-androidx-activity = "1.8.0-rc01"
+accompanist = "0.33.2-alpha"
+agp = "8.3.0-alpha07"
+androidx-activity = "1.8.0"
 androidx-core = "1.12.0"
-benchmark = "1.2.0-rc01"
-compose-material3 = "1.2.0-alpha08"
+androidx-sqlite = "2.4.0"
+appcompat = "1.7.0-alpha03"
+benchmark = "1.2.0"
+compose-material3 = "1.2.0-alpha10"
 emoji = "1.2.0-alpha03"
 anvil = "2.4.8"
 apollo = "3.8.2"
 circuit = "0.15.0"
 coil = "2.4.0"
-compose = "1.6.0-alpha06"
+compose = "1.6.0-alpha08"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.5.4-dev-k1.9.20-Beta-692cbee7ddd"
 compose-compiler-kotlinVersion = "1.9.20-Beta"
-compose-jb = "1.5.1"
+compose-jb = "1.5.3"
 compose-jb-compiler = "1.5.2"
 compose-jb-kotlinVersion = "1.9.0"
 corbind = "1.8.0"
 coroutines = "1.7.3"
-dagger = "2.48"
+dagger = "2.48.1"
 datastore = "1.1.0-alpha05"
 detekt = "1.23.1"
-eithernet = "1.5.0"
-flipper = "0.221.0"
+eithernet = "1.6.0"
+flipper = "0.223.0"
 jdk = "20"
 jvmTarget = "11"
 kotlin = "1.9.20-Beta"
@@ -33,7 +35,7 @@ kotlinx-serialization = "1.6.0"
 ksp = "1.9.20-Beta-1.0.13"
 ktfmt = "0.44"
 leakcanary = "2.12"
-lifecycle = "2.7.0-alpha02"
+lifecycle = "2.7.0-alpha03"
 markwon = "4.6.2"
 moshi = "1.15.0"
 moshix = "0.25.0-alpha01"
@@ -41,12 +43,12 @@ okhttp = "5.0.0-alpha.11"
 preferences = "1.2.1"
 retrofit = "2.9.0"
 sortDependencies = "0.4"
-sgp = "0.10.9-alpha02"
-spotless = "6.21.0"
+sgp = "0.10.10"
+spotless = "6.22.0"
 sqldelight = "2.0.0"
-telephoto = "0.6.1"
+telephoto = "0.6.2"
 tikxml = "0.8.15"
-xerial = "3.43.0.0"
+xerial = "3.43.2.1"
 collapsingToolbar = "2.3.5"
 
 [plugins]
@@ -56,9 +58,9 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark"}
-bugsnag = { id = "com.bugsnag.android.gradle", version = "8.0.1" }
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.8.0" }
-dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.22.0" }
+bugsnag = { id = "com.bugsnag.android.gradle", version = "8.1.0" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.8.1" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.24.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.8.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -69,11 +71,11 @@ kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-licensee = { id = "app.cash.licensee", version = "1.7.0" }
+licensee = { id = "app.cash.licensee", version = "1.8.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.8.4" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.7.0-alpha01" }
-retry = { id = "org.gradle.test-retry", version = "1.5.5" }
+retry = { id = "org.gradle.test-retry", version = "1.5.6" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
 sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
 sortDependencies = { id = "com.squareup.sort-dependencies", version.ref = "sortDependencies" }
@@ -84,19 +86,22 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 androidx-annotations = "androidx.annotation:annotation:1.7.0"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-appCompat = "androidx.appcompat:appcompat:1.7.0-alpha03"
+androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-appCompat-resources = { module = "androidx.appcompat:appcompat-resources", version.ref = "appcompat" }
 
 androidx-benchmark-macro-junit = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
+
+androidx-collection = "androidx.collection:collection:1.4.0-alpha02"
 
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
-androidx-customTabs = "androidx.browser:browser:1.6.0"
+androidx-customTabs = "androidx.browser:browser:1.7.0-beta01"
 androidx-design = "com.google.android.material:material:1.9.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
-androidx-fragment = "androidx.fragment:fragment:1.7.0-alpha05"
+androidx-fragment = "androidx.fragment:fragment:1.7.0-alpha06"
 
 androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
@@ -110,25 +115,28 @@ androidx-preferenceKtx = { module = "androidx.preference:preference-ktx", versio
 androidx-lifecycle-extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
 androidx-lifecycle-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
-androidx-sqlite = "androidx.sqlite:sqlite-framework:2.4.0-rc01"
+androidx-sqlite-framework = { module = "androidx.sqlite:sqlite-framework", version.ref = "androidx-sqlite" }
+androidx-sqlite = { module = "androidx.sqlite:sqlite", version.ref = "androidx-sqlite" }
 
 androidx-compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose" }
 # Here to trigger renovate updates
 androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
+androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.5.1"
+androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.5.4"
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 androidx-compose-material-ripple = { module = "androidx.compose.material:material-ripple", version.ref = "compose" }
 androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-accompanist-adaptive = { module = "com.google.accompanist:accompanist-adaptive", version.ref = "accompanist" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha13"
 androidx-paging-compose = "androidx.paging:paging-compose:3.3.0-alpha02"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-material-material3-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
-androidx-window = { module = "androidx.window:window", version = "1.2.0-beta03" }
+androidx-window = { module = "androidx.window:window", version = "1.2.0-beta04" }
 androidx-splashscreen = "androidx.core:core-splashscreen:1.1.0-alpha02"
 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.3.1"
@@ -153,6 +161,7 @@ anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "
 apollo-api = { module = "com.apollographql.apollo3:apollo-api", version.ref = "apollo" }
 apollo-httpcache = { module = "com.apollographql.apollo3:apollo-http-cache", version.ref = "apollo" }
 apollo-normalizedCache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
+apollo-normalizedCache-api = { module = "com.apollographql.apollo3:apollo-normalized-cache-api", version.ref = "apollo" }
 apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
 
 autoService-annotations = "com.google.auto.service:auto-service:1.1.1"
@@ -175,28 +184,34 @@ circuitx-android = { module = "com.slack.circuit:circuitx-android", version.ref 
 circuitx-gestureNav = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
 circuitx-overlays = { module = "com.slack.circuit:circuitx-overlays", version.ref = "circuit" }
 
-clikt = "com.github.ajalt.clikt:clikt:4.2.0"
+clikt = "com.github.ajalt.clikt:clikt:4.2.1"
 
 coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
 coil-default = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coil-compose-base = { module = "io.coil-kt:coil-compose-base", version.ref = "coil" }
 
 corbind = { module = "ru.ldralighieri.corbind:corbind", version.ref = "corbind" }
 dagger-apt-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }
 
+androidx-datastore-core = { module = "androidx.datastore:datastore-core", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.22.0"
+
+javaxInject = "javax.inject:javax.inject:1"
+
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.1"
-kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
+kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.6"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 
 lints-compose = "com.slack.lint.compose:compose-lint-checks:1.2.0"
@@ -211,26 +226,27 @@ markwon-imageCoil = { module = "io.noties.markwon:image-coil", version.ref = "ma
 markwon-linkify = { module = "io.noties.markwon:linkify", version.ref = "markwon" }
 
 misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+misc-leakCanary-shark = { module = "com.squareup.leakcanary:shark", version.ref = "leakcanary" }
 misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakcanary-object-watcher-android", version.ref = "leakcanary" }
-misc-bugsnag = "com.bugsnag:bugsnag-android:5.31.1"
+misc-bugsnag = "com.bugsnag:bugsnag-android:5.31.2"
 misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
 misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.10.5"
-misc-debug-guava = "com.google.guava:guava:32.1.2-jre"
+misc-debug-guava = "com.google.guava:guava:32.1.3-jre"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.2.0"
 
-misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:1.0.1"
-misc-composeSettings-base = "com.github.alorma:compose-settings-storage-base:1.0.1"
+misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:1.0.2"
+misc-composeSettings-base = "com.github.alorma:compose-settings-storage-base:1.0.2"
 misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.27.0"
 misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
 misc-jsoup = "org.jsoup:jsoup:1.16.1"
 misc-jsr250 = "javax.annotation:jsr250-api:1.0"
 misc-jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 misc-moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-misc-okio = "com.squareup.okio:okio:3.5.0"
+misc-okio = "com.squareup.okio:okio:3.6.0"
 misc-tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.3"
 misc-timber = "com.jakewharton.timber:timber:5.0.1"
 misc-unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"
@@ -256,6 +272,8 @@ sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sq
 
 sqlite-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "xerial" }
 
+telephoto-zoomable = { module = "me.saket.telephoto:zoomable", version.ref = "telephoto" }
+telephoto-zoomableImage = { module = "me.saket.telephoto:zoomable-image", version.ref = "telephoto" }
 telephoto-zoomableImageCoil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
 
 tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", version.ref = "tikxml" }

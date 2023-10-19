@@ -2,9 +2,9 @@ package catchup.app.ui.activity
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import catchup.compose.rememberStableCoroutineScope
 import com.alorma.compose.settings.storage.base.SettingValueState
 import com.alorma.compose.settings.storage.datastore.GenericPreferenceDataStoreSettingValueState
 import com.alorma.compose.settings.storage.datastore.rememberPreferenceDataStoreBooleanSettingState
@@ -55,7 +55,7 @@ class RealBaseSettingsUi(private val dataStore: DataStore<Preferences>) : BaseSe
     key: Preferences.Key<Long>,
     defaultValue: Long
   ): SettingValueState<Long> {
-    val scope = rememberCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     return remember {
       GenericPreferenceDataStoreSettingValueState(
         coroutineScope = scope,
@@ -71,7 +71,7 @@ class RealBaseSettingsUi(private val dataStore: DataStore<Preferences>) : BaseSe
     key: Preferences.Key<String>,
     defaultValue: String
   ): SettingValueState<String> {
-    val scope = rememberCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     return remember {
       GenericPreferenceDataStoreSettingValueState(
         coroutineScope = scope,
