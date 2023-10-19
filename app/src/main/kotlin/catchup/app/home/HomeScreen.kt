@@ -22,8 +22,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -42,7 +42,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -433,7 +432,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         if (dynamicTheme) MaterialTheme.colorScheme.onPrimaryContainer else Color.White
       val containerColor =
         if (dynamicTheme) MaterialTheme.colorScheme.primaryContainer else tabLayoutColor.value
-      ScrollableTabRow(
+      PrimaryScrollableTabRow(
         // Our selected tab is our current page
         selectedTabIndex = pagerState.settledPage,
         contentColor = contentColor,
@@ -449,7 +448,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         },
       ) {
         // Add tabs for all of our pages
-        val coroutineScope = rememberCoroutineScope()
+        val coroutineScope = rememberStableCoroutineScope()
         serviceMetas.forEachIndexed { index, serviceMeta ->
           Tab(
             icon = {

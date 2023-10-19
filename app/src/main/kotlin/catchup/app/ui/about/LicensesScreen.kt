@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,6 +39,7 @@ import catchup.app.service.TextItem
 import catchup.app.service.UrlMeta
 import catchup.app.ui.about.LicensesScreen.Event.Click
 import catchup.app.ui.about.LicensesScreen.State
+import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.gemoji.EmojiMarkdownConverter
 import catchup.gemoji.replaceMarkdownEmojisIn
@@ -118,7 +118,7 @@ constructor(
     // TODO use paging?
     val items by
       produceState<ImmutableList<OssBaseItem>?>(null) { value = licensesRepository.requestItems() }
-    val scope = rememberCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     val context = LocalContext.current
     return State(items) { event ->
       when (event) {

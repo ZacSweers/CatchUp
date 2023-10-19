@@ -20,7 +20,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -126,7 +125,7 @@ constructor(
   override fun present(): State {
     val context = LocalContext.current
     val accentColor = colorResource(R.color.colorAccent).toArgb()
-    val scope = rememberCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     return State(
       id = screen.id,
       url = screen.url,

@@ -41,7 +41,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,6 +71,7 @@ import catchup.app.ui.debug.LogsShareResult.DISMISS
 import catchup.app.ui.debug.LogsShareResult.SHARE
 import catchup.appconfig.AppConfig
 import catchup.compose.CatchUpTheme
+import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.util.truncateAt
 import com.alorma.compose.settings.storage.base.SettingValueState
@@ -274,7 +274,7 @@ constructor(
     val clientCache by
       produceState<Cache?>(null) { value = withContext(IO) { client.get().cache!! } }
 
-    val scope = rememberCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     return State(
       items(appConfig, LocalContext.current.resources.displayMetrics, clientCache),
       if (showLogs) lumberYard.bufferedLogs().toImmutableList() else persistentListOf(),
@@ -384,7 +384,7 @@ constructor(
               }
               is Element -> {
                 item(index) {
-                  val scope = rememberCoroutineScope()
+                  val scope = rememberStableCoroutineScope()
                   DebugElementContent(item, { screen -> state.eventSink(NavigateTo(screen)) }) {
                     key,
                     value ->

@@ -25,7 +25,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,6 +55,7 @@ import catchup.app.service.ServiceScreen.State.TextState
 import catchup.app.service.ServiceScreen.State.VisualState
 import catchup.app.ui.activity.ImageViewerScreen
 import catchup.compose.dynamicAwareColor
+import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.pullrefresh.PullRefreshIndicator
 import catchup.pullrefresh.pullRefresh
@@ -149,7 +149,7 @@ constructor(
         dynamicColor = { MaterialTheme.colorScheme.primary }
       )
 
-    val coroutineScope = rememberCoroutineScope()
+    val coroutineScope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
     val eventSink: (Event) -> Unit = { event ->
       when (event) {
