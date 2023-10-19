@@ -8,8 +8,6 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -17,10 +15,10 @@ import androidx.compose.ui.unit.LayoutDirection
 import catchup.app.data.DebugPreferences
 import catchup.base.ui.DefaultRootContent
 import catchup.base.ui.RootContent
+import catchup.base.ui.rememberSystemBarColorController
 import catchup.compose.rememberConditionalSystemUiColors
 import catchup.di.AppScope
 import catchup.di.SingleIn
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.onNavEvent
 import com.slack.circuit.runtime.Navigator
@@ -59,9 +57,9 @@ constructor(
       }
 
       // Update system bar icon colors when drawer is open/closed
-      val systemUiController = rememberSystemUiController()
-      val conditionalSystemUiColors = rememberConditionalSystemUiColors(systemUiController)
-      LaunchedEffect(systemUiController) {
+      val systemBarColorController = rememberSystemBarColorController()
+      val conditionalSystemUiColors = rememberConditionalSystemUiColors(systemBarColorController)
+      LaunchedEffect(systemBarColorController) {
         snapshotFlow { drawerState.currentValue }
           .collect { value ->
             when (value) {
@@ -70,7 +68,7 @@ constructor(
               }
               DrawerValue.Open -> {
                 conditionalSystemUiColors.save()
-                systemUiController.systemBarsDarkContentEnabled = false
+                systemBarColorController.systemBarsDarkContentEnabled = false
               }
             }
           }

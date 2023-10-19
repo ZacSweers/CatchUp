@@ -155,8 +155,7 @@ abstract class ApplicationModule {
       // Prefer higher quality images unless we're on a low RAM device
       return context.getSystemService<ActivityManager>()?.let {
         ActivityManagerCompat.isLowRamDevice(it)
-      }
-        ?: true
+      } ?: true
     }
 
     @ExperimentalCoilApi

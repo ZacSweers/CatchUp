@@ -63,8 +63,7 @@ internal constructor(
     get() =
       draggingItemLayoutInfo?.let { item ->
         draggingItemInitialOffset + draggingItemDraggedDelta - item.offset
-      }
-        ?: 0f
+      } ?: 0f
 
   private val draggingItemLayoutInfo: LazyListItemInfo?
     get() = state.layoutInfo.visibleItemsInfo.firstOrNull { it.index == draggingItemIndex }

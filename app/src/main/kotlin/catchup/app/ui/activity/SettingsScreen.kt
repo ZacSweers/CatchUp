@@ -209,7 +209,7 @@ constructor(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     // TODO icon
-    ) {
+  ) {
     val state =
       rememberBooleanSettingState(
         key = key,

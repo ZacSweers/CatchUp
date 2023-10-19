@@ -39,6 +39,7 @@ import catchup.app.home.HomeScreen
 import catchup.app.util.customtabs.CustomTabActivityHelper
 import catchup.appconfig.AppConfig
 import catchup.base.ui.RootContent
+import catchup.base.ui.rememberSystemBarColorController
 import catchup.compose.CatchUpTheme
 import catchup.compose.LocalDisplayFeatures
 import catchup.deeplink.DeepLinkHandler
@@ -50,7 +51,6 @@ import catchup.service.api.ServiceMeta
 import catchup.util.toDayContext
 import catchup.util.toNightContext
 import com.google.accompanist.adaptive.calculateDisplayFeatures
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -112,7 +112,7 @@ constructor(
       // Update the system UI content colors anytime our dark theme changes
       var systemUiSet by remember(useDarkTheme) { mutableStateOf(false) }
       if (!systemUiSet) {
-        val systemUiController = rememberSystemUiController()
+        val systemUiController = rememberSystemBarColorController()
         systemUiController.systemBarsDarkContentEnabled = !useDarkTheme
         systemUiSet = true
       }

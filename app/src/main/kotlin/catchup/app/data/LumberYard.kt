@@ -110,8 +110,7 @@ class LumberYard @Inject constructor(private val app: Application) {
         .filter { it.name.endsWith(".log") }
         .forEach { it.delete() }
       return@let initialSize - folder.length()
-    }
-      ?: -1L
+    } ?: -1L
   }
 
   data class Entry(val level: Int, val tag: String?, val message: String) {

@@ -90,7 +90,7 @@ class MockDataInterceptor(
         //        put(DribbbleApi.HOST,
         //            ServiceData.Builder("dr").addEndpoint("/v1/shots")
         //                .build())
-        )
+      )
 
     private fun formatUrl(service: ServiceData, url: HttpUrl): String {
       var lastSegment = url.pathSegments[url.pathSize - 1]
