@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -23,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import catchup.app.ui.about.AboutScreen.AboutScreenComponent
 import catchup.app.ui.about.AboutScreen.State
 import catchup.appconfig.AppConfig
+import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -109,12 +111,12 @@ fun About(state: State, modifier: Modifier = Modifier) {
       Column {
         val components = remember { AboutScreenComponent.entries.toImmutableList() }
         val pagerState = rememberPagerState(initialPage = state.initialPage) { 2 }
-        TabRow(
+        PrimaryTabRow(
           // Our selected tab is our current page
           selectedTabIndex = pagerState.currentPage,
         ) {
           // Add tabs for all of our pages
-          val coroutinesScope = rememberCoroutineScope()
+          val coroutinesScope = rememberStableCoroutineScope()
           components.forEach { component ->
             val index = component.ordinal
             val titleRes = component.titleRes

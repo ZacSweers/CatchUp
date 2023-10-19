@@ -56,6 +56,7 @@ import catchup.app.service.ServiceScreen.State.TextState
 import catchup.app.service.ServiceScreen.State.VisualState
 import catchup.app.ui.activity.ImageViewerScreen
 import catchup.compose.dynamicAwareColor
+import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.pullrefresh.PullRefreshIndicator
 import catchup.pullrefresh.pullRefresh
@@ -149,7 +150,7 @@ constructor(
         dynamicColor = { MaterialTheme.colorScheme.primary }
       )
 
-    val coroutineScope = rememberCoroutineScope()
+    val coroutineScope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
     val eventSink: (Event) -> Unit = { event ->
       when (event) {

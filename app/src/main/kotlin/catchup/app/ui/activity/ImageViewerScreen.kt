@@ -126,7 +126,7 @@ constructor(
   override fun present(): State {
     val context = LocalContext.current
     val accentColor = colorResource(R.color.colorAccent).toArgb()
-    val scope = rememberCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     return State(
       id = screen.id,
       url = screen.url,

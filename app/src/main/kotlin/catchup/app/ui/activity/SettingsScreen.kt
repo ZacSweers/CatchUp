@@ -50,6 +50,7 @@ import catchup.base.ui.BackPressNavButton
 import catchup.compose.ContentAlphas
 import catchup.compose.DisableableContent
 import catchup.compose.LocalEnabled
+import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
 import catchup.util.clearCache
@@ -137,7 +138,7 @@ constructor(
         }
     }
 
-    val scope = rememberCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     return State { event ->
       when (event) {
         ClearCache -> {

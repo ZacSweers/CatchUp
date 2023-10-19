@@ -60,6 +60,7 @@ import catchup.base.ui.ColorUtils
 import catchup.base.ui.generateAsync
 import catchup.compose.ScrollToTopHandler
 import catchup.compose.columnCount
+import catchup.compose.rememberStableCoroutineScope
 import catchup.service.api.CatchUpItem
 import coil.compose.AsyncImage
 import coil.drawable.MovieDrawable
@@ -143,7 +144,7 @@ fun VisualItem(
     val imageHeight = (imageWidth / imageInfo.aspectRatio).toInt()
     val imageHeightDp = LocalDensity.current.run { imageHeight.toDp() }
 
-    val scope = rememberCoroutineScope()
+    val scope = rememberStableCoroutineScope()
 
     val placeholders =
       if (isSystemInDarkTheme()) {

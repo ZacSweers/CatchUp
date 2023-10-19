@@ -30,6 +30,7 @@ import catchup.app.service.rememberClickableItemState
 import catchup.app.ui.about.ChangelogScreen.Event.Click
 import catchup.app.ui.about.ChangelogScreen.State
 import catchup.compose.LocalDynamicTheme
+import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.gemoji.EmojiMarkdownConverter
 import catchup.gemoji.replaceMarkdownEmojisIn
@@ -74,7 +75,7 @@ constructor(
     // TODO use paging?
     val items by
       produceState<ImmutableList<CatchUpItem>?>(null) { value = changelogRepository.requestItems() }
-    val scope = rememberCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     val context = LocalContext.current
     return State(items) { event ->
       when (event) {

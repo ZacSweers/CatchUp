@@ -82,6 +82,7 @@ import catchup.base.ui.BackPressNavButton
 import catchup.compose.DraggableItem
 import catchup.compose.dragContainer
 import catchup.compose.rememberDragDropState
+import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.service.api.ServiceMeta
 import catchup.util.toDayContext
@@ -163,7 +164,7 @@ constructor(
 
       BackHandler(enabled = isChanged && !showConfirmation) { showConfirmation = true }
 
-      val scope = rememberCoroutineScope()
+      val scope = rememberStableCoroutineScope()
       return State(
         services = currentDisplay,
         showSave = isChanged,
@@ -275,7 +276,7 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
         enter = scaleIn(),
         exit = scaleOut(),
       ) {
-        val scope = rememberCoroutineScope()
+        val scope = rememberStableCoroutineScope()
         val interactionSource = remember { MutableInteractionSource() }
         FloatingActionButton(
           modifier =
