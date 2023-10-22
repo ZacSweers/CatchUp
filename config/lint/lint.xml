@@ -27,4 +27,8 @@
   <issue id="ComposeM2Api" severity="error" />
 
   <issue id="GradleDependency" severity="ignore" />
+
+  <issue id="Typos" severity="ignore" />
+
+  <issue id="VectorPath" severity="ignore" />
 </lint>
