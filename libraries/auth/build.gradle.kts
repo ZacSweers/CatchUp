@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.moshix)
-  // TODO https://github.com/slackhq/slack-gradle-plugin/issues/559
-  id("com.android.lint")
 }
 
 kotlin {
