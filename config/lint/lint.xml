@@ -31,4 +31,7 @@
   <issue id="Typos" severity="ignore" />
 
   <issue id="VectorPath" severity="ignore" />
+
+  <!-- Something is up with EnsureInitializerMetadata -->
+  <issue id="UnknownIssueId" severity="ignore" />
 </lint>

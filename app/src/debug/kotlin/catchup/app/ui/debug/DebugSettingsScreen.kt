@@ -303,7 +303,6 @@ constructor(
     }
   }
 
-  @SuppressLint("DiscouragedPrivateApi")
   private fun applyAnimationSpeed(multiplier: Int) {
     try {
       val method =

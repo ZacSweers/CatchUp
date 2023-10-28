@@ -140,7 +140,6 @@ constructor(
     uploadIssue(context, report, body, logs)
   }
 
-  @SuppressLint("NewApi") // False positive
   private suspend fun uploadIssue(
     context: Context,
     report: Report,

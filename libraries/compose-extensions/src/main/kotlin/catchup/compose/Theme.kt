@@ -117,7 +117,6 @@ private val googleFontProvider: GoogleFont.Provider by lazy {
   )
 }
 
-@SuppressLint("NewApi") // False positive because we do check the API level.
 @Composable
 fun CatchUpTheme(
   useDarkTheme: Boolean = isSystemInDarkTheme(),

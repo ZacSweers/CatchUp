@@ -81,9 +81,7 @@ fun Context.isInNightMode(): Boolean {
   }
 }
 
-@Suppress("DEPRECATION")
 val Context.primaryLocale: Locale
-  @SuppressLint("NewApi") // False positive
   get() {
-    return sdk(24) { resources.configuration.locales[0] } ?: resources.configuration.locale
+    return resources.configuration.locales[0]
   }

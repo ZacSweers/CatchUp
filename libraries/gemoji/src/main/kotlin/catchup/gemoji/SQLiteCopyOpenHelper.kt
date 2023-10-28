@@ -171,7 +171,6 @@ private fun isMigrationRequired(fromVersion: Int, toVersion: Int): Boolean {
  * @param output the output channel to copy.
  * @throws IOException if there is an I/O error.
  */
-@SuppressLint("LambdaLast")
 private fun copy(input: ReadableByteChannel, output: FileChannel) {
   try {
     output.transferFrom(input, 0, Long.MAX_VALUE)

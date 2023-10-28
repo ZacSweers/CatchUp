@@ -26,7 +26,6 @@ import catchup.base.ui.orderedSwatches
 
 object UiUtil {
 
-  @SuppressLint("Range")
   @ColorInt
   inline fun createRippleColor(
     palette: Palette,

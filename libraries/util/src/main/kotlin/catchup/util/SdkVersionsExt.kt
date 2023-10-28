@@ -26,7 +26,6 @@ import catchup.appconfig.sdk
 @PublishedApi
 internal val BUILD_APP_CONFIG =
   object : EmptyAppConfig {
-    @SuppressLint("AnnotateVersionCheck") // False positive
     override val sdkInt: Int = Build.VERSION.SDK_INT
   }
 

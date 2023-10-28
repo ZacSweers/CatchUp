@@ -130,7 +130,6 @@ object DebugApplicationModule {
   @Initializers
   @IntoSet
   @Provides
-  @SuppressLint("NewApi") // False positive
   fun strictModeInit(
     @StrictModeExecutor penaltyListenerExecutor: dagger.Lazy<ExecutorService>,
   ): () -> Unit = {

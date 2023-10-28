@@ -23,7 +23,6 @@ import catchup.util.sdk
 // BuildConfig.VERSION_NAME/CODE is not reliable here because we replace this dynamically in the
 // application manifest.
 @Suppress("DEPRECATION")
-@get:SuppressLint("NewApi") // False positive
 val Context.versionInfo: VersionInfo
   get() {
     val metadataBundle =

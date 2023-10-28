@@ -15,6 +15,7 @@ package catchup.compose
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -51,13 +52,13 @@ private val recomposeModifier =
     totalCompositions[0]++
 
     // The value of totalCompositions at the last timeout.
-    val totalCompositionsAtLastTimeout = remember { mutableStateOf(0L) }
+    val totalCompositionsAtLastTimeout = remember { mutableLongStateOf(0L) }
 
     // Start the timeout, and reset everytime there's a recomposition. (Using totalCompositions
     // as the key is really just to cause the timer to restart every composition).
     LaunchedEffect(totalCompositions[0]) {
       delay(3000)
-      totalCompositionsAtLastTimeout.value = totalCompositions[0]
+      totalCompositionsAtLastTimeout.longValue = totalCompositions[0]
     }
 
     Modifier.drawWithCache {
@@ -68,7 +69,7 @@ private val recomposeModifier =
         // Below is to draw the highlight, if necessary. A lot of the logic is copied from
         // Modifier.border
         val numCompositionsSinceTimeout =
-          totalCompositions[0] - totalCompositionsAtLastTimeout.value
+          totalCompositions[0] - totalCompositionsAtLastTimeout.longValue
 
         val hasValidBorderParams = size.minDimension > 0f
         if (!hasValidBorderParams || numCompositionsSinceTimeout <= 0) {

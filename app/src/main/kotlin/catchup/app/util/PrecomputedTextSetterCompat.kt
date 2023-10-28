@@ -65,7 +65,6 @@ class PrecomputedTextSetterCompat internal constructor(private val context: Coro
       return PrecomputedTextSetterCompat(context)
     }
 
-    @SuppressLint("NewApi") // False positive
     private fun precomputedText(
       textView: TextView,
       spanned: Spanned,

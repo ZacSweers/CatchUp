@@ -25,7 +25,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-@SuppressLint("UnspecifiedRegisterReceiverFlag")
 fun Context.intentReceivers(intentFilter: IntentFilter): Flow<Intent> = callbackFlow {
   val receiver =
     object : BroadcastReceiver() {
