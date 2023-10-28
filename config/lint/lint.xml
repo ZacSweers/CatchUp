@@ -34,4 +34,7 @@
 
   <!-- Something is up with EnsureInitializerMetadata -->
   <issue id="UnknownIssueId" severity="ignore" />
+
+  <!-- Slack-specific -->
+  <issue id="RawDispatchersUse,DeprecatedCall,MoshiUsageEnumMissingUnknown" severity="ignore" />
 </lint>

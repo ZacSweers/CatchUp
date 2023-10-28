@@ -58,7 +58,9 @@ internal class SQLiteCopyOpenHelper(
   }
 
   private fun verifyDatabaseFile() {
-    val name = checkNotNull(databaseName)
+    val name = checkNotNull(databaseName) {
+      "Database name was not set yet"
+    }
     val databaseFile = context.getDatabasePath(name)
     val copyLock = ProcessLock(name, context.filesDir, true)
     try {

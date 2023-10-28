@@ -20,7 +20,9 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.datetime.Instant
 
-@Keep sealed class RedditObject
+@Keep
+@JsonClass(generateAdapter = false)
+sealed class RedditObject
 
 @Keep
 interface RedditSubmission {
