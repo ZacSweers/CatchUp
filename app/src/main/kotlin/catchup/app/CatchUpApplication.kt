@@ -16,7 +16,6 @@
 package catchup.app
 
 import android.app.Application
-import android.content.Context
 import android.os.StrictMode
 import android.os.strictmode.DiskReadViolation
 import android.os.strictmode.UntaggedSocketViolation
@@ -45,7 +44,6 @@ class CatchUpApplication : Application() {
 
   @Inject
   internal fun plantTimberTrees(trees: DaggerSet<Tree>) {
-    Context.RECEIVER_NOT_EXPORTED
     Timber.plant(*trees.toTypedArray())
   }
 

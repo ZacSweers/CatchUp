@@ -4,12 +4,12 @@
     <issue
         id="MoshiUsageGenerateAdapterShouldBeTrue"
         message="JsonClass.generateAdapter must be true in order for Moshi code gen to run."
-        errorLine1="@JsonClass(generateAdapter = false)"
-        errorLine2="                             ~~~~~">
+        errorLine1="@Keep @JsonClass(generateAdapter = false) sealed class RedditObject"
+        errorLine2="                                   ~~~~~">
         <location
             file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
-            line="24"
-            column="30"/>
+            line="23"
+            column="36"/>
     </issue>
 
     <issue
@@ -19,7 +19,7 @@
         errorLine2="                        ~~~~~~~">
         <location
             file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
-            line="64"
+            line="62"
             column="25"/>
     </issue>
 
@@ -30,7 +30,7 @@
         errorLine2="                                                       ~~~~~~~">
         <location
             file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
-            line="65"
+            line="63"
             column="56"/>
     </issue>
 
@@ -41,7 +41,7 @@
         errorLine2="                        ~~~~~~~">
         <location
             file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
-            line="97"
+            line="95"
             column="25"/>
     </issue>
 
@@ -52,19 +52,19 @@
         errorLine2="                                                       ~~~~~~~">
         <location
             file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
-            line="98"
+            line="96"
             column="56"/>
     </issue>
 
     <issue
         id="MoshiUsageUnsupportedType"
         message="This type cannot be annotated with @JsonClass."
-        errorLine1="@JsonClass(generateAdapter = false)"
-        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        errorLine1="@Keep @JsonClass(generateAdapter = false) sealed class RedditObject"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
-            line="24"
-            column="1"/>
+            line="23"
+            column="7"/>
     </issue>
 
 </issues>

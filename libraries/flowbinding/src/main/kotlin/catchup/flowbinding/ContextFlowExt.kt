@@ -35,8 +35,7 @@ fun Context.intentReceivers(intentFilter: IntentFilter): Flow<Intent> = callback
   if (Build.VERSION.SDK_INT >= 33) {
     registerReceiver(receiver, intentFilter, Context.RECEIVER_NOT_EXPORTED)
   } else {
-    @Suppress("UnspecifiedRegisterReceiverFlag")
-    registerReceiver(receiver, intentFilter)
+    @Suppress("UnspecifiedRegisterReceiverFlag") registerReceiver(receiver, intentFilter)
   }
 
   awaitClose { unregisterReceiver(receiver) }
