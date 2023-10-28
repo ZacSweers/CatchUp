@@ -15,7 +15,6 @@
  */
 package catchup.app.ui.bugreport
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent

@@ -15,7 +15,6 @@
  */
 package catchup.base.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import catchup.util.sdk

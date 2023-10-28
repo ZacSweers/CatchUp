@@ -1,6 +1,5 @@
 package catchup.gemoji
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper

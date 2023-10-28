@@ -1,6 +1,5 @@
 package catchup.compose
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

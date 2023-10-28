@@ -1,6 +1,5 @@
 package catchup.gemoji
 
-import android.annotation.SuppressLint
 import androidx.annotation.RestrictTo
 import java.io.File
 import java.io.FileOutputStream

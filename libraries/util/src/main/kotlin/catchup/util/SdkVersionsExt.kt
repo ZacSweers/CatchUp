@@ -15,7 +15,6 @@
  */
 package catchup.util
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import androidx.core.content.getSystemService

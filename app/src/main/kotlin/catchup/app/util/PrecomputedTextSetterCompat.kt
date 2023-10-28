@@ -15,7 +15,6 @@
  */
 package catchup.app.util
 
-import android.annotation.SuppressLint
 import android.text.Spanned
 import android.widget.TextView
 import androidx.core.text.PrecomputedTextCompat
