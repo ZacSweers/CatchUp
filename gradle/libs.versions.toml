@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.33.2-alpha"
-agp = "8.3.0-alpha11"
+agp = "8.3.0-alpha12"
 androidx-activity = "1.8.0"
 androidx-core = "1.13.0-alpha01"
 androidx-sqlite = "2.4.0"
