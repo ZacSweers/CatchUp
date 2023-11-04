@@ -167,7 +167,7 @@ apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.
 autoService-annotations = "com.google.auto.service:auto-service:1.1.1"
 autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.1.0"
 
-google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.3"
+google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.4"
 javapoet = "com.squareup:javapoet:1.13.0"
 
 circuit-backstack = { module = "com.slack.circuit:circuit-backstack", version.ref = "circuit" }
