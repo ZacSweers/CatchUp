@@ -120,14 +120,6 @@ android {
       isUniversalApk = true
     }
   }
-  lint {
-    disable += "Typos" // https://twitter.com/ZacSweers/status/1495491162920136706
-    disable += "MissingTranslation"
-    disable += "ExtraTranslation" // wrong?
-    disable += "VectorPath" // Always complains about long paths as if I could do something about it
-    error += "ComposeUnstableCollections"
-    checkDependencies = true
-  }
   namespace = "dev.zacsweers.catchup"
 }
 

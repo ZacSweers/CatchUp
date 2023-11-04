@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.3.0-alpha11" type="baseline" client="gradle" dependencies="false" name="AGP (8.3.0-alpha11)" variant="all" version="8.3.0-alpha11">
+
+    <issue
+        id="MoshiUsageGenerateAdapterShouldBeTrue"
+        message="JsonClass.generateAdapter must be true in order for Moshi code gen to run."
+        errorLine1="@Keep @JsonClass(generateAdapter = false) sealed class RedditObject"
+        errorLine2="                                   ~~~~~">
+        <location
+            file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
+            line="23"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="MoshiUsageNonMoshiClassPlatform"
+        message="Platform type &apos;Instant&apos; is not natively supported by Moshi."
+        errorLine1="  override val created: Instant,"
+        errorLine2="                        ~~~~~~~">
+        <location
+            file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
+            line="62"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="MoshiUsageNonMoshiClassPlatform"
+        message="Platform type &apos;Instant&apos; is not natively supported by Moshi."
+        errorLine1="  @Json(name = &quot;created_utc&quot;) override val createdUtc: Instant,"
+        errorLine2="                                                       ~~~~~~~">
+        <location
+            file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
+            line="63"
+            column="56"/>
+    </issue>
+
+    <issue
+        id="MoshiUsageNonMoshiClassPlatform"
+        message="Platform type &apos;Instant&apos; is not natively supported by Moshi."
+        errorLine1="  override val created: Instant,"
+        errorLine2="                        ~~~~~~~">
+        <location
+            file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
+            line="95"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="MoshiUsageNonMoshiClassPlatform"
+        message="Platform type &apos;Instant&apos; is not natively supported by Moshi."
+        errorLine1="  @Json(name = &quot;created_utc&quot;) override val createdUtc: Instant,"
+        errorLine2="                                                       ~~~~~~~">
+        <location
+            file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
+            line="96"
+            column="56"/>
+    </issue>
+
+    <issue
+        id="MoshiUsageUnsupportedType"
+        message="This type cannot be annotated with @JsonClass."
+        errorLine1="@Keep @JsonClass(generateAdapter = false) sealed class RedditObject"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/catchup/service/reddit/model/RedditObject.kt"
+            line="23"
+            column="7"/>
+    </issue>
+
+</issues>

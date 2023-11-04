@@ -15,7 +15,6 @@
  */
 package catchup.app.ui.bugreport
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -140,7 +139,6 @@ constructor(
     uploadIssue(context, report, body, logs)
   }
 
-  @SuppressLint("NewApi") // False positive
   private suspend fun uploadIssue(
     context: Context,
     report: Report,

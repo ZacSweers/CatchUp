@@ -42,6 +42,7 @@ moshix = "0.25.0"
 okhttp = "5.0.0-alpha.11"
 preferences = "1.2.1"
 retrofit = "2.9.0"
+slack-lint = "0.7.0"
 sortDependencies = "0.4"
 sgp = "0.11.3"
 spotless = "6.22.0"
@@ -265,6 +266,9 @@ retrofit-debug-mock = { module = "com.squareup.retrofit2:retrofit-mock", version
 retrofit-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 retrofit-kotlinxSerialization = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0"
 
+slack-lint-checks = { module = "com.slack.lint:slack-lint-checks", version.ref = "slack-lint" }
+slack-lint-annotations = { module = "com.slack.lint:slack-lint-annotations", version.ref = "slack-lint" }
+
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
@@ -289,4 +293,4 @@ xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.86.2"
 xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.86.2"
 
 [bundles]
-common-lint = ["lints-compose"]
+common-lint = ["slack-lint-checks", "lints-compose"]

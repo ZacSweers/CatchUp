@@ -25,10 +25,17 @@
   </issue>
 
   <issue id="ComposeM2Api" severity="error" />
-
   <issue id="GradleDependency" severity="ignore" />
-
   <issue id="Typos" severity="ignore" />
-
   <issue id="VectorPath" severity="ignore" />
+  <issue id="MissingTranslation" severity="ignore" />
+  <issue id="ExtraTranslation" severity="ignore" />
+  <issue id="VectorPath" severity="ignore" />
+  <issue id="ComposeUnstableCollections" severity="Error" />
+
+  <!-- Something is up with EnsureInitializerMetadata -->
+  <issue id="UnknownIssueId" severity="ignore" />
+
+  <!-- Slack-specific -->
+  <issue id="RawDispatchersUse,DeprecatedCall,MoshiUsageEnumMissingUnknown,MainScopeUsage" severity="ignore" />
 </lint>

@@ -15,7 +15,6 @@
  */
 package catchup.util
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import androidx.core.content.getSystemService
@@ -26,7 +25,7 @@ import catchup.appconfig.sdk
 @PublishedApi
 internal val BUILD_APP_CONFIG =
   object : EmptyAppConfig {
-    @SuppressLint("AnnotateVersionCheck") // False positive
+    @Suppress("AnnotateVersionCheck") // False positive
     override val sdkInt: Int = Build.VERSION.SDK_INT
   }
 

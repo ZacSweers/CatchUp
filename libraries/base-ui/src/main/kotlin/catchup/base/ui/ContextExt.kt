@@ -15,7 +15,6 @@
  */
 package catchup.base.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import catchup.util.sdk
@@ -23,7 +22,6 @@ import catchup.util.sdk
 // BuildConfig.VERSION_NAME/CODE is not reliable here because we replace this dynamically in the
 // application manifest.
 @Suppress("DEPRECATION")
-@get:SuppressLint("NewApi") // False positive
 val Context.versionInfo: VersionInfo
   get() {
     val metadataBundle =

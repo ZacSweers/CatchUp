@@ -1,7 +1,6 @@
 package catchup.app.ui.debug
 
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.os.Build
@@ -303,7 +302,6 @@ constructor(
     }
   }
 
-  @SuppressLint("DiscouragedPrivateApi")
   private fun applyAnimationSpeed(multiplier: Int) {
     try {
       val method =

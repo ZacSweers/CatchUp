@@ -17,7 +17,6 @@
 
 package catchup.app.util
 
-import android.annotation.SuppressLint
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.palette.graphics.Palette
@@ -26,7 +25,6 @@ import catchup.base.ui.orderedSwatches
 
 object UiUtil {
 
-  @SuppressLint("Range")
   @ColorInt
   inline fun createRippleColor(
     palette: Palette,
