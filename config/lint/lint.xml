@@ -37,5 +37,5 @@
   <issue id="UnknownIssueId" severity="ignore" />
 
   <!-- Slack-specific -->
-  <issue id="RawDispatchersUse,DeprecatedCall,MoshiUsageEnumMissingUnknown" severity="ignore" />
+  <issue id="RawDispatchersUse,DeprecatedCall,MoshiUsageEnumMissingUnknown,MainScopeUsage" severity="ignore" />
 </lint>
