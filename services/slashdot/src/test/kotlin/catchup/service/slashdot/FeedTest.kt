@@ -9,7 +9,6 @@ class FeedTest {
 
   @Test
   fun parseSmokeTest() {
-    @Suppress("DoNotCallProviders")
     val parsedFeed = SlashdotModule.provideXml().decodeFromString<Feed>(FEED_STRING)
     assertThat(parsedFeed.entries).hasSize(1)
   }

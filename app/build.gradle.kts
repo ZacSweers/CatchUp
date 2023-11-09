@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import com.android.build.gradle.internal.tasks.factory.dependsOn
-import com.google.devtools.ksp.gradle.KspTaskJvm
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
@@ -26,32 +25,15 @@ import java.util.Locale
 import okio.buffer
 import okio.sink
 import okio.source
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.kotlin.kapt)
-  alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.sgp.base)
-  alias(libs.plugins.apollo)
   alias(libs.plugins.licensee)
-  alias(libs.plugins.anvil)
-  alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
-  alias(libs.plugins.sqldelight)
 //  alias(libs.plugins.baselineprofile) apply false
-  alias(libs.plugins.moshix)
   //  alias(libs.plugins.playPublisher)
-}
-
-slack {
-  features {
-    compose()
-    @Suppress("OPT_IN_USAGE")
-    dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
-    moshi(codegen = true)
-  }
 }
 
 val useDebugSigning: Boolean =
@@ -67,19 +49,11 @@ android {
 
     configure<BasePluginExtension> { archivesName.set("catchup") }
 
-    buildConfigField(
-      "String",
-      "GITHUB_DEVELOPER_TOKEN",
-      "\"${properties["catchup_github_developer_token"]}\""
-    )
-    resValue("string", "changelog_text", "haha")
     manifestPlaceholders["BUGSNAG_API_KEY"] = "placeholder"
   }
   buildFeatures {
     buildConfig = true
-    compose = true
     resValues = true
-    viewBinding = true
   }
   signingConfigs {
     if (!useDebugSigning && rootProject.file("signing/app-release.jks").exists()) {
@@ -97,14 +71,8 @@ android {
     getByName("debug") {
       applicationIdSuffix = ".debug"
       versionNameSuffix = "-dev"
-      buildConfigField(
-        "String",
-        "IMGUR_CLIENT_ACCESS_TOKEN",
-        "\"${project.properties["catchup_imgur_access_token"]}\""
-      )
     }
     getByName("release") {
-      buildConfigField("String", "BUGSNAG_KEY", "\"${properties["catchup_bugsnag_key"]}\"")
       manifestPlaceholders["BUGSNAG_API_KEY"] = properties["catchup_bugsnag_key"].toString()
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       proguardFiles += file("proguard-rules.pro")
@@ -120,7 +88,7 @@ android {
       isUniversalApk = true
     }
   }
-  namespace = "dev.zacsweers.catchup"
+  namespace = "dev.zacsweers.catchup.apk"
 }
 
 bugsnag {
@@ -133,16 +101,6 @@ bugsnag {
 //  serviceAccountEmail = properties["catchup_play_publisher_account"].toString()
 //  serviceAccountCredentials = rootProject.file("signing/play-account.p12")
 // }
-
-apollo {
-  service("github") {
-    customScalarsMapping.set(
-      mapOf("DateTime" to "kotlinx.datetime.Instant", "URI" to "okhttp3.HttpUrl")
-    )
-    packageName.set("catchup.app.data.github")
-    schemaFile.set(file("src/main/graphql/catchup/app/data/github/schema.json"))
-  }
-}
 
 abstract class CutChangelogTask : DefaultTask() {
 
@@ -424,18 +382,6 @@ licensee {
   allowUrl("https://www.openssl.org/source/license-openssl-ssleay.txt")
 }
 
-// Workaround for https://youtrack.jetbrains.com/issue/KT-59220
-afterEvaluate {
-  val kspDebugTask = tasks.named<KspTaskJvm>("kspDebugKotlin")
-  tasks.named<KotlinCompile>("kaptGenerateStubsDebugKotlin").configure {
-    source(kspDebugTask.flatMap { it.destination })
-  }
-  val kspReleaseTask = tasks.named<KspTaskJvm>("kspReleaseKotlin")
-  tasks.named<KotlinCompile>("kaptGenerateStubsReleaseKotlin").configure {
-    source(kspReleaseTask.flatMap { it.destination })
-  }
-}
-
 androidComponents {
   onVariants(selector().withBuildType("release")) { variant ->
     variant.packaging.resources.excludes.addAll(
@@ -469,152 +415,5 @@ androidComponents {
 //}
 
 dependencies {
-  ksp(libs.circuit.codegen)
-
-  implementation(libs.androidx.activity)
-  implementation(libs.androidx.activity.compose)
-  implementation(libs.androidx.annotations)
-  implementation(libs.androidx.appCompat)
-  implementation(libs.androidx.appCompat.resources)
-  implementation(libs.androidx.collection)
-  implementation(libs.androidx.compose.accompanist.adaptive)
-  implementation(libs.androidx.compose.accompanist.systemUi)
-  implementation(libs.androidx.compose.animation.graphics)
-  implementation(libs.androidx.compose.foundation)
-  implementation(libs.androidx.compose.material.material3)
-  implementation(libs.androidx.compose.material.material3.windowSizeClass)
-  implementation(libs.androidx.compose.material.ripple)
-  implementation(libs.androidx.compose.materialIcons)
-  implementation(libs.androidx.compose.runtime)
-  implementation(libs.androidx.compose.ui)
-  implementation(libs.androidx.core)
-  implementation(libs.androidx.coreKtx)
-  implementation(libs.androidx.customTabs)
-  implementation(libs.androidx.datastore.core)
-  implementation(libs.androidx.datastore.preferences)
-  implementation(libs.androidx.datastore.preferences.core)
-  implementation(libs.androidx.design)
-  implementation(libs.androidx.emojiAppcompat)
-  implementation(libs.androidx.lifecycle.extensions)
-  implementation(libs.androidx.lifecycle.ktx)
-  implementation(libs.androidx.paging.compose)
-  implementation(libs.androidx.palette)
-  implementation(libs.androidx.preference)
-  implementation(libs.androidx.preferenceKtx)
-  implementation(libs.androidx.profileinstaller)
-  implementation(libs.androidx.splashscreen)
-  implementation(libs.androidx.sqlite)
-  implementation(libs.androidx.window)
-  implementation(libs.apollo.api)
-  implementation(libs.apollo.httpcache)
-  implementation(libs.apollo.normalizedCache)
-  implementation(libs.apollo.normalizedCache.api)
-  implementation(libs.apollo.runtime)
-  implementation(libs.circuit.backstack)
-  implementation(libs.circuit.codegenAnnotations)
-  implementation(libs.circuit.foundation)
-  implementation(libs.circuit.overlay)
-  implementation(libs.circuit.retained)
-  implementation(libs.circuit.runtime)
-  implementation(libs.circuit.runtime.presenter)
-  implementation(libs.circuit.runtime.screen)
-  implementation(libs.circuit.runtime.ui)
-  implementation(libs.circuitx.android)
-  implementation(libs.circuitx.gestureNav)
-  implementation(libs.circuitx.overlays)
-  implementation(libs.coil.base)
-  implementation(libs.coil.compose)
-  implementation(libs.coil.compose.base)
-  implementation(libs.coil.default)
-  implementation(libs.coil.gif)
-  implementation(libs.collapsingToolbar)
-  implementation(libs.errorProneAnnotations)
-  implementation(libs.firebase.core)
-  implementation(libs.firebase.database)
-  implementation(libs.kotlin.coroutines)
-  implementation(libs.kotlin.coroutinesAndroid)
-  implementation(libs.kotlin.datetime)
-  implementation(libs.kotlinx.immutable)
-  implementation(libs.markwon.core)
-  implementation(libs.markwon.extStrikethrough)
-  implementation(libs.markwon.extTables)
-  implementation(libs.markwon.extTasklist)
-  implementation(libs.markwon.html)
-  implementation(libs.markwon.image)
-  implementation(libs.markwon.imageCoil)
-  implementation(libs.markwon.linkify)
-  implementation(libs.misc.byteunits)
-  implementation(libs.misc.composeSettings.base)
-  implementation(libs.misc.composeSettings.datastore)
-  implementation(libs.misc.debug.processPhoenix)
-  implementation(libs.misc.moshiLazyAdapters)
-  implementation(libs.misc.okio)
-  implementation(libs.misc.tapTargetView)
-  implementation(libs.misc.timber)
-  implementation(libs.moshi.core)
-  implementation(libs.moshi.shimo)
-  implementation(libs.okhttp.core)
-  implementation(libs.retrofit.core)
-  implementation(libs.sqldelight.driver.android)
-  implementation(libs.sqldelight.paging)
-  implementation(libs.sqldelight.primitiveAdapters)
-  implementation(libs.sqldelight.runtime)
-  implementation(libs.telephoto.zoomable)
-  implementation(libs.telephoto.zoomableImage)
-  implementation(libs.telephoto.zoomableImageCoil)
-  implementation(libs.xmlutil.serialization)
-  implementation(projects.bookmarks)
-  implementation(projects.bookmarks.db)
-  implementation(projects.libraries.appconfig)
-  implementation(projects.libraries.auth)
-  implementation(projects.libraries.baseUi)
-  implementation(projects.libraries.composeExtensions)
-  implementation(projects.libraries.composeExtensions.pullRefresh)
-  implementation(projects.libraries.deeplinking)
-  implementation(projects.libraries.di)
-  implementation(projects.libraries.di.android)
-  implementation(projects.libraries.flowbinding)
-  implementation(projects.libraries.gemoji)
-  implementation(projects.libraries.gemoji.db)
-  implementation(projects.libraries.kotlinutil)
-  implementation(projects.libraries.summarizer)
-  implementation(projects.libraries.util)
-  implementation(projects.serviceApi)
-  implementation(projects.serviceDb)
-  implementation(projects.services.designernews)
-  implementation(projects.services.dribbble)
-  implementation(projects.services.github)
-  implementation(projects.services.hackernews)
-  implementation(projects.services.producthunt)
-  implementation(projects.services.reddit)
-  implementation(projects.services.slashdot)
-  implementation(projects.services.unsplash)
-  implementation(projects.services.uplabs)
-
-  releaseImplementation(libs.misc.bugsnag)
-  releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
-
-  debugImplementation(libs.androidx.compose.uiTooling)
-  debugImplementation(libs.corbind)
-  debugImplementation(libs.misc.debug.flipper)
-  debugImplementation(libs.misc.debug.flipperNetwork)
-  debugImplementation(libs.misc.debug.guava)
-  debugImplementation(libs.misc.debug.soLoader)
-  debugImplementation(libs.misc.debug.telescope)
-  debugImplementation(libs.misc.leakCanary)
-  debugImplementation(libs.misc.leakCanary.shark)
-  debugImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
-  debugImplementation(libs.okhttp.debug.loggingInterceptor)
-  debugImplementation(libs.retrofit.moshi)
-  debugImplementation(projects.libraries.retrofitconverters)
-
-  kaptDebug(projects.libraries.tooling.spiMultibindsValidator)
-  kaptDebug(projects.libraries.tooling.spiVisualizer)
-
-  testImplementation(libs.misc.debug.flipper)
-  testImplementation(libs.misc.debug.flipperNetwork)
-  testImplementation(libs.test.junit)
-  testImplementation(libs.test.truth)
-
-  androidTestImplementation(libs.misc.jsr305)
+  implementation(projects.appScaffold)
 }
