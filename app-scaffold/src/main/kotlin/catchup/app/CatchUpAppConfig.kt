@@ -36,7 +36,9 @@ constructor(
 ) : AppConfig {
   private val versionInfo = appContext.versionInfo
   override val isDebug: Boolean = BuildConfig.DEBUG
-  override val applicationId: String get() = appContext.packageName
+  override val applicationId: String
+    get() = appContext.packageName
+
   override val buildType: String = BuildConfig.BUILD_TYPE
   override val versionCode: Long = versionInfo.code
   override val versionName: String = versionInfo.name
