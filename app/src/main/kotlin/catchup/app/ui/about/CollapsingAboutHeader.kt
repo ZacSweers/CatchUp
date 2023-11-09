@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.isSpecified
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -68,7 +69,10 @@ fun CollapsingAboutHeader(
   val scaffoldState = rememberCollapsingToolbarScaffoldState()
   val parallaxRatio = 0.2f
 
-  Surface(modifier) { // todo: why is this needed when AboutScreen is already using Scaffold()?
+  Surface(
+    modifier,
+    color = Color.Transparent
+  ) { // todo: why is this needed when AboutScreen is already using Scaffold()?
     CollapsingToolbarScaffold(
       state = scaffoldState,
       modifier = Modifier.statusBarsPadding(),

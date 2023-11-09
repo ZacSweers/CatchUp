@@ -54,6 +54,7 @@ dependencies {
   implementation(libs.androidx.compose.materialIcons)
   implementation(libs.androidx.compose.uiTooling)
   implementation(libs.androidx.core)
+  implementation(libs.haze)
   implementation(libs.kotlin.coroutines)
   implementation(projects.libraries.appconfig)
   implementation(projects.libraries.util)
