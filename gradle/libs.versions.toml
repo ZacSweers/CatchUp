@@ -15,11 +15,11 @@ coil = "2.5.0"
 compose = "1.6.0-alpha08"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
-compose-compiler = "1.5.4-dev-k1.9.20-RC-1edce5fd625"
-compose-compiler-kotlinVersion = "1.9.20-RC"
+compose-compiler = "1.5.4"
+compose-compiler-kotlinVersion = "1.9.20"
 compose-jb = "1.5.10"
 compose-jb-compiler = "1.5.3"
-compose-jb-kotlinVersion = "1.9.20-RC"
+compose-jb-kotlinVersion = "1.9.20"
 corbind = "1.9.0"
 coroutines = "1.7.3"
 dagger = "2.48.1"
@@ -28,7 +28,7 @@ detekt = "1.23.3"
 eithernet = "1.8.0"
 flipper = "0.236.0"
 jdk = "20"
-jvmTarget = "11"
+jvmTarget = "17"
 kotlin = "1.9.20"
 kotlinx-metadata = "0.7.0"
 kotlinx-serialization = "1.6.0"
@@ -74,7 +74,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.8.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
-playPublisher = { id = "com.github.triplet.play", version = "3.8.4" }
+playPublisher = { id = "com.github.triplet.play", version = "3.8.5" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.7.0" }
 retry = { id = "org.gradle.test-retry", version = "1.5.6" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
@@ -231,7 +231,7 @@ markwon-linkify = { module = "io.noties.markwon:linkify", version.ref = "markwon
 misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 misc-leakCanary-shark = { module = "com.squareup.leakcanary:shark", version.ref = "leakcanary" }
 misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakcanary-object-watcher-android", version.ref = "leakcanary" }
-misc-bugsnag = "com.bugsnag:bugsnag-android:5.31.2"
+misc-bugsnag = "com.bugsnag:bugsnag-android:5.31.3"
 misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
