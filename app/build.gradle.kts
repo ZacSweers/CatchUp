@@ -40,7 +40,7 @@ plugins {
   alias(libs.plugins.ksp)
   alias(libs.plugins.bugsnag)
   alias(libs.plugins.sqldelight)
-  alias(libs.plugins.baselineprofile) apply false
+//  alias(libs.plugins.baselineprofile) apply false
   alias(libs.plugins.moshix)
   //  alias(libs.plugins.playPublisher)
 }

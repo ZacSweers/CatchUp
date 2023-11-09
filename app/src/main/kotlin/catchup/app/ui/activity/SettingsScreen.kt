@@ -6,7 +6,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
@@ -19,11 +18,11 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,6 +45,7 @@ import catchup.app.ui.activity.SettingsScreen.Event.NavToScreen
 import catchup.app.ui.activity.SettingsScreen.State
 import catchup.app.util.restartApp
 import catchup.base.ui.BackPressNavButton
+import catchup.base.ui.CatchUpScaffold
 import catchup.compose.ContentAlphas
 import catchup.compose.DisableableContent
 import catchup.compose.LocalEnabled
@@ -192,7 +192,7 @@ constructor(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(SettingsScreen::class, AppScope::class)
 class SettingsUi
 @Inject
@@ -226,14 +226,17 @@ constructor(
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
   override fun Content(state: State, modifier: Modifier) {
-    Scaffold(
+    CatchUpScaffold(
       modifier = modifier,
       contentWindowInsets = WindowInsets(0, 0, 0, 0),
       containerColor = Color.Transparent,
+      blurTopBar = true,
+      blurBottomBar = true,
       topBar = {
         TopAppBar(
           title = { Text(stringResource(R.string.title_activity_settings)) },
           navigationIcon = { BackPressNavButton() },
+          colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         )
       },
     ) { innerPadding ->

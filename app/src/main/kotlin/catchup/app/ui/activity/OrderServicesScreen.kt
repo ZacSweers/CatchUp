@@ -44,10 +44,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -78,6 +78,7 @@ import catchup.app.ui.activity.OrderServicesScreen.Event.Save
 import catchup.app.ui.activity.OrderServicesScreen.Event.Shuffle
 import catchup.app.ui.activity.OrderServicesScreen.State
 import catchup.base.ui.BackPressNavButton
+import catchup.base.ui.CatchUpScaffold
 import catchup.compose.DraggableItem
 import catchup.compose.dragContainer
 import catchup.compose.rememberDragDropState
@@ -242,12 +243,15 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
       }
     }
   }
-  Scaffold(
+  CatchUpScaffold(
     modifier = modifier,
+    blurTopBar = true,
+    blurBottomBar = true,
     topBar = {
       TopAppBar(
         title = { Text(stringResource(id = R.string.pref_reorder_services)) },
         navigationIcon = { BackPressNavButton() },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         actions = {
           IconButton(
             onClick = { state.eventSink(Shuffle) },
