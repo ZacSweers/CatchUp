@@ -74,7 +74,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.8.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
-playPublisher = { id = "com.github.triplet.play", version = "3.8.4" }
+playPublisher = { id = "com.github.triplet.play", version = "3.8.5" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.7.0" }
 retry = { id = "org.gradle.test-retry", version = "1.5.6" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
