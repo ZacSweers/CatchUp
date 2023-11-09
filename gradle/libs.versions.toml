@@ -206,7 +206,7 @@ eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet
 
 errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.23.0"
 
-haze = "dev.chrisbanes.haze:haze:0.2.0"
+haze = "dev.chrisbanes.haze:haze:0.3.0"
 
 javaxInject = "javax.inject:javax.inject:1"
 
