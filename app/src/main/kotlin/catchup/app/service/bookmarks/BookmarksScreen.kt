@@ -23,10 +23,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -56,6 +56,7 @@ import catchup.app.service.bookmarks.BookmarksScreen.Event.Click
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Remove
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Share
 import catchup.base.ui.BackPressNavButton
+import catchup.base.ui.CatchUpScaffold
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
@@ -191,14 +192,17 @@ constructor(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
-  Scaffold(
+  CatchUpScaffold(
     modifier = modifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,
+    blurTopBar = true,
+    blurBottomBar = true,
     topBar = {
       TopAppBar(
         title = { Text(stringResource(string.title_bookmarks)) },
         navigationIcon = { BackPressNavButton() },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         actions = {
           IconButton({ state.eventSink(Share) }) {
             Icon(

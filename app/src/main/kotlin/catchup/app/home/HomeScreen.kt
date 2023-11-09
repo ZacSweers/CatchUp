@@ -23,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -72,6 +71,7 @@ import catchup.app.service.ServiceScreen
 import catchup.app.service.bookmarks.Bookmark
 import catchup.app.service.bookmarks.BookmarksScreen
 import catchup.app.ui.activity.SettingsScreen
+import catchup.base.ui.CatchUpScaffold
 import catchup.base.ui.rememberSystemBarColorController
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.LocalDisplayFeatures
@@ -266,14 +266,15 @@ fun Home(state: State, modifier: Modifier = Modifier) {
               // Embed the content in a scaffold for padding and such
               val meta = state.serviceMetas[state.selectedIndex]
               val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-              Scaffold(
+              CatchUpScaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 containerColor = Color.Transparent,
                 topBar = {
                   TopAppBar(
                     title = { Text(stringResource(meta.name), fontWeight = FontWeight.Black) },
-                    scrollBehavior = scrollBehavior
+                    scrollBehavior = scrollBehavior,
+                    colors = topAppBarColors(containerColor = Color.Transparent)
                   )
                 },
               ) { innerPadding ->
@@ -359,7 +360,8 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
               position + offset.sign.toInt()
             }
 
-          // Coerce because HorizontalPager sometimes jumps multiple pages and it makes the rest of
+          // Coerce because HorizontalPager sometimes jumps multiple pages and it makes the rest
+          // of
           // this code sad
           // https://issuetracker.google.com/issues/264602921
           val adjustedOffset =
@@ -378,15 +380,18 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
   }
   val serviceMetas by rememberUpdatedState(state.serviceMetas)
   val eventSink by rememberUpdatedState(state.eventSink)
-  Scaffold(
+  CatchUpScaffold(
     modifier = nestedScrollModifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,
+    blurTopBar = true,
+    blurBottomBar = true,
     topBar = {
       TopAppBar(
         title = { Text(title) },
         scrollBehavior = scrollBehavior,
-        colors = topAppBarColors(scrolledContainerColor = scrimColor),
+        colors =
+          topAppBarColors(containerColor = Color.Transparent, scrolledContainerColor = scrimColor),
         actions = {
           // TODO wire with Syllabus
           if (state.changelogAvailable) {
