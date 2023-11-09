@@ -1,5 +1,6 @@
 include(
   ":app",
+  ":app-scaffold",
 //  ":benchmark",
   ":bookmarks",
   ":bookmarks:db",
