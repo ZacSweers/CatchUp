@@ -23,7 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -252,10 +252,10 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
         val themeColor = themeColorRes?.let { colorResource(it) } ?: Color.Unspecified
         // When swiping from start to end, we don't dismiss and instead use this to indicate
         // metadata about the bookmark, like the service it's from.
-        SwipeToDismiss(
-          modifier = Modifier.animateItemPlacement(),
+        // Do nothing
+        SwipeToDismissBox(
           state = dismissState,
-          background = {
+          backgroundContent = {
             val color =
               when (dismissState.dismissDirection) {
                 StartToEnd -> themeColor
@@ -296,7 +296,8 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
               }
             }
           },
-          dismissContent = {
+          modifier = Modifier.animateItemPlacement(),
+          content = {
             val clickUrl = item.clickUrl
             if (clickUrl != null) {
               ClickableItem(
