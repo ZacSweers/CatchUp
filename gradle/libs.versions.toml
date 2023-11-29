@@ -12,7 +12,7 @@ anvil = "2.4.8"
 apollo = "3.8.2"
 circuit = "0.17.0"
 coil = "2.5.0"
-compose = "1.6.0-beta01"
+compose = "1.6.0-beta02"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.5.4"
