@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!--
+    We run checkDependencies on this project but also run lint individually on subprojects. SO, to
+    avoid duplicating reports, we ignore all issues in projects that aren't in /app/src/ dirs.
+    · `^` matches the start of the string.
+    · `(?!.*/app/src/)` is a negative lookahead that ensures that the string does not contain /app/src/.
+    · `.*` matches any character (except for a newline) zero or more times.
+    · `$` matches the end of the string.
+    -->
+    <issue id="all">
+        <ignore regexp="^(?!.*/app/src/).*$" />
+
+        <!-- For some reason the above regex isn't working on class files -->
+        <ignore path="**/*.class" />
+    </issue>
+</lint>

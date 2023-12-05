@@ -91,7 +91,7 @@ data class HackerNewsComment(
   val text: String,
   /* private, but Firebase is too dumb to read private fields */
   val type: String?
-//  val url: String?
+  //  val url: String?
 ) {
 
   /*

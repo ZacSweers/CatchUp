@@ -14,9 +14,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -35,7 +36,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun rememberDragDropState(lazyListState: LazyListState, onMove: (Int, Int) -> Unit): DragDropState {
-  val scope = rememberCoroutineScope()
+  val scope = rememberStableCoroutineScope()
   val state =
     remember(lazyListState) { DragDropState(state = lazyListState, onMove = onMove, scope = scope) }
   LaunchedEffect(state) {
@@ -58,14 +59,13 @@ internal constructor(
 
   internal val scrollChannel = Channel<Float>()
 
-  private var draggingItemDraggedDelta by mutableStateOf(0f)
-  private var draggingItemInitialOffset by mutableStateOf(0)
+  private var draggingItemDraggedDelta by mutableFloatStateOf(0f)
+  private var draggingItemInitialOffset by mutableIntStateOf(0)
   internal val draggingItemOffset: Float
     get() =
       draggingItemLayoutInfo?.let { item ->
         draggingItemInitialOffset + draggingItemDraggedDelta - item.offset
-      }
-        ?: 0f
+      } ?: 0f
 
   private val draggingItemLayoutInfo: LazyListItemInfo?
     get() = state.layoutInfo.visibleItemsInfo.firstOrNull { it.index == draggingItemIndex }

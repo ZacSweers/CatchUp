@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.3.0-alpha11" type="baseline" client="gradle" dependencies="false" name="AGP (8.3.0-alpha11)" variant="all" version="8.3.0-alpha11">
+
+    <issue
+        id="MoshiUsageNonMoshiClassPlatform"
+        message="Platform type &apos;Instant&apos; is not natively supported by Moshi."
+        errorLine1="  @Json(name = &quot;created_at&quot;) val createdAt: Instant,"
+        errorLine2="                                            ~~~~~~~">
+        <location
+            file="src/main/kotlin/catchup/service/unsplash/model/UnsplashModels.kt"
+            line="25"
+            column="45"/>
+    </issue>
+
+</issues>

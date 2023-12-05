@@ -15,17 +15,16 @@
  */
 package catchup.flowbinding
 
-import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import catchup.util.kotlin.safeOffer
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-@SuppressLint("UnspecifiedRegisterReceiverFlag")
 fun Context.intentReceivers(intentFilter: IntentFilter): Flow<Intent> = callbackFlow {
   val receiver =
     object : BroadcastReceiver() {
@@ -33,7 +32,11 @@ fun Context.intentReceivers(intentFilter: IntentFilter): Flow<Intent> = callback
         safeOffer(intent)
       }
     }
-  registerReceiver(receiver, intentFilter)
+  if (Build.VERSION.SDK_INT >= 33) {
+    registerReceiver(receiver, intentFilter, Context.RECEIVER_NOT_EXPORTED)
+  } else {
+    @Suppress("UnspecifiedRegisterReceiverFlag") registerReceiver(receiver, intentFilter)
+  }
 
   awaitClose { unregisterReceiver(receiver) }
 }

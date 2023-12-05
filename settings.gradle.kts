@@ -215,7 +215,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise") version "3.15"
+  id("com.gradle.enterprise") version "3.16"
   id("com.dropbox.focus") version "0.5.1"
 }
 

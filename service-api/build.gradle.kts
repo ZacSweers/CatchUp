@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.multiplatform)
@@ -27,12 +25,13 @@ kotlin {
   jvm()
   // endregion
 
-  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+  applyDefaultHierarchyTemplate()
 
   sourceSets {
     commonMain {
       dependencies {
         api(libs.androidx.annotations)
+        api(libs.anvil.annotations)
         api(libs.compose.runtime)
         api(libs.dagger.runtime)
         api(libs.kotlin.datetime)

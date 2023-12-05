@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.google.accompanist.systemuicontroller.SystemUiController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import catchup.base.ui.SystemBarColorController
+import catchup.base.ui.rememberSystemBarColorController
 
 class ConditionalSystemUiColors(
-  private val systemUiController: SystemUiController,
+  private val systemBarColorController: SystemBarColorController,
   initialStatusBarDarkContent: Boolean,
   initialNavBarDarkContent: Boolean,
 ) {
@@ -16,24 +16,24 @@ class ConditionalSystemUiColors(
   private var storedNavBarDarkContent by mutableStateOf(initialNavBarDarkContent)
 
   fun save() {
-    storedStatusBarDarkContent = systemUiController.statusBarDarkContentEnabled
-    storedNavBarDarkContent = systemUiController.navigationBarDarkContentEnabled
+    storedStatusBarDarkContent = systemBarColorController.statusBarDarkContentEnabled
+    storedNavBarDarkContent = systemBarColorController.navigationBarDarkContentEnabled
   }
 
   fun restore() {
-    systemUiController.statusBarDarkContentEnabled = storedStatusBarDarkContent
-    systemUiController.navigationBarDarkContentEnabled = storedNavBarDarkContent
+    systemBarColorController.statusBarDarkContentEnabled = storedStatusBarDarkContent
+    systemBarColorController.navigationBarDarkContentEnabled = storedNavBarDarkContent
   }
 }
 
 // TODO if dark mode changes during this, it will restore the wrong colors. What do we do?
 @Composable
 fun rememberConditionalSystemUiColors(
-  systemUiController: SystemUiController = rememberSystemUiController()
+  systemBarColorController: SystemBarColorController = rememberSystemBarColorController()
 ): ConditionalSystemUiColors {
   return ConditionalSystemUiColors(
-    systemUiController,
-    systemUiController.statusBarDarkContentEnabled,
-    systemUiController.navigationBarDarkContentEnabled
+    systemBarColorController,
+    systemBarColorController.statusBarDarkContentEnabled,
+    systemBarColorController.navigationBarDarkContentEnabled
   )
 }

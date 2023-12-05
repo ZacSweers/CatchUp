@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.3.0-alpha12" type="baseline" client="gradle" dependencies="false" name="AGP (8.3.0-alpha12)" variant="all" version="8.3.0-alpha12">
+
+    <issue
+        id="DoNotCallProviders"
+        message="Dagger provider methods should not be called directly by user code."
+        errorLine1="    val parsedFeed = SlashdotModule.provideXml().decodeFromString&lt;Feed>(FEED_STRING)"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/test/kotlin/catchup/service/slashdot/FeedTest.kt"
+            line="12"
+            column="22"/>
+    </issue>
+
+</issues>
