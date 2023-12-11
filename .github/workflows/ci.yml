@@ -43,7 +43,7 @@ jobs:
           touch ~/.gradle/gradle.properties
 
       - name: Bootstrap
-        run: ./gradlew bootstrap --stacktrace
+        run: ./gradlew bootstrap
 
       - name: Get changed files
         if: always() && github.event_name == 'pull_request'
@@ -89,7 +89,11 @@ jobs:
           path: build/skippy/**
 
       - name: Build and run tests
-        run: ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
+        timeout-minutes: 30
+        env:
+          OPEN_AI_KEY: ${{ secrets.OPEN_AI_KEY }}
+        # TODO the check task undoes what Skippy provides, better to split it
+        run: ./scripts/shell_sentry.sh ./gradlew ${{ env.APP_TARGET }} checkSortDependencies spotlessCheck globalCiLint globalCiUnitTest -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
 
       - name: Filter sarif
         if: always() && github.event_name == 'pull_request'
