@@ -84,7 +84,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 
 [libraries]
-androidx-annotations = "androidx.annotation:annotation:1.7.0"
+androidx-annotations = "androidx.annotation:annotation:1.7.1"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
