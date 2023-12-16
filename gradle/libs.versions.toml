@@ -241,7 +241,7 @@ misc-debug-guava = "com.google.guava:guava:32.1.3-jre"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.2.0"
 
-misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:1.0.2"
+misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:1.0.3"
 misc-composeSettings-base = "com.github.alorma:compose-settings-storage-base:1.0.2"
 misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.27.0"
 misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
