@@ -83,7 +83,7 @@ jobs:
           fi
 
       - name: Upload skippy diagnostics
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: reports
           path: build/skippy/**
@@ -113,7 +113,7 @@ jobs:
 
       - name: (Fail-only) Upload build reports
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: reports
           path: |
