@@ -15,19 +15,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.DismissDirection.EndToStart
-import androidx.compose.material3.DismissDirection.StartToEnd
-import androidx.compose.material3.DismissValue.Default
-import androidx.compose.material3.DismissValue.DismissedToStart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissValue.EndToStart
+import androidx.compose.material3.SwipeToDismissValue.Settled
+import androidx.compose.material3.SwipeToDismissValue.StartToEnd
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -239,9 +238,9 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
       if (item == null) {
         PlaceholderItem(Color.Unspecified)
       } else {
-        val dismissState = rememberDismissState(confirmValueChange = { it == DismissedToStart })
+        val dismissState = rememberSwipeToDismissState(confirmValueChange = { it == EndToStart })
 
-        if (dismissState.currentValue == DismissedToStart) {
+        if (dismissState.currentValue == EndToStart) {
           // TODO offer an undo option after a pause?
           // TODO no exit animation yet https://issuetracker.google.com/issues/150812265#comment30
           state.eventSink(Remove(item.id))
@@ -260,13 +259,13 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
               when (dismissState.dismissDirection) {
                 StartToEnd -> themeColor
                 EndToStart -> MaterialTheme.colorScheme.error
-                null -> Color.Unspecified
+                Settled -> Color.Unspecified
               }
             val alignment =
               when (dismissState.dismissDirection) {
                 StartToEnd -> Alignment.CenterStart
                 EndToStart -> Alignment.CenterEnd
-                null -> Alignment.CenterStart
+                Settled -> Alignment.CenterStart
               }
             Box(
               modifier = Modifier.fillMaxSize().background(color),
@@ -290,7 +289,7 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
                     modifier = Modifier.padding(32.dp).size(32.dp),
                     tint = MaterialTheme.colorScheme.onError
                   )
-                null -> {
+                Settled -> {
                   // Do nothing
                 }
               }
