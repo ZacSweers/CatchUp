@@ -102,6 +102,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlinx.collections.immutable.ImmutableList
@@ -117,7 +118,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
-import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 
 // TODO generalize metas to allow dynamic ones, like settings/bookmarks
 @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)

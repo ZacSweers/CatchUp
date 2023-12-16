@@ -71,6 +71,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.Dispatchers
@@ -80,7 +81,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import okhttp3.Cache
-import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 
 @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
 @StringKey("settings")
@@ -274,7 +274,10 @@ constructor(
         }
 
         stickyHeader(key = "theming_header") {
-          ComposableHeaderItem(stringResource(AppScaffoldR.string.prefs_theme), displayDivider = true)
+          ComposableHeaderItem(
+            stringResource(AppScaffoldR.string.prefs_theme),
+            displayDivider = true
+          )
         }
 
         item(key = "dynamic_theme") {

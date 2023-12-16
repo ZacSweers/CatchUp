@@ -56,10 +56,11 @@ fun HazeScaffold(
     contentWindowInsets = contentWindowInsets,
   ) { contentPadding ->
     Box(
-      modifier = Modifier.haze(
-        state = hazeState,
-        backgroundColor = containerColor,
-      ),
+      modifier =
+        Modifier.haze(
+          state = hazeState,
+          backgroundColor = containerColor,
+        ),
       content = { content(contentPadding) },
     )
   }

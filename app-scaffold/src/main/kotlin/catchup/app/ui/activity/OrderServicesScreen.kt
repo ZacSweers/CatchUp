@@ -96,10 +96,10 @@ import com.slack.circuit.runtime.screen.Screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
-import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 
 @Parcelize
 object OrderServicesScreen : Screen {
