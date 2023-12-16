@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DismissDirection.EndToStart
 import androidx.compose.material3.DismissDirection.StartToEnd
-import androidx.compose.material3.DismissValue.Default
 import androidx.compose.material3.DismissValue.DismissedToStart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -56,7 +55,7 @@ import catchup.app.service.bookmarks.BookmarksScreen.Event.Click
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Remove
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Share
 import catchup.base.ui.BackPressNavButton
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
@@ -192,7 +191,7 @@ constructor(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
-  CatchUpScaffold(
+  HazeScaffold(
     modifier = modifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,

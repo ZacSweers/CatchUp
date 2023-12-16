@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import catchup.app.ui.about.AboutScreen.AboutScreenComponent
 import catchup.app.ui.about.AboutScreen.State
 import catchup.appconfig.AppConfig
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
@@ -35,13 +35,13 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
-import dev.zacsweers.catchup.app.scaffold.R
 import java.util.Locale
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 
 @Parcelize
 data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenComponent.DEFAULT) :
@@ -63,8 +63,8 @@ data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenCompon
     val screen: Screen,
     @StringRes val titleRes: Int,
   ) {
-    Licenses(LicensesScreen, R.string.licenses),
-    Changelog(ChangelogScreen, R.string.changelog);
+    Licenses(LicensesScreen, AppScaffoldR.string.licenses),
+    Changelog(ChangelogScreen, AppScaffoldR.string.changelog);
 
     companion object {
       internal val DEFAULT = Licenses
@@ -100,7 +100,7 @@ constructor(@Assisted val screen: AboutScreen, private val appConfig: AppConfig)
 @CircuitInject(AboutScreen::class, AppScope::class)
 @Composable
 fun About(state: State, modifier: Modifier = Modifier) {
-  CatchUpScaffold(
+  HazeScaffold(
     containerColor = Color.Transparent,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     blurTopBar = true,

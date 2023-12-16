@@ -45,7 +45,7 @@ import catchup.app.ui.activity.SettingsScreen.Event.NavToScreen
 import catchup.app.ui.activity.SettingsScreen.State
 import catchup.app.util.restartApp
 import catchup.base.ui.BackPressNavButton
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.compose.ContentAlphas
 import catchup.compose.DisableableContent
 import catchup.compose.LocalEnabled
@@ -71,7 +71,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
-import dev.zacsweers.catchup.app.scaffold.R
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.Dispatchers
@@ -81,6 +80,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import okhttp3.Cache
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 
 @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
 @StringKey("settings")
@@ -129,10 +129,10 @@ constructor(
           // TODO circuit-ify this
           Snackbar.make(
               view,
-              appContext.getString(R.string.settings_reset),
+              appContext.getString(AppScaffoldR.string.settings_reset),
               Snackbar.LENGTH_INDEFINITE
             )
-            .setAction(R.string.restart) { appContext.restartApp() }
+            .setAction(AppScaffoldR.string.restart) { appContext.restartApp() }
             .show()
         }
     }
@@ -146,15 +146,15 @@ constructor(
               try {
                 val cleanedAmount = clearCache()
                 appContext.getString(
-                  R.string.clear_cache_success,
+                  AppScaffoldR.string.clear_cache_success,
                   BinaryByteUnit.format(cleanedAmount)
                 )
               } catch (e: Exception) {
-                appContext.getString(R.string.settings_error_cleaning_cache)
+                appContext.getString(AppScaffoldR.string.settings_error_cleaning_cache)
               }
             // TODO circuit-ify this
             Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE)
-              .setAction(R.string.restart) { appContext.restartApp() }
+              .setAction(AppScaffoldR.string.restart) { appContext.restartApp() }
               .show()
           }
         }
@@ -226,7 +226,7 @@ constructor(
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
   override fun Content(state: State, modifier: Modifier) {
-    CatchUpScaffold(
+    HazeScaffold(
       modifier = modifier,
       contentWindowInsets = WindowInsets(0, 0, 0, 0),
       containerColor = Color.Transparent,
@@ -234,7 +234,7 @@ constructor(
       blurBottomBar = true,
       topBar = {
         TopAppBar(
-          title = { Text(stringResource(R.string.title_activity_settings)) },
+          title = { Text(stringResource(AppScaffoldR.string.title_activity_settings)) },
           navigationIcon = { BackPressNavButton() },
           colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         )
@@ -244,21 +244,21 @@ constructor(
         modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding)
       ) {
         stickyHeader(key = "general_header") {
-          ComposableHeaderItem(stringResource(R.string.general), displayDivider = false)
+          ComposableHeaderItem(stringResource(AppScaffoldR.string.general), displayDivider = false)
         }
         item(key = "smart_linking") {
           BooleanPreference(
             key = CatchUpPreferences.Keys.smartlinkingGlobal,
             defaultValue = true,
-            title = stringResource(R.string.pref_smart_linking_title),
-            subtitle = stringResource(R.string.pref_smart_linking_summary),
+            title = stringResource(AppScaffoldR.string.pref_smart_linking_title),
+            subtitle = stringResource(AppScaffoldR.string.pref_smart_linking_summary),
           )
         }
 
         item(key = "reorder_services") {
           ClickablePreference(
-            title = stringResource(R.string.pref_reorder_services),
-            subtitle = stringResource(R.string.pref_order_services_description)
+            title = stringResource(AppScaffoldR.string.pref_reorder_services),
+            subtitle = stringResource(AppScaffoldR.string.pref_order_services_description)
           ) {
             state.eventSink(NavToScreen(OrderServicesScreen))
           }
@@ -266,15 +266,15 @@ constructor(
 
         item(key = "clear_cache") {
           ClickablePreference(
-            title = stringResource(R.string.pref_clear_cache),
-            subtitle = stringResource(R.string.pref_clear_cache_summary),
+            title = stringResource(AppScaffoldR.string.pref_clear_cache),
+            subtitle = stringResource(AppScaffoldR.string.pref_clear_cache_summary),
           ) {
             state.eventSink(ClearCache)
           }
         }
 
         stickyHeader(key = "theming_header") {
-          ComposableHeaderItem(stringResource(R.string.prefs_theme), displayDivider = true)
+          ComposableHeaderItem(stringResource(AppScaffoldR.string.prefs_theme), displayDivider = true)
         }
 
         item(key = "dynamic_theme") {
@@ -282,8 +282,8 @@ constructor(
             key = CatchUpPreferences.Keys.dynamicTheme,
             modifier = Modifier.animateContentSize(),
             defaultValue = false,
-            title = stringResource(R.string.pref_dynamic_theme_title),
-            subtitle = stringResource(R.string.pref_dynamic_theme_summary),
+            title = stringResource(AppScaffoldR.string.pref_dynamic_theme_title),
+            subtitle = stringResource(AppScaffoldR.string.pref_dynamic_theme_summary),
           )
         }
 
@@ -291,8 +291,8 @@ constructor(
           BooleanPreference(
             key = CatchUpPreferences.Keys.dayNightAuto,
             defaultValue = true,
-            title = stringResource(R.string.pref_auto_set_theme),
-            subtitle = stringResource(R.string.pref_auto_set_theme_summary),
+            title = stringResource(AppScaffoldR.string.pref_auto_set_theme),
+            subtitle = stringResource(AppScaffoldR.string.pref_auto_set_theme_summary),
           )
         }
         item(key = "force_night") {
@@ -304,14 +304,14 @@ constructor(
               key = Keys.dayNightForceNight,
               modifier = Modifier.animateContentSize(), // Because the summary changes
               defaultValue = false,
-              title = stringResource(R.string.pref_force_dark_theme),
+              title = stringResource(AppScaffoldR.string.pref_force_dark_theme),
               subtitle =
                 if (!LocalEnabled.current) {
-                  stringResource(R.string.pref_dark_theme_disabled_auto)
+                  stringResource(AppScaffoldR.string.pref_dark_theme_disabled_auto)
                 } else if (forceNightValue) {
-                  stringResource(R.string.pref_dark_theme_enabled)
+                  stringResource(AppScaffoldR.string.pref_dark_theme_enabled)
                 } else {
-                  stringResource(R.string.pref_dark_theme_disabled)
+                  stringResource(AppScaffoldR.string.pref_dark_theme_disabled)
                 },
             )
           }
@@ -323,7 +323,7 @@ constructor(
 
         item(key = "about") {
           ClickablePreference(
-            title = stringResource(R.string.about),
+            title = stringResource(AppScaffoldR.string.about),
           ) {
             state.eventSink(NavToScreen(AboutScreen()))
           }
@@ -333,8 +333,8 @@ constructor(
           BooleanPreference(
             key = CatchUpPreferences.Keys.reports,
             defaultValue = true,
-            title = stringResource(R.string.pref_reports),
-            subtitle = stringResource(R.string.pref_reports_summary),
+            title = stringResource(AppScaffoldR.string.pref_reports),
+            subtitle = stringResource(AppScaffoldR.string.pref_reports_summary),
           )
         }
       }

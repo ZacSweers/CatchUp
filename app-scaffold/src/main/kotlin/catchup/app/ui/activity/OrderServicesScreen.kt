@@ -78,7 +78,7 @@ import catchup.app.ui.activity.OrderServicesScreen.Event.Save
 import catchup.app.ui.activity.OrderServicesScreen.Event.Shuffle
 import catchup.app.ui.activity.OrderServicesScreen.State
 import catchup.base.ui.BackPressNavButton
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.compose.DraggableItem
 import catchup.compose.dragContainer
 import catchup.compose.rememberDragDropState
@@ -96,10 +96,10 @@ import com.slack.circuit.runtime.screen.Screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.zacsweers.catchup.app.scaffold.R
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 
 @Parcelize
 object OrderServicesScreen : Screen {
@@ -224,10 +224,10 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
       val result =
         overlayHost.show(
           DialogOverlay(
-            title = { Text(stringResource(R.string.pending_changes_title)) },
-            text = { Text(stringResource(R.string.pending_changes_message)) },
-            confirmButtonText = { Text(stringResource(R.string.save)) },
-            dismissButtonText = { Text(stringResource(R.string.dontsave)) }
+            title = { Text(stringResource(AppScaffoldR.string.pending_changes_title)) },
+            text = { Text(stringResource(AppScaffoldR.string.pending_changes_message)) },
+            confirmButtonText = { Text(stringResource(AppScaffoldR.string.save)) },
+            dismissButtonText = { Text(stringResource(AppScaffoldR.string.dontsave)) }
           )
         )
       when (result) {
@@ -243,13 +243,13 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
       }
     }
   }
-  CatchUpScaffold(
+  HazeScaffold(
     modifier = modifier,
     blurTopBar = true,
     blurBottomBar = true,
     topBar = {
       TopAppBar(
-        title = { Text(stringResource(id = R.string.pref_reorder_services)) },
+        title = { Text(stringResource(id = AppScaffoldR.string.pref_reorder_services)) },
         navigationIcon = { BackPressNavButton() },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         actions = {
@@ -257,8 +257,8 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
             onClick = { state.eventSink(Shuffle) },
             content = {
               Icon(
-                painter = painterResource(R.drawable.ic_shuffle_black_24dp),
-                contentDescription = stringResource(R.string.shuffle),
+                painter = painterResource(AppScaffoldR.drawable.ic_shuffle_black_24dp),
+                contentDescription = stringResource(AppScaffoldR.string.shuffle),
               )
             }
           )
@@ -290,12 +290,12 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
           //  .onGloballyPositioned { coordinates ->
           //    val (x, y) = coordinates.positionInRoot()
           //  },
-          containerColor = colorResource(R.color.colorAccent),
+          containerColor = colorResource(AppScaffoldR.color.colorAccent),
           onClick = { scope.launch { state.eventSink(Save) } },
           content = {
             Image(
-              painterResource(R.drawable.ic_save_black_24dp),
-              stringResource(R.string.save),
+              painterResource(AppScaffoldR.drawable.ic_save_black_24dp),
+              stringResource(AppScaffoldR.string.save),
               colorFilter = ColorFilter.tint(Color.White)
             )
           }
@@ -344,7 +344,7 @@ private fun ServiceListItem(item: ServiceMeta) {
   ) {
     Image(
       painter = painterResource(item.icon),
-      contentDescription = stringResource(R.string.service_icon),
+      contentDescription = stringResource(AppScaffoldR.string.service_icon),
       modifier = Modifier.width(40.dp).height(40.dp)
     )
 
