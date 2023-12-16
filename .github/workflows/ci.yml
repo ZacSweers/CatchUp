@@ -83,7 +83,7 @@ jobs:
           fi
 
       - name: Upload skippy diagnostics
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: reports
           path: build/skippy/**
@@ -107,13 +107,13 @@ jobs:
 
       - name: Upload lint sarif
         if: steps.check_file.outputs.modified_sarif_exists == 'true'
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: tmp/modified_sarif.sarif
 
       - name: (Fail-only) Upload build reports
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: reports
           path: |
