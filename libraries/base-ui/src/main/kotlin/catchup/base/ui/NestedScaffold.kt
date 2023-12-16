@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package catchup.base.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -23,24 +22,20 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
-import dev.chrisbanes.haze.haze
 
 private val LocalScaffoldContentPadding = staticCompositionLocalOf { PaddingValues(0.dp) }
 
 /**
  * A copy of Material 3's [Scaffold] composable, but with a few tweaks:
  * - Supports being used nested. The `contentPadding` is compounded on each level.
- * - Supports automatic blurring of content over [topBar] and [bottomBar], via [blurTopBar] and
- *   [blurBottomBar].
  */
 @Composable
-fun CatchUpScaffold(
+internal fun NestedScaffold(
   modifier: Modifier = Modifier,
   topBar: @Composable () -> Unit = {},
   bottomBar: @Composable () -> Unit = {},
@@ -50,8 +45,6 @@ fun CatchUpScaffold(
   containerColor: Color = MaterialTheme.colorScheme.background,
   contentColor: Color = contentColorFor(containerColor),
   contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
-  blurTopBar: Boolean = false,
-  blurBottomBar: Boolean = false,
   content: @Composable (PaddingValues) -> Unit,
 ) {
   Surface(modifier = modifier, color = containerColor, contentColor = contentColor) {
@@ -63,8 +56,6 @@ fun CatchUpScaffold(
       snackbar = snackbarHost,
       contentWindowInsets = contentWindowInsets,
       fab = floatingActionButton,
-      blurTopBar = blurTopBar,
-      blurBottomBar = blurBottomBar,
       incomingContentPadding = LocalScaffoldContentPadding.current,
     )
   }
@@ -92,8 +83,6 @@ private fun NestedScaffoldLayout(
   contentWindowInsets: WindowInsets,
   incomingContentPadding: PaddingValues,
   bottomBar: @Composable () -> Unit,
-  blurTopBar: Boolean,
-  blurBottomBar: Boolean,
 ) {
   SubcomposeLayout { constraints ->
     val layoutWidth = constraints.maxWidth
@@ -204,45 +193,10 @@ private fun NestedScaffoldLayout(
                 end = contentInsets.calculateEndPadding((this@SubcomposeLayout).layoutDirection),
               )
 
-            val blurAreas =
-              listOfNotNull(
-                if (blurTopBar) {
-                  Rect(
-                      left = 0f,
-                      top = 0f,
-                      right = layoutWidth.toFloat(),
-                      bottom = innerPadding.calculateTopPadding().toPx(),
-                    )
-                    .takeUnless { it.isEmpty }
-                } else {
-                  null
-                },
-                if (blurBottomBar) {
-                  Rect(
-                      left = 0f,
-                      top = layoutHeight.toFloat() - innerPadding.calculateBottomPadding().toPx(),
-                      right = layoutWidth.toFloat(),
-                      bottom = layoutHeight.toFloat(),
-                    )
-                    .takeUnless { it.isEmpty }
-                } else {
-                  null
-                },
-              )
-
-            Box(
-              modifier =
-                Modifier.haze(
-                  *blurAreas.toTypedArray(),
-                  backgroundColor = MaterialTheme.colorScheme.surface,
-                ),
-            ) {
-              // Scaffold always applies the insets, so we only want to pass down the content
-              // padding
-              // without the insets (i.e. padding from the bottom bar, etc)
-              CompositionLocalProvider(LocalScaffoldContentPadding provides innerPadding) {
-                content(innerPadding)
-              }
+            // Scaffold always applies the insets, so we only want to pass down the content padding
+            // without the insets (i.e. padding from the bottom bar, etc)
+            CompositionLocalProvider(LocalScaffoldContentPadding provides innerPadding) {
+              content(innerPadding)
             }
           }
           .map { it.measure(looseConstraints) }

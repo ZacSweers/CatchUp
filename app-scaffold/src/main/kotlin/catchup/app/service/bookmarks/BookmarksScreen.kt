@@ -55,7 +55,7 @@ import catchup.app.service.bookmarks.BookmarksScreen.Event.Click
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Remove
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Share
 import catchup.base.ui.BackPressNavButton
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
@@ -191,7 +191,7 @@ constructor(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
-  CatchUpScaffold(
+  HazeScaffold(
     modifier = modifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,
