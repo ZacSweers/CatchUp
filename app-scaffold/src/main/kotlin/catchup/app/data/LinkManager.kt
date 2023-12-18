@@ -21,8 +21,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.widget.Toast
-import androidx.annotation.ColorInt
 import androidx.annotation.RequiresApi
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
@@ -30,12 +28,13 @@ import androidx.collection.ArrayMap
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.unit.Density
 import androidx.window.layout.WindowMetricsCalculator
 import catchup.app.CatchUpPreferences
 import catchup.app.service.LinkHandler
-import catchup.app.service.UrlMeta
 import catchup.app.ui.activity.MainActivity
 import catchup.app.util.customtabs.CustomTabActivityHelper
 import catchup.appconfig.AppConfig
@@ -47,7 +46,6 @@ import catchup.util.isInNightMode
 import catchup.util.kotlin.any
 import catchup.util.kotlin.mergeWith
 import com.squareup.anvil.annotations.ContributesBinding
-import dev.zacsweers.catchup.app.scaffold.R
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +55,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import okhttp3.HttpUrl
 import timber.log.Timber
 
 @ContributesBinding(AppScope::class)
@@ -74,8 +73,10 @@ constructor(
   private val dumbCache = ArrayMap<String, Boolean>()
   private var currentActivityScope: CoroutineScope? = null
   private var windowSizeClass: (() -> WindowSizeClass)? = null
+  private var currentActivity: MainActivity? = null
 
   fun connect(activity: MainActivity) {
+    currentActivity = activity
     val scope = MainScope()
     currentActivityScope = scope
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -103,6 +104,7 @@ constructor(
     currentActivityScope?.cancel()
     currentActivityScope = null
     windowSizeClass = null
+    currentActivity = null
   }
 
   /**
@@ -119,34 +121,28 @@ constructor(
     return match >= IntentFilter.MATCH_CATEGORY_HOST && match <= IntentFilter.MATCH_CATEGORY_PATH
   }
 
-  @Suppress("MemberVisibilityCanPrivate")
-  override suspend fun openUrl(meta: UrlMeta) {
-    // TODO handle this better
-    val uri =
-      meta.uri
-        ?: run {
-          Toast.makeText(meta.context, R.string.error_no_url, Toast.LENGTH_SHORT).show()
-          return
-        }
-
+  override suspend fun openUrl(url: HttpUrl, accentColor: Color): Boolean {
+    val context = currentActivity ?: return false
     // TODO this isn't great, should we make a StateFlow backed by this?
+    val uri = Uri.parse(url.toString())
     if (!catchUpPreferences.smartlinkingGlobal.first()) {
       Timber.tag("LinkManager").d("Smartlinking disabled, skipping query")
-      openCustomTab(meta.context, uri, meta.accentColor)
-      return
+      openCustomTab(context, uri, accentColor)
+      return false
     }
 
-    val intent = Intent(Intent.ACTION_VIEW, meta.uri)
-    when {
+    val intent = Intent(Intent.ACTION_VIEW, uri)
+    return when {
       !dumbCache.containsKey(uri.host) -> {
         Timber.tag("LinkManager").d("Smartlinking enabled, querying")
-        queryAndOpen(meta.context, uri, intent.applyFlags(), meta.accentColor)
+        queryAndOpen(context, uri, intent.applyFlags(), accentColor)
       }
-      dumbCache[uri.host] == true -> {
-        meta.context.startActivity(intent.applyFlags())
+      dumbCache[url.host] == true -> {
+        context.startActivity(intent.applyFlags())
+        true
       }
       else -> {
-        openCustomTab(meta.context, uri, meta.accentColor)
+        openCustomTab(context, uri, accentColor)
       }
     }
   }
@@ -155,8 +151,8 @@ constructor(
     context: Context,
     uri: Uri,
     intent: Intent,
-    @ColorInt accentColor: Int
-  ) {
+    accentColor: Color
+  ): Boolean {
     val matchedUri =
       if (appConfig.isSdkAtLeast(30)) {
         queryAndOpen30(context, intent)
@@ -164,8 +160,9 @@ constructor(
         queryAndOpenLegacy(context, intent)
       }
 
-    if (matchedUri) {
+    return if (matchedUri) {
       dumbCache[uri.host] = true
+      true
     } else {
       dumbCache[uri.host] = false
       openCustomTab(context, uri, accentColor)
@@ -225,7 +222,7 @@ constructor(
     }
   }
 
-  private fun openCustomTab(context: Context, uri: Uri, @ColorInt accentColor: Int) {
+  private fun openCustomTab(context: Context, uri: Uri, accentColor: Color): Boolean {
     // TODO source this from compose+settings
     // TODO this actually doesn't seem to make a difference as the scheme behavior seems to be
     //  controlled via chrome://flags and ignore whatever apps or system define.
@@ -235,13 +232,13 @@ constructor(
       } else {
         CustomTabsIntent.COLOR_SCHEME_LIGHT
       }
-    customTab.openCustomTab(
+    return customTab.openCustomTab(
       context,
       customTab
         .newCustomTabIntentBuilder()
         .setColorScheme(colorScheme)
         .setDefaultColorSchemeParams(
-          CustomTabColorSchemeParams.Builder().setToolbarColor(accentColor).build()
+          CustomTabColorSchemeParams.Builder().setToolbarColor(accentColor.toArgb()).build()
         )
         .build()
         .apply { intent.applyFlags() },
