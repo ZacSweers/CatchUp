@@ -2,7 +2,6 @@ package catchup.app.ui.about
 
 import android.content.Context
 import android.content.res.AssetManager
-import android.graphics.Color
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -22,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -36,7 +36,7 @@ import catchup.app.data.github.RepositoryByNameAndOwnerQuery
 import catchup.app.service.ClickableItem
 import catchup.app.service.ErrorItem
 import catchup.app.service.TextItem
-import catchup.app.service.UrlMeta
+import catchup.app.service.openUrl
 import catchup.app.ui.about.LicensesScreen.Event.Click
 import catchup.app.ui.about.LicensesScreen.State
 import catchup.compose.rememberStableCoroutineScope
@@ -119,11 +119,10 @@ constructor(
     val items by
       produceState<ImmutableList<OssBaseItem>?>(null) { value = licensesRepository.requestItems() }
     val scope = rememberStableCoroutineScope()
-    val context = LocalContext.current
     return State(items) { event ->
       when (event) {
         is Click -> {
-          scope.launch { linkManager.openUrl(UrlMeta(event.url, Color.BLACK, context)) }
+          scope.launch { linkManager.openUrl(event.url, Color.Black) }
         }
       }
     }

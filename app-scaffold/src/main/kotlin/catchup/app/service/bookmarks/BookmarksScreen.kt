@@ -2,7 +2,6 @@ package catchup.app.service.bookmarks
 
 import android.content.Context
 import android.content.Intent
-import androidx.annotation.ColorInt
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -32,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -50,10 +48,10 @@ import catchup.app.data.LinkManager
 import catchup.app.service.ClickableItem
 import catchup.app.service.PlaceholderItem
 import catchup.app.service.TextItem
-import catchup.app.service.UrlMeta
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Click
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Remove
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Share
+import catchup.app.service.openUrl
 import catchup.base.ui.BackPressNavButton
 import catchup.base.ui.HazeScaffold
 import catchup.bookmarks.BookmarkRepository
@@ -99,7 +97,7 @@ object BookmarksScreen : Screen, DeepLinkable {
   ) : CircuitUiState
 
   sealed interface Event : CircuitUiEvent {
-    data class Click(val url: String, @ColorInt val themeColor: Int) : Event
+    data class Click(val url: String, val themeColor: Color) : Event
 
     data class Remove(val id: Long) : Event
 
@@ -146,10 +144,7 @@ constructor(
           scope.launch { bookmarksRepository.removeBookmark(event.id) }
         }
         is Click -> {
-          scope.launch {
-            val meta = UrlMeta(event.url, event.themeColor, context)
-            linkManager.openUrl(meta)
-          }
+          scope.launch { linkManager.openUrl(event.url, event.themeColor) }
         }
         Share -> scope.launch { shareAll(context, metaMap) }
       }
@@ -301,7 +296,7 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
             if (clickUrl != null) {
               ClickableItem(
                 modifier = Modifier.animateItemPlacement(),
-                onClick = { state.eventSink(Click(clickUrl, themeColor.toArgb())) },
+                onClick = { state.eventSink(Click(clickUrl, themeColor)) },
               ) {
                 TextItem(item, themeColor)
               }

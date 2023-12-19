@@ -24,13 +24,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
 import catchup.app.data.LinkManager
-import catchup.app.service.UrlMeta
+import catchup.app.service.openUrl
 import catchup.app.ui.activity.FlickToDismissState.FlickGestureState.Dismissed
 import catchup.app.ui.activity.ImageViewerScreen.Event
 import catchup.app.ui.activity.ImageViewerScreen.Event.Close
@@ -51,7 +50,6 @@ import com.slack.circuit.backstack.NavDecoration
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.NavigatorDefaults
 import com.slack.circuit.foundation.RecordContentProvider
-import com.slack.circuit.foundation.screen
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.overlay.OverlayHost
 import com.slack.circuit.runtime.CircuitUiEvent
@@ -123,8 +121,7 @@ constructor(
 
   @Composable
   override fun present(): State {
-    val context = LocalContext.current
-    val accentColor = colorResource(R.color.colorAccent).toArgb()
+    val accentColor = colorResource(R.color.colorAccent)
     val scope = rememberStableCoroutineScope()
     return State(
       id = screen.id,
@@ -139,7 +136,7 @@ constructor(
         Close -> navigator.pop()
         CopyImage -> {}
         is OpenInBrowser -> {
-          scope.launch { linkManager.openUrl(UrlMeta(event.url, accentColor, context)) }
+          scope.launch { linkManager.openUrl(event.url, accentColor) }
         }
         SaveImage -> {}
         ShareImage -> {}
