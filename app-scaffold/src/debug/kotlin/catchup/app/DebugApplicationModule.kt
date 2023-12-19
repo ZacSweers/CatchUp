@@ -27,6 +27,7 @@ import android.util.Log
 import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
 import catchup.app.data.LumberYard
+import catchup.app.data.tree
 import catchup.app.injection.DaggerSet
 import catchup.appconfig.AppConfig
 import catchup.base.ui.CatchUpObjectWatcher
