@@ -1,6 +1,8 @@
 package catchup.app.data
 
 import com.google.common.truth.Truth.assertThat
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
@@ -11,8 +13,6 @@ import okio.Path.Companion.toPath
 import okio.fakefilesystem.FakeFileSystem
 import org.junit.Before
 import org.junit.Test
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 class LumberYardTest {
 
@@ -20,11 +20,11 @@ class LumberYardTest {
   private val logsPath = "logs".toPath()
   private val flushInterval = 1000L.milliseconds
   private val testClock =
-      object : Clock {
-        override fun now(): Instant {
-          return Instant.DISTANT_PAST
-        }
+    object : Clock {
+      override fun now(): Instant {
+        return Instant.DISTANT_PAST
       }
+    }
 
   @Before
   fun setup() {
@@ -35,22 +35,22 @@ class LumberYardTest {
   @Test
   fun smokeTest() = runTest {
     val lumberYard =
-        LumberYard(
-            logsPath,
-            scope = this,
-            flushInterval = flushInterval,
-            fs = fs,
-            clock = testClock,
-        )
+      LumberYard(
+        logsPath,
+        scope = this,
+        flushInterval = flushInterval,
+        fs = fs,
+        clock = testClock,
+      )
 
     // 3 is DEBUG
     val entry =
-        LumberYard.Entry(
-            testClock.now().toLocalDateTime(TimeZone.UTC),
-            3,
-            "tag",
-            "message\nwith\nnewlines",
-        )
+      LumberYard.Entry(
+        testClock.now().toLocalDateTime(TimeZone.UTC),
+        3,
+        "tag",
+        "message\nwith\nnewlines",
+      )
     lumberYard.addEntry(entry)
 
     assertThat(logFiles()).isEmpty()
@@ -71,22 +71,22 @@ class LumberYardTest {
   @Test
   fun closeAndJoinFlushes() = runTest {
     val lumberYard =
-        LumberYard(
-            logsPath,
-            scope = this,
-            flushInterval = flushInterval,
-            fs = fs,
-            clock = testClock,
-        )
+      LumberYard(
+        logsPath,
+        scope = this,
+        flushInterval = flushInterval,
+        fs = fs,
+        clock = testClock,
+      )
 
     // 3 is DEBUG
     val entry =
-        LumberYard.Entry(
-            testClock.now().toLocalDateTime(TimeZone.UTC),
-            3,
-            "tag",
-            "message\nwith\nnewlines",
-        )
+      LumberYard.Entry(
+        testClock.now().toLocalDateTime(TimeZone.UTC),
+        3,
+        "tag",
+        "message\nwith\nnewlines",
+      )
     lumberYard.addEntry(entry)
 
     assertThat(logFiles()).isEmpty()

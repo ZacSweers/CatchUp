@@ -60,12 +60,11 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.SupervisorJob
 import okhttp3.OkHttpClient
 import timber.log.Timber
 

@@ -21,6 +21,13 @@ import androidx.annotation.WorkerThread
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import com.squareup.anvil.annotations.optional.ForScope
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Job
@@ -42,36 +49,29 @@ import okio.Path
 import okio.Path.Companion.toOkioPath
 import okio.buffer
 import timber.log.Timber
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
-import java.time.format.DateTimeFormatterBuilder
-import java.time.temporal.ChronoField
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 @SingleIn(AppScope::class)
 class LumberYard(
-    private val logDir: Path,
-    scope: CoroutineScope,
-    private val flushInterval: Duration = FLUSH_INTERVAL,
-    bufferSize: Int = BUFFER_SIZE,
-    private val fs: FileSystem = FileSystem.SYSTEM,
-    internal val clock: Clock = Clock.System,
-    private val createFileName: (LocalDateTime) -> String = {
-      ISO_LOCAL_DATE_TIME.format(it.toJavaLocalDateTime()) + ".$LOG_EXTENSION"
-    }
+  private val logDir: Path,
+  scope: CoroutineScope,
+  private val flushInterval: Duration = FLUSH_INTERVAL,
+  bufferSize: Int = BUFFER_SIZE,
+  private val fs: FileSystem = FileSystem.SYSTEM,
+  internal val clock: Clock = Clock.System,
+  private val createFileName: (LocalDateTime) -> String = {
+    ISO_LOCAL_DATE_TIME.format(it.toJavaLocalDateTime()) + ".$LOG_EXTENSION"
+  }
 ) {
 
   @Inject
   constructor(
-      app: Application,
-      @ForScope(AppScope::class) scope: CoroutineScope,
+    app: Application,
+    @ForScope(AppScope::class) scope: CoroutineScope,
   ) : this(
-      logDir =
-          app.getExternalFilesDir(null)?.toOkioPath()?.resolve("logs")
-              ?: throw IOException("External storage is not mounted."),
-      scope = scope,
+    logDir =
+      app.getExternalFilesDir(null)?.toOkioPath()?.resolve("logs")
+        ?: throw IOException("External storage is not mounted."),
+    scope = scope,
   )
 
   // Guard against concurrent writes
@@ -79,28 +79,28 @@ class LumberYard(
 
   // Act as a ring buffer with a fixed size
   private val logChannel =
-      Channel<Entry>(
-          capacity = bufferSize,
-          onBufferOverflow = BufferOverflow.DROP_OLDEST,
-      )
+    Channel<Entry>(
+      capacity = bufferSize,
+      onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
   // TODO what context does this run on?
   @OptIn(DelicateCoroutinesApi::class)
   private val writeJob: Job =
-      scope.launch {
-        val pendingLogs = mutableListOf<Entry>()
-        while (isActive && !logChannel.isClosedForReceive) {
-          withTimeoutOrNull(flushInterval) {
-            for (item in logChannel) {
-              pendingLogs.add(item)
-            }
-          }
-          if (pendingLogs.isNotEmpty()) {
-            save(pendingLogs)
-            pendingLogs.clear()
+    scope.launch {
+      val pendingLogs = mutableListOf<Entry>()
+      while (isActive && !logChannel.isClosedForReceive) {
+        withTimeoutOrNull(flushInterval) {
+          for (item in logChannel) {
+            pendingLogs.add(item)
           }
         }
+        if (pendingLogs.isNotEmpty()) {
+          save(pendingLogs)
+          pendingLogs.clear()
+        }
       }
+    }
 
   fun tryAddEntry(entry: Entry) {
     logChannel.trySend(entry)
@@ -113,21 +113,20 @@ class LumberYard(
   /** Save the current logs to disk. */
   @WorkerThread
   suspend fun save(entries: List<Entry>): Path =
-      writeMutex.withLock {
-        if (!fs.exists(logDir)) {
-          fs.createDirectories(logDir)
-        }
-        val output =
-            logDir.resolve(
-                createFileName(clock.now().toLocalDateTime(TimeZone.currentSystemDefault())))
-
-        fs.sink(output).buffer().use { sink ->
-          for (entry in entries) {
-            sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
-          }
-        }
-        return output
+    writeMutex.withLock {
+      if (!fs.exists(logDir)) {
+        fs.createDirectories(logDir)
       }
+      val output =
+        logDir.resolve(createFileName(clock.now().toLocalDateTime(TimeZone.currentSystemDefault())))
+
+      fs.sink(output).buffer().use { sink ->
+        for (entry in entries) {
+          sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
+        }
+      }
+      return output
+    }
 
   /**
    * Delete all of the log files saved to disk. Be careful not to call this before any intents have
@@ -135,27 +134,29 @@ class LumberYard(
    */
   @WorkerThread
   suspend fun cleanUp(): Long =
-      writeMutex.withLock {
-        var deleted = 0L
-        fs.list(logDir)
-            .filter { it.name.endsWith(".log") }
-            .forEach {
-              fs.metadata(it).size?.let { size -> deleted += size }
-              fs.delete(it)
-            }
+    writeMutex.withLock {
+      var deleted = 0L
+      fs
+        .list(logDir)
+        .filter { it.name.endsWith(".log") }
+        .forEach {
+          fs.metadata(it).size?.let { size -> deleted += size }
+          fs.delete(it)
+        }
 
-        return deleted
-      }
+      return deleted
+    }
 
   data class Entry(val time: LocalDateTime, val level: Int, val tag: String?, val message: String) {
     fun prettyPrint(): String {
       return "%s %22s %s %s"
-          .format(
-              displayTime,
-              tag ?: "",
-              displayLevel,
-              // Indent newlines to match the original indentation.
-              message.replace("\\n".toRegex(), "\n                         "))
+        .format(
+          displayTime,
+          tag ?: "",
+          displayLevel,
+          // Indent newlines to match the original indentation.
+          message.replace("\\n".toRegex(), "\n                         ")
+        )
     }
 
     val displayTime: String
@@ -163,28 +164,28 @@ class LumberYard(
 
     val displayLevel
       get() =
-          when (level) {
-            Log.VERBOSE -> "V"
-            Log.DEBUG -> "D"
-            Log.INFO -> "I"
-            Log.WARN -> "W"
-            Log.ERROR -> "E"
-            Log.ASSERT -> "A"
-            else -> "?"
-          }
+        when (level) {
+          Log.VERBOSE -> "V"
+          Log.DEBUG -> "D"
+          Log.INFO -> "I"
+          Log.WARN -> "W"
+          Log.ERROR -> "E"
+          Log.ASSERT -> "A"
+          else -> "?"
+        }
 
     companion object {
       private val ENTRY_TIMESTAMP_FORMATTER: DateTimeFormatter =
-          DateTimeFormatterBuilder()
-              .appendValue(ChronoField.HOUR_OF_DAY, 2)
-              .appendLiteral(':')
-              .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
-              .optionalStart()
-              .appendLiteral(':')
-              .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
-              .optionalStart()
-              .appendFraction(ChronoField.NANO_OF_SECOND, 3, 3, true)
-              .toFormatter()
+        DateTimeFormatterBuilder()
+          .appendValue(ChronoField.HOUR_OF_DAY, 2)
+          .appendLiteral(':')
+          .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+          .optionalStart()
+          .appendLiteral(':')
+          .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+          .optionalStart()
+          .appendFraction(ChronoField.NANO_OF_SECOND, 3, 3, true)
+          .toFormatter()
     }
   }
 
@@ -204,8 +205,13 @@ fun LumberYard.tree(): Timber.Tree {
   return object : Timber.DebugTree() {
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
       tryAddEntry(
-          LumberYard.Entry(
-              clock.now().toLocalDateTime(TimeZone.currentSystemDefault()), priority, tag, message))
+        LumberYard.Entry(
+          clock.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+          priority,
+          tag,
+          message
+        )
+      )
     }
   }
 }
