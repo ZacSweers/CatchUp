@@ -46,6 +46,7 @@ import coil.request.ImageRequest
 import coil.request.ImageResult
 import coil.util.DebugLogger
 import com.squareup.anvil.annotations.ContributesTo
+import com.squareup.anvil.annotations.optional.ForScope
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -59,9 +60,12 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 import okhttp3.OkHttpClient
 import timber.log.Timber
 
@@ -226,6 +230,13 @@ abstract class ApplicationModule {
 
         build()
       }
+    }
+
+    @Provides
+    @ForScope(AppScope::class)
+    @SingleIn(AppScope::class)
+    fun provideAppCoroutineScope(): CoroutineScope {
+      return MainScope()
     }
   }
 }
