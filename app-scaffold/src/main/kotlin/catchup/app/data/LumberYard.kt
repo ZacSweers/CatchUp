@@ -20,124 +20,192 @@ import android.util.Log
 import androidx.annotation.WorkerThread
 import catchup.di.AppScope
 import catchup.di.SingleIn
-import java.io.File
-import java.io.IOException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
-import java.util.ArrayDeque
-import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
-import okio.BufferedSink
+import com.squareup.anvil.annotations.optional.ForScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
+import okio.FileSystem
+import okio.IOException
+import okio.Path
+import okio.Path.Companion.toOkioPath
 import okio.buffer
-import okio.sink
 import timber.log.Timber
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 @SingleIn(AppScope::class)
 class LumberYard(
-  private val folder: File,
-  private val bufferSize: Int = BUFFER_SIZE,
+    private val logDir: Path,
+    scope: CoroutineScope,
+    private val flushInterval: Duration = FLUSH_INTERVAL,
+    bufferSize: Int = BUFFER_SIZE,
+    private val fs: FileSystem = FileSystem.SYSTEM,
+    internal val clock: Clock = Clock.System,
+    private val createFileName: (LocalDateTime) -> String = {
+      ISO_LOCAL_DATE_TIME.format(it.toJavaLocalDateTime()) + ".$LOG_EXTENSION"
+    }
 ) {
+
   @Inject
-  constructor(app: Application) : this(
-    app.getExternalFilesDir(null) ?: throw IOException("External storage is not mounted.")
+  constructor(
+      app: Application,
+      @ForScope(AppScope::class) scope: CoroutineScope,
+  ) : this(
+      logDir =
+          app.getExternalFilesDir(null)?.toOkioPath()?.resolve("logs")
+              ?: throw IOException("External storage is not mounted."),
+      scope = scope,
   )
 
-  private val entries = ArrayDeque<Entry>(bufferSize + 1)
-  private val sharedFlow = MutableSharedFlow<Entry>()
+  // Guard against concurrent writes
+  private val writeMutex = Mutex()
 
-  fun tree(): Timber.Tree {
-    return object : Timber.DebugTree() {
-      override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        addEntry(Entry(priority, tag, message))
-      }
-    }
-  }
+  // Act as a ring buffer with a fixed size
+  private val logChannel =
+      Channel<Entry>(
+          capacity = bufferSize,
+          onBufferOverflow = BufferOverflow.DROP_OLDEST,
+      )
 
-  @Synchronized
-  private fun addEntry(entry: Entry) {
-    entries.addLast(entry)
-    if (entries.size > bufferSize) {
-      entries.removeFirst()
-    }
-
-    sharedFlow.tryEmit(entry)
-  }
-
-  fun bufferedLogs() = entries.toList()
-
-  /** Save the current logs to disk. */
-  suspend fun save(): File = suspendCancellableCoroutine { continuation ->
-    val fileName = ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())
-    val output = File(folder, fileName)
-
-    var sink: BufferedSink? = null
-    try {
-      sink = output.sink().buffer()
-      val entries1 = bufferedLogs()
-      for (entry in entries1) {
-        sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
-      }
-      // need to close before emiting file to the subscriber, because when subscriber receives
-      // data in the same thread the file may be truncated
-      sink.close()
-      sink = null
-
-      continuation.resume(output)
-    } catch (e: IOException) {
-      continuation.resumeWithException(e)
-    } finally {
-      if (sink != null) {
-        try {
-          sink.close()
-        } catch (e: IOException) {
-          continuation.resumeWithException(e)
+  // TODO what context does this run on?
+  @OptIn(DelicateCoroutinesApi::class)
+  private val writeJob: Job =
+      scope.launch {
+        val pendingLogs = mutableListOf<Entry>()
+        while (isActive && !logChannel.isClosedForReceive) {
+          withTimeoutOrNull(flushInterval) {
+            for (item in logChannel) {
+              pendingLogs.add(item)
+            }
+          }
+          if (pendingLogs.isNotEmpty()) {
+            save(pendingLogs)
+            pendingLogs.clear()
+          }
         }
       }
-    }
+
+  fun tryAddEntry(entry: Entry) {
+    logChannel.trySend(entry)
   }
+
+  suspend fun addEntry(entry: Entry) {
+    logChannel.send(entry)
+  }
+
+  /** Save the current logs to disk. */
+  @WorkerThread
+  suspend fun save(entries: List<Entry>): Path =
+      writeMutex.withLock {
+        if (!fs.exists(logDir)) {
+          fs.createDirectories(logDir)
+        }
+        val output =
+            logDir.resolve(
+                createFileName(clock.now().toLocalDateTime(TimeZone.currentSystemDefault())))
+
+        fs.sink(output).buffer().use { sink ->
+          for (entry in entries) {
+            sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
+          }
+        }
+        return output
+      }
 
   /**
    * Delete all of the log files saved to disk. Be careful not to call this before any intents have
    * finished using the file reference.
    */
   @WorkerThread
-  fun cleanUp(): Long {
-    val initialSize = folder.length()
-    (folder.listFiles() ?: return -1L)
-      .asSequence()
-      .filter { it.name.endsWith(".log") }
-      .forEach { it.delete() }
-    return initialSize - folder.length()
-  }
+  suspend fun cleanUp(): Long =
+      writeMutex.withLock {
+        var deleted = 0L
+        fs.list(logDir)
+            .filter { it.name.endsWith(".log") }
+            .forEach {
+              fs.metadata(it).size?.let { size -> deleted += size }
+              fs.delete(it)
+            }
 
-  data class Entry(val level: Int, val tag: String?, val message: String) {
+        return deleted
+      }
+
+  data class Entry(val time: LocalDateTime, val level: Int, val tag: String?, val message: String) {
     fun prettyPrint(): String {
-      return String.format(
-        "%22s %s %s",
-        tag ?: "CATCHUP",
-        displayLevel,
-        // Indent newlines to match the original indentation.
-        message.replace("\\n".toRegex(), "\n                         ")
-      )
+      return "%s %22s %s %s"
+          .format(
+              displayTime,
+              tag ?: "",
+              displayLevel,
+              // Indent newlines to match the original indentation.
+              message.replace("\\n".toRegex(), "\n                         "))
     }
+
+    val displayTime: String
+      get() = ENTRY_TIMESTAMP_FORMATTER.format(time.toJavaLocalDateTime())
 
     val displayLevel
       get() =
-        when (level) {
-          Log.VERBOSE -> "V"
-          Log.DEBUG -> "D"
-          Log.INFO -> "I"
-          Log.WARN -> "W"
-          Log.ERROR -> "E"
-          Log.ASSERT -> "A"
-          else -> "?"
-        }
+          when (level) {
+            Log.VERBOSE -> "V"
+            Log.DEBUG -> "D"
+            Log.INFO -> "I"
+            Log.WARN -> "W"
+            Log.ERROR -> "E"
+            Log.ASSERT -> "A"
+            else -> "?"
+          }
+
+    companion object {
+      private val ENTRY_TIMESTAMP_FORMATTER: DateTimeFormatter =
+          DateTimeFormatterBuilder()
+              .appendValue(ChronoField.HOUR_OF_DAY, 2)
+              .appendLiteral(':')
+              .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+              .optionalStart()
+              .appendLiteral(':')
+              .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+              .optionalStart()
+              .appendFraction(ChronoField.NANO_OF_SECOND, 3, 3, true)
+              .toFormatter()
+    }
+  }
+
+  suspend fun closeAndJoin() {
+    logChannel.close()
+    writeJob.join()
   }
 
   companion object {
+    internal const val LOG_EXTENSION = "log"
     private const val BUFFER_SIZE = 200
+    private val FLUSH_INTERVAL = 2000L.milliseconds
+  }
+}
+
+fun LumberYard.tree(): Timber.Tree {
+  return object : Timber.DebugTree() {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+      tryAddEntry(
+          LumberYard.Entry(
+              clock.now().toLocalDateTime(TimeZone.currentSystemDefault()), priority, tag, message))
+    }
   }
 }
