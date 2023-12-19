@@ -51,7 +51,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.net.toUri
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.Preferences.Key
 import catchup.app.data.DebugPreferences
@@ -276,7 +275,11 @@ constructor(
     val scope = rememberStableCoroutineScope()
     return State(
       items(appConfig, LocalContext.current.resources.displayMetrics, clientCache),
-      if (showLogs) lumberYard.bufferedLogs().toImmutableList() else persistentListOf(),
+      if (showLogs) {
+        lumberYard.writtenLogs()
+      } else {
+        persistentListOf()
+      },
     ) { event ->
       when (event) {
         is NavigateTo -> {
@@ -290,11 +293,12 @@ constructor(
         ShareLogs -> {
           showLogs = false
           scope.launch {
-            val file = withContext(IO) { lumberYard.save() }
+            lumberYard.flush()
+            // TODO write back to a file first to share?
+            val text = lumberYard.currentLogFileText()
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.type = "text/plain"
-            sendIntent.putExtra(Intent.EXTRA_STREAM, file.toUri())
-            sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            sendIntent.putExtra(Intent.EXTRA_TEXT, text)
             navigator.goTo(IntentScreen(Intent.createChooser(sendIntent, "Share logs")))
           }
         }
