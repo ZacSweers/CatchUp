@@ -21,7 +21,6 @@ import androidx.annotation.WorkerThread
 import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.di.AppScope
 import catchup.di.SingleIn
-import com.squareup.anvil.annotations.optional.ForScope
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.time.format.DateTimeFormatterBuilder
@@ -29,16 +28,17 @@ import java.time.temporal.ChronoField
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -60,9 +60,6 @@ class LumberYard(
   private val fs: FileSystem = FileSystem.SYSTEM,
   internal val clock: Clock = Clock.System,
   internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
-  private val createFileName: (LocalDateTime) -> String = {
-    ISO_LOCAL_DATE_TIME.format(it.toJavaLocalDateTime()) + ".$LOG_EXTENSION"
-  }
 ) {
 
   @Inject
@@ -79,6 +76,11 @@ class LumberYard(
   // Guard against concurrent writes
   private val writeMutex = Mutex()
 
+  private val logFiles = Array(5) { i ->
+    _logDir.resolve("log$i.$LOG_EXTENSION")
+  }
+  private var currentFileIndex = 0
+
   // Act as a ring buffer with a fixed size
   private val logChannel =
     Channel<Entry>(
@@ -86,20 +88,31 @@ class LumberYard(
       onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
-  @OptIn(DelicateCoroutinesApi::class)
+  private val flushChannel = Channel<Unit>(Channel.CONFLATED)
+  private val writtenLogs = ArrayDeque<Entry>()
+
   private val writeJob: Job =
     scope.launch {
       val pendingLogs = mutableListOf<Entry>()
-      while (isActive && !logChannel.isClosedForReceive) {
-        withTimeoutOrNull(flushInterval) {
+      while (isActive) {
+        for (saveNow in flushChannel) {
+          println("Flushing logs")
           for (item in logChannel) {
             pendingLogs.add(item)
           }
+          if (pendingLogs.isNotEmpty()) {
+            save(pendingLogs)
+            pendingLogs.clear()
+          }
         }
-        if (pendingLogs.isNotEmpty()) {
-          save(pendingLogs)
-          pendingLogs.clear()
-        }
+      }
+    }
+
+  private val flushJob: Job =
+    scope.launch {
+      while (isActive) {
+        delay(flushInterval)
+        flushChannel.send(Unit)
       }
     }
 
@@ -112,47 +125,68 @@ class LumberYard(
   }
 
   private suspend inline fun <T> guardedIo(body: (logDir: Path) -> T): T {
-    return writeMutex.withLock {
-      body(_logDir)
-    }
+    return writeMutex.withLock { body(_logDir) }
   }
 
   /** Save the current logs to disk. */
-  @WorkerThread
-  suspend fun save(entries: List<Entry>): Path =
-    guardedIo { logDir ->
-      if (!fs.exists(logDir)) {
-        fs.createDirectories(logDir)
-      }
-      val output =
-        logDir.resolve(createFileName(clock.now().toLocalDateTime(timeZone)))
+  suspend fun flush() {
+    flushChannel.send(Unit)
+  }
 
-      fs.sink(output).buffer().use { sink ->
+  /** Tries to save the current logs to disk. */
+  fun tryFlush() {
+    flushChannel.trySend(Unit)
+  }
+
+  fun writtenLogs(): ImmutableList<Entry> = writtenLogs.toImmutableList()
+
+  private tailrec suspend fun save(entries: List<Entry>): Path = guardedIo { logDir ->
+    if (!fs.exists(logDir)) {
+      fs.createDirectories(logDir)
+    }
+
+    val output = logFiles[currentFileIndex]
+    return if (!fs.exists(output) || fs.metadata(output).size!! <= 1024) {
+      fs.appendingSink(output).buffer().use { sink ->
         for (entry in entries) {
           sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
+          writtenLogs.add(entry)
         }
       }
-      return output
+      output
+    } else {
+      rotate()
+      save(entries)
     }
+  }
 
   /**
    * Delete all of the log files saved to disk. Be careful not to call this before any intents have
    * finished using the file reference.
    */
   @WorkerThread
-  suspend fun cleanUp(): Long =
-    guardedIo { logDir ->
-      var deleted = 0L
-      fs
-        .list(logDir)
-        .filter { it.name.endsWith(".log") }
-        .forEach {
-          fs.metadata(it).size?.let { size -> deleted += size }
-          fs.delete(it)
-        }
+  suspend fun cleanUp(): Long = guardedIo { logDir ->
+    var deleted = 0L
+    fs
+      .list(logDir)
+      .filter { it.name.endsWith(".log") }
+      .forEach {
+        fs.metadata(it).size?.let { size -> deleted += size }
+        fs.delete(it)
+      }
 
-      return deleted
-    }
+    currentFileIndex = 0
+
+    return deleted
+  }
+
+  suspend fun currentLogFileText(): String = guardedIo {
+    return fs.read(logFiles[currentFileIndex]) { readUtf8() }
+  }
+
+  private fun rotate() {
+    currentFileIndex = (currentFileIndex + 1) % logFiles.size
+  }
 
   data class Entry(val time: LocalDateTime, val level: Int, val tag: String?, val message: String) {
     fun prettyPrint(): String {
@@ -197,6 +231,7 @@ class LumberYard(
   }
 
   suspend fun closeAndJoin() {
+    flushJob.cancel()
     logChannel.close()
     writeJob.join()
   }
@@ -211,14 +246,7 @@ class LumberYard(
 fun LumberYard.tree(): Timber.Tree {
   return object : Timber.DebugTree() {
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-      tryAddEntry(
-        LumberYard.Entry(
-          clock.now().toLocalDateTime(timeZone),
-          priority,
-          tag,
-          message
-        )
-      )
+      tryAddEntry(LumberYard.Entry(clock.now().toLocalDateTime(timeZone), priority, tag, message))
     }
   }
 }
