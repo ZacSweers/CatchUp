@@ -86,6 +86,9 @@ class LumberYard(
     )
 
   private val flushChannel = Channel<Unit>(Channel.CONFLATED)
+
+  // TODO make this debug only, it's really just a backdoor for viewing those logs. Maybe even
+  //  just make that UI read the log file contents, though wouldn't be as colorful
   private val writtenLogs = ArrayDeque<Entry>()
 
   private val writeJob: Job =
