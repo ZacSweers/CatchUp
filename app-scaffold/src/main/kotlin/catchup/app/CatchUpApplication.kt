@@ -25,9 +25,12 @@ import catchup.app.ApplicationModule.Initializers
 import catchup.app.data.LumberYard
 import catchup.app.injection.DaggerSet
 import catchup.appconfig.AppConfig
+import catchup.di.AppScope
 import catchup.util.d
+import com.squareup.anvil.annotations.optional.ForScope
 import java.util.concurrent.Executors
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -47,7 +50,6 @@ class CatchUpApplication : Application() {
 
   @Inject internal lateinit var catchUpPreferences: CatchUpPreferences
   @Inject internal lateinit var appConfig: AppConfig
-  @Inject internal lateinit var lumberYard: LumberYard
 
   lateinit var appComponent: ApplicationComponent
 
@@ -56,25 +58,19 @@ class CatchUpApplication : Application() {
     Timber.plant(*trees.toTypedArray())
   }
 
-  @OptIn(DelicateCoroutinesApi::class)
   @Inject
-  internal fun asyncInits(@AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>) {
-    GlobalScope.launch(Dispatchers.IO) {
+  internal fun asyncInits(
+    @ForScope(AppScope::class) appCoroutineScope: CoroutineScope,
+    @AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>
+  ) {
+    appCoroutineScope.launch(Dispatchers.IO) {
       // TODO - run these in parallel?
       asyncInitializers.forEach { it() }
     }
   }
 
   @Inject
-  internal fun inits(@Initializers initializers: DaggerSet<InitializerFunction>) {
-    initializers.forEach { it() }
-  }
-
-  override fun onCreate() {
-    super.onCreate()
-    appComponent =
-      DaggerApplicationComponent.factory().create(this).apply { inject(this@CatchUpApplication) }
-
+  internal fun setupLumberYard(lumberYard: LumberYard) {
     val defaultHandler = Thread.currentThread().uncaughtExceptionHandler
     Thread.currentThread().setUncaughtExceptionHandler { thread, throwable ->
       runBlocking {
@@ -92,6 +88,17 @@ class CatchUpApplication : Application() {
       }
       defaultHandler?.uncaughtException(thread, throwable)
     }
+  }
+
+  @Inject
+  internal fun inits(@Initializers initializers: DaggerSet<InitializerFunction>) {
+    initializers.forEach { it() }
+  }
+
+  override fun onCreate() {
+    super.onCreate()
+    appComponent =
+      DaggerApplicationComponent.factory().create(this).apply { inject(this@CatchUpApplication) }
 
     StrictMode.setVmPolicy(
       StrictMode.VmPolicy.Builder()
