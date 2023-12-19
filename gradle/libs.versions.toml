@@ -40,6 +40,7 @@ markwon = "4.6.2"
 moshi = "1.15.0"
 moshix = "0.25.1"
 okhttp = "5.0.0-alpha.12"
+okio = "3.7.0"
 preferences = "1.2.1"
 retrofit = "2.9.0"
 slack-lint = "0.7.0"
@@ -158,6 +159,7 @@ firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-database = "com.google.firebase:firebase-database:20.3.0"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
+anvil-annotationsOptional = { module = "com.squareup.anvil:annotations-optional", version.ref = "anvil" }
 
 apollo-api = { module = "com.apollographql.apollo3:apollo-api", version.ref = "apollo" }
 apollo-httpcache = { module = "com.apollographql.apollo3:apollo-http-cache", version.ref = "apollo" }
@@ -249,7 +251,8 @@ misc-jsoup = "org.jsoup:jsoup:1.17.1"
 misc-jsr250 = "javax.annotation:jsr250-api:1.0"
 misc-jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 misc-moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-misc-okio = "com.squareup.okio:okio:3.7.0"
+misc-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+misc-okio-fakeFileSystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 misc-tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.3"
 misc-timber = "com.jakewharton.timber:timber:5.0.1"
 misc-unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"

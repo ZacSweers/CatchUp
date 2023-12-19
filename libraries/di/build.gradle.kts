@@ -29,6 +29,7 @@ kotlin {
     commonMain {
       dependencies {
         api(libs.dagger.runtime)
+        api(libs.anvil.annotationsOptional)
       }
     }
   }
