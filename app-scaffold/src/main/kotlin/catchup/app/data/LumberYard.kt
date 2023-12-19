@@ -18,6 +18,7 @@ package catchup.app.data
 import android.app.Application
 import android.util.Log
 import androidx.annotation.WorkerThread
+import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import com.squareup.anvil.annotations.optional.ForScope
@@ -67,7 +68,7 @@ class LumberYard(
   @Inject
   constructor(
     app: Application,
-    @ForScope(AppScope::class) scope: CoroutineScope,
+    scope: BackgroundAppCoroutineScope,
   ) : this(
     _logDir =
       app.getExternalFilesDir(null)?.toOkioPath()?.resolve("logs")
@@ -85,7 +86,6 @@ class LumberYard(
       onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
-  // TODO what context does this run on?
   @OptIn(DelicateCoroutinesApi::class)
   private val writeJob: Job =
     scope.launch {

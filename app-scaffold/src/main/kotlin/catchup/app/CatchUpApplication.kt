@@ -24,6 +24,8 @@ import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
 import catchup.app.data.LumberYard
 import catchup.app.injection.DaggerSet
+import catchup.app.util.BackgroundAppCoroutineScope
+import catchup.app.util.MainAppCoroutineScope
 import catchup.appconfig.AppConfig
 import catchup.di.AppScope
 import catchup.util.d
@@ -60,10 +62,10 @@ class CatchUpApplication : Application() {
 
   @Inject
   internal fun asyncInits(
-    @ForScope(AppScope::class) appCoroutineScope: CoroutineScope,
+    scope: BackgroundAppCoroutineScope,
     @AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>
   ) {
-    appCoroutineScope.launch(Dispatchers.IO) {
+    scope.launch {
       // TODO - run these in parallel?
       asyncInitializers.forEach { it() }
     }
