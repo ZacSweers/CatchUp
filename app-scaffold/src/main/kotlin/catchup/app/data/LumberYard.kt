@@ -58,6 +58,7 @@ class LumberYard(
   bufferSize: Int = BUFFER_SIZE,
   private val fs: FileSystem = FileSystem.SYSTEM,
   internal val clock: Clock = Clock.System,
+  internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
   private val createFileName: (LocalDateTime) -> String = {
     ISO_LOCAL_DATE_TIME.format(it.toJavaLocalDateTime()) + ".$LOG_EXTENSION"
   }
@@ -124,7 +125,7 @@ class LumberYard(
         fs.createDirectories(logDir)
       }
       val output =
-        logDir.resolve(createFileName(clock.now().toLocalDateTime(TimeZone.currentSystemDefault())))
+        logDir.resolve(createFileName(clock.now().toLocalDateTime(timeZone)))
 
       fs.sink(output).buffer().use { sink ->
         for (entry in entries) {
@@ -212,7 +213,7 @@ fun LumberYard.tree(): Timber.Tree {
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
       tryAddEntry(
         LumberYard.Entry(
-          clock.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+          clock.now().toLocalDateTime(timeZone),
           priority,
           tag,
           message
