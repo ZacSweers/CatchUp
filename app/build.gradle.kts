@@ -18,13 +18,13 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
+import okio.buffer
+import okio.sink
+import okio.source
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import okio.buffer
-import okio.sink
-import okio.source
 
 plugins {
   alias(libs.plugins.android.application)

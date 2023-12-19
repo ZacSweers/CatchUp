@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,13 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.LoadState
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.compose.LazyPagingItems
@@ -54,6 +54,7 @@ import catchup.app.service.ServiceScreen.State
 import catchup.app.service.ServiceScreen.State.TextState
 import catchup.app.service.ServiceScreen.State.VisualState
 import catchup.app.ui.activity.ImageViewerScreen
+import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
@@ -134,27 +135,26 @@ constructor(
   @OptIn(ExperimentalPagingApi::class)
   @Composable
   override fun present(): State {
-    val service = remember {
-      services[screen.serviceKey]?.get()
-        ?: throw IllegalArgumentException(
-          "No service provided for ${screen.serviceKey}! Available are ${services.keys}"
-        )
-    }
+    val service =
+      remember(screen.serviceKey) {
+        services[screen.serviceKey]?.get()
+          ?: throw IllegalArgumentException(
+            "No service provided for ${screen.serviceKey}! Available are ${services.keys}"
+          )
+      }
 
-    // TODO this is a bad pattern in circuit
-    val context = LocalContext.current
     val themeColor =
       dynamicAwareColor(
         regularColor = { colorResource(service.meta().themeColor) },
         dynamicColor = { MaterialTheme.colorScheme.primary }
       )
 
-    val coroutineScope = rememberStableCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
-    val eventSink: (Event) -> Unit = { event ->
+    val eventSink: (Event) -> Unit = rememberEventSink { event ->
       when (event) {
         is ItemClicked -> {
-          coroutineScope.launch {
+          scope.launch {
             if (service.meta().isVisual) {
               val info = event.item.imageInfo!!
               overlayHost.showFullScreenOverlay(
@@ -186,8 +186,7 @@ constructor(
                   )
                 )
               } else {
-                val meta = UrlMeta(url, themeColor.toArgb(), context)
-                linkManager.openUrl(meta)
+                linkManager.openUrl(url, themeColor)
               }
             }
           }
@@ -205,19 +204,19 @@ constructor(
               navigator.goTo(IntentScreen(Intent.createChooser(shareIntent, "Share")))
             }
             SUMMARIZE -> {
-              coroutineScope.launch {
+              scope.launch {
                 overlayHost.showFullScreenOverlay(SummarizerScreen(event.item.title, url))
               }
             }
           }
         }
         is MarkClicked -> {
-          val url = event.item.markClickUrl
-          coroutineScope.launch { linkManager.openUrl(UrlMeta(url, themeColor.toArgb(), context)) }
+          event.item.markClickUrl?.let { url ->
+            scope.launch { linkManager.openUrl(url, themeColor) }
+          }
         }
       }
     }
-    val rememberedSink by rememberUpdatedState(eventSink)
 
     val itemsFlow =
       rememberRetained(service.meta()) {
@@ -243,8 +242,8 @@ constructor(
       }
     val items = itemsFlow.collectAsLazyPagingItems()
     return when (service.meta().isVisual) {
-      true -> VisualState(items = items, themeColor = themeColor, eventSink = rememberedSink)
-      false -> TextState(items = items, themeColor = themeColor, eventSink = rememberedSink)
+      true -> VisualState(items = items, themeColor = themeColor, eventSink = eventSink)
+      false -> TextState(items = items, themeColor = themeColor, eventSink = eventSink)
     }
   }
 
@@ -255,20 +254,21 @@ constructor(
   }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(ServiceScreen::class, AppScope::class)
 @Composable
 fun Service(state: State, modifier: Modifier = Modifier) {
-  var refreshing by remember { mutableStateOf(false) }
-  val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh = state.items::refresh)
+  val refreshLoadState by rememberUpdatedState(state.items.loadState.refresh)
+  val pullRefreshState = rememberPullRefreshState(false, onRefresh = state.items::refresh)
   Box(modifier.pullRefresh(pullRefreshState)) {
     if (state is VisualState) {
-      VisualServiceUi(state.items, state.themeColor, { refreshing = it }, state.eventSink)
+      VisualServiceUi(state.items, state.themeColor, state.eventSink)
     } else {
-      TextServiceUi(state.items, state.themeColor, { refreshing = it }, state.eventSink)
+      TextServiceUi(state.items, state.themeColor, state.eventSink)
     }
 
     PullRefreshIndicator(
-      refreshing = refreshing,
+      refreshing = refreshLoadState == LoadState.Loading,
       state = pullRefreshState,
       contentColor = state.themeColor,
       modifier = Modifier.align(Alignment.TopCenter)

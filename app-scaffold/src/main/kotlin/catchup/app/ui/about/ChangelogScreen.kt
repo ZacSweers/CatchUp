@@ -1,6 +1,5 @@
 package catchup.app.ui.about
 
-import android.graphics.Color
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -16,7 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import catchup.app.data.LinkManager
@@ -24,7 +23,7 @@ import catchup.app.data.github.RepoReleasesQuery
 import catchup.app.service.ClickableItem
 import catchup.app.service.ErrorItem
 import catchup.app.service.TextItem
-import catchup.app.service.UrlMeta
+import catchup.app.service.openUrl
 import catchup.app.service.rememberClickableItemState
 import catchup.app.ui.about.ChangelogScreen.Event.Click
 import catchup.app.ui.about.ChangelogScreen.State
@@ -75,11 +74,10 @@ constructor(
     val items by
       produceState<ImmutableList<CatchUpItem>?>(null) { value = changelogRepository.requestItems() }
     val scope = rememberStableCoroutineScope()
-    val context = LocalContext.current
     return State(items) { event ->
       when (event) {
         is Click -> {
-          scope.launch { linkManager.openUrl(UrlMeta(event.url, Color.BLACK, context)) }
+          scope.launch { linkManager.openUrl(event.url, Color.Black) }
         }
       }
     }

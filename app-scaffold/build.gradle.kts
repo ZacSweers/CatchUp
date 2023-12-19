@@ -97,6 +97,25 @@ afterEvaluate {
   }
 }
 
+tasks.withType<KotlinCompile>().configureEach {
+  compilerOptions {
+    if (project.hasProperty("catchup.enableComposeCompilerReports")) {
+      val metricsDir =
+        project.layout.buildDirectory.dir("compose_metrics").get().asFile.absolutePath
+      freeCompilerArgs.addAll(
+        "-P",
+        "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$metricsDir",
+        "-P",
+        "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$metricsDir",
+      )
+    }
+    freeCompilerArgs.addAll(
+      "-P",
+      "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
+    )
+  }
+}
+
 dependencies {
   ksp(libs.circuit.codegen)
 

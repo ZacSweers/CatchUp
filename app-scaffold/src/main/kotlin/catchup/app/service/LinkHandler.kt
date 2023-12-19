@@ -15,6 +15,29 @@
  */
 package catchup.app.service
 
+import android.net.Uri
+import androidx.annotation.CheckResult
+import androidx.annotation.ColorInt
+import androidx.compose.ui.graphics.Color
+import catchup.app.data.LinkManager
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
+
 interface LinkHandler {
-  suspend fun openUrl(meta: UrlMeta)
+  @CheckResult
+  suspend fun openUrl(url: HttpUrl, @ColorInt accentColor: Color = Color.Unspecified): Boolean
+}
+
+suspend fun LinkManager.openUrl(
+  url: String,
+  @ColorInt accentColor: Color = Color.Unspecified
+): Boolean {
+  return openUrl(url.toHttpUrl(), accentColor)
+}
+
+suspend fun LinkManager.openUrl(
+  uri: Uri,
+  @ColorInt accentColor: Color = Color.Unspecified
+): Boolean {
+  return openUrl(uri.toString(), accentColor)
 }

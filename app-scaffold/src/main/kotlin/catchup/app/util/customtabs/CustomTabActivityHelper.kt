@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.annotation.CheckResult
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsIntent.SHARE_STATE_ON
@@ -51,14 +52,16 @@ class CustomTabActivityHelper @Inject constructor() {
    * @param customTabsIntent a CustomTabsIntent to be used if Custom Tabs is available
    * @param uri the Uri to be opened
    */
-  fun openCustomTab(context: Context, customTabsIntent: CustomTabsIntent, uri: Uri) {
+  @CheckResult
+  fun openCustomTab(context: Context, customTabsIntent: CustomTabsIntent, uri: Uri): Boolean {
     val packageName = CustomTabsHelper.getPackageNameToUse(context)
 
     // if we cant find a package name, it means there's no browser that supports
     // Custom Tabs installed. So, we fallback to a view intent
-    packageName?.let {
+    return packageName?.let {
       customTabsIntent.intent.`package` = it
       customTabsIntent.launchUrl(context, uri)
+      true
     } ?: context.maybeStartActivity(Intent(Intent.ACTION_VIEW, uri))
   }
 
