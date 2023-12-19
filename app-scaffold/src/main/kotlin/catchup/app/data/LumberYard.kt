@@ -52,7 +52,7 @@ import timber.log.Timber
 
 @SingleIn(AppScope::class)
 class LumberYard(
-  private val logDir: Path,
+  private val _logDir: Path,
   scope: CoroutineScope,
   private val flushInterval: Duration = FLUSH_INTERVAL,
   bufferSize: Int = BUFFER_SIZE,
@@ -68,7 +68,7 @@ class LumberYard(
     app: Application,
     @ForScope(AppScope::class) scope: CoroutineScope,
   ) : this(
-    logDir =
+    _logDir =
       app.getExternalFilesDir(null)?.toOkioPath()?.resolve("logs")
         ?: throw IOException("External storage is not mounted."),
     scope = scope,
@@ -110,10 +110,16 @@ class LumberYard(
     logChannel.send(entry)
   }
 
+  private suspend inline fun <T> guardedIo(body: (logDir: Path) -> T): T {
+    return writeMutex.withLock {
+      body(_logDir)
+    }
+  }
+
   /** Save the current logs to disk. */
   @WorkerThread
   suspend fun save(entries: List<Entry>): Path =
-    writeMutex.withLock {
+    guardedIo { logDir ->
       if (!fs.exists(logDir)) {
         fs.createDirectories(logDir)
       }
@@ -134,7 +140,7 @@ class LumberYard(
    */
   @WorkerThread
   suspend fun cleanUp(): Long =
-    writeMutex.withLock {
+    guardedIo { logDir ->
       var deleted = 0L
       fs
         .list(logDir)
