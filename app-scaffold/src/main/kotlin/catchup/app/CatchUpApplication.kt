@@ -25,17 +25,10 @@ import catchup.app.ApplicationModule.Initializers
 import catchup.app.data.LumberYard
 import catchup.app.injection.DaggerSet
 import catchup.app.util.BackgroundAppCoroutineScope
-import catchup.app.util.MainAppCoroutineScope
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
 import catchup.util.d
-import com.squareup.anvil.annotations.optional.ForScope
 import java.util.concurrent.Executors
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

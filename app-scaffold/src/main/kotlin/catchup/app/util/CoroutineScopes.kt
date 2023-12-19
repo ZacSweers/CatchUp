@@ -12,5 +12,5 @@ import kotlinx.coroutines.SupervisorJob
 class MainAppCoroutineScope @Inject constructor() : CoroutineScope by MainScope()
 
 @SingleIn(AppScope::class)
-class BackgroundAppCoroutineScope @Inject constructor()  : CoroutineScope by CoroutineScope(
-  SupervisorJob() + Dispatchers.Default)
+class BackgroundAppCoroutineScope @Inject constructor() :
+  CoroutineScope by CoroutineScope(SupervisorJob() + Dispatchers.Default)

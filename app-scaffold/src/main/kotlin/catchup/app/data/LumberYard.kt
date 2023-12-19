@@ -22,7 +22,6 @@ import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 import javax.inject.Inject
@@ -76,9 +75,7 @@ class LumberYard(
   // Guard against concurrent writes
   private val writeMutex = Mutex()
 
-  private val logFiles = Array(5) { i ->
-    _logDir.resolve("log$i.$LOG_EXTENSION")
-  }
+  private val logFiles = Array(5) { i -> _logDir.resolve("log$i.$LOG_EXTENSION") }
   private var currentFileIndex = 0
 
   // Act as a ring buffer with a fixed size

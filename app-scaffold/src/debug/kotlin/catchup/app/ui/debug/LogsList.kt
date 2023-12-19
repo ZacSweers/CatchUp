@@ -36,11 +36,7 @@ import kotlinx.datetime.toLocalDateTime
 /** A simple list UI for showing debugging logs and sharing them. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LogsList(
-  entries: ImmutableList<Entry>,
-  modifier: Modifier = Modifier,
-  onShare: () -> Unit
-) {
+fun LogsList(entries: ImmutableList<Entry>, modifier: Modifier = Modifier, onShare: () -> Unit) {
   LazyColumn(modifier = modifier, contentPadding = PaddingValues(start = 16.dp, end = 16.dp)) {
     stickyHeader(key = "header") {
       Surface {

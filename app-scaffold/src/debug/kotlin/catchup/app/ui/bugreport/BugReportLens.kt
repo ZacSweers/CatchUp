@@ -76,9 +76,7 @@ constructor(
       if (report.includeLogs) {
         try {
           lumberYard.flush()
-          submitReport(context, report) {
-            lumberYard.currentLogFileText()
-          }
+          submitReport(context, report) { lumberYard.currentLogFileText() }
         } catch (e: Exception) {
           Toast.makeText(context, "Couldn't attach the logs.", Toast.LENGTH_SHORT).show()
           submitReport(context, report, null)
