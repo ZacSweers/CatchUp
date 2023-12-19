@@ -19,8 +19,10 @@ import android.app.Application
 import android.os.StrictMode
 import android.os.strictmode.DiskReadViolation
 import android.os.strictmode.UntaggedSocketViolation
+import android.util.Log
 import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
+import catchup.app.data.LumberYard
 import catchup.app.injection.DaggerSet
 import catchup.appconfig.AppConfig
 import catchup.util.d
@@ -29,7 +31,13 @@ import javax.inject.Inject
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import timber.log.Timber
 import timber.log.Timber.Tree
 
@@ -39,6 +47,7 @@ class CatchUpApplication : Application() {
 
   @Inject internal lateinit var catchUpPreferences: CatchUpPreferences
   @Inject internal lateinit var appConfig: AppConfig
+  @Inject internal lateinit var lumberYard: LumberYard
 
   lateinit var appComponent: ApplicationComponent
 
@@ -65,6 +74,24 @@ class CatchUpApplication : Application() {
     super.onCreate()
     appComponent =
       DaggerApplicationComponent.factory().create(this).apply { inject(this@CatchUpApplication) }
+
+    val defaultHandler = Thread.currentThread().uncaughtExceptionHandler
+    Thread.currentThread().setUncaughtExceptionHandler { thread, throwable ->
+      runBlocking {
+        withContext(NonCancellable) {
+          lumberYard.addEntry(
+            LumberYard.Entry(
+              Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+              Log.ERROR,
+              "FATAL",
+              throwable.message ?: "No message",
+            )
+          )
+          lumberYard.closeAndJoin()
+        }
+      }
+      defaultHandler?.uncaughtException(thread, throwable)
+    }
 
     StrictMode.setVmPolicy(
       StrictMode.VmPolicy.Builder()
