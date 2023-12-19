@@ -78,7 +78,6 @@ import kotlinx.datetime.Clock
 fun TextServiceUi(
   lazyItems: LazyPagingItems<CatchUpItem>,
   themeColor: Color,
-  onRefreshChange: (Boolean) -> Unit,
   eventSink: (Event) -> Unit,
   modifier: Modifier = Modifier,
 ) {
@@ -149,7 +148,7 @@ fun TextServiceUi(
         }
       }
     }
-    handleLoadStates(lazyItems, themeColor, onRefreshChange)
+    handleLoadStates(lazyItems, themeColor)
   }
 }
 
@@ -338,22 +337,16 @@ private fun ItemFooter(item: CatchUpItem) {
 fun LazyListScope.handleLoadStates(
   lazyItems: LazyPagingItems<CatchUpItem>,
   themeColor: Color,
-  onRefreshChange: (Boolean) -> Unit
 ) {
   lazyItems.apply {
     when {
       loadState.refresh is LoadState.Loading -> {
-        onRefreshChange(true)
         item { LoadingView(themeColor, Modifier.fillParentMaxSize()) }
-      }
-      loadState.refresh is LoadState.NotLoading -> {
-        onRefreshChange(false)
       }
       loadState.append is LoadState.Loading -> {
         item { LoadingItem() }
       }
       loadState.refresh is LoadState.Error -> {
-        onRefreshChange(false)
         val e = loadState.refresh as LoadState.Error
         item {
           ErrorItem(

@@ -71,7 +71,7 @@ import catchup.app.service.ServiceScreen
 import catchup.app.service.bookmarks.Bookmark
 import catchup.app.service.bookmarks.BookmarksScreen
 import catchup.app.ui.activity.SettingsScreen
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.base.ui.rememberSystemBarColorController
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.LocalDisplayFeatures
@@ -102,7 +102,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
-import dev.zacsweers.catchup.app.scaffold.R
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlinx.collections.immutable.ImmutableList
@@ -266,7 +266,7 @@ fun Home(state: State, modifier: Modifier = Modifier) {
               // Embed the content in a scaffold for padding and such
               val meta = state.serviceMetas[state.selectedIndex]
               val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-              CatchUpScaffold(
+              HazeScaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 containerColor = Color.Transparent,
@@ -380,7 +380,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
   }
   val serviceMetas by rememberUpdatedState(state.serviceMetas)
   val eventSink by rememberUpdatedState(state.eventSink)
-  CatchUpScaffold(
+  HazeScaffold(
     modifier = nestedScrollModifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,
@@ -555,8 +555,8 @@ internal fun ChangelogButton(modifier: Modifier = Modifier, onClick: () -> Unit)
     modifier = modifier,
   ) {
     Icon(
-      imageVector = ImageVector.vectorResource(R.drawable.baseline_redeem_24),
-      contentDescription = stringResource(R.string.changes),
+      imageVector = ImageVector.vectorResource(AppScaffoldR.drawable.baseline_redeem_24),
+      contentDescription = stringResource(AppScaffoldR.string.changes),
     )
   }
 }

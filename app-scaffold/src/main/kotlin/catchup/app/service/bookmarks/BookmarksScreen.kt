@@ -2,7 +2,6 @@ package catchup.app.service.bookmarks
 
 import android.content.Context
 import android.content.Intent
-import androidx.annotation.ColorInt
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,25 +14,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.DismissDirection.EndToStart
-import androidx.compose.material3.DismissDirection.StartToEnd
-import androidx.compose.material3.DismissValue.Default
-import androidx.compose.material3.DismissValue.DismissedToStart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissValue.EndToStart
+import androidx.compose.material3.SwipeToDismissValue.Settled
+import androidx.compose.material3.SwipeToDismissValue.StartToEnd
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -51,12 +48,12 @@ import catchup.app.data.LinkManager
 import catchup.app.service.ClickableItem
 import catchup.app.service.PlaceholderItem
 import catchup.app.service.TextItem
-import catchup.app.service.UrlMeta
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Click
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Remove
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Share
+import catchup.app.service.openUrl
 import catchup.base.ui.BackPressNavButton
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
@@ -100,7 +97,7 @@ object BookmarksScreen : Screen, DeepLinkable {
   ) : CircuitUiState
 
   sealed interface Event : CircuitUiEvent {
-    data class Click(val url: String, @ColorInt val themeColor: Int) : Event
+    data class Click(val url: String, val themeColor: Color) : Event
 
     data class Remove(val id: Long) : Event
 
@@ -147,10 +144,7 @@ constructor(
           scope.launch { bookmarksRepository.removeBookmark(event.id) }
         }
         is Click -> {
-          scope.launch {
-            val meta = UrlMeta(event.url, event.themeColor, context)
-            linkManager.openUrl(meta)
-          }
+          scope.launch { linkManager.openUrl(event.url, event.themeColor) }
         }
         Share -> scope.launch { shareAll(context, metaMap) }
       }
@@ -192,7 +186,7 @@ constructor(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
-  CatchUpScaffold(
+  HazeScaffold(
     modifier = modifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,
@@ -239,9 +233,9 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
       if (item == null) {
         PlaceholderItem(Color.Unspecified)
       } else {
-        val dismissState = rememberDismissState(confirmValueChange = { it == DismissedToStart })
+        val dismissState = rememberSwipeToDismissState(confirmValueChange = { it == EndToStart })
 
-        if (dismissState.currentValue == DismissedToStart) {
+        if (dismissState.currentValue == EndToStart) {
           // TODO offer an undo option after a pause?
           // TODO no exit animation yet https://issuetracker.google.com/issues/150812265#comment30
           state.eventSink(Remove(item.id))
@@ -260,13 +254,13 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
               when (dismissState.dismissDirection) {
                 StartToEnd -> themeColor
                 EndToStart -> MaterialTheme.colorScheme.error
-                null -> Color.Unspecified
+                Settled -> Color.Unspecified
               }
             val alignment =
               when (dismissState.dismissDirection) {
                 StartToEnd -> Alignment.CenterStart
                 EndToStart -> Alignment.CenterEnd
-                null -> Alignment.CenterStart
+                Settled -> Alignment.CenterStart
               }
             Box(
               modifier = Modifier.fillMaxSize().background(color),
@@ -290,7 +284,7 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
                     modifier = Modifier.padding(32.dp).size(32.dp),
                     tint = MaterialTheme.colorScheme.onError
                   )
-                null -> {
+                Settled -> {
                   // Do nothing
                 }
               }
@@ -302,7 +296,7 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
             if (clickUrl != null) {
               ClickableItem(
                 modifier = Modifier.animateItemPlacement(),
-                onClick = { state.eventSink(Click(clickUrl, themeColor.toArgb())) },
+                onClick = { state.eventSink(Click(clickUrl, themeColor)) },
               ) {
                 TextItem(item, themeColor)
               }

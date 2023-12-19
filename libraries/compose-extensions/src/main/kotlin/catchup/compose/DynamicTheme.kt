@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 val LocalDynamicTheme = compositionLocalOf { false }
 
 @Composable
-fun dynamicAwareColor(
+inline fun dynamicAwareColor(
   regularColor: @Composable () -> Color,
   dynamicColor: @Composable () -> Color,
   // Trigger recomposition if the context changes
