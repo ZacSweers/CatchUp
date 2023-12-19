@@ -289,7 +289,7 @@ tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", versi
 collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "collapsingToolbar" }
 
 test-junit = "junit:junit:4.13.2"
-test-truth = "com.google.truth:truth:1.1.5"
+test-truth = "com.google.truth:truth:1.2.0"
 
 xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.86.3"
 xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.86.3"
