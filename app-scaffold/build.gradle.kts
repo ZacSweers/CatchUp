@@ -243,8 +243,8 @@ dependencies {
 
   testImplementation(libs.misc.debug.flipper)
   testImplementation(libs.misc.debug.flipperNetwork)
+  testImplementation(libs.misc.okio.fakeFileSystem)
+  testImplementation(libs.kotlin.coroutines.test)
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
-
-  androidTestImplementation(libs.misc.jsr305)
 }
