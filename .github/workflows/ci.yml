@@ -62,13 +62,13 @@ jobs:
 
       - name: Check affected projects
         run: |
-          path="build/skippy/affected_projects.txt"
+          path="build/skippy/merged/affected_projects.txt"
           if [[ -e "$path" ]]; then
             cat "$path"
             # Copy focus file to root of project
             # Necessary to omit the newline because the focus plugin reads the whole file text!
             # TODO changing settings breaks caching https://issuetracker.google.com/issues/279997228
-            # echo -n "build/skippy/focus.settings.gradle" > .focus
+            # echo -n "build/skippy/merged/focus.settings.gradle" > .focus
             # Check if app is affected
             if grep -q ":app" "$path"; then
               echo "App is affected"
@@ -89,7 +89,7 @@ jobs:
           path: build/skippy/**
 
       - name: Build and run tests
-        run: ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=build/skippy/affected_projects.txt
+        run: ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=build/skippy/merged/affected_projects.txt
 
       - name: Filter sarif
         if: always() && github.event_name == 'pull_request'

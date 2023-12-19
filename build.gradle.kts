@@ -68,22 +68,24 @@ subprojects {
   }
 }
 
-tasks.named<ComputeAffectedProjectsTask>("computeAffectedProjects") {
-  // Glob patterns of files to include in computing
-  includePatterns.addAll(AffectedProjectsDefaults.DEFAULT_INCLUDE_PATTERNS)
-  includePatterns.addAll(
-    "**/schemas/**",
-    "app/proguard-rules.pro",
-    "**/src/**/graphql/**",
-  )
-  // Glob patterns of files that, if changed, should result in not skipping anything in the build
-  neverSkipPatterns.addAll(AffectedProjectsDefaults.DEFAULT_NEVER_SKIP_PATTERNS)
-  neverSkipPatterns.addAll(
-    ".github/workflows/**",
-    "spotless/**",
-    "scripts/github/schema.json",
-    "config/lint/lint.xml"
-  )
+skippy {
+  mergeOutputs = true
+  global {
+    applyDefaults()
+    // Glob patterns of files to include in computing
+    includePatterns.addAll(
+      "**/schemas/**",
+      "app/proguard-rules.pro",
+      "**/src/**/graphql/**",
+    )
+    // Glob patterns of files that, if changed, should result in not skipping anything in the build
+    neverSkipPatterns.addAll(
+      ".github/workflows/**",
+      "spotless/**",
+      "scripts/github/schema.json",
+      "config/lint/lint.xml",
+    )
+  }
 }
 
 dependencyAnalysis {
