@@ -36,9 +36,16 @@ import okio.sink
 import timber.log.Timber
 
 @SingleIn(AppScope::class)
-class LumberYard @Inject constructor(private val app: Application) {
+class LumberYard(
+  private val folder: File,
+  private val bufferSize: Int = BUFFER_SIZE,
+) {
+  @Inject
+  constructor(app: Application) : this(
+    app.getExternalFilesDir(null) ?: throw IOException("External storage is not mounted.")
+  )
 
-  private val entries = ArrayDeque<Entry>(BUFFER_SIZE + 1)
+  private val entries = ArrayDeque<Entry>(bufferSize + 1)
   private val sharedFlow = MutableSharedFlow<Entry>()
 
   fun tree(): Timber.Tree {
@@ -52,7 +59,7 @@ class LumberYard @Inject constructor(private val app: Application) {
   @Synchronized
   private fun addEntry(entry: Entry) {
     entries.addLast(entry)
-    if (entries.size > BUFFER_SIZE) {
+    if (entries.size > bufferSize) {
       entries.removeFirst()
     }
 
@@ -63,35 +70,30 @@ class LumberYard @Inject constructor(private val app: Application) {
 
   /** Save the current logs to disk. */
   suspend fun save(): File = suspendCancellableCoroutine { continuation ->
-    val folder = app.getExternalFilesDir(null)
-    if (folder == null) {
-      continuation.resumeWithException(IOException("External storage is not mounted."))
-    } else {
-      val fileName = ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())
-      val output = File(folder, fileName)
+    val fileName = ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())
+    val output = File(folder, fileName)
 
-      var sink: BufferedSink? = null
-      try {
-        sink = output.sink().buffer()
-        val entries1 = bufferedLogs()
-        for (entry in entries1) {
-          sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
-        }
-        // need to close before emiting file to the subscriber, because when subscriber receives
-        // data in the same thread the file may be truncated
-        sink.close()
-        sink = null
+    var sink: BufferedSink? = null
+    try {
+      sink = output.sink().buffer()
+      val entries1 = bufferedLogs()
+      for (entry in entries1) {
+        sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
+      }
+      // need to close before emiting file to the subscriber, because when subscriber receives
+      // data in the same thread the file may be truncated
+      sink.close()
+      sink = null
 
-        continuation.resume(output)
-      } catch (e: IOException) {
-        continuation.resumeWithException(e)
-      } finally {
-        if (sink != null) {
-          try {
-            sink.close()
-          } catch (e: IOException) {
-            continuation.resumeWithException(e)
-          }
+      continuation.resume(output)
+    } catch (e: IOException) {
+      continuation.resumeWithException(e)
+    } finally {
+      if (sink != null) {
+        try {
+          sink.close()
+        } catch (e: IOException) {
+          continuation.resumeWithException(e)
         }
       }
     }
@@ -103,14 +105,12 @@ class LumberYard @Inject constructor(private val app: Application) {
    */
   @WorkerThread
   fun cleanUp(): Long {
-    return app.getExternalFilesDir(null)?.let { folder ->
-      val initialSize = folder.length()
-      (folder.listFiles() ?: return -1L)
-        .asSequence()
-        .filter { it.name.endsWith(".log") }
-        .forEach { it.delete() }
-      return@let initialSize - folder.length()
-    } ?: -1L
+    val initialSize = folder.length()
+    (folder.listFiles() ?: return -1L)
+      .asSequence()
+      .filter { it.name.endsWith(".log") }
+      .forEach { it.delete() }
+    return initialSize - folder.length()
   }
 
   data class Entry(val level: Int, val tag: String?, val message: String) {
