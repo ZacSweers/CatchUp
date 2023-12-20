@@ -2,8 +2,9 @@ package catchup.app.data
 
 import com.google.common.truth.Truth.assertThat
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -31,16 +32,18 @@ class LumberYardTest {
     fs.createDirectory(logsPath)
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun smokeTest() = runTest {
+    val testDispatcher = StandardTestDispatcher()
+    val scope = CoroutineScope(SupervisorJob() + testDispatcher)
     val lumberYard =
       LumberYard(
         logsPath,
-        scope = this,
+        scope = scope,
         flushInterval = flushInterval,
         fs = fs,
         clock = testClock,
+        debugLog = ::println
       )
 
     // 3 is DEBUG
@@ -55,9 +58,7 @@ class LumberYardTest {
 
     assertThat(logFiles()).isEmpty()
 
-    println("testScheduler.currentTime: ${testScheduler.currentTime}")
-    testScheduler.advanceTimeBy(flushInterval.plus(1.seconds))
-    println("testScheduler.currentTime: ${testScheduler.currentTime}")
+    testDispatcher.scheduler.advanceTimeBy(flushInterval.plus(1.milliseconds))
 
     assertThat(logFiles()).hasSize(1)
     val logText = fs.read(logFiles().first()) { readUtf8() }.trim()
@@ -70,13 +71,16 @@ class LumberYardTest {
 
   @Test
   fun closeAndJoinFlushes() = runTest {
+    val testDispatcher = StandardTestDispatcher()
+    val scope = CoroutineScope(SupervisorJob() + testDispatcher)
     val lumberYard =
       LumberYard(
         logsPath,
-        scope = this,
+        scope = scope,
         flushInterval = flushInterval,
         fs = fs,
         clock = testClock,
+        debugLog = ::println
       )
 
     // 3 is DEBUG
@@ -91,6 +95,7 @@ class LumberYardTest {
 
     assertThat(logFiles()).isEmpty()
 
+    println("Closing")
     lumberYard.closeAndJoin()
 
     assertThat(logFiles()).hasSize(1)

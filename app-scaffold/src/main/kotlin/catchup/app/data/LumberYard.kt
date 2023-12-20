@@ -30,6 +30,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
@@ -59,6 +60,7 @@ class LumberYard(
   private val fs: FileSystem = FileSystem.SYSTEM,
   internal val clock: Clock = Clock.System,
   internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
+  internal val debugLog: (String) -> Unit = {},
 ) {
 
   @Inject
@@ -91,18 +93,33 @@ class LumberYard(
   //  just make that UI read the log file contents, though wouldn't be as colorful
   private val writtenLogs = ArrayDeque<Entry>()
 
+  @OptIn(DelicateCoroutinesApi::class)
   private val writeJob: Job =
     scope.launch {
-      val pendingLogs = mutableListOf<Entry>()
-      while (isActive) {
+      while (isActive && !flushChannel.isClosedForReceive && !logChannel.isClosedForReceive) {
+        debugLog("Checking for flush")
         for (saveNow in flushChannel) {
-          println("Flushing logs")
-          for (item in logChannel) {
-            pendingLogs.add(item)
+          debugLog("Flush triggered")
+          val results = mutableListOf(logChannel.receive())
+          // Drain the channel buffer
+          while (true) {
+            val attempt = logChannel.tryReceive()
+            when (val value = attempt.getOrNull()) {
+              null -> {
+                debugLog("No more logs to flush, breaking")
+                break
+              }
+              else -> {
+                debugLog("Adding log - ${value.prettyPrint()}")
+                results += value
+              }
+            }
           }
-          if (pendingLogs.isNotEmpty()) {
-            save(pendingLogs)
-            pendingLogs.clear()
+          if (results.isNotEmpty()) {
+            debugLog("Saving logs to disk")
+            save(results)
+            debugLog("Done saving logs to disk, clearing pending")
+            results.clear()
           }
         }
       }
@@ -112,6 +129,7 @@ class LumberYard(
     scope.launch {
       while (isActive) {
         delay(flushInterval)
+        debugLog("Flush interval elapsed, triggering flush")
         flushChannel.send(Unit)
       }
     }
@@ -130,6 +148,7 @@ class LumberYard(
 
   /** Save the current logs to disk. */
   suspend fun flush() {
+    debugLog("Flush triggered")
     flushChannel.send(Unit)
   }
 
@@ -149,6 +168,7 @@ class LumberYard(
     return if (!fs.exists(output) || fs.metadata(output).size!! <= 1024) {
       fs.appendingSink(output).buffer().use { sink ->
         for (entry in entries) {
+          debugLog("Writing entry to disk - ${entry.prettyPrint()}")
           sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
           writtenLogs.add(entry)
         }
@@ -185,6 +205,7 @@ class LumberYard(
   }
 
   private fun rotate() {
+    debugLog("Rotating files")
     currentFileIndex = (currentFileIndex + 1) % logFiles.size
   }
 
@@ -231,8 +252,14 @@ class LumberYard(
   }
 
   suspend fun closeAndJoin() {
+    flush()
+    debugLog("Canceling flush job")
     flushJob.cancel()
+    debugLog("Closing flush channel")
+    flushChannel.close()
+    debugLog("Closing log channel")
     logChannel.close()
+    debugLog("Joining write job")
     writeJob.join()
   }
 
