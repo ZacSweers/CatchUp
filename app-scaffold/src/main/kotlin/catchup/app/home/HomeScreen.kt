@@ -61,11 +61,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.window.layout.FoldingFeature
 import catchup.app.CatchUpPreferences
 import catchup.app.changes.ChangelogHelper
-import catchup.app.home.HomeScreen.Event.NestedNavEvent
-import catchup.app.home.HomeScreen.Event.OpenBookmarks
-import catchup.app.home.HomeScreen.Event.OpenSettings
-import catchup.app.home.HomeScreen.Event.Selected
-import catchup.app.home.HomeScreen.Event.ShowChangelog
 import catchup.app.home.HomeScreen.State
 import catchup.app.service.ServiceScreen
 import catchup.app.service.bookmarks.Bookmark
@@ -91,7 +86,6 @@ import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.foundation.onNavEvent
 import com.slack.circuit.overlay.LocalOverlayHost
-import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -126,24 +120,21 @@ import kotlinx.parcelize.Parcelize
 object HomeScreen : Screen, DeepLinkable {
   override fun createScreen(queryParams: ImmutableMap<String, List<String?>>): Screen = HomeScreen
 
-  data class State(
-    val serviceMetas: ImmutableList<ServiceMeta>,
-    val changelogAvailable: Boolean,
-    val selectedIndex: Int,
-    val bookmarksCount: Long,
-    val eventSink: (Event) -> Unit = {}
-  ) : CircuitUiState
+  interface State : CircuitUiState {
+    val serviceMetas: ImmutableList<ServiceMeta>
+    val changelogAvailable: Boolean
+    val selectedIndex: Int
+    val bookmarksCount: Long
 
-  sealed interface Event : CircuitUiEvent {
-    data object OpenSettings : Event
+    fun openSettings()
 
-    data object OpenBookmarks : Event
+    fun openBookmarks()
 
-    data object ShowChangelog : Event
+    fun showChangelog()
 
-    data class NestedNavEvent(val navEvent: NavEvent) : Event
+    fun nestedNavEvent(navEvent: NavEvent)
 
-    data class Selected(val index: Int) : Event
+    fun selected(index: Int)
   }
 }
 
@@ -166,7 +157,7 @@ constructor(
   @Composable
   override fun present(): State {
     val currentOrder by
-      remember { catchUpPreferences.servicesOrder }.collectAsState(initial = persistentListOf())
+      remember(catchUpPreferences::servicesOrder).collectAsState(initial = persistentListOf())
     var selectedIndex by remember(currentOrder) { mutableIntStateOf(0) }
     val serviceMetas by
       produceState(initialValue = persistentListOf(), currentOrder) {
@@ -186,42 +177,46 @@ constructor(
     val context = LocalContext.current
     val changelogAvailable by changelogHelper.changelogAvailable(context).collectAsState(false)
 
-    val countFlow = remember { bookmarkRepository.bookmarksCountFlow() }
+    val countFlow = remember(bookmarkRepository::bookmarksCountFlow)
     val bookmarksCount by countFlow.collectAsState(0L)
 
     val scope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
-    return State(
-      serviceMetas = serviceMetas,
-      changelogAvailable = changelogAvailable,
-      selectedIndex = selectedIndex,
-      bookmarksCount = bookmarksCount
-    ) { event ->
-      when (event) {
-        OpenSettings -> {
+    return remember(scope, overlayHost) {
+      object : State {
+        override val serviceMetas = serviceMetas
+        override val changelogAvailable = changelogAvailable
+        override val selectedIndex = selectedIndex
+        override val bookmarksCount = bookmarksCount
+
+        override fun openSettings() {
           navigator.goTo(SettingsScreen)
         }
-        OpenBookmarks -> {
+
+        override fun openBookmarks() {
           navigator.goTo(BookmarksScreen)
         }
-        is NestedNavEvent -> {
-          navigator.onNavEvent(event.navEvent)
-        }
-        is Selected -> {
-          selectedIndex = event.index
-          // TODO only do this if we make a TwoPane nav-aware
-          //  navigator.goTo(ServiceScreen(serviceMetas[event.index].id))
-        }
-        ShowChangelog -> {
+
+        override fun showChangelog() {
           scope.launch {
             overlayHost.show(
               BottomSheetOverlay(
                 model = Unit,
                 content = { _, _ -> changelogHelper.Content() },
-                onDismiss = { Unit }
+                onDismiss = { }
               )
             )
           }
+        }
+
+        override fun nestedNavEvent(navEvent: NavEvent) {
+          navigator.onNavEvent(navEvent)
+        }
+
+        override fun selected(index: Int) {
+          selectedIndex = index
+          // TODO only do this if we make a TwoPane nav-aware
+          //  navigator.goTo(ServiceScreen(serviceMetas[event.index].id))
         }
       }
     }
@@ -237,7 +232,7 @@ fun Home(state: State, modifier: Modifier = Modifier) {
   // TODO movable for current content? How can we better save the state of the current detail
   val displayFeatures = LocalDisplayFeatures.current
   val foldingFeature =
-    remember(displayFeatures) { displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull() }
+    remember(displayFeatures, displayFeatures.filterIsInstance<FoldingFeature>()::firstOrNull)
 
   if (foldingFeature != null) {
     // TODO
@@ -310,12 +305,12 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
   if (state.serviceMetas.isEmpty()) return // Not loaded yet
 
   val pagerState =
-    key(state.serviceMetas) { rememberPagerState(state.selectedIndex) { state.serviceMetas.size } }
+    key(state.serviceMetas) { rememberPagerState(state.selectedIndex, pageCount = state.serviceMetas::size) }
 
   LaunchedEffect(pagerState) {
-    snapshotFlow { pagerState.settledPage }
+    snapshotFlow(pagerState::settledPage)
       .distinctUntilChanged()
-      .collect { state.eventSink(Selected(it)) }
+      .collect(state::selected)
   }
 
   val currentServiceMeta = state.serviceMetas[pagerState.currentPage]
@@ -333,7 +328,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
   if (!dynamicTheme) {
     // Set the status bar color to match the top app bar when it's collapsed
     LaunchedEffect(scrollBehavior) {
-      snapshotFlow { scrollBehavior.state.collapsedFraction }
+      snapshotFlow(scrollBehavior.state::collapsedFraction)
         .collect { fraction ->
           scrimColor = lerp(surfaceColor, tabLayoutColor.value, fraction)
           if (fraction == 1.0f) {
@@ -346,7 +341,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
 
     // Transition the color from one
     LaunchedEffect(pagerState) {
-      snapshotFlow { pagerState.currentPageOffsetFraction }
+      snapshotFlow(pagerState::currentPageOffsetFraction)
         .filterNot { isAnimatingColor }
         .collect { offset ->
           val position = pagerState.currentPage
@@ -379,7 +374,6 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
     modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
   }
   val serviceMetas by rememberUpdatedState(state.serviceMetas)
-  val eventSink by rememberUpdatedState(state.eventSink)
   HazeScaffold(
     modifier = nestedScrollModifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -395,7 +389,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         actions = {
           // TODO wire with Syllabus
           if (state.changelogAvailable) {
-            ChangelogButton { eventSink(ShowChangelog) }
+            ChangelogButton(onClick = state::showChangelog)
           }
 
           AnimatedVisibility(
@@ -408,7 +402,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
               shouldWiggle = { old, new -> new > old },
             ) {
               IconButton(
-                onClick = { eventSink(OpenBookmarks) },
+                onClick = state::openBookmarks,
               ) {
                 Icon(
                   imageVector = Icons.Filled.Bookmark,
@@ -418,7 +412,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
             }
           }
           IconButton(
-            onClick = { eventSink(OpenSettings) },
+            onClick = state::openSettings,
           ) {
             Icon(
               imageVector = Icons.Default.Settings,
@@ -432,7 +426,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
     Column(
       modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding)
     ) {
-      val scrollToTop = remember { MutableScrollToTop() }
+      val scrollToTop = remember(::MutableScrollToTop)
       val contentColor =
         if (dynamicTheme) MaterialTheme.colorScheme.onPrimaryContainer else Color.White
       val containerColor =
@@ -498,7 +492,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         ) {
           CircuitContent(
             screen = ServiceScreen(serviceMetas[page].id),
-            onNavEvent = { eventSink(NestedNavEvent(it)) }
+            onNavEvent = state::nestedNavEvent
           )
         }
       }
