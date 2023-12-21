@@ -32,6 +32,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -96,33 +98,43 @@ class LumberYard(
   @OptIn(DelicateCoroutinesApi::class)
   private val writeJob: Job =
     scope.launch {
-      while (isActive && !flushChannel.isClosedForReceive && !logChannel.isClosedForReceive) {
-        debugLog("Checking for flush")
-        for (saveNow in flushChannel) {
-          debugLog("Flush triggered")
-          val results = mutableListOf(logChannel.receive())
-          // Drain the channel buffer
-          while (true) {
-            val attempt = logChannel.tryReceive()
-            when (val value = attempt.getOrNull()) {
-              null -> {
-                debugLog("No more logs to flush, breaking")
-                break
-              }
-              else -> {
-                debugLog("Adding log - ${value.prettyPrint()}")
-                results += value
+      try {
+        debugLog("Starting write job")
+        while (isActive && !flushChannel.isClosedForReceive && !logChannel.isClosedForReceive) {
+          debugLog("Checking for flush")
+          for (flush in flushChannel) {
+            debugLog("Flush triggered")
+            val results = mutableListOf(logChannel.receive())
+            // Drain the channel buffer
+            while (isActive && !logChannel.isClosedForReceive) {
+              debugLog("Draining log channel")
+              val attempt = logChannel.tryReceive()
+              when (val value = attempt.getOrNull()) {
+                null -> {
+                  debugLog("No more logs to flush, breaking")
+                  break
+                }
+                else -> {
+                  debugLog("Adding log - ${value.prettyPrint()}")
+                  results += value
+                }
               }
             }
-          }
-          if (results.isNotEmpty()) {
-            debugLog("Saving logs to disk")
-            save(results)
-            debugLog("Done saving logs to disk, clearing pending")
-            results.clear()
+            debugLog("Done draining log channel, saving logs to disk")
+            if (results.isNotEmpty()) {
+              debugLog("Saving logs to disk")
+              save(results)
+              debugLog("Done saving logs to disk, clearing pending")
+              results.clear()
+            }
           }
         }
+      } catch (e: Exception) {
+        Timber.e(e, "Error writing logs to disk")
+      } finally {
+        debugLog("Finalizer for job")
       }
+      debugLog("Exiting write job")
     }
 
   private val flushJob: Job =
@@ -252,12 +264,8 @@ class LumberYard(
   }
 
   suspend fun closeAndJoin() {
-    flush()
-    debugLog("Canceling flush job")
     flushJob.cancel()
-    debugLog("Closing flush channel")
     flushChannel.close()
-    debugLog("Closing log channel")
     logChannel.close()
     debugLog("Joining write job")
     writeJob.join()
