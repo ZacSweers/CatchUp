@@ -37,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
 import catchup.app.CatchUpPreferences
-import catchup.app.CatchUpPreferences.Keys
 import catchup.app.data.LumberYard
 import catchup.app.ui.about.AboutScreen
 import catchup.app.ui.activity.SettingsScreen.Event.ClearCache
@@ -122,7 +121,6 @@ constructor(
 
     LaunchedEffect(view) {
       catchUpPreferences.reports
-        .distinctUntilChanged()
         .drop(1) // Drop the initial true emission
         .collect {
           // If we change reports to false, restart
@@ -299,12 +297,12 @@ constructor(
           )
         }
         item(key = "force_night") {
-          val autoEnabled by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
+          val autoEnabled by catchUpPreferences.dayNightAuto.collectAsState()
           DisableableContent(enabled = !autoEnabled) {
             val forceNightValue by
-              catchUpPreferences.dayNightForceNight.collectAsState(initial = false)
+              catchUpPreferences.dayNightForceNight.collectAsState()
             BooleanPreference(
-              key = Keys.dayNightForceNight,
+              key = CatchUpPreferences.Keys.dayNightForceNight,
               modifier = Modifier.animateContentSize(), // Because the summary changes
               defaultValue = false,
               title = stringResource(AppScaffoldR.string.pref_force_dark_theme),
