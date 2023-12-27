@@ -235,6 +235,7 @@ abstract class ApplicationModule {
   }
 }
 
+@ContributesTo(AppScope::class)
 @Module
 object FakeModeModule {
   @Provides @FakeMode fun provideFakeMode(catchUpPreferences: CatchUpPreferences): Boolean {
