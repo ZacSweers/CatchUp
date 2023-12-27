@@ -40,7 +40,6 @@ class DebugPreferences @Inject constructor(@ApplicationContext context: Context)
     PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(STORAGE_FILE_NAME) }
 
   val animationSpeed: Flow<Int> = datastore.data.map { it[Keys.animationSpeed] ?: 1 }
-  val mockModeEnabled: Flow<Boolean> = datastore.data.map { it[Keys.mockModeEnabled] ?: false }
   val networkDelay: Flow<Long> = datastore.data.map { it[Keys.networkDelay] ?: 2000L }
   val networkFailurePercent: Flow<Int> = datastore.data.map { it[Keys.networkFailurePercent] ?: 3 }
   val networkVariancePercent: Flow<Int> =
@@ -53,7 +52,6 @@ class DebugPreferences @Inject constructor(@ApplicationContext context: Context)
 
   object Keys {
     var animationSpeed = intPreferencesKey("debug_animation_speed")
-    var mockModeEnabled = booleanPreferencesKey("debug_mock_mode_enabled")
     var networkDelay = longPreferencesKey("debug_network_delay")
     var networkFailurePercent = intPreferencesKey("debug_network_failure_percent")
     var networkVariancePercent = intPreferencesKey("debug_network_variance_percent")

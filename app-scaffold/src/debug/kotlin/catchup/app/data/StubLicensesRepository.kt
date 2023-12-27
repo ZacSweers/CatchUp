@@ -5,6 +5,7 @@ import catchup.app.ui.about.LicensesRepositoryImpl
 import catchup.app.ui.about.OssBaseItem
 import catchup.app.ui.about.OssItem
 import catchup.di.AppScope
+import catchup.di.FakeMode
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
@@ -15,11 +16,11 @@ import kotlinx.coroutines.flow.first
 class StubLicensesRepository
 @Inject
 constructor(
-  private val debugPreferences: DebugPreferences,
+  @FakeMode private val isFakeMode: Boolean,
   private val realImpl: dagger.Lazy<LicensesRepositoryImpl>,
 ) : LicensesRepository {
   override suspend fun requestItems(): ImmutableList<OssBaseItem> {
-    return if (debugPreferences.mockModeEnabled.first()) {
+    return if (isFakeMode) {
       buildList {
           repeat(15) { index ->
             add(
