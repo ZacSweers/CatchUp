@@ -31,6 +31,8 @@ import catchup.appconfig.AppConfigMetadataContributor
 import catchup.base.ui.VersionInfo
 import catchup.base.ui.versionInfo
 import catchup.di.AppScope
+import catchup.di.DataMode
+import catchup.di.FakeMode
 import catchup.di.SingleIn
 import catchup.util.injection.qualifiers.ApplicationContext
 import coil.Coil
@@ -230,5 +232,12 @@ abstract class ApplicationModule {
     }
 
     @Provides @SingleIn(AppScope::class) fun provideClock(): Clock = Clock.System
+  }
+}
+
+@Module
+object FakeModeModule {
+  @Provides @FakeMode fun provideFakeMode(catchUpPreferences: CatchUpPreferences): Boolean {
+    return catchUpPreferences.dataMode.value == DataMode.FAKE
   }
 }

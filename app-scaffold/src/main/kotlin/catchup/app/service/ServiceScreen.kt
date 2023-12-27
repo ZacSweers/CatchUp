@@ -223,21 +223,14 @@ constructor(
     }
 
     val dataMode by catchUpPreferences.dataMode.collectAsState()
+    // Changes to DataMode in settings will trigger a restart, but not bad to key explicitly here too
     val itemsFlow =
       rememberRetained(dataMode) {
         // TODO
         //  preference page size
 
-        // If we're in fake mode, write to a separate ID to avoid polluting real data
-        val serviceIdKey =
-          service.meta().id.let {
-            if (dataMode == DataMode.FAKE) {
-              "$it-fake"
-            } else {
-              it
-            }
-          }
-        val remoteMediator = serviceMediatorFactory.create(service, dataMode, serviceIdKey)
+        // If we're in fake mode, we'll get a fake DB
+        val remoteMediator = serviceMediatorFactory.create(service, dataMode)
         Pager(
             config = PagingConfig(pageSize = 50),
             initialKey = service.meta().firstPageKey,
@@ -245,11 +238,11 @@ constructor(
           ) {
             // Real data driven through the DB
             QueryPagingSource(
-              countQuery = catchUpDatabase.serviceQueries.countItems(serviceIdKey),
+              countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
               transacter = catchUpDatabase.serviceQueries,
               context = Dispatchers.IO,
               queryProvider = { limit, offset ->
-                catchUpDatabase.serviceQueries.itemsByService(serviceIdKey, limit, offset)
+                catchUpDatabase.serviceQueries.itemsByService(service.meta().id, limit, offset)
               },
             )
           }

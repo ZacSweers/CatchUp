@@ -8,6 +8,7 @@ import androidx.paging.RemoteMediator
 import catchup.app.data.lastUpdated
 import catchup.di.DataMode
 import catchup.di.DataMode.OFFLINE
+import catchup.di.FakeMode
 import catchup.service.api.DataRequest
 import catchup.service.api.Service
 import catchup.service.api.toCatchUpDbItem
@@ -33,8 +34,7 @@ class ServiceMediator
 @AssistedInject
 constructor(
   @Assisted private val service: Service,
-  @Assisted private val useFakeData: Boolean,
-  @Assisted private val serviceIdKey: String,
+  @FakeMode private val isFakeMode: Boolean,
   private val catchUpDatabase: CatchUpDatabase,
   private val contentTypeChecker: ContentTypeChecker,
   private val clock: Clock,
@@ -43,23 +43,22 @@ constructor(
   @AssistedFactory
   fun interface Factory {
     fun createInternal(
-      service: Service,
-      useFakeData: Boolean,
-      serviceIdKey: String
+      service: Service
     ): ServiceMediator
 
     fun create(
       service: Service,
       dataMode: DataMode,
-      serviceIdKey: String
     ): RemoteMediator<Int, CatchUpDbItem> {
       return when (dataMode) {
         // If we're in offline, return nothing
         OFFLINE -> OfflineRemoteMediator()
-        else -> createInternal(service, useFakeData = dataMode == DataMode.FAKE, serviceIdKey)
+        else -> createInternal(service)
       }
     }
   }
+
+  private val serviceIdKey: String = service.meta().id
 
   override suspend fun load(
     loadType: LoadType,
@@ -128,7 +127,7 @@ constructor(
               REFRESH -> state.config.initialLoadSize
               else -> state.config.pageSize
             },
-          useFakeData = useFakeData,
+          useFakeData = isFakeMode,
         )
 
       // Need to wrap in IO due to
