@@ -9,8 +9,11 @@ import catchup.app.data.lastUpdated
 import catchup.di.DataMode
 import catchup.di.DataMode.OFFLINE
 import catchup.di.FakeMode
+import catchup.service.api.CatchUpItem
 import catchup.service.api.DataRequest
+import catchup.service.api.DataResult
 import catchup.service.api.Service
+import catchup.service.api.VisualService
 import catchup.service.api.toCatchUpDbItem
 import catchup.service.db.CatchUpDatabase
 import catchup.service.db.CatchUpDbItem
@@ -42,9 +45,7 @@ constructor(
 
   @AssistedFactory
   fun interface Factory {
-    fun createInternal(
-      service: Service
-    ): ServiceMediator
+    fun createInternal(service: Service): ServiceMediator
 
     fun create(
       service: Service,
@@ -133,25 +134,38 @@ constructor(
       // Need to wrap in IO due to
       // https://github.com/square/retrofit/issues/3363#issuecomment-1371767242
       val result =
-        withContext(Dispatchers.IO) {
-          val initialResult = service.fetch(request)
-          val items = initialResult.items
-          // Remap items with content types if they're not set.
-          // TODO concatMapEager?
-          initialResult.copy(
-            items =
-              items
-                .asFlow()
-                .map { item ->
-                  item.clickUrl?.let { clickUrl ->
-                    if (item.contentType == null) {
-                      return@map item.copy(contentType = contentTypeChecker.contentType(clickUrl))
+        if (request.useFakeData) {
+          if (service.supportsFakeData) {
+            withContext(Dispatchers.IO) {
+              service.fetch(request)
+            }
+          } else {
+            DataResult(
+              items = CatchUpItem.fakeItems(request.limit, serviceIdKey, service is VisualService),
+              nextPageKey = null
+            )
+          }
+        } else {
+          withContext(Dispatchers.IO) {
+            val initialResult = service.fetch(request)
+            val items = initialResult.items
+            // Remap items with content types if they're not set.
+            // TODO concatMapEager?
+            initialResult.copy(
+              items =
+                items
+                  .asFlow()
+                  .map { item ->
+                    item.clickUrl?.let { clickUrl ->
+                      if (item.contentType == null) {
+                        return@map item.copy(contentType = contentTypeChecker.contentType(clickUrl))
+                      }
                     }
+                    item
                   }
-                  item
-                }
-                .toList()
-          )
+                  .toList()
+            )
+          }
         }
 
       Timber.tag("ServiceMediator").d("Updating DB $serviceIdKey with key '$loadKey'")
