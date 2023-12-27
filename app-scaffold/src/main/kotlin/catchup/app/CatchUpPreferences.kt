@@ -26,6 +26,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import catchup.app.CatchUpPreferences.Keys
+import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.app.util.MainAppCoroutineScope
 import catchup.di.AppScope
 import catchup.di.DataMode
@@ -48,7 +49,7 @@ interface CatchUpPreferences {
   val dayNightForceNight: StateFlow<Boolean>
   val dynamicTheme: StateFlow<Boolean>
   val reports: StateFlow<Boolean>
-  val servicesOrder: StateFlow<ImmutableList<String>>
+  val servicesOrder: StateFlow<ImmutableList<String>?>
   val servicesOrderSeen: StateFlow<Boolean>
   val smartlinkingGlobal: StateFlow<Boolean>
   val lastVersion: StateFlow<String?>
@@ -82,7 +83,7 @@ interface CatchUpPreferences {
 @ContributesBinding(AppScope::class, boundType = CatchUpPreferences::class)
 class CatchUpPreferencesImpl @Inject constructor(
   @ApplicationContext context: Context,
-  private val scope: MainAppCoroutineScope,
+  private val scope: BackgroundAppCoroutineScope,
 ) :
   CatchUpPreferences {
 
@@ -98,8 +99,8 @@ class CatchUpPreferencesImpl @Inject constructor(
 
   override val reports: StateFlow<Boolean> = preferenceStateFlow(Keys.reports, true)
 
-  override val servicesOrder: StateFlow<ImmutableList<String>> =
-    preferenceStateFlow(Keys.servicesOrder, persistentListOf()) {
+  override val servicesOrder: StateFlow<ImmutableList<String>?> =
+    preferenceStateFlow(Keys.servicesOrder, null) {
       it.split(',').toImmutableList()
     }
 
@@ -126,6 +127,7 @@ class CatchUpPreferencesImpl @Inject constructor(
     key: Preferences.Key<KeyType>,
     initialValue: StateType,
     defaultValue: StateType = initialValue,
+    started: SharingStarted = SharingStarted.Eagerly,
     transform: ((KeyType) -> StateType?),
   ): StateFlow<StateType> {
     return datastore.data.map { preferences ->
@@ -133,7 +135,7 @@ class CatchUpPreferencesImpl @Inject constructor(
     }
       .stateIn(
         scope = scope,
-        started = SharingStarted.WhileSubscribed(),
+        started = started,
         initialValue = initialValue
       )
   }
