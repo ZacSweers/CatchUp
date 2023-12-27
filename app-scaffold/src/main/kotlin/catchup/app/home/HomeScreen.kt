@@ -179,7 +179,7 @@ constructor(
                 .map { it[booleanPreferencesKey(serviceMeta.enabledPreferenceKey)] ?: true }
                 .first()
             }
-            .sortedBy { currentOrder.indexOf(it.id) }
+            .sortedBy { currentOrder.orEmpty().indexOf(it.id) }
             .toImmutableList()
       }
     val context = LocalContext.current
