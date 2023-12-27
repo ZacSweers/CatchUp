@@ -19,6 +19,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import catchup.service.api.ContentType.HTML
+import catchup.service.api.Mark.MarkType
 import kotlinx.datetime.Instant
 
 @Keep
@@ -51,6 +52,58 @@ data class CatchUpItem(
     val finalMarkClickUrl = markClickUrl?.let { if (itemClickUrl == markClickUrl) null else it }
     this.clickUrl = itemClickUrl
     this.markClickUrl = finalMarkClickUrl
+  }
+
+  companion object {
+    fun fakeItems(
+      count: Int,
+      serviceId: String,
+      isImage: Boolean
+    ): List<CatchUpItem> {
+      return (0 until count).map { fake(it, serviceId, isImage) }
+    }
+
+    fun fake(
+      index: Int,
+      serviceId: String,
+      isImage: Boolean
+    ): CatchUpItem {
+      val imageInfo = if (isImage) {
+        val url = "https://picsum.photos/seed/$index/300/300"
+        ImageInfo(
+          url = url,
+          bestSize = 400 to 300,
+          animatable = false,
+          detailUrl = url,
+          sourceUrl = url,
+          aspectRatio = 4 / 3f,
+          imageId = url
+        )
+      } else {
+        null
+      }
+
+      return CatchUpItem(
+        id = index.toLong(),
+        title = "Lorem ipsum dolor sit amet",
+        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        timestamp = Instant.parse("2020-01-01T00:00:00Z"),
+        score = "+" to 5,
+        tag = "Lorem Tag",
+        author = "Ipsum Author",
+        source = "Dolor Source",
+        itemClickUrl = "https://example.com",
+        imageInfo = imageInfo,
+        mark = Mark(
+          markType = MarkType.COMMENT,
+          _markClickUrl = "https://example.com"
+        ),
+        detailKey = "0",
+        serviceId = serviceId,
+        indexInResponse = index,
+        contentType = HTML
+      )
+    }
   }
 }
 
