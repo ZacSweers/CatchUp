@@ -60,6 +60,7 @@ import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
+import catchup.di.DataMode
 import catchup.pullrefresh.PullRefreshIndicator
 import catchup.pullrefresh.pullRefresh
 import catchup.pullrefresh.rememberPullRefreshState
@@ -226,18 +227,28 @@ constructor(
       rememberRetained(dataMode) {
         // TODO
         //  preference page size
-        //  if data mode = fake, use a fake db?
+
+        // If we're in fake mode, write to a separate ID to avoid polluting real data
+        val serviceIdKey = service.meta().id.let {
+          if (dataMode == DataMode.FAKE) {
+            "$it-fake"
+          } else {
+            it
+          }
+        }
+        val remoteMediator = serviceMediatorFactory.create(service, dataMode, serviceIdKey)
         Pager(
             config = PagingConfig(pageSize = 50),
             initialKey = service.meta().firstPageKey,
-            remoteMediator = serviceMediatorFactory.create(service = service, dataMode = dataMode)
+            remoteMediator = remoteMediator
           ) {
+            // Real data driven through the DB
             QueryPagingSource(
-              countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
+              countQuery = catchUpDatabase.serviceQueries.countItems(serviceIdKey),
               transacter = catchUpDatabase.serviceQueries,
               context = Dispatchers.IO,
               queryProvider = { limit, offset ->
-                catchUpDatabase.serviceQueries.itemsByService(service.meta().id, limit, offset)
+                catchUpDatabase.serviceQueries.itemsByService(serviceIdKey, limit, offset)
               },
             )
           }
