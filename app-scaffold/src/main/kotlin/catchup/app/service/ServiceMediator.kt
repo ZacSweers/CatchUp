@@ -5,7 +5,11 @@ import androidx.paging.LoadType
 import androidx.paging.LoadType.REFRESH
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import catchup.app.CatchUpPreferences
 import catchup.app.data.lastUpdated
+import catchup.di.DataMode
+import catchup.di.DataMode.FAKE
+import catchup.di.DataMode.OFFLINE
 import catchup.service.api.DataRequest
 import catchup.service.api.Service
 import catchup.service.api.toCatchUpDbItem
@@ -16,13 +20,13 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.io.IOException
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
 import retrofit2.HttpException
 import timber.log.Timber
 
@@ -31,13 +35,23 @@ class ServiceMediator
 @AssistedInject
 constructor(
   @Assisted private val service: Service,
+  @Assisted private val dataMode: DataMode,
   private val catchUpDatabase: CatchUpDatabase,
-  private val contentTypeChecker: ContentTypeChecker
+  private val contentTypeChecker: ContentTypeChecker,
+  private val clock: Clock,
 ) : RemoteMediator<Int, CatchUpDbItem>() {
 
   @AssistedFactory
   fun interface Factory {
-    fun create(service: Service): ServiceMediator
+    fun createInternal(service: Service, dataMode: DataMode): ServiceMediator
+
+    fun create(service: Service, dataMode: DataMode): RemoteMediator<Int, CatchUpDbItem> {
+      return when (dataMode) {
+        // If we're in offline, return nothing
+        OFFLINE -> OfflineRemoteMediator()
+        else -> createInternal(service, dataMode)
+      }
+    }
   }
 
   private val serviceId: String = service.meta().id
@@ -74,7 +88,7 @@ constructor(
             // ServiceRemoteKey is a wrapper object we use to keep track of page keys we
             // receive from the service to fetch the next or previous page.
             val remoteKey =
-              withContext(IO) {
+              withContext(Dispatchers.IO) {
                 catchUpDatabase.transactionWithResult {
                   catchUpDatabase.serviceQueries.remoteKeyByItem(serviceId).executeAsOne()
                 }
@@ -100,22 +114,23 @@ constructor(
       // Retrofit's Coroutine CallAdapter dispatches on a worker
       // thread.
       Timber.tag("ServiceMediator").d("Fetching $serviceId with key '$loadKey'")
+      val request =
+        DataRequest(
+          pageKey = loadKey,
+          pageOffset = pageOffset,
+          limit =
+            when (loadType) {
+              REFRESH -> state.config.initialLoadSize
+              else -> state.config.pageSize
+            },
+          dataMode = dataMode,
+        )
+
       // Need to wrap in IO due to
       // https://github.com/square/retrofit/issues/3363#issuecomment-1371767242
       val result =
         withContext(Dispatchers.IO) {
-          val initialResult =
-            service.fetch(
-              DataRequest(
-                pageKey = loadKey,
-                pageOffset = pageOffset,
-                limit =
-                  when (loadType) {
-                    REFRESH -> state.config.initialLoadSize
-                    else -> state.config.pageSize
-                  }
-              )
-            )
+          val initialResult = service.fetch(request)
           val items = initialResult.items
           // Remap items with content types if they're not set.
           // TODO concatMapEager?
@@ -136,7 +151,7 @@ constructor(
         }
 
       Timber.tag("ServiceMediator").d("Updating DB $serviceId with key '$loadKey'")
-      withContext(IO) {
+      withContext(Dispatchers.IO) {
         catchUpDatabase.transaction {
           if (loadType == REFRESH) {
             Timber.tag("ServiceMediator").d("Clearing DB $serviceId")
@@ -150,7 +165,7 @@ constructor(
             catchUpDatabase.serviceQueries.insert(item.toCatchUpDbItem())
           }
           catchUpDatabase.serviceQueries.putOperation(
-            System.currentTimeMillis(),
+            clock.now().toEpochMilliseconds(),
             serviceId,
             "insert"
           )
@@ -171,9 +186,9 @@ constructor(
   }
 
   override suspend fun initialize(): InitializeAction {
-    val cacheTimeout = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
+    val cacheTimeout = 1.hours.inWholeMilliseconds
     val lastUpdate =
-      withContext(IO) {
+      withContext(Dispatchers.IO) {
         catchUpDatabase.transactionWithResult { catchUpDatabase.lastUpdated(serviceId) }
       }
     return if (lastUpdate != null && (System.currentTimeMillis() - lastUpdate >= cacheTimeout)) {

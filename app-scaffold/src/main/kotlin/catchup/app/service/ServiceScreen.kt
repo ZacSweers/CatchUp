@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.map
 import app.cash.sqldelight.paging3.QueryPagingSource
+import catchup.app.CatchUpPreferences
 import catchup.app.data.LinkManager
 import catchup.app.service.ServiceScreen.Event
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked
@@ -130,7 +132,8 @@ constructor(
   private val linkManager: LinkManager,
   private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
   private val catchUpDatabase: CatchUpDatabase,
-  private val serviceMediatorFactory: ServiceMediator.Factory
+  private val serviceMediatorFactory: ServiceMediator.Factory,
+  private val catchUpPreferences: CatchUpPreferences,
 ) : Presenter<State> {
   @OptIn(ExperimentalPagingApi::class)
   @Composable
@@ -218,15 +221,16 @@ constructor(
       }
     }
 
+    val dataMode by catchUpPreferences.dataMode.collectAsState()
     val itemsFlow =
-      rememberRetained(service.meta()) {
+      rememberRetained(dataMode) {
         // TODO
         //  preference page size
-        //  retain pager or even the flow?
+        //  if data mode = fake, use a fake db?
         Pager(
             config = PagingConfig(pageSize = 50),
             initialKey = service.meta().firstPageKey,
-            remoteMediator = serviceMediatorFactory.create(service = service)
+            remoteMediator = serviceMediatorFactory.create(service = service, dataMode = dataMode)
           ) {
             QueryPagingSource(
               countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
