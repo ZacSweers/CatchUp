@@ -23,6 +23,7 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import catchup.bookmarks.db.Bookmark
 import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
 import catchup.di.AppScope
+import catchup.di.FakeMode
 import catchup.di.SingleIn
 import catchup.service.db.CatchUpDatabase
 import catchup.service.db.CatchUpDbItem
@@ -48,9 +49,13 @@ abstract class CatchUpDatabaseModule {
   companion object {
     @Provides
     @SingleIn(AppScope::class)
-    fun provideBookmarksDatabase(@ApplicationContext context: Context): BookmarksDatabase =
-      BookmarksDatabase(
-        AndroidSqliteDriver(BookmarksDatabase.Schema, context, "catchup.db"),
+    fun provideBookmarksDatabase(
+      @ApplicationContext context: Context,
+      @FakeMode isFakeMode: Boolean,
+    ): BookmarksDatabase {
+      val dbName = if (isFakeMode) "fake_catchup.db" else "catchup.db"
+      return BookmarksDatabase(
+        AndroidSqliteDriver(BookmarksDatabase.Schema, context, dbName),
         Bookmark.Adapter(InstantColumnAdapter),
         CatchUpDbItem.Adapter(
           InstantColumnAdapter,
@@ -63,6 +68,7 @@ abstract class CatchUpDatabaseModule {
           IntColumnAdapter,
         ),
       )
+    }
   }
 }
 
