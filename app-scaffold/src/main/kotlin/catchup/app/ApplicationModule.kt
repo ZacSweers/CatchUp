@@ -62,6 +62,7 @@ import io.noties.markwon.movement.MovementMethodPlugin
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlinx.coroutines.Dispatchers
+import kotlinx.datetime.Clock
 import okhttp3.OkHttpClient
 import timber.log.Timber
 
@@ -227,5 +228,7 @@ abstract class ApplicationModule {
         build()
       }
     }
+
+    @Provides @SingleIn(AppScope::class) fun provideClock(): Clock = Clock.System
   }
 }
