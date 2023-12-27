@@ -229,13 +229,14 @@ constructor(
         //  preference page size
 
         // If we're in fake mode, write to a separate ID to avoid polluting real data
-        val serviceIdKey = service.meta().id.let {
-          if (dataMode == DataMode.FAKE) {
-            "$it-fake"
-          } else {
-            it
+        val serviceIdKey =
+          service.meta().id.let {
+            if (dataMode == DataMode.FAKE) {
+              "$it-fake"
+            } else {
+              it
+            }
           }
-        }
         val remoteMediator = serviceMediatorFactory.create(service, dataMode, serviceIdKey)
         Pager(
             config = PagingConfig(pageSize = 50),

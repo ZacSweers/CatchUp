@@ -74,7 +74,6 @@ import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -299,8 +298,7 @@ constructor(
         item(key = "force_night") {
           val autoEnabled by catchUpPreferences.dayNightAuto.collectAsState()
           DisableableContent(enabled = !autoEnabled) {
-            val forceNightValue by
-              catchUpPreferences.dayNightForceNight.collectAsState()
+            val forceNightValue by catchUpPreferences.dayNightForceNight.collectAsState()
             BooleanPreference(
               key = CatchUpPreferences.Keys.dayNightForceNight,
               modifier = Modifier.animateContentSize(), // Because the summary changes

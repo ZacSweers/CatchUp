@@ -59,21 +59,20 @@ constructor(
 ) {
 
   fun changelogAvailable(context: Context): Flow<Boolean> {
-    return catchUpPreferences.lastVersion
-      .map { lastVersion ->
-        // Check if version name changed and if there's a changelog
-        if (lastVersion != appConfig.versionName) {
-          // Write the new version in
-          catchUpPreferences.edit { it[CatchUpPreferences.Keys.lastVersion] = appConfig.versionName }
-          if (lastVersion == null) {
-            // This was the first load it seems, so ignore it
-            return@map false
-          } else if (context.getString(R.string.changelog_text).isNotEmpty()) {
-            return@map true
-          }
+    return catchUpPreferences.lastVersion.map { lastVersion ->
+      // Check if version name changed and if there's a changelog
+      if (lastVersion != appConfig.versionName) {
+        // Write the new version in
+        catchUpPreferences.edit { it[CatchUpPreferences.Keys.lastVersion] = appConfig.versionName }
+        if (lastVersion == null) {
+          // This was the first load it seems, so ignore it
+          return@map false
+        } else if (context.getString(R.string.changelog_text).isNotEmpty()) {
+          return@map true
         }
-        false
       }
+      false
+    }
   }
 
   @Composable

@@ -27,7 +27,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import catchup.app.CatchUpPreferences.Keys
 import catchup.app.util.BackgroundAppCoroutineScope
-import catchup.app.util.MainAppCoroutineScope
 import catchup.di.AppScope
 import catchup.di.DataMode
 import catchup.di.SingleIn
@@ -36,7 +35,6 @@ import com.squareup.anvil.annotations.ContributesBinding
 import java.io.File
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -81,11 +79,12 @@ interface CatchUpPreferences {
 @Keep
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class, boundType = CatchUpPreferences::class)
-class CatchUpPreferencesImpl @Inject constructor(
+class CatchUpPreferencesImpl
+@Inject
+constructor(
   @ApplicationContext context: Context,
   private val scope: BackgroundAppCoroutineScope,
-) :
-  CatchUpPreferences {
+) : CatchUpPreferences {
 
   // TODO hide this, only exposed for settings
   override val datastore =
@@ -93,20 +92,21 @@ class CatchUpPreferencesImpl @Inject constructor(
 
   override val dayNightAuto: StateFlow<Boolean> = preferenceStateFlow(Keys.dayNightAuto, true)
 
-  override val dayNightForceNight: StateFlow<Boolean> = preferenceStateFlow(Keys.dayNightForceNight, false)
+  override val dayNightForceNight: StateFlow<Boolean> =
+    preferenceStateFlow(Keys.dayNightForceNight, false)
 
   override val dynamicTheme: StateFlow<Boolean> = preferenceStateFlow(Keys.dynamicTheme, false)
 
   override val reports: StateFlow<Boolean> = preferenceStateFlow(Keys.reports, true)
 
   override val servicesOrder: StateFlow<ImmutableList<String>?> =
-    preferenceStateFlow(Keys.servicesOrder, null) {
-      it.split(',').toImmutableList()
-    }
+    preferenceStateFlow(Keys.servicesOrder, null) { it.split(',').toImmutableList() }
 
-  override val servicesOrderSeen: StateFlow<Boolean> = preferenceStateFlow(Keys.servicesOrderSeen, false)
+  override val servicesOrderSeen: StateFlow<Boolean> =
+    preferenceStateFlow(Keys.servicesOrderSeen, false)
 
-  override val smartlinkingGlobal: StateFlow<Boolean> = preferenceStateFlow(Keys.smartlinkingGlobal, true)
+  override val smartlinkingGlobal: StateFlow<Boolean> =
+    preferenceStateFlow(Keys.smartlinkingGlobal, true)
 
   override val lastVersion: StateFlow<String?> = preferenceStateFlow(Keys.lastVersion, null) { it }
 
@@ -130,14 +130,9 @@ class CatchUpPreferencesImpl @Inject constructor(
     started: SharingStarted = SharingStarted.Eagerly,
     transform: ((KeyType) -> StateType?),
   ): StateFlow<StateType> {
-    return datastore.data.map { preferences ->
-      preferences[key]?.let(transform) ?: defaultValue
-    }
-      .stateIn(
-        scope = scope,
-        started = started,
-        initialValue = initialValue
-      )
+    return datastore.data
+      .map { preferences -> preferences[key]?.let(transform) ?: defaultValue }
+      .stateIn(scope = scope, started = started, initialValue = initialValue)
   }
 
   override suspend fun edit(body: (MutablePreferences) -> Unit) {

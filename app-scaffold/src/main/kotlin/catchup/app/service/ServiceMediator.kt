@@ -42,9 +42,17 @@ constructor(
 
   @AssistedFactory
   fun interface Factory {
-    fun createInternal(service: Service, useFakeData: Boolean, serviceIdKey: String): ServiceMediator
+    fun createInternal(
+      service: Service,
+      useFakeData: Boolean,
+      serviceIdKey: String
+    ): ServiceMediator
 
-    fun create(service: Service, dataMode: DataMode, serviceIdKey: String): RemoteMediator<Int, CatchUpDbItem> {
+    fun create(
+      service: Service,
+      dataMode: DataMode,
+      serviceIdKey: String
+    ): RemoteMediator<Int, CatchUpDbItem> {
       return when (dataMode) {
         // If we're in offline, return nothing
         OFFLINE -> OfflineRemoteMediator()

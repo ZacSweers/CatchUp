@@ -165,8 +165,7 @@ constructor(
 
   @Composable
   override fun present(): State {
-    val currentOrder by
-      remember { catchUpPreferences.servicesOrder }.collectAsState()
+    val currentOrder by remember { catchUpPreferences.servicesOrder }.collectAsState()
     var selectedIndex by remember(currentOrder) { mutableIntStateOf(0) }
     val serviceMetas by
       produceState(initialValue = persistentListOf(), currentOrder) {
