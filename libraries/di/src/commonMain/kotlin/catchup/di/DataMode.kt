@@ -9,8 +9,4 @@ enum class DataMode {
   FAKE,
 }
 
-fun interface ModeDependentFactory<T> {
-  fun create(mode: DataMode): T
-}
-
 @Qualifier annotation class FakeMode

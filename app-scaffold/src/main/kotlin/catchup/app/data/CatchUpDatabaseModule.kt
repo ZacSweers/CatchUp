@@ -15,18 +15,15 @@
  */
 package catchup.app.data
 
-import android.annotation.SuppressLint
 import android.content.Context
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import catchup.bookmarks.db.Bookmark
-import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
 import catchup.di.AppScope
+import catchup.di.ContextualFactory
 import catchup.di.DataMode
-import catchup.di.FakeMode
-import catchup.di.ModeDependentFactory
 import catchup.di.SingleIn
 import catchup.service.db.CatchUpDatabase
 import catchup.service.db.CatchUpDbItem
@@ -36,22 +33,22 @@ import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import javax.inject.Inject
 import kotlinx.datetime.Instant
+import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
 
 /**
  * This setup is a little weird but apparently how SqlDelight works.
  *
  * [BookmarksDatabase] is the "real" db instance, but they all implement the same base interface.
  *
- * We expose a [ModeDependentFactory] for the DBs so that we can switch between real and fake easily.
+ * We expose a [ContextualFactory] for the DBs so that we can switch between real and fake easily.
  */
 @ContributesTo(AppScope::class)
 @Module
 abstract class CatchUpDatabaseModule {
 
   @Binds
-  abstract fun provideCatchUpDbFactory(real: ModeDependentFactory<BookmarksDatabase>): ModeDependentFactory<out CatchUpDatabase>
+  abstract fun provideCatchUpDbFactory(real: ContextualFactory<DataMode, BookmarksDatabase>): ContextualFactory<DataMode, out CatchUpDatabase>
 
   companion object {
     // Unscoped, the real DB instance is a singleton
@@ -59,8 +56,8 @@ abstract class CatchUpDatabaseModule {
     fun provideBookmarksDatabaseFactory(
       @ApplicationContext context: Context,
       realDb: Lazy<BookmarksDatabase>
-    ): ModeDependentFactory<BookmarksDatabase> {
-      return ModeDependentFactory { mode ->
+    ): ContextualFactory<DataMode, BookmarksDatabase> {
+      return ContextualFactory { mode ->
         when (mode) {
           // Fakes are unscoped but that's fine, they're in-memory and whatever
           DataMode.FAKE -> createDb(context, null)

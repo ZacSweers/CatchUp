@@ -61,6 +61,7 @@ import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
+import catchup.di.ContextualFactory
 import catchup.di.DataMode
 import catchup.di.DataMode.OFFLINE
 import catchup.di.ModeDependentFactory
@@ -136,7 +137,7 @@ constructor(
   @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,
   private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-  private val dbFactory: ModeDependentFactory<out CatchUpDatabase>,
+  private val dbFactory: ContextualFactory<DataMode, out CatchUpDatabase>,
   private val serviceMediatorFactory: ServiceMediator.Factory,
   private val catchUpPreferences: CatchUpPreferences,
 ) : Presenter<State> {
