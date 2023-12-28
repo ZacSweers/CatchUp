@@ -36,10 +36,41 @@ import java.io.File
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
+interface BasePreferences {
+  val datastore: DataStore<Preferences>
+  val scope: CoroutineScope
+  val initialValues: Preferences
+
+  fun <KeyType> preferenceStateFlow(
+    key: Preferences.Key<KeyType>,
+    defaultValue: KeyType,
+  ): StateFlow<KeyType> {
+    return preferenceStateFlow(key, defaultValue) { it }
+  }
+
+  fun <KeyType, StateType> preferenceStateFlow(
+    key: Preferences.Key<KeyType>,
+    defaultValue: StateType,
+    transform: ((KeyType) -> StateType?),
+  ): StateFlow<StateType> {
+    val initialValue = initialValues[key]?.let(transform) ?: defaultValue
+    val stateFlow = MutableStateFlow(initialValue)
+    scope.launch {
+      datastore.data
+        .map { preferences -> preferences[key]?.let(transform) ?: defaultValue }
+        .collect(stateFlow::emit)
+    }
+    return stateFlow
+  }
+}
 
 interface CatchUpPreferences {
   val datastore: DataStore<Preferences>
@@ -53,7 +84,9 @@ interface CatchUpPreferences {
   val lastVersion: StateFlow<String?>
   val dataMode: StateFlow<DataMode>
 
-  suspend fun edit(body: (MutablePreferences) -> Unit)
+  suspend fun edit(body: (MutablePreferences) -> Unit) {
+    datastore.edit(body)
+  }
 
   object Keys {
     val dayNightAuto = booleanPreferencesKey("dayNightAuto")
@@ -83,12 +116,17 @@ class CatchUpPreferencesImpl
 @Inject
 constructor(
   @ApplicationContext context: Context,
-  private val scope: BackgroundAppCoroutineScope,
-) : CatchUpPreferences {
+  override val scope: BackgroundAppCoroutineScope,
+) : CatchUpPreferences, BasePreferences {
 
   // TODO hide this, only exposed for settings
   override val datastore =
     PreferenceDataStoreFactory.create { CatchUpPreferences.dataStoreFile(context) }
+
+  // TODO this is... ugly, but needed to force initial values to load from the store
+  override val initialValues = runBlocking {
+    datastore.data.first()
+  }
 
   override val dayNightAuto: StateFlow<Boolean> = preferenceStateFlow(Keys.dayNightAuto, true)
 
@@ -114,28 +152,4 @@ constructor(
     preferenceStateFlow(Keys.dataMode, DataMode.REAL) { prefValue ->
       DataMode.entries.find { mode -> mode.name == prefValue }
     }
-
-  private fun <KeyType> preferenceStateFlow(
-    key: Preferences.Key<KeyType>,
-    initialValue: KeyType,
-    defaultValue: KeyType = initialValue,
-  ): StateFlow<KeyType> {
-    return preferenceStateFlow(key, initialValue, defaultValue) { it }
-  }
-
-  private fun <KeyType, StateType> preferenceStateFlow(
-    key: Preferences.Key<KeyType>,
-    initialValue: StateType,
-    defaultValue: StateType = initialValue,
-    started: SharingStarted = SharingStarted.Eagerly,
-    transform: ((KeyType) -> StateType?),
-  ): StateFlow<StateType> {
-    return datastore.data
-      .map { preferences -> preferences[key]?.let(transform) ?: defaultValue }
-      .stateIn(scope = scope, started = started, initialValue = initialValue)
-  }
-
-  override suspend fun edit(body: (MutablePreferences) -> Unit) {
-    datastore.edit(body)
-  }
 }
