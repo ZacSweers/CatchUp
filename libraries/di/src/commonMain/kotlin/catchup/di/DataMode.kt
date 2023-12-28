@@ -9,5 +9,4 @@ enum class DataMode {
   FAKE,
 }
 
-@Qualifier
-annotation class FakeMode
+@Qualifier annotation class FakeMode

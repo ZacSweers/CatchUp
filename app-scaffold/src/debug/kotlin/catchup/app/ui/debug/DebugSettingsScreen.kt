@@ -53,7 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.Preferences.Key
 import catchup.app.CatchUpPreferences
 import catchup.app.data.DebugPreferences
@@ -103,14 +102,12 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import leakcanary.LeakCanary
 import okhttp3.Cache
 import okhttp3.OkHttpClient
-import timber.log.Timber
 
 private fun items(
   appConfig: AppConfig,
@@ -271,9 +268,7 @@ constructor(
 
   @Composable
   override fun present(): State {
-    LaunchedEffect(Unit) {
-      debugPreferences.animationSpeed.collect(::applyAnimationSpeed)
-    }
+    LaunchedEffect(Unit) { debugPreferences.animationSpeed.collect(::applyAnimationSpeed) }
 
     var showLogs by remember { mutableStateOf(false) }
 
@@ -451,9 +446,8 @@ constructor(
               )
             }
           }
-        (element as Element.SpinnerElement<Any>).Content(
-          state as SettingValueState<Any>
-        ) { newValue ->
+        (element as Element.SpinnerElement<Any>).Content(state as SettingValueState<Any>) { newValue
+          ->
           onUpdate(element.key, newValue)
         }
       }
@@ -484,6 +478,7 @@ sealed interface DebugItem {
 
   sealed interface Element : DebugItem {
     val requiresRestart: Boolean
+
     data class SpinnerElement<T>(
       val title: String,
       val key: Key<T>,

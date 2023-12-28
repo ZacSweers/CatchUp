@@ -46,7 +46,6 @@ import coil.request.DefaultRequestOptions
 import coil.request.Disposable
 import coil.request.ImageRequest
 import coil.request.ImageResult
-import coil.util.DebugLogger
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Module
@@ -234,7 +233,9 @@ abstract class ApplicationModule {
 @ContributesTo(AppScope::class)
 @Module
 object FakeModeModule {
-  @Provides @FakeMode fun provideFakeMode(catchUpPreferences: CatchUpPreferences): Boolean {
+  @Provides
+  @FakeMode
+  fun provideFakeMode(catchUpPreferences: CatchUpPreferences): Boolean {
     return catchUpPreferences.dataMode.value == DataMode.FAKE
   }
 }

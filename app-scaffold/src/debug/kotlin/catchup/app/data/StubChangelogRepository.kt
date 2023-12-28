@@ -7,10 +7,8 @@ import catchup.di.FakeMode
 import catchup.service.api.CatchUpItem
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
-import javax.inject.Qualifier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.first
 
 @ContributesBinding(AppScope::class, replaces = [ChangelogRepositoryImpl::class])
 class StubChangelogRepository

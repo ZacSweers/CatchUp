@@ -15,10 +15,8 @@
  */
 package catchup.app.data
 
-import android.content.Context
 import catchup.di.AppScope
 import catchup.di.SingleIn
-import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.injection.qualifiers.NetworkInterceptor
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module

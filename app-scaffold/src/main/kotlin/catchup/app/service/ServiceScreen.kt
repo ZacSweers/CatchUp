@@ -60,8 +60,6 @@ import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
-import catchup.di.DataMode
-import catchup.di.DataMode.FAKE
 import catchup.di.DataMode.OFFLINE
 import catchup.pullrefresh.PullRefreshIndicator
 import catchup.pullrefresh.pullRefresh
@@ -225,17 +223,19 @@ constructor(
     }
 
     val dataMode by catchUpPreferences.dataMode.collectAsState()
-    // Changes to DataMode in settings will trigger a restart, but not bad to key explicitly here too
+    // Changes to DataMode in settings will trigger a restart, but not bad to key explicitly here
+    // too
     val itemsFlow =
       rememberRetained(dataMode) {
         // TODO
         //  preference page size
 
-        val remoteMediator = if (dataMode == OFFLINE) {
-          null
-        } else {
-          serviceMediatorFactory.create(service)
-        }
+        val remoteMediator =
+          if (dataMode == OFFLINE) {
+            null
+          } else {
+            serviceMediatorFactory.create(service)
+          }
 
         Pager(
             config = PagingConfig(pageSize = 50),

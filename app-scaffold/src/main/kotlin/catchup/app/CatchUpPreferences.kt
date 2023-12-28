@@ -124,9 +124,7 @@ constructor(
     PreferenceDataStoreFactory.create { CatchUpPreferences.dataStoreFile(context) }
 
   // TODO this is... ugly, but needed to force initial values to load from the store
-  override val initialValues = runBlocking {
-    datastore.data.first()
-  }
+  override val initialValues = runBlocking { datastore.data.first() }
 
   override val dayNightAuto: StateFlow<Boolean> = preferenceStateFlow(Keys.dayNightAuto, true)
 

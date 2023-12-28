@@ -10,7 +10,6 @@ import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.first
 
 @ContributesBinding(AppScope::class, replaces = [LicensesRepositoryImpl::class])
 class StubLicensesRepository

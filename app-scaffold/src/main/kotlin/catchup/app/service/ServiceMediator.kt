@@ -6,8 +6,6 @@ import androidx.paging.LoadType.REFRESH
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import catchup.app.data.lastUpdated
-import catchup.di.DataMode
-import catchup.di.DataMode.OFFLINE
 import catchup.di.FakeMode
 import catchup.service.api.CatchUpItem
 import catchup.service.api.DataRequest
@@ -125,9 +123,7 @@ constructor(
       val result =
         if (request.useFakeData) {
           if (service.supportsFakeData) {
-            withContext(Dispatchers.IO) {
-              service.fetch(request)
-            }
+            withContext(Dispatchers.IO) { service.fetch(request) }
           } else {
             DataResult(
               items = CatchUpItem.fakeItems(request.limit, serviceIdKey, service is VisualService),

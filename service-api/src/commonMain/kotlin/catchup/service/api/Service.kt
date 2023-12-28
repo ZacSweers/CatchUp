@@ -16,7 +16,8 @@
 package catchup.service.api
 
 sealed interface Service {
-  val supportsFakeData: Boolean get() = false
+  val supportsFakeData: Boolean
+    get() = false
 
   fun meta(): ServiceMeta
 
