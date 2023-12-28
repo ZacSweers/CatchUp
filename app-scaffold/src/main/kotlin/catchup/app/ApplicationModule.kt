@@ -212,10 +212,6 @@ abstract class ApplicationModule {
         // wasn't the default.
         callFactory { request -> okHttpClient.get().newCall(request) }
 
-        if (appConfig.isDebug) {
-          logger(DebugLogger())
-        }
-
         // Hardware bitmaps don't work with the saturation effect or palette extraction
         allowHardware(false)
         allowRgb565(isLowRamDevice)
