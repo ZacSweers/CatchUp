@@ -1,6 +1,7 @@
 package catchup.app.ui.debug
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.os.Build
@@ -109,6 +110,7 @@ import kotlinx.parcelize.Parcelize
 import leakcanary.LeakCanary
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import timber.log.Timber
 
 private fun items(
   appConfig: AppConfig,
@@ -270,7 +272,7 @@ constructor(
   @Composable
   override fun present(): State {
     LaunchedEffect(Unit) {
-      debugPreferences.animationSpeed.distinctUntilChanged().collect(::applyAnimationSpeed)
+      debugPreferences.animationSpeed.collect(::applyAnimationSpeed)
     }
 
     var showLogs by remember { mutableStateOf(false) }
@@ -307,6 +309,7 @@ constructor(
     }
   }
 
+  @SuppressLint("DiscouragedPrivateApi")
   private fun applyAnimationSpeed(multiplier: Int) {
     try {
       val method =

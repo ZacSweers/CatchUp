@@ -54,7 +54,12 @@ abstract class CatchUpDatabaseModule {
       @FakeMode isFakeMode: Boolean,
     ): BookmarksDatabase {
       // Fun fact, null name for a db gives you an in-memory DB
-      val dbName = if (isFakeMode) null else "catchup.db"
+      val dbName =
+        if (isFakeMode) {
+          null
+        } else {
+          "catchup.db"
+        }
       return BookmarksDatabase(
         AndroidSqliteDriver(BookmarksDatabase.Schema, context, dbName),
         Bookmark.Adapter(InstantColumnAdapter),
