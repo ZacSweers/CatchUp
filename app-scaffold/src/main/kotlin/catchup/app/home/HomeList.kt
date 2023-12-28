@@ -28,8 +28,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import catchup.app.home.HomeScreen.Event.Selected
-import catchup.app.home.HomeScreen.Event.ShowChangelog
 import catchup.app.home.HomeScreen.State
 import catchup.compose.dynamicAwareColor
 import dev.zacsweers.catchup.app.scaffold.R
@@ -48,7 +46,7 @@ fun HomeList(state: State, modifier: Modifier = Modifier) {
             modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
           )
           if (state.changelogAvailable) {
-            ChangelogButton(Modifier.align(Alignment.TopEnd)) { state.eventSink(ShowChangelog) }
+            ChangelogButton(Modifier.align(Alignment.TopEnd), state::showChangelog)
           }
         }
       }
@@ -61,7 +59,7 @@ fun HomeList(state: State, modifier: Modifier = Modifier) {
             serviceTint = colorResource(meta.themeColor),
             description = "",
             isSelected = state.selectedIndex == index,
-            onClick = { state.eventSink(Selected(index)) }
+            onClick = { state.selected(index) }
           )
         }
       }
@@ -75,7 +73,7 @@ fun HomeList(state: State, modifier: Modifier = Modifier) {
           serviceTint = MaterialTheme.colorScheme.primary,
           description = "Miscellaneous CatchUp settings",
           isSelected = state.selectedIndex == index,
-          onClick = { state.eventSink(Selected(index)) }
+          onClick = { state.selected(index) }
         )
       }
     }
