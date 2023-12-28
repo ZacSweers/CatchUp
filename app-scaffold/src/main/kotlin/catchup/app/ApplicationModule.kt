@@ -35,6 +35,7 @@ import catchup.di.DataMode
 import catchup.di.FakeMode
 import catchup.di.SingleIn
 import catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.kotlin.mapToStateFlow
 import coil.Coil
 import coil.ComponentRegistry
 import coil.ImageLoader
@@ -63,6 +64,8 @@ import io.noties.markwon.movement.MovementMethodPlugin
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import okhttp3.OkHttpClient
 import timber.log.Timber
@@ -226,6 +229,11 @@ abstract class ApplicationModule {
     }
 
     @Provides @SingleIn(AppScope::class) fun provideClock(): Clock = Clock.System
+
+    @Provides
+    fun provideDataMode(catchUpPreferences: CatchUpPreferences): StateFlow<DataMode> {
+      return catchUpPreferences.dataMode
+    }
   }
 }
 
@@ -234,7 +242,13 @@ abstract class ApplicationModule {
 object FakeModeModule {
   @Provides
   @FakeMode
-  fun provideFakeMode(catchUpPreferences: CatchUpPreferences): Boolean {
-    return catchUpPreferences.dataMode.value == DataMode.FAKE
+  fun provideFakeModeStateFlow(dataMode: StateFlow<DataMode>): StateFlow<Boolean> {
+    return dataMode.mapToStateFlow { it == DataMode.FAKE }
+  }
+
+  @Provides
+  @FakeMode
+  fun provideFakeMode(dataMode: StateFlow<DataMode>): Boolean {
+    return dataMode.value == DataMode.FAKE
   }
 }

@@ -31,6 +31,7 @@ import catchup.di.AppScope
 import catchup.summarizer.SummarizerResult.Error
 import catchup.summarizer.SummarizerResult.NotFound
 import catchup.summarizer.SummarizerResult.Success
+import catchup.summarizer.SummarizerResult.Unavailable
 import catchup.summarizer.SummarizerScreen.State
 import catchup.summarizer.SummarizerScreen.State.Loading
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -62,6 +63,7 @@ private fun SummarizerResult.toState(title: String, url: String): State {
   return when (this) {
     is Success -> State.Success(title, summary)
     is NotFound -> State.Error(title, url, "Unable to summarize this.")
+    is Unavailable -> State.Error(title, url, "Summarization not available.")
     is Error -> State.Error(title, url, message)
   }
 }
