@@ -15,6 +15,7 @@
  */
 package catchup.app.data
 
+import android.annotation.SuppressLint
 import android.content.Context
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
@@ -23,43 +24,60 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import catchup.bookmarks.db.Bookmark
 import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
 import catchup.di.AppScope
+import catchup.di.DataMode
 import catchup.di.FakeMode
+import catchup.di.ModeDependentFactory
 import catchup.di.SingleIn
 import catchup.service.db.CatchUpDatabase
 import catchup.service.db.CatchUpDbItem
 import catchup.util.injection.qualifiers.ApplicationContext
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
+import javax.inject.Inject
 import kotlinx.datetime.Instant
 
 /**
  * This setup is a little weird but apparently how SqlDelight works.
  *
  * [BookmarksDatabase] is the "real" db instance, but they all implement the same base interface.
+ *
+ * We expose a [ModeDependentFactory] for the DBs so that we can switch between real and fake easily.
  */
 @ContributesTo(AppScope::class)
 @Module
 abstract class CatchUpDatabaseModule {
+  @SuppressLint("BindsTypeMismatch") // This should be valid
   @Binds
-  @SingleIn(AppScope::class)
-  abstract fun provideCatchUpDatabase(real: BookmarksDatabase): CatchUpDatabase
+  abstract fun provideCatchUpDatabaseFactory(real: ModeDependentFactory<BookmarksDatabase>): ModeDependentFactory<CatchUpDatabase>
 
   companion object {
+    // Unscoped, the real DB instance is a singleton
+    @Provides
+    fun provideBookmarksDatabaseFactory(
+      @ApplicationContext context: Context,
+      realDb: Lazy<BookmarksDatabase>
+    ): ModeDependentFactory<out BookmarksDatabase> {
+      return ModeDependentFactory { mode ->
+        when (mode) {
+          // Fakes are unscoped but that's fine, they're in-memory and whatever
+          DataMode.FAKE -> createDb(context, null)
+          else -> realDb.get()
+        }
+      }
+    }
+
+    // Singleton instance of the "real" db
     @Provides
     @SingleIn(AppScope::class)
     fun provideBookmarksDatabase(
       @ApplicationContext context: Context,
       @FakeMode isFakeMode: Boolean,
-    ): BookmarksDatabase {
-      // Fun fact, null name for a db gives you an in-memory DB
-      val dbName =
-        if (isFakeMode) {
-          null
-        } else {
-          "catchup.db"
-        }
+    ): BookmarksDatabase = createDb(context, "catchup.db")
+
+    private fun createDb(context: Context, dbName: String?): BookmarksDatabase {
       return BookmarksDatabase(
         AndroidSqliteDriver(BookmarksDatabase.Schema, context, dbName),
         Bookmark.Adapter(InstantColumnAdapter),

@@ -63,6 +63,7 @@ import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.di.DataMode
 import catchup.di.DataMode.OFFLINE
+import catchup.di.ModeDependentFactory
 import catchup.pullrefresh.PullRefreshIndicator
 import catchup.pullrefresh.pullRefresh
 import catchup.pullrefresh.rememberPullRefreshState
@@ -135,7 +136,7 @@ constructor(
   @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,
   private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-  private val catchUpDatabase: CatchUpDatabase,
+  private val catchUpDatabase: ModeDependentFactory<CatchUpDatabase>,
   private val serviceMediatorFactory: ServiceMediator.Factory,
   private val catchUpPreferences: CatchUpPreferences,
 ) : Presenter<State> {
@@ -255,14 +256,15 @@ constructor(
       initialKey = service.meta().firstPageKey,
       remoteMediator = remoteMediator
     ) {
+      val db = catchUpDatabase.create(dataMode)
       // Real data driven through the DB
       // If we're in fake mode, we'll get a fake DB
       QueryPagingSource(
-        countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
-        transacter = catchUpDatabase.serviceQueries,
+        countQuery = db.serviceQueries.countItems(service.meta().id),
+        transacter = db.serviceQueries,
         context = Dispatchers.IO,
         queryProvider = { limit, offset ->
-          catchUpDatabase.serviceQueries.itemsByService(service.meta().id, limit, offset)
+          db.serviceQueries.itemsByService(service.meta().id, limit, offset)
         },
       )
     }
