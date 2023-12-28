@@ -165,8 +165,7 @@ constructor(
 
   @Composable
   override fun present(): State {
-    val currentOrder by
-      remember { catchUpPreferences.servicesOrder }.collectAsState(initial = persistentListOf())
+    val currentOrder by remember { catchUpPreferences.servicesOrder }.collectAsState()
     var selectedIndex by remember(currentOrder) { mutableIntStateOf(0) }
     val serviceMetas by
       produceState(initialValue = persistentListOf(), currentOrder) {
@@ -180,7 +179,7 @@ constructor(
                 .map { it[booleanPreferencesKey(serviceMeta.enabledPreferenceKey)] ?: true }
                 .first()
             }
-            .sortedBy { currentOrder.indexOf(it.id) }
+            .sortedBy { currentOrder.orEmpty().indexOf(it.id) }
             .toImmutableList()
       }
     val context = LocalContext.current

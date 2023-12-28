@@ -28,8 +28,9 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        api(libs.anvil.annotationsOptional)
         api(libs.dagger.runtime)
-      }
+}
     }
   }
 }

@@ -1,6 +1,7 @@
 package catchup.summarizer
 
 import catchup.di.AppScope
+import catchup.di.FakeMode
 import catchup.di.SingleIn
 import catchup.summarizer.SummarizerResult.Error
 import catchup.summarizer.SummarizerResult.NotFound
@@ -8,6 +9,7 @@ import catchup.summarizer.SummarizerResult.Success
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
@@ -18,7 +20,9 @@ interface SummarizerRepository {
 sealed interface SummarizerResult {
   data class Success(val summary: String) : SummarizerResult
 
-  object NotFound : SummarizerResult
+  data object NotFound : SummarizerResult
+
+  data object Unavailable : SummarizerResult
 
   data class Error(val message: String) : SummarizerResult
 }
@@ -27,10 +31,16 @@ sealed interface SummarizerResult {
 @ContributesBinding(AppScope::class)
 class SummarizerRepositoryImpl
 @Inject
-constructor(private val database: SummarizationsDatabase, private val chatGptApi: ChatGptApi) :
-  SummarizerRepository {
-  override suspend fun getSummarization(url: String): SummarizerResult =
-    withContext(IO) {
+constructor(
+  private val database: SummarizationsDatabase,
+  private val chatGptApi: ChatGptApi,
+  @FakeMode private val isFakeMode: StateFlow<Boolean>,
+) : SummarizerRepository {
+  override suspend fun getSummarization(url: String): SummarizerResult {
+    if (isFakeMode.value) {
+      return NotFound
+    }
+    return withContext(IO) {
       val summary =
         database.summarizationsQueries.transactionWithResult {
           database.summarizationsQueries.getSummarization(url).executeAsOneOrNull()?.summary
@@ -55,6 +65,7 @@ constructor(private val database: SummarizationsDatabase, private val chatGptApi
       }
       return@withContext Success(text)
     }
+  }
 
   private companion object {
     const val NOT_FOUND = "CATCHUP_SUMMARIZER_NOT_FOUND"
