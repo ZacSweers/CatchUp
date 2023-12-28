@@ -20,6 +20,7 @@ import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import catchup.service.api.ContentType.HTML
 import catchup.service.api.Mark.MarkType
+import java.util.Objects
 import kotlinx.datetime.Instant
 
 @Keep
@@ -59,7 +60,7 @@ data class CatchUpItem(
       return (0 until count).map { fake(it, serviceId, isImage) }
     }
 
-    fun fake(index: Int, serviceId: String, isImage: Boolean): CatchUpItem {
+    fun fake(index: Int, serviceId: String, isImage: Boolean, id: Long = Objects.hash(index, serviceId).toLong()): CatchUpItem {
       val imageInfo =
         if (isImage) {
           val url = "https://picsum.photos/seed/$index/300/300"
@@ -77,15 +78,15 @@ data class CatchUpItem(
         }
 
       return CatchUpItem(
-        id = index.toLong(),
+        id = id,
         title = "Lorem ipsum dolor sit amet",
         description =
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         timestamp = Instant.parse("2020-01-01T00:00:00Z"),
         score = "+" to 5,
-        tag = "Lorem Tag",
-        author = "Ipsum Author",
-        source = "Dolor Source",
+        tag = "Tag",
+        author = "Author",
+        source = "Source",
         itemClickUrl = "https://example.com",
         imageInfo = imageInfo,
         mark = Mark(markType = MarkType.COMMENT, _markClickUrl = "https://example.com"),

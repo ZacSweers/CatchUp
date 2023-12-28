@@ -136,7 +136,7 @@ constructor(
   @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,
   private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-  private val catchUpDatabase: ModeDependentFactory<CatchUpDatabase>,
+  private val dbFactory: ModeDependentFactory<out CatchUpDatabase>,
   private val serviceMediatorFactory: ServiceMediator.Factory,
   private val catchUpPreferences: CatchUpPreferences,
 ) : Presenter<State> {
@@ -244,11 +244,14 @@ constructor(
   @OptIn(ExperimentalPagingApi::class)
   private fun createPager(service: Service, dataMode: DataMode, pageSize: Int): Flow<PagingData<CatchUpItem>> {
     // TODO make DB factory based on data modes
+    val db by lazy {
+      dbFactory.create(dataMode)
+    }
     val remoteMediator =
       if (dataMode == OFFLINE) {
         null
       } else {
-        serviceMediatorFactory.create(service)
+        serviceMediatorFactory.create(service, db)
       }
 
     return Pager(
@@ -256,7 +259,6 @@ constructor(
       initialKey = service.meta().firstPageKey,
       remoteMediator = remoteMediator
     ) {
-      val db = catchUpDatabase.create(dataMode)
       // Real data driven through the DB
       // If we're in fake mode, we'll get a fake DB
       QueryPagingSource(

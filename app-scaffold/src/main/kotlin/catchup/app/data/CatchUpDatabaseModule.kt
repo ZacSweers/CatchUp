@@ -49,9 +49,9 @@ import kotlinx.datetime.Instant
 @ContributesTo(AppScope::class)
 @Module
 abstract class CatchUpDatabaseModule {
-  @SuppressLint("BindsTypeMismatch") // This should be valid
+
   @Binds
-  abstract fun provideCatchUpDatabaseFactory(real: ModeDependentFactory<BookmarksDatabase>): ModeDependentFactory<CatchUpDatabase>
+  abstract fun provideCatchUpDbFactory(real: ModeDependentFactory<BookmarksDatabase>): ModeDependentFactory<out CatchUpDatabase>
 
   companion object {
     // Unscoped, the real DB instance is a singleton
@@ -59,7 +59,7 @@ abstract class CatchUpDatabaseModule {
     fun provideBookmarksDatabaseFactory(
       @ApplicationContext context: Context,
       realDb: Lazy<BookmarksDatabase>
-    ): ModeDependentFactory<out BookmarksDatabase> {
+    ): ModeDependentFactory<BookmarksDatabase> {
       return ModeDependentFactory { mode ->
         when (mode) {
           // Fakes are unscoped but that's fine, they're in-memory and whatever
@@ -74,7 +74,6 @@ abstract class CatchUpDatabaseModule {
     @SingleIn(AppScope::class)
     fun provideBookmarksDatabase(
       @ApplicationContext context: Context,
-      @FakeMode isFakeMode: Boolean,
     ): BookmarksDatabase = createDb(context, "catchup.db")
 
     private fun createDb(context: Context, dbName: String?): BookmarksDatabase {

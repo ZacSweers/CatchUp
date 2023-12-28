@@ -124,7 +124,6 @@ private fun items(
           DataMode.entries.map { it.name },
           ValueType.STRING,
           defaultOptionIndex = DataMode.REAL.ordinal,
-          requiresRestart = true
         )
       )
       // TODO conditional based on mock mode?

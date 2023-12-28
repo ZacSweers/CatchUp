@@ -202,7 +202,6 @@ abstract class ApplicationModule {
       @ApplicationContext context: Context,
       @IsLowRamDevice isLowRamDevice: Boolean,
       okHttpClient: dagger.Lazy<OkHttpClient>,
-      appConfig: AppConfig
     ): ImageLoader {
       // TODO make this like an actual builder. But for now run works...
       return ImageLoader.Builder(context).run {

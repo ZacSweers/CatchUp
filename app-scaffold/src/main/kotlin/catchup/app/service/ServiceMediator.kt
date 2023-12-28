@@ -35,15 +35,15 @@ class ServiceMediator
 @AssistedInject
 constructor(
   @Assisted private val service: Service,
+  @Assisted private val catchUpDatabase: CatchUpDatabase,
   @FakeMode private val isFakeMode: Boolean,
-  private val catchUpDatabase: CatchUpDatabase,
   private val contentTypeChecker: ContentTypeChecker,
   private val clock: Clock,
 ) : RemoteMediator<Int, CatchUpDbItem>() {
 
   @AssistedFactory
   fun interface Factory {
-    fun create(service: Service): ServiceMediator
+    fun create(service: Service, catchUpDatabase: CatchUpDatabase): ServiceMediator
   }
 
   private val serviceIdKey: String = service.meta().id
@@ -163,6 +163,7 @@ constructor(
             catchUpDatabase.serviceQueries.deleteRemoteKeyByService(serviceIdKey)
           }
 
+          Timber.tag("ServiceMediator").d("Inserting ${result.items.size} items into DB for '$serviceIdKey'")
           catchUpDatabase.serviceQueries.insertRemoteKey(serviceIdKey, result.nextPageKey)
           for (item in result.items) {
             catchUpDatabase.serviceQueries.insert(item.toCatchUpDbItem())
