@@ -139,7 +139,7 @@ constructor(
 
   @Composable
   override fun present(): State {
-    val storedOrderState by remember { catchUpPreferences.servicesOrder }.collectAsState(null)
+    val storedOrderState by remember { catchUpPreferences.servicesOrder }.collectAsState()
 
     return storedOrderState?.let { storedOrder ->
       val initialOrderedServices =

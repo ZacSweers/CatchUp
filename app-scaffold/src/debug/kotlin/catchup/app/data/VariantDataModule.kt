@@ -15,10 +15,8 @@
  */
 package catchup.app.data
 
-import android.content.Context
 import catchup.di.AppScope
 import catchup.di.SingleIn
-import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.injection.qualifiers.NetworkInterceptor
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
@@ -46,19 +44,4 @@ object VariantDataModule {
   @IntoSet
   internal fun provideLoggingInterceptor(): Interceptor =
     httpLoggingInterceptor(BASIC) { message -> Timber.tag("OkHttp").v(message) }
-
-  //  @Provides
-  //  @SingleIn(AppScope::class)
-  //  @NetworkInterceptor
-  //  @IntoSet
-  //  internal fun provideChuckInterceptor(@ApplicationContext context: Context): Interceptor =
-  //      ChuckInterceptor(context)
-
-  @SingleIn(AppScope::class)
-  @Provides
-  @IntoSet
-  internal fun provideMockDataInterceptor(
-    @ApplicationContext context: Context,
-    debugPreferences: DebugPreferences
-  ): Interceptor = MockDataInterceptor(context, debugPreferences)
 }

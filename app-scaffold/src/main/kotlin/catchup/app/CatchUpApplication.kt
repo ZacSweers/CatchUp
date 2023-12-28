@@ -43,7 +43,6 @@ private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
 
 class CatchUpApplication : Application() {
 
-  @Inject internal lateinit var catchUpPreferences: CatchUpPreferences
   @Inject internal lateinit var appConfig: AppConfig
 
   lateinit var appComponent: ApplicationComponent

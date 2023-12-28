@@ -16,44 +16,53 @@
 package catchup.app.data
 
 import android.content.Context
-import androidx.datastore.preferences.core.MutablePreferences
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.preferencesDataStoreFile
+import catchup.app.BasePreferences
+import catchup.app.CatchUpPreferences
+import catchup.app.CatchUpPreferencesImpl
+import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import catchup.util.injection.qualifiers.ApplicationContext
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
+/**
+ * Debug build preferences. This is a superset of [CatchUpPreferences] and uses the same underlying
+ * store.
+ */
 @SingleIn(AppScope::class)
-class DebugPreferences @Inject constructor(@ApplicationContext context: Context) {
-  companion object {
-    private const val STORAGE_FILE_NAME = "debug_preferences"
-  }
+@ContributesBinding(
+  AppScope::class,
+  boundType = CatchUpPreferences::class,
+  replaces = [CatchUpPreferencesImpl::class]
+)
+class DebugPreferences
+private constructor(
+  private val catchUpPreferencesImpl: CatchUpPreferencesImpl,
+  override val scope: BackgroundAppCoroutineScope,
+) : CatchUpPreferences by catchUpPreferencesImpl, BasePreferences by catchUpPreferencesImpl {
 
-  internal val datastore =
-    PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(STORAGE_FILE_NAME) }
+  @Inject
+  constructor(
+    @ApplicationContext context: Context,
+    scope: BackgroundAppCoroutineScope,
+  ) : this(CatchUpPreferencesImpl(context, scope), scope)
 
-  val animationSpeed: Flow<Int> = datastore.data.map { it[Keys.animationSpeed] ?: 1 }
-  val mockModeEnabled: Flow<Boolean> = datastore.data.map { it[Keys.mockModeEnabled] ?: false }
-  val networkDelay: Flow<Long> = datastore.data.map { it[Keys.networkDelay] ?: 2000L }
-  val networkFailurePercent: Flow<Int> = datastore.data.map { it[Keys.networkFailurePercent] ?: 3 }
-  val networkVariancePercent: Flow<Int> =
-    datastore.data.map { it[Keys.networkVariancePercent] ?: 40 }
-  val seenDebugDrawer: Flow<Boolean> = datastore.data.map { it[Keys.seenDebugDrawer] ?: false }
+  override val datastore: DataStore<Preferences> = catchUpPreferencesImpl.datastore
 
-  suspend fun edit(body: (MutablePreferences) -> Unit) {
-    datastore.edit(body)
-  }
+  val animationSpeed = preferenceStateFlow(Keys.animationSpeed, 1)
+  val networkDelay = preferenceStateFlow(Keys.networkDelay, 2000L)
+  val networkFailurePercent = preferenceStateFlow(Keys.networkFailurePercent, 3)
+  val networkVariancePercent = preferenceStateFlow(Keys.networkVariancePercent, 40)
+  val seenDebugDrawer = preferenceStateFlow(Keys.seenDebugDrawer, false)
 
   object Keys {
     var animationSpeed = intPreferencesKey("debug_animation_speed")
-    var mockModeEnabled = booleanPreferencesKey("debug_mock_mode_enabled")
     var networkDelay = longPreferencesKey("debug_network_delay")
     var networkFailurePercent = intPreferencesKey("debug_network_failure_percent")
     var networkVariancePercent = intPreferencesKey("debug_network_variance_percent")

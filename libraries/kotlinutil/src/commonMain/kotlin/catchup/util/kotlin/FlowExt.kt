@@ -18,6 +18,8 @@ package catchup.util.kotlin
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.merge
@@ -55,3 +57,24 @@ suspend fun <T> Flow<T>.any(predicate: suspend (T) -> Boolean): Boolean {
 }
 
 fun <T> Flow<T>.mergeWith(other: Flow<T>): Flow<T> = merge(this, other)
+
+internal class MappedStateFlow<T, R>(
+  private val source: StateFlow<T>,
+  private val mapper: (T) -> R
+) : StateFlow<R> {
+
+  override val value: R
+    get() = mapper(source.value)
+
+  override val replayCache: List<R>
+    get() = source.replayCache.map(mapper)
+
+  override suspend fun collect(collector: FlowCollector<R>): Nothing {
+    source.collect { value -> collector.emit(mapper(value)) }
+  }
+}
+
+// Because Coroutines still doesn't offer an API for this
+// https://github.com/Kotlin/kotlinx.coroutines/issues/2514#issuecomment-775001647
+fun <T, R> StateFlow<T>.mapToStateFlow(mapper: (T) -> R): StateFlow<R> =
+  MappedStateFlow(this, mapper)

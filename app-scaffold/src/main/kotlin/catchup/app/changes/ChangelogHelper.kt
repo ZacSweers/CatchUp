@@ -47,8 +47,7 @@ import catchup.di.SingleIn
 import dev.zacsweers.catchup.app.scaffold.R
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 @SingleIn(AppScope::class)
 class ChangelogHelper
@@ -59,20 +58,21 @@ constructor(
   private val appConfig: AppConfig
 ) {
 
-  fun changelogAvailable(context: Context): Flow<Boolean> = flow {
-    val lastVersion = catchUpPreferences.lastVersion.first()
-    // Check if version name changed and if there's a changelog
-    if (lastVersion != appConfig.versionName) {
-      // Write the new version in
-      catchUpPreferences.edit { it[CatchUpPreferences.Keys.lastVersion] = appConfig.versionName }
-      if (lastVersion == null) {
-        // This was the first load it seems, so ignore it
-        emit(false)
-      } else if (context.getString(R.string.changelog_text).isNotEmpty()) {
-        emit(true)
+  fun changelogAvailable(context: Context): Flow<Boolean> {
+    return catchUpPreferences.lastVersion.map { lastVersion ->
+      // Check if version name changed and if there's a changelog
+      if (lastVersion != appConfig.versionName) {
+        // Write the new version in
+        catchUpPreferences.edit { it[CatchUpPreferences.Keys.lastVersion] = appConfig.versionName }
+        if (lastVersion == null) {
+          // This was the first load it seems, so ignore it
+          return@map false
+        } else if (context.getString(R.string.changelog_text).isNotEmpty()) {
+          return@map true
+        }
       }
+      false
     }
-    emit(false)
   }
 
   @Composable

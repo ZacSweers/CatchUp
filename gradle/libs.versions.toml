@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.33.2-alpha"
-agp = "8.3.0-alpha18"
+agp = "8.4.0-alpha01"
 androidx-activity = "1.9.0-alpha01"
 androidx-core = "1.13.0-alpha02"
 androidx-sqlite = "2.4.0"
@@ -15,24 +15,24 @@ coil = "2.5.0"
 compose = "1.6.0-beta03"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
-compose-compiler = "1.5.6"
+compose-compiler = "1.5.7"
 compose-compiler-kotlinVersion = "1.9.21"
 compose-jb = "1.5.11"
-compose-jb-compiler = "1.5.4"
+compose-jb-compiler = "1.5.7"
 compose-jb-kotlinVersion = "1.9.20"
-corbind = "1.9.0"
-coroutines = "1.7.3"
-dagger = "2.49"
+corbind = "1.10.0"
+coroutines = "1.8.0-RC2"
+dagger = "2.50"
 datastore = "1.1.0-alpha07"
 detekt = "1.23.4"
 eithernet = "1.8.0"
-flipper = "0.242.0"
+flipper = "0.243.0"
 jdk = "20"
 jvmTarget = "17"
-kotlin = "1.9.21"
+kotlin = "1.9.22"
 kotlinx-metadata = "0.7.0"
 kotlinx-serialization = "1.6.2"
-ksp = "1.9.21-1.0.16"
+ksp = "1.9.22-1.0.16"
 ktfmt = "0.46"
 leakcanary = "2.12"
 lifecycle = "2.7.0-rc02"
@@ -206,7 +206,7 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 
-errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.23.0"
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.24.0"
 
 haze = "dev.chrisbanes.haze:haze:0.4.1"
 
@@ -292,7 +292,7 @@ tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", versi
 collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "collapsingToolbar" }
 
 test-junit = "junit:junit:4.13.2"
-test-truth = "com.google.truth:truth:1.1.5"
+test-truth = "com.google.truth:truth:1.2.0"
 
 xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.86.3"
 xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.86.3"
