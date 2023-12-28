@@ -230,7 +230,9 @@ abstract class ApplicationModule {
     @Provides @SingleIn(AppScope::class) fun provideClock(): Clock = Clock.System
 
     @Provides
-    fun provideDataMode(catchUpPreferences: CatchUpPreferences): StateFlow<DataMode> {
+    fun provideDataMode(
+      catchUpPreferences: CatchUpPreferences
+    ): StateFlow<@JvmSuppressWildcards DataMode> {
       return catchUpPreferences.dataMode
     }
   }
@@ -241,13 +243,15 @@ abstract class ApplicationModule {
 object FakeModeModule {
   @Provides
   @FakeMode
-  fun provideFakeModeStateFlow(dataMode: StateFlow<DataMode>): StateFlow<Boolean> {
+  fun provideFakeModeStateFlow(
+    dataMode: StateFlow<@JvmSuppressWildcards DataMode>
+  ): StateFlow<Boolean> {
     return dataMode.mapToStateFlow { it == DataMode.FAKE }
   }
 
   @Provides
   @FakeMode
-  fun provideFakeMode(dataMode: StateFlow<DataMode>): Boolean {
+  fun provideFakeMode(dataMode: StateFlow<@JvmSuppressWildcards DataMode>): Boolean {
     return dataMode.value == DataMode.FAKE
   }
 }
