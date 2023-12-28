@@ -33,7 +33,11 @@ object SummarizerModule {
     @FakeMode isFakeMode: Boolean,
   ): SummarizationsDatabase =
     SummarizationsDatabase(
-      AndroidSqliteDriver(SummarizationsDatabase.Schema, context, "summarizations.db".takeUnless { isFakeMode })
+      AndroidSqliteDriver(
+        SummarizationsDatabase.Schema,
+        context,
+        "summarizations.db".takeUnless { isFakeMode }
+      )
     )
 
   @Provides

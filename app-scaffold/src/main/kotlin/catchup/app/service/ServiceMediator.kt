@@ -163,7 +163,8 @@ constructor(
             catchUpDatabase.serviceQueries.deleteRemoteKeyByService(serviceIdKey)
           }
 
-          Timber.tag("ServiceMediator").d("Inserting ${result.items.size} items into DB for '$serviceIdKey'")
+          Timber.tag("ServiceMediator")
+            .d("Inserting ${result.items.size} items into DB for '$serviceIdKey'")
           catchUpDatabase.serviceQueries.insertRemoteKey(serviceIdKey, result.nextPageKey)
           for (item in result.items) {
             catchUpDatabase.serviceQueries.insert(item.toCatchUpDbItem())

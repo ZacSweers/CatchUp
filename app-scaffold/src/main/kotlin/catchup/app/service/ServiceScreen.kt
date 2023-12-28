@@ -64,7 +64,6 @@ import catchup.di.AppScope
 import catchup.di.ContextualFactory
 import catchup.di.DataMode
 import catchup.di.DataMode.OFFLINE
-import catchup.di.ModeDependentFactory
 import catchup.pullrefresh.PullRefreshIndicator
 import catchup.pullrefresh.pullRefresh
 import catchup.pullrefresh.rememberPullRefreshState
@@ -243,11 +242,13 @@ constructor(
   }
 
   @OptIn(ExperimentalPagingApi::class)
-  private fun createPager(service: Service, dataMode: DataMode, pageSize: Int): Flow<PagingData<CatchUpItem>> {
+  private fun createPager(
+    service: Service,
+    dataMode: DataMode,
+    pageSize: Int
+  ): Flow<PagingData<CatchUpItem>> {
     // TODO make DB factory based on data modes
-    val db by lazy {
-      dbFactory.create(dataMode)
-    }
+    val db by lazy { dbFactory.create(dataMode) }
     val remoteMediator =
       if (dataMode == OFFLINE) {
         null
@@ -256,21 +257,21 @@ constructor(
       }
 
     return Pager(
-      config = PagingConfig(pageSize = pageSize),
-      initialKey = service.meta().firstPageKey,
-      remoteMediator = remoteMediator
-    ) {
-      // Real data driven through the DB
-      // If we're in fake mode, we'll get a fake DB
-      QueryPagingSource(
-        countQuery = db.serviceQueries.countItems(service.meta().id),
-        transacter = db.serviceQueries,
-        context = Dispatchers.IO,
-        queryProvider = { limit, offset ->
-          db.serviceQueries.itemsByService(service.meta().id, limit, offset)
-        },
-      )
-    }
+        config = PagingConfig(pageSize = pageSize),
+        initialKey = service.meta().firstPageKey,
+        remoteMediator = remoteMediator
+      ) {
+        // Real data driven through the DB
+        // If we're in fake mode, we'll get a fake DB
+        QueryPagingSource(
+          countQuery = db.serviceQueries.countItems(service.meta().id),
+          transacter = db.serviceQueries,
+          context = Dispatchers.IO,
+          queryProvider = { limit, offset ->
+            db.serviceQueries.itemsByService(service.meta().id, limit, offset)
+          },
+        )
+      }
       .flow
       .map { data -> data.map { it.toCatchUpItem() } }
   }

@@ -21,6 +21,7 @@ import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import catchup.bookmarks.db.Bookmark
+import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
 import catchup.di.AppScope
 import catchup.di.ContextualFactory
 import catchup.di.DataMode
@@ -34,7 +35,6 @@ import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import kotlinx.datetime.Instant
-import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
 
 /**
  * This setup is a little weird but apparently how SqlDelight works.
@@ -48,7 +48,9 @@ import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
 abstract class CatchUpDatabaseModule {
 
   @Binds
-  abstract fun provideCatchUpDbFactory(real: ContextualFactory<DataMode, BookmarksDatabase>): ContextualFactory<DataMode, out CatchUpDatabase>
+  abstract fun provideCatchUpDbFactory(
+    real: ContextualFactory<DataMode, BookmarksDatabase>
+  ): ContextualFactory<DataMode, out CatchUpDatabase>
 
   companion object {
     // Unscoped, the real DB instance is a singleton

@@ -60,7 +60,12 @@ data class CatchUpItem(
       return (0 until count).map { fake(it, serviceId, isImage) }
     }
 
-    fun fake(index: Int, serviceId: String, isImage: Boolean, id: Long = Objects.hash(index, serviceId).toLong()): CatchUpItem {
+    fun fake(
+      index: Int,
+      serviceId: String,
+      isImage: Boolean,
+      id: Long = Objects.hash(index, serviceId).toLong()
+    ): CatchUpItem {
       val imageInfo =
         if (isImage) {
           val url = "https://picsum.photos/seed/$index/300/300"
