@@ -58,7 +58,10 @@ suspend fun <T> Flow<T>.any(predicate: suspend (T) -> Boolean): Boolean {
 
 fun <T> Flow<T>.mergeWith(other: Flow<T>): Flow<T> = merge(this, other)
 
-internal class MappedStateFlow<T, R>(private val source: StateFlow<T>, private val mapper: (T) -> R) : StateFlow<R> {
+internal class MappedStateFlow<T, R>(
+  private val source: StateFlow<T>,
+  private val mapper: (T) -> R
+) : StateFlow<R> {
 
   override val value: R
     get() = mapper(source.value)
@@ -73,4 +76,5 @@ internal class MappedStateFlow<T, R>(private val source: StateFlow<T>, private v
 
 // Because Coroutines still doesn't offer an API for this
 // https://github.com/Kotlin/kotlinx.coroutines/issues/2514#issuecomment-775001647
-fun <T, R> StateFlow<T>.mapToStateFlow(mapper: (T) -> R): StateFlow<R> = MappedStateFlow(this, mapper)
+fun <T, R> StateFlow<T>.mapToStateFlow(mapper: (T) -> R): StateFlow<R> =
+  MappedStateFlow(this, mapper)

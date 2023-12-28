@@ -35,8 +35,7 @@ constructor(
   private val database: SummarizationsDatabase,
   private val chatGptApi: ChatGptApi,
   @FakeMode private val isFakeMode: StateFlow<Boolean>,
-) :
-  SummarizerRepository {
+) : SummarizerRepository {
   override suspend fun getSummarization(url: String): SummarizerResult {
     if (isFakeMode.value) {
       return NotFound
