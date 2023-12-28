@@ -40,6 +40,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.map
@@ -60,6 +61,7 @@ import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
+import catchup.di.DataMode
 import catchup.di.DataMode.OFFLINE
 import catchup.pullrefresh.PullRefreshIndicator
 import catchup.pullrefresh.pullRefresh
@@ -86,6 +88,7 @@ import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.app.scaffold.R
 import javax.inject.Provider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -136,7 +139,6 @@ constructor(
   private val serviceMediatorFactory: ServiceMediator.Factory,
   private val catchUpPreferences: CatchUpPreferences,
 ) : Presenter<State> {
-  @OptIn(ExperimentalPagingApi::class)
   @Composable
   override fun present(): State {
     val service =
@@ -229,38 +231,43 @@ constructor(
       rememberRetained(dataMode) {
         // TODO
         //  preference page size
-
-        val remoteMediator =
-          if (dataMode == OFFLINE) {
-            null
-          } else {
-            serviceMediatorFactory.create(service)
-          }
-
-        Pager(
-            config = PagingConfig(pageSize = 50),
-            initialKey = service.meta().firstPageKey,
-            remoteMediator = remoteMediator
-          ) {
-            // Real data driven through the DB
-            // If we're in fake mode, we'll get a fake DB
-            QueryPagingSource(
-              countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
-              transacter = catchUpDatabase.serviceQueries,
-              context = Dispatchers.IO,
-              queryProvider = { limit, offset ->
-                catchUpDatabase.serviceQueries.itemsByService(service.meta().id, limit, offset)
-              },
-            )
-          }
-          .flow
-          .map { data -> data.map { it.toCatchUpItem() } }
+        createPager(service, dataMode, 50)
       }
     val items = itemsFlow.collectAsLazyPagingItems()
     return when (service.meta().isVisual) {
       true -> VisualState(items = items, themeColor = themeColor, eventSink = eventSink)
       false -> TextState(items = items, themeColor = themeColor, eventSink = eventSink)
     }
+  }
+
+  @OptIn(ExperimentalPagingApi::class)
+  private fun createPager(service: Service, dataMode: DataMode, pageSize: Int): Flow<PagingData<CatchUpItem>> {
+    // TODO make DB factory based on data modes
+    val remoteMediator =
+      if (dataMode == OFFLINE) {
+        null
+      } else {
+        serviceMediatorFactory.create(service)
+      }
+
+    return Pager(
+      config = PagingConfig(pageSize = pageSize),
+      initialKey = service.meta().firstPageKey,
+      remoteMediator = remoteMediator
+    ) {
+      // Real data driven through the DB
+      // If we're in fake mode, we'll get a fake DB
+      QueryPagingSource(
+        countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
+        transacter = catchUpDatabase.serviceQueries,
+        context = Dispatchers.IO,
+        queryProvider = { limit, offset ->
+          catchUpDatabase.serviceQueries.itemsByService(service.meta().id, limit, offset)
+        },
+      )
+    }
+      .flow
+      .map { data -> data.map { it.toCatchUpItem() } }
   }
 
   @CircuitInject(ServiceScreen::class, AppScope::class)
