@@ -61,6 +61,8 @@ import catchup.compose.dynamicAwareColor
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.di.DataMode
+import catchup.di.DataMode.FAKE
+import catchup.di.DataMode.OFFLINE
 import catchup.pullrefresh.PullRefreshIndicator
 import catchup.pullrefresh.pullRefresh
 import catchup.pullrefresh.rememberPullRefreshState
@@ -229,14 +231,19 @@ constructor(
         // TODO
         //  preference page size
 
-        // If we're in fake mode, we'll get a fake DB
-        val remoteMediator = serviceMediatorFactory.create(service, dataMode)
+        val remoteMediator = if (dataMode == OFFLINE) {
+          null
+        } else {
+          serviceMediatorFactory.create(service)
+        }
+
         Pager(
             config = PagingConfig(pageSize = 50),
             initialKey = service.meta().firstPageKey,
             remoteMediator = remoteMediator
           ) {
             // Real data driven through the DB
+            // If we're in fake mode, we'll get a fake DB
             QueryPagingSource(
               countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
               transacter = catchUpDatabase.serviceQueries,

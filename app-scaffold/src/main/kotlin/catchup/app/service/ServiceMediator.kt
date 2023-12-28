@@ -45,18 +45,7 @@ constructor(
 
   @AssistedFactory
   fun interface Factory {
-    fun createInternal(service: Service): ServiceMediator
-
-    fun create(
-      service: Service,
-      dataMode: DataMode,
-    ): RemoteMediator<Int, CatchUpDbItem> {
-      return when (dataMode) {
-        // If we're in offline, return nothing
-        OFFLINE -> OfflineRemoteMediator()
-        else -> createInternal(service)
-      }
-    }
+    fun create(service: Service): ServiceMediator
   }
 
   private val serviceIdKey: String = service.meta().id
