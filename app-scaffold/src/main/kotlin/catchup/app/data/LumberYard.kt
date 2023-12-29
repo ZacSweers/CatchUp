@@ -22,6 +22,7 @@ import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.appconfig.AppConfig
 import catchup.di.AppScope
 import catchup.di.SingleIn
+import catchup.util.RingBuffer
 import catchup.util.io.AtomicFile
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
@@ -65,7 +66,6 @@ class LumberYard(
   private val flushInterval: Duration = FLUSH_INTERVAL,
   bufferSize: Int = BUFFER_SIZE,
   private val fs: FileSystem = FileSystem.SYSTEM,
-  private val isDebug: Boolean = false,
   internal val clock: Clock = Clock.System,
   internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
   private val debugLog: (String) -> Unit = {},
@@ -75,13 +75,11 @@ class LumberYard(
   constructor(
     app: Application,
     scope: BackgroundAppCoroutineScope,
-    appConfig: AppConfig,
   ) : this(
     _logDir =
       app.getExternalFilesDir(null)?.toOkioPath()?.resolve("logs")
         ?: throw IOException("External storage is not mounted."),
     scope = scope,
-    isDebug = appConfig.isDebug,
   )
 
   // Guard against concurrent writes
@@ -99,14 +97,9 @@ class LumberYard(
 
   private val flushChannel = Channel<Unit>(Channel.CONFLATED)
 
-  // We only keep these in debug builds, as this is used for the debug drawer modal
-  private val writtenLogs =
-    if (isDebug) {
-      ArrayDeque<Entry>()
-    } else {
-      // Collections.emptyList() will silently drop writes for us
-      Collections.emptyList()
-    }
+  // Keep last 200 logs in memory for bug reporting
+  // Guarded implicitly by writeMutex
+  private val writtenLogs = RingBuffer<Entry>(200)
 
   @OptIn(DelicateCoroutinesApi::class)
   private val writeJob: Job =
@@ -183,7 +176,7 @@ class LumberYard(
     flushChannel.trySend(Unit)
   }
 
-  fun writtenLogs(): ImmutableList<Entry> = writtenLogs.toImmutableList()
+  fun writtenLogs(): ImmutableList<Entry> = writtenLogs.toList().toImmutableList()
 
   private tailrec suspend fun save(entries: List<Entry>): Path = guardedIo { logDir ->
     if (!fs.exists(logDir)) {
@@ -197,7 +190,7 @@ class LumberYard(
         for (entry in entries) {
           debugLog("Writing entry to disk - ${entry.prettyPrint()}")
           sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
-          writtenLogs.add(entry)
+          writtenLogs.push(entry)
         }
       }
       output
