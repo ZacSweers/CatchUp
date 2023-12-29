@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
 import catchup.app.CatchUpPreferences
+import catchup.app.data.DiskLumberYard
 import catchup.app.data.LumberYard
 import catchup.app.ui.about.AboutScreen
 import catchup.app.ui.activity.SettingsScreen.Event.ClearCache
@@ -183,7 +184,11 @@ constructor(
           cleanedSize += initialDbSize
         }
       }
-      cleanedSize += lumberYard.cleanUp()
+      cleanedSize += if (lumberYard is DiskLumberYard) {
+        lumberYard.cleanUp()
+      } else {
+        0
+      }
       return@withContext cleanedSize
     }
   }
