@@ -22,9 +22,12 @@ import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
 import java.util.function.Consumer
+import okio.BufferedSink
+import okio.FileHandle
 import okio.IOException
 import okio.FileSystem
 import okio.Path
+import okio.buffer
 
 /**
  * Helper class for performing atomic operations on a file by writing to a new file and renaming it
@@ -82,14 +85,14 @@ constructor(
    * access to AtomicFile.
    */
   @Throws(IOException::class)
-  fun startWrite(): FileOutputStream {
+  fun startWrite(): FileHandle {
     if (fs.exists(legacyBackupName)) {
       fs.atomicMove(legacyBackupName, baseFile)
     }
 
     return try {
-      FileOutputStream(newName)
-    } catch (e: FileNotFoundException) {
+      fs.openReadWrite(newName, mustExist = true)
+    } catch (e: IOException) {
       val parent = newName.parent ?: error("Couldn't find a parent directory for $newName")
       fs.createDirectories(parent)
       if (!fs.exists(parent)) {
@@ -109,7 +112,7 @@ constructor(
         PosixFilePermission.OTHERS_EXECUTE
       ))
       try {
-        FileOutputStream(newName)
+        fs.openReadWrite(newName, mustExist = true)
       } catch (e2: FileNotFoundException) {
         throw IOException("Failed to create new file $newName", e2)
       }
@@ -120,9 +123,9 @@ constructor(
    * Perform an fsync on the given FileOutputStream. The stream at this
    * point must be flushed but not yet closed.
    */
-  private fun sync(stream: FileOutputStream): Boolean {
+  private fun sync(handle: FileHandle): Boolean {
     try {
-      stream.fd.sync()
+      handle.flush()
       return true
     } catch (_: IOException) {
     }
@@ -135,17 +138,17 @@ constructor(
    * commit the new data. The next attempt to read the atomic file
    * will return the new file stream.
    */
-  fun finishWrite(str: FileOutputStream?) {
-    if (str == null) {
+  fun finishWrite(handle: FileHandle?) {
+    if (handle == null) {
       return
     }
-    if (!sync(str)) {
-      Log.e(LOG_TAG, "Failed to sync file output stream")
+    if (!sync(handle)) {
+      Log.e(LOG_TAG, "Failed to sync file handle")
     }
     try {
-      str.close()
+      handle.close()
     } catch (e: IOException) {
-      Log.e(LOG_TAG, "Failed to close file output stream", e)
+      Log.e(LOG_TAG, "Failed to close file handle", e)
     }
     fs.atomicMove(newName, baseFile)
   }
@@ -155,17 +158,17 @@ constructor(
    * returned by [startWrite]. This will close the current
    * write stream, and delete the new file.
    */
-  fun failWrite(str: FileOutputStream?) {
-    if (str == null) {
+  fun failWrite(handle: FileHandle?) {
+    if (handle == null) {
       return
     }
-    if (!sync(str)) {
-      Log.e(LOG_TAG, "Failed to sync file output stream")
+    if (!sync(handle)) {
+      Log.e(LOG_TAG, "Failed to sync file handle")
     }
     try {
-      str.close()
+      handle.close()
     } catch (e: IOException) {
-      Log.e(LOG_TAG, "Failed to close file output stream", e)
+      Log.e(LOG_TAG, "Failed to close file handle", e)
     }
     fs.delete(newName)
   }
@@ -177,27 +180,27 @@ constructor(
   @Throws(IOException::class)
   fun truncate() {
     try {
-      val fos = FileOutputStream(baseFile)
+      val fos = fs.openReadWrite(baseFile, mustExist = true)
       sync(fos)
       fos.close()
-    } catch (e: FileNotFoundException) {
+    } catch (e: IOException) {
       throw IOException("Couldn't append $baseFile")
-    } catch (_: IOException) {
     }
   }
 
+  // TODO revisit with better APIs
   /**
    * @hide
    */
-  @Deprecated("This is not safe.")
-  @Throws(IOException::class)
-  fun openAppend(): FileOutputStream {
-    try {
-      return FileOutputStream(baseFile, true)
-    } catch (e: FileNotFoundException) {
-      throw IOException("Couldn't append $baseFile")
-    }
-  }
+//  @Deprecated("This is not safe.")
+//  @Throws(IOException::class)
+//  fun openAppend(): FileOutputStream {
+//    try {
+//      return FileOutputStream(baseFile, true)
+//    } catch (e: FileNotFoundException) {
+//      throw IOException("Couldn't append $baseFile")
+//    }
+//  }
 
   /**
    * Open the atomic file for reading. You should call close() on the FileInputStream when you are
@@ -206,7 +209,7 @@ constructor(
    * You must do your own threading protection for access to AtomicFile.
    */
   @Throws(FileNotFoundException::class)
-  fun openRead(): FileInputStream {
+  fun openRead(): FileHandle {
     if (fs.exists(legacyBackupName)) {
       fs.atomicMove(legacyBackupName, baseFile)
     }
@@ -221,7 +224,7 @@ constructor(
     if (fs.exists(newName) && fs.exists(baseFile)) {
       fs.delete(newName)
     }
-    return FileInputStream(baseFile)
+    return fs.openReadOnly(baseFile)
   }
 
   /**
@@ -252,57 +255,23 @@ constructor(
    */
   @Throws(IOException::class)
   fun readFully(): ByteArray {
-    val stream = openRead()
-    try {
-      var pos = 0
-      var avail = stream.available()
-      var data = ByteArray(avail)
-      while (true) {
-        val amt = stream.read(data, pos, data.size - pos)
-        if (amt <= 0) {
-          return data
-        }
-        pos += amt
-        avail = stream.available()
-        if (avail > data.size - pos) {
-          val newData = ByteArray(pos + avail)
-          System.arraycopy(data, 0, newData, 0, pos)
-          data = newData
-        }
-      }
-    } finally {
-      stream.close()
-    }
-  }
-
-  /** @hide
-   */
-  fun write(writeContent: Consumer<FileOutputStream?>) {
-    var out: FileOutputStream? = null
-    try {
-      out = startWrite()
-      writeContent.accept(out)
-      finishWrite(out)
-    } catch (t: Throwable) {
-      failWrite(out)
-      throw propagate(t)
-    } finally {
-      closeQuietly(out)
+    return openRead().source().buffer().use {
+      it.readByteArray()
     }
   }
 
   /**
-   * Closes [AutoCloseable] instance, ignoring any checked exceptions.
-   *
-   * @param closeable is AutoClosable instance, null value is ignored.
+   * @hide
    */
-  private fun closeQuietly(closeable: AutoCloseable?) {
-    if (closeable != null) {
+  fun write(writeContent: (BufferedSink) -> Unit) {
+    val handle = startWrite()
+    handle.sink().buffer().use {
       try {
-        closeable.close()
-      } catch (rethrown: RuntimeException) {
-        throw rethrown
-      } catch (ignored: Exception) {
+        writeContent(it)
+        finishWrite(handle)
+      } catch (t: Throwable) {
+        failWrite(handle)
+        throw propagate(t)
       }
     }
   }
