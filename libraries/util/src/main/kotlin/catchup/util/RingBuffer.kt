@@ -13,10 +13,12 @@ class RingBuffer<T>(private val capacity: Int) {
     get() = deque.size
 
   fun push(item: T) {
-    if (deque.size == capacity) {
-      deque.removeFirst()
+    synchronized(deque) {
+      if (deque.size == capacity) {
+        deque.removeFirst()
+      }
+      deque.addLast(item)
     }
-    deque.addLast(item)
   }
 
   fun clear() = deque.clear()
