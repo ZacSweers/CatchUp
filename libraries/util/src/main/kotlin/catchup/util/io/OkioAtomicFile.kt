@@ -85,14 +85,18 @@ constructor(
   @VisibleForTesting
   internal fun startWrite(append: Boolean = false): FileHandle {
     return try {
-      // Okio doesn't truncate opening a file for writing, so we need to delete the file instead
-      // to replicate this. https://github.com/square/okio/issues/514
-      fs.delete(newName)
       // If we're appending, copy the existing file comments over first
       if (append) {
         fs.copy(baseFile, newName)
       }
       fs.openReadWrite(newName)
+        // Okio doesn't truncate opening a file for writing, so we need to resize the file instead
+        // to replicate this. https://github.com/square/okio/issues/514
+        .also {
+          if (!append) {
+            it.resize(0L)
+          }
+        }
     } catch (e: IOException) {
       val parent = newName.parent ?: error("Couldn't find a parent directory for $newName")
       fs.createDirectories(parent)
@@ -119,6 +123,13 @@ constructor(
       }
       try {
         fs.openReadWrite(newName)
+          // Okio doesn't truncate opening a file for writing, so we need to resize the file instead
+          // to replicate this. https://github.com/square/okio/issues/514
+          .also {
+            if (!append) {
+              it.resize(0L)
+            }
+          }
       } catch (e2: IOException) {
         throw IOException("Failed to create new file $newName", e2)
       }
