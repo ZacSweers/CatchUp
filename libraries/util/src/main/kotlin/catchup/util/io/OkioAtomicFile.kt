@@ -20,11 +20,14 @@ import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
 import okio.BufferedSink
+import okio.BufferedSource
 import okio.FileHandle
 import okio.FileSystem
 import okio.IOException
 import okio.Path
+import okio.Path.Companion.toPath
 import okio.buffer
+import org.jetbrains.annotations.VisibleForTesting
 
 /**
  * Helper class for performing atomic operations on a file by writing to a new file and renaming it
@@ -53,11 +56,12 @@ constructor(
    */
   val baseFile: Path,
   private val fs: FileSystem = FileSystem.SYSTEM,
+  private val setPosixPermissions: Boolean = true,
   private val logError: ((String, Throwable?) -> Unit) = { message, throwable ->
     Log.e(LOG_TAG, message, throwable)
   }
 ) {
-  private val newName = baseFile / ".new"
+  private val newName = "$baseFile.new".toPath()
 
   /** Delete the atomic file. This deletes both the base and new files. */
   fun delete() {
@@ -74,35 +78,42 @@ constructor(
    * that thread is writing with the new file being written by this thread, and when the other
    * thread finishes the write the new write operation will no longer be safe (or will be lost). You
    * must do your own threading protection for access to AtomicFile.
+   *
+   * Note that when you call [FileHandle.sink] or [FileHandle.appendingSink] on the returned handle,
+   * you _must_ close it before calling [finishWrite] or [failWrite].
    */
-  @Throws(IOException::class)
-  fun startWrite(): FileHandle {
+  @VisibleForTesting
+  internal fun startWrite(): FileHandle {
     return try {
-      fs.openReadWrite(newName, mustExist = true)
+      // Okio doesn't truncate opening a file for writing, so we need to delete the file instead
+      fs.delete(newName)
+      fs.openReadWrite(newName)
     } catch (e: IOException) {
       val parent = newName.parent ?: error("Couldn't find a parent directory for $newName")
       fs.createDirectories(parent)
       if (!fs.exists(parent)) {
         throw IOException("Failed to create directory for $newName")
       }
-      // Set perms to 00771
-      Files.setPosixFilePermissions(
-        parent.toNioPath(),
-        setOf(
-          // Owner
-          PosixFilePermission.OWNER_READ,
-          PosixFilePermission.OWNER_WRITE,
-          PosixFilePermission.OWNER_EXECUTE,
-          // Group
-          PosixFilePermission.GROUP_READ,
-          PosixFilePermission.GROUP_WRITE,
-          PosixFilePermission.GROUP_EXECUTE,
-          // Other
-          PosixFilePermission.OTHERS_EXECUTE
+      if (setPosixPermissions) {
+        // Set perms to 00771
+        Files.setPosixFilePermissions(
+          parent.toNioPath(),
+          setOf(
+            // Owner
+            PosixFilePermission.OWNER_READ,
+            PosixFilePermission.OWNER_WRITE,
+            PosixFilePermission.OWNER_EXECUTE,
+            // Group
+            PosixFilePermission.GROUP_READ,
+            PosixFilePermission.GROUP_WRITE,
+            PosixFilePermission.GROUP_EXECUTE,
+            // Other
+            PosixFilePermission.OTHERS_EXECUTE
+          )
         )
-      )
+      }
       try {
-        fs.openReadWrite(newName, mustExist = true)
+        fs.openReadWrite(newName)
       } catch (e2: IOException) {
         throw IOException("Failed to create new file $newName", e2)
       }
@@ -110,8 +121,8 @@ constructor(
   }
 
   /**
-   * Perform an fsync on the given [FileHandle]. The stream at this point must be flushed but not
-   * yet closed.
+   * Perform an fsync/flush on the given [FileHandle]. The handle at this point must be flushed but
+   * not yet closed.
    */
   private fun sync(handle: FileHandle): Boolean {
     try {
@@ -122,11 +133,12 @@ constructor(
   }
 
   /**
-   * Call when you have successfully finished writing to the stream returned by [startWrite]. This
+   * Call when you have successfully finished writing to the handle returned by [startWrite]. This
    * will close, sync, and commit the new data. The next attempt to read the atomic file will return
-   * the new file stream.
+   * the new file handle.
    */
-  fun finishWrite(handle: FileHandle?) {
+  @VisibleForTesting
+  internal fun finishWrite(handle: FileHandle?) {
     if (handle == null) {
       return
     }
@@ -138,14 +150,15 @@ constructor(
     } catch (e: IOException) {
       logError("Failed to close file handle", e)
     }
-    fs.atomicMove(newName, baseFile)
+    rename(newName, baseFile)
   }
 
   /**
-   * Call when you have failed for some reason at writing to the stream returned by [startWrite].
-   * This will close the current write stream, and delete the new file.
+   * Call when you have failed for some reason at writing to the handle returned by [startWrite].
+   * This will close the current write handle, and delete the new file.
    */
-  fun failWrite(handle: FileHandle?) {
+  @VisibleForTesting
+  internal fun failWrite(handle: FileHandle?) {
     if (handle == null) {
       return
     }
@@ -166,8 +179,9 @@ constructor(
    *
    * You must do your own threading protection for access to AtomicFile.
    */
-  @Throws(IOException::class)
-  fun openRead(): FileHandle {
+  // TODO just return a sink instead?
+  @VisibleForTesting
+  private fun openRead(): FileHandle {
     // It was okay to call openRead() between startWrite() and finishWrite() for the first time
     // (because there is no backup file), where openRead() would open the file being written,
     // which makes no sense, but finishWrite() would still persist the write properly. For all
@@ -179,6 +193,10 @@ constructor(
       fs.delete(newName)
     }
     return fs.openReadOnly(baseFile)
+  }
+
+  fun <T> read(block: (BufferedSource) -> T): T {
+    return openRead().use { it.source().buffer().use(block) }
   }
 
   /** @return whether the original file exists. */
@@ -198,9 +216,8 @@ constructor(
    *
    * This method is not recommended on huge files. It has an internal limitation of 2 GB file size.
    */
-  @Throws(IOException::class)
-  fun readBytes(): ByteArray {
-    return openRead().source().buffer().use { it.readByteArray() }
+  fun readByteArray(): ByteArray {
+    return read { it.readByteArray() }
   }
 
   /**
@@ -210,19 +227,20 @@ constructor(
   fun tryWrite(append: Boolean = false, block: (BufferedSink) -> Unit) {
     val handle = startWrite()
     val sink = if (append) handle.appendingSink() else handle.sink()
-    sink.buffer().use {
-      var success = false
-      try {
+    var success = false
+    try {
+      sink.buffer().use {
         block(it)
         success = true
-      } catch (t: Throwable) {
-        throw propagate(t)
-      } finally {
-        if (success) {
-          finishWrite(handle)
-        } else {
-          failWrite(handle)
-        }
+      }
+    } catch (t: Throwable) {
+      throw propagate(t)
+    } finally {
+      // Both of the below call close()
+      if (success) {
+        finishWrite(handle)
+      } else {
+        failWrite(handle)
       }
     }
   }
@@ -230,11 +248,28 @@ constructor(
   private fun propagate(t: Throwable): Throwable {
     if (t is Error) return t
     if (t is RuntimeException) return t
+    if (t is IOException) return t
     return RuntimeException(t)
   }
 
   override fun toString(): String {
     return "AtomicFile[$baseFile]"
+  }
+
+  private fun rename(source: Path, target: Path) {
+    // We used to delete the target file before rename, but that isn't atomic, and the rename()
+    // syscall should atomically replace the target file. However in the case where the target
+    // file is a directory, a simple rename() won't work. We need to delete the file in this
+    // case because there are callers who erroneously called mBaseName.mkdirs() (instead of
+    // mBaseName.getParentFile().mkdirs()) before creating the AtomicFile, and it worked
+    // regardless, so this deletion became some kind of API.
+    if (fs.metadataOrNull(target)?.isDirectory == true) {
+      fs.deleteRecursively(target)
+      if (fs.exists(target)) {
+        logError("Failed to delete file which is a directory $target", null)
+      }
+    }
+    fs.atomicMove(source, target)
   }
 
   companion object {
@@ -261,5 +296,5 @@ fun AtomicFile.writeText(text: String, charset: Charset = Charsets.UTF_8) {
  * This method is not recommended on huge files. It has an internal limitation of 2 GB file size.
  */
 fun AtomicFile.readText(charset: Charset = Charsets.UTF_8): String {
-  return readBytes().toString(charset)
+  return readByteArray().toString(charset)
 }
