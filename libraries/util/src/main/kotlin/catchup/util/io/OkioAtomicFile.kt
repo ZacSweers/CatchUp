@@ -16,14 +16,15 @@
 package catchup.util.io
 
 import android.util.Log
-import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
 import java.util.function.Consumer
+import okio.IOException
+import okio.FileSystem
+import okio.Path
 
 /**
  * Helper class for performing atomic operations on a file by writing to a new file and renaming it
@@ -51,18 +52,19 @@ constructor(
    * Return the path to the base file.  You should not generally use this,
    * as the data at that path may not be valid.
    */
-  val baseFile: File,
+  val baseFile: Path,
+  private val fs: FileSystem = FileSystem.SYSTEM
 ) {
-  private val newName = File(baseFile.path + ".new")
-  private val legacyBackupName = File(baseFile.path + ".bak")
+  private val newName = baseFile / ".new"
+  private val legacyBackupName = baseFile / ".bak"
 
   /**
    * Delete the atomic file. This deletes both the base and new files.
    */
   fun delete() {
-    baseFile.delete()
-    newName.delete()
-    legacyBackupName.delete()
+    fs.delete(baseFile)
+    fs.delete(newName)
+    fs.delete(legacyBackupName)
   }
 
   /**
@@ -81,20 +83,20 @@ constructor(
    */
   @Throws(IOException::class)
   fun startWrite(): FileOutputStream {
-    if (legacyBackupName.exists()) {
-      rename(legacyBackupName, baseFile)
+    if (fs.exists(legacyBackupName)) {
+      fs.atomicMove(legacyBackupName, baseFile)
     }
 
     return try {
       FileOutputStream(newName)
     } catch (e: FileNotFoundException) {
-      val parent = newName.parentFile ?: error("Couldn't create directory for $newName")
-      if (!parent.mkdirs()) {
+      val parent = newName.parent ?: error("Couldn't find a parent directory for $newName")
+      fs.createDirectories(parent)
+      if (!fs.exists(parent)) {
         throw IOException("Failed to create directory for $newName")
       }
-      // -----------------------------------00700                00070                00001
       // Set perms to 00771
-      Files.setPosixFilePermissions(parent.toPath(), setOf(
+      Files.setPosixFilePermissions(parent.toNioPath(), setOf(
         // Owner
         PosixFilePermission.OWNER_READ,
         PosixFilePermission.OWNER_WRITE,
@@ -145,7 +147,7 @@ constructor(
     } catch (e: IOException) {
       Log.e(LOG_TAG, "Failed to close file output stream", e)
     }
-    rename(newName, baseFile)
+    fs.atomicMove(newName, baseFile)
   }
 
   /**
@@ -165,13 +167,11 @@ constructor(
     } catch (e: IOException) {
       Log.e(LOG_TAG, "Failed to close file output stream", e)
     }
-    if (!newName.delete()) {
-      Log.e(LOG_TAG,
-        "Failed to delete new file $newName")
-    }
+    fs.delete(newName)
   }
 
-  /** @hide
+  /**
+   * @hide
    */
   @Deprecated("This is not safe.")
   @Throws(IOException::class)
@@ -186,7 +186,8 @@ constructor(
     }
   }
 
-  /** @hide
+  /**
+   * @hide
    */
   @Deprecated("This is not safe.")
   @Throws(IOException::class)
@@ -194,7 +195,7 @@ constructor(
     try {
       return FileOutputStream(baseFile, true)
     } catch (e: FileNotFoundException) {
-      throw IOException("Couldn't append " + baseFile)
+      throw IOException("Couldn't append $baseFile")
     }
   }
 
@@ -202,13 +203,12 @@ constructor(
    * Open the atomic file for reading. You should call close() on the FileInputStream when you are
    * done reading from it.
    *
-   *
    * You must do your own threading protection for access to AtomicFile.
    */
   @Throws(FileNotFoundException::class)
   fun openRead(): FileInputStream {
-    if (legacyBackupName.exists()) {
-      AtomicFile.rename(legacyBackupName, baseFile)
+    if (fs.exists(legacyBackupName)) {
+      fs.atomicMove(legacyBackupName, baseFile)
     }
 
     // It was okay to call openRead() between startWrite() and finishWrite() for the first time
@@ -218,11 +218,8 @@ constructor(
     // delete the file being written, the same behavior as our new implementation. So we only
     // need a special case for the first write, and don't delete the new file in this case so
     // that finishWrite() can still work.
-    if (newName.exists() && baseFile.exists()) {
-      if (!newName.delete()) {
-        Log.e(LOG_TAG,
-          "Failed to delete outdated new file $newName")
-      }
+    if (fs.exists(newName) && fs.exists(baseFile)) {
+      fs.delete(newName)
     }
     return FileInputStream(baseFile)
   }
@@ -233,21 +230,20 @@ constructor(
    * @return whether the original or legacy backup file exists.
    */
   fun exists(): Boolean {
-    return baseFile.exists() || legacyBackupName.exists()
+    return fs.exists(baseFile) || fs.exists(legacyBackupName)
   }
 
+  /**
+   * Returns the last modified time of the atomic file in milliseconds since epoch. Returns zero if
+   * the file does not exist or an I/O error is encountered.
+   */
   val lastModifiedTime: Long
-    /**
-     * Gets the last modified time of the atomic file.
-     *
-     * @return last modified time in milliseconds since epoch. Returns zero if
-     * the file does not exist or an I/O error is encountered.
-     */
     get() {
-      if (legacyBackupName.exists()) {
-        return legacyBackupName.lastModified()
+      return if (fs.exists(legacyBackupName)) {
+        fs.metadataOrNull(legacyBackupName)?.lastModifiedAtMillis ?: 0
+      } else {
+        fs.metadataOrNull(baseFile)?.lastModifiedAtMillis ?: 0
       }
-      return baseFile.lastModified()
     }
 
   /**
@@ -263,11 +259,7 @@ constructor(
       var data = ByteArray(avail)
       while (true) {
         val amt = stream.read(data, pos, data.size - pos)
-        //Log.i("foo", "Read " + amt + " bytes at " + pos
-        //        + " of avail " + data.length);
         if (amt <= 0) {
-          //Log.i("foo", "**** FINISHED READING: pos=" + pos
-          //        + " len=" + data.length);
           return data
         }
         pos += amt
@@ -327,24 +319,5 @@ constructor(
 
   companion object {
     const val LOG_TAG = "AtomicFile"
-
-    fun rename(source: File, target: File) {
-      // We used to delete the target file before rename, but that isn't atomic, and the rename()
-      // syscall should atomically replace the target file. However in the case where the target
-      // file is a directory, a simple rename() won't work. We need to delete the file in this
-      // case because there are callers who erroneously called mBaseName.mkdirs() (instead of
-      // mBaseName.getParentFile().mkdirs()) before creating the AtomicFile, and it worked
-      // regardless, so this deletion became some kind of API.
-      if (target.isDirectory) {
-        if (!target.delete()) {
-          Log.e(LOG_TAG,
-            "Failed to delete file which is a directory $target")
-        }
-      }
-      if (!source.renameTo(target)) {
-        Log.e(LOG_TAG,
-          "Failed to rename $source to $target")
-      }
-    }
   }
 }
