@@ -25,6 +25,7 @@ import timber.log.Timber
 /**
  * A logging implementation which buffers the last 200 messages and notifies on error exceptions.
  */
+// TODO source logs from LumberYard
 internal class BugsnagTree : Timber.Tree() {
 
   companion object {
