@@ -70,9 +70,9 @@ constructor(
   }
 
   /**
-   * Start a new write operation on the file. This returns a FileOutputStream to which you can write
-   * the new file data. The existing file is replaced with the new data. You *must not* directly
-   * close the given [FileHandle]; instead call either [finishWrite] or [failWrite].
+   * Start a new write operation on the file. This returns a [FileHandle] to which you can write the
+   * new file data. The existing file is replaced with the new data. You *must not* directly close
+   * the given [FileHandle]; instead call either [finishWrite] or [failWrite].
    *
    * Note that if another thread is currently performing a write, this will simply replace whatever
    * that thread is writing with the new file being written by this thread, and when the other
@@ -192,8 +192,8 @@ constructor(
   }
 
   /**
-   * Open the atomic file for reading. You should call close() on the FileInputStream when you are
-   * done reading from it.
+   * Open the atomic file for reading. You should call close() on the [FileHandle] when you are done
+   * reading from it.
    *
    * You must do your own threading protection for access to AtomicFile.
    */
