@@ -52,11 +52,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.net.toUri
 import androidx.datastore.preferences.core.Preferences.Key
 import catchup.app.CatchUpPreferences
 import catchup.app.data.DebugPreferences
+import catchup.app.data.DiskLumberYard
 import catchup.app.data.LumberYard
+import catchup.app.data.LumberYard.Entry
 import catchup.app.home.DrawerScreen
 import catchup.app.ui.activity.BaseSettingsUi
 import catchup.app.ui.activity.RealBaseSettingsUi
@@ -277,7 +278,11 @@ constructor(
     val scope = rememberStableCoroutineScope()
     return State(
       items(appConfig, LocalContext.current.resources.displayMetrics, clientCache),
-      if (showLogs) lumberYard.bufferedLogs().toImmutableList() else persistentListOf(),
+      if (showLogs) {
+        lumberYard.bufferedLogs()
+      } else {
+        persistentListOf()
+      },
     ) { event ->
       when (event) {
         is NavigateTo -> {
@@ -291,11 +296,19 @@ constructor(
         ShareLogs -> {
           showLogs = false
           scope.launch {
-            val file = withContext(IO) { lumberYard.save() }
+            val text =
+              if (lumberYard is DiskLumberYard) {
+                lumberYard.flush()
+                // TODO write back to a file first to share?
+                lumberYard.currentLogFileText()
+              } else {
+                lumberYard
+                  .bufferedLogs()
+                  .joinToString(separator = "\n", transform = Entry::prettyPrint)
+              }
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.type = "text/plain"
-            sendIntent.putExtra(Intent.EXTRA_STREAM, file.toUri())
-            sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            sendIntent.putExtra(Intent.EXTRA_TEXT, text)
             navigator.goTo(IntentScreen(Intent.createChooser(sendIntent, "Share logs")))
           }
         }

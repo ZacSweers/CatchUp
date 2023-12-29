@@ -23,6 +23,7 @@ import androidx.compose.animation.core.AnimationConstants
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import catchup.app.data.DribbbleSizingInterceptor
+import catchup.app.data.LumberYard
 import catchup.app.data.UnsplashSizingInterceptor
 import catchup.app.util.LinkTouchMovementMethod
 import catchup.app.util.PrecomputedTextSetterCompat
@@ -234,6 +235,12 @@ abstract class ApplicationModule {
       catchUpPreferences: CatchUpPreferences
     ): StateFlow<@JvmSuppressWildcards DataMode> {
       return catchUpPreferences.dataMode
+    }
+
+    @SingleIn(AppScope::class)
+    @Provides
+    fun provideLumberYard(factory: LumberYard.Factory): LumberYard {
+      return factory.create(useDisk = false)
     }
   }
 }

@@ -159,6 +159,7 @@ dependencies {
   implementation(libs.coil.gif)
   implementation(libs.collapsingToolbar)
   implementation(libs.errorProneAnnotations)
+  implementation(libs.fileSize)
   implementation(libs.firebase.core)
   implementation(libs.firebase.database)
   implementation(libs.kotlin.coroutines)
@@ -241,10 +242,10 @@ dependencies {
   kaptDebug(projects.libraries.tooling.spiMultibindsValidator)
   kaptDebug(projects.libraries.tooling.spiVisualizer)
 
+  testImplementation(libs.kotlin.coroutines.test)
   testImplementation(libs.misc.debug.flipper)
   testImplementation(libs.misc.debug.flipperNetwork)
+  testImplementation(libs.misc.okio.fakeFileSystem)
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
-
-  androidTestImplementation(libs.misc.jsr305)
 }

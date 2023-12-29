@@ -152,7 +152,7 @@ class H4 : MarkerElementWithText("####")
 
 class H5 : MarkerElementWithText("#####")
 
-fun buildMarkdown(init: Document.() -> Unit): Markdown {
+inline fun buildMarkdown(init: Document.() -> Unit): Markdown {
   val markdown = Document()
   markdown.init()
   return markdown.toString().markdown()

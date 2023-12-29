@@ -40,6 +40,7 @@ markwon = "4.6.2"
 moshi = "1.15.0"
 moshix = "0.25.1"
 okhttp = "5.0.0-alpha.12"
+okio = "3.7.0"
 preferences = "1.2.1"
 retrofit = "2.9.0"
 slack-lint = "0.7.0"
@@ -207,6 +208,8 @@ eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet
 
 errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.24.0"
 
+fileSize = "me.saket.filesize:filesize:1.1.0"
+
 haze = "dev.chrisbanes.haze:haze:0.4.1"
 
 javaxInject = "javax.inject:javax.inject:1"
@@ -215,6 +218,7 @@ kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", 
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.5.0"
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 
@@ -250,7 +254,8 @@ misc-jsoup = "org.jsoup:jsoup:1.17.2"
 misc-jsr250 = "javax.annotation:jsr250-api:1.0"
 misc-jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 misc-moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
-misc-okio = "com.squareup.okio:okio:3.7.0"
+misc-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+misc-okio-fakeFileSystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 misc-tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.3"
 misc-timber = "com.jakewharton.timber:timber:5.0.1"
 misc-unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"

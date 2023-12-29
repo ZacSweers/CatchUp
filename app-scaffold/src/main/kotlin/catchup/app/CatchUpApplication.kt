@@ -19,17 +19,22 @@ import android.app.Application
 import android.os.StrictMode
 import android.os.strictmode.DiskReadViolation
 import android.os.strictmode.UntaggedSocketViolation
+import android.util.Log
 import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
+import catchup.app.data.DiskLumberYard
+import catchup.app.data.LumberYard
 import catchup.app.injection.DaggerSet
+import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.appconfig.AppConfig
 import catchup.util.d
 import java.util.concurrent.Executors
 import javax.inject.Inject
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import timber.log.Timber
 import timber.log.Timber.Tree
 
@@ -46,12 +51,34 @@ class CatchUpApplication : Application() {
     Timber.plant(*trees.toTypedArray())
   }
 
-  @OptIn(DelicateCoroutinesApi::class)
   @Inject
-  internal fun asyncInits(@AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>) {
-    GlobalScope.launch(Dispatchers.IO) {
+  internal fun asyncInits(
+    scope: BackgroundAppCoroutineScope,
+    @AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>
+  ) {
+    scope.launch {
       // TODO - run these in parallel?
       asyncInitializers.forEach { it() }
+    }
+  }
+
+  @Inject
+  internal fun setupLumberYard(lumberYard: LumberYard, clock: Clock) {
+    if (lumberYard !is DiskLumberYard) return
+    val defaultHandler = Thread.currentThread().uncaughtExceptionHandler
+    Thread.currentThread().setUncaughtExceptionHandler { thread, throwable ->
+      runBlocking {
+        lumberYard.addEntry(
+          LumberYard.Entry(
+            clock.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+            Log.ERROR,
+            "FATAL",
+            throwable.message ?: "No message",
+          )
+        )
+        lumberYard.closeAndJoin()
+      }
+      defaultHandler?.uncaughtException(thread, throwable)
     }
   }
 
