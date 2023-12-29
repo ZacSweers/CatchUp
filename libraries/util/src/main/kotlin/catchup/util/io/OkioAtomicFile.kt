@@ -16,6 +16,7 @@
 package catchup.util.io
 
 import android.util.Log
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
 import okio.BufferedSink
@@ -51,7 +52,10 @@ constructor(
    * may not be valid.
    */
   val baseFile: Path,
-  private val fs: FileSystem = FileSystem.SYSTEM
+  private val fs: FileSystem = FileSystem.SYSTEM,
+  private val logError: ((String, Throwable?) -> Unit) = { message, throwable ->
+    Log.e(LOG_TAG, message, throwable)
+  }
 ) {
   private val newName = baseFile / ".new"
 
@@ -127,12 +131,12 @@ constructor(
       return
     }
     if (!sync(handle)) {
-      Log.e(LOG_TAG, "Failed to sync file handle")
+      logError("Failed to sync file handle", null)
     }
     try {
       handle.close()
     } catch (e: IOException) {
-      Log.e(LOG_TAG, "Failed to close file handle", e)
+      logError("Failed to close file handle", e)
     }
     fs.atomicMove(newName, baseFile)
   }
@@ -146,12 +150,12 @@ constructor(
       return
     }
     if (!sync(handle)) {
-      Log.e(LOG_TAG, "Failed to sync file handle")
+      logError("Failed to sync file handle", null)
     }
     try {
       handle.close()
     } catch (e: IOException) {
-      Log.e(LOG_TAG, "Failed to close file handle", e)
+      logError("Failed to close file handle", e)
     }
     fs.delete(newName)
   }
@@ -190,24 +194,35 @@ constructor(
     get() = fs.metadataOrNull(baseFile)?.lastModifiedAtMillis ?: 0
 
   /**
-   * A convenience for [openRead] that also reads all of the file contents into a byte array which
-   * is returned.
+   * Gets the entire content of this file as a byte array.
+   *
+   * This method is not recommended on huge files. It has an internal limitation of 2 GB file size.
    */
   @Throws(IOException::class)
-  fun readFully(): ByteArray {
+  fun readBytes(): ByteArray {
     return openRead().source().buffer().use { it.readByteArray() }
   }
 
-  fun write(append: Boolean = false, writeContent: (BufferedSink) -> Unit) {
+  /**
+   * Perform the write operations inside [block] on this file. If [block] throws an exception the
+   * write will be failed. Otherwise the write will be applied atomically to the file.
+   */
+  fun tryWrite(append: Boolean = false, block: (BufferedSink) -> Unit) {
     val handle = startWrite()
     val sink = if (append) handle.appendingSink() else handle.sink()
     sink.buffer().use {
+      var success = false
       try {
-        writeContent(it)
-        finishWrite(handle)
+        block(it)
+        success = true
       } catch (t: Throwable) {
-        failWrite(handle)
         throw propagate(t)
+      } finally {
+        if (success) {
+          finishWrite(handle)
+        } else {
+          failWrite(handle)
+        }
       }
     }
   }
@@ -225,4 +240,26 @@ constructor(
   companion object {
     const val LOG_TAG = "AtomicFile"
   }
+}
+
+/** Sets the content of this file as an [array] of bytes. */
+fun AtomicFile.writeBytes(array: ByteArray) {
+  tryWrite { it.write(array) }
+}
+
+/**
+ * Sets the content of this file as [text] encoded using UTF-8 or specified [charset]. If this file
+ * exists, it becomes overwritten.
+ */
+fun AtomicFile.writeText(text: String, charset: Charset = Charsets.UTF_8) {
+  writeBytes(text.toByteArray(charset))
+}
+
+/**
+ * Gets the entire content of this file as a String using UTF-8 or specified [charset].
+ *
+ * This method is not recommended on huge files. It has an internal limitation of 2 GB file size.
+ */
+fun AtomicFile.readText(charset: Charset = Charsets.UTF_8): String {
+  return readBytes().toString(charset)
 }
