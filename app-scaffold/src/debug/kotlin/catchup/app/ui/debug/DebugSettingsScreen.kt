@@ -55,7 +55,9 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.datastore.preferences.core.Preferences.Key
 import catchup.app.CatchUpPreferences
 import catchup.app.data.DebugPreferences
+import catchup.app.data.DiskLumberYard
 import catchup.app.data.LumberYard
+import catchup.app.data.LumberYard.Entry
 import catchup.app.home.DrawerScreen
 import catchup.app.ui.activity.BaseSettingsUi
 import catchup.app.ui.activity.RealBaseSettingsUi
@@ -294,9 +296,16 @@ constructor(
         ShareLogs -> {
           showLogs = false
           scope.launch {
-            lumberYard.flush()
-            // TODO write back to a file first to share?
-            val text = lumberYard.currentLogFileText()
+            val text =
+              if (lumberYard is DiskLumberYard) {
+                lumberYard.flush()
+                // TODO write back to a file first to share?
+                lumberYard.currentLogFileText()
+              } else {
+                lumberYard
+                  .bufferedLogs()
+                  .joinToString(separator = "\n", transform = Entry::prettyPrint)
+              }
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.type = "text/plain"
             sendIntent.putExtra(Intent.EXTRA_TEXT, text)
