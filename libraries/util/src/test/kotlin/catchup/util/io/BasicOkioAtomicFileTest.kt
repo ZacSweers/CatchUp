@@ -39,6 +39,13 @@ class BasicOkioAtomicFileTest {
   }
 
   @Test
+  fun tryWriteSuccess_append_noExisting() {
+    file.tryWrite(append = true) { it.write(byteArrayOf(0, 1, 2)) }
+    val bytes = file.readByteArray()
+    assertArrayEquals(byteArrayOf(0, 1, 2), bytes)
+  }
+
+  @Test
   fun tryWriteFail() {
     file.tryWrite { sink -> sink.write(byteArrayOf(0, 1, 2)) }
 

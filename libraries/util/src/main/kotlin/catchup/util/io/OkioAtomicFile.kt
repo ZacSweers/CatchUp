@@ -86,7 +86,7 @@ constructor(
   internal fun startWrite(append: Boolean = false): FileHandle {
     return try {
       // If we're appending, copy the existing file comments over first
-      if (append) {
+      if (append && fs.exists(baseFile)) {
         fs.copy(baseFile, newName)
       }
       fs
