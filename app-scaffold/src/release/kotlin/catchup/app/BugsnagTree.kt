@@ -19,7 +19,6 @@ import android.util.Log
 import catchup.app.data.LumberYard
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Event
-import java.util.ArrayDeque
 import java.util.Locale
 import timber.log.Timber
 

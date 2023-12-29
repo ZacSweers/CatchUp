@@ -19,7 +19,6 @@ import android.app.Application
 import android.util.Log
 import androidx.annotation.WorkerThread
 import catchup.app.util.BackgroundAppCoroutineScope
-import catchup.appconfig.AppConfig
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import catchup.util.RingBuffer
@@ -27,7 +26,6 @@ import catchup.util.io.AtomicFile
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
-import java.util.Collections
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds

@@ -89,7 +89,8 @@ constructor(
       if (append) {
         fs.copy(baseFile, newName)
       }
-      fs.openReadWrite(newName)
+      fs
+        .openReadWrite(newName)
         // Okio doesn't truncate opening a file for writing, so we need to resize the file instead
         // to replicate this. https://github.com/square/okio/issues/514
         .also {
@@ -122,7 +123,8 @@ constructor(
         )
       }
       try {
-        fs.openReadWrite(newName)
+        fs
+          .openReadWrite(newName)
           // Okio doesn't truncate opening a file for writing, so we need to resize the file instead
           // to replicate this. https://github.com/square/okio/issues/514
           .also {
