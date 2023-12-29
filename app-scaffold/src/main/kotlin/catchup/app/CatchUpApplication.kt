@@ -22,6 +22,7 @@ import android.os.strictmode.UntaggedSocketViolation
 import android.util.Log
 import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
+import catchup.app.data.DiskLumberYard
 import catchup.app.data.LumberYard
 import catchup.app.injection.DaggerSet
 import catchup.app.util.BackgroundAppCoroutineScope
@@ -63,6 +64,7 @@ class CatchUpApplication : Application() {
 
   @Inject
   internal fun setupLumberYard(lumberYard: LumberYard, clock: Clock) {
+    if (lumberYard !is DiskLumberYard) return
     val defaultHandler = Thread.currentThread().uncaughtExceptionHandler
     Thread.currentThread().setUncaughtExceptionHandler { thread, throwable ->
       runBlocking {

@@ -13,7 +13,7 @@ import okio.fakefilesystem.FakeFileSystem
 import org.junit.Before
 import org.junit.Test
 
-class LumberYardTest {
+class DiskLumberYardTest {
 
   private val fs = FakeFileSystem()
   private val logsPath = "logs".toPath()
@@ -33,7 +33,7 @@ class LumberYardTest {
   @Test
   fun smokeTest() = runTest {
     val lumberYard =
-      LumberYard(
+      DiskLumberYard(
         logsPath,
         scope = this,
         flushInterval = flushInterval,
@@ -68,7 +68,7 @@ class LumberYardTest {
   @Test
   fun closeAndJoinFlushes() = runTest {
     val lumberYard =
-      LumberYard(
+      DiskLumberYard(
         logsPath,
         scope = this,
         flushInterval = flushInterval,

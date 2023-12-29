@@ -18,15 +18,15 @@ package catchup.app.data
 import android.app.Application
 import android.util.Log
 import androidx.annotation.WorkerThread
+import catchup.app.data.LumberYard.Entry
 import catchup.app.util.BackgroundAppCoroutineScope
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.util.RingBuffer
 import catchup.util.io.AtomicFile
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 import javax.inject.Inject
+import javax.inject.Provider
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.collections.immutable.ImmutableList
@@ -54,175 +54,54 @@ import okio.Path.Companion.toOkioPath
 import okio.buffer
 import timber.log.Timber
 
-// TODO
-//  disable flushing in background? Requires exposing some sort of StateFlow<Boolean> on the DI
-//  graph of foreground/background events
-@SingleIn(AppScope::class)
-class LumberYard(
-  private val _logDir: Path,
-  scope: CoroutineScope,
-  private val flushInterval: Duration = FLUSH_INTERVAL,
-  bufferSize: Int = BUFFER_SIZE,
-  private val fs: FileSystem = FileSystem.SYSTEM,
-  internal val clock: Clock = Clock.System,
-  internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
-  /** Using AtomicFile isn't really necessary if just appending to a file, but left as an option. */
-  private val useAtomicFile: Boolean = false,
-) {
-
-  @Inject
-  constructor(
-    app: Application,
-    scope: BackgroundAppCoroutineScope,
-  ) : this(
-    _logDir =
-      app.getExternalFilesDir(null)?.toOkioPath()?.resolve("logs")
-        ?: throw IOException("External storage is not mounted."),
-    scope = scope,
-  )
-
-  // Guard against concurrent writes
-  private val writeMutex = Mutex()
-
-  private val logFiles = Array(5) { i -> _logDir.resolve("log$i.$LOG_EXTENSION") }
-  private var currentFileIndex = 0
-
-  // Act as a ring buffer with a fixed size
-  private val logChannel =
-    Channel<Entry>(
-      capacity = bufferSize,
-      onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
-
-  private val flushChannel = Channel<Unit>(Channel.CONFLATED)
+sealed class LumberYard {
+  private var closed = false
+  protected open val bufferSize: Int = BUFFER_SIZE
+  internal open val clock: Clock = Clock.System
+  internal open val timeZone: TimeZone = TimeZone.currentSystemDefault()
 
   /**
    * Keep last [BUFFER_SIZE] logs in memory for the bugsnag trace tab and debug screen.
    *
-   * Guarded implicitly by [writeMutex].
-   *
-   * TODO would be nice to not maintain this separately from [logChannel], but shrug
+   * TODO would be nice to not maintain this separately from [DiskLumberYard.logChannel], but shrug
    */
   private val bufferedLogs = RingBuffer<Entry>(BUFFER_SIZE)
 
-  @OptIn(DelicateCoroutinesApi::class)
-  private val writeJob: Job =
-    scope.launch {
-      try {
-        while (isActive && !flushChannel.isClosedForReceive) {
-          for (flush in flushChannel) {
-            if (logChannel.isClosedForReceive) break
-            val results = logChannel.drain(this)
-            if (results.isNotEmpty()) {
-              save(results)
-              results.clear()
-            }
-          }
-        }
-      } catch (e: Exception) {
-        Timber.e(e, "Error writing logs to disk")
-      }
-    }
-
-  @OptIn(DelicateCoroutinesApi::class)
-  private val flushJob: Job =
-    scope.launch {
-      while (isActive && !flushChannel.isClosedForSend) {
-        delay(flushInterval)
-        flushChannel.send(Unit)
-      }
-    }
-
-  @OptIn(DelicateCoroutinesApi::class)
-  private suspend fun <T> Channel<T>.drain(scope: CoroutineScope) =
-    with(scope) {
-      val results = mutableListOf(receive())
-      while (isActive && !isClosedForReceive) {
-        val attempt = tryReceive()
-        when (val value = attempt.getOrNull()) {
-          null -> break
-          else -> {
-            results += value
-          }
-        }
-      }
-      results
-    }
-
   fun tryAddEntry(entry: Entry) {
-    logChannel.trySend(entry)
     bufferedLogs.push(entry)
+    protectedTryAddEntry(entry)
   }
 
   suspend fun addEntry(entry: Entry) {
-    logChannel.send(entry)
     bufferedLogs.push(entry)
+    protectedAddEntry(entry)
   }
 
-  private suspend inline fun <T> guardedIo(body: (logDir: Path) -> T): T {
-    return writeMutex.withLock { body(_logDir) }
-  }
-
-  /** Save the current logs to disk. */
-  suspend fun flush() {
-    flushChannel.send(Unit)
-  }
-
-  /** Tries to save the current logs to disk. */
-  fun tryFlush() {
-    flushChannel.trySend(Unit)
-  }
+  protected open fun protectedTryAddEntry(entry: Entry) {}
+  protected open suspend fun protectedAddEntry(entry: Entry) {}
 
   fun bufferedLogs(): ImmutableList<Entry> = bufferedLogs.toImmutableList()
 
-  private tailrec suspend fun save(entries: List<Entry>): Path = guardedIo { logDir ->
-    if (!fs.exists(logDir)) {
-      fs.createDirectories(logDir)
-    }
-
-    val output = logFiles[currentFileIndex]
-    return if (!fs.exists(output) || fs.metadata(output).size!! <= MAX_LOG_FILE_SIZE) {
-      val writeAction: (BufferedSink) -> Unit = { sink ->
-        for (entry in entries) {
-          sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
-        }
-      }
-      if (useAtomicFile) {
-        AtomicFile(output, fs).tryWrite(append = true, writeAction)
-      } else {
-        fs.appendingSink(output).buffer().use(writeAction)
-      }
-      output
-    } else {
-      // Rotate files
-      currentFileIndex = (currentFileIndex + 1) % logFiles.size
-      save(entries)
-    }
+  fun clear() {
+    bufferedLogs.clear()
   }
 
-  /**
-   * Delete all of the log files saved to disk. Be careful not to call this before any intents have
-   * finished using the file reference.
-   */
-  @WorkerThread
-  suspend fun cleanUp(): Long = guardedIo { logDir ->
-    var deleted = 0L
-    fs
-      .list(logDir)
-      .filter { it.name.endsWith(".log") }
-      .forEach {
-        fs.metadata(it).size?.let { size -> deleted += size }
-        fs.delete(it)
-      }
+  /** Flushes the current logs to disk, if applicable. */
+  open suspend fun flush() {
 
-    currentFileIndex = 0
-
-    return deleted
   }
 
-  suspend fun currentLogFileText(): String = guardedIo {
-    return fs.read(logFiles[currentFileIndex]) { readUtf8() }
+  /** Tries to flush the current logs to disk, if applicable. */
+  open fun tryFlush() {
+
   }
+
+  suspend fun closeAndJoin() {
+    protectedCloseAndJoin()
+    closed = true
+  }
+
+  protected open suspend fun protectedCloseAndJoin() {}
 
   data class Entry(val time: LocalDateTime, val level: Int, val tag: String?, val message: String) {
     fun prettyPrint(): String {
@@ -266,7 +145,174 @@ class LumberYard(
     }
   }
 
-  suspend fun closeAndJoin() {
+  class Factory @Inject constructor(
+    private val simpleLumberYard: Provider<SimpleLumberYard>,
+    private val diskLumberYard: Provider<SimpleLumberYard>,
+  ) {
+    fun create(useDisk: Boolean): LumberYard {
+      return if (useDisk) {
+        diskLumberYard.get()
+      } else {
+        simpleLumberYard.get()
+      }
+    }
+  }
+
+  protected companion object {
+    const val BUFFER_SIZE = 200
+  }
+}
+
+class SimpleLumberYard internal constructor(
+  override val bufferSize: Int = BUFFER_SIZE,
+  override val clock: Clock = Clock.System,
+  override val timeZone: TimeZone = TimeZone.currentSystemDefault(),
+) : LumberYard() {
+  @Inject constructor() : this(BUFFER_SIZE)
+}
+
+
+// TODO
+//  disable flushing in background? Requires exposing some sort of StateFlow<Boolean> on the DI
+//  graph of foreground/background events
+class DiskLumberYard internal constructor(
+  private val _logDir: Path,
+  scope: CoroutineScope,
+  private val flushInterval: Duration = FLUSH_INTERVAL,
+  override val bufferSize: Int = BUFFER_SIZE,
+  override val clock: Clock = Clock.System,
+  override val timeZone: TimeZone = TimeZone.currentSystemDefault(),
+  private val fs: FileSystem = FileSystem.SYSTEM,
+  /** Using AtomicFile isn't really necessary if just appending to a file, but left as an option. */
+  private val useAtomicFile: Boolean = false,
+) : LumberYard() {
+
+  @Inject
+  constructor(
+    app: Application,
+    scope: BackgroundAppCoroutineScope,
+  ) : this(
+    _logDir =
+      app.getExternalFilesDir(null)?.toOkioPath()?.resolve("logs")
+        ?: throw IOException("External storage is not mounted."),
+    scope = scope,
+  )
+
+  // Guard against concurrent writes
+  private val writeMutex = Mutex()
+
+  private val logFiles = Array(5) { i -> _logDir.resolve("log$i.$LOG_EXTENSION") }
+  private var currentFileIndex = 0
+
+  // Act as a ring buffer with a fixed size
+  private val logChannel =
+    Channel<Entry>(
+      capacity = bufferSize,
+      onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+
+  private val flushChannel = Channel<Unit>(Channel.CONFLATED)
+
+  @OptIn(DelicateCoroutinesApi::class)
+  private val writeJob: Job =
+    scope.launch {
+      try {
+        while (isActive && !flushChannel.isClosedForReceive) {
+          for (flush in flushChannel) {
+            if (logChannel.isClosedForReceive) break
+            val results = logChannel.drain(this)
+            if (results.isNotEmpty()) {
+              save(results)
+              results.clear()
+            }
+          }
+        }
+      } catch (e: Exception) {
+        Timber.e(e, "Error writing logs to disk")
+      }
+    }
+
+  @OptIn(DelicateCoroutinesApi::class)
+  private val flushJob: Job =
+    scope.launch {
+      while (isActive && !flushChannel.isClosedForSend) {
+        delay(flushInterval)
+        flushChannel.send(Unit)
+      }
+    }
+
+  override fun protectedTryAddEntry(entry: Entry) {
+    logChannel.trySend(entry)
+  }
+
+  override suspend fun protectedAddEntry(entry: Entry) {
+    logChannel.send(entry)
+  }
+
+  private suspend inline fun <T> guardedIo(body: (logDir: Path) -> T): T {
+    return writeMutex.withLock { body(_logDir) }
+  }
+
+  /** Save the current logs to disk. */
+  override suspend fun flush() {
+    flushChannel.send(Unit)
+  }
+
+  /** Tries to save the current logs to disk. */
+  override fun tryFlush() {
+    flushChannel.trySend(Unit)
+  }
+
+  private tailrec suspend fun save(entries: List<Entry>): Path = guardedIo { logDir ->
+    if (!fs.exists(logDir)) {
+      fs.createDirectories(logDir)
+    }
+
+    val output = logFiles[currentFileIndex]
+    return if (!fs.exists(output) || fs.metadata(output).size!! <= MAX_LOG_FILE_SIZE) {
+      val writeAction: (BufferedSink) -> Unit = { sink ->
+        for (entry in entries) {
+          sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
+        }
+      }
+      if (useAtomicFile) {
+        AtomicFile(output, fs).tryWrite(append = true, writeAction)
+      } else {
+        fs.appendingSink(output).buffer().use(writeAction)
+        }
+      output
+    } else {
+      // Rotate files
+      currentFileIndex = (currentFileIndex + 1) % logFiles.size
+      save(entries)
+    }
+  }
+
+  /**
+   * Delete all of the log files saved to disk. Be careful not to call this before any intents have
+   * finished using the file reference.
+   */
+  @WorkerThread
+  suspend fun cleanUp(): Long = guardedIo { logDir ->
+    var deleted = 0L
+    fs
+      .list(logDir)
+      .filter { it.name.endsWith(".log") }
+      .forEach {
+        fs.metadata(it).size?.let { size -> deleted += size }
+        fs.delete(it)
+      }
+
+    currentFileIndex = 0
+
+    return deleted
+  }
+
+  suspend fun currentLogFileText(): String = guardedIo {
+    return fs.read(logFiles[currentFileIndex]) { readUtf8() }
+  }
+
+  override suspend fun protectedCloseAndJoin() {
     // Flush whatever is left in the buffer
     flush()
     flushJob.cancel()
@@ -277,7 +323,6 @@ class LumberYard(
 
   companion object {
     internal const val LOG_EXTENSION = "log"
-    private const val BUFFER_SIZE = 200
     private val FLUSH_INTERVAL = 5000.milliseconds
     private val MAX_LOG_FILE_SIZE = 1.megabytes.bytes
   }
@@ -286,7 +331,23 @@ class LumberYard(
 fun LumberYard.tree(): Timber.Tree {
   return object : Timber.DebugTree() {
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-      tryAddEntry(LumberYard.Entry(clock.now().toLocalDateTime(timeZone), priority, tag, message))
+      tryAddEntry(Entry(clock.now().toLocalDateTime(timeZone), priority, tag, message))
     }
   }
 }
+
+@OptIn(DelicateCoroutinesApi::class)
+private suspend fun <T> Channel<T>.drain(scope: CoroutineScope) =
+  with(scope) {
+    val results = mutableListOf(receive())
+    while (isActive && !isClosedForReceive) {
+      val attempt = tryReceive()
+      when (val value = attempt.getOrNull()) {
+        null -> break
+        else -> {
+          results += value
+        }
+      }
+    }
+    results
+  }
