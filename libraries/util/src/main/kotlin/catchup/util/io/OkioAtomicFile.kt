@@ -60,7 +60,6 @@ constructor(
   private val fs: FileSystem = FileSystem.SYSTEM
 ) {
   private val newName = baseFile / ".new"
-  private val legacyBackupName = baseFile / ".bak"
 
   /**
    * Delete the atomic file. This deletes both the base and new files.
@@ -68,7 +67,6 @@ constructor(
   fun delete() {
     fs.delete(baseFile)
     fs.delete(newName)
-    fs.delete(legacyBackupName)
   }
 
   /**
@@ -87,10 +85,6 @@ constructor(
    */
   @Throws(IOException::class)
   private fun startWrite(): FileHandle {
-    if (fs.exists(legacyBackupName)) {
-      fs.atomicMove(legacyBackupName, baseFile)
-    }
-
     return try {
       fs.openReadWrite(newName, mustExist = true)
     } catch (e: IOException) {
@@ -197,10 +191,6 @@ constructor(
    */
   @Throws(FileNotFoundException::class)
   private fun openRead(): FileHandle {
-    if (fs.exists(legacyBackupName)) {
-      fs.atomicMove(legacyBackupName, baseFile)
-    }
-
     // It was okay to call openRead() between startWrite() and finishWrite() for the first time
     // (because there is no backup file), where openRead() would open the file being written,
     // which makes no sense, but finishWrite() would still persist the write properly. For all
@@ -220,7 +210,7 @@ constructor(
    * @return whether the original or legacy backup file exists.
    */
   fun exists(): Boolean {
-    return fs.exists(baseFile) || fs.exists(legacyBackupName)
+    return fs.exists(baseFile)
   }
 
   /**
@@ -228,13 +218,7 @@ constructor(
    * the file does not exist or an I/O error is encountered.
    */
   val lastModifiedTime: Long
-    get() {
-      return if (fs.exists(legacyBackupName)) {
-        fs.metadataOrNull(legacyBackupName)?.lastModifiedAtMillis ?: 0
-      } else {
-        fs.metadataOrNull(baseFile)?.lastModifiedAtMillis ?: 0
-      }
-    }
+    get() = fs.metadataOrNull(baseFile)?.lastModifiedAtMillis ?: 0
 
   /**
    * A convenience for [openRead] that also reads all of the
