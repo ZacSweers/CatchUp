@@ -19,12 +19,14 @@ import android.app.Application
 import android.util.Log
 import androidx.annotation.WorkerThread
 import catchup.app.util.BackgroundAppCoroutineScope
+import catchup.appconfig.AppConfig
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import catchup.util.io.AtomicFile
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
+import java.util.Collections
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -54,7 +56,8 @@ import okio.Path.Companion.toOkioPath
 import timber.log.Timber
 
 // TODO
-//  disable flushing in background?
+//  disable flushing in background? Requires exposing some sort of StateFlow<Boolean> on the DI
+//  graph of foreground/background events
 @SingleIn(AppScope::class)
 class LumberYard(
   private val _logDir: Path,
@@ -62,20 +65,23 @@ class LumberYard(
   private val flushInterval: Duration = FLUSH_INTERVAL,
   bufferSize: Int = BUFFER_SIZE,
   private val fs: FileSystem = FileSystem.SYSTEM,
+  private val isDebug: Boolean = false,
   internal val clock: Clock = Clock.System,
   internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
-  internal val debugLog: (String) -> Unit = { Log.d("LumberYard", it) },
+  private val debugLog: (String) -> Unit = {},
 ) {
 
   @Inject
   constructor(
     app: Application,
     scope: BackgroundAppCoroutineScope,
+    appConfig: AppConfig,
   ) : this(
     _logDir =
       app.getExternalFilesDir(null)?.toOkioPath()?.resolve("logs")
         ?: throw IOException("External storage is not mounted."),
     scope = scope,
+    isDebug = appConfig.isDebug,
   )
 
   // Guard against concurrent writes
@@ -93,9 +99,14 @@ class LumberYard(
 
   private val flushChannel = Channel<Unit>(Channel.CONFLATED)
 
-  // TODO make this debug only, it's really just a backdoor for viewing those logs. Maybe even
-  //  just make that UI read the log file contents, though wouldn't be as colorful
-  private val writtenLogs = ArrayDeque<Entry>()
+  // We only keep these in debug builds, as this is used for the debug drawer modal
+  private val writtenLogs =
+    if (isDebug) {
+      ArrayDeque<Entry>()
+    } else {
+      // Collections.emptyList() will silently drop writes for us
+      Collections.emptyList()
+    }
 
   @OptIn(DelicateCoroutinesApi::class)
   private val writeJob: Job =
