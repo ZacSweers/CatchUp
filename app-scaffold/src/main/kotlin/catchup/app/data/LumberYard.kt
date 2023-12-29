@@ -21,6 +21,7 @@ import androidx.annotation.WorkerThread
 import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.di.AppScope
 import catchup.di.SingleIn
+import catchup.util.io.AtomicFile
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
@@ -54,7 +55,6 @@ import okio.buffer
 import timber.log.Timber
 
 // TODO
-//  atomic file
 //  disable flushing in background?
 @SingleIn(AppScope::class)
 class LumberYard(
@@ -183,7 +183,7 @@ class LumberYard(
     val output = logFiles[currentFileIndex]
     return if (!fs.exists(output) || fs.metadata(output).size!! <= MAX_LOG_FILE_SIZE) {
       debugLog("Writing logs to $output")
-      fs.appendingSink(output).buffer().use { sink ->
+      AtomicFile(output, fs).tryWrite(append = true) { sink ->
         for (entry in entries) {
           debugLog("Writing entry to disk - ${entry.prettyPrint()}")
           sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)

@@ -89,6 +89,7 @@ class ParameterizedOkioAtomicFileTests(
               atomicFile.failWrite(handle)
             }
             ABORT -> {
+              // Close for the sake of the FS open files check
               handle.close()
             }
             READ_FINISH -> {

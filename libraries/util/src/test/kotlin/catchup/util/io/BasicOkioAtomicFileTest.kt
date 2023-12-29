@@ -23,7 +23,7 @@ class BasicOkioAtomicFileTest {
   @Test
   fun tryWriteSuccess() {
     file.tryWrite { it.write(byteArrayOf(0, 1, 2)) }
-    val bytes = file.read { it.readByteArray() }
+    val bytes = file.read { readByteArray() }
     assertArrayEquals(byteArrayOf(0, 1, 2), bytes)
   }
 
@@ -41,7 +41,7 @@ class BasicOkioAtomicFileTest {
       }
     assertThat(exception).isSameInstanceAs(failure)
 
-    val bytes = file.read { it.readByteArray() }
+    val bytes = file.read { readByteArray() }
     assertArrayEquals(byteArrayOf(0, 1, 2), bytes)
   }
 
@@ -49,7 +49,7 @@ class BasicOkioAtomicFileTest {
   fun writeBytes() {
     file.writeBytes(byteArrayOf(0, 1, 2))
 
-    val bytes = file.read { it.readByteArray() }
+    val bytes = file.read { readByteArray() }
     assertArrayEquals(byteArrayOf(0, 1, 2), bytes)
   }
 
@@ -57,7 +57,7 @@ class BasicOkioAtomicFileTest {
   fun writeText() {
     file.writeText("Hey")
 
-    val bytes = file.read { it.readByteArray() }
+    val bytes = file.read { readByteArray() }
     assertArrayEquals(byteArrayOf(72, 101, 121), bytes)
   }
 
@@ -65,7 +65,7 @@ class BasicOkioAtomicFileTest {
   fun writeTextCharset() {
     file.writeText("Hey", charset = Charsets.UTF_16LE)
 
-    val bytes = file.read { it.readByteArray() }
+    val bytes = file.read { readByteArray() }
     assertArrayEquals(byteArrayOf(72, 0, 101, 0, 121, 0), bytes)
   }
 

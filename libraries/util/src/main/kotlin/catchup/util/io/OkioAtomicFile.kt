@@ -83,10 +83,13 @@ constructor(
    * you _must_ close it before calling [finishWrite] or [failWrite].
    */
   @VisibleForTesting
-  internal fun startWrite(): FileHandle {
+  internal fun startWrite(truncate: Boolean = true): FileHandle {
     return try {
-      // Okio doesn't truncate opening a file for writing, so we need to delete the file instead
-      fs.delete(newName)
+      if (truncate) {
+        // Okio doesn't truncate opening a file for writing, so we need to delete the file instead
+        // to replicate this
+        fs.delete(newName)
+      }
       fs.openReadWrite(newName)
     } catch (e: IOException) {
       val parent = newName.parent ?: error("Couldn't find a parent directory for $newName")
@@ -195,7 +198,7 @@ constructor(
     return fs.openReadOnly(baseFile)
   }
 
-  fun <T> read(block: (BufferedSource) -> T): T {
+  fun <T> read(block: BufferedSource.() -> T): T {
     return openRead().use { it.source().buffer().use(block) }
   }
 
@@ -217,15 +220,15 @@ constructor(
    * This method is not recommended on huge files. It has an internal limitation of 2 GB file size.
    */
   fun readByteArray(): ByteArray {
-    return read { it.readByteArray() }
+    return read { readByteArray() }
   }
 
   /**
    * Perform the write operations inside [block] on this file. If [block] throws an exception the
    * write will be failed. Otherwise the write will be applied atomically to the file.
    */
-  fun tryWrite(append: Boolean = false, block: (BufferedSink) -> Unit) {
-    val handle = startWrite()
+  fun tryWrite(append: Boolean = false, truncate: Boolean = true, block: (BufferedSink) -> Unit) {
+    val handle = startWrite(truncate)
     val sink = if (append) handle.appendingSink() else handle.sink()
     var success = false
     try {
