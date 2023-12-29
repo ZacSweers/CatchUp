@@ -52,8 +52,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
-import androidx.datastore.preferences.core.Preferences
-import androidx.core.net.toUri
 import androidx.datastore.preferences.core.Preferences.Key
 import catchup.app.CatchUpPreferences
 import catchup.app.data.DebugPreferences
