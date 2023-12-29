@@ -29,10 +29,8 @@ import catchup.appconfig.AppConfig
 import catchup.util.d
 import java.util.concurrent.Executors
 import javax.inject.Inject
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -68,17 +66,15 @@ class CatchUpApplication : Application() {
     val defaultHandler = Thread.currentThread().uncaughtExceptionHandler
     Thread.currentThread().setUncaughtExceptionHandler { thread, throwable ->
       runBlocking {
-        withContext(NonCancellable) {
-          lumberYard.addEntry(
-            LumberYard.Entry(
-              clock.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-              Log.ERROR,
-              "FATAL",
-              throwable.message ?: "No message",
-            )
+        lumberYard.addEntry(
+          LumberYard.Entry(
+            clock.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+            Log.ERROR,
+            "FATAL",
+            throwable.message ?: "No message",
           )
-          lumberYard.closeAndJoin()
-        }
+        )
+        lumberYard.closeAndJoin()
       }
       defaultHandler?.uncaughtException(thread, throwable)
     }

@@ -1,10 +1,8 @@
 package catchup.app.data
 
+import catchup.app.data.LumberYard.Entry
 import com.google.common.truth.Truth.assertThat
 import kotlin.time.Duration.Companion.milliseconds
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -19,7 +17,7 @@ class LumberYardTest {
 
   private val fs = FakeFileSystem()
   private val logsPath = "logs".toPath()
-  private val flushInterval = 1000L.milliseconds
+  private val flushInterval = 1000.milliseconds
   private val testClock =
     object : Clock {
       override fun now(): Instant {
@@ -34,12 +32,10 @@ class LumberYardTest {
 
   @Test
   fun smokeTest() = runTest {
-    val testDispatcher = StandardTestDispatcher()
-    val scope = CoroutineScope(SupervisorJob() + testDispatcher)
     val lumberYard =
       LumberYard(
         logsPath,
-        scope = scope,
+        scope = this,
         flushInterval = flushInterval,
         fs = fs,
         clock = testClock,
@@ -48,7 +44,7 @@ class LumberYardTest {
 
     // 3 is DEBUG
     val entry =
-      LumberYard.Entry(
+      Entry(
         testClock.now().toLocalDateTime(TimeZone.UTC),
         3,
         "tag",
@@ -58,11 +54,12 @@ class LumberYardTest {
 
     assertThat(logFiles()).isEmpty()
 
-    testDispatcher.scheduler.advanceTimeBy(flushInterval.plus(1.milliseconds))
+    testScheduler.advanceTimeBy(flushInterval.plus(1.milliseconds))
 
     assertThat(logFiles()).hasSize(1)
     val logText = fs.read(logFiles().first()) { readUtf8() }.trim()
     assertThat(logText).contains("tag D message")
+    lumberYard.closeAndJoin()
 
     val result = lumberYard.cleanUp()
     assertThat(result).isGreaterThan(0L)
@@ -71,12 +68,10 @@ class LumberYardTest {
 
   @Test
   fun closeAndJoinFlushes() = runTest {
-    val testDispatcher = StandardTestDispatcher()
-    val scope = CoroutineScope(SupervisorJob() + testDispatcher)
     val lumberYard =
       LumberYard(
         logsPath,
-        scope = scope,
+        scope = this,
         flushInterval = flushInterval,
         fs = fs,
         clock = testClock,
@@ -85,7 +80,7 @@ class LumberYardTest {
 
     // 3 is DEBUG
     val entry =
-      LumberYard.Entry(
+      Entry(
         testClock.now().toLocalDateTime(TimeZone.UTC),
         3,
         "tag",
@@ -102,6 +97,10 @@ class LumberYardTest {
     val logText = fs.read(logFiles().first()) { readUtf8() }.trim()
     assertThat(logText).contains("tag D message")
   }
+
+  // TODO
+  //  test file rotations
+  //  test repeated flushes
 
   private fun logFiles() = fs.list(logsPath)
 }

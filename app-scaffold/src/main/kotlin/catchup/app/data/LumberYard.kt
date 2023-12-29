@@ -44,6 +44,8 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
+import me.saket.filesize.FileSize.Companion.bytes
+import me.saket.filesize.FileSize.Companion.megabytes
 import okio.FileSystem
 import okio.IOException
 import okio.Path
@@ -51,6 +53,9 @@ import okio.Path.Companion.toOkioPath
 import okio.buffer
 import timber.log.Timber
 
+// TODO
+//  atomic file
+//  disable flushing in background?
 @SingleIn(AppScope::class)
 class LumberYard(
   private val _logDir: Path,
@@ -60,7 +65,7 @@ class LumberYard(
   private val fs: FileSystem = FileSystem.SYSTEM,
   internal val clock: Clock = Clock.System,
   internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
-  internal val debugLog: (String) -> Unit = {},
+  internal val debugLog: (String) -> Unit = { Log.d("LumberYard", it) },
 ) {
 
   @Inject
@@ -98,10 +103,11 @@ class LumberYard(
     scope.launch {
       try {
         debugLog("Starting write job")
-        while (isActive && !flushChannel.isClosedForReceive && !logChannel.isClosedForReceive) {
+        while (isActive && !flushChannel.isClosedForReceive) {
           debugLog("Checking for flush")
           for (flush in flushChannel) {
             debugLog("Flush triggered")
+            if (logChannel.isClosedForReceive) break
             val results = mutableListOf(logChannel.receive())
             // Drain the channel buffer
             while (isActive && !logChannel.isClosedForReceive) {
@@ -135,11 +141,11 @@ class LumberYard(
       debugLog("Exiting write job")
     }
 
+  @OptIn(DelicateCoroutinesApi::class)
   private val flushJob: Job =
     scope.launch {
-      while (isActive) {
+      while (isActive && !flushChannel.isClosedForSend) {
         delay(flushInterval)
-        debugLog("Flush interval elapsed, triggering flush")
         flushChannel.send(Unit)
       }
     }
@@ -175,7 +181,8 @@ class LumberYard(
     }
 
     val output = logFiles[currentFileIndex]
-    return if (!fs.exists(output) || fs.metadata(output).size!! <= 1024) {
+    return if (!fs.exists(output) || fs.metadata(output).size!! <= MAX_LOG_FILE_SIZE) {
+      debugLog("Writing logs to $output")
       fs.appendingSink(output).buffer().use { sink ->
         for (entry in entries) {
           debugLog("Writing entry to disk - ${entry.prettyPrint()}")
@@ -185,7 +192,11 @@ class LumberYard(
       }
       output
     } else {
-      rotate()
+      debugLog(
+        "Rotating files, current file (${output.name}) of size ${fs.metadata(output).size} exceeds max size of ${MAX_LOG_FILE_SIZE.bytes.inWholeMegabytes}MB"
+      )
+      // Rotate files
+      currentFileIndex = (currentFileIndex + 1) % logFiles.size
       save(entries)
     }
   }
@@ -212,11 +223,6 @@ class LumberYard(
 
   suspend fun currentLogFileText(): String = guardedIo {
     return fs.read(logFiles[currentFileIndex]) { readUtf8() }
-  }
-
-  private fun rotate() {
-    debugLog("Rotating files")
-    currentFileIndex = (currentFileIndex + 1) % logFiles.size
   }
 
   data class Entry(val time: LocalDateTime, val level: Int, val tag: String?, val message: String) {
@@ -262,6 +268,9 @@ class LumberYard(
   }
 
   suspend fun closeAndJoin() {
+    debugLog("Closing and joining")
+    // Flush whatever is left in the buffer
+    flush()
     flushJob.cancel()
     flushChannel.close()
     logChannel.close()
@@ -272,7 +281,8 @@ class LumberYard(
   companion object {
     internal const val LOG_EXTENSION = "log"
     private const val BUFFER_SIZE = 200
-    private val FLUSH_INTERVAL = 2000L.milliseconds
+    private val FLUSH_INTERVAL = 5000.milliseconds
+    private val MAX_LOG_FILE_SIZE = 1.megabytes.bytes
   }
 }
 

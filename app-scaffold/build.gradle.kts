@@ -159,6 +159,7 @@ dependencies {
   implementation(libs.coil.gif)
   implementation(libs.collapsingToolbar)
   implementation(libs.errorProneAnnotations)
+  implementation(libs.fileSize)
   implementation(libs.firebase.core)
   implementation(libs.firebase.database)
   implementation(libs.kotlin.coroutines)
