@@ -56,4 +56,6 @@ dependencies {
 
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
+  testImplementation(libs.misc.okio.fakeFileSystem)
+  testImplementation(libs.kotlin.test)
 }
