@@ -83,12 +83,14 @@ constructor(
    * you _must_ close it before calling [finishWrite] or [failWrite].
    */
   @VisibleForTesting
-  internal fun startWrite(truncate: Boolean = true): FileHandle {
+  internal fun startWrite(append: Boolean = false): FileHandle {
     return try {
-      if (truncate) {
-        // Okio doesn't truncate opening a file for writing, so we need to delete the file instead
-        // to replicate this
-        fs.delete(newName)
+      // Okio doesn't truncate opening a file for writing, so we need to delete the file instead
+      // to replicate this. https://github.com/square/okio/issues/514
+      fs.delete(newName)
+      // If we're appending, copy the existing file comments over first
+      if (append) {
+        fs.copy(baseFile, newName)
       }
       fs.openReadWrite(newName)
     } catch (e: IOException) {
@@ -227,8 +229,8 @@ constructor(
    * Perform the write operations inside [block] on this file. If [block] throws an exception the
    * write will be failed. Otherwise the write will be applied atomically to the file.
    */
-  fun tryWrite(append: Boolean = false, truncate: Boolean = true, block: (BufferedSink) -> Unit) {
-    val handle = startWrite(truncate)
+  fun tryWrite(append: Boolean = false, block: (BufferedSink) -> Unit) {
+    val handle = startWrite(append)
     val sink = if (append) handle.appendingSink() else handle.sink()
     var success = false
     try {

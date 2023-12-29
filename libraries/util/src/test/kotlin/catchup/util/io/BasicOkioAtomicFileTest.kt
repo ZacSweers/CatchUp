@@ -13,7 +13,8 @@ import org.junit.Test
 class BasicOkioAtomicFileTest {
 
   private val fs = FakeFileSystem()
-  private val file = AtomicFile("file".toPath(), fs, setPosixPermissions = false)
+  private val filePath = "file".toPath()
+  private val file = AtomicFile(filePath, fs, setPosixPermissions = false)
 
   @After
   fun tearDown() {
@@ -23,8 +24,18 @@ class BasicOkioAtomicFileTest {
   @Test
   fun tryWriteSuccess() {
     file.tryWrite { it.write(byteArrayOf(0, 1, 2)) }
-    val bytes = file.read { readByteArray() }
+    val bytes = file.readByteArray()
     assertArrayEquals(byteArrayOf(0, 1, 2), bytes)
+  }
+
+  @Test
+  fun tryWriteSuccess_append() {
+    // Write some initial bytes
+    fs.write(filePath) { write(byteArrayOf(0, 1, 2)) }
+
+    file.tryWrite(append = true) { it.write(byteArrayOf(0, 1, 2)) }
+    val bytes = file.readByteArray()
+    assertArrayEquals(byteArrayOf(0, 1, 2, 0, 1, 2), bytes)
   }
 
   @Test
@@ -41,7 +52,7 @@ class BasicOkioAtomicFileTest {
       }
     assertThat(exception).isSameInstanceAs(failure)
 
-    val bytes = file.read { readByteArray() }
+    val bytes = file.readByteArray()
     assertArrayEquals(byteArrayOf(0, 1, 2), bytes)
   }
 
@@ -49,7 +60,7 @@ class BasicOkioAtomicFileTest {
   fun writeBytes() {
     file.writeBytes(byteArrayOf(0, 1, 2))
 
-    val bytes = file.read { readByteArray() }
+    val bytes = file.readByteArray()
     assertArrayEquals(byteArrayOf(0, 1, 2), bytes)
   }
 
@@ -57,7 +68,7 @@ class BasicOkioAtomicFileTest {
   fun writeText() {
     file.writeText("Hey")
 
-    val bytes = file.read { readByteArray() }
+    val bytes = file.readByteArray()
     assertArrayEquals(byteArrayOf(72, 101, 121), bytes)
   }
 
@@ -65,7 +76,7 @@ class BasicOkioAtomicFileTest {
   fun writeTextCharset() {
     file.writeText("Hey", charset = Charsets.UTF_16LE)
 
-    val bytes = file.read { readByteArray() }
+    val bytes = file.readByteArray()
     assertArrayEquals(byteArrayOf(72, 0, 101, 0, 121, 0), bytes)
   }
 
