@@ -46,10 +46,12 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import me.saket.filesize.FileSize.Companion.megabytes
+import okio.BufferedSink
 import okio.FileSystem
 import okio.IOException
 import okio.Path
 import okio.Path.Companion.toOkioPath
+import okio.buffer
 import timber.log.Timber
 
 // TODO
@@ -64,6 +66,8 @@ class LumberYard(
   private val fs: FileSystem = FileSystem.SYSTEM,
   internal val clock: Clock = Clock.System,
   internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
+  /** Using AtomicFile isn't really necessary if just appending to a file, but left as an option. */
+  private val useAtomicFile: Boolean = false,
 ) {
 
   @Inject
@@ -178,10 +182,15 @@ class LumberYard(
 
     val output = logFiles[currentFileIndex]
     return if (!fs.exists(output) || fs.metadata(output).size!! <= MAX_LOG_FILE_SIZE) {
-      AtomicFile(output, fs).tryWrite(append = true) { sink ->
+      val writeAction: (BufferedSink) -> Unit = { sink ->
         for (entry in entries) {
           sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
         }
+      }
+      if (useAtomicFile) {
+        AtomicFile(output, fs).tryWrite(append = true, writeAction)
+      } else {
+        fs.appendingSink(output).buffer().use(writeAction)
       }
       output
     } else {
