@@ -23,6 +23,7 @@ import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
 import java.util.function.Consumer
 import okio.BufferedSink
+import okio.BufferedSource
 import okio.FileHandle
 import okio.IOException
 import okio.FileSystem
@@ -85,7 +86,7 @@ constructor(
    * access to AtomicFile.
    */
   @Throws(IOException::class)
-  fun startWrite(): FileHandle {
+  private fun startWrite(): FileHandle {
     if (fs.exists(legacyBackupName)) {
       fs.atomicMove(legacyBackupName, baseFile)
     }
@@ -188,20 +189,6 @@ constructor(
     }
   }
 
-  // TODO revisit with better APIs
-  /**
-   * @hide
-   */
-//  @Deprecated("This is not safe.")
-//  @Throws(IOException::class)
-//  fun openAppend(): FileOutputStream {
-//    try {
-//      return FileOutputStream(baseFile, true)
-//    } catch (e: FileNotFoundException) {
-//      throw IOException("Couldn't append $baseFile")
-//    }
-//  }
-
   /**
    * Open the atomic file for reading. You should call close() on the FileInputStream when you are
    * done reading from it.
@@ -209,7 +196,7 @@ constructor(
    * You must do your own threading protection for access to AtomicFile.
    */
   @Throws(FileNotFoundException::class)
-  fun openRead(): FileHandle {
+  private fun openRead(): FileHandle {
     if (fs.exists(legacyBackupName)) {
       fs.atomicMove(legacyBackupName, baseFile)
     }
@@ -260,12 +247,10 @@ constructor(
     }
   }
 
-  /**
-   * @hide
-   */
-  fun write(writeContent: (BufferedSink) -> Unit) {
+  fun write(append: Boolean = false, writeContent: (BufferedSink) -> Unit) {
     val handle = startWrite()
-    handle.sink().buffer().use {
+    val sink = if (append) handle.appendingSink() else handle.sink()
+    sink.buffer().use {
       try {
         writeContent(it)
         finishWrite(handle)
