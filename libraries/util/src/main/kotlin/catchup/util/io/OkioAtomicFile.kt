@@ -169,21 +169,6 @@ constructor(
   }
 
   /**
-   * @hide
-   */
-  @Deprecated("This is not safe.")
-  @Throws(IOException::class)
-  fun truncate() {
-    try {
-      val fos = fs.openReadWrite(baseFile, mustExist = true)
-      sync(fos)
-      fos.close()
-    } catch (e: IOException) {
-      throw IOException("Couldn't append $baseFile")
-    }
-  }
-
-  /**
    * Open the atomic file for reading. You should call close() on the FileInputStream when you are
    * done reading from it.
    *
