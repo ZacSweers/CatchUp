@@ -1,39 +1,33 @@
 /*
-* Copyright (C) 2009 The Android Open Source Project
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright (C) 2009 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package catchup.util.io
 
 import android.util.Log
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
-import java.util.function.Consumer
 import okio.BufferedSink
-import okio.BufferedSource
 import okio.FileHandle
-import okio.IOException
 import okio.FileSystem
+import okio.IOException
 import okio.Path
 import okio.buffer
 
 /**
  * Helper class for performing atomic operations on a file by writing to a new file and renaming it
- * into the place of the original file after the write has successfully completed. If you need this
- * on older versions of the platform you can use [androidx.core.util.AtomicFile] in AndroidX.
+ * into the place of the original file after the write has successfully completed.
  *
  * Atomic file guarantees file integrity by ensuring that a file has been completely written and
  * sync'd to disk before renaming it to the original file. Previously this is done by renaming the
@@ -48,43 +42,37 @@ import okio.buffer
 @Suppress("LogNotTimber")
 class AtomicFile
 /**
- * Create a new AtomicFile for a file located at the given File path.
- * The new file created when writing will be the same file path with ".new" appended.
+ * Create a new AtomicFile for a file located at the given File path. The new file created when
+ * writing will be the same file path with ".new" appended.
  */
 constructor(
   /**
-   * Return the path to the base file.  You should not generally use this,
-   * as the data at that path may not be valid.
+   * Return the path to the base file. You should not generally use this, as the data at that path
+   * may not be valid.
    */
   val baseFile: Path,
   private val fs: FileSystem = FileSystem.SYSTEM
 ) {
   private val newName = baseFile / ".new"
 
-  /**
-   * Delete the atomic file. This deletes both the base and new files.
-   */
+  /** Delete the atomic file. This deletes both the base and new files. */
   fun delete() {
     fs.delete(baseFile)
     fs.delete(newName)
   }
 
   /**
-   * Start a new write operation on the file. This returns a FileOutputStream
-   * to which you can write the new file data. The existing file is replaced
-   * with the new data. You *must not* directly close the given
-   * FileOutputStream; instead call either [finishWrite]
-   * or [failWrite].
+   * Start a new write operation on the file. This returns a FileOutputStream to which you can write
+   * the new file data. The existing file is replaced with the new data. You *must not* directly
+   * close the given [FileHandle]; instead call either [finishWrite] or [failWrite].
    *
-   * Note that if another thread is currently performing
-   * a write, this will simply replace whatever that thread is writing
-   * with the new file being written by this thread, and when the other
-   * thread finishes the write the new write operation will no longer be
-   * safe (or will be lost). You must do your own threading protection for
-   * access to AtomicFile.
+   * Note that if another thread is currently performing a write, this will simply replace whatever
+   * that thread is writing with the new file being written by this thread, and when the other
+   * thread finishes the write the new write operation will no longer be safe (or will be lost). You
+   * must do your own threading protection for access to AtomicFile.
    */
   @Throws(IOException::class)
-  private fun startWrite(): FileHandle {
+  fun startWrite(): FileHandle {
     return try {
       fs.openReadWrite(newName, mustExist = true)
     } catch (e: IOException) {
@@ -94,44 +82,45 @@ constructor(
         throw IOException("Failed to create directory for $newName")
       }
       // Set perms to 00771
-      Files.setPosixFilePermissions(parent.toNioPath(), setOf(
-        // Owner
-        PosixFilePermission.OWNER_READ,
-        PosixFilePermission.OWNER_WRITE,
-        PosixFilePermission.OWNER_EXECUTE,
-        // Group
-        PosixFilePermission.GROUP_READ,
-        PosixFilePermission.GROUP_WRITE,
-        PosixFilePermission.GROUP_EXECUTE,
-        // Other
-        PosixFilePermission.OTHERS_EXECUTE
-      ))
+      Files.setPosixFilePermissions(
+        parent.toNioPath(),
+        setOf(
+          // Owner
+          PosixFilePermission.OWNER_READ,
+          PosixFilePermission.OWNER_WRITE,
+          PosixFilePermission.OWNER_EXECUTE,
+          // Group
+          PosixFilePermission.GROUP_READ,
+          PosixFilePermission.GROUP_WRITE,
+          PosixFilePermission.GROUP_EXECUTE,
+          // Other
+          PosixFilePermission.OTHERS_EXECUTE
+        )
+      )
       try {
         fs.openReadWrite(newName, mustExist = true)
-      } catch (e2: FileNotFoundException) {
+      } catch (e2: IOException) {
         throw IOException("Failed to create new file $newName", e2)
       }
     }
   }
 
   /**
-   * Perform an fsync on the given FileOutputStream. The stream at this
-   * point must be flushed but not yet closed.
+   * Perform an fsync on the given [FileHandle]. The stream at this point must be flushed but not
+   * yet closed.
    */
   private fun sync(handle: FileHandle): Boolean {
     try {
       handle.flush()
       return true
-    } catch (_: IOException) {
-    }
+    } catch (_: IOException) {}
     return false
   }
 
   /**
-   * Call when you have successfully finished writing to the stream
-   * returned by [startWrite]. This will close, sync, and
-   * commit the new data. The next attempt to read the atomic file
-   * will return the new file stream.
+   * Call when you have successfully finished writing to the stream returned by [startWrite]. This
+   * will close, sync, and commit the new data. The next attempt to read the atomic file will return
+   * the new file stream.
    */
   fun finishWrite(handle: FileHandle?) {
     if (handle == null) {
@@ -149,9 +138,8 @@ constructor(
   }
 
   /**
-   * Call when you have failed for some reason at writing to the stream
-   * returned by [startWrite]. This will close the current
-   * write stream, and delete the new file.
+   * Call when you have failed for some reason at writing to the stream returned by [startWrite].
+   * This will close the current write stream, and delete the new file.
    */
   fun failWrite(handle: FileHandle?) {
     if (handle == null) {
@@ -174,8 +162,8 @@ constructor(
    *
    * You must do your own threading protection for access to AtomicFile.
    */
-  @Throws(FileNotFoundException::class)
-  private fun openRead(): FileHandle {
+  @Throws(IOException::class)
+  fun openRead(): FileHandle {
     // It was okay to call openRead() between startWrite() and finishWrite() for the first time
     // (because there is no backup file), where openRead() would open the file being written,
     // which makes no sense, but finishWrite() would still persist the write properly. For all
@@ -189,11 +177,7 @@ constructor(
     return fs.openReadOnly(baseFile)
   }
 
-  /**
-   * @hide
-   * Checks if the original or legacy backup file exists.
-   * @return whether the original or legacy backup file exists.
-   */
+  /** @return whether the original file exists. */
   fun exists(): Boolean {
     return fs.exists(baseFile)
   }
@@ -206,14 +190,12 @@ constructor(
     get() = fs.metadataOrNull(baseFile)?.lastModifiedAtMillis ?: 0
 
   /**
-   * A convenience for [openRead] that also reads all of the
-   * file contents into a byte array which is returned.
+   * A convenience for [openRead] that also reads all of the file contents into a byte array which
+   * is returned.
    */
   @Throws(IOException::class)
   fun readFully(): ByteArray {
-    return openRead().source().buffer().use {
-      it.readByteArray()
-    }
+    return openRead().source().buffer().use { it.readByteArray() }
   }
 
   fun write(append: Boolean = false, writeContent: (BufferedSink) -> Unit) {
@@ -233,7 +215,7 @@ constructor(
   private fun propagate(t: Throwable): Throwable {
     if (t is Error) return t
     if (t is RuntimeException) return t
-    return RuntimeException(t);
+    return RuntimeException(t)
   }
 
   override fun toString(): String {
