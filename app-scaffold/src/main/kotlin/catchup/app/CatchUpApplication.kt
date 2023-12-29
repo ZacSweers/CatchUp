@@ -64,14 +64,14 @@ class CatchUpApplication : Application() {
   }
 
   @Inject
-  internal fun setupLumberYard(lumberYard: LumberYard) {
+  internal fun setupLumberYard(lumberYard: LumberYard, clock: Clock) {
     val defaultHandler = Thread.currentThread().uncaughtExceptionHandler
     Thread.currentThread().setUncaughtExceptionHandler { thread, throwable ->
       runBlocking {
         withContext(NonCancellable) {
           lumberYard.addEntry(
             LumberYard.Entry(
-              Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+              clock.now().toLocalDateTime(TimeZone.currentSystemDefault()),
               Log.ERROR,
               "FATAL",
               throwable.message ?: "No message",
