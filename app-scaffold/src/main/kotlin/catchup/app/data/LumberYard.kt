@@ -78,6 +78,7 @@ sealed class LumberYard {
   }
 
   protected open fun protectedTryAddEntry(entry: Entry) {}
+
   protected open suspend fun protectedAddEntry(entry: Entry) {}
 
   fun bufferedLogs(): ImmutableList<Entry> = bufferedLogs.toImmutableList()
@@ -87,14 +88,10 @@ sealed class LumberYard {
   }
 
   /** Flushes the current logs to disk, if applicable. */
-  open suspend fun flush() {
-
-  }
+  open suspend fun flush() {}
 
   /** Tries to flush the current logs to disk, if applicable. */
-  open fun tryFlush() {
-
-  }
+  open fun tryFlush() {}
 
   suspend fun closeAndJoin() {
     protectedCloseAndJoin()
@@ -145,7 +142,9 @@ sealed class LumberYard {
     }
   }
 
-  class Factory @Inject constructor(
+  class Factory
+  @Inject
+  constructor(
     private val simpleLumberYard: Provider<SimpleLumberYard>,
     private val diskLumberYard: Provider<SimpleLumberYard>,
   ) {
@@ -163,7 +162,8 @@ sealed class LumberYard {
   }
 }
 
-class SimpleLumberYard internal constructor(
+class SimpleLumberYard
+internal constructor(
   override val bufferSize: Int = BUFFER_SIZE,
   override val clock: Clock = Clock.System,
   override val timeZone: TimeZone = TimeZone.currentSystemDefault(),
@@ -171,11 +171,11 @@ class SimpleLumberYard internal constructor(
   @Inject constructor() : this(BUFFER_SIZE)
 }
 
-
 // TODO
 //  disable flushing in background? Requires exposing some sort of StateFlow<Boolean> on the DI
 //  graph of foreground/background events
-class DiskLumberYard internal constructor(
+class DiskLumberYard
+internal constructor(
   private val _logDir: Path,
   scope: CoroutineScope,
   private val flushInterval: Duration = FLUSH_INTERVAL,
@@ -279,7 +279,7 @@ class DiskLumberYard internal constructor(
         AtomicFile(output, fs).tryWrite(append = true, writeAction)
       } else {
         fs.appendingSink(output).buffer().use(writeAction)
-        }
+      }
       output
     } else {
       // Rotate files
