@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import catchup.app.data.DiskLumberYard
 import catchup.app.data.LumberYard
 import catchup.app.ui.bugreport.BugReportDialog.ReportListener
 import catchup.app.ui.bugreport.BugReportView.Report
@@ -76,7 +77,15 @@ constructor(
       if (report.includeLogs) {
         try {
           lumberYard.flush()
-          submitReport(context, report) { lumberYard.currentLogFileText() }
+          submitReport(context, report) {
+            if (lumberYard is DiskLumberYard) {
+              lumberYard.currentLogFileText()
+            } else {
+              lumberYard
+                .bufferedLogs()
+                .joinToString("\n", transform = LumberYard.Entry::prettyPrint)
+            }
+          }
         } catch (e: Exception) {
           Toast.makeText(context, "Couldn't attach the logs.", Toast.LENGTH_SHORT).show()
           submitReport(context, report, null)

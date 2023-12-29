@@ -184,11 +184,12 @@ constructor(
           cleanedSize += initialDbSize
         }
       }
-      cleanedSize += if (lumberYard is DiskLumberYard) {
-        lumberYard.cleanUp()
-      } else {
-        0
-      }
+      cleanedSize +=
+        if (lumberYard is DiskLumberYard) {
+          lumberYard.cleanUp()
+        } else {
+          0
+        }
       return@withContext cleanedSize
     }
   }
