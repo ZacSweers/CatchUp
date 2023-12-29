@@ -277,7 +277,7 @@ constructor(
     return State(
       items(appConfig, LocalContext.current.resources.displayMetrics, clientCache),
       if (showLogs) {
-        lumberYard.writtenLogs()
+        lumberYard.bufferedLogs()
       } else {
         persistentListOf()
       },

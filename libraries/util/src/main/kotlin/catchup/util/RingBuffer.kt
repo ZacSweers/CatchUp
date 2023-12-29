@@ -25,5 +25,5 @@ class RingBuffer<T>(private val capacity: Int) {
     deque.clear()
   }
 
-  fun toList(): ImmutableList<T> = deque.toImmutableList()
+  fun toImmutableList(): ImmutableList<T> = deque.toImmutableList()
 }

@@ -39,7 +39,6 @@ class LumberYardTest {
         flushInterval = flushInterval,
         fs = fs,
         clock = testClock,
-        debugLog = ::println
       )
 
     // 3 is DEBUG
@@ -75,7 +74,6 @@ class LumberYardTest {
         flushInterval = flushInterval,
         fs = fs,
         clock = testClock,
-        debugLog = ::println
       )
 
     // 3 is DEBUG
@@ -90,7 +88,6 @@ class LumberYardTest {
 
     assertThat(logFiles()).isEmpty()
 
-    println("Closing")
     lumberYard.closeAndJoin()
 
     assertThat(logFiles()).hasSize(1)

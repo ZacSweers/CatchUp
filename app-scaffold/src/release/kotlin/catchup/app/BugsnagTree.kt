@@ -34,7 +34,7 @@ internal class BugsnagTree(private val lumberYard: LumberYard) : Timber.Tree() {
   }
 
   fun update(event: Event) {
-    for ((i, entry) in lumberYard.writtenLogs().withIndex()) {
+    for ((i, entry) in lumberYard.bufferedLogs().withIndex()) {
       val message = entry.prettyPrint()
       event.addMetadata("Log", String.format(Locale.US, "%03d", i), message)
     }

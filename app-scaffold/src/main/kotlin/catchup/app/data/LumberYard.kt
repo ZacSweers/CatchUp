@@ -30,7 +30,6 @@ import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Job
@@ -46,7 +45,6 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
-import me.saket.filesize.FileSize.Companion.bytes
 import me.saket.filesize.FileSize.Companion.megabytes
 import okio.FileSystem
 import okio.IOException
@@ -66,7 +64,6 @@ class LumberYard(
   private val fs: FileSystem = FileSystem.SYSTEM,
   internal val clock: Clock = Clock.System,
   internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
-  private val debugLog: (String) -> Unit = {},
 ) {
 
   @Inject
@@ -95,51 +92,32 @@ class LumberYard(
 
   private val flushChannel = Channel<Unit>(Channel.CONFLATED)
 
-  // Keep last 200 logs in memory for bug reporting
-  // Guarded implicitly by writeMutex
-  private val writtenLogs = RingBuffer<Entry>(200)
+  /**
+   * Keep last [BUFFER_SIZE] logs in memory for the bugsnag trace tab and debug screen.
+   *
+   * Guarded implicitly by [writeMutex].
+   *
+   * TODO would be nice to not maintain this separately from [logChannel], but shrug
+   */
+  private val bufferedLogs = RingBuffer<Entry>(BUFFER_SIZE)
 
   @OptIn(DelicateCoroutinesApi::class)
   private val writeJob: Job =
     scope.launch {
       try {
-        debugLog("Starting write job")
         while (isActive && !flushChannel.isClosedForReceive) {
-          debugLog("Checking for flush")
           for (flush in flushChannel) {
-            debugLog("Flush triggered")
             if (logChannel.isClosedForReceive) break
-            val results = mutableListOf(logChannel.receive())
-            // Drain the channel buffer
-            while (isActive && !logChannel.isClosedForReceive) {
-              debugLog("Draining log channel")
-              val attempt = logChannel.tryReceive()
-              when (val value = attempt.getOrNull()) {
-                null -> {
-                  debugLog("No more logs to flush, breaking")
-                  break
-                }
-                else -> {
-                  debugLog("Adding log - ${value.prettyPrint()}")
-                  results += value
-                }
-              }
-            }
-            debugLog("Done draining log channel, saving logs to disk")
+            val results = logChannel.drain(this)
             if (results.isNotEmpty()) {
-              debugLog("Saving logs to disk")
               save(results)
-              debugLog("Done saving logs to disk, clearing pending")
               results.clear()
             }
           }
         }
       } catch (e: Exception) {
         Timber.e(e, "Error writing logs to disk")
-      } finally {
-        debugLog("Finalizer for job")
       }
-      debugLog("Exiting write job")
     }
 
   @OptIn(DelicateCoroutinesApi::class)
@@ -151,12 +129,30 @@ class LumberYard(
       }
     }
 
+  @OptIn(DelicateCoroutinesApi::class)
+  private suspend fun <T> Channel<T>.drain(scope: CoroutineScope) =
+    with(scope) {
+      val results = mutableListOf(receive())
+      while (isActive && !isClosedForReceive) {
+        val attempt = tryReceive()
+        when (val value = attempt.getOrNull()) {
+          null -> break
+          else -> {
+            results += value
+          }
+        }
+      }
+      results
+    }
+
   fun tryAddEntry(entry: Entry) {
     logChannel.trySend(entry)
+    bufferedLogs.push(entry)
   }
 
   suspend fun addEntry(entry: Entry) {
     logChannel.send(entry)
+    bufferedLogs.push(entry)
   }
 
   private suspend inline fun <T> guardedIo(body: (logDir: Path) -> T): T {
@@ -165,7 +161,6 @@ class LumberYard(
 
   /** Save the current logs to disk. */
   suspend fun flush() {
-    debugLog("Flush triggered")
     flushChannel.send(Unit)
   }
 
@@ -174,7 +169,7 @@ class LumberYard(
     flushChannel.trySend(Unit)
   }
 
-  fun writtenLogs(): ImmutableList<Entry> = writtenLogs.toList().toImmutableList()
+  fun bufferedLogs(): ImmutableList<Entry> = bufferedLogs.toImmutableList()
 
   private tailrec suspend fun save(entries: List<Entry>): Path = guardedIo { logDir ->
     if (!fs.exists(logDir)) {
@@ -183,19 +178,13 @@ class LumberYard(
 
     val output = logFiles[currentFileIndex]
     return if (!fs.exists(output) || fs.metadata(output).size!! <= MAX_LOG_FILE_SIZE) {
-      debugLog("Writing logs to $output")
       AtomicFile(output, fs).tryWrite(append = true) { sink ->
         for (entry in entries) {
-          debugLog("Writing entry to disk - ${entry.prettyPrint()}")
           sink.writeUtf8(entry.prettyPrint()).writeByte('\n'.code)
-          writtenLogs.push(entry)
         }
       }
       output
     } else {
-      debugLog(
-        "Rotating files, current file (${output.name}) of size ${fs.metadata(output).size} exceeds max size of ${MAX_LOG_FILE_SIZE.bytes.inWholeMegabytes}MB"
-      )
       // Rotate files
       currentFileIndex = (currentFileIndex + 1) % logFiles.size
       save(entries)
@@ -269,13 +258,11 @@ class LumberYard(
   }
 
   suspend fun closeAndJoin() {
-    debugLog("Closing and joining")
     // Flush whatever is left in the buffer
     flush()
     flushJob.cancel()
     flushChannel.close()
     logChannel.close()
-    debugLog("Joining write job")
     writeJob.join()
   }
 
