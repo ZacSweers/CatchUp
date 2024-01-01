@@ -216,10 +216,17 @@ dependencyResolutionManagement {
 
 plugins {
   id("com.gradle.enterprise") version "3.16.1"
-  id("com.dropbox.focus") version "0.5.1"
+  id("com.dropbox.focus") version "0.5.1" apply false
 }
 
-configure<FocusExtension> { allSettingsFileName.set("settings-all.gradle.kts") }
+val useProjectIsolation = System.getProperty("org.gradle.unsafe.isolated-projects", "false").toBoolean()
+val focusDisabled = System.getenv("NO_FOCUS").toBoolean()
+if (focusDisabled || useProjectIsolation) {
+  apply(from = "settings-all.gradle.kts")
+} else {
+  apply(plugin = "com.dropbox.focus")
+  configure<FocusExtension> { allSettingsFileName.set("settings-all.gradle.kts") }
+}
 
 gradleEnterprise {
   buildScan {
