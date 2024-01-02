@@ -24,7 +24,6 @@
   <string name="changelog">Changelog</string>
   <string name="pref_reports">Analytics and Crash Reporting</string>
   <string name="pref_reports_summary">Help me help you! Enable this to allow automatic uploads of analytics and crash reports. No personally identifiable data is sent.</string>
-  <string name="error_no_url">No URL :(</string>
   <string name="general">General</string>
   <string name="prefs_theme">Theming</string>
   <string name="pref_smart_linking_title">Enable smart linking</string>

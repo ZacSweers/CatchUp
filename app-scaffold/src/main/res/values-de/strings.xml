@@ -23,7 +23,6 @@
   <string name="licenses">Lizenzen</string>
   <string name="pref_reports">Analytics und Crash Reporting</string>
   <string name="pref_reports_summary">Hilf mir Dir zu helfen! Schalte dies ein um den automatischen Upload von Analyse und Absturzmeldungen zu erlauben. Dabei werden keine persönlichen Daten versandt.</string>
-  <string name="error_no_url">Keine URL :(</string>
   <string name="general">Allgemein</string>
   <string name="prefs_theme">Darstellung</string>
   <string name="pref_smart_linking_title">Smart-Linking einschalten</string>
