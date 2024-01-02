@@ -60,8 +60,8 @@ android {
       create("release") {
         keyAlias = "catchupkey"
         storeFile = rootProject.file("signing/app-release.jks")
-        storePassword = properties["catchup_signing_store_password"].toString()
-        keyPassword = properties["catchup_signing_key_password"].toString()
+        storePassword = providers.gradleProperty("catchup_signing_store_password").getOrElse("")
+        keyPassword = providers.gradleProperty("catchup_signing_key_password").getOrElse("")
       }
     } else {
       create("release").initWith(getByName("debug"))
@@ -73,7 +73,7 @@ android {
       versionNameSuffix = "-dev"
     }
     getByName("release") {
-      manifestPlaceholders["BUGSNAG_API_KEY"] = properties["catchup_bugsnag_key"].toString()
+      manifestPlaceholders["BUGSNAG_API_KEY"] = providers.gradleProperty("catchup_bugsnag_key").getOrElse("")
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       proguardFiles += file("proguard-rules.pro")
       isMinifyEnabled = true
