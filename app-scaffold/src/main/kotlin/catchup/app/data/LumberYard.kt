@@ -324,7 +324,7 @@ internal constructor(
   companion object {
     internal const val LOG_EXTENSION = "log"
     private val FLUSH_INTERVAL = 5000.milliseconds
-    private val MAX_LOG_FILE_SIZE = 1.megabytes.bytes
+    private val MAX_LOG_FILE_SIZE = 1.megabytes.inWholeBytes
   }
 }
 

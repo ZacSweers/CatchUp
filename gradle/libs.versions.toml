@@ -208,7 +208,7 @@ eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet
 
 errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.24.0"
 
-fileSize = "me.saket.filesize:filesize:1.1.0"
+fileSize = "me.saket.filesize:filesize:1.2.0"
 
 haze = "dev.chrisbanes.haze:haze:0.4.1"
 
