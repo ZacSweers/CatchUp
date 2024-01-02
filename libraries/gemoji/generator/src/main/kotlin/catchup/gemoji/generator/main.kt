@@ -71,9 +71,7 @@ private class GemojiGenerator : CliktCommand() {
 
   private fun assertAlias(db: GemojiDatabase, alias: String, emoji: String) {
     val result = db.gemojiQueries.getEmoji(alias).executeAsOne().emoji
-    check(result == emoji) {
-      "Expected $alias to be $emoji, but was $result"
-    }
+    check(result == emoji) { "Expected $alias to be $emoji, but was $result" }
   }
 }
 
