@@ -15,8 +15,8 @@ coil = "2.5.0"
 compose = "1.6.0-rc01"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
-compose-compiler = "1.5.7"
-compose-compiler-kotlinVersion = "1.9.21"
+compose-compiler = "1.5.8"
+compose-compiler-kotlinVersion = "1.9.22"
 compose-jb = "1.5.11"
 compose-jb-compiler = "1.5.7.1"
 compose-jb-kotlinVersion = "1.9.20"
