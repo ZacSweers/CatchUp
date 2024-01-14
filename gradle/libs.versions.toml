@@ -2,7 +2,7 @@
 accompanist = "0.33.2-alpha"
 agp = "8.4.0-alpha03"
 androidx-activity = "1.9.0-alpha01"
-androidx-core = "1.13.0-alpha02"
+androidx-core = "1.13.0-alpha03"
 androidx-sqlite = "2.4.0"
 appcompat = "1.7.0-alpha03"
 benchmark = "1.2.2"
@@ -12,7 +12,7 @@ anvil = "2.4.9"
 apollo = "3.8.2"
 circuit = "0.18.2"
 coil = "2.5.0"
-compose = "1.6.0-beta03"
+compose = "1.6.0-rc01"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.5.7"
@@ -23,7 +23,7 @@ compose-jb-kotlinVersion = "1.9.20"
 corbind = "1.10.0"
 coroutines = "1.8.0-RC2"
 dagger = "2.50"
-datastore = "1.1.0-alpha07"
+datastore = "1.1.0-beta01"
 detekt = "1.23.4"
 eithernet = "1.8.0"
 flipper = "0.244.0"
@@ -45,7 +45,7 @@ preferences = "1.2.1"
 retrofit = "2.9.0"
 slack-lint = "0.7.0"
 sortDependencies = "0.6"
-sgp = "0.15.0"
+sgp = "0.15.2"
 spotless = "6.23.3"
 sqldelight = "2.0.1"
 telephoto = "0.7.1"
@@ -93,7 +93,7 @@ androidx-appCompat-resources = { module = "androidx.appcompat:appcompat-resource
 
 androidx-benchmark-macro-junit = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
 
-androidx-collection = "androidx.collection:collection:1.4.0-beta02"
+androidx-collection = "androidx.collection:collection:1.4.0-rc01"
 
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
@@ -103,7 +103,7 @@ androidx-design = "com.google.android.material:material:1.11.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
-androidx-fragment = "androidx.fragment:fragment:1.7.0-alpha07"
+androidx-fragment = "androidx.fragment:fragment:1.7.0-alpha08"
 
 androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
@@ -210,7 +210,7 @@ errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.24.1"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:0.4.3"
+haze = "dev.chrisbanes.haze:haze:0.4.5"
 
 javaxInject = "javax.inject:javax.inject:1"
 
