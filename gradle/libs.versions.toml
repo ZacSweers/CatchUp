@@ -244,7 +244,7 @@ misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plu
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.11.0"
 misc-debug-guava = "com.google.guava:guava:33.0.0-jre"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
-misc-debug-telescope = "com.mattprecious.telescope:telescope:2.2.0"
+misc-debug-telescope = "com.mattprecious.telescope:telescope:2.3.0"
 
 misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:1.0.3"
 misc-composeSettings-base = "com.github.alorma:compose-settings-storage-base:1.0.3"
