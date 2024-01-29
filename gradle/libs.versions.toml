@@ -17,7 +17,7 @@ compose = "1.6.0"
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.5.8"
 compose-compiler-kotlinVersion = "1.9.22"
-compose-jb = "1.5.11"
+compose-jb = "1.5.12"
 compose-jb-compiler = "1.5.8"
 compose-jb-kotlinVersion = "1.9.20"
 corbind = "1.10.0"
