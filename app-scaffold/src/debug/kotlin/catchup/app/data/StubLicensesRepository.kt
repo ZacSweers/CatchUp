@@ -30,7 +30,7 @@ constructor(
                 "Apache v2",
                 "https://github.com/ZacSweers/MoshiX",
                 "Extra serialization tools for Moshi",
-                "https://github.com/ZacSweers"
+                "https://github.com/ZacSweers",
               )
             )
           }

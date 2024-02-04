@@ -43,7 +43,7 @@ class NumberUtilTest {
         999_999_999_999_999_999L,
         1_230_000_000_000_000L,
         java.lang.Long.MIN_VALUE,
-        java.lang.Long.MAX_VALUE
+        java.lang.Long.MAX_VALUE,
       )
     val DEFAULT_LOCALE: Locale = Locale.US
     val EXPECTED =
@@ -63,7 +63,7 @@ class NumberUtilTest {
         "999P",
         "1.2P",
         "-9.2E",
-        "9.2E"
+        "9.2E",
       )
   }
 

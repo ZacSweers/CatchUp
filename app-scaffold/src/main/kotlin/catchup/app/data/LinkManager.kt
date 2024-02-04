@@ -65,7 +65,7 @@ class LinkManager
 constructor(
   private val customTab: CustomTabActivityHelper,
   private val catchUpPreferences: CatchUpPreferences,
-  private val appConfig: AppConfig
+  private val appConfig: AppConfig,
 ) : LinkHandler {
 
   // Naive cache that tracks if we've already resolved for activities that can handle a given host
@@ -151,7 +151,7 @@ constructor(
     context: Context,
     uri: Uri,
     intent: Intent,
-    accentColor: Color
+    accentColor: Color,
   ): Boolean {
     val matchedUri =
       if (appConfig.isSdkAtLeast(30)) {
@@ -174,10 +174,7 @@ constructor(
    * try/catch.
    */
   @RequiresApi(30)
-  private fun queryAndOpen30(
-    context: Context,
-    inputIntent: Intent,
-  ): Boolean {
+  private fun queryAndOpen30(context: Context, inputIntent: Intent): Boolean {
     val intent =
       Intent(inputIntent).apply { flags = flags or Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER }
     return try {
@@ -188,10 +185,7 @@ constructor(
     }
   }
 
-  private suspend fun queryAndOpenLegacy(
-    context: Context,
-    intent: Intent,
-  ): Boolean {
+  private suspend fun queryAndOpenLegacy(context: Context, intent: Intent): Boolean {
     val manager = context.packageManager
     val hasMatch =
       flow {
@@ -242,7 +236,7 @@ constructor(
         )
         .build()
         .apply { intent.applyFlags() },
-      uri
+      uri,
     )
   }
 }

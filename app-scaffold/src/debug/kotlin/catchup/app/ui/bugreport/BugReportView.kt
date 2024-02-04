@@ -69,7 +69,7 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
       combine(
           titleView.afterTextChangeEvents().map { !it.editable.isNullOrBlank() },
           usernameView.afterTextChangeEvents().map { !it.editable.isNullOrBlank() },
-          transform = { title, username -> title && username }
+          transform = { title, username -> title && username },
         )
         .onEach { listener?.onStateChanged(it) }
         .collect()
@@ -90,7 +90,7 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
         titleView.text.toString(),
         descriptionView.text.toString(),
         screenshotView.isChecked,
-        logsView.isChecked
+        logsView.isChecked,
       )
 
   data class Report(
@@ -98,6 +98,6 @@ class BugReportView(context: Context, attrs: AttributeSet) : LinearLayout(contex
     val title: String,
     val description: String,
     val includeScreenshot: Boolean,
-    val includeLogs: Boolean
+    val includeLogs: Boolean,
   )
 }

@@ -30,5 +30,5 @@ data class Shot(
   val videoUrl: String?,
   val likesCount: Long,
   val user: User,
-  val viewsCount: Long
+  val viewsCount: Long,
 )

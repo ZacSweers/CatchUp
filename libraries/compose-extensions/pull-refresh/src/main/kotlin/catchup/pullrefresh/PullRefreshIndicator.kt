@@ -17,7 +17,7 @@ fun PullRefreshIndicator(
   modifier: Modifier = Modifier,
   backgroundColor: Color = MaterialTheme.colorScheme.surface,
   contentColor: Color = contentColorFor(backgroundColor),
-  scale: Boolean = false
+  scale: Boolean = false,
 ) {
   AndroidXPullRefreshIndicator(
     refreshing = refreshing,

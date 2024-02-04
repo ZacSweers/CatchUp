@@ -108,7 +108,7 @@ sealed class LumberYard {
           tag ?: "",
           displayLevel,
           // Indent newlines to match the original indentation.
-          message.replace("\\n".toRegex(), "\n                         ")
+          message.replace("\\n".toRegex(), "\n                         "),
         )
     }
 
@@ -206,10 +206,7 @@ internal constructor(
 
   // Act as a ring buffer with a fixed size
   private val logChannel =
-    Channel<Entry>(
-      capacity = bufferSize,
-      onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
+    Channel<Entry>(capacity = bufferSize, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
   private val flushChannel = Channel<Unit>(Channel.CONFLATED)
 

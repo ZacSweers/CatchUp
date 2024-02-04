@@ -30,7 +30,7 @@ interface UnsplashApi {
   suspend fun getPhotos(
     @Query("page") page: Int = 1, // Default 1
     @Query("per_page") pageSize: Int = 25, // Default 10
-    @Query("order_by") orderBy: OrderBy = LATEST // latest
+    @Query("order_by") orderBy: OrderBy = LATEST, // latest
   ): List<UnsplashPhoto>
 
   companion object {
