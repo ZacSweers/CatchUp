@@ -131,7 +131,7 @@ object HomeScreen : Screen, DeepLinkable {
     val changelogAvailable: Boolean,
     val selectedIndex: Int,
     val bookmarksCount: Long,
-    val eventSink: (Event) -> Unit = {}
+    val eventSink: (Event) -> Unit = {},
   ) : CircuitUiState
 
   sealed interface Event : CircuitUiEvent {
@@ -154,7 +154,7 @@ constructor(
   private val serviceMetaMap: Map<String, ServiceMeta>,
   private val catchUpPreferences: CatchUpPreferences,
   private val changelogHelper: ChangelogHelper,
-  private val bookmarkRepository: BookmarkRepository
+  private val bookmarkRepository: BookmarkRepository,
 ) : Presenter<State> {
 
   @CircuitInject(HomeScreen::class, AppScope::class)
@@ -194,7 +194,7 @@ constructor(
       serviceMetas = serviceMetas,
       changelogAvailable = changelogAvailable,
       selectedIndex = selectedIndex,
-      bookmarksCount = bookmarksCount
+      bookmarksCount = bookmarksCount,
     ) { event ->
       when (event) {
         OpenSettings -> {
@@ -217,7 +217,7 @@ constructor(
               BottomSheetOverlay(
                 model = Unit,
                 content = { _, _ -> changelogHelper.Content() },
-                onDismiss = { Unit }
+                onDismiss = { Unit },
               )
             )
           }
@@ -273,7 +273,7 @@ fun Home(state: State, modifier: Modifier = Modifier) {
                   TopAppBar(
                     title = { Text(stringResource(meta.name), fontWeight = FontWeight.Black) },
                     scrollBehavior = scrollBehavior,
-                    colors = topAppBarColors(containerColor = Color.Transparent)
+                    colors = topAppBarColors(containerColor = Color.Transparent),
                   )
                 },
               ) { innerPadding ->
@@ -300,10 +300,7 @@ fun Home(state: State, modifier: Modifier = Modifier) {
   }
 }
 
-@OptIn(
-  ExperimentalMaterial3Api::class,
-  ExperimentalFoundationApi::class,
-)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomePager(state: State, modifier: Modifier = Modifier) {
   if (state.serviceMetas.isEmpty()) return // Not loaded yet
@@ -397,34 +394,17 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
             ChangelogButton { eventSink(ShowChangelog) }
           }
 
-          AnimatedVisibility(
-            state.bookmarksCount > 0,
-            enter = fadeIn(),
-            exit = fadeOut(),
-          ) {
-            Wigglable(
-              state.bookmarksCount,
-              shouldWiggle = { old, new -> new > old },
-            ) {
-              IconButton(
-                onClick = { eventSink(OpenBookmarks) },
-              ) {
-                Icon(
-                  imageVector = Icons.Filled.Bookmark,
-                  contentDescription = "Bookmarks",
-                )
+          AnimatedVisibility(state.bookmarksCount > 0, enter = fadeIn(), exit = fadeOut()) {
+            Wigglable(state.bookmarksCount, shouldWiggle = { old, new -> new > old }) {
+              IconButton(onClick = { eventSink(OpenBookmarks) }) {
+                Icon(imageVector = Icons.Filled.Bookmark, contentDescription = "Bookmarks")
               }
             }
           }
-          IconButton(
-            onClick = { eventSink(OpenSettings) },
-          ) {
-            Icon(
-              imageVector = Icons.Default.Settings,
-              contentDescription = "Settings",
-            )
+          IconButton(onClick = { eventSink(OpenSettings) }) {
+            Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
           }
-        }
+        },
       )
     },
   ) { innerPadding ->
@@ -447,7 +427,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         indicator = { tabPositions ->
           SecondaryIndicator(
             Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-            color = contentColor
+            color = contentColor,
           )
         },
       ) {
@@ -497,7 +477,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         ) {
           CircuitContent(
             screen = ServiceScreen(serviceMetas[page].id),
-            onNavEvent = { eventSink(NestedNavEvent(it)) }
+            onNavEvent = { eventSink(NestedNavEvent(it)) },
           )
         }
       }
@@ -549,10 +529,7 @@ private val Color.isDark: Boolean
 
 @Composable
 internal fun ChangelogButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
-  IconButton(
-    onClick = onClick,
-    modifier = modifier,
-  ) {
+  IconButton(onClick = onClick, modifier = modifier) {
     Icon(
       imageVector = ImageVector.vectorResource(AppScaffoldR.drawable.baseline_redeem_24),
       contentDescription = stringResource(AppScaffoldR.string.changes),

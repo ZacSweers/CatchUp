@@ -114,10 +114,8 @@ interface CatchUpPreferences {
 @ContributesBinding(AppScope::class, boundType = CatchUpPreferences::class)
 class CatchUpPreferencesImpl
 @Inject
-constructor(
-  @ApplicationContext context: Context,
-  override val scope: BackgroundAppCoroutineScope,
-) : CatchUpPreferences, BasePreferences {
+constructor(@ApplicationContext context: Context, override val scope: BackgroundAppCoroutineScope) :
+  CatchUpPreferences, BasePreferences {
 
   // TODO hide this, only exposed for settings
   override val datastore =

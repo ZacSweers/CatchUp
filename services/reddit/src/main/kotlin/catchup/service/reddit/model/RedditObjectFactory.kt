@@ -28,7 +28,7 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
   override fun create(
     type: Type,
     annotations: Set<Annotation>,
-    moshi: Moshi
+    moshi: Moshi,
   ): JsonAdapter<RedditObject>? {
     if (!Types.getRawType(type).isAssignableFrom(RedditObject::class.java)) {
       // Not one of our oddball polymorphic types, ignore it.

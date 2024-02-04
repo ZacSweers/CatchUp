@@ -9,16 +9,12 @@ val LocalEnabled = compositionLocalOf { true }
 
 // TODO this is super hacky but compose's built-in support is patchy at best
 @Composable
-fun DisableableContent(
-  enabled: Boolean,
-  content: @Composable () -> Unit,
-) {
+fun DisableableContent(enabled: Boolean, content: @Composable () -> Unit) {
   val currentContentColor = LocalContentColor.current
   CompositionLocalProvider(
     LocalEnabled provides enabled,
     LocalContentColor provides
-      if (enabled) currentContentColor
-      else currentContentColor.copy(alpha = ContentAlphas.Disabled),
+      if (enabled) currentContentColor else currentContentColor.copy(alpha = ContentAlphas.Disabled),
   ) {
     content()
   }

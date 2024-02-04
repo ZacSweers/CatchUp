@@ -36,7 +36,7 @@ object SummarizerModule {
       AndroidSqliteDriver(
         SummarizationsDatabase.Schema,
         context,
-        "summarizations.db".takeUnless { isFakeMode }
+        "summarizations.db".takeUnless { isFakeMode },
       )
     )
 

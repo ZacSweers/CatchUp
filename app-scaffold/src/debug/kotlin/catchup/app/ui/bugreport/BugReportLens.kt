@@ -59,7 +59,7 @@ constructor(
   private val lumberYard: LumberYard,
   private val imgurUploadApi: ImgurUploadApi,
   private val gitHubIssueApi: GitHubIssueApi,
-  private val appConfig: AppConfig
+  private val appConfig: AppConfig,
 ) : Lens(), ReportListener {
 
   private var screenshot: File? = null
@@ -152,7 +152,7 @@ constructor(
     context: Context,
     report: Report,
     body: StringBuilder,
-    logs: (suspend () -> String)?
+    logs: (suspend () -> String)?,
   ) {
     val channelId = "bugreports"
     val notificationManager =
@@ -186,7 +186,7 @@ constructor(
             MultipartBody.Part.createFormData(
               "image",
               finalScreenshot.name,
-              finalScreenshot.asRequestBody("image/*".toMediaTypeOrNull())
+              finalScreenshot.asRequestBody("image/*".toMediaTypeOrNull()),
             )
           )
           .let { "\n\n!${buildMarkdown { link(it, "Screenshot") }}" }
@@ -238,7 +238,7 @@ constructor(
             NotificationCompat.Action(
               R.drawable.ic_share_black_24dp,
               "Share link",
-              PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE)
+              PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE),
             )
           )
         }

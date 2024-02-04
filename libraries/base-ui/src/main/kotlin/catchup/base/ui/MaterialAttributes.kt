@@ -42,7 +42,7 @@ internal object MaterialAttributes {
   private fun resolveOrThrow(
     context: Context,
     @AttrRes attributeResId: Int,
-    errorMessageComponent: String?
+    errorMessageComponent: String?,
   ): Int {
     val typedValue = resolve(context, attributeResId)
     if (typedValue == null) {
@@ -54,7 +54,7 @@ internal object MaterialAttributes {
         String.format(
           errorMessage,
           errorMessageComponent,
-          context.resources.getResourceName(attributeResId)
+          context.resources.getResourceName(attributeResId),
         )
       )
     }
@@ -71,7 +71,7 @@ internal object MaterialAttributes {
     return resolveOrThrow(
       componentView.context,
       attributeResId,
-      componentView.javaClass.canonicalName
+      componentView.javaClass.canonicalName,
     )
   }
 }

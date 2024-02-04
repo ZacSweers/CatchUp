@@ -39,7 +39,7 @@ import javax.inject.Inject
 @ContributesBinding(
   AppScope::class,
   boundType = CatchUpPreferences::class,
-  replaces = [CatchUpPreferencesImpl::class]
+  replaces = [CatchUpPreferencesImpl::class],
 )
 class DebugPreferences
 private constructor(

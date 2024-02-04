@@ -54,7 +54,7 @@ class CatchUpApplication : Application() {
   @Inject
   internal fun asyncInits(
     scope: BackgroundAppCoroutineScope,
-    @AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>
+    @AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>,
   ) {
     scope.launch {
       // TODO - run these in parallel?

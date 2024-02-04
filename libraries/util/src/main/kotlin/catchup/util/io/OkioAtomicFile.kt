@@ -59,7 +59,7 @@ constructor(
   private val setPosixPermissions: Boolean = true,
   private val logError: ((String, Throwable?) -> Unit) = { message, throwable ->
     Log.e(LOG_TAG, message, throwable)
-  }
+  },
 ) {
   private val newName = "$baseFile.new".toPath()
 
@@ -118,8 +118,8 @@ constructor(
             PosixFilePermission.GROUP_WRITE,
             PosixFilePermission.GROUP_EXECUTE,
             // Other
-            PosixFilePermission.OTHERS_EXECUTE
-          )
+            PosixFilePermission.OTHERS_EXECUTE,
+          ),
         )
       }
       try {

@@ -60,7 +60,7 @@ fun <T> Flow<T>.mergeWith(other: Flow<T>): Flow<T> = merge(this, other)
 
 internal class MappedStateFlow<T, R>(
   private val source: StateFlow<T>,
-  private val mapper: (T) -> R
+  private val mapper: (T) -> R,
 ) : StateFlow<R> {
 
   override val value: R

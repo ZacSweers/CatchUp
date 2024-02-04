@@ -28,7 +28,7 @@ import android.view.View
 abstract class TouchableUrlSpan(
   private val url: String,
   textColor: ColorStateList,
-  private val pressedBackgroundColor: Int
+  private val pressedBackgroundColor: Int,
 ) : ClickableSpan() {
   private var isPressed: Boolean = false
   private val normalTextColor: Int = textColor.defaultColor

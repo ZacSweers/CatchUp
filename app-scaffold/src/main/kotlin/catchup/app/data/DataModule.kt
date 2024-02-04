@@ -65,7 +65,7 @@ abstract class DataModule {
     internal fun provideOkHttpClient(
       cache: Cache,
       interceptors: DaggerSet<Interceptor>,
-      @NetworkInterceptor networkInterceptors: DaggerSet<Interceptor>
+      @NetworkInterceptor networkInterceptors: DaggerSet<Interceptor>,
     ): OkHttpClient {
       if (Looper.myLooper() == Looper.getMainLooper()) {
         throw IllegalStateException("HTTP client initialized on main thread.")

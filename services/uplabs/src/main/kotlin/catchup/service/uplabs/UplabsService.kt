@@ -79,7 +79,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
               sourceUrl = it.url,
               bestSize = null,
               aspectRatio = 4 / 3f,
-              imageId = it.id.toString()
+              imageId = it.id.toString(),
             ),
           indexInResponse = index + request.pageOffset,
           serviceId = meta().id,
@@ -111,7 +111,7 @@ abstract class UplabsMetaModule {
         R.drawable.catchup_service_uplabs_logo,
         isVisual = true,
         pagesAreNumeric = true,
-        firstPageKey = 0
+        firstPageKey = 0,
       )
   }
 }
@@ -129,7 +129,7 @@ object UplabsModule {
   internal fun provideUplabsService(
     client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
-    appConfig: AppConfig
+    appConfig: AppConfig,
   ): UplabsApi {
     return Retrofit.Builder()
       .baseUrl(UplabsApi.ENDPOINT)

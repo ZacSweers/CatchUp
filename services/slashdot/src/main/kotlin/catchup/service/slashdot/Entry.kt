@@ -43,14 +43,14 @@ data class Entry(
   @XmlSerialName(
     "section",
     namespace = "http://purl.org/rss/1.0/modules/slash/",
-    prefix = SLASH_PREFIX
+    prefix = SLASH_PREFIX,
   )
   val section: String,
   @XmlElement
   @XmlSerialName(
     "comments",
     namespace = "http://purl.org/rss/1.0/modules/slash/",
-    prefix = SLASH_PREFIX
+    prefix = SLASH_PREFIX,
   )
   val comments: Int = 0,
   val author: Author,
@@ -58,9 +58,9 @@ data class Entry(
   @XmlSerialName(
     "department",
     namespace = "http://purl.org/rss/1.0/modules/slash/",
-    prefix = SLASH_PREFIX
+    prefix = SLASH_PREFIX,
   )
-  val department: String
+  val department: String,
 )
 
 /** Nearly identical to [InstantIso8601Serializer] but handles possibly offset instants. */

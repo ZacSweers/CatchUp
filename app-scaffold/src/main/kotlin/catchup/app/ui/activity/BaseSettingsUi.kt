@@ -14,13 +14,13 @@ interface BaseSettingsUi {
   @Composable
   fun rememberBooleanSettingState(
     key: Preferences.Key<Boolean>,
-    defaultValue: Boolean
+    defaultValue: Boolean,
   ): SettingValueState<Boolean>
 
   @Composable
   fun rememberStringSettingState(
     key: Preferences.Key<String>,
-    defaultValue: String
+    defaultValue: String,
   ): SettingValueState<String>
 
   @Composable
@@ -29,7 +29,7 @@ interface BaseSettingsUi {
   @Composable
   fun rememberLongSettingState(
     key: Preferences.Key<Long>,
-    defaultValue: Long
+    defaultValue: Long,
   ): SettingValueState<Long>
 }
 
@@ -53,7 +53,7 @@ class RealBaseSettingsUi(private val dataStore: DataStore<Preferences>) : BaseSe
   @Composable
   override fun rememberLongSettingState(
     key: Preferences.Key<Long>,
-    defaultValue: Long
+    defaultValue: Long,
   ): SettingValueState<Long> {
     val scope = rememberStableCoroutineScope()
     return remember {
@@ -69,7 +69,7 @@ class RealBaseSettingsUi(private val dataStore: DataStore<Preferences>) : BaseSe
   @Composable
   override fun rememberStringSettingState(
     key: Preferences.Key<String>,
-    defaultValue: String
+    defaultValue: String,
   ): SettingValueState<String> {
     val scope = rememberStableCoroutineScope()
     return remember {

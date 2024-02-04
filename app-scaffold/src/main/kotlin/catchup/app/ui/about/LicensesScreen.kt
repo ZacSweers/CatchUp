@@ -192,7 +192,7 @@ private fun OssItemHeaderUi(item: OssItemHeader) {
   Surface {
     Row(
       modifier = Modifier.fillMaxWidth().padding(8.dp),
-      verticalAlignment = Alignment.CenterVertically
+      verticalAlignment = Alignment.CenterVertically,
     ) {
       val size = 40.dp
       val sizePx = with(LocalDensity.current) { size.toPx() }.toInt()
@@ -204,11 +204,7 @@ private fun OssItemHeaderUi(item: OssItemHeader) {
             .transformations(CircleCropTransformation())
             .build()
         )
-      Image(
-        painter = painter,
-        contentDescription = item.name,
-        modifier = Modifier.size(size),
-      )
+      Image(painter = painter, contentDescription = item.name, modifier = Modifier.size(size))
 
       Spacer(modifier = Modifier.width(16.dp))
 
@@ -238,7 +234,7 @@ constructor(
   private val apolloClient: ApolloClient,
   private val markdownConverter: EmojiMarkdownConverter,
   private val moshi: Moshi,
-  private val assets: AssetManager
+  private val assets: AssetManager,
 ) : LicensesRepository {
   override suspend fun requestItems(): ImmutableList<OssBaseItem> {
     return try {
@@ -332,7 +328,7 @@ constructor(
           name = repo.name,
           clickUrl = repo.url.toString(),
           license = repo.licenseInfo?.name,
-          description = repo.description
+          description = repo.description,
         )
       }
       .onStart {
@@ -351,7 +347,7 @@ constructor(
           author = markdownConverter.replaceMarkdownEmojisIn(it.author),
           name = markdownConverter.replaceMarkdownEmojisIn(it.name),
           description =
-            it.description?.let { markdownConverter.replaceMarkdownEmojisIn(it) } ?: it.description
+            it.description?.let { markdownConverter.replaceMarkdownEmojisIn(it) } ?: it.description,
         )
       }
       .flowOn(Dispatchers.IO)
@@ -393,7 +389,7 @@ internal data class OssItem(
   val license: String?,
   val clickUrl: String,
   val description: String?,
-  val authorUrl: String? = null
+  val authorUrl: String? = null,
 ) : OssBaseItem() {
   val id = Objects.hash(author, name).toLong()
 

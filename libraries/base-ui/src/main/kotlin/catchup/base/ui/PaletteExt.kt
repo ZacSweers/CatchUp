@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 
 inline fun Palette.orderedSwatches(
   @FloatRange(from = 0.0, to = 1.0) darkAlpha: Float,
-  @FloatRange(from = 0.0, to = 1.0) lightAlpha: Float
+  @FloatRange(from = 0.0, to = 1.0) lightAlpha: Float,
 ): List<Pair<Swatch, Float>> {
   return listOfNotNull(
     vibrantSwatch?.let { it to darkAlpha },
@@ -37,7 +37,7 @@ inline fun Palette.orderedSwatches(
     darkVibrantSwatch?.let { it to darkAlpha },
     mutedSwatch?.let { it to darkAlpha },
     lightMutedSwatch?.let { it to lightAlpha },
-    darkMutedSwatch?.let { it to darkAlpha }
+    darkMutedSwatch?.let { it to darkAlpha },
   )
 }
 
@@ -49,7 +49,7 @@ inline fun Palette.findSwatch(predicate: (Swatch) -> Boolean): Swatch? {
       vibrantSwatch,
       mutedSwatch,
       lightVibrantSwatch,
-      darkMutedSwatch
+      darkMutedSwatch,
     )
     .firstOrNull(predicate)
 }
