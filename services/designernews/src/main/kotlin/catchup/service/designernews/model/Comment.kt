@@ -33,5 +33,5 @@ internal data class Comment(
   @Json(name = "user_id") val userId: Long,
   @Json(name = "user_job") val userJob: String?,
   @Json(name = "user_portrait_url") val userPortraitUrl: String?,
-  @Json(name = "vote_count") val voteCount: Int
+  @Json(name = "vote_count") val voteCount: Int,
 )

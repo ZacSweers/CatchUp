@@ -83,7 +83,7 @@ constructor(
         .query(
           PostsQuery(
             first = 50,
-            after = Optional.presentIfNotNull(request.pageKey.takeUnless { it == "0" })
+            after = Optional.presentIfNotNull(request.pageKey.takeUnless { it == "0" }),
           )
         )
         .execute()
@@ -130,7 +130,7 @@ private val META =
     R.drawable.catchup_service_ph_logo,
     pagesAreNumeric = true,
     firstPageKey = 0,
-    enabled = BuildConfig.PRODUCT_HUNT_CLIENT_ID.run { !isNullOrEmpty() && !equals("null") }
+    enabled = BuildConfig.PRODUCT_HUNT_CLIENT_ID.run { !isNullOrEmpty() && !equals("null") },
   )
 
 @ContributesTo(AppScope::class)
@@ -180,15 +180,14 @@ object ProductHuntModule {
         BuildConfig.PRODUCT_HUNT_CLIENT_ID,
         BuildConfig.PRODUCT_HUNT_CLIENT_SECRET,
         authType = AuthType.JSON,
-      )
+      ),
     )
   }
 
   @Provides
   @InternalApi
-  fun provideProductHuntAuthInterceptor(
-    @InternalApi tokenManager: TokenManager,
-  ): AuthInterceptor = AuthInterceptor(tokenManager)
+  fun provideProductHuntAuthInterceptor(@InternalApi tokenManager: TokenManager): AuthInterceptor =
+    AuthInterceptor(tokenManager)
 
   @Provides
   @InternalApi
@@ -218,7 +217,7 @@ object ProductHuntModule {
   @SingleIn(AppScope::class)
   fun provideNetworkTransport(
     @InternalApi httpEngine: HttpEngine,
-    @InternalApi httpRequestComposer: HttpRequestComposer
+    @InternalApi httpRequestComposer: HttpRequestComposer,
   ): NetworkTransport {
     return HttpNetworkTransport.Builder()
       .httpRequestComposer(httpRequestComposer)

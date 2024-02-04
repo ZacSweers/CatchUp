@@ -43,12 +43,7 @@ class DiskLumberYardTest {
 
     // 3 is DEBUG
     val entry =
-      Entry(
-        testClock.now().toLocalDateTime(TimeZone.UTC),
-        3,
-        "tag",
-        "message\nwith\nnewlines",
-      )
+      Entry(testClock.now().toLocalDateTime(TimeZone.UTC), 3, "tag", "message\nwith\nnewlines")
     lumberYard.addEntry(entry)
 
     assertThat(logFiles()).isEmpty()
@@ -78,12 +73,7 @@ class DiskLumberYardTest {
 
     // 3 is DEBUG
     val entry =
-      Entry(
-        testClock.now().toLocalDateTime(TimeZone.UTC),
-        3,
-        "tag",
-        "message\nwith\nnewlines",
-      )
+      Entry(testClock.now().toLocalDateTime(TimeZone.UTC), 3, "tag", "message\nwith\nnewlines")
     lumberYard.addEntry(entry)
 
     assertThat(logFiles()).isEmpty()

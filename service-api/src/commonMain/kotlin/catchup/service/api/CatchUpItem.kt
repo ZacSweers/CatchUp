@@ -64,7 +64,7 @@ data class CatchUpItem(
       index: Int,
       serviceId: String,
       isImage: Boolean,
-      id: Long = Objects.hash(index, serviceId).toLong()
+      id: Long = Objects.hash(index, serviceId).toLong(),
     ): CatchUpItem {
       val imageInfo =
         if (isImage) {
@@ -76,7 +76,7 @@ data class CatchUpItem(
             detailUrl = url,
             sourceUrl = url,
             aspectRatio = 4 / 3f,
-            imageId = url
+            imageId = url,
           )
         } else {
           null
@@ -98,7 +98,7 @@ data class CatchUpItem(
         detailKey = "0",
         serviceId = serviceId,
         indexInResponse = index,
-        contentType = HTML
+        contentType = HTML,
       )
     }
   }

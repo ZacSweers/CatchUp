@@ -21,26 +21,14 @@ class ContentTypeChecker @Inject constructor() {
   }
 }
 
-private val MEDIA_EXTENSIONS =
-  setOf(
-    "apng",
-    "avif",
-    "gif",
-    "jpeg",
-    "png",
-    "webp",
-  )
+private val MEDIA_EXTENSIONS = setOf("apng", "avif", "gif", "jpeg", "png", "webp")
 
 private val String.hasMediaExtension: Boolean
   get() {
     return substring(lastIndexOf(".") + 1) in MEDIA_EXTENSIONS
   }
 
-private val KNOWN_DOMAINS =
-  setOf(
-    "i.imgur.com",
-    "i.redd.it",
-  )
+private val KNOWN_DOMAINS = setOf("i.imgur.com", "i.redd.it")
 
 private val String.isMediaUrl: Boolean
   get() {

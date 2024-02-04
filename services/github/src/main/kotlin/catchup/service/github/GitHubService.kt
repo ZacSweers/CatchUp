@@ -68,7 +68,7 @@ constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val apolloClient: Lazy<ApolloClient>,
   private val emojiMarkdownConverter: Lazy<EmojiMarkdownConverter>,
-  private val gitHubApi: Lazy<GitHubApi>
+  private val gitHubApi: Lazy<GitHubApi>,
 ) : TextService {
 
   override fun meta() = serviceMeta
@@ -128,7 +128,7 @@ constructor(
             queryString = query,
             firstCount = 50,
             order = LanguageOrder(direction = OrderDirection.DESC, field = LanguageOrderField.SIZE),
-            after = Optional.presentIfNotNull(request.pageKey)
+            after = Optional.presentIfNotNull(request.pageKey),
           )
         )
         .execute()
@@ -194,7 +194,7 @@ abstract class GitHubMetaModule {
         R.color.catchup_service_github_accent,
         R.drawable.catchup_service_github_logo,
         firstPageKey = null,
-        enabled = BuildConfig.GITHUB_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") }
+        enabled = BuildConfig.GITHUB_DEVELOPER_TOKEN.run { !isNullOrEmpty() && !equals("null") },
       )
   }
 }

@@ -21,17 +21,13 @@ interface TokenStorage {
   suspend fun getAuthData(): AuthData?
 
   companion object {
-    fun create(
-      pathFactory: (prefix: String) -> Path,
-    ): TokenStorage = TokenStorageImpl(pathFactory)
+    fun create(pathFactory: (prefix: String) -> Path): TokenStorage = TokenStorageImpl(pathFactory)
   }
 }
 
 data class AuthData(val tokenType: String, val expiration: Instant, val token: String)
 
-internal class TokenStorageImpl(
-  pathFactory: (prefix: String) -> Path,
-) : TokenStorage {
+internal class TokenStorageImpl(pathFactory: (prefix: String) -> Path) : TokenStorage {
   private val datastore =
     PreferenceDataStoreFactory.createWithPath { pathFactory(TOKEN_STORAGE_FILE_NAME_PREFIX) }
 

@@ -75,7 +75,7 @@ fun VisualServiceUi(
   items: LazyPagingItems<CatchUpItem>,
   themeColor: Color,
   eventSink: (Event) -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) {
   val delegateRippleTheme = LocalRippleTheme.current
   CompositionLocalProvider(LocalRippleTheme provides ImageItemRippleTheme(delegateRippleTheme)) {
@@ -99,12 +99,9 @@ fun VisualServiceUi(
             rememberClickableItemState(
               contentColor =
                 item.imageInfo?.color?.let { Color(android.graphics.Color.parseColor(it)) }
-                  ?: Color.Unspecified,
+                  ?: Color.Unspecified
             )
-          ClickableItem(
-            onClick = { eventSink(ItemClicked(item)) },
-            state = clickableItemState,
-          ) {
+          ClickableItem(onClick = { eventSink(ItemClicked(item)) }, state = clickableItemState) {
             VisualItem(
               item = item,
               index = index,
@@ -236,7 +233,7 @@ fun VisualItem(
                     it.width - cornerSize,
                     it.height - cornerSize,
                     cornerSize,
-                    cornerSize
+                    cornerSize,
                   )
                 val isDark = ColorUtils.isDark(corner)
                 corner.recycle()
@@ -258,15 +255,11 @@ fun VisualItem(
 }
 
 @Composable
-private fun Badge(
-  badgeColor: Color,
-  modifier: Modifier = Modifier,
-  text: String = "GIF",
-) {
+private fun Badge(badgeColor: Color, modifier: Modifier = Modifier, text: String = "GIF") {
   Surface(
     modifier = modifier,
     color = badgeColor.copy(alpha = 0.5f),
-    shape = RoundedCornerShape(2.dp)
+    shape = RoundedCornerShape(2.dp),
   ) {
     Text(
       modifier = Modifier.padding(4.dp),
@@ -274,7 +267,7 @@ private fun Badge(
       fontSize = 12.sp,
       fontStyle = FontStyle.Normal,
       fontWeight = FontWeight.Black,
-      color = Color.White
+      color = Color.White,
     )
   }
 }
@@ -288,9 +281,7 @@ private fun PreviewBadge() {
   }
 }
 
-private class ImageItemRippleTheme(
-  private val delegate: RippleTheme,
-) : RippleTheme {
+private class ImageItemRippleTheme(private val delegate: RippleTheme) : RippleTheme {
   companion object {
     val opaqueRippleAlpha =
       RippleAlpha(
@@ -314,7 +305,7 @@ private fun applyPalette(palette: Palette, onContentColorChanged: (Color) -> Uni
 
 fun LazyStaggeredGridScope.handleLoadStates(
   lazyItems: LazyPagingItems<CatchUpItem>,
-  themeColor: Color
+  themeColor: Color,
 ) {
   lazyItems.apply {
     when {
@@ -334,7 +325,7 @@ fun LazyStaggeredGridScope.handleLoadStates(
           ErrorItem(
             "Error loading service: ${e.error.localizedMessage}",
             Modifier.fillMaxSize(),
-            ::retry
+            ::retry,
           )
         }
       }
@@ -371,16 +362,6 @@ private data class PagingPlaceholderKey(private val index: Int) : Parcelable {
   }
 }
 
-private val PLACEHOLDERS_DARK =
-  arrayOf(
-    Color(0xff191919),
-    Color(0xff212121),
-    Color(0xff232323),
-  )
+private val PLACEHOLDERS_DARK = arrayOf(Color(0xff191919), Color(0xff212121), Color(0xff232323))
 
-private val PLACEHOLDERS_LIGHT =
-  arrayOf(
-    Color(0xfff5f5f5),
-    Color(0xffeeeeee),
-    Color(0xffe0e0e0),
-  )
+private val PLACEHOLDERS_LIGHT = arrayOf(Color(0xfff5f5f5), Color(0xffeeeeee), Color(0xffe0e0e0))

@@ -55,7 +55,7 @@ class ChangelogHelper
 constructor(
   // TODO datastore this
   private val catchUpPreferences: CatchUpPreferences,
-  private val appConfig: AppConfig
+  private val appConfig: AppConfig,
 ) {
 
   fun changelogAvailable(context: Context): Flow<Boolean> {
@@ -88,14 +88,14 @@ constructor(
       Image(
         bitmap = icon.asImageBitmap(),
         contentDescription = "CatchUp icon",
-        modifier = Modifier.size(56.dp).align(Alignment.CenterHorizontally)
+        modifier = Modifier.size(56.dp).align(Alignment.CenterHorizontally),
       )
       Text(
         appConfig.versionName,
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.SemiBold
+        fontWeight = FontWeight.SemiBold,
       )
       Spacer(Modifier.height(16.dp))
       // TODO parse markdown, make it clickable

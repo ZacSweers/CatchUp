@@ -99,7 +99,7 @@ abstract class SlashdotMetaModule {
         R.string.catchup_service_sd_name,
         R.color.catchup_service_sd_accent,
         R.drawable.catchup_service_sd_logo,
-        firstPageKey = null
+        firstPageKey = null,
       )
   }
 }
@@ -128,7 +128,7 @@ object SlashdotModule {
   internal fun provideSlashdotApi(
     @InternalApi client: Lazy<OkHttpClient>,
     xml: XML,
-    appConfig: AppConfig
+    appConfig: AppConfig,
   ): SlashdotApi {
     val contentType = "application/xml".toMediaType()
     val retrofit =

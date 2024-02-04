@@ -117,7 +117,7 @@ abstract class UnsplashMetaModule {
         isVisual = true,
         pagesAreNumeric = true,
         firstPageKey = 1,
-        enabled = BuildConfig.UNSPLASH_API_KEY.run { !isNullOrEmpty() && !equals("null") }
+        enabled = BuildConfig.UNSPLASH_API_KEY.run { !isNullOrEmpty() && !equals("null") },
       )
   }
 }
@@ -148,7 +148,7 @@ object UnsplashModule {
   internal fun provideUnsplashService(
     @InternalApi client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
-    appConfig: AppConfig
+    appConfig: AppConfig,
   ): UnsplashApi {
     return Retrofit.Builder()
       .baseUrl(UnsplashApi.ENDPOINT)

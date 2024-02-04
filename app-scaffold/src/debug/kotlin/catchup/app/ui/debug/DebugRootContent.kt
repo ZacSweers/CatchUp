@@ -27,11 +27,8 @@ import javax.inject.Inject
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class, replaces = [DefaultRootContent::class])
-class DebugRootContent
-@Inject
-constructor(
-  private val debugPreferences: DebugPreferences,
-) : RootContent {
+class DebugRootContent @Inject constructor(private val debugPreferences: DebugPreferences) :
+  RootContent {
   @Composable
   override fun Content(navigator: Navigator, content: @Composable () -> Unit) {
     val original = LocalLayoutDirection.current
@@ -76,14 +73,12 @@ constructor(
       ModalNavigationDrawer(
         drawerContent = {
           CompositionLocalProvider(LocalLayoutDirection provides original) {
-            ModalDrawerSheet(
-              windowInsets = WindowInsets(0, 0, 0, 0),
-            ) {
+            ModalDrawerSheet(windowInsets = WindowInsets(0, 0, 0, 0)) {
               CircuitContent(screen = DebugSettingsScreen, onNavEvent = navigator::onNavEvent)
             }
           }
         },
-        drawerState = drawerState
+        drawerState = drawerState,
       ) {
         CompositionLocalProvider(LocalLayoutDirection provides original, content = content)
       }

@@ -105,13 +105,13 @@ data class ServiceScreen(val serviceKey: String) : Screen {
     data class TextState(
       override val items: LazyPagingItems<CatchUpItem>,
       override val themeColor: Color,
-      override val eventSink: (Event) -> Unit
+      override val eventSink: (Event) -> Unit,
     ) : State
 
     data class VisualState(
       override val items: LazyPagingItems<CatchUpItem>,
       override val themeColor: Color,
-      override val eventSink: (Event) -> Unit
+      override val eventSink: (Event) -> Unit,
     ) : State
   }
 
@@ -153,7 +153,7 @@ constructor(
     val themeColor =
       dynamicAwareColor(
         regularColor = { colorResource(service.meta().themeColor) },
-        dynamicColor = { MaterialTheme.colorScheme.primary }
+        dynamicColor = { MaterialTheme.colorScheme.primary },
       )
 
     val scope = rememberStableCoroutineScope()
@@ -170,7 +170,7 @@ constructor(
                   info.detailUrl,
                   isBitmap = !info.animatable,
                   info.cacheKey,
-                  info.sourceUrl
+                  info.sourceUrl,
                 )
               )
             } else {
@@ -189,7 +189,7 @@ constructor(
                     url = url,
                     isBitmap = bestGuessIsBitmap,
                     alias = null,
-                    sourceUrl = url
+                    sourceUrl = url,
                   )
                 )
               } else {
@@ -245,7 +245,7 @@ constructor(
   private fun createPager(
     service: Service,
     dataMode: DataMode,
-    pageSize: Int
+    pageSize: Int,
   ): Flow<PagingData<CatchUpItem>> {
     // TODO make DB factory based on data modes
     val db by lazy { dbFactory.create(dataMode) }
@@ -259,7 +259,7 @@ constructor(
     return Pager(
         config = PagingConfig(pageSize = pageSize),
         initialKey = service.meta().firstPageKey,
-        remoteMediator = remoteMediator
+        remoteMediator = remoteMediator,
       ) {
         // Real data driven through the DB
         // If we're in fake mode, we'll get a fake DB
@@ -300,7 +300,7 @@ fun Service(state: State, modifier: Modifier = Modifier) {
       refreshing = refreshLoadState == LoadState.Loading,
       state = pullRefreshState,
       contentColor = state.themeColor,
-      modifier = Modifier.align(Alignment.TopCenter)
+      modifier = Modifier.align(Alignment.TopCenter),
     )
   }
 }
@@ -311,7 +311,7 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> 
   Column(
     modifier = modifier.padding(16.dp),
     verticalArrangement = spacedBy(16.dp),
-    horizontalAlignment = Alignment.CenterHorizontally
+    horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     val image = AnimatedImageVector.animatedVectorResource(R.drawable.avd_no_connection)
     var atEnd by remember { mutableStateOf(false) }
@@ -326,10 +326,10 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> 
       modifier =
         Modifier.size(72.dp).clickable(
           interactionSource = remember { MutableInteractionSource() },
-          indication = rememberRipple(bounded = false)
+          indication = rememberRipple(bounded = false),
         ) {
           atEnd = !atEnd
-        }
+        },
     )
     Text(text, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurface)
     onRetryClick?.let { ElevatedButton(onClick = it) { Text(stringResource(R.string.retry)) } }
@@ -338,9 +338,7 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> 
 
 @Composable
 fun LoadingView(themeColor: Color, modifier: Modifier = Modifier) {
-  Box(
-    modifier = modifier,
-  ) {
+  Box(modifier = modifier) {
     CircularProgressIndicator(color = themeColor, modifier = Modifier.align(Alignment.Center))
   }
 }
@@ -350,6 +348,6 @@ fun LoadingItem(modifier: Modifier = Modifier) {
   CircularProgressIndicator(
     modifier =
       modifier.fillMaxWidth().padding(16.dp).wrapContentWidth(Alignment.CenterHorizontally),
-    color = MaterialTheme.colorScheme.outline
+    color = MaterialTheme.colorScheme.outline,
   )
 }

@@ -110,7 +110,7 @@ abstract class DribbbleMetaModule {
         R.drawable.catchup_service_dribbble_logo,
         isVisual = true,
         pagesAreNumeric = true,
-        firstPageKey = 1
+        firstPageKey = 1,
       )
   }
 }
@@ -121,7 +121,7 @@ object DribbbleModule {
   @Provides
   internal fun provideDribbbleService(
     client: Lazy<OkHttpClient>,
-    appConfig: AppConfig
+    appConfig: AppConfig,
   ): DribbbleApi {
     return Retrofit.Builder()
       .baseUrl(DribbbleApi.ENDPOINT)
