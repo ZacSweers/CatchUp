@@ -15,7 +15,4 @@
  */
 package catchup.service.api
 
-data class DataResult(
-  val items: List<CatchUpItem>,
-  val nextPageKey: String?,
-)
+data class DataResult(val items: List<CatchUpItem>, val nextPageKey: String?)

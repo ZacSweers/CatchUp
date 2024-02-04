@@ -50,7 +50,7 @@ constructor(
 
   override suspend fun load(
     loadType: LoadType,
-    state: PagingState<Int, CatchUpDbItem>
+    state: PagingState<Int, CatchUpDbItem>,
   ): MediatorResult {
     Timber.tag("ServiceMediator").d("Loading $serviceIdKey ($loadType)")
     return try {
@@ -127,7 +127,7 @@ constructor(
           } else {
             DataResult(
               items = CatchUpItem.fakeItems(request.limit, serviceIdKey, service is VisualService),
-              nextPageKey = null
+              nextPageKey = null,
             )
           }
         } else {
@@ -172,7 +172,7 @@ constructor(
           catchUpDatabase.serviceQueries.putOperation(
             clock.now().toEpochMilliseconds(),
             serviceIdKey,
-            "insert"
+            "insert",
           )
         }
       }

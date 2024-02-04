@@ -52,10 +52,7 @@ data class SummarizerScreen(val title: String, val url: String) : Screen {
 
     data class Error(override val title: String, val url: String, val message: String) : State
 
-    data class Success(
-      override val title: String,
-      val summary: String,
-    ) : State
+    data class Success(override val title: String, val summary: String) : State
   }
 }
 
@@ -78,9 +75,7 @@ constructor(
   @CircuitInject(SummarizerScreen::class, AppScope::class)
   @AssistedFactory
   fun interface Factory {
-    fun create(
-      screen: SummarizerScreen,
-    ): SummarizerPresenter
+    fun create(screen: SummarizerScreen): SummarizerPresenter
   }
 
   @Composable
@@ -120,13 +115,13 @@ fun Summarizer(state: State, modifier: Modifier = Modifier) {
             Text(
               "Error summarizing.\n${state.message}",
               color = MaterialTheme.colorScheme.error,
-              style = MaterialTheme.typography.displaySmall
+              style = MaterialTheme.typography.displaySmall,
             )
             Button(
               onClick = {
                 // TODO
               },
-              modifier = Modifier.padding(top = 16.dp)
+              modifier = Modifier.padding(top = 16.dp),
             ) {
               Text("Open in browser")
             }
@@ -137,7 +132,7 @@ fun Summarizer(state: State, modifier: Modifier = Modifier) {
             Text(
               state.summary,
               textAlign = TextAlign.Justify,
-              style = MaterialTheme.typography.bodyLarge
+              style = MaterialTheme.typography.bodyLarge,
             )
             Spacer(Modifier.height(24.dp))
             Text("Generated with ChatGPT", style = MaterialTheme.typography.labelMedium)

@@ -113,7 +113,7 @@ import okhttp3.OkHttpClient
 private fun items(
   appConfig: AppConfig,
   displayMetrics: DisplayMetrics,
-  cache: Cache?
+  cache: Cache?,
 ): ImmutableList<DebugItem> {
   if (cache == null) return persistentListOf()
   return buildList {
@@ -134,7 +134,7 @@ private fun items(
           DebugPreferences.Keys.networkDelay,
           listOf(250, 500, 1000, 2000, 3000, 5000),
           ValueType.LONG,
-          defaultOptionIndex = 3
+          defaultOptionIndex = 3,
         ) { index ->
           "${index}ms"
         }
@@ -145,7 +145,7 @@ private fun items(
           DebugPreferences.Keys.networkVariancePercent,
           listOf(20, 40, 60),
           ValueType.INT,
-          defaultOptionIndex = 1
+          defaultOptionIndex = 1,
         ) { index ->
           "${index}%"
         }
@@ -156,7 +156,7 @@ private fun items(
           DebugPreferences.Keys.networkFailurePercent,
           listOf(0, 3, 10, 25, 50, 75, 100),
           ValueType.INT,
-          defaultOptionIndex = 1
+          defaultOptionIndex = 1,
         ) { index ->
           "${index}%"
         }
@@ -169,7 +169,7 @@ private fun items(
           DebugPreferences.Keys.animationSpeed,
           listOf(1, 2, 3, 5, 10),
           ValueType.INT,
-          defaultOptionIndex = 0
+          defaultOptionIndex = 0,
         ) { index ->
           if (index == 1) {
             "Normal"
@@ -183,7 +183,7 @@ private fun items(
       add(
         Element.ButtonElement(
           "Leak Analysis",
-          IntentScreen(LeakCanary.newLeakDisplayActivityIntent())
+          IntentScreen(LeakCanary.newLeakDisplayActivityIntent()),
         )
       )
       add(Header("Build Information"))
@@ -197,13 +197,13 @@ private fun items(
       add(
         Element.ValueElement(
           "Resolution",
-          "${displayMetrics.heightPixels}x${displayMetrics.widthPixels}"
+          "${displayMetrics.heightPixels}x${displayMetrics.widthPixels}",
         )
       )
       add(
         Element.ValueElement(
           "Density",
-          "${displayMetrics.densityDpi}dpi (${displayMetrics.bucket})"
+          "${displayMetrics.densityDpi}dpi (${displayMetrics.bucket})",
         )
       )
       add(Element.ValueElement("Release", Build.VERSION.RELEASE))
@@ -216,7 +216,7 @@ private fun items(
       add(
         Element.ValueElement(
           "Write Errors",
-          "${cache.writeAbortCount()} / $writeTotal ($percentage%)"
+          "${cache.writeAbortCount()} / $writeTotal ($percentage%)",
         )
       )
       add(Element.ValueElement("Request Count", cache.requestCount().toString()))
@@ -258,7 +258,7 @@ constructor(
   private val client: Lazy<OkHttpClient>,
   private val lumberYard: LumberYard,
   private val debugPreferences: DebugPreferences,
-  private val appConfig: AppConfig
+  private val appConfig: AppConfig,
 ) : Presenter<State> {
   @CircuitInject(DebugSettingsScreen::class, AppScope::class)
   @AssistedFactory
@@ -336,11 +336,8 @@ private enum class LogsShareResult {
 }
 
 @CircuitInject(DebugSettingsScreen::class, AppScope::class)
-class DebugSettingsUi
-@Inject
-constructor(
-  private val debugPreferences: DebugPreferences,
-) : Ui<State>, BaseSettingsUi by RealBaseSettingsUi(debugPreferences.datastore) {
+class DebugSettingsUi @Inject constructor(private val debugPreferences: DebugPreferences) :
+  Ui<State>, BaseSettingsUi by RealBaseSettingsUi(debugPreferences.datastore) {
   @Composable
   override fun Content(state: State, modifier: Modifier) {
     if (state.logsToShow.isNotEmpty()) {
@@ -370,7 +367,7 @@ constructor(
             Row(
               Modifier.fillMaxWidth().padding(12.dp),
               verticalAlignment = Alignment.CenterVertically,
-              horizontalArrangement = Arrangement.End
+              horizontalArrangement = Arrangement.End,
             ) {
               Text(
                 stringResource(R.string.development_settings),
@@ -385,7 +382,7 @@ constructor(
               Image(
                 bitmap = icon.asImageBitmap(),
                 contentDescription = "CatchUp icon",
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(48.dp),
               )
             }
           }
@@ -465,10 +462,7 @@ constructor(
       }
       is Element.SwitchElement -> {
         element.Content(
-          rememberBooleanSettingState(
-            key = element.key,
-            defaultValue = element.defaultValue,
-          )
+          rememberBooleanSettingState(key = element.key, defaultValue = element.defaultValue)
         ) { newValue ->
           onUpdate(element.key, newValue)
         }
@@ -522,7 +516,7 @@ sealed interface DebugItem {
         }
         Row(
           modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp),
-          verticalAlignment = Alignment.CenterVertically
+          verticalAlignment = Alignment.CenterVertically,
         ) {
           DebugLabelText(title, modifier = Modifier.weight(1f))
 
@@ -530,7 +524,7 @@ sealed interface DebugItem {
           ExposedDropdownMenuBox(
             modifier = Modifier.weight(1f),
             expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
+            onExpandedChange = { expanded = !expanded },
           ) {
             OutlinedTextField(
               value = formatSelection(storageValue),
@@ -540,10 +534,7 @@ sealed interface DebugItem {
               readOnly = true,
               trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             )
-            ExposedDropdownMenu(
-              expanded = expanded,
-              onDismissRequest = { expanded = false },
-            ) {
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
               for (option in options) {
                 DropdownMenuItem(
                   text = {
@@ -557,7 +548,7 @@ sealed interface DebugItem {
                   onClick = {
                     expanded = false
                     update(option)
-                  }
+                  },
                 )
               }
             }
@@ -572,13 +563,10 @@ sealed interface DebugItem {
       override val requiresRestart: Boolean = false,
     ) : Element {
       @Composable
-      fun Content(
-        modifier: Modifier = Modifier,
-        onClick: (Screen) -> Unit,
-      ) {
+      fun Content(modifier: Modifier = Modifier, onClick: (Screen) -> Unit) {
         Button(
           modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp),
-          onClick = { onClick(onClickScreen) }
+          onClick = { onClick(onClickScreen) },
         ) {
           Text(text)
         }
@@ -608,10 +596,10 @@ sealed interface DebugItem {
               .toggleable(
                 value = storageValue,
                 role = Role.Checkbox,
-                onValueChange = { update(!storageValue) }
+                onValueChange = { update(!storageValue) },
               )
               .padding(horizontal = 12.dp),
-          verticalAlignment = Alignment.CenterVertically
+          verticalAlignment = Alignment.CenterVertically,
         ) {
           DebugLabelText(title)
           Spacer(modifier = Modifier.weight(1f))
@@ -629,7 +617,7 @@ sealed interface DebugItem {
       fun Content(modifier: Modifier = Modifier) {
         Row(
           modifier = modifier.padding(horizontal = 12.dp),
-          verticalAlignment = Alignment.CenterVertically
+          verticalAlignment = Alignment.CenterVertically,
         ) {
           DebugLabelText(title)
           Spacer(modifier = Modifier.weight(1f))
@@ -648,7 +636,7 @@ private fun DebugSectionHeader(text: String) {
       text = text.uppercase(),
       style = MaterialTheme.typography.labelLarge,
       fontWeight = FontWeight.Bold,
-      modifier = Modifier.padding(horizontal = 12.dp)
+      modifier = Modifier.padding(horizontal = 12.dp),
     )
     Spacer(Modifier.height(2.dp))
     HorizontalDivider()

@@ -71,7 +71,7 @@ fun CollapsingAboutHeader(
 
   Surface(
     modifier,
-    color = Color.Transparent
+    color = Color.Transparent,
   ) { // todo: why is this needed when AboutScreen is already using Scaffold()?
     CollapsingToolbarScaffold(
       state = scaffoldState,
@@ -107,7 +107,7 @@ fun CollapsingAboutHeader(
             modifier =
               Modifier.size(48.dp)
                 .align(CenterHorizontally)
-                .alpha(scaffoldState.toolbarState.progress)
+                .alpha(scaffoldState.toolbarState.progress),
           )
 
           Spacer(Modifier.height(8.dp))

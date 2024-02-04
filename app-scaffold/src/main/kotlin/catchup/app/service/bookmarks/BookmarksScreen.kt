@@ -199,10 +199,7 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         actions = {
           IconButton({ state.eventSink(Share) }) {
-            Icon(
-              imageVector = Icons.Default.Share,
-              contentDescription = "Share",
-            )
+            Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
           }
         },
       )
@@ -262,10 +259,7 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
                 EndToStart -> Alignment.CenterEnd
                 Settled -> Alignment.CenterStart
               }
-            Box(
-              modifier = Modifier.fillMaxSize().background(color),
-              contentAlignment = alignment,
-            ) {
+            Box(modifier = Modifier.fillMaxSize().background(color), contentAlignment = alignment) {
               when (dismissState.dismissDirection) {
                 StartToEnd -> {
                   serviceMeta?.let {
@@ -282,7 +276,7 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
                     modifier = Modifier.padding(32.dp).size(32.dp),
-                    tint = MaterialTheme.colorScheme.onError
+                    tint = MaterialTheme.colorScheme.onError,
                   )
                 Settled -> {
                   // Do nothing
@@ -301,13 +295,9 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
                 TextItem(item, themeColor)
               }
             } else {
-              TextItem(
-                item,
-                themeColor,
-                modifier = Modifier.animateItemPlacement(),
-              )
+              TextItem(item, themeColor, modifier = Modifier.animateItemPlacement())
             }
-          }
+          },
         )
       }
     }

@@ -27,7 +27,7 @@ import dev.zacsweers.catchup.app.scaffold.R
 @Composable
 fun rememberClickableItemState(
   enabled: Boolean = true,
-  contentColor: Color = Color.Unspecified
+  contentColor: Color = Color.Unspecified,
 ): ClickableItemState {
   val colorToUse =
     if (contentColor == Color.Unspecified) {
@@ -58,7 +58,7 @@ fun ClickableItem(
   modifier: Modifier = Modifier,
   onLongClick: (() -> Unit)? = null,
   state: ClickableItemState = rememberClickableItemState(),
-  content: @Composable () -> Unit
+  content: @Composable () -> Unit,
 ) {
   if (state.enabled) {
     val interactionSource = state.interactionSource
@@ -84,12 +84,12 @@ fun ClickableItem(
                   haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                   longClickFunction()
                 }
-              }
+              },
           )
           .zIndex(elevation.value),
       shadowElevation = elevation,
       contentColor = state.contentColor,
-      content = content
+      content = content,
     )
   } else {
     content()

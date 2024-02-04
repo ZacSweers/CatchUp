@@ -39,7 +39,7 @@ class LinkTouchMovementMethod : LinkMovementMethod() {
         Selection.setSelection(
           spannable,
           spannable.getSpanStart(pressedSpan),
-          spannable.getSpanEnd(pressedSpan)
+          spannable.getSpanEnd(pressedSpan),
         )
         handled = true
       }
@@ -65,7 +65,7 @@ class LinkTouchMovementMethod : LinkMovementMethod() {
   private fun getPressedSpan(
     textView: TextView,
     spannable: Spannable,
-    event: MotionEvent
+    event: MotionEvent,
   ): TouchableUrlSpan? {
 
     var x = event.x.toInt()

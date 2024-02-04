@@ -57,7 +57,7 @@ abstract class CatchUpDatabaseModule {
     @Provides
     fun provideBookmarksDatabaseFactory(
       @ApplicationContext context: Context,
-      realDb: Lazy<BookmarksDatabase>
+      realDb: Lazy<BookmarksDatabase>,
     ): ContextualFactory<DataMode, BookmarksDatabase> {
       return ContextualFactory { mode ->
         when (mode) {
@@ -71,9 +71,8 @@ abstract class CatchUpDatabaseModule {
     // Singleton instance of the "real" db
     @Provides
     @SingleIn(AppScope::class)
-    fun provideBookmarksDatabase(
-      @ApplicationContext context: Context,
-    ): BookmarksDatabase = createDb(context, "catchup.db")
+    fun provideBookmarksDatabase(@ApplicationContext context: Context): BookmarksDatabase =
+      createDb(context, "catchup.db")
 
     private fun createDb(context: Context, dbName: String?): BookmarksDatabase {
       return BookmarksDatabase(

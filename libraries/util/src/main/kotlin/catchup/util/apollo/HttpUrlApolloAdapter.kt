@@ -35,7 +35,7 @@ object HttpUrlApolloAdapter : Adapter<HttpUrl> {
   override fun toJson(
     writer: JsonWriter,
     customScalarAdapters: CustomScalarAdapters,
-    value: HttpUrl
+    value: HttpUrl,
   ) {
     writer.value(value.toString())
   }

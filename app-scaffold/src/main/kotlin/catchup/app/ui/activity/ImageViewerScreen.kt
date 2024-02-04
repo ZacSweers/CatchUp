@@ -108,15 +108,12 @@ class ImageViewerPresenter
 constructor(
   @Assisted private val screen: ImageViewerScreen,
   @Assisted private val navigator: Navigator,
-  private val linkManager: LinkManager
+  private val linkManager: LinkManager,
 ) : Presenter<State> {
   @CircuitInject(ImageViewerScreen::class, AppScope::class)
   @AssistedFactory
   fun interface Factory {
-    fun create(
-      screen: ImageViewerScreen,
-      navigator: Navigator,
-    ): ImageViewerPresenter
+    fun create(screen: ImageViewerScreen, navigator: Navigator): ImageViewerPresenter
   }
 
   @Composable
@@ -171,7 +168,7 @@ fun ImageViewer(state: State, modifier: Modifier = Modifier) {
     Surface(
       modifier.fillMaxSize().animateContentSize(),
       color = Color.Black.copy(alpha = backgroundAlpha),
-      contentColor = Color.White
+      contentColor = Color.White,
     ) {
       Box(Modifier.fillMaxSize()) {
         // Image + scrim
@@ -202,15 +199,8 @@ fun ImageViewer(state: State, modifier: Modifier = Modifier) {
         }
 
         // TODO pick color based on if image is underneath it or not. Similar to badges
-        AnimatedVisibility(
-          showChrome,
-          enter = fadeIn(),
-          exit = fadeOut(),
-        ) {
-          NavButton(
-            Modifier.align(Alignment.TopStart).padding(16.dp).statusBarsPadding(),
-            CLOSE,
-          ) {
+        AnimatedVisibility(showChrome, enter = fadeIn(), exit = fadeOut()) {
+          NavButton(Modifier.align(Alignment.TopStart).padding(16.dp).statusBarsPadding(), CLOSE) {
             state.eventSink(Close)
           }
         }
@@ -219,11 +209,7 @@ fun ImageViewer(state: State, modifier: Modifier = Modifier) {
   }
 }
 
-private fun launchShareSheet(
-  scope: CoroutineScope,
-  overlayHost: OverlayHost,
-  state: State,
-) =
+private fun launchShareSheet(scope: CoroutineScope, overlayHost: OverlayHost, state: State) =
   scope.launch {
     val result =
       overlayHost.show(
@@ -233,24 +219,24 @@ private fun launchShareSheet(
             Text(
               modifier =
                 Modifier.fillMaxWidth().clickable { navigator.finish(ShareImage) }.padding(16.dp),
-              text = "Share"
+              text = "Share",
             )
             Text(
               modifier =
                 Modifier.fillMaxWidth().clickable { navigator.finish(SaveImage) }.padding(16.dp),
-              text = "Save"
+              text = "Save",
             )
             Text(
               modifier =
                 Modifier.fillMaxWidth().clickable { navigator.finish(CopyImage) }.padding(16.dp),
-              text = "Copy"
+              text = "Copy",
             )
             Text(
               modifier =
                 Modifier.fillMaxWidth()
                   .clickable { navigator.finish(OpenInBrowser(state.url)) }
                   .padding(16.dp),
-              text = "Open in Browser"
+              text = "Open in Browser",
             )
           }
         }
@@ -267,7 +253,7 @@ class ImageViewerAwareNavDecoration : NavDecoration {
     args: ImmutableList<T>,
     backStackDepth: Int,
     modifier: Modifier,
-    content: @Composable (T) -> Unit
+    content: @Composable (T) -> Unit,
   ) {
     val arg = args.first()
     val decoration =

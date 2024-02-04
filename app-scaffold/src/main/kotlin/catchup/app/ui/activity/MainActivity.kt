@@ -160,8 +160,8 @@ constructor(
                     GestureNavigationDecoration(
                       circuit.defaultNavDecoration,
                       // Pop the back stack once the user has gone 'back'
-                      navigator::pop
-                    )
+                      navigator::pop,
+                    ),
                 )
               }
             }

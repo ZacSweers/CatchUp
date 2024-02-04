@@ -72,14 +72,14 @@ fun LogEntry(entry: Entry, modifier: Modifier = Modifier) {
         maxLines = 1,
         fontSize = 10.sp,
         overflow = TextOverflow.Ellipsis,
-        style = MaterialTheme.typography.labelSmall
+        style = MaterialTheme.typography.labelSmall,
       )
     }
 
     Text(
       entry.message,
       modifier = Modifier.fillMaxWidth().padding(4.dp),
-      style = MaterialTheme.typography.bodySmall
+      style = MaterialTheme.typography.bodySmall,
     )
   }
 }

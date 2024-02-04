@@ -29,7 +29,7 @@ import timber.log.Timber
 
 private inline fun httpLoggingInterceptor(
   level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE,
-  crossinline logger: (String) -> Unit
+  crossinline logger: (String) -> Unit,
 ): HttpLoggingInterceptor {
   return HttpLoggingInterceptor { message -> logger(message) }.also { it.level = level }
 }

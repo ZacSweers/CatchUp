@@ -22,5 +22,5 @@ data class Links(
   val user: String,
   val comments: List<String>,
   val upvotes: List<String>,
-  val downvotes: List<String>
+  val downvotes: List<String>,
 )
