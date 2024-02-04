@@ -71,7 +71,7 @@ class HackerNewsService
 @Inject
 constructor(
   @InternalApi private val serviceMeta: ServiceMeta,
-  private val database: dagger.Lazy<FirebaseDatabase>
+  private val database: dagger.Lazy<FirebaseDatabase>,
 ) : TextService {
 
   override fun meta() = serviceMeta
@@ -180,7 +180,7 @@ abstract class HackerNewsMetaModule {
         R.drawable.catchup_service_hn_logo,
         pagesAreNumeric = true,
         firstPageKey = 0,
-        enabled = false // HN is broken for some reason
+        enabled = false, // HN is broken for some reason
       )
   }
 }
@@ -205,7 +205,7 @@ object HackerNewsModule {
               .setStorageBucket(resources.getString(R.string.google_storage_bucket))
               .setProjectId(resources.getString(R.string.project_id))
               .build(),
-            "HN"
+            "HN",
           )
         }
 

@@ -227,7 +227,7 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
             title = { Text(stringResource(AppScaffoldR.string.pending_changes_title)) },
             text = { Text(stringResource(AppScaffoldR.string.pending_changes_message)) },
             confirmButtonText = { Text(stringResource(AppScaffoldR.string.save)) },
-            dismissButtonText = { Text(stringResource(AppScaffoldR.string.dontsave)) }
+            dismissButtonText = { Text(stringResource(AppScaffoldR.string.dontsave)) },
           )
         )
       when (result) {
@@ -260,9 +260,9 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
                 painter = painterResource(AppScaffoldR.drawable.ic_shuffle_black_24dp),
                 contentDescription = stringResource(AppScaffoldR.string.shuffle),
               )
-            }
+            },
           )
-        }
+        },
       )
     },
     content = { innerPadding ->
@@ -273,18 +273,14 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
       }
     },
     floatingActionButton = {
-      AnimatedVisibility(
-        visible = state.showSave,
-        enter = scaleIn(),
-        exit = scaleOut(),
-      ) {
+      AnimatedVisibility(visible = state.showSave, enter = scaleIn(), exit = scaleOut()) {
         val scope = rememberStableCoroutineScope()
         val interactionSource = remember { MutableInteractionSource() }
         FloatingActionButton(
           modifier =
             Modifier.indication(
               interactionSource,
-              indication = rememberRipple(color = Color.White)
+              indication = rememberRipple(color = Color.White),
             ),
           // TODO show syllabus on fab
           //  .onGloballyPositioned { coordinates ->
@@ -296,12 +292,12 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
             Image(
               painterResource(AppScaffoldR.drawable.ic_save_black_24dp),
               stringResource(AppScaffoldR.string.save),
-              colorFilter = ColorFilter.tint(Color.White)
+              colorFilter = ColorFilter.tint(Color.White),
             )
-          }
+          },
         )
       }
-    }
+    },
   )
 }
 
@@ -320,7 +316,7 @@ private fun ListContent(
       modifier = Modifier.dragContainer(dragDropState, LocalHapticFeedback.current),
       state = listState,
       contentPadding = PaddingValues(16.dp),
-      verticalArrangement = spacedBy(16.dp)
+      verticalArrangement = spacedBy(16.dp),
     ) {
       itemsIndexed(services, key = { _, item -> item.id }) { index, item ->
         // TODO show touch response on press
@@ -345,13 +341,13 @@ private fun ServiceListItem(item: ServiceMeta) {
     Image(
       painter = painterResource(item.icon),
       contentDescription = stringResource(AppScaffoldR.string.service_icon),
-      modifier = Modifier.width(40.dp).height(40.dp)
+      modifier = Modifier.width(40.dp).height(40.dp),
     )
 
     Text(
       text = stringResource(item.name),
       style = MaterialTheme.typography.headlineSmall,
-      color = Color.White
+      color = Color.White,
     )
   }
 }

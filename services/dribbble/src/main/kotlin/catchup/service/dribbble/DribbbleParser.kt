@@ -78,7 +78,7 @@ internal object DribbbleParser {
       likesCount = element.getElementsByClass("js-shot-likes-count").first()!!.text().parseCount(),
       commentsCount = 0,
       viewsCount = element.getElementsByClass("js-shot-views-count").first()!!.text().parseCount(),
-      user = parsePlayer(element)
+      user = parsePlayer(element),
     )
   }
 
@@ -102,7 +102,7 @@ internal object DribbbleParser {
       username = username,
       htmlUrl = "$ENDPOINT/$username",
       avatarUrl = avatarUrl,
-      pro = element.select("span.badge-pro").size > 0
+      pro = element.select("span.badge-pro").size > 0,
     )
   }
 }

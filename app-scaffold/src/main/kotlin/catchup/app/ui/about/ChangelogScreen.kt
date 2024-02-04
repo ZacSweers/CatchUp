@@ -114,10 +114,7 @@ fun Changelog(state: State, modifier: Modifier = Modifier) {
         }
       }
     } else {
-      items(
-        count = items.size,
-        key = { items[it].id },
-      ) { index ->
+      items(count = items.size, key = { items[it].id }) { index ->
         val item = items[index]
         val clickableItemState = rememberClickableItemState()
         clickableItemState.focused = expandedItemIndex == index
@@ -125,7 +122,7 @@ fun Changelog(state: State, modifier: Modifier = Modifier) {
           modifier = Modifier.animateItemPlacement(),
           state = clickableItemState,
           onClick = { state.eventSink(Click(item.clickUrl!!)) },
-          onLongClick = { expandedItemIndex = if (expandedItemIndex == index) -1 else index }
+          onLongClick = { expandedItemIndex = if (expandedItemIndex == index) -1 else index },
         ) {
           Column(Modifier.animateContentSize()) {
             TextItem(item, themeColor, showDescription = expandedItemIndex == index)

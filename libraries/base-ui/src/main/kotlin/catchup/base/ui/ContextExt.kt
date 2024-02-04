@@ -31,7 +31,7 @@ val Context.versionInfo: VersionInfo
       VersionInfo(
         code = sdk(28) { longVersionCode } ?: versionCode.toLong(),
         name = versionName,
-        timestamp = timestamp
+        timestamp = timestamp,
       )
     }
   }

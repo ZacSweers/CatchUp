@@ -50,7 +50,7 @@ interface GitHubIssueApi {
     value =
       [
         "Authorization: token ${BuildConfig.GITHUB_DEVELOPER_TOKEN}",
-        "Accept: application/vnd.github.v3+json"
+        "Accept: application/vnd.github.v3+json",
       ]
   )
   @POST("repos/zacsweers/catchup/issues")
@@ -69,7 +69,7 @@ object BugReportModule {
   internal fun provideImgurService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
-    appConfig: AppConfig
+    appConfig: AppConfig,
   ): ImgurUploadApi {
     return Retrofit.Builder()
       .baseUrl("https://api.imgur.com/3/")
@@ -87,7 +87,7 @@ object BugReportModule {
   internal fun provideGithubIssueService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
-    appConfig: AppConfig
+    appConfig: AppConfig,
   ): GitHubIssueApi {
     return Retrofit.Builder()
       .baseUrl("https://api.github.com/")

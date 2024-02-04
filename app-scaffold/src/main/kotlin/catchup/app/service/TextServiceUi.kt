@@ -87,10 +87,7 @@ fun TextServiceUi(
   // Only animate items in on first load
   var animatePlacement by rememberRetained { mutableStateOf(true) }
   var expandedItemIndex by rememberRetained { mutableIntStateOf(-1) }
-  LazyColumn(
-    modifier = modifier,
-    state = state,
-  ) {
+  LazyColumn(modifier = modifier, state = state) {
     items(
       count = lazyItems.itemCount,
       // Here we use the new itemKey extension on LazyPagingItems to
@@ -119,14 +116,14 @@ fun TextServiceUi(
           onLongClick = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             expandedItemIndex = if (expandedItemIndex == index) -1 else index
-          }
+          },
         ) {
           Column(Modifier.animateContentSize()) {
             TextItem(item, themeColor) { eventSink(MarkClicked(item)) }
             if (index == expandedItemIndex) {
               Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
               ) {
                 val bookmarkIconScreen =
                   remember(item.id) { BookmarkIconScreen(item.id, themeColor.toArgb()) }
@@ -172,12 +169,9 @@ fun TextItem(
   themeColor: Color,
   modifier: Modifier = Modifier,
   showDescription: Boolean = true,
-  onMarkClick: () -> Unit = {}
+  onMarkClick: () -> Unit = {},
 ) {
-  Row(
-    modifier = modifier.padding(16.dp),
-    verticalAlignment = Alignment.CenterVertically,
-  ) {
+  Row(modifier = modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
     DetailColumn(item, themeColor, showDescription = showDescription)
     item.mark?.let { mark ->
       Column(
@@ -187,9 +181,9 @@ fun TextItem(
               enabled = item.markClickUrl != null,
               interactionSource = remember { MutableInteractionSource() },
               indication = rememberRipple(bounded = false),
-              onClick = onMarkClick
+              onClick = onMarkClick,
             ),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
       ) {
         val icon =
           when (mark.markType) {
@@ -200,7 +194,7 @@ fun TextItem(
           painter = rememberVectorPainter(icon),
           contentDescription = null,
           modifier = Modifier.size(24.dp),
-          tint = mark.iconTintColor?.let(::Color) ?: themeColor
+          tint = mark.iconTintColor?.let(::Color) ?: themeColor,
         )
         mark.text?.let { text ->
           val finalText =
@@ -210,7 +204,7 @@ fun TextItem(
           Text(
             text = "${mark.textPrefix.orEmpty()}$finalText",
             style = MaterialTheme.typography.labelSmall,
-            color = themeColor
+            color = themeColor,
           )
         }
       }
@@ -233,7 +227,7 @@ fun RowScope.DetailColumn(
       text = item.title,
       style = MaterialTheme.typography.titleMedium,
       overflow = TextOverflow.Ellipsis,
-      color = MaterialTheme.colorScheme.onSurface
+      color = MaterialTheme.colorScheme.onSurface,
     )
     // Description
     item.description
@@ -244,7 +238,7 @@ fun RowScope.DetailColumn(
           style = MaterialTheme.typography.bodyMedium,
           overflow = TextOverflow.Ellipsis,
           maxLines = 5,
-          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
+          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
         )
       }
     // Author, source
@@ -261,7 +255,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
           text = "${score.first} ${score.second.toLong().format()}",
           fontWeight = FontWeight.Bold,
           style = MaterialTheme.typography.labelSmall,
-          color = themeColor
+          color = themeColor,
         )
       }
       item.tag?.let { tag ->
@@ -270,7 +264,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
             text = " • ",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.labelSmall,
-            color = item.tagHintColor?.let(::Color) ?: themeColor
+            color = item.tagHintColor?.let(::Color) ?: themeColor,
           )
         }
         val primaryLocale = LocalContext.current.primaryLocale
@@ -281,7 +275,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
             },
           fontWeight = FontWeight.Bold,
           style = MaterialTheme.typography.labelSmall,
-          color = themeColor
+          color = themeColor,
         )
       }
       item.timestamp?.let { timestamp ->
@@ -289,7 +283,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
           Text(
             text = " • ",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
           )
         }
         val millis = timestamp.toEpochMilliseconds()
@@ -299,11 +293,11 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
                 millis,
                 System.currentTimeMillis(),
                 0L,
-                DateUtils.FORMAT_ABBREV_ALL
+                DateUtils.FORMAT_ABBREV_ALL,
               )
               .toString(),
           style = MaterialTheme.typography.labelSmall,
-          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
+          color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
         )
       }
     }
@@ -334,10 +328,7 @@ private fun ItemFooter(item: CatchUpItem) {
   }
 }
 
-fun LazyListScope.handleLoadStates(
-  lazyItems: LazyPagingItems<CatchUpItem>,
-  themeColor: Color,
-) {
+fun LazyListScope.handleLoadStates(lazyItems: LazyPagingItems<CatchUpItem>, themeColor: Color) {
   lazyItems.apply {
     when {
       loadState.refresh is LoadState.Loading -> {
@@ -352,7 +343,7 @@ fun LazyListScope.handleLoadStates(
           ErrorItem(
             "Error loading service: ${e.error.localizedMessage}",
             Modifier.fillMaxSize(),
-            ::retry
+            ::retry,
           )
         }
       }
@@ -384,7 +375,7 @@ fun PreviewTextItem() {
             score = "+" to 200,
             tag = "News",
             timestamp = Clock.System.now().minus(12.hours),
-            mark = Mark(text = "14")
+            mark = Mark(text = "14"),
           ),
         themeColor = colorResource(R.color.colorAccent),
       )

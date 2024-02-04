@@ -30,14 +30,14 @@ interface LinkHandler {
 
 suspend fun LinkManager.openUrl(
   url: String,
-  @ColorInt accentColor: Color = Color.Unspecified
+  @ColorInt accentColor: Color = Color.Unspecified,
 ): Boolean {
   return openUrl(url.toHttpUrl(), accentColor)
 }
 
 suspend fun LinkManager.openUrl(
   uri: Uri,
-  @ColorInt accentColor: Color = Color.Unspecified
+  @ColorInt accentColor: Color = Color.Unspecified,
 ): Boolean {
   return openUrl(uri.toString(), accentColor)
 }

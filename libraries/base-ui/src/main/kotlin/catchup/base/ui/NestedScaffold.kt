@@ -106,9 +106,7 @@ private fun NestedScaffoldLayout(
         subcompose(ScaffoldLayoutContent.Snackbar, snackbar).map {
           // respect only bottom and horizontal for snackbar and fab
           // offset the snackbar constraints by the insets values
-          it.measure(
-            looseConstraints.offset(-leftInset - rightInset, -bottomInset),
-          )
+          it.measure(looseConstraints.offset(-leftInset - rightInset, -bottomInset))
         }
 
       val snackbarHeight = snackbarPlaceables.maxByOrNull { it.height }?.height ?: 0
@@ -117,9 +115,7 @@ private fun NestedScaffoldLayout(
       val fabPlaceables =
         subcompose(ScaffoldLayoutContent.Fab, fab).mapNotNull { measurable ->
           measurable
-            .measure(
-              looseConstraints.offset(-leftInset - rightInset, -bottomInset),
-            )
+            .measure(looseConstraints.offset(-leftInset - rightInset, -bottomInset))
             .takeIf { it.height != 0 && it.width != 0 }
         }
 
@@ -139,21 +135,14 @@ private fun NestedScaffoldLayout(
               (layoutWidth - fabWidth) / 2
             }
 
-          FabPlacement(
-            left = fabLeftOffset,
-            width = fabWidth,
-            height = fabHeight,
-          )
+          FabPlacement(left = fabLeftOffset, width = fabWidth, height = fabHeight)
         } else {
           null
         }
 
       val bottomBarPlaceables =
         subcompose(ScaffoldLayoutContent.BottomBar) {
-            CompositionLocalProvider(
-              LocalFabPlacement provides fabPlacement,
-              content = bottomBar,
-            )
+            CompositionLocalProvider(LocalFabPlacement provides fabPlacement, content = bottomBar)
           }
           .map { it.measure(looseConstraints) }
 
@@ -229,12 +218,7 @@ private fun NestedScaffoldLayout(
  * @property width the width of the FAB
  * @property height the height of the FAB
  */
-@Immutable
-internal class FabPlacement(
-  val left: Int,
-  val width: Int,
-  val height: Int,
-)
+@Immutable internal class FabPlacement(val left: Int, val width: Int, val height: Int)
 
 /** CompositionLocal containing a [FabPlacement] that is used to calculate the FAB bottom offset. */
 internal val LocalFabPlacement = staticCompositionLocalOf<FabPlacement?> { null }

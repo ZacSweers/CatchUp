@@ -77,7 +77,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
             mark =
               createCommentMark(
                 count = link.commentsCount,
-                clickUrl = "https://reddit.com/comments/${link.id}"
+                clickUrl = "https://reddit.com/comments/${link.id}",
               ),
             indexInResponse = index + request.pageOffset,
             serviceId = meta().id,
@@ -109,7 +109,7 @@ abstract class RedditMetaModule {
         R.string.catchup_service_reddit_name,
         R.color.catchup_service_reddit_accent,
         R.drawable.catchup_service_reddit_logo,
-        firstPageKey = null
+        firstPageKey = null,
       )
   }
 }
@@ -157,7 +157,7 @@ object RedditModule {
   internal fun provideRedditApi(
     @InternalApi client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
-    appConfig: AppConfig
+    appConfig: AppConfig,
   ): RedditApi {
     val retrofit =
       Retrofit.Builder()

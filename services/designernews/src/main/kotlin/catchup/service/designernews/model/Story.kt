@@ -34,5 +34,5 @@ data class Story(
   val url: String?,
   val links: Links,
   @Json(name = "vote_count") val voteCount: Int,
-  @Json(name = "twitter_handles") val twitterHandles: List<String>
+  @Json(name = "twitter_handles") val twitterHandles: List<String>,
 )

@@ -80,6 +80,6 @@ fun CatchUpDbItem.toCatchUpItem(): CatchUpItem {
           formatTextAsCount =
             checkNotNull(markFormatTextAsCount) { "markFormatTextAsCount was null" },
         )
-      }
+      },
   )
 }

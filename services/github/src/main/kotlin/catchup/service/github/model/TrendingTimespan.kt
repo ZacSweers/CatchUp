@@ -24,7 +24,7 @@ import java.time.temporal.TemporalUnit
 internal enum class TrendingTimespan(
   private val contextualReference: String,
   duration: Int,
-  private val durationUnit: TemporalUnit
+  private val durationUnit: TemporalUnit,
 ) {
   DAY("today", 1, ChronoUnit.DAYS),
   WEEK("last week", 1, ChronoUnit.WEEKS),
