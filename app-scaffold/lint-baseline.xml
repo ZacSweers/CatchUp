@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 8.3.0-alpha12" type="baseline" client="gradle" dependencies="false" name="AGP (8.3.0-alpha12)" variant="all" version="8.3.0-alpha12">
+<issues format="6" by="lint 8.4.0-alpha06" type="baseline" client="gradle" dependencies="false" name="AGP (8.4.0-alpha06)" variant="all" version="8.4.0-alpha06">
 
     <issue
         id="RetrofitUsage"
@@ -10,28 +10,6 @@
             file="src/debug/kotlin/catchup/app/ui/bugreport/BugReportApi.kt"
             line="43"
             column="3"/>
-    </issue>
-
-    <issue
-        id="AnnotateVersionCheck"
-        message="This field should be annotated with `ChecksSdkIntAtLeast(extension=0)`"
-        errorLine1="  override val sdkInt: Int = Build.VERSION.SDK_INT"
-        errorLine2="               ~~~~~~">
-        <location
-            file="src/main/kotlin/catchup/app/CatchUpAppConfig.kt"
-            line="46"
-            column="16"/>
-    </issue>
-
-    <issue
-        id="DiscouragedPrivateApi"
-        message="Reflective access to setDurationScale, which is not part of the public SDK and therefore likely to change in future Android releases"
-        errorLine1="        ValueAnimator::class"
-        errorLine2="        ^">
-        <location
-            file="src/debug/kotlin/catchup/app/ui/debug/DebugSettingsScreen.kt"
-            line="308"
-            column="9"/>
     </issue>
 
     <issue

@@ -360,7 +360,7 @@ fun LazyListScope.handleLoadStates(lazyItems: LazyPagingItems<CatchUpItem>, them
 @Preview(uiMode = UI_MODE_NIGHT_NO)
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewTextItem() {
+private fun PreviewTextItem() {
   CatchUpTheme {
     Surface {
       TextItem(
