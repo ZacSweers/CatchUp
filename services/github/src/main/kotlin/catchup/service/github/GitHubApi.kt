@@ -27,7 +27,7 @@ interface GitHubApi {
   @GET("/trending{$LANGUAGE}")
   suspend fun getTrending(
     @Path(LANGUAGE) language: Language,
-    @Query("since") since: Since
+    @Query("since") since: Since,
   ): List<TrendingItem>
 
   @Suppress("unused")

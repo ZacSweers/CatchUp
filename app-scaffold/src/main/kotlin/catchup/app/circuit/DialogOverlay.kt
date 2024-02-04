@@ -37,17 +37,7 @@ class DialogOverlay(
       confirmButton = { Button(onClick = { navigator.finish(Confirm) }) { confirmButtonText() } },
       dismissButton =
         dismissButtonText?.let { dismissButtonText ->
-          {
-            Button(
-              onClick = {
-                navigator.finish(
-                  Cancel,
-                )
-              }
-            ) {
-              dismissButtonText()
-            }
-          }
+          { Button(onClick = { navigator.finish(Cancel) }) { dismissButtonText() } }
         },
       properties =
         DialogProperties(

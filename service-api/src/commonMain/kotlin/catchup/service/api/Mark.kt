@@ -32,7 +32,7 @@ data class Mark(
   val markType: MarkType = COMMENT,
   val _markClickUrl: String? = null,
   @ColorInt val iconTintColor: Int? = null,
-  val formatTextAsCount: Boolean = false
+  val formatTextAsCount: Boolean = false,
 ) {
 
   enum class MarkType {

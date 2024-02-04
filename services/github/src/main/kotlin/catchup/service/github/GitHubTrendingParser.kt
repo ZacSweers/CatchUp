@@ -106,7 +106,7 @@ internal object GitHubTrendingParser {
       forks = forks,
       starsToday = starsToday,
       language = language,
-      languageColor = languageColor
+      languageColor = languageColor,
     )
   }
 }

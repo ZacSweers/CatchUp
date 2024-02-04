@@ -26,7 +26,7 @@ fun TextActionItem(
         imageVector = it,
         contentDescription = contentDescription,
         tint = tint,
-        modifier = Modifier.size(24.dp)
+        modifier = Modifier.size(24.dp),
       )
     }
   }

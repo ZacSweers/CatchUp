@@ -59,7 +59,7 @@ object ReleaseApplicationModule {
   fun provideBugsnagTree(
     application: Application,
     @BugsnagKey key: String,
-    lumberYard: LumberYard
+    lumberYard: LumberYard,
   ): Timber.Tree {
     return BugsnagTree(lumberYard).also {
       getOrStartBugsnag(application, key).addOnError { error ->
@@ -69,10 +69,7 @@ object ReleaseApplicationModule {
     }
   }
 
-  private fun getOrStartBugsnag(
-    application: Application,
-    key: String,
-  ): Client {
+  private fun getOrStartBugsnag(application: Application, key: String): Client {
     return if (!Bugsnag.isStarted()) {
       Bugsnag.start(application, key)
     } else {

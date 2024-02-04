@@ -22,7 +22,7 @@ internal class SQLiteCopyOpenHelper(
   private val context: Context,
   private val copyFromAssetPath: String,
   private val databaseVersion: Int,
-  val delegate: SupportSQLiteOpenHelper
+  val delegate: SupportSQLiteOpenHelper,
 ) : SupportSQLiteOpenHelper {
   private var verified = false
 

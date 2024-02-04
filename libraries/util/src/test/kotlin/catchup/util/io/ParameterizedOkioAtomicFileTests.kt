@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 class ParameterizedOkioAtomicFileTests(
   @Suppress("UNUSED_PARAMETER") unusedTestName: String,
-  parameters: Parameters
+  parameters: Parameters,
 ) {
 
   enum class WriteAction {
@@ -158,44 +158,44 @@ class ParameterizedOkioAtomicFileTests(
         arrayOf("new + abort = none", Parameters(arrayOf(NEW_NAME), ABORT, null)),
         arrayOf(
           "base & new + none = base",
-          Parameters(arrayOf(BASE_NAME, NEW_NAME), null, BASE_BYTES)
+          Parameters(arrayOf(BASE_NAME, NEW_NAME), null, BASE_BYTES),
         ),
         arrayOf(
           "base & new + finish = new",
-          Parameters(arrayOf(BASE_NAME, NEW_NAME), FINISH, NEW_BYTES)
+          Parameters(arrayOf(BASE_NAME, NEW_NAME), FINISH, NEW_BYTES),
         ),
         arrayOf(
           "base & new + fail = base",
-          Parameters(arrayOf(BASE_NAME, NEW_NAME), FAIL, BASE_BYTES)
+          Parameters(arrayOf(BASE_NAME, NEW_NAME), FAIL, BASE_BYTES),
         ),
         arrayOf(
           "base & new + abort = base",
-          Parameters(arrayOf(BASE_NAME, NEW_NAME), ABORT, BASE_BYTES)
+          Parameters(arrayOf(BASE_NAME, NEW_NAME), ABORT, BASE_BYTES),
         ),
         arrayOf("base.dir + none = none", Parameters(arrayOf(BASE_NAME_DIRECTORY), null, null)),
         arrayOf(
           "base.dir + finish = new",
-          Parameters(arrayOf(BASE_NAME_DIRECTORY), FINISH, NEW_BYTES)
+          Parameters(arrayOf(BASE_NAME_DIRECTORY), FINISH, NEW_BYTES),
         ),
         arrayOf("base.dir + fail = none", Parameters(arrayOf(BASE_NAME_DIRECTORY), FAIL, null)),
         arrayOf("base.dir + abort = none", Parameters(arrayOf(BASE_NAME_DIRECTORY), ABORT, null)),
         arrayOf(
           "base.dir & new + none = none",
-          Parameters(arrayOf(BASE_NAME_DIRECTORY, NEW_NAME), null, null)
+          Parameters(arrayOf(BASE_NAME_DIRECTORY, NEW_NAME), null, null),
         ),
         arrayOf(
           "base.dir & new + finish = new",
-          Parameters(arrayOf(BASE_NAME_DIRECTORY, NEW_NAME), FINISH, NEW_BYTES)
+          Parameters(arrayOf(BASE_NAME_DIRECTORY, NEW_NAME), FINISH, NEW_BYTES),
         ),
         arrayOf(
           "base.dir & new + fail = none",
-          Parameters(arrayOf(BASE_NAME_DIRECTORY, NEW_NAME), FAIL, null)
+          Parameters(arrayOf(BASE_NAME_DIRECTORY, NEW_NAME), FAIL, null),
         ),
         arrayOf(
           "base.dir & new + abort = none",
-          Parameters(arrayOf(BASE_NAME_DIRECTORY, NEW_NAME), ABORT, null)
+          Parameters(arrayOf(BASE_NAME_DIRECTORY, NEW_NAME), ABORT, null),
         ),
-        arrayOf("none + read & finish = new", Parameters(null, READ_FINISH, NEW_BYTES))
+        arrayOf("none + read & finish = new", Parameters(null, READ_FINISH, NEW_BYTES)),
       )
     }
   }
@@ -205,6 +205,6 @@ class ParameterizedOkioAtomicFileTests(
   internal constructor(
     var existingFileNames: Array<String>?,
     var writeAction: WriteAction?,
-    var expectedBytes: ByteArray?
+    var expectedBytes: ByteArray?,
   )
 }

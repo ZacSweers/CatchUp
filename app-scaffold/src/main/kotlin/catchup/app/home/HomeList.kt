@@ -45,7 +45,7 @@ fun HomeList(state: State, modifier: Modifier = Modifier) {
             text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.displayLarge,
             fontWeight = FontWeight.Black,
-            modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
+            modifier = Modifier.padding(bottom = 32.dp, start = 12.dp),
           )
           if (state.changelogAvailable) {
             ChangelogButton(Modifier.align(Alignment.TopEnd)) { state.eventSink(ShowChangelog) }
@@ -61,7 +61,7 @@ fun HomeList(state: State, modifier: Modifier = Modifier) {
             serviceTint = colorResource(meta.themeColor),
             description = "",
             isSelected = state.selectedIndex == index,
-            onClick = { state.eventSink(Selected(index)) }
+            onClick = { state.eventSink(Selected(index)) },
           )
         }
       }
@@ -75,7 +75,7 @@ fun HomeList(state: State, modifier: Modifier = Modifier) {
           serviceTint = MaterialTheme.colorScheme.primary,
           description = "Miscellaneous CatchUp settings",
           isSelected = state.selectedIndex == index,
-          onClick = { state.eventSink(Selected(index)) }
+          onClick = { state.eventSink(Selected(index)) },
         )
       }
     }
@@ -95,7 +95,7 @@ private fun HomeListItemEntry(
   val tintColor =
     dynamicAwareColor(
       regularColor = { serviceTint },
-      dynamicColor = { MaterialTheme.colorScheme.primary }
+      dynamicColor = { MaterialTheme.colorScheme.primary },
     )
   // TODO animate this on changes?
   val color =
@@ -116,22 +116,19 @@ private fun HomeListItemEntry(
         painter = icon,
         contentDescription = null,
         modifier = Modifier.padding(16.dp).size(48.dp),
-        tint = tintColor
+        tint = tintColor,
       )
       Column(
         modifier = Modifier.align(Alignment.CenterVertically),
-        verticalArrangement = spacedBy(4.dp)
+        verticalArrangement = spacedBy(4.dp),
       ) {
         Text(
           text = title,
           style = MaterialTheme.typography.titleLarge,
-          fontWeight = FontWeight.Black
+          fontWeight = FontWeight.Black,
         )
         if (description.isNotBlank()) {
-          Text(
-            text = description,
-            style = MaterialTheme.typography.bodyMedium,
-          )
+          Text(text = description, style = MaterialTheme.typography.bodyMedium)
         }
       }
     }

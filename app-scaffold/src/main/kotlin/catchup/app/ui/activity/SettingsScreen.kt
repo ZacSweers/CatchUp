@@ -128,7 +128,7 @@ constructor(
           Snackbar.make(
               view,
               appContext.getString(AppScaffoldR.string.settings_reset),
-              Snackbar.LENGTH_INDEFINITE
+              Snackbar.LENGTH_INDEFINITE,
             )
             .setAction(AppScaffoldR.string.restart) { appContext.restartApp() }
             .show()
@@ -145,7 +145,7 @@ constructor(
                 val cleanedAmount = clearCache()
                 appContext.getString(
                   AppScaffoldR.string.clear_cache_success,
-                  BinaryByteUnit.format(cleanedAmount)
+                  BinaryByteUnit.format(cleanedAmount),
                 )
               } catch (e: Exception) {
                 appContext.getString(AppScaffoldR.string.settings_error_cleaning_cache)
@@ -201,7 +201,7 @@ class SettingsUi
 @Inject
 constructor(
   // TODO this is unfortunate but sorta how the settings library used here works
-  private val catchUpPreferences: CatchUpPreferences,
+  private val catchUpPreferences: CatchUpPreferences
 ) : Ui<State>, BaseSettingsUi by RealBaseSettingsUi(catchUpPreferences.datastore) {
 
   @Composable
@@ -213,17 +213,8 @@ constructor(
     subtitle: String? = null,
     // TODO icon
   ) {
-    val state =
-      rememberBooleanSettingState(
-        key = key,
-        defaultValue = defaultValue,
-      )
-    CheckboxPref(
-      modifier = modifier,
-      title = title,
-      subtitle = subtitle,
-      state = state,
-    )
+    val state = rememberBooleanSettingState(key = key, defaultValue = defaultValue)
+    CheckboxPref(modifier = modifier, title = title, subtitle = subtitle, state = state)
   }
 
   @OptIn(ExperimentalFoundationApi::class)
@@ -261,7 +252,7 @@ constructor(
         item(key = "reorder_services") {
           ClickablePreference(
             title = stringResource(AppScaffoldR.string.pref_reorder_services),
-            subtitle = stringResource(AppScaffoldR.string.pref_order_services_description)
+            subtitle = stringResource(AppScaffoldR.string.pref_order_services_description),
           ) {
             state.eventSink(NavToScreen(OrderServicesScreen))
           }
@@ -279,7 +270,7 @@ constructor(
         stickyHeader(key = "theming_header") {
           ComposableHeaderItem(
             stringResource(AppScaffoldR.string.prefs_theme),
-            displayDivider = true
+            displayDivider = true,
           )
         }
 
@@ -327,9 +318,7 @@ constructor(
         }
 
         item(key = "about") {
-          ClickablePreference(
-            title = stringResource(AppScaffoldR.string.about),
-          ) {
+          ClickablePreference(title = stringResource(AppScaffoldR.string.about)) {
             state.eventSink(NavToScreen(AboutScreen()))
           }
         }
@@ -374,11 +363,7 @@ private fun ClickablePreference(
   onClick: () -> Unit,
 ) {
   Surface(modifier = modifier.fillMaxWidth(), onClick = onClick) {
-    SimplePrefItem(
-      title,
-      subtitle,
-      icon,
-    )
+    SimplePrefItem(title, subtitle, icon)
   }
 }
 
@@ -404,14 +389,10 @@ private fun CheckboxPref(
           value = storageValue,
           role = Role.Checkbox,
           enabled = LocalEnabled.current,
-          onValueChange = { update(!storageValue) }
-        ),
+          onValueChange = { update(!storageValue) },
+        )
   ) {
-    SimplePrefItem(
-      title,
-      subtitle,
-      icon,
-    ) {
+    SimplePrefItem(title, subtitle, icon) {
       Switch(checked = storageValue, onCheckedChange = update, enabled = LocalEnabled.current)
     }
   }
@@ -427,22 +408,19 @@ private fun SimplePrefItem(
   Row(
     modifier = Modifier.padding(16.dp),
     verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = spacedBy(16.dp)
+    horizontalArrangement = spacedBy(16.dp),
   ) {
     icon?.let {
       // TODO()
       it()
     }
-    Column(
-      modifier = Modifier.weight(1f),
-      verticalArrangement = spacedBy(4.dp),
-    ) {
+    Column(modifier = Modifier.weight(1f), verticalArrangement = spacedBy(4.dp)) {
       val titleAlpha = if (LocalEnabled.current) ContentAlphas.High else ContentAlphas.Disabled
       Text(
         text = title,
         style = MaterialTheme.typography.titleMedium,
         // TODO why do I have to do all this manually? Why doesn't this respect LocalContentAlpha
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = titleAlpha)
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = titleAlpha),
       )
       subtitle?.let {
         val subtitleAlpha =

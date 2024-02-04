@@ -131,7 +131,7 @@ abstract class ApplicationModule {
             CoilImagesPlugin.create(context, imageLoader),
             TablePlugin.create(context),
             LinkifyPlugin.create(),
-            TaskListPlugin.create(context)
+            TaskListPlugin.create(context),
             //            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
           )
         )

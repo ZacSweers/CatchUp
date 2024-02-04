@@ -88,7 +88,7 @@ object GithubApolloModule {
 
       override fun cacheKeyForObject(
         obj: Map<String, Any?>,
-        context: CacheKeyGeneratorContext
+        context: CacheKeyGeneratorContext,
       ): CacheKey? {
         // Most objects use id
         obj["id"].let {
@@ -129,7 +129,7 @@ object GithubApolloModule {
   @SingleIn(AppScope::class)
   fun provideNetworkTransport(
     httpEngine: HttpEngine,
-    httpRequestComposer: HttpRequestComposer
+    httpRequestComposer: HttpRequestComposer,
   ): NetworkTransport {
     return HttpNetworkTransport.Builder()
       .httpRequestComposer(httpRequestComposer)
@@ -143,7 +143,7 @@ object GithubApolloModule {
     networkTransport: NetworkTransport,
     cacheFactory: NormalizedCacheFactory,
     cacheKeyResolver: CacheKeyResolver,
-    cacheKeyGenerator: CacheKeyGenerator
+    cacheKeyGenerator: CacheKeyGenerator,
   ): ApolloClient {
     return ApolloClient.Builder()
       .networkTransport(networkTransport)
@@ -156,7 +156,7 @@ object GithubApolloModule {
       .normalizedCache(
         normalizedCacheFactory = cacheFactory,
         cacheResolver = cacheKeyResolver,
-        cacheKeyGenerator = cacheKeyGenerator
+        cacheKeyGenerator = cacheKeyGenerator,
       )
       .build()
   }

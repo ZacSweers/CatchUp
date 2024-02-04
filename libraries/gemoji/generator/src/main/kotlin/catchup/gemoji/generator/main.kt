@@ -80,7 +80,4 @@ fun main(args: Array<String>) {
 }
 
 @JsonClass(generateAdapter = true)
-data class GemojiJson(
-  val emoji: String,
-  val aliases: List<String>,
-)
+data class GemojiJson(val emoji: String, val aliases: List<String>)

@@ -35,7 +35,7 @@ fun FlickToDismiss(
   modifier: Modifier = Modifier,
   state: FlickToDismissState = rememberFlickToDismissState(),
   interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-  content: @Composable BoxScope.() -> Unit
+  content: @Composable BoxScope.() -> Unit,
 ) {
   val dragStartedOnLeftSide = remember { mutableStateOf(false) }
 
@@ -62,10 +62,10 @@ fun FlickToDismiss(
             } else {
               state.resetOffset()
             }
-          }
+          },
         )
         .onGloballyPositioned { coordinates -> state.contentSize.value = coordinates.size },
-    content = content
+    content = content,
   )
 }
 
@@ -142,7 +142,7 @@ data class FlickToDismissState(
     draggableState.drag(MutatePriority.PreventUserInput) {
       Animatable(offset).animateTo(
         targetValue = contentSize.value!!.height * if (offset > 0f) 1f else -1f,
-        animationSpec = tween(AnimationConstants.DefaultDurationMillis)
+        animationSpec = tween(AnimationConstants.DefaultDurationMillis),
       ) {
         dragBy(value - offset)
       }

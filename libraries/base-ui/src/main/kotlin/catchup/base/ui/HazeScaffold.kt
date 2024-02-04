@@ -37,10 +37,7 @@ fun HazeScaffold(
   NestedScaffold(
     modifier = modifier,
     topBar = {
-      Box(
-        modifier = Modifier.thenIf(blurTopBar) { hazeChild(hazeState) },
-        content = { topBar() },
-      )
+      Box(modifier = Modifier.thenIf(blurTopBar) { hazeChild(hazeState) }, content = { topBar() })
     },
     bottomBar = {
       Box(
@@ -56,11 +53,7 @@ fun HazeScaffold(
     contentWindowInsets = contentWindowInsets,
   ) { contentPadding ->
     Box(
-      modifier =
-        Modifier.haze(
-          state = hazeState,
-          backgroundColor = containerColor,
-        ),
+      modifier = Modifier.haze(state = hazeState, backgroundColor = containerColor),
       content = { content(contentPadding) },
     )
   }

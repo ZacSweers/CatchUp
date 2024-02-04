@@ -36,7 +36,7 @@ data class UplabsImage(
   @Json(name = "category_friendly_name") val category: String,
   @Json(name = "teaser_url") val teaserUrl: String,
   @Json(name = "preview_url") val previewUrl: String,
-  val images: List<Image>
+  val images: List<Image>,
 )
 
 @JsonClass(generateAdapter = true)
@@ -45,7 +45,7 @@ data class Image(
   val height: Int,
   val width: Int,
   val size: Long,
-  val urls: Urls
+  val urls: Urls,
 )
 
 @JsonClass(generateAdapter = true) data class Urls(val full: String, val thumbnail: String)

@@ -49,7 +49,7 @@ object GemojiModule {
                 override fun onUpgrade(
                   db: SupportSQLiteDatabase,
                   oldVersion: Int,
-                  newVersion: Int
+                  newVersion: Int,
                 ) {
                   // Do nothing
                 }
@@ -62,7 +62,7 @@ object GemojiModule {
         context = context,
         copyFromAssetPath = "databases/gemoji.db",
         databaseVersion = GemojiDatabase.Schema.version.toInt(),
-        delegate = delegate
+        delegate = delegate,
       )
 
     return GemojiDatabase(AndroidSqliteDriver(assetAssistedOpenHelper))
