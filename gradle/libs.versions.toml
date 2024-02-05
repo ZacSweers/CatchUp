@@ -6,13 +6,13 @@ androidx-core = "1.13.0-alpha04"
 androidx-sqlite = "2.4.0"
 appcompat = "1.7.0-alpha03"
 benchmark = "1.2.3"
-compose-material3 = "1.2.0-beta02"
+compose-material3 = "1.2.0-rc01"
 emoji = "1.2.0-alpha03"
 anvil = "2.4.9"
 apollo = "3.8.2"
 circuit = "0.18.2"
 coil = "2.5.0"
-compose = "1.6.0"
+compose = "1.7.0-alpha01"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.5.8"
@@ -127,7 +127,7 @@ androidx-compose-animation = { module = "androidx.compose.animation:animation", 
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-androidx-compose-googleFonts = "androidx.compose.ui:ui-text-google-fonts:1.6.0"
+androidx-compose-googleFonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "compose" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 androidx-compose-material-ripple = { module = "androidx.compose.material:material-ripple", version.ref = "compose" }
 androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }

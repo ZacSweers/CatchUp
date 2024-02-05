@@ -466,7 +466,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
 
       HorizontalPager(
         modifier = Modifier.weight(1f),
-        beyondBoundsPageCount = 1,
+        outOfBoundsPageCount = 1,
         key = { serviceMetas[it].id },
         state = pagerState,
         verticalAlignment = Alignment.Top,
