@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.google.devtools.ksp.gradle.KspAATask
 import com.google.devtools.ksp.gradle.KspTaskJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -86,15 +87,31 @@ apollo {
   }
 }
 
+val useKsp2 = findProperty("ksp.useKSP2")?.toString().toBoolean()
+
+@Suppress("UNCHECKED_CAST")
+fun kspTaskDestinationProvider(name: String): Provider<File> {
+  val taskType = if (useKsp2) KspAATask::class else KspTaskJvm::class
+  val kspDebugTask = tasks.named(name, taskType)
+  val provider: Provider<File> = if (useKsp2) {
+    // TODO double check after KSP2 resources fix if this is right, or if we need to use the base
+    //  dir instead to make it more general
+    (kspDebugTask as TaskProvider<KspAATask>).flatMap { it.kspConfig.kotlinOutputDir }
+  } else {
+    (kspDebugTask as TaskProvider<KspTaskJvm>).flatMap { it.destination }
+  }
+  return provider
+}
+
 // Workaround for https://youtrack.jetbrains.com/issue/KT-59220
 afterEvaluate {
-  val kspDebugTask = tasks.named<KspTaskJvm>("kspDebugKotlin")
+  val kspDebugTaskProvider = kspTaskDestinationProvider("kspDebugKotlin")
   tasks.named<KotlinCompile>("kaptGenerateStubsDebugKotlin").configure {
-    source(kspDebugTask.flatMap { it.destination })
+    source(kspDebugTaskProvider)
   }
-  val kspReleaseTask = tasks.named<KspTaskJvm>("kspReleaseKotlin")
+  val kspReleaseTaskProvider = kspTaskDestinationProvider("kspReleaseKotlin")
   tasks.named<KotlinCompile>("kaptGenerateStubsReleaseKotlin").configure {
-    source(kspReleaseTask.flatMap { it.destination })
+    source(kspReleaseTaskProvider)
   }
 }
 
