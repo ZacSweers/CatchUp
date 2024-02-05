@@ -1,6 +1,7 @@
 package catchup.app.ui.activity
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -10,6 +11,7 @@ import com.alorma.compose.settings.storage.datastore.GenericPreferenceDataStoreS
 import com.alorma.compose.settings.storage.datastore.rememberPreferenceDataStoreBooleanSettingState
 import com.alorma.compose.settings.storage.datastore.rememberPreferenceDataStoreIntSettingState
 
+@Stable
 interface BaseSettingsUi {
   @Composable
   fun rememberBooleanSettingState(
