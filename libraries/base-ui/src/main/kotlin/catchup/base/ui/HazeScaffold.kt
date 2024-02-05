@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 
@@ -53,7 +55,16 @@ fun HazeScaffold(
     contentWindowInsets = contentWindowInsets,
   ) { contentPadding ->
     Box(
-      modifier = Modifier.haze(state = hazeState, backgroundColor = containerColor),
+      modifier =
+        Modifier.haze(
+          state = hazeState,
+          style =
+            HazeStyle(
+              HazeDefaults.tint(containerColor),
+              HazeDefaults.blurRadius,
+              HazeDefaults.noiseFactor,
+            ),
+        ),
       content = { content(contentPadding) },
     )
   }
