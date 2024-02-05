@@ -56,7 +56,7 @@ interface CircuitModule {
               """
               .trimIndent(),
             modifier.background(Color.Red),
-            style = TextStyle(color = Color.Yellow)
+            style = TextStyle(color = Color.Yellow),
           )
         }
         .build()

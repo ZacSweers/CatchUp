@@ -88,7 +88,7 @@ private val recomposeModifier =
               lerp(
                 Color.Yellow.copy(alpha = 0.8f),
                 Color.Red.copy(alpha = 0.5f),
-                min(1f, (numCompositionsSinceTimeout - 1).toFloat() / 100f)
+                min(1f, (numCompositionsSinceTimeout - 1).toFloat() / 100f),
               ) to numCompositionsSinceTimeout.toInt().dp.toPx()
             }
           }

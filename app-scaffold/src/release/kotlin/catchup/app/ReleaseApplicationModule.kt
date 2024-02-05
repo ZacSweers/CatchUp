@@ -17,10 +17,12 @@ package catchup.app
 
 import android.app.Application
 import catchup.app.ApplicationModule.Initializers
+import catchup.app.data.LumberYard
 import catchup.base.ui.CatchUpObjectWatcher
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Client
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
@@ -49,17 +51,29 @@ object ReleaseApplicationModule {
   @IntoSet
   @Provides
   fun bugsnagInit(application: Application, @BugsnagKey key: String): () -> Unit = {
-    Bugsnag.start(application, key)
+    getOrStartBugsnag(application, key)
   }
 
   @IntoSet
   @Provides
-  fun provideBugsnagTree(application: Application, @BugsnagKey key: String): Timber.Tree =
-    BugsnagTree().also {
-      Bugsnag.start(application, key) // TODO nix this by allowing ordering of inits
-      Bugsnag.getClient().addOnError { error ->
+  fun provideBugsnagTree(
+    application: Application,
+    @BugsnagKey key: String,
+    lumberYard: LumberYard,
+  ): Timber.Tree {
+    return BugsnagTree(lumberYard).also {
+      getOrStartBugsnag(application, key).addOnError { error ->
         it.update(error)
         true
       }
     }
+  }
+
+  private fun getOrStartBugsnag(application: Application, key: String): Client {
+    return if (!Bugsnag.isStarted()) {
+      Bugsnag.start(application, key)
+    } else {
+      Bugsnag.getClient()
+    }
+  }
 }

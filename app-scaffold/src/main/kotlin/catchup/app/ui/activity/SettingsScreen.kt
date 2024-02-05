@@ -37,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
 import catchup.app.CatchUpPreferences
-import catchup.app.CatchUpPreferences.Keys
+import catchup.app.data.DiskLumberYard
 import catchup.app.data.LumberYard
 import catchup.app.ui.about.AboutScreen
 import catchup.app.ui.activity.SettingsScreen.Event.ClearCache
@@ -45,7 +45,7 @@ import catchup.app.ui.activity.SettingsScreen.Event.NavToScreen
 import catchup.app.ui.activity.SettingsScreen.State
 import catchup.app.util.restartApp
 import catchup.base.ui.BackPressNavButton
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.compose.ContentAlphas
 import catchup.compose.DisableableContent
 import catchup.compose.LocalEnabled
@@ -71,11 +71,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
-import dev.zacsweers.catchup.app.scaffold.R
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -122,17 +121,16 @@ constructor(
 
     LaunchedEffect(view) {
       catchUpPreferences.reports
-        .distinctUntilChanged()
         .drop(1) // Drop the initial true emission
         .collect {
           // If we change reports to false, restart
           // TODO circuit-ify this
           Snackbar.make(
               view,
-              appContext.getString(R.string.settings_reset),
-              Snackbar.LENGTH_INDEFINITE
+              appContext.getString(AppScaffoldR.string.settings_reset),
+              Snackbar.LENGTH_INDEFINITE,
             )
-            .setAction(R.string.restart) { appContext.restartApp() }
+            .setAction(AppScaffoldR.string.restart) { appContext.restartApp() }
             .show()
         }
     }
@@ -146,15 +144,15 @@ constructor(
               try {
                 val cleanedAmount = clearCache()
                 appContext.getString(
-                  R.string.clear_cache_success,
-                  BinaryByteUnit.format(cleanedAmount)
+                  AppScaffoldR.string.clear_cache_success,
+                  BinaryByteUnit.format(cleanedAmount),
                 )
               } catch (e: Exception) {
-                appContext.getString(R.string.settings_error_cleaning_cache)
+                appContext.getString(AppScaffoldR.string.settings_error_cleaning_cache)
               }
             // TODO circuit-ify this
             Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE)
-              .setAction(R.string.restart) { appContext.restartApp() }
+              .setAction(AppScaffoldR.string.restart) { appContext.restartApp() }
               .show()
           }
         }
@@ -186,7 +184,12 @@ constructor(
           cleanedSize += initialDbSize
         }
       }
-      cleanedSize += lumberYard.cleanUp()
+      cleanedSize +=
+        if (lumberYard is DiskLumberYard) {
+          lumberYard.cleanUp()
+        } else {
+          0
+        }
       return@withContext cleanedSize
     }
   }
@@ -198,7 +201,7 @@ class SettingsUi
 @Inject
 constructor(
   // TODO this is unfortunate but sorta how the settings library used here works
-  private val catchUpPreferences: CatchUpPreferences,
+  private val catchUpPreferences: CatchUpPreferences
 ) : Ui<State>, BaseSettingsUi by RealBaseSettingsUi(catchUpPreferences.datastore) {
 
   @Composable
@@ -210,23 +213,14 @@ constructor(
     subtitle: String? = null,
     // TODO icon
   ) {
-    val state =
-      rememberBooleanSettingState(
-        key = key,
-        defaultValue = defaultValue,
-      )
-    CheckboxPref(
-      modifier = modifier,
-      title = title,
-      subtitle = subtitle,
-      state = state,
-    )
+    val state = rememberBooleanSettingState(key = key, defaultValue = defaultValue)
+    CheckboxPref(modifier = modifier, title = title, subtitle = subtitle, state = state)
   }
 
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
   override fun Content(state: State, modifier: Modifier) {
-    CatchUpScaffold(
+    HazeScaffold(
       modifier = modifier,
       contentWindowInsets = WindowInsets(0, 0, 0, 0),
       containerColor = Color.Transparent,
@@ -234,7 +228,7 @@ constructor(
       blurBottomBar = true,
       topBar = {
         TopAppBar(
-          title = { Text(stringResource(R.string.title_activity_settings)) },
+          title = { Text(stringResource(AppScaffoldR.string.title_activity_settings)) },
           navigationIcon = { BackPressNavButton() },
           colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         )
@@ -244,21 +238,21 @@ constructor(
         modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding)
       ) {
         stickyHeader(key = "general_header") {
-          ComposableHeaderItem(stringResource(R.string.general), displayDivider = false)
+          ComposableHeaderItem(stringResource(AppScaffoldR.string.general), displayDivider = false)
         }
         item(key = "smart_linking") {
           BooleanPreference(
             key = CatchUpPreferences.Keys.smartlinkingGlobal,
             defaultValue = true,
-            title = stringResource(R.string.pref_smart_linking_title),
-            subtitle = stringResource(R.string.pref_smart_linking_summary),
+            title = stringResource(AppScaffoldR.string.pref_smart_linking_title),
+            subtitle = stringResource(AppScaffoldR.string.pref_smart_linking_summary),
           )
         }
 
         item(key = "reorder_services") {
           ClickablePreference(
-            title = stringResource(R.string.pref_reorder_services),
-            subtitle = stringResource(R.string.pref_order_services_description)
+            title = stringResource(AppScaffoldR.string.pref_reorder_services),
+            subtitle = stringResource(AppScaffoldR.string.pref_order_services_description),
           ) {
             state.eventSink(NavToScreen(OrderServicesScreen))
           }
@@ -266,15 +260,18 @@ constructor(
 
         item(key = "clear_cache") {
           ClickablePreference(
-            title = stringResource(R.string.pref_clear_cache),
-            subtitle = stringResource(R.string.pref_clear_cache_summary),
+            title = stringResource(AppScaffoldR.string.pref_clear_cache),
+            subtitle = stringResource(AppScaffoldR.string.pref_clear_cache_summary),
           ) {
             state.eventSink(ClearCache)
           }
         }
 
         stickyHeader(key = "theming_header") {
-          ComposableHeaderItem(stringResource(R.string.prefs_theme), displayDivider = true)
+          ComposableHeaderItem(
+            stringResource(AppScaffoldR.string.prefs_theme),
+            displayDivider = true,
+          )
         }
 
         item(key = "dynamic_theme") {
@@ -282,8 +279,8 @@ constructor(
             key = CatchUpPreferences.Keys.dynamicTheme,
             modifier = Modifier.animateContentSize(),
             defaultValue = false,
-            title = stringResource(R.string.pref_dynamic_theme_title),
-            subtitle = stringResource(R.string.pref_dynamic_theme_summary),
+            title = stringResource(AppScaffoldR.string.pref_dynamic_theme_title),
+            subtitle = stringResource(AppScaffoldR.string.pref_dynamic_theme_summary),
           )
         }
 
@@ -291,27 +288,26 @@ constructor(
           BooleanPreference(
             key = CatchUpPreferences.Keys.dayNightAuto,
             defaultValue = true,
-            title = stringResource(R.string.pref_auto_set_theme),
-            subtitle = stringResource(R.string.pref_auto_set_theme_summary),
+            title = stringResource(AppScaffoldR.string.pref_auto_set_theme),
+            subtitle = stringResource(AppScaffoldR.string.pref_auto_set_theme_summary),
           )
         }
         item(key = "force_night") {
-          val autoEnabled by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
+          val autoEnabled by catchUpPreferences.dayNightAuto.collectAsState()
           DisableableContent(enabled = !autoEnabled) {
-            val forceNightValue by
-              catchUpPreferences.dayNightForceNight.collectAsState(initial = false)
+            val forceNightValue by catchUpPreferences.dayNightForceNight.collectAsState()
             BooleanPreference(
-              key = Keys.dayNightForceNight,
+              key = CatchUpPreferences.Keys.dayNightForceNight,
               modifier = Modifier.animateContentSize(), // Because the summary changes
               defaultValue = false,
-              title = stringResource(R.string.pref_force_dark_theme),
+              title = stringResource(AppScaffoldR.string.pref_force_dark_theme),
               subtitle =
                 if (!LocalEnabled.current) {
-                  stringResource(R.string.pref_dark_theme_disabled_auto)
+                  stringResource(AppScaffoldR.string.pref_dark_theme_disabled_auto)
                 } else if (forceNightValue) {
-                  stringResource(R.string.pref_dark_theme_enabled)
+                  stringResource(AppScaffoldR.string.pref_dark_theme_enabled)
                 } else {
-                  stringResource(R.string.pref_dark_theme_disabled)
+                  stringResource(AppScaffoldR.string.pref_dark_theme_disabled)
                 },
             )
           }
@@ -322,9 +318,7 @@ constructor(
         }
 
         item(key = "about") {
-          ClickablePreference(
-            title = stringResource(R.string.about),
-          ) {
+          ClickablePreference(title = stringResource(AppScaffoldR.string.about)) {
             state.eventSink(NavToScreen(AboutScreen()))
           }
         }
@@ -333,8 +327,8 @@ constructor(
           BooleanPreference(
             key = CatchUpPreferences.Keys.reports,
             defaultValue = true,
-            title = stringResource(R.string.pref_reports),
-            subtitle = stringResource(R.string.pref_reports_summary),
+            title = stringResource(AppScaffoldR.string.pref_reports),
+            subtitle = stringResource(AppScaffoldR.string.pref_reports_summary),
           )
         }
       }
@@ -369,11 +363,7 @@ private fun ClickablePreference(
   onClick: () -> Unit,
 ) {
   Surface(modifier = modifier.fillMaxWidth(), onClick = onClick) {
-    SimplePrefItem(
-      title,
-      subtitle,
-      icon,
-    )
+    SimplePrefItem(title, subtitle, icon)
   }
 }
 
@@ -399,14 +389,10 @@ private fun CheckboxPref(
           value = storageValue,
           role = Role.Checkbox,
           enabled = LocalEnabled.current,
-          onValueChange = { update(!storageValue) }
-        ),
+          onValueChange = { update(!storageValue) },
+        )
   ) {
-    SimplePrefItem(
-      title,
-      subtitle,
-      icon,
-    ) {
+    SimplePrefItem(title, subtitle, icon) {
       Switch(checked = storageValue, onCheckedChange = update, enabled = LocalEnabled.current)
     }
   }
@@ -422,22 +408,19 @@ private fun SimplePrefItem(
   Row(
     modifier = Modifier.padding(16.dp),
     verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = spacedBy(16.dp)
+    horizontalArrangement = spacedBy(16.dp),
   ) {
     icon?.let {
       // TODO()
       it()
     }
-    Column(
-      modifier = Modifier.weight(1f),
-      verticalArrangement = spacedBy(4.dp),
-    ) {
+    Column(modifier = Modifier.weight(1f), verticalArrangement = spacedBy(4.dp)) {
       val titleAlpha = if (LocalEnabled.current) ContentAlphas.High else ContentAlphas.Disabled
       Text(
         text = title,
         style = MaterialTheme.typography.titleMedium,
         // TODO why do I have to do all this manually? Why doesn't this respect LocalContentAlpha
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = titleAlpha)
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = titleAlpha),
       )
       subtitle?.let {
         val subtitleAlpha =

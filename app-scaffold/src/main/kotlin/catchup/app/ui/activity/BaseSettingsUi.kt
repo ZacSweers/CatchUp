@@ -1,6 +1,7 @@
 package catchup.app.ui.activity
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -10,17 +11,18 @@ import com.alorma.compose.settings.storage.datastore.GenericPreferenceDataStoreS
 import com.alorma.compose.settings.storage.datastore.rememberPreferenceDataStoreBooleanSettingState
 import com.alorma.compose.settings.storage.datastore.rememberPreferenceDataStoreIntSettingState
 
+@Stable
 interface BaseSettingsUi {
   @Composable
   fun rememberBooleanSettingState(
     key: Preferences.Key<Boolean>,
-    defaultValue: Boolean
+    defaultValue: Boolean,
   ): SettingValueState<Boolean>
 
   @Composable
   fun rememberStringSettingState(
     key: Preferences.Key<String>,
-    defaultValue: String
+    defaultValue: String,
   ): SettingValueState<String>
 
   @Composable
@@ -29,7 +31,7 @@ interface BaseSettingsUi {
   @Composable
   fun rememberLongSettingState(
     key: Preferences.Key<Long>,
-    defaultValue: Long
+    defaultValue: Long,
   ): SettingValueState<Long>
 }
 
@@ -53,7 +55,7 @@ class RealBaseSettingsUi(private val dataStore: DataStore<Preferences>) : BaseSe
   @Composable
   override fun rememberLongSettingState(
     key: Preferences.Key<Long>,
-    defaultValue: Long
+    defaultValue: Long,
   ): SettingValueState<Long> {
     val scope = rememberStableCoroutineScope()
     return remember {
@@ -69,7 +71,7 @@ class RealBaseSettingsUi(private val dataStore: DataStore<Preferences>) : BaseSe
   @Composable
   override fun rememberStringSettingState(
     key: Preferences.Key<String>,
-    defaultValue: String
+    defaultValue: String,
   ): SettingValueState<String> {
     val scope = rememberStableCoroutineScope()
     return remember {

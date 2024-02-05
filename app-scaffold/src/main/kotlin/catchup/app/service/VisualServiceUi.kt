@@ -28,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -64,6 +65,7 @@ import catchup.service.api.CatchUpItem
 import coil.compose.AsyncImage
 import coil.drawable.MovieDrawable
 import coil.request.ImageRequest
+import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -71,11 +73,10 @@ import timber.log.Timber
 
 @Composable
 fun VisualServiceUi(
-  lazyItems: LazyPagingItems<CatchUpItem>,
+  items: LazyPagingItems<CatchUpItem>,
   themeColor: Color,
-  onRefreshChange: (Boolean) -> Unit,
   eventSink: (Event) -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) {
   val delegateRippleTheme = LocalRippleTheme.current
   CompositionLocalProvider(LocalRippleTheme provides ImageItemRippleTheme(delegateRippleTheme)) {
@@ -87,24 +88,21 @@ fun VisualServiceUi(
       modifier = modifier,
     ) {
       items(
-        count = lazyItems.itemCount,
+        count = items.itemCount,
         // Here we use the new itemKey extension on LazyPagingItems to
         // handle placeholders automatically, ensuring you only need to provide
         // keys for real items
-        key = lazyItems.itemKey { it.id },
+        key = items.itemKey { it.id },
       ) { index ->
-        val item = lazyItems[index]
+        val item = items[index]
         if (item != null) {
           val clickableItemState =
             rememberClickableItemState(
               contentColor =
                 item.imageInfo?.color?.let { Color(android.graphics.Color.parseColor(it)) }
-                  ?: Color.Unspecified,
+                  ?: Color.Unspecified
             )
-          ClickableItem(
-            onClick = { eventSink(ItemClicked(item)) },
-            state = clickableItemState,
-          ) {
+          ClickableItem(onClick = { eventSink(ItemClicked(item)) }, state = clickableItemState) {
             VisualItem(
               item = item,
               index = index,
@@ -116,7 +114,7 @@ fun VisualServiceUi(
           }
         }
       }
-      handleLoadStates(lazyItems, themeColor, onRefreshChange)
+      handleLoadStates(items, themeColor)
     }
   }
 }
@@ -140,7 +138,9 @@ fun VisualItem(
     // Compute in-grid image size
     val imageWidth = displayMetrics.widthPixels / columnCount(2)
     val imageWidthDp = LocalDensity.current.run { imageWidth.toDp() }
-    val imageHeight = (imageWidth / imageInfo.aspectRatio).toInt()
+    // To avoid super tall images, cap the aspect ration to 1:2 at most
+    val maxHeight = (imageWidth * 1.5).roundToInt()
+    val imageHeight = (imageWidth / imageInfo.aspectRatio).toInt().coerceAtMost(maxHeight)
     val imageHeightDp = LocalDensity.current.run { imageHeight.toDp() }
 
     val scope = rememberStableCoroutineScope()
@@ -234,7 +234,7 @@ fun VisualItem(
                     it.width - cornerSize,
                     it.height - cornerSize,
                     cornerSize,
-                    cornerSize
+                    cornerSize,
                   )
                 val isDark = ColorUtils.isDark(corner)
                 corner.recycle()
@@ -256,15 +256,11 @@ fun VisualItem(
 }
 
 @Composable
-private fun Badge(
-  badgeColor: Color,
-  modifier: Modifier = Modifier,
-  text: String = "GIF",
-) {
+private fun Badge(badgeColor: Color, modifier: Modifier = Modifier, text: String = "GIF") {
   Surface(
     modifier = modifier,
     color = badgeColor.copy(alpha = 0.5f),
-    shape = RoundedCornerShape(2.dp)
+    shape = RoundedCornerShape(2.dp),
   ) {
     Text(
       modifier = Modifier.padding(4.dp),
@@ -272,7 +268,7 @@ private fun Badge(
       fontSize = 12.sp,
       fontStyle = FontStyle.Normal,
       fontWeight = FontWeight.Black,
-      color = Color.White
+      color = Color.White,
     )
   }
 }
@@ -286,9 +282,8 @@ private fun PreviewBadge() {
   }
 }
 
-private class ImageItemRippleTheme(
-  private val delegate: RippleTheme,
-) : RippleTheme {
+@Stable
+private class ImageItemRippleTheme(private val delegate: RippleTheme) : RippleTheme {
   companion object {
     val opaqueRippleAlpha =
       RippleAlpha(
@@ -313,31 +308,26 @@ private fun applyPalette(palette: Palette, onContentColorChanged: (Color) -> Uni
 fun LazyStaggeredGridScope.handleLoadStates(
   lazyItems: LazyPagingItems<CatchUpItem>,
   themeColor: Color,
-  onRefreshChange: (Boolean) -> Unit
 ) {
   lazyItems.apply {
     when {
       loadState.refresh is LoadState.Loading -> {
-        onRefreshChange(true)
+        // Refresh
         item(key = "loading", span = StaggeredGridItemSpan.FullLine) {
           LoadingView(themeColor, Modifier.fillMaxSize())
         }
-      }
-      loadState.refresh is LoadState.NotLoading -> {
-        onRefreshChange(false)
       }
       loadState.append is LoadState.Loading -> {
         item(key = "appendingMore", span = StaggeredGridItemSpan.FullLine) { LoadingItem() }
       }
       loadState.refresh is LoadState.Error -> {
-        onRefreshChange(false)
         val e = loadState.refresh as LoadState.Error
         Timber.e(e.error)
         item(key = "errorLoading", span = StaggeredGridItemSpan.FullLine) {
           ErrorItem(
             "Error loading service: ${e.error.localizedMessage}",
             Modifier.fillMaxSize(),
-            ::retry
+            ::retry,
           )
         }
       }
@@ -374,16 +364,6 @@ private data class PagingPlaceholderKey(private val index: Int) : Parcelable {
   }
 }
 
-private val PLACEHOLDERS_DARK =
-  arrayOf(
-    Color(0xff191919),
-    Color(0xff212121),
-    Color(0xff232323),
-  )
+private val PLACEHOLDERS_DARK = arrayOf(Color(0xff191919), Color(0xff212121), Color(0xff232323))
 
-private val PLACEHOLDERS_LIGHT =
-  arrayOf(
-    Color(0xfff5f5f5),
-    Color(0xffeeeeee),
-    Color(0xffe0e0e0),
-  )
+private val PLACEHOLDERS_LIGHT = arrayOf(Color(0xfff5f5f5), Color(0xffeeeeee), Color(0xffe0e0e0))

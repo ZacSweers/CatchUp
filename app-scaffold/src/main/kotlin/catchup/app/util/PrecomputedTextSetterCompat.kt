@@ -37,7 +37,7 @@ class PrecomputedTextSetterCompat internal constructor(private val context: Coro
     textView: TextView,
     markdown: Spanned,
     bufferType: TextView.BufferType,
-    onComplete: Runnable
+    onComplete: Runnable,
   ) {
     textView.viewScope().launch {
       try {
@@ -58,16 +58,11 @@ class PrecomputedTextSetterCompat internal constructor(private val context: Coro
   companion object {
 
     /** @param context for background execution of text pre-computation */
-    fun create(
-      context: CoroutineContext = Dispatchers.Default,
-    ): PrecomputedTextSetterCompat {
+    fun create(context: CoroutineContext = Dispatchers.Default): PrecomputedTextSetterCompat {
       return PrecomputedTextSetterCompat(context)
     }
 
-    private fun precomputedText(
-      textView: TextView,
-      spanned: Spanned,
-    ): PrecomputedTextCompat? {
+    private fun precomputedText(textView: TextView, spanned: Spanned): PrecomputedTextCompat? {
 
       // use native parameters on P
       val params: PrecomputedTextCompat.Params =
@@ -80,7 +75,7 @@ class PrecomputedTextSetterCompat internal constructor(private val context: Coro
       textView: TextView,
       text: Spanned,
       bufferType: TextView.BufferType,
-      onComplete: Runnable
+      onComplete: Runnable,
     ) {
       textView.setText(text, bufferType)
       onComplete.run()

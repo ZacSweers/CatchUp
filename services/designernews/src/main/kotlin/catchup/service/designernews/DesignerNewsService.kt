@@ -74,7 +74,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
             mark =
               createCommentMark(
                 count = commentCount,
-                clickUrl = href.replace("api.", "www.").replace("api/v2/", "")
+                clickUrl = href.replace("api.", "www.").replace("api/v2/", ""),
               ),
             indexInResponse = index + request.pageOffset,
             serviceId = meta().id,
@@ -106,7 +106,7 @@ abstract class DesignerNewsMetaModule {
         R.color.catchup_service_dn_accent,
         R.drawable.catchup_service_dn_logo,
         pagesAreNumeric = true,
-        firstPageKey = 1
+        firstPageKey = 1,
       )
   }
 }
@@ -124,7 +124,7 @@ object DesignerNewsModule {
   internal fun provideDesignerNewsApi(
     client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
-    appConfig: AppConfig
+    appConfig: AppConfig,
   ): DesignerNewsApi {
 
     val retrofit =

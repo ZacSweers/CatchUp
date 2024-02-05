@@ -1,7 +1,7 @@
 #!/usr/bin/env kotlin
-@file:DependsOn("com.github.ajalt.clikt:clikt-jvm:4.2.1")
-@file:DependsOn("com.squareup.moshi:moshi:1.15.0")
-@file:DependsOn("com.squareup.moshi:moshi-kotlin:1.15.0")
+@file:DependsOn("com.github.ajalt.clikt:clikt-jvm:4.2.2")
+@file:DependsOn("com.squareup.moshi:moshi:1.15.1")
+@file:DependsOn("com.squareup.moshi:moshi-kotlin:1.15.1")
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.option

@@ -27,18 +27,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import catchup.app.data.LumberYard
 import catchup.app.data.LumberYard.Entry
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 /** A simple list UI for showing debugging logs and sharing them. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LogsList(
-  entries: ImmutableList<LumberYard.Entry>,
-  modifier: Modifier = Modifier,
-  onShare: () -> Unit
-) {
+fun LogsList(entries: ImmutableList<Entry>, modifier: Modifier = Modifier, onShare: () -> Unit) {
   LazyColumn(modifier = modifier, contentPadding = PaddingValues(start = 16.dp, end = 16.dp)) {
     stickyHeader(key = "header") {
       Surface {
@@ -56,7 +54,7 @@ fun LogsList(
 }
 
 @Composable
-fun LogEntry(entry: LumberYard.Entry, modifier: Modifier = Modifier) {
+fun LogEntry(entry: Entry, modifier: Modifier = Modifier) {
   Column(modifier = modifier.fillMaxWidth()) {
     Row {
       Text(
@@ -74,14 +72,14 @@ fun LogEntry(entry: LumberYard.Entry, modifier: Modifier = Modifier) {
         maxLines = 1,
         fontSize = 10.sp,
         overflow = TextOverflow.Ellipsis,
-        style = MaterialTheme.typography.labelSmall
+        style = MaterialTheme.typography.labelSmall,
       )
     }
 
     Text(
       entry.message,
       modifier = Modifier.fillMaxWidth().padding(4.dp),
-      style = MaterialTheme.typography.bodySmall
+      style = MaterialTheme.typography.bodySmall,
     )
   }
 }
@@ -102,6 +100,7 @@ private fun backgroundForLevel(level: Int) =
 private fun LogEntryPreview() {
   LogEntry(
     Entry(
+      time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
       level = Log.DEBUG,
       tag = "CatchUp",
       message = "This is a test message",

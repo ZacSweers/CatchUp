@@ -27,7 +27,7 @@ data class User(
   val id: Long,
   val job: String,
   @Json(name = "last_name") val lastName: String,
-  @Json(name = "portrait_url") val portraitUrl: String
+  @Json(name = "portrait_url") val portraitUrl: String,
 ) {
 
   companion object {

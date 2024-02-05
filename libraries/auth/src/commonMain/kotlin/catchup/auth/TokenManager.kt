@@ -20,7 +20,7 @@ import retrofit2.create
 
 internal suspend fun TokenStorage.updateAuthData(
   response: AuthenticationResponse,
-  clock: Clock = Clock.System
+  clock: Clock = Clock.System,
 ) {
   val expiration =
     response.expiresIn?.let { clock.now().plus(it.seconds) } ?: Instant.DISTANT_FUTURE
@@ -85,14 +85,14 @@ internal class TokenManagerImpl(
             authEndpoint,
             credentials.clientId,
             credentials.secret,
-            credentials.grantType
+            credentials.grantType,
           )
         }
       JSON ->
         suspend {
           api.authenticateJSON(
             authEndpoint,
-            AuthRequest(credentials.clientId, credentials.secret, credentials.grantType)
+            AuthRequest(credentials.clientId, credentials.secret, credentials.grantType),
           )
         }
     }

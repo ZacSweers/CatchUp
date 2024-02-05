@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import catchup.app.data.DiskLumberYard
 import catchup.app.data.LumberYard
 import catchup.app.ui.bugreport.BugReportDialog.ReportListener
 import catchup.app.ui.bugreport.BugReportView.Report
@@ -58,7 +59,7 @@ constructor(
   private val lumberYard: LumberYard,
   private val imgurUploadApi: ImgurUploadApi,
   private val gitHubIssueApi: GitHubIssueApi,
-  private val appConfig: AppConfig
+  private val appConfig: AppConfig,
 ) : Lens(), ReportListener {
 
   private var screenshot: File? = null
@@ -75,8 +76,16 @@ constructor(
     withContext(Dispatchers.IO) {
       if (report.includeLogs) {
         try {
-          val logs = lumberYard.save()
-          submitReport(context, report, logs)
+          lumberYard.flush()
+          submitReport(context, report) {
+            if (lumberYard is DiskLumberYard) {
+              lumberYard.currentLogFileText()
+            } else {
+              lumberYard
+                .bufferedLogs()
+                .joinToString("\n", transform = LumberYard.Entry::prettyPrint)
+            }
+          }
         } catch (e: Exception) {
           Toast.makeText(context, "Couldn't attach the logs.", Toast.LENGTH_SHORT).show()
           submitReport(context, report, null)
@@ -90,7 +99,7 @@ constructor(
   private suspend fun submitReport(
     context: Context,
     report: Report,
-    logs: File?,
+    logs: (suspend () -> String)?,
   ) {
     val displayMetrics = context.resources.displayMetrics
     val densityBucket = getDensityString(displayMetrics)
@@ -98,7 +107,7 @@ constructor(
     val markdown = buildMarkdown {
       text("Reported by @${report.username}")
       newline(2)
-      if (!report.description.isBlank()) {
+      if (report.description.isNotBlank()) {
         h4("Description")
         newline()
         codeBlock(report.description)
@@ -143,7 +152,7 @@ constructor(
     context: Context,
     report: Report,
     body: StringBuilder,
-    logs: File?
+    logs: (suspend () -> String)?,
   ) {
     val channelId = "bugreports"
     val notificationManager =
@@ -177,7 +186,7 @@ constructor(
             MultipartBody.Part.createFormData(
               "image",
               finalScreenshot.name,
-              finalScreenshot.asRequestBody("image/*".toMediaTypeOrNull())
+              finalScreenshot.asRequestBody("image/*".toMediaTypeOrNull()),
             )
           )
           .let { "\n\n!${buildMarkdown { link(it, "Screenshot") }}" }
@@ -185,18 +194,18 @@ constructor(
         "\n\nNo screenshot provided"
       }
 
+    val screenshotMarkdown = buildMarkdown {
+      newline(2)
+      h4("Logs")
+      if (report.includeLogs && logs != null) {
+        codeBlock(logs())
+      } else {
+        text("No logs provided")
+      }
+    }
     val bodyText =
       with(body) {
         append(screenshotText)
-        val screenshotMarkdown = buildMarkdown {
-          newline(2)
-          h4("Logs")
-          if (report.includeLogs && logs != null) {
-            codeBlock(logs.readText())
-          } else {
-            text("No logs provided")
-          }
-        }
         append(screenshotMarkdown)
         toString()
       }
@@ -229,7 +238,7 @@ constructor(
             NotificationCompat.Action(
               R.drawable.ic_share_black_24dp,
               "Share link",
-              PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE)
+              PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE),
             )
           )
         }

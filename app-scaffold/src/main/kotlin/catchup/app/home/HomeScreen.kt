@@ -71,7 +71,7 @@ import catchup.app.service.ServiceScreen
 import catchup.app.service.bookmarks.Bookmark
 import catchup.app.service.bookmarks.BookmarksScreen
 import catchup.app.ui.activity.SettingsScreen
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.base.ui.rememberSystemBarColorController
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.LocalDisplayFeatures
@@ -102,7 +102,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
-import dev.zacsweers.catchup.app.scaffold.R
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlinx.collections.immutable.ImmutableList
@@ -131,7 +131,7 @@ object HomeScreen : Screen, DeepLinkable {
     val changelogAvailable: Boolean,
     val selectedIndex: Int,
     val bookmarksCount: Long,
-    val eventSink: (Event) -> Unit = {}
+    val eventSink: (Event) -> Unit = {},
   ) : CircuitUiState
 
   sealed interface Event : CircuitUiEvent {
@@ -154,7 +154,7 @@ constructor(
   private val serviceMetaMap: Map<String, ServiceMeta>,
   private val catchUpPreferences: CatchUpPreferences,
   private val changelogHelper: ChangelogHelper,
-  private val bookmarkRepository: BookmarkRepository
+  private val bookmarkRepository: BookmarkRepository,
 ) : Presenter<State> {
 
   @CircuitInject(HomeScreen::class, AppScope::class)
@@ -165,8 +165,7 @@ constructor(
 
   @Composable
   override fun present(): State {
-    val currentOrder by
-      remember { catchUpPreferences.servicesOrder }.collectAsState(initial = persistentListOf())
+    val currentOrder by remember { catchUpPreferences.servicesOrder }.collectAsState()
     var selectedIndex by remember(currentOrder) { mutableIntStateOf(0) }
     val serviceMetas by
       produceState(initialValue = persistentListOf(), currentOrder) {
@@ -180,7 +179,7 @@ constructor(
                 .map { it[booleanPreferencesKey(serviceMeta.enabledPreferenceKey)] ?: true }
                 .first()
             }
-            .sortedBy { currentOrder.indexOf(it.id) }
+            .sortedBy { currentOrder.orEmpty().indexOf(it.id) }
             .toImmutableList()
       }
     val context = LocalContext.current
@@ -195,7 +194,7 @@ constructor(
       serviceMetas = serviceMetas,
       changelogAvailable = changelogAvailable,
       selectedIndex = selectedIndex,
-      bookmarksCount = bookmarksCount
+      bookmarksCount = bookmarksCount,
     ) { event ->
       when (event) {
         OpenSettings -> {
@@ -218,7 +217,7 @@ constructor(
               BottomSheetOverlay(
                 model = Unit,
                 content = { _, _ -> changelogHelper.Content() },
-                onDismiss = { Unit }
+                onDismiss = { Unit },
               )
             )
           }
@@ -266,7 +265,7 @@ fun Home(state: State, modifier: Modifier = Modifier) {
               // Embed the content in a scaffold for padding and such
               val meta = state.serviceMetas[state.selectedIndex]
               val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-              CatchUpScaffold(
+              HazeScaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 containerColor = Color.Transparent,
@@ -274,7 +273,7 @@ fun Home(state: State, modifier: Modifier = Modifier) {
                   TopAppBar(
                     title = { Text(stringResource(meta.name), fontWeight = FontWeight.Black) },
                     scrollBehavior = scrollBehavior,
-                    colors = topAppBarColors(containerColor = Color.Transparent)
+                    colors = topAppBarColors(containerColor = Color.Transparent),
                   )
                 },
               ) { innerPadding ->
@@ -301,10 +300,7 @@ fun Home(state: State, modifier: Modifier = Modifier) {
   }
 }
 
-@OptIn(
-  ExperimentalMaterial3Api::class,
-  ExperimentalFoundationApi::class,
-)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomePager(state: State, modifier: Modifier = Modifier) {
   if (state.serviceMetas.isEmpty()) return // Not loaded yet
@@ -380,7 +376,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
   }
   val serviceMetas by rememberUpdatedState(state.serviceMetas)
   val eventSink by rememberUpdatedState(state.eventSink)
-  CatchUpScaffold(
+  HazeScaffold(
     modifier = nestedScrollModifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     containerColor = Color.Transparent,
@@ -398,34 +394,17 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
             ChangelogButton { eventSink(ShowChangelog) }
           }
 
-          AnimatedVisibility(
-            state.bookmarksCount > 0,
-            enter = fadeIn(),
-            exit = fadeOut(),
-          ) {
-            Wigglable(
-              state.bookmarksCount,
-              shouldWiggle = { old, new -> new > old },
-            ) {
-              IconButton(
-                onClick = { eventSink(OpenBookmarks) },
-              ) {
-                Icon(
-                  imageVector = Icons.Filled.Bookmark,
-                  contentDescription = "Bookmarks",
-                )
+          AnimatedVisibility(state.bookmarksCount > 0, enter = fadeIn(), exit = fadeOut()) {
+            Wigglable(state.bookmarksCount, shouldWiggle = { old, new -> new > old }) {
+              IconButton(onClick = { eventSink(OpenBookmarks) }) {
+                Icon(imageVector = Icons.Filled.Bookmark, contentDescription = "Bookmarks")
               }
             }
           }
-          IconButton(
-            onClick = { eventSink(OpenSettings) },
-          ) {
-            Icon(
-              imageVector = Icons.Default.Settings,
-              contentDescription = "Settings",
-            )
+          IconButton(onClick = { eventSink(OpenSettings) }) {
+            Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
           }
-        }
+        },
       )
     },
   ) { innerPadding ->
@@ -448,7 +427,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         indicator = { tabPositions ->
           SecondaryIndicator(
             Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-            color = contentColor
+            color = contentColor,
           )
         },
       ) {
@@ -498,7 +477,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         ) {
           CircuitContent(
             screen = ServiceScreen(serviceMetas[page].id),
-            onNavEvent = { eventSink(NestedNavEvent(it)) }
+            onNavEvent = { eventSink(NestedNavEvent(it)) },
           )
         }
       }
@@ -550,13 +529,10 @@ private val Color.isDark: Boolean
 
 @Composable
 internal fun ChangelogButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
-  IconButton(
-    onClick = onClick,
-    modifier = modifier,
-  ) {
+  IconButton(onClick = onClick, modifier = modifier) {
     Icon(
-      imageVector = ImageVector.vectorResource(R.drawable.baseline_redeem_24),
-      contentDescription = stringResource(R.string.changes),
+      imageVector = ImageVector.vectorResource(AppScaffoldR.drawable.baseline_redeem_24),
+      contentDescription = stringResource(AppScaffoldR.string.changes),
     )
   }
 }

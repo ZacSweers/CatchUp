@@ -30,27 +30,30 @@ plugins {
 }
 
 slack {
+  @Suppress("OPT_IN_USAGE")
   features {
-    compose()
-    @Suppress("OPT_IN_USAGE")
+    compose {
+      if (project.hasProperty("catchup.enableComposeCompilerReports")) {
+        val metricsDir = project.layout.buildDirectory.dir("compose_metrics").get().asFile
+        enableCompilerMetricsForDebugging(metricsDir)
+      }
+      compilerOption("experimentalStrongSkipping", "true")
+    }
     dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
     moshi(codegen = true)
   }
   // TODO
-//  android {
-//    features {
-//      resources("app")
-//    }
-//  }
+  //  android {
+  //    features {
+  //      resources("app")
+  //    }
+  //  }
 }
 
 android {
   defaultConfig {
     buildConfigField(
-      "String",
-      "GITHUB_DEVELOPER_TOKEN",
-      "\"${properties["catchup_github_developer_token"]}\""
-    )
+        "String", "GITHUB_DEVELOPER_TOKEN", "\"${properties["catchup_github_developer_token"]}\"")
     resValue("string", "changelog_text", "haha")
   }
   buildFeatures {
@@ -63,10 +66,9 @@ android {
   buildTypes {
     getByName("debug") {
       buildConfigField(
-        "String",
-        "IMGUR_CLIENT_ACCESS_TOKEN",
-        "\"${project.properties["catchup_imgur_access_token"]}\""
-      )
+          "String",
+          "IMGUR_CLIENT_ACCESS_TOKEN",
+          "\"${project.properties["catchup_imgur_access_token"]}\"")
     }
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY", "\"${properties["catchup_bugsnag_key"]}\"")
@@ -78,8 +80,7 @@ android {
 apollo {
   service("github") {
     customScalarsMapping.set(
-      mapOf("DateTime" to "kotlinx.datetime.Instant", "URI" to "okhttp3.HttpUrl")
-    )
+        mapOf("DateTime" to "kotlinx.datetime.Instant", "URI" to "okhttp3.HttpUrl"))
     packageName.set("catchup.app.data.github")
     schemaFile.set(file("src/main/graphql/catchup/app/data/github/schema.json"))
   }
@@ -158,6 +159,7 @@ dependencies {
   implementation(libs.coil.gif)
   implementation(libs.collapsingToolbar)
   implementation(libs.errorProneAnnotations)
+  implementation(libs.fileSize)
   implementation(libs.firebase.core)
   implementation(libs.firebase.database)
   implementation(libs.kotlin.coroutines)
@@ -240,10 +242,10 @@ dependencies {
   kaptDebug(projects.libraries.tooling.spiMultibindsValidator)
   kaptDebug(projects.libraries.tooling.spiVisualizer)
 
+  testImplementation(libs.kotlin.coroutines.test)
   testImplementation(libs.misc.debug.flipper)
   testImplementation(libs.misc.debug.flipperNetwork)
+  testImplementation(libs.misc.okio.fakeFileSystem)
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
-
-  androidTestImplementation(libs.misc.jsr305)
 }

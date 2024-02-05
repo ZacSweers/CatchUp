@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import slack.gradle.avoidance.AffectedProjectsDefaults
-import slack.gradle.avoidance.ComputeAffectedProjectsTask
+import com.autonomousapps.DependencyAnalysisExtension
 
 plugins {
   alias(libs.plugins.kotlin.jvm) apply false
@@ -27,8 +26,8 @@ plugins {
   alias(libs.plugins.android.test) apply false
   alias(libs.plugins.sgp.root)
   alias(libs.plugins.sgp.base)
-  alias(libs.plugins.spotless)
-  alias(libs.plugins.doctor)
+  alias(libs.plugins.spotless) apply false
+  alias(libs.plugins.doctor) apply false
   alias(libs.plugins.ksp) apply false
   alias(libs.plugins.anvil) apply false
   alias(libs.plugins.cacheFixPlugin) apply false
@@ -39,7 +38,7 @@ plugins {
   alias(libs.plugins.bugsnag) apply false
   alias(libs.plugins.sortDependencies) apply false
   alias(libs.plugins.sqldelight) apply false
-  alias(libs.plugins.dependencyAnalysis)
+  alias(libs.plugins.dependencyAnalysis) apply false
 }
 
 buildscript {
@@ -49,49 +48,45 @@ buildscript {
   }
 }
 
+val useProjectIsolation = System.getProperty("org.gradle.unsafe.isolated-projects", "false").toBoolean()
+
+if (!useProjectIsolation) {
+  apply(plugin = libs.plugins.doctor.get().pluginId)
+  apply(plugin = libs.plugins.spotless.get().pluginId)
+}
+
 val useK2 = findProperty("kotlin.experimental.tryK2")?.toString().toBoolean()
 
-subprojects {
-  pluginManager.withPlugin("com.squareup.anvil") {
-    dependencies { add("compileOnly", libs.anvil.annotations) }
-  }
-
-  // TODO remove after kotlinpoet 1.14.0 is out with https://github.com/square/kotlinpoet/pull/1568
-  configurations.configureEach {
-    resolutionStrategy {
-      eachDependency {
-        if (requested.group == "com.squareup" && requested.name.contains("kotlinpoet")) {
-          useVersion("1.12.0")
-        }
-      }
-    }
+skippy {
+  mergeOutputs = true
+  global {
+    applyDefaults()
+    // Glob patterns of files to include in computing
+    includePatterns.addAll(
+      "**/schemas/**",
+      "app/proguard-rules.pro",
+      "**/src/**/graphql/**",
+    )
+    // Glob patterns of files that, if changed, should result in not skipping anything in the build
+    neverSkipPatterns.addAll(
+      ".github/workflows/**",
+      "spotless/**",
+      "scripts/github/schema.json",
+      "config/lint/lint.xml",
+    )
   }
 }
 
-tasks.named<ComputeAffectedProjectsTask>("computeAffectedProjects") {
-  // Glob patterns of files to include in computing
-  includePatterns.addAll(AffectedProjectsDefaults.DEFAULT_INCLUDE_PATTERNS)
-  includePatterns.addAll(
-    "**/schemas/**",
-    "app/proguard-rules.pro",
-    "**/src/**/graphql/**",
-  )
-  // Glob patterns of files that, if changed, should result in not skipping anything in the build
-  neverSkipPatterns.addAll(AffectedProjectsDefaults.DEFAULT_NEVER_SKIP_PATTERNS)
-  neverSkipPatterns.addAll(
-    ".github/workflows/**",
-    "spotless/**",
-    "scripts/github/schema.json",
-    "config/lint/lint.xml"
-  )
-}
-
-dependencyAnalysis {
-  structure {
-    bundle("compose-ui") {
-      primary("androidx.compose.ui:ui")
-      includeGroup("androidx.compose.ui")
-      // TODO exclude ui-tooling
-    }
-  }
+if (!useProjectIsolation) {
+  // https://github.com/autonomousapps/dependency-analysis-gradle-plugin/issues/1111
+//  apply(plugin = libs.plugins.dependencyAnalysis.get().pluginId)
+//  configure<DependencyAnalysisExtension> {
+//    structure {
+//      bundle("compose-ui") {
+//        primary("androidx.compose.ui:ui")
+//        includeGroup("androidx.compose.ui")
+//        // TODO exclude ui-tooling
+//      }
+//    }
+//  }
 }

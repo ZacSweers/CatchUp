@@ -24,7 +24,6 @@
   <string name="changelog">Changelog</string>
   <string name="pref_reports">Statistiques et rapports de plantage</string>
   <string name="pref_reports_summary">Laissez moi vous aider ! Activer pour autoriser l\'envoi de statistiques et de rapports de plantage anonymes.</string>
-  <string name="error_no_url">Aucune URL :(</string>
   <string name="general">Général</string>
   <string name="prefs_theme">Thème</string>
   <string name="pref_smart_linking_title">Activer "Smart linking"</string>

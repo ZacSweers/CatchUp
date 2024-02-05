@@ -3,6 +3,7 @@ package catchup.app.circuit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.window.DialogProperties
 import catchup.app.circuit.DialogResult.Cancel
 import catchup.app.circuit.DialogResult.Confirm
@@ -18,6 +19,7 @@ sealed interface DialogResult {
   data object Dismiss : DialogResult
 }
 
+@Stable // TODO remove in next circuit release
 class DialogOverlay(
   private val confirmButtonText: @Composable () -> Unit,
   private val icon: @Composable (() -> Unit)? = null,
@@ -37,17 +39,7 @@ class DialogOverlay(
       confirmButton = { Button(onClick = { navigator.finish(Confirm) }) { confirmButtonText() } },
       dismissButton =
         dismissButtonText?.let { dismissButtonText ->
-          {
-            Button(
-              onClick = {
-                navigator.finish(
-                  Cancel,
-                )
-              }
-            ) {
-              dismissButtonText()
-            }
-          }
+          { Button(onClick = { navigator.finish(Cancel) }) { dismissButtonText() } }
         },
       properties =
         DialogProperties(

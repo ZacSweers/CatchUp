@@ -78,7 +78,7 @@ import catchup.app.ui.activity.OrderServicesScreen.Event.Save
 import catchup.app.ui.activity.OrderServicesScreen.Event.Shuffle
 import catchup.app.ui.activity.OrderServicesScreen.State
 import catchup.base.ui.BackPressNavButton
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.compose.DraggableItem
 import catchup.compose.dragContainer
 import catchup.compose.rememberDragDropState
@@ -96,7 +96,7 @@ import com.slack.circuit.runtime.screen.Screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.zacsweers.catchup.app.scaffold.R
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -139,7 +139,7 @@ constructor(
 
   @Composable
   override fun present(): State {
-    val storedOrderState by remember { catchUpPreferences.servicesOrder }.collectAsState(null)
+    val storedOrderState by remember { catchUpPreferences.servicesOrder }.collectAsState()
 
     return storedOrderState?.let { storedOrder ->
       val initialOrderedServices =
@@ -224,10 +224,10 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
       val result =
         overlayHost.show(
           DialogOverlay(
-            title = { Text(stringResource(R.string.pending_changes_title)) },
-            text = { Text(stringResource(R.string.pending_changes_message)) },
-            confirmButtonText = { Text(stringResource(R.string.save)) },
-            dismissButtonText = { Text(stringResource(R.string.dontsave)) }
+            title = { Text(stringResource(AppScaffoldR.string.pending_changes_title)) },
+            text = { Text(stringResource(AppScaffoldR.string.pending_changes_message)) },
+            confirmButtonText = { Text(stringResource(AppScaffoldR.string.save)) },
+            dismissButtonText = { Text(stringResource(AppScaffoldR.string.dontsave)) },
           )
         )
       when (result) {
@@ -243,13 +243,13 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
       }
     }
   }
-  CatchUpScaffold(
+  HazeScaffold(
     modifier = modifier,
     blurTopBar = true,
     blurBottomBar = true,
     topBar = {
       TopAppBar(
-        title = { Text(stringResource(id = R.string.pref_reorder_services)) },
+        title = { Text(stringResource(id = AppScaffoldR.string.pref_reorder_services)) },
         navigationIcon = { BackPressNavButton() },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         actions = {
@@ -257,12 +257,12 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
             onClick = { state.eventSink(Shuffle) },
             content = {
               Icon(
-                painter = painterResource(R.drawable.ic_shuffle_black_24dp),
-                contentDescription = stringResource(R.string.shuffle),
+                painter = painterResource(AppScaffoldR.drawable.ic_shuffle_black_24dp),
+                contentDescription = stringResource(AppScaffoldR.string.shuffle),
               )
-            }
+            },
           )
-        }
+        },
       )
     },
     content = { innerPadding ->
@@ -273,35 +273,31 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
       }
     },
     floatingActionButton = {
-      AnimatedVisibility(
-        visible = state.showSave,
-        enter = scaleIn(),
-        exit = scaleOut(),
-      ) {
+      AnimatedVisibility(visible = state.showSave, enter = scaleIn(), exit = scaleOut()) {
         val scope = rememberStableCoroutineScope()
         val interactionSource = remember { MutableInteractionSource() }
         FloatingActionButton(
           modifier =
             Modifier.indication(
               interactionSource,
-              indication = rememberRipple(color = Color.White)
+              indication = rememberRipple(color = Color.White),
             ),
           // TODO show syllabus on fab
           //  .onGloballyPositioned { coordinates ->
           //    val (x, y) = coordinates.positionInRoot()
           //  },
-          containerColor = colorResource(R.color.colorAccent),
+          containerColor = colorResource(AppScaffoldR.color.colorAccent),
           onClick = { scope.launch { state.eventSink(Save) } },
           content = {
             Image(
-              painterResource(R.drawable.ic_save_black_24dp),
-              stringResource(R.string.save),
-              colorFilter = ColorFilter.tint(Color.White)
+              painterResource(AppScaffoldR.drawable.ic_save_black_24dp),
+              stringResource(AppScaffoldR.string.save),
+              colorFilter = ColorFilter.tint(Color.White),
             )
-          }
+          },
         )
       }
-    }
+    },
   )
 }
 
@@ -320,7 +316,7 @@ private fun ListContent(
       modifier = Modifier.dragContainer(dragDropState, LocalHapticFeedback.current),
       state = listState,
       contentPadding = PaddingValues(16.dp),
-      verticalArrangement = spacedBy(16.dp)
+      verticalArrangement = spacedBy(16.dp),
     ) {
       itemsIndexed(services, key = { _, item -> item.id }) { index, item ->
         // TODO show touch response on press
@@ -344,14 +340,14 @@ private fun ServiceListItem(item: ServiceMeta) {
   ) {
     Image(
       painter = painterResource(item.icon),
-      contentDescription = stringResource(R.string.service_icon),
-      modifier = Modifier.width(40.dp).height(40.dp)
+      contentDescription = stringResource(AppScaffoldR.string.service_icon),
+      modifier = Modifier.width(40.dp).height(40.dp),
     )
 
     Text(
       text = stringResource(item.name),
       style = MaterialTheme.typography.headlineSmall,
-      color = Color.White
+      color = Color.White,
     )
   }
 }

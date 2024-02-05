@@ -27,6 +27,7 @@ import android.util.Log
 import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
 import catchup.app.data.LumberYard
+import catchup.app.data.tree
 import catchup.app.injection.DaggerSet
 import catchup.appconfig.AppConfig
 import catchup.base.ui.CatchUpObjectWatcher
@@ -91,7 +92,7 @@ object DebugApplicationModule {
   fun leakCanaryInit(
     application: Application,
     objectWatcher: CatchUpObjectWatcher,
-    leakCanaryConfig: LeakCanary.Config
+    leakCanaryConfig: LeakCanary.Config,
   ): () -> Unit = {
     LeakCanary.config = leakCanaryConfig
 
@@ -130,7 +131,7 @@ object DebugApplicationModule {
   @IntoSet
   @Provides
   fun strictModeInit(
-    @StrictModeExecutor penaltyListenerExecutor: dagger.Lazy<ExecutorService>,
+    @StrictModeExecutor penaltyListenerExecutor: dagger.Lazy<ExecutorService>
   ): () -> Unit = {
     StrictMode.setThreadPolicy(
       StrictMode.ThreadPolicy.Builder()
@@ -160,7 +161,7 @@ object DebugApplicationModule {
             // Note: Chuck causes a closeable leak. Possible
             // https://github.com/square/okhttp/issues/3174
             Timber.w(it)
-          }
+          },
         )
         .build()
     )
@@ -185,7 +186,7 @@ object DebugApplicationModule {
   fun flipperInit(
     @FlipperEnabled enabled: Boolean,
     application: Application,
-    flipperPlugins: DaggerSet<FlipperPlugin>
+    flipperPlugins: DaggerSet<FlipperPlugin>,
   ): () -> Unit = {
     if (enabled) {
       SoLoader.init(application, SoLoader.SOLOADER_ALLOW_ASYNC_INIT)

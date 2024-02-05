@@ -215,11 +215,18 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise") version "3.15.1"
-  id("com.dropbox.focus") version "0.5.1"
+  id("com.gradle.enterprise") version "3.16.2"
+  id("com.dropbox.focus") version "0.5.1" apply false
 }
 
-configure<FocusExtension> { allSettingsFileName.set("settings-all.gradle.kts") }
+val useProjectIsolation = System.getProperty("org.gradle.unsafe.isolated-projects", "false").toBoolean()
+val focusDisabled = System.getenv("NO_FOCUS").toBoolean()
+if (focusDisabled || useProjectIsolation) {
+  apply(from = "settings-all.gradle.kts")
+} else {
+  apply(plugin = "com.dropbox.focus")
+  configure<FocusExtension> { allSettingsFileName.set("settings-all.gradle.kts") }
+}
 
 gradleEnterprise {
   buildScan {
@@ -249,8 +256,8 @@ configureIncludedBuild("sgp") { path ->
       substitute(module("com.slack.gradle:sgp")).using(project(":slack-plugin"))
       substitute(module("com.slack.gradle:sgp-agp-handler-api"))
         .using(project(":agp-handlers:agp-handler-api"))
-      substitute(module("com.slack.gradle:sgp-agp-handler-80"))
-        .using(project(":agp-handlers:agp-handler-80"))
+      substitute(module("com.slack.gradle:sgp-agp-handler-82"))
+        .using(project(":agp-handlers:agp-handler-82"))
       substitute(module("com.slack.gradle:sgp-agp-handler-83"))
         .using(project(":agp-handlers:agp-handler-83"))
     }

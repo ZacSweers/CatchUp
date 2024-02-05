@@ -35,7 +35,7 @@ object ISO8601InstantApolloAdapter : Adapter<Instant> {
   override fun toJson(
     writer: JsonWriter,
     customScalarAdapters: CustomScalarAdapters,
-    value: Instant
+    value: Instant,
   ) {
     writer.value(value.toString())
   }

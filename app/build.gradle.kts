@@ -18,13 +18,13 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
+import okio.buffer
+import okio.sink
+import okio.source
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import okio.buffer
-import okio.sink
-import okio.source
 
 plugins {
   alias(libs.plugins.android.application)
@@ -60,8 +60,8 @@ android {
       create("release") {
         keyAlias = "catchupkey"
         storeFile = rootProject.file("signing/app-release.jks")
-        storePassword = properties["catchup_signing_store_password"].toString()
-        keyPassword = properties["catchup_signing_key_password"].toString()
+        storePassword = providers.gradleProperty("catchup_signing_store_password").getOrElse("")
+        keyPassword = providers.gradleProperty("catchup_signing_key_password").getOrElse("")
       }
     } else {
       create("release").initWith(getByName("debug"))
@@ -73,7 +73,7 @@ android {
       versionNameSuffix = "-dev"
     }
     getByName("release") {
-      manifestPlaceholders["BUGSNAG_API_KEY"] = properties["catchup_bugsnag_key"].toString()
+      manifestPlaceholders["BUGSNAG_API_KEY"] = providers.gradleProperty("catchup_bugsnag_key").getOrElse("")
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       proguardFiles += file("proguard-rules.pro")
       isMinifyEnabled = true

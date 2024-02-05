@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import catchup.app.ui.about.AboutScreen.AboutScreenComponent
 import catchup.app.ui.about.AboutScreen.State
 import catchup.appconfig.AppConfig
-import catchup.base.ui.CatchUpScaffold
+import catchup.base.ui.HazeScaffold
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
@@ -35,7 +35,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.multibindings.StringKey
-import dev.zacsweers.catchup.app.scaffold.R
+import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import java.util.Locale
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
@@ -54,17 +54,11 @@ data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenCompon
       AboutScreen(AboutScreenComponent.componentFor(queryParams["tab"]?.first()))
   }
 
-  data class State(
-    val initialPage: Int,
-    val version: String,
-  ) : CircuitUiState
+  data class State(val initialPage: Int, val version: String) : CircuitUiState
 
-  enum class AboutScreenComponent(
-    val screen: Screen,
-    @StringRes val titleRes: Int,
-  ) {
-    Licenses(LicensesScreen, R.string.licenses),
-    Changelog(ChangelogScreen, R.string.changelog);
+  enum class AboutScreenComponent(val screen: Screen, @StringRes val titleRes: Int) {
+    Licenses(LicensesScreen, AppScaffoldR.string.licenses),
+    Changelog(ChangelogScreen, AppScaffoldR.string.changelog);
 
     companion object {
       internal val DEFAULT = Licenses
@@ -100,7 +94,7 @@ constructor(@Assisted val screen: AboutScreen, private val appConfig: AppConfig)
 @CircuitInject(AboutScreen::class, AppScope::class)
 @Composable
 fun About(state: State, modifier: Modifier = Modifier) {
-  CatchUpScaffold(
+  HazeScaffold(
     containerColor = Color.Transparent,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     blurTopBar = true,
@@ -115,7 +109,7 @@ fun About(state: State, modifier: Modifier = Modifier) {
         val pagerState = rememberPagerState(initialPage = state.initialPage) { 2 }
         PrimaryTabRow(
           // Our selected tab is our current page
-          selectedTabIndex = pagerState.currentPage,
+          selectedTabIndex = pagerState.currentPage
         ) {
           // Add tabs for all of our pages
           val coroutinesScope = rememberStableCoroutineScope()

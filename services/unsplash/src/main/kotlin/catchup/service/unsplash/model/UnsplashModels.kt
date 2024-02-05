@@ -41,7 +41,7 @@ data class Urls(
   val full: String,
   val regular: String,
   val small: String,
-  val thumb: String
+  val thumb: String,
 )
 
 @JsonClass(generateAdapter = true)
@@ -49,7 +49,7 @@ data class Links(
   val self: String,
   val html: String,
   val download: String,
-  @Json(name = "download_location") val downloadLocation: String
+  @Json(name = "download_location") val downloadLocation: String,
 )
 
 @JsonClass(generateAdapter = true)

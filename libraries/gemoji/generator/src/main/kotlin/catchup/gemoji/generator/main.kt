@@ -1,6 +1,7 @@
 package catchup.gemoji.generator
 
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
+import catchup.gemoji.db.mutable.GemojiDatabase
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -8,7 +9,6 @@ import com.github.ajalt.clikt.parameters.types.file
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
-import catchup.gemoji.db.mutable.GemojiDatabase
 
 private class GemojiGenerator : CliktCommand() {
 
@@ -71,7 +71,7 @@ private class GemojiGenerator : CliktCommand() {
 
   private fun assertAlias(db: GemojiDatabase, alias: String, emoji: String) {
     val result = db.gemojiQueries.getEmoji(alias).executeAsOne().emoji
-    check(result == emoji)
+    check(result == emoji) { "Expected $alias to be $emoji, but was $result" }
   }
 }
 
@@ -80,7 +80,4 @@ fun main(args: Array<String>) {
 }
 
 @JsonClass(generateAdapter = true)
-data class GemojiJson(
-  val emoji: String,
-  val aliases: List<String>,
-)
+data class GemojiJson(val emoji: String, val aliases: List<String>)

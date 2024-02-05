@@ -18,10 +18,12 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,19 +32,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.LoadState
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.map
 import app.cash.sqldelight.paging3.QueryPagingSource
+import catchup.app.CatchUpPreferences
 import catchup.app.data.LinkManager
 import catchup.app.service.ServiceScreen.Event
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked
@@ -54,9 +57,13 @@ import catchup.app.service.ServiceScreen.State
 import catchup.app.service.ServiceScreen.State.TextState
 import catchup.app.service.ServiceScreen.State.VisualState
 import catchup.app.ui.activity.ImageViewerScreen
+import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
+import catchup.di.ContextualFactory
+import catchup.di.DataMode
+import catchup.di.DataMode.OFFLINE
 import catchup.pullrefresh.PullRefreshIndicator
 import catchup.pullrefresh.pullRefresh
 import catchup.pullrefresh.rememberPullRefreshState
@@ -82,6 +89,7 @@ import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.app.scaffold.R
 import javax.inject.Provider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -97,13 +105,13 @@ data class ServiceScreen(val serviceKey: String) : Screen {
     data class TextState(
       override val items: LazyPagingItems<CatchUpItem>,
       override val themeColor: Color,
-      override val eventSink: (Event) -> Unit
+      override val eventSink: (Event) -> Unit,
     ) : State
 
     data class VisualState(
       override val items: LazyPagingItems<CatchUpItem>,
       override val themeColor: Color,
-      override val eventSink: (Event) -> Unit
+      override val eventSink: (Event) -> Unit,
     ) : State
   }
 
@@ -128,33 +136,32 @@ constructor(
   @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,
   private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-  private val catchUpDatabase: CatchUpDatabase,
-  private val serviceMediatorFactory: ServiceMediator.Factory
+  private val dbFactory: ContextualFactory<DataMode, out CatchUpDatabase>,
+  private val serviceMediatorFactory: ServiceMediator.Factory,
+  private val catchUpPreferences: CatchUpPreferences,
 ) : Presenter<State> {
-  @OptIn(ExperimentalPagingApi::class)
   @Composable
   override fun present(): State {
-    val service = remember {
-      services[screen.serviceKey]?.get()
-        ?: throw IllegalArgumentException(
-          "No service provided for ${screen.serviceKey}! Available are ${services.keys}"
-        )
-    }
+    val service =
+      remember(screen.serviceKey) {
+        services[screen.serviceKey]?.get()
+          ?: throw IllegalArgumentException(
+            "No service provided for ${screen.serviceKey}! Available are ${services.keys}"
+          )
+      }
 
-    // TODO this is a bad pattern in circuit
-    val context = LocalContext.current
     val themeColor =
       dynamicAwareColor(
         regularColor = { colorResource(service.meta().themeColor) },
-        dynamicColor = { MaterialTheme.colorScheme.primary }
+        dynamicColor = { MaterialTheme.colorScheme.primary },
       )
 
-    val coroutineScope = rememberStableCoroutineScope()
+    val scope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
-    val eventSink: (Event) -> Unit = { event ->
+    val eventSink: (Event) -> Unit = rememberEventSink { event ->
       when (event) {
         is ItemClicked -> {
-          coroutineScope.launch {
+          scope.launch {
             if (service.meta().isVisual) {
               val info = event.item.imageInfo!!
               overlayHost.showFullScreenOverlay(
@@ -163,7 +170,7 @@ constructor(
                   info.detailUrl,
                   isBitmap = !info.animatable,
                   info.cacheKey,
-                  info.sourceUrl
+                  info.sourceUrl,
                 )
               )
             } else {
@@ -182,12 +189,11 @@ constructor(
                     url = url,
                     isBitmap = bestGuessIsBitmap,
                     alias = null,
-                    sourceUrl = url
+                    sourceUrl = url,
                   )
                 )
               } else {
-                val meta = UrlMeta(url, themeColor.toArgb(), context)
-                linkManager.openUrl(meta)
+                linkManager.openUrl(url, themeColor)
               }
             }
           }
@@ -205,47 +211,69 @@ constructor(
               navigator.goTo(IntentScreen(Intent.createChooser(shareIntent, "Share")))
             }
             SUMMARIZE -> {
-              coroutineScope.launch {
+              scope.launch {
                 overlayHost.showFullScreenOverlay(SummarizerScreen(event.item.title, url))
               }
             }
           }
         }
         is MarkClicked -> {
-          val url = event.item.markClickUrl
-          coroutineScope.launch { linkManager.openUrl(UrlMeta(url, themeColor.toArgb(), context)) }
+          event.item.markClickUrl?.let { url ->
+            scope.launch { linkManager.openUrl(url, themeColor) }
+          }
         }
       }
     }
-    val rememberedSink by rememberUpdatedState(eventSink)
 
+    val dataMode by catchUpPreferences.dataMode.collectAsState()
+    // Changes to DataMode in settings will trigger a restart, but not bad to key explicitly here
+    // too
     val itemsFlow =
-      rememberRetained(service.meta()) {
+      rememberRetained(dataMode) {
         // TODO
         //  preference page size
-        //  retain pager or even the flow?
-        Pager(
-            config = PagingConfig(pageSize = 50),
-            initialKey = service.meta().firstPageKey,
-            remoteMediator = serviceMediatorFactory.create(service = service)
-          ) {
-            QueryPagingSource(
-              countQuery = catchUpDatabase.serviceQueries.countItems(service.meta().id),
-              transacter = catchUpDatabase.serviceQueries,
-              context = Dispatchers.IO,
-              queryProvider = { limit, offset ->
-                catchUpDatabase.serviceQueries.itemsByService(service.meta().id, limit, offset)
-              },
-            )
-          }
-          .flow
-          .map { data -> data.map { it.toCatchUpItem() } }
+        createPager(service, dataMode, 50)
       }
     val items = itemsFlow.collectAsLazyPagingItems()
     return when (service.meta().isVisual) {
-      true -> VisualState(items = items, themeColor = themeColor, eventSink = rememberedSink)
-      false -> TextState(items = items, themeColor = themeColor, eventSink = rememberedSink)
+      true -> VisualState(items = items, themeColor = themeColor, eventSink = eventSink)
+      false -> TextState(items = items, themeColor = themeColor, eventSink = eventSink)
     }
+  }
+
+  @OptIn(ExperimentalPagingApi::class)
+  private fun createPager(
+    service: Service,
+    dataMode: DataMode,
+    pageSize: Int,
+  ): Flow<PagingData<CatchUpItem>> {
+    // TODO make DB factory based on data modes
+    val db by lazy { dbFactory.create(dataMode) }
+    val remoteMediator =
+      if (dataMode == OFFLINE) {
+        null
+      } else {
+        serviceMediatorFactory.create(service, db)
+      }
+
+    return Pager(
+        config = PagingConfig(pageSize = pageSize),
+        initialKey = service.meta().firstPageKey,
+        remoteMediator = remoteMediator,
+      ) {
+        // Real data driven through the DB
+        // If we're in fake mode, we'll get a fake DB
+        QueryPagingSource(
+          countQuery = db.serviceQueries.countItems(service.meta().id),
+          transacter = db.serviceQueries,
+          context = Dispatchers.IO,
+          queryProvider = { limit, offset ->
+            db.serviceQueries.itemsByService(service.meta().id, limit, offset)
+          },
+        )
+      }
+      .flow
+      .map { data -> data.map { it.toCatchUpItem() } }
   }
 
   @CircuitInject(ServiceScreen::class, AppScope::class)
@@ -255,23 +283,24 @@ constructor(
   }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(ServiceScreen::class, AppScope::class)
 @Composable
 fun Service(state: State, modifier: Modifier = Modifier) {
-  var refreshing by remember { mutableStateOf(false) }
-  val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh = state.items::refresh)
+  val refreshLoadState by rememberUpdatedState(state.items.loadState.refresh)
+  val pullRefreshState = rememberPullRefreshState(false, onRefresh = state.items::refresh)
   Box(modifier.pullRefresh(pullRefreshState)) {
     if (state is VisualState) {
-      VisualServiceUi(state.items, state.themeColor, { refreshing = it }, state.eventSink)
+      VisualServiceUi(state.items, state.themeColor, state.eventSink)
     } else {
-      TextServiceUi(state.items, state.themeColor, { refreshing = it }, state.eventSink)
+      TextServiceUi(state.items, state.themeColor, state.eventSink)
     }
 
     PullRefreshIndicator(
-      refreshing = refreshing,
+      refreshing = refreshLoadState == LoadState.Loading,
       state = pullRefreshState,
       contentColor = state.themeColor,
-      modifier = Modifier.align(Alignment.TopCenter)
+      modifier = Modifier.align(Alignment.TopCenter),
     )
   }
 }
@@ -282,7 +311,7 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> 
   Column(
     modifier = modifier.padding(16.dp),
     verticalArrangement = spacedBy(16.dp),
-    horizontalAlignment = Alignment.CenterHorizontally
+    horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     val image = AnimatedImageVector.animatedVectorResource(R.drawable.avd_no_connection)
     var atEnd by remember { mutableStateOf(false) }
@@ -297,10 +326,10 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> 
       modifier =
         Modifier.size(72.dp).clickable(
           interactionSource = remember { MutableInteractionSource() },
-          indication = rememberRipple(bounded = false)
+          indication = rememberRipple(bounded = false),
         ) {
           atEnd = !atEnd
-        }
+        },
     )
     Text(text, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurface)
     onRetryClick?.let { ElevatedButton(onClick = it) { Text(stringResource(R.string.retry)) } }
@@ -309,9 +338,7 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> 
 
 @Composable
 fun LoadingView(themeColor: Color, modifier: Modifier = Modifier) {
-  Box(
-    modifier = modifier,
-  ) {
+  Box(modifier = modifier) {
     CircularProgressIndicator(color = themeColor, modifier = Modifier.align(Alignment.Center))
   }
 }
@@ -321,6 +348,6 @@ fun LoadingItem(modifier: Modifier = Modifier) {
   CircularProgressIndicator(
     modifier =
       modifier.fillMaxWidth().padding(16.dp).wrapContentWidth(Alignment.CenterHorizontally),
-    color = MaterialTheme.colorScheme.outline
+    color = MaterialTheme.colorScheme.outline,
   )
 }

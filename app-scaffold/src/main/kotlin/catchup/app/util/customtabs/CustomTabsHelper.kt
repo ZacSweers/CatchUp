@@ -20,7 +20,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.browser.customtabs.CustomTabsService
 import androidx.core.net.toUri
-import java.util.ArrayList
 import timber.log.Timber
 
 /**

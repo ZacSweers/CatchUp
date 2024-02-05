@@ -1,6 +1,7 @@
 package catchup.app.ui.debug
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.os.Build
@@ -51,11 +52,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.net.toUri
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.Preferences.Key
+import catchup.app.CatchUpPreferences
 import catchup.app.data.DebugPreferences
+import catchup.app.data.DiskLumberYard
 import catchup.app.data.LumberYard
+import catchup.app.data.LumberYard.Entry
 import catchup.app.home.DrawerScreen
 import catchup.app.ui.activity.BaseSettingsUi
 import catchup.app.ui.activity.RealBaseSettingsUi
@@ -72,10 +74,12 @@ import catchup.appconfig.AppConfig
 import catchup.compose.CatchUpTheme
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
+import catchup.di.DataMode
 import catchup.util.truncateAt
 import com.alorma.compose.settings.storage.base.SettingValueState
 import com.alorma.compose.settings.storage.base.getValue
 import com.alorma.compose.settings.storage.base.setValue
+import com.jakewharton.processphoenix.ProcessPhoenix
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitUiEvent
@@ -99,7 +103,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
@@ -110,62 +113,63 @@ import okhttp3.OkHttpClient
 private fun items(
   appConfig: AppConfig,
   displayMetrics: DisplayMetrics,
-  cache: Cache?
+  cache: Cache?,
 ): ImmutableList<DebugItem> {
   if (cache == null) return persistentListOf()
   return buildList {
-      add(DebugItem.Header("Network"))
+      add(Header("Network"))
       add(
-        // TODO requires context.restartApp()
-        DebugItem.Element.SwitchElement(
-          "Mock Mode",
-          DebugPreferences.Keys.mockModeEnabled,
-          defaultValue = false
+        Element.SpinnerElement(
+          "Data Mode",
+          CatchUpPreferences.Keys.dataMode,
+          DataMode.entries.map { it.name },
+          ValueType.STRING,
+          defaultOptionIndex = DataMode.REAL.ordinal,
         )
       )
       // TODO conditional based on mock mode?
       add(
-        DebugItem.Element.SpinnerElement(
+        Element.SpinnerElement(
           "Delay",
           DebugPreferences.Keys.networkDelay,
           listOf(250, 500, 1000, 2000, 3000, 5000),
           ValueType.LONG,
-          defaultOptionIndex = 3
+          defaultOptionIndex = 3,
         ) { index ->
           "${index}ms"
         }
       )
       add(
-        DebugItem.Element.SpinnerElement(
+        Element.SpinnerElement(
           "Variance",
           DebugPreferences.Keys.networkVariancePercent,
           listOf(20, 40, 60),
           ValueType.INT,
-          defaultOptionIndex = 1
+          defaultOptionIndex = 1,
         ) { index ->
           "${index}%"
         }
       )
       add(
-        DebugItem.Element.SpinnerElement(
+        Element.SpinnerElement(
           "Error",
           DebugPreferences.Keys.networkFailurePercent,
           listOf(0, 3, 10, 25, 50, 75, 100),
           ValueType.INT,
-          defaultOptionIndex = 1
+          defaultOptionIndex = 1,
         ) { index ->
           "${index}%"
         }
       )
 
-      add(DebugItem.Header("User Interface"))
+      add(Header("User Interface"))
       add(
-        DebugItem.Element.SpinnerElement(
+        Element.SpinnerElement(
           "Animations",
           DebugPreferences.Keys.animationSpeed,
           listOf(1, 2, 3, 5, 10),
           ValueType.INT,
-          defaultOptionIndex = 0
+          defaultOptionIndex = 0,
         ) { index ->
           if (index == 1) {
             "Normal"
@@ -174,50 +178,50 @@ private fun items(
           }
         }
       )
-      add(DebugItem.Header("Logs"))
-      add(DebugItem.Element.ButtonElement("Show logs", LogsModal))
+      add(Header("Logs"))
+      add(Element.ButtonElement("Show logs", LogsModal))
       add(
-        DebugItem.Element.ButtonElement(
+        Element.ButtonElement(
           "Leak Analysis",
-          IntentScreen(LeakCanary.newLeakDisplayActivityIntent())
+          IntentScreen(LeakCanary.newLeakDisplayActivityIntent()),
         )
       )
-      add(DebugItem.Header("Build Information"))
-      add(DebugItem.Element.ValueElement("Name", appConfig.versionName))
-      add(DebugItem.Element.ValueElement("Code", appConfig.versionCode.toString()))
-      add(DebugItem.Element.ValueElement("Date", appConfig.timestamp))
+      add(Header("Build Information"))
+      add(Element.ValueElement("Name", appConfig.versionName))
+      add(Element.ValueElement("Code", appConfig.versionCode.toString()))
+      add(Element.ValueElement("Date", appConfig.timestamp))
 
-      add(DebugItem.Header("Device Information"))
-      add(DebugItem.Element.ValueElement("Make", Build.MANUFACTURER truncateAt 20))
-      add(DebugItem.Element.ValueElement("Model", Build.MODEL truncateAt 20))
+      add(Header("Device Information"))
+      add(Element.ValueElement("Make", Build.MANUFACTURER truncateAt 20))
+      add(Element.ValueElement("Model", Build.MODEL truncateAt 20))
       add(
-        DebugItem.Element.ValueElement(
+        Element.ValueElement(
           "Resolution",
-          "${displayMetrics.heightPixels}x${displayMetrics.widthPixels}"
+          "${displayMetrics.heightPixels}x${displayMetrics.widthPixels}",
         )
       )
       add(
-        DebugItem.Element.ValueElement(
+        Element.ValueElement(
           "Density",
-          "${displayMetrics.densityDpi}dpi (${displayMetrics.bucket})"
+          "${displayMetrics.densityDpi}dpi (${displayMetrics.bucket})",
         )
       )
-      add(DebugItem.Element.ValueElement("Release", Build.VERSION.RELEASE))
-      add(DebugItem.Element.ValueElement("API", appConfig.sdkInt.toString()))
+      add(Element.ValueElement("Release", Build.VERSION.RELEASE))
+      add(Element.ValueElement("API", appConfig.sdkInt.toString()))
 
-      add(DebugItem.Header("OkHttp Cache"))
-      add(DebugItem.Element.ValueElement("Max Size", cache.maxSize().sizeString))
+      add(Header("OkHttp Cache"))
+      add(Element.ValueElement("Max Size", cache.maxSize().sizeString))
       val writeTotal = cache.writeSuccessCount() + cache.writeAbortCount()
       val percentage = (1f * cache.writeAbortCount() / writeTotal * 100).toInt()
       add(
-        DebugItem.Element.ValueElement(
+        Element.ValueElement(
           "Write Errors",
-          "${cache.writeAbortCount()} / $writeTotal ($percentage%)"
+          "${cache.writeAbortCount()} / $writeTotal ($percentage%)",
         )
       )
-      add(DebugItem.Element.ValueElement("Request Count", cache.requestCount().toString()))
-      add(DebugItem.Element.ValueElement("   Network Count", cache.networkCount().toString()))
-      add(DebugItem.Element.ValueElement("   Hit Count", cache.hitCount().toString()))
+      add(Element.ValueElement("Request Count", cache.requestCount().toString()))
+      add(Element.ValueElement("   Network Count", cache.networkCount().toString()))
+      add(Element.ValueElement("   Hit Count", cache.hitCount().toString()))
     }
     .toImmutableList()
 }
@@ -254,7 +258,7 @@ constructor(
   private val client: Lazy<OkHttpClient>,
   private val lumberYard: LumberYard,
   private val debugPreferences: DebugPreferences,
-  private val appConfig: AppConfig
+  private val appConfig: AppConfig,
 ) : Presenter<State> {
   @CircuitInject(DebugSettingsScreen::class, AppScope::class)
   @AssistedFactory
@@ -264,9 +268,7 @@ constructor(
 
   @Composable
   override fun present(): State {
-    LaunchedEffect(Unit) {
-      debugPreferences.animationSpeed.distinctUntilChanged().collect(::applyAnimationSpeed)
-    }
+    LaunchedEffect(Unit) { debugPreferences.animationSpeed.collect(::applyAnimationSpeed) }
 
     var showLogs by remember { mutableStateOf(false) }
 
@@ -276,7 +278,11 @@ constructor(
     val scope = rememberStableCoroutineScope()
     return State(
       items(appConfig, LocalContext.current.resources.displayMetrics, clientCache),
-      if (showLogs) lumberYard.bufferedLogs().toImmutableList() else persistentListOf(),
+      if (showLogs) {
+        lumberYard.bufferedLogs()
+      } else {
+        persistentListOf()
+      },
     ) { event ->
       when (event) {
         is NavigateTo -> {
@@ -290,11 +296,19 @@ constructor(
         ShareLogs -> {
           showLogs = false
           scope.launch {
-            val file = withContext(IO) { lumberYard.save() }
+            val text =
+              if (lumberYard is DiskLumberYard) {
+                lumberYard.flush()
+                // TODO write back to a file first to share?
+                lumberYard.currentLogFileText()
+              } else {
+                lumberYard
+                  .bufferedLogs()
+                  .joinToString(separator = "\n", transform = Entry::prettyPrint)
+              }
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.type = "text/plain"
-            sendIntent.putExtra(Intent.EXTRA_STREAM, file.toUri())
-            sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            sendIntent.putExtra(Intent.EXTRA_TEXT, text)
             navigator.goTo(IntentScreen(Intent.createChooser(sendIntent, "Share logs")))
           }
         }
@@ -302,6 +316,7 @@ constructor(
     }
   }
 
+  @SuppressLint("DiscouragedPrivateApi")
   private fun applyAnimationSpeed(multiplier: Int) {
     try {
       val method =
@@ -321,11 +336,8 @@ private enum class LogsShareResult {
 }
 
 @CircuitInject(DebugSettingsScreen::class, AppScope::class)
-class DebugSettingsUi
-@Inject
-constructor(
-  private val debugPreferences: DebugPreferences,
-) : Ui<State>, BaseSettingsUi by RealBaseSettingsUi(debugPreferences.datastore) {
+class DebugSettingsUi @Inject constructor(private val debugPreferences: DebugPreferences) :
+  Ui<State>, BaseSettingsUi by RealBaseSettingsUi(debugPreferences.datastore) {
   @Composable
   override fun Content(state: State, modifier: Modifier) {
     if (state.logsToShow.isNotEmpty()) {
@@ -355,7 +367,7 @@ constructor(
             Row(
               Modifier.fillMaxWidth().padding(12.dp),
               verticalAlignment = Alignment.CenterVertically,
-              horizontalArrangement = Arrangement.End
+              horizontalArrangement = Arrangement.End,
             ) {
               Text(
                 stringResource(R.string.development_settings),
@@ -370,7 +382,7 @@ constructor(
               Image(
                 bitmap = icon.asImageBitmap(),
                 contentDescription = "CatchUp icon",
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(48.dp),
               )
             }
           }
@@ -383,6 +395,7 @@ constructor(
               is Element -> {
                 item(index) {
                   val scope = rememberStableCoroutineScope()
+                  val context = LocalContext.current
                   DebugElementContent(item, { screen -> state.eventSink(NavigateTo(screen)) }) {
                     key,
                     value ->
@@ -390,6 +403,9 @@ constructor(
                       debugPreferences.edit { prefs ->
                         @Suppress("UNCHECKED_CAST")
                         prefs[key as Key<Any?>] = value
+                      }
+                      if (item.requiresRestart) {
+                        ProcessPhoenix.triggerRebirth(context)
                       }
                     }
                   }
@@ -404,58 +420,54 @@ constructor(
 
   @Composable
   private fun DebugElementContent(
-    element: DebugItem.Element,
+    element: Element,
     onNavigate: (Screen) -> Unit,
-    onUpdate: (Preferences.Key<*>, Any?) -> Unit,
+    onUpdate: (Key<*>, Any?) -> Unit,
   ) {
     @Suppress("UNCHECKED_CAST")
     when (element) {
-      is DebugItem.Element.ButtonElement -> {
+      is Element.ButtonElement -> {
         element.Content { screen -> onNavigate(screen) }
       }
-      is DebugItem.Element.SpinnerElement<*> -> {
+      is Element.SpinnerElement<*> -> {
         // TODO this is really... ugly
         val state: SettingValueState<*> =
           when (element.valueType) {
             ValueType.INT -> {
-              val typedElement = element as DebugItem.Element.SpinnerElement<Int>
+              val typedElement = element as Element.SpinnerElement<Int>
               rememberIntSettingState(
                 typedElement.key,
                 typedElement.options[typedElement.defaultOptionIndex],
               )
             }
             ValueType.LONG -> {
-              val typedElement = element as DebugItem.Element.SpinnerElement<Long>
+              val typedElement = element as Element.SpinnerElement<Long>
               rememberLongSettingState(
                 typedElement.key,
                 typedElement.options[typedElement.defaultOptionIndex],
               )
             }
             ValueType.STRING -> {
-              val typedElement = element as DebugItem.Element.SpinnerElement<String>
+              val typedElement = element as Element.SpinnerElement<String>
               rememberStringSettingState(
                 typedElement.key,
                 typedElement.options[typedElement.defaultOptionIndex],
               )
             }
           }
-        (element as DebugItem.Element.SpinnerElement<Any>).Content(
-          state as SettingValueState<Any>
-        ) { newValue ->
+        (element as Element.SpinnerElement<Any>).Content(state as SettingValueState<Any>) { newValue
+          ->
           onUpdate(element.key, newValue)
         }
       }
-      is DebugItem.Element.SwitchElement -> {
+      is Element.SwitchElement -> {
         element.Content(
-          rememberBooleanSettingState(
-            key = element.key,
-            defaultValue = element.defaultValue,
-          )
+          rememberBooleanSettingState(key = element.key, defaultValue = element.defaultValue)
         ) { newValue ->
           onUpdate(element.key, newValue)
         }
       }
-      is DebugItem.Element.ValueElement -> {
+      is Element.ValueElement -> {
         element.Content()
       }
     }
@@ -471,20 +483,23 @@ sealed interface DebugItem {
   data class Header(val title: String) : DebugItem
 
   sealed interface Element : DebugItem {
+    val requiresRestart: Boolean
+
     data class SpinnerElement<T>(
       val title: String,
-      val key: Preferences.Key<T>,
+      val key: Key<T>,
       val options: List<T>,
       val valueType: ValueType<T>,
       val defaultOptionIndex: Int = 0,
+      override val requiresRestart: Boolean = false,
       val formatSelection: (T) -> String = { it.toString() },
     ) : Element {
       sealed interface ValueType<T> {
-        object STRING : ValueType<String>
+        data object STRING : ValueType<String>
 
-        object INT : ValueType<Int>
+        data object INT : ValueType<Int>
 
-        object LONG : ValueType<Long>
+        data object LONG : ValueType<Long>
       }
 
       @OptIn(ExperimentalMaterial3Api::class)
@@ -501,7 +516,7 @@ sealed interface DebugItem {
         }
         Row(
           modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp),
-          verticalAlignment = Alignment.CenterVertically
+          verticalAlignment = Alignment.CenterVertically,
         ) {
           DebugLabelText(title, modifier = Modifier.weight(1f))
 
@@ -509,7 +524,7 @@ sealed interface DebugItem {
           ExposedDropdownMenuBox(
             modifier = Modifier.weight(1f),
             expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
+            onExpandedChange = { expanded = !expanded },
           ) {
             OutlinedTextField(
               value = formatSelection(storageValue),
@@ -519,10 +534,7 @@ sealed interface DebugItem {
               readOnly = true,
               trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             )
-            ExposedDropdownMenu(
-              expanded = expanded,
-              onDismissRequest = { expanded = false },
-            ) {
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
               for (option in options) {
                 DropdownMenuItem(
                   text = {
@@ -536,7 +548,7 @@ sealed interface DebugItem {
                   onClick = {
                     expanded = false
                     update(option)
-                  }
+                  },
                 )
               }
             }
@@ -548,15 +560,13 @@ sealed interface DebugItem {
     data class ButtonElement(
       val text: String,
       val onClickScreen: Screen,
+      override val requiresRestart: Boolean = false,
     ) : Element {
       @Composable
-      fun Content(
-        modifier: Modifier = Modifier,
-        onClick: (Screen) -> Unit,
-      ) {
+      fun Content(modifier: Modifier = Modifier, onClick: (Screen) -> Unit) {
         Button(
           modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp),
-          onClick = { onClick(onClickScreen) }
+          onClick = { onClick(onClickScreen) },
         ) {
           Text(text)
         }
@@ -565,8 +575,9 @@ sealed interface DebugItem {
 
     data class SwitchElement(
       val title: String,
-      val key: Preferences.Key<Boolean>,
+      val key: Key<Boolean>,
       val defaultValue: Boolean,
+      override val requiresRestart: Boolean = false,
     ) : Element {
       @Composable
       fun Content(
@@ -585,10 +596,10 @@ sealed interface DebugItem {
               .toggleable(
                 value = storageValue,
                 role = Role.Checkbox,
-                onValueChange = { update(!storageValue) }
+                onValueChange = { update(!storageValue) },
               )
               .padding(horizontal = 12.dp),
-          verticalAlignment = Alignment.CenterVertically
+          verticalAlignment = Alignment.CenterVertically,
         ) {
           DebugLabelText(title)
           Spacer(modifier = Modifier.weight(1f))
@@ -600,12 +611,13 @@ sealed interface DebugItem {
     data class ValueElement(
       val title: String,
       val value: String, // Are any of these live?
+      override val requiresRestart: Boolean = false,
     ) : Element {
       @Composable
       fun Content(modifier: Modifier = Modifier) {
         Row(
           modifier = modifier.padding(horizontal = 12.dp),
-          verticalAlignment = Alignment.CenterVertically
+          verticalAlignment = Alignment.CenterVertically,
         ) {
           DebugLabelText(title)
           Spacer(modifier = Modifier.weight(1f))
@@ -624,7 +636,7 @@ private fun DebugSectionHeader(text: String) {
       text = text.uppercase(),
       style = MaterialTheme.typography.labelLarge,
       fontWeight = FontWeight.Bold,
-      modifier = Modifier.padding(horizontal = 12.dp)
+      modifier = Modifier.padding(horizontal = 12.dp),
     )
     Spacer(Modifier.height(2.dp))
     HorizontalDivider()

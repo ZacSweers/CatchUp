@@ -23,6 +23,7 @@ import androidx.compose.animation.core.AnimationConstants
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import catchup.app.data.DribbbleSizingInterceptor
+import catchup.app.data.LumberYard
 import catchup.app.data.UnsplashSizingInterceptor
 import catchup.app.util.LinkTouchMovementMethod
 import catchup.app.util.PrecomputedTextSetterCompat
@@ -31,8 +32,11 @@ import catchup.appconfig.AppConfigMetadataContributor
 import catchup.base.ui.VersionInfo
 import catchup.base.ui.versionInfo
 import catchup.di.AppScope
+import catchup.di.DataMode
+import catchup.di.FakeMode
 import catchup.di.SingleIn
 import catchup.util.injection.qualifiers.ApplicationContext
+import catchup.util.kotlin.mapToStateFlow
 import coil.Coil
 import coil.ComponentRegistry
 import coil.ImageLoader
@@ -44,7 +48,6 @@ import coil.request.DefaultRequestOptions
 import coil.request.Disposable
 import coil.request.ImageRequest
 import coil.request.ImageResult
-import coil.util.DebugLogger
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Module
@@ -62,6 +65,8 @@ import io.noties.markwon.movement.MovementMethodPlugin
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.datetime.Clock
 import okhttp3.OkHttpClient
 import timber.log.Timber
 
@@ -126,7 +131,7 @@ abstract class ApplicationModule {
             CoilImagesPlugin.create(context, imageLoader),
             TablePlugin.create(context),
             LinkifyPlugin.create(),
-            TaskListPlugin.create(context)
+            TaskListPlugin.create(context),
             //            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
           )
         )
@@ -200,7 +205,6 @@ abstract class ApplicationModule {
       @ApplicationContext context: Context,
       @IsLowRamDevice isLowRamDevice: Boolean,
       okHttpClient: dagger.Lazy<OkHttpClient>,
-      appConfig: AppConfig
     ): ImageLoader {
       // TODO make this like an actual builder. But for now run works...
       return ImageLoader.Builder(context).run {
@@ -208,10 +212,6 @@ abstract class ApplicationModule {
         // don't need that here because we've already made it lazy. Wish this
         // wasn't the default.
         callFactory { request -> okHttpClient.get().newCall(request) }
-
-        if (appConfig.isDebug) {
-          logger(DebugLogger())
-        }
 
         // Hardware bitmaps don't work with the saturation effect or palette extraction
         allowHardware(false)
@@ -227,5 +227,38 @@ abstract class ApplicationModule {
         build()
       }
     }
+
+    @Provides @SingleIn(AppScope::class) fun provideClock(): Clock = Clock.System
+
+    @Provides
+    fun provideDataMode(
+      catchUpPreferences: CatchUpPreferences
+    ): StateFlow<@JvmSuppressWildcards DataMode> {
+      return catchUpPreferences.dataMode
+    }
+
+    @SingleIn(AppScope::class)
+    @Provides
+    fun provideLumberYard(factory: LumberYard.Factory): LumberYard {
+      return factory.create(useDisk = false)
+    }
+  }
+}
+
+@ContributesTo(AppScope::class)
+@Module
+object FakeModeModule {
+  @Provides
+  @FakeMode
+  fun provideFakeModeStateFlow(
+    dataMode: StateFlow<@JvmSuppressWildcards DataMode>
+  ): StateFlow<Boolean> {
+    return dataMode.mapToStateFlow { it == DataMode.FAKE }
+  }
+
+  @Provides
+  @FakeMode
+  fun provideFakeMode(dataMode: StateFlow<@JvmSuppressWildcards DataMode>): Boolean {
+    return dataMode.value == DataMode.FAKE
   }
 }

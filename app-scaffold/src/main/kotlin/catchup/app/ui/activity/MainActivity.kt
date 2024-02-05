@@ -97,9 +97,9 @@ constructor(
     linkManager.connect(this)
 
     setContent {
-      val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState(initial = true)
-      val forceNight by catchUpPreferences.dayNightForceNight.collectAsState(initial = false)
-      val useDynamicTheme by catchUpPreferences.dynamicTheme.collectAsState(initial = false)
+      val dayNightAuto by catchUpPreferences.dayNightAuto.collectAsState()
+      val forceNight by catchUpPreferences.dayNightForceNight.collectAsState()
+      val useDynamicTheme by catchUpPreferences.dynamicTheme.collectAsState()
       val useDarkTheme =
         if (dayNightAuto) {
           isSystemInDarkTheme()
@@ -160,8 +160,8 @@ constructor(
                     GestureNavigationDecoration(
                       circuit.defaultNavDecoration,
                       // Pop the back stack once the user has gone 'back'
-                      navigator::pop
-                    )
+                      navigator::pop,
+                    ),
                 )
               }
             }

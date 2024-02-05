@@ -43,7 +43,7 @@ interface SystemBarColorController {
   fun setStatusBarColor(
     color: Color,
     darkIcons: Boolean = color.luminance() > MIN_DARK_ICONS_LUMINANCE,
-    transformColorForLightContent: (Color) -> Color = BlackScrimmed
+    transformColorForLightContent: (Color) -> Color = BlackScrimmed,
   )
 
   /**
@@ -66,7 +66,7 @@ interface SystemBarColorController {
     color: Color,
     darkIcons: Boolean = color.luminance() > MIN_DARK_ICONS_LUMINANCE,
     navigationBarContrastEnforced: Boolean = true,
-    transformColorForLightContent: (Color) -> Color = BlackScrimmed
+    transformColorForLightContent: (Color) -> Color = BlackScrimmed,
   )
 
   /**
@@ -79,14 +79,14 @@ interface SystemBarColorController {
     color: Color,
     darkIcons: Boolean = color.luminance() > MIN_DARK_ICONS_LUMINANCE,
     isNavigationBarContrastEnforced: Boolean = true,
-    transformColorForLightContent: (Color) -> Color = BlackScrimmed
+    transformColorForLightContent: (Color) -> Color = BlackScrimmed,
   ) {
     setStatusBarColor(color, darkIcons, transformColorForLightContent)
     setNavigationBarColor(
       color,
       darkIcons,
       isNavigationBarContrastEnforced,
-      transformColorForLightContent
+      transformColorForLightContent,
     )
   }
 
@@ -126,9 +126,7 @@ interface SystemBarColorController {
  * returned [SystemBarColorController] will be degraded, but won't throw an exception.
  */
 @Composable
-fun rememberSystemBarColorController(
-  window: Window? = findWindow(),
-): SystemBarColorController {
+fun rememberSystemBarColorController(window: Window? = findWindow()): SystemBarColorController {
   val view = LocalView.current
   return remember(view, window) { AndroidSystemBarColorController(view, window) }
 }
@@ -153,14 +151,14 @@ private tailrec fun Context.findWindow(): Window? =
  */
 internal class AndroidSystemBarColorController(
   private val view: View,
-  private val window: Window?
+  private val window: Window?,
 ) : SystemBarColorController {
   private val windowInsetsController = window?.let { WindowCompat.getInsetsController(it, view) }
 
   override fun setStatusBarColor(
     color: Color,
     darkIcons: Boolean,
-    transformColorForLightContent: (Color) -> Color
+    transformColorForLightContent: (Color) -> Color,
   ) {
     statusBarDarkContentEnabled = darkIcons
 
@@ -180,7 +178,7 @@ internal class AndroidSystemBarColorController(
     color: Color,
     darkIcons: Boolean,
     navigationBarContrastEnforced: Boolean,
-    transformColorForLightContent: (Color) -> Color
+    transformColorForLightContent: (Color) -> Color,
   ) {
     navigationBarDarkContentEnabled = darkIcons
     isNavigationBarContrastEnforced = navigationBarContrastEnforced

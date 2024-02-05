@@ -52,7 +52,7 @@ class DragDropState
 internal constructor(
   private val state: LazyListState,
   private val scope: CoroutineScope,
-  private val onMove: (Int, Int) -> Unit
+  private val onMove: (Int, Int) -> Unit,
 ) {
   var draggingItemIndex by mutableStateOf<Int?>(null)
     private set
@@ -93,7 +93,7 @@ internal constructor(
         previousItemOffset.snapTo(startOffset)
         previousItemOffset.animateTo(
           0f,
-          spring(stiffness = Spring.StiffnessMediumLow, visibilityThreshold = 1f)
+          spring(stiffness = Spring.StiffnessMediumLow, visibilityThreshold = 1f),
         )
         previousIndexOfDraggedItem = null
       }
@@ -168,7 +168,7 @@ fun Modifier.dragContainer(
         dragDropState.onDragStart(offset)
       },
       onDragEnd = { dragDropState.onDragInterrupted() },
-      onDragCancel = { dragDropState.onDragInterrupted() }
+      onDragCancel = { dragDropState.onDragInterrupted() },
     )
   }
 }
@@ -179,7 +179,7 @@ fun LazyItemScope.DraggableItem(
   dragDropState: DragDropState,
   index: Int,
   modifier: Modifier = Modifier,
-  content: @Composable ColumnScope.(isDragging: Boolean) -> Unit
+  content: @Composable ColumnScope.(isDragging: Boolean) -> Unit,
 ) {
   val dragging = index == dragDropState.draggingItemIndex
   val draggingModifier =

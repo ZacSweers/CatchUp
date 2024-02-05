@@ -67,7 +67,7 @@ data class RedditComment(
   override val saved: Boolean,
   override val score: Int,
   override val subreddit: String,
-  override val ups: Int
+  override val ups: Int,
 ) : RedditObject(), RedditSubmission
 
 @Keep
@@ -100,7 +100,7 @@ data class RedditLink(
   override val saved: Boolean,
   override val score: Int,
   override val subreddit: String,
-  override val ups: Int
+  override val ups: Int,
 ) : RedditObject(), RedditSubmission
 
 @Keep
@@ -109,5 +109,5 @@ data class RedditListing(
   val after: String,
   val before: String?,
   val children: List<RedditObject>,
-  val modhash: String
+  val modhash: String,
 ) : RedditObject()
