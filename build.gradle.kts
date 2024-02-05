@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.autonomousapps.DependencyAnalysisExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   alias(libs.plugins.kotlin.jvm) apply false
@@ -89,4 +90,16 @@ if (!useProjectIsolation) {
 //      }
 //    }
 //  }
+}
+
+// TODO cover until anvil supports 2.0
+subprojects {
+  pluginManager.withPlugin("com.squareup.anvil") {
+    tasks.withType<KotlinCompile>().configureEach {
+      compilerOptions {
+        progressiveMode.set(false)
+        languageVersion.set(KotlinVersion.KOTLIN_1_9)
+      }
+    }
+  }
 }
