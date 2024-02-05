@@ -25,7 +25,7 @@ interface UplabsApi {
   @GET("/all.json")
   suspend fun getPopular(
     @Query("days_ago") daysAgo: Int, // Default 0
-    @Query("page") page: Int // Default 1
+    @Query("page") page: Int, // Default 1
   ): List<UplabsImage>
 
   companion object {

@@ -78,14 +78,15 @@ skippy {
 }
 
 if (!useProjectIsolation) {
-  apply(plugin = libs.plugins.dependencyAnalysis.get().pluginId)
-  configure<DependencyAnalysisExtension> {
-    structure {
-      bundle("compose-ui") {
-        primary("androidx.compose.ui:ui")
-        includeGroup("androidx.compose.ui")
-        // TODO exclude ui-tooling
-      }
-    }
-  }
+  // https://github.com/autonomousapps/dependency-analysis-gradle-plugin/issues/1111
+//  apply(plugin = libs.plugins.dependencyAnalysis.get().pluginId)
+//  configure<DependencyAnalysisExtension> {
+//    structure {
+//      bundle("compose-ui") {
+//        primary("androidx.compose.ui:ui")
+//        includeGroup("androidx.compose.ui")
+//        // TODO exclude ui-tooling
+//      }
+//    }
+//  }
 }

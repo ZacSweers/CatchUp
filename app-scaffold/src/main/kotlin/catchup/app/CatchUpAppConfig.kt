@@ -32,7 +32,7 @@ class CatchUpAppConfig
 @Inject
 constructor(
   @ApplicationContext private val appContext: Context,
-  metadataContributors: DaggerSet<AppConfigMetadataContributor>
+  metadataContributors: DaggerSet<AppConfigMetadataContributor>,
 ) : AppConfig {
   private val versionInfo = appContext.versionInfo
   override val isDebug: Boolean = BuildConfig.DEBUG

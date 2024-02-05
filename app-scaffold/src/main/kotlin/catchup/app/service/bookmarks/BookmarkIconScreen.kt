@@ -71,7 +71,7 @@ fun BookmarkIcon(state: State, modifier: Modifier = Modifier) {
     icon = icon,
     tint = state.themeColor,
     contentDescription = "Bookmark",
-    modifier = modifier
+    modifier = modifier,
   ) {
     state.toggle()
   }

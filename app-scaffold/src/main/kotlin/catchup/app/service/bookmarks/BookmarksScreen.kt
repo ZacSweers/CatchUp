@@ -19,13 +19,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissValue.EndToStart
-import androidx.compose.material3.SwipeToDismissValue.Settled
-import androidx.compose.material3.SwipeToDismissValue.StartToEnd
+import androidx.compose.material3.SwipeToDismissBoxValue.EndToStart
+import androidx.compose.material3.SwipeToDismissBoxValue.Settled
+import androidx.compose.material3.SwipeToDismissBoxValue.StartToEnd
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberSwipeToDismissState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -199,10 +199,7 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         actions = {
           IconButton({ state.eventSink(Share) }) {
-            Icon(
-              imageVector = Icons.Default.Share,
-              contentDescription = "Share",
-            )
+            Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
           }
         },
       )
@@ -233,7 +230,7 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
       if (item == null) {
         PlaceholderItem(Color.Unspecified)
       } else {
-        val dismissState = rememberSwipeToDismissState(confirmValueChange = { it == EndToStart })
+        val dismissState = rememberSwipeToDismissBoxState(confirmValueChange = { it == EndToStart })
 
         if (dismissState.currentValue == EndToStart) {
           // TODO offer an undo option after a pause?
@@ -262,10 +259,7 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
                 EndToStart -> Alignment.CenterEnd
                 Settled -> Alignment.CenterStart
               }
-            Box(
-              modifier = Modifier.fillMaxSize().background(color),
-              contentAlignment = alignment,
-            ) {
+            Box(modifier = Modifier.fillMaxSize().background(color), contentAlignment = alignment) {
               when (dismissState.dismissDirection) {
                 StartToEnd -> {
                   serviceMeta?.let {
@@ -282,7 +276,7 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
                     modifier = Modifier.padding(32.dp).size(32.dp),
-                    tint = MaterialTheme.colorScheme.onError
+                    tint = MaterialTheme.colorScheme.onError,
                   )
                 Settled -> {
                   // Do nothing
@@ -301,13 +295,9 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
                 TextItem(item, themeColor)
               }
             } else {
-              TextItem(
-                item,
-                themeColor,
-                modifier = Modifier.animateItemPlacement(),
-              )
+              TextItem(item, themeColor, modifier = Modifier.animateItemPlacement())
             }
-          }
+          },
         )
       }
     }

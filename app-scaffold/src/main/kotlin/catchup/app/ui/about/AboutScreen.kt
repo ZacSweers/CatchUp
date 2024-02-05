@@ -54,15 +54,9 @@ data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenCompon
       AboutScreen(AboutScreenComponent.componentFor(queryParams["tab"]?.first()))
   }
 
-  data class State(
-    val initialPage: Int,
-    val version: String,
-  ) : CircuitUiState
+  data class State(val initialPage: Int, val version: String) : CircuitUiState
 
-  enum class AboutScreenComponent(
-    val screen: Screen,
-    @StringRes val titleRes: Int,
-  ) {
+  enum class AboutScreenComponent(val screen: Screen, @StringRes val titleRes: Int) {
     Licenses(LicensesScreen, AppScaffoldR.string.licenses),
     Changelog(ChangelogScreen, AppScaffoldR.string.changelog);
 
@@ -115,7 +109,7 @@ fun About(state: State, modifier: Modifier = Modifier) {
         val pagerState = rememberPagerState(initialPage = state.initialPage) { 2 }
         PrimaryTabRow(
           // Our selected tab is our current page
-          selectedTabIndex = pagerState.currentPage,
+          selectedTabIndex = pagerState.currentPage
         ) {
           // Add tabs for all of our pages
           val coroutinesScope = rememberStableCoroutineScope()

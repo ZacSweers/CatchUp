@@ -5,11 +5,7 @@ import android.content.Intent
 import androidx.core.content.FileProvider
 import java.io.File
 
-fun createFileShareIntent(
-  context: Context,
-  file: File,
-  intentType: String,
-): Intent {
+fun createFileShareIntent(context: Context, file: File, intentType: String): Intent {
   val fileUri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
 
   return Intent(Intent.ACTION_SEND).apply {

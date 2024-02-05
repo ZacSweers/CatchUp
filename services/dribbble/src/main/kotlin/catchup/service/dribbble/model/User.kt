@@ -22,5 +22,5 @@ data class User(
   val id: Long,
   val name: String?,
   val pro: Boolean?,
-  val username: String?
+  val username: String?,
 )

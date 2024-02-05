@@ -19,7 +19,7 @@ class ServiceData
 private constructor(
   val assetsPrefix: String,
   val fileType: String,
-  private val supportedEndpoints: Set<String>
+  private val supportedEndpoints: Set<String>,
 ) {
 
   fun supports(path: String): Boolean {

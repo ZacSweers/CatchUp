@@ -31,7 +31,7 @@ class TimberEventListener(private val tree: Timber.Tree) : EventListener {
     screen: Screen,
     navigator: Navigator,
     presenter: Presenter<*>?,
-    context: CircuitContext
+    context: CircuitContext,
   ) {
     tree.d("onAfterCreatePresenter")
   }
@@ -43,7 +43,7 @@ class TimberEventListener(private val tree: Timber.Tree) : EventListener {
   override fun onBeforeCreatePresenter(
     screen: Screen,
     navigator: Navigator,
-    context: CircuitContext
+    context: CircuitContext,
   ) {
     tree.d("onBeforeCreatePresenter")
   }
@@ -80,7 +80,7 @@ class TimberEventListener(private val tree: Timber.Tree) : EventListener {
     screen: Screen,
     presenter: Presenter<*>?,
     ui: Ui<*>?,
-    context: CircuitContext
+    context: CircuitContext,
   ) {
     tree.d("onUnavailableContent: ${presenter?.javaClass?.simpleName} ${ui?.javaClass?.simpleName}")
   }

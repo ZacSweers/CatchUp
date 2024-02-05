@@ -18,13 +18,13 @@ internal interface AuthApi {
     @Url url: String,
     @Field("client_id") clientId: String,
     @Field("client_secret") secret: String,
-    @Field("grant_type") grantType: String = "client_credentials"
+    @Field("grant_type") grantType: String = "client_credentials",
   ): ApiResult<AuthenticationResponse, Unit>
 
   @POST
   suspend fun authenticateJSON(
     @Url url: String,
-    @Body request: AuthRequest
+    @Body request: AuthRequest,
   ): ApiResult<AuthenticationResponse, Unit>
 }
 

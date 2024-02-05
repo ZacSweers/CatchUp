@@ -24,5 +24,5 @@ data class TrendingItem(
   val forks: Int?,
   val starsToday: Int?,
   val language: String,
-  val languageColor: String?
+  val languageColor: String?,
 )

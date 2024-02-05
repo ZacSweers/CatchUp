@@ -6,7 +6,7 @@ androidx-core = "1.13.0-alpha04"
 androidx-sqlite = "2.4.0"
 appcompat = "1.7.0-alpha03"
 benchmark = "1.2.3"
-compose-material3 = "1.2.0-beta01"
+compose-material3 = "1.2.0-beta02"
 emoji = "1.2.0-alpha03"
 anvil = "2.4.9"
 apollo = "3.8.2"
@@ -33,7 +33,7 @@ kotlin = "1.9.22"
 kotlinx-metadata = "0.7.0"
 kotlinx-serialization = "1.6.2"
 ksp = "1.9.22-1.0.17"
-ktfmt = "0.46"
+ktfmt = "0.47"
 leakcanary = "2.13"
 lifecycle = "2.8.0-alpha01"
 markwon = "4.6.2"
@@ -222,7 +222,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 
-lints-compose = "com.slack.lint.compose:compose-lint-checks:1.2.0"
+lints-compose = "com.slack.lint.compose:compose-lint-checks:1.3.1"
 
 markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
 markwon-extStrikethrough = { module = "io.noties.markwon:ext-strikethrough", version.ref = "markwon" }

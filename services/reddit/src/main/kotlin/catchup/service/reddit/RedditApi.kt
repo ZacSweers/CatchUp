@@ -25,7 +25,7 @@ interface RedditApi {
   @GET("/r/{subreddit}/comments/{id}")
   suspend fun comments(
     @Path("subreddit") subreddit: String,
-    @Path("id") id: String
+    @Path("id") id: String,
   ): List<RedditResponse>
 
   @GET("/")
@@ -36,7 +36,7 @@ interface RedditApi {
   suspend fun subreddit(
     @Path("subreddit") subreddit: String,
     @Query("after") after: String,
-    @Query("limit") limit: Int
+    @Query("limit") limit: Int,
   ): RedditResponse
 
   @GET("/top")
