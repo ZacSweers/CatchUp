@@ -36,7 +36,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -82,6 +81,7 @@ import catchup.base.ui.HazeScaffold
 import catchup.compose.DraggableItem
 import catchup.compose.dragContainer
 import catchup.compose.rememberDragDropState
+import catchup.compose.rememberRippleCompat
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.service.api.ServiceMeta
@@ -280,7 +280,7 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
           modifier =
             Modifier.indication(
               interactionSource,
-              indication = rememberRipple(color = Color.White),
+              indication = rememberRippleCompat(color = Color.White),
             ),
           // TODO show syllabus on fab
           //  .onGloballyPositioned { coordinates ->
