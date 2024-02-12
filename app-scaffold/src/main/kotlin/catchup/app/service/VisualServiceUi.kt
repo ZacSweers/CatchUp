@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package catchup.app.service
 
 import android.graphics.Bitmap
@@ -295,9 +297,19 @@ private class ImageItemRippleTheme(private val delegate: RippleTheme) : RippleTh
       )
   }
 
-  @Composable override fun defaultColor(): Color = delegate.defaultColor()
+  @Deprecated(
+    "RippleTheme and LocalRippleTheme have been deprecated - they are not compatible with the new ripple implementation using the new Indication APIs that provide notable performance improvements. For a migration guide and background information, please visit developer.android.com",
+    level = DeprecationLevel.ERROR,
+  )
+  @Composable
+  override fun defaultColor(): Color = delegate.defaultColor()
 
-  @Composable override fun rippleAlpha(): RippleAlpha = opaqueRippleAlpha
+  @Deprecated(
+    "RippleTheme and LocalRippleTheme have been deprecated - they are not compatible with the new ripple implementation using the new Indication APIs that provide notable performance improvements. For a migration guide and background information, please visit developer.android.com",
+    level = DeprecationLevel.ERROR,
+  )
+  @Composable
+  override fun rippleAlpha(): RippleAlpha = opaqueRippleAlpha
 }
 
 private fun applyPalette(palette: Palette, onContentColorChanged: (Color) -> Unit) {

@@ -64,6 +64,7 @@ import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.multibindings.Multibinds
 import javax.inject.Inject
+import kotlinx.collections.immutable.persistentListOf
 import timber.log.Timber
 
 @ActivityKey(MainActivity::class)
@@ -143,19 +144,22 @@ constructor(
         CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
           CircuitCompositionLocals(circuit) {
             ContentWithOverlays {
-              val backstack = rememberSaveableBackStack {
-                val stack = intent?.let(deepLinkHandler::parse) ?: listOf(HomeScreen)
+              val stack = remember {
+                intent?.let(deepLinkHandler::parse) ?: persistentListOf(HomeScreen)
+              }
+              // TODO move to new list input API in 0.19.1
+              val backStack = rememberSaveableBackStack {
                 for (screen in stack) {
                   push(screen)
                 }
               }
-              val navigator = rememberCircuitNavigator(backstack)
+              val navigator = rememberCircuitNavigator(backStack)
               val intentAwareNavigator =
                 rememberAndroidScreenAwareNavigator(navigator, this@MainActivity)
               rootContent.Content(intentAwareNavigator) {
                 NavigableCircuitContent(
                   intentAwareNavigator,
-                  backstack,
+                  backStack,
                   decoration =
                     GestureNavigationDecoration(
                       circuit.defaultNavDecoration,
