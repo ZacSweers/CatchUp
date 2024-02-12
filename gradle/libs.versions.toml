@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.34.0"
-agp = "8.4.0-alpha06"
+agp = "8.4.0-alpha09"
 androidx-activity = "1.9.0-alpha03"
 androidx-core = "1.13.0-alpha05"
 androidx-sqlite = "2.4.0"
@@ -40,7 +40,7 @@ markwon = "4.6.2"
 moshi = "1.15.1"
 moshix = "0.25.1"
 okhttp = "5.0.0-alpha.12"
-okio = "3.7.0"
+okio = "3.8.0"
 preferences = "1.2.1"
 retrofit = "2.9.0"
 slack-lint = "0.7.0"
@@ -61,7 +61,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.1.0" }
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.1" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.29.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.9.1" }
@@ -75,7 +75,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.9.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
-playPublisher = { id = "com.github.triplet.play", version = "3.8.6" }
+playPublisher = { id = "com.github.triplet.play", version = "3.9.0" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.7.1" }
 retry = { id = "org.gradle.test-retry", version = "1.5.8" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
