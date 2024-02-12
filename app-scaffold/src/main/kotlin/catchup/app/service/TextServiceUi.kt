@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -62,6 +61,7 @@ import catchup.app.service.bookmarks.BookmarkIconScreen
 import catchup.compose.CatchUpTheme
 import catchup.compose.ContentAlphas
 import catchup.compose.ScrollToTopHandler
+import catchup.compose.rememberRippleCompat
 import catchup.service.api.CatchUpItem
 import catchup.service.api.Mark
 import catchup.service.api.canBeSummarized
@@ -180,7 +180,7 @@ fun TextItem(
             .clickable(
               enabled = item.markClickUrl != null,
               interactionSource = remember { MutableInteractionSource() },
-              indication = rememberRipple(bounded = false),
+              indication = rememberRippleCompat(bounded = false),
               onClick = onMarkClick,
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
