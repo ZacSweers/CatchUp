@@ -147,12 +147,7 @@ constructor(
               val stack = remember {
                 intent?.let(deepLinkHandler::parse) ?: persistentListOf(HomeScreen)
               }
-              // TODO move to new list input API in 0.19.1
-              val backStack = rememberSaveableBackStack {
-                for (screen in stack) {
-                  push(screen)
-                }
-              }
+              val backStack = rememberSaveableBackStack(stack)
               val navigator = rememberCircuitNavigator(backStack)
               val intentAwareNavigator =
                 rememberAndroidScreenAwareNavigator(navigator, this@MainActivity)
