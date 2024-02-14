@@ -30,10 +30,10 @@ eithernet = "1.8.1"
 flipper = "0.247.0"
 jdk = "21"
 jvmTarget = "17"
-kotlin = "2.0.0-Beta3"
+kotlin = "2.0.0-Beta4"
 kotlinx-metadata = "0.7.0"
 kotlinx-serialization = "1.6.2"
-ksp = "2.0.0-Beta3-1.0.17"
+ksp = "2.0.0-Beta4-1.0.17"
 ktfmt = "0.47"
 leakcanary = "2.13"
 lifecycle = "2.8.0-alpha01"
@@ -77,7 +77,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.9.1" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.9.0" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.8.0-alpha01" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.8.0-alpha02" }
 retry = { id = "org.gradle.test-retry", version = "1.5.8" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
 sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
