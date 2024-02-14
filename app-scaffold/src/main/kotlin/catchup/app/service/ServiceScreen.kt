@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,6 +58,7 @@ import catchup.app.service.ServiceScreen.State.VisualState
 import catchup.app.ui.activity.ImageViewerScreen
 import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
+import catchup.compose.rememberRippleCompat
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.di.ContextualFactory
@@ -326,7 +326,7 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> 
       modifier =
         Modifier.size(72.dp).clickable(
           interactionSource = remember { MutableInteractionSource() },
-          indication = rememberRipple(bounded = false),
+          indication = rememberRippleCompat(bounded = false),
         ) {
           atEnd = !atEnd
         },
