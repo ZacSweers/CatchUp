@@ -10,7 +10,7 @@ compose-material3 = "1.2.0"
 emoji = "1.2.0-alpha03"
 anvil = "2.4.9"
 apollo = "3.8.2"
-circuit = "0.19.0"
+circuit = "0.19.1"
 coil = "2.5.0"
 compose = "1.7.0-alpha02"
 # Pre-release versions for testing Kotlin previews can be found here

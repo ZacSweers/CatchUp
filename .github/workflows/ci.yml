@@ -41,7 +41,7 @@ jobs:
           touch ~/.gradle/gradle.properties
 
       - name: Bootstrap
-        run: ./gradlew bootstrap --stacktrace
+        run: ./gradlew bootstrap
 
       - name: Get changed files
         if: always() && github.event_name == 'pull_request'
@@ -54,7 +54,7 @@ jobs:
       - name: Compute affected projects
         if: always() && github.event_name == 'pull_request'
         id: gradle-affected-projects
-        run: ./gradlew computeAffectedProjects --changed-files tmp/changed_files.txt -Pslack.debug=true --stacktrace
+        run: ./gradlew computeAffectedProjects --changed-files tmp/changed_files.txt -Pslack.debug=true
 
       - name: Check affected projects
         run: |
@@ -85,7 +85,7 @@ jobs:
           path: build/skippy/**
 
       - name: Build and run tests
-        run: ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest --continue --quiet --stacktrace -Pslack.avoidance.affectedProjectsFile=build/skippy/merged/affected_projects.txt
+        run: ./gradlew check ${{ env.APP_TARGET }} globalCiLint globalCiUnitTest --continue --quiet -Pslack.avoidance.affectedProjectsFile=build/skippy/merged/affected_projects.txt
 
       - name: Filter sarif
         if: always() && github.event_name == 'pull_request'
