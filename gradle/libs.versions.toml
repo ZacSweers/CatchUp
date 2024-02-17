@@ -210,7 +210,7 @@ errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.25.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:0.5.1"
+haze = "dev.chrisbanes.haze:haze:0.5.2"
 
 javaxInject = "javax.inject:javax.inject:1"
 
