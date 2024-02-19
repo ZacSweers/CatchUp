@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.35.0-alpha"
-agp = "8.4.0-alpha09"
+agp = "8.4.0-alpha10"
 androidx-activity = "1.9.0-alpha03"
 androidx-core = "1.13.0-alpha05"
 androidx-sqlite = "2.4.0"
@@ -22,7 +22,7 @@ compose-jb = "1.5.12"
 compose-jb-compiler = "1.5.6-dev2-kt2.0.0-Beta3"
 compose-jb-kotlinVersion = "2.0.0-Beta3"
 corbind = "1.10.0"
-coroutines = "1.8.0-RC2"
+coroutines = "1.8.0"
 dagger = "2.50"
 datastore = "1.1.0-beta01"
 detekt = "1.23.5"
@@ -32,7 +32,7 @@ jdk = "21"
 jvmTarget = "17"
 kotlin = "2.0.0-Beta4"
 kotlinx-metadata = "0.7.0"
-kotlinx-serialization = "1.6.2"
+kotlinx-serialization = "1.6.3"
 ksp = "2.0.0-Beta4-1.0.17"
 ktfmt = "0.47"
 leakcanary = "2.13"
@@ -49,7 +49,7 @@ sortDependencies = "0.6"
 sgp = "0.15.3"
 spotless = "6.25.0"
 sqldelight = "2.0.1"
-telephoto = "0.7.1"
+telephoto = "0.8.0"
 tikxml = "0.8.15"
 xerial = "3.45.1.0"
 collapsingToolbar = "2.3.5"
@@ -63,7 +63,7 @@ apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.1.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.1" }
-dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.29.0" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.30.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.9.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -207,11 +207,11 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 
-errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.24.1"
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.25.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:0.5.1"
+haze = "dev.chrisbanes.haze:haze:0.5.3"
 
 javaxInject = "javax.inject:javax.inject:1"
 
@@ -296,7 +296,7 @@ tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", versi
 collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "collapsingToolbar" }
 
 test-junit = "junit:junit:4.13.2"
-test-truth = "com.google.truth:truth:1.4.0"
+test-truth = "com.google.truth:truth:1.4.1"
 
 xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.86.3"
 xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.86.3"
