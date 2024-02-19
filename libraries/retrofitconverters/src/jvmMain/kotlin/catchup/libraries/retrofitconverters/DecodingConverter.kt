@@ -39,7 +39,7 @@ class DecodingConverter<T> private constructor(private val convertBody: (Respons
         override fun responseBodyConverter(
           type: Type,
           annotations: Array<Annotation>,
-          retrofit: Retrofit
+          retrofit: Retrofit,
         ) = converter
       }
     }

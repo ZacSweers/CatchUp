@@ -19,4 +19,5 @@ data class DataRequest(
   val pageKey: String?,
   val pageOffset: Int,
   val limit: Int,
+  val useFakeData: Boolean,
 )

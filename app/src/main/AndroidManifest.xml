@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2018 Zac Sweers
+  ~ Copyright (c) 2023 Zac Sweers
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -32,22 +32,6 @@
       android:theme="@style/Theme.CatchUp.Starting"
       tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
       tools:replace="android:appComponentFactory">
-    <activity
-        android:name="catchup.app.ui.activity.MainActivity"
-        android:configChanges="colorMode|density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
-        android:exported="true"
-        android:launchMode="singleTask">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-      <!-- Add an intent filter to get catchup schemes -->
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <data android:scheme="catchup" />
-      </intent-filter>
-    </activity>
 
     <meta-data
         android:name="preloaded_fonts"

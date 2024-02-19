@@ -26,13 +26,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import catchup.base.ui.BackPressNavButton
 import catchup.base.ui.NavButtonType.CLOSE
+import catchup.base.ui.rememberSystemBarColorController
 import catchup.di.AppScope
 import catchup.summarizer.SummarizerResult.Error
 import catchup.summarizer.SummarizerResult.NotFound
 import catchup.summarizer.SummarizerResult.Success
+import catchup.summarizer.SummarizerResult.Unavailable
 import catchup.summarizer.SummarizerScreen.State
 import catchup.summarizer.SummarizerScreen.State.Loading
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -51,10 +52,7 @@ data class SummarizerScreen(val title: String, val url: String) : Screen {
 
     data class Error(override val title: String, val url: String, val message: String) : State
 
-    data class Success(
-      override val title: String,
-      val summary: String,
-    ) : State
+    data class Success(override val title: String, val summary: String) : State
   }
 }
 
@@ -62,6 +60,7 @@ private fun SummarizerResult.toState(title: String, url: String): State {
   return when (this) {
     is Success -> State.Success(title, summary)
     is NotFound -> State.Error(title, url, "Unable to summarize this.")
+    is Unavailable -> State.Error(title, url, "Summarization not available.")
     is Error -> State.Error(title, url, message)
   }
 }
@@ -76,9 +75,7 @@ constructor(
   @CircuitInject(SummarizerScreen::class, AppScope::class)
   @AssistedFactory
   fun interface Factory {
-    fun create(
-      screen: SummarizerScreen,
-    ): SummarizerPresenter
+    fun create(screen: SummarizerScreen): SummarizerPresenter
   }
 
   @Composable
@@ -94,7 +91,7 @@ constructor(
 @CircuitInject(SummarizerScreen::class, AppScope::class)
 @Composable
 fun Summarizer(state: State, modifier: Modifier = Modifier) {
-  val sysUi = rememberSystemUiController()
+  val sysUi = rememberSystemBarColorController()
   sysUi.setSystemBarsColor(MaterialTheme.colorScheme.surface)
   Surface(modifier.fillMaxSize()) {
     Box(Modifier.systemBarsPadding()) {
@@ -118,13 +115,13 @@ fun Summarizer(state: State, modifier: Modifier = Modifier) {
             Text(
               "Error summarizing.\n${state.message}",
               color = MaterialTheme.colorScheme.error,
-              style = MaterialTheme.typography.displaySmall
+              style = MaterialTheme.typography.displaySmall,
             )
             Button(
               onClick = {
                 // TODO
               },
-              modifier = Modifier.padding(top = 16.dp)
+              modifier = Modifier.padding(top = 16.dp),
             ) {
               Text("Open in browser")
             }
@@ -135,7 +132,7 @@ fun Summarizer(state: State, modifier: Modifier = Modifier) {
             Text(
               state.summary,
               textAlign = TextAlign.Justify,
-              style = MaterialTheme.typography.bodyLarge
+              style = MaterialTheme.typography.bodyLarge,
             )
             Spacer(Modifier.height(24.dp))
             Text("Generated with ChatGPT", style = MaterialTheme.typography.labelMedium)

@@ -1,0 +1,47 @@
+<!--
+  ~ Copyright (c) 2018 Zac Sweers
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+  <string name="app_name" translatable="false">CatchUp</string>
+  <string name="retry">Réessayer</string>
+  <string name="pref_clear_cache">Vider le cache</string>
+  <string name="pref_clear_cache_summary">Vide le cache courant</string>
+  <string name="about">À propos</string>
+  <string name="licenses">Licences</string>
+  <string name="changelog">Changelog</string>
+  <string name="pref_reports">Statistiques et rapports de plantage</string>
+  <string name="pref_reports_summary">Laissez moi vous aider ! Activer pour autoriser l\'envoi de statistiques et de rapports de plantage anonymes.</string>
+  <string name="general">Général</string>
+  <string name="prefs_theme">Thème</string>
+  <string name="pref_smart_linking_title">Activer "Smart linking"</string>
+  <string name="pref_smart_linking_summary">"Smart linking" permet d\'ouvrir les liens dans l\'application dédiée si disponible, sinon dans un onglet personnalisé Chrome ou dans un navigateur.</string>
+  <string name="title_activity_settings">Paramètres</string>
+  <string name="clear_cache_success">%s vidé</string>
+  <string name="about_description">Une application pour rester à jour sur divers sujets.</string>
+  <string name="about_version">Version %1s</string>
+  <string name="about_by">Par</string>
+  <string name="about_source_code">Code source</string>
+  <string name="icon_attribution">Icône par Michael Cook</string>
+  <string name="changelog_error">Impossible de charger le changelog.</string>
+  <string name="licenses_error">Impossible de charger les licences open source.</string>
+  <string name="settings_error_cleaning_cache">Une erreur est survenue lors du vidage du cache</string>
+  <string name="settings_reset">Prendra effet lors du prochain redémarrage de l\'application</string>
+  <string name="pref_force_dark_theme">Forcer le thème foncé.</string>
+  <string name="pref_dark_theme_enabled">Le thème foncé est activé</string>
+  <string name="pref_dark_theme_disabled">Le thème foncé est désactivé, le thème clair est celui par défaut.</string>
+  <string name="pref_auto_set_theme">Thème automatique</string>
+  <string name="pref_auto_set_theme_summary">Le thème sera défini automatiquement en fonction de l\'heure de la journée (via DayNight).</string>
+</resources>

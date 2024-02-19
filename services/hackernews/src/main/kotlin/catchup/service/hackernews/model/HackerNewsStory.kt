@@ -46,7 +46,7 @@ data class HackerNewsStory(
   val text: String?,
   /* private, but Firebase is too dumb to read private fields */
   val type: String?,
-  val url: String?
+  val url: String?,
 ) {
 
   /*
@@ -90,8 +90,8 @@ data class HackerNewsComment(
   //  val title: String?,
   val text: String,
   /* private, but Firebase is too dumb to read private fields */
-  val type: String?
-//  val url: String?
+  val type: String?,
+  //  val url: String?
 ) {
 
   /*

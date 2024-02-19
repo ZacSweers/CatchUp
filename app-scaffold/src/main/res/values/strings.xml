@@ -1,0 +1,63 @@
+<!--
+  ~ Copyright (c) 2018 Zac Sweers
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+  <string name="app_name" translatable="false">CatchUp</string>
+  <string name="retry">Retry</string>
+  <string name="pref_clear_cache">Clear cache</string>
+  <string name="pref_clear_cache_summary">Clears the current cache</string>
+  <string name="about">About</string>
+  <string name="licenses">Licenses</string>
+  <string name="changelog">Changelog</string>
+  <string name="pref_reports">Analytics and Crash Reporting</string>
+  <string name="pref_reports_summary">Help me help you! Enable this to allow automatic uploads of analytics and crash reports. No personally identifiable data is sent.</string>
+  <string name="general">General</string>
+  <string name="prefs_theme">Theming</string>
+  <string name="pref_smart_linking_title">Enable smart linking</string>
+  <string name="pref_smart_linking_summary">Smart linking will open links in a dedicated app if one exists, otherwise it will fall back to using a Chrome custom tab or browser.</string>
+  <string name="title_activity_settings">Settings</string>
+  <string name="title_bookmarks">Bookmarks</string>
+  <string name="clear_cache_success">Cleaned %s</string>
+  <string name="about_description">An app for catching up on things.</string>
+  <string name="about_version">Version %1s</string>
+  <string name="about_by">By</string>
+  <string name="about_source_code">Source code</string>
+  <string name="icon_attribution">Icon by Michael Cook</string>
+  <string name="changelog_error">Could not load changelog.</string>
+  <string name="licenses_error">Could not load open source licenses.</string>
+  <string name="settings_error_cleaning_cache">There was an error cleaning cache</string>
+  <string name="settings_reset">Will take full effect on next app restart</string>
+  <string name="restart">Restart now</string>
+  <string name="enabled">Enabled</string>
+  <string name="pref_force_dark_theme">Force dark theme.</string>
+  <string name="pref_dark_theme_enabled">Dark theme is enabled</string>
+  <string name="pref_dark_theme_disabled">Dark theme is disabled, light theme is the default.</string>
+  <string name="pref_dark_theme_disabled_auto">Dark theme is disabled because auto-theme is enabled.</string>
+  <string name="pref_dynamic_theme_title">Dynamic Theme</string>
+  <string name="pref_dynamic_theme_summary">Enables dynamic Material You theming.</string>
+  <string name="pref_auto_set_theme">Automatically set theme</string>
+  <string name="pref_auto_set_theme_summary">Sets the theme automatically via depending on the time of day (via DayNight).</string>
+  <string name="changes">Changelog</string>
+  <string name="pref_reorder_services">Reorder services</string>
+  <string name="pref_order_services_description">Drag and drop to reorder services.\nThis save button will show when you have pending changes, click to save when you\'re done.</string>
+  <string name="pending_changes_title">Save changes?</string>
+  <string name="pending_changes_message">You have unsaved changes. Do you want to proceed without saving?</string>
+  <string name="dontsave">Don\'t save</string>
+  <string name="save">Save</string>
+  <string name="service_icon">Service icon</string>
+  <string name="transition_image" translatable="false">image</string>
+  <string name="shuffle">Shuffle</string>
+</resources>

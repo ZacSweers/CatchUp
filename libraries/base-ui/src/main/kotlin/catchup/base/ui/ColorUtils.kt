@@ -85,7 +85,7 @@ object ColorUtils {
   fun isDark(
     bitmap: Bitmap,
     backupPixelX: Int = bitmap.width / 2,
-    backupPixelY: Int = bitmap.height / 2
+    backupPixelY: Int = bitmap.height / 2,
   ): Boolean {
     // first try palette with a small color quant size
     val palette = Palette.from(bitmap).maximumColorCount(3).generate()

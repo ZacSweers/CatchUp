@@ -14,9 +14,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -35,7 +36,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun rememberDragDropState(lazyListState: LazyListState, onMove: (Int, Int) -> Unit): DragDropState {
-  val scope = rememberCoroutineScope()
+  val scope = rememberStableCoroutineScope()
   val state =
     remember(lazyListState) { DragDropState(state = lazyListState, onMove = onMove, scope = scope) }
   LaunchedEffect(state) {
@@ -51,21 +52,20 @@ class DragDropState
 internal constructor(
   private val state: LazyListState,
   private val scope: CoroutineScope,
-  private val onMove: (Int, Int) -> Unit
+  private val onMove: (Int, Int) -> Unit,
 ) {
   var draggingItemIndex by mutableStateOf<Int?>(null)
     private set
 
   internal val scrollChannel = Channel<Float>()
 
-  private var draggingItemDraggedDelta by mutableStateOf(0f)
-  private var draggingItemInitialOffset by mutableStateOf(0)
+  private var draggingItemDraggedDelta by mutableFloatStateOf(0f)
+  private var draggingItemInitialOffset by mutableIntStateOf(0)
   internal val draggingItemOffset: Float
     get() =
       draggingItemLayoutInfo?.let { item ->
         draggingItemInitialOffset + draggingItemDraggedDelta - item.offset
-      }
-        ?: 0f
+      } ?: 0f
 
   private val draggingItemLayoutInfo: LazyListItemInfo?
     get() = state.layoutInfo.visibleItemsInfo.firstOrNull { it.index == draggingItemIndex }
@@ -93,7 +93,7 @@ internal constructor(
         previousItemOffset.snapTo(startOffset)
         previousItemOffset.animateTo(
           0f,
-          spring(stiffness = Spring.StiffnessMediumLow, visibilityThreshold = 1f)
+          spring(stiffness = Spring.StiffnessMediumLow, visibilityThreshold = 1f),
         )
         previousIndexOfDraggedItem = null
       }
@@ -168,7 +168,7 @@ fun Modifier.dragContainer(
         dragDropState.onDragStart(offset)
       },
       onDragEnd = { dragDropState.onDragInterrupted() },
-      onDragCancel = { dragDropState.onDragInterrupted() }
+      onDragCancel = { dragDropState.onDragInterrupted() },
     )
   }
 }
@@ -179,7 +179,7 @@ fun LazyItemScope.DraggableItem(
   dragDropState: DragDropState,
   index: Int,
   modifier: Modifier = Modifier,
-  content: @Composable ColumnScope.(isDragging: Boolean) -> Unit
+  content: @Composable ColumnScope.(isDragging: Boolean) -> Unit,
 ) {
   val dragging = index == dragDropState.draggingItemIndex
   val draggingModifier =

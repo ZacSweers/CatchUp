@@ -1,6 +1,5 @@
 package catchup.gemoji
 
-import android.annotation.SuppressLint
 import androidx.annotation.RestrictTo
 import java.io.File
 import java.io.FileOutputStream
@@ -35,7 +34,6 @@ import timber.log.Timber
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 class ProcessLock(name: String, lockDir: File, private val processLock: Boolean) {
   private val lockFile: File = File(lockDir, "$name.lck")
-  @SuppressLint("SyntheticAccessor")
   private val threadLock: Lock = getThreadLock(lockFile.absolutePath)
   private var lockChannel: FileChannel? = null
 

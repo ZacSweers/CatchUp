@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sgp.base)
-  // TODO https://github.com/slackhq/slack-gradle-plugin/issues/559
-  id("com.android.lint")
 }
 
 kotlin {
@@ -27,7 +23,7 @@ kotlin {
   jvm()
   // endregion
 
-  @OptIn(ExperimentalKotlinGradlePluginApi::class) targetHierarchy.default()
+  applyDefaultHierarchyTemplate()
 
   sourceSets {
     commonMain {

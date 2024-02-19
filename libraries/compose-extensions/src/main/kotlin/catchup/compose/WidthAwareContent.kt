@@ -14,10 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 
 @Composable
-fun columnCount(
-  minColumns: Int,
-  minColumnWidth: Dp = 125.dp,
-): Int {
+fun columnCount(minColumns: Int, minColumnWidth: Dp = 250.dp): Int {
   val availableWidth = rememberAvailableWidth()
   val minWidthPx = with(LocalDensity.current) { minColumnWidth.toPx() }
   return (availableWidth / minWidthPx).toInt().coerceAtLeast(minColumns)

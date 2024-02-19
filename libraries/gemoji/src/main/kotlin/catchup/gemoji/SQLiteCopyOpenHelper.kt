@@ -1,6 +1,5 @@
 package catchup.gemoji
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
@@ -23,7 +22,7 @@ internal class SQLiteCopyOpenHelper(
   private val context: Context,
   private val copyFromAssetPath: String,
   private val databaseVersion: Int,
-  val delegate: SupportSQLiteOpenHelper
+  val delegate: SupportSQLiteOpenHelper,
 ) : SupportSQLiteOpenHelper {
   private var verified = false
 
@@ -59,7 +58,7 @@ internal class SQLiteCopyOpenHelper(
   }
 
   private fun verifyDatabaseFile() {
-    val name = checkNotNull(databaseName)
+    val name = checkNotNull(databaseName) { "Database name was not set yet" }
     val databaseFile = context.getDatabasePath(name)
     val copyLock = ProcessLock(name, context.filesDir, true)
     try {
@@ -171,7 +170,6 @@ private fun isMigrationRequired(fromVersion: Int, toVersion: Int): Boolean {
  * @param output the output channel to copy.
  * @throws IOException if there is an I/O error.
  */
-@SuppressLint("LambdaLast")
 private fun copy(input: ReadableByteChannel, output: FileChannel) {
   try {
     output.transferFrom(input, 0, Long.MAX_VALUE)

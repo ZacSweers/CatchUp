@@ -1,6 +1,6 @@
 include(
   ":app",
-  ":benchmark",
+  ":app-scaffold",
   ":bookmarks",
   ":bookmarks:db",
   ":libraries:auth",
@@ -27,9 +27,6 @@ include(
   ":services:dribbble",
   ":services:github",
   ":services:hackernews",
-//    ":services:imgur",
-//  ":services:medium",
-//    ":services:newsapi",
   ":services:producthunt",
   ":services:reddit",
   ":services:slashdot",

@@ -1,6 +1,5 @@
 package catchup.compose
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -20,7 +19,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
-import catchup.ui.core.R
+import catchup.ui.core.R as UiCoreR
 
 private val LightColors =
   lightColorScheme(
@@ -91,20 +90,14 @@ private val DarkColors =
 private val FONT_FAMILY by lazy {
   getGoogleFontFamily(
     name = "Nunito",
-    weights =
-      listOf(
-        FontWeight.Bold,
-        FontWeight.SemiBold,
-        FontWeight.Medium,
-        FontWeight.Light,
-      )
+    weights = listOf(FontWeight.Bold, FontWeight.SemiBold, FontWeight.Medium, FontWeight.Light),
   )
 }
 
 private fun getGoogleFontFamily(
   name: String,
   provider: GoogleFont.Provider = googleFontProvider,
-  weights: List<FontWeight>
+  weights: List<FontWeight>,
 ): FontFamily {
   return FontFamily(weights.map { Font(GoogleFont(name), provider, it) })
 }
@@ -113,16 +106,15 @@ private val googleFontProvider: GoogleFont.Provider by lazy {
   GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
-    certificates = R.array.catchup_baseui_com_google_android_gms_fonts_certs
+    certificates = UiCoreR.array.catchup_baseui_com_google_android_gms_fonts_certs,
   )
 }
 
-@SuppressLint("NewApi") // False positive because we do check the API level.
 @Composable
 fun CatchUpTheme(
   useDarkTheme: Boolean = isSystemInDarkTheme(),
   isDynamicColor: Boolean = LocalDynamicTheme.current,
-  content: @Composable () -> Unit
+  content: @Composable () -> Unit,
 ) {
   val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
   val colors =
@@ -167,7 +159,7 @@ fun CatchUpTheme(
         labelLarge = MaterialTheme.typography.labelLarge.copy(fontFamily = FONT_FAMILY),
         labelMedium = MaterialTheme.typography.labelMedium.copy(fontFamily = FONT_FAMILY),
         labelSmall = MaterialTheme.typography.labelSmall.copy(fontFamily = FONT_FAMILY),
-      )
+      ),
   ) {
     CompositionLocalProvider(LocalDynamicTheme provides dynamicColor) { content() }
   }

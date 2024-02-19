@@ -45,6 +45,7 @@ dependencies {
   api(libs.apollo.api)
   api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
+  api(libs.kotlinx.immutable)
   api(libs.moshi.core)
   api(libs.okhttp.core)
 
@@ -54,6 +55,8 @@ dependencies {
   implementation(libs.misc.unbescape)
   implementation(projects.libraries.appconfig)
 
+  testImplementation(libs.kotlin.test)
+  testImplementation(libs.misc.okio.fakeFileSystem)
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
 }

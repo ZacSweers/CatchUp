@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.4.0-alpha06" type="baseline" client="gradle" dependencies="true" name="AGP (8.4.0-alpha06)" variant="all" version="8.4.0-alpha06">
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.debug_drawer_welcome` appears to be unused"
+        errorLine1="  &lt;string name=&quot;debug_drawer_welcome&quot;>Debug settings are available in this drawer.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/debug/res/values/debug_strings.xml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_icon_flattened` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/main/res/drawable/ic_icon_flattened.xml"
+            line="17"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.icon_attribution` appears to be unused"
+        errorLine1="  &lt;string name=&quot;icon_attribution&quot;>Icon by Michael Cook&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="38"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.enabled` appears to be unused"
+        errorLine1="  &lt;string name=&quot;enabled&quot;>Enabled&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="44"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.transition_image` appears to be unused"
+        errorLine1="  &lt;string name=&quot;transition_image&quot; translatable=&quot;false&quot;>image&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="61"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.hacker_news` appears to be unused"
+        errorLine1="  &lt;string name=&quot;hacker_news&quot;>Hacker News&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings_services.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.medium` appears to be unused"
+        errorLine1="  &lt;string name=&quot;medium&quot;>Medium&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings_services.xml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.product_hunt` appears to be unused"
+        errorLine1="  &lt;string name=&quot;product_hunt&quot;>Product Hunt&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings_services.xml"
+            line="22"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.designer_news` appears to be unused"
+        errorLine1="  &lt;string name=&quot;designer_news&quot;>Designer News&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings_services.xml"
+            line="23"
+            column="11"/>
+    </issue>
+
+</issues>

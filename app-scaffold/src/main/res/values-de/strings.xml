@@ -1,0 +1,32 @@
+<!--
+  ~ Copyright (c) 2018 Zac Sweers
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+  <string name="app_name" translatable="false">CatchUp</string>
+  <string name="retry">Erneut Versuchen</string>
+  <string name="pref_clear_cache">Cache leeren</string>
+  <string name="pref_clear_cache_summary">Leert den aktuellen Cache</string>
+  <string name="about">Über</string>
+  <string name="licenses">Lizenzen</string>
+  <string name="pref_reports">Analytics und Crash Reporting</string>
+  <string name="pref_reports_summary">Hilf mir Dir zu helfen! Schalte dies ein um den automatischen Upload von Analyse und Absturzmeldungen zu erlauben. Dabei werden keine persönlichen Daten versandt.</string>
+  <string name="general">Allgemein</string>
+  <string name="prefs_theme">Darstellung</string>
+  <string name="pref_smart_linking_title">Smart-Linking einschalten</string>
+  <string name="pref_smart_linking_summary">Smart-Linking öffnet Links in einer dafür vorgesehenen App (Solange diese existiert). Anderenfalls wird der Link in einem Chrome Custom Tab oder Browser geöffnet.</string>
+  <string name="title_activity_settings">Einstellungen</string>
+  <string name="clear_cache_success">Leerte %s</string>
+</resources>
