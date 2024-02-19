@@ -40,8 +40,6 @@ import androidx.compose.ui.zIndex
 import androidx.core.view.WindowInsetsControllerCompat
 import catchup.app.data.LinkManager
 import catchup.app.service.openUrl
-import catchup.app.ui.activity.FlickToDismissState.FlickGestureState.Dismissed
-import catchup.app.service.UrlMeta
 import catchup.app.ui.activity.ImageViewerScreen.Event
 import catchup.app.ui.activity.ImageViewerScreen.Event.Close
 import catchup.app.ui.activity.ImageViewerScreen.Event.CopyImage
@@ -95,7 +93,7 @@ data class ImageViewerScreen(
   val isBitmap: Boolean,
   val alias: String?,
   val sourceUrl: String,
-  @ColorInt val backgroundColor: Int = Color.Unspecified.toArgb()
+  @ColorInt val backgroundColor: Int = Color.Unspecified.toArgb(),
 ) : Screen {
   data class State(
     val id: String,
@@ -268,7 +266,11 @@ fun ImageViewer(state: State, modifier: Modifier = Modifier) {
 
         // TODO pick color based on if image is underneath it or not. Similar to badges?
         //  Alternatively make this just a very small button?
-        AnimatedVisibility(showChrome && flickState.gestureState == GestureState.Idle, enter = fadeIn(), exit = fadeOut()) {
+        AnimatedVisibility(
+          showChrome && flickState.gestureState == GestureState.Idle,
+          enter = fadeIn(),
+          exit = fadeOut(),
+        ) {
           NavButton(Modifier.align(Alignment.TopStart).padding(16.dp).statusBarsPadding(), CLOSE) {
             state.eventSink(Close)
           }
@@ -281,7 +283,7 @@ fun ImageViewer(state: State, modifier: Modifier = Modifier) {
 @Composable
 private fun CloseScreenOnFlickDismissEffect(
   flickState: FlickToDismissState,
-  onDismiss: () -> Unit
+  onDismiss: () -> Unit,
 ) {
   val gestureState = flickState.gestureState
 
