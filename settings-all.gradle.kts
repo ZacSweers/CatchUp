@@ -14,6 +14,7 @@ include(
   ":libraries:gemoji",
   ":libraries:gemoji:db",
   ":libraries:gemoji:generator",
+  ":libraries:http-api",
   ":libraries:flowbinding",
   ":libraries:kotlinutil",
   ":libraries:retrofitconverters",
