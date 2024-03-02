@@ -376,24 +376,23 @@ private fun CheckboxPref(
   icon: @Composable (() -> Unit)? = null,
   onCheckedChange: (Boolean) -> Unit = {},
 ) {
-  var storageValue by state
   val update: (Boolean) -> Unit = { boolean ->
-    storageValue = boolean
-    onCheckedChange(storageValue)
+    state.value = boolean
+    onCheckedChange(state.value)
   }
   Surface(
     modifier =
       modifier
         .fillMaxWidth()
         .toggleable(
-          value = storageValue,
+          value = state.value,
           role = Role.Checkbox,
           enabled = LocalEnabled.current,
-          onValueChange = { update(!storageValue) },
+          onValueChange = { update(!state.value) },
         )
   ) {
     SimplePrefItem(title, subtitle, icon) {
-      Switch(checked = storageValue, onCheckedChange = update, enabled = LocalEnabled.current)
+      Switch(checked = state.value, onCheckedChange = update, enabled = LocalEnabled.current)
     }
   }
 }

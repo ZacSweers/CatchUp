@@ -509,10 +509,9 @@ sealed interface DebugItem {
         modifier: Modifier = Modifier,
         onSelection: (T) -> Unit,
       ) {
-        var storageValue by state
         val update: (T) -> Unit = { newValue ->
-          storageValue = newValue
-          onSelection(storageValue)
+          state.value = newValue
+          onSelection(state.value)
         }
         Row(
           modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp),
@@ -527,7 +526,7 @@ sealed interface DebugItem {
             onExpandedChange = { expanded = !expanded },
           ) {
             OutlinedTextField(
-              value = formatSelection(storageValue),
+              value = formatSelection(state.value),
               modifier = Modifier.menuAnchor(),
               textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
               onValueChange = {},
@@ -585,25 +584,24 @@ sealed interface DebugItem {
         modifier: Modifier = Modifier,
         onCheckedChange: (Boolean) -> Unit,
       ) {
-        var storageValue by state
         val update: (Boolean) -> Unit = { boolean ->
-          storageValue = boolean
-          onCheckedChange(storageValue)
+          state.value = boolean
+          onCheckedChange(state.value)
         }
         Row(
           modifier =
             modifier
               .toggleable(
-                value = storageValue,
+                value = state.value,
                 role = Role.Checkbox,
-                onValueChange = { update(!storageValue) },
+                onValueChange = { update(!state.value) },
               )
               .padding(horizontal = 12.dp),
           verticalAlignment = Alignment.CenterVertically,
         ) {
           DebugLabelText(title)
           Spacer(modifier = Modifier.weight(1f))
-          Switch(checked = storageValue, onCheckedChange = update)
+          Switch(checked = state.value, onCheckedChange = update)
         }
       }
     }
