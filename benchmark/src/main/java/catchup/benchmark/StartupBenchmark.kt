@@ -17,7 +17,7 @@ class StartupBenchmark {
   @Test
   fun startup() =
     benchmarkRule.measureRepeated(
-      packageName = "io.sweers.catchup",
+      packageName = "dev.zacsweers.catchup",
       metrics = listOf(StartupTimingMetric()),
       iterations = 5,
       startupMode = StartupMode.COLD

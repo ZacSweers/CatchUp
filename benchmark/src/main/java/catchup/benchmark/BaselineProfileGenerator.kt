@@ -12,7 +12,7 @@ class BaselineProfileGenerator {
   @Test
   fun startupBaselineProfile() =
     baselineProfileRule.collect(
-      packageName = "io.sweers.catchup",
+      packageName = "dev.zacsweers.catchup",
       // Iteration values recommended by AndroidX folks
       maxIterations = 15,
       stableIterations = 3,
