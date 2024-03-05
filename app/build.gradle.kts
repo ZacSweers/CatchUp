@@ -68,6 +68,15 @@ android {
       create("release").initWith(getByName("debug"))
     }
   }
+  flavorDimensions += "stage"
+  productFlavors {
+    create("beta") {
+      isDefault = true
+    }
+    create("production") {
+      isDefault = false
+    }
+  }
   buildTypes {
     getByName("debug") {
       applicationIdSuffix = ".debug"
@@ -95,8 +104,10 @@ android {
 
 val automaticBaselineProfileGeneration = providers.environmentVariable("AUTOMATIC_BASELINE_GENERATION").getOrElse("false").toBoolean()
 
-tasks.named { it == "mergeProductionReleaseStartupProfile"}.configureEach {
-  mustRunAfter(":app:copyProductionReleaseBaselineProfileIntoSrc")
+if (!automaticBaselineProfileGeneration) {
+  tasks.named { it == "mergeProductionReleaseStartupProfile"}.configureEach {
+    mustRunAfter(":app:copyProductionReleaseBaselineProfileIntoSrc")
+  }
 }
 
 baselineProfile {
@@ -111,7 +122,7 @@ baselineProfile {
 
   if (automaticBaselineProfileGeneration) {
     variants {
-      maybeCreate("release").apply {
+      maybeCreate("productionRelease").apply {
         // Ensure Baseline Profile is fresh for release builds.
         automaticGenerationDuringBuild = true
       }

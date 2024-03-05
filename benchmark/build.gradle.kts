@@ -17,6 +17,7 @@ android {
   namespace = "catchup.benchmark"
   defaultConfig {
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    missingDimensionStrategy("stage", "production")
   }
 
   testOptions.managedDevices.devices {
