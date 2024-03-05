@@ -1,15 +1,17 @@
 // Copyright (C) 2022 Slack Technologies, LLC
 // SPDX-License-Identifier: Apache-2.0
 import com.android.build.api.dsl.ManagedVirtualDevice
+import slack.gradle.isCi
 
 plugins {
   alias(libs.plugins.android.test)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.sgp.base)
-  alias(libs.plugins.baselineprofile) apply false
+  alias(libs.plugins.baselineprofile)
 }
 
-val mvdName = "pixel6Api31"
+val mvdApi = 33
+val mvdName = "pixel6Api$mvdApi"
 
 android {
   namespace = "catchup.benchmark"
@@ -20,27 +22,44 @@ android {
   testOptions.managedDevices.devices {
     create<ManagedVirtualDevice>(mvdName) {
       device = "Pixel 6"
-      apiLevel = 31
-      systemImageSource = "aosp"
+      apiLevel = mvdApi
+      // Play store image source that can run both arm and x86 binaries
+      systemImageSource = "google_apis_playstore"
+      require64Bit = true
     }
   }
 
   targetProjectPath = ":app"
-  experimentalProperties["android.experimental.r8.dex-startup-optimization"] = true
+  // Load the target app in a separate process so that it can be restarted multiple times, which
+  // is necessary for startup benchmarking to work correctly.
+  // https://source.android.com/docs/core/tests/development/instr-self-e2e
+  experimentalProperties["android.experimental.self-instrumenting"] = true
+  experimentalProperties["android.experimental.testOptions.managedDevices.setupTimeoutMinutes"] = 20
+  experimentalProperties["android.experimental.androidTest.numManagedDeviceShards"] = 1
+  experimentalProperties["android.experimental.testOptions.managedDevices.maxConcurrentDevices"] = 1
+  experimentalProperties["android.testoptions.manageddevices.emulator.gpu"] = "swiftshader_indirect"
+  experimentalProperties[
+    "android.experimental.testOptions.managedDevices.emulator.showKernelLogging"] = true
 }
 
-//baselineProfile {
-//  // This specifies the managed devices to use that you run the tests on. The default
-//  // is none.
-//  managedDevices += mvdName
-//
-//  // This enables using connected devices to generate profiles. The default is true.
-//  // When using connected devices, they must be rooted or API 33 and higher.
-//  useConnectedDevices = false
-//
-//  // Set to true to see the emulator, useful for debugging. Only enabled locally
-//  enableEmulatorDisplay = false
-//}
+val usePhysicalDevice =
+  providers.gradleProperty("catchup.benchmark.usePhysicalDevice").getOrElse("false").toBoolean()
+
+baselineProfile {
+  // This specifies the managed devices to use that you run the tests on. The
+  // default is none.
+  if (!usePhysicalDevice) {
+    managedDevices += mvdName
+  }
+
+  // This enables using connected devices to generate profiles. The default is
+  // true. When using connected devices, they must be rooted or API 33 and
+  // higher.
+  useConnectedDevices = usePhysicalDevice
+
+  // Disable the emulator display for GMD devices on CI
+  enableEmulatorDisplay = !isCi
+}
 
 dependencies {
   implementation(libs.androidx.benchmark.macro.junit)
