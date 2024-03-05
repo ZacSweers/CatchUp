@@ -102,10 +102,10 @@ tasks.named { it == "mergeProductionReleaseStartupProfile"}.configureEach {
 baselineProfile {
   // Don't build on every iteration of a full assemble.
   // Instead enable generation directly for the release build variant.
-  automaticGenerationDuringBuild = false
+  automaticGenerationDuringBuild = automaticBaselineProfileGeneration
 
   // Don't save the profiles in source, generate adhoc
-  saveInSrc = false
+  saveInSrc = !automaticBaselineProfileGeneration
 
   from(projects.benchmark.dependencyProject)
 

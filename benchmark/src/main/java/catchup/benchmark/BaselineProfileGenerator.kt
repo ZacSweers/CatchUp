@@ -17,6 +17,6 @@ class BaselineProfileGenerator {
       maxIterations = 15,
       stableIterations = 3,
       includeInStartupProfile = true,
-      profileBlock = { startActivityAndWait() }
+      profileBlock = { startActivityAndWait() },
     )
 }
