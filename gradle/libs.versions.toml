@@ -1,33 +1,33 @@
 [versions]
 accompanist = "0.35.0-alpha"
-agp = "8.4.0-alpha10"
+agp = "8.4.0-alpha12"
 androidx-activity = "1.9.0-alpha03"
 androidx-core = "1.13.0-alpha05"
 androidx-sqlite = "2.4.0"
 appcompat = "1.7.0-alpha03"
-benchmark = "1.2.3"
-compose-material3 = "1.2.0"
+benchmark = "1.3.0-alpha01"
+compose-material3 = "1.2.1"
 emoji = "1.2.0-alpha03"
 anvil = "2.4.9"
 apollo = "3.8.2"
 circuit = "0.19.1"
-coil = "2.5.0"
-compose = "1.7.0-alpha02"
+coil = "2.6.0"
+compose = "1.7.0-alpha04"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.5.11-dev-k2.0.0-Beta4-21f5e479a96"
 compose-compiler-kotlinVersion = "2.0.0-Beta4"
-compose-jb = "1.5.12"
+compose-jb = "1.6.0"
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-compatibility-and-versioning.html#use-a-developer-version-of-compose-multiplatform-compiler
 compose-jb-compiler = "1.5.9-kt-2.0.0-Beta4"
 compose-jb-kotlinVersion = "2.0.0-Beta4"
 corbind = "1.10.0"
 coroutines = "1.8.0"
-dagger = "2.50"
-datastore = "1.1.0-beta01"
+dagger = "2.51"
+datastore = "1.1.0-beta02"
 detekt = "1.23.5"
 eithernet = "1.8.1"
-flipper = "0.247.0"
+flipper = "0.249.0"
 jdk = "21"
 jvmTarget = "17"
 kotlin = "2.0.0-Beta4"
@@ -36,7 +36,7 @@ kotlinx-serialization = "1.6.3"
 ksp = "2.0.0-Beta4-1.0.17"
 ktfmt = "0.47"
 leakcanary = "2.13"
-lifecycle = "2.8.0-alpha01"
+lifecycle = "2.8.0-alpha02"
 markwon = "4.6.2"
 moshi = "1.15.1"
 moshix = "0.26.0-alpha01"
@@ -46,7 +46,7 @@ preferences = "1.2.1"
 retrofit = "2.9.0"
 slack-lint = "0.7.0"
 sortDependencies = "0.6"
-sgp = "0.15.3"
+sgp = "0.15.8"
 spotless = "6.25.0"
 sqldelight = "2.0.1"
 telephoto = "0.8.0"
@@ -65,7 +65,7 @@ bugsnag = { id = "com.bugsnag.android.gradle", version = "8.1.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.1" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.30.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-doctor = { id = "com.osacky.doctor", version = "0.9.1" }
+doctor = { id = "com.osacky.doctor", version = "0.9.2" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -86,7 +86,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 
 [libraries]
-androidx-annotations = "androidx.annotation:annotation:1.7.1"
+androidx-annotations = "androidx.annotation:annotation:1.8.0-alpha01"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -99,7 +99,7 @@ androidx-collection = "androidx.collection:collection:1.4.0"
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
-androidx-customTabs = "androidx.browser:browser:1.8.0-beta02"
+androidx-customTabs = "androidx.browser:browser:1.8.0"
 androidx-design = "com.google.android.material:material:1.11.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
@@ -115,7 +115,6 @@ androidx-paletteKtx = "androidx.palette:palette-ktx:1.0.0"
 androidx-preference = { module = "androidx.preference:preference", version.ref = "preferences" }
 androidx-preferenceKtx = { module = "androidx.preference:preference-ktx", version = "1.2.1" }
 
-androidx-lifecycle-extensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
 androidx-lifecycle-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
 androidx-sqlite-framework = { module = "androidx.sqlite:sqlite-framework", version.ref = "androidx-sqlite" }
@@ -136,16 +135,16 @@ androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", versio
 androidx-compose-accompanist-adaptive = { module = "com.google.accompanist:accompanist-adaptive", version.ref = "accompanist" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha13"
-androidx-paging-compose = "androidx.paging:paging-compose:3.3.0-alpha03"
+androidx-paging-compose = "androidx.paging:paging-compose:3.3.0-alpha04"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-material-material3-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
-androidx-window = { module = "androidx.window:window", version = "1.3.0-alpha02" }
+androidx-window = { module = "androidx.window:window", version = "1.3.0-alpha03" }
 androidx-splashscreen = "androidx.core:core-splashscreen:1.1.0-alpha02"
 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-alpha01"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.1.5"
 androidx-test-monitor = "androidx.test:monitor:1.7.0-alpha04"
-androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0-rc01"
+androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 
 compose-compilerJb = { module = "org.jetbrains.compose.compiler:compiler", version.ref = "compose-jb-compiler" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-jb" }
@@ -157,7 +156,7 @@ compose-material-material = { module = "org.jetbrains.compose.material:material"
 compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
-firebase-database = "com.google.firebase:firebase-database:20.3.0"
+firebase-database = "com.google.firebase:firebase-database:20.3.1"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
 anvil-annotationsOptional = { module = "com.squareup.anvil:annotations-optional", version.ref = "anvil" }
@@ -211,7 +210,7 @@ errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.25.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:0.5.3"
+haze = "dev.chrisbanes.haze:haze:0.5.4"
 
 javaxInject = "javax.inject:javax.inject:1"
 
@@ -244,11 +243,11 @@ misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "f
 misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.11.0"
 misc-debug-guava = "com.google.guava:guava:33.0.0-jre"
-misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.1.2"
+misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.2.0"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.3.0"
 
 misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:1.0.3"
-misc-composeSettings-base = "com.github.alorma:compose-settings-storage-base:1.0.3"
+misc-composeSettings-base = "com.github.alorma:compose-settings-storage-base:1.3.0"
 misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.27.0"
 misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
 misc-jsoup = "org.jsoup:jsoup:1.17.2"
@@ -296,7 +295,7 @@ tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", versi
 collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "collapsingToolbar" }
 
 test-junit = "junit:junit:4.13.2"
-test-truth = "com.google.truth:truth:1.4.1"
+test-truth = "com.google.truth:truth:1.4.2"
 
 xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.86.3"
 xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.86.3"
