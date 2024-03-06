@@ -24,8 +24,8 @@ android {
     create<ManagedVirtualDevice>(mvdName) {
       device = "Pixel 6"
       apiLevel = mvdApi
-      // Play store image source that can run both arm and x86 binaries
-      systemImageSource = "google_apis_playstore"
+      // Google source can run both arm and x86 binaries
+      systemImageSource = "google"
       require64Bit = true
     }
   }
@@ -38,25 +38,27 @@ android {
   experimentalProperties["android.experimental.testOptions.managedDevices.setupTimeoutMinutes"] = 20
   experimentalProperties["android.experimental.androidTest.numManagedDeviceShards"] = 1
   experimentalProperties["android.experimental.testOptions.managedDevices.maxConcurrentDevices"] = 1
-  experimentalProperties["android.testoptions.manageddevices.emulator.gpu"] = "swiftshader_indirect"
   experimentalProperties[
     "android.experimental.testOptions.managedDevices.emulator.showKernelLogging"] = true
+  if (isCi) {
+    experimentalProperties["android.testoptions.manageddevices.emulator.gpu"] = "swiftshader_indirect"
+  }
 }
 
-val usePhysicalDevice =
-  providers.gradleProperty("catchup.benchmark.usePhysicalDevice").getOrElse("false").toBoolean()
+val useConnectedDevice =
+  providers.gradleProperty("catchup.benchmark.useConnectedDevice").getOrElse("false").toBoolean()
 
 baselineProfile {
   // This specifies the managed devices to use that you run the tests on. The
   // default is none.
-  if (!usePhysicalDevice) {
+  if (!useConnectedDevice) {
     managedDevices += mvdName
   }
 
   // This enables using connected devices to generate profiles. The default is
   // true. When using connected devices, they must be rooted or API 33 and
   // higher.
-  useConnectedDevices = usePhysicalDevice
+  useConnectedDevices = useConnectedDevice
 
   // Disable the emulator display for GMD devices on CI
   enableEmulatorDisplay = !isCi
