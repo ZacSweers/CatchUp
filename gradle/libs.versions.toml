@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.35.0-alpha"
-agp = "8.4.0-alpha12"
+agp = "8.4.0-alpha13"
 androidx-activity = "1.9.0-alpha03"
 androidx-core = "1.13.0-alpha05"
 androidx-sqlite = "2.4.0"
@@ -33,7 +33,7 @@ jvmTarget = "17"
 kotlin = "2.0.0-Beta4"
 kotlinx-metadata = "0.7.0"
 kotlinx-serialization = "1.6.3"
-ksp = "2.0.0-Beta4-1.0.18"
+ksp = "2.0.0-Beta4-1.0.19"
 ktfmt = "0.47"
 leakcanary = "2.13"
 lifecycle = "2.8.0-alpha02"
@@ -210,7 +210,7 @@ errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.25.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:0.5.4"
+haze = "dev.chrisbanes.haze:haze:0.6.0"
 
 javaxInject = "javax.inject:javax.inject:1"
 
