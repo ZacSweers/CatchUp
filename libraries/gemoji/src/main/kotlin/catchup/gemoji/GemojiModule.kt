@@ -34,7 +34,7 @@ object GemojiModule {
 
   @Provides
   @SingleIn(AppScope::class)
-  internal fun provideGemojiDatabase(@ApplicationContext context: Context): GemojiDatabase {
+  fun provideGemojiDatabase(@ApplicationContext context: Context): GemojiDatabase {
     val delegate =
       FrameworkSQLiteOpenHelperFactory()
         .create(
