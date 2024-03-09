@@ -119,10 +119,7 @@ abstract class DribbbleMetaModule {
 @Module(includes = [DribbbleMetaModule::class])
 object DribbbleModule {
   @Provides
-  fun provideDribbbleService(
-    client: Lazy<OkHttpClient>,
-    appConfig: AppConfig,
-  ): DribbbleApi {
+  fun provideDribbbleService(client: Lazy<OkHttpClient>, appConfig: AppConfig): DribbbleApi {
     return Retrofit.Builder()
       .baseUrl(DribbbleApi.ENDPOINT)
       .delegatingCallFactory(client)
