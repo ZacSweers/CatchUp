@@ -108,7 +108,7 @@ abstract class UnsplashMetaModule {
 
     @InternalApi
     @Provides
-    internal fun provideUnsplashServiceMeta(): ServiceMeta =
+    fun provideUnsplashServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
         R.string.catchup_service_unsplash_name,
@@ -128,13 +128,13 @@ object UnsplashModule {
 
   @Provides
   @InternalApi
-  internal fun provideUnsplashMoshi(moshi: Moshi): Moshi {
+  fun provideUnsplashMoshi(moshi: Moshi): Moshi {
     return moshi.newBuilder().add(Instant::class.java, ISO8601InstantAdapter()).build()
   }
 
   @Provides
   @InternalApi
-  internal fun provideUnsplashOkHttpClient(client: OkHttpClient): OkHttpClient {
+  fun provideUnsplashOkHttpClient(client: OkHttpClient): OkHttpClient {
     return client
       .newBuilder()
       .addInterceptor {
@@ -145,7 +145,7 @@ object UnsplashModule {
   }
 
   @Provides
-  internal fun provideUnsplashService(
+  fun provideUnsplashService(
     @InternalApi client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
     appConfig: AppConfig,

@@ -99,7 +99,7 @@ abstract class DesignerNewsMetaModule {
 
     @InternalApi
     @Provides
-    internal fun provideDesignerNewsMeta(): ServiceMeta =
+    fun provideDesignerNewsMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
         R.string.catchup_service_dn_name,
@@ -116,12 +116,12 @@ abstract class DesignerNewsMetaModule {
 object DesignerNewsModule {
   @Provides
   @InternalApi
-  internal fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
+  fun provideDesignerNewsMoshi(moshi: Moshi): Moshi {
     return moshi.newBuilder().add(Instant::class.java, ISO8601InstantAdapter()).build()
   }
 
   @Provides
-  internal fun provideDesignerNewsApi(
+  fun provideDesignerNewsApi(
     client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
     appConfig: AppConfig,
