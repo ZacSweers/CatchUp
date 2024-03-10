@@ -124,6 +124,7 @@ androidx-compose-animation-graphics = { module = "androidx.compose.animation:ani
 androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 androidx-compose-googleFonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "compose" }
@@ -288,6 +289,7 @@ sqlite-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "xerial" }
 
 telephoto-zoomable = { module = "me.saket.telephoto:zoomable", version.ref = "telephoto" }
 telephoto-zoomableImage = { module = "me.saket.telephoto:zoomable-image", version.ref = "telephoto" }
+telephoto-flick = { module = "me.saket.telephoto:flick", version.ref = "telephoto" }
 telephoto-zoomableImageCoil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
 
 tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", version.ref = "tikxml" }

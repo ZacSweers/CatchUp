@@ -1,36 +1,45 @@
 package catchup.app.ui.activity
 
+import androidx.annotation.ColorInt
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
+import androidx.compose.ui.zIndex
 import androidx.core.view.WindowInsetsControllerCompat
 import catchup.app.data.LinkManager
 import catchup.app.service.openUrl
-import catchup.app.ui.activity.FlickToDismissState.FlickGestureState.Dismissed
 import catchup.app.ui.activity.ImageViewerScreen.Event
 import catchup.app.ui.activity.ImageViewerScreen.Event.Close
 import catchup.app.ui.activity.ImageViewerScreen.Event.CopyImage
@@ -64,8 +73,14 @@ import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.app.scaffold.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import me.saket.telephoto.flick.FlickToDismiss
+import me.saket.telephoto.flick.FlickToDismissState
+import me.saket.telephoto.flick.FlickToDismissState.GestureState
+import me.saket.telephoto.flick.FlickToDismissState.GestureState.Dismissing
+import me.saket.telephoto.flick.rememberFlickToDismissState
 import me.saket.telephoto.zoomable.ZoomSpec
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import me.saket.telephoto.zoomable.rememberZoomableImageState
@@ -78,6 +93,7 @@ data class ImageViewerScreen(
   val isBitmap: Boolean,
   val alias: String?,
   val sourceUrl: String,
+  @ColorInt val backgroundColor: Int = Color.Unspecified.toArgb(),
 ) : Screen {
   data class State(
     val id: String,
@@ -85,6 +101,7 @@ data class ImageViewerScreen(
     val alias: String?,
     val sourceUrl: String,
     val isBitmap: Boolean,
+    val backgroundColor: Color,
     val eventSink: (Event) -> Unit,
   ) : CircuitUiState
 
@@ -126,6 +143,7 @@ constructor(
       alias = screen.alias,
       isBitmap = screen.isBitmap,
       sourceUrl = screen.sourceUrl,
+      backgroundColor = Color(screen.backgroundColor),
     ) { event ->
       // TODO finish implementing these. Also why is copying an image on android so terrible in
       //  2023.
@@ -155,35 +173,79 @@ fun ImageViewer(state: State, modifier: Modifier = Modifier) {
     // Set BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE so the UI doesn't jump when it hides
     systemUiController.systemBarsBehavior =
       WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    val originalIsDarkContent = systemUiController.systemBarsDarkContentEnabled
+    systemUiController.systemBarsDarkContentEnabled = false
     onDispose {
-      // TODO this is too late for some reason
       systemUiController.isSystemBarsVisible = true
       systemUiController.systemBarsBehavior = originalSystemBarsBehavior
+      systemUiController.systemBarsDarkContentEnabled = originalIsDarkContent
     }
   }
 
   CatchUpTheme(useDarkTheme = true) {
-    val backgroundAlpha: Float by
-      animateFloatAsState(targetValue = 1f, animationSpec = tween(), label = "backgroundAlpha")
-    Surface(
-      modifier.fillMaxSize().animateContentSize(),
-      color = Color.Black.copy(alpha = backgroundAlpha),
+    Scaffold(
+      contentWindowInsets = WindowInsets(0, 0, 0, 0),
+      containerColor = Color.Transparent,
       contentColor = Color.White,
-    ) {
-      Box(Modifier.fillMaxSize()) {
-        // Image + scrim
-
-        val dismissState = rememberFlickToDismissState()
-        if (dismissState.gestureState is Dismissed) {
-          state.eventSink(Close)
+    ) { contentPadding ->
+      val flickState = rememberFlickToDismissState(rotateOnDrag = false)
+      val backgroundColor =
+        if (state.backgroundColor == Color.Unspecified) {
+          MaterialTheme.colorScheme.background
+        } else {
+          state.backgroundColor
         }
-        // TODO bind scrim with flick. animate scrim out after flick finishes? Or with flick?
-        FlickToDismiss(state = dismissState) {
+      Box(
+        modifier
+          .padding(contentPadding)
+          .fillMaxSize()
+          .background(backgroundColor.copy(alpha = 1f - flickState.offsetFraction))
+      ) {
+        // Image + scrim
+        CloseScreenOnFlickDismissEffect(flickState) {
+          state.eventSink(ImageViewerScreen.Event.Close)
+        }
+
+        // TODO
+        //  corner shape on drag offset
+        //  dropshadow on dragging
+        FlickToDismiss(state = flickState) {
           val overlayHost = LocalOverlayHost.current
           val scope = rememberStableCoroutineScope()
           val zoomableState = rememberZoomableState(ZoomSpec(maxZoomFactor = 2f))
           val imageState = rememberZoomableImageState(zoomableState)
           // TODO loading loading indicator if there's no memory cached alias
+
+          // TODO elevation and corner radius don't actually work currently
+          val targetElevation =
+            if (flickState.gestureState is GestureState.Dragging) {
+              32.dp
+            } else {
+              0.dp
+            }
+          val targetRadius =
+            if (flickState.gestureState is GestureState.Dragging) {
+              32.dp
+            } else {
+              0.dp
+            }
+
+          val elevation by animateDpAsState(targetElevation, label = "Animated elevation")
+          val cornerRadius by animateDpAsState(targetRadius, label = "Animated corner radius")
+
+          // Scale x/y based on the flick offset
+          // We scale at most to 0.95f, and lerp this within the first 30% of the offset fraction
+          val scale by remember {
+            derivedStateOf {
+              val adjustedFraction =
+                when {
+                  flickState.offsetFraction <= 0f -> 0f
+                  flickState.offsetFraction >= 0.3f -> 1f
+                  else -> flickState.offsetFraction / 0.3f
+                }
+              lerp(1f, 0.95f, adjustedFraction)
+            }
+          }
           ZoomableAsyncImage(
             model =
               Builder(LocalContext.current)
@@ -191,20 +253,44 @@ fun ImageViewer(state: State, modifier: Modifier = Modifier) {
                 .apply { state.alias?.let(::placeholderMemoryCacheKey) }
                 .build(),
             contentDescription = "TODO",
-            modifier = Modifier.fillMaxSize(),
+            modifier =
+              Modifier.fillMaxSize()
+                .graphicsLayer(scaleX = scale, scaleY = scale)
+                .zIndex(elevation.value)
+                .clip(RoundedCornerShape(cornerRadius)),
             state = imageState,
             onClick = { showChrome = !showChrome },
             onLongClick = { launchShareSheet(scope, overlayHost, state) },
           )
         }
 
-        // TODO pick color based on if image is underneath it or not. Similar to badges
-        AnimatedVisibility(showChrome, enter = fadeIn(), exit = fadeOut()) {
+        // TODO pick color based on if image is underneath it or not. Similar to badges?
+        //  Alternatively make this just a very small button?
+        AnimatedVisibility(
+          showChrome && flickState.gestureState == GestureState.Idle,
+          enter = fadeIn(),
+          exit = fadeOut(),
+        ) {
           NavButton(Modifier.align(Alignment.TopStart).padding(16.dp).statusBarsPadding(), CLOSE) {
             state.eventSink(Close)
           }
         }
       }
+    }
+  }
+}
+
+@Composable
+private fun CloseScreenOnFlickDismissEffect(
+  flickState: FlickToDismissState,
+  onDismiss: () -> Unit,
+) {
+  val gestureState = flickState.gestureState
+
+  if (gestureState is Dismissing) {
+    LaunchedEffect(Unit) {
+      delay(gestureState.animationDuration / 2)
+      onDismiss()
     }
   }
 }

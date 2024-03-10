@@ -189,6 +189,7 @@ dependencies {
   implementation(libs.sqldelight.paging)
   implementation(libs.sqldelight.primitiveAdapters)
   implementation(libs.sqldelight.runtime)
+  implementation(libs.telephoto.flick)
   implementation(libs.telephoto.zoomable)
   implementation(libs.telephoto.zoomableImage)
   implementation(libs.telephoto.zoomableImageCoil)

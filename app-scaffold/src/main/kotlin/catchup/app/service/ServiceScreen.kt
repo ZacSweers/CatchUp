@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -116,7 +117,7 @@ data class ServiceScreen(val serviceKey: String) : Screen {
   }
 
   sealed interface Event : CircuitUiEvent {
-    data class ItemClicked(val item: CatchUpItem) : Event
+    data class ItemClicked(val item: CatchUpItem, val colorHint: Color = Color.Unspecified) : Event
 
     data class ItemActionClicked(val item: CatchUpItem, val action: Action) : Event {
       enum class Action {
@@ -171,6 +172,7 @@ constructor(
                   isBitmap = !info.animatable,
                   info.cacheKey,
                   info.sourceUrl,
+                  event.colorHint.toArgb(),
                 )
               )
             } else {
@@ -190,6 +192,7 @@ constructor(
                     isBitmap = bestGuessIsBitmap,
                     alias = null,
                     sourceUrl = url,
+                    backgroundColor = event.colorHint.toArgb(),
                   )
                 )
               } else {
