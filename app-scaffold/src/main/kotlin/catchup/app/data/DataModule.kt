@@ -53,7 +53,7 @@ abstract class DataModule {
 
     @Provides
     @SingleIn(AppScope::class)
-    internal fun provideCache(@ApplicationContext context: Context): Cache {
+    fun provideCache(@ApplicationContext context: Context): Cache {
       if (Looper.myLooper() == Looper.getMainLooper()) {
         throw IllegalStateException("Cache initialized on main thread.")
       }
@@ -62,7 +62,7 @@ abstract class DataModule {
 
     @Provides
     @SingleIn(AppScope::class)
-    internal fun provideOkHttpClient(
+    fun provideOkHttpClient(
       cache: Cache,
       interceptors: DaggerSet<Interceptor>,
       @NetworkInterceptor networkInterceptors: DaggerSet<Interceptor>,
@@ -86,7 +86,7 @@ abstract class DataModule {
 
     @Provides
     @SingleIn(AppScope::class)
-    internal fun provideMoshi(appConfig: AppConfig): Moshi {
+    fun provideMoshi(appConfig: AppConfig): Moshi {
       return Moshi.Builder()
         .apply {
           // TODO would like to just have this in debug but need to abstract it better

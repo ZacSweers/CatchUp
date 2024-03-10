@@ -42,17 +42,17 @@ private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
 
 class CatchUpApplication : Application() {
 
-  @Inject internal lateinit var appConfig: AppConfig
+  @Inject lateinit var appConfig: AppConfig
 
   lateinit var appComponent: ApplicationComponent
 
   @Inject
-  internal fun plantTimberTrees(trees: DaggerSet<Tree>) {
+  fun plantTimberTrees(trees: DaggerSet<Tree>) {
     Timber.plant(*trees.toTypedArray())
   }
 
   @Inject
-  internal fun asyncInits(
+  fun asyncInits(
     scope: BackgroundAppCoroutineScope,
     @AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>,
   ) {
@@ -63,7 +63,7 @@ class CatchUpApplication : Application() {
   }
 
   @Inject
-  internal fun setupLumberYard(lumberYard: LumberYard, clock: Clock) {
+  fun setupLumberYard(lumberYard: LumberYard, clock: Clock) {
     if (lumberYard !is DiskLumberYard) return
     val defaultHandler = Thread.currentThread().uncaughtExceptionHandler
     Thread.currentThread().setUncaughtExceptionHandler { thread, throwable ->
@@ -83,7 +83,7 @@ class CatchUpApplication : Application() {
   }
 
   @Inject
-  internal fun inits(@Initializers initializers: DaggerSet<InitializerFunction>) {
+  fun inits(@Initializers initializers: DaggerSet<InitializerFunction>) {
     initializers.forEach { it() }
   }
 

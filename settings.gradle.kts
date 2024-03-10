@@ -273,6 +273,15 @@ configureIncludedBuild("dagp") { path ->
   }
 }
 
+// See comments on systemProp.slack.include-build.anvil property in gradle.properties
+configureIncludedBuild("anvil") { path ->
+  includeBuild(path) {
+    dependencySubstitution {
+      substitute(module("com.squareup.anvil:compiler")).using(project(":compiler"))
+    }
+  }
+}
+
 include(":platform")
 
 // https://docs.gradle.org/5.6/userguide/groovy_plugin.html#sec:groovy_compilation_avoidance
