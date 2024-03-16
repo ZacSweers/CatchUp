@@ -77,8 +77,6 @@ import catchup.di.AppScope
 import catchup.di.DataMode
 import catchup.util.truncateAt
 import com.alorma.compose.settings.storage.base.SettingValueState
-import com.alorma.compose.settings.storage.base.getValue
-import com.alorma.compose.settings.storage.base.setValue
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost

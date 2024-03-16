@@ -56,8 +56,6 @@ import catchup.util.clearCache
 import catchup.util.clearFiles
 import catchup.util.injection.qualifiers.ApplicationContext
 import com.alorma.compose.settings.storage.base.SettingValueState
-import com.alorma.compose.settings.storage.base.getValue
-import com.alorma.compose.settings.storage.base.setValue
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.byteunits.BinaryByteUnit
 import com.slack.circuit.codegen.annotations.CircuitInject
