@@ -103,7 +103,7 @@ abstract class RedditMetaModule {
 
     @InternalApi
     @Provides
-    internal fun provideRedditServiceMeta(): ServiceMeta =
+    fun provideRedditServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
         R.string.catchup_service_reddit_name,
@@ -120,7 +120,7 @@ object RedditModule {
 
   @InternalApi
   @Provides
-  internal fun provideMoshi(upstreamMoshi: Moshi): Moshi {
+  fun provideMoshi(upstreamMoshi: Moshi): Moshi {
     return upstreamMoshi
       .newBuilder()
       .add(RedditObjectFactory.INSTANCE)
@@ -130,7 +130,7 @@ object RedditModule {
 
   @InternalApi
   @Provides
-  internal fun provideRedditOkHttpClient(client: OkHttpClient): OkHttpClient {
+  fun provideRedditOkHttpClient(client: OkHttpClient): OkHttpClient {
     return client
       .newBuilder()
       .addNetworkInterceptor { chain ->
@@ -154,7 +154,7 @@ object RedditModule {
   }
 
   @Provides
-  internal fun provideRedditApi(
+  fun provideRedditApi(
     @InternalApi client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
     appConfig: AppConfig,

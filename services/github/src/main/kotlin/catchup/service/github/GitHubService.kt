@@ -187,7 +187,7 @@ abstract class GitHubMetaModule {
 
     @InternalApi
     @Provides
-    internal fun provideGitHubServiceMeta(): ServiceMeta =
+    fun provideGitHubServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
         R.string.catchup_service_github_name,
@@ -204,7 +204,7 @@ abstract class GitHubMetaModule {
 object GitHubModule {
 
   @Provides
-  internal fun provideGitHubService(client: Lazy<OkHttpClient>, appConfig: AppConfig): GitHubApi {
+  fun provideGitHubService(client: Lazy<OkHttpClient>, appConfig: AppConfig): GitHubApi {
     return Retrofit.Builder()
       .baseUrl(GitHubApi.ENDPOINT)
       .delegatingCallFactory(client)

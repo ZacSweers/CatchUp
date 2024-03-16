@@ -172,7 +172,7 @@ abstract class HackerNewsMetaModule {
 
     @InternalApi
     @Provides
-    internal fun provideHackerNewsServiceMeta(): ServiceMeta =
+    fun provideHackerNewsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
         R.string.catchup_service_hn_name,
@@ -189,7 +189,7 @@ abstract class HackerNewsMetaModule {
 @Module
 object HackerNewsModule {
   @Provides
-  internal fun provideDatabase(@ApplicationContext context: Context): FirebaseDatabase {
+  fun provideDatabase(@ApplicationContext context: Context): FirebaseDatabase {
     val app =
       FirebaseApp.getApps(context).firstOrNull()
         ?: run {

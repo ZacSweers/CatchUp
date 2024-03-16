@@ -93,7 +93,7 @@ abstract class SlashdotMetaModule {
 
     @Provides
     @InternalApi
-    internal fun provideSlashdotServiceMeta(): ServiceMeta =
+    fun provideSlashdotServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
         R.string.catchup_service_sd_name,
@@ -108,11 +108,11 @@ abstract class SlashdotMetaModule {
 @Module(includes = [SlashdotMetaModule::class])
 object SlashdotModule {
 
-  @Provides internal fun provideXml(): XML = XML { defaultPolicy { ignoreUnknownChildren() } }
+  @Provides fun provideXml(): XML = XML { defaultPolicy { ignoreUnknownChildren() } }
 
   @Provides
   @InternalApi
-  internal fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
+  fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
     return okHttpClient
       .newBuilder()
       .addNetworkInterceptor { chain ->
@@ -125,7 +125,7 @@ object SlashdotModule {
   }
 
   @Provides
-  internal fun provideSlashdotApi(
+  fun provideSlashdotApi(
     @InternalApi client: Lazy<OkHttpClient>,
     xml: XML,
     appConfig: AppConfig,

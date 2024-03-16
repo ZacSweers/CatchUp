@@ -102,7 +102,7 @@ abstract class DribbbleMetaModule {
 
     @InternalApi
     @Provides
-    internal fun provideDribbbleServiceMeta(): ServiceMeta =
+    fun provideDribbbleServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
         R.string.catchup_service_dribbble_name,
@@ -119,10 +119,7 @@ abstract class DribbbleMetaModule {
 @Module(includes = [DribbbleMetaModule::class])
 object DribbbleModule {
   @Provides
-  internal fun provideDribbbleService(
-    client: Lazy<OkHttpClient>,
-    appConfig: AppConfig,
-  ): DribbbleApi {
+  fun provideDribbbleService(client: Lazy<OkHttpClient>, appConfig: AppConfig): DribbbleApi {
     return Retrofit.Builder()
       .baseUrl(DribbbleApi.ENDPOINT)
       .delegatingCallFactory(client)
