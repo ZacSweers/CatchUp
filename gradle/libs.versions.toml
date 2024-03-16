@@ -17,7 +17,7 @@ compose = "1.7.0-alpha04"
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.5.10"
 compose-compiler-kotlinVersion = "1.9.22"
-compose-jb = "1.6.0"
+compose-jb = "1.6.1"
 compose-jb-compiler = "1.5.10.1"
 compose-jb-kotlinVersion = "1.9.20"
 corbind = "1.10.0"
@@ -26,7 +26,7 @@ dagger = "2.51"
 datastore = "1.1.0-beta02"
 detekt = "1.23.5"
 eithernet = "1.8.1"
-flipper = "0.249.0"
+flipper = "0.250.0"
 jdk = "21"
 jvmTarget = "17"
 kotlin = "1.9.23"
@@ -40,17 +40,17 @@ markwon = "4.6.2"
 moshi = "1.15.1"
 moshix = "0.25.1"
 okhttp = "5.0.0-alpha.12"
-okio = "3.8.0"
+okio = "3.9.0"
 preferences = "1.2.1"
 retrofit = "2.9.0"
 slack-lint = "0.7.0"
 sortDependencies = "0.6"
-sgp = "0.15.9"
+sgp = "0.16.1"
 spotless = "6.25.0"
 sqldelight = "2.0.1"
 telephoto = "0.8.0"
 tikxml = "0.8.15"
-xerial = "3.45.1.0"
+xerial = "3.45.2.0"
 collapsingToolbar = "2.3.5"
 
 [plugins]
@@ -206,7 +206,7 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 
-errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.26.0"
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.26.1"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
@@ -242,7 +242,7 @@ misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
 misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.11.0"
-misc-debug-guava = "com.google.guava:guava:33.0.0-jre"
+misc-debug-guava = "com.google.guava:guava:33.1.0-jre"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:2.2.0"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.3.0"
 
