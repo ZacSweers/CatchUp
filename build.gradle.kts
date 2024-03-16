@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.autonomousapps.DependencyAnalysisExtension
 
 plugins {
   alias(libs.plugins.kotlin.jvm) apply false
@@ -48,7 +47,8 @@ buildscript {
   }
 }
 
-val useProjectIsolation = System.getProperty("org.gradle.unsafe.isolated-projects", "false").toBoolean()
+val useProjectIsolation =
+  System.getProperty("org.gradle.unsafe.isolated-projects", "false").toBoolean()
 
 if (!useProjectIsolation) {
   apply(plugin = libs.plugins.doctor.get().pluginId)
@@ -62,11 +62,7 @@ skippy {
   global {
     applyDefaults()
     // Glob patterns of files to include in computing
-    includePatterns.addAll(
-      "**/schemas/**",
-      "app/proguard-rules.pro",
-      "**/src/**/graphql/**",
-    )
+    includePatterns.addAll("**/schemas/**", "app/proguard-rules.pro", "**/src/**/graphql/**")
     // Glob patterns of files that, if changed, should result in not skipping anything in the build
     neverSkipPatterns.addAll(
       ".github/workflows/**",
@@ -79,14 +75,14 @@ skippy {
 
 if (!useProjectIsolation) {
   // https://github.com/autonomousapps/dependency-analysis-gradle-plugin/issues/1111
-//  apply(plugin = libs.plugins.dependencyAnalysis.get().pluginId)
-//  configure<DependencyAnalysisExtension> {
-//    structure {
-//      bundle("compose-ui") {
-//        primary("androidx.compose.ui:ui")
-//        includeGroup("androidx.compose.ui")
-//        // TODO exclude ui-tooling
-//      }
-//    }
-//  }
+  //  apply(plugin = libs.plugins.dependencyAnalysis.get().pluginId)
+  //  configure<DependencyAnalysisExtension> {
+  //    structure {
+  //      bundle("compose-ui") {
+  //        primary("androidx.compose.ui:ui")
+  //        includeGroup("androidx.compose.ui")
+  //        // TODO exclude ui-tooling
+  //      }
+  //    }
+  //  }
 }
