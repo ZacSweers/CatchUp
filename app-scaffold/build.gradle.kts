@@ -181,6 +181,7 @@ dependencies {
   implementation(libs.misc.okio)
   implementation(libs.misc.tapTargetView)
   implementation(libs.misc.timber)
+  implementation(libs.misc.unfurl)
   implementation(libs.moshi.core)
   implementation(libs.moshi.shimo)
   implementation(libs.okhttp.core)
