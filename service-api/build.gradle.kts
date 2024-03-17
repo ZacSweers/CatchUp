@@ -35,6 +35,7 @@ kotlin {
         api(libs.compose.runtime)
         api(libs.dagger.runtime)
         api(libs.kotlin.datetime)
+        api(libs.kotlinx.immutable)
         api(projects.libraries.di)
 
         implementation(libs.androidx.annotations)
