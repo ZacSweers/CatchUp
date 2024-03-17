@@ -19,15 +19,18 @@ import catchup.appconfig.AppConfig
 import catchup.di.AppScope
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
+import catchup.service.api.Comment
 import catchup.service.api.ContentType
 import catchup.service.api.DataRequest
 import catchup.service.api.DataResult
+import catchup.service.api.Detail
 import catchup.service.api.Mark.Companion.createCommentMark
 import catchup.service.api.Service
 import catchup.service.api.ServiceKey
 import catchup.service.api.ServiceMeta
 import catchup.service.api.ServiceMetaKey
 import catchup.service.api.TextService
+import catchup.service.reddit.model.RedditComment
 import catchup.service.reddit.model.RedditLink
 import catchup.service.reddit.model.RedditObjectFactory
 import catchup.util.data.adapters.EpochInstantJsonAdapter
@@ -41,6 +44,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import javax.inject.Inject
 import javax.inject.Qualifier
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -83,10 +87,55 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
             serviceId = meta().id,
             // If it's a selftext, mark it as HTML for summarizing.
             contentType = if (link.isSelf) ContentType.HTML else null,
+            detailKey = link.id,
           )
         }
       DataResult(data, redditListingRedditResponse.data.after)
     }
+  }
+
+  override suspend fun fetchDetail(item: CatchUpItem): Detail {
+    val (listing, redditComments) =
+      api
+        .comments(
+          id = item.detailKey!!,
+          // TODO need a better way for this
+          subreddit = item.tag!!.removePrefix("/r/"),
+        )
+        .map { it.data.children }
+
+    val detailListing = listing[0] as RedditLink
+
+    val comments =
+      redditComments
+        .filterIsInstance<RedditComment>()
+        .map { comment ->
+          Comment(
+            id = comment.id,
+            serviceId = SERVICE_KEY,
+            author = comment.author,
+            timestamp = comment.createdUtc,
+            text = comment.body,
+            score = comment.score,
+            children = emptyList(),
+            depth = comment.depth,
+            clickableUrls = emptyList(),
+          )
+        }
+        .toImmutableList()
+
+    return Detail.Full(
+      id = detailListing.id,
+      itemId = item.id,
+      title = detailListing.title,
+      text = detailListing.selftext,
+      imageUrl = detailListing.thumbnail,
+      score = detailListing.score,
+      url = detailListing.url,
+      linkUrl = detailListing.url.takeUnless { detailListing.isSelf },
+      comments = comments,
+      commentsCount = detailListing.commentsCount,
+    )
   }
 }
 
