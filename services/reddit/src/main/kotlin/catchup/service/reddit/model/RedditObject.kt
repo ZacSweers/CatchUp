@@ -20,7 +20,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.datetime.Instant
 
-@Keep @JsonClass(generateAdapter = false) sealed class RedditObject
+@Keep @JsonClass(generateAdapter = false) sealed interface RedditObject
 
 @Keep
 interface RedditSubmission {
@@ -52,7 +52,7 @@ data class RedditComment(
    *
    * @return list of comments. Or false. Because yeah.
    */
-  val replies: RedditObject,
+  val replies: RedditObject?,
   @Json(name = "subreddit_id") val subredditId: String,
 
   // Inherited from RedditSubmission. A little grody
@@ -68,7 +68,7 @@ data class RedditComment(
   override val score: Int,
   override val subreddit: String,
   override val ups: Int,
-) : RedditObject(), RedditSubmission
+) : RedditObject, RedditSubmission
 
 @Keep
 @JsonClass(generateAdapter = true)
@@ -101,13 +101,41 @@ data class RedditLink(
   override val score: Int,
   override val subreddit: String,
   override val ups: Int,
-) : RedditObject(), RedditSubmission
+) : RedditObject, RedditSubmission
 
 @Keep
 @JsonClass(generateAdapter = true)
 data class RedditListing(
-  val after: String,
-  val before: String?,
+  val after: String? = null,
+  val before: String? = null,
   val children: List<RedditObject>,
   val modhash: String,
-) : RedditObject()
+) : RedditObject
+
+/*
+"count": 7624,
+"name": "t1_djk44jk",
+"id": "djk44jk",
+"parent_id": "t3_6k7zjc",
+"depth": 0,
+"children": [
+    "djk44jk",
+    "djk68e9",
+    "djk91jb",
+    "djk8c97",
+    "djk68er",
+    "djk44k4",
+    "djk8c9k",
+    and hundreds more of these
+]
+ */
+@Keep
+@JsonClass(generateAdapter = true)
+data class RedditMore(
+  val count: Int,
+  val name: String,
+  val id: String,
+  @Json(name = "parent_id") val parentId: String,
+  val depth: Int,
+  val children: List<String>,
+) : RedditObject
