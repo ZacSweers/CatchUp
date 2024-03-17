@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,6 +54,7 @@ import catchup.app.service.ServiceScreen.Event.MarkClicked
 import catchup.app.service.ServiceScreen.State
 import catchup.app.service.ServiceScreen.State.TextState
 import catchup.app.service.ServiceScreen.State.VisualState
+import catchup.app.service.detail.ServiceDetailScreen
 import catchup.app.ui.activity.ImageViewerScreen
 import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
@@ -161,39 +161,58 @@ constructor(
     val eventSink: (Event) -> Unit = rememberEventSink { event ->
       when (event) {
         is ItemClicked -> {
-          scope.launch {
-            if (service.meta().isVisual) {
-              val info = event.item.imageInfo!!
-              overlayHost.showFullScreenOverlay(
-                ImageViewerScreen(
-                  info.imageId,
-                  info.detailUrl,
-                  isBitmap = !info.animatable,
-                  info.cacheKey,
-                  info.sourceUrl,
-                )
+          // TODO what's the best way to handle these
+          if (event.item.detailKey != null) {
+            navigator.goTo(
+              ServiceDetailScreen(
+                serviceId = event.item.serviceId!!,
+                itemId = event.item.id,
+                id = event.item.detailKey!!,
+                title = event.item.title,
+                text = "",
+                imageUrl = event.item.imageInfo?.detailUrl,
+                // TODO this needs to be conditional. For example, we don't want selftext links
+                //  here. Maybe a new external link property?
+                linkUrl = null,
+                score = event.item.score?.second ?: 0,
+                commentsCount = event.item.mark?.text?.toIntOrNull() ?: 0,
               )
-            } else {
-              val url = event.item.clickUrl!!
-              if (event.item.contentType == ContentType.IMAGE) {
-                // TODO generalize this
-                val bestGuessIsBitmap =
-                  url.toHttpUrl().pathSegments.last().let { path ->
-                    path.endsWith(".jpg", ignoreCase = true) ||
-                      path.endsWith(".png", ignoreCase = true) ||
-                      path.endsWith(".gif", ignoreCase = true)
-                  }
+            )
+          } else {
+            scope.launch {
+              if (service.meta().isVisual) {
+                val info = event.item.imageInfo!!
                 overlayHost.showFullScreenOverlay(
                   ImageViewerScreen(
-                    id = url,
-                    url = url,
-                    isBitmap = bestGuessIsBitmap,
-                    alias = null,
-                    sourceUrl = url,
+                    info.imageId,
+                    info.detailUrl,
+                    isBitmap = !info.animatable,
+                    info.cacheKey,
+                    info.sourceUrl,
                   )
                 )
               } else {
-                linkManager.openUrl(url, themeColor)
+                val url = event.item.clickUrl!!
+                if (event.item.contentType == ContentType.IMAGE) {
+                  // TODO generalize this
+                  val bestGuessIsBitmap =
+                    url.toHttpUrl().pathSegments.last().let { path ->
+                      path.endsWith(".jpg", ignoreCase = true) ||
+                        path.endsWith(".png", ignoreCase = true) ||
+                        path.endsWith(".gif", ignoreCase = true)
+                    }
+                  overlayHost.showFullScreenOverlay(
+                    ImageViewerScreen(
+                      id = url,
+                      url = url,
+                      isBitmap = bestGuessIsBitmap,
+                      alias = null,
+                      sourceUrl = url,
+                    )
+                  )
+                } else {
+                  linkManager.openUrl(url, themeColor)
+                }
               }
             }
           }
@@ -283,7 +302,6 @@ constructor(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(ServiceScreen::class, AppScope::class)
 @Composable
 fun Service(state: State, modifier: Modifier = Modifier) {
