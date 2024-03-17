@@ -89,7 +89,7 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
         name("kind")
         moshi
           .adapter(RedditKind::class.java)
-          .toJson(this, RedditKind.values().find { it.derivedClass == T::class.java })
+          .toJson(this, RedditKind.entries.find { it.derivedClass == T::class.java })
         name("data")
         moshi.adapter(T::class.java).toJson(this, value)
       }
