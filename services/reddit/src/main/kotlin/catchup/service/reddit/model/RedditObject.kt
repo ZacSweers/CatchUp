@@ -87,6 +87,8 @@ data class RedditLink(
   val title: String,
   val url: String,
   val visited: Boolean,
+  @Json(name = "post_hint")
+  val postHint: String?,
 
   // Inherited from RedditSubmission. A little grody
   override val author: String,
