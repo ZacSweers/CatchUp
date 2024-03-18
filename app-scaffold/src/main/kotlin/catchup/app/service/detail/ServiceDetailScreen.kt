@@ -4,12 +4,14 @@ import android.content.Context
 import android.text.format.DateUtils
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,6 +21,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -27,14 +30,21 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import catchup.app.data.LinkManager
+import catchup.app.service.ActionRow
+import catchup.app.service.openUrl
+import catchup.app.ui.activity.ImageViewerScreen
 import catchup.base.ui.BackPressNavButton
 import catchup.compose.ContentAlphas
 import catchup.di.AppScope
@@ -49,15 +59,20 @@ import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.kotlin.format
 import coil.compose.AsyncImage
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.retained.produceRetainedState
+import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuitx.overlays.showFullScreenOverlay
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import javax.inject.Provider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import me.saket.unfurl.UnfurlResult
@@ -75,8 +90,18 @@ data class ServiceDetailScreen(
   val score: Int?,
   val commentsCount: Int?,
 ) : Screen {
-  data class State(val detail: Detail, val unfurl: UnfurlResult?, val themeColor: Color) :
-    CircuitUiState
+  data class State(
+    val detail: Detail,
+    val unfurl: UnfurlResult?,
+    val themeColor: Color,
+    val eventSink: (Event) -> Unit = {},
+  ) : CircuitUiState
+
+  sealed interface Event : CircuitUiEvent {
+    data object OpenImage : Event
+
+    data object OpenUrl : Event
+  }
 }
 
 class ServiceDetailPresenter
@@ -87,6 +112,7 @@ constructor(
   private val dbFactory: ContextualFactory<DataMode, out CatchUpDatabase>,
   private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
   private val unfurler: Unfurler,
+  private val linkManager: LinkManager,
 ) : Presenter<ServiceDetailScreen.State> {
 
   @CircuitInject(ServiceDetailScreen::class, AppScope::class)
@@ -113,22 +139,49 @@ constructor(
 
   @Composable
   override fun present(): ServiceDetailScreen.State {
-    val detailState by
-      produceRetainedState(initialValue = initialState) {
-        // TODO fetch in parallel
-        val detail =
+    val detail by
+      produceRetainedState<Detail?>(initialValue = null) {
+        value =
           withContext(Dispatchers.IO) {
             val db = dbFactory.create(DataMode.REAL)
             val item =
               db.serviceQueries.getItem(screen.itemId).executeAsOneOrNull()!!.toCatchUpItem()
             services.getValue(item.serviceId!!).get().fetchDetail(item)
           }
-
-        val unfurl = detail.linkUrl?.let { withContext(Dispatchers.IO) { unfurler.unfurl(it) } }
-
-        value = ServiceDetailScreen.State(detail, unfurl, themeColor)
       }
-    return detailState
+
+    val unfurl by
+      produceRetainedState<UnfurlResult?>(initialValue = null) {
+        value = screen.linkUrl?.let { withContext(Dispatchers.IO) { unfurler.unfurl(it) } }
+      }
+
+    val scope = rememberStableCoroutineScope()
+    val overlayHost = LocalOverlayHost.current
+    val state =
+      detail?.let {
+        ServiceDetailScreen.State(it, unfurl, themeColor) { event ->
+          when (event) {
+            ServiceDetailScreen.Event.OpenImage -> {
+              scope.launch {
+                overlayHost.showFullScreenOverlay(
+                  ImageViewerScreen(
+                    it.imageUrl!!,
+                    it.imageUrl!!,
+                    // TODO
+                    isBitmap = true,
+                    null,
+                    it.imageUrl!!,
+                  )
+                )
+              }
+            }
+            ServiceDetailScreen.Event.OpenUrl -> {
+              scope.launch { linkManager.openUrl(it.linkUrl!!) }
+            }
+          }
+        }
+      } ?: initialState
+    return state
   }
 }
 
@@ -161,7 +214,7 @@ fun DetailUi(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
 
 @Composable
 private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
-  LazyColumn(modifier = modifier, verticalArrangement = spacedBy(16.dp)) {
+  LazyColumn(modifier = modifier) {
     val numComments =
       when (state.detail) {
         is Detail.Shallow -> 0
@@ -190,102 +243,159 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
 private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
   Surface(modifier = modifier.animateContentSize()) {
     Column {
+      state.detail.imageUrl?.let {
+        AsyncImage(
+          model = it,
+          contentDescription = "Image",
+          modifier =
+            Modifier.fillMaxWidth().clickable {
+              state.eventSink(ServiceDetailScreen.Event.OpenImage)
+            },
+          contentScale = ContentScale.FillWidth,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+      }
       Column(
         modifier = Modifier.padding(horizontal = 16.dp),
         verticalArrangement = spacedBy(8.dp),
       ) {
+        state.unfurl
+          // TODO Improve this. Maybe just ignore self-referencing unfurls?
+          ?.takeUnless { it.thumbnail == null }
+          ?.let {
+            UnfurlItem(state.detail.title, it) {
+              state.eventSink(ServiceDetailScreen.Event.OpenUrl)
+            }
+          }
         Text(state.detail.title, style = MaterialTheme.typography.titleMedium)
-        state.unfurl?.let { UnfurlItem(it) }
-        state.detail.text?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
+        state.detail.text
+          ?.takeUnless { it.isBlank() }
+          ?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
+
+        // TODO metadata
+
+        HorizontalDivider(thickness = Dp.Hairline)
+        // Action buttons
+        ActionRow(
+          itemId = state.detail.itemId,
+          themeColor = state.themeColor,
+          onShareClick = {
+            // TODO
+          },
+        )
       }
-      // Action buttons
-      // TODO where is this extra padding coming from
-      //      ActionRow(
-      //        itemId = state.detail.itemId,
-      //        themeColor = state.themeColor,
-      //        onShareClick = {
-      //          // TODO share
-      //        },
-      //      )
     }
   }
 }
 
-// TODO handle nesting and "more" replies
 @Composable
 private fun CommentItem(comment: Comment, modifier: Modifier = Modifier) {
-  Column(modifier = modifier.padding(horizontal = 16.dp)) {
-    Row {
-      Text(
-        comment.author,
-        style = MaterialTheme.typography.labelMedium,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
-      )
-      Text(
-        " | ${comment.score.toLong().format()}",
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
-      )
-      // TODO move this formatting into presenter somehow
-      val formattedTimestamp =
-        remember(comment.timestamp) {
-          DateUtils.getRelativeTimeSpanString(
-              comment.timestamp.toEpochMilliseconds(),
-              System.currentTimeMillis(),
-              0L,
-              DateUtils.FORMAT_ABBREV_ALL,
-            )
-            .toString()
+  val startPadding = 8.dp * comment.depth
+  Surface(modifier = modifier.padding(start = startPadding)) {
+    Box {
+      Column(modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)) {
+        Row {
+          Text(
+            comment.author,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
+          )
+          Text(
+            " | ${comment.score.toLong().format()}",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
+          )
+          // TODO move this formatting into presenter somehow
+          val formattedTimestamp =
+            remember(comment.timestamp) {
+              DateUtils.getRelativeTimeSpanString(
+                  comment.timestamp.toEpochMilliseconds(),
+                  System.currentTimeMillis(),
+                  0L,
+                  DateUtils.FORMAT_ABBREV_ALL,
+                )
+                .toString()
+            }
+          // TODO markdown support
+          Text(
+            formattedTimestamp,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.End,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
+          )
         }
-      // TODO markdown support
-      Text(
-        formattedTimestamp,
-        modifier = Modifier.weight(1f),
-        textAlign = TextAlign.End,
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
-      )
+        Spacer(Modifier.height(4.dp))
+        Text(comment.text, style = MaterialTheme.typography.bodySmall)
+        // TODO clickable links if any
+      }
+      HorizontalDivider(Modifier.align(Alignment.TopCenter), thickness = Dp.Hairline)
     }
-    Spacer(Modifier.height(4.dp))
-    Text(comment.text, style = MaterialTheme.typography.bodySmall)
-    // TODO clickable links if any
   }
 }
 
 @Composable
-private fun UnfurlItem(unfurl: UnfurlResult, modifier: Modifier = Modifier) {
-  ElevatedCard(
-    modifier = modifier,
-    onClick = {
-      // TODO clickable to open url
-    },
-  ) {
-    Row(Modifier.padding(16.dp)) {
-      // TODO if thumbnail is available, show rich preview. If just favicon, show just in corner
-      (unfurl.thumbnail ?: unfurl.favicon)?.let {
-        AsyncImage(
-          model = it,
-          modifier = Modifier.size(48.dp).align(Alignment.CenterVertically),
-          contentDescription = "Preview",
-        )
-        Spacer(Modifier.width(8.dp))
-      }
-      Column {
-        Text(
-          unfurl.title ?: unfurl.url.toString(),
-          style = MaterialTheme.typography.titleSmall,
-          fontWeight = FontWeight.Bold,
-        )
-        unfurl.description?.let {
-          Text(
-            it,
-            style = MaterialTheme.typography.bodyMedium,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
+private fun UnfurlItem(
+  parentTitle: String,
+  unfurl: UnfurlResult,
+  modifier: Modifier = Modifier,
+  onOpenUrl: () -> Unit,
+) {
+  ElevatedCard(modifier = modifier, onClick = onOpenUrl) {
+    val thumbnail = unfurl.thumbnail
+    val title = unfurl.title ?: unfurl.url.toString()
+    if (thumbnail == null) {
+      Row(Modifier.padding(16.dp)) {
+        // TODO if thumbnail is available, show rich preview. If just favicon, show just in corner
+        (unfurl.favicon)?.let {
+          AsyncImage(
+            model = it,
+            modifier = Modifier.size(48.dp).align(Alignment.CenterVertically),
+            contentDescription = "Preview",
           )
+          Spacer(Modifier.width(8.dp))
         }
+        UnfurlText(title, showTitle = title != parentTitle, unfurl.description)
       }
+    } else {
+      Column {
+        AsyncImage(
+          model = thumbnail,
+          contentDescription = "Preview",
+          modifier = Modifier.fillMaxWidth(),
+          contentScale = ContentScale.FillWidth,
+        )
+        UnfurlText(
+          title,
+          showTitle = title != parentTitle,
+          unfurl.description,
+          modifier = Modifier.padding(16.dp),
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun UnfurlText(
+  title: String,
+  showTitle: Boolean,
+  description: String?,
+  modifier: Modifier = Modifier,
+) {
+  Column(modifier) {
+    if (showTitle) {
+      Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+    }
+    description?.let {
+      Text(
+        it,
+        style = MaterialTheme.typography.bodyMedium,
+        maxLines = 3,
+        overflow = TextOverflow.Ellipsis,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
+      )
     }
   }
 }
