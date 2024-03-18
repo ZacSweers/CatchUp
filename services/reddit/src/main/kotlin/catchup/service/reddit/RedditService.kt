@@ -32,6 +32,7 @@ import catchup.service.api.ServiceMetaKey
 import catchup.service.api.TextService
 import catchup.service.reddit.model.RedditComment
 import catchup.service.reddit.model.RedditLink
+import catchup.service.reddit.model.RedditListing
 import catchup.service.reddit.model.RedditObjectFactory
 import catchup.util.data.adapters.EpochInstantJsonAdapter
 import com.squareup.anvil.annotations.ContributesMultibinding
@@ -109,18 +110,20 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
     val comments =
       redditComments
         .filterIsInstance<RedditComment>()
-        .map { comment ->
-          Comment(
-            id = comment.id,
-            serviceId = SERVICE_KEY,
-            author = comment.author,
-            timestamp = comment.createdUtc,
-            text = comment.body,
-            score = comment.score,
-            children = emptyList(),
-            depth = comment.depth,
-            clickableUrls = emptyList(),
-          )
+        .flatMap { comment ->
+          buildList {
+            fun recurseComment(comment: RedditComment) {
+              add(comment.toComment())
+              comment.replies?.let { repliesListing ->
+                if (repliesListing is RedditListing) {
+                  repliesListing.children.filterIsInstance<RedditComment>().forEach {
+                    recurseComment(it)
+                  }
+                }
+              }
+            }
+            recurseComment(comment)
+          }
         }
         .toImmutableList()
 
@@ -129,7 +132,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
       itemId = item.id,
       title = detailListing.title,
       text = detailListing.selftext,
-      imageUrl = detailListing.thumbnail,
+      imageUrl = if (detailListing.postHint == "image") detailListing.url else null,
       score = detailListing.score,
       url = detailListing.url,
       linkUrl = detailListing.url.takeUnless { detailListing.isSelf },
@@ -217,4 +220,18 @@ object RedditModule {
         .build()
     return retrofit.create(RedditApi::class.java)
   }
+}
+
+private fun RedditComment.toComment(): Comment {
+  return Comment(
+    id = id,
+    serviceId = SERVICE_KEY,
+    author = author,
+    timestamp = createdUtc,
+    text = body,
+    score = score,
+    children = emptyList(),
+    depth = depth,
+    clickableUrls = emptyList(),
+  )
 }
