@@ -169,11 +169,13 @@ constructor(
                 itemId = event.item.id,
                 id = event.item.detailKey!!,
                 title = event.item.title,
+                // TODO we should be able to put this in an item if available
                 text = "",
-                imageUrl = event.item.imageInfo?.detailUrl,
+                imageUrl =
+                  if (event.item.contentType == ContentType.IMAGE) event.item.clickUrl else null,
                 // TODO this needs to be conditional. For example, we don't want selftext links
                 //  here. Maybe a new external link property?
-                linkUrl = null,
+                linkUrl = event.item.clickUrl,
                 score = event.item.score?.second ?: 0,
                 commentsCount = event.item.mark?.text?.toIntOrNull() ?: 0,
               )
