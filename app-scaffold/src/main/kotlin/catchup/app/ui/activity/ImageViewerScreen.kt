@@ -257,7 +257,7 @@ class ImageViewerAwareNavDecoration : NavDecoration {
   ) {
     val arg = args.first()
     val decoration =
-      if (arg is RecordContentProvider && arg.record.screen is ImageViewerScreen) {
+      if (arg is RecordContentProvider<*> && arg.record.screen is ImageViewerScreen) {
         NavigatorDefaults.EmptyDecoration
       } else {
         NavigatorDefaults.DefaultDecoration
