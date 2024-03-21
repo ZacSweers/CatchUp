@@ -39,26 +39,30 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
       private val kindAdapter = moshi.adapter(RedditKind::class.java)
 
       override fun fromJson(reader: JsonReader): RedditObject? {
-        val nextToken = reader.peek()
-        if (nextToken == JsonReader.Token.STRING || nextToken == JsonReader.Token.NULL) {
-          // It's null or there are no replies, just return null
-          return null
-        }
-
-        reader.beginObject()
-        val kind = reader.peekJson().use(::readKind)
-        var data: RedditObject? = null
-        while (reader.hasNext()) {
-          if (reader.selectName(DATA_OPTIONS) == -1) {
-            reader.skipName()
+        return when (reader.peek()) {
+          JsonReader.Token.STRING -> {
+            // It's null or there are no replies, just return null
             reader.skipValue()
-            continue
+            null
           }
+          JsonReader.Token.NULL -> reader.nextNull()
+          else -> {
+            reader.beginObject()
+            val kind = reader.peekJson().use(::readKind)
+            var data: RedditObject? = null
+            while (reader.hasNext()) {
+              if (reader.selectName(DATA_OPTIONS) == -1) {
+                reader.skipName()
+                reader.skipValue()
+                continue
+              }
 
-          data = moshi.adapter(kind.derivedClass).fromJson(reader) ?: throw JsonDataException()
+              data = moshi.adapter(kind.derivedClass).fromJson(reader) ?: throw JsonDataException()
+            }
+            reader.endObject()
+            data ?: throw JsonDataException("Missing 'data' label!")
+          }
         }
-        reader.endObject()
-        return data ?: throw JsonDataException("Missing 'data' label!")
       }
 
       private fun readKind(reader: JsonReader): RedditKind {
@@ -89,7 +93,7 @@ internal class RedditObjectFactory : JsonAdapter.Factory {
         name("kind")
         moshi
           .adapter(RedditKind::class.java)
-          .toJson(this, RedditKind.values().find { it.derivedClass == T::class.java })
+          .toJson(this, RedditKind.entries.find { it.derivedClass == T::class.java })
         name("data")
         moshi.adapter(T::class.java).toJson(this, value)
       }

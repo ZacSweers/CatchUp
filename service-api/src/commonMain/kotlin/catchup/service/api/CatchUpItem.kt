@@ -106,3 +106,6 @@ data class CatchUpItem(
 
 val CatchUpItem.canBeSummarized: Boolean
   get() = contentType == HTML
+
+val CatchUpItem.supportsDetail: Boolean
+  get() = detailKey != null

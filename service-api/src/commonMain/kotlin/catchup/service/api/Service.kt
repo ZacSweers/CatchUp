@@ -23,5 +23,7 @@ sealed interface Service {
 
   suspend fun fetch(request: DataRequest): DataResult
 
-  fun rootService(): Service = this
+  suspend fun fetchDetail(item: CatchUpItem): Detail {
+    throw NotImplementedError()
+  }
 }

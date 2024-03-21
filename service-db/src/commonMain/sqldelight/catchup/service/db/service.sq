@@ -104,6 +104,9 @@ INSERT OR REPLACE INTO catchUpDbItem (
 countItems:
 SELECT count(*) AS Int FROM catchUpDbItem WHERE serviceId = ?;
 
+getItem:
+SELECT * FROM catchUpDbItem WHERE id = ?;
+
 itemsByService:
 SELECT *
 FROM catchUpDbItem

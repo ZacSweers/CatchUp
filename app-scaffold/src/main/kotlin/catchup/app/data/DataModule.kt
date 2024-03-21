@@ -32,6 +32,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.Multibinds
 import java.util.concurrent.TimeUnit
+import me.saket.unfurl.Unfurler
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -97,6 +98,12 @@ abstract class DataModule {
         .add(Wrapped.ADAPTER_FACTORY)
         .add(UnescapeJsonAdapter.FACTORY)
         .build()
+    }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    fun provideUnfurler(client: OkHttpClient): Unfurler {
+      return Unfurler(httpClient = client)
     }
   }
 }

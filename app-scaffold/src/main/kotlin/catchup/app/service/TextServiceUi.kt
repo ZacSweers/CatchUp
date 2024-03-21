@@ -121,25 +121,14 @@ fun TextServiceUi(
           Column(Modifier.animateContentSize()) {
             TextItem(item, themeColor) { eventSink(MarkClicked(item)) }
             if (index == expandedItemIndex) {
-              Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-              ) {
-                val bookmarkIconScreen =
-                  remember(item.id) { BookmarkIconScreen(item.id, themeColor.toArgb()) }
-                CircuitContent(bookmarkIconScreen)
-                TextActionItem(Icons.Filled.Share, themeColor, "Share") {
-                  eventSink(ItemActionClicked(item, SHARE))
-                }
-                TextActionItem(
-                  Icons.Filled.Info,
-                  themeColor,
-                  "Summarize",
-                  enabled = item.canBeSummarized,
-                ) {
-                  eventSink(ItemActionClicked(item, SUMMARIZE))
-                }
-              }
+              ActionRow(
+                modifier = Modifier.padding(bottom = 8.dp),
+                itemId = item.id,
+                themeColor = themeColor,
+                onShareClick = { eventSink(ItemActionClicked(item, SHARE)) },
+                canBeSummarized = item.canBeSummarized,
+                onSummarizeClick = { eventSink(ItemActionClicked(item, SUMMARIZE)) },
+              )
             }
           }
         }
