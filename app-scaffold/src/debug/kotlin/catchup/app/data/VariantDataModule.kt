@@ -42,6 +42,6 @@ object VariantDataModule {
   @Provides
   @NetworkInterceptor
   @IntoSet
-  internal fun provideLoggingInterceptor(): Interceptor =
+  fun provideLoggingInterceptor(): Interceptor =
     httpLoggingInterceptor(BASIC) { message -> Timber.tag("OkHttp").v(message) }
 }

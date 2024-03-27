@@ -103,7 +103,7 @@ abstract class UplabsMetaModule {
 
     @InternalApi
     @Provides
-    internal fun provideUplabsServiceMeta(): ServiceMeta =
+    fun provideUplabsServiceMeta(): ServiceMeta =
       ServiceMeta(
         SERVICE_KEY,
         R.string.catchup_service_uplabs_name,
@@ -121,12 +121,12 @@ abstract class UplabsMetaModule {
 object UplabsModule {
   @Provides
   @InternalApi
-  internal fun provideUplabsMoshi(moshi: Moshi): Moshi {
+  fun provideUplabsMoshi(moshi: Moshi): Moshi {
     return moshi.newBuilder().add(Instant::class.java, ISO8601InstantAdapter()).build()
   }
 
   @Provides
-  internal fun provideUplabsService(
+  fun provideUplabsService(
     client: Lazy<OkHttpClient>,
     @InternalApi moshi: Moshi,
     appConfig: AppConfig,

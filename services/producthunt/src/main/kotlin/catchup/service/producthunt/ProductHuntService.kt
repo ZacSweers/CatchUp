@@ -144,7 +144,7 @@ abstract class ProductHuntMetaModule {
 
   companion object {
 
-    @InternalApi @Provides internal fun provideProductHuntServiceMeta(): ServiceMeta = META
+    @InternalApi @Provides fun provideProductHuntServiceMeta(): ServiceMeta = META
   }
 }
 
