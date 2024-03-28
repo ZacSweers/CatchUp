@@ -1,3 +1,5 @@
+import com.android.build.gradle.tasks.JavaPreCompileTask
+
 /*
  * Copyright (c) 2018 Zac Sweers
  *
@@ -85,4 +87,22 @@ if (!useProjectIsolation) {
   //      }
   //    }
   //  }
+}
+
+// See https://github.com/square/anvil/issues/935#issuecomment-2026064393
+subprojects {
+  pluginManager.withPlugin("com.android.base") {
+    tasks.withType<JavaPreCompileTask>()
+      .configureEach {
+        doFirst {
+          // JavaPreCompileTask incorrectly reads annotation processors from the ksp classpath
+          // and then warns about them ending up in the JavaCompile tasks even though they're
+          // not on the classpath. This works around that by clearing out that field before it
+          // tries to merge them in with annotationProcessorArtifacts.
+          JavaPreCompileTask::class.java.getDeclaredField("kspProcessorArtifacts")
+            .apply { isAccessible = true }
+            .set(this, null)
+        }
+      }
+  }
 }
