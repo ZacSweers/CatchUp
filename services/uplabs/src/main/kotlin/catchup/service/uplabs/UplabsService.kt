@@ -19,15 +19,18 @@ import catchup.appconfig.AppConfig
 import catchup.di.AppScope
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
+import catchup.service.api.Comment
 import catchup.service.api.ContentType
 import catchup.service.api.DataRequest
 import catchup.service.api.DataResult
+import catchup.service.api.Detail
 import catchup.service.api.ImageInfo
 import catchup.service.api.Service
 import catchup.service.api.ServiceKey
 import catchup.service.api.ServiceMeta
 import catchup.service.api.ServiceMetaKey
 import catchup.service.api.VisualService
+import catchup.service.uplabs.model.UplabsComment
 import catchup.util.data.adapters.ISO8601InstantAdapter
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
@@ -39,6 +42,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import javax.inject.Inject
 import javax.inject.Qualifier
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -64,6 +68,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
       .mapIndexed { index, it ->
         CatchUpItem(
           id = it.id.hashCode().toLong(),
+          detailKey = it.id.toString(),
           title = it.name,
           score = "▲" to it.points,
           timestamp = it.showcasedAt,
@@ -88,6 +93,41 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
       }
       .let { DataResult(it, (page + 1).toString()) }
   }
+
+  override suspend fun fetchDetail(item: CatchUpItem, detailKey: String): Detail {
+    val id = detailKey.toLong()
+    val comments = api.getComments(id).comments
+    return Detail.Full(
+      id = detailKey,
+      itemId = item.id,
+      title = item.title,
+      text = null,
+      imageUrl = item.imageInfo!!.url,
+      score = item.score?.second,
+      url = item.clickUrl!!,
+      commentsCount = comments.size,
+      comments =
+        comments
+          .map { comment ->
+            comment.toComment(0)
+          }
+          .toImmutableList(),
+    )
+  }
+}
+
+private fun UplabsComment.toComment(depth: Int): Comment {
+  return Comment(
+    id = id.toString(),
+    serviceId = SERVICE_KEY,
+    text = body,
+    timestamp = createdAt,
+    score = commentLikesCount,
+    author = user?.nickname ?: user?.fullName ?: "Unknown",
+    depth = depth,
+    children = replies.map { it.toComment(depth + 1) },
+    clickableUrls = emptyList(),
+  )
 }
 
 @ContributesTo(AppScope::class)
