@@ -37,12 +37,12 @@ android {
 apollo {
   // https://api.producthunt.com/v2/api/graphql
   service("producthunt") {
-    customScalarsMapping.set(mapOf(
+    customScalarsMapping.putAll(mapOf(
       "DateTime" to "kotlinx.datetime.Instant",
 //      "URI" to "okhttp3.HttpUrl"
     ))
     packageName.set("catchup.service.producthunt")
-    schemaFile.set(file("src/main/graphql/catchup/service/producthunt/schema.graphqls"))
+    schemaFile.set(layout.projectDirectory.file("src/main/graphql/catchup/service/producthunt/schema.graphqls"))
   }
 }
 

@@ -12,15 +12,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -57,7 +53,6 @@ import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SUMMARIZE
 import catchup.app.service.ServiceScreen.Event.ItemClicked
 import catchup.app.service.ServiceScreen.Event.MarkClicked
-import catchup.app.service.bookmarks.BookmarkIconScreen
 import catchup.compose.CatchUpTheme
 import catchup.compose.ContentAlphas
 import catchup.compose.ScrollToTopHandler
@@ -67,7 +62,6 @@ import catchup.service.api.Mark
 import catchup.service.api.canBeSummarized
 import catchup.util.kotlin.format
 import catchup.util.primaryLocale
-import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.retained.rememberRetained
 import dev.zacsweers.catchup.app.scaffold.R
 import kotlin.time.Duration.Companion.hours

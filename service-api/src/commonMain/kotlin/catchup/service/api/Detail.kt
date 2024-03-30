@@ -56,5 +56,4 @@ data class Comment(
   val clickableUrls: List<ClickableUrl>,
 )
 
-@Immutable
-data class ClickableUrl(val text: String, val url: String, val previewUrl: String?)
+@Immutable data class ClickableUrl(val text: String, val url: String, val previewUrl: String?)
