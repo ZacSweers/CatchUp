@@ -30,7 +30,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -146,7 +145,7 @@ constructor(
             val db = dbFactory.create(DataMode.REAL)
             val item =
               db.serviceQueries.getItem(screen.itemId).executeAsOneOrNull()!!.toCatchUpItem()
-            services.getValue(item.serviceId!!).get().fetchDetail(item)
+            services.getValue(item.serviceId!!).get().fetchDetail(item, item.detailKey!!)
           }
       }
 

@@ -95,7 +95,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
     }
   }
 
-  override suspend fun fetchDetail(item: CatchUpItem): Detail {
+  override suspend fun fetchDetail(item: CatchUpItem, detailKey: String): Detail {
     val (listing, redditComments) =
       api
         .comments(
