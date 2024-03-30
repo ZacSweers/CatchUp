@@ -199,7 +199,7 @@ fun DetailUi(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
           AnimatedContent(scrollBehavior.state.overlappedFraction != 0f, label = "AppBar Title") {
             scrolled ->
             if (scrolled) {
-              Text(text = "${state.detail.commentsCount} comments")
+              Text(text = "${state.detail.commentsCount?.toString() ?: "No"} comments")
             }
           }
         },
@@ -213,6 +213,7 @@ fun DetailUi(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
 
 @Composable
 private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
+  // TODO handle empty state
   LazyColumn(modifier = modifier) {
     val numComments =
       when (state.detail) {
