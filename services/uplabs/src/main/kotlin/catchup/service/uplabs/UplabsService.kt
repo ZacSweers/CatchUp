@@ -106,12 +106,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
       score = item.score?.second,
       url = item.clickUrl!!,
       commentsCount = comments.size,
-      comments =
-        comments
-          .map { comment ->
-            comment.toComment(0)
-          }
-          .toImmutableList(),
+      comments = comments.map { comment -> comment.toComment(0) }.toImmutableList(),
     )
   }
 }

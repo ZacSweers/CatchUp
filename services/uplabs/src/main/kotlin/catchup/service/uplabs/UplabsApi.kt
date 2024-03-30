@@ -15,7 +15,6 @@
  */
 package catchup.service.uplabs
 
-import catchup.service.uplabs.model.UplabsComment
 import catchup.service.uplabs.model.UplabsComments
 import catchup.service.uplabs.model.UplabsImage
 import retrofit2.http.GET

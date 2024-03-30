@@ -50,8 +50,7 @@ data class Image(
 
 @JsonClass(generateAdapter = true) data class Urls(val full: String, val thumbnail: String)
 
-@JsonClass(generateAdapter = true)
-data class UplabsComments(val comments: List<UplabsComment>)
+@JsonClass(generateAdapter = true) data class UplabsComments(val comments: List<UplabsComment>)
 
 @JsonClass(generateAdapter = true)
 data class UplabsComment(
