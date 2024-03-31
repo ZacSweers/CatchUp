@@ -31,6 +31,7 @@ dependencies {
   api(libs.androidx.compose.ui)
   api(libs.androidx.compose.uiTooling)
   api(libs.androidx.window)
+  api(libs.circuit.retained)
   api(libs.kotlin.coroutines)
 
   implementation(libs.androidx.compose.animation)

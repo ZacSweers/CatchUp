@@ -39,6 +39,7 @@ import androidx.paging.LoadState
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.map
@@ -58,6 +59,7 @@ import catchup.app.service.detail.ServiceDetailScreen
 import catchup.app.ui.activity.ImageViewerScreen
 import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
+import catchup.compose.rememberRetainedCoroutineScope
 import catchup.compose.rememberRippleCompat
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
@@ -247,15 +249,18 @@ constructor(
     }
 
     val dataMode by catchUpPreferences.dataMode.collectAsState()
+    val pagingScope = rememberRetainedCoroutineScope()
+
     // Changes to DataMode in settings will trigger a restart, but not bad to key explicitly here
     // too
-    val itemsFlow =
+    // We use Paging's `cachedIn` operator with our retained CoroutineScope
+    val items =
       rememberRetained(dataMode) {
-        // TODO
-        //  preference page size
-        createPager(service, dataMode, 50)
-      }
-    val items = itemsFlow.collectAsLazyPagingItems()
+          // TODO
+          //  preference page size
+          createPager(service, dataMode, 50).cachedIn(pagingScope)
+        }
+        .collectAsLazyPagingItems()
     return when (service.meta().isVisual) {
       true -> VisualState(items = items, themeColor = themeColor, eventSink = eventSink)
       false -> TextState(items = items, themeColor = themeColor, eventSink = eventSink)
