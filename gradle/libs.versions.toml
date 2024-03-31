@@ -22,7 +22,7 @@ compose-jb-compiler = "1.5.10.1"
 compose-jb-kotlinVersion = "1.9.20"
 corbind = "1.10.0"
 coroutines = "1.8.0"
-dagger = "2.51"
+dagger = "2.51.1"
 datastore = "1.1.0-beta02"
 detekt = "1.23.6"
 eithernet = "1.8.1"
@@ -42,10 +42,10 @@ moshix = "0.25.1"
 okhttp = "5.0.0-alpha.12"
 okio = "3.9.0"
 preferences = "1.2.1"
-retrofit = "2.10.0"
+retrofit = "2.11.0"
 slack-lint = "0.7.1"
 sortDependencies = "0.6"
-sgp = "0.16.1"
+sgp = "0.16.2"
 spotless = "6.25.0"
 sqldelight = "2.0.1"
 telephoto = "0.9.0"
@@ -73,7 +73,7 @@ kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-licensee = { id = "app.cash.licensee", version = "1.9.1" }
+licensee = { id = "app.cash.licensee", version = "1.11.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.9.1" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.7.1" }
