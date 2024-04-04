@@ -35,7 +35,7 @@ kotlinx-serialization = "1.6.3"
 ksp = "1.9.23-1.0.19"
 ktfmt = "0.47"
 leakcanary = "2.13"
-lifecycle = "2.8.0-alpha03"
+lifecycle = "2.8.0-alpha04"
 markwon = "4.6.2"
 moshi = "1.15.1"
 moshix = "0.25.1"
@@ -103,7 +103,7 @@ androidx-design = "com.google.android.material:material:1.11.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
-androidx-fragment = "androidx.fragment:fragment:1.7.0-beta01"
+androidx-fragment = "androidx.fragment:fragment:1.8.0-alpha01"
 
 androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
