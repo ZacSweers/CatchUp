@@ -119,7 +119,7 @@ fun Changelog(state: State, modifier: Modifier = Modifier) {
         val clickableItemState = rememberClickableItemState()
         clickableItemState.focused = expandedItemIndex == index
         ClickableItem(
-          modifier = Modifier.animateItemPlacement(),
+          modifier = Modifier.animateItem(),
           state = clickableItemState,
           onClick = { state.eventSink(Click(item.clickUrl!!)) },
           onLongClick = { expandedItemIndex = if (expandedItemIndex == index) -1 else index },
