@@ -215,7 +215,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise") version "3.17"
+  id("com.gradle.develocity") version "3.17"
   id("com.dropbox.focus") version "0.5.1" apply false
 }
 
@@ -228,11 +228,13 @@ if (focusDisabled || useProjectIsolation) {
   configure<FocusExtension> { allSettingsFileName.set("settings-all.gradle.kts") }
 }
 
-gradleEnterprise {
+develocity {
   buildScan {
-    publishAlways()
-    termsOfServiceAgree = "yes"
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    publishing {
+      onlyIf { true }
+      termsOfUseAgree = "yes"
+      termsOfUseUrl = "https://gradle.com/terms-of-service"
+    }
 
     tag(if (System.getenv("CI").isNullOrBlank()) "Local" else "CI")
     obfuscation {

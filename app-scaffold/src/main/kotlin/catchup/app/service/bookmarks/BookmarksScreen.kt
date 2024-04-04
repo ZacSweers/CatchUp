@@ -284,18 +284,18 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
               }
             }
           },
-          modifier = Modifier.animateItemPlacement(),
+          modifier = Modifier.animateItem(),
           content = {
             val clickUrl = item.clickUrl
             if (clickUrl != null) {
               ClickableItem(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(),
                 onClick = { state.eventSink(Click(clickUrl, themeColor)) },
               ) {
                 TextItem(item, themeColor)
               }
             } else {
-              TextItem(item, themeColor, modifier = Modifier.animateItemPlacement())
+              TextItem(item, themeColor, modifier = Modifier.animateItem())
             }
           },
         )
