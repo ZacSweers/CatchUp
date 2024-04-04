@@ -171,7 +171,7 @@ internal fun Licenses(state: State, modifier: Modifier = Modifier) {
             item(ossItem.id) {
               val catchUpItem = ossItem.toCatchUpItem()
               ClickableItem(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(),
                 onClick = { state.eventSink(Click(catchUpItem.clickUrl!!)) },
               ) {
                 Row {
