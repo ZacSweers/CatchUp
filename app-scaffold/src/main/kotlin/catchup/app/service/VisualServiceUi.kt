@@ -104,7 +104,12 @@ fun VisualServiceUi(
                 item.imageInfo?.color?.let { Color(android.graphics.Color.parseColor(it)) }
                   ?: Color.Unspecified
             )
-          ClickableItem(onClick = { eventSink(ItemClicked(item)) }, state = clickableItemState) {
+          ClickableItem(
+            onClick = {
+              eventSink(ServiceScreen.Event.ItemClicked(item, clickableItemState.contentColor))
+            },
+            state = clickableItemState,
+          ) {
             VisualItem(
               item = item,
               index = index,
