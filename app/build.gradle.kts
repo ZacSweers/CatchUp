@@ -378,6 +378,8 @@ licensee {
   allowUrl("https://github.com/facebookincubator/fbjni/blob/main/LICENSE")
   allowUrl("https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE")
   allowUrl("https://www.openssl.org/source/license-openssl-ssleay.txt")
+  // MIT
+  allowUrl("https://opensource.org/licenses/MIT")
 }
 
 androidComponents {

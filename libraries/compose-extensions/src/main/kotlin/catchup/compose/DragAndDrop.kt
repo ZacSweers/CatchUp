@@ -188,7 +188,7 @@ fun LazyItemScope.DraggableItem(
     } else if (index == dragDropState.previousIndexOfDraggedItem) {
       Modifier.zIndex(1f).graphicsLayer { translationY = dragDropState.previousItemOffset.value }
     } else {
-      Modifier.animateItemPlacement()
+      Modifier.animateItem()
     }
   Column(modifier = modifier.then(draggingModifier)) { content(dragging) }
 }

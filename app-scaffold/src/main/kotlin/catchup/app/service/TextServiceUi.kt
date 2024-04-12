@@ -102,7 +102,7 @@ fun TextServiceUi(
         val itemModifier =
           if (animatePlacement) {
             LaunchedEffect(Unit) { animatePlacement = false }
-            Modifier.animateItemPlacement()
+            Modifier.animateItem()
           } else {
             Modifier
           }

@@ -228,7 +228,6 @@ dependencies {
   implementation(projects.libraries.util)
   implementation(projects.serviceApi)
   implementation(projects.serviceDb)
-  implementation(projects.services.designernews)
   implementation(projects.services.dribbble)
   implementation(projects.services.github)
   implementation(projects.services.hackernews)
