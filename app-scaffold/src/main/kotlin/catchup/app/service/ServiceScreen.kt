@@ -121,7 +121,7 @@ data class ServiceScreen(val serviceKey: String) : Screen {
     data class ItemActionClicked(val item: CatchUpItem, val action: Action) : Event {
       enum class Action {
         SHARE,
-        SUMMARIZE
+        SUMMARIZE,
       }
     }
 

@@ -42,7 +42,7 @@ class ParameterizedOkioAtomicFileTests(
     FINISH,
     FAIL,
     ABORT,
-    READ_FINISH
+    READ_FINISH,
   }
 
   private val existingFileNames: Array<String>? = parameters.existingFileNames
@@ -199,6 +199,7 @@ class ParameterizedOkioAtomicFileTests(
       )
     }
   }
+
   // JUnit on API 17 somehow turns null parameters into the string "null". Wrapping the parameters
   // inside a class solves this problem.
   class Parameters
