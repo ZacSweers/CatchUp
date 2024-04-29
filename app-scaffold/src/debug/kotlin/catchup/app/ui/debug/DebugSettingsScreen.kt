@@ -30,6 +30,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -525,7 +526,7 @@ sealed interface DebugItem {
           ) {
             OutlinedTextField(
               value = formatSelection(state.value),
-              modifier = Modifier.menuAnchor(),
+              modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
               textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
               onValueChange = {},
               readOnly = true,
