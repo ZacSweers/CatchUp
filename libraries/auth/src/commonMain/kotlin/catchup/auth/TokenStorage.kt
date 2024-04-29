@@ -17,6 +17,7 @@ import okio.Path
 interface TokenStorage {
   /** Updates the current stored auth data. */
   suspend fun updateAuthData(authData: AuthData)
+
   /** Returns the current auth data or null if none are stored. */
   suspend fun getAuthData(): AuthData?
 
