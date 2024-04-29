@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
-import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
@@ -65,7 +64,7 @@ internal fun NestedScaffold(
  * Layout for a [Scaffold]'s content.
  *
  * @param fabPosition [FabPosition] for the FAB (if present)
- * @param topBar the content to place at the top of the [Scaffold], typically a [SmallTopAppBar]
+ * @param topBar the content to place at the top of the [Scaffold], typically a SmallTopAppBar
  * @param content the main 'body' of the [Scaffold]
  * @param snackbar the [Snackbar] displayed on top of the [content]
  * @param fab the [FloatingActionButton] displayed on top of the [content], below the [snackbar] and
