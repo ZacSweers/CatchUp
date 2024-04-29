@@ -331,7 +331,7 @@ constructor(
 
 private enum class LogsShareResult {
   SHARE,
-  DISMISS
+  DISMISS,
 }
 
 @CircuitInject(DebugSettingsScreen::class, AppScope::class)
