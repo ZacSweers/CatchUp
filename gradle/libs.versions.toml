@@ -142,7 +142,7 @@ androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-alpha01"
 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-alpha01"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.1.5"
-androidx-test-monitor = "androidx.test:monitor:1.7.0-alpha04"
+androidx-test-monitor = "androidx.test:monitor:1.7.0-alpha05"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 
 compose-compilerJb = { module = "org.jetbrains.compose.compiler:compiler", version.ref = "compose-jb-compiler" }
