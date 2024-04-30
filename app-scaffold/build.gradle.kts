@@ -83,9 +83,8 @@ android {
 
 apollo {
   service("github") {
-    customScalarsMapping.set(
-      mapOf("DateTime" to "kotlinx.datetime.Instant", "URI" to "okhttp3.HttpUrl")
-    )
+    mapScalar("DateTime", "kotlinx.datetime.Instant")
+    mapScalar("URI", "okhttp3.HttpUrl")
     packageName.set("catchup.app.data.github")
     schemaFile.set(file("src/main/graphql/catchup/app/data/github/schema.json"))
   }
