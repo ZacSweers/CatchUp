@@ -37,6 +37,7 @@ plugins {
   alias(libs.plugins.sortDependencies) apply false
   alias(libs.plugins.sqldelight) apply false
   alias(libs.plugins.dependencyAnalysis) apply false
+  alias(libs.plugins.kotlin.plugin.compose) apply false
 }
 
 buildscript {
