@@ -116,7 +116,7 @@ object GithubApolloModule {
   @Provides
   @SingleIn(AppScope::class)
   fun provideHttpEngine(@InternalApi client: Lazy<OkHttpClient>): HttpEngine {
-    return DefaultHttpEngine { client.get().newCall(it) }
+    return DefaultHttpEngine(client::get)
   }
 
   @Provides
