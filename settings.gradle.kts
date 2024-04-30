@@ -258,10 +258,6 @@ configureIncludedBuild("sgp") { path ->
       substitute(module("com.slack.gradle:sgp")).using(project(":slack-plugin"))
       substitute(module("com.slack.gradle:sgp-agp-handler-api"))
         .using(project(":agp-handlers:agp-handler-api"))
-      substitute(module("com.slack.gradle:sgp-agp-handler-82"))
-        .using(project(":agp-handlers:agp-handler-82"))
-      substitute(module("com.slack.gradle:sgp-agp-handler-83"))
-        .using(project(":agp-handlers:agp-handler-83"))
     }
   }
 }
