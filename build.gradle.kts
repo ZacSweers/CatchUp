@@ -1,5 +1,3 @@
-import com.android.build.gradle.tasks.JavaPreCompileTask
-
 /*
  * Copyright (c) 2018 Zac Sweers
  *
