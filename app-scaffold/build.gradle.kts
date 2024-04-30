@@ -53,7 +53,10 @@ slack {
 android {
   defaultConfig {
     buildConfigField(
-        "String", "GITHUB_DEVELOPER_TOKEN", "\"${properties["catchup_github_developer_token"]}\"")
+      "String",
+      "GITHUB_DEVELOPER_TOKEN",
+      "\"${properties["catchup_github_developer_token"]}\"",
+    )
     resValue("string", "changelog_text", "haha")
   }
   buildFeatures {
@@ -66,9 +69,10 @@ android {
   buildTypes {
     getByName("debug") {
       buildConfigField(
-          "String",
-          "IMGUR_CLIENT_ACCESS_TOKEN",
-          "\"${project.properties["catchup_imgur_access_token"]}\"")
+        "String",
+        "IMGUR_CLIENT_ACCESS_TOKEN",
+        "\"${project.properties["catchup_imgur_access_token"]}\"",
+      )
     }
     getByName("release") {
       buildConfigField("String", "BUGSNAG_KEY", "\"${properties["catchup_bugsnag_key"]}\"")
@@ -80,7 +84,8 @@ android {
 apollo {
   service("github") {
     customScalarsMapping.set(
-        mapOf("DateTime" to "kotlinx.datetime.Instant", "URI" to "okhttp3.HttpUrl"))
+      mapOf("DateTime" to "kotlinx.datetime.Instant", "URI" to "okhttp3.HttpUrl")
+    )
     packageName.set("catchup.app.data.github")
     schemaFile.set(file("src/main/graphql/catchup/app/data/github/schema.json"))
   }
@@ -98,8 +103,12 @@ afterEvaluate {
   }
 }
 
+// TODO temporary cover for anvil not looking in the right configuration for dagger-compiler
+ksp { excludeProcessor("dagger.internal.codegen.KspComponentProcessor\$Provider") }
+
 dependencies {
   ksp(libs.circuit.codegen)
+  ksp(libs.dagger.apt.compiler)
 
   implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
