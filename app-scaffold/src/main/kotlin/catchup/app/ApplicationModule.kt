@@ -20,7 +20,6 @@ import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.compose.animation.core.AnimationConstants
-import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
 import catchup.app.data.DribbbleSizingInterceptor
 import catchup.app.data.LumberYard
@@ -158,9 +157,7 @@ abstract class ApplicationModule {
     @SingleIn(AppScope::class)
     fun isLowRam(@ApplicationContext context: Context): Boolean {
       // Prefer higher quality images unless we're on a low RAM device
-      return context.getSystemService<ActivityManager>()?.let {
-        ActivityManagerCompat.isLowRamDevice(it)
-      } ?: true
+      return context.getSystemService<ActivityManager>()?.isLowRamDevice ?: true
     }
 
     @ExperimentalCoilApi

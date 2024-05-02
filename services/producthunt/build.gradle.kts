@@ -39,7 +39,7 @@ apollo {
   service("producthunt") {
     mapScalar("DateTime", "kotlinx.datetime.Instant")
     packageName.set("catchup.service.producthunt")
-    schemaFile.set(file("src/main/graphql/catchup/service/producthunt/schema.graphqls"))
+    schemaFiles.from(file("src/main/graphql/catchup/service/producthunt/schema.graphqls"))
   }
 }
 
