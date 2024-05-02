@@ -5,17 +5,17 @@ androidx-activity = "1.9.0"
 androidx-core = "1.14.0-alpha01"
 androidx-sqlite = "2.5.0-alpha01"
 appcompat = "1.7.0-beta01"
-benchmark = "1.3.0-alpha03"
+benchmark = "1.3.0-alpha04"
 compose-material3 = "1.3.0-alpha05"
 emoji = "1.2.0-alpha03"
-anvil = "2.5.0-beta07"
+anvil = "2.5.0-beta08"
 apollo = "4.0.0-beta.6"
 circuit = "0.20.0"
 coil = "2.6.0"
 compose = "1.7.0-alpha08"
 # Pre-release versions for testing Kotlin previews can be found here
 # https://androidx.dev/storage/compose-compiler/repository
-compose-compiler = "1.5.12"
+compose-compiler = "1.5.13"
 compose-compiler-kotlinVersion = "1.9.23"
 compose-jb = "1.6.2"
 compose-jb-compiler = "1.5.10.2"
@@ -35,7 +35,7 @@ kotlinx-serialization = "1.6.3"
 ksp = "1.9.23-1.0.20"
 ktfmt = "0.49"
 leakcanary = "2.14"
-lifecycle = "2.8.0-beta01"
+lifecycle = "2.8.0-rc01"
 markwon = "4.6.2"
 moshi = "1.15.1"
 moshix = "0.25.1"
@@ -134,7 +134,7 @@ androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", versio
 androidx-compose-accompanist-adaptive = { module = "com.google.accompanist:accompanist-adaptive", version.ref = "accompanist" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha13"
-androidx-paging-compose = "androidx.paging:paging-compose:3.3.0-beta01"
+androidx-paging-compose = "androidx.paging:paging-compose:3.3.0-rc01"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-material-material3-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
 androidx-window = { module = "androidx.window:window", version = "1.3.0-beta02" }
@@ -155,7 +155,7 @@ compose-material-material = { module = "org.jetbrains.compose.material:material"
 compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
-firebase-database = "com.google.firebase:firebase-database:20.3.1"
+firebase-database = "com.google.firebase:firebase-database:21.0.0"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
 anvil-annotationsOptional = { module = "com.squareup.anvil:annotations-optional", version.ref = "anvil" }
@@ -210,7 +210,7 @@ errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.27.1"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:0.7.0"
+haze = "dev.chrisbanes.haze:haze:0.7.1"
 
 javaxInject = "javax.inject:javax.inject:1"
 
@@ -242,7 +242,7 @@ misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
 misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.11.0"
-misc-debug-guava = "com.google.guava:guava:33.1.0-jre"
+misc-debug-guava = "com.google.guava:guava:33.2.0-jre"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:3.0.0"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.3.0"
 
