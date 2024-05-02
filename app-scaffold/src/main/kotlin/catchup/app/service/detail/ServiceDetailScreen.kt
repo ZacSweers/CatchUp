@@ -46,20 +46,21 @@ import catchup.app.service.openUrl
 import catchup.app.ui.activity.ImageViewerScreen
 import catchup.base.ui.BackPressNavButton
 import catchup.compose.ContentAlphas
+import catchup.compose.rememberRetainedCoroutineScope
 import catchup.di.AppScope
 import catchup.di.ContextualFactory
 import catchup.di.DataMode
 import catchup.service.api.Comment
 import catchup.service.api.Detail
 import catchup.service.api.Service
-import catchup.service.api.toCatchUpItem
 import catchup.service.db.CatchUpDatabase
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.kotlin.format
 import coil.compose.AsyncImage
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
-import com.slack.circuit.retained.produceRetainedState
+import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
@@ -70,12 +71,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import javax.inject.Provider
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import me.saket.unfurl.UnfurlResult
-import me.saket.unfurl.Unfurler
 
 @Parcelize
 data class ServiceDetailScreen(
@@ -108,10 +106,9 @@ class ServiceDetailPresenter
 constructor(
   @Assisted val screen: ServiceDetailScreen,
   @ApplicationContext private val context: Context,
-  private val dbFactory: ContextualFactory<DataMode, out CatchUpDatabase>,
-  private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-  private val unfurler: Unfurler,
+  services: @JvmSuppressWildcards Map<String, Provider<Service>>,
   private val linkManager: LinkManager,
+  private val detailRepoFactory: DetailRepository.Factory,
 ) : Presenter<ServiceDetailScreen.State> {
 
   @CircuitInject(ServiceDetailScreen::class, AppScope::class)
@@ -138,44 +135,34 @@ constructor(
 
   @Composable
   override fun present(): ServiceDetailScreen.State {
-    val detail by
-      produceRetainedState<Detail?>(initialValue = null) {
-        value =
-          withContext(Dispatchers.IO) {
-            val db = dbFactory.create(DataMode.REAL)
-            val item =
-              db.serviceQueries.getItem(screen.itemId).executeAsOneOrNull()!!.toCatchUpItem()
-            services.getValue(item.serviceId!!).get().fetchDetail(item, item.detailKey!!)
-          }
-      }
-
-    val unfurl by
-      produceRetainedState<UnfurlResult?>(initialValue = null) {
-        value = screen.linkUrl?.let { withContext(Dispatchers.IO) { unfurler.unfurl(it) } }
-      }
+    val detailRepository = rememberRetained {
+      detailRepoFactory.create(screen.itemId, screen.serviceId)
+    }
+    val detailFlow = rememberRetained(init = detailRepository::loadDetail)
+    val detail by detailFlow.collectAsRetainedState(initial = null)
 
     val scope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
     val state =
-      detail?.let {
-        ServiceDetailScreen.State(it, unfurl, themeColor) { event ->
+      detail?.let { (detail, unfurl) ->
+        ServiceDetailScreen.State(detail, unfurl, themeColor) { event ->
           when (event) {
             ServiceDetailScreen.Event.OpenImage -> {
               scope.launch {
                 overlayHost.showFullScreenOverlay(
                   ImageViewerScreen(
-                    it.imageUrl!!,
-                    it.imageUrl!!,
+                    detail.imageUrl!!,
+                    detail.imageUrl!!,
                     // TODO
                     isBitmap = true,
                     null,
-                    it.imageUrl!!,
+                    detail.imageUrl!!,
                   )
                 )
               }
             }
             ServiceDetailScreen.Event.OpenUrl -> {
-              scope.launch { linkManager.openUrl(it.linkUrl!!) }
+              scope.launch { linkManager.openUrl(detail.linkUrl!!) }
             }
           }
         }
@@ -259,6 +246,10 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
         modifier = Modifier.padding(horizontal = 16.dp),
         verticalArrangement = spacedBy(8.dp),
       ) {
+        Text(state.detail.title, style = MaterialTheme.typography.titleMedium)
+        state.detail.text?.takeUnless(String::isBlank)?.let {
+          Text(it, style = MaterialTheme.typography.bodyMedium)
+        }
         state.unfurl
           // TODO Improve this. Maybe just ignore self-referencing unfurls?
           ?.takeUnless { it.thumbnail == null }
@@ -267,10 +258,6 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
               state.eventSink(ServiceDetailScreen.Event.OpenUrl)
             }
           }
-        Text(state.detail.title, style = MaterialTheme.typography.titleMedium)
-        state.detail.text
-          ?.takeUnless { it.isBlank() }
-          ?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
 
         // TODO metadata
 
