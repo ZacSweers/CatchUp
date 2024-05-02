@@ -37,7 +37,6 @@ slack {
         val metricsDir = project.layout.buildDirectory.dir("compose_metrics").get().asFile
         enableCompilerMetricsForDebugging(metricsDir)
       }
-      compilerOption("experimentalStrongSkipping", "true")
     }
     dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
     moshi(codegen = true)
@@ -86,7 +85,7 @@ apollo {
     mapScalar("DateTime", "kotlinx.datetime.Instant")
     mapScalar("URI", "okhttp3.HttpUrl")
     packageName.set("catchup.app.data.github")
-    schemaFile.set(file("src/main/graphql/catchup/app/data/github/schema.json"))
+    schemaFiles.from(file("src/main/graphql/catchup/app/data/github/schema.json"))
   }
 }
 
