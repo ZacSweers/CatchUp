@@ -2,22 +2,22 @@
 accompanist = "0.35.0-alpha"
 agp = "8.5.0-alpha07"
 androidx-activity = "1.9.0"
-androidx-core = "1.13.0"
-androidx-sqlite = "2.4.0"
-appcompat = "1.7.0-alpha03"
-benchmark = "1.3.0-alpha03"
-compose-material3 = "1.3.0-alpha05"
+androidx-core = "1.14.0-alpha01"
+androidx-sqlite = "2.5.0-alpha01"
+appcompat = "1.7.0-beta01"
+benchmark = "1.3.0-alpha04"
+compose-material3 = "1.3.0-alpha06"
 emoji = "1.2.0-alpha03"
-anvil = "2.5.0-beta07"
+anvil = "2.5.0-beta08"
 apollo = "4.0.0-beta.6"
 circuit = "0.20.0"
 coil = "2.6.0"
-compose = "1.7.0-alpha07"
+compose = "1.7.0-alpha08"
 compose-jb = "1.6.10-beta03"
 corbind = "1.10.0"
 coroutines = "1.8.0"
 dagger = "2.51.1"
-datastore = "1.1.0"
+datastore = "1.1.1"
 detekt = "1.23.6"
 eithernet = "1.8.1"
 flipper = "0.250.0"
@@ -28,7 +28,7 @@ kotlinx-serialization = "1.6.3"
 ksp = "2.0.0-RC2-1.0.20"
 ktfmt = "0.49"
 leakcanary = "2.14"
-lifecycle = "2.8.0-beta01"
+lifecycle = "2.8.0-rc01"
 markwon = "4.6.2"
 moshi = "1.15.1"
 moshix = "0.26.0-alpha03"
@@ -36,7 +36,7 @@ okhttp = "5.0.0-alpha.14"
 okio = "3.9.0"
 preferences = "1.2.1"
 retrofit = "2.11.0"
-slack-lint = "0.7.1"
+slack-lint = "0.7.2"
 sortDependencies = "0.6"
 sgp = "0.18.0-alpha01"
 spotless = "6.25.0"
@@ -79,7 +79,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 
 [libraries]
-androidx-annotations = "androidx.annotation:annotation:1.8.0-beta02"
+androidx-annotations = "androidx.annotation:annotation:1.8.0-rc01"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -93,7 +93,7 @@ androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
 androidx-customTabs = "androidx.browser:browser:1.8.0"
-androidx-design = "com.google.android.material:material:1.11.0"
+androidx-design = "com.google.android.material:material:1.12.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
@@ -127,10 +127,10 @@ androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", versio
 androidx-compose-accompanist-adaptive = { module = "com.google.accompanist:accompanist-adaptive", version.ref = "accompanist" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha13"
-androidx-paging-compose = "androidx.paging:paging-compose:3.3.0-beta01"
+androidx-paging-compose = "androidx.paging:paging-compose:3.3.0-rc01"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-material-material3-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
-androidx-window = { module = "androidx.window:window", version = "1.3.0-beta01" }
+androidx-window = { module = "androidx.window:window", version = "1.3.0-beta02" }
 androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-alpha01"
 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-alpha01"
@@ -147,7 +147,7 @@ compose-material-material = { module = "org.jetbrains.compose.material:material"
 compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
-firebase-database = "com.google.firebase:firebase-database:20.3.1"
+firebase-database = "com.google.firebase:firebase-database:21.0.0"
 
 anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
 anvil-annotationsOptional = { module = "com.squareup.anvil:annotations-optional", version.ref = "anvil" }
@@ -198,11 +198,11 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 
-errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.27.0"
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.27.1"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:0.7.0"
+haze = "dev.chrisbanes.haze:haze:0.7.1"
 
 javaxInject = "javax.inject:javax.inject:1"
 
@@ -234,7 +234,7 @@ misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
 misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.11.0"
-misc-debug-guava = "com.google.guava:guava:33.1.0-jre"
+misc-debug-guava = "com.google.guava:guava:33.2.0-jre"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:3.0.0"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.3.0"
 
