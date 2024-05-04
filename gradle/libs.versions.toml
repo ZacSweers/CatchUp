@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.35.0-alpha"
-agp = "8.5.0-alpha07"
+agp = "8.5.0-alpha08"
 androidx-activity = "1.9.0"
 androidx-core = "1.14.0-alpha01"
 androidx-sqlite = "2.5.0-alpha01"
@@ -36,7 +36,7 @@ okhttp = "5.0.0-alpha.14"
 okio = "3.9.0"
 preferences = "1.2.1"
 retrofit = "2.11.0"
-slack-lint = "0.7.2"
+slack-lint = "0.7.3"
 sortDependencies = "0.6"
 sgp = "0.18.0-alpha01"
 spotless = "6.25.0"
@@ -57,7 +57,7 @@ bugsnag = { id = "com.bugsnag.android.gradle", version = "8.1.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.1" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.31.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-doctor = { id = "com.osacky.doctor", version = "0.9.2" }
+doctor = { id = "com.osacky.doctor", version = "0.10.0" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
