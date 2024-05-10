@@ -129,9 +129,6 @@ tasks.withType<KaptGenerateStubsTask>().configureEach {
   }
 }
 
-// TODO temporary cover for anvil not looking in the right configuration for dagger-compiler
-ksp { excludeProcessor("dagger.internal.codegen.KspComponentProcessor\$Provider") }
-
 dependencies {
   ksp(libs.circuit.codegen)
   ksp(libs.dagger.apt.compiler)
