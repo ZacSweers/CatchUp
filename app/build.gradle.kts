@@ -129,6 +129,10 @@ baselineProfile {
       }
     }
   }
+
+  warnings {
+    maxAgpVersion = false
+  }
 }
 
 bugsnag {
@@ -443,14 +447,6 @@ androidComponents {
       "META-INF/README.md",
     )
   }
-}
-
-baselineProfile {
-//  // TODO enable this only when cutting a new release?
-////  automaticGenerationDuringBuild = true
-//  saveInSrc = true
-//  dexLayoutOptimization = true
-//  from(projects.benchmark.dependencyProject)
 }
 
 dependencies { implementation(projects.appScaffold) }
