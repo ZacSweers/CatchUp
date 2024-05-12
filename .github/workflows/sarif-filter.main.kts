@@ -1,5 +1,5 @@
 #!/usr/bin/env kotlin
-@file:DependsOn("com.github.ajalt.clikt:clikt-jvm:4.2.2")
+@file:DependsOn("com.github.ajalt.clikt:clikt-jvm:4.4.0")
 @file:DependsOn("com.squareup.moshi:moshi:1.15.1")
 @file:DependsOn("com.squareup.moshi:moshi-kotlin:1.15.1")
 
@@ -9,14 +9,14 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.path
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import okio.buffer
-import okio.sink
-import okio.source
 import kotlin.io.path.createFile
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.exists
 import kotlin.io.path.readLines
+import okio.buffer
+import okio.sink
+import okio.source
 
 @Suppress("UNCHECKED_CAST")
 class SarifCleaner :

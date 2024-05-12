@@ -24,7 +24,6 @@ include(
   ":libraries:util",
   ":service-api",
   ":service-db",
-  ":services:designernews",
   ":services:dribbble",
   ":services:github",
   ":services:hackernews",

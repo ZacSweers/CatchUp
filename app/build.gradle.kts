@@ -18,13 +18,13 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
-import okio.buffer
-import okio.sink
-import okio.source
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import okio.buffer
+import okio.sink
+import okio.source
 
 plugins {
   alias(libs.plugins.android.application)
@@ -83,7 +83,8 @@ android {
       versionNameSuffix = "-dev"
     }
     getByName("release") {
-      manifestPlaceholders["BUGSNAG_API_KEY"] = providers.gradleProperty("catchup_bugsnag_key").getOrElse("")
+      manifestPlaceholders["BUGSNAG_API_KEY"] =
+        providers.gradleProperty("catchup_bugsnag_key").getOrElse("")
       signingConfig = signingConfigs.getByName(if (useDebugSigning) "debug" else "release")
       proguardFiles += file("proguard-rules.pro")
       isMinifyEnabled = true
@@ -155,7 +156,7 @@ abstract class CutChangelogTask : DefaultTask() {
         if (it.length > 500) {
           logger.log(
             LogLevel.WARN,
-            "Changelog length (${it.length}) exceeds 500 char max. Truncating..."
+            "Changelog length (${it.length}) exceeds 500 char max. Truncating...",
           )
           val warning = "\n(Truncated due to store restrictions. Full changelog in app!)"
           val warningLength = warning.length
@@ -252,14 +253,11 @@ fun getChangelog(): String {
 
 abstract class UpdateVersion
 @Inject
-constructor(
-  providers: ProviderFactory,
-  private val execOps: ExecOperations,
-) : DefaultTask() {
+constructor(providers: ProviderFactory, private val execOps: ExecOperations) : DefaultTask() {
 
   @get:Option(
     option = "updateType",
-    description = "Configures the version update type. Can be (major|minor|patch)."
+    description = "Configures the version update type. Can be (major|minor|patch).",
   )
   @get:Input
   abstract val type: Property<String>
@@ -308,7 +306,7 @@ constructor(
           "-a",
           latestVersionString,
           "-m",
-          "\"Version $latestVersionString.\""
+          "\"Version $latestVersionString.\"",
         )
         standardOutput = os
         errorOutput = os
@@ -419,6 +417,8 @@ licensee {
   allowUrl("https://github.com/facebookincubator/fbjni/blob/main/LICENSE")
   allowUrl("https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE")
   allowUrl("https://www.openssl.org/source/license-openssl-ssleay.txt")
+  // MIT
+  allowUrl("https://opensource.org/licenses/MIT")
 }
 
 androidComponents {
@@ -445,6 +445,12 @@ androidComponents {
   }
 }
 
-dependencies {
-  implementation(projects.appScaffold)
+baselineProfile {
+//  // TODO enable this only when cutting a new release?
+////  automaticGenerationDuringBuild = true
+//  saveInSrc = true
+//  dexLayoutOptimization = true
+//  from(projects.benchmark.dependencyProject)
 }
+
+dependencies { implementation(projects.appScaffold) }

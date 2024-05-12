@@ -19,7 +19,7 @@ import catchup.ui.core.R
 
 enum class NavButtonType(val icon: ImageVector, @StringRes val contentDescription: Int) {
   BACK(Icons.AutoMirrored.Filled.ArrowBack, R.string.catchup_baseui_back),
-  CLOSE(Icons.Filled.Close, R.string.catchup_baseui_close)
+  CLOSE(Icons.Filled.Close, R.string.catchup_baseui_close),
 }
 
 @Composable

@@ -24,8 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -424,12 +422,6 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         // Good lord M3's default values for this are ugly
         edgePadding = 0.dp,
         divider = {},
-        indicator = { tabPositions ->
-          SecondaryIndicator(
-            Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-            color = contentColor,
-          )
-        },
       ) {
         // Add tabs for all of our pages
         val coroutineScope = rememberStableCoroutineScope()
@@ -466,7 +458,7 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
 
       HorizontalPager(
         modifier = Modifier.weight(1f),
-        outOfBoundsPageCount = 1,
+        beyondViewportPageCount = 1,
         key = { serviceMetas[it].id },
         state = pagerState,
         verticalAlignment = Alignment.Top,

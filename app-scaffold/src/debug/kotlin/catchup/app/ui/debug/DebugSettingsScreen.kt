@@ -30,6 +30,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -77,8 +78,6 @@ import catchup.di.AppScope
 import catchup.di.DataMode
 import catchup.util.truncateAt
 import com.alorma.compose.settings.storage.base.SettingValueState
-import com.alorma.compose.settings.storage.base.getValue
-import com.alorma.compose.settings.storage.base.setValue
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
@@ -332,7 +331,7 @@ constructor(
 
 private enum class LogsShareResult {
   SHARE,
-  DISMISS
+  DISMISS,
 }
 
 @CircuitInject(DebugSettingsScreen::class, AppScope::class)
@@ -527,7 +526,7 @@ sealed interface DebugItem {
           ) {
             OutlinedTextField(
               value = formatSelection(state.value),
-              modifier = Modifier.menuAnchor(),
+              modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
               textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
               onValueChange = {},
               readOnly = true,
