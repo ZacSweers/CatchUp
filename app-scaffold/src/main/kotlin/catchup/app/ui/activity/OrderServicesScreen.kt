@@ -280,9 +280,10 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
         FloatingActionButton(
           modifier =
             Modifier.indication(
-              interactionSource,
-              indication = rememberRippleCompat(color = Color.White),
-            ).navigationBarsPadding(),
+                interactionSource,
+                indication = rememberRippleCompat(color = Color.White),
+              )
+              .navigationBarsPadding(),
           // TODO show syllabus on fab
           //  .onGloballyPositioned { coordinates ->
           //    val (x, y) = coordinates.positionInRoot()
