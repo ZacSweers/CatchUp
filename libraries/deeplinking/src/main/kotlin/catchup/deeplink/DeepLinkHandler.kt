@@ -48,7 +48,7 @@ fun DeepLinkHandler.parse(intent: Intent): ImmutableList<Screen>? {
     Example intent:
     adb shell am start \
     -W -a android.intent.action.VIEW \
-    -d "catchup://catchup.zacsweers.dev/home/settings/about/?tab=changelog" io.sweers.catchup
+    -d "catchup://catchup.zacsweers.dev/home/settings/about/?tab=changelog" dev.zacsweers.catchup
   */
   return intent.takeIf { intent.action == Intent.ACTION_VIEW }?.data?.toHttpUrl()?.let(::parse)
 }
