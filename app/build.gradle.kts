@@ -68,15 +68,6 @@ android {
       create("release").initWith(getByName("debug"))
     }
   }
-  flavorDimensions += "stage"
-  productFlavors {
-    create("beta") {
-      isDefault = true
-    }
-    create("production") {
-      isDefault = false
-    }
-  }
   buildTypes {
     getByName("debug") {
       applicationIdSuffix = ".debug"
@@ -123,7 +114,7 @@ baselineProfile {
 
   if (automaticBaselineProfileGeneration) {
     variants {
-      maybeCreate("productionRelease").apply {
+      maybeCreate("release").apply {
         // Ensure Baseline Profile is fresh for release builds.
         automaticGenerationDuringBuild = true
       }
