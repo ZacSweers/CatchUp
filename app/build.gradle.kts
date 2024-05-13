@@ -32,7 +32,7 @@ plugins {
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.licensee)
   alias(libs.plugins.bugsnag)
-  //  alias(libs.plugins.baselineprofile) apply false
+  alias(libs.plugins.baselineprofile)
   //  alias(libs.plugins.playPublisher)
 }
 
@@ -40,6 +40,7 @@ val useDebugSigning: Boolean =
   providers.gradleProperty("useDebugSigning").orElse("false").map { it.toBoolean() }.get()
 
 android {
+  namespace = "dev.zacsweers.catchup.apk"
   defaultConfig {
     applicationId = "dev.zacsweers.catchup"
 
@@ -89,7 +90,40 @@ android {
       isUniversalApk = true
     }
   }
-  namespace = "dev.zacsweers.catchup.apk"
+  experimentalProperties["android.experimental.art-profile-r8-rewriting"] = true
+  experimentalProperties["android.experimental.r8.dex-startup-optimization"] = true
+}
+
+val automaticBaselineProfileGeneration = providers.environmentVariable("AUTOMATIC_BASELINE_GENERATION").getOrElse("false").toBoolean()
+
+if (!automaticBaselineProfileGeneration) {
+  tasks.named { it == "mergeProductionReleaseStartupProfile"}.configureEach {
+    mustRunAfter(":app:copyProductionReleaseBaselineProfileIntoSrc")
+  }
+}
+
+baselineProfile {
+  // Don't build on every iteration of a full assemble.
+  // Instead enable generation directly for the release build variant.
+  automaticGenerationDuringBuild = automaticBaselineProfileGeneration
+
+  // Don't save the profiles in source, generate adhoc
+  saveInSrc = !automaticBaselineProfileGeneration
+
+  from(projects.benchmark.dependencyProject)
+
+  if (automaticBaselineProfileGeneration) {
+    variants {
+      maybeCreate("release").apply {
+        // Ensure Baseline Profile is fresh for release builds.
+        automaticGenerationDuringBuild = true
+      }
+    }
+  }
+
+  warnings {
+    maxAgpVersion = false
+  }
 }
 
 bugsnag {
@@ -405,13 +439,5 @@ androidComponents {
     )
   }
 }
-
-// baselineProfile {
-//  // TODO enable this only when cutting a new release?
-////  automaticGenerationDuringBuild = true
-//  saveInSrc = true
-//  dexLayoutOptimization = true
-//  from(projects.benchmark.dependencyProject)
-// }
 
 dependencies { implementation(projects.appScaffold) }

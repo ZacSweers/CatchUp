@@ -275,6 +275,8 @@ sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", 
 sqldelight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
 sqldelight-primitiveAdapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
+# Force a newer version of this to avoid "Changing log factory from null to null" warnings
+sqldelight-sqlPsiCore = { module = "com.alecstrong.sql.psi:core", version = "0.4.9" }
 
 sqlite-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "xerial" }
 

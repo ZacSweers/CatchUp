@@ -2,6 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <queries>
-        <package android:name="io.sweers.catchup" />
+        <package android:name="dev.zacsweers.catchup" />
     </queries>
 </manifest>
