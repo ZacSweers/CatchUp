@@ -131,7 +131,6 @@ tasks.withType<KaptGenerateStubsTask>().configureEach {
 
 dependencies {
   ksp(libs.circuit.codegen)
-  ksp(libs.dagger.apt.compiler)
 
   implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
