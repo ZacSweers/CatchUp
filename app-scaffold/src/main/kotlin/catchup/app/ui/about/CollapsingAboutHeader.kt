@@ -163,7 +163,9 @@ fun CollapsingAboutHeader(
                 appendLine()
                 append(stringResource(R.string.about_by))
                 append(" ")
-                withLink(LinkAnnotation.Url("https://twitter.com/ZacSweers")) { append("Zac Sweers") }
+                withLink(LinkAnnotation.Url("https://twitter.com/ZacSweers")) {
+                  append("Zac Sweers")
+                }
                 append(" – ")
                 withLink(LinkAnnotation.Url("https://github.com/ZacSweers/CatchUp")) {
                   append(stringResource(R.string.about_source_code))
