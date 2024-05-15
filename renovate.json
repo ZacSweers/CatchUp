@@ -3,10 +3,10 @@
   "extends": [
     "config:base"
   ],
-  "prHourlyLimit": 10,
+  "prHourlyLimit": 20,
   "packageRules": [
     {
-      "matchPackagePatterns": [
+      "matchDepPatterns": [
         "^androidx\\.([\\w-:]+)$",
         "^org\\.robolectric([\\w-.]*):([\\w-]+)$",
         "^com\\.google\\.accompanist:([\\w-]+)$"
