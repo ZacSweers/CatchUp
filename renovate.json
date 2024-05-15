@@ -9,7 +9,8 @@
       "matchDepPatterns": [
         "^androidx\\.([\\w-:]+)$",
         "^org\\.robolectric([\\w-.]*):([\\w-]+)$",
-        "^com\\.google\\.accompanist:([\\w-]+)$"
+        "^com\\.google\\.accompanist:([\\w-]+)$",
+        "^com\\.google\\.android\\.material:([\\w-]+)$"
       ],
       "description": "Libraries allowed to use non-stable releases.",
       "ignoreUnstable": false
