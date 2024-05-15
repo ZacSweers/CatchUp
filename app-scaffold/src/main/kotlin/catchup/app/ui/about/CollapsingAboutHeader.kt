@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +39,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -163,9 +163,11 @@ fun CollapsingAboutHeader(
                 appendLine()
                 append(stringResource(R.string.about_by))
                 append(" ")
-                withLink(TextDefaults.Url("https://twitter.com/ZacSweers")) { append("Zac Sweers") }
+                withLink(LinkAnnotation.Url("https://twitter.com/ZacSweers")) {
+                  append("Zac Sweers")
+                }
                 append(" – ")
-                withLink(TextDefaults.Url("https://github.com/ZacSweers/CatchUp")) {
+                withLink(LinkAnnotation.Url("https://github.com/ZacSweers/CatchUp")) {
                   append(stringResource(R.string.about_source_code))
                 }
               }
