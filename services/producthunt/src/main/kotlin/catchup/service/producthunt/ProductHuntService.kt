@@ -46,7 +46,7 @@ import com.apollographql.apollo3.api.http.DefaultHttpRequestComposer
 import com.apollographql.apollo3.api.http.HttpRequestComposer
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy
 import com.apollographql.apollo3.cache.http.httpFetchPolicy
-import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo3.exception.DefaultApolloException
 import com.apollographql.apollo3.network.NetworkTransport
 import com.apollographql.apollo3.network.http.DefaultHttpEngine
 import com.apollographql.apollo3.network.http.HttpEngine
@@ -93,7 +93,7 @@ constructor(
         .execute()
 
     if (postsQuery.hasErrors()) {
-      throw ApolloException(postsQuery.errors.toString())
+      throw DefaultApolloException(postsQuery.errors.toString())
     }
 
     return postsQuery.data
@@ -266,7 +266,7 @@ object ProductHuntModule {
   @Provides
   @SingleIn(AppScope::class)
   fun provideHttpEngine(@InternalApi client: Lazy<OkHttpClient>): HttpEngine {
-    return DefaultHttpEngine { client.get().newCall(it) }
+    return DefaultHttpEngine(client::get)
   }
 
   @InternalApi

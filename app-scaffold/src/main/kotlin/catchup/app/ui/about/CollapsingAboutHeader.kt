@@ -39,10 +39,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.UrlAnnotation
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
@@ -162,16 +163,15 @@ fun CollapsingAboutHeader(
                 appendLine()
                 append(stringResource(R.string.about_by))
                 append(" ")
-                pushUrlAnnotation(UrlAnnotation("https://twitter.com/ZacSweers"))
-                append("Zac Sweers")
-                pop()
+                withLink(LinkAnnotation.Url("https://twitter.com/ZacSweers")) {
+                  append("Zac Sweers")
+                }
                 append(" – ")
-                pushUrlAnnotation(UrlAnnotation("https://github.com/ZacSweers/CatchUp"))
-                append(stringResource(R.string.about_source_code))
-                pop()
+                withLink(LinkAnnotation.Url("https://github.com/ZacSweers/CatchUp")) {
+                  append(stringResource(R.string.about_source_code))
+                }
               }
             }
-          // TODO material3 has zero ways to actually add clickable links in text out of the box
           Text(
             modifier =
               Modifier.align(CenterHorizontally).alpha(scaffoldState.toolbarState.progress),

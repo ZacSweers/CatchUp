@@ -43,7 +43,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.http.httpFetchPolicy
-import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo3.exception.DefaultApolloException
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
@@ -134,7 +134,7 @@ constructor(
         .execute()
 
     if (searchQuery.hasErrors()) {
-      throw ApolloException(searchQuery.errors.toString())
+      throw DefaultApolloException(searchQuery.errors.toString())
     }
     return searchQuery.data!!.let { (search) ->
       search.nodes
