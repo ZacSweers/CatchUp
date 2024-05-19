@@ -1,6 +1,6 @@
 [versions]
-accompanist = "0.35.0-alpha"
-agp = "8.6.0-alpha01"
+accompanist = "0.35.1-alpha"
+agp = "8.6.0-alpha02"
 androidx-activity = "1.9.0"
 androidx-core = "1.14.0-alpha01"
 androidx-sqlite = "2.5.0-alpha02"
@@ -17,7 +17,7 @@ compose = "1.7.0-beta01"
 # https://androidx.dev/storage/compose-compiler/repository
 compose-compiler = "1.5.14"
 compose-compiler-kotlinVersion = "1.9.24"
-compose-jb = "1.6.2"
+compose-jb = "1.6.10"
 compose-jb-compiler = "1.5.14"
 compose-jb-kotlinVersion = "1.9.20"
 corbind = "1.11.0"
@@ -142,7 +142,7 @@ androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-alpha01"
 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-alpha01"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.1.5"
-androidx-test-monitor = "androidx.test:monitor:1.7.0-alpha05"
+androidx-test-monitor = "androidx.test:monitor:1.7.0-beta01"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 
 compose-compilerJb = { module = "org.jetbrains.compose.compiler:compiler", version.ref = "compose-jb-compiler" }
