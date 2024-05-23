@@ -1,7 +1,6 @@
 package catchup.app.ui.about
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
@@ -84,7 +83,6 @@ constructor(
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @CircuitInject(ChangelogScreen::class, AppScope::class)
 @Composable
 fun Changelog(state: State, modifier: Modifier = Modifier) {
