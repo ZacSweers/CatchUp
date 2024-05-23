@@ -38,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -60,7 +59,6 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 //  - Use arcLerp() for title's movement.
 //  - Can all this state be hoisted?
 //  - Title initially jumps multiple pixels when collapsing
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun CollapsingAboutHeader(
   versionName: String,

@@ -1,7 +1,6 @@
 package catchup.app.ui.about
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -90,7 +89,7 @@ constructor(@Assisted val screen: AboutScreen, private val appConfig: AppConfig)
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(AboutScreen::class, AppScope::class)
 @Composable
 fun About(state: State, modifier: Modifier = Modifier) {

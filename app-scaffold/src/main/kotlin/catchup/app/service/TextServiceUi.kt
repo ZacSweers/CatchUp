@@ -4,7 +4,6 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.text.format.DateUtils
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -67,7 +66,6 @@ import dev.zacsweers.catchup.app.scaffold.R
 import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Clock
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TextServiceUi(
   lazyItems: LazyPagingItems<CatchUpItem>,
