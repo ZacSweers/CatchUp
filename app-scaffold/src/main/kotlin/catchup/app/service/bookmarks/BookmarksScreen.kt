@@ -2,7 +2,6 @@ package catchup.app.service.bookmarks
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -215,7 +214,6 @@ fun Bookmarks(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Modifier) {
   LazyColumn(modifier.fillMaxHeight()) {
