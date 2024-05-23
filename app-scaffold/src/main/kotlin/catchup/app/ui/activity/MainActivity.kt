@@ -42,7 +42,7 @@ import catchup.base.ui.RootContent
 import catchup.base.ui.rememberSystemBarColorController
 import catchup.compose.CatchUpTheme
 import catchup.compose.LocalDisplayFeatures
-import catchup.deeplink.DeepLinkHandler
+import catchup.deeplink.Router
 import catchup.deeplink.parse
 import catchup.di.AppScope
 import catchup.di.android.ActivityKey
@@ -77,7 +77,7 @@ constructor(
   private val circuit: Circuit,
   private val catchUpPreferences: CatchUpPreferences,
   private val rootContent: RootContent,
-  private val deepLinkHandler: DeepLinkHandler,
+  private val router: Router,
   appConfig: AppConfig,
 ) : AppCompatActivity() {
 
@@ -144,9 +144,7 @@ constructor(
         CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
           CircuitCompositionLocals(circuit) {
             ContentWithOverlays {
-              val stack = remember {
-                intent?.let(deepLinkHandler::parse) ?: persistentListOf(HomeScreen)
-              }
+              val stack = remember { intent?.let(router::parse) ?: persistentListOf(HomeScreen) }
               val backStack = rememberSaveableBackStack(stack)
               val navigator = rememberCircuitNavigator(backStack)
               val intentAwareNavigator =
