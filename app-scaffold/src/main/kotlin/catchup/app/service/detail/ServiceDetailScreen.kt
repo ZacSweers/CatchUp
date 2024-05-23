@@ -46,14 +46,10 @@ import catchup.app.service.openUrl
 import catchup.app.ui.activity.ImageViewerScreen
 import catchup.base.ui.BackPressNavButton
 import catchup.compose.ContentAlphas
-import catchup.compose.rememberRetainedCoroutineScope
 import catchup.di.AppScope
-import catchup.di.ContextualFactory
-import catchup.di.DataMode
 import catchup.service.api.Comment
 import catchup.service.api.Detail
 import catchup.service.api.Service
-import catchup.service.db.CatchUpDatabase
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.kotlin.format
 import coil.compose.AsyncImage
