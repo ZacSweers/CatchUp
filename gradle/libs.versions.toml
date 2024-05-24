@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.35.1-alpha"
-agp = "8.6.0-alpha02"
+agp = "8.6.0-alpha03"
 androidx-activity = "1.9.0"
 androidx-core = "1.14.0-alpha01"
 androidx-sqlite = "2.5.0-alpha02"
@@ -62,7 +62,7 @@ apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.1.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.1" }
-dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.31.0" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.32.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.10.0" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
