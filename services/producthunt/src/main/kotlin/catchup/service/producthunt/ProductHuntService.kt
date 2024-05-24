@@ -138,7 +138,7 @@ constructor(
         .execute()
 
     if (postsQuery.hasErrors()) {
-      throw ApolloException(postsQuery.errors.toString())
+      throw DefaultApolloException(postsQuery.errors.toString())
     }
 
     val post = postsQuery.data?.post!!

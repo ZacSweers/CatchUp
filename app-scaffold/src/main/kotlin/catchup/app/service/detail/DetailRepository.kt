@@ -35,7 +35,7 @@ constructor(
 
   fun loadDetail(): Flow<CompositeDetail> {
     // TODO refresh/updates
-    return flow { loadDetailParallel() }
+    return flow { emit(loadDetailParallel()) }
   }
 
   private suspend fun loadDetailParallel(): CompositeDetail =

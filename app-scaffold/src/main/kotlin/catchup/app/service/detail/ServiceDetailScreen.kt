@@ -28,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -70,6 +71,7 @@ import javax.inject.Provider
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import me.saket.unfurl.UnfurlResult
+import timber.log.Timber
 
 @Parcelize
 data class ServiceDetailScreen(
@@ -135,35 +137,31 @@ constructor(
       detailRepoFactory.create(screen.itemId, screen.serviceId)
     }
     val detailFlow = rememberRetained(init = detailRepository::loadDetail)
-    val detail by detailFlow.collectAsRetainedState(initial = null)
-
+    val compositeDetail by detailFlow.collectAsRetainedState(initial = null)
     val scope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
-    val state =
-      detail?.let { (detail, unfurl) ->
-        ServiceDetailScreen.State(detail, unfurl, themeColor) { event ->
-          when (event) {
-            ServiceDetailScreen.Event.OpenImage -> {
-              scope.launch {
-                overlayHost.showFullScreenOverlay(
-                  ImageViewerScreen(
-                    detail.imageUrl!!,
-                    detail.imageUrl!!,
-                    // TODO
-                    isBitmap = true,
-                    null,
-                    detail.imageUrl!!,
-                  )
-                )
-              }
-            }
-            ServiceDetailScreen.Event.OpenUrl -> {
-              scope.launch { linkManager.openUrl(detail.linkUrl!!) }
-            }
+    val (detail, unfurl) = compositeDetail ?: return initialState
+    return ServiceDetailScreen.State(detail, unfurl, themeColor) { event ->
+      when (event) {
+        ServiceDetailScreen.Event.OpenImage -> {
+          scope.launch {
+            overlayHost.showFullScreenOverlay(
+              ImageViewerScreen(
+                detail.imageUrl!!,
+                detail.imageUrl!!,
+                // TODO
+                isBitmap = true,
+                null,
+                detail.imageUrl!!,
+              )
+            )
           }
         }
-      } ?: initialState
-    return state
+        ServiceDetailScreen.Event.OpenUrl -> {
+          scope.launch { linkManager.openUrl(detail.linkUrl!!) }
+        }
+      }
+    }
   }
 }
 
