@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -413,14 +414,22 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
         if (dynamicTheme) MaterialTheme.colorScheme.onPrimaryContainer else Color.White
       val containerColor =
         if (dynamicTheme) MaterialTheme.colorScheme.primaryContainer else tabLayoutColor.value
+      val selectedTabIndex = pagerState.settledPage
       PrimaryScrollableTabRow(
         // Our selected tab is our current page
-        selectedTabIndex = pagerState.settledPage,
+        selectedTabIndex = selectedTabIndex,
         contentColor = contentColor,
         containerColor = containerColor,
         // Good lord M3's default values for this are ugly
         edgePadding = 0.dp,
         divider = {},
+        indicator = {
+          TabRowDefaults.PrimaryIndicator(
+            color = contentColor,
+            modifier = Modifier.tabIndicatorOffset(selectedTabIndex, matchContentSize = true),
+            width = Dp.Unspecified,
+          )
+        },
       ) {
         // Add tabs for all of our pages
         val coroutineScope = rememberStableCoroutineScope()

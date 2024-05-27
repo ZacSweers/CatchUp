@@ -225,13 +225,7 @@ constructor(
           val url = event.item.clickUrl!!
           when (event.action) {
             SHARE -> {
-              val shareIntent =
-                Intent().apply {
-                  action = Intent.ACTION_SEND
-                  putExtra(Intent.EXTRA_TEXT, "${event.item.title}\n\n${event.item.clickUrl}")
-                  type = "text/plain"
-                }
-              navigator.goTo(IntentScreen(Intent.createChooser(shareIntent, "Share")))
+              linkManager.shareUrl(url, event.item.title)
             }
             SUMMARIZE -> {
               scope.launch {

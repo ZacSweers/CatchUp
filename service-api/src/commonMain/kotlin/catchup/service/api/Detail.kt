@@ -17,6 +17,7 @@ sealed interface Detail {
   val score: Int?
   val commentsCount: Int?
   val linkUrl: String?
+  val shareUrl: String?
 
   data class Shallow(
     override val id: String,
@@ -27,6 +28,7 @@ sealed interface Detail {
     override val score: Int? = null,
     override val commentsCount: Int? = null,
     override val linkUrl: String? = null,
+    override val shareUrl: String? = null,
   ) : Detail
 
   data class Full(
@@ -38,7 +40,7 @@ sealed interface Detail {
     override val score: Int? = null,
     override val commentsCount: Int? = null,
     override val linkUrl: String? = null,
-    val url: String,
+    override val shareUrl: String,
     val comments: ImmutableList<Comment> = persistentListOf(),
   ) : Detail
 }

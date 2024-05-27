@@ -134,7 +134,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
       text = detailListing.selftext,
       imageUrl = if (detailListing.postHint == "image") detailListing.url else null,
       score = detailListing.score,
-      url = detailListing.url,
+      shareUrl = detailListing.url,
       linkUrl = detailListing.url.takeUnless { detailListing.isSelf },
       comments = comments,
       commentsCount = detailListing.commentsCount,

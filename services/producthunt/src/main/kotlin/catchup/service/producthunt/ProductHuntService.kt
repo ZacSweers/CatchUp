@@ -150,7 +150,7 @@ constructor(
       score = post.votesCount,
       commentsCount = post.commentsCount,
       linkUrl = post.website,
-      url = post.url,
+      shareUrl = post.url,
       comments =
         post.comments.edges
           .map {

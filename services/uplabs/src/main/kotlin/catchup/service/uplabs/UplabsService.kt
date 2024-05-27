@@ -104,7 +104,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
       text = null,
       imageUrl = item.imageInfo!!.url,
       score = item.score?.second,
-      url = item.clickUrl!!,
+      shareUrl = item.clickUrl!!,
       commentsCount = comments.size,
       comments = comments.map { comment -> comment.toComment(0) }.toImmutableList(),
     )

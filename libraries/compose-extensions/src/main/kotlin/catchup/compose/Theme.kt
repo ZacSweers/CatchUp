@@ -52,6 +52,14 @@ private val LightColors =
     surfaceTint = md_theme_light_surfaceTint,
     outlineVariant = md_theme_light_outlineVariant,
     scrim = md_theme_light_scrim,
+    // TODO what do
+    surfaceContainerLow = md_theme_light_surface,
+    surfaceContainer = md_theme_light_surface,
+    surfaceContainerHigh = md_theme_light_surface,
+    surfaceBright = md_theme_light_surface,
+    surfaceDim = md_theme_light_surface,
+    surfaceContainerLowest = md_theme_light_surface,
+    surfaceContainerHighest = md_theme_light_surface,
   )
 
 private val DarkColors =
@@ -85,6 +93,14 @@ private val DarkColors =
     surfaceTint = md_theme_dark_surfaceTint,
     outlineVariant = md_theme_dark_outlineVariant,
     scrim = md_theme_dark_scrim,
+    // TODO what do
+    surfaceContainerLow = md_theme_dark_surface,
+    surfaceContainer = md_theme_dark_surface,
+    surfaceContainerHigh = md_theme_dark_surface,
+    surfaceBright = md_theme_dark_surface,
+    surfaceDim = md_theme_dark_surface,
+    surfaceContainerLowest = md_theme_dark_surface,
+    surfaceContainerHighest = md_theme_dark_surface,
   )
 
 private val FONT_FAMILY by lazy {

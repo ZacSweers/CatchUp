@@ -17,24 +17,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,7 +48,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import catchup.app.data.LinkManager
 import catchup.app.service.ActionRow
+import catchup.app.service.detail.ServiceDetailScreen.Event.OpenImage
+import catchup.app.service.detail.ServiceDetailScreen.Event.OpenUrl
+import catchup.app.service.detail.ServiceDetailScreen.Event.Share
+import catchup.app.service.detail.ServiceDetailScreen.Event.ToggleCollapse
 import catchup.app.service.openUrl
+import catchup.app.service.shareUrl
 import catchup.app.ui.activity.ImageViewerScreen
 import catchup.base.ui.BackPressNavButton
 import catchup.compose.ContentAlphas
@@ -67,6 +78,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import javax.inject.Provider
+import kotlinx.collections.immutable.mutate
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import me.saket.unfurl.UnfurlResult
@@ -87,6 +100,7 @@ data class ServiceDetailScreen(
     val detail: Detail,
     val unfurl: UnfurlResult?,
     val themeColor: Color,
+    val collapsedItems: Set<String> = emptySet(),
     val eventSink: (Event) -> Unit = {},
   ) : CircuitUiState
 
@@ -94,6 +108,9 @@ data class ServiceDetailScreen(
     data object OpenImage : Event
 
     data object OpenUrl : Event
+    data object Share : Event
+
+    data class ToggleCollapse(val commentId: String) : Event
   }
 }
 
@@ -134,14 +151,43 @@ constructor(
     val detailRepository = rememberRetained {
       detailRepoFactory.create(screen.itemId, screen.serviceId)
     }
+    val collapsedItems = rememberRetained { mutableStateMapOf<String, Unit>() }
     val detailFlow = rememberRetained(init = detailRepository::loadDetail)
     val compositeDetail by detailFlow.collectAsRetainedState(initial = null)
     val scope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
     val (detail, unfurl) = compositeDetail ?: return initialState
-    return ServiceDetailScreen.State(detail, unfurl, themeColor) { event ->
+    val filteredDetail by
+      rememberRetained(detail, collapsedItems) {
+        derivedStateOf {
+          when (detail) {
+            is Detail.Shallow -> detail
+            is Detail.Full -> {
+              detail.copy(
+                comments =
+                  persistentListOf<Comment>().mutate {
+                    var collapsedDepth = -1
+                    for (comment in detail.comments) {
+                      if (collapsedDepth != -1 && comment.depth >= collapsedDepth) {
+                        continue
+                      } else if (comment.id in collapsedItems) {
+                        collapsedDepth = comment.depth + 1
+                        it.add(comment)
+                      } else {
+                        collapsedDepth = -1
+                        it.add(comment)
+                      }
+                    }
+                  }
+              )
+            }
+          }
+        }
+      }
+    return ServiceDetailScreen.State(filteredDetail, unfurl, themeColor, collapsedItems.keys) {
+      event ->
       when (event) {
-        ServiceDetailScreen.Event.OpenImage -> {
+        OpenImage -> {
           scope.launch {
             overlayHost.showFullScreenOverlay(
               ImageViewerScreen(
@@ -155,8 +201,19 @@ constructor(
             )
           }
         }
-        ServiceDetailScreen.Event.OpenUrl -> {
+        OpenUrl -> {
           scope.launch { linkManager.openUrl(detail.linkUrl!!) }
+        }
+        is ToggleCollapse -> {
+          val commentId = event.commentId
+          if (commentId in collapsedItems) {
+            collapsedItems -= commentId
+          } else {
+            collapsedItems[commentId] = Unit
+          }
+        }
+        Share -> {
+          linkManager.shareUrl(detail.shareUrl!!, detail.title)
         }
       }
     }
@@ -199,18 +256,37 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
         is Detail.Shallow -> 0
         is Detail.Full -> state.detail.comments.size
       }
-    items(1 + numComments) { index ->
+    items(
+      1 + numComments,
+      key = { i ->
+        // Ensure stable keys so animations look good
+        if (i == 0) {
+          "header"
+        } else
+          when (state.detail) {
+            is Detail.Shallow -> "loading"
+            is Detail.Full -> state.detail.comments[i - 1].id
+          }
+      },
+    ) { index ->
       if (index == 0) {
-        HeaderItem(state)
+        HeaderItem(state, Modifier.animateItem())
       } else {
         when (state.detail) {
           is Detail.Shallow -> {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(Modifier.fillMaxSize().animateItem(), contentAlignment = Alignment.Center) {
               CircularProgressIndicator()
             }
           }
           is Detail.Full -> {
-            CommentItem(state.detail.comments[index - 1])
+            val comment = state.detail.comments[index - 1]
+            CommentItem(
+              comment,
+              isCollapsed = comment.id in state.collapsedItems,
+              modifier = Modifier.animateItem(),
+            ) {
+              state.eventSink(ToggleCollapse(comment.id))
+            }
           }
         }
       }
@@ -245,11 +321,7 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
         state.unfurl
           // TODO Improve this. Maybe just ignore self-referencing unfurls?
           ?.takeUnless { it.thumbnail == null }
-          ?.let {
-            UnfurlItem(state.detail.title, it) {
-              state.eventSink(ServiceDetailScreen.Event.OpenUrl)
-            }
-          }
+          ?.let { UnfurlItem(state.detail.title, it) { state.eventSink(OpenUrl) } }
 
         // TODO metadata
 
@@ -259,7 +331,7 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
           itemId = state.detail.itemId,
           themeColor = state.themeColor,
           onShareClick = {
-            // TODO
+             state.eventSink(ServiceDetailScreen.Event.Share)
           },
         )
       }
@@ -268,46 +340,72 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
 }
 
 @Composable
-private fun CommentItem(comment: Comment, modifier: Modifier = Modifier) {
+private fun CommentItem(
+  comment: Comment,
+  isCollapsed: Boolean,
+  modifier: Modifier = Modifier,
+  onToggleCollapse: () -> Unit,
+) {
   val startPadding = 8.dp * comment.depth
-  Surface(modifier = modifier.padding(start = startPadding)) {
+  Surface(modifier = modifier.padding(start = startPadding), onClick = onToggleCollapse) {
     Box {
-      Column(modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)) {
+      val verticalPadding = if (isCollapsed) 16.dp else 8.dp
+      Column(
+        modifier =
+          Modifier.padding(vertical = verticalPadding, horizontal = 16.dp).animateContentSize()
+      ) {
         Row {
+          val commonModifier =
+            if (isCollapsed) Modifier.align(Alignment.CenterVertically) else Modifier
           Text(
             comment.author,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
+            modifier = commonModifier,
           )
           Text(
             " | ${comment.score.toLong().format()}",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
+            modifier = commonModifier,
           )
-          // TODO move this formatting into presenter somehow
-          val formattedTimestamp =
-            remember(comment.timestamp) {
-              DateUtils.getRelativeTimeSpanString(
-                  comment.timestamp.toEpochMilliseconds(),
-                  System.currentTimeMillis(),
-                  0L,
-                  DateUtils.FORMAT_ABBREV_ALL,
-                )
-                .toString()
-            }
-          // TODO markdown support
-          Text(
-            formattedTimestamp,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.End,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
-          )
+          if (isCollapsed) {
+            // TODO show number of children comments?
+            Spacer(Modifier.weight(1f))
+            Icon(
+              imageVector = Icons.Filled.ArrowDropDown,
+              contentDescription = "Expand",
+              modifier = commonModifier.size(24.dp),
+              tint = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
+            )
+          } else {
+            // TODO move this formatting into presenter somehow
+            val formattedTimestamp =
+              remember(comment.timestamp) {
+                DateUtils.getRelativeTimeSpanString(
+                    comment.timestamp.toEpochMilliseconds(),
+                    System.currentTimeMillis(),
+                    0L,
+                    DateUtils.FORMAT_ABBREV_ALL,
+                  )
+                  .toString()
+              }
+            // TODO markdown support
+            Text(
+              formattedTimestamp,
+              modifier = Modifier.weight(1f),
+              textAlign = TextAlign.End,
+              style = MaterialTheme.typography.labelMedium,
+              color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
+            )
+          }
         }
-        Spacer(Modifier.height(4.dp))
-        Text(comment.text, style = MaterialTheme.typography.bodySmall)
-        // TODO clickable links if any
+        if (!isCollapsed) {
+          Spacer(Modifier.height(4.dp))
+          Text(comment.text, style = MaterialTheme.typography.bodySmall)
+          // TODO clickable links if any
+        }
       }
       HorizontalDivider(Modifier.align(Alignment.TopCenter), thickness = Dp.Hairline)
     }
