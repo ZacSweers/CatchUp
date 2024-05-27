@@ -1,6 +1,5 @@
 package catchup.app.service
 
-import android.content.Intent
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -83,7 +82,6 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import com.slack.circuitx.android.IntentScreen
 import com.slack.circuitx.overlays.showFullScreenOverlay
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

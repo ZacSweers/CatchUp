@@ -40,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -108,6 +107,7 @@ data class ServiceDetailScreen(
     data object OpenImage : Event
 
     data object OpenUrl : Event
+
     data object Share : Event
 
     data class ToggleCollapse(val commentId: String) : Event
@@ -330,9 +330,7 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
         ActionRow(
           itemId = state.detail.itemId,
           themeColor = state.themeColor,
-          onShareClick = {
-             state.eventSink(ServiceDetailScreen.Event.Share)
-          },
+          onShareClick = { state.eventSink(ServiceDetailScreen.Event.Share) },
         )
       }
     }

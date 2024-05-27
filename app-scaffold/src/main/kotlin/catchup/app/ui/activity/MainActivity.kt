@@ -138,13 +138,12 @@ constructor(
         )
       }
 
-      val uriHandler = object : UriHandler {
-        override fun openUri(uri: String) {
-          runBlocking {
-            linkManager.openUrl(uri)
+      val uriHandler =
+        object : UriHandler {
+          override fun openUri(uri: String) {
+            runBlocking { linkManager.openUrl(uri) }
           }
         }
-      }
 
       val displayFeatures = calculateDisplayFeatures(this)
       CompositionLocalProvider(
@@ -152,7 +151,7 @@ constructor(
         // Override LocalContext to one that's set to our daynight modes, as many compose APIs use
         // LocalContext under the hood
         LocalContext provides contextToUse,
-        LocalUriHandler provides uriHandler
+        LocalUriHandler provides uriHandler,
       ) {
         CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
           CircuitCompositionLocals(circuit) {
