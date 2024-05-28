@@ -13,13 +13,7 @@ apollo = "4.0.0-beta.6"
 circuit = "0.21.0"
 coil = "2.6.0"
 compose = "1.7.0-beta01"
-# Pre-release versions for testing Kotlin previews can be found here
-# https://androidx.dev/storage/compose-compiler/repository
-compose-compiler = "1.5.14"
-compose-compiler-kotlinVersion = "1.9.24"
 compose-jb = "1.6.10"
-compose-jb-compiler = "1.5.14"
-compose-jb-kotlinVersion = "1.9.20"
 corbind = "1.11.0"
 coroutines = "1.8.1"
 dagger = "2.51.1"
@@ -29,23 +23,22 @@ eithernet = "1.8.1"
 flipper = "0.250.0"
 jdk = "21"
 jvmTarget = "17"
-kotlin = "1.9.24"
-kotlinx-metadata = "0.7.0"
-kotlinx-serialization = "1.6.3"
-ksp = "1.9.24-1.0.20"
+kotlin = "2.0.0"
+kotlinx-serialization = "1.7.0-RC"
+ksp = "2.0.0-1.0.21"
 ktfmt = "0.49"
 leakcanary = "3.0-alpha-6"
 lifecycle = "2.8.0"
 markwon = "4.6.2"
 moshi = "1.15.1"
-moshix = "0.26.0"
+moshix = "0.27.0"
 okhttp = "5.0.0-alpha.14"
 okio = "3.9.0"
 preferences = "1.2.1"
 retrofit = "2.11.0"
 slack-lint = "0.7.4"
 sortDependencies = "0.6"
-sgp = "0.17.0"
+sgp = "0.18.0-alpha03"
 spotless = "6.25.0"
 sqldelight = "2.0.2"
 telephoto = "0.11.2"
@@ -71,12 +64,13 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.11.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.9.1" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.8.1" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.9.0" }
 retry = { id = "org.gradle.test-retry", version = "1.5.9" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
 sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
@@ -121,7 +115,6 @@ androidx-sqlite = { module = "androidx.sqlite:sqlite", version.ref = "androidx-s
 
 androidx-compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose" }
 # Here to trigger renovate updates
-androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
@@ -145,7 +138,6 @@ androidx-test-ext-junit = "androidx.test.ext:junit:1.1.5"
 androidx-test-monitor = "androidx.test:monitor:1.7.0-beta01"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 
-compose-compilerJb = { module = "org.jetbrains.compose.compiler:compiler", version.ref = "compose-jb-compiler" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-jb" }
 compose-runtime-saveable = { module = "org.jetbrains.compose.runtime:runtime-saveable", version.ref = "compose-jb" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-jb" }
