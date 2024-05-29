@@ -230,11 +230,15 @@ fun DetailUi(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
       CenterAlignedTopAppBar(
         navigationIcon = { BackPressNavButton() },
         title = {
+          val formattedScore =
+            remember(state.detail.commentsCount) {
+              "${state.detail.commentsCount?.toLong()?.format() ?: "No"} comments"
+            }
           // TODO animation is clipped
           AnimatedContent(scrollBehavior.state.overlappedFraction != 0f, label = "AppBar Title") {
             scrolled ->
             if (scrolled) {
-              Text(text = "${state.detail.commentsCount?.toString() ?: "No"} comments")
+              Text(text = formattedScore)
             }
           }
         },
@@ -261,14 +265,14 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
       -1 -> {
         item(key = "loading", contentType = "loading") {
           Box(Modifier.fillParentMaxSize().animateItem(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(color = state.themeColor)
           }
         }
       }
       0 -> {
         item(key = "empty", contentType = "empty") {
           Box(Modifier.fillParentMaxSize().animateItem(), contentAlignment = Alignment.Center) {
-            Text("No comments")
+            Text("No comments 📭")
           }
         }
       }
@@ -372,6 +376,7 @@ private fun CommentItem(
             Icon(
               imageVector = Icons.Filled.ArrowDropDown,
               contentDescription = "Expand",
+              // TODO this is actually just because without this, there's a weird padding issue
               modifier = commonModifier.size(24.dp),
               tint = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
             )

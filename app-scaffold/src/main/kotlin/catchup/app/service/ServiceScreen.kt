@@ -250,7 +250,7 @@ constructor(
       rememberRetained(dataMode) {
           // TODO
           //  preference page size
-          createPager(service, dataMode, 50).cachedIn(pagingScope)
+          createPager(service, dataMode, 20).cachedIn(pagingScope)
         }
         .collectAsLazyPagingItems()
     return when (service.meta().isVisual) {
@@ -362,9 +362,12 @@ fun LoadingView(themeColor: Color, modifier: Modifier = Modifier) {
 
 @Composable
 fun LoadingItem(modifier: Modifier = Modifier) {
-  CircularProgressIndicator(
-    modifier =
-      modifier.fillMaxWidth().padding(16.dp).wrapContentWidth(Alignment.CenterHorizontally),
-    color = MaterialTheme.colorScheme.outline,
-  )
+  Box(
+    modifier = modifier.fillMaxWidth().padding(16.dp)
+  ) {
+    CircularProgressIndicator(
+      modifier = Modifier.align(Alignment.Center),
+      color = MaterialTheme.colorScheme.outline,
+    )
+  }
 }
