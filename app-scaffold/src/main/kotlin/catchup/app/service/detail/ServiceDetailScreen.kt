@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -251,43 +250,42 @@ fun DetailUi(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
 private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
   // TODO handle empty state
   LazyColumn(modifier = modifier) {
+    item(key = "header", contentType = "header") { HeaderItem(state, Modifier.animateItem()) }
+
     val numComments =
       when (state.detail) {
-        is Detail.Shallow -> 0
+        is Detail.Shallow -> -1
         is Detail.Full -> state.detail.comments.size
       }
-    items(
-      1 + numComments,
-      key = { i ->
-        // Ensure stable keys so animations look good
-        if (i == 0) {
-          "header"
-        } else
-          when (state.detail) {
-            is Detail.Shallow -> "loading"
-            is Detail.Full -> state.detail.comments[i - 1].id
-          }
-      },
-    ) { index ->
-      if (index == 0) {
-        HeaderItem(state, Modifier.animateItem())
-      } else {
-        when (state.detail) {
-          is Detail.Shallow -> {
-            Box(Modifier.fillMaxSize().animateItem(), contentAlignment = Alignment.Center) {
-              CircularProgressIndicator()
-            }
-          }
-          is Detail.Full -> {
-            val comment = state.detail.comments[index - 1]
-            CommentItem(
-              comment,
-              isCollapsed = comment.id in state.collapsedItems,
-              modifier = Modifier.animateItem(),
-            ) {
-              state.eventSink(ToggleCollapse(comment.id))
-            }
-          }
+
+    if (numComments == -1) {
+      item(key = "loading", contentType = "loading") {
+        Box(Modifier.fillParentMaxSize().animateItem(), contentAlignment = Alignment.Center) {
+          CircularProgressIndicator()
+        }
+      }
+    } else if (numComments == 0) {
+      item(key = "empty", contentType = "empty") {
+        Box(Modifier.fillParentMaxSize().animateItem(), contentAlignment = Alignment.Center) {
+          Text("No comments")
+        }
+      }
+    } else {
+      items(
+        count = numComments,
+        key = { i ->
+          // Ensure stable keys so animations look good
+          (state.detail as Detail.Full).comments[i].id
+        },
+        contentType = { "comment" },
+      ) { index ->
+        val comment = (state.detail as Detail.Full).comments[index]
+        CommentItem(
+          comment,
+          isCollapsed = comment.id in state.collapsedItems,
+          modifier = Modifier.animateItem(),
+        ) {
+          state.eventSink(ToggleCollapse(comment.id))
         }
       }
     }
@@ -302,10 +300,7 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
         AsyncImage(
           model = it,
           contentDescription = "Image",
-          modifier =
-            Modifier.fillMaxWidth().clickable {
-              state.eventSink(ServiceDetailScreen.Event.OpenImage)
-            },
+          modifier = Modifier.fillMaxWidth().clickable { state.eventSink(OpenImage) },
           contentScale = ContentScale.FillWidth,
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -330,7 +325,7 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
         ActionRow(
           itemId = state.detail.itemId,
           themeColor = state.themeColor,
-          onShareClick = { state.eventSink(ServiceDetailScreen.Event.Share) },
+          onShareClick = { state.eventSink(Share) },
         )
       }
     }
