@@ -248,7 +248,6 @@ fun DetailUi(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
 
 @Composable
 private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
-  // TODO handle empty state
   LazyColumn(modifier = modifier) {
     item(key = "header", contentType = "header") { HeaderItem(state, Modifier.animateItem()) }
 
@@ -258,34 +257,38 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
         is Detail.Full -> state.detail.comments.size
       }
 
-    if (numComments == -1) {
-      item(key = "loading", contentType = "loading") {
-        Box(Modifier.fillParentMaxSize().animateItem(), contentAlignment = Alignment.Center) {
-          CircularProgressIndicator()
+    when (numComments) {
+      -1 -> {
+        item(key = "loading", contentType = "loading") {
+          Box(Modifier.fillParentMaxSize().animateItem(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+          }
         }
       }
-    } else if (numComments == 0) {
-      item(key = "empty", contentType = "empty") {
-        Box(Modifier.fillParentMaxSize().animateItem(), contentAlignment = Alignment.Center) {
-          Text("No comments")
+      0 -> {
+        item(key = "empty", contentType = "empty") {
+          Box(Modifier.fillParentMaxSize().animateItem(), contentAlignment = Alignment.Center) {
+            Text("No comments")
+          }
         }
       }
-    } else {
-      items(
-        count = numComments,
-        key = { i ->
-          // Ensure stable keys so animations look good
-          (state.detail as Detail.Full).comments[i].id
-        },
-        contentType = { "comment" },
-      ) { index ->
-        val comment = (state.detail as Detail.Full).comments[index]
-        CommentItem(
-          comment,
-          isCollapsed = comment.id in state.collapsedItems,
-          modifier = Modifier.animateItem(),
-        ) {
-          state.eventSink(ToggleCollapse(comment.id))
+      else -> {
+        items(
+          count = numComments,
+          key = { i ->
+            // Ensure stable keys so animations look good
+            (state.detail as Detail.Full).comments[i].id
+          },
+          contentType = { "comment" },
+        ) { index ->
+          val comment = (state.detail as Detail.Full).comments[index]
+          CommentItem(
+            comment,
+            isCollapsed = comment.id in state.collapsedItems,
+            modifier = Modifier.animateItem(),
+          ) {
+            state.eventSink(ToggleCollapse(comment.id))
+          }
         }
       }
     }
