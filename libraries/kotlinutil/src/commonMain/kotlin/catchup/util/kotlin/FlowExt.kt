@@ -16,6 +16,7 @@
 package catchup.util.kotlin
 
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -58,6 +59,7 @@ suspend fun <T> Flow<T>.any(predicate: suspend (T) -> Boolean): Boolean {
 
 fun <T> Flow<T>.mergeWith(other: Flow<T>): Flow<T> = merge(this, other)
 
+@OptIn(ExperimentalForInheritanceCoroutinesApi::class)
 internal class MappedStateFlow<T, R>(
   private val source: StateFlow<T>,
   private val mapper: (T) -> R,
