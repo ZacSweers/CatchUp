@@ -3,16 +3,21 @@ accompanist = "0.35.1-alpha"
 agp = "8.6.0-alpha03"
 androidx-activity = "1.9.0"
 androidx-core = "1.14.0-alpha01"
+<<<<<<< renovate/androidx.sqlite -- Incoming Change
 androidx-sqlite = "2.5.0-alpha03"
 appcompat = "1.7.0-rc01"
+=======
+androidx-sqlite = "2.5.0-alpha02"
+appcompat = "1.7.0"
+>>>>>>> main -- Current Change
 benchmark = "1.3.0-alpha05"
-compose-material3 = "1.3.0-beta01"
+compose-material3 = "1.3.0-beta02"
 emoji = "1.2.0-alpha03"
 anvil = "2.5.0-beta09"
 apollo = "4.0.0-beta.6"
-circuit = "0.22.0"
+circuit = "0.22.1"
 coil = "2.6.0"
-compose = "1.7.0-beta01"
+compose = "1.7.0-beta02"
 compose-jb = "1.6.10"
 corbind = "1.11.0"
 coroutines = "1.8.1"
@@ -28,7 +33,7 @@ kotlinx-serialization = "1.7.0-RC"
 ksp = "2.0.0-1.0.21"
 ktfmt = "0.49"
 leakcanary = "3.0-alpha-6"
-lifecycle = "2.8.0"
+lifecycle = "2.8.1"
 markwon = "4.6.2"
 moshi = "1.15.1"
 moshix = "0.27.0"
@@ -97,7 +102,7 @@ androidx-design = "com.google.android.material:material:1.13.0-alpha02"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
-androidx-fragment = "androidx.fragment:fragment:1.8.0-beta01"
+androidx-fragment = "androidx.fragment:fragment:1.8.0-rc01"
 
 androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
@@ -130,7 +135,7 @@ androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.0-al
 androidx-paging-compose = "androidx.paging:paging-compose:3.3.0"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-material-material3-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
-androidx-window = { module = "androidx.window:window", version = "1.3.0-rc01" }
+androidx-window = { module = "androidx.window:window", version = "1.3.0" }
 androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-alpha01"
 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-alpha01"
