@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
@@ -176,8 +175,11 @@ constructor(
                 // TODO this needs to be conditional. For example, we don't want selftext links
                 //  here. Maybe a new external link property?
                 linkUrl = event.item.clickUrl,
-                score = event.item.score?.second ?: 0,
+                score = event.item.score?.second?.toLong() ?: 0L,
                 commentsCount = event.item.mark?.text?.toIntOrNull() ?: 0,
+                tag = event.item.tag,
+                author = event.item.author,
+                timestamp = event.item.timestamp?.toEpochMilliseconds(),
               )
             )
           } else {
@@ -362,9 +364,7 @@ fun LoadingView(themeColor: Color, modifier: Modifier = Modifier) {
 
 @Composable
 fun LoadingItem(modifier: Modifier = Modifier) {
-  Box(
-    modifier = modifier.fillMaxWidth().padding(16.dp)
-  ) {
+  Box(modifier = modifier.fillMaxWidth().padding(16.dp)) {
     CircularProgressIndicator(
       modifier = Modifier.align(Alignment.Center),
       color = MaterialTheme.colorScheme.outline,

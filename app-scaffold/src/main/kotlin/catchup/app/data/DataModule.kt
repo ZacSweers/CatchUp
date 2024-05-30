@@ -17,10 +17,13 @@ package catchup.app.data
 
 import android.content.Context
 import android.os.Looper
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import catchup.app.injection.DaggerSet
 import catchup.appconfig.AppConfig
 import catchup.di.AppScope
+import catchup.di.FakeMode
 import catchup.di.SingleIn
+import catchup.sqldelight.SqlDriverFactory
 import catchup.util.data.adapters.UnescapeJsonAdapter
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.injection.qualifiers.NetworkInterceptor
@@ -32,7 +35,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.Multibinds
 import java.util.concurrent.TimeUnit
-import me.saket.unfurl.Unfurler
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -101,9 +103,15 @@ abstract class DataModule {
     }
 
     @Provides
-    @SingleIn(AppScope::class)
-    fun provideUnfurler(client: OkHttpClient): Unfurler {
-      return Unfurler(httpClient = client)
+    fun provideSqlDriverFactory(
+      @ApplicationContext context: Context,
+      @FakeMode isFakeMode: Boolean,
+    ): SqlDriverFactory = SqlDriverFactory { schema, name ->
+      AndroidSqliteDriver(
+        schema,
+        context,
+        name.takeUnless { isFakeMode },
+      )
     }
   }
 }

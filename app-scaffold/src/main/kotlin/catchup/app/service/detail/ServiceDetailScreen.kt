@@ -46,6 +46,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import catchup.app.data.LinkManager
 import catchup.app.service.ActionRow
+import catchup.app.service.TextItemFooter
+import catchup.app.service.TextItemHeader
 import catchup.app.service.detail.ServiceDetailScreen.Event.OpenImage
 import catchup.app.service.detail.ServiceDetailScreen.Event.OpenUrl
 import catchup.app.service.detail.ServiceDetailScreen.Event.Share
@@ -59,6 +61,7 @@ import catchup.di.AppScope
 import catchup.service.api.Comment
 import catchup.service.api.Detail
 import catchup.service.api.Service
+import catchup.unfurler.UnfurlResult
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.kotlin.format
 import coil.compose.AsyncImage
@@ -79,8 +82,8 @@ import javax.inject.Provider
 import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
 import kotlinx.parcelize.Parcelize
-import me.saket.unfurl.UnfurlResult
 
 @Parcelize
 data class ServiceDetailScreen(
@@ -91,8 +94,11 @@ data class ServiceDetailScreen(
   val text: String?,
   val imageUrl: String?,
   val linkUrl: String?,
-  val score: Int?,
+  val score: Long?,
   val commentsCount: Int?,
+  val tag: String?,
+  val author: String?,
+  val timestamp: Long?,
 ) : Screen {
   data class State(
     val detail: Detail,
@@ -134,12 +140,15 @@ constructor(
   private val initialState =
     ServiceDetailScreen.State(
       Detail.Shallow(
-        screen.id,
-        screen.itemId,
-        screen.title,
-        screen.text,
-        screen.imageUrl,
-        screen.score,
+        id = screen.id,
+        itemId = screen.itemId,
+        title = screen.title,
+        text = screen.text,
+        imageUrl = screen.imageUrl,
+        score = screen.score,
+        tag = screen.tag,
+        author = screen.author,
+        timestamp = screen.timestamp?.let(Instant::fromEpochMilliseconds),
       ),
       null,
       themeColor,
@@ -319,18 +328,27 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
         modifier = Modifier.padding(horizontal = 16.dp),
         verticalArrangement = spacedBy(8.dp),
       ) {
-        Text(state.detail.title, style = MaterialTheme.typography.titleMedium)
-        state.detail.text?.takeUnless(String::isBlank)?.let {
+        val detail = state.detail
+        Text(detail.title, style = MaterialTheme.typography.titleMedium)
+        detail.text?.takeUnless(String::isBlank)?.let {
           Text(it, style = MaterialTheme.typography.bodyMedium)
         }
+
         state.unfurl
           // TODO Improve this. Maybe just ignore self-referencing unfurls?
           ?.takeUnless { it.thumbnail == null }
-          ?.let { UnfurlItem(state.detail.title, it) { state.eventSink(OpenUrl) } }
+          ?.let { UnfurlItem(detail.title, it) { state.eventSink(OpenUrl) } }
 
-        // TODO metadata
+        TextItemHeader(
+          score = detail.score,
+          tag = detail.tag,
+          tagHintColor = state.themeColor,
+          timestamp = detail.timestamp,
+        )
+        TextItemFooter(author = detail.author, source = null)
 
         HorizontalDivider(thickness = Dp.Hairline)
+
         // Action buttons
         ActionRow(
           itemId = state.detail.itemId,
@@ -423,9 +441,10 @@ private fun UnfurlItem(
   modifier: Modifier = Modifier,
   onOpenUrl: () -> Unit,
 ) {
+  // TODO in dark mode this doesn't work well
   ElevatedCard(modifier = modifier, onClick = onOpenUrl) {
     val thumbnail = unfurl.thumbnail
-    val title = unfurl.title ?: unfurl.url.toString()
+    val title = unfurl.title ?: unfurl.url
     if (thumbnail == null) {
       Row(Modifier.padding(16.dp)) {
         // TODO if thumbnail is available, show rich preview. If just favicon, show just in corner

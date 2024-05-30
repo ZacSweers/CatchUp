@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -65,6 +66,7 @@ import com.slack.circuit.retained.rememberRetained
 import dev.zacsweers.catchup.app.scaffold.R
 import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @Composable
 fun TextServiceUi(
@@ -228,24 +230,49 @@ fun RowScope.DetailColumn(
 }
 
 @Composable
-private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
-  if (item.score != null || item.tag != null || item.timestamp != null) {
-    Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-      item.score?.let { score ->
+private fun ItemHeader(item: CatchUpItem, themeColor: Color, modifier: Modifier = Modifier) {
+  TextItemHeader(
+    score = item.score?.second?.toLong(),
+    scorePrefix = item.score?.first?.let { "$it " },
+    tag = item.tag,
+    tagHintColor = item.tagHintColor?.let(::Color) ?: themeColor,
+    timestamp = item.timestamp,
+    themeColor = themeColor,
+    modifier = modifier,
+  )
+}
+
+@Composable
+fun TextItemHeader(
+  score: Long?,
+  tag: String?,
+  timestamp: Instant?,
+  modifier: Modifier = Modifier,
+  scorePrefix: String? = null,
+  themeColor: Color = LocalContentColor.current,
+  tagHintColor: Color = themeColor,
+) {
+  if (score != null || tag != null || timestamp != null) {
+    Row(
+      modifier = modifier,
+      verticalAlignment = Alignment.Bottom,
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+      score?.let { score ->
         Text(
-          text = "${score.first} ${score.second.toLong().format()}",
+          text = "${scorePrefix.orEmpty()}${score.format()}",
           fontWeight = FontWeight.Bold,
           style = MaterialTheme.typography.labelSmall,
           color = themeColor,
         )
       }
-      item.tag?.let { tag ->
-        if (item.score != null) {
+      tag?.let { tag ->
+        if (score != null) {
           Text(
             text = " • ",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.labelSmall,
-            color = item.tagHintColor?.let(::Color) ?: themeColor,
+            color = tagHintColor,
           )
         }
         val primaryLocale = LocalContext.current.primaryLocale
@@ -259,8 +286,8 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
           color = themeColor,
         )
       }
-      item.timestamp?.let { timestamp ->
-        if (item.score != null || item.tag != null) {
+      timestamp?.let { timestamp ->
+        if (score != null || tag != null) {
           Text(
             text = " • ",
             style = MaterialTheme.typography.labelSmall,
@@ -286,21 +313,34 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
 }
 
 @Composable
-private fun ItemFooter(item: CatchUpItem) {
+private fun ItemFooter(item: CatchUpItem, modifier: Modifier = Modifier) {
+  TextItemFooter(
+    author = item.author,
+    source = item.source,
+    modifier = modifier,
+  )
+}
+
+@Composable
+fun TextItemFooter(
+  author: String?,
+  source: String?,
+  modifier: Modifier = Modifier,
+) {
   val textColor = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
-  if (item.author != null || item.source != null) {
-    Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+  if (author != null || source != null) {
+    Row(modifier = modifier, verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
       // Author
-      item.author
+      author
         ?.takeUnless { it.isBlank() }
         ?.let { author ->
           Text(text = author, style = MaterialTheme.typography.labelSmall, color = textColor)
         }
       // Source
-      item.source
+      source
         ?.takeUnless { it.isBlank() }
         ?.let { source ->
-          if (item.author != null) {
+          if (author != null) {
             Text(text = " — ", style = MaterialTheme.typography.labelSmall, color = textColor)
           }
           Text(text = source, style = MaterialTheme.typography.labelSmall, color = textColor)

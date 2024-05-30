@@ -103,10 +103,13 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
       title = item.title,
       text = null,
       imageUrl = item.imageInfo!!.url,
-      score = item.score?.second,
+      score = item.score?.second?.toLong(),
       shareUrl = item.clickUrl!!,
       commentsCount = comments.size,
       comments = comments.map { comment -> comment.toComment(0) }.toImmutableList(),
+      timestamp = item.timestamp,
+      author = item.author,
+      tag = item.tag,
     )
   }
 }

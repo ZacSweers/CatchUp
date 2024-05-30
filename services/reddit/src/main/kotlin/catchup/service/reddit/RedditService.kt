@@ -133,11 +133,14 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
       title = detailListing.title,
       text = detailListing.selftext,
       imageUrl = if (detailListing.postHint == "image") detailListing.url else null,
-      score = detailListing.score,
+      score = detailListing.score.toLong(),
       shareUrl = detailListing.url,
       linkUrl = detailListing.url.takeUnless { detailListing.isSelf },
       comments = comments,
       commentsCount = detailListing.commentsCount,
+      timestamp = detailListing.createdUtc,
+      author = "/u/" + detailListing.author,
+      tag = detailListing.subreddit,
     )
   }
 }

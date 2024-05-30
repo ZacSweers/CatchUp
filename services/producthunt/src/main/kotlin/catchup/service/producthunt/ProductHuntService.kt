@@ -147,10 +147,13 @@ constructor(
       itemId = item.id,
       title = post.name,
       text = post.description,
-      score = post.votesCount,
+      score = post.votesCount.toLong(),
       commentsCount = post.commentsCount,
       linkUrl = post.website,
       shareUrl = post.url,
+      timestamp = post.featuredAt,
+      author = null, // Always redacted now in their API
+      tag = post.topics.edges.firstOrNull()?.node?.name,
       comments =
         post.comments.edges
           .map {

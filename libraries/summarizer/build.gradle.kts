@@ -54,6 +54,7 @@ dependencies {
   api(projects.libraries.appconfig)
   api(projects.libraries.di)
   api(projects.libraries.util)
+  api(projects.libraries.sqldelightExtensions)
 
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.compose.accompanist.systemUi)
@@ -64,7 +65,6 @@ dependencies {
   implementation(libs.androidx.sqlite)
   implementation(libs.kotlin.coroutines)
   implementation(libs.retrofit.moshi)
-  implementation(libs.sqldelight.driver.android)
   implementation(projects.libraries.baseUi)
   implementation(projects.libraries.retrofitconverters)
 }

@@ -14,10 +14,13 @@ sealed interface Detail {
   val title: String
   val text: String?
   val imageUrl: String?
-  val score: Int?
+  val score: Long?
   val commentsCount: Int?
   val linkUrl: String?
   val shareUrl: String?
+  val tag: String?
+  val author: String?
+  val timestamp: Instant?
 
   data class Shallow(
     override val id: String,
@@ -25,10 +28,13 @@ sealed interface Detail {
     override val title: String,
     override val text: String? = null,
     override val imageUrl: String? = null,
-    override val score: Int? = null,
+    override val score: Long? = null,
     override val commentsCount: Int? = null,
     override val linkUrl: String? = null,
     override val shareUrl: String? = null,
+    override val tag: String? = null,
+    override val author: String? = null,
+    override val timestamp: Instant? = null,
   ) : Detail
 
   data class Full(
@@ -37,10 +43,13 @@ sealed interface Detail {
     override val title: String,
     override val text: String? = null,
     override val imageUrl: String? = null,
-    override val score: Int? = null,
+    override val score: Long? = null,
     override val commentsCount: Int? = null,
     override val linkUrl: String? = null,
     override val shareUrl: String,
+    override val tag: String? = null,
+    override val author: String? = null,
+    override val timestamp: Instant? = null,
     val comments: ImmutableList<Comment> = persistentListOf(),
   ) : Detail
 }

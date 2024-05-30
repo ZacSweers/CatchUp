@@ -7,6 +7,8 @@ import catchup.service.api.Detail
 import catchup.service.api.Service
 import catchup.service.api.toCatchUpItem
 import catchup.service.db.CatchUpDatabase
+import catchup.unfurler.UnfurlResult
+import catchup.unfurler.UnfurlerRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -16,8 +18,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
-import me.saket.unfurl.UnfurlResult
-import me.saket.unfurl.Unfurler
 
 class DetailRepository
 @AssistedInject
@@ -26,7 +26,7 @@ constructor(
   @Assisted private val serviceId: String,
   private val dbFactory: ContextualFactory<DataMode, out CatchUpDatabase>,
   services: @JvmSuppressWildcards Map<String, Provider<Service>>,
-  private val unfurler: Unfurler,
+  private val unfurlerRepository: UnfurlerRepository,
 ) {
 
   private val service = services.getValue(serviceId).get()
@@ -53,8 +53,8 @@ constructor(
     return service.fetchDetail(item, item.detailKey!!)
   }
 
-  private fun loadUnfurl(linkUrl: String): UnfurlResult? {
-    return unfurler.unfurl(linkUrl)
+  private suspend fun loadUnfurl(linkUrl: String): UnfurlResult? {
+    return unfurlerRepository.loadUnfurl(linkUrl)
   }
 
   @AssistedFactory
