@@ -7,8 +7,6 @@ CREATE TABLE IF NOT EXISTS unfurls (
   PRIMARY KEY(url)
 );
 
-CREATE UNIQUE INDEX idx_unfurls_url ON unfurls (url);
-
 insert:
 INSERT INTO unfurls(url, title, description, favicon, thumbnail)
 VALUES (?, ?, ? ,?, ?);

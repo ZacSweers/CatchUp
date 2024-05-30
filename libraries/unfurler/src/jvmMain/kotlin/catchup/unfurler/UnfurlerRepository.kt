@@ -33,10 +33,12 @@ constructor(okHttpClient: OkHttpClient, sqlDriverFactory: SqlDriverFactory) {
       db.unfurlsQueries.getUnfurl(url, ::UnfurlResult).executeAsOneOrNull()?.let { dbResult ->
         return@withContext dbResult
       }
+      println("No DB result for $url")
       val unfurlerResult =
         unfurler.unfurl(url)?.let(UnfurlResult::fromInternalResult) ?: return@withContext null
       // TODO make an alias table instead? We do this because urls may be different
-      for (key in listOf(unfurlerResult.url, url).distinct()) {
+      for (key in listOf(url, unfurlerResult.url).distinct()) {
+        println("Inserting unfurl for $key. Original was $url.")
         db.unfurlsQueries.insert(
           url = key,
           title = unfurlerResult.title,

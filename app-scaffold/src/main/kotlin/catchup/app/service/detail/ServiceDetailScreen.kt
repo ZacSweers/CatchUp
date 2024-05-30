@@ -441,7 +441,7 @@ private fun UnfurlItem(
   modifier: Modifier = Modifier,
   onOpenUrl: () -> Unit,
 ) {
-  // TODO in dark mode this doesn't work well
+  // TODO in dark mode this doesn't work well. In light mode it could be darker too
   ElevatedCard(modifier = modifier, onClick = onOpenUrl) {
     val thumbnail = unfurl.thumbnail
     val title = unfurl.title ?: unfurl.url
