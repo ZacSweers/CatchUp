@@ -271,7 +271,10 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
       }
       0 -> {
         item(key = "empty", contentType = "empty") {
-          Box(Modifier.fillParentMaxSize().animateItem(), contentAlignment = Alignment.Center) {
+          Box(
+            modifier = Modifier.animateItem().padding(16.dp).fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+          ) {
             Text("No comments 📭")
           }
         }
