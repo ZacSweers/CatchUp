@@ -38,7 +38,7 @@ constructor(okHttpClient: OkHttpClient, sqlDriverFactory: SqlDriverFactory) {
       // TODO make an alias table instead? We do this because urls may be different
       for (key in listOf(unfurlerResult.url, url).distinct()) {
         db.unfurlsQueries.insert(
-          url = unfurlerResult.url,
+          url = key,
           title = unfurlerResult.title,
           description = unfurlerResult.description,
           favicon = unfurlerResult.favicon.toString(),
