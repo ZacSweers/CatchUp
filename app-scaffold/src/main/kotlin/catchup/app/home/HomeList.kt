@@ -72,7 +72,7 @@ fun HomeList(state: State, modifier: Modifier = Modifier) {
         HomeListItemEntry(
           icon = rememberVectorPainter(Icons.Filled.Settings),
           title = stringResource(R.string.title_activity_settings),
-          serviceTint = MaterialTheme.colorScheme.primary,
+          serviceTint = MaterialTheme.colorScheme.onPrimaryContainer,
           description = "Miscellaneous CatchUp settings",
           isSelected = state.selectedIndex == index,
           onClick = { state.eventSink(Selected(index)) },

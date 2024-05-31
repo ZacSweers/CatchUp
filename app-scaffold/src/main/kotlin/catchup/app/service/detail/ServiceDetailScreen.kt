@@ -5,6 +5,7 @@ import android.text.format.DateUtils
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement.End
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -356,6 +357,7 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
           onShareClick = { state.eventSink(Share) },
         )
       }
+      HorizontalDivider(thickness = Dp.Hairline)
     }
   }
 }
@@ -367,13 +369,13 @@ private fun CommentItem(
   modifier: Modifier = Modifier,
   onToggleCollapse: () -> Unit,
 ) {
-  val startPadding = 8.dp * comment.depth
-  Surface(modifier = modifier.padding(start = startPadding), onClick = onToggleCollapse) {
+  Surface(modifier = modifier, onClick = onToggleCollapse) {
     Box {
-      val verticalPadding = if (isCollapsed) 16.dp else 8.dp
+      val startPadding = 8.dp * comment.depth
       Column(
         modifier =
-          Modifier.padding(vertical = verticalPadding, horizontal = 16.dp).animateContentSize()
+          Modifier.padding(start = startPadding + 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp)
+            .animateContentSize()
       ) {
         Row {
           val commonModifier =
@@ -393,11 +395,11 @@ private fun CommentItem(
           )
           if (isCollapsed) {
             // TODO show number of children comments?
+            // TODO animate/crossfade this somehow with timestamp?
             Spacer(Modifier.weight(1f))
             Icon(
               imageVector = Icons.Filled.ArrowDropDown,
               contentDescription = "Expand",
-              // TODO this is actually just because without this, there's a weird padding issue
               modifier = commonModifier.size(24.dp),
               tint = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
             )
@@ -429,7 +431,10 @@ private fun CommentItem(
           // TODO clickable links if any
         }
       }
-      HorizontalDivider(Modifier.align(Alignment.TopCenter), thickness = Dp.Hairline)
+      HorizontalDivider(
+        modifier = Modifier.padding(start = startPadding).align(Alignment.BottomCenter),
+        thickness = Dp.Hairline,
+      )
     }
   }
 }
@@ -441,7 +446,6 @@ private fun UnfurlItem(
   modifier: Modifier = Modifier,
   onOpenUrl: () -> Unit,
 ) {
-  // TODO in dark mode this doesn't work well. In light mode it could be darker too
   ElevatedCard(modifier = modifier, onClick = onOpenUrl) {
     val thumbnail = unfurl.thumbnail
     val title = unfurl.title ?: unfurl.url
@@ -456,7 +460,7 @@ private fun UnfurlItem(
           )
           Spacer(Modifier.width(8.dp))
         }
-        UnfurlText(title, showTitle = title != parentTitle, unfurl.description)
+        UnfurlText(title, showTitle = title != parentTitle, unfurl.description, unfurl.domain)
       }
     } else {
       Column {
@@ -470,6 +474,7 @@ private fun UnfurlItem(
           title,
           showTitle = title != parentTitle,
           unfurl.description,
+          unfurl.domain,
           modifier = Modifier.padding(16.dp),
         )
       }
@@ -482,9 +487,10 @@ private fun UnfurlText(
   title: String,
   showTitle: Boolean,
   description: String?,
+  domain: String?,
   modifier: Modifier = Modifier,
 ) {
-  Column(modifier) {
+  Column(modifier.fillMaxWidth()) {
     if (showTitle) {
       Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
     }
@@ -495,6 +501,15 @@ private fun UnfurlText(
         maxLines = 3,
         overflow = TextOverflow.Ellipsis,
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
+      )
+    }
+    domain?.let {
+      Text(
+        it,
+        modifier = Modifier.align(Alignment.End),
+        style = MaterialTheme.typography.bodySmall,
+        maxLines = 1,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
       )
     }
   }

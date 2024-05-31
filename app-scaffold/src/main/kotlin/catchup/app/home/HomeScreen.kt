@@ -69,7 +69,6 @@ import catchup.app.service.ServiceScreen
 import catchup.app.service.bookmarks.Bookmark
 import catchup.app.service.bookmarks.BookmarksScreen
 import catchup.app.ui.activity.SettingsScreen
-import catchup.base.ui.HazeScaffold
 import catchup.base.ui.rememberSystemBarColorController
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.LocalDisplayFeatures
@@ -84,10 +83,13 @@ import catchup.service.api.ServiceMeta
 import catchup.util.toDayContext
 import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.google.accompanist.adaptive.TwoPane
+import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
+import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.onNavEvent
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.produceRetainedState
@@ -199,7 +201,7 @@ constructor(
     ) { event ->
       when (event) {
         OpenSettings -> {
-          navigator.goTo(SettingsScreen)
+          navigator.goTo(SettingsScreen())
         }
         OpenBookmarks -> {
           navigator.goTo(BookmarksScreen)
@@ -252,35 +254,53 @@ fun Home(state: State, modifier: Modifier = Modifier) {
       },
       // TODO animate content changes, ideally same as nav decoration
       second = {
-        // Box is to prevent it from flashing the background between changes
-        Box {
-          // TODO temporary until https://github.com/slackhq/circuit/pull/799
-          key(state.selectedIndex) {
-            // TODO
-            //  should probably just synthesize putting the settings in the list
-            //  crossfade?
-            if (state.selectedIndex == state.serviceMetas.size) {
-              // TODO this doesn't reaaaaaaally work because it wants to navigate on its own
-              CircuitContent(SettingsScreen)
-            } else {
-              // Embed the content in a scaffold for padding and such
-              val meta = state.serviceMetas[state.selectedIndex]
-              val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-              HazeScaffold(
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                containerColor = Color.Transparent,
-                topBar = {
-                  TopAppBar(
-                    title = { Text(stringResource(meta.name), fontWeight = FontWeight.Black) },
-                    scrollBehavior = scrollBehavior,
-                    colors = topAppBarColors(containerColor = Color.Transparent),
-                  )
-                },
-              ) { innerPadding ->
-                CircuitContent(ServiceScreen(meta.id), modifier = Modifier.padding(innerPadding))
+        // TODO
+        //  should probably just synthesize putting the settings in the list
+        //  crossfade?
+        // TODO key is necessary for nested nav to work for some reason? Otherwise only works once
+        key(state.selectedIndex) {
+          val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+          var showTopBar by remember { mutableStateOf(true) }
+          // Embed the content in a scaffold for padding and such
+          Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            topBar = {
+              AnimatedVisibility(showTopBar) {
+                TopAppBar(
+                  title = {
+                    val title =
+                      if (state.selectedIndex == state.serviceMetas.size) {
+                        stringResource(AppScaffoldR.string.title_activity_settings)
+                      } else {
+                        val meta = state.serviceMetas[state.selectedIndex]
+                        stringResource(meta.name)
+                      }
+                    Text(title, fontWeight = FontWeight.Black)
+                  },
+                  scrollBehavior = scrollBehavior,
+                  colors = topAppBarColors(),
+                )
               }
-            }
+            },
+          ) { innerPadding ->
+            val screen =
+              remember(state.selectedIndex) {
+                if (state.selectedIndex == state.serviceMetas.size) {
+                  SettingsScreen(showTopAppBar = false)
+                } else {
+                  val meta = state.serviceMetas[state.selectedIndex]
+                  ServiceScreen(meta.id)
+                }
+              }
+            val nestedBackStack = rememberSaveableBackStack(screen)
+            val nestedNavigator = rememberCircuitNavigator(nestedBackStack)
+            showTopBar = nestedBackStack.size == 1
+            NavigableCircuitContent(
+              nestedNavigator,
+              backStack = nestedBackStack,
+              modifier = Modifier.padding(innerPadding),
+            )
           }
         }
       },
