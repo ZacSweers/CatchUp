@@ -9,6 +9,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.saket.unfurl.Unfurler
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 
 /** A simple unfurler client that maintains a small in-memory and DB cache. */
@@ -61,6 +62,8 @@ data class UnfurlResult(
   val favicon: String?,
   val thumbnail: String?,
 ) {
+  val domain = url.toHttpUrl().host.removePrefix("www.")
+
   internal companion object {
     fun fromInternalResult(unfurlResult: me.saket.unfurl.UnfurlResult): UnfurlResult {
       return UnfurlResult(
