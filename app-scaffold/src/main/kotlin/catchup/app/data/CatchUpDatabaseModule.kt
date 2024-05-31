@@ -15,11 +15,9 @@
  */
 package catchup.app.data
 
-import android.content.Context
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
-import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import catchup.bookmarks.db.Bookmark
 import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
 import catchup.di.AppScope
@@ -29,7 +27,6 @@ import catchup.di.SingleIn
 import catchup.service.db.CatchUpDatabase
 import catchup.service.db.CatchUpDbItem
 import catchup.sqldelight.SqlDriverFactory
-import catchup.util.injection.qualifiers.ApplicationContext
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Lazy

@@ -314,22 +314,18 @@ fun TextItemHeader(
 
 @Composable
 private fun ItemFooter(item: CatchUpItem, modifier: Modifier = Modifier) {
-  TextItemFooter(
-    author = item.author,
-    source = item.source,
-    modifier = modifier,
-  )
+  TextItemFooter(author = item.author, source = item.source, modifier = modifier)
 }
 
 @Composable
-fun TextItemFooter(
-  author: String?,
-  source: String?,
-  modifier: Modifier = Modifier,
-) {
+fun TextItemFooter(author: String?, source: String?, modifier: Modifier = Modifier) {
   val textColor = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
   if (author != null || source != null) {
-    Row(modifier = modifier, verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+    Row(
+      modifier = modifier,
+      verticalAlignment = Alignment.Bottom,
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
       // Author
       author
         ?.takeUnless { it.isBlank() }

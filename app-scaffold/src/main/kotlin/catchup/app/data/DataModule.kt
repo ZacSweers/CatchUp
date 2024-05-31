@@ -107,11 +107,7 @@ abstract class DataModule {
       @ApplicationContext context: Context,
       @FakeMode isFakeMode: Boolean,
     ): SqlDriverFactory = SqlDriverFactory { schema, name ->
-      AndroidSqliteDriver(
-        schema,
-        context,
-        name.takeUnless { isFakeMode },
-      )
+      AndroidSqliteDriver(schema, context, name.takeUnless { isFakeMode })
     }
   }
 }
