@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
@@ -37,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -89,6 +89,9 @@ import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.foundation.onNavEvent
 import com.slack.circuit.overlay.LocalOverlayHost
+import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.produceRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -163,10 +166,10 @@ constructor(
 
   @Composable
   override fun present(): State {
-    val currentOrder by remember { catchUpPreferences.servicesOrder }.collectAsState()
-    var selectedIndex by remember(currentOrder) { mutableIntStateOf(0) }
+    val currentOrder by rememberRetained { catchUpPreferences.servicesOrder }.collectAsState()
+    var selectedIndex by rememberRetained(currentOrder) { mutableIntStateOf(0) }
     val serviceMetas by
-      produceState(initialValue = persistentListOf(), currentOrder) {
+      produceRetainedState(initialValue = persistentListOf(), currentOrder) {
         // TODO make enabledPrefKey live?
         check(serviceMetaMap.isNotEmpty()) { "No services found!" }
         value =
@@ -183,8 +186,8 @@ constructor(
     val context = LocalContext.current
     val changelogAvailable by changelogHelper.changelogAvailable(context).collectAsState(false)
 
-    val countFlow = remember { bookmarkRepository.bookmarksCountFlow() }
-    val bookmarksCount by countFlow.collectAsState(0L)
+    val countFlow = rememberRetained { bookmarkRepository.bookmarksCountFlow() }
+    val bookmarksCount by countFlow.collectAsRetainedState(0L)
 
     val scope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
@@ -374,12 +377,9 @@ fun HomePager(state: State, modifier: Modifier = Modifier) {
   }
   val serviceMetas by rememberUpdatedState(state.serviceMetas)
   val eventSink by rememberUpdatedState(state.eventSink)
-  HazeScaffold(
+  Scaffold(
     modifier = nestedScrollModifier,
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
-    containerColor = Color.Transparent,
-    blurTopBar = true,
-    blurBottomBar = true,
     topBar = {
       TopAppBar(
         title = { Text(title) },
