@@ -264,6 +264,7 @@ fun TextItemHeader(
           fontWeight = FontWeight.Bold,
           style = MaterialTheme.typography.labelSmall,
           color = themeColor,
+          maxLines = 1,
         )
       }
       tag?.let { tag ->
@@ -273,6 +274,7 @@ fun TextItemHeader(
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.labelSmall,
             color = tagHintColor,
+            maxLines = 1,
           )
         }
         val primaryLocale = LocalContext.current.primaryLocale
@@ -284,6 +286,7 @@ fun TextItemHeader(
           fontWeight = FontWeight.Bold,
           style = MaterialTheme.typography.labelSmall,
           color = themeColor,
+          maxLines = 1,
         )
       }
       timestamp?.let { timestamp ->
@@ -292,6 +295,7 @@ fun TextItemHeader(
             text = " • ",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
+            maxLines = 1,
           )
         }
         val millis = timestamp.toEpochMilliseconds()
@@ -306,6 +310,7 @@ fun TextItemHeader(
               .toString(),
           style = MaterialTheme.typography.labelSmall,
           color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
+          maxLines = 1,
         )
       }
     }
@@ -330,16 +335,31 @@ fun TextItemFooter(author: String?, source: String?, modifier: Modifier = Modifi
       author
         ?.takeUnless { it.isBlank() }
         ?.let { author ->
-          Text(text = author, style = MaterialTheme.typography.labelSmall, color = textColor)
+          Text(
+            text = author,
+            style = MaterialTheme.typography.labelSmall,
+            color = textColor,
+            maxLines = 1,
+          )
         }
       // Source
       source
         ?.takeUnless { it.isBlank() }
         ?.let { source ->
           if (author != null) {
-            Text(text = " — ", style = MaterialTheme.typography.labelSmall, color = textColor)
+            Text(
+              text = " — ",
+              style = MaterialTheme.typography.labelSmall,
+              color = textColor,
+              maxLines = 1,
+            )
           }
-          Text(text = source, style = MaterialTheme.typography.labelSmall, color = textColor)
+          Text(
+            text = source,
+            style = MaterialTheme.typography.labelSmall,
+            color = textColor,
+            maxLines = 1,
+          )
         }
     }
   }
