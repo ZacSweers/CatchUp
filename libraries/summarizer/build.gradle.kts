@@ -53,8 +53,8 @@ dependencies {
   api(libs.retrofit.core)
   api(projects.libraries.appconfig)
   api(projects.libraries.di)
-  api(projects.libraries.util)
   api(projects.libraries.sqldelightExtensions)
+  api(projects.libraries.util)
 
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.compose.accompanist.systemUi)

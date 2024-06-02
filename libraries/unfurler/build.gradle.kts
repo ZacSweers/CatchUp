@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 plugins {
-  alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sgp.base)
+  alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.anvil)
 }
@@ -33,16 +33,17 @@ kotlin {
         api(libs.compose.runtime)
         api(libs.kotlin.coroutines)
         api(projects.libraries.di)
-        api(projects.libraries.sqldelightExtensions)
         api(projects.libraries.kotlinutil)
-      }
+        api(projects.libraries.sqldelightExtensions)
+}
     }
     jvmMain {
       dependencies {
-        implementation(libs.misc.unfurl)
-        implementation(libs.anvil.annotationsOptional)
         api(libs.okhttp.core)
-      }
+
+        implementation(libs.anvil.annotationsOptional)
+        implementation(libs.misc.unfurl)
+}
     }
   }
 }
