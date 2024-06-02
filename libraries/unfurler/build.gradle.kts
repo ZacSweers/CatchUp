@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 plugins {
-  alias(libs.plugins.sgp.base)
   alias(libs.plugins.kotlin.multiplatform)
-  alias(libs.plugins.sqldelight)
   alias(libs.plugins.anvil)
+  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.sqldelight)
 }
 
 kotlin {
