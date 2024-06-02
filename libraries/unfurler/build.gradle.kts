@@ -17,6 +17,7 @@ plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.sqldelight)
+  alias(libs.plugins.anvil)
 }
 
 kotlin {
