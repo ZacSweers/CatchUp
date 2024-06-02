@@ -24,8 +24,6 @@ import androidx.core.content.getSystemService
 import catchup.app.data.DribbbleSizingInterceptor
 import catchup.app.data.LumberYard
 import catchup.app.data.UnsplashSizingInterceptor
-import catchup.app.util.LinkTouchMovementMethod
-import catchup.app.util.PrecomputedTextSetterCompat
 import catchup.appconfig.AppConfig
 import catchup.appconfig.AppConfigMetadataContributor
 import catchup.base.ui.VersionInfo
@@ -113,29 +111,6 @@ abstract class ApplicationModule {
     @SingleIn(AppScope::class)
     internal fun versionInfo(@ApplicationContext appContext: Context): VersionInfo =
       appContext.versionInfo
-
-    @Provides
-    @SingleIn(AppScope::class)
-    internal fun markwon(
-      @LazyDelegate imageLoader: ImageLoader,
-      @ApplicationContext context: Context, // TODO should use themed one from activity?
-    ): Markwon {
-      return Markwon.builder(context)
-        .textSetter(PrecomputedTextSetterCompat.create())
-        .usePlugins(
-          listOf(
-            MovementMethodPlugin.create(LinkTouchMovementMethod.getInstance()),
-            ImagesPlugin.create(),
-            StrikethroughPlugin.create(),
-            CoilImagesPlugin.create(context, imageLoader),
-            TablePlugin.create(context),
-            LinkifyPlugin.create(),
-            TaskListPlugin.create(context),
-            //            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
-          )
-        )
-        .build()
-    }
 
     @AsyncInitializers
     @IntoSet

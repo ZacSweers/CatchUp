@@ -5,6 +5,7 @@ import android.text.format.DateUtils
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.End
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,11 +42,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import catchup.app.data.LinkManager
 import catchup.app.service.ActionRow
 import catchup.app.service.TextItemFooter
@@ -57,7 +67,9 @@ import catchup.app.service.openUrl
 import catchup.app.service.shareUrl
 import catchup.app.ui.activity.ImageViewerScreen
 import catchup.base.ui.BackPressNavButton
+import catchup.base.ui.rememberSystemBarColorController
 import catchup.compose.ContentAlphas
+import catchup.compose.minus
 import catchup.di.AppScope
 import catchup.service.api.Comment
 import catchup.service.api.Detail
@@ -66,6 +78,11 @@ import catchup.unfurler.UnfurlResult
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.kotlin.format
 import coil.compose.AsyncImage
+import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.m3.markdownColor
+import com.mikepenz.markdown.model.DefaultMarkdownTypography
+import com.mikepenz.markdown.model.MarkdownColors
+import com.mikepenz.markdown.model.MarkdownTypography
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.retained.collectAsRetainedState
@@ -233,6 +250,10 @@ constructor(
 @CircuitInject(ServiceDetailScreen::class, AppScope::class)
 @Composable
 fun DetailUi(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
+  // TODO this is a bit awkward, maybe we should have some middleware that resets
+  //  status bar colors on every screen change?
+  val systemBarColorController = rememberSystemBarColorController()
+  systemBarColorController.systemBarsDarkContentEnabled = !isSystemInDarkTheme()
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
   Scaffold(
     modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -302,6 +323,7 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
           CommentItem(
             comment,
             isCollapsed = comment.id in state.collapsedItems,
+            themeColor = state.themeColor,
             modifier = Modifier.animateItem(),
           ) {
             state.eventSink(ToggleCollapse(comment.id))
@@ -367,6 +389,7 @@ private fun CommentItem(
   comment: Comment,
   isCollapsed: Boolean,
   modifier: Modifier = Modifier,
+  themeColor: Color = MaterialTheme.colorScheme.tertiary,
   onToggleCollapse: () -> Unit,
 ) {
   Surface(modifier = modifier, onClick = onToggleCollapse) {
@@ -415,7 +438,6 @@ private fun CommentItem(
                   )
                   .toString()
               }
-            // TODO markdown support
             Text(
               formattedTimestamp,
               modifier = Modifier.weight(1f),
@@ -427,8 +449,21 @@ private fun CommentItem(
         }
         if (!isCollapsed) {
           Spacer(Modifier.height(4.dp))
-          Text(comment.text, style = MaterialTheme.typography.bodySmall)
-          // TODO clickable links if any
+          Markdown(
+            comment.text,
+            colors = catchupMarkdownColors(themeColor),
+            typography = catchupMarkdownTypography(),
+          )
+          if (comment.clickableUrls.isNotEmpty()) {
+            Spacer(Modifier.height(4.dp))
+            // TODO refine this UI. Currently unsupported though
+            Column(verticalArrangement = spacedBy(4.dp)) {
+              val uriHandler = LocalUriHandler.current
+              for (url in comment.clickableUrls) {
+                OutlinedButton(onClick = { uriHandler.openUri(url.url) }) { Text(url.text) }
+              }
+            }
+          }
         }
       }
       HorizontalDivider(
@@ -514,3 +549,51 @@ private fun UnfurlText(
     }
   }
 }
+
+@Composable
+fun catchupMarkdownColors(linkColor: Color): MarkdownColors {
+  return markdownColor(linkText = linkColor)
+}
+
+private val defaultSmallTextSize = 12.sp
+
+// TODO any other tunings/stylings?
+@Composable
+fun catchupMarkdownTypography(
+  seedSize: TextUnit = defaultSmallTextSize,
+  h1: TextStyle = MaterialTheme.typography.titleLarge.copy(fontSize = seedSize * 2.0f),
+  h2: TextStyle = MaterialTheme.typography.titleLarge.copy(fontSize = seedSize * 1.8f),
+  h3: TextStyle = MaterialTheme.typography.titleLarge.copy(fontSize = seedSize * 1.6f),
+  h4: TextStyle = MaterialTheme.typography.titleLarge.copy(fontSize = seedSize * 1.4f),
+  h5: TextStyle = MaterialTheme.typography.titleLarge.copy(fontSize = seedSize * 1f),
+  h6: TextStyle = MaterialTheme.typography.titleLarge.copy(fontSize = seedSize * 0.85f),
+  text: TextStyle = MaterialTheme.typography.bodySmall,
+  code: TextStyle =
+    MaterialTheme.typography.bodySmall.copy(
+      fontFamily = FontFamily.Monospace,
+      fontSize = seedSize - 1.sp,
+    ),
+  quote: TextStyle =
+    MaterialTheme.typography.bodySmall
+      .copy(fontSize = seedSize - 1.sp)
+      .plus(SpanStyle(fontStyle = FontStyle.Italic)),
+  paragraph: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
+  ordered: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
+  bullet: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
+  list: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
+): MarkdownTypography =
+  DefaultMarkdownTypography(
+    h1 = h1,
+    h2 = h2,
+    h3 = h3,
+    h4 = h4,
+    h5 = h5,
+    h6 = h6,
+    text = text,
+    quote = quote,
+    code = code,
+    paragraph = paragraph,
+    ordered = ordered,
+    bullet = bullet,
+    list = list,
+  )
