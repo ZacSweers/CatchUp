@@ -141,6 +141,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
       timestamp = detailListing.createdUtc,
       author = "/u/" + detailListing.author,
       tag = detailListing.subreddit,
+      allowUnfurl = !detailListing.isSelf,
     )
   }
 }

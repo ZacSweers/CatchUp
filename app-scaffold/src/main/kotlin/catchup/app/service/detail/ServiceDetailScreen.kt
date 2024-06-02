@@ -6,7 +6,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement.End
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +25,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -33,6 +33,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -54,7 +55,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import catchup.app.data.LinkManager
 import catchup.app.service.ActionRow
 import catchup.app.service.TextItemFooter
@@ -210,8 +210,12 @@ constructor(
           }
         }
       }
-    return ServiceDetailScreen.State(filteredDetail, unfurl, themeColor, collapsedItems.keys) {
-      event ->
+    return ServiceDetailScreen.State(
+      detail = filteredDetail,
+      unfurl = unfurl.takeUnless { !filteredDetail.allowUnfurl },
+      themeColor = themeColor,
+      collapsedItems = collapsedItems.keys,
+    ) { event ->
       when (event) {
         OpenImage -> {
           scope.launch {
@@ -354,13 +358,15 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
         val detail = state.detail
         Text(detail.title, style = MaterialTheme.typography.titleMedium)
         detail.text?.takeUnless(String::isBlank)?.let {
-          Text(it, style = MaterialTheme.typography.bodyMedium)
+          HorizontalDivider(thickness = Dp.Hairline)
+          Markdown(
+            it,
+            typography = catchupMarkdownTypography(),
+            colors = catchupMarkdownColors(state.themeColor),
+          )
         }
 
-        state.unfurl
-          // TODO Improve this. Maybe just ignore self-referencing unfurls?
-          ?.takeUnless { it.thumbnail == null }
-          ?.let { UnfurlItem(detail.title, it) { state.eventSink(OpenUrl) } }
+        state.unfurl?.let { UnfurlItem(detail.title, it) { state.eventSink(OpenUrl) } }
 
         TextItemHeader(
           score = detail.score,
@@ -392,84 +398,88 @@ private fun CommentItem(
   themeColor: Color = MaterialTheme.colorScheme.tertiary,
   onToggleCollapse: () -> Unit,
 ) {
-  Surface(modifier = modifier, onClick = onToggleCollapse) {
-    Box {
-      val startPadding = 8.dp * comment.depth
-      Column(
-        modifier =
-          Modifier.padding(start = startPadding + 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp)
-            .animateContentSize()
-      ) {
-        Row {
-          val commonModifier =
-            if (isCollapsed) Modifier.align(Alignment.CenterVertically) else Modifier
-          Text(
-            comment.author,
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
-            modifier = commonModifier,
-          )
-          Text(
-            " | ${comment.score.toLong().format()}",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
-            modifier = commonModifier,
-          )
-          if (isCollapsed) {
-            // TODO show number of children comments?
-            // TODO animate/crossfade this somehow with timestamp?
-            Spacer(Modifier.weight(1f))
-            Icon(
-              imageVector = Icons.Filled.ArrowDropDown,
-              contentDescription = "Expand",
-              modifier = commonModifier.size(24.dp),
-              tint = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
-            )
-          } else {
-            // TODO move this formatting into presenter somehow
-            val formattedTimestamp =
-              remember(comment.timestamp) {
-                DateUtils.getRelativeTimeSpanString(
-                    comment.timestamp.toEpochMilliseconds(),
-                    System.currentTimeMillis(),
-                    0L,
-                    DateUtils.FORMAT_ABBREV_ALL,
-                  )
-                  .toString()
-              }
+  // Disable minimum height for a clickable surface as we're ok with it going smaller here. Without
+  // this, there ends up being a lot of padding around the clickable area.
+  CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+    Surface(modifier = modifier, onClick = onToggleCollapse) {
+      Box {
+        val startPadding = 8.dp * comment.depth
+        Column(
+          modifier =
+            Modifier.padding(start = startPadding + 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp)
+              .animateContentSize()
+        ) {
+          Row {
+            val commonModifier =
+              if (isCollapsed) Modifier.align(Alignment.CenterVertically) else Modifier
             Text(
-              formattedTimestamp,
-              modifier = Modifier.weight(1f),
-              textAlign = TextAlign.End,
+              comment.author,
+              style = MaterialTheme.typography.labelMedium,
+              fontWeight = FontWeight.Bold,
+              color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
+              modifier = commonModifier,
+            )
+            Text(
+              " | ${comment.score.toLong().format()}",
               style = MaterialTheme.typography.labelMedium,
               color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
+              modifier = commonModifier,
             )
+            if (isCollapsed) {
+              // TODO show number of children comments?
+              // TODO animate/crossfade this somehow with timestamp?
+              Spacer(Modifier.weight(1f))
+              Icon(
+                imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = "Expand",
+                modifier = commonModifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
+              )
+            } else {
+              // TODO move this formatting into presenter somehow
+              val formattedTimestamp =
+                remember(comment.timestamp) {
+                  DateUtils.getRelativeTimeSpanString(
+                      comment.timestamp.toEpochMilliseconds(),
+                      System.currentTimeMillis(),
+                      0L,
+                      DateUtils.FORMAT_ABBREV_ALL,
+                    )
+                    .toString()
+                }
+              Text(
+                formattedTimestamp,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.End,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Disabled),
+              )
+            }
           }
-        }
-        if (!isCollapsed) {
-          Spacer(Modifier.height(4.dp))
-          Markdown(
-            comment.text,
-            colors = catchupMarkdownColors(themeColor),
-            typography = catchupMarkdownTypography(),
-          )
-          if (comment.clickableUrls.isNotEmpty()) {
+          if (!isCollapsed) {
             Spacer(Modifier.height(4.dp))
-            // TODO refine this UI. Currently unsupported though
-            Column(verticalArrangement = spacedBy(4.dp)) {
-              val uriHandler = LocalUriHandler.current
-              for (url in comment.clickableUrls) {
-                OutlinedButton(onClick = { uriHandler.openUri(url.url) }) { Text(url.text) }
+            Markdown(
+              comment.text,
+              colors = catchupMarkdownColors(themeColor),
+              typography = catchupMarkdownTypography(),
+            )
+            if (comment.clickableUrls.isNotEmpty()) {
+              Spacer(Modifier.height(4.dp))
+              // TODO refine this UI. Currently unsupported though
+              Column(verticalArrangement = spacedBy(4.dp)) {
+                val uriHandler = LocalUriHandler.current
+                for (url in comment.clickableUrls) {
+                  OutlinedButton(onClick = { uriHandler.openUri(url.url) }) { Text(url.text) }
+                }
               }
             }
           }
         }
+        HorizontalDivider(
+          modifier = Modifier.padding(start = startPadding).align(Alignment.BottomCenter),
+          thickness = Dp.Hairline,
+        )
       }
-      HorizontalDivider(
-        modifier = Modifier.padding(start = startPadding).align(Alignment.BottomCenter),
-        thickness = Dp.Hairline,
-      )
     }
   }
 }

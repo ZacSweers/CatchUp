@@ -21,6 +21,7 @@ sealed interface Detail {
   val tag: String?
   val author: String?
   val timestamp: Instant?
+  val allowUnfurl: Boolean
 
   data class Shallow(
     override val id: String,
@@ -35,6 +36,7 @@ sealed interface Detail {
     override val tag: String? = null,
     override val author: String? = null,
     override val timestamp: Instant? = null,
+    override val allowUnfurl: Boolean = true,
   ) : Detail
 
   data class Full(
@@ -50,6 +52,7 @@ sealed interface Detail {
     override val tag: String? = null,
     override val author: String? = null,
     override val timestamp: Instant? = null,
+    override val allowUnfurl: Boolean = true,
     val comments: ImmutableList<Comment> = persistentListOf(),
   ) : Detail
 }
