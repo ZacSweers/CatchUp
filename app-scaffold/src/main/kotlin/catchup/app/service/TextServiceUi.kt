@@ -5,7 +5,6 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.text.format.DateUtils
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,12 +22,12 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,7 +55,6 @@ import catchup.app.service.ServiceScreen.Event.MarkClicked
 import catchup.compose.CatchUpTheme
 import catchup.compose.ContentAlphas
 import catchup.compose.ScrollToTopHandler
-import catchup.compose.rememberRippleCompat
 import catchup.service.api.CatchUpItem
 import catchup.service.api.Mark
 import catchup.service.api.canBeSummarized
@@ -162,8 +160,8 @@ fun TextItem(
           Modifier.padding(start = 16.dp)
             .clickable(
               enabled = item.markClickUrl != null,
-              interactionSource = remember { MutableInteractionSource() },
-              indication = rememberRippleCompat(bounded = false),
+              interactionSource = null,
+              indication = ripple(bounded = false),
               onClick = onMarkClick,
             ),
         horizontalAlignment = Alignment.CenterHorizontally,

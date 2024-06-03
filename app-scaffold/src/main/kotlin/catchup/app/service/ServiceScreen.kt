@@ -6,7 +6,6 @@ import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -62,7 +62,6 @@ import catchup.app.ui.activity.ImageViewerScreen
 import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
 import catchup.compose.rememberRetainedCoroutineScope
-import catchup.compose.rememberRippleCompat
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.di.ContextualFactory
@@ -352,8 +351,8 @@ fun ErrorItem(text: String, modifier: Modifier = Modifier, onRetryClick: (() -> 
       contentDescription = "No connection",
       modifier =
         Modifier.size(72.dp).clickable(
-          interactionSource = remember { MutableInteractionSource() },
-          indication = rememberRippleCompat(bounded = false),
+          interactionSource = null,
+          indication = ripple(bounded = false),
         ) {
           atEnd = !atEnd
         },

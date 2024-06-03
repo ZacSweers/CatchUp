@@ -23,8 +23,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -82,7 +80,6 @@ import catchup.base.ui.HazeScaffold
 import catchup.compose.DraggableItem
 import catchup.compose.dragContainer
 import catchup.compose.rememberDragDropState
-import catchup.compose.rememberRippleCompat
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.service.api.ServiceMeta
@@ -281,14 +278,8 @@ fun OrderServices(state: State, modifier: Modifier = Modifier) {
     floatingActionButton = {
       AnimatedVisibility(visible = state.showSave, enter = scaleIn(), exit = scaleOut()) {
         val scope = rememberStableCoroutineScope()
-        val interactionSource = remember { MutableInteractionSource() }
         FloatingActionButton(
-          modifier =
-            Modifier.indication(
-                interactionSource,
-                indication = rememberRippleCompat(color = Color.White),
-              )
-              .navigationBarsPadding(),
+          modifier = Modifier.navigationBarsPadding(),
           // TODO show syllabus on fab
           //  .onGloballyPositioned { coordinates ->
           //    val (x, y) = coordinates.positionInRoot()
