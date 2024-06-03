@@ -17,6 +17,8 @@ plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.anvil)
   alias(libs.plugins.sgp.base)
+  // TODO why doesn't SGP handle this
+  alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
 }
 
@@ -35,7 +37,7 @@ kotlin {
         api(projects.libraries.di)
         api(projects.libraries.kotlinutil)
         api(projects.libraries.sqldelightExtensions)
-}
+      }
     }
     jvmMain {
       dependencies {
@@ -43,21 +45,11 @@ kotlin {
 
         implementation(libs.anvil.annotationsOptional)
         implementation(libs.misc.unfurl)
-}
+      }
     }
   }
 }
 
-slack {
-  features {
-    dagger()
-  }
-}
+slack { features { dagger() } }
 
-sqldelight {
-  databases {
-    create("UnfurlerDatabase") {
-      packageName.set("catchup.unfurler")
-    }
-  }
-}
+sqldelight { databases { create("UnfurlerDatabase") { packageName.set("catchup.unfurler") } } }
